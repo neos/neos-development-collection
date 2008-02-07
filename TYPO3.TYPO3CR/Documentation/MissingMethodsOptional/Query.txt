@@ -1,0 +1,5 @@
+== Query ==
+
+String SQL 
+A string constant representing the SQL query language applied to the 
+database view of the workspace.

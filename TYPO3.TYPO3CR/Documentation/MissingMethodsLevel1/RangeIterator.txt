@@ -1,0 +1,39 @@
+== RangeIterator ==
+
+=== void skip(long skipNum) ===
+Skip the specified number of elements in the iterator. 
+Throws a java.util.NoSuchElementException if an attempt is made to 
+skip past the last element in the iterator. 
+
+=== long getSize() ===
+Returns the total number of elements in the iterator. If this information 
+is unavailable, returns -1. 
+
+=== long getPosition() ===
+Returns the current position within the iterator. The number returned is 
+the zero-based index of the next element in the iterator, that is, the one 
+that will be returned on the subsequent next call. Note that this method
+does not check if there actually is a next element. An empty iterator will 
+always return 0. 
+
+=== long getNumberRemaining() ===
+Returns the number of subsequent next calls that can be successfully 
+performed on this iterator, in other words, the number of elements 
+remaining in the iterator. The value returned may not always be 
+absolutely accurate, depending on implementation details.
+
+== RowIterator extends RangeIterator ==
+
+=== Row nextRow() ===
+Returns the next Row in the iteration. 
+Throws a java.util.NoSuchElementException if the iterator contains 
+no more elements. 
+
+== NodeTypeIterator extends RangeIterator ==
+
+=== NodeType nextNodeType() ===
+Returns the next 
+NodeType in the iteration. 
+Throws a 
+java.util.NoSuchElementException if the iterator contains 
+no more elements. 
