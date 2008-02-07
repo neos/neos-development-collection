@@ -1,0 +1,68 @@
+= Node Structure =
+
+This is the definition for the node types used by the CMS package.
+
+== The hierarchy ==
+
+ * nt:base
+   * nt:hierarchyNode
+     * nt:folder
+       * t3:AbstractFolder
+         * t3:SystemFolder
+         * t3:Category
+   * t3:AbstractPage
+     * t3:Page
+     * t3:Spacer
+     * t3:Reference
+   * t3:AbstractContent
+     * t3:ContentElement
+     * t3:Plugin
+
+== Compact Node Type Definition ==
+
+CND is explained in the JCR specification and at http://jackrabbit.apache.org/doc/nodetype/cnd.html
+
+{{{
+
+<t3 = '!http://typo3.org/nodetypes/5.0'>
+
+[t3:AbstractFolder] > nt:folder, mix:referenceable
+ orderable
+
+[t3:SystemFolder] > t3:AbstractFolder
+ orderable
+ + * (t3:AbstractPage)
+ + * (t3:Content)
+
+[t3:Category] > t3:AbstractFolder
+ orderable
+ + * (t3:AbstractPage)
+ + * (t3:AbstractContent)
+
+[t3:AbstractPage] > mix:referenceable
+ orderable
+ - Hidden (boolean) mandatory
+ - Title (string)
+
+[t3:Page] > t3:AbstractPage
+ - SubTitle (string)
+
+[t3:Spacer] > t3:AbstractPage
+
+[t3:Reference] > t3:AbstractPage
+ - Target (reference) mandatory
+
+[t3:AbstractContent]
+ + *
+
+[t3:ContentElement] > t3:AbstractContent
+ - Hidden (boolean) mandatory
+ - Title (string)
+ - SubTitle (string)
+
+[t3:Plugin] > t3:AbstractContent
+ - Hidden (boolean) mandatory
+ - Title (string)
+ - SubTitle (string)
+
+}}}

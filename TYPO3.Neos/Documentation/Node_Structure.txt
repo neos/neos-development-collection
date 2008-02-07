@@ -1,0 +1,10 @@
+This is the expected basic node structure for the CMS package.
+
+
+/Configuration t3:SystemFolder
+/Content t3:SystemFolder
+	/Categories t3:SystemFolder
+		/Pages t3:Category
+			/Home t3:Page
+				[/* t3:Content]
+		/Users t3:Category
