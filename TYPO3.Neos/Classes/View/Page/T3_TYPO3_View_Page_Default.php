@@ -22,7 +22,7 @@ declare(encoding = 'utf-8');
  * @copyright Copyright belongs to the respective authorst
  * @license   http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_TYPO3_View_Default extends T3_FLOW3_MVC_View_Abstract {
+class T3_TYPO3_View_Page_Default extends T3_FLOW3_MVC_View_Abstract {
 
 	/**
 	 * @var array
