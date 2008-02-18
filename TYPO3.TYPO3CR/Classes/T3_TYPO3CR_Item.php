@@ -230,12 +230,12 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 		$path = $this->getPath();
 		$slash = 0;
 		for ($i = 0; $i < $depth-1; $i++) {
-			$slash = strpos($path, '/', $slash+1);
+			$slash = T3_PHP6_Functions::strpos($path, '/', $slash+1);
 			if ($slash === false) {
 				throw new T3_phpCR_ItemNotFoundException("Invalid ancestor depth (".$depth.")", 1187530839);
 			}
 		}
-		$slash = strpos($path, '/', $slash+1);
+		$slash = T3_PHP6_Functions::strpos($path, '/', $slash+1);
 		if ($slash == -1) {
 			return $this;
 		}
@@ -263,10 +263,10 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 			return 0;
 		} else {
 			$depth = 1;
-			$slash = strpos($path, '/', 1);
+			$slash = T3_PHP6_Functions::strpos($path, '/', 1);
 			while ($slash !== false) {
 				$depth++;
-				$slash = strpos($path, '/', $slash+1);
+				$slash = T3_PHP6_Functions::strpos($path, '/', $slash+1);
 			}
 			return $depth;
 		}

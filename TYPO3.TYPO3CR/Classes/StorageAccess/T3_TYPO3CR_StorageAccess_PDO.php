@@ -100,20 +100,6 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 	}
 
 	/**
-	 * Checks if the node with the given UUID has subnodes
-	 * 
-	 * @param string $nodeUUID
-	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function hasNodes($nodeUUID) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT(id) AS nodecount FROM nodes WHERE pid = ?');
-		$statementHandle->execute(array($nodeUUID));
-		$row = $statementHandle->fetch(PDO::FETCH_ASSOC);
-		return $row['nodecount']>0 ? TRUE : FALSE;
-	}
-
-	/**
 	 * Fetches sub node UUIDs from the database
 	 *
 	 * @param integer $nodeId The node UUID to fetch (sub-)nodes for
@@ -129,21 +115,6 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 			$nodeUUIDs[] = $rawNode['uuid'];
 		}
 		return $nodeUUIDs;
-	}
-
-	/**
-	 * Checks if the node with the given UUID has properties
-	 *
-	 * @param string $nodeUUID
-	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function hasProperties($nodeUUID) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT(name) AS propertycount FROM properties WHERE nodeuuid = ?');
-		$statementHandle->execute(array($nodeUUID));
-		$row = $statementHandle->fetch(PDO::FETCH_ASSOC);
-
-		return $row['propertycount']>0 ? TRUE : FALSE;
 	}
 
 	/**

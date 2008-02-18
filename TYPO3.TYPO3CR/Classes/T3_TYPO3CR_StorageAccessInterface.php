@@ -119,22 +119,6 @@ interface T3_TYPO3CR_StorageAccessInterface {
 	public function getRawNodeTypeById($nodeTypeId);
 
 	/**
-	 * Checks if the node with the given UUID has properties
-	 *
-	 * @param string $nodeUUID
-	 * @return boolean
-	 */
-	public function hasProperties($nodeUUID);
-
-	/**
-	 * Returns TRUE if the node with the given UUID has subnodes
-	 *
-	 * @param string $nodeUUID
-	 * @return boolean
-	 */
-	public function hasNodes($nodeUUID);
-
-	/**
 	 * Adds a node to the storage
 	 *
 	 * @param string $uuid UUID to insert

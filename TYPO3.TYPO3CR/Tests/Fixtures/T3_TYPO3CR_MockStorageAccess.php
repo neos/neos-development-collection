@@ -203,38 +203,6 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 	}
 
 	/**
-	 * Checks if the node with the given UUID has properties
-	 *
-	 * @param string $nodeUUID
-	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function hasProperties($nodeUUID) {
-		if (key_exists($this->workspaceName, $this->rawPropertiesByUUIDGroupedByWorkspace)) {
-			if (key_exists($nodeUUID, $this->rawPropertiesByUUIDGroupedByWorkspace[$this->workspaceName])) {
-				return (boolean) count($this->rawPropertiesByUUIDGroupedByWorkspace[$this->workspaceName][$nodeUUID]);
-			}
-		}
-		return FALSE;
-	}
-
-	/**
-	 * Checks if the node with the given UUID has subnodes
-	 * 
-	 * @param string $nodeUUID
-	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function hasNodes($nodeUUID) {
-		if (key_exists($this->workspaceName, $this->rawNodesByUUIDGroupedByWorkspace)) {
-			foreach($this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName] as $node) {
-				if($node['pid'] == $nodeUUID) return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	/**
 	 * Adds a node to the storage
 	 *
 	 * @param string $uuid UUID to insert

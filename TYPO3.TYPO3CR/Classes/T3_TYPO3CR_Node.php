@@ -45,6 +45,11 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	protected $properties;
 
 	/**
+	 * @var array
+	 */
+	protected $nodes;
+
+	/**
 	 * Constructs a Node
 	 *
 	 * @param T3_TYPO3CR_SessionInterface $session
@@ -154,7 +159,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	public function getProperties($namePattern = NULL) {
 		if($namePattern !== NULL) throw new T3_phpCR_RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
-		return $this->componentManager->getComponent('T3_TYPO3CR_PropertyIterator', $this->properties);
+		return $this->componentManager->getComponent('T3_phpCR_PropertyIteratorInterface', $this->properties);
 	}
 
 	/**
@@ -166,10 +171,10 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getProperty($relativePath) {
-		if(strpos($relativePath, '/') === FALSE && isset($this->properties[$relativePath])) {
+		if(T3_PHP6_Functions::strpos($relativePath, '/') === FALSE && isset($this->properties[$relativePath])) {
 			return $this->properties[$relativePath];
 		} else {
-			$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParser');
+			$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParserInterface');
 			return $pathParser->parsePath($relativePath, $this, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
 		}
 	}
@@ -183,7 +188,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperty($relativePath) {
-		if(strpos($relativePath, '/') === FALSE) {
+		if(T3_PHP6_Functions::strpos($relativePath, '/') === FALSE) {
 			return isset($this->properties[$relativePath]);
 		} else {
 			try {
@@ -235,7 +240,10 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasNodes() {
-		return $this->storageAccess->hasNodes($this->getUUID());
+		if(!is_array($this->nodes)) {
+			$this->initializeNodes();
+		}
+		return count($this->nodes) > 0;
 	}
 
 	/**
@@ -249,7 +257,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * If $namePattern is not NULL: Gets all child nodes of this node
 	 * accessible through the current Session that match namePattern.
 	 * The pattern may be a full name or a partial name with one or more
-	 * wildcard characters ("*"), or a disjunction (using the “|”
+	 * wildcard characters ("*"), or a disjunction (using the |
 	 * character to represent logical OR) of these. The pattern is matched
 	 * against the names (not the paths) of the immediate child nodes of
 	 * this node.
@@ -262,11 +270,11 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	public function getNodes($namePattern = NULL) {
 		if($namePattern !== NULL) throw new T3_phpCR_RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
 
-		if(!isset($this->nodes)) {
+		if(!is_array($this->nodes)) {
 			$this->initializeNodes();
 		}
-		$this->nodes->rewind();
-		return $this->nodes;
+
+		return $this->componentManager->getComponent('T3_phpCR_NodeIteratorInterface', $this->nodes);
 	}
 
 	/**
@@ -276,24 +284,24 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeNodes() {
+		$this->nodes = array();
 		$rawNodeUUIDs = $this->storageAccess->getUUIDsOfSubNodesOfNode($this->getUUID());
-		$this->nodes = $this->componentManager->getComponent('T3_phpCR_NodeIteratorInterface');
 		foreach($rawNodeUUIDs as $rawNodeUUID) {
 			$node = $this->session->getNodeByUUID($rawNodeUUID);
-			$this->nodes->append($node);
+			$this->nodes[$node->getUUID()] = $node;
 		}
 	}
 
 	/**
 	 * Returns the node specified by $relPath
 	 *
-	 * @param string $relPath The relative path to the node to return
+	 * @param string $relativePath The relative path to the node to return
 	 * @return T3_TYPO3CR_Node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function getNode($relPath) {
-		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParser');
-		return $pathParser->parsePath($relPath, $this);
+	public function getNode($relativePath) {
+		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParserInterface');
+		return $pathParser->parsePath($relativePath, $this);
 	}
 
 	/**
@@ -352,7 +360,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getParent() {
-		if ($this->parentNode==null) throw new T3_phpCR_ItemNotFoundException("root node doesn't have a parent", 1187530879);
+		if ($this->parentNode === NULL) throw new T3_phpCR_ItemNotFoundException("root node does not have a parent", 1187530879);
 		return $this->parentNode;
 	}
 
@@ -375,6 +383,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @throws T3_phpCR_RepositoryException
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Many :)
 	 */
 	public function addNode($relativePath, $primaryNodeTypeName = NULL) {
@@ -382,7 +391,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 			throw new T3_phpCR_PathNotFoundException('Path not found or not provided', 1187531979);
 		}
 
-		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParser');
+		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParserInterface');
 		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = $pathParser->getLastPathPart($relativePath);
 
 		if($numberOfElementsRemaining===0) {
@@ -395,10 +404,10 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 			));
 			$newNode->setNew(TRUE);
 
-			if(!isset($this->nodes)) {
+			if(!is_array($this->nodes)) {
 				$this->initializeNodes();
 			}
-			$this->nodes->append($newNode);
+			$this->nodes[$newNode->getUUID()] = $newNode;
 			$this->setModified(TRUE);  // JSR-283: (5.1.3.6): This specification provides the following methods on Item for determining whether a particular item has pending changes (isModified) or constitutes part of the pending changes of its parent(isNew)
 		} else {
 			$upperNode = $pathParser->parsePath($remainingPath, $this);
@@ -412,14 +421,15 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * Delete the item
 	 *
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove() {
-		$nodes = $this->getNodes();
+		if(!is_array($this->nodes)) {
+			$this->initializeNodes();
+		}
 
-		if (count($nodes)) { 
-			foreach ($nodes as $node) {
-				$node->remove();
-			}
+		foreach ($this->nodes as $node) {
+			$node->remove();
 		}
 
 		foreach ($this->properties as $property) {
@@ -434,10 +444,14 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * 
 	 * @return void
 	 * @author Thomas Peterson <info@thomas-peterson.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function save() {
-		foreach ($this->getNodes() as $subNode) {
-			$subNode->save();
+		if(!is_array($this->nodes)) {
+			$this->initializeNodes();
+		}
+		foreach ($this->nodes as $node) {
+			$node->save();
 		}
 
 		if ($this->isRemoved()===TRUE) {

@@ -55,7 +55,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 		if($value === NULL) throw new T3_TYPO3CR_RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
 
 		$this->name = $name;
-		$valueFactory = $this->componentManager->getComponent('T3_TYPO3CR_ValueFactory');
+		$valueFactory = $this->componentManager->getComponent('T3_phpCR_ValueFactoryInterface');
 		if ($isMultiValued) {
 			foreach($value as $singleValue) {
 				$this->value[] = $valueFactory->createValue($singleValue);
@@ -285,7 +285,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 			$this->value = NULL;
 			$this->setRemoved(TRUE);
 		} else {
-			$valueFactory = $this->componentManager->getComponent('T3_TYPO3CR_ValueFactory');
+			$valueFactory = $this->componentManager->getComponent('T3_phpCR_ValueFactoryInterface');
 			if (is_array($value)) {
 				foreach($value as $singleValue) {
 					$this->value[] = $valueFactory->createValue($singleValue);

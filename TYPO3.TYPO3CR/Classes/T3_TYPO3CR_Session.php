@@ -229,7 +229,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getItem($absPath) {
-		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParser');
+		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParserInterface');
 		return $pathParser->parsePath($absPath, $this->getRootNode(), T3_TYPO3CR_PathParserInterface::SEARCH_MODE_ITEMS);
 	}
 
