@@ -36,7 +36,6 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function parsePath($path, T3_phpCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
-
 		if ($this->isPathAbsolute($path)) {
 			$currentNode = $this->getRootNode($currentNode);
 			$path = T3_PHP6_Functions::substr($path, 1);
@@ -55,6 +54,7 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implementation of Namespaces!
+	 * @todo Add name pattern support
 	 */
 	protected function parseRelativePath($path, T3_phpCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
 		if ($path == '' && ($searchMode & self::SEARCH_MODE_NODES)) {
@@ -81,7 +81,7 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 			return $this->parseRelativePath($remainingPath, $currentNode->getParent(), $searchMode);
 		}
 
-			// @TODO: Once NamePatterns are implemented, it will be a lot easier!
+			// Once NamePatterns are implemented, it will be a lot easier!
 		$nodeIterator = $currentNode->getNodes();
 		$currentNameIndex = 1;
 		foreach ($nodeIterator as $currentSubNode) {

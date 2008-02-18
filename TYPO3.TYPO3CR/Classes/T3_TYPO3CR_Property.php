@@ -42,13 +42,18 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	/**
 	 * Constructs a Property
 	 *
-	 * @param string $name
-	 * @param string $value
+	 * @param string $name The name of the property
+	 * @param string $value The raw value of the property
+	 * @param T3_TYPO3CR_NodeInterface $parentNode
+	 * @param boolean $isMultiValued Whether this property is multivalued
+	 * 	 * @param T3_TYPO3CR_SessionInterface $session
+	 * @param T3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param T3_TYPO3CR_StorageAccessInterface $storageAccess
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, $value, $parentNode, $isMultiValued, T3_FLOW3_Component_ManagerInterface $componentManager, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_phpCR_SessionInterface $session) {
-		parent::__construct($storageAccess, $session);
+	public function __construct($name, $value, $parentNode, $isMultiValued, T3_phpCR_SessionInterface $session, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_FLOW3_Component_ManagerInterface $componentManager) {
+		parent::__construct($session, $storageAccess);
 
 		$this->name = $name;
 		if ($isMultiValued) {
@@ -73,7 +78,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	 */
 	public function getValue() {
 		if(is_array($this->value)) throw new T3_phpCR_ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
-		
+
 		return $this->componentManager->getComponent('T3_phpCR_ValueInterface', $this->value);
 	}
 

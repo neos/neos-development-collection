@@ -14,54 +14,80 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_BaseTest.php');
-
 /**
  * Tests for the Property implementation of TYPO3CR
  *
  * @package		TYPO3CR
  * @subpackage	Tests
  * @version 	$Id$
- * @author 		Karsten Dambekalns <karsten@typo3.org>
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_PropertyTest extends TYPO3CR_BaseTest {
+class TYPO3CR_PropertyTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if getValue returns a Value object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getValueReturnsAValueObject() {
-		$uuid = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
-		$node = $this->session->getNodeByUUID($uuid);
-		$valueObject = $node->getProperties()->next()->getValue();
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
+		$mockStorageAccess->expects($this->any())->method('getRawPropertiesOfNode')->will($this->returnValue(array(array('name' => 'testproperty', 'value' => 'testvalue', 'namespace' => '', 'multivalue' => 0))));
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = new T3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
+
+		$node = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
+		$valueObject = $node->getProperty('testproperty')->getValue();
 		$this->assertType('T3_phpCR_ValueInterface', $valueObject, 'getValue() a Value object.');
 	}
 
 	/**
 	 * Checks if getValues returns an exception if called with on a single value
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getValuesReturnsAnExceptionIfCalledOnSingleValue() {
-		$uuid = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
-		$node = $this->session->getNodeByUUID($uuid);
-		
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
+		$mockStorageAccess->expects($this->any())->method('getRawPropertiesOfNode')->will($this->returnValue(array(array('name' => 'testproperty', 'value' => 'testvalue', 'namespace' => '', 'multivalue' => 0))));
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = new T3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
+
+		$node = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		try {
-			$valueObject = $node->getProperties()->next()->getValues();
+			$valueObject = $node->getProperty('testproperty')->getValues();
 			$this->fail('getValues needs to return an exception if called on a single value');
 		} catch (T3_phpCR_ValueFormatException $e) {
 		}
 	}
 
 	/**
-	 * Checks if getPath works
+	 * Checks if getPath works as expected
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getPathWorks() {
-		$uuid = '96bca35d-1ef5-4a47-8b0c-0bfc79507d08';
-		$propertyPath = $this->session->getNodeByUUID($uuid)->getProperty('title')->getPath();
-		$this->assertEquals($propertyPath, '/Content/Categories/Pages/Home/News/title', 'The path '.$propertyPath.' was not correct.');
+	public function getPathReturnsPathToProperty() {
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
+		$mockStorageAccess->expects($this->once())->method('getRawPropertiesOfNode')->will($this->returnValue(array(array('name' => 'testproperty', 'value' => 'testvalue', 'namespace' => '', 'multivalue' => 0))));
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('T3_TYPO3CR_Session', array(), array('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager));
+
+		$rootNode = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
+		$rootNode->initializeFromArray(array('id' => NULL, 'pid' => 0, 'name' => '', 'uuid' => $rootNode->getUUID(), 'nodetype' => 1));
+		$mockSession->expects($this->once())->method('getNodeByUUID')->will($this->returnValue($rootNode));
+		$node = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
+		$node->initializeFromArray(array(
+			'pid' => $rootNode->getUUID(),
+			'name' => 'testnode',
+			'uuid' => $node->getUUID(),
+			'nodetype' => 1,
+		));
+
+		$testProperty = $node->getProperty('testproperty');
+		$propertyPath = $testProperty->getPath();
+		$this->assertEquals($propertyPath, '/testnode/testproperty', 'The path '.$propertyPath.' was not correct.');
 	}
 }
 ?>

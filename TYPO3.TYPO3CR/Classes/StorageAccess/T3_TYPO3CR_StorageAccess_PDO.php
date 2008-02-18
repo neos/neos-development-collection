@@ -65,7 +65,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 	 * Fetches raw node data from the database
 	 * 
 	 * @param integer $nodeId The (internal) ID of the node to fetch
-	 * @return array
+	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeById($nodeId) {
@@ -78,7 +78,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 	 * Fetches raw node data from the database
 	 *
 	 * @param string $uuid The UUID of the node to fetch
-	 * @return array
+	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeByUUID($uuid) {
@@ -90,21 +90,25 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 	/**
 	 * Fetches raw node data of the root node of the current workspace.
 	 * 
-	 * @return array
+	 * @return array|FALSE
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawRootNode() {
-		return array();
+		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, uuid, nodetype FROM nodes WHERE pid = 0');
+		$statementHandle->execute();
+		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
-	
+
 	/**
-	 * Checks if the node with the given ID has subnodes
+	 * Checks if the node with the given UUID has subnodes
 	 * 
-	 * @param integer $nodeId
+	 * @param string $nodeUUID
+	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function hasNodes($nodeId) {
+	public function hasNodes($nodeUUID) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT(id) AS nodecount FROM nodes WHERE pid = ?');
-		$statementHandle->execute(array($nodeId));
+		$statementHandle->execute(array($nodeUUID));
 		$row = $statementHandle->fetch(PDO::FETCH_ASSOC);
 		return $row['nodecount']>0 ? TRUE : FALSE;
 	}
@@ -128,9 +132,10 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 	}
 
 	/**
-	 * Checks if the node with the given UUID has proeprties
+	 * Checks if the node with the given UUID has properties
 	 *
-	 * @param integer $nodeUUID
+	 * @param string $nodeUUID
+	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperties($nodeUUID) {
@@ -145,7 +150,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 	 * Fetches raw property data from the database
 	 *
 	 * @param integer $nodeUUID The node UUID to fetch properties for
-	 * @return array
+	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawPropertiesOfNode($nodeUUID) {
@@ -159,7 +164,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 	 * Fetches raw nodetype data from the database
 	 * 
 	 * @param integer $nodeTypeId The (internal) id of the nodetype record to fetch
-	 * @return array
+	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeTypeById($nodeTypeId) {

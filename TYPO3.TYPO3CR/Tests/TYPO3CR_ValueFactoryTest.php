@@ -14,19 +14,16 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_BaseTest.php');
-
 /**
  * Tests for the ValueFactory implementation of TYPO3CR
  *
  * @package		TYPO3CR
  * @subpackage	Tests
  * @version 	$Id$
- * @author 		Karsten Dambekalns <karsten@typo3.org>
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_ValueFactoryTest extends TYPO3CR_BaseTest {
+class TYPO3CR_ValueFactoryTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * @var T3_phpCR_ValueFactory
@@ -37,11 +34,12 @@ class TYPO3CR_ValueFactoryTest extends TYPO3CR_BaseTest {
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$this->valueFactory = $this->session->getValueFactory();
+		$this->valueFactory = new T3_TYPO3CR_ValueFactory($this->componentManager);
 	}
 
 	/**
 	 * Checks if createValue can guess the STRING type
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function createValueFromStringGuessesCorrectType() {
@@ -51,6 +49,7 @@ class TYPO3CR_ValueFactoryTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if createValue can guess the LONG type
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function createValueFromLongGuessesCorrectType() {
@@ -60,6 +59,7 @@ class TYPO3CR_ValueFactoryTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if createValue can guess the DOUBLE type
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function createValueFromDoubleGuessesCorrectType() {
@@ -69,6 +69,7 @@ class TYPO3CR_ValueFactoryTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if createValue can guess the BOOLEAN type
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function createValueFromBooleanGuessesCorrectType() {
@@ -78,6 +79,7 @@ class TYPO3CR_ValueFactoryTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if createValue can guess the DATE type
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function createValueFromDateGuessesCorrectType() {
@@ -87,10 +89,13 @@ class TYPO3CR_ValueFactoryTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if createValue can guess the REFERENCE type
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function createValueFromReferenceGuessesCorrectType() {
-		$node = $this->session->getRootNode();
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
+		$mockSession = $this->getMock('T3_TYPO3CR_Session', array(), array(), '', FALSE);
+		$node = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$value = $this->valueFactory->createValue($node);
 		$this->assertEquals($value->getType(), T3_phpCR_PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
 		$this->assertEquals($value->getString(), $node->getUUID(), 'The Value did not contain the UUID of the passed Node object.');
@@ -98,6 +103,7 @@ class TYPO3CR_ValueFactoryTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if createValue can guess the BINARY type
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function createValueFromBinaryGuessesCorrectType() {

@@ -37,7 +37,7 @@ interface T3_TYPO3CR_StorageAccessInterface {
 	 * Fetches raw node data from the database
 	 * 
 	 * @param  integer $id The (internal) ID of the node to fetch
-	 * @return array
+	 * @return array|FALSE
 	 */
 	public function getRawNodeById($Id);
 
@@ -45,14 +45,14 @@ interface T3_TYPO3CR_StorageAccessInterface {
 	 * Fetches raw node data from the database
 	 *
 	 * @param  string $uuid The UUID of the node to fetch
-	 * @return array
+	 * @return array|FALSE
 	 */
 	public function getRawNodeByUUID($uuid);
 
 	/**
 	 * Fetches raw node data of the root node of the current workspace.
 	 * 
-	 * @return array
+	 * @return array|FALSE
 	 */
 	public function getRawRootNode();
 
@@ -93,5 +93,89 @@ interface T3_TYPO3CR_StorageAccessInterface {
 	 * @param string $prefix The prefix of the namespace to delete
 	 */
 	public function deleteNamespace($prefix);
+
+	/**
+	 * Fetches sub node UUIDs from the database
+	 *
+	 * @param integer $nodeId The node UUID to fetch (sub-)nodes for
+	 * @return array
+	 */
+	public function getUUIDsOfSubNodesOfNode($nodeId);
+
+	/**
+	 * Fetches raw property data from the database
+	 *
+	 * @param integer $nodeUUID The node UUID to fetch properties for
+	 * @return array|FALSE
+	 */
+	public function getRawPropertiesOfNode($nodeUUID);
+
+	/**
+	 * Fetches raw nodetype data from the database
+	 * 
+	 * @param integer $nodeTypeId The (internal) id of the nodetype record to fetch
+	 * @return array|FALSE
+	 */
+	public function getRawNodeTypeById($nodeTypeId);
+
+	/**
+	 * Checks if the node with the given UUID has properties
+	 *
+	 * @param string $nodeUUID
+	 * @return boolean
+	 */
+	public function hasProperties($nodeUUID);
+
+	/**
+	 * Returns TRUE if the node with the given UUID has subnodes
+	 *
+	 * @param string $nodeUUID
+	 * @return boolean
+	 */
+	public function hasNodes($nodeUUID);
+
+	/**
+	 * Adds a node to the storage
+	 *
+	 * @param string $uuid UUID to insert
+	 * @param string $pid UUID of the parent node
+	 * @param integer $nodetype Nodetype to insert
+	 * @param string $name Name to insert
+	 * @return void
+	 */
+	public function addNode($uuid, $pid, $nodetype, $name);
+
+	/**
+	 * Adds a property in the storage
+	 *
+	 * @param string $uuid UUID of parent node
+	 * @param string $name Name of property
+	 * @param string $value Value of property
+	 * @param boolean $isMultiValued
+	 * @return void
+	 */
+	public function addProperty($uuid, $name, $value, $isMultiValued);
+
+	/**
+	 * Updates a node in the storage
+	 *
+	 * @param string $uuid UUID of the node to update
+	 * @param string $pid UUID of the parent node
+	 * @param integer $nodetype new nodetype
+	 * @param string $name new name
+	 * @return void
+	 */
+	public function updateNode($uuid, $pid, $nodetype, $name);
+
+	/**
+	 * Updates a property in the repository identified by uuid and name
+	 *
+	 * @param string $uuid UUID of parent node
+	 * @param string $name Name of property
+	 * @param string $value Value of property
+	 * @param boolean $isMultiValued
+	 * @return void
+	 */
+	public function updateProperty($uuid, $name, $value, $isMultiValued);
 }
 ?>

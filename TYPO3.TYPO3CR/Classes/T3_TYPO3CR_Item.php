@@ -68,12 +68,13 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	/**
 	 * Constructs an Item
 	 *
-	 * @param T3_FLOW3_Component_Manager $componentManager
+	 * @param T3_phpCR_SessionInterface $session
 	 * @param T3_TYPO3CR_StorageAccessInterface $storageAccess
 	 * @return void
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_phpCR_SessionInterface $session) {
+	public function __construct(T3_phpCR_SessionInterface $session, T3_TYPO3CR_StorageAccessInterface $storageAccess) {
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;
 	}
@@ -228,9 +229,11 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function getAncestor($depth) {
-		if ($depth < 0) {
+		if ($depth < 0 || $depth > $this->getDepth()) {
 			throw new T3_phpCR_ItemNotFoundException("Invalid ancestor depth (".$depth.")", 1187530802);
-		} else if ($depth == 0) {
+		}
+
+		if ($depth == 0) {
 			return $this->getSession()->getRootNode();
 		}
 
@@ -244,7 +247,7 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 		}
 		$slash = strpos($path, '/', $slash+1);
 		if ($slash == -1) {
-			return this;
+			return $this;
 		}
 
 		try {
@@ -266,7 +269,7 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	 */
 	public function getDepth() {
 		$path = $this->getPath();
-		if (T3_PHP6_Functions::strlen($path) == 1) {
+		if ($path == '/') {
 			return 0;
 		} else {
 			$depth = 1;
@@ -309,15 +312,25 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	 * @param T3_phpCR_ItemInterface $otherItem The item to which the comparison should be done
 	 * @return boolean
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo Add (proper) checks for the repository and workspace conditions
 	 */
 	public function isSame(T3_phpCR_ItemInterface $otherItem) {
-		if ($this === $otherItem) {
-			return TRUE;
+		if($this->getSession()->getWorkspace()->getName() != $otherItem->getSession()->getWorkspace()->getName()) return FALSE;
+
+		if($this instanceof T3_TYPO3CR_Node) {
+			return (
+				($otherItem instanceof T3_TYPO3CR_Node) &&
+				($this->getUUID() == $otherItem->getUUID())
+			);
+		} elseif($otherItem instanceof T3_TYPO3CR_Property) {
+			return (
+				($otherItem instanceof T3_TYPO3CR_Property) &&
+				($this->getName() == $otherItem->getName()) &&
+				$this->getParent()->isSame($otherItem->getParent())
+			);
 		}
 
-		if ($otherItem instanceof T3_TYPO3CR_Item) {
-			return ($this->id == $otherItem->id && $this->getSession()->getWorkspace()->getName() == $otherItem->getSession()->getWorkspace()->getName());
-		}
 		return FALSE;
 	}
 

@@ -21,7 +21,6 @@ require_once('Fixtures/T3_TYPO3CR_MockStorageAccess.php');
  *
  * @package   phpCR
  * @version   $Id$
- * @author    Karsten Dambekalns <karsten@typo3.org>
  * @copyright Copyright belongs to the respective authors
  * @license   http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -35,9 +34,8 @@ class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 	public function getRepositoryReturnsTheCreatingRepository() {
 		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
-		$mockItemManager = $this->getMock('T3_TYPO3CR_ItemManager', array(), array(), '', FALSE);
-		
-		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager, $mockItemManager);
+
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$this->assertSame($mockRepository, $session->getRepository(), 'The session did not return the repository from which it was created.');
 	}
 
@@ -49,10 +47,9 @@ class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 	public function getWorkspaceAlwaysReturnsTheAssociatedWorkspace() {
 		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
-		$mockItemManager = $this->getMock('T3_TYPO3CR_ItemManager', array(), array(), '', FALSE);
 
-		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager, $mockItemManager);
-		
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
 		$this->assertType('T3_phpCR_WorkspaceInterface', $session->getWorkspace(), 'The session did not return a workspace object on getWorkspace().');
 	}
 
@@ -62,7 +59,6 @@ class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 	 */
 	public function getRootNodeReturnsRootModeOfDefaultWorkspace() {
 		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockItemManager = $this->getMock('T3_TYPO3CR_ItemManager', array(), array(), '', FALSE);
 
 		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
@@ -73,154 +69,337 @@ class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 				'name' => ''
 			)
 		);
-		
-		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager, $mockItemManager);
+
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$rootNode = $session->getRootNode();
-		
+
 		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', $rootNode->getUUID(), 'The UUID of the retrieved root node is not as expected.');
 	}
-	
-	
-/*** TESTS WHICH STILL NEED TO BE OVERHAULED BELOW: ***/
-	
-	
+
 	/**
 	 * Checks if getNodeByUUID returns a Node object on an existing node.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getNodeByExistingUUIDReturnsANode() {
 		$uuid = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
-		$node = $this->session->getNodeByUUID($uuid);
+
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				$uuid => array(
+					'uuid' => $uuid,
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				)
+			)
+		);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
+		$node = $session->getNodeByUUID($uuid);
 		$this->assertType('T3_phpCR_NodeInterface', $node, 'The session did not return a node object on getNodeByUUID('.$uuid.').');
 	}
-	
+
 	/**
 	 * Checks if getNodeByUUID fails properly on a non-existing node.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getNodeByNotExistingUUIDFails() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
 		try {
 			$uuid = 'hurzhurz-hurz-hurz-hurz-hurzhurzhurz';
-			$node = $this->session->getNodeByUUID($uuid);
+			$node = $session->getNodeByUUID($uuid);
 			$this->fail('getNodeByUUID with a non-exsting UUID must throw a T3_phpCR_ItemNotFoundException');
 		} catch (T3_phpCR_ItemNotFoundException $e) {}
 	}
-	
+
 	/**
 	 * Checks of getNodeByUUID actually returns the requested node (determined through $node->getUUID()).
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getNodeByUUIDReturnsTheRequestedNode() {
 		$uuid = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
-		$node = $this->session->getNodeByUUID($uuid);
+
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				$uuid => array(
+					'uuid' => $uuid,
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				)
+			)
+		);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$node = $session->getNodeByUUID($uuid);
 		$this->assertEquals($uuid, $node->getUUID(), 'The returned node did not have the same UUID as requested.');
 	}
-	
+
 	/**
 	 * Checks if isLve() returns false after logout().
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function isLiveReturnsFalseAfterLogout() {
-		$this->session->logout();
-		$this->assertEquals(FALSE, $this->session->isLive(), 'isLive did not return FALSE after logout() has been called.');
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$session->logout();
+		$this->assertEquals(FALSE, $session->isLive(), 'isLive did not return FALSE after logout() has been called.');
 	}
-	
+
 	/**
-	 * Checks if getItem works
+	 * Checks if getItem returns the expected items
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getItemWorks() {
+	public function getItemReturnsTheExpectedItems() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawRootNodesByWorkspace = array(
+			'default' => array(
+				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'pid' => 0,
+				'nodetype' => 0,
+				'name' => ''
+			)
+		);
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 0,
+					'name' => 'News'
+				),
+			)
+		);
+		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					array(
+						'name' => 'title',
+						'value' => 'News about the TYPO3CR',
+						'namespace' => '',
+						'multivalue' => FALSE
+					)
+				)
+			)
+		);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
 		$expectedTitle = 'News about the TYPO3CR';
-		$newsItem = $this->session->getItem('Content/Categories/Pages/Home/News/title');
-		$this->assertEquals($expectedTitle, $newsItem->getString(), 'It did not return the property as expected.');
-		
+		$newsItem = $session->getItem('News/title');
+		$this->assertEquals($expectedTitle, $newsItem->getString(), 'getItem() did not return the property as expected.');
+
 		$expectedTitle = 'News';
-		$newsItem = $this->session->getItem('Content/Categories/Pages/Home/News/');
-		$this->assertEquals($expectedTitle, $newsItem->getName(), 'It did not return the expected node title.');
-	
+		$newsItem = $session->getItem('News/');
+		$this->assertEquals($expectedTitle, $newsItem->getName(), 'getItem() did not return the expected node title.');
+	}
+
+	/**
+	 * Checks if getItem returns the same node as just created
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function getItemReturnsSameNodeAsAdded() {
+		throw new PHPUnit_Framework_IncompleteTestError('Test for fetching a freshly added node not implemented yet.');
+
 		$testPropertyNode = $this->session->getRootNode()->addNode('TestPropertyNode');
 		$this->assertSame($testPropertyNode, $this->session->getItem('/TestPropertyNode'), 'The returned TestPropertyNode was not the same as the local one.');
 		$testPropertyNode->remove();
 		$this->session->save();
 	}
-	
+
 	/**
 	 * Checks if getNode works
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNodeWorks() {
-		$expectedTitle = 'News';
-		$newsItem = $this->session->getNode('Content/Categories/Pages/Home/News/');
-		$this->assertEquals($expectedTitle, $newsItem->getName(), 'It did not return the node.');
+	public function getNodeReturnsTheExpectedNode() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawRootNodesByWorkspace = array(
+			'default' => array(
+				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'pid' => 0,
+				'nodetype' => 0,
+				'name' => ''
+			)
+		);
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 0,
+					'name' => 'News'
+				),
+			)
+		);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
+		$newsItem = $session->getNode('News');
+		$this->assertEquals('News', $newsItem->getName(), 'It did not return the node.');
 	}
-	
+
 	/**
 	 * Checks if getProperty works
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getPropertyWorks() {
-		$expectedTitle = 'News about the TYPO3CR';
-		$newsItem = $this->session->getItem('Content/Categories/Pages/Home/News/title');
-		$this->assertEquals($expectedTitle, $newsItem->getString(), 'It did not return the property.');
+	public function getPropertyReturnsTheExpectedProperty() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawRootNodesByWorkspace = array(
+			'default' => array(
+				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'pid' => 0,
+				'nodetype' => 0,
+				'name' => ''
+			)
+		);
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 0,
+					'name' => 'News'
+				),
+			)
+		);
+		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					array(
+						'name' => 'title',
+						'value' => 'News about the TYPO3CR',
+						'namespace' => '',
+						'multivalue' => FALSE
+					)
+				)
+			)
+		);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
+		$property = $session->getProperty('News/title');
+		$this->assertEquals('News about the TYPO3CR', $property->getString(), 'getProperty() did not return the property.');
 	}
-	
+
 	/**
 	 * Checks if getValueFactory() returns a ValueFactory
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getValueFactoryReturnsAValueFactory() {
-		$this->assertType('T3_phpCR_ValueFactoryInterface', $this->session->getValueFactory(), 'The session did not return a ValueFactory object on getValueFactory().');
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$this->assertType('T3_phpCR_ValueFactoryInterface', $session->getValueFactory(), 'The session did not return a ValueFactory object on getValueFactory().');
 	}
-	
+
 	/**
 	 * Checks the namespace mappings
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNamespacePrefixesWorks() {
-		$persistentPrefixes = $this->session->getWorkspace()->getNamespaceRegistry()->getPrefixes();
-		$sessionPrefixes = $this->session->getNamespacePrefixes();
+	public function getNamespacePrefixesReturnsTheSameResultAsTheWorkspaceNamespaceRegistry() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
+		$persistentPrefixes = $session->getWorkspace()->getNamespaceRegistry()->getPrefixes();
+		$sessionPrefixes = $session->getNamespacePrefixes();
 		$this->assertEquals($persistentPrefixes, $sessionPrefixes, 'getNamespacePrefixes() did not return all the persistent namespaces.');
 	}
-	
+
 	/**
 	 * Checks if fetching the URI for the jcr namespace prefix is as expected
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNamespaceURIWorks() {
+	public function getNamespaceURIReturnsCorrectURIForJCRPrefix() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
 		$expectedURI = 'http://www.jcp.org/jcr/1.0'; 
-		$returnedURI = $this->session->getNamespaceURI('jcr');
+		$returnedURI = $session->getNamespaceURI('jcr');
 		$this->assertEquals($expectedURI, $returnedURI, 'The namespace URI for the prefix "jcr" was not successfully received. (Received: '.$returnedURI.')');
 	}
-	
+
 	/**
 	 * Checks if setNameSpacePrefix follows the rules of the specification
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function setNamespacePrefixWorks() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+
 		try {
-			$this->session->setNamespacePrefix('xMLtest', 'http://should.throw/exception');
+			$session->setNamespacePrefix('xMLtest', 'http://should.throw/exception');
 			$this->fail('Prefix starts with XML, but does not throw an exception!');
 		} catch (T3_phpCR_NamespaceException $e) {
 		}
-	
+
 		try {
-			$this->session->setNamespacePrefix('', 'http://should.throw/exception');
+			$session->setNamespacePrefix('', 'http://should.throw/exception');
 			$this->fail('Prefix is empty, but no exception is thrown!');
 		} catch (T3_phpCR_NamespaceException $e) {
 		}
-	
+
 		try {
-			$this->session->setNamespacePrefix('testprefix', '');
+			$session->setNamespacePrefix('testprefix', '');
 			$this->fail('URI is empty, but no exception is thrown!');
 		} catch (T3_phpCR_NamespaceException $e) {
 		}
-	
+
+		try {
+			$session->getNamespaceUri('someNonExistingPrefix');
+			$this->fail('Unknown URI does not trigger exception.');
+		} catch (T3_phpCR_NamespaceException $e) {}
+
 		$testUri = 'http://typo3.org/jcr/test';
-		$this->session->setNamespacePrefix('localPrefixToTest', $testUri);
-		$this->assertEquals($testUri, $this->session->getNamespaceUri('localPrefixToTest'), 'Prefix was not registered!');
-	
-		$this->session->setNamespacePrefix('nt', $testUri);
-		$this->assertEquals($testUri, $this->session->getNamespaceUri('nt'), 'Reregistering an already existing prefix does not work.');
+		$session->setNamespacePrefix('localPrefixToTest', $testUri);
+		$this->assertEquals($testUri, $session->getNamespaceUri('localPrefixToTest'), 'Prefix was not registered!');
+
+		$session->setNamespacePrefix('nt', $testUri);
+		$this->assertEquals($testUri, $session->getNamespaceUri('nt'), 'Reregistering an already existing prefix does not work.');
+		if(in_array('localPrefixToTest', $session->getNamespacePrefixes())) {
+			$this->fail('Reregistering an already existing uri does not remove the existing prefix.');
+		}
 	}
 }
 ?>

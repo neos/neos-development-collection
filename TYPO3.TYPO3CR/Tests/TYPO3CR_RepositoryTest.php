@@ -20,7 +20,6 @@ declare(encoding = 'utf-8');
  * @package     TYPO3CR
  * @subpackage  Tests
  * @version     $Id$
- * @author      Karsten Dambekalns <karsten@typo3.org>
  * @copyright   Copyright belongs to the respective authors
  * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -28,6 +27,7 @@ class TYPO3CR_RepositoryTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks of the login() method returns a Session object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function repositoryLoginReturnsASession() {
@@ -36,8 +36,10 @@ class TYPO3CR_RepositoryTest extends T3_Testing_BaseTestCase {
 		$session = $repository->login();
 		$this->assertType('T3_phpCR_SessionInterface', $session, 'The repository login did not return a session object.');
 	}
-	
+
 	/**
+	 * Credentials of an invalid type must throw an exception
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
 	 */
 	public function credentialsOfInvalidTypeThrowException() {
@@ -53,6 +55,7 @@ class TYPO3CR_RepositoryTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if getDesciptorKeys returns an array and if the values are all strings.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getDescriptorKeysReturnsAnArray() {
@@ -67,6 +70,7 @@ class TYPO3CR_RepositoryTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if getDesciptor('SPEC_VERSION_DESC') returns '2.0'.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getDescriptorReturnsCorrectVersionString() {

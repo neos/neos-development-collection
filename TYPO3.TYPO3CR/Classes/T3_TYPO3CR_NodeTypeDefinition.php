@@ -48,17 +48,17 @@ class T3_TYPO3CR_NodeTypeDefinition implements T3_phpCR_NodeTypeDefinitionInterf
 	 * Constructs a NodeTypeDefinition
 	 *
 	 * @param integer $nodeTypeId The internal id of the nodetype
-	 * @param T3_FLOW3_Component_Manager $componentManager
 	 * @param T3_TYPO3CR_StorageAccessInterface $storageAccess
+	 * @param T3_FLOW3_Component_Manager $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check node type handling
 	 */
-	public function __construct($nodeTypeId, T3_FLOW3_Component_ManagerInterface $componentManager, T3_TYPO3CR_StorageAccessInterface $storageAccess) {
+	public function __construct($nodeTypeId, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->nodeTypeId = $nodeTypeId;
 		$this->componentManager = $componentManager;
 		$this->storageAccess = $storageAccess;
-		
+
 		$rawNodeTypeData = $this->storageAccess->getRawNodeTypeById($this->nodeTypeId);
 		$this->name = $rawNodeTypeData['name'];
 	}

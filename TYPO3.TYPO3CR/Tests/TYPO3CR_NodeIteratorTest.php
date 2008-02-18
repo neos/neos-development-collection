@@ -14,8 +14,6 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_BaseTest.php');
-
 /**
  * Test the NodeIterator implementation.
  *
@@ -23,73 +21,81 @@ require_once('TYPO3CR_BaseTest.php');
  * @subpackage	Tests
  * @version 	$Id$
  * @copyright	Copyright belongs to the respective authors
- * @author		Ronny Unger <ru@php-workx.de>
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_NodeIteratorTest extends TYPO3CR_BaseTest {
+class TYPO3CR_NodeIteratorTest extends T3_Testing_BaseTestCase {
 
 	/**
-	 * @var T3_TYPO3CR_Node
+	 * Tests if getSize() returns the correct size.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
 	 */
-	protected $rootNode;
+	public function getSizeReturnsCorrectResult() {
+		$iterator = new T3_TYPO3CR_NodeIterator();
+		$iterator->append('one');
+		$iterator->append('two');
+		$iterator->append('three');
+		$iterator->append('four');
 
-	/**
-	 * Set up the test environment
-	 */
-	public function setUp() {
-		$this->rootNode = $this->session->getRootNode();
+		$size = $iterator->getSize();
+		$this->assertEquals(4, $size, "getSize() does not return correct number.");
 	}
 
 	/**
-	 * Tests if getSize() returns the correct
-	 * size.
+	 * Tests if hasNext() and nextNode() see all elements
 	 *
-	 * @author	Ronny Unger <ru@php-workx.de>
+	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getSizeWorks() {
-		$iter = $this->rootNode->getNodes();
-		$size = $this->rootNode->getNodes()->getSize();
+	public function hasNextAndNextNodeIterateThroughAllElements() {
+		$iterator = new T3_TYPO3CR_NodeIterator();
+		$iterator->append('one');
+		$iterator->append('two');
+		$iterator->append('three');
+		$iterator->append('four');
 
 		$count = 0;
-		while ($iter->hasNext()) {
-			$iter->nextNode();
+		while ($iterator->hasNext()) {
+			$iterator->nextNode();
 			$count++;
 		}
-		$this->assertEquals($size, $count, "NodeIterator->getSize() does not return correct number.");
+		$this->assertEquals(4, $count, "hasNext() and nextNode() do not iterate over all elements.");
 	}
 
 	/**
 	 * Tests if getPosition() return correct values.
 	 *
-	 * @author	Ronny Unger <ru@php-workx.de>
+	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getPositionWorks() {
-		$iter = $this->rootNode->getNodes();
-		$this->assertEquals(0, $iter->getPosition(), "Initial call to getPos() must return zero");
+		$iterator = new T3_TYPO3CR_NodeIterator();
+		$iterator->append('one');
+		$iterator->append('two');
+		$iterator->append('three');
+		$iterator->append('four');
+
+		$this->assertEquals(0, $iterator->getPosition(), "Initial call to getPosition() must return 0");
 		$index = 0;
-		while ($iter->hasNext()) {
-			$iter->nextNode();
-			$this->assertEquals(++$index, $iter->getPosition(), "Wrong position returned by getPos()");
+		while ($iterator->hasNext()) {
+			$iterator->nextNode();
+			$this->assertEquals(++$index, $iterator->getPosition(), "Wrong position returned by getPosition()");
 		}
 	}
 
 	/**
 	 * Tests if a T3_phpCR_NoSuchElementException} is thrown when nextNode()
-	 * is called and there are no more nodes available.
+	 * is called and there are no (more) nodes available.
 	 *
-	 * @author	Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function throwsNoSuchElementExceptionIfNoNodesAvailable() {
-		$iter = $this->rootNode->getNodes();
-		while ($iter->hasNext()) {
-			$iter->nextNode();
-		}
-
+		$iterator = new T3_TYPO3CR_NodeIterator();
 		try {
-			$iter->nextNode();
+			$iterator->nextNode();
 			$this->fail("nextNode() must throw a NoSuchElementException when no nodes are available");
 		} catch (T3_phpCR_NoSuchElementException $e) {
 			// success
@@ -99,38 +105,44 @@ class TYPO3CR_NodeIteratorTest extends TYPO3CR_BaseTest {
 	/**
 	 * Tests if skip() works correctly.
 	 *
-	 * @author	Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function skipWorks() {
-		$iter = $this->rootNode->getNodes();
-			// find out if there is anything we can skip
-		$count = 0;
-		while ($iter->hasNext()) {
-			$iter->nextNode();
-			$count++;
+	public function skipToEndOfIteratorSetsPositionCorrectly() {
+		$iterator = new T3_TYPO3CR_NodeIterator();
+		$iterator->append('one');
+		$iterator->append('two');
+		$iterator->append('three');
+		$iterator->append('four');
+
+		$iterator->skip(4);
+		$this->assertEquals(4, $iterator->getPosition(), "Call to getPosition() must return 4");
+		try {
+			$iterator->nextNode();
+			$this->fail("nextNode() after skip() to the end must throw a NoSuchElementException");
+		} catch (T3_phpCR_NoSuchElementException $e) {
+			// success
 		}
+	}
 
-		if ($count > 0) {
-				// re-aquire iterator
-			$iter = $this->rootNode->getNodes();
-			$iter->rewind();
-			$iter->skip($count);
-			try {
-				$iter->nextNode();
-				$this->fail("nextNode() must throw a NoSuchElementException when no nodes are available");
-			} catch (T3_phpCR_NoSuchElementException $e) {
-				// success
-			}
+	/**
+	 * Tests if skip() works correctly.
+	 *
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function skipPastEndOfIteratorThrowsNoSuchElementException() {
+		$iterator = new T3_TYPO3CR_NodeIterator();
+		$iterator->append('one');
+		$iterator->append('two');
+		$iterator->append('three');
+		$iterator->append('four');
 
-				// re-aquire iterator
-			$iter = $this->rootNode->getNodes();
-			try {
-				$iter->skip($count + 1);
-				$this->fail("skip() must throw a NoSuchElementException if one tries to skip past the end of the iterator");
-			} catch (T3_phpCR_NoSuchElementException $e) {
-				// success
-			}
+		try {
+			$iterator->skip(5);
+			$this->fail("skip() must throw a NoSuchElementException if one tries to skip past the end of the iterator");
+		} catch (T3_phpCR_NoSuchElementException $e) {
+			// success
 		}
 	}
 }

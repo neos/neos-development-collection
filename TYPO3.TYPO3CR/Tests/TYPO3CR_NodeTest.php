@@ -14,19 +14,16 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_BaseTest.php');
-
 /**
  * Tests for the Node implementation of TYPO3CR
  *
  * @package		TYPO3CR
  * @subpackage	Tests
  * @version 	$Id$
- * @author 		Karsten Dambekalns <karsten@typo3.org>
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
+class TYPO3CR_NodeTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * @var T3_TYPO3CR_Node
@@ -37,83 +34,129 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	 * Set up the test environment
 	 */
 	public function setUp() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawRootNodesByWorkspace = array(
+			'default' => array(
+				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'pid' => 0,
+				'nodetype' => 0,
+				'name' => ''
+			)
+		);
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 0,
+					'name' => 'Content'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 0,
+					'name' => 'News'
+				),
+			)
+		);
+		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					array(
+						'name' => 'title',
+						'value' => 'News about the TYPO3CR',
+						'namespace' => '',
+						'multivalue' => FALSE
+					)
+				)
+			)
+		);
+
+		$this->session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$this->rootNode = $this->session->getRootNode();
 	}
 
 	/**
 	 * Checks if a Node fetched by getNodeByUUID() returns the expected UUID on getUUID().
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getUUIDReturnsExpectedUUID() {
-		$firstExpectedUUID = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
+		$firstExpectedUUID = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
 		$firstNode = $this->session->getNodeByUUID($firstExpectedUUID);
 		$this->assertEquals($firstExpectedUUID, $firstNode->getUUID(), 'getUUID() did not return the expected UUID.');
 	
-		$secondExpectedUUID = '96bca35d-1ef5-4a47-8b0c-0bfc69507d01';
+		$secondExpectedUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
 		$secondNode = $this->session->getNodeByUUID($secondExpectedUUID);
 		$this->assertEquals($secondExpectedUUID, $secondNode->getUUID(), 'getUUID() did not return the expected UUID.');
 	}
 
 	/**
 	 * Checks if hasProperties() works as it should.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function hasPropertiesWorks() {
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc69507d04');
+		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals(TRUE, $node->hasProperties(), 'hasProperties() did not return TRUE for a node with properties.');
 
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc69507d00');
+		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$this->assertEquals(FALSE, $node->hasProperties(), 'hasProperties() did not return FALSE for a node without properties.');
 	}
 
 	/**
 	 * Checks if getProperties() returns the expected result.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getPropertiesWorks() {
-		$propertyIterator = $this->componentManager->getComponent('T3_phpCR_PropertyIteratorInterface');
-
-		$emptyNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc69507d00');
+		$emptyNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noProperties = $emptyNode->getProperties();
 		$this->assertType('T3_phpCR_PropertyIteratorInterface', $noProperties, 'getProperties() did not return a PropertyIterator for a node without properties.');
 
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc69507d04');
+		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$properties = $node->getProperties();
 		$this->assertType('T3_phpCR_PropertyIteratorInterface', $properties, 'getProperties() did not return a PropertyIterator for a node with properties.');
 
-		$this->assertEquals($propertyIterator, $noProperties, 'getProperties() did not return an empty PropertyIterator for a node without properties.');
-		$this->assertNotEquals($propertyIterator, $properties, 'getProperties() returned an empty PropertyIterator for a node with properties.');
+		$propertyIterator = new T3_TYPO3CR_PropertyIterator;
+		$this->assertEquals(0, $propertyIterator->getSize(), 'getProperties() did not return an empty PropertyIterator for a node without properties.');
+		$this->assertNotEquals(1, $propertyIterator->getSize(), 'getProperties() returned an empty PropertyIterator for a node with properties.');
 
-		$titleProperty = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', 'title', 'This page is stored in the TYPO3CR...', null, FALSE);
-		$propertyIterator->append($titleProperty);
-		$this->assertNotEquals($propertyIterator, $properties, 'getProperties() did not return the expected result for a node with properties.');
-		/*$subtitleProperty = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', 'subtitle', '... believe it or not!', null, FALSE);
-		$propertyIterator->append($subtitleProperty);
-		$this->assertEquals($propertyIterator, $properties, 'getProperties() did not return the expected result for a node with properties.');*/
+			// we don't compare the iterators directly here, as this hits the memory limit hard. really hard.
+		$titleProperty = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', 'title', 'News about the TYPO3CR', $node, FALSE, $this->session);
+		$this->assertEquals($titleProperty->getString(), $properties->nextProperty()->getString(), 'getProperties() did not return the expected property.');
 	}
 
 	/**
-	 * Checks if getProperty() works
+	 * Checks if getProperty() works with various paths
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getPropertyWorks() {
-		$newsNodeUUID = '96bca35d-1ef5-4a47-8b0c-0bfc79507d08';
+		$newsNodeUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
 		$newsTitleText = 'News about the TYPO3CR';
 		$newsNode = $this->session->getNodeByUUID($newsNodeUUID);
-		
+
 		$title = $newsNode->getProperty('title');
-		
 		$this->assertEquals($title->getString(), $newsTitleText, 'Expected property was not found (1).');
-		
-		$titleProperty = $newsNode->getProperty('./title');
+
+		$title = $newsNode->getProperty('./title');
 		$this->assertEquals($title->getString(), $newsTitleText, 'Expected property was not found (2).');
-		
-		$titleProperty = $newsNode->getProperty('../News/title');
+
+		$title = $newsNode->getProperty('../News/title');
 		$this->assertEquals($title->getString(), $newsTitleText, 'Expected property was not found (3).');
 	}
 
 	/**
 	 * Checks if getPrimaryNodeType() returns a NodeType object.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getPrimaryNodeTypeReturnsANodeType() {
@@ -121,53 +164,46 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	}
 
 	/**
-	 * Checks if hasNodes() works es it should.
+	 * Checks if hasNodes() works as it should.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function hasNodesWorks() {
-		$node = $this->session->getNodeByUUID('96bca35d-9ef5-4a47-8b0c-0bfc69507d05');
+		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$this->assertEquals(TRUE, $node->hasNodes(), 'hasNodes() did not return TRUE for a node with child nodes.');
-	
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc79507d08');
+
+		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals(FALSE, $node->hasNodes(), 'hasNodes() did not return FALSE for a node without child nodes.');
 	}
 
 	/**
 	 * Checks if getNodes() returns the expected result.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getNodesWorks() {
-		$nodeIterator = $this->componentManager->getComponent('T3_phpCR_NodeIteratorInterface');
-
-		$leaf = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc79507d08');
+		$leaf = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noChildNodes = $leaf->getNodes();
 		$this->assertType('T3_phpCR_NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
 
-		$node = $this->session->getNodeByUUID('96bca35d-9ef5-4a47-8b0c-0bfc69507d05');
+		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$childNodes = $node->getNodes();
 		$this->assertType('T3_phpCR_NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
 
-		$this->assertEquals($nodeIterator, $noChildNodes, 'getNodes() did not return an empty NodeIterator for a node without child nodes.');
-		$this->assertNotEquals($nodeIterator, $childNodes, 'getNodes() returned an empty NodeIterator for a node with child nodes.');
+		$this->assertEquals(0, $noChildNodes->getSize(), 'getNodes() did not return an empty NodeIterator for a node without child nodes.');
+		$this->assertNotEquals(0, $childNodes->getSize(), 'getNodes() returned an empty NodeIterator for a node with child nodes.');
 
-		$node7 = $this->componentManager->getComponent('T3_phpCR_NodeInterface');
-		$node7->initializeFromArray(array('id' => '7', 'name' => 'Community', 'pid' => '96bca35d-9ef5-4a47-8b0c-0bfc69507d05', 'nodetype' => '5', 'uuid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d04'));
-		$nodeIterator->append($node7);
-		$this->assertNotEquals($nodeIterator, $childNodes, 'getNodes() did not return the expected result for a node with child nodes.');
-		$node8 = $this->componentManager->getComponent('T3_phpCR_NodeInterface');
-		$node8->initializeFromArray(array('id' => '8', 'name' => 'News', 'pid' => '96bca35d-9ef5-4a47-8b0c-0bfc69507d05', 'nodetype' => '5', 'uuid' => '96bca35d-1ef5-4a47-8b0c-0bfc79507d08'));
-		$nodeIterator->append($node8);
-		//$this->assertEquals($nodeIterator, $childNodes, 'getNodes() did not return the expected result for a node with child nodes.');
+		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', $childNodes->nextNode()->getUUID(), 'getNodes() did not return the expected result for a node with child nodes.');
 	}
 
 	/**
 	 * Checks if getNode() returns the expected result.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getNodeWorks() {
-		$newsNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc79507d08');
-		
-		$this->assertEquals($newsNode->getNode('../News')->getUUID(), $newsNode->getUUID(), 'getNode() did not return the expected result (1).');
+		$newsNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$this->assertEquals($newsNode->getNode('../News')->getUUID(), $newsNode->getUUID(), 'getNode() did not return the expected result.');
 	}
 
 	/**
@@ -177,34 +213,54 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	 * @test
 	 */
 	public function getNameWorks() {
-		$leaf = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc79507d08');
+		$leaf = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals('News', $leaf->getName(), "getName() must be the same as the last item in the path");
 	}
 
 	/**
 	 * Test if the ancestor at depth = n, where n is the depth of this
-	 * <code>phpCR_Item</code>, returns this <code>phpCR_Node</code> itself.
+	 * item, returns this node itself.
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getAncestorOfNodeDepthWorks() {
-		$nodeAtDepth = $this->rootNode->getAncestor($this->rootNode->getDepth());
-		$this->assertTrue($this->rootNode->isSame($nodeAtDepth), "The ancestor of depth = n, where n is the depth of this Node must be the item itself.");
+		$node = $this->rootNode->getNode('Content');
+		$nodeAtDepth = $node->getAncestor($node->getDepth());
+		$this->assertTrue($node->isSame($nodeAtDepth), "The ancestor of depth = n, where n is the depth of this Node must be the item itself.");
 	}
 
 	/**
 	 * Test if getting the ancestor of depth = n, where n is greater than depth
-	 * of this <code>phpCR_Node</code>, throws an <code>phpCR_ItemNotFoundException</code>.
+	 * of this node, throws an phpCR_ItemNotFoundException for a sub node.
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getAncestorOfGreaterDepthWorks() {
-		$this->markTestIncomplete('This test has not been implemented yet.');
+	public function getAncestorOfGreaterDepthOnSubNodeThrowsException() {
+		$node = $this->rootNode->getNode('Content/News');
 		try {
-			$greaterDepth = $this->rootNode->getDepth() + 1;
-			$this->rootNode->getAncestor($greaterDepth);
+			$node->getAncestor($node->getDepth() + 1);
+			$this->fail("Getting ancestor of depth n, where n is greater than depth of this Node must throw an ItemNotFoundException");
+		} catch (T3_phpCR_ItemNotFoundException $e) {
+			// success
+		}
+	}
+
+	/**
+	 * Test if getting the ancestor of depth = n, where n is greater than depth
+	 * of this node, throws an phpCR_ItemNotFoundException for a root node.
+	 *
+	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function getAncestorOfGreaterDepthOnRootNodeThrowsException() {
+		$node = $this->rootNode;
+		try {
+			$node->getAncestor($node->getDepth() + 1);
 			$this->fail("Getting ancestor of depth n, where n is greater than depth of this Node must throw an ItemNotFoundException");
 		} catch (T3_phpCR_ItemNotFoundException $e) {
 			// success
@@ -217,7 +273,7 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @test
 	 */
-	public function getAncestorOfNegativeDepthWorks() {
+	public function getAncestorOfNegativeDepthThrowsException() {
 		try {
 			$this->rootNode->getAncestor(-1);
 			$this->fail("Getting ancestor of depth < 0 must throw an ItemNotFoundException.");
@@ -234,10 +290,10 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	 * @todo try to fetch root node through other session
 	 * @test
 	 */
-	public function isSameWorks() {
+	public function isSameReturnsTrueForSameNodes() {
 			// fetch root node "by hand"
-		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc69507d00');
-		$this->assertTrue($this->rootNode->isSame($testNode), "isSame(Item item) must return true for the same item.");
+		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d00');
+		$this->assertTrue($this->rootNode->isSame($testNode), "isSame() must return true for the same item.");
 	}
 
 	/**
@@ -246,12 +302,8 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @test
 	 */
-	public function getParentWorks() {
-		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc69507d01');
-		if ($testNode == null) {
-			$this->fail("Workspace does not have sufficient content to run this test.");
-		}
-
+	public function getParentReturnsExpectedNode() {
+		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$this->assertTrue($this->rootNode->isSame($testNode->getParent()), "getParent() of a child node does not return the parent node.");
 	}
 
@@ -263,7 +315,7 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	 */
 	public function getParentOfRootFails() {
 		try {
-			$this->session->getRootNode()->getParent();
+			$this->rootNode->getParent();
 			$this->fail("getParent() of root must throw an ItemNotFoundException.");
 		} catch (T3_phpCR_ItemNotFoundException $e) {
 			// success
@@ -271,18 +323,18 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	}
 
 	/**
-	 * Tests if depth of root is 0 and depth of a sub node of root is 1
+	 * Tests if depth of root is 0, depth of a sub node of root is 1, and sub-sub nodes have a depth of 2
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @test
 	 */
-	public function getDepthWorks() {
-		$this->assertEquals(0, $this->session->getRootNode()->getDepth(), "getDepth() of root must be 0");
+	public function getDepthReturnsCorrectDepth() {
+		$this->assertEquals(0, $this->rootNode->getDepth(), "getDepth() of root must be 0");
 
-		$testNode = $this->session->getNodeByUUID('96fca35d-1ef5-4a47-8b0c-0bfc69507d02');
+		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals(2, $testNode->getDepth(), "getDepth() of subchild must be 2");
 
-		for ($it = $this->session->getRootNode()->getNodes(); $it->hasNext(); ) {
+		for ($it = $this->rootNode->getNodes(); $it->hasNext(); ) {
 			$this->assertEquals(1, $it->next()->getDepth(), "getDepth() of child node of root must be 1");
 		}
 	}
@@ -311,89 +363,82 @@ class TYPO3CR_NodeTest extends TYPO3CR_BaseTest {
 	 * Tests if getPath() returns the correct path.
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getPathWithoutSameNameSiblingsWorks() {
-		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0bfc69507d01');
-
-		$path = $this->rootNode->getPath() . $testNode->getName();
-		$this->assertEquals($path, $testNode->getPath(), "getPath() returns wrong result");
+		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$this->assertEquals('/Content/News', $testNode->getPath(), "getPath() returns wrong result");
 	}
 
 	/**
 	 * Test if addNode() returns a Node.
 	 *
 	 * @author Thomas Peterson <info@thomas-peterson.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function addNodePathReturnsANode() {
-
+	public function addNodeReturnsANode() {
 		$newNode = $this->rootNode->addNode('User');
 		$this->assertType('T3_phpCR_NodeInterface', $newNode, 'addNode() does not return an object of type T3_phpCR_NodeInterface.');
-		$this->assertTrue($this->rootNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the parent node.');
-
-		$newNode->remove();
-		$this->rootNode->save();
+		$this->assertTrue($this->rootNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
 	}
 
 	/**
 	 * Test if addNode(Content/./Categories/Pages/User) returns a Node.
 	 *
 	 * @author Thomas Peterson <info@thomas-peterson.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function addNodeWithRelPathReturnsANode() {
+		$newNode1 = $this->rootNode->addNode('SomeItem');
+		$newNode2 = $this->rootNode->addNode('Content/./News/SomeItem');
 
-		$newNode = $this->rootNode->addNode('Content/./Categories/Pages/User');
-		$this->assertType('T3_phpCR_NodeInterface', $newNode, 'Function: addNode() - returns not an object from type T3_phpCR_NodeInterface.');
-		$this->assertType('T3_phpCR_NodeInterface', $newNode->getParent(), 'Function: addNode() - getParent() return an parent Node.');
+		$this->assertType('T3_phpCR_NodeInterface', $newNode1, 'Function: addNode() - returns not an object from type T3_phpCR_NodeInterface.');
+		$this->assertType('T3_phpCR_NodeInterface', $newNode2, 'Function: addNode() - returns not an object from type T3_phpCR_NodeInterface.');
 
-		$newNode->remove();
-		$this->rootNode->save();
+		$expectedParentNode = $this->rootNode->getNode('Content/News');
+		$this->assertTrue($expectedParentNode->isSame($newNode2->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
 	}
 
 	/**
-	 * Test session save()
+	 * Test save() on a node
 	 *
 	 * @author Thomas Peterson <info@thomas-peterson.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function sessionSaveWorks() {
+	public function saveWorksAsExpected() {
 		$newNode1 = $this->rootNode->addNode('User');
-		$newNode2 = $this->rootNode->addNode('Content/./Categories/Pages/User');
+		$newNode2 = $this->rootNode->addNode('Content/News/User');
 
-		$this->session->save();
+		$this->rootNode->save();
 
 		$newNode1 = $this->session->getNodeByUUID($newNode1->getUUID());
 		$this->assertType('T3_phpCR_NodeInterface', $newNode1, 'Function: save() - Nodes are not persisted in the CR.');
 		$newNode2 = $this->session->getNodeByUUID($newNode2->getUUID());
 		$this->assertType('T3_phpCR_NodeInterface', $newNode2, 'Function: save() - Nodes are not persisted in the CR.');
-
-			// delete nodes again
-		$newNode1->remove();
-		$newNode2->remove();
-		$this->session->save();
 	}
 
 	/**
 	 * Test set property
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function setPropertyWorks() {
-		$testPropertyNode = $this->session->getRootNode()->addNode('TestPropertyNode');
+	public function setPropertyCreatesPropertyAsExpected() {
+		$testPropertyNode = $this->rootNode->addNode('TestPropertyNode');
 		$testPropertyNode->setProperty('title', 'YEAH, it works!');
 		$this->assertEquals($this->session->getItem('/TestPropertyNode/title')->getString(), 'YEAH, it works!', 'Transient storage does not work, title should be "YEAH, it works!", but is "' . $this->session->getItem('/TestPropertyNode/title')->getString() . '"');
-		$this->session->save();
-		$this->assertFalse($this->session->getItem('/TestPropertyNode/title')->isNew(), 'isNew() not correctly set. (Needs to be false)');
+		$this->assertTrue($this->session->getItem('/TestPropertyNode/title')->isNew(), 'isNew() not correctly set. (Needs to be TRUE)');
+		$testPropertyNode->save();
+		$this->assertFalse($this->session->getItem('/TestPropertyNode/title')->isNew(), 'isNew() not correctly set. (Needs to be FALSE)');
 
 		$testPropertyNode->setProperty('title', 'YEAH, it still works!');
 		$this->assertEquals($this->session->getItem('/TestPropertyNode/title')->getString(), 'YEAH, it still works!', 'Transient storage does not work, title should be "YEAH, it still works!", but is "' . $this->session->getItem('/TestPropertyNode/title')->getString() . '"');
-		$this->assertTrue($this->session->getItem('/TestPropertyNode/title')->isModified(), 'isModified() not correctly set. (Needs to be true)');
-		$this->session->save();
-		$this->assertFalse($this->session->getItem('/TestPropertyNode/title')->isModified(), 'isModified() not correctly set. (Needs to be false)');
-
-		$testPropertyNode->remove();
-		$this->session->save();
+		$this->assertTrue($this->session->getItem('/TestPropertyNode/title')->isModified(), 'isModified() not correctly set. (Needs to be TRUE)');
+		$testPropertyNode->save();
+		$this->assertFalse($this->session->getItem('/TestPropertyNode/title')->isModified(), 'isModified() not correctly set. (Needs to be FALSE)');
 	}
 }
 ?>

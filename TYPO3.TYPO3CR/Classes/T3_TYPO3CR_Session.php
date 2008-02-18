@@ -71,17 +71,15 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 * @param  T3_phpCR_RepositoryInterface $repository
 	 * @param  T3_TYPO3CR_StorageAccessInterface $storageAccess
 	 * @param  T3_FLOW3_Component_ManagerInterface $componentManager
-	 * @param  T3_TYPO3CR_ItemManagerInterface $itemManager
 	 * @throws InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($workspaceName, T3_phpCR_RepositoryInterface $repository, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_FLOW3_Component_ManagerInterface $componentManager, T3_TYPO3CR_ItemManagerInterface $itemManager) {
+	public function __construct($workspaceName, T3_phpCR_RepositoryInterface $repository, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_FLOW3_Component_ManagerInterface $componentManager) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
 		
 		$this->componentManager = $componentManager;
 		$this->repository = $repository;
 		$this->storageAccess = $storageAccess;
-		$this->itemManager = $itemManager;
 		$this->workspace = $this->componentManager->getComponent('T3_phpCR_WorkspaceInterface', $workspaceName, $this);
 
 		$this->storageAccess->setWorkspaceName($workspaceName);
@@ -155,7 +153,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 */
 	public function getRootNode() {
 		if ($this->rootNode === NULL) {
-			$this->rootNode = $this->componentManager->getComponent('T3_phpCR_NodeInterface', $this->componentManager, $this->storageAccess, $this);
+			$this->rootNode = $this->componentManager->getComponent('T3_phpCR_NodeInterface', $this, $this->storageAccess);
 			$this->rootNode->initializeFromArray($this->storageAccess->getRawRootNode());
 			$this->currentlyLoadedNodes[$this->rootNode->getUUID()] = $this->rootNode;
 		}
@@ -180,7 +178,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 		if($rawNode === FALSE) {
 			throw new T3_phpCR_ItemNotFoundException('Node with UUID '.$uuid.' not found in repository.', 1181070997);
 		}
-		$node = $this->componentManager->getComponent('T3_phpCR_NodeInterface');
+		$node = $this->componentManager->getComponent('T3_phpCR_NodeInterface', $this, $this->storageAccess);
 		$node->initializeFromArray($rawNode);
 		$this->currentlyLoadedNodes[$node->getUUID()] = $node;
 
@@ -197,7 +195,6 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	public function logout() {
 		$this->isLive = FALSE;
 		$this->currentlyLoadedNodes = array();
-		unset($this->itemManager);
 	}
 
 	/**
@@ -213,29 +210,12 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	}
 
 	/**
-	 * Returns an Object from Type ItemManager
-	 *
-	 * @return T3_TYPO3CR_ItemManager
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 */
-	public function getItemManager() {
-		return $this->itemManager;
-	}
-
-	/**
-	 * Save items from itemManager
+	 * Save all pending changes in the session
 	 *
 	 * @return void
-	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 */
 	public function save() {
-		$nodes = $this->getItemManager()->getNodes();
-
-		if(count($nodes)===0) return;
-
-		foreach($nodes as $node) {
-			$node->save();
-		}
+		throw new T3_phpCR_RepositoryException('Session::save() not implemented yet', 1203091439);
 	}
 
 	/**
@@ -300,7 +280,6 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 * @throws T3_phpCR_NamespaceException if the prefix begins with "xml" or prefix/uri are empty
 	 * @throws T3_phpCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @todo Check if specification was understood correctly: "If a prefix other than $prefix is already locally mapped to $uri, then the previous mapping is removed."
 	 */
 	public function setNamespacePrefix($prefix, $uri) {
 		if (T3_PHP6_Functions::strtolower(T3_PHP6_Functions::substr($prefix, 0, 3)) == 'xml') {
@@ -325,7 +304,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 * and the persistently registered namespaces.
 	 *
 	 * @return array All namespace prefixes available through this session
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org> 
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getNamespacePrefixes() {
 		$globalPrefixes = $this->workspace->getNamespaceRegistry()->getPrefixes();

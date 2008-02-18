@@ -14,23 +14,21 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_BaseTest.php');
-
 /**
  * Tests for the Value implementation of TYPO3CR
  *
  * @package		TYPO3CR
  * @subpackage	Tests
  * @version 	$Id$
- * @author 		Karsten Dambekalns <karsten@typo3.org>
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_ValueTest extends TYPO3CR_BaseTest {
+class TYPO3CR_ValueTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if a newly created Value object is of undefined type and
 	 * requesting a type actually works.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function typeAssignmentWorks() {
@@ -65,10 +63,12 @@ class TYPO3CR_ValueTest extends TYPO3CR_BaseTest {
 		$value = new T3_TYPO3CR_Value('/some/path/to/something', T3_phpCR_PropertyType::PATH);
 		$this->assertEquals($value->getType(), T3_phpCR_PropertyType::PATH, 'New Value object was not of type PATH, although requested.');
 
-		$value = new T3_TYPO3CR_Value($this->session->getRootNode(), T3_phpCR_PropertyType::REFERENCE);
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
+		$mockSession = $this->getMock('T3_TYPO3CR_Session', array(), array(), '', FALSE);
+		$value = new T3_TYPO3CR_Value(new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager), T3_phpCR_PropertyType::REFERENCE);
 		$this->assertEquals($value->getType(), T3_phpCR_PropertyType::REFERENCE, 'New Value object was not of type REFERENCE, although requested.');
 
-		$value = new T3_TYPO3CR_Value($this->session->getRootNode(), T3_phpCR_PropertyType::WEAKREFERENCE);
+		$value = new T3_TYPO3CR_Value(new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager), T3_phpCR_PropertyType::WEAKREFERENCE);
 		$this->assertEquals($value->getType(), T3_phpCR_PropertyType::WEAKREFERENCE, 'New Value object was not of type WEAKREFERENCE, although requested.');
 
 		$value = new T3_TYPO3CR_Value('http://typo3.org/gimmefive/', T3_phpCR_PropertyType::URI);
@@ -78,6 +78,7 @@ class TYPO3CR_ValueTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if getString returns the expected result
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getStringWorksOnStringValue() {
@@ -93,6 +94,7 @@ class TYPO3CR_ValueTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if getString returns the expected result on a DATE value
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getStringWorksOnDateValue() {
@@ -108,6 +110,7 @@ class TYPO3CR_ValueTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if getBoolean returns the expected result
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getBooleanWorksOnStringValue() {
@@ -126,6 +129,7 @@ class TYPO3CR_ValueTest extends TYPO3CR_BaseTest {
 	/**
 	 * Checks if getDouble returns the expected result
 	 * Also checks if getStream() is blocked afterwards
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getDoubleWorksOnStringAndBlocksGetStream() {
@@ -142,6 +146,7 @@ class TYPO3CR_ValueTest extends TYPO3CR_BaseTest {
 	/**
 	 * Checks if getLong returns the expected result
 	 * Also checks if getStream() is blocked afterwards
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getLongWorksOnStringValueAndBlocksGetStream() {
@@ -158,6 +163,7 @@ class TYPO3CR_ValueTest extends TYPO3CR_BaseTest {
 	/**
 	 * Checks if getDate returns the expected result
 	 * Also checks if getStream() is blocked afterwards
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getDateWorksOnDateValue() {

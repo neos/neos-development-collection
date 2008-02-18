@@ -14,19 +14,16 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_BaseTest.php');
-
 /**
  * Tests for the PathParser implementation of TYPO3CR
  *
  * @package		TYPO3CR
  * @subpackage	Tests
  * @version 	$Id: TYPO3CR_WorkspaceTest.php 328 2007-09-04 13:44:34Z robert $
- * @author 		Sebastian Kurfuerst <sebastian@typo3.org>
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_PathParserTest extends TYPO3CR_BaseTest {
+class TYPO3CR_PathParserTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * @var T3_TYPO3CR_Node
@@ -42,64 +39,211 @@ class TYPO3CR_PathParserTest extends TYPO3CR_BaseTest {
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$this->rootNode = $this->session->getRootNode();
 		$this->pathParser = new T3_TYPO3CR_PathParser();
 	}
 
 	/**
 	 * Checks if we receive the root node properly
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function weGetTheRootNode() {
-		$firstNode = $this->pathParser->parsePath('/', $this->rootNode);
-		$this->assertEquals($this->rootNode, $firstNode, 'The path parser did not return the root node.');
-		
-		$thirdNode = $this->pathParser->parsePath('/./', $this->rootNode);
-		$this->assertEquals($this->rootNode, $thirdNode, 'The path parser did not return the root node.');
-	}
+		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
+		$mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->will($this->returnValue(array('id' => 1, 'name' => 'nodeTypeName')));
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = new T3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
 
-	/**
-	 * Checks if we receive a sub node properly
-	 * @test
-	 */
-	public function subnodesAreRetrievedProperly() {
-		$expectedContentNodeUUID = '96bca35d-1ef5-4a47-8b0c-0bfc69507d01';
-		$expectedHomeNodeUUID = '96bca35d-9ef5-4a47-8b0c-0bfc69507d05';
-		$contentNode = $this->pathParser->parsePath('/Content', $this->rootNode);
-		$this->assertEquals($expectedContentNodeUUID, $contentNode->getUUID(), 'The path parser did not return the correct content node.');
-		
-		$contentNode = $this->pathParser->parsePath('/Content/', $this->rootNode);
-		$this->assertEquals($expectedContentNodeUUID, $contentNode->getUUID(), 'The path parser did not return the correct content node.');
-		
-		$contentNode = $this->pathParser->parsePath('/Content/.', $this->rootNode);
-		$this->assertEquals($expectedContentNodeUUID, $contentNode->getUUID(), 'The path parser did not return the correct content node.');
-		
-		$rootNode = $this->pathParser->parsePath('Content/..', $this->rootNode);
-		$this->assertEquals($rootNode->getUUID(), $this->rootNode->getUUID(), 'The path parser did not return the correct content node.');
-		
-		$homeNode = $this->pathParser->parsePath('Content/./Categories/Pages/Home', $this->rootNode);
-		$this->assertEquals($expectedHomeNodeUUID, $homeNode->getUUID(), 'The path parser did not return the home page.');
+		$rootNode = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
+		$rootNode->initializeFromArray(array(
+			'id' => '1',
+			'uuid' => '',
+			'pid' => '0',
+			'nodetype' => '1',
+			'name' => 'nodeA'
+		));
+
+		$firstNode = $this->pathParser->parsePath('/', $rootNode);
+		$this->assertEquals($rootNode, $firstNode, 'The path parser did not return the root node.');
+
+		$secondNode = $this->pathParser->parsePath('/./', $rootNode);
+		$this->assertEquals($rootNode, $secondNode, 'The path parser did not return the root node.');
 	}
 
 	/**
 	 * Checks if we receive a sub node property properly
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function propertiesAreRetrievedCorrectly() {
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawRootNodesByWorkspace = array(
+			'default' => array(
+				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'pid' => 0,
+				'nodetype' => 0,
+				'name' => ''
+			)
+		);
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 0,
+					'name' => 'Content'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 0,
+					'name' => 'News'
+				),
+			)
+		);
+		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					array(
+						'name' => 'title',
+						'value' => 'News about the TYPO3CR',
+						'namespace' => '',
+						'multivalue' => FALSE
+					)
+				)
+			)
+		);
+
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$rootNode = $session->getRootNode();
+
 		$expectedTitle = 'News about the TYPO3CR';
-		$newsItem = $this->pathParser->parsePath('Content/Categories/Pages/Home/News/title', $this->rootNode, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
-		
-		$this->assertEquals($expectedTitle, $newsItem->getString(), 'The path parser did not return the home page.');
+		$newsItem = $this->pathParser->parsePath('Content/News/title', $rootNode, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
+		$this->assertEquals($expectedTitle, $newsItem->getString(), 'The path parser did not return the expected property value.');
 	}
 
 	/**
 	 * Checks if we receive the same sub node property twice
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function propertyObjectsAreIdentical() {
-		$property1 = $this->pathParser->parsePath('Content/Categories/Pages/Home/News/title', $this->rootNode, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
-		$property2 = $this->pathParser->parsePath('Content/Categories/Pages/Home/News/title', $this->rootNode, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawRootNodesByWorkspace = array(
+			'default' => array(
+				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'pid' => 0,
+				'nodetype' => 0,
+				'name' => ''
+			)
+		);
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 0,
+					'name' => 'Node'
+				),
+			)
+		);
+		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
+					array(
+						'name' => 'title',
+						'value' => 'Same title, same object!?',
+						'namespace' => '',
+						'multivalue' => FALSE
+					)
+				)
+			)
+		);
+
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$rootNode = $session->getRootNode();
+		$property1 = $this->pathParser->parsePath('Node/title', $rootNode, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
+		$property2 = $this->pathParser->parsePath('Node/title', $rootNode, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
 		$this->assertSame($property1, $property2, 'The path parser did not return the same object.');
+	}
+
+	/**
+	 * Checks if we receive a sub node properly
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function subnodesAreRetrievedProperly() {
+		$expectedContentNodeUUID = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
+		$expectedHomeNodeUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+
+		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockStorageAccess = new T3_TYPO3CR_MockStorageAccess();
+		$mockStorageAccess->rawRootNodesByWorkspace = array(
+			'default' => array(
+				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'pid' => 0,
+				'nodetype' => 0,
+				'name' => ''
+			)
+		);
+		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+			'default' => array(
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
+					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'pid' => 0,
+					'nodetype' => 0,
+					'name' => ''
+				),
+				$expectedContentNodeUUID => array(
+					'uuid' => $expectedContentNodeUUID,
+					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 0,
+					'name' => 'Content'
+				),
+				$expectedHomeNodeUUID => array(
+					'uuid' => $expectedHomeNodeUUID,
+					'pid' => $expectedContentNodeUUID,
+					'nodetype' => 0,
+					'name' => 'Home'
+				),
+			)
+		);
+
+		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$rootNode = $session->getRootNode();
+
+		$node = $this->pathParser->parsePath('/Content', $rootNode);
+		$this->assertEquals($expectedContentNodeUUID, $node->getUUID(), 'The path parser did not return the correct content node.');
+
+		$node = $this->pathParser->parsePath('/Content/', $rootNode);
+		$this->assertEquals($expectedContentNodeUUID, $node->getUUID(), 'The path parser did not return the correct content node.');
+
+		$node = $this->pathParser->parsePath('/Content/.', $rootNode);
+		$this->assertEquals($expectedContentNodeUUID, $node->getUUID(), 'The path parser did not return the correct content node.');
+
+		$node = $this->pathParser->parsePath('Content/..', $rootNode);
+		$this->assertEquals($rootNode->getUUID(), $node->getUUID(), 'The path parser did not return the correct root node.');
+
+		$node = $this->pathParser->parsePath('Content/./Home', $rootNode);
+		$this->assertEquals($expectedHomeNodeUUID, $node->getUUID(), 'The path parser did not return the home page.');
 	}
 
 	/**

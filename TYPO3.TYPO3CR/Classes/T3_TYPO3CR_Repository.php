@@ -110,9 +110,9 @@ class T3_TYPO3CR_Repository implements T3_phpCR_RepositoryInterface {
 	 * @todo   Currently given credentials are not checked at all!
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function login($credentials = NULL, $workspaceName = NULL) {
+	public function login($credentials = NULL, $workspaceName = 'default') {
 		if ($credentials !== NULL && !($credentials instanceof T3_phpCR_CredentialsInterface)) throw new T3_phpCR_RepositoryException('$credentials must be an instance of T3_phpCR_Credentials', 1181042933);
-		if ($workspaceName !== NULL && $workspaceName !== 'default') {
+		if ($workspaceName !== 'default') {
 			throw new T3_phpCR_NoSuchWorkspaceException('Only default workspace supported for now', 1181063009);
 		}
 

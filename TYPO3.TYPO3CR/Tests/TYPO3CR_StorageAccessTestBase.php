@@ -14,33 +14,25 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_BaseTest.php');
-
 /**
- * Tests for the StorageAccess implementation of TYPO3CR
+ * Tests for the StorageAccess implementation of TYPO3CR. Needs to be extended
+ * for various storage types
  *
  * @package		TYPO3CR
  * @version 	$Id$
- * @author 		Sebastian Kurfuerst <sebastian@typo3.org>
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_StorageAccessTest extends TYPO3CR_BaseTest {
+class TYPO3CR_StorageAccessTestBase extends T3_Testing_BaseTestCase {
 
 	/**
-	 * @var T3_TYPO3CR_StorageAccess_PDO
+	 * @var T3_TYPO3CR_StorageAccessInterface
 	 */
 	protected $storageAccess;
 
 	/**
-	 * Set up the test environment
-	 */
-	public function setUp() {
-		$this->storageAccess = $this->componentManager->getComponent('T3_TYPO3CR_StorageAccessInterface');
-	}
-
-	/**
 	 * Checks if we can store and remove a raw node properly.
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @test
 	 */
 	public function addNodeAndRemoveNodeWork() {
@@ -65,6 +57,7 @@ class TYPO3CR_StorageAccessTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Checks if we can update and remove a raw node properly
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @test
 	 */
 	public function updateNodeAndRemoveNodeWork() {

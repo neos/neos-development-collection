@@ -40,6 +40,11 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 	public $rawRootNodesByWorkspace = array();
 
 	/**
+	 * @var array Raw properties of nodes
+	 */
+	public $rawPropertiesByUUIDGroupedByWorkspace = array();
+
+	/**
 	 * @var T3_TYPO3CR_Workspace
 	 */
 	protected $workspaceName = 'default';
@@ -61,7 +66,7 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 	 * Fetches raw node data from the database
 	 * 
 	 * @param  integer $id The (internal) ID of the node to fetch
-	 * @return array
+	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawNodeById($Id) {
@@ -70,13 +75,14 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 				return $this->rawNodesByIDGroupedByWorkspace[$this->workspaceName][$id];
 			}
 		}
+		return FALSE;
 	}
 
 	/**
 	 * Fetches raw node data from the database
 	 *
 	 * @param  string $uuid The UUID of the node to fetch
-	 * @return array
+	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawNodeByUUID($uuid) {
@@ -85,20 +91,20 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 				return $this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName][$uuid];
 			}
 		}
-		return array();
+		return FALSE;
 	}
 
 	/**
 	 * Fetches raw node data of the root node of the current workspace.
 	 * 
-	 * @return array
+	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawRootNode() {
 		if (key_exists($this->workspaceName, $this->rawRootNodesByWorkspace)) {
 			return $this->rawRootNodesByWorkspace[$this->workspaceName];
 		}
-		return array();
+		return FALSE;
 	}
 
 	/**
@@ -148,5 +154,151 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 	public function deleteNamespace($prefix) {
 		
 	}
+
+	/**
+	 * Fetches sub node UUIDs from the database
+	 *
+	 * @param integer $nodeId The node uid to fetch (sub-)nodes for
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUIDsOfSubNodesOfNode($nodeId) {
+		$uuids = array();
+		if (key_exists($this->workspaceName, $this->rawNodesByUUIDGroupedByWorkspace)) {
+			if (key_exists($nodeId, $this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName])) {
+				foreach($this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName] as $uuid => $rawNode) {
+					if($rawNode['pid'] == $nodeId) {
+						$uuids[] = $uuid;
+					}
+				}
+			}
+		}
+		return $uuids;
+	}
+
+	/**
+	 * Returns raw property data for the specified node
+	 *
+	 * @param string $nodeUUID The node UUID to fetch properties for
+	 * @return array|FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRawPropertiesOfNode($nodeUUID) {
+		if (key_exists($this->workspaceName, $this->rawPropertiesByUUIDGroupedByWorkspace)) {
+			if (key_exists($nodeUUID, $this->rawPropertiesByUUIDGroupedByWorkspace[$this->workspaceName])) {
+				return $this->rawPropertiesByUUIDGroupedByWorkspace[$this->workspaceName][$nodeUUID];
+			}
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Fetches raw nodetype data from the database
+	 * 
+	 * @param integer $nodeTypeId The (internal) id of the nodetype record to fetch
+	 * @return array
+	 */
+	public function getRawNodeTypeById($nodeTypeId) {
+		
+	}
+
+	/**
+	 * Checks if the node with the given UUID has properties
+	 *
+	 * @param string $nodeUUID
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasProperties($nodeUUID) {
+		if (key_exists($this->workspaceName, $this->rawPropertiesByUUIDGroupedByWorkspace)) {
+			if (key_exists($nodeUUID, $this->rawPropertiesByUUIDGroupedByWorkspace[$this->workspaceName])) {
+				return (boolean) count($this->rawPropertiesByUUIDGroupedByWorkspace[$this->workspaceName][$nodeUUID]);
+			}
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Checks if the node with the given UUID has subnodes
+	 * 
+	 * @param string $nodeUUID
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasNodes($nodeUUID) {
+		if (key_exists($this->workspaceName, $this->rawNodesByUUIDGroupedByWorkspace)) {
+			foreach($this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName] as $node) {
+				if($node['pid'] == $nodeUUID) return TRUE;
+			}
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Adds a node to the storage
+	 *
+	 * @param string $uuid UUID to insert
+	 * @param string $pid UUID of the parent node
+	 * @param integer $nodetype Nodetype to insert
+	 * @param string $name Name to insert
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addNode($uuid, $pid, $nodetype, $name) {
+		$this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName][$uuid] = array(
+			'uuid' => $uuid,
+			'pid' => $pid,
+			'nodetype' => $nodetype,
+			'name' => $name
+		);
+	}
+
+	/**
+	 * Updates a node in the storage
+	 *
+	 * @param string $uuid UUID of the node to update
+	 * @param string $pid UUID of the parent node
+	 * @param integer $nodetype new nodetype
+	 * @param string $name new name
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function updateNode($uuid, $pid, $nodetype, $name) {
+		$this->addNode($uuid, $pid, $nodetype, $name);
+	}
+
+	/**
+	 * Adds a property in the storage
+	 *
+	 * @param string $uuid UUID of parent node
+	 * @param string $name Name of property
+	 * @param string $value Value of property
+	 * @param boolean $isMultiValued
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addProperty($uuid, $name, $value, $isMultiValued) {
+		$this->rawPropertiesByUUIDGroupedByWorkspace[$this->workspaceName][$uuid][] = array(
+			'name' => $name,
+			'value' => $value,
+			'namespace' => '',
+			'multivalue' => $isMultiValued
+		);
+	}
+
+	/**
+	 * Updates a property in the repository identified by uuid and name
+	 *
+	 * @param string $uuid UUID of parent node
+	 * @param string $name Name of property
+	 * @param string $value Value of property
+	 * @param boolean $isMultiValued
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function updateProperty($uuid, $name, $value, $isMultiValued) {
+		$this->addProperty($uuid, $name, $value, $isMultiValued);
+	}
+
 }
 ?>

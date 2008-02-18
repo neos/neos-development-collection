@@ -52,20 +52,20 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	/**
 	 * Constructs a Node
 	 *
-	 * @param T3_FLOW3_Component_Manager $componentManager
+	 * @param T3_TYPO3CR_SessionInterface $session
 	 * @param T3_TYPO3CR_StorageAccessInterface $storageAccess
-	 * @param T3_TYPO3CR_Session $session
+	 * @param T3_FLOW3_Component_ManagerInterface $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_phpCR_SessionInterface $session) {
-		parent::__construct($storageAccess, $session);
+	public function __construct(T3_phpCR_SessionInterface $session, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_FLOW3_Component_ManagerInterface $componentManager) {
+		parent::__construct($session, $storageAccess);
 		$this->componentManager = $componentManager;
 		$this->UUID = $componentManager->getComponent('T3_FLOW3_Utility_Algorithms')->generateUUID();
 	}
 
 	/**
-	 * Set the modified flag of Item and adds the node to the ItemManager
+	 * Set the modified flag of Item
 	 *
 	 * @param boolean $isModified The modified state to set
 	 * @return void
@@ -73,11 +73,10 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 */
 	public function setModified($isModified) {
 		parent::setModified($isModified);
-		$this->session->getItemManager()->addNode($this);
 	}
 
 	/**
-	 * Set the new flag of Item and adds the node to the ItemManager
+	 * Set the new flag of Item
 	 *
 	 * @param boolean $isNew The new state to set
 	 * @return void
@@ -85,7 +84,6 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 */
 	public function setNew($isNew) {
 		parent::setNew($isNew);
-		$this->session->getItemManager()->addNode($this);
 	}
 
 	/**
@@ -94,6 +92,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @param array $rawData
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo The NodeType object should be coming from some factory-thingy. Right now it's protoype (defined in phpCR Components.conf), but actually the same nodetype could be the same object!
 	 */
 	public function initializeFromArray($rawData) {
 		if(!isset($this->id)) {
@@ -107,7 +106,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 			}
 			$this->name = $rawData['name'];
 			$this->UUID = $rawData['uuid'];
-			$this->nodeType = $this->componentManager->getComponent('T3_phpCR_NodeTypeInterface', $rawData['nodetype']);
+			$this->nodeType = $this->componentManager->getComponent('T3_phpCR_NodeTypeInterface', $rawData['nodetype'], $this->storageAccess);
 		} else {
 			throw new T3_phpCR_RepositoryException('New node objects can only be initialized from an array once.', 1181076288);
 		}
@@ -120,11 +119,13 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeProperties() {
-		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getUUID());
 		$this->properties = $this->componentManager->getComponent('T3_phpCR_PropertyIteratorInterface');
-		foreach($rawProperties as $rawProperty) {
-			$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue']);
-			$this->properties->append($property);
+		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getUUID());
+		if(is_array($rawProperties)) {
+			foreach($rawProperties as $rawProperty) {
+				$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
+				$this->properties->append($property);
+			}
 		}
 	}
 
@@ -230,7 +231,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasNodes() {
-		return $this->storageAccess->hasNodes($this->getUuid());
+		return $this->storageAccess->hasNodes($this->getUUID());
 	}
 
 	/**
@@ -373,16 +374,15 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @todo Many :)
 	 */
 	public function addNode($relativePath, $primaryNodeTypeName = NULL) {
-			// check relPath is not NULL
 		if ($relativePath === NULL) {
 			throw new T3_phpCR_PathNotFoundException('Path not found or not provided', 1187531979);
 		}
-		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParser');
 
+		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParser');
 		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = $pathParser->getLastPathPart($relativePath);
 
 		if($numberOfElementsRemaining===0) {
-			$newNode = $this->componentManager->getComponent('T3_phpCR_NodeInterface');
+			$newNode = $this->componentManager->getComponent('T3_phpCR_NodeInterface', $this->session, $this->storageAccess);
 			$newNode->initializeFromArray(array(
 				'pid' => $this->getUUID(),
 				'name' => $lastNodeName,
@@ -392,7 +392,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 			$newNode->setNew(TRUE);
 
 			if(!isset($this->nodes)) {
-				$this->nodes = $this->componentManager->getComponent('T3_phpCR_NodeIteratorInterface');
+				$this->initializeNodes();
 			}
 			$this->nodes->append($newNode);
 			$this->setModified(TRUE);  // JSR-283: (5.1.3.6): This specification provides the following methods on Item for determining whether a particular item has pending changes (isModified) or constitutes part of the pending changes of its parent(isNew)
@@ -472,7 +472,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 		if ($this->hasProperty($name)) {
 			$this->getProperty($name)->setValue($value);
 		} else {
-			$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $name, $value, $this, FALSE);
+			$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $name, $value, $this, FALSE, $this->session, $this->storageAccess);
 			$this->properties->append($property);
 			$property->setNew(TRUE);
 		}

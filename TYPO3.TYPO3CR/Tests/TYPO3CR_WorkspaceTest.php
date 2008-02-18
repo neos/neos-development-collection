@@ -14,19 +14,21 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_BaseTest.php');
-
 /**
  * Tests for the Workspace implementation of TYPO3CR
  *
  * @package		TYPO3CR
  * @subpackage	Tests
  * @version 	$Id$
- * @author 		Karsten Dambekalns <karsten@typo3.org>
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_WorkspaceTest extends TYPO3CR_BaseTest {
+class TYPO3CR_WorkspaceTest extends T3_Testing_BaseTestCase {
+
+	/**
+	 * @var T3_TYPO3CR_Session
+	 */
+	protected $mockSession;
 
 	/**
 	 * @var T3_TYPO3CR_Workspace
@@ -35,33 +37,38 @@ class TYPO3CR_WorkspaceTest extends TYPO3CR_BaseTest {
 
 	/**
 	 * Set up the test environment
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$this->workspace = $this->session->getWorkspace();
+		$this->mockSession = $this->getMock('T3_TYPO3CR_Session', array(), array(), '', FALSE);
+		$this->workspace = new T3_TYPO3CR_Workspace('workspaceName', $this->mockSession, $this->componentManager);
 	}
 
 	/**
-	 * Checks if getSession returns the Session object used to create the Workspace object.
+	 * Checks if getSession returns the same Session object used to create the Workspace object.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getSessionReturnsCreatingSession() {
-		$this->assertSame($this->session, $this->workspace->getSession(), 'The workspace did not return the session from which it was created.');
+		$this->assertSame($this->mockSession, $this->workspace->getSession(), 'The workspace did not return the session from which it was created.');
 	}
 
 	/**
-	 * Checks if getSession() returns the same session as was used to aquire the workspace object.
+	 * Checks if getNamespaceRegistry() returns a NameSpaceRegistry object.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getNamespaceRegistryReturnsANameSpaceRegistry() {
 		$this->assertType('T3_phpCR_NamespaceRegistryInterface', $this->workspace->getNamespaceRegistry(), 'The workspace did not return a NamespaceRegistry object on getNamespaceRegistry().');
 	}
-	
+
 	/**
-	 * Checks if getName() returns a string.
+	 * Checks if getName() returns the expected string.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNameReturnsAString() {
-		$this->assertType('string', $this->workspace->getName(), 'The workspace did not return a string on getName().');
+	public function getNameReturnsTheExpectedName() {
+		$this->assertSame('workspaceName', $this->workspace->getName(), 'The workspace did not return the expected name on getName().');
 	}
 }
 ?>
