@@ -32,13 +32,11 @@ class TYPO3CR_PropertyTest extends T3_Testing_BaseTestCase {
 	 */
 	public function getValueReturnsAValueObject() {
 		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
-		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
-		$mockStorageAccess->expects($this->any())->method('getRawPropertiesOfNode')->will($this->returnValue(array(array('name' => 'testproperty', 'value' => 'testvalue', 'namespace' => '', 'multivalue' => 0))));
-		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockSession = new T3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$mockSession = $this->getMock('T3_TYPO3CR_Session', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('T3_TYPO3CR_Node', array(), array(), '', FALSE);
 
-		$node = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
-		$valueObject = $node->getProperty('testproperty')->getValue();
+		$property = new T3_TYPO3CR_Property('testproperty', 'testvalue', $mockNode, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
+		$valueObject = $property->getValue();
 		$this->assertType('T3_phpCR_ValueInterface', $valueObject, 'getValue() a Value object.');
 	}
 
@@ -49,14 +47,13 @@ class TYPO3CR_PropertyTest extends T3_Testing_BaseTestCase {
 	 */
 	public function getValuesReturnsAnExceptionIfCalledOnSingleValue() {
 		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
-		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
-		$mockStorageAccess->expects($this->any())->method('getRawPropertiesOfNode')->will($this->returnValue(array(array('name' => 'testproperty', 'value' => 'testvalue', 'namespace' => '', 'multivalue' => 0))));
-		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockSession = new T3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$mockSession = $this->getMock('T3_TYPO3CR_Session', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('T3_TYPO3CR_Node', array(), array(), '', FALSE);
 
-		$node = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
+		$property = new T3_TYPO3CR_Property('testproperty', 'testvalue', $mockNode, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
+
 		try {
-			$valueObject = $node->getProperty('testproperty')->getValues();
+			$valueObject = $property->getValues();
 			$this->fail('getValues needs to return an exception if called on a single value');
 		} catch (T3_phpCR_ValueFormatException $e) {
 		}
