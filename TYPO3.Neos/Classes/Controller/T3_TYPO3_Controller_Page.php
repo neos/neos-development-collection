@@ -36,7 +36,7 @@ class T3_TYPO3_Controller_Page extends T3_FLOW3_MVC_Controller_ActionController 
 	 *
 	 * @param T3_TypoScript_Parser
 	 */
-	public function setTypoScriptParser(T3_TypoScript_ParserInterface $typoScriptParser) {
+	public function injectTypoScriptParser(T3_TypoScript_ParserInterface $typoScriptParser) {
 		$this->typoScriptParser = $typoScriptParser;
 		$this->typoScriptParser->setDefaultNamespace('T3_TYPO3_TypoScript');
 	}
