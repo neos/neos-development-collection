@@ -27,12 +27,16 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	/**
 	 * @var array
 	 */
-	protected $elements = array();
+	protected $elements;
 
 	/**
 	 * @var integer
 	 */
 	protected $position = 0;
+
+	public function __construct($elements = array()) {
+		$this->elements = array_values($elements);
+	}
 
 	/**
 	 * Append a new element to the end of the iteration

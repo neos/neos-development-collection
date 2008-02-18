@@ -66,13 +66,17 @@ class TYPO3CR_PropertyTest extends T3_Testing_BaseTestCase {
 	 */
 	public function getPathReturnsPathToProperty() {
 		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
-		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
-		$mockStorageAccess->expects($this->once())->method('getRawPropertiesOfNode')->will($this->returnValue(array(array('name' => 'testproperty', 'value' => 'testvalue', 'namespace' => '', 'multivalue' => 0))));
 		$mockRepository = $this->getMock('T3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('T3_TYPO3CR_Session', array(), array('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager));
 
 		$rootNode = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
-		$rootNode->initializeFromArray(array('id' => NULL, 'pid' => 0, 'name' => '', 'uuid' => $rootNode->getUUID(), 'nodetype' => 1));
+		$rootNode->initializeFromArray(array(
+			'id' => NULL,
+			'pid' => 0,
+			'name' => '',
+			'uuid' => $rootNode->getUUID(),
+			'nodetype' => 1)
+		);
 		$mockSession->expects($this->once())->method('getNodeByUUID')->will($this->returnValue($rootNode));
 		$node = new T3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$node->initializeFromArray(array(
@@ -81,6 +85,7 @@ class TYPO3CR_PropertyTest extends T3_Testing_BaseTestCase {
 			'uuid' => $node->getUUID(),
 			'nodetype' => 1,
 		));
+		$node->setProperty('testproperty', 'some test value');
 
 		$testProperty = $node->getProperty('testproperty');
 		$propertyPath = $testProperty->getPath();

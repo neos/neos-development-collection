@@ -40,7 +40,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	protected $path;
 
 	/**
-	 * @var T3_phpCR_PropertyIteratorInterface
+	 * @var array
 	 */
 	protected $properties;
 
@@ -104,6 +104,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 			$this->name = $rawData['name'];
 			$this->UUID = $rawData['uuid'];
 			$this->nodeType = $this->componentManager->getComponent('T3_phpCR_NodeTypeInterface', $rawData['nodetype'], $this->storageAccess);
+			$this->initializeProperties();
 		} else {
 			throw new T3_phpCR_RepositoryException('New node objects can only be initialized from an array once.', 1181076288);
 		}
@@ -116,12 +117,11 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeProperties() {
-		$this->properties = $this->componentManager->getComponent('T3_phpCR_PropertyIteratorInterface');
 		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getUUID());
 		if(is_array($rawProperties)) {
 			foreach($rawProperties as $rawProperty) {
 				$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
-				$this->properties->append($property);
+				$this->properties[$property->getName()] = $property;
 			}
 		}
 	}
@@ -134,7 +134,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperties() {
-		return $this->storageAccess->hasProperties($this->getUUID());
+		return count($this->properties) > 0;
 	}
 
 	/**
@@ -154,10 +154,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	public function getProperties($namePattern = NULL) {
 		if($namePattern !== NULL) throw new T3_phpCR_RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
-		if(!isset($this->properties)) {
-			$this->initializeProperties();
-		}
-		return $this->properties;
+		return $this->componentManager->getComponent('T3_TYPO3CR_PropertyIterator', $this->properties);
 	}
 
 	/**
@@ -166,25 +163,35 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @param string $relPath absolute or relative path
 	 * @return T3_TYPO3CR_Property
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getProperty($relativePath) {
-		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParser');
-		return $pathParser->parsePath($relativePath, $this, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
+		if(strpos($relativePath, '/') === FALSE && isset($this->properties[$relativePath])) {
+			return $this->properties[$relativePath];
+		} else {
+			$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParser');
+			return $pathParser->parsePath($relativePath, $this, T3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
+		}
 	}
 
 	/**
 	 * Checks if a property exists
 	 * 
-	 * @param  string		$relPath
-	 * @return boolean		true if property specified with $relPath exists
+	 * @param  string		$relativePath
+	 * @return boolean		true if property specified with $relativePath exists
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function hasProperty($relPath) {
-		try {
-			$this->getProperty($relPath);
-			return TRUE;
-		} catch (T3_phpCR_PathNotFoundException $e) {
-			return FALSE;
+	public function hasProperty($relativePath) {
+		if(strpos($relativePath, '/') === FALSE) {
+			return isset($this->properties[$relativePath]);
+		} else {
+			try {
+				$this->getProperty($relativePath);
+				return TRUE;
+			} catch (T3_phpCR_PathNotFoundException $e) {
+				return FALSE;
+			}
 		}
 	}
 
@@ -415,7 +422,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 			}
 		}
 
-		foreach ($this->getProperties() as $property) {
+		foreach ($this->properties as $property) {
 			$property->remove();
 		}
 
@@ -472,8 +479,8 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 		} else {
 			$multiValued = is_array($value) ? TRUE : FALSE;
 			$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $name, $value, $this, $multiValued, $this->session, $this->storageAccess);
-			$this->properties->append($property);
 			$property->setNew(TRUE);
+			$this->properties[$name] = $property;
 		}
 		$this->setModified(TRUE);
 	}
@@ -483,12 +490,13 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * 
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function saveProperties() {
-		if (!isset($this->properties) || $this->properties->getSize() == 0) return;
+		if (!isset($this->properties) || count($this->properties) == 0) return;
 
-		foreach ($this->getProperties() as $singleProperty) {
-			$singleProperty->save();
+		foreach ($this->properties as $property) {
+			$property->save();
 		}
 	}
 }

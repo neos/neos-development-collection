@@ -135,6 +135,24 @@ class TYPO3CR_NodeTest extends T3_Testing_BaseTestCase {
 	}
 
 	/**
+	 * Checks if hasProperty() works with various paths
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function hasPropertyWorks() {
+		$newsNodeUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$newsTitleText = 'News about the TYPO3CR';
+		$newsNode = $this->session->getNodeByUUID($newsNodeUUID);
+
+		$this->assertTrue($newsNode->hasProperty('title'), 'Expected property was not found (1).');
+		$this->assertTrue($newsNode->hasProperty('./title'), 'Expected property was not found (2).');
+		$this->assertTrue($newsNode->hasProperty('../News/title'), 'Expected property was not found (3).');
+
+		$this->assertFalse($newsNode->hasProperty('nonexistant'), 'Unxpected property was found (1).');
+		$this->assertFalse($newsNode->hasProperty('./nonexistant'), 'Unexpected property wasfound (2).');
+	}
+
+	/**
 	 * Checks if getProperty() works with various paths
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test

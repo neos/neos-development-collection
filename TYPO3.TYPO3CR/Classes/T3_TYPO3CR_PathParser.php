@@ -102,11 +102,8 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 
 			// check for properties
 		if ($numberOfRemainingPathParts == 0 && ($searchMode & self::SEARCH_MODE_PROPERTIES)) {
-			$propertyIterator = $currentNode->getProperties();
-			foreach ($propertyIterator as $currentProperty) {
-				if ($currentProperty->getName() == $name) {
-					return $currentProperty;
-				}
+			if($currentNode->hasProperty($name)) {
+				return $currentNode->getProperty($name);
 			}
 		}
 
