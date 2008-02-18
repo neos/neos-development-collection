@@ -35,6 +35,11 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	protected $session;
 
 	/**
+	 * @var T3_FLOW3_Component_Manager
+	 */
+	protected $componentManager;
+
+	/**
 	 * @var integer
 	 */
 	protected $id;
@@ -63,21 +68,6 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	 * @var boolean
 	 */
 	protected $isRemoved;
-
-
-	/**
-	 * Constructs an Item
-	 *
-	 * @param T3_phpCR_SessionInterface $session
-	 * @param T3_TYPO3CR_StorageAccessInterface $storageAccess
-	 * @return void
-	 * @author Ronny Unger <ru@php-workx.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function __construct(T3_phpCR_SessionInterface $session, T3_TYPO3CR_StorageAccessInterface $storageAccess) {
-		$this->session = $session;
-		$this->storageAccess = $storageAccess;
-	}
 
 	/**
 	 * Returns the session associated with this item.

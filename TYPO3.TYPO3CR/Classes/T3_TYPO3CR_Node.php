@@ -25,11 +25,6 @@ declare(encoding = 'utf-8');
 class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface {
 
 	/**
-	 * @var T3_FLOW3_Component_Manager
-	 */
-	protected $componentManager;
-
-	/**
 	 * @var string
 	 */
 	protected $UUID;
@@ -59,8 +54,10 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(T3_phpCR_SessionInterface $session, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_FLOW3_Component_ManagerInterface $componentManager) {
-		parent::__construct($session, $storageAccess);
+		$this->session = $session;
+		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
+
 		$this->UUID = $componentManager->getComponent('T3_FLOW3_Utility_Algorithms')->generateUUID();
 	}
 
@@ -94,7 +91,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo The NodeType object should be coming from some factory-thingy. Right now it's protoype (defined in phpCR Components.conf), but actually the same nodetype could be the same object!
 	 */
-	public function initializeFromArray($rawData) {
+	public function initializeFromArray(array $rawData) {
 		if(!isset($this->id)) {
 			if(isset($rawData['id'])) {
 				$this->id = $rawData['id'];
@@ -465,14 +462,16 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @param mixed $value
 	 * @param unknown $type
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setProperty($name, $value, $type = NULL) {
-		if ($type != NULL) throw new T3_phpCR_RepositoryException('$type is not supported in T3_TYPO3CR_Node::setProperty().', 1189538797);
+		if ($type !== NULL) throw new T3_phpCR_RepositoryException('$type is not supported in T3_TYPO3CR_Node::setProperty().', 1189538797);
 
 		if ($this->hasProperty($name)) {
 			$this->getProperty($name)->setValue($value);
 		} else {
-			$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $name, $value, $this, FALSE, $this->session, $this->storageAccess);
+			$multiValued = is_array($value) ? TRUE : FALSE;
+			$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $name, $value, $this, $multiValued, $this->session, $this->storageAccess);
 			$this->properties->append($property);
 			$property->setNew(TRUE);
 		}

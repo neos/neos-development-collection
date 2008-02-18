@@ -157,6 +157,9 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE nodeuuid = ?');
 		$statementHandle->execute(array($nodeUUID));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		if(is_array($properties) && $properties['multivalue']) {
+			$properties['value'] = unserialize($properties['value']);
+		}
 		return $properties;
 	}
 
