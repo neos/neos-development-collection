@@ -46,7 +46,7 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	 * @return void
 	 */
 	public function __construct(array $elements = array()) {
-		$this->elements = array_values($elements);
+		$this->elements = $elements;
 	}
 
 	/**
@@ -61,13 +61,16 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	}
 
 	/**
-	 * Removes the last element returned by next(), i.e. the current element
+	 * Removes the last element returned by next()
 	 * 
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove() {
-		array_splice($this->elements, $this->getPosition(), 1);
+		$positionToRemove = $this->getPosition()-1;
+		array_splice($this->elements, $positionToRemove, 1);
+			// array_splice resets the array pointer, so we fix it together with the internal position
+		for($skipped = 0; $skipped < --$this->position; $skipped++) next($this->elements);
 	}
 
 	/**
@@ -82,7 +85,7 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	}
 
 	/**
-	 * Set the internal pointer to the next element and return it.
+	 * Return the next (i.e. current) element in the iterator
 	 * 
 	 * @return mixed The next element in the iteration
 	 * @author Ronny Unger <ru@php-workx.de>
@@ -90,7 +93,10 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	 */
 	public function next() {
 		if ($this->hasNext()) {
-			return $this->elements[$this->position++];
+			$this->position++;
+			$element = current($this->elements);
+			next($this->elements);
+			return $element;
 		} else {
 			throw new T3_phpCR_NoSuchElementException('Tried to go past the last element in the iterator.', 1187530869);
 		}
@@ -110,7 +116,8 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 		if ($newPosition > $this->getSize()) {
 			throw new T3_phpCR_NoSuchElementException('Skip operation past the last element in the iterator.', 1187530862);
 		} else {
-			$this->setPosition($newPosition);
+			$this->position = $newPosition;
+			for($skipped = 0; $skipped < $skipNum; $skipped++) next($this->elements);
 		}
 	}
 
@@ -148,24 +155,13 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	}
 
 	/**
-	 * Sets the current position within the iterator.
-	 * 
-	 * @param integer $position The new position to set, 0-based
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function setPosition($position) {
-		$this->position = $position;
-	}
-
-	/**
 	 * Returns the number of subsequent next() calls that can be
 	 * successfully performed on this iterator.
 	 * 
 	 * This is the  number of items still available through this iterator. For
 	 * example, for some node $n, $n->getNodes()->getSize() returns the number
-	 * of child nodes of <code>N</code> visible through the current
-	 * Session that have not yet been returned.
+	 * of child nodes of N visible through the current Session that have not
+	 * yet been returned.
 	 * 
 	 * In some implementations precise information about the number of remaining
 	 * elements may not be available. In such cases this method should return
@@ -176,7 +172,7 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function getNumberRemaining() {
-		return ($this->getSize() - ($this->getPosition()+1));
+		return $this->getSize() - $this->getPosition();
 	}
 
 
@@ -199,7 +195,7 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function rewind() {
-		$this->setPosition(0);
+		reset($this->elements);
 	}
 
 	/**
@@ -210,7 +206,7 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function current() {
-		return $this->elements[$this->getPosition()];
+		return current($this->elements);
 	}
 
 	/**
