@@ -195,6 +195,7 @@ class T3_TYPO3CR_RangeIterator implements T3_phpCR_RangeIteratorInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function rewind() {
+		$this->position = 0;
 		reset($this->elements);
 	}
 
