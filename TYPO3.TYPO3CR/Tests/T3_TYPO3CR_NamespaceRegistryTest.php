@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,15 +15,21 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ */
+
+/**
  * Tests for the NameSpaceRegistry implementation of TYPO3CR
  *
- * @package		TYPO3CR
- * @subpackage	Tests
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_NamespaceRegistryTest extends T3_Testing_BaseTestCase {
+class T3_TYPO3CR_NamespaceRegistryTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * @var T3_TYPO3CR_NamespaceRegistry
@@ -63,8 +69,8 @@ class TYPO3CR_NamespaceRegistryTest extends T3_Testing_BaseTestCase {
 		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
 		$namespaceRegistry = new T3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
-		foreach($this->expectedBuiltInNameSpaces as $prefix => $URI) {
-			$this->assertSame($prefix, $namespaceRegistry->getPrefix($URI), 'The NamespaceRegistry did not return the prefix ('.$prefix.' != '.$namespaceRegistry->getPrefix($URI).') for the requested URI ('.$URI.').');
+		foreach ($this->expectedBuiltInNameSpaces as $prefix => $URI) {
+			$this->assertSame($prefix, $namespaceRegistry->getPrefix($URI), 'The NamespaceRegistry did not return the prefix (' . $prefix . ' != ' . $namespaceRegistry->getPrefix($URI) . ') for the requested URI (' . $URI . ').');
 		}
 	}
 
@@ -90,8 +96,8 @@ class TYPO3CR_NamespaceRegistryTest extends T3_Testing_BaseTestCase {
 		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccessInterface');
 		$namespaceRegistry = new T3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
-		foreach($this->expectedBuiltInNameSpaces as $prefix => $URI) {
-			$this->assertSame($URI, $namespaceRegistry->getURI($prefix), 'The NamespaceRegistry did not return the URI ('.$URI.' != '.$namespaceRegistry->getURI($prefix).') for the requested prefix ('.$prefix.').');
+		foreach ($this->expectedBuiltInNameSpaces as $prefix => $URI) {
+			$this->assertSame($URI, $namespaceRegistry->getURI($prefix), 'The NamespaceRegistry did not return the URI (' . $URI . ' != ' . $namespaceRegistry->getURI($prefix) . ') for the requested prefix (' . $prefix . ').');
 		}
 	}
 

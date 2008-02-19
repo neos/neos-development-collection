@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,15 +15,21 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ */
+
+/**
  * Tests for the Repository implementation of TYPO3CR
  *
- * @package     TYPO3CR
- * @subpackage  Tests
- * @version     $Id$
- * @copyright   Copyright belongs to the respective authors
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_RepositoryTest extends T3_Testing_BaseTestCase {
+class T3_TYPO3CR_RepositoryTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks of the login() method returns a Session object
@@ -63,8 +69,8 @@ class TYPO3CR_RepositoryTest extends T3_Testing_BaseTestCase {
 		$repository = new T3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
 		$descriptorKeys = $repository->getDescriptorKeys();
 		$this->assertTrue(is_array($descriptorKeys), 'The getDescriptorKeys method did not return an array.');
-		foreach($descriptorKeys as $k => $v) {
-			$this->assertTrue(is_string($v), 'An element ('.$v.') returned by getDescriptorKeys was not a string.');
+		foreach ($descriptorKeys as $k => $v) {
+			$this->assertTrue(is_string($v), 'An element (' . $v . ') returned by getDescriptorKeys was not a string.');
 		}
 	}
 

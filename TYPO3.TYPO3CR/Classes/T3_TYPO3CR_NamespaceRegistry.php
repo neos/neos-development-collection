@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,12 +15,17 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id$
+ */
+
+/**
  * A NamespaceRegistry
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterface {
 
@@ -66,8 +71,8 @@ class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterfac
 	 */
 	protected function initializeCustomNamespaces()	{
 		$rawNamespaces = $this->storageAccess->getRawNamespaces();
-		if(!count($rawNamespaces))	return;
-		foreach($rawNamespaces as $rawNamespace) {
+		if (!count($rawNamespaces))	return;
+		foreach ($rawNamespaces as $rawNamespace) {
 			$this->customNamespaces[$rawNamespace['prefix']] = $rawNamespace['uri'];
 		}
 	}
@@ -119,10 +124,10 @@ class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterfac
 	 */
 	public function getPrefix($uri) {
 		$prefix = array_search($uri, $this->builtInNamespaces);
-		if($prefix === FALSE) {
+		if ($prefix === FALSE) {
 			$prefix = array_search($uri, $this->customNamespaces);
-			if($prefix === FALSE)	{
-				throw new T3_phpCR_NamespaceException('URI '.$uri.' not registered in NamespaceRegistry', 1184478139);
+			if ($prefix === FALSE)	{
+				throw new T3_phpCR_NamespaceException('URI ' . $uri . ' not registered in NamespaceRegistry', 1184478139);
 			}
 		}
 		return $prefix;
@@ -143,12 +148,12 @@ class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterfac
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getURI($prefix) {
-		if(array_key_exists($prefix, $this->builtInNamespaces)) {
+		if (array_key_exists($prefix, $this->builtInNamespaces)) {
 			return $this->builtInNamespaces[$prefix];
-		} elseif(array_key_exists($prefix, $this->customNamespaces)) {
+		} elseif (array_key_exists($prefix, $this->customNamespaces)) {
 			return $this->customNamespaces[$prefix];
 		} else {
-			throw new T3_phpCR_NamespaceException('Prefix '.$prefix.' not registered in NamespaceRegistry', 1184478140);
+			throw new T3_phpCR_NamespaceException('Prefix ' . $prefix . ' not registered in NamespaceRegistry', 1184478140);
 		}
 	}
 
@@ -171,17 +176,17 @@ class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterfac
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerNamespace($prefix, $uri)	{
-		if(!$this->isAllowedToModifyNamespace($prefix))	{
+		if (!$this->isAllowedToModifyNamespace($prefix))	{
 			throw new T3_phpCR_NamespaceException('Attempt to register a protected namespace!', 1184478152);
 		}
 
 			// Update a namespace
-		if(in_array($uri, $this->customNamespaces)) {
+		if (in_array($uri, $this->customNamespaces)) {
 			$this->storageAccess->updateNamespacePrefix($prefix, $uri);
 			$prefixToRemove = array_search($uri, $this->customNamespaces);
 			unset($this->customNamespaces[$prefixToRemove]);
 			$this->customNamespaces[$prefix] = $uri;
-		} elseif(in_array($prefix, array_keys($this->customNamespaces))) {
+		} elseif (in_array($prefix, array_keys($this->customNamespaces))) {
 			$this->storageAccess->updateNamespaceURI($prefix, $uri);
 			$this->customNamespaces[$prefix] = $uri;
 		} else {
@@ -202,11 +207,11 @@ class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterfac
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function unregisterNamespace($prefix) {
-		if(!$this->isAllowedToModifyNamespace($prefix))	{
+		if (!$this->isAllowedToModifyNamespace($prefix))	{
 			throw new T3_phpCR_NamespaceException('Attempt to unregister a protected namespace!', 1184478149);
 		}
 
-		if(!array_key_exists($prefix, $this->customNamespaces)) {
+		if (!array_key_exists($prefix, $this->customNamespaces)) {
 			throw new T3_phpCR_NamespaceException("Attempt to unregister a not registered namespace!", 1184479159);
 		}
 		$this->storageAccess->deleteNamespace($prefix);
@@ -223,11 +228,11 @@ class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterfac
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	protected function isAllowedToModifyNamespace($prefix)	{
-		if(array_key_exists($prefix, $this->builtInNamespaces))	{
+		if (array_key_exists($prefix, $this->builtInNamespaces))	{
 			return FALSE;
 		}
 
-		if(T3_PHP6_Functions::strtolower(T3_PHP6_Functions::substr($prefix, 0,3)) == 'xml') {
+		if (T3_PHP6_Functions::strtolower(T3_PHP6_Functions::substr($prefix, 0,3)) == 'xml') {
 			return FALSE;
 		}
 

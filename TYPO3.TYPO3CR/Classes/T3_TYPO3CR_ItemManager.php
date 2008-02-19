@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,17 +15,20 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
- * ItemManager holds the new and modified nodes with Sessionscope
- * 
- *
- * @package		TYPO3CR
- * @version 	$Id: T3_TYPO3CR_ItemManager.php 328 2007-09-04 13:44:34Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id: T3_TYPO3CR_ItemManager.php 328 2007-09-04 13:44:34Z robert $
  */
 
+/**
+ * ItemManager holds the new and modified nodes with Sessionscope
+ *
+ * @package TYPO3CR
+ * @version $Id: T3_TYPO3CR_ItemManager.php 328 2007-09-04 13:44:34Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
 class T3_TYPO3CR_ItemManager implements T3_TYPO3CR_ItemManagerInterface {
-	
+
 	/**
 	 * @var T3_FLOW3_Component_Manager
 	 */
@@ -36,7 +39,7 @@ class T3_TYPO3CR_ItemManager implements T3_TYPO3CR_ItemManagerInterface {
 	 */
 	protected $nodes;
 
-	 /**
+	/**
 	 * Constructs a Node
 	 *
 	 * @param T3_FLOW3_Component_Manager $componentManager
@@ -67,17 +70,17 @@ class T3_TYPO3CR_ItemManager implements T3_TYPO3CR_ItemManagerInterface {
 	 * @todo How to remove an Item?
 	 */
 	public function getNodes() {
-		
-		if(count($this->nodes)===0) {
-			return null;
+
+		if (count($this->nodes)===0) {
+			return NULL;
 		}
 
-		foreach($this->nodes as $node) {
-			if(($node->isModified() === FALSE) && ($node->isNew() === FALSE)) unset($this->nodes[$node->getUUID()]);
+		foreach ($this->nodes as $node) {
+			if (($node->isModified() === FALSE) && ($node->isNew() === FALSE)) unset($this->nodes[$node->getUUID()]);
 		}
 
 		return $this->nodes;
 	}
-	
+
 }
 ?>

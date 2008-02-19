@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,12 +15,17 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id$
+ */
+
+/**
  * A Storage Access object using PDO
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface {
 
@@ -111,7 +116,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 		$statementHandle = $this->databaseHandle->prepare('SELECT uuid FROM nodes WHERE pid = ?');
 		$statementHandle->execute(array($nodeId));
 		$rawNodes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		foreach($rawNodes as $k => $rawNode) {
+		foreach ($rawNodes as $k => $rawNode) {
 			$nodeUUIDs[] = $rawNode['uuid'];
 		}
 		return $nodeUUIDs;
@@ -128,7 +133,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE nodeuuid = ?');
 		$statementHandle->execute(array($nodeUUID));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		if(is_array($properties) && $properties['multivalue']) {
+		if (is_array($properties) && $properties['multivalue']) {
 			$properties['value'] = unserialize($properties['value']);
 		}
 		return $properties;

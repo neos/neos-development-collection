@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -14,17 +14,24 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once('TYPO3CR_StorageAccessTestBase.php');
+/**
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ */
+
+require_once('T3_TYPO3CR_StorageAccessTestBase.php');
 
 /**
  * Tests for the StorageAccess_PDO implementation of TYPO3CR
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_StorageAccess_PDOTest extends TYPO3CR_StorageAccessTestBase {
+class T3_TYPO3CR_StorageAccess_PDOTest extends T3_TYPO3CR_StorageAccessTestBase {
 
 	/**
 	 * @var string

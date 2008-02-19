@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,14 +15,19 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id$
+ */
+
+/**
  * A Property
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyInterface {
+class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_PropertyInterface {
 
 	/**
 	 * @var mixed
@@ -52,12 +57,12 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
 
-		if($value === NULL) throw new T3_TYPO3CR_RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
+		if ($value === NULL) throw new T3_TYPO3CR_RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
 
 		$this->name = $name;
 		$valueFactory = $this->componentManager->getComponent('T3_phpCR_ValueFactoryInterface');
 		if ($isMultiValued) {
-			foreach($value as $singleValue) {
+			foreach ($value as $singleValue) {
 				$this->value[] = $valueFactory->createValue($singleValue);
 			}
 		} else {
@@ -77,7 +82,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValue() {
-		if(is_array($this->value)) throw new T3_phpCR_ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
+		if (is_array($this->value)) throw new T3_phpCR_ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
 
 		return clone $this->value;
 	}
@@ -117,7 +122,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getString() {
-		if(is_array($this->value)) throw new T3_phpCR_ValueFormatException('getString() cannot be called on multi-valued properties.', 1203338111);
+		if (is_array($this->value)) throw new T3_phpCR_ValueFormatException('getString() cannot be called on multi-valued properties.', 1203338111);
 
 		return $this->value->getString();
 	}
@@ -141,7 +146,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getLong() {
-		if(is_array($this->value)) throw new T3_phpCR_ValueFormatException('getLong() cannot be called on multi-valued properties.', 1203338188);
+		if (is_array($this->value)) throw new T3_phpCR_ValueFormatException('getLong() cannot be called on multi-valued properties.', 1203338188);
 
 		return $this->value->getLong();
 	}
@@ -156,7 +161,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDouble() {
-		if(is_array($this->value)) throw new T3_phpCR_ValueFormatException('getDouble() cannot be called on multi-valued properties.', 1203338188);
+		if (is_array($this->value)) throw new T3_phpCR_ValueFormatException('getDouble() cannot be called on multi-valued properties.', 1203338188);
 
 		return $this->value->getDouble();
 	}
@@ -171,7 +176,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBoolean() {
-		if(is_array($this->value)) throw new T3_phpCR_ValueFormatException('getBoolean() cannot be called on multi-valued properties.', 1203338188);
+		if (is_array($this->value)) throw new T3_phpCR_ValueFormatException('getBoolean() cannot be called on multi-valued properties.', 1203338188);
 
 		return $this->value->getBoolean();
 	}
@@ -185,7 +190,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDate() {
-		if(is_array($this->value)) throw new T3_phpCR_ValueFormatException('getDate() cannot be called on multi-valued properties.', 1203338327);
+		if (is_array($this->value)) throw new T3_phpCR_ValueFormatException('getDate() cannot be called on multi-valued properties.', 1203338327);
 
 		return $this->value->getDate();
 	}
@@ -199,20 +204,20 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getStream() {
-		if(is_array($this->value)) throw new T3_phpCR_ValueFormatException('getStream() cannot be called on multi-valued properties.', 1203338571);
+		if (is_array($this->value)) throw new T3_phpCR_ValueFormatException('getStream() cannot be called on multi-valued properties.', 1203338571);
 
 		return $this->value->getStream();
 	}
 
 	/**
-	 * Returns true if this Item is a Node; returns false if this Item is a
+	 * Returns FALSE if this Item is a Node; returns FALSE if this Item is a
 	 * Property.
 	 *
 	 * @return boolean
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function isNode() {
-		return false;
+		return FALSE;
 	}
 
 	/**
@@ -287,7 +292,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_Item implements T3_phpCR_PropertyIn
 		} else {
 			$valueFactory = $this->componentManager->getComponent('T3_phpCR_ValueFactoryInterface');
 			if (is_array($value)) {
-				foreach($value as $singleValue) {
+				foreach ($value as $singleValue) {
 					$this->value[] = $valueFactory->createValue($singleValue);
 				}
 			} else {

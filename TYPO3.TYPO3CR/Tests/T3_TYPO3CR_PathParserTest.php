@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,15 +15,21 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id: TYPO3CR_WorkspaceTest.php 328 2007-09-04 13:44:34Z robert $
+ */
+
+/**
  * Tests for the PathParser implementation of TYPO3CR
  *
- * @package		TYPO3CR
- * @subpackage	Tests
- * @version 	$Id: TYPO3CR_WorkspaceTest.php 328 2007-09-04 13:44:34Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id: TYPO3CR_WorkspaceTest.php 328 2007-09-04 13:44:34Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_PathParserTest extends T3_Testing_BaseTestCase {
+class T3_TYPO3CR_PathParserTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * @var T3_TYPO3CR_Node

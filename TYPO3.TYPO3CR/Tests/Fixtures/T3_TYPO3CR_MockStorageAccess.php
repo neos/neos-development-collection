@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,12 +15,19 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ */
+
+/**
  * A mock Storage Access
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface {
 
@@ -166,8 +173,8 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 		$uuids = array();
 		if (key_exists($this->workspaceName, $this->rawNodesByUUIDGroupedByWorkspace)) {
 			if (key_exists($nodeId, $this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName])) {
-				foreach($this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName] as $uuid => $rawNode) {
-					if($rawNode['pid'] == $nodeId) {
+				foreach ($this->rawNodesByUUIDGroupedByWorkspace[$this->workspaceName] as $uuid => $rawNode) {
+					if ($rawNode['pid'] == $nodeId) {
 						$uuids[] = $uuid;
 					}
 				}

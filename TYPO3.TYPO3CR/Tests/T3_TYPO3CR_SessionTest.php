@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -14,17 +14,24 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
+/**
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
+ */
+
 require_once('Fixtures/T3_TYPO3CR_MockStorageAccess.php');
 
 /**
  * Tests for the Session implementation of TYPO3CR
  *
- * @package   phpCR
- * @version   $Id$
+ * @package TYPO3CR
+ * @subpackage Tests
+ * @version $Id$
  * @copyright Copyright belongs to the respective authors
- * @license   http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
+class T3_TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if getRepository returns the Repository object used to create the Session object.
@@ -99,7 +106,7 @@ class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
 		$node = $session->getNodeByUUID($uuid);
-		$this->assertType('T3_phpCR_NodeInterface', $node, 'The session did not return a node object on getNodeByUUID('.$uuid.').');
+		$this->assertType('T3_phpCR_NodeInterface', $node, 'The session did not return a node object on getNodeByUUID(' . $uuid . ').');
 	}
 
 	/**
@@ -145,7 +152,7 @@ class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Checks if isLve() returns false after logout().
+	 * Checks if isLve() returns FALSE after logout().
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -354,7 +361,7 @@ class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 
 		$expectedURI = 'http://www.jcp.org/jcr/1.0'; 
 		$returnedURI = $session->getNamespaceURI('jcr');
-		$this->assertEquals($expectedURI, $returnedURI, 'The namespace URI for the prefix "jcr" was not successfully received. (Received: '.$returnedURI.')');
+		$this->assertEquals($expectedURI, $returnedURI, 'The namespace URI for the prefix "jcr" was not successfully received. (Received: ' . $returnedURI . ')');
 	}
 
 	/**
@@ -397,7 +404,7 @@ class TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 
 		$session->setNamespacePrefix('nt', $testUri);
 		$this->assertEquals($testUri, $session->getNamespaceUri('nt'), 'Reregistering an already existing prefix does not work.');
-		if(in_array('localPrefixToTest', $session->getNamespacePrefixes())) {
+		if (in_array('localPrefixToTest', $session->getNamespacePrefixes())) {
 			$this->fail('Reregistering an already existing uri does not remove the existing prefix.');
 		}
 	}

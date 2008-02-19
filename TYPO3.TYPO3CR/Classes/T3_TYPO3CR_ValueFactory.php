@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,12 +15,17 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id: T3_TYPO3CR_Node.php 285 2007-07-19 21:28:14Z karsten $
+ */
+
+/**
  * A ValueFactory, used to create Value objects.
  *
- * @package		TYPO3CR
- * @version 	$Id: T3_TYPO3CR_Node.php 285 2007-07-19 21:28:14Z karsten $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id: T3_TYPO3CR_Node.php 285 2007-07-19 21:28:14Z karsten $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_TYPO3CR_ValueFactory implements T3_phpCR_ValueFactoryInterface {
 
@@ -62,12 +67,12 @@ class T3_TYPO3CR_ValueFactory implements T3_phpCR_ValueFactoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createValue($value, $type = T3_phpCR_PropertyType::UNDEFINED) {
-		if(is_a($value, 'T3_phpCR_NodeInterface')) {
+		if (is_a($value, 'T3_phpCR_NodeInterface')) {
 			$value = $value->getUUID();
 			$type = T3_phpCR_PropertyType::REFERENCE;
-		} elseif(is_a($value, 'DateTime')) {
+		} elseif (is_a($value, 'DateTime')) {
 			$type = T3_phpCR_PropertyType::DATE;
-		} elseif(is_resource($value)) {
+		} elseif (is_resource($value)) {
 			$data = '';
 			while (!feof($value)) {
 				$data .= fread($value, 8192);
@@ -75,15 +80,15 @@ class T3_TYPO3CR_ValueFactory implements T3_phpCR_ValueFactoryInterface {
 			fclose($value);
 			$value &= $data;
 			$type = T3_phpCR_PropertyType::BINARY;
-		} elseif(T3_PHP6_Functions::is_binary($value)) {
+		} elseif (T3_PHP6_Functions::is_binary($value)) {
 			$type = T3_phpCR_PropertyType::BINARY;
-		} elseif(is_double($value)) {
+		} elseif (is_double($value)) {
 			$type = T3_phpCR_PropertyType::DOUBLE;
-		} elseif(is_bool($value)) {
+		} elseif (is_bool($value)) {
 			$type = T3_phpCR_PropertyType::BOOLEAN;
-		} elseif(is_long($value)) {
+		} elseif (is_long($value)) {
 			$type = T3_phpCR_PropertyType::LONG;
-		} elseif(is_string($value)) {
+		} elseif (is_string($value)) {
 			$type = T3_phpCR_PropertyType::STRING;
 		}
 

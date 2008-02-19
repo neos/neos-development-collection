@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,14 +15,19 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id$
+ */
+
+/**
  * A Node
  *
- * @package		TYPO3CR
- * @version		$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface {
+class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeInterface {
 
 	/**
 	 * @var string
@@ -97,8 +102,8 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @todo The NodeType object should be coming from some factory-thingy. Right now it's protoype (defined in phpCR Components.conf), but actually the same nodetype could be the same object!
 	 */
 	public function initializeFromArray(array $rawData) {
-		if(!isset($this->id)) {
-			if(isset($rawData['id'])) {
+		if (!isset($this->id)) {
+			if (isset($rawData['id'])) {
 				$this->id = $rawData['id'];
 			}
 			if ($rawData['pid'] == '0') {
@@ -123,8 +128,8 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 */
 	protected function initializeProperties() {
 		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getUUID());
-		if(is_array($rawProperties)) {
-			foreach($rawProperties as $rawProperty) {
+		if (is_array($rawProperties)) {
+			foreach ($rawProperties as $rawProperty) {
 				$property = $this->componentManager->getComponent('T3_phpCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
 				$this->properties[$property->getName()] = $property;
 			}
@@ -132,8 +137,8 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	}
 
 	/**
-	 * Returns true if this node has one or more properties accessible
-	 * through the current Session. Returns false otherwise.
+	 * Returns FALSE if this node has one or more properties accessible
+	 * through the current Session. Returns FALSE otherwise.
 	 *
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -157,7 +162,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @todo Implement support for $namePattern
 	 */
 	public function getProperties($namePattern = NULL) {
-		if($namePattern !== NULL) throw new T3_phpCR_RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
+		if ($namePattern !== NULL) throw new T3_phpCR_RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
 		return $this->componentManager->getComponent('T3_phpCR_PropertyIteratorInterface', $this->properties);
 	}
@@ -171,7 +176,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getProperty($relativePath) {
-		if(T3_PHP6_Functions::strpos($relativePath, '/') === FALSE && isset($this->properties[$relativePath])) {
+		if (T3_PHP6_Functions::strpos($relativePath, '/') === FALSE && isset($this->properties[$relativePath])) {
 			return $this->properties[$relativePath];
 		} else {
 			$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParserInterface');
@@ -183,12 +188,12 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * Checks if a property exists
 	 * 
 	 * @param  string		$relativePath
-	 * @return boolean		true if property specified with $relativePath exists
+	 * @return boolean		FALSE if property specified with $relativePath exists
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperty($relativePath) {
-		if(T3_PHP6_Functions::strpos($relativePath, '/') === FALSE) {
+		if (T3_PHP6_Functions::strpos($relativePath, '/') === FALSE) {
 			return isset($this->properties[$relativePath]);
 		} else {
 			try {
@@ -233,14 +238,14 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	}
 
 	/**
-	 * Returns true if this node has one or more child nodes accessible
-	 * through the current Session. Returns false otherwise.
+	 * Returns FALSE if this node has one or more child nodes accessible
+	 * through the current Session. Returns FALSE otherwise.
 	 *
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasNodes() {
-		if(!is_array($this->nodes)) {
+		if (!is_array($this->nodes)) {
 			$this->initializeNodes();
 		}
 		return count($this->nodes) > 0;
@@ -268,9 +273,9 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodes($namePattern = NULL) {
-		if($namePattern !== NULL) throw new T3_phpCR_RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
+		if ($namePattern !== NULL) throw new T3_phpCR_RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
 
-		if(!is_array($this->nodes)) {
+		if (!is_array($this->nodes)) {
 			$this->initializeNodes();
 		}
 
@@ -286,7 +291,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	protected function initializeNodes() {
 		$this->nodes = array();
 		$rawNodeUUIDs = $this->storageAccess->getUUIDsOfSubNodesOfNode($this->getUUID());
-		foreach($rawNodeUUIDs as $rawNodeUUID) {
+		foreach ($rawNodeUUIDs as $rawNodeUUID) {
 			$node = $this->session->getNodeByUUID($rawNodeUUID);
 			$this->nodes[$node->getUUID()] = $node;
 		}
@@ -305,7 +310,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	}
 
 	/**
-	 * Returns true if this Item is a Node; returns false if this Item is a
+	 * Returns FALSE if this Item is a Node; returns FALSE if this Item is a
 	 * Property.
 	 *
 	 * @return boolean
@@ -371,7 +376,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * criteria of the parent node's nodetype.
 	 *
 	 * @param string $relPath The path of the new node to be created.
-	 * @param string|null $primaryNodeTypeName The name of the primary nodetype of the new node. (Optional)
+	 * @param string|NULL $primaryNodeTypeName The name of the primary nodetype of the new node. (Optional)
 	 * @return object A node object
 	 * @throws T3_phpCR_NoSuchNodeTypeException
 	 * @throws T3_phpCR_ItemExistsException
@@ -394,7 +399,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 		$pathParser = $this->componentManager->getComponent('T3_TYPO3CR_PathParserInterface');
 		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = $pathParser->getLastPathPart($relativePath);
 
-		if($numberOfElementsRemaining===0) {
+		if ($numberOfElementsRemaining===0) {
 			$newNode = $this->componentManager->getComponent('T3_phpCR_NodeInterface', $this->session, $this->storageAccess);
 			$newNode->initializeFromArray(array(
 				'pid' => $this->getUUID(),
@@ -404,7 +409,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 			));
 			$newNode->setNew(TRUE);
 
-			if(!is_array($this->nodes)) {
+			if (!is_array($this->nodes)) {
 				$this->initializeNodes();
 			}
 			$this->nodes[$newNode->getUUID()] = $newNode;
@@ -424,7 +429,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove() {
-		if(!is_array($this->nodes)) {
+		if (!is_array($this->nodes)) {
 			$this->initializeNodes();
 		}
 
@@ -447,7 +452,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function save() {
-		if(!is_array($this->nodes)) {
+		if (!is_array($this->nodes)) {
 			$this->initializeNodes();
 		}
 		foreach ($this->nodes as $node) {
@@ -458,13 +463,13 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_Item implements T3_phpCR_NodeInterface 
 			$this->saveProperties();
 			$this->storageAccess->removeNode($this->getUUID());
 			// TODO: HOW TO REMOVE THE DELETED NODE FROM THE OBJECT TREE?
-			// $this = null; // does not work.
+			// $this = NULL; // does not work.
 			// $this->parentNode->remove($this); // would be nice
 		} elseif ($this->isNew()===TRUE) {
 			$this->storageAccess->addNode($this->getUUID(), $this->parentNode->getUUID(), $this->nodeType->getId(), $this->name);
 			$this->saveProperties();
 		} elseif ($this->isModified()===TRUE) {
-			if($this->getDepth() == 0) {
+			if ($this->getDepth() == 0) {
 				$this->storageAccess->updateNode($this->getUUID(), 0, $this->nodeType->getId(), $this->name);
 			} else {
 				$this->storageAccess->updateNode($this->getUUID(), $this->parentNode->getUUID(), $this->nodeType->getId(), $this->name);

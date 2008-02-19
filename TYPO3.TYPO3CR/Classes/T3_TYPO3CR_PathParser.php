@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,15 +15,19 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id: T3_TYPO3CR_Workspace.php 328 2007-09-04 13:44:34Z robert $
+ */
+
+/**
  * Path parser for relative and absolute paths defined in chapter 3.6 ("Path Syntax") 
  * of the JSR-283 specification. This parser should never be called outside the CR!
  *
- * @package		TYPO3CR
- * @version		$Id: T3_TYPO3CR_Workspace.php 328 2007-09-04 13:44:34Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id: T3_TYPO3CR_Workspace.php 328 2007-09-04 13:44:34Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-
 class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 
 	/**
@@ -102,7 +106,7 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 
 			// check for properties
 		if ($numberOfRemainingPathParts == 0 && ($searchMode & self::SEARCH_MODE_PROPERTIES)) {
-			if($currentNode->hasProperty($name)) {
+			if ($currentNode->hasProperty($name)) {
 				return $currentNode->getProperty($name);
 			}
 		}
@@ -129,7 +133,7 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 	 * Checks if a given path is absolute or relative
 	 * 
 	 * @param string $path Absolute or relative path to check
-	 * @return boolean TRUE if path is absolute (e.g. starts with a /), false otherwise
+	 * @return boolean TRUE if path is absolute (e.g. starts with a /), FALSE otherwise
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org> 
 	 */
 	public function isPathAbsolute($path) {

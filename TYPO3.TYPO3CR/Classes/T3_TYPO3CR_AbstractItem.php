@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,15 +15,20 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id: T3_TYPO3CR_Node.php 285 2007-07-19 21:28:14Z karsten $
+ */
+
+/**
  * An Item
  *
- * @package		TYPO3CR
- * @version 	$Id: T3_TYPO3CR_Node.php 285 2007-07-19 21:28:14Z karsten $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id: T3_TYPO3CR_Node.php 285 2007-07-19 21:28:14Z karsten $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
- 
+abstract class T3_TYPO3CR_AbstractItem implements T3_phpCR_ItemInterface {
+
 	/**
 	 * @var T3_TYPO3CR_StorageAccess
 	 */
@@ -90,7 +95,7 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function getName() {
-		if ($this->isNode() && $this->parentNode == null) {
+		if ($this->isNode() && $this->parentNode == NULL) {
 			return '';
 		}
 
@@ -162,7 +167,7 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	}
 
 	/**
-	 * Returns true if this Item is a Node; returns false if this Item is a
+	 * Returns TRUE if this Item is a Node; returns FALSE if this Item is a
 	 * Property.
 	 *
 	 * @return boolean
@@ -220,7 +225,7 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	 */
 	public function getAncestor($depth) {
 		if ($depth < 0 || $depth > $this->getDepth()) {
-			throw new T3_phpCR_ItemNotFoundException("Invalid ancestor depth (".$depth.")", 1187530802);
+			throw new T3_phpCR_ItemNotFoundException('Invalid ancestor depth (' . $depth . ')', 1187530802);
 		}
 
 		if ($depth == 0) {
@@ -231,8 +236,8 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 		$slash = 0;
 		for ($i = 0; $i < $depth-1; $i++) {
 			$slash = T3_PHP6_Functions::strpos($path, '/', $slash+1);
-			if ($slash === false) {
-				throw new T3_phpCR_ItemNotFoundException("Invalid ancestor depth (".$depth.")", 1187530839);
+			if ($slash === FALSE) {
+				throw new T3_phpCR_ItemNotFoundException('Invalid ancestor depth (' . $depth . ')', 1187530839);
 			}
 		}
 		$slash = T3_PHP6_Functions::strpos($path, '/', $slash+1);
@@ -243,7 +248,7 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 		try {
 			return $this->getSession()->getItem(T3_PHP6_Functions::substr($path, 0, $slash));
 		} catch (T3_phpCR_ItemNotFoundException $e) {
-			throw new T3_phpCR_AccessDeniedException("Ancestor access denied (".$depth.")", 1187530845);
+			throw new T3_phpCR_AccessDeniedException('Ancestor access denied (' . $depth . ')', 1187530845);
 		}
 	}
 
@@ -264,7 +269,7 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 		} else {
 			$depth = 1;
 			$slash = T3_PHP6_Functions::strpos($path, '/', 1);
-			while ($slash !== false) {
+			while ($slash !== FALSE) {
 				$depth++;
 				$slash = T3_PHP6_Functions::strpos($path, '/', $slash+1);
 			}
@@ -273,9 +278,9 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	}
 
 	/**
-	 * Returns true if this Item object represents the same actual workspace
+	 * Returns TRUE if this Item object represents the same actual workspace
 	 * item as the object otherItem. Two Item objects represent the same
-	 * workspace item if all the following are true:
+	 * workspace item if all the following are TRUE:
 	 * - Both objects were acquired through Session objects that were created by
 	 * 	 the same Repository object.
 	 * - Both objects were acquired through Session objects bound to the same
@@ -294,7 +299,7 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	 * This method does not compare the states of the two items. For example, if
 	 * two Item objects representing the same actual workspace item have been
 	 * retrieved through two different sessions and one has been modified, then
-	 * this method will still return true when comparing these two objects. Note
+	 * this method will still return FALSE when comparing these two objects. Note
 	 * that if two Item objects representing the same workspace item are retrieved
 	 * through the same session they will always reflect the same state
 	 * (see 5.1.3 Reflecting Item State) so comparing state is not an issue.
@@ -306,14 +311,14 @@ abstract class T3_TYPO3CR_Item implements T3_phpCR_ItemInterface {
 	 * @todo Add (proper) checks for the repository and workspace conditions
 	 */
 	public function isSame(T3_phpCR_ItemInterface $otherItem) {
-		if($this->getSession()->getWorkspace()->getName() != $otherItem->getSession()->getWorkspace()->getName()) return FALSE;
+		if ($this->getSession()->getWorkspace()->getName() != $otherItem->getSession()->getWorkspace()->getName()) return FALSE;
 
-		if($this instanceof T3_TYPO3CR_Node) {
+		if ($this instanceof T3_TYPO3CR_Node) {
 			return (
 				($otherItem instanceof T3_TYPO3CR_Node) &&
 				($this->getUUID() == $otherItem->getUUID())
 			);
-		} elseif($otherItem instanceof T3_TYPO3CR_Property) {
+		} elseif ($otherItem instanceof T3_TYPO3CR_Property) {
 			return (
 				($otherItem instanceof T3_TYPO3CR_Property) &&
 				($this->getName() == $otherItem->getName()) &&

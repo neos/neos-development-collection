@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,12 +15,17 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id$
+ */
+
+/**
  * A Value
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 
@@ -72,12 +77,12 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getString() {
-		if(!$this->nonStreamConversionAllowed) {
+		if (!$this->nonStreamConversionAllowed) {
 			throw new BadMethodCallException('getStream() has previously been called on this Value object.', 1190032940);
 		}
 		$this->streamConversionAllowed = FALSE;
 
-		switch($this->type) {
+		switch ($this->type) {
 			case T3_phpCR_PropertyType::DATE:
 				return date_format(new DateTime($this->value), DATE_ISO8601);
 				break;
@@ -107,7 +112,7 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 	 * @todo Implement this. We may need the resource manager first...
 	 */
 	public function getStream() {
-		if(!$this->streamConversionAllowed) {
+		if (!$this->streamConversionAllowed) {
 			throw new BadMethodCallException('A non stream get method has previously been called on this Value object.', 1190032941);
 		}
 		$this->nonStreamConversionAllowed = FALSE;
@@ -125,7 +130,7 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getLong() {
-		if(!$this->nonStreamConversionAllowed) {
+		if (!$this->nonStreamConversionAllowed) {
 			throw new BadMethodCallException('getStream() has previously been called on this Value object.', 1190032942);
 		}
 		$this->streamConversionAllowed = FALSE;
@@ -155,7 +160,7 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDate() {
-		if(!$this->nonStreamConversionAllowed) {
+		if (!$this->nonStreamConversionAllowed) {
 			throw new BadMethodCallException('getStream() has previously been called on this Value object.', 1190032944);
 		}
 		$this->streamConversionAllowed = FALSE;
@@ -163,7 +168,7 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 		try {
 			$DateTime = new DateTime($this->value);
 		} catch (Exception $e) {
-			throw new T3_phpCR_ValueFormatException('Conversion to a DateTime object is not possible. Cause: '.$e->getMessage(), 1190034628);
+			throw new T3_phpCR_ValueFormatException('Conversion to a DateTime object is not possible. Cause: ' . $e->getMessage(), 1190034628);
 		}
 		return $DateTime;
 	}
@@ -178,7 +183,7 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBoolean() {
-		if(!$this->nonStreamConversionAllowed) {
+		if (!$this->nonStreamConversionAllowed) {
 			throw new BadMethodCallException('getStream() has previously been called on this Value object.', 1190032945);
 		}
 		$this->streamConversionAllowed = FALSE;

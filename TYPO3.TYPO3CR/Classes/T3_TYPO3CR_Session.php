@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,12 +15,17 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id$
+ */
+
+/**
  * A Session
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 
@@ -58,7 +63,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 * @var array of T3_TYPO3CR_Node - stores references to all loaded nodes in a UUID->value fashion.
 	 */
 	protected $currentlyLoadedNodes = array();
-	 
+
 	/**
 	 * @var array Associative array of local namespace mappings (created either explicitely or implicitely)
 	 */
@@ -76,7 +81,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 */
 	public function __construct($workspaceName, T3_phpCR_RepositoryInterface $repository, T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_FLOW3_Component_ManagerInterface $componentManager) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
-		
+
 		$this->componentManager = $componentManager;
 		$this->repository = $repository;
 		$this->storageAccess = $storageAccess;
@@ -97,7 +102,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 
 	/**
 	 * Gets the user ID associated with this Session. This method is free to return an
-	 * 'anonymous user ID' or null.
+	 * 'anonymous user ID' or NULL.
 	 * 
 	 * Currently always returns NULL!
 	 * 
@@ -123,7 +128,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	}
 
 	/**
-	 * Returns the value of the named attribute as an Object, or null if no
+	 * Returns the value of the named attribute as an Object, or NULL if no
 	 * attribute of the given name exists.
 	 *
 	 * @param String $name
@@ -175,8 +180,8 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 		}
 
 		$rawNode = $this->storageAccess->getRawNodeByUUID($uuid);
-		if($rawNode === FALSE) {
-			throw new T3_phpCR_ItemNotFoundException('Node with UUID '.$uuid.' not found in repository.', 1181070997);
+		if ($rawNode === FALSE) {
+			throw new T3_phpCR_ItemNotFoundException('Node with UUID ' . $uuid . ' not found in repository.', 1181070997);
 		}
 		$node = $this->componentManager->getComponent('T3_phpCR_NodeInterface', $this, $this->storageAccess);
 		$node->initializeFromArray($rawNode);
@@ -198,7 +203,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	}
 
 	/**
-	 * Returns true if this Session object is usable by the client. A usable
+	 * Returns TRUE if this Session object is usable by the client. A usable
 	 * Session object is one that is neither logged-out, timed-out nor in any
 	 * other way disconnected from the repository.
 	 *

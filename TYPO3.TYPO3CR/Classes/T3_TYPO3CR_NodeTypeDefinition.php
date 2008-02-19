@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,12 +15,17 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @version $Id$
+ */
+
+/**
  * A NodeTypeDefinition
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_TYPO3CR_NodeTypeDefinition implements T3_phpCR_NodeTypeDefinitionInterface {
 
@@ -69,7 +74,7 @@ class T3_TYPO3CR_NodeTypeDefinition implements T3_phpCR_NodeTypeDefinitionInterf
 	 * In implementations that support node type registration (see 6.6 Node
 	 * Type Registration), if this NodeTypeDefinition object is actually a
 	 * newly-created empty NodeTypeTemplate, then this method will return
-	 * null.
+	 * NULL.
 	 * 
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>

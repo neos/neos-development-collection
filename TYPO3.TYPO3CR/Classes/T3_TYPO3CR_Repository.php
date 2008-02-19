@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,12 +15,17 @@ declare(encoding = 'utf-8');
  *                                                                        */ 
 
 /**
+ * @package TYPO3CR
+ * @version $Id$
+ */
+
+/**
  * A Repository
  * 
- * @package		TYPO3CR
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_TYPO3CR_Repository implements T3_phpCR_RepositoryInterface {
 
@@ -135,7 +140,7 @@ class T3_TYPO3CR_Repository implements T3_phpCR_RepositoryInterface {
 	/**
 	 * Returns the descriptor for the specified key. Used to query information about
 	 * this repository implementation. The set of available keys can be found by
-	 * calling getDescriptorKeys. If the specified key is not found, null is
+	 * calling getDescriptorKeys. If the specified key is not found, NULL is
 	 * returned.
 	 *
 	 * @return mixed
