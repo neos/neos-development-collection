@@ -60,7 +60,7 @@ class T3_TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 		$this->assertType('T3_phpCR_WorkspaceInterface', $session->getWorkspace(), 'The session did not return a workspace object on getWorkspace().');
 	}
 
-	/** 
+	/**
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
 	 */
@@ -359,7 +359,7 @@ class T3_TYPO3CR_SessionTest extends T3_Testing_BaseTestCase {
 		$mockStorageAccess = $this->getMock('T3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
 		$session = new T3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
-		$expectedURI = 'http://www.jcp.org/jcr/1.0'; 
+		$expectedURI = 'http://www.jcp.org/jcr/1.0';
 		$returnedURI = $session->getNamespaceURI('jcr');
 		$this->assertEquals($expectedURI, $returnedURI, 'The namespace URI for the prefix "jcr" was not successfully received. (Received: ' . $returnedURI . ')');
 	}

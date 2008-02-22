@@ -193,10 +193,10 @@ abstract class T3_TYPO3CR_AbstractItem implements T3_phpCR_ItemInterface {
 	 *
 	 * An ItemNotFoundException is thrown if there is no parent node. This
 	 * only happens if this item is the root node of a workspace.
-	 * 
+	 *
 	 * An AccessDeniedException is thrown if the current session does not
 	 * have sufficient access permissions to retrieve the parent of this item.
-	 * 
+	 *
 	 * A RepositoryException is thrown if another error occurs.
 	 *
 	 * @return T3_phpCR_Node The parent node of the item
@@ -209,7 +209,7 @@ abstract class T3_TYPO3CR_AbstractItem implements T3_phpCR_ItemInterface {
 
 	/**
 	 * Returns the ancestor of this item at the given depth.
-	 * 
+	 *
 	 * The default implementation handles the root node at depth zero and
 	 * this item at depth equal to the depth of this item as special cases,
 	 * and uses Session->getItem(String) to retrieve other
@@ -254,7 +254,7 @@ abstract class T3_TYPO3CR_AbstractItem implements T3_phpCR_ItemInterface {
 
 	/**
 	 * Returns the depth of this item.
-	 * 
+	 *
 	 * The default implementation determines the depth by counting the
 	 * slashes in the path returned by getPath().
 	 *

@@ -34,7 +34,7 @@ class T3_TYPO3CR_NodeIterator extends T3_TYPO3CR_RangeIterator implements T3_php
 	 *
 	 * @return T3_phpCR_NodeInterface
 	 * @throws T3_phpCR_NoSuchElementException if the iterator contains no more elements.
-	 * 
+	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function nextNode() {

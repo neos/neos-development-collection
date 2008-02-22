@@ -41,7 +41,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Connects to the database using the provided DSN and (optional) user data
-	 * 
+	 *
 	 * @param string $dsn The DSN to use for connecting to the DB
 	 * @param string $username The username to use for connecting to the DB
 	 * @param string $password The password to use for connecting to the DB
@@ -55,7 +55,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Sets the name of the current workspace
-	 * 
+	 *
 	 * @param  string $workspaceName Name of the workspace which should be used for all storage operations
 	 * @return void
 	 * @throws InvalidArgumentException
@@ -65,10 +65,10 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 		if ($workspaceName == '' || !is_string($workspaceName)) throw new InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1200614989);
 		$this->workspaceName = $workspaceName;
 	}
-	
+
 	/**
 	 * Fetches raw node data from the database
-	 * 
+	 *
 	 * @param integer $nodeId The (internal) ID of the node to fetch
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -94,7 +94,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Fetches raw node data of the root node of the current workspace.
-	 * 
+	 *
 	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -141,7 +141,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Fetches raw nodetype data from the database
-	 * 
+	 *
 	 * @param integer $nodeTypeId The (internal) id of the nodetype record to fetch
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -276,7 +276,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Adds a namespace identified by prefix and URI
-	 * 
+	 *
 	 * @param string $prefix The namespace prefix to register
 	 * @param string $uri The namespace URI to register
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
@@ -288,7 +288,7 @@ class T3_TYPO3CR_StorageAccess_PDO implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Deletes the namespace identified by $prefix.
-	 * 
+	 *
 	 * @param string $prefix The prefix of the namespace to delete
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */

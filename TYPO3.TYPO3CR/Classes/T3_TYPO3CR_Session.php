@@ -67,7 +67,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	/**
 	 * @var array Associative array of local namespace mappings (created either explicitely or implicitely)
 	 */
-	protected $localNamespaceMappings = array(); 
+	protected $localNamespaceMappings = array();
 
 	/**
 	 * Constructs a Session object
@@ -103,9 +103,9 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	/**
 	 * Gets the user ID associated with this Session. This method is free to return an
 	 * 'anonymous user ID' or NULL.
-	 * 
+	 *
 	 * Currently always returns NULL!
-	 * 
+	 *
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implement after making the repository actually honour the credentials given to login().
@@ -121,7 +121,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 *
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Implement after actually making use of the login credentials. 
+	 * @todo Implement after actually making use of the login credentials.
 	 */
 	public function getAttributeNames() {
 		return array();
@@ -141,7 +141,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 
 	/**
 	 * Returns the Workspace attached to this Session.
-	 * 
+	 *
 	 * @return T3_TYPO3CR_Workspace
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -193,7 +193,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	/**
 	 * Releases all resources associated with this Session. This method should
 	 * be called when a Session is no longer needed.
-	 * 
+	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -227,7 +227,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	 * Returns the node at the specified absolute path in the workspace.
 	 * if no such node exists, then it returns the property at the specified path.
 	 * If no such property exists, a T3_phpCR_PathNotFoundException is thrown.
-	 * 
+	 *
 	 * @param string $absPath absolute path
 	 * @return T3_phpCR_Item
 	 * @throws T3_phpCR_PathNotFoundException
@@ -241,7 +241,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	/**
 	 * Returns the node at the specified absolute path in the workspace.
 	 * If no such node exists, a T3_phpCR_PathNotFoundException is thrown.
-	 * 
+	 *
 	 * @param string $absPath absolute path
 	 * @return T3_phpCR_Item
 	 * @throws T3_phpCR_PathNotFoundException
@@ -254,7 +254,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	/**
 	 * Returns the property at the specified absolute path in the workspace.
 	 * If no such property exists, a T3_phpCR_PathNotFoundException is thrown.
-	 * 
+	 *
 	 * @param string $absPath absolute path
 	 * @return T3_phpCR_Item
 	 * @throws T3_phpCR_PathNotFoundException
@@ -267,7 +267,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	/**
 	 * This method returns a ValueFactory that is used to create Value objects for
 	 * use when setting repository properties.
-	 * 
+	 *
 	 * @return T3_phpCR_ValueFactoryInterface
 	 * @throws T3_phpCR_RepositoryException if an error occurs.
 	 */
@@ -278,7 +278,7 @@ class T3_TYPO3CR_Session implements T3_phpCR_SessionInterface {
 	/**
 	 * Maps $uri to $prefix within the scope of this session.
 	 * Overrides previous mappings with the same URI/Prefix
-	 * 
+	 *
 	 * @param string $prefix: XML prefix
 	 * @param string $uri: Namespace URI
 	 * @return void

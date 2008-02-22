@@ -58,7 +58,7 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Sets the name of the current workspace
-	 * 
+	 *
 	 * @param  string $workspaceName Name of the workspace which should be used for all storage operations
 	 * @return void
 	 * @throws InvalidArgumentException
@@ -71,7 +71,7 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Fetches raw node data from the database
-	 * 
+	 *
 	 * @param  integer $id The (internal) ID of the node to fetch
 	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>
@@ -103,7 +103,7 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Fetches raw node data of the root node of the current workspace.
-	 * 
+	 *
 	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -120,17 +120,17 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 	 * @return array
 	 */
 	public function getRawNamespaces() {
-		
+
 	}
 
 	/**
 	 * Adds a namespace identified by prefix and URI
-	 * 
+	 *
 	 * @param string $prefix The namespace prefix to register
 	 * @param string $uri The namespace URI to register
 	 */
 	public function addNamespace($prefix, $uri) {
-		
+
 	}
 
 	/**
@@ -140,7 +140,7 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 	 * @param string $uri The URI of the namespace to update
 	 */
 	public function updateNamespacePrefix($prefix, $uri) {
-		
+
 	}
 
 	/**
@@ -150,16 +150,16 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 	 * @param string $uri The URI of the namespace to update
 	 */
 	public function updateNamespaceURI($prefix, $uri) {
-		
+
 	}
 
 	/**
 	 * Deletes the namespace identified by $prefix.
-	 * 
+	 *
 	 * @param string $prefix The prefix of the namespace to delete
 	 */
 	public function deleteNamespace($prefix) {
-		
+
 	}
 
 	/**
@@ -201,12 +201,12 @@ class T3_TYPO3CR_MockStorageAccess implements T3_TYPO3CR_StorageAccessInterface 
 
 	/**
 	 * Fetches raw nodetype data from the database
-	 * 
+	 *
 	 * @param integer $nodeTypeId The (internal) id of the nodetype record to fetch
 	 * @return array
 	 */
 	public function getRawNodeTypeById($nodeTypeId) {
-		
+
 	}
 
 	/**

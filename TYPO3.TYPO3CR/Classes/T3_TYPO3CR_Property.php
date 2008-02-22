@@ -73,7 +73,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns the value of this property as a Value object.
-	 * 
+	 *
 	 * The object returned is a copy of the stored value and is immutable.
 	 *
 	 * @return T3_TYPO3CR_Value
@@ -88,13 +88,13 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 	}
 
 	/**
-	 * Returns an array of all the values of this property. This method is 
+	 * Returns an array of all the values of this property. This method is
 	 * used to access multi-value properties.
 	 * If the property is single-valued, this method throws a
 	 * ValueFormatException.
 	 * The array returned is a copy of the stored values, so changes to it
 	 * are not reflected in internal storage.
-	 * 
+	 *
 	 * @return array Array of T3_TYPO3CR_Value
 	 * @throws T3_phpCR_ValueFormatException
 	 * @throws T3_phpCR_RepositoryException
@@ -114,7 +114,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns a String representation of the value of this property.
-	 * 
+	 *
 	 * @return string tring representation of the value of this property
 	 * @throws T3_phpCR_ValueFormatException
 	 * @throws T3_phpCR_RepositoryException
@@ -129,7 +129,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns the value as string, alias for getString()
-	 * 
+	 *
 	 * @return string
 	 */
 	public function __toString() {
@@ -138,7 +138,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns a Long (double) representation of the value of this property.
-	 * 
+	 *
 	 * @return long Long representation of the value of this property
 	 * @throws T3_phpCR_ValueFormatException
 	 * @throws T3_phpCR_RepositoryException
@@ -153,7 +153,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns a double representation of the value of this property.
-	 * 
+	 *
 	 * @return double Double representation of the value of this property
 	 * @throws T3_phpCR_ValueFormatException
 	 * @throws T3_phpCR_RepositoryException
@@ -168,7 +168,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns a boolean representation of the value of this property.
-	 * 
+	 *
 	 * @return boolean Boolean representation of the value of this property
 	 * @throws T3_phpCR_ValueFormatException
 	 * @throws T3_phpCR_RepositoryException
@@ -183,7 +183,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns a date representation of the value of this property.
-	 * 
+	 *
 	 * @return DateTime DateTime representation of the value of this property
 	 * @throws T3_phpCR_ValueFormatException
 	 * @throws T3_phpCR_RepositoryException
@@ -197,7 +197,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns a stream representation of the value of this property.
-	 * 
+	 *
 	 * @return InputStream Stream representation of the value of this property
 	 * @throws T3_phpCR_ValueFormatException
 	 * @throws T3_phpCR_RepositoryException
@@ -222,7 +222,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Get path of property
-	 * 
+	 *
 	 * @return string Path to the property
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -237,7 +237,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Return parent node
-	 * 
+	 *
 	 * @return T3_phpCR_Node The Parent Node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -247,7 +247,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Remove property
-	 * 
+	 *
 	 * @todo
 	 */
 	public function remove() {
@@ -256,7 +256,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Returns an array with data ready to be written into the DB
-	 * 
+	 *
 	 * @return array
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -280,7 +280,7 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 
 	/**
 	 * Set a value.
-	 * 
+	 *
 	 * @param mixed $value The value to set
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>

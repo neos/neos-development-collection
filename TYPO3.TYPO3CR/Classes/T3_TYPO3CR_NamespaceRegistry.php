@@ -59,7 +59,7 @@ class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterfac
 	public function __construct(T3_TYPO3CR_StorageAccessInterface $storageAccess, T3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
-		
+
 		$this->initializeCustomNamespaces();
 	}
 
@@ -220,9 +220,9 @@ class T3_TYPO3CR_NamespaceRegistry implements T3_phpCR_NamespaceRegistryInterfac
 
 	/**
 	 * Are we allowed to register/unregister a workspace?
-	 * 
+	 *
 	 * @param string $prefix Prefix of namespace
-	 * @return boolean TRUE if we are allowed to modify the namespace 
+	 * @return boolean TRUE if we are allowed to modify the namespace
 	 * @throws T3_phpCR_NamespaceException
 	 * @todo Throws an AccessDeniedException if this Session does not have permission to add/remove a Namespace
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>

@@ -70,12 +70,12 @@ class T3_TYPO3CR_NodeTypeDefinition implements T3_phpCR_NodeTypeDefinitionInterf
 
 	/**
 	 * Returns the name of the node type.
-	 * 
+	 *
 	 * In implementations that support node type registration (see 6.6 Node
 	 * Type Registration), if this NodeTypeDefinition object is actually a
 	 * newly-created empty NodeTypeTemplate, then this method will return
 	 * NULL.
-	 * 
+	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

@@ -12,7 +12,7 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * @package TYPO3CR
@@ -21,7 +21,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * A Repository
- * 
+ *
  * @package TYPO3CR
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
@@ -98,7 +98,7 @@ class T3_TYPO3CR_Repository implements T3_phpCR_RepositoryInterface {
 	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager, T3_TYPO3CR_StorageAccessInterface $storageAccess) {
 		$this->componentManager = $componentManager;
 		$this->storageAccess = $storageAccess;
-		
+
 	}
 
 	/**
@@ -106,7 +106,7 @@ class T3_TYPO3CR_Repository implements T3_phpCR_RepositoryInterface {
 	 * recognized as the name of an existing workspace in the repository and
 	 * authorization to access that workspace is granted, then a new Session
 	 * object is returned.
-	 * 
+	 *
 	 * @param  T3_phpCR_Credentials $credentials
 	 * @param  string $workspaceName
 	 * @return T3_TYPO3CR_Session

@@ -67,7 +67,7 @@ class T3_TYPO3CR_Workspace implements T3_phpCR_WorkspaceInterface {
 	/**
 	 * Returns the Session object through which this Workspace object was
 	 * acquired.
-	 * 
+	 *
 	 * @return T3_TYPO3CR_Session
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

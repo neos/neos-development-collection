@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * StorageAccess interface 
+ * StorageAccess interface
  *
  * @package TYPO3CR
  * @version $Id: T3_TYPO3CR_StorageAccessInterface.php 328 2007-09-04 13:44:34Z robert $

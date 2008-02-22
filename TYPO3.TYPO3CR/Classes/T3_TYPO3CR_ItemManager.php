@@ -52,8 +52,8 @@ class T3_TYPO3CR_ItemManager implements T3_TYPO3CR_ItemManagerInterface {
 	}
 
 	/**
-	 * Create the Node in nodes. 
-	 * 
+	 * Create the Node in nodes.
+	 *
 	 * @param T3_phpCR_NodeInterface		the node for add
 	 * @return void
 	 * @author Thomas Peterson <info@thomas-peterson.de>
@@ -64,7 +64,7 @@ class T3_TYPO3CR_ItemManager implements T3_TYPO3CR_ItemManagerInterface {
 
 	/**
 	 * get nodes as a NodeIterator
-	 * 
+	 *
 	 * @return T3_phpCR_NodeIteratorInterface the nodes
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @todo How to remove an Item?

@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Path parser for relative and absolute paths defined in chapter 3.6 ("Path Syntax") 
+ * Path parser for relative and absolute paths defined in chapter 3.6 ("Path Syntax")
  * of the JSR-283 specification. This parser should never be called outside the CR!
  *
  * @package TYPO3CR
@@ -31,8 +31,8 @@ declare(ENCODING = 'utf-8');
 class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 
 	/**
-	 * Parse a path - It can be either a relative or an absolute path. We support same-name siblings as well. 
-	 * 
+	 * Parse a path - It can be either a relative or an absolute path. We support same-name siblings as well.
+	 *
 	 * @param string $path Relative or absolute path according to the specification (Section 3.6)
 	 * @param T3_phpCR_NodeInterface $currentNode current node
 	 * @param integer $searchMode 1 (default) for returning only Nodes, 2 for returning only Properties, 3 for returning both
@@ -50,7 +50,7 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 
 	/**
 	 * Parse a relative path.
-	 * 
+	 *
 	 * @param string $path Relative path according to the specification (Section 3.6)
 	 * @param T3_phpCR_NodeInterface $currentNode current node
 	 * @param integer $searchMode 1 (default) for returning only Nodes, 2 for returning only Properties, 3 for returning both
@@ -116,7 +116,7 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 
 	/**
 	 * Get root node by traversing the tree up
-	 * 
+	 *
 	 * @param T3_phpCR_NodeInterface $currentNode current node
 	 * @return T3_phpCR_NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
@@ -131,10 +131,10 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 
 	/**
 	 * Checks if a given path is absolute or relative
-	 * 
+	 *
 	 * @param string $path Absolute or relative path to check
 	 * @return boolean TRUE if path is absolute (e.g. starts with a /), FALSE otherwise
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org> 
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function isPathAbsolute($path) {
 		return ($path{0} == '/');
@@ -143,15 +143,15 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 	/**
 	 * Returns the first element of the path and the remainder.
 	 * Usage: list($firstElement, $remainingPath, $numberOfElementsRemaining) = T3_TYPO3CR_PathParser::getFirstPathPart($path);
-	 * 
+	 *
 	 * @param string $path relative or absolute path
 	 * @return array array[0] is first element, array[1] is the rest, and array[2] is the number of parts remaining in array[1]
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org> 
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
 	public function getFirstPathPart($path) {
-		if (self::isPathAbsolute($path)) { 
-			$path = T3_PHP6_Functions::substr($path, 1); 
+		if (self::isPathAbsolute($path)) {
+			$path = T3_PHP6_Functions::substr($path, 1);
 		}
 		$pathArray = explode('/', $path);
 		$firstElement = array_shift($pathArray);
@@ -162,10 +162,10 @@ class T3_TYPO3CR_PathParser implements T3_TYPO3CR_PathParserInterface {
 	/**
 	 * Returns the last element of the path and the remainder.
 	 * Usage: list($lastElement, $remainingPath, $numberOfElementsRemaining) = T3_TYPO3CR_PathParser::getLastPathPart($pathString);
-	 * 
+	 *
 	 * @param string $path relative or absolute path
 	 * @return array array[0] is last element, array[1] is the first part, and array[2] is the number of parts remaining in array[1]
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org> 
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
 	public function getLastPathPart($path) {

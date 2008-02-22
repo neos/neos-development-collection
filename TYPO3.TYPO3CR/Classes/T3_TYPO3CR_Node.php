@@ -155,7 +155,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 	 *
 	 * If $namePattern is not NULL: Gets all properties of this node accessible
 	 * through the current Session that match namePattern.
-	 * 
+	 *
 	 * @param string $namePattern A pattern to match properties against
 	 * @return T3_TYPO3CR_PropertyIterator
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -169,7 +169,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 
 	/**
 	 * Returns a single property of a node.
-	 * 
+	 *
 	 * @param string $relPath absolute or relative path
 	 * @return T3_TYPO3CR_Property
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
@@ -186,7 +186,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 
 	/**
 	 * Checks if a property exists
-	 * 
+	 *
 	 * @param  string		$relativePath
 	 * @return boolean		FALSE if property specified with $relativePath exists
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
@@ -223,7 +223,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 
 	/**
 	 * Returns the primary node type assigned to this node.
-	 * 
+	 *
 	 * Which NodeType is returned when this method is called on the root node
 	 * of a workspace is up to the implementation, though the returned type must,
 	 * of course, be consistent with the child nodes and properties of the root
@@ -254,11 +254,11 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 	/**
 	 * Returns all child nodes of this node accessible through the current
 	 * Session.
-	 * 
+	 *
 	 * Does not include properties of this node. The same reacquisition
 	 * semantics apply as with getNode. If this node has no accessible
 	 * child nodes, then an empty iterator is returned.
-	 * 
+	 *
 	 * If $namePattern is not NULL: Gets all child nodes of this node
 	 * accessible through the current Session that match namePattern.
 	 * The pattern may be a full name or a partial name with one or more
@@ -284,7 +284,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 
 	/**
 	 * Fetches the properties of the node from the storage layer
-	 * 
+	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -322,7 +322,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 
 	/**
 	 * Returns the path of this node.
-	 * 
+	 *
 	 * The default implementation recursively calls this method on the
 	 * parent node and appends the name and optionally the index of this
 	 * node to construct the full path. Returns "/" if the parent node is
@@ -446,7 +446,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 
 	/**
 	 * Save the node
-	 * 
+	 *
 	 * @return void
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -483,7 +483,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 
 	/**
 	 * Set property $name of $type to $value
-	 * 
+	 *
 	 * @param string $name
 	 * @param mixed $value
 	 * @param unknown $type
@@ -506,7 +506,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 
 	/**
 	 * Save properties.
-	 * 
+	 *
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>

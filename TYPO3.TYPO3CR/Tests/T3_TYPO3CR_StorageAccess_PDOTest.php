@@ -45,7 +45,7 @@ class T3_TYPO3CR_StorageAccess_PDOTest extends T3_TYPO3CR_StorageAccessTestBase 
 
 	/**
 	 * Set up the test environment
-	 * 
+	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

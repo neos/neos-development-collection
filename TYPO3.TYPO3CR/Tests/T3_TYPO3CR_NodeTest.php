@@ -98,7 +98,7 @@ class T3_TYPO3CR_NodeTest extends T3_Testing_BaseTestCase {
 		$firstExpectedUUID = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
 		$firstNode = $this->session->getNodeByUUID($firstExpectedUUID);
 		$this->assertEquals($firstExpectedUUID, $firstNode->getUUID(), 'getUUID() did not return the expected UUID.');
-	
+
 		$secondExpectedUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
 		$secondNode = $this->session->getNodeByUUID($secondExpectedUUID);
 		$this->assertEquals($secondExpectedUUID, $secondNode->getUUID(), 'getUUID() did not return the expected UUID.');

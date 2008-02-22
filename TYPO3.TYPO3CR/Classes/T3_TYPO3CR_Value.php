@@ -69,10 +69,10 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 
 	/**
 	 * Returns a string representation of this value.
-	 * 
+	 *
 	 * @return string A String representation of the value of this property.
-	 * @throws T3_phpCR_ValueFormatException if conversion to a String is not possible. 
-	 * @throws T3_phpCR_IllegalStateException if getStream has previously been called on this Value instance. 
+	 * @throws T3_phpCR_ValueFormatException if conversion to a String is not possible.
+	 * @throws T3_phpCR_IllegalStateException if getStream has previously been called on this Value instance.
 	 * @throws T3_phpCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -93,7 +93,7 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 
 	/**
 	 * Returns the value as string, alias for getString()
-	 * 
+	 *
 	 * @return string
 	 */
 	public function __toString() {
@@ -104,7 +104,7 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 	 * Returns an InputStream representation of this value. Uses the standard
 	 * conversion to binary (see JCR specification).
 	 * It is the responsibility of the caller to close the returned InputStream.
-	 * 
+	 *
 	 * @return InputStream An InputStream representation of this value.
 	 * @throws BadMethodCallException if a non-stream get method has previously been called on this Value instance.
 	 * @throws T3_phpCR_RepositoryException if another error occurs.
@@ -122,10 +122,10 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 
 	/**
 	 * Returns a long representation of this value.
-	 * 
+	 *
 	 * @return string A long representation of the value of this property.
-	 * @throws T3_phpCR_ValueFormatException if conversion to a long is not possible. 
-	 * @throws BadMethodCallException if getStream has previously been called on this Value instance. 
+	 * @throws T3_phpCR_ValueFormatException if conversion to a long is not possible.
+	 * @throws BadMethodCallException if getStream has previously been called on this Value instance.
 	 * @throws T3_phpCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -139,10 +139,10 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 
 	/**
 	 * Returns a double representation of this value. Is an alias for getLong().
-	 * 
+	 *
 	 * @return string A double representation of the value of this property.
-	 * @throws T3_phpCR_ValueFormatException if conversion to a double is not possible. 
-	 * @throws BadMethodCallException if getStream has previously been called on this Value instance. 
+	 * @throws T3_phpCR_ValueFormatException if conversion to a double is not possible.
+	 * @throws BadMethodCallException if getStream has previously been called on this Value instance.
 	 * @throws T3_phpCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -152,10 +152,10 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 
 	/**
 	 * Returns a DateTime representation of this value.
-	 * 
+	 *
 	 * @return DateTime A DateTime representation of the value of this property.
-	 * @throws T3_phpCR_ValueFormatException if conversion to a DateTime is not possible. 
-	 * @throws BadMethodCallException if getStream has previously been called on this Value instance. 
+	 * @throws T3_phpCR_ValueFormatException if conversion to a DateTime is not possible.
+	 * @throws BadMethodCallException if getStream has previously been called on this Value instance.
 	 * @throws T3_phpCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -175,10 +175,10 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 
 	/**
 	 * Returns a boolean representation of this value.
-	 * 
+	 *
 	 * @return string A boolean representation of the value of this property.
-	 * @throws T3_phpCR_ValueFormatException if conversion to a boolean is not possible. 
-	 * @throws BadMethodCallException if getStream has previously been called on this Value instance. 
+	 * @throws T3_phpCR_ValueFormatException if conversion to a boolean is not possible.
+	 * @throws BadMethodCallException if getStream has previously been called on this Value instance.
 	 * @throws T3_phpCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -203,7 +203,7 @@ class T3_TYPO3CR_Value implements T3_phpCR_ValueInterface {
 	 * * T3_phpCR_PropertyType::REFERENCE
 	 * * T3_phpCR_PropertyType::WEAKREFERENCE
 	 * * T3_phpCR_PropertyType::URI
-	 * 
+	 *
 	 * The type returned is that which was set at property creation.
 	 * @return integer The type of the value
 	 * @author Karsten Dambekalns <karsten@typo3.org>
