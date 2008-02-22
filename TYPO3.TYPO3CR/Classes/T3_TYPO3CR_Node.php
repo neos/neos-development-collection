@@ -486,7 +486,7 @@ class T3_TYPO3CR_Node extends T3_TYPO3CR_AbstractItem implements T3_phpCR_NodeIn
 	 *
 	 * @param string $name
 	 * @param mixed $value
-	 * @param unknown $type
+	 * @param integer $type
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

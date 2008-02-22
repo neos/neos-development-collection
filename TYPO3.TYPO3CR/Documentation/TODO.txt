@@ -9,7 +9,6 @@ For these functionalities we need to implement at least the following methods:
 
 ==== Level 1 ====
  * Node::hasNode(String relPath)
- * Node::hasProperties(String relPath)
 
 ==== Level 2 ====
 
@@ -29,7 +28,7 @@ implemented as well, of course.
 
  * Node::getProperties() (done, Karsten)
  * Node::hasProperties() (done, Karsten)
- 
+ * Node::hasProperty(String relPath)
 
 * Node::getNode(String relPath) (done, Sebastian)
 * Node::getProperty(String relPath) ( done , Sebastian )
@@ -39,4 +38,3 @@ implemented as well, of course.
  * setProperty(String name, Value value) (done, Sebastian)
  * Node::addNode(String relPath) (done, Thomas & Sebastian)
  * Node addNode(String relPath, String primaryNodeTypeName) (done, Thomas & Sebastian)
- 

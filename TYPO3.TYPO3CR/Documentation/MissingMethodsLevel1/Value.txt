@@ -1,27 +1,11 @@
 == Value ==
 
 === InputStream getStream() ===
-Returns an InputStream representation of this value. Uses the 
-standard conversion to binary. It is the responsibility of the caller 
-to close the returned InputStream. 
-If a non-stream get method has previously been called on this 
-Value instance, an IllegalStateException is thrown. In this 
-case, a new Value instance must be acquired in order to 
-successfully call getStream. 
-A RepositoryException is thrown if another error occurs. 
-
-=== Calendar getDate() ===
-Returns a Calendar representation of this value. 
-The object returned is a copy of the stored value, so changes to it 
-are not reflected in internal storage. 
-If this value cannot be converted to a Calendar, a 
-ValueFormatException is thrown. 
-If getStream has previously been called on this Value instance, an 
-IllegalStateException is thrown. In this case a new Value 
-instance must be acquired in order to successfully call 
-getDate. 
-A RepositoryException is thrown if another error occurs. 
-
-=== int getType() ===
-Returns the type of this value. See 4.2.6 Property Types. The type 
-returned is that which was set at property creation. 
+Returns an InputStream representation of this value. Uses the
+standard conversion to binary. It is the responsibility of the caller
+to close the returned InputStream.
+If a non-stream get method has previously been called on this
+Value instance, an IllegalStateException is thrown. In this
+case, a new Value instance must be acquired in order to
+successfully call getStream.
+A RepositoryException is thrown if another error occurs.

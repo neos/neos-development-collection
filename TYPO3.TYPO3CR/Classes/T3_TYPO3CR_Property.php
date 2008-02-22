@@ -182,11 +182,14 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 	}
 
 	/**
-	 * Returns a date representation of the value of this property.
+	 * Returns a DateTime representation of the value of this property. A
+	 * shortcut for Property.getValue().getDate()
+	 * The object returned is a copy of the stored value, so changes to it
+	 * are not reflected in internal storage.
 	 *
 	 * @return DateTime DateTime representation of the value of this property
-	 * @throws T3_phpCR_ValueFormatException
-	 * @throws T3_phpCR_RepositoryException
+	 * @throws T3_phpCR_ValueFormatException if the property is multi-valued or cannot be converted to a DateTime object
+	 * @throws T3_phpCR_RepositoryException on any other error
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDate() {
@@ -196,11 +199,14 @@ class T3_TYPO3CR_Property extends T3_TYPO3CR_AbstractItem implements T3_phpCR_Pr
 	}
 
 	/**
-	 * Returns a stream representation of the value of this property.
+	 * Returns a stream representation of the value of this
+	 * property. A shortcut for Property.getValue().getStream().
+	 * It is the responsibility of the caller to close the returned
+	 * InputStream.
 	 *
-	 * @return InputStream Stream representation of the value of this property
-	 * @throws T3_phpCR_ValueFormatException
-	 * @throws T3_phpCR_RepositoryException
+	 * @return unknown Stream representation of the value of this property
+	 * @throws T3_phpCR_ValueFormatException if the property is multi-valued
+	 * @throws T3_phpCR_RepositoryException on any other error
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getStream() {
