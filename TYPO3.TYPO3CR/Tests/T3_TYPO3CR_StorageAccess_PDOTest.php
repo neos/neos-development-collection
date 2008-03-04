@@ -50,12 +50,12 @@ class T3_TYPO3CR_StorageAccess_PDOTest extends T3_TYPO3CR_StorageAccessTestBase 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$this->fixtureFolder = TYPO3_PATH_PRIVATEFILECACHE . 'TYPO3CR/Tests/';
+		$this->fixtureFolder = FLOW3_PATH_PRIVATEFILECACHE . 'TYPO3CR/Tests/';
 		if (!is_dir($this->fixtureFolder)) {
 			T3_FLOW3_Utility_Files::createDirectoryRecursively($this->fixtureFolder);
 		}
 		$this->fixtureDB = uniqid('sqlite') . '.db';
-		copy(TYPO3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
+		copy(FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
 		$this->storageAccess = new T3_TYPO3CR_StorageAccess_PDO('sqlite:' . $this->fixtureFolder . $this->fixtureDB);
 	}
 

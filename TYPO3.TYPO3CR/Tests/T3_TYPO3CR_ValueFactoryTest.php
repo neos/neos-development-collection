@@ -113,13 +113,13 @@ class T3_TYPO3CR_ValueFactoryTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function createValueFromBinaryGuessesCorrectType() {
-		$fileHandle = fopen(TYPO3_PATH_ROOT . 'Packages/TYPO3CR/Tests/Fixtures/binaryGarbage.dat', 'rb');
+		$fileHandle = fopen(FLOW3_PATH_ROOT . 'Packages/TYPO3CR/Tests/Fixtures/binaryGarbage.dat', 'rb');
 		$value = $this->valueFactory->createValue($fileHandle);
 		$this->assertEquals($value->getType(), T3_phpCR_PropertyType::BINARY, 'New Value object was not of type BINARY.');
 		$this->assertFalse(is_resource($fileHandle), 'ValueFactory did not close a passed file handle as expected.');
 
 			// The following differentiates between PHP with is_binary and without.
-		$data = file_get_contents(TYPO3_PATH_ROOT . 'Packages/TYPO3CR/Tests/Fixtures/binaryGarbage.dat');
+		$data = file_get_contents(FLOW3_PATH_ROOT . 'Packages/TYPO3CR/Tests/Fixtures/binaryGarbage.dat');
 		$value = $this->valueFactory->createValue($data);
 		if (function_exists('is_binary')) {
 			$this->assertEquals($value->getType(), T3_phpCR_PropertyType::BINARY, 'New Value object was not of type BINARY.');
