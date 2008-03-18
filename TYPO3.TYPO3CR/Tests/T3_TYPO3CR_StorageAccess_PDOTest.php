@@ -50,7 +50,8 @@ class T3_TYPO3CR_StorageAccess_PDOTest extends T3_TYPO3CR_StorageAccessTestBase 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$this->fixtureFolder = FLOW3_PATH_PRIVATEFILECACHE . 'TYPO3CR/Tests/';
+		$environment = $this->componentManager->getComponent('T3_FLOW3_Utility_Environment');
+		$this->fixtureFolder = $environment->getPathToTemporaryDirectory() . 'TYPO3CR/Tests/';
 		if (!is_dir($this->fixtureFolder)) {
 			T3_FLOW3_Utility_Files::createDirectoryRecursively($this->fixtureFolder);
 		}
