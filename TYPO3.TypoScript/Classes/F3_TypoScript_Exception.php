@@ -22,7 +22,7 @@ declare(ENCODING = 'utf-8');
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_TypoScript_Exception extends Exception {
+class F3_TypoScript_Exception extends Exception {
 
 }
 ?>

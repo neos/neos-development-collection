@@ -15,44 +15,32 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * Common class for TypoScript Content Objects
+ * Contract for a TypoScript parser
  * 
  * @package		TypoScript
  * @version 	$Id$
  * @copyright	Copyright belongs to the respective authors
+ * @author Robert Lemke <robert@typo3.org>
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class T3_TypoScript_AbstractContentObject extends T3_TypoScript_AbstractObject {
-	
+interface F3_TypoScript_ParserInterface {
+		
 	/**
-	 * Returns the rendered content of this content object
+	 * Parses the given TypoScript source code and returns an object tree
+	 * as the result.
+	 *
+	 * @param  string								$sourceCode: The TypoScript source code to parse
+	 * @return F3_TypoScript_ObjectTree			A TypoScript object tree, generated from the source code
+	 */
+	public function parse($sourceCode);
+		
+	/**
+	 * Sets the default namespace to the given component name prefix
 	 * 
-	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param  string								$componentNamePrefix: The component name to prepend as the default namespace, without trailing "
+	 * @return void
 	 */
-	abstract public function getRenderedContent();
-	
-	/**
-	 * Returns the rendered content of this content object
-	 *
-	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __toString() {
-		return $this->getRenderedContent();
-	}
+	public function setDefaultNamespace($componentNamePrefix);
 
-	/**
-	 * Runs the processors chain for the given content by using the root processor chain of the
-	 * content object and returns the result value.
-	 *
-	 * @param  string				$content: The content to process
-	 * @result string				The processed content
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function processContent($content) {
-		if (!isset($this->propertyProcessorChains['_root'])) return $content;
-		return $this->propertyProcessorChains['_root']->process($content);
-	}
 }
 ?>

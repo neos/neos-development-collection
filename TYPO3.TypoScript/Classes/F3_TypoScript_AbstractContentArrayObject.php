@@ -22,7 +22,7 @@ declare(ENCODING = 'utf-8');
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class T3_TypoScript_AbstractContentArrayObject extends T3_TypoScript_AbstractContentObject implements ArrayAccess {
+abstract class F3_TypoScript_AbstractContentArrayObject extends F3_TypoScript_AbstractContentObject implements ArrayAccess {
 
 	/**
 	 * @var array An array which contains further content objects which can be set and retrieved through numeric indexes
@@ -106,7 +106,7 @@ abstract class T3_TypoScript_AbstractContentArrayObject extends T3_TypoScript_Ab
 		ksort($this->contentArray);
 		$content = '';
 		foreach ($this->contentArray as $contentItem) {
-			if ($contentItem instanceof T3_TypoScript_AbstractContentObject) {
+			if ($contentItem instanceof F3_TypoScript_AbstractContentObject) {
 				$content .= $contentItem->getRenderedContent();
 			}
 		}

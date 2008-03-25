@@ -5,7 +5,7 @@
  *  objects, variables and properties.
  *
  */
-namespace: default = T3_TYPO3_TypoScript
+namespace: default = F3_TYPO3_TypoScript
  
 object1 = Text
 object1.$message = "Hello world"

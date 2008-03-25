@@ -5,7 +5,7 @@
 #  - namespace declarations
 #  - value assignments: object type and literal
 
-  namespace: cms = T3_TYPO3_TypoScript 
+  namespace: cms = F3_TYPO3_TypoScript 
 test = cms:Text
  	test.value= "Hello world!" 
 

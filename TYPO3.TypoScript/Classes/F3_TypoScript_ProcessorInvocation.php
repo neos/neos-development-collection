@@ -24,7 +24,7 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class T3_TypoScript_ProcessorInvocation {
+class F3_TypoScript_ProcessorInvocation {
 	
 	/**
 	 * @var object An instance of the class providing the processor

@@ -23,6 +23,6 @@ declare(ENCODING = 'utf-8');
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface T3_TypoScript_ObjectInterface {
+interface F3_TypoScript_ObjectInterface {
 }
 ?>

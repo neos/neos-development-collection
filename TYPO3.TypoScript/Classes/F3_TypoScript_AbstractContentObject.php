@@ -15,50 +15,44 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * The implementation of a processor chain
+ * Common class for TypoScript Content Objects
  * 
  * @package		TypoScript
  * @version 	$Id$
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- *
- * @scope prototype
  */
-class T3_TypoScript_ProcessorChain {
+abstract class F3_TypoScript_AbstractContentObject extends F3_TypoScript_AbstractObject {
 	
 	/**
-	 * @var An array of 
-	 */
-	protected $processorInvocations = array();
-	
-	/**
-	 * Sets the processor invocation with a specified index representing the order
-	 * in the processor chain.
-	 *
-	 * @param  integer					$index: A numeric index expressing the order of the processor in the overall chain
-	 * @param  T3_TypoScript_ProcessorInvocation $processorInvocation: The processor invocation
-	 * @return void
+	 * Returns the rendered content of this content object
+	 * 
+	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException
 	 */
-	public function setProcessorInvocation($index, T3_TypoScript_ProcessorInvocation $processorInvocation) {
-		if (!is_integer($index)) throw new InvalidArgumentException('Index must be of type integer, ' . gettype($index) . ' given.', 1179416592);
-		$this->processorInvocations[$index] = $processorInvocation;
-		ksort($this->processorInvocations);
+	abstract public function getRenderedContent();
+	
+	/**
+	 * Returns the rendered content of this content object
+	 *
+	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __toString() {
+		return $this->getRenderedContent();
 	}
-	
+
 	/**
-	 * Runs the through the processor chain to process the specified string.
+	 * Runs the processors chain for the given content by using the root processor chain of the
+	 * content object and returns the result value.
 	 *
-	 * @param  string					$subject: The string to process by the processor chain
-	 * @return string					The result of the processing
+	 * @param  string				$content: The content to process
+	 * @result string				The processed content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function process($subject) {
-		foreach ($this->processorInvocations as $processorInvocation) {
-			$subject = $processorInvocation->process($subject);
-		}
-		return $subject;
+	protected function processContent($content) {
+		if (!isset($this->propertyProcessorChains['_root'])) return $content;
+		return $this->propertyProcessorChains['_root']->process($content);
 	}
 }
 ?>

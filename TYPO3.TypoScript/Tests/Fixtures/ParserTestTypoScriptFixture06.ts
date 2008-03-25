@@ -4,7 +4,7 @@
  *  This fixture serves for testing variables
  *
  */
-namespace: default = T3_TYPO3_TypoScript
+namespace: default = F3_TYPO3_TypoScript
  
 object1 = Text
 object1.$message = "Hello world"

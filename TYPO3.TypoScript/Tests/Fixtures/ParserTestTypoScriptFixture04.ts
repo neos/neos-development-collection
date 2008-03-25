@@ -4,7 +4,7 @@
  *  This fixture serves for testing the parsing of content object arrays / cobjects with array capabilities
  *
  */
-namespace: default = T3_TYPO3_TypoScript
+namespace: default = F3_TYPO3_TypoScript
  
 myArrayObject = ContentArray
 

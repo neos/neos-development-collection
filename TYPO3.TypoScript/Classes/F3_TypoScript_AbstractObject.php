@@ -22,10 +22,10 @@ declare(ENCODING = 'utf-8');
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class T3_TypoScript_AbstractObject implements T3_TypoScript_ObjectInterface {
+abstract class F3_TypoScript_AbstractObject implements F3_TypoScript_ObjectInterface {
 	
 	/**
-	 * @var array An array of T3_TypoScript_ProcessorChain objects
+	 * @var array An array of F3_TypoScript_ProcessorChain objects
 	 */
 	protected $propertyProcessorChains = array();
 
@@ -33,11 +33,11 @@ abstract class T3_TypoScript_AbstractObject implements T3_TypoScript_ObjectInter
 	 * Sets the property processor chain for a specific property
 	 *
 	 * @param  string				$propertyName: Name of the property to set the chain for
-	 * @param  T3_TypoScript_ProcessorChain $propertyProcessorChain: The property processor chain for that property
+	 * @param  F3_TypoScript_ProcessorChain $propertyProcessorChain: The property processor chain for that property
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPropertyProcessorChain($propertyName, T3_TypoScript_ProcessorChain $propertyProcessorChain) {
+	public function setPropertyProcessorChain($propertyName, F3_TypoScript_ProcessorChain $propertyProcessorChain) {
 		$this->propertyProcessorChains[$propertyName] = $propertyProcessorChain;
 	}
 	
@@ -58,7 +58,7 @@ abstract class T3_TypoScript_AbstractObject implements T3_TypoScript_ObjectInter
 	 * Returns the property processor chain for a specific property
 	 *
 	 * @param  string				$propertyName: Name of the property to return the chain of
-	 * @return T3_TypoScript_ProcessorChain $propertyProcessorChain: The property processor chain of that property
+	 * @return F3_TypoScript_ProcessorChain $propertyProcessorChain: The property processor chain of that property
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws LogicException
 	 */

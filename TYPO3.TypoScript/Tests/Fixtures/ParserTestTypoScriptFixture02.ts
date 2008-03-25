@@ -7,7 +7,7 @@
 //  - block comments
 //  - quote escaping in literals
 
-namespace: default = T3_TYPO3_TypoScript
+namespace: default = F3_TYPO3_TypoScript
 
 myObject = Text
 myObject.value = 'Sorry, we\'re closed.'
