@@ -1,6 +1,6 @@
 /**
  * This TypoScript template defines a rudimentary Page object,
- * which is used in the T3_TYPO3_Controllers_PageController until real data
+ * which is used in the F3_TYPO3_Controllers_PageController until real data
  * can be fetched from the Content Repository.
  */
  

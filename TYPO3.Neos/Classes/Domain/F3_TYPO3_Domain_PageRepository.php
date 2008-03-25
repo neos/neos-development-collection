@@ -15,63 +15,16 @@ declare(ENCODING = 'utf-8');
  *                                                                        */ 
 
 /**
- * Some content
+ * The Page Repository contains all Pages and provides methods to manage them.
  * 
  * @package		CMS
  * @version 	$Id$
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- *
- * @scope prototype
  */
-class T3_TYPO3_Domain_Content {
+class F3_TYPO3_Domain_PageRepository {
 
-	/**
-	 * @var string The UUID of this content element
-	 */
-	protected $uuid;
-	
-	/**
-	 * @var boolean Flags if the content is hidden
-	 */
-	protected $hidden = FALSE;
-	
-	/**
-	 * @var string Some content
-	 */
-	protected $content;
-	
-	/**
-	 * Constructs the Content
-	 *
-	 * @param  T3_FLOW3_Utility_Algorithms $utilityAlgorithms: A reference to the algorithms utility component
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct(T3_FLOW3_Utility_Algorithms $utilityAlgorithms) {
-		$this->uuid = $utilityAlgorithms->generateUUID();
-	}
-	
-	/**
-	 * Sets the content
-	 *
-	 * @param  string			$content: The content
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
-	
-	/**
-	 * Returns the content
-	 *
-	 * @return string			The content
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getContent() {
-		return $this->content;
-	}
+
 }
 
 ?>

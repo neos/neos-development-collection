@@ -20,11 +20,11 @@ require_once 'PHPUnit/Framework.php';
  * Testcase for the TypoScript Text object
  * 
  * @package		CMS
- * @version 	$Id:T3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_TYPO3_TypoScript_TextTest extends T3_Testing_BaseTestCase {
+class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 	
 	/**
 	 * Checks if a Text object renders a simple content without any processors involved.
@@ -34,7 +34,7 @@ class T3_TYPO3_TypoScript_TextTest extends T3_Testing_BaseTestCase {
 	 */
 	public function textObjectRendersSimpleContentCorrectly() {
 		$testString = 'Skårhøj is a nice name for special character testing.';
-		$text = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Text');
+		$text = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$text->setValue($testString);
 		$this->assertEquals($testString, $text->getRenderedContent(), 'The Text object did not return the expected content during the basic check.');
 	}
@@ -47,14 +47,14 @@ class T3_TYPO3_TypoScript_TextTest extends T3_Testing_BaseTestCase {
 	 */
 	public function textObjectRendersContentWithWrapProcessorCorrectly() {
 		$testString = 'Blåbärskaka';		
-		$text = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Text');
+		$text = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$text->setValue($testString);
 
-		$processorChain = $this->componentManager->getComponent('T3_TypoScript_ProcessorChain');
-		$processors = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Processors');
+		$processorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
+		$processors = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Processors');
 
-		$processorChain->setProcessorInvocation(1, $this->componentManager->getComponent('T3_TypoScript_ProcessorInvocation', $processors, 'processor_crop', array(9, ' ...')));
-		$processorChain->setProcessorInvocation(2, $this->componentManager->getComponent('T3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
+		$processorChain->setProcessorInvocation(1, $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_crop', array(9, ' ...')));
+		$processorChain->setProcessorInvocation(2, $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
 		
 		$text->setPropertyProcessorChain('value', $processorChain);
 		
@@ -69,20 +69,20 @@ class T3_TYPO3_TypoScript_TextTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function textObjectRendersContentOfOtherTextObjectCorrectly() {
-		$processors = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Processors');
+		$processors = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Processors');
 		
-		$firstText = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Text');
+		$firstText = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$firstText->setValue('first text object');
 
-		$processorChain = $this->componentManager->getComponent('T3_TypoScript_ProcessorChain');
-		$processorChain->setProcessorInvocation(1, $this->componentManager->getComponent('T3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<em>', '</em>')));
+		$processorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
+		$processorChain->setProcessorInvocation(1, $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<em>', '</em>')));
 		$firstText->setPropertyProcessorChain('value', $processorChain);
 		
-		$secondText = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Text');
+		$secondText = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$secondText->setValue($firstText);
 
-		$secondProcessorChain = $this->componentManager->getComponent('T3_TypoScript_ProcessorChain');
-		$secondProcessorChain->setProcessorInvocation(1, $this->componentManager->getComponent('T3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
+		$secondProcessorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
+		$secondProcessorChain->setProcessorInvocation(1, $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
 		$secondText->setPropertyProcessorChain('value', $secondProcessorChain);
 		
 		$expectedResult = '<strong><em>first text object</em></strong>';
@@ -97,13 +97,13 @@ class T3_TYPO3_TypoScript_TextTest extends T3_Testing_BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textObjectRendersItselfOnStringCast() {
-		$firstText = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Text');
+		$firstText = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$firstText->setValue('first text object');
 		
 		$expectedResult = 'first text object';
 		$this->assertEquals($expectedResult, (string)$firstText, 'The Text object did not return the expected content while casting it to string.');
 		
-		$secondText = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Text');
+		$secondText = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$secondText->setValue(12345343232);
 		
 		$expectedResult = '12345343232';

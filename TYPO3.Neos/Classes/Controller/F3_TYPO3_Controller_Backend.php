@@ -12,19 +12,29 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
- * The Page Repository contains all Pages and provides methods to manage them.
- * 
- * @package		CMS
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * The TYPO3 Backend controller
+ *
+ * @package   TYPO3
+ * @version   $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @copyright Copyright belongs to the respective authorst
+ * @license   http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_TYPO3_Domain_PageRepository {
+class F3_TYPO3_Controller_Backend extends F3_FLOW3_MVC_Controller_ActionController {
 
+	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
 
+	/**
+	 * The default action
+	 *
+	 * @param  F3_FLOW3_MVC_Web_Request $request: The request to process
+	 * @param  F3_FLOW3_MVC_Response $response: The response
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function defaultAction() {
+		$this->response->setContent('TYPO3 Backend');
+	}
 }
-
 ?>

@@ -24,7 +24,7 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class T3_TYPO3_Domain_Page {
+class F3_TYPO3_Domain_Page {
 
 	/**
 	 * @var string The UUID of this page
@@ -55,11 +55,11 @@ class T3_TYPO3_Domain_Page {
 	 * Constructs the Page
 	 *
 	 * @param  string			$title: The page title
-	 * @param  T3_FLOW3_Utility_Algorithms $utilityAlgorithms: A reference to the algorithms utility component
+	 * @param  F3_FLOW3_Utility_Algorithms $utilityAlgorithms: A reference to the algorithms utility component
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($title, T3_FLOW3_Utility_Algorithms $utilityAlgorithms) {
+	public function __construct($title, F3_FLOW3_Utility_Algorithms $utilityAlgorithms) {
 		$this->uuid = $utilityAlgorithms->generateUUID();
 		$this->setTitle($title);
 	}
@@ -136,22 +136,22 @@ class T3_TYPO3_Domain_Page {
 	/**
 	 * Adds content to the page
 	 *
-	 * @param  T3_TYPO3_Domain_Content $content: The content to add
+	 * @param  F3_TYPO3_Domain_Content $content: The content to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addContentElement(T3_TYPO3_Domain_Content $content) {
+	public function addContentElement(F3_TYPO3_Domain_Content $content) {
 		$this->contentElements[] = $content;
 	}
 	
 	/**
 	 * Adds a sub page to the page
 	 *
-	 * @param  T3_TYPO3_Domain_Page $page
+	 * @param  F3_TYPO3_Domain_Page $page
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addSubPage(T3_TYPO3_Domain_Page $page) {
+	public function addSubPage(F3_TYPO3_Domain_Page $page) {
 		$this->subPages[] = $page;
 	}
 	

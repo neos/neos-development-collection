@@ -12,10 +12,10 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */
+ *                                                                        */ 
 
 /**
- * A TypoScript Text object
+ * Some content
  * 
  * @package		CMS
  * @version 	$Id$
@@ -24,42 +24,54 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class T3_TYPO3_TypoScript_Text extends T3_TypoScript_AbstractContentObject {
+class F3_TYPO3_Domain_Content {
 
 	/**
-	 * @var string Content of this Text TypoScript object
+	 * @var string The UUID of this content element
 	 */
-	protected $value = '';
+	protected $uuid;
 	
 	/**
-	 * Sets the Content
+	 * @var boolean Flags if the content is hidden
+	 */
+	protected $hidden = FALSE;
+	
+	/**
+	 * @var string Some content
+	 */
+	protected $content;
+	
+	/**
+	 * Constructs the Content
 	 *
-	 * @param  string			$value: Text value of this Text object
+	 * @param  F3_FLOW3_Utility_Algorithms $utilityAlgorithms: A reference to the algorithms utility component
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setValue($value) {
-		$this->value = (string)$value;
+	public function __construct(F3_FLOW3_Utility_Algorithms $utilityAlgorithms) {
+		$this->uuid = $utilityAlgorithms->generateUUID();
 	}
 	
 	/**
-	 * Returns the Content of this Text object
+	 * Sets the content
 	 *
-	 * @return string			The text value of this Text object
+	 * @param  string			$content: The content
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getValue() {
-		return $this->value;
+	public function setContent($content) {
+		$this->content = $content;
 	}
-
+	
 	/**
-	 * Returns the rendered content of this content object
-	 * 
-	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
+	 * Returns the content
+	 *
+	 * @return string			The content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRenderedContent() {
-		return $this->getProcessedProperty('value');
-	}	
+	public function getContent() {
+		return $this->content;
+	}
 }
+
 ?>

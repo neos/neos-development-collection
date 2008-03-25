@@ -24,7 +24,7 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class T3_TYPO3_TypoScript_Template extends T3_TypoScript_AbstractContentArrayObject {
+class F3_TYPO3_TypoScript_Template extends F3_TypoScript_AbstractContentArrayObject {
 
 	/**
 	 * This property must be loaded with the template source code, otherwise this content object will return an empty string.
@@ -33,9 +33,9 @@ class T3_TYPO3_TypoScript_Template extends T3_TypoScript_AbstractContentArrayObj
 	 */
 	protected $templateCode = '';
 
-	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->templateCode = $componentManager->getComponent('T3_TYPO3_TypoScript_ContentArray');
-		$this->templateCode[10] = $componentManager->getComponent('T3_TYPO3_TypoScript_Text');
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+		$this->templateCode = $componentManager->getComponent('F3_TYPO3_TypoScript_ContentArray');
+		$this->templateCode[10] = $componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$this->templateCode[10]->setValue('test');
 	}
 	

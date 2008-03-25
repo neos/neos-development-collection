@@ -20,11 +20,11 @@ require_once 'PHPUnit/Framework.php';
  * Testcase for the TypoScript Page object
  * 
  * @package		CMS
- * @version 	$Id:T3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_TYPO3_TypoScript_PageTest extends T3_Testing_BaseTestCase {
+class F3_TYPO3_TypoScript_PageTest extends F3_Testing_BaseTestCase {
 	
 	/**
 	 * Checks if a Page object renders a simple content without any processors involved.
@@ -33,7 +33,7 @@ class T3_TYPO3_TypoScript_PageTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function pageObjectRendersSimpleContentCorrectly() {
-		$page = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Page');
+		$page = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Page');
 		$expectedContent = '<!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 <html>
@@ -60,10 +60,10 @@ class T3_TYPO3_TypoScript_PageTest extends T3_Testing_BaseTestCase {
 	 */
 	public function settingInvalidBodyTagThrowsException() {
 		try {
-			$page = $this->componentManager->getComponent('T3_TYPO3_TypoScript_Page');
+			$page = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Page');
 			$page->setBodyTag('<lotty style="">');
 			$this->fail('setBodyTag accepted an invalid body tag without throwing an exception.');
-		} catch (T3_TypoScript_Exception $exception) {
+		} catch (F3_TypoScript_Exception $exception) {
 			
 		}
 	}

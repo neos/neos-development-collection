@@ -24,6 +24,6 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class T3_TYPO3_TypoScript_ContentArray extends T3_TypoScript_AbstractContentArrayObject {
+class F3_TYPO3_TypoScript_ContentArray extends F3_TypoScript_AbstractContentArrayObject {
 }
 ?>

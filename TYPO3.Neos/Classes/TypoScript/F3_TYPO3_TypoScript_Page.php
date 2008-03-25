@@ -24,7 +24,7 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class T3_TYPO3_TypoScript_Page extends T3_TypoScript_AbstractContentArrayObject {
+class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject {
 
 	const SCAN_PATTERN_BODYTAG = '/(body|BODY)[^<>]*>/';
 	const SCAN_PATTERN_HEADTAG = '/(head|HEAD)[^<>]*>/';
@@ -82,7 +82,7 @@ class T3_TYPO3_TypoScript_Page extends T3_TypoScript_AbstractContentArrayObject 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setView($view) {
-		if (!is_string($view) || preg_match(self::SCAN_PATTERN_VIEW, $view) !== 1) throw new T3_TypoScript_Exception('The specified view "' . $view . '" is not a view name.', 1181091024);
+		if (!is_string($view) || preg_match(self::SCAN_PATTERN_VIEW, $view) !== 1) throw new F3_TypoScript_Exception('The specified view "' . $view . '" is not a view name.', 1181091024);
 	}
 	
 	/**
@@ -103,7 +103,7 @@ class T3_TYPO3_TypoScript_Page extends T3_TypoScript_AbstractContentArrayObject 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setBodyTag($bodyTag) {
-		if (!is_string($bodyTag) || ($bodyTag !== '' && preg_match(self::SCAN_PATTERN_BODYTAG, $bodyTag) !== 1)) throw new T3_TypoScript_Exception('The specified value is not a valid body tag.', 1181051659);
+		if (!is_string($bodyTag) || ($bodyTag !== '' && preg_match(self::SCAN_PATTERN_BODYTAG, $bodyTag) !== 1)) throw new F3_TypoScript_Exception('The specified value is not a valid body tag.', 1181051659);
 		$this->bodyTag = $bodyTag;
 	}
 	
@@ -115,7 +115,7 @@ class T3_TYPO3_TypoScript_Page extends T3_TypoScript_AbstractContentArrayObject 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHeadTag($headTag) {
-		if (!is_string($headTag) || ($headTag !== '' && preg_match(self::SCAN_PATTERN_HEADTAG, $headTag) !== 1)) throw new T3_TypoScript_Exception('The specified value is not a valid head tag.', 1181051660);
+		if (!is_string($headTag) || ($headTag !== '' && preg_match(self::SCAN_PATTERN_HEADTAG, $headTag) !== 1)) throw new F3_TypoScript_Exception('The specified value is not a valid head tag.', 1181051660);
 		$this->headTag = $headTag;
 	}
 	

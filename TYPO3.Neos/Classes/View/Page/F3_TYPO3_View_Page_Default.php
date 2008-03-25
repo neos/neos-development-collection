@@ -18,11 +18,11 @@ declare(ENCODING = 'utf-8');
  * TypoScript View for a Page
  *
  * @package   TYPO3
- * @version   $Id:T3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version   $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  * @copyright Copyright belongs to the respective authorst
  * @license   http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_TYPO3_View_Page_Default extends T3_FLOW3_MVC_View_Abstract {
+class F3_TYPO3_View_Page_Default extends F3_FLOW3_MVC_View_Abstract {
 
 	/**
 	 * @var array
@@ -38,7 +38,7 @@ class T3_TYPO3_View_Page_Default extends T3_FLOW3_MVC_View_Abstract {
 	 */
 	public function render() {
 		foreach ($this->typoScriptObjectTree as $name => $typoScriptObject) {
-			if ($typoScriptObject instanceof T3_TYPO3_TypoScript_Page) {
+			if ($typoScriptObject instanceof F3_TYPO3_TypoScript_Page) {
 				$typoScriptPageObjectName = $name;
 			}
 		}
