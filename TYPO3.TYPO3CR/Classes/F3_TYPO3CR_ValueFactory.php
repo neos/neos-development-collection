@@ -16,14 +16,14 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
- * @version $Id: F3_TYPO3CR_Node.php 285 2007-07-19 21:28:14Z karsten $
+ * @version $Id$
  */
 
 /**
  * A ValueFactory, used to create Value objects.
  *
  * @package TYPO3CR
- * @version $Id: F3_TYPO3CR_Node.php 285 2007-07-19 21:28:14Z karsten $
+ * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */

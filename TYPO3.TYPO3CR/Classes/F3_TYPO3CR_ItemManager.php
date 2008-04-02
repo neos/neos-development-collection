@@ -16,14 +16,14 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
- * @version $Id: F3_TYPO3CR_ItemManager.php 328 2007-09-04 13:44:34Z robert $
+ * @version $Id$
  */
 
 /**
  * ItemManager holds the new and modified nodes with Sessionscope
  *
  * @package TYPO3CR
- * @version $Id: F3_TYPO3CR_ItemManager.php 328 2007-09-04 13:44:34Z robert $
+ * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
