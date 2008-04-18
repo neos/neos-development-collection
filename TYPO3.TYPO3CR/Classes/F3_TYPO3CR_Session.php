@@ -85,9 +85,9 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 		$this->componentManager = $componentManager;
 		$this->repository = $repository;
 		$this->storageAccess = $storageAccess;
-		$this->workspace = $this->componentManager->getComponent('F3_phpCR_WorkspaceInterface', $workspaceName, $this);
-
 		$this->storageAccess->setWorkspaceName($workspaceName);
+
+		$this->workspace = $this->componentManager->getComponent('F3_phpCR_WorkspaceInterface', $workspaceName, $this, $storageAccess, $this->componentManager);
 	}
 
 	/**

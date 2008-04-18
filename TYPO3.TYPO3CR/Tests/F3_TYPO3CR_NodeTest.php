@@ -37,12 +37,17 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	protected $rootNode;
 
 	/**
+	 * @var F3_TYPO3CR_MockStorageAccess
+	 */
+	protected $mockStorageAccess;
+
+	/**
 	 * Set up the test environment
 	 */
 	public function setUp() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
-		$mockStorageAccess->rawRootNodesByWorkspace = array(
+		$this->mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
+		$this->mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
@@ -50,7 +55,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 				'name' => ''
 			)
 		);
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$this->mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
@@ -72,7 +77,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 				),
 			)
 		);
-		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+		$this->mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(
@@ -85,7 +90,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 			)
 		);
 
-		$this->session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$this->session = new F3_TYPO3CR_Session('default', $mockRepository, $this->mockStorageAccess, $this->componentManager);
 		$this->rootNode = $this->session->getRootNode();
 	}
 
@@ -136,7 +141,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->assertNotEquals(1, $propertyIterator->getSize(), 'getProperties() returned an empty PropertyIterator for a node with properties.');
 
 			// we don't compare the iterators directly here, as this hits the memory limit hard. really hard.
-		$titleProperty = $this->componentManager->getComponent('F3_phpCR_PropertyInterface', 'title', 'News about the TYPO3CR', $node, FALSE, $this->session);
+		$titleProperty = $this->componentManager->getComponent('F3_phpCR_PropertyInterface', 'title', 'News about the TYPO3CR', $node, FALSE, $this->session, $this->mockStorageAccess);
 		$this->assertEquals($titleProperty->getString(), $properties->nextProperty()->getString(), 'getProperties() did not return the expected property.');
 	}
 

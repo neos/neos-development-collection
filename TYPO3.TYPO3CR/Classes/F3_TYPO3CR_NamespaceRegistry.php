@@ -53,6 +53,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_phpCR_NamespaceRegistryInterfac
 	/**
 	 * Constructs a NamespaceRegistry object
 	 *
+	 * @param F3_TYPO3CR_StorageAccessInterface $storageAccess
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

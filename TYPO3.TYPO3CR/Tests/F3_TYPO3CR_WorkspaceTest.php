@@ -37,6 +37,11 @@ class F3_TYPO3CR_WorkspaceTest extends F3_Testing_BaseTestCase {
 	protected $mockSession;
 
 	/**
+	 * @var F3_TYPO3CR_StorageAccessInterface
+	 */
+	protected $mockStorageAccess;
+
+	/**
 	 * @var F3_TYPO3CR_Workspace
 	 */
 	protected $workspace;
@@ -47,7 +52,8 @@ class F3_TYPO3CR_WorkspaceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function setUp() {
 		$this->mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
-		$this->workspace = new F3_TYPO3CR_Workspace('workspaceName', $this->mockSession, $this->componentManager);
+		$this->mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
+		$this->workspace = new F3_TYPO3CR_Workspace('workspaceName', $this->mockSession, $this->mockStorageAccess, $this->componentManager);
 	}
 
 	/**

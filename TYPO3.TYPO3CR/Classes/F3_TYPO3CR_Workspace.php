@@ -53,14 +53,15 @@ class F3_TYPO3CR_Workspace implements F3_phpCR_WorkspaceInterface {
 	 * Constructs a Workspace object
 	 *
 	 * @param string $name
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @param F3_phpCR_SessionInterface $session
 	 * @param F3_phpCR_StorageAccessInterface $storageAccess
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, F3_phpCR_SessionInterface $session, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($name, F3_phpCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->name = (F3_PHP6_Functions::strlen($name) ? $name : 'default');
 		$this->session = $session;
+		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
 	}
 
@@ -94,7 +95,7 @@ class F3_TYPO3CR_Workspace implements F3_phpCR_WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNamespaceRegistry() {
-		return $this->componentManager->getComponent('F3_phpCR_NamespaceRegistryInterface');
+		return $this->componentManager->getComponent('F3_phpCR_NamespaceRegistryInterface', $this->storageAccess, $this->componentManager);
 	}
 }
 
