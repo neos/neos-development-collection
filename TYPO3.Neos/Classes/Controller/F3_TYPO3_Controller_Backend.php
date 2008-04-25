@@ -15,26 +15,51 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3
+ * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @copyright Copyright belongs to the respective authorst
+ */
+
+/**
  * The TYPO3 Backend controller
  *
- * @package   TYPO3
- * @version   $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @package TYPO3
+ * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
  * @copyright Copyright belongs to the respective authorst
- * @license   http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_Controller_Backend extends F3_FLOW3_MVC_Controller_ActionController {
 
+	/**
+	 * @var F3_TypoScript_ParserInterface
+	 */
+	protected $typoScriptParser;
+
+	/**
+	 * @var array Only Web Requests are supported
+	 */
 	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
 
 	/**
-	 * The default action
+	 * Initalizes the page controller
+	 *
+	 * @param F3_TypoScript_Parser
+	 */
+	public function injectTypoScriptParser(F3_TypoScript_ParserInterface $typoScriptParser) {
+		$this->typoScriptParser = $typoScriptParser;
+		$this->typoScriptParser->setDefaultNamespace('F3_TYPO3_TypoScript');
+	}
+
+	/**
+	 * Processes a web- request and returns the rendered page as a response
 	 *
 	 * @param  F3_FLOW3_MVC_Web_Request $request: The request to process
 	 * @param  F3_FLOW3_MVC_Response $response: The response
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
-		$this->response->setContent('TYPO3 Backend');
+		$this->view->typoScriptObjectTree = $this->typoScriptParser->parse(file_get_contents($this->package->getResourcesPath() . 'TypoScript/Backend.ts'));
+		return $this->view->render();
 	}
 }
 ?>
