@@ -15,27 +15,32 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TypoScript
+ * @version $Id$
+ */
+
+/**
  * Common class for TypoScript Content Objects
- * 
- * @package		TypoScript
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package TypoScript
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 abstract class F3_TypoScript_AbstractContentObject extends F3_TypoScript_AbstractObject {
-	
-	/**
-	 * Returns the rendered content of this content object
-	 * 
-	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	abstract public function getRenderedContent();
-	
+
 	/**
 	 * Returns the rendered content of this content object
 	 *
-	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
+	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	abstract public function getRenderedContent();
+
+	/**
+	 * Returns the rendered content of this content object
+	 *
+	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __toString() {
@@ -46,8 +51,8 @@ abstract class F3_TypoScript_AbstractContentObject extends F3_TypoScript_Abstrac
 	 * Runs the processors chain for the given content by using the root processor chain of the
 	 * content object and returns the result value.
 	 *
-	 * @param  string				$content: The content to process
-	 * @result string				The processed content
+	 * @param string $content The content to process
+	 * @result string The processed content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function processContent($content) {

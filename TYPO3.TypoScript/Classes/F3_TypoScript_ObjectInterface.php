@@ -15,13 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TypoScript
+ * @version $Id$
+ */
+
+/**
  * Interface of a TypoScript object
- * 
- * @package		TypoScript
- * @version 	$Id$
- * @author		Robert Lemke <robert@typo3.org>
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package TypoScript
+ * @version $Id$
+ * @author Robert Lemke <robert@typo3.org>
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_TypoScript_ObjectInterface {
 }

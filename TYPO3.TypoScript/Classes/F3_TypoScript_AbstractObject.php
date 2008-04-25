@@ -15,15 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TypoScript
+ * @version $Id$
+ */
+
+/**
  * Common class for TypoScript objects
- * 
- * @package		TypoScript
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package TypoScript
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 abstract class F3_TypoScript_AbstractObject implements F3_TypoScript_ObjectInterface {
-	
+
 	/**
 	 * @var array An array of F3_TypoScript_ProcessorChain objects
 	 */
@@ -32,19 +37,19 @@ abstract class F3_TypoScript_AbstractObject implements F3_TypoScript_ObjectInter
 	/**
 	 * Sets the property processor chain for a specific property
 	 *
-	 * @param  string				$propertyName: Name of the property to set the chain for
-	 * @param  F3_TypoScript_ProcessorChain $propertyProcessorChain: The property processor chain for that property
+	 * @param string $propertyName Name of the property to set the chain for
+	 * @param F3_TypoScript_ProcessorChain $propertyProcessorChain The property processor chain for that property
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPropertyProcessorChain($propertyName, F3_TypoScript_ProcessorChain $propertyProcessorChain) {
 		$this->propertyProcessorChains[$propertyName] = $propertyProcessorChain;
 	}
-	
+
 	/**
 	 * Unsets the property processor chain for a specific property
 	 *
-	 * @param  string				$propertyName: Name of the property to unset the chain for
+	 * @param string $propertyName Name of the property to unset the chain for
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws LogicException
@@ -53,11 +58,11 @@ abstract class F3_TypoScript_AbstractObject implements F3_TypoScript_ObjectInter
 		if (!isset($this->propertyProcessorChains[$propertyName])) throw new LogicException('Tried to unset the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407939);
 		unset($this->propertyProcessorChains[$propertyName]);
 	}
-	
+
 	/**
 	 * Returns the property processor chain for a specific property
 	 *
-	 * @param  string				$propertyName: Name of the property to return the chain of
+	 * @param string $propertyName: Name of the property to return the chain of
 	 * @return F3_TypoScript_ProcessorChain $propertyProcessorChain: The property processor chain of that property
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws LogicException
@@ -66,23 +71,23 @@ abstract class F3_TypoScript_AbstractObject implements F3_TypoScript_ObjectInter
 		if (!isset($this->propertyProcessorChains[$propertyName])) throw new LogicException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
 		return $this->propertyProcessorChains[$propertyName];
 	}
-	
+
 	/**
 	 * Tells if a processor chain for the given property exists
 	 *
-	 * @param  string				$propertyName: Name of the property to check for
-	 * @return boolean				TRUE if a property chain exists, otherwise FALSE
+	 * @param string $propertyName Name of the property to check for
+	 * @return boolean TRUE if a property chain exists, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertyHasProcessorChain($propertyName) {
 		return isset($this->propertyProcessorChains[$propertyName]);
 	}
-	
+
 	/**
 	 * Runs the processors chain for the specified property and returns the result value.
 	 *
-	 * @param  string				$propertyName: Name of the property to process
-	 * @result string				The processed value of the property
+	 * @param string $propertyName Name of the property to process
+	 * @result string The processed value of the property
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws LogicException
 	 */
