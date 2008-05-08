@@ -49,7 +49,7 @@ class F3_TYPO3CR_StorageAccess_PDO implements F3_TYPO3CR_StorageAccessInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($dsn, $username = NULL, $password = NULL) {
-		$this->databaseHandle = new PDO($dsn, $username = NULL, $password = NULL);
+		$this->databaseHandle = new PDO($dsn, $username, $password);
 		$this->databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
 
