@@ -20,7 +20,6 @@ declare(ENCODING = 'utf-8');
  * 
  * @package		CMS
  * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_TypoScript_Processors {

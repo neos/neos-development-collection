@@ -17,7 +17,6 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
- * @copyright Copyright belongs to the respective authorst
  */
 
 /**
@@ -25,7 +24,6 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
- * @copyright Copyright belongs to the respective authorst
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_Controller_Backend extends F3_FLOW3_MVC_Controller_ActionController {
