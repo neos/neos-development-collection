@@ -28,7 +28,6 @@ require_once('F3_TYPO3CR_StorageAccessTestBase.php');
  * @package TYPO3CR
  * @subpackage Tests
  * @version $Id$
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_StorageAccess_PDOTest extends F3_TYPO3CR_StorageAccessTestBase {

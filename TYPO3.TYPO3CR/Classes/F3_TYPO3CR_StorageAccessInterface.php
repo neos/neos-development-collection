@@ -24,7 +24,6 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @version $Id$
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_TYPO3CR_StorageAccessInterface {
