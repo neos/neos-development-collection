@@ -19,7 +19,6 @@ declare(ENCODING = 'utf-8');
  * 
  * @package		TypoScript
  * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TypoScript_Parser_PatternTest extends F3_Testing_BaseTestCase {
