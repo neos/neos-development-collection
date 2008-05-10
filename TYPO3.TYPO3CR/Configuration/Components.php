@@ -10,6 +10,11 @@ declare(ENCODING="utf-8");
  * @version $Id$
  */
 
-$c->F3_TYPO3CR_StorageAccessInterface->constructorArguments[1] = 'sqlite:Packages/TYPO3CR/Tests/Fixtures/TYPO3CR.db';
+/**
+ * The DSN to use for connecting to the database acting as storage backend.
+ *
+ * @type string
+ */
+$c->F3_TYPO3CR_StorageAccessInterface->constructorArguments[1] = '';
 
 ?>
