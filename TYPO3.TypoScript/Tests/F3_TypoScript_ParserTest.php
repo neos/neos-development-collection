@@ -16,18 +16,18 @@ declare(ENCODING = 'utf-8');
 
 /**
  * Testcase for the TypoScript Parser
- * 
+ *
  * @package		TypoScript
  * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
-	
+
 	/**
 	 * @var F3_TypoScript_Parser
 	 */
 	protected $parser;
-	
+
 	/**
 	 * Sets up this test case
 	 *
@@ -62,7 +62,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 		$expectedObjectTree['test']->setValue('Hello world!');
 		$expectedObjectTree['secondTest'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['secondTest']->setValue(23);
-		
+
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 01.');
 		$this->assertSame($expectedObjectTree['secondTest']->getValue(), $actualObjectTree['secondTest']->getValue(), 'The numeric value was not really the same after parsing fixture 01.');
@@ -77,13 +77,13 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	public function parserThrowsSyntaxExceptionStringAfterNamespaceDeclaration() {
 		$sourceCode = "namespace: cms=F3_TYPO3_TypoScript xyz";
 		try {
-			$this->parser->parse($sourceCode);		
+			$this->parser->parse($sourceCode);
 			$this->fail('String after namespace declaration did not throw an exception.');
 		} catch (Exception $exception) {
-			
+
 		}
 	}
-	
+
 	/**
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 02
 	 *
@@ -103,7 +103,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 02.');
 	}
-	
+
 	/**
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 03
 	 *
@@ -137,7 +137,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 		$expectedObjectTree['myArrayObject'][30] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_ContentArray');
 		$expectedObjectTree['myArrayObject'][30][20] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_ContentArray');
 		$expectedObjectTree['myArrayObject'][30][20][10] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
-		$expectedObjectTree['myArrayObject'][30][20][10]->setValue('Huh?');		
+		$expectedObjectTree['myArrayObject'][30][20][10]->setValue('Huh?');
 		$expectedObjectTree['anotherObject']['sub1']['sub2']['sub3'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_ContentArray');
 		$expectedObjectTree['anotherObject']['sub1']['sub2']['sub3'][1] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['anotherObject']['sub1']['sub2']['sub3'][1]->setValue('Yawn');
@@ -183,7 +183,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 		$expectedObjectTree['object3']->setValue("I didn't have a coffee yet!");
 		$expectedObjectTree['object4'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object4']->setValue("Hello, Kasper Skårhøj!");
-		
+
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 06.');
 	}
@@ -201,7 +201,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 		$expectedObjectTree['object2']->setValue('');
 		$expectedObjectTree['object3'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object3']->setValue('');
-		
+
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 07.');
 	}
@@ -227,7 +227,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 		$expectedObjectTree['object7']->setValue($expectedObjectTree['object1']->getValue());
 		$expectedObjectTree['object8'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object8']->setValue('I say "Hello world!"');
-		
+
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 08.');
 	}
@@ -240,18 +240,18 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 */
 	public function parserCorrectlyParsesFixture09() {
 		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture09.ts', FILE_TEXT);
-		
+
 		$expectedObjectTree['object1'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object1']->setValue('Quien busca el peligro, perece en él');
 		$expectedObjectTree['object2'] = $expectedObjectTree['object1'];
 		$expectedObjectTree['object3'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object3']->setValue('Don Quijote dice: "Quien busca el peligro, perece en él"');
-				
+
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 09.');
 		$this->assertSame($actualObjectTree['object1'], $actualObjectTree['object2'], 'The two reference objects are not identical after parsing fixture 09.');
-	}	
-	
+	}
+
 	/**
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 10
 	 *
@@ -261,43 +261,45 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	public function parserCorrectlyParsesFixture10() {
 		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture10.ts', FILE_TEXT);
 		$processorObject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Processors');
-		
+
 		$propertyProcessorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
 		$expectedObjectTree['object1'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object1']->setValue('Hello world!');
 		$expectedObjectTree['object1']->setPropertyProcessorChain('value', $propertyProcessorChain);
 		$processorInvocation = $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processorObject, 'processor_wrap', array('<strong>', '</strong>'));
-		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);	
-		
+		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
+
 		$propertyProcessorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
 		$expectedObjectTree['object2'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object2']->setValue('Bumerang');
 		$expectedObjectTree['object2']->setPropertyProcessorChain('value', $propertyProcessorChain);
 		$processorInvocation = $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processorObject, 'processor_wrap', array('ein ', ';'));
-		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);	
+		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
 		$processorInvocation = $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processorObject, 'processor_wrap', array('War ', ''));
-		$propertyProcessorChain->setProcessorInvocation(3, $processorInvocation);	
+		$propertyProcessorChain->setProcessorInvocation(3, $processorInvocation);
 		$processorInvocation = $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processorObject, 'processor_wrap', array('einmal (vielleicht auch zweimal) ', ''));
-		$propertyProcessorChain->setProcessorInvocation(2, $processorInvocation);	
+		$propertyProcessorChain->setProcessorInvocation(2, $processorInvocation);
 
 		$propertyProcessorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
 		$expectedObjectTree['object3'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object3']->setValue('345');
 		$expectedObjectTree['object3']->setPropertyProcessorChain('value', $propertyProcessorChain);
 		$processorInvocation = $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processorObject, 'processor_wrap', array('2', '6'));
-		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);	
+		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
 		$processorInvocation = $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processorObject, 'processor_wrap', array('1', '789 ...'));
-		$propertyProcessorChain->setProcessorInvocation(2, $processorInvocation);	
-		
+		$propertyProcessorChain->setProcessorInvocation(2, $processorInvocation);
+
 		$propertyProcessorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
 		$expectedObjectTree['object4'] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_ContentArray');
 		$expectedObjectTree['object4'][10] = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object4'][10]->setValue('cc');
 		$expectedObjectTree['object4'][10]->setPropertyProcessorChain('value', $propertyProcessorChain);
 		$processorInvocation = $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processorObject, 'processor_wrap', array('su', 'ess'));
-		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);	
-		
+		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
+
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 10.');
-	}	}
+	}
+}
+
 ?>
