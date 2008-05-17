@@ -16,7 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * A TypoScript Page object
- * 
+ *
  * @package		CMS
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
@@ -28,42 +28,42 @@ class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject 
 	const SCAN_PATTERN_BODYTAG = '/(body|BODY)[^<>]*>/';
 	const SCAN_PATTERN_HEADTAG = '/(head|HEAD)[^<>]*>/';
 	const SCAN_PATTERN_VIEW = '/[a-zA-Z0-9_]+/';
-	
+
 	/**
-	 * This specifies the name of the view this Page object represents. The default is 
+	 * This specifies the name of the view this Page object represents. The default is
 	 * "default" and you only have to specify a view name if you're going to use frames
 	 * or want to add alternative views of your website.
-	 * 
-	 * @var string 
+	 *
+	 * @var string
 	 */
 	protected $view = 'default';
 
 	/**
-	 * Defines the opening body tag of the page. 
+	 * Defines the opening body tag of the page.
 	 *
 	 * @var string
 	 */
 	protected $bodyTag = '<body style="background-color: white;">';
 
 	/**
-	 * Defines the opening head tag of the page. 
+	 * Defines the opening head tag of the page.
 	 *
 	 * @var string
 	 */
 	protected $headTag = '<head>';
-	
+
 	/**
-	 * The data of this content array are inserted in the head section. Data could be JavaScript, Meta-tags or additional stylesheet references. 
+	 * The data of this content array are inserted in the head section. Data could be JavaScript, Meta-tags or additional stylesheet references.
 	 *
 	 * @var array
 	 */
 	protected $headData = '';
-	
+
 	/**
 	 * These parameters are inserted into the body tag definition.
 	 *
 	 * @var string
-	 */	
+	 */
 	protected $bodyTagAdditionalParameters = '';
 
 	/**
@@ -83,17 +83,17 @@ class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject 
 	public function setView($view) {
 		if (!is_string($view) || preg_match(self::SCAN_PATTERN_VIEW, $view) !== 1) throw new F3_TypoScript_Exception('The specified view "' . $view . '" is not a view name.', 1181091024);
 	}
-	
+
 	/**
 	 * Returns the name of the view
-	 * 
+	 *
 	 * @return string				Name of the view or "default" for the default view
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getView() {
 		return $this->view;
 	}
-	
+
 	/**
 	 * Sets the body tag
 	 *
@@ -105,7 +105,7 @@ class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject 
 		if (!is_string($bodyTag) || ($bodyTag !== '' && preg_match(self::SCAN_PATTERN_BODYTAG, $bodyTag) !== 1)) throw new F3_TypoScript_Exception('The specified value is not a valid body tag.', 1181051659);
 		$this->bodyTag = $bodyTag;
 	}
-	
+
 	/**
 	 * Sets the head tag
 	 *
@@ -117,7 +117,7 @@ class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject 
 		if (!is_string($headTag) || ($headTag !== '' && preg_match(self::SCAN_PATTERN_HEADTAG, $headTag) !== 1)) throw new F3_TypoScript_Exception('The specified value is not a valid head tag.', 1181051660);
 		$this->headTag = $headTag;
 	}
-	
+
 	/**
 	 * Sets the head data
 	 *
@@ -128,7 +128,7 @@ class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject 
 	public function setHeadData($headData) {
 		$this->headData = $headData;
 	}
-	
+
 	/**
 	 * Returns the body tag
 	 *
@@ -138,10 +138,10 @@ class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject 
 	public function getBodyTag() {
 		return $this->bodyTag;
 	}
-	
+
 	/**
 	 * Returns the rendered content of this content object
-	 * 
+	 *
 	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -152,7 +152,7 @@ class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject 
 ' . $this->headTag . '
 ' . $this->headData . '
 </head>
-<!-- 
+<!--
 	This website is brought to you by TYPO3 - inspiring people to share.
 	TYPO3 is a free open source Content Management Framework licensed under GNU/GPL.
 	Information and contribution at http://www.typo3.com and http://www.typo3.org
@@ -162,6 +162,6 @@ class F3_TYPO3_TypoScript_Page extends F3_TypoScript_AbstractContentArrayObject 
 </body>
 ';
 		return $this->processContent($content);
-	}	
+	}
 }
 ?>

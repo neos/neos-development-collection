@@ -14,17 +14,15 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once 'PHPUnit/Framework.php';
-
 /**
  * Testcase for the TypoScript Text object
- * 
+ *
  * @package		CMS
  * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
-	
+
 	/**
 	 * Checks if a Text object renders a simple content without any processors involved.
 	 *
@@ -45,7 +43,7 @@ class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function textObjectRendersContentWithWrapProcessorCorrectly() {
-		$testString = 'Blåbärskaka';		
+		$testString = 'Blåbärskaka';
 		$text = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$text->setValue($testString);
 
@@ -54,13 +52,13 @@ class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 
 		$processorChain->setProcessorInvocation(1, $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_crop', array(9, ' ...')));
 		$processorChain->setProcessorInvocation(2, $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
-		
+
 		$text->setPropertyProcessorChain('value', $processorChain);
-		
+
 		$expectedResult = '<strong>Blåbärska ...</strong>';
 		$this->assertEquals($expectedResult, $text->getRenderedContent(), 'The Text object did not return the expected content during the basic check.');
 	}
-	
+
 	/**
 	 * Checks if the content of a Text object is a reference to another Text object, the whole thing renders correctly.
 	 *
@@ -69,42 +67,42 @@ class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 	 */
 	public function textObjectRendersContentOfOtherTextObjectCorrectly() {
 		$processors = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Processors');
-		
+
 		$firstText = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$firstText->setValue('first text object');
 
 		$processorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
 		$processorChain->setProcessorInvocation(1, $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<em>', '</em>')));
 		$firstText->setPropertyProcessorChain('value', $processorChain);
-		
+
 		$secondText = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$secondText->setValue($firstText);
 
 		$secondProcessorChain = $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
 		$secondProcessorChain->setProcessorInvocation(1, $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
 		$secondText->setPropertyProcessorChain('value', $secondProcessorChain);
-		
+
 		$expectedResult = '<strong><em>first text object</em></strong>';
 		$this->assertEquals($expectedResult, $secondText->getRenderedContent(), 'The Text object did not return the expected content during the referenced content check.');
-		
+
 	}
-	
+
 	/**
 	 * Checks if we can render the Text object as a string by simply casting it
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textObjectRendersItselfOnStringCast() {
 		$firstText = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$firstText->setValue('first text object');
-		
+
 		$expectedResult = 'first text object';
 		$this->assertEquals($expectedResult, (string)$firstText, 'The Text object did not return the expected content while casting it to string.');
-		
+
 		$secondText = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$secondText->setValue(12345343232);
-		
+
 		$expectedResult = '12345343232';
 		$this->assertEquals($expectedResult, (string)$secondText, 'The Text object did not return the expected content while casting it to string.');
 	}

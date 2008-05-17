@@ -14,26 +14,24 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once 'PHPUnit/Framework.php';
-
 /**
  * Testcase for the TypoScript standard processors
- * 
+ *
  * @package		CMS
  * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
-	
+
 	/**
 	 * Sets up this test case
 	 *
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->processors = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Processors');		
+		$this->processors = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Processors');
 	}
-	
+
 	/**
 	 * Checks if the crop() processor works with standard options
 	 *
@@ -85,7 +83,7 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$expectedResult = '... implemented the original version of the crop function.';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "from beginning" and the "at word" option.');
 	}
-	
+
 	/**
 	 * Checks if the crop() processor works with option "crop at sentence"
 	 *
@@ -98,10 +96,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$expectedResult = 'Kasper Skårhøj implemented the original version of the crop function. ...';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "crop at sentence" option.');
 	}
-	
+
 	/**
 	 * Checks if the crop() processor can handle objects as parameters
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -109,7 +107,7 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testText = 'Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testText);
-		
+
 		$expectedResult = 'Kasper Skårhøj implemented the original version of the crop function. ...';
 		$result = $this->processors->processor_crop($subject, 80, '...', F3_TYPO3_TypoScript_Processors::CROP_AT_SENTENCE);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "crop at sentence" option. (We called it with an text object)');
@@ -117,7 +115,7 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if the wrap() processor basically works
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -127,10 +125,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$expectedResult = '<strong>Kasper Skårhøj</strong>';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "wrap" did not return the expected result.');
 	}
-	
+
 	/**
 	 * Checks if the wrap() processor can handle objects as parameters
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -138,20 +136,20 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testText = 'Kasper Skårhøj';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testText);
-		
+
 		$openStrongTag = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$openStrongTag->setValue('<strong>');
 		$closeStrongTag = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$closeStrongTag->setValue('</strong>');
-		
+
 		$result = $this->processors->processor_wrap($subject, $openStrongTag, $closeStrongTag);
 		$expectedResult = '<strong>Kasper Skårhøj</strong>';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "wrap" did not return the expected result. (We called it with text objects)');
 	}
-	
+
 	/**
 	 * Checks if the shiftCase() processor works with direction "to upper"
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -159,17 +157,17 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$subject = 'Kasper Skårhøj';
 		$result = $this->processors->processor_shiftCase($subject, F3_TYPO3_TypoScript_Processors::SHIFT_CASE_TO_UPPER);
 		$expectedResult = 'KASPER SKÅRHØJ';
-		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case.');		
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case.');
 
 		$subject = 'Fußball ist nicht mein Lieblingssport';
 		$result = $this->processors->processor_shiftCase($subject, F3_TYPO3_TypoScript_Processors::SHIFT_CASE_TO_UPPER);
 		$expectedResult = 'FUSSBALL IST NICHT MEIN LIEBLINGSSPORT';
-		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case - the Fußball test.');		
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case - the Fußball test.');
 	}
 
 	/**
 	 * Checks if the shiftCase() processor works with direction "to lower"
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -177,12 +175,12 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$subject = 'Kasper SKÅRHØJ';
 		$result = $this->processors->processor_shiftCase($subject, F3_TYPO3_TypoScript_Processors::SHIFT_CASE_TO_LOWER);
 		$expectedResult = 'kasper skårhøj';
-		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to lower case.');		
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to lower case.');
 	}
 
 	/**
 	 * Checks if the shiftCase() processor works with direction "to title"
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -190,12 +188,12 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$subject = 'kasper skårhøj';
 		$result = $this->processors->processor_shiftCase($subject, F3_TYPO3_TypoScript_Processors::SHIFT_CASE_TO_TITLE);
 		$expectedResult = 'Kasper Skårhøj';
-		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to title case.');		
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to title case.');
 	}
-	
+
 	/**
 	 * Checks if the shiftCase() processor throws an exception on an invalid direction
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -203,15 +201,15 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$subject = 'Kasper Skårhøj';
 		try {
 			$result = $this->processors->processor_shiftCase($subject, -123456);
-			$this->fail('The TypoScript processor "shiftCase" did not throw an exception on specifying an invalid direction.');		
+			$this->fail('The TypoScript processor "shiftCase" did not throw an exception on specifying an invalid direction.');
 		} catch (Exception $exception) {
-			
+
 		}
 	}
-	
+
 	/**
 	 * Checks if the shiftCase() processor can handle objects as parameters
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -219,15 +217,15 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testText = 'Kasper Skårhøj';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testText);
-		
+
 		$result = $this->processors->processor_shiftCase($subject, F3_TYPO3_TypoScript_Processors::SHIFT_CASE_TO_UPPER);
 		$expectedResult = 'KASPER SKÅRHØJ';
-		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case. (We called it with an text object)');		
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case. (We called it with an text object)');
 	}
-	
+
 	/**
 	 * Checks if the date() processor basically works.
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -236,12 +234,12 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$format = 'F j, Y, g:i a';
 		$result = $this->processors->processor_date($subject, $format);
 		$expectedResult = 'July 24, 2007, 2:25 pm';
-		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return the expected result while converting a UNIX timestamp. Expected "'.$expectedResult.'" but got "'.$result.'"');
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return the expected result while converting a UNIX timestamp. Expected "' . $expectedResult . '" but got "' . $result . '"');
 	}
-	
+
 	/**
 	 * Checks if the date() processor throws an F3_TypoScript_Exception on an invalid timestamp
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -253,13 +251,13 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 			$this->fail('The TypoScript processor "date" did not throw an F3_TypoScript_Exception on transforming an invalid timestamp.');
 		}
 		catch (F3_TypoScript_Exception $exception) {
-			
+
 		}
 	}
-	
+
 	/**
 	 * Checks if the date() processor throws an F3_TypoScript_Exception on a negative timestamp value
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -271,13 +269,13 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 			$this->fail('The TypoScript processor "date" did not throw an F3_TypoScript_Exception on transforming a negative timestamp value.');
 		}
 		catch (F3_TypoScript_Exception $exception) {
-			
+
 		}
 	}
-	
+
 	/**
 	 * Checks if the date() processor returns an empty value on an empty format string
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -288,10 +286,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_date($subject, $format);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return an empty value on an empty format string.');
 	}
-	
+
 	/**
 	 * Checks if the date() processor can be called with objects as parameters
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -299,32 +297,32 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testTimestamp = '1185279917';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testTimestamp);
-		
+
 		$testFormat = 'F j, Y, g:i a';
 		$format = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$format->setValue($testFormat);
-		
+
 		$expectedResult = 'July 24, 2007, 2:25 pm';
 		$result = $this->processors->processor_date($subject, $format);
-		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return the expected result while converting a UNIX timestamp. Expected "'.$expectedResult.'" but got "'.$result.'". (We called it with objects that return strings as parameters)');
-		
-		
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return the expected result while converting a UNIX timestamp. Expected "' . $expectedResult . '" but got "' . $result . '". (We called it with objects that return strings as parameters)');
+
+
 		$testTimestamp = 1254324643;
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testTimestamp);
-		
+
 		$testFormat = 246896744;
 		$format = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$format->setValue($testFormat);
-		
+
 		$expectedResult = '246896744';
 		$result = $this->processors->processor_date($subject, $format);
-		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return the expected result while converting a UNIX timestamp. Expected "'.$expectedResult.'" but got "'.$result.'". (We called it with objects that return integers as parameters)');
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return the expected result while converting a UNIX timestamp. Expected "' . $expectedResult . '" but got "' . $result . '". (We called it with objects that return integers as parameters)');
 	}
-	
+
 	/**
 	 * Checks if the override() processor basically works
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -335,10 +333,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_override($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "override" did not override the subject with the given value.');
 	}
-	
+
 	/**
 	 * Checks if the override() processor returns the original subject on an empty override value
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -349,10 +347,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_override($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "override" did override the subject with an empty override value.');
 	}
-	
+
 	/**
 	 * Checks if the override() processor returns the original subject on a 0 value
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -363,10 +361,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_override($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "override" did override the subject with a zero override value.');
 	}
-	
+
 	/**
 	 * Checks if the override() processor returns the original subject on a not trimmed 0 value
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -377,10 +375,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_override($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "override" did override the subject with a not trimmed zero override value.');
 	}
-	
+
 	/**
 	 * Checks if the override() processor can be called with objects as parameters
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -388,32 +386,32 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testString = 'To be killed!';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$testOverrideString = 'I shot the subject!';
 		$overrideValue = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$overrideValue->setValue($testOverrideString);
-		
+
 		$expectedResult = 'I shot the subject!';
 		$result = $this->processors->processor_override($subject, $overrideValue);
 		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "override" did not override the subject with the override value. (We called it with objects that return strings as parameters)');
-		
-		
+
+
 		$testString = 1132435454;
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$testOverrideString = 0;
 		$overrideValue = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$overrideValue->setValue($testOverrideString);
-		
+
 		$expectedResult = 1132435454;
 		$result = $this->processors->processor_override($subject, $overrideValue);
 		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "override" did override the subject with a zero override value. (We called it with objects that return integers as parameters)');
 	}
-	
+
 	/**
 	 * Checks if the ifEmpty() processor basically works
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -424,10 +422,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifEmpty($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifEmpty" did not override an empty subject with the given value.');
 	}
-	
+
 	/**
 	 * Checks if the ifEmpty() processor returns the original subject if the subject is not empty
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -438,10 +436,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifEmpty($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifEmpty" did override the subject even it was not empty.');
 	}
-	
+
 	/**
 	 * Checks if the ifEmpty() processor returns the override value for an 0 value of the subject
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -452,10 +450,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifEmpty($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifEmpty" did not override the subject wich has a zero value.');
 	}
-	
+
 	/**
 	 * Checks if the ifEmpty() processor returns the override value for an not trimmed 0 value of the subject
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -466,10 +464,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifEmpty($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifEmpty" did override the subject which has a not trimmed zero value.');
 	}
-	
+
 	/**
 	 * Checks if the ifEmpty() processor can be called with objects as parameters
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -477,32 +475,32 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testString = '';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$testOverrideString = 'I shot the subject!';
 		$overrideValue = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$overrideValue->setValue($testOverrideString);
-		
+
 		$expectedResult = 'I shot the subject!';
 		$result = $this->processors->processor_ifEmpty($subject, $overrideValue);
 		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "ifEmpty" did not override the subject with the override value. (We called it with objects that return strings as parameters)');
-		
-		
+
+
 		$testString = 0;
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$testOverrideString = 1132435454;
 		$overrideValue = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$overrideValue->setValue($testOverrideString);
-		
+
 		$expectedResult = 1132435454;
 		$result = $this->processors->processor_ifEmpty($subject, $overrideValue);
 		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "ifEmpty" did not override the subject wich has a zero value. (We called it with objects that return integers as parameters)');
 	}
-	
+
 	/**
 	 * Checks if the ifBlank() processor basically works
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -513,10 +511,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifBlank($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifBlank" did not override an empty subject with the given value.');
 	}
-	
+
 	/**
 	 * Checks if the ifBlank() processor returns the original subject if the subject is not empty
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -527,10 +525,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifBlank($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifBlank" did override the subject even it was not empty.');
 	}
-	
+
 	/**
 	 * Checks if the ifBlank() processor returns the subject for an 0 value of the subject
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -541,10 +539,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifBlank($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifBlank" did not return the subject wich has a zero value.');
 	}
-	
+
 	/**
 	 * Checks if the ifBlank() processor returns the subject for an not trimmed 0 value of the subject
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -555,10 +553,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifBlank($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifBlank" did override the subject which has a not trimmed zero value.');
 	}
-	
+
 	/**
 	 * Checks if the ifBlank() processor returns the subject for a subject with one space character
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -569,10 +567,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_ifBlank($subject, $overrideValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "ifBlank" did override the subject which is one space character.');
 	}
-	
+
 	/**
 	 * Checks if the ifBlank() processor can be called with objects as parameters
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -580,32 +578,32 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testString = '';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$testOverrideString = 'I shot the subject!';
 		$overrideValue = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$overrideValue->setValue($testOverrideString);
-		
+
 		$expectedResult = 'I shot the subject!';
 		$result = $this->processors->processor_ifBlank($subject, $overrideValue);
 		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "ifEmpty" did not override the subject with the override value. (We called it with objects that return strings as parameters)');
-		
-		
+
+
 		$testString = 0;
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$testOverrideString = 1132435454;
 		$overrideValue = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$overrideValue->setValue($testOverrideString);
-		
+
 		$expectedResult = 0;
 		$result = $this->processors->processor_ifBlank($subject, $overrideValue);
 		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "ifEmpty" did override the subject wich has a zero value. (We called it with objects that return integers as parameters)');
 	}
-	
+
 	/**
 	 * Checks if the trim() processor basically works
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -615,10 +613,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_trim($subject);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "trim" did not return the expected result.');
 	}
-	
+
 	/**
 	 * Checks if the trim() processor can handle objects
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -626,15 +624,15 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testString = '  I am not trimmed     ';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$expectedResult = 'I am not trimmed';
 		$result = $this->processors->processor_trim($subject);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "trim" did not return the expected result. (We called it with a text object)');
 	}
-	
+
 	/**
 	 * Checks if the if() processor basically works
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -643,20 +641,20 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$condition = TRUE;
 		$trueValue = 'I am really true!';
 		$falseValue = 'I am more than just false!';
-		
+
 		$expectedResult = 'I am really true!';
 		$result = $this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "if" did not return the expected result. (condition: TRUE)');
-		
+
 		$condition = FALSE;
 		$expectedResult = 'I am more than just false!';
 		$result = $this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "if" did not return the expected result. (condition: FALSE)');
 	}
-	
+
 	/**
 	 * Checks if the if() processor can handle objects
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -668,25 +666,25 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$trueValue->setValue('I am really true!');
 		$falseValue = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$falseValue->setValue('I am more than just false!');
-		
+
 		$expectedResult = 'I am really true!';
 		$result = $this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
-		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "if" did not return the expected result. (condition: TRUE) We called it with text objects. Gave: '.(string)$condition.' Got: '.$result);
-		
+		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "if" did not return the expected result. (condition: TRUE) We called it with text objects. Gave: ' . (string)$condition . ' Got: ' . $result);
+
 		$condition->setValue('FALSE');
 		$expectedResult = 'I am really true!';
 		$result = $this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
-		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "if" did not return the expected result. (condition: "FALSE") We called it with text objects. Gave: '.(string)$condition.' Got: '.$result);
+		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "if" did not return the expected result. (condition: "FALSE") We called it with text objects. Gave: ' . (string)$condition . ' Got: ' . $result);
 
 		$condition->setValue('');
 		$expectedResult = 'I am more than just false!';
 		$result = $this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
-		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "if" did not return the expected result. (condition: "FALSE") We called it with text objects. Gave: '.(string)$condition.' Got: '.$result);
+		$this->assertEquals($expectedResult, (string)$result, 'The TypoScript processor "if" did not return the expected result. (condition: "FALSE") We called it with text objects. Gave: ' . (string)$condition . ' Got: ' . $result);
 	}
-	
+
 	/**
 	 * Checks if the if() processor throws an exception on an invalid condition
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -695,7 +693,7 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$condition = NULL;
 		$trueValue = 'I am really true!';
 		$falseValue = 'I am more than just false!';
-		
+
 		try {
 			$result = $this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
 			$this->fail('The TypoScript processor "if" did not throw an F3_TypoScript_Exception on an invalid condition.');
@@ -703,10 +701,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		catch (F3_TypoScript_Exception $exception) {
 		}
 	}
-	
+
 	/**
 	 * Checks if the isEmpty() processor basically works
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -715,15 +713,15 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 
 		$result = $this->processors->processor_isEmpty($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isEmpty" did not return false on a not empty subject.');
-		
+
 		$subject = '';
 		$result = $this->processors->processor_isEmpty($subject);
 		$this->assertTrue($result, 'The TypoScript processor "isEmpty" did not return true on an empty subject.');
 	}
-	
+
 	/**
 	 * Checks if the isEmpty() processor returns true on a zero value
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -732,15 +730,15 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 
 		$result = $this->processors->processor_isEmpty($subject);
 		$this->assertTrue($result, 'The TypoScript processor "isEmpty" did not return true on a \'0\' subject.');
-		
+
 		$subject = 0;
 		$result = $this->processors->processor_isEmpty($subject);
 		$this->assertTrue($result, 'The TypoScript processor "isEmpty" did not return true on a 0 subject.');
 	}
-	
+
 	/**
 	 * Checks if the isEmpty() processor can handle objects
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -750,15 +748,15 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 
 		$result = $this->processors->processor_isEmpty($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isEmpty" did not return false on a not empty subject. (We called it with an text object)');
-		
+
 		$subject->setValue('');
 		$result = $this->processors->processor_isEmpty($subject);
 		$this->assertTrue($result, 'The TypoScript processor "isEmpty" did not return true on an empty subject. (We called it with an text object)');
 	}
-	
+
 	/**
 	 * Checks if the isBlank() processor basically works
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -767,10 +765,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertTrue($result, 'The TypoScript processor "isBlank" did not return true on a blank subject.');
 	}
-	
+
 	/**
 	 * Checks if the isBlank() processor returns false if the subject is not empty
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -779,10 +777,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isBlank" did return true even the subject was not empty.');
 	}
-	
+
 	/**
 	 * Checks if the isBlank() processor returns true for an 0 value of the subject
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -791,10 +789,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isBlank" did not return true for a zero subject.');
 	}
-	
+
 	/**
 	 * Checks if the isBlank() processor returns false for an not trimmed 0 value of the subject
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -803,10 +801,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isBlank" did return true for a subject that has a not trimmed zero value.');
 	}
-	
+
 	/**
 	 * Checks if the isBlank() processor returns false for a subject with one space character
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -815,10 +813,10 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isBlank" did return true for a subject which is one space character.');
 	}
-	
+
 	/**
 	 * Checks if the isBlank() processor can be called with objects as parameters
-	 * 
+	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -826,15 +824,15 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$testString = '';
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertTrue($result, 'The TypoScript processor "isBlank" returned false. (We called it with objects that return strings as parameters)');
-		
-		
+
+
 		$testString = 0;
 		$subject = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Text');
 		$subject->setValue($testString);
-		
+
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isBlank" returned true on a subject wich has a zero value. (We called it with objects that return integers as parameters)');
 	}
