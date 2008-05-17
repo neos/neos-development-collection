@@ -80,12 +80,12 @@ class F3_TYPO3CR_ValueFactory implements F3_phpCR_ValueFactoryInterface {
 			$type = F3_phpCR_PropertyType::BINARY;
 		} else {
 				// try to do requested conversion, else guess the type
-			if($type !== F3_phpCR_PropertyType::UNDEFINED) {
-				if(!is_string($value)) {
+			if ($type !== F3_phpCR_PropertyType::UNDEFINED) {
+				if (!is_string($value)) {
 					throw new F3_phpCR_ValueFormatException('Type conversion in Valuefactory only allowed for string values.', 1203676334);
 				}
 
-				switch($type) {
+				switch ($type) {
 					case F3_phpCR_PropertyType::REFERENCE:
 					case F3_phpCR_PropertyType::WEAKREFERENCE:
 							// for REFERENCE make sure we really have a node with that UUID

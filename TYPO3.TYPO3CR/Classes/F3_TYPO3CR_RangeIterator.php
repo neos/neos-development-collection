@@ -69,7 +69,7 @@ class F3_TYPO3CR_RangeIterator implements F3_phpCR_RangeIteratorInterface {
 		$positionToRemove = $this->getPosition()-1;
 		array_splice($this->elements, $positionToRemove, 1);
 			// array_splice resets the array pointer, so we fix it together with the internal position
-		for($skipped = 0; $skipped < --$this->position; $skipped++) next($this->elements);
+		for ($skipped = 0; $skipped < --$this->position; $skipped++) next($this->elements);
 	}
 
 	/**
@@ -116,7 +116,7 @@ class F3_TYPO3CR_RangeIterator implements F3_phpCR_RangeIteratorInterface {
 			throw new F3_phpCR_NoSuchElementException('Skip operation past the last element in the iterator.', 1187530862);
 		} else {
 			$this->position = $newPosition;
-			for($skipped = 0; $skipped < $skipNum; $skipped++) next($this->elements);
+			for ($skipped = 0; $skipped < $skipNum; $skipped++) next($this->elements);
 		}
 	}
 

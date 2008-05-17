@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  */
 
-require_once('F3_TYPO3CR_StorageAccessTestBase.php');
+require_once('F3_TYPO3CR_StorageAccess_TestBase.php');
 
 /**
  * Tests for the StorageAccess_PDO implementation of TYPO3CR
@@ -30,7 +30,7 @@ require_once('F3_TYPO3CR_StorageAccessTestBase.php');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_StorageAccess_PDOTest extends F3_TYPO3CR_StorageAccessTestBase {
+class F3_TYPO3CR_StorageAccess_PDOTest extends F3_TYPO3CR_StorageAccess_TestBase {
 
 	/**
 	 * @var string

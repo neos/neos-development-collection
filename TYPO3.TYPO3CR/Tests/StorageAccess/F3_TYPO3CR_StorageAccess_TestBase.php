@@ -29,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_StorageAccessTestBase extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_StorageAccess_TestBase extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @var F3_TYPO3CR_StorageAccessInterface

@@ -69,7 +69,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_phpCR_NamespaceRegistryInterfac
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	protected function initializeCustomNamespaces()	{
+	protected function initializeCustomNamespaces() {
 		$rawNamespaces = $this->storageAccess->getRawNamespaces();
 		if (!count($rawNamespaces))	return;
 		foreach ($rawNamespaces as $rawNamespace) {
@@ -126,7 +126,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_phpCR_NamespaceRegistryInterfac
 		$prefix = array_search($uri, $this->builtInNamespaces);
 		if ($prefix === FALSE) {
 			$prefix = array_search($uri, $this->customNamespaces);
-			if ($prefix === FALSE)	{
+			if ($prefix === FALSE) {
 				throw new F3_phpCR_NamespaceException('URI ' . $uri . ' not registered in NamespaceRegistry', 1184478139);
 			}
 		}
@@ -175,8 +175,8 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_phpCR_NamespaceRegistryInterfac
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerNamespace($prefix, $uri)	{
-		if (!$this->isAllowedToModifyNamespace($prefix))	{
+	public function registerNamespace($prefix, $uri) {
+		if (!$this->isAllowedToModifyNamespace($prefix)) {
 			throw new F3_phpCR_NamespaceException('Attempt to register a protected namespace!', 1184478152);
 		}
 
@@ -207,7 +207,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_phpCR_NamespaceRegistryInterfac
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function unregisterNamespace($prefix) {
-		if (!$this->isAllowedToModifyNamespace($prefix))	{
+		if (!$this->isAllowedToModifyNamespace($prefix)) {
 			throw new F3_phpCR_NamespaceException('Attempt to unregister a protected namespace!', 1184478149);
 		}
 
@@ -227,8 +227,8 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_phpCR_NamespaceRegistryInterfac
 	 * @todo Throws an AccessDeniedException if this Session does not have permission to add/remove a Namespace
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	protected function isAllowedToModifyNamespace($prefix)	{
-		if (array_key_exists($prefix, $this->builtInNamespaces))	{
+	protected function isAllowedToModifyNamespace($prefix) {
+		if (array_key_exists($prefix, $this->builtInNamespaces)) {
 			return FALSE;
 		}
 

@@ -194,7 +194,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function reregisteringURIRemovesPrefix(){
+	public function reregisteringURIRemovesPrefix() {
 		$prefix1 = 'testprefix1';
 		$prefix2 = 'testprefix2';
 		$uri = 'http://5-0.dev.typo3.org/test/1.0/';
@@ -225,7 +225,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function reregisteringPrefixRemovesURI(){
+	public function reregisteringPrefixRemovesURI() {
 		$prefix = 'testprefix3';
 		$uri1 = 'http://5-0.dev.typo3.org/test/1.0/';
 		$uri2 = 'http://5-0.dev.typo3.org/test/2.0/';
@@ -256,7 +256,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function unregisteringNamespaceRemovedTheNamespace(){
+	public function unregisteringNamespaceRemovedTheNamespace() {
 		$prefix = 'testprefix4';
 		$uri = 'http://5-0.dev.typo3.org/test/3.0/';
 

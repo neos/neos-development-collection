@@ -256,7 +256,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function indexBasedNotationWorks() {
-		throw new PHPUnit_Framework_IncompleteTestError('Test for same-name siblings not implemented yet.');
+		throw new PHPUnit_Framework_IncompleteTestError('Test for same-name siblings not implemented yet.', 1211051286);
 	}
 
 	/**
@@ -264,7 +264,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function fetchingPropertiesWorks() {
-		throw new PHPUnit_Framework_IncompleteTestError('Test for property fetching not implemented yet.');
+		throw new PHPUnit_Framework_IncompleteTestError('Test for property fetching not implemented yet.', 1211051287);
 	}
 
 }

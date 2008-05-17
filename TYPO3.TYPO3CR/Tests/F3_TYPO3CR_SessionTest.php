@@ -224,7 +224,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getItemReturnsSameNodeAsAdded() {
-		throw new PHPUnit_Framework_IncompleteTestError('Test for fetching a freshly added node not implemented yet.');
+		throw new PHPUnit_Framework_IncompleteTestError('Test for fetching a freshly added node not implemented yet.', 1211051320);
 
 		$testPropertyNode = $this->session->getRootNode()->addNode('TestPropertyNode');
 		$this->assertSame($testPropertyNode, $this->session->getItem('/TestPropertyNode'), 'The returned TestPropertyNode was not the same as the local one.');
