@@ -91,7 +91,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Tests if a F3_phpCR_NoSuchElementException} is thrown when nextNode()
+	 * Tests if a F3_PHPCR_NoSuchElementException} is thrown when nextNode()
 	 * is called and there are no (more) nodes available.
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -102,7 +102,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 		try {
 			$iterator->nextNode();
 			$this->fail("nextNode() must throw a NoSuchElementException when no nodes are available");
-		} catch (F3_phpCR_NoSuchElementException $e) {
+		} catch (F3_PHPCR_NoSuchElementException $e) {
 			// success
 		}
 	}
@@ -125,7 +125,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 		try {
 			$iterator->nextNode();
 			$this->fail("nextNode() after skip() to the end must throw a NoSuchElementException");
-		} catch (F3_phpCR_NoSuchElementException $e) {
+		} catch (F3_PHPCR_NoSuchElementException $e) {
 			// success
 		}
 	}
@@ -146,7 +146,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 		try {
 			$iterator->skip(5);
 			$this->fail("skip() must throw a NoSuchElementException if one tries to skip past the end of the iterator");
-		} catch (F3_phpCR_NoSuchElementException $e) {
+		} catch (F3_PHPCR_NoSuchElementException $e) {
 			// success
 		}
 	}

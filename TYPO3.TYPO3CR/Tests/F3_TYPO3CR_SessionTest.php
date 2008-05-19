@@ -56,7 +56,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
-		$this->assertType('F3_phpCR_WorkspaceInterface', $session->getWorkspace(), 'The session did not return a workspace object on getWorkspace().');
+		$this->assertType('F3_PHPCR_WorkspaceInterface', $session->getWorkspace(), 'The session did not return a workspace object on getWorkspace().');
 	}
 
 	/**
@@ -105,7 +105,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
 		$node = $session->getNodeByUUID($uuid);
-		$this->assertType('F3_phpCR_NodeInterface', $node, 'The session did not return a node object on getNodeByUUID(' . $uuid . ').');
+		$this->assertType('F3_PHPCR_NodeInterface', $node, 'The session did not return a node object on getNodeByUUID(' . $uuid . ').');
 	}
 
 	/**
@@ -121,8 +121,8 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		try {
 			$uuid = 'hurzhurz-hurz-hurz-hurz-hurzhurzhurz';
 			$node = $session->getNodeByUUID($uuid);
-			$this->fail('getNodeByUUID with a non-exsting UUID must throw a F3_phpCR_ItemNotFoundException');
-		} catch (F3_phpCR_ItemNotFoundException $e) {}
+			$this->fail('getNodeByUUID with a non-exsting UUID must throw a F3_PHPCR_ItemNotFoundException');
+		} catch (F3_PHPCR_ItemNotFoundException $e) {}
 	}
 
 	/**
@@ -329,7 +329,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
-		$this->assertType('F3_phpCR_ValueFactoryInterface', $session->getValueFactory(), 'The session did not return a ValueFactory object on getValueFactory().');
+		$this->assertType('F3_PHPCR_ValueFactoryInterface', $session->getValueFactory(), 'The session did not return a ValueFactory object on getValueFactory().');
 	}
 
 	/**
@@ -377,25 +377,25 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		try {
 			$session->setNamespacePrefix('xMLtest', 'http://should.throw/exception');
 			$this->fail('Prefix starts with XML, but does not throw an exception!');
-		} catch (F3_phpCR_NamespaceException $e) {
+		} catch (F3_PHPCR_NamespaceException $e) {
 		}
 
 		try {
 			$session->setNamespacePrefix('', 'http://should.throw/exception');
 			$this->fail('Prefix is empty, but no exception is thrown!');
-		} catch (F3_phpCR_NamespaceException $e) {
+		} catch (F3_PHPCR_NamespaceException $e) {
 		}
 
 		try {
 			$session->setNamespacePrefix('testprefix', '');
 			$this->fail('URI is empty, but no exception is thrown!');
-		} catch (F3_phpCR_NamespaceException $e) {
+		} catch (F3_PHPCR_NamespaceException $e) {
 		}
 
 		try {
 			$session->getNamespaceUri('someNonExistingPrefix');
 			$this->fail('Unknown URI does not trigger exception.');
-		} catch (F3_phpCR_NamespaceException $e) {}
+		} catch (F3_PHPCR_NamespaceException $e) {}
 
 		$testUri = 'http://typo3.org/jcr/test';
 		$session->setNamespacePrefix('localPrefixToTest', $testUri);

@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeTypeDefinition implements F3_phpCR_NodeTypeDefinitionInterface {
+class F3_TYPO3CR_NodeTypeDefinition implements F3_PHPCR_NodeTypeDefinitionInterface {
 
 	/**
 	 * @var F3_FLOW3_Component_Manager

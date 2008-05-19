@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_PropertyInterface {
+class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_PropertyInterface {
 
 	/**
 	 * @var mixed
@@ -34,7 +34,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	protected $value;
 
 	/**
-	 * @var F3_phpCR_Node
+	 * @var F3_PHPCR_Node
 	 */
 	protected $parentNode;
 
@@ -51,7 +51,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, $value, F3_phpCR_NodeInterface $parentNode, $isMultiValued, F3_phpCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($name, $value, F3_PHPCR_NodeInterface $parentNode, $isMultiValued, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
@@ -59,7 +59,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 		if ($value === NULL) throw new F3_TYPO3CR_RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
 
 		$this->name = $name;
-		$valueFactory = $this->componentManager->getComponent('F3_phpCR_ValueFactoryInterface');
+		$valueFactory = $this->componentManager->getComponent('F3_PHPCR_ValueFactoryInterface');
 		if ($isMultiValued) {
 			foreach ($value as $singleValue) {
 				$this->value[] = $valueFactory->createValue($singleValue);
@@ -76,12 +76,12 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * The object returned is a copy of the stored value and is immutable.
 	 *
 	 * @return F3_TYPO3CR_Value
-	 * @throws F3_phpCR_ValueFormatException
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_ValueFormatException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValue() {
-		if (is_array($this->value)) throw new F3_phpCR_ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
+		if (is_array($this->value)) throw new F3_PHPCR_ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
 
 		return clone $this->value;
 	}
@@ -95,13 +95,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * are not reflected in internal storage.
 	 *
 	 * @return array Array of F3_TYPO3CR_Value
-	 * @throws F3_phpCR_ValueFormatException
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_ValueFormatException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValues() {
-		if (!is_array($this->value)) throw new F3_phpCR_ValueFormatException('getValues() cannot be used to access single-valued properties.', 1189512545);
+		if (!is_array($this->value)) throw new F3_PHPCR_ValueFormatException('getValues() cannot be used to access single-valued properties.', 1189512545);
 
 		$values = array();
 		foreach ($this->value as $singleValue) {
@@ -115,13 +115,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * Returns a String representation of the value of this property.
 	 *
 	 * @return string tring representation of the value of this property
-	 * @throws F3_phpCR_ValueFormatException
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_ValueFormatException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getString() {
-		if (is_array($this->value)) throw new F3_phpCR_ValueFormatException('getString() cannot be called on multi-valued properties.', 1203338111);
+		if (is_array($this->value)) throw new F3_PHPCR_ValueFormatException('getString() cannot be called on multi-valued properties.', 1203338111);
 
 		return $this->value->getString();
 	}
@@ -139,13 +139,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * Returns a Long (double) representation of the value of this property.
 	 *
 	 * @return long Long representation of the value of this property
-	 * @throws F3_phpCR_ValueFormatException
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_ValueFormatException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getLong() {
-		if (is_array($this->value)) throw new F3_phpCR_ValueFormatException('getLong() cannot be called on multi-valued properties.', 1203338188);
+		if (is_array($this->value)) throw new F3_PHPCR_ValueFormatException('getLong() cannot be called on multi-valued properties.', 1203338188);
 
 		return $this->value->getLong();
 	}
@@ -154,13 +154,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * Returns a double representation of the value of this property.
 	 *
 	 * @return double Double representation of the value of this property
-	 * @throws F3_phpCR_ValueFormatException
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_ValueFormatException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDouble() {
-		if (is_array($this->value)) throw new F3_phpCR_ValueFormatException('getDouble() cannot be called on multi-valued properties.', 1203338188);
+		if (is_array($this->value)) throw new F3_PHPCR_ValueFormatException('getDouble() cannot be called on multi-valued properties.', 1203338188);
 
 		return $this->value->getDouble();
 	}
@@ -169,13 +169,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * Returns a boolean representation of the value of this property.
 	 *
 	 * @return boolean Boolean representation of the value of this property
-	 * @throws F3_phpCR_ValueFormatException
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_ValueFormatException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBoolean() {
-		if (is_array($this->value)) throw new F3_phpCR_ValueFormatException('getBoolean() cannot be called on multi-valued properties.', 1203338188);
+		if (is_array($this->value)) throw new F3_PHPCR_ValueFormatException('getBoolean() cannot be called on multi-valued properties.', 1203338188);
 
 		return $this->value->getBoolean();
 	}
@@ -187,12 +187,12 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * are not reflected in internal storage.
 	 *
 	 * @return DateTime DateTime representation of the value of this property
-	 * @throws F3_phpCR_ValueFormatException if the property is multi-valued or cannot be converted to a DateTime object
-	 * @throws F3_phpCR_RepositoryException on any other error
+	 * @throws F3_PHPCR_ValueFormatException if the property is multi-valued or cannot be converted to a DateTime object
+	 * @throws F3_PHPCR_RepositoryException on any other error
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDate() {
-		if (is_array($this->value)) throw new F3_phpCR_ValueFormatException('getDate() cannot be called on multi-valued properties.', 1203338327);
+		if (is_array($this->value)) throw new F3_PHPCR_ValueFormatException('getDate() cannot be called on multi-valued properties.', 1203338327);
 
 		return $this->value->getDate();
 	}
@@ -204,12 +204,12 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	 * InputStream.
 	 *
 	 * @return unknown Stream representation of the value of this property
-	 * @throws F3_phpCR_ValueFormatException if the property is multi-valued
-	 * @throws F3_phpCR_RepositoryException on any other error
+	 * @throws F3_PHPCR_ValueFormatException if the property is multi-valued
+	 * @throws F3_PHPCR_RepositoryException on any other error
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getStream() {
-		if (is_array($this->value)) throw new F3_phpCR_ValueFormatException('getStream() cannot be called on multi-valued properties.', 1203338571);
+		if (is_array($this->value)) throw new F3_PHPCR_ValueFormatException('getStream() cannot be called on multi-valued properties.', 1203338571);
 
 		return $this->value->getStream();
 	}
@@ -243,7 +243,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 	/**
 	 * Return parent node
 	 *
-	 * @return F3_phpCR_Node The Parent Node
+	 * @return F3_PHPCR_Node The Parent Node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getParent() {
@@ -295,7 +295,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_phpCR_Pr
 			$this->value = NULL;
 			$this->setRemoved(TRUE);
 		} else {
-			$valueFactory = $this->componentManager->getComponent('F3_phpCR_ValueFactoryInterface');
+			$valueFactory = $this->componentManager->getComponent('F3_PHPCR_ValueFactoryInterface');
 			if (is_array($value)) {
 				foreach ($value as $singleValue) {
 					$this->value[] = $valueFactory->createValue($singleValue);

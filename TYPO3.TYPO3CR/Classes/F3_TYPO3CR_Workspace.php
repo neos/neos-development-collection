@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Workspace implements F3_phpCR_WorkspaceInterface {
+class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 
 	/**
 	 * @var string
@@ -52,12 +52,12 @@ class F3_TYPO3CR_Workspace implements F3_phpCR_WorkspaceInterface {
 	 * Constructs a Workspace object
 	 *
 	 * @param string $name
-	 * @param F3_phpCR_SessionInterface $session
-	 * @param F3_phpCR_StorageAccessInterface $storageAccess
+	 * @param F3_PHPCR_SessionInterface $session
+	 * @param F3_PHPCR_StorageAccessInterface $storageAccess
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, F3_phpCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($name, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->name = (F3_PHP6_Functions::strlen($name) ? $name : 'default');
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;
@@ -90,11 +90,11 @@ class F3_TYPO3CR_Workspace implements F3_phpCR_WorkspaceInterface {
 	 * mappings.
 	 *
 	 * @return F3_TYPO3CR_NamespaceRegistry
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNamespaceRegistry() {
-		return $this->componentManager->getComponent('F3_phpCR_NamespaceRegistryInterface', $this->storageAccess, $this->componentManager);
+		return $this->componentManager->getComponent('F3_PHPCR_NamespaceRegistryInterface', $this->storageAccess, $this->componentManager);
 	}
 }
 

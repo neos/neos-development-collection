@@ -129,18 +129,18 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	public function getPropertiesWorks() {
 		$emptyNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noProperties = $emptyNode->getProperties();
-		$this->assertType('F3_phpCR_PropertyIteratorInterface', $noProperties, 'getProperties() did not return a PropertyIterator for a node without properties.');
+		$this->assertType('F3_PHPCR_PropertyIteratorInterface', $noProperties, 'getProperties() did not return a PropertyIterator for a node without properties.');
 
 		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$properties = $node->getProperties();
-		$this->assertType('F3_phpCR_PropertyIteratorInterface', $properties, 'getProperties() did not return a PropertyIterator for a node with properties.');
+		$this->assertType('F3_PHPCR_PropertyIteratorInterface', $properties, 'getProperties() did not return a PropertyIterator for a node with properties.');
 
 		$propertyIterator = new F3_TYPO3CR_PropertyIterator;
 		$this->assertEquals(0, $propertyIterator->getSize(), 'getProperties() did not return an empty PropertyIterator for a node without properties.');
 		$this->assertNotEquals(1, $propertyIterator->getSize(), 'getProperties() returned an empty PropertyIterator for a node with properties.');
 
 			// we don't compare the iterators directly here, as this hits the memory limit hard. really hard.
-		$titleProperty = $this->componentManager->getComponent('F3_phpCR_PropertyInterface', 'title', 'News about the TYPO3CR', $node, FALSE, $this->session, $this->mockStorageAccess);
+		$titleProperty = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', 'title', 'News about the TYPO3CR', $node, FALSE, $this->session, $this->mockStorageAccess);
 		$this->assertEquals($titleProperty->getString(), $properties->nextProperty()->getString(), 'getProperties() did not return the expected property.');
 	}
 
@@ -188,7 +188,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPrimaryNodeTypeReturnsANodeType() {
-		$this->assertType('F3_phpCR_NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
+		$this->assertType('F3_PHPCR_NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
 	}
 
 	/**
@@ -212,11 +212,11 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	public function getNodesWorks() {
 		$leaf = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noChildNodes = $leaf->getNodes();
-		$this->assertType('F3_phpCR_NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
+		$this->assertType('F3_PHPCR_NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
 
 		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$childNodes = $node->getNodes();
-		$this->assertType('F3_phpCR_NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
+		$this->assertType('F3_PHPCR_NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
 
 		$this->assertEquals(0, $noChildNodes->getSize(), 'getNodes() did not return an empty NodeIterator for a node without child nodes.');
 		$this->assertNotEquals(0, $childNodes->getSize(), 'getNodes() returned an empty NodeIterator for a node with child nodes.');
@@ -272,7 +272,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$node->getAncestor($node->getDepth() + 1);
 			$this->fail("Getting ancestor of depth n, where n is greater than depth of this Node must throw an ItemNotFoundException");
-		} catch (F3_phpCR_ItemNotFoundException $e) {
+		} catch (F3_PHPCR_ItemNotFoundException $e) {
 			// success
 		}
 	}
@@ -290,7 +290,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$node->getAncestor($node->getDepth() + 1);
 			$this->fail("Getting ancestor of depth n, where n is greater than depth of this Node must throw an ItemNotFoundException");
-		} catch (F3_phpCR_ItemNotFoundException $e) {
+		} catch (F3_PHPCR_ItemNotFoundException $e) {
 			// success
 		}
 	}
@@ -305,7 +305,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->rootNode->getAncestor(-1);
 			$this->fail("Getting ancestor of depth < 0 must throw an ItemNotFoundException.");
-		} catch (F3_phpCR_ItemNotFoundException $e) {
+		} catch (F3_PHPCR_ItemNotFoundException $e) {
 			// success
 		}
 	}
@@ -345,7 +345,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->rootNode->getParent();
 			$this->fail("getParent() of root must throw an ItemNotFoundException.");
-		} catch (F3_phpCR_ItemNotFoundException $e) {
+		} catch (F3_PHPCR_ItemNotFoundException $e) {
 			// success
 		}
 	}
@@ -408,7 +408,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function addNodeReturnsANode() {
 		$newNode = $this->rootNode->addNode('User');
-		$this->assertType('F3_phpCR_NodeInterface', $newNode, 'addNode() does not return an object of type F3_phpCR_NodeInterface.');
+		$this->assertType('F3_PHPCR_NodeInterface', $newNode, 'addNode() does not return an object of type F3_PHPCR_NodeInterface.');
 		$this->assertTrue($this->rootNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
 	}
 
@@ -423,8 +423,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$newNode1 = $this->rootNode->addNode('SomeItem');
 		$newNode2 = $this->rootNode->addNode('Content/./News/SomeItem');
 
-		$this->assertType('F3_phpCR_NodeInterface', $newNode1, 'Function: addNode() - returns not an object from type F3_phpCR_NodeInterface.');
-		$this->assertType('F3_phpCR_NodeInterface', $newNode2, 'Function: addNode() - returns not an object from type F3_phpCR_NodeInterface.');
+		$this->assertType('F3_PHPCR_NodeInterface', $newNode1, 'Function: addNode() - returns not an object from type F3_PHPCR_NodeInterface.');
+		$this->assertType('F3_PHPCR_NodeInterface', $newNode2, 'Function: addNode() - returns not an object from type F3_PHPCR_NodeInterface.');
 
 		$expectedParentNode = $this->rootNode->getNode('Content/News');
 		$this->assertTrue($expectedParentNode->isSame($newNode2->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
@@ -444,9 +444,9 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->rootNode->save();
 
 		$newNode1 = $this->session->getNodeByUUID($newNode1->getUUID());
-		$this->assertType('F3_phpCR_NodeInterface', $newNode1, 'Function: save() - Nodes are not persisted in the CR.');
+		$this->assertType('F3_PHPCR_NodeInterface', $newNode1, 'Function: save() - Nodes are not persisted in the CR.');
 		$newNode2 = $this->session->getNodeByUUID($newNode2->getUUID());
-		$this->assertType('F3_phpCR_NodeInterface', $newNode2, 'Function: save() - Nodes are not persisted in the CR.');
+		$this->assertType('F3_PHPCR_NodeInterface', $newNode2, 'Function: save() - Nodes are not persisted in the CR.');
 	}
 
 	/**

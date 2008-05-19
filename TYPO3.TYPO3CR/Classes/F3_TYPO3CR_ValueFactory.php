@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_ValueFactory implements F3_phpCR_ValueFactoryInterface {
+class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 
 	/**
 	 * @var F3_FLOW3_Component_Manager
@@ -61,14 +61,14 @@ class F3_TYPO3CR_ValueFactory implements F3_phpCR_ValueFactoryInterface {
 	 *
 	 * @param mixed $value
 	 * @param integer $type
-	 * @return F3_phpCR_ValueInterface
-	 * @throws F3_phpCR_ValueFormatException is thrown if the specified value cannot be converted to the specified type.
-	 * @throws F3_phpCR_RepositoryException if the specified Node is not referenceable, the current Session is no longer active, or another error occurs.
+	 * @return F3_PHPCR_ValueInterface
+	 * @throws F3_PHPCR_ValueFormatException is thrown if the specified value cannot be converted to the specified type.
+	 * @throws F3_PHPCR_RepositoryException if the specified Node is not referenceable, the current Session is no longer active, or another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check type guessing/conversion when we go for PHP6
 	 * @todo Make sure conversion is checked for possibility
 	 */
-	public function createValue($value, $type = F3_phpCR_PropertyType::UNDEFINED) {
+	public function createValue($value, $type = F3_PHPCR_PropertyType::UNDEFINED) {
 			// we handle resources "the PHP way" by just fetching their contents
 		if (is_resource($value)) {
 			$data = '';
@@ -77,60 +77,60 @@ class F3_TYPO3CR_ValueFactory implements F3_phpCR_ValueFactoryInterface {
 			}
 			fclose($value);
 			$value &= $data;
-			$type = F3_phpCR_PropertyType::BINARY;
+			$type = F3_PHPCR_PropertyType::BINARY;
 		} else {
 				// try to do requested conversion, else guess the type
-			if ($type !== F3_phpCR_PropertyType::UNDEFINED) {
+			if ($type !== F3_PHPCR_PropertyType::UNDEFINED) {
 				if (!is_string($value)) {
-					throw new F3_phpCR_ValueFormatException('Type conversion in Valuefactory only allowed for string values.', 1203676334);
+					throw new F3_PHPCR_ValueFormatException('Type conversion in Valuefactory only allowed for string values.', 1203676334);
 				}
 
 				switch ($type) {
-					case F3_phpCR_PropertyType::REFERENCE:
-					case F3_phpCR_PropertyType::WEAKREFERENCE:
+					case F3_PHPCR_PropertyType::REFERENCE:
+					case F3_PHPCR_PropertyType::WEAKREFERENCE:
 							// for REFERENCE make sure we really have a node with that UUID
 						break;
-					case F3_phpCR_PropertyType::DATE:
+					case F3_PHPCR_PropertyType::DATE:
 						$value = new DateTime($value);
 						break;
-					case F3_phpCR_PropertyType::BINARY:
+					case F3_PHPCR_PropertyType::BINARY:
 							// make sure it is binary for PHP6
 						break;
-					case F3_phpCR_PropertyType::DOUBLE:
+					case F3_PHPCR_PropertyType::DOUBLE:
 						$value = (float)$value;
 						break;
-					case F3_phpCR_PropertyType::BOOLEAN:
+					case F3_PHPCR_PropertyType::BOOLEAN:
 						$value = (boolean)$value;
 						break;
-					case F3_phpCR_PropertyType::LONG:
+					case F3_PHPCR_PropertyType::LONG:
 						$value = (int)$value;
 						break;
-					case F3_phpCR_PropertyType::URI:
+					case F3_PHPCR_PropertyType::URI:
 							// we cannot really use parse_url to check for a syntactically valid URI
 							// as it emits an E_WARNING on failure and "correctly" parses about everything
 						break;
 				}
 			} else {
-				if (is_a($value, 'F3_phpCR_NodeInterface')) {
+				if (is_a($value, 'F3_PHPCR_NodeInterface')) {
 					$value = $value->getUUID();
-					$type = F3_phpCR_PropertyType::REFERENCE;
+					$type = F3_PHPCR_PropertyType::REFERENCE;
 				} elseif (is_a($value, 'DateTime')) {
-					$type = F3_phpCR_PropertyType::DATE;
+					$type = F3_PHPCR_PropertyType::DATE;
 				} elseif (F3_PHP6_Functions::is_binary($value)) {
-					$type = F3_phpCR_PropertyType::BINARY;
+					$type = F3_PHPCR_PropertyType::BINARY;
 				} elseif (is_double($value)) {
-					$type = F3_phpCR_PropertyType::DOUBLE;
+					$type = F3_PHPCR_PropertyType::DOUBLE;
 				} elseif (is_bool($value)) {
-					$type = F3_phpCR_PropertyType::BOOLEAN;
+					$type = F3_PHPCR_PropertyType::BOOLEAN;
 				} elseif (is_long($value)) {
-					$type = F3_phpCR_PropertyType::LONG;
+					$type = F3_PHPCR_PropertyType::LONG;
 				} elseif (is_string($value)) {
-					$type = F3_phpCR_PropertyType::STRING;
+					$type = F3_PHPCR_PropertyType::STRING;
 				}
 			}
 		}
 
-		return $this->componentManager->getComponent('F3_phpCR_ValueInterface', $value, $type);
+		return $this->componentManager->getComponent('F3_PHPCR_ValueInterface', $value, $type);
 	}
 }
 

@@ -33,12 +33,12 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 	 * Parse a path - It can be either a relative or an absolute path. We support same-name siblings as well.
 	 *
 	 * @param string $path Relative or absolute path according to the specification (Section 3.6)
-	 * @param F3_phpCR_NodeInterface $currentNode current node
+	 * @param F3_PHPCR_NodeInterface $currentNode current node
 	 * @param integer $searchMode 1 (default) for returning only Nodes, 2 for returning only Properties, 3 for returning both
-	 * @return F3_phpCR_NodeInterface the root node
+	 * @return F3_PHPCR_NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function parsePath($path, F3_phpCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
+	public function parsePath($path, F3_PHPCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
 		if ($this->isPathAbsolute($path)) {
 			$currentNode = $this->getRootNode($currentNode);
 			$path = F3_PHP6_Functions::substr($path, 1);
@@ -51,15 +51,15 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 	 * Parse a relative path.
 	 *
 	 * @param string $path Relative path according to the specification (Section 3.6)
-	 * @param F3_phpCR_NodeInterface $currentNode current node
+	 * @param F3_PHPCR_NodeInterface $currentNode current node
 	 * @param integer $searchMode 1 (default) for returning only Nodes, 2 for returning only Properties, 3 for returning both
-	 * @return F3_phpCR_NodeInterface the root node
+	 * @return F3_PHPCR_NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implementation of Namespaces!
 	 * @todo Add name pattern support
 	 */
-	protected function parseRelativePath($path, F3_phpCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
+	protected function parseRelativePath($path, F3_PHPCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
 		if ($path == '' && ($searchMode & self::SEARCH_MODE_NODES)) {
 			return $currentNode;
 		}
@@ -67,7 +67,7 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 
 		if (preg_match('/(.*)\[(.*)\]/', $firstElement, $matchResult)) {
 			if ($matchResult[2] < 1) {
-				throw new F3_phpCR_RepositoryException('Invalid relative path supplied, index must be > 0!', 1189350810);
+				throw new F3_PHPCR_RepositoryException('Invalid relative path supplied, index must be > 0!', 1189350810);
 			}
 
 			$name = $matchResult[1];
@@ -110,20 +110,20 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 			}
 		}
 
-		throw new F3_phpCR_PathNotFoundException('Node or property not found!', 1189351448);
+		throw new F3_PHPCR_PathNotFoundException('Node or property not found!', 1189351448);
 	}
 
 	/**
 	 * Get root node by traversing the tree up
 	 *
-	 * @param F3_phpCR_NodeInterface $currentNode current node
-	 * @return F3_phpCR_NodeInterface the root node
+	 * @param F3_PHPCR_NodeInterface $currentNode current node
+	 * @return F3_PHPCR_NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	protected function getRootNode(F3_phpCR_NodeInterface $currentNode) {
+	protected function getRootNode(F3_PHPCR_NodeInterface $currentNode) {
 		try {
 			return $currentNode->getParent();
-		} catch (F3_phpCR_ItemNotFoundException $e) {
+		} catch (F3_PHPCR_ItemNotFoundException $e) {
 			return $currentNode;
 		}
 	}

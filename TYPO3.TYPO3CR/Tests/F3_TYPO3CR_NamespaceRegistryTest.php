@@ -112,7 +112,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 
 		try {
 			$namespaceRegistry->registerNamespace('nt', 'http://some.domain.invalid/path');
-		} catch (F3_phpCR_NamespaceException $exception) {
+		} catch (F3_PHPCR_NamespaceException $exception) {
 			return;
 		}
 		$this->fail('registerNamespace threw no exception although a builtin prefix was re-registered.');
@@ -130,7 +130,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 
 		try {
 			$namespaceRegistry->registerNamespace('XmLpf', 'http://some.domain.invalid/path');
-		} catch (F3_phpCR_NamespaceException $exception) {
+		} catch (F3_PHPCR_NamespaceException $exception) {
 			return;
 		}
 		$this->fail('registerNamespace threw no exception although a prefix starting with XmL was registered.');
@@ -148,7 +148,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 
 		try {
 			$namespaceRegistry->unregisterNamespace('probablyUnknownPrefix', 'http://some.domain.invalid/path');
-		} catch (F3_phpCR_NamespaceException $exception) {
+		} catch (F3_PHPCR_NamespaceException $exception) {
 			return;
 		}
 		$this->fail('unregisterNamespace threw no exception although an unknown prefix was unregistered.');
@@ -214,7 +214,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 
 		try {
 			$namespaceRegistry->getURI($prefix1);
-		} catch (F3_phpCR_NamespaceException $e) {
+		} catch (F3_PHPCR_NamespaceException $e) {
 			return;
 		}
 		$this->fail('Re-registering a URI with a new prefix did not remove the old prefix!');
@@ -245,7 +245,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 
 		try {
 			$namespaceRegistry->getPrefix($uri1);
-		} catch (F3_phpCR_NamespaceException $e) {
+		} catch (F3_PHPCR_NamespaceException $e) {
 			return;
 		}
 		$this->fail('Re-registering prefix with a new URI did not remove the old URI!');
@@ -274,7 +274,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 		try {
 			$namespaceRegistry->getPrefix($uri);
 			$namespaceRegistry->getURI($prefix);
-		} catch (F3_phpCR_NamespaceException $e) {
+		} catch (F3_PHPCR_NamespaceException $e) {
 			return;
 		}
 		$this->fail('Unregistering a namespace did not remove it!');
@@ -297,7 +297,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 			try {
 				$namespaceRegistry->unregisterNamespace($prefix);
 				$this->fail("Trying to unregister " . $prefix . " must fail");
-			} catch (F3_phpCR_NamespaceException $e) {
+			} catch (F3_PHPCR_NamespaceException $e) {
 				// expected behaviour
 			}
 		}

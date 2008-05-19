@@ -26,13 +26,13 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeTypeIterator extends F3_TYPO3CR_RangeIterator implements F3_phpCR_NodeTypeIteratorInterface {
+class F3_TYPO3CR_NodeTypeIterator extends F3_TYPO3CR_RangeIterator implements F3_PHPCR_NodeTypeIteratorInterface {
 
 	/**
 	 * Returns the next NodeType in the iteration.
 	 *
-	 * @return F3_phpCR_NodeTypeInterface
-	 * @throws F3_phpCR_NoSuchElementException if the iterator contains no more elements.
+	 * @return F3_PHPCR_NodeTypeInterface
+	 * @throws F3_PHPCR_NoSuchElementException if the iterator contains no more elements.
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

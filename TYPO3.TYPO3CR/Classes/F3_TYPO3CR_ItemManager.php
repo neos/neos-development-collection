@@ -53,18 +53,18 @@ class F3_TYPO3CR_ItemManager implements F3_TYPO3CR_ItemManagerInterface {
 	/**
 	 * Create the Node in nodes.
 	 *
-	 * @param F3_phpCR_NodeInterface		the node for add
+	 * @param F3_PHPCR_NodeInterface		the node for add
 	 * @return void
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 */
-	public function addNode(F3_phpCR_NodeInterface $node) {
+	public function addNode(F3_PHPCR_NodeInterface $node) {
 		$this->nodes[$node->getUUID()] = $node;
 	}
 
 	/**
 	 * get nodes as a NodeIterator
 	 *
-	 * @return F3_phpCR_NodeIteratorInterface the nodes
+	 * @return F3_PHPCR_NodeIteratorInterface the nodes
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @todo How to remove an Item?
 	 */

@@ -42,7 +42,7 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 
 		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', $mockNode, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
 		$valueObject = $property->getValue();
-		$this->assertType('F3_phpCR_ValueInterface', $valueObject, 'getValue() a Value object.');
+		$this->assertType('F3_PHPCR_ValueInterface', $valueObject, 'getValue() a Value object.');
 	}
 
 	/**
@@ -60,7 +60,7 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 		try {
 			$valueObject = $property->getValues();
 			$this->fail('getValues needs to return an exception if called on a single value');
-		} catch (F3_phpCR_ValueFormatException $e) {
+		} catch (F3_PHPCR_ValueFormatException $e) {
 		}
 	}
 

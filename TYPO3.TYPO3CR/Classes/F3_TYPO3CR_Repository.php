@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Repository implements F3_phpCR_RepositoryInterface {
+class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 
 	const REP_VENDOR_DESC = 'TYPO3 Association';
 	const REP_VENDOR_URL_DESC = 'http://association.typo3.org/';
@@ -106,21 +106,21 @@ class F3_TYPO3CR_Repository implements F3_phpCR_RepositoryInterface {
 	 * authorization to access that workspace is granted, then a new Session
 	 * object is returned.
 	 *
-	 * @param  F3_phpCR_Credentials $credentials
+	 * @param  F3_PHPCR_Credentials $credentials
 	 * @param  string $workspaceName
 	 * @return F3_TYPO3CR_Session
-	 * @throws F3_phpCR_RepositoryException
-	 * @throws F3_phpCR_NoSuchWorkspacexception
+	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3_PHPCR_NoSuchWorkspacexception
 	 * @todo   Currently given credentials are not checked at all!
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function login($credentials = NULL, $workspaceName = 'default') {
-		if ($credentials !== NULL && !($credentials instanceof F3_phpCR_CredentialsInterface)) throw new F3_phpCR_RepositoryException('$credentials must be an instance of F3_phpCR_Credentials', 1181042933);
+		if ($credentials !== NULL && !($credentials instanceof F3_PHPCR_CredentialsInterface)) throw new F3_PHPCR_RepositoryException('$credentials must be an instance of F3_PHPCR_Credentials', 1181042933);
 		if ($workspaceName !== 'default') {
-			throw new F3_phpCR_NoSuchWorkspaceException('Only default workspace supported for now', 1181063009);
+			throw new F3_PHPCR_NoSuchWorkspaceException('Only default workspace supported for now', 1181063009);
 		}
 
-		$this->session = $this->componentManager->getComponent('F3_phpCR_SessionInterface', $workspaceName, $this, $this->storageAccess);
+		$this->session = $this->componentManager->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageAccess);
 		return $this->session;
 	}
 

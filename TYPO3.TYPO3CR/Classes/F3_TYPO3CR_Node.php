@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeInterface {
+class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeInterface {
 
 	/**
 	 * @var string
@@ -34,7 +34,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	protected $UUID;
 
 	/**
-	 * @var F3_phpCR_NodeTypeInterface
+	 * @var F3_PHPCR_NodeTypeInterface
 	 */
 	protected $nodeType;
 
@@ -62,7 +62,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_phpCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3_PHPCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
@@ -112,10 +112,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 			}
 			$this->name = $rawData['name'];
 			$this->UUID = $rawData['uuid'];
-			$this->nodeType = $this->componentManager->getComponent('F3_phpCR_NodeTypeInterface', $rawData['nodetype'], $this->storageAccess);
+			$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeTypeInterface', $rawData['nodetype'], $this->storageAccess);
 			$this->initializeProperties();
 		} else {
-			throw new F3_phpCR_RepositoryException('New node objects can only be initialized from an array once.', 1181076288);
+			throw new F3_PHPCR_RepositoryException('New node objects can only be initialized from an array once.', 1181076288);
 		}
 	}
 
@@ -129,7 +129,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getUUID());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
-				$property = $this->componentManager->getComponent('F3_phpCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
+				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
 				$this->properties[$property->getName()] = $property;
 			}
 		}
@@ -161,9 +161,9 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	 * @todo Implement support for $namePattern
 	 */
 	public function getProperties($namePattern = NULL) {
-		if ($namePattern !== NULL) throw new F3_phpCR_RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
+		if ($namePattern !== NULL) throw new F3_PHPCR_RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
-		return $this->componentManager->getComponent('F3_phpCR_PropertyIteratorInterface', $this->properties);
+		return $this->componentManager->getComponent('F3_PHPCR_PropertyIteratorInterface', $this->properties);
 	}
 
 	/**
@@ -198,7 +198,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 			try {
 				$this->getProperty($relativePath);
 				return TRUE;
-			} catch (F3_phpCR_PathNotFoundException $e) {
+			} catch (F3_PHPCR_PathNotFoundException $e) {
 				return FALSE;
 			}
 		}
@@ -208,7 +208,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	 * Returns the UUID of the node. If the node has no UUID, an exception is thrown
 	 *
 	 * @return string
-	 * @throws F3_phpCR_UnsupportedRepositoryOperationException
+	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check for mix:referenceable on node to determine if an UnsupportedRepositoryOperationException should be thrown. Then throw RepositoryException if still no UUID is available.
 	 */
@@ -216,7 +216,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 		if (isset($this->UUID)) {
 			return $this->UUID;
 		} else {
-			throw new F3_phpCR_UnsupportedRepositoryOperationException('Node has no UUID', 1181070099);
+			throw new F3_PHPCR_UnsupportedRepositoryOperationException('Node has no UUID', 1181070099);
 		}
 	}
 
@@ -229,7 +229,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	 * node.
 	 *
 	 * @return F3_TYPO3CR_NodeType
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPrimaryNodeType() {
@@ -267,18 +267,18 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	 * this node.
 	 *
 	 * @param string $namePattern A pattern to match node names against
-	 * @return F3_phpCR_NodeIteratorInterface
-	 * @throws F3_phpCR_RepositoryException
+	 * @return F3_PHPCR_NodeIteratorInterface
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodes($namePattern = NULL) {
-		if ($namePattern !== NULL) throw new F3_phpCR_RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
+		if ($namePattern !== NULL) throw new F3_PHPCR_RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
 
 		if (!is_array($this->nodes)) {
 			$this->initializeNodes();
 		}
 
-		return $this->componentManager->getComponent('F3_phpCR_NodeIteratorInterface', $this->nodes);
+		return $this->componentManager->getComponent('F3_PHPCR_NodeIteratorInterface', $this->nodes);
 	}
 
 	/**
@@ -340,7 +340,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 
 			$buffer .= $this->getName();
 			return $buffer;
-		} catch (F3_phpCR_ItemNotFoundException $e) {
+		} catch (F3_PHPCR_ItemNotFoundException $e) {
 			return "/";
 		}
 	}
@@ -348,23 +348,23 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	/**
 	 * Returns the parent of this Node.
 	 *
-	 * An F3_phpCR_ItemNotFoundException is thrown if there is no parent node. This
+	 * An F3_PHPCR_ItemNotFoundException is thrown if there is no parent node. This
 	 * only happens if this item is the root node of a workspace.
 	 *
-	 * An F3_phpCR_AccessDeniedException is thrown if the current session does not
+	 * An F3_PHPCR_AccessDeniedException is thrown if the current session does not
 	 * have sufficient access permissions to retrieve the parent of this item.
 	 *
-	 * A F3_phpCR_RepositoryException is thrown if another error occurs.
+	 * A F3_PHPCR_RepositoryException is thrown if another error occurs.
 	 *
-	 * @return F3_phpCR_Node
-	 * @throws F3_phpCR_ItemNotFoundException
-	 * @throws F3_phpCR_AccessDeniedException
-	 * @throws F3_phpCR_RepositoryException
+	 * @return F3_PHPCR_Node
+	 * @throws F3_PHPCR_ItemNotFoundException
+	 * @throws F3_PHPCR_AccessDeniedException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getParent() {
-		if ($this->parentNode === NULL) throw new F3_phpCR_ItemNotFoundException("root node does not have a parent", 1187530879);
+		if ($this->parentNode === NULL) throw new F3_PHPCR_ItemNotFoundException("root node does not have a parent", 1187530879);
 		return $this->parentNode;
 	}
 
@@ -377,14 +377,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	 * @param string $relPath The path of the new node to be created.
 	 * @param string|NULL $primaryNodeTypeName The name of the primary nodetype of the new node. (Optional)
 	 * @return object A node object
-	 * @throws F3_phpCR_NoSuchNodeTypeException
-	 * @throws F3_phpCR_ItemExistsException
-	 * @throws F3_phpCR_PathNotFoundException
-	 * @throws F3_phpCR_NoSuchNodeTypeException
-	 * @throws F3_phpCR_ConstraintViolationException
-	 * @throws F3_phpCR_VersionException
-	 * @throws F3_phpCR_LockException
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_NoSuchNodeTypeException
+	 * @throws F3_PHPCR_ItemExistsException
+	 * @throws F3_PHPCR_PathNotFoundException
+	 * @throws F3_PHPCR_NoSuchNodeTypeException
+	 * @throws F3_PHPCR_ConstraintViolationException
+	 * @throws F3_PHPCR_VersionException
+	 * @throws F3_PHPCR_LockException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -392,14 +392,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	 */
 	public function addNode($relativePath, $primaryNodeTypeName = NULL) {
 		if ($relativePath === NULL) {
-			throw new F3_phpCR_PathNotFoundException('Path not found or not provided', 1187531979);
+			throw new F3_PHPCR_PathNotFoundException('Path not found or not provided', 1187531979);
 		}
 
 		$pathParser = $this->componentManager->getComponent('F3_TYPO3CR_PathParserInterface');
 		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = $pathParser->getLastPathPart($relativePath);
 
 		if ($numberOfElementsRemaining===0) {
-			$newNode = $this->componentManager->getComponent('F3_phpCR_NodeInterface', $this->session, $this->storageAccess);
+			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this->session, $this->storageAccess);
 			$newNode->initializeFromArray(array(
 				'pid' => $this->getUUID(),
 				'name' => $lastNodeName,
@@ -490,13 +490,13 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_phpCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setProperty($name, $value, $type = NULL) {
-		if ($type !== NULL) throw new F3_phpCR_RepositoryException('$type is not supported in F3_TYPO3CR_Node::setProperty().', 1189538797);
+		if ($type !== NULL) throw new F3_PHPCR_RepositoryException('$type is not supported in F3_TYPO3CR_Node::setProperty().', 1189538797);
 
 		if ($this->hasProperty($name)) {
 			$this->getProperty($name)->setValue($value);
 		} else {
 			$multiValued = is_array($value) ? TRUE : FALSE;
-			$property = $this->componentManager->getComponent('F3_phpCR_PropertyInterface', $name, $value, $this, $multiValued, $this->session, $this->storageAccess);
+			$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $this, $multiValued, $this->session, $this->storageAccess);
 			$property->setNew(TRUE);
 			$this->properties[$name] = $property;
 		}

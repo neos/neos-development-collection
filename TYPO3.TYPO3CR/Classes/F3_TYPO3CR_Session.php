@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
+class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 
 	/**
 	 * @var F3_FLOW3_Component_Manager
@@ -71,14 +71,14 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	/**
 	 * Constructs a Session object
 	 *
-	 * @param  F3_phpCR_WorkspaceInterface $workspace
-	 * @param  F3_phpCR_RepositoryInterface $repository
+	 * @param  F3_PHPCR_WorkspaceInterface $workspace
+	 * @param  F3_PHPCR_RepositoryInterface $repository
 	 * @param  F3_TYPO3CR_StorageAccessInterface $storageAccess
 	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @throws InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($workspaceName, F3_phpCR_RepositoryInterface $repository, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($workspaceName, F3_PHPCR_RepositoryInterface $repository, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
 
 		$this->componentManager = $componentManager;
@@ -86,13 +86,13 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 		$this->storageAccess = $storageAccess;
 		$this->storageAccess->setWorkspaceName($workspaceName);
 
-		$this->workspace = $this->componentManager->getComponent('F3_phpCR_WorkspaceInterface', $workspaceName, $this, $storageAccess, $this->componentManager);
+		$this->workspace = $this->componentManager->getComponent('F3_PHPCR_WorkspaceInterface', $workspaceName, $this, $storageAccess, $this->componentManager);
 	}
 
 	/**
 	 * Returns the Repository object through which the Session object was aquired.
 	 *
-	 * @return F3_phpCR_Repository
+	 * @return F3_PHPCR_Repository
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRepository() {
@@ -157,7 +157,7 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	 */
 	public function getRootNode() {
 		if ($this->rootNode === NULL) {
-			$this->rootNode = $this->componentManager->getComponent('F3_phpCR_NodeInterface', $this, $this->storageAccess);
+			$this->rootNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this, $this->storageAccess);
 			$this->rootNode->initializeFromArray($this->storageAccess->getRawRootNode());
 			$this->currentlyLoadedNodes[$this->rootNode->getUUID()] = $this->rootNode;
 		}
@@ -180,9 +180,9 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 
 		$rawNode = $this->storageAccess->getRawNodeByUUID($uuid);
 		if ($rawNode === FALSE) {
-			throw new F3_phpCR_ItemNotFoundException('Node with UUID ' . $uuid . ' not found in repository.', 1181070997);
+			throw new F3_PHPCR_ItemNotFoundException('Node with UUID ' . $uuid . ' not found in repository.', 1181070997);
 		}
-		$node = $this->componentManager->getComponent('F3_phpCR_NodeInterface', $this, $this->storageAccess);
+		$node = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this, $this->storageAccess);
 		$node->initializeFromArray($rawNode);
 		$this->currentlyLoadedNodes[$node->getUUID()] = $node;
 
@@ -219,17 +219,17 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	 * @return void
 	 */
 	public function save() {
-		throw new F3_phpCR_RepositoryException('Session::save() not implemented yet', 1203091439);
+		throw new F3_PHPCR_RepositoryException('Session::save() not implemented yet', 1203091439);
 	}
 
 	/**
 	 * Returns the node at the specified absolute path in the workspace.
 	 * if no such node exists, then it returns the property at the specified path.
-	 * If no such property exists, a F3_phpCR_PathNotFoundException is thrown.
+	 * If no such property exists, a F3_PHPCR_PathNotFoundException is thrown.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_phpCR_Item
-	 * @throws F3_phpCR_PathNotFoundException
+	 * @return F3_PHPCR_Item
+	 * @throws F3_PHPCR_PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getItem($absPath) {
@@ -239,11 +239,11 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 
 	/**
 	 * Returns the node at the specified absolute path in the workspace.
-	 * If no such node exists, a F3_phpCR_PathNotFoundException is thrown.
+	 * If no such node exists, a F3_PHPCR_PathNotFoundException is thrown.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_phpCR_Item
-	 * @throws F3_phpCR_PathNotFoundException
+	 * @return F3_PHPCR_Item
+	 * @throws F3_PHPCR_PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getNode($absPath) {
@@ -252,11 +252,11 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 
 	/**
 	 * Returns the property at the specified absolute path in the workspace.
-	 * If no such property exists, a F3_phpCR_PathNotFoundException is thrown.
+	 * If no such property exists, a F3_PHPCR_PathNotFoundException is thrown.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_phpCR_Item
-	 * @throws F3_phpCR_PathNotFoundException
+	 * @return F3_PHPCR_Item
+	 * @throws F3_PHPCR_PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getProperty($absPath) {
@@ -267,11 +267,11 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	 * This method returns a ValueFactory that is used to create Value objects for
 	 * use when setting repository properties.
 	 *
-	 * @return F3_phpCR_ValueFactoryInterface
-	 * @throws F3_phpCR_RepositoryException if an error occurs.
+	 * @return F3_PHPCR_ValueFactoryInterface
+	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function getValueFactory() {
-		return $this->componentManager->getComponent('F3_phpCR_ValueFactoryInterface');
+		return $this->componentManager->getComponent('F3_PHPCR_ValueFactoryInterface');
 	}
 
 	/**
@@ -281,17 +281,17 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	 * @param string $prefix: XML prefix
 	 * @param string $uri: Namespace URI
 	 * @return void
-	 * @throws F3_phpCR_NamespaceException if the prefix begins with "xml" or prefix/uri are empty
-	 * @throws F3_phpCR_RepositoryException
+	 * @throws F3_PHPCR_NamespaceException if the prefix begins with "xml" or prefix/uri are empty
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function setNamespacePrefix($prefix, $uri) {
 		if (F3_PHP6_Functions::strtolower(F3_PHP6_Functions::substr($prefix, 0, 3)) == 'xml') {
-			throw new F3_phpCR_NamespaceException('Attempt to register a prefix which starts with "XML" (in any combination of case)', 1190282877);
+			throw new F3_PHPCR_NamespaceException('Attempt to register a prefix which starts with "XML" (in any combination of case)', 1190282877);
 		}
 
 		if (empty($prefix) || empty($uri)) {
-			throw new F3_phpCR_NamespaceException('Attempt to map the empty prefix or the empty namespace.', 1190282972);
+			throw new F3_PHPCR_NamespaceException('Attempt to map the empty prefix or the empty namespace.', 1190282972);
 		}
 
 		if (in_array($uri, $this->localNamespaceMappings)) {
@@ -325,7 +325,7 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	 * @param string $prefix
 	 * @return string URI
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @throws F3_phpCR_NamespaceException if prefix is unknown
+	 * @throws F3_PHPCR_NamespaceException if prefix is unknown
 	 */
 	public function getNamespaceURI($prefix) {
 		$this->loadNamespaceFromPrefix($prefix);
@@ -338,7 +338,7 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	 * @param string $uri
 	 * @return string prefix
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @throws F3_phpCR_NamespaceException if uri is unknown
+	 * @throws F3_PHPCR_NamespaceException if uri is unknown
 	 */
 	public function getNamespacePrefix($uri) {
 		$this->loadNamespaceFromURI($uri);
@@ -351,7 +351,7 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	 *
 	 * @param string $prefix
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @throws F3_phpCR_NamespaceException if prefix is unknown
+	 * @throws F3_PHPCR_NamespaceException if prefix is unknown
 	 */
 	protected function loadNamespaceFromPrefix($prefix) {
 		if (!isset($this->localNamespaceMappings[$prefix])) {
@@ -365,7 +365,7 @@ class F3_TYPO3CR_Session implements F3_phpCR_SessionInterface {
 	 *
 	 * @param string $uri
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @throws F3_phpCR_NamespaceException if prefix is unknown
+	 * @throws F3_PHPCR_NamespaceException if prefix is unknown
 	 */
 	protected function loadNamespaceFromURI($uri) {
 		if (!in_array($uri, $this->localNamespaceMappings)) {

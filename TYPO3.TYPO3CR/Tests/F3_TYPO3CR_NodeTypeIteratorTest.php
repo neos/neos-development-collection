@@ -67,7 +67,7 @@ class F3_TYPO3CR_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Tests if a F3_phpCR_NoSuchElementException is thrown when nextNodeType()
+	 * Tests if a F3_PHPCR_NoSuchElementException is thrown when nextNodeType()
 	 * is called and there are no (more) nodetypes available.
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -77,7 +77,7 @@ class F3_TYPO3CR_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->iterator->nextNodeType();
 			$this->fail("nextNodeType() must throw a NoSuchElementException when no nodetypes are available");
-		} catch (F3_phpCR_NoSuchElementException $e) {
+		} catch (F3_PHPCR_NoSuchElementException $e) {
 			// success
 		}
 	}

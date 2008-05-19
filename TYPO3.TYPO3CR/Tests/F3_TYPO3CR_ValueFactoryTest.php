@@ -31,7 +31,7 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @var F3_phpCR_ValueFactory
+	 * @var F3_PHPCR_ValueFactory
 	 */
 	protected $valueFactory;
 
@@ -49,7 +49,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromStringGuessesCorrectType() {
 		$value = $this->valueFactory->createValue('This is a string');
-		$this->assertEquals($value->getType(), F3_phpCR_PropertyType::STRING, 'New Value object was not of type STRING.');
+		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::STRING, 'New Value object was not of type STRING.');
 	}
 
 	/**
@@ -59,7 +59,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromLongGuessesCorrectType() {
 		$value = $this->valueFactory->createValue(10);
-		$this->assertEquals($value->getType(), F3_phpCR_PropertyType::LONG, 'New Value object was not of type LONG.');
+		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::LONG, 'New Value object was not of type LONG.');
 	}
 
 	/**
@@ -69,7 +69,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromDoubleGuessesCorrectType() {
 		$value = $this->valueFactory->createValue(1.5);
-		$this->assertEquals($value->getType(), F3_phpCR_PropertyType::DOUBLE, 'New Value object was not of type DOUBLE.');
+		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::DOUBLE, 'New Value object was not of type DOUBLE.');
 	}
 
 	/**
@@ -79,7 +79,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromBooleanGuessesCorrectType() {
 		$value = $this->valueFactory->createValue(FALSE);
-		$this->assertEquals($value->getType(), F3_phpCR_PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
+		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
 	}
 
 	/**
@@ -89,7 +89,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromDateGuessesCorrectType() {
 		$value = $this->valueFactory->createValue(new DateTime('2007-09-22'));
-		$this->assertEquals($value->getType(), F3_phpCR_PropertyType::DATE, 'New Value object was not of type DATE.');
+		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::DATE, 'New Value object was not of type DATE.');
 	}
 
 	/**
@@ -102,7 +102,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$node = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$value = $this->valueFactory->createValue($node);
-		$this->assertEquals($value->getType(), F3_phpCR_PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
+		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
 		$this->assertEquals($value->getString(), $node->getUUID(), 'The Value did not contain the UUID of the passed Node object.');
 	}
 
@@ -114,16 +114,16 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	public function createValueFromBinaryGuessesCorrectType() {
 		$fileHandle = fopen(FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/binaryGarbage.dat', 'rb');
 		$value = $this->valueFactory->createValue($fileHandle);
-		$this->assertEquals($value->getType(), F3_phpCR_PropertyType::BINARY, 'New Value object was not of type BINARY.');
+		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::BINARY, 'New Value object was not of type BINARY.');
 		$this->assertFalse(is_resource($fileHandle), 'ValueFactory did not close a passed file handle as expected.');
 
 			// The following differentiates between PHP with is_binary and without.
 		$data = file_get_contents(FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/binaryGarbage.dat');
 		$value = $this->valueFactory->createValue($data);
 		if (function_exists('is_binary')) {
-			$this->assertEquals($value->getType(), F3_phpCR_PropertyType::BINARY, 'New Value object was not of type BINARY.');
+			$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::BINARY, 'New Value object was not of type BINARY.');
 		} else {
-			$this->assertEquals($value->getType(), F3_phpCR_PropertyType::STRING, 'New Value object was not of type STRING.');
+			$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::STRING, 'New Value object was not of type STRING.');
 		}
 	}
 
@@ -133,9 +133,9 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueThrowsExceptionIfTypeIsGivenForNonStringValue() {
 		try {
-			$value = $this->valueFactory->createValue(new DateTime('2007-09-22'), F3_phpCR_PropertyType::BINARY);
+			$value = $this->valueFactory->createValue(new DateTime('2007-09-22'), F3_PHPCR_PropertyType::BINARY);
 			$this->fail('createValue() must throw an exception if type conversion is requested for a non-string value.');
-		} catch (F3_phpCR_ValueFormatException $e) {
+		} catch (F3_PHPCR_ValueFormatException $e) {
 			// fine
 		}
 	}
@@ -146,8 +146,8 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * @todo We cannot see the internal value variable, thus the check is somewhat flaky...
 	 */
 	public function createValueConvertsTypeToBooleanIfRequested() {
-		$value = $this->valueFactory->createValue('Some test string', F3_phpCR_PropertyType::BOOLEAN);
-		$this->assertSame($value->getType(), F3_phpCR_PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
+		$value = $this->valueFactory->createValue('Some test string', F3_PHPCR_PropertyType::BOOLEAN);
+		$this->assertSame($value->getType(), F3_PHPCR_PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
 	}
 }
 ?>

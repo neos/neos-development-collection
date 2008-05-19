@@ -39,7 +39,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
 		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
 		$session = $repository->login();
-		$this->assertType('F3_phpCR_SessionInterface', $session, 'The repository login did not return a session object.');
+		$this->assertType('F3_PHPCR_SessionInterface', $session, 'The repository login did not return a session object.');
 	}
 
 	/**
@@ -54,7 +54,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 			$session = $repository->login(new ArrayObject);
 			$this->fail('Invalid credentials did not throw an exception.');
 		} catch (Exception $exception) {
-			$this->assertTrue($exception instanceof F3_phpCR_RepositoryException, 'The thrown exception is not of the expected type.');
+			$this->assertTrue($exception instanceof F3_PHPCR_RepositoryException, 'The thrown exception is not of the expected type.');
 		}
 	}
 

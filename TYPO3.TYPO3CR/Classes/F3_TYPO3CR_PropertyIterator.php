@@ -26,12 +26,12 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_PropertyIterator extends F3_TYPO3CR_RangeIterator implements F3_phpCR_PropertyIteratorInterface {
+class F3_TYPO3CR_PropertyIterator extends F3_TYPO3CR_RangeIterator implements F3_PHPCR_PropertyIteratorInterface {
 
 	/**
 	 * Returns the next Property in the iteration.
 	 *
-	 * @return F3_phpCR_PropertyInterface
+	 * @return F3_PHPCR_PropertyInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function nextProperty() {

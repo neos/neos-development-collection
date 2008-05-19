@@ -70,7 +70,7 @@ class F3_TYPO3CR_WorkspaceTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getNamespaceRegistryReturnsANameSpaceRegistry() {
-		$this->assertType('F3_phpCR_NamespaceRegistryInterface', $this->workspace->getNamespaceRegistry(), 'The workspace did not return a NamespaceRegistry object on getNamespaceRegistry().');
+		$this->assertType('F3_PHPCR_NamespaceRegistryInterface', $this->workspace->getNamespaceRegistry(), 'The workspace did not return a NamespaceRegistry object on getNamespaceRegistry().');
 	}
 
 	/**
