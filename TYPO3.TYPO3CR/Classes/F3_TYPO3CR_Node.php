@@ -98,7 +98,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param array $rawData
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo The NodeType object should be coming from some factory-thingy. Right now it's protoype (defined in phpCR Components.conf), but actually the same nodetype could be the same object!
+	 * @todo The NodeType object should be coming from some factory-thingy. Right now it's protoype (defined in PHPCR Components.php), but actually the same nodetype could be the same object!
 	 */
 	public function initializeFromArray(array $rawData) {
 		if (!isset($this->id)) {

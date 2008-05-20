@@ -261,7 +261,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Test if getting the ancestor of depth = n, where n is greater than depth
-	 * of this node, throws an phpCR_ItemNotFoundException for a sub node.
+	 * of this node, throws an PHPCR_ItemNotFoundException for a sub node.
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -279,7 +279,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Test if getting the ancestor of depth = n, where n is greater than depth
-	 * of this node, throws an phpCR_ItemNotFoundException for a root node.
+	 * of this node, throws an PHPCR_ItemNotFoundException for a root node.
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -336,7 +336,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Tests if getParent() of root throws an phpCR_ItemNotFoundException
+	 * Tests if getParent() of root throws an PHPCR_ItemNotFoundException
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @test
