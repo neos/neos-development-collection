@@ -91,18 +91,18 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Tests if a F3_PHPCR_NoSuchElementException} is thrown when nextNode()
+	 * Tests if a OutOfBoundsException} is thrown when nextNode()
 	 * is called and there are no (more) nodes available.
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function throwsNoSuchElementExceptionIfNoNodesAvailable() {
+	public function throwsOutOfBoundsExceptionIfNoNodesAvailable() {
 		$iterator = new F3_TYPO3CR_NodeIterator();
 		try {
 			$iterator->nextNode();
-			$this->fail("nextNode() must throw a NoSuchElementException when no nodes are available");
-		} catch (F3_PHPCR_NoSuchElementException $e) {
+			$this->fail("nextNode() must throw a OutOfBoundsException when no nodes are available");
+		} catch (OutOfBoundsException $e) {
 			// success
 		}
 	}
@@ -124,8 +124,8 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals(4, $iterator->getPosition(), "Call to getPosition() must return 4");
 		try {
 			$iterator->nextNode();
-			$this->fail("nextNode() after skip() to the end must throw a NoSuchElementException");
-		} catch (F3_PHPCR_NoSuchElementException $e) {
+			$this->fail("nextNode() after skip() to the end must throw a OutOfBoundsException");
+		} catch (OutOfBoundsException $e) {
 			// success
 		}
 	}
@@ -136,7 +136,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function skipPastEndOfIteratorThrowsNoSuchElementException() {
+	public function skipPastEndOfIteratorThrowsOutOfBoundsException() {
 		$iterator = new F3_TYPO3CR_NodeIterator();
 		$iterator->append('one');
 		$iterator->append('two');
@@ -145,8 +145,8 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 
 		try {
 			$iterator->skip(5);
-			$this->fail("skip() must throw a NoSuchElementException if one tries to skip past the end of the iterator");
-		} catch (F3_PHPCR_NoSuchElementException $e) {
+			$this->fail("skip() must throw a OutOfBoundsException if one tries to skip past the end of the iterator");
+		} catch (OutOfBoundsException $e) {
 			// success
 		}
 	}

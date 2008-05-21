@@ -32,7 +32,7 @@ class F3_TYPO3CR_NodeTypeIterator extends F3_TYPO3CR_RangeIterator implements F3
 	 * Returns the next NodeType in the iteration.
 	 *
 	 * @return F3_PHPCR_NodeTypeInterface
-	 * @throws F3_PHPCR_NoSuchElementException if the iterator contains no more elements.
+	 * @throws OutOfBoundsException if the iterator contains no more elements.
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

@@ -97,7 +97,7 @@ class F3_TYPO3CR_RangeIterator implements F3_PHPCR_RangeIteratorInterface {
 			next($this->elements);
 			return $element;
 		} else {
-			throw new F3_PHPCR_NoSuchElementException('Tried to go past the last element in the iterator.', 1187530869);
+			throw new OutOfBoundsException('Tried to go past the last element in the iterator.', 1187530869);
 		}
 	}
 
@@ -106,14 +106,14 @@ class F3_TYPO3CR_RangeIterator implements F3_PHPCR_RangeIteratorInterface {
 	 *
 	 * @param integer $skipNum the non-negative number of elements to skip
 	 * @return void
-	 * @throws F3_PHPCR_NoSuchElementException if skipped past the last element in the iterator.
+	 * @throws OutOfBoundsException if skipped past the last element in the iterator.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function skip($skipNum) {
 		$newPosition = $this->getPosition() + $skipNum;
 		if ($newPosition > $this->getSize()) {
-			throw new F3_PHPCR_NoSuchElementException('Skip operation past the last element in the iterator.', 1187530862);
+			throw new OutOfBoundsException('Skip operation past the last element in the iterator.', 1187530862);
 		} else {
 			$this->position = $newPosition;
 			for ($skipped = 0; $skipped < $skipNum; $skipped++) next($this->elements);

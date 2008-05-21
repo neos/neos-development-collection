@@ -45,18 +45,27 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	}
 
 	/**
+	 * Returns a F3_TYPO3CR_Binary object with a value consisting of the content of
+	 * the specified resource handle.
+	 * The passed resource handle is closed before this method returns either normally
+	 * or because of an exception.
+	 *
+	 * @param resource $handle
+	 * @return F3_TYPO3CR_Binary
+	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 */
+	public function createBinary($handle) {
+	}
+
+	/**
 	 * Returns a Value object with the specified value. If $type is given,
 	 * conversion from string is attempted before creating the Value object.
-	 *
-	 * If the given $value is a resource, it is assumed to be a file handle
-	 * and the file's content will be fetched for the Value object. The
-	 * file pointer will be closed before returning the Value object. The
-	 * Value object will be of type BINARY.
 	 *
 	 * If no type is given, the type is guessed intelligently.
 	 * * if the given $value is a Node object, it's UUID is fetched for the
 	 *   Value object and the type of that object will be REFERENCE
-	 * * if the given $Value is a DateTime object, the Value type will be DATE.
+	 * * if the given $value is a DateTime object, the Value type will be DATE.
+	 * * if the given $value is a Binary object, the Value type will be BINARY
 	 * If guessing fails the type will be UNDEFINED.
 	 *
 	 * @param mixed $value
@@ -65,69 +74,99 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 * @throws F3_PHPCR_ValueFormatException is thrown if the specified value cannot be converted to the specified type.
 	 * @throws F3_PHPCR_RepositoryException if the specified Node is not referenceable, the current Session is no longer active, or another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function createValue($value, $type = F3_PHPCR_PropertyType::UNDEFINED) {
+			// try to do requested conversion, else guess the type
+		if ($type !== F3_PHPCR_PropertyType::UNDEFINED) {
+			return $this->createValueWithGivenType($value, $type);
+		} else {
+			return $this->createValueAndGuessType($value);
+		}
+	}
+
+	/**
+	 * Returns a Value object with the specified value. Conversion from string
+	 * is attempted before creating the Value object.
+	 *
+	 * @param mixed $value
+	 * @param integer $type
+	 * @return F3_PHPCR_ValueInterface
+	 * @throws F3_PHPCR_ValueFormatException is thrown if the specified value cannot be converted to the specified type.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo Make sure the given value is a valid UUID for reference types
+	 */
+	protected function createValueWithGivenType($value, $type) {
+		if (!is_string($value)) {
+			throw new F3_PHPCR_ValueFormatException('Requesting type conversion is only allowed for string values.', 1203676334);
+		}
+
+		switch ($type) {
+			case F3_PHPCR_PropertyType::REFERENCE:
+			case F3_PHPCR_PropertyType::WEAKREFERENCE:
+					// for REFERENCE make sure we really have a node with that UUID
+				break;
+			case F3_PHPCR_PropertyType::DATE:
+				try {
+					$value = new DateTime($value);
+				} catch (Exception $e) {
+					throw new F3_PHPCR_ValueFormatException('The given value could not be converted to a DateTime object.', 1211372741);
+				}
+				break;
+			case F3_PHPCR_PropertyType::BINARY:
+					// we do not do anything here, getBinary on Value objects does the hard work
+				break;
+			case F3_PHPCR_PropertyType::DECIMAL:
+			case F3_PHPCR_PropertyType::DOUBLE:
+				$value = (float)$value;
+				break;
+			case F3_PHPCR_PropertyType::BOOLEAN:
+				$value = (boolean)$value;
+				break;
+			case F3_PHPCR_PropertyType::LONG:
+				$value = (int)$value;
+				break;
+			case F3_PHPCR_PropertyType::URI:
+					// we cannot really use parse_url to check for a syntactically valid URI
+					// as it emits an E_WARNING on failure and "correctly" parses about everything
+					// so we just leave the value as it is
+				break;
+		}
+		return $this->componentManager->getComponent('F3_PHPCR_ValueInterface', $value, $type);
+	}
+
+	/**
+	 * Returns a Value object with the specified value.
+	 *
+	 * * if the given $value is a Node object, it's UUID is fetched for the
+	 *   Value object and the type of that object will be REFERENCE
+	 * * if the given $value is a DateTime object, the Value type will be DATE.
+	 * * if the given $value is a Binary object, the Value type will be BINARY
+	 * If guessing fails the type will be UNDEFINED.
+	 *
+	 * @param mixed $value
+	 * @return F3_PHPCR_ValueInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check type guessing/conversion when we go for PHP6
 	 * @todo Make sure conversion is checked for possibility
 	 */
-	public function createValue($value, $type = F3_PHPCR_PropertyType::UNDEFINED) {
-			// we handle resources "the PHP way" by just fetching their contents
-		if (is_resource($value)) {
-			$data = '';
-			while (!feof($value)) {
-				$data .= fread($value, 8192);
-			}
-			fclose($value);
-			$value &= $data;
+	public function createValueAndGuessType($value) {
+		if (is_a($value, 'F3_PHPCR_NodeInterface')) {
+			$value = $value->getUUID();
+			$type = F3_PHPCR_PropertyType::REFERENCE;
+		} elseif (is_a($value, 'DateTime')) {
+			$type = F3_PHPCR_PropertyType::DATE;
+		} elseif (is_a($value, 'F3_PHPCR_BinaryInterface')) {
 			$type = F3_PHPCR_PropertyType::BINARY;
-		} else {
-				// try to do requested conversion, else guess the type
-			if ($type !== F3_PHPCR_PropertyType::UNDEFINED) {
-				if (!is_string($value)) {
-					throw new F3_PHPCR_ValueFormatException('Type conversion in Valuefactory only allowed for string values.', 1203676334);
-				}
-
-				switch ($type) {
-					case F3_PHPCR_PropertyType::REFERENCE:
-					case F3_PHPCR_PropertyType::WEAKREFERENCE:
-							// for REFERENCE make sure we really have a node with that UUID
-						break;
-					case F3_PHPCR_PropertyType::DATE:
-						$value = new DateTime($value);
-						break;
-					case F3_PHPCR_PropertyType::BINARY:
-							// make sure it is binary for PHP6
-						break;
-					case F3_PHPCR_PropertyType::DOUBLE:
-						$value = (float)$value;
-						break;
-					case F3_PHPCR_PropertyType::BOOLEAN:
-						$value = (boolean)$value;
-						break;
-					case F3_PHPCR_PropertyType::LONG:
-						$value = (int)$value;
-						break;
-					case F3_PHPCR_PropertyType::URI:
-							// we cannot really use parse_url to check for a syntactically valid URI
-							// as it emits an E_WARNING on failure and "correctly" parses about everything
-						break;
-				}
-			} else {
-				if (is_a($value, 'F3_PHPCR_NodeInterface')) {
-					$value = $value->getUUID();
-					$type = F3_PHPCR_PropertyType::REFERENCE;
-				} elseif (is_a($value, 'DateTime')) {
-					$type = F3_PHPCR_PropertyType::DATE;
-				} elseif (F3_PHP6_Functions::is_binary($value)) {
-					$type = F3_PHPCR_PropertyType::BINARY;
-				} elseif (is_double($value)) {
-					$type = F3_PHPCR_PropertyType::DOUBLE;
-				} elseif (is_bool($value)) {
-					$type = F3_PHPCR_PropertyType::BOOLEAN;
-				} elseif (is_long($value)) {
-					$type = F3_PHPCR_PropertyType::LONG;
-				} elseif (is_string($value)) {
-					$type = F3_PHPCR_PropertyType::STRING;
-				}
-			}
+		} elseif (F3_PHP6_Functions::is_binary($value)) {
+			$type = F3_PHPCR_PropertyType::BINARY;
+		} elseif (is_double($value)) {
+			$type = F3_PHPCR_PropertyType::DOUBLE;
+		} elseif (is_bool($value)) {
+			$type = F3_PHPCR_PropertyType::BOOLEAN;
+		} elseif (is_long($value)) {
+			$type = F3_PHPCR_PropertyType::LONG;
+		} elseif (is_string($value)) {
+			$type = F3_PHPCR_PropertyType::STRING;
 		}
 
 		return $this->componentManager->getComponent('F3_PHPCR_ValueInterface', $value, $type);

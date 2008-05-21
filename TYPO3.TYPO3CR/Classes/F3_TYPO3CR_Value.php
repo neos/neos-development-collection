@@ -20,18 +20,14 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A Value
+ * A generic holder for the value of a property. A Value object can be used
+ * without knowing the actual property type (STRING, DOUBLE, BINARY etc.).
  *
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
-
-	/**
-	 * @var F3_FLOW3_Component_Manager
-	 */
-	protected $componentManager;
 
 	/**
 	 * @var mixed
@@ -42,16 +38,6 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	 * @var integer
 	 */
 	protected $type;
-
-	/**
-	 * @var $nonStreamConversionAllowed
-	 */
-	protected $nonStreamConversionAllowed = TRUE;
-
-	/**
-	 * @var $streamConversionAllowed
-	 */
-	protected $streamConversionAllowed = TRUE;
 
 	/**
 	 * Constructs a Value object from the given $value and $type arguments
@@ -67,23 +53,35 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	}
 
 	/**
-	 * Returns a string representation of this value.
+	 * Returns a Binary representation of this value. The Binary object in turn provides
+	 * methods to access the binary data itself. Uses the standard conversion to binary
+	 * (see JCR specification).
+	 *
+	 * @return F3_TYPO3CR_Binary A Binary representation of this value.
+	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getBinary() {
+
+	}
+
+	/**
+	 * Returns a string representation of this value. For Value objects being
+	 * of type DATE the string will conform to ISO8601 format.
 	 *
 	 * @return string A String representation of the value of this property.
 	 * @throws F3_PHPCR_ValueFormatException if conversion to a String is not possible.
-	 * @throws F3_PHPCR_IllegalStateException if getStream has previously been called on this Value instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getString() {
-		if (!$this->nonStreamConversionAllowed) {
-			throw new BadMethodCallException('getStream() has previously been called on this Value object.', 1190032940);
-		}
-		$this->streamConversionAllowed = FALSE;
-
 		switch ($this->type) {
 			case F3_PHPCR_PropertyType::DATE:
-				return date_format(new DateTime($this->value), DATE_ISO8601);
+				if(is_a($this->value, 'DateTime')) {
+					return date_format($this->value, DATE_ISO8601);
+				} else {
+					return date_format(new DateTime($this->value), DATE_ISO8601);
+				}
 				break;
 			default:
 				return (string)$this->value;
@@ -100,53 +98,38 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	}
 
 	/**
-	 * Returns an InputStream representation of this value. Uses the standard
-	 * conversion to binary (see JCR specification).
-	 * It is the responsibility of the caller to close the returned InputStream.
-	 *
-	 * @return InputStream An InputStream representation of this value.
-	 * @throws BadMethodCallException if a non-stream get method has previously been called on this Value instance.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Implement this. We may need the resource manager first...
-	 */
-	public function getStream() {
-		if (!$this->streamConversionAllowed) {
-			throw new BadMethodCallException('A non stream get method has previously been called on this Value object.', 1190032941);
-		}
-		$this->nonStreamConversionAllowed = FALSE;
-
-		throw new F3_PHPCR_RepositoryException('getStream() has not yet been implemented.', 1190034714);
-	}
-
-	/**
-	 * Returns a long representation of this value.
+	 * Returns a long (integer) representation of this value.
 	 *
 	 * @return string A long representation of the value of this property.
 	 * @throws F3_PHPCR_ValueFormatException if conversion to a long is not possible.
-	 * @throws BadMethodCallException if getStream has previously been called on this Value instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getLong() {
-		if (!$this->nonStreamConversionAllowed) {
-			throw new BadMethodCallException('getStream() has previously been called on this Value object.', 1190032942);
-		}
-		$this->streamConversionAllowed = FALSE;
-		return (double)$this->value;
+		return (int)$this->value;
 	}
 
 	/**
-	 * Returns a double representation of this value. Is an alias for getLong().
+	 * Returns a BigDecimal representation of this value (aliased to getDouble()).
+	 *
+	 * @return string A double representation of the value of this property.
+	 * @throws F3_PHPCR_ValueFormatException if conversion is not possible.
+	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 */
+	public function getDecimal() {
+		return $this->getDouble();
+	}
+
+	/**
+	 * Returns a double (floating point) representation of this value.
 	 *
 	 * @return string A double representation of the value of this property.
 	 * @throws F3_PHPCR_ValueFormatException if conversion to a double is not possible.
-	 * @throws BadMethodCallException if getStream has previously been called on this Value instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDouble() {
-		return $this->getLong();
+		return (double)$this->value;
 	}
 
 	/**
@@ -154,22 +137,19 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	 *
 	 * @return DateTime A DateTime representation of the value of this property.
 	 * @throws F3_PHPCR_ValueFormatException if conversion to a DateTime is not possible.
-	 * @throws BadMethodCallException if getStream has previously been called on this Value instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDate() {
-		if (!$this->nonStreamConversionAllowed) {
-			throw new BadMethodCallException('getStream() has previously been called on this Value object.', 1190032944);
+		if(is_a($this->value, 'DateTime')) {
+			return clone($this->value);
 		}
-		$this->streamConversionAllowed = FALSE;
 
 		try {
-			$DateTime = new DateTime($this->value);
+			return new DateTime($this->value);
 		} catch (Exception $e) {
 			throw new F3_PHPCR_ValueFormatException('Conversion to a DateTime object is not possible. Cause: ' . $e->getMessage(), 1190034628);
 		}
-		return $DateTime;
 	}
 
 	/**
@@ -177,15 +157,10 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	 *
 	 * @return string A boolean representation of the value of this property.
 	 * @throws F3_PHPCR_ValueFormatException if conversion to a boolean is not possible.
-	 * @throws BadMethodCallException if getStream has previously been called on this Value instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBoolean() {
-		if (!$this->nonStreamConversionAllowed) {
-			throw new BadMethodCallException('getStream() has previously been called on this Value object.', 1190032945);
-		}
-		$this->streamConversionAllowed = FALSE;
 		return (boolean)$this->value;
 	}
 
@@ -195,6 +170,7 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	 * * F3_PHPCR_PropertyType::DATE
 	 * * F3_PHPCR_PropertyType::BINARY
 	 * * F3_PHPCR_PropertyType::DOUBLE
+	 * * F3_PHPCR_PropertyType::DECIMAL
 	 * * F3_PHPCR_PropertyType::LONG
 	 * * F3_PHPCR_PropertyType::BOOLEAN
 	 * * F3_PHPCR_PropertyType::NAME
