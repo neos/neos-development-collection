@@ -38,7 +38,7 @@ class F3_TYPO3CR_NodeTypeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function nodeTypeObjectReturnedIsDifferent() {
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
-		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
+		$mockStorageAccess->expects($this->any())->method('getIdentifiersOfSubNodesOfNode')->will($this->returnValue(array()));
 		$mockStorageAccess->expects($this->any())->method('getRawPropertiesOfNode')->will($this->returnValue(array()));
 		$mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->will($this->returnValue(array('id' => 1, 'name' => 'nodeTypeName')));
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
@@ -47,7 +47,7 @@ class F3_TYPO3CR_NodeTypeTest extends F3_Testing_BaseTestCase {
 		$nodeA = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$nodeA->initializeFromArray(array(
 			'id' => '1',
-			'uuid' => '',
+			'identifier' => '',
 			'pid' => '0',
 			'nodetype' => '1',
 			'name' => 'nodeA'
@@ -55,7 +55,7 @@ class F3_TYPO3CR_NodeTypeTest extends F3_Testing_BaseTestCase {
 		$nodeB = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$nodeB->initializeFromArray(array(
 			'id' => '2',
-			'uuid' => '',
+			'identifier' => '',
 			'pid' => '0',
 			'nodetype' => '1',
 			'name' => 'nodeB'

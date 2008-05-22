@@ -69,7 +69,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
-				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
 				'nodetype' => 0,
 				'name' => ''
@@ -79,23 +79,23 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$rootNode = $session->getRootNode();
 
-		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', $rootNode->getUUID(), 'The UUID of the retrieved root node is not as expected.');
+		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', $rootNode->getIdentifier(), 'The Identifier of the retrieved root node is not as expected.');
 	}
 
 	/**
-	 * Checks if getNodeByUUID returns a Node object on an existing node.
+	 * Checks if getNodeByIdentifier returns a Node object on an existing node.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNodeByExistingUUIDReturnsANode() {
-		$uuid = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
+	public function getNodeByExistingIdentifierReturnsANode() {
+		$identifier = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
 
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
-				$uuid => array(
-					'uuid' => $uuid,
+				$identifier => array(
+					'identifier' => $identifier,
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
@@ -104,41 +104,41 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		);
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
-		$node = $session->getNodeByUUID($uuid);
-		$this->assertType('F3_PHPCR_NodeInterface', $node, 'The session did not return a node object on getNodeByUUID(' . $uuid . ').');
+		$node = $session->getNodeByIdentifier($identifier);
+		$this->assertType('F3_PHPCR_NodeInterface', $node, 'The session did not return a node object on getNodeByIdentifier(' . $identifier . ').');
 	}
 
 	/**
-	 * Checks if getNodeByUUID fails properly on a non-existing node.
+	 * Checks if getNodeByIdentifier fails properly on a non-existing node.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNodeByNotExistingUUIDFails() {
+	public function getNodeByNotExistingIdentifierFails() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
 		try {
-			$uuid = 'hurzhurz-hurz-hurz-hurz-hurzhurzhurz';
-			$node = $session->getNodeByUUID($uuid);
-			$this->fail('getNodeByUUID with a non-exsting UUID must throw a F3_PHPCR_ItemNotFoundException');
+			$identifier = 'hurzhurz-hurz-hurz-hurz-hurzhurzhurz';
+			$node = $session->getNodeByIdentifier($identifier);
+			$this->fail('getNodeByIdentifier with a non-exsting Identifier must throw a F3_PHPCR_ItemNotFoundException');
 		} catch (F3_PHPCR_ItemNotFoundException $e) {}
 	}
 
 	/**
-	 * Checks of getNodeByUUID actually returns the requested node (determined through $node->getUUID()).
+	 * Checks of getNodeByIdentifier actually returns the requested node (determined through $node->getIdentifier()).
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNodeByUUIDReturnsTheRequestedNode() {
-		$uuid = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
+	public function getNodeByIdentifierReturnsTheRequestedNode() {
+		$identifier = '96bca35d-1ef5-4a47-8b0c-0bfc69507d04';
 
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
-				$uuid => array(
-					'uuid' => $uuid,
+				$identifier => array(
+					'identifier' => $identifier,
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
@@ -146,8 +146,8 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 			)
 		);
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
-		$node = $session->getNodeByUUID($uuid);
-		$this->assertEquals($uuid, $node->getUUID(), 'The returned node did not have the same UUID as requested.');
+		$node = $session->getNodeByIdentifier($identifier);
+		$this->assertEquals($identifier, $node->getIdentifier(), 'The returned node did not have the same Identifier as requested.');
 	}
 
 	/**
@@ -173,29 +173,29 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
-				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
 				'nodetype' => 0,
 				'name' => ''
 			)
 		);
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'News'
 				),
 			)
 		);
-		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawPropertiesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(
@@ -242,22 +242,22 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
-				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
 				'nodetype' => 0,
 				'name' => ''
 			)
 		);
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'News'
@@ -280,29 +280,29 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
-				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
 				'nodetype' => 0,
 				'name' => ''
 			)
 		);
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'News'
 				),
 			)
 		);
-		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawPropertiesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(

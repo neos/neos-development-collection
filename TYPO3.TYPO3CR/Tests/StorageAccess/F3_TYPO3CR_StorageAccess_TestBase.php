@@ -42,23 +42,23 @@ class F3_TYPO3CR_StorageAccess_TestBase extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function addNodeAndRemoveNodeWork() {
-		$UUID = $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
+		$identifier = $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
 		$expectedRawNode = array(
 			'id' => NULL,
 			'pid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
 			'name' => 'TestNode1',
-			'uuid' => $UUID,
+			'identifier' => $identifier,
 			'nodetype' => '1'
 		);
-		$this->storageAccess->addNode($UUID, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', '1', 'TestNode1');
-		$rawNode = $this->storageAccess->getRawNodeByUUID($UUID);
-		$this->assertTrue(is_array($rawNode), 'getRawNodeByUUID() did not return an array for a just created node entry.');
+		$this->storageAccess->addNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', '1', 'TestNode1');
+		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
+		$this->assertTrue(is_array($rawNode), 'getRawNodeByIdentifier() did not return an array for a just created node entry.');
 		$expectedRawNode['id'] = $rawNode['id'];
 		$this->assertSame($expectedRawNode, $rawNode, 'The returned raw node had not the expected values.');
 
-		$this->storageAccess->removeNode($UUID);
-		$rawNode = $this->storageAccess->getRawNodeByUUID($UUID);
-		$this->assertFalse($rawNode, 'getRawNodeByUUID() did return an array for a just removed node entry.');
+		$this->storageAccess->removeNode($identifier);
+		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
+		$this->assertFalse($rawNode, 'getRawNodeByIdentifier() did return an array for a just removed node entry.');
 	}
 
 	/**
@@ -67,17 +67,17 @@ class F3_TYPO3CR_StorageAccess_TestBase extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function updateNodeAndRemoveNodeWork() {
-		$UUID = $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
+		$identifier = $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
 		$expectedRawNode = array(
 			'id' => NULL,
 			'pid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
 			'name' => 'TestNode2',
-			'uuid' => $UUID,
+			'identifier' => $identifier,
 			'nodetype' => '1'
 		);
-		$this->storageAccess->addNode($UUID, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', '1', 'TestNode2');
-		$rawNode = $this->storageAccess->getRawNodeByUUID($UUID);
-		$this->assertTrue(is_array($rawNode), 'getRawNodeByUUID() did not return an array for a just created node entry.');
+		$this->storageAccess->addNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', '1', 'TestNode2');
+		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
+		$this->assertTrue(is_array($rawNode), 'getRawNodeByIdentifier() did not return an array for a just created node entry.');
 		$expectedRawNode['id'] = $rawNode['id'];
 		$this->assertSame($expectedRawNode, $rawNode, 'The returned raw node had not the expected values.');
 
@@ -85,17 +85,17 @@ class F3_TYPO3CR_StorageAccess_TestBase extends F3_Testing_BaseTestCase {
 			'id' => $rawNode['id'],
 			'pid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d01',
 			'name' => 'TestNode2Updated',
-			'uuid' => $UUID,
+			'identifier' => $identifier,
 			'nodetype' => '3'
 		);
-		$this->storageAccess->updateNode($UUID, '96bca35d-1ef5-4a47-8b0c-0bfc69507d01', '3', 'TestNode2Updated');
-		$rawNodeUpdated = $this->storageAccess->getRawNodeByUUID($UUID);
-		$this->assertTrue(is_array($rawNodeUpdated), 'getRawNodeByUUID() did not return an array for an updated node entry.');
+		$this->storageAccess->updateNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d01', '3', 'TestNode2Updated');
+		$rawNodeUpdated = $this->storageAccess->getRawNodeByIdentifier($identifier);
+		$this->assertTrue(is_array($rawNodeUpdated), 'getRawNodeByIdentifier() did not return an array for an updated node entry.');
 		$this->assertSame($expectedRawNodeUpdated, $rawNodeUpdated, 'The returned raw node had not the expected (updated) values.');
 
-		$this->storageAccess->removeNode($UUID);
-		$rawNode = $this->storageAccess->getRawNodeByUUID($UUID);
-		$this->assertFalse($rawNode, 'getRawNodeByUUID() did return an array for a just removed node entry.');
+		$this->storageAccess->removeNode($identifier);
+		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
+		$this->assertFalse($rawNode, 'getRawNodeByIdentifier() did return an array for a just removed node entry.');
 	}
 
 }

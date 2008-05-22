@@ -315,7 +315,7 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 		if ($this instanceof F3_TYPO3CR_Node) {
 			return (
 				($otherItem instanceof F3_TYPO3CR_Node) &&
-				($this->getUUID() == $otherItem->getUUID())
+				($this->getIdentifier() == $otherItem->getIdentifier())
 			);
 		} elseif ($otherItem instanceof F3_TYPO3CR_Property) {
 			return (

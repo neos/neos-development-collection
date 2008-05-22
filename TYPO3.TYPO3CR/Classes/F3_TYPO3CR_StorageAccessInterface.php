@@ -48,10 +48,10 @@ interface F3_TYPO3CR_StorageAccessInterface {
 	/**
 	 * Fetches raw node data from the database
 	 *
-	 * @param  string $uuid The UUID of the node to fetch
+	 * @param  string $identifier The Identifier of the node to fetch
 	 * @return array|FALSE
 	 */
-	public function getRawNodeByUUID($uuid);
+	public function getRawNodeByIdentifier($identifier);
 
 	/**
 	 * Fetches raw node data of the root node of the current workspace.
@@ -99,20 +99,20 @@ interface F3_TYPO3CR_StorageAccessInterface {
 	public function deleteNamespace($prefix);
 
 	/**
-	 * Fetches sub node UUIDs from the database
+	 * Fetches sub node Identifiers from the database
 	 *
-	 * @param integer $nodeId The node UUID to fetch (sub-)nodes for
+	 * @param integer $nodeId The node Identifier to fetch (sub-)nodes for
 	 * @return array
 	 */
-	public function getUUIDsOfSubNodesOfNode($nodeId);
+	public function getIdentifiersOfSubNodesOfNode($nodeId);
 
 	/**
 	 * Fetches raw property data from the database
 	 *
-	 * @param integer $nodeUUID The node UUID to fetch properties for
+	 * @param integer $nodeIdentifier The node Identifier to fetch properties for
 	 * @return array|FALSE
 	 */
-	public function getRawPropertiesOfNode($nodeUUID);
+	public function getRawPropertiesOfNode($nodeIdentifier);
 
 	/**
 	 * Fetches raw nodetype data from the database
@@ -125,45 +125,45 @@ interface F3_TYPO3CR_StorageAccessInterface {
 	/**
 	 * Adds a node to the storage
 	 *
-	 * @param string $uuid UUID to insert
-	 * @param string $pid UUID of the parent node
+	 * @param string $identifier Identifier to insert
+	 * @param string $pid Identifier of the parent node
 	 * @param integer $nodetype Nodetype to insert
 	 * @param string $name Name to insert
 	 * @return void
 	 */
-	public function addNode($uuid, $pid, $nodetype, $name);
+	public function addNode($identifier, $pid, $nodetype, $name);
 
 	/**
 	 * Adds a property in the storage
 	 *
-	 * @param string $uuid UUID of parent node
+	 * @param string $identifier Identifier of parent node
 	 * @param string $name Name of property
 	 * @param string $value Value of property
 	 * @param boolean $isMultiValued
 	 * @return void
 	 */
-	public function addProperty($uuid, $name, $value, $isMultiValued);
+	public function addProperty($identifier, $name, $value, $isMultiValued);
 
 	/**
 	 * Updates a node in the storage
 	 *
-	 * @param string $uuid UUID of the node to update
-	 * @param string $pid UUID of the parent node
+	 * @param string $identifier Identifier of the node to update
+	 * @param string $pid Identifier of the parent node
 	 * @param integer $nodetype new nodetype
 	 * @param string $name new name
 	 * @return void
 	 */
-	public function updateNode($uuid, $pid, $nodetype, $name);
+	public function updateNode($identifier, $pid, $nodetype, $name);
 
 	/**
-	 * Updates a property in the repository identified by uuid and name
+	 * Updates a property in the repository identified by identifier and name
 	 *
-	 * @param string $uuid UUID of parent node
+	 * @param string $identifier Identifier of parent node
 	 * @param string $name Name of property
 	 * @param string $value Value of property
 	 * @param boolean $isMultiValued
 	 * @return void
 	 */
-	public function updateProperty($uuid, $name, $value, $isMultiValued);
+	public function updateProperty($identifier, $name, $value, $isMultiValued);
 }
 ?>

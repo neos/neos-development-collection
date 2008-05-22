@@ -79,15 +79,15 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 			'id' => NULL,
 			'pid' => 0,
 			'name' => '',
-			'uuid' => $rootNode->getUUID(),
+			'identifier' => $rootNode->getIdentifier(),
 			'nodetype' => 1)
 		);
-		$mockSession->expects($this->once())->method('getNodeByUUID')->will($this->returnValue($rootNode));
+		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($rootNode));
 		$node = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$node->initializeFromArray(array(
-			'pid' => $rootNode->getUUID(),
+			'pid' => $rootNode->getIdentifier(),
 			'name' => 'testnode',
-			'uuid' => $node->getUUID(),
+			'identifier' => $node->getIdentifier(),
 			'nodetype' => 1,
 		));
 		$node->setProperty('testproperty', 'some test value');

@@ -73,7 +73,7 @@ class F3_TYPO3CR_StorageAccess_PDO implements F3_TYPO3CR_StorageAccessInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeById($nodeId) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, uuid, nodetype FROM nodes WHERE id = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, identifier, nodetype FROM nodes WHERE id = ?');
 		$statementHandle->execute(array($nodeId));
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
@@ -81,13 +81,13 @@ class F3_TYPO3CR_StorageAccess_PDO implements F3_TYPO3CR_StorageAccessInterface 
 	/**
 	 * Fetches raw node data from the database
 	 *
-	 * @param string $uuid The UUID of the node to fetch
+	 * @param string $identifier The Identifier of the node to fetch
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getRawNodeByUUID($uuid) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, uuid, nodetype FROM nodes WHERE uuid = ?');
-		$statementHandle->execute(array($uuid));
+	public function getRawNodeByIdentifier($identifier) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, identifier, nodetype FROM nodes WHERE identifier = ?');
+		$statementHandle->execute(array($identifier));
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
 
@@ -98,39 +98,39 @@ class F3_TYPO3CR_StorageAccess_PDO implements F3_TYPO3CR_StorageAccessInterface 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawRootNode() {
-		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, uuid, nodetype FROM nodes WHERE pid = 0');
+		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, identifier, nodetype FROM nodes WHERE pid = 0');
 		$statementHandle->execute();
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
 
 	/**
-	 * Fetches sub node UUIDs from the database
+	 * Fetches sub node Identifiers from the database
 	 *
-	 * @param integer $nodeId The node UUID to fetch (sub-)nodes for
+	 * @param integer $nodeId The node Identifier to fetch (sub-)nodes for
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDsOfSubNodesOfNode($nodeId) {
-		$nodeUUIDs = array();
-		$statementHandle = $this->databaseHandle->prepare('SELECT uuid FROM nodes WHERE pid = ?');
+	public function getIdentifiersOfSubNodesOfNode($nodeId) {
+		$nodeIdentifiers = array();
+		$statementHandle = $this->databaseHandle->prepare('SELECT identifier FROM nodes WHERE pid = ?');
 		$statementHandle->execute(array($nodeId));
 		$rawNodes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rawNodes as $k => $rawNode) {
-			$nodeUUIDs[] = $rawNode['uuid'];
+			$nodeIdentifiers[] = $rawNode['identifier'];
 		}
-		return $nodeUUIDs;
+		return $nodeIdentifiers;
 	}
 
 	/**
 	 * Fetches raw property data from the database
 	 *
-	 * @param integer $nodeUUID The node UUID to fetch properties for
+	 * @param integer $nodeIdentifier The node Identifier to fetch properties for
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getRawPropertiesOfNode($nodeUUID) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE nodeuuid = ?');
-		$statementHandle->execute(array($nodeUUID));
+	public function getRawPropertiesOfNode($nodeIdentifier) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE nodeidentifier = ?');
+		$statementHandle->execute(array($nodeIdentifier));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		if (is_array($properties) && $properties['multivalue']) {
 			$properties['value'] = unserialize($properties['value']);
@@ -154,86 +154,86 @@ class F3_TYPO3CR_StorageAccess_PDO implements F3_TYPO3CR_StorageAccessInterface 
 	/**
 	 * Adds a node to the repository
 	 *
-	 * @param string $uuid UUID to insert
-	 * @param string $pid UUID of the parent node
+	 * @param string $identifier Identifier to insert
+	 * @param string $pid Identifier of the parent node
 	 * @param integer $nodetype Nodetype to insert
 	 * @param string $name Name to insert
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function addNode($uuid, $pid, $nodetype, $name) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO nodes (uuid, pid, nodetype, name) VALUES (?, ?, ?, ?)');
-		$statementHandle->execute(array($uuid, $pid, $nodetype, $name));
+	public function addNode($identifier, $pid, $nodetype, $name) {
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO nodes (identifier, pid, nodetype, name) VALUES (?, ?, ?, ?)');
+		$statementHandle->execute(array($identifier, $pid, $nodetype, $name));
 	}
 
 	/**
 	 * Updates a node in the repository
 	 *
-	 * @param string $uuid UUID of the node to update
-	 * @param string $pid UUID of the parent node
+	 * @param string $identifier Identifier of the node to update
+	 * @param string $pid Identifier of the parent node
 	 * @param integer $nodetype Nodetype to update
 	 * @param string $name Name to update
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function updateNode($uuid, $pid, $nodetype, $name) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE nodes SET pid=?, nodetype=?, name=? WHERE uuid=?');
-		$statementHandle->execute(array($pid, $nodetype, $name, $uuid));
+	public function updateNode($identifier, $pid, $nodetype, $name) {
+		$statementHandle = $this->databaseHandle->prepare('UPDATE nodes SET pid=?, nodetype=?, name=? WHERE identifier=?');
+		$statementHandle->execute(array($pid, $nodetype, $name, $identifier));
 	}
 
 	/**
 	 * Deletes a node in the repository
 	 *
-	 * @param string $uuid UUID of the node to delete
+	 * @param string $identifier Identifier of the node to delete
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function removeNode($uuid) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM nodes WHERE uuid=?');
-		$statementHandle->execute(array($uuid));
+	public function removeNode($identifier) {
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM nodes WHERE identifier=?');
+		$statementHandle->execute(array($identifier));
 	}
 
 	/**
 	 * Adds a property in the repository
 	 *
-	 * @param string $uuid UUID of parent node
+	 * @param string $identifier Identifier of parent node
 	 * @param string $name Name of property
 	 * @param string $value Value of property
 	 * @param boolean $isMultiValued
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function addProperty($uuid, $name, $value, $isMultiValued) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (nodeuuid, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, ?)');
-		$statementHandle->execute(array($uuid, $name, $value, $isMultiValued));
+	public function addProperty($identifier, $name, $value, $isMultiValued) {
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (nodeidentifier, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, ?)');
+		$statementHandle->execute(array($identifier, $name, $value, $isMultiValued));
 	}
 
 	/**
-	 * Updates a property in the repository identified by uuid and name
+	 * Updates a property in the repository identified by identifier and name
 	 *
-	 * @param string $uuid UUID of parent node
+	 * @param string $identifier Identifier of parent node
 	 * @param string $name Name of property
 	 * @param string $value Value of property
 	 * @param boolean $isMultiValued
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function updateProperty($uuid, $name, $value, $isMultiValued) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=?, multivalue=? WHERE nodeuuid=? AND name=?');
-		$statementHandle->execute(array($value, $isMultiValued, $uuid, $name));
+	public function updateProperty($identifier, $name, $value, $isMultiValued) {
+		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=?, multivalue=? WHERE nodeidentifier=? AND name=?');
+		$statementHandle->execute(array($value, $isMultiValued, $identifier, $name));
 	}
 
 	/**
-	 * Deletes a property in the repository identified by uuid and name
+	 * Deletes a property in the repository identified by identifier and name
 	 *
-	 * @param string $uuid UUID of parent node
+	 * @param string $identifier Identifier of parent node
 	 * @param string $name Name of property
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function removeProperty($uuid, $name) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM properties WHERE nodeuuid=? AND name=?');
-		$statementHandle->execute(array($uuid, $name));
+	public function removeProperty($identifier, $name) {
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM properties WHERE nodeidentifier=? AND name=?');
+		$statementHandle->execute(array($identifier, $name));
 	}
 
 	/**

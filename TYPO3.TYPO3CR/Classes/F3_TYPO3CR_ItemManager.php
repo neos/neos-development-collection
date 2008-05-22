@@ -58,7 +58,7 @@ class F3_TYPO3CR_ItemManager implements F3_TYPO3CR_ItemManagerInterface {
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 */
 	public function addNode(F3_PHPCR_NodeInterface $node) {
-		$this->nodes[$node->getUUID()] = $node;
+		$this->nodes[$node->getIdentifier()] = $node;
 	}
 
 	/**
@@ -75,7 +75,7 @@ class F3_TYPO3CR_ItemManager implements F3_TYPO3CR_ItemManagerInterface {
 		}
 
 		foreach ($this->nodes as $node) {
-			if (($node->isModified() === FALSE) && ($node->isNew() === FALSE)) unset($this->nodes[$node->getUUID()]);
+			if (($node->isModified() === FALSE) && ($node->isNew() === FALSE)) unset($this->nodes[$node->getIdentifier()]);
 		}
 
 		return $this->nodes;

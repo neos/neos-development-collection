@@ -272,11 +272,11 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 		}
 
 		if ($this->isRemoved()) {
-			$this->storageAccess->removeProperty($this->getParent()->getUUID(), $this->getName());
+			$this->storageAccess->removeProperty($this->getParent()->getIdentifier(), $this->getName());
 		} elseif ($this->isModified()) {
-			$this->storageAccess->updateProperty($this->getParent()->getUUID(), $this->getName(), $value, is_array($this->value));
+			$this->storageAccess->updateProperty($this->getParent()->getIdentifier(), $this->getName(), $value, is_array($this->value));
 		} elseif ($this->isNew()) {
-			$this->storageAccess->addProperty($this->getParent()->getUUID(), $this->getName(), $value, is_array($this->value));
+			$this->storageAccess->addProperty($this->getParent()->getIdentifier(), $this->getName(), $value, is_array($this->value));
 		}
 
 		$this->setModified(FALSE);

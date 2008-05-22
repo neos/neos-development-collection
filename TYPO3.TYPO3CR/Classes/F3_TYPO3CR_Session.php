@@ -59,7 +59,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	protected $rootNode;
 
 	/**
-	 * @var array of F3_TYPO3CR_Node - stores references to all loaded nodes in a UUID->value fashion.
+	 * @var array of F3_TYPO3CR_Node - stores references to all loaded nodes in a Identifier->value fashion.
 	 */
 	protected $currentlyLoadedNodes = array();
 
@@ -159,32 +159,32 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		if ($this->rootNode === NULL) {
 			$this->rootNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this, $this->storageAccess);
 			$this->rootNode->initializeFromArray($this->storageAccess->getRawRootNode());
-			$this->currentlyLoadedNodes[$this->rootNode->getUUID()] = $this->rootNode;
+			$this->currentlyLoadedNodes[$this->rootNode->getIdentifier()] = $this->rootNode;
 		}
 
 		return $this->rootNode;
 	}
 
 	/**
-	 * Get a node by its UUID
+	 * Get a node by its identifier
 	 *
-	 * @param string $uuid
+	 * @param string $id
 	 * @return F3_TYPO3CR_Node
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function getNodeByUUID($uuid) {
-		if (array_key_exists($uuid, $this->currentlyLoadedNodes)) {
-			return $this->currentlyLoadedNodes[$uuid];
+	public function getNodeByIdentifier($id) {
+		if (array_key_exists($id, $this->currentlyLoadedNodes)) {
+			return $this->currentlyLoadedNodes[$id];
 		}
 
-		$rawNode = $this->storageAccess->getRawNodeByUUID($uuid);
+		$rawNode = $this->storageAccess->getRawNodeByIdentifier($id);
 		if ($rawNode === FALSE) {
-			throw new F3_PHPCR_ItemNotFoundException('Node with UUID ' . $uuid . ' not found in repository.', 1181070997);
+			throw new F3_PHPCR_ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
 		}
 		$node = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this, $this->storageAccess);
 		$node->initializeFromArray($rawNode);
-		$this->currentlyLoadedNodes[$node->getUUID()] = $node;
+		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
 
 		return $node;
 	}

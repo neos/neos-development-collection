@@ -10,11 +10,11 @@ CREATE TABLE nodetypes (
 CREATE TABLE [nodes] (
   [id] INTEGER NOT NULL PRIMARY KEY, 
   [name] VARCHAR(255) NOT NULL, 
-  [uuid] VARCHAR(36), 
+  [identifier] VARCHAR(36), 
   [pid] VARCHAR(36) NOT NULL DEFAULT 0, 
   [nodetype] INTEGER);
 CREATE TABLE [properties] (
-  [nodeuuid] VARCHAR(36) NOT NULL, 
+  [nodeidentifier] VARCHAR(36) NOT NULL, 
   [name] VARCHAR(255) NOT NULL, 
   [value] TEXT, 
   [namespace] VARCHAR NOT NULL DEFAULT 0, 

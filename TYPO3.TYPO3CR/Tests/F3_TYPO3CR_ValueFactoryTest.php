@@ -103,7 +103,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 		$node = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$value = $this->valueFactory->createValue($node);
 		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
-		$this->assertEquals($value->getString(), $node->getUUID(), 'The Value did not contain the UUID of the passed Node object.');
+		$this->assertEquals($value->getString(), $node->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');
 	}
 
 	/**

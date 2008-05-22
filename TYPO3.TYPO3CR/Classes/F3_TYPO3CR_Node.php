@@ -31,7 +31,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	/**
 	 * @var string
 	 */
-	protected $UUID;
+	protected $Identifier;
 
 	/**
 	 * @var F3_PHPCR_NodeTypeInterface
@@ -67,7 +67,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
 
-		$this->UUID = $componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
+		$this->Identifier = $componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
 	}
 
 	/**
@@ -108,10 +108,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			if ($rawData['pid'] == '0') {
 				$this->parentNode = NULL;
 			} else {
-				$this->parentNode = $this->session->getNodeByUUID($rawData['pid']);
+				$this->parentNode = $this->session->getNodeByIdentifier($rawData['pid']);
 			}
 			$this->name = $rawData['name'];
-			$this->UUID = $rawData['uuid'];
+			$this->Identifier = $rawData['identifier'];
 			$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeTypeInterface', $rawData['nodetype'], $this->storageAccess);
 			$this->initializeProperties();
 		} else {
@@ -126,7 +126,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeProperties() {
-		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getUUID());
+		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
 				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
@@ -205,18 +205,18 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	}
 
 	/**
-	 * Returns the UUID of the node. If the node has no UUID, an exception is thrown
+	 * Returns the Identifier of the node. If the node has no Identifier, an exception is thrown
 	 *
 	 * @return string
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Check for mix:referenceable on node to determine if an UnsupportedRepositoryOperationException should be thrown. Then throw RepositoryException if still no UUID is available.
+	 * @todo Check for mix:referenceable on node to determine if an UnsupportedRepositoryOperationException should be thrown. Then throw RepositoryException if still no Identifier is available.
 	 */
-	public function getUUID() {
-		if (isset($this->UUID)) {
-			return $this->UUID;
+	public function getIdentifier() {
+		if (isset($this->Identifier)) {
+			return $this->Identifier;
 		} else {
-			throw new F3_PHPCR_UnsupportedRepositoryOperationException('Node has no UUID', 1181070099);
+			throw new F3_PHPCR_UnsupportedRepositoryOperationException('Node has no Identifier', 1181070099);
 		}
 	}
 
@@ -289,10 +289,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 */
 	protected function initializeNodes() {
 		$this->nodes = array();
-		$rawNodeUUIDs = $this->storageAccess->getUUIDsOfSubNodesOfNode($this->getUUID());
-		foreach ($rawNodeUUIDs as $rawNodeUUID) {
-			$node = $this->session->getNodeByUUID($rawNodeUUID);
-			$this->nodes[$node->getUUID()] = $node;
+		$rawNodeIdentifiers = $this->storageAccess->getIdentifiersOfSubNodesOfNode($this->getIdentifier());
+		foreach ($rawNodeIdentifiers as $rawNodeIdentifier) {
+			$node = $this->session->getNodeByIdentifier($rawNodeIdentifier);
+			$this->nodes[$node->getIdentifier()] = $node;
 		}
 	}
 
@@ -401,9 +401,9 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		if ($numberOfElementsRemaining===0) {
 			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this->session, $this->storageAccess);
 			$newNode->initializeFromArray(array(
-				'pid' => $this->getUUID(),
+				'pid' => $this->getIdentifier(),
 				'name' => $lastNodeName,
-				'uuid' => $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID(),
+				'identifier' => $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID(),
 				'nodetype' => 0,
 			));
 			$newNode->setNew(TRUE);
@@ -411,7 +411,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			if (!is_array($this->nodes)) {
 				$this->initializeNodes();
 			}
-			$this->nodes[$newNode->getUUID()] = $newNode;
+			$this->nodes[$newNode->getIdentifier()] = $newNode;
 			$this->setModified(TRUE);  // JSR-283: (5.1.3.6): This specification provides the following methods on Item for determining whether a particular item has pending changes (isModified) or constitutes part of the pending changes of its parent(isNew)
 		} else {
 			$upperNode = $pathParser->parsePath($remainingPath, $this);
@@ -460,18 +460,18 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 
 		if ($this->isRemoved()===TRUE) {
 			$this->saveProperties();
-			$this->storageAccess->removeNode($this->getUUID());
+			$this->storageAccess->removeNode($this->getIdentifier());
 			// TODO: HOW TO REMOVE THE DELETED NODE FROM THE OBJECT TREE?
 			// $this = NULL; // does not work.
 			// $this->parentNode->remove($this); // would be nice
 		} elseif ($this->isNew()===TRUE) {
-			$this->storageAccess->addNode($this->getUUID(), $this->parentNode->getUUID(), $this->nodeType->getId(), $this->name);
+			$this->storageAccess->addNode($this->getIdentifier(), $this->parentNode->getIdentifier(), $this->nodeType->getId(), $this->name);
 			$this->saveProperties();
 		} elseif ($this->isModified()===TRUE) {
 			if ($this->getDepth() == 0) {
-				$this->storageAccess->updateNode($this->getUUID(), 0, $this->nodeType->getId(), $this->name);
+				$this->storageAccess->updateNode($this->getIdentifier(), 0, $this->nodeType->getId(), $this->name);
 			} else {
-				$this->storageAccess->updateNode($this->getUUID(), $this->parentNode->getUUID(), $this->nodeType->getId(), $this->name);
+				$this->storageAccess->updateNode($this->getIdentifier(), $this->parentNode->getIdentifier(), $this->nodeType->getId(), $this->name);
 			}
 			$this->saveProperties();
 		}

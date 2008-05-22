@@ -48,35 +48,35 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$this->mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
-				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
 				'nodetype' => 0,
 				'name' => ''
 			)
 		);
-		$this->mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$this->mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'Content'
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
 					'nodetype' => 0,
 					'name' => 'News'
 				),
 			)
 		);
-		$this->mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+		$this->mockStorageAccess->rawPropertiesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(
@@ -94,18 +94,18 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Checks if a Node fetched by getNodeByUUID() returns the expected UUID on getUUID().
+	 * Checks if a Node fetched by getNodeByIdentifier() returns the expected Identifier on getIdentifier().
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getUUIDReturnsExpectedUUID() {
-		$firstExpectedUUID = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
-		$firstNode = $this->session->getNodeByUUID($firstExpectedUUID);
-		$this->assertEquals($firstExpectedUUID, $firstNode->getUUID(), 'getUUID() did not return the expected UUID.');
+	public function getIdentifierReturnsExpectedIdentifier() {
+		$firstExpectedIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
+		$firstNode = $this->session->getNodeByIdentifier($firstExpectedIdentifier);
+		$this->assertEquals($firstExpectedIdentifier, $firstNode->getIdentifier(), 'getIdentifier() did not return the expected Identifier.');
 
-		$secondExpectedUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$secondNode = $this->session->getNodeByUUID($secondExpectedUUID);
-		$this->assertEquals($secondExpectedUUID, $secondNode->getUUID(), 'getUUID() did not return the expected UUID.');
+		$secondExpectedIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$secondNode = $this->session->getNodeByIdentifier($secondExpectedIdentifier);
+		$this->assertEquals($secondExpectedIdentifier, $secondNode->getIdentifier(), 'getIdentifier() did not return the expected Identifier.');
 	}
 
 	/**
@@ -114,10 +114,10 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function hasPropertiesWorks() {
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals(TRUE, $node->hasProperties(), 'hasProperties() did not return TRUE for a node with properties.');
 
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
+		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$this->assertEquals(FALSE, $node->hasProperties(), 'hasProperties() did not return FALSE for a node without properties.');
 	}
 
@@ -127,11 +127,11 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPropertiesWorks() {
-		$emptyNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$emptyNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noProperties = $emptyNode->getProperties();
 		$this->assertType('F3_PHPCR_PropertyIteratorInterface', $noProperties, 'getProperties() did not return a PropertyIterator for a node without properties.');
 
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$properties = $node->getProperties();
 		$this->assertType('F3_PHPCR_PropertyIteratorInterface', $properties, 'getProperties() did not return a PropertyIterator for a node with properties.');
 
@@ -150,9 +150,9 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function hasPropertyWorks() {
-		$newsNodeUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$newsNodeIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
 		$newsTitleText = 'News about the TYPO3CR';
-		$newsNode = $this->session->getNodeByUUID($newsNodeUUID);
+		$newsNode = $this->session->getNodeByIdentifier($newsNodeIdentifier);
 
 		$this->assertTrue($newsNode->hasProperty('title'), 'Expected property was not found (1).');
 		$this->assertTrue($newsNode->hasProperty('./title'), 'Expected property was not found (2).');
@@ -168,9 +168,9 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPropertyWorks() {
-		$newsNodeUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$newsNodeIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
 		$newsTitleText = 'News about the TYPO3CR';
-		$newsNode = $this->session->getNodeByUUID($newsNodeUUID);
+		$newsNode = $this->session->getNodeByIdentifier($newsNodeIdentifier);
 
 		$title = $newsNode->getProperty('title');
 		$this->assertEquals($title->getString(), $newsTitleText, 'Expected property was not found (1).');
@@ -197,10 +197,10 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function hasNodesWorks() {
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
+		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$this->assertEquals(TRUE, $node->hasNodes(), 'hasNodes() did not return TRUE for a node with child nodes.');
 
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals(FALSE, $node->hasNodes(), 'hasNodes() did not return FALSE for a node without child nodes.');
 	}
 
@@ -210,18 +210,18 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getNodesWorks() {
-		$leaf = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$leaf = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noChildNodes = $leaf->getNodes();
 		$this->assertType('F3_PHPCR_NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
 
-		$node = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
+		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$childNodes = $node->getNodes();
 		$this->assertType('F3_PHPCR_NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
 
 		$this->assertEquals(0, $noChildNodes->getSize(), 'getNodes() did not return an empty NodeIterator for a node without child nodes.');
 		$this->assertNotEquals(0, $childNodes->getSize(), 'getNodes() returned an empty NodeIterator for a node with child nodes.');
 
-		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', $childNodes->nextNode()->getUUID(), 'getNodes() did not return the expected result for a node with child nodes.');
+		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', $childNodes->nextNode()->getIdentifier(), 'getNodes() did not return the expected result for a node with child nodes.');
 	}
 
 	/**
@@ -230,8 +230,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getNodeWorks() {
-		$newsNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$this->assertEquals($newsNode->getNode('../News')->getUUID(), $newsNode->getUUID(), 'getNode() did not return the expected result.');
+		$newsNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$this->assertEquals($newsNode->getNode('../News')->getIdentifier(), $newsNode->getIdentifier(), 'getNode() did not return the expected result.');
 	}
 
 	/**
@@ -241,7 +241,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getNameWorks() {
-		$leaf = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$leaf = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals('News', $leaf->getName(), "getName() must be the same as the last item in the path");
 	}
 
@@ -320,7 +320,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function isSameReturnsTrueForSameNodes() {
 			// fetch root node "by hand"
-		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d00');
+		$testNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d00');
 		$this->assertTrue($this->rootNode->isSame($testNode), "isSame() must return FALSE for the same item.");
 	}
 
@@ -331,7 +331,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getParentReturnsExpectedNode() {
-		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
+		$testNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$this->assertTrue($this->rootNode->isSame($testNode->getParent()), "getParent() of a child node does not return the parent node.");
 	}
 
@@ -359,7 +359,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	public function getDepthReturnsCorrectDepth() {
 		$this->assertEquals(0, $this->rootNode->getDepth(), "getDepth() of root must be 0");
 
-		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$testNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals(2, $testNode->getDepth(), "getDepth() of subchild must be 2");
 
 		for ($it = $this->rootNode->getNodes(); $it->hasNext(); ) {
@@ -395,7 +395,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPathWithoutSameNameSiblingsWorks() {
-		$testNode = $this->session->getNodeByUUID('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
+		$testNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertEquals('/Content/News', $testNode->getPath(), "getPath() returns wrong result");
 	}
 
@@ -443,9 +443,9 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 
 		$this->rootNode->save();
 
-		$newNode1 = $this->session->getNodeByUUID($newNode1->getUUID());
+		$newNode1 = $this->session->getNodeByIdentifier($newNode1->getIdentifier());
 		$this->assertType('F3_PHPCR_NodeInterface', $newNode1, 'Function: save() - Nodes are not persisted in the CR.');
-		$newNode2 = $this->session->getNodeByUUID($newNode2->getUUID());
+		$newNode2 = $this->session->getNodeByIdentifier($newNode2->getIdentifier());
 		$this->assertType('F3_PHPCR_NodeInterface', $newNode2, 'Function: save() - Nodes are not persisted in the CR.');
 	}
 

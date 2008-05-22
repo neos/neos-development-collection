@@ -55,7 +55,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 	 */
 	public function weGetTheRootNode() {
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
-		$mockStorageAccess->expects($this->any())->method('getUUIDsOfSubNodesOfNode')->will($this->returnValue(array()));
+		$mockStorageAccess->expects($this->any())->method('getIdentifiersOfSubNodesOfNode')->will($this->returnValue(array()));
 		$mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->will($this->returnValue(array('id' => 1, 'name' => 'nodeTypeName')));
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = new F3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
@@ -63,7 +63,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$rootNode = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$rootNode->initializeFromArray(array(
 			'id' => '1',
-			'uuid' => '',
+			'identifier' => '',
 			'pid' => '0',
 			'nodetype' => '1',
 			'name' => 'nodeA'
@@ -87,35 +87,35 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
-				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
 				'nodetype' => 0,
 				'name' => ''
 			)
 		);
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'Content'
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
 					'nodetype' => 0,
 					'name' => 'News'
 				),
 			)
 		);
-		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawPropertiesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(
@@ -147,29 +147,29 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
-				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
 				'nodetype' => 0,
 				'name' => ''
 			)
 		);
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'Node'
 				),
 			)
 		);
-		$mockStorageAccess->rawPropertiesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawPropertiesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(
@@ -196,36 +196,36 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function subnodesAreRetrievedProperly() {
-		$expectedContentNodeUUID = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
-		$expectedHomeNodeUUID = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$expectedContentNodeIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
+		$expectedHomeNodeIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
 
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
-				'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'pid' => 0,
 				'nodetype' => 0,
 				'name' => ''
 			)
 		);
-		$mockStorageAccess->rawNodesByUUIDGroupedByWorkspace = array(
+		$mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
-					'uuid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'pid' => 0,
 					'nodetype' => 0,
 					'name' => ''
 				),
-				$expectedContentNodeUUID => array(
-					'uuid' => $expectedContentNodeUUID,
+				$expectedContentNodeIdentifier => array(
+					'identifier' => $expectedContentNodeIdentifier,
 					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'Content'
 				),
-				$expectedHomeNodeUUID => array(
-					'uuid' => $expectedHomeNodeUUID,
-					'pid' => $expectedContentNodeUUID,
+				$expectedHomeNodeIdentifier => array(
+					'identifier' => $expectedHomeNodeIdentifier,
+					'pid' => $expectedContentNodeIdentifier,
 					'nodetype' => 0,
 					'name' => 'Home'
 				),
@@ -236,19 +236,19 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$rootNode = $session->getRootNode();
 
 		$node = $this->pathParser->parsePath('/Content', $rootNode);
-		$this->assertEquals($expectedContentNodeUUID, $node->getUUID(), 'The path parser did not return the correct content node.');
+		$this->assertEquals($expectedContentNodeIdentifier, $node->getIdentifier(), 'The path parser did not return the correct content node.');
 
 		$node = $this->pathParser->parsePath('/Content/', $rootNode);
-		$this->assertEquals($expectedContentNodeUUID, $node->getUUID(), 'The path parser did not return the correct content node.');
+		$this->assertEquals($expectedContentNodeIdentifier, $node->getIdentifier(), 'The path parser did not return the correct content node.');
 
 		$node = $this->pathParser->parsePath('/Content/.', $rootNode);
-		$this->assertEquals($expectedContentNodeUUID, $node->getUUID(), 'The path parser did not return the correct content node.');
+		$this->assertEquals($expectedContentNodeIdentifier, $node->getIdentifier(), 'The path parser did not return the correct content node.');
 
 		$node = $this->pathParser->parsePath('Content/..', $rootNode);
-		$this->assertEquals($rootNode->getUUID(), $node->getUUID(), 'The path parser did not return the correct root node.');
+		$this->assertEquals($rootNode->getIdentifier(), $node->getIdentifier(), 'The path parser did not return the correct root node.');
 
 		$node = $this->pathParser->parsePath('Content/./Home', $rootNode);
-		$this->assertEquals($expectedHomeNodeUUID, $node->getUUID(), 'The path parser did not return the home page.');
+		$this->assertEquals($expectedHomeNodeIdentifier, $node->getIdentifier(), 'The path parser did not return the home page.');
 	}
 
 	/**
