@@ -170,7 +170,6 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 * Property.
 	 *
 	 * @return boolean
-	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public abstract function isNode();
 
@@ -183,7 +182,6 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 *
 	 * @return string The path to the Item
 	 * @throws F3_PHPCR_RepositoryException
-	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public abstract function getPath();
 
@@ -202,7 +200,6 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 * @throws F3_PHPCR_ItemNotFoundException
 	 * @throws F3_PHPCR_AccessDeniedException
 	 * @throws F3_PHPCR_RepositoryException
-	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public abstract function getParent();
 

@@ -77,7 +77,7 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	public function getString() {
 		switch ($this->type) {
 			case F3_PHPCR_PropertyType::DATE:
-				if(is_a($this->value, 'DateTime')) {
+				if (is_a($this->value, 'DateTime')) {
 					return date_format($this->value, DATE_ISO8601);
 				} else {
 					return date_format(new DateTime($this->value), DATE_ISO8601);
@@ -141,7 +141,7 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDate() {
-		if(is_a($this->value, 'DateTime')) {
+		if (is_a($this->value, 'DateTime')) {
 			return clone($this->value);
 		}
 
