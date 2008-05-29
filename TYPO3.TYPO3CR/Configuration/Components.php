@@ -13,7 +13,7 @@ declare(ENCODING="utf-8");
 /**
  * The DSN to use for connecting to the database acting as storage backend.
  *
- * @type string
+ * @var string
  */
 $c->F3_TYPO3CR_StorageAccessInterface->constructorArguments[1] = '';
 
