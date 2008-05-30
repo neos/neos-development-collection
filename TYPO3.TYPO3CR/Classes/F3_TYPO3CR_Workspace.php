@@ -44,7 +44,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	protected $componentManager;
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccess
+	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
 	 */
 	protected $storageAccess;
 
@@ -53,11 +53,11 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 *
 	 * @param string $name
 	 * @param F3_PHPCR_SessionInterface $session
-	 * @param F3_PHPCR_StorageAccessInterface $storageAccess
+	 * @param F3_PHPCR_StorageAccess_StorageAccessInterface $storageAccess
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
-	 * 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($name, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->name = (F3_PHP6_Functions::strlen($name) ? $name : 'default');
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;

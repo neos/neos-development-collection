@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_StorageAccessInterface {
+class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_StorageAccess_StorageAccessInterface {
 
 	/**
 	 * @var array This array can be set from tests to mock raw node arrays

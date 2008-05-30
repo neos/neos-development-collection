@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeTypeTest extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_NodeType_NodeTypeTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if the primary NodeType object returned by two different nodes is not the same one.
@@ -37,7 +37,7 @@ class F3_TYPO3CR_NodeTypeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function nodeTypeObjectReturnedIsDifferent() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
 		$mockStorageAccess->expects($this->any())->method('getIdentifiersOfSubNodesOfNode')->will($this->returnValue(array()));
 		$mockStorageAccess->expects($this->any())->method('getRawPropertiesOfNode')->will($this->returnValue(array()));
 		$mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->will($this->returnValue(array('id' => 1, 'name' => 'nodeTypeName')));
@@ -69,9 +69,9 @@ class F3_TYPO3CR_NodeTypeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getNameReturnsTheExpectedName() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
 		$mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->with($this->equalTo(1))->will($this->returnValue(array('id' => 1, 'name' => 'nodeTypeName')));
-		$nodeTypeObject = new F3_TYPO3CR_NodeType(1, $mockStorageAccess, $this->componentManager);
+		$nodeTypeObject = new F3_TYPO3CR_NodeType_NodeType(1, $mockStorageAccess, $this->componentManager);
 
 		$this->assertEquals('nodeTypeName', $nodeTypeObject->getName(), 'getName() on the NodeType object did not return the expected name.');
 	}

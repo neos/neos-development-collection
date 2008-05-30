@@ -34,7 +34,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	protected $Identifier;
 
 	/**
-	 * @var F3_PHPCR_NodeTypeInterface
+	 * @var F3_PHPCR_NodeType_NodeTypeInterface
 	 */
 	protected $nodeType;
 
@@ -57,12 +57,12 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * Constructs a Node
 	 *
 	 * @param F3_TYPO3CR_SessionInterface $session
-	 * @param F3_TYPO3CR_StorageAccessInterface $storageAccess
+	 * @param F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_PHPCR_SessionInterface $session, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3_PHPCR_SessionInterface $session, F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
@@ -112,7 +112,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			}
 			$this->name = $rawData['name'];
 			$this->Identifier = $rawData['identifier'];
-			$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeTypeInterface', $rawData['nodetype'], $this->storageAccess);
+			$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $rawData['nodetype'], $this->storageAccess);
 			$this->initializeProperties();
 		} else {
 			throw new F3_PHPCR_RepositoryException('New node objects can only be initialized from an array once.', 1181076288);

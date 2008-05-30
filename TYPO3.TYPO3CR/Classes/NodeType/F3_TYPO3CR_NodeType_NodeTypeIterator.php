@@ -16,6 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
+ * @subpackage NodeType
  * @version $Id$
  */
 
@@ -23,17 +24,17 @@ declare(ENCODING = 'utf-8');
  * A NodeTypeIterator
  *
  * @package TYPO3CR
+ * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeTypeIterator extends F3_TYPO3CR_RangeIterator implements F3_PHPCR_NodeTypeIteratorInterface {
+class F3_TYPO3CR_NodeType_NodeTypeIterator extends F3_TYPO3CR_RangeIterator implements F3_PHPCR_NodeType_NodeTypeIteratorInterface {
 
 	/**
 	 * Returns the next NodeType in the iteration.
 	 *
-	 * @return F3_PHPCR_NodeTypeInterface
+	 * @return F3_PHPCR_NodeType_NodeTypeInterface
 	 * @throws OutOfBoundsException if the iterator contains no more elements.
-	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function nextNodeType() {

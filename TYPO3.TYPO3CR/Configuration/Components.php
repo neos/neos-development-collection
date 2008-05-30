@@ -15,6 +15,6 @@ declare(ENCODING="utf-8");
  *
  * @var string
  */
-$c->F3_TYPO3CR_StorageAccessInterface->constructorArguments[1] = '';
+$c->F3_TYPO3CR_StorageAccess_StorageAccessInterface->constructorArguments[1] = '';
 
 ?>

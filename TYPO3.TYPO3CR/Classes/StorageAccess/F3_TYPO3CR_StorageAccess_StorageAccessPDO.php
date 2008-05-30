@@ -16,6 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
+ * @subpackage StorageAccess
  * @version $Id$
  */
 
@@ -23,10 +24,11 @@ declare(ENCODING = 'utf-8');
  * A Storage Access object using PDO
  *
  * @package TYPO3CR
+ * @subpackage StorageAccess
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_StorageAccess_PDO implements F3_TYPO3CR_StorageAccessInterface {
+class F3_TYPO3CR_StorageAccess_StorageAccessPDO implements F3_TYPO3CR_StorageAccess_StorageAccessInterface {
 
 	/**
 	 * @var PDO

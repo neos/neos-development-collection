@@ -16,6 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
+ * @subpackage NodeType
  * @version $Id$
  */
 
@@ -23,10 +24,11 @@ declare(ENCODING = 'utf-8');
  * A NodeType
  *
  * @package TYPO3CR
+ * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeType extends F3_TYPO3CR_NodeTypeDefinition implements F3_PHPCR_NodeTypeInterface {
+class F3_TYPO3CR_NodeType_NodeType extends F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTypeInterface {
 
 	/**
 	 * @var F3_FLOW3_Component_Manager
@@ -34,7 +36,7 @@ class F3_TYPO3CR_NodeType extends F3_TYPO3CR_NodeTypeDefinition implements F3_PH
 	protected $componentManager;
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccess
+	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
 	 */
 	protected $storageAccess;
 

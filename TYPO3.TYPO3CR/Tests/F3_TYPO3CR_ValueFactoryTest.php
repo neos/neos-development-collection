@@ -98,7 +98,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function createValueFromReferenceGuessesCorrectType() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$node = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
 		$value = $this->valueFactory->createValue($node);

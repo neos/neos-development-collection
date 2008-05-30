@@ -188,7 +188,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPrimaryNodeTypeReturnsANodeType() {
-		$this->assertType('F3_PHPCR_NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
+		$this->assertType('F3_PHPCR_NodeType_NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
 	}
 
 	/**

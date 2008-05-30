@@ -56,7 +56,7 @@ class F3_TYPO3CR_StorageAccess_PDOTest extends F3_TYPO3CR_StorageAccess_TestBase
 		}
 		$this->fixtureDB = uniqid('sqlite') . '.db';
 		copy(FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
-		$this->storageAccess = new F3_TYPO3CR_StorageAccess_PDO('sqlite:' . $this->fixtureFolder . $this->fixtureDB);
+		$this->storageAccess = new F3_TYPO3CR_StorageAccess_StorageAccessPDO('sqlite:' . $this->fixtureFolder . $this->fixtureDB);
 	}
 
 	/**

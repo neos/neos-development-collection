@@ -28,13 +28,13 @@ declare(ENCODING = 'utf-8');
  * @version  $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_NodeType_NodeType_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 
 	public function setUp() {
-		$this->mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
+		$this->mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
 		$this->mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->will($this->returnValue(array('name' => 'SuperDuperNodeType')));
 
-		$this->iterator = new F3_TYPO3CR_NodeTypeIterator();
+		$this->iterator = new F3_TYPO3CR_NodeType_NodeTypeIterator();
 	}
 
 	/**
@@ -43,8 +43,8 @@ class F3_TYPO3CR_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResult() {
-		$this->iterator->append(new F3_TYPO3CR_NodeType(1, $this->mockStorageAccess, $this->componentManager));
-		$this->iterator->append(new F3_TYPO3CR_NodeType(1, $this->mockStorageAccess, $this->componentManager));
+		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType(1, $this->mockStorageAccess, $this->componentManager));
+		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType(1, $this->mockStorageAccess, $this->componentManager));
 		$size = $this->iterator->getSize();
 		$this->assertEquals(2, $size, "getSize() does not return correct number.");
 	}
@@ -56,8 +56,8 @@ class F3_TYPO3CR_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function hasNextAndNextNodeIterateThroughAllElements() {
-		$this->iterator->append(new F3_TYPO3CR_NodeType(1, $this->mockStorageAccess, $this->componentManager));
-		$this->iterator->append(new F3_TYPO3CR_NodeType(1, $this->mockStorageAccess, $this->componentManager));
+		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType(1, $this->mockStorageAccess, $this->componentManager));
+		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType(1, $this->mockStorageAccess, $this->componentManager));
 		$count = 0;
 		while ($this->iterator->hasNext()) {
 			$this->iterator->nextNodeType();

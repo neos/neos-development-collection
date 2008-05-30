@@ -39,7 +39,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getRepositoryReturnsTheCreatingRepository() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
 
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$this->assertSame($mockRepository, $session->getRepository(), 'The session did not return the repository from which it was created.');
@@ -52,7 +52,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getWorkspaceAlwaysReturnsTheAssociatedWorkspace() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
 
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
@@ -157,7 +157,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 */
 	public function isLiveReturnsFalseAfterLogout() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessPDO', array(), array(), '', FALSE);
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$session->logout();
 		$this->assertEquals(FALSE, $session->isLive(), 'isLive did not return FALSE after logout() has been called.');
@@ -327,7 +327,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getValueFactoryReturnsAValueFactory() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessPDO', array(), array(), '', FALSE);
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$this->assertType('F3_PHPCR_ValueFactoryInterface', $session->getValueFactory(), 'The session did not return a ValueFactory object on getValueFactory().');
 	}
@@ -339,7 +339,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getNamespacePrefixesReturnsTheSameResultAsTheWorkspaceNamespaceRegistry() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessPDO', array(), array(), '', FALSE);
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
 		$persistentPrefixes = $session->getWorkspace()->getNamespaceRegistry()->getPrefixes();
@@ -355,7 +355,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getNamespaceURIReturnsCorrectURIForJCRPrefix() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessPDO', array(), array(), '', FALSE);
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
 		$expectedURI = 'http://www.jcp.org/jcr/1.0';
@@ -371,7 +371,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 */
 	public function setNamespacePrefixWorks() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_PDO', array(), array(), '', FALSE);
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessPDO', array(), array(), '', FALSE);
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 
 		try {

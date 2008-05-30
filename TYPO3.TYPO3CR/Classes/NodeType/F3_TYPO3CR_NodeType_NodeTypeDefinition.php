@@ -16,6 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
+ * @subpackage NodeType
  * @version $Id$
  */
 
@@ -23,10 +24,11 @@ declare(ENCODING = 'utf-8');
  * A NodeTypeDefinition
  *
  * @package TYPO3CR
+ * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeTypeDefinition implements F3_PHPCR_NodeTypeDefinitionInterface {
+class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTypeDefinitionInterface {
 
 	/**
 	 * @var F3_FLOW3_Component_Manager
@@ -34,7 +36,7 @@ class F3_TYPO3CR_NodeTypeDefinition implements F3_PHPCR_NodeTypeDefinitionInterf
 	protected $componentManager;
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccess
+	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
 	 */
 	protected $storageAccess;
 
@@ -52,13 +54,13 @@ class F3_TYPO3CR_NodeTypeDefinition implements F3_PHPCR_NodeTypeDefinitionInterf
 	 * Constructs a NodeTypeDefinition
 	 *
 	 * @param integer $nodeTypeId The internal id of the nodetype
-	 * @param F3_TYPO3CR_StorageAccessInterface $storageAccess
+	 * @param F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess
 	 * @param F3_FLOW3_Component_Manager $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check node type handling
 	 */
-	public function __construct($nodeTypeId, F3_TYPO3CR_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($nodeTypeId, F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->nodeTypeId = $nodeTypeId;
 		$this->componentManager = $componentManager;
 		$this->storageAccess = $storageAccess;

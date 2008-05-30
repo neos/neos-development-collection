@@ -16,6 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
+ * @subpackage StorageAccess
  * @version $Id$
  */
 
@@ -23,15 +24,16 @@ declare(ENCODING = 'utf-8');
  * StorageAccess interface
  *
  * @package TYPO3CR
+ * @subpackage StorageAccess
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_TYPO3CR_StorageAccessInterface {
+interface F3_TYPO3CR_StorageAccess_StorageAccessInterface {
 
 	/**
 	 * Sets the name of the current workspace
 	 *
-	 * @param  string $workspaceName Name of the workspace which should be used for all storage operations
+	 * @param string $workspaceName Name of the workspace which should be used for all storage operations
 	 * @return void
 	 * @throws InvalidArgumentException
 	 */
@@ -40,7 +42,7 @@ interface F3_TYPO3CR_StorageAccessInterface {
 	/**
 	 * Fetches raw node data from the database
 	 *
-	 * @param  integer $id The (internal) ID of the node to fetch
+	 * @param integer $id The (internal) ID of the node to fetch
 	 * @return array|FALSE
 	 */
 	public function getRawNodeById($Id);
@@ -48,7 +50,7 @@ interface F3_TYPO3CR_StorageAccessInterface {
 	/**
 	 * Fetches raw node data from the database
 	 *
-	 * @param  string $identifier The Identifier of the node to fetch
+	 * @param string $identifier The Identifier of the node to fetch
 	 * @return array|FALSE
 	 */
 	public function getRawNodeByIdentifier($identifier);

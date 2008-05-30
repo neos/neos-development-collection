@@ -32,7 +32,7 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_StorageAccess_TestBase extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccessInterface
+	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
 	 */
 	protected $storageAccess;
 
