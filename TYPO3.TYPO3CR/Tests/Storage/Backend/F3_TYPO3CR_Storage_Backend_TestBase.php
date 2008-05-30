@@ -21,7 +21,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Tests for the StorageAccess implementation of TYPO3CR. Needs to be extended
+ * Tests for the storage backend implementations of TYPO3CR. Needs to be extended
  * for various storage types
  *
  * @package TYPO3CR
@@ -29,10 +29,10 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_StorageAccess_TestBase extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
+	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
 	protected $storageAccess;
 

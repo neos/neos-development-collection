@@ -36,7 +36,7 @@ class F3_TYPO3CR_NodeType_NodeType extends F3_TYPO3CR_NodeType_NodeTypeDefinitio
 	protected $componentManager;
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
+	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
 	protected $storageAccess;
 

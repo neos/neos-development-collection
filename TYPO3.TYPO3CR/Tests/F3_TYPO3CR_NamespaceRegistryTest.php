@@ -52,7 +52,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPrefixesReturnsRequiredNamepacePrefixes() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
 		$foundPrefixes = array_intersect_assoc(array_keys($this->expectedBuiltInNameSpaces), $namespaceRegistry->getPrefixes());
@@ -65,7 +65,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPrefixReturnsRequiredURI() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
 		foreach ($this->expectedBuiltInNameSpaces as $prefix => $URI) {
@@ -79,7 +79,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getURIsReturnsRequiredNamepaceURIs() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
 		$foundURIs = array_intersect_assoc(array_values($this->expectedBuiltInNameSpaces), $namespaceRegistry->getURIs());
@@ -92,7 +92,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getURIReturnsRequiredPrefix() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
 		foreach ($this->expectedBuiltInNameSpaces as $prefix => $URI) {
@@ -106,7 +106,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function registeringBuiltinPrefixFails() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->never())->method('addNamespace');
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
@@ -124,7 +124,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function registeringXMLAsPrefixFails() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->never())->method('addNamespace');
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
@@ -142,7 +142,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function unregisteringUnknownPrefixFails() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->never())->method('deleteNamespace');
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
@@ -163,7 +163,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 		$prefix = 'typo3';
 		$uri = 'http://typo3.org/ns/cms/1.0/';
 
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->any())->method('getRawNamespaces')->will($this->returnValue(array(array('prefix' => $prefix, 'uri' => $uri))));
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
@@ -180,7 +180,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 		$prefix = 'testprefix';
 		$uri = 'http://5-0.dev.typo3.org/test/1.0/';
 
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->once())->method('addNamespace')->with($this->equalTo($prefix), $this->equalTo($uri));
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 
@@ -199,7 +199,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 		$prefix2 = 'testprefix2';
 		$uri = 'http://5-0.dev.typo3.org/test/1.0/';
 
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->once())->method('addNamespace')->with($this->equalTo($prefix1), $this->equalTo($uri));
 		$mockStorageAccess->expects($this->once())->method('updateNamespacePrefix')->with($this->equalTo($prefix2), $this->equalTo($uri));
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
@@ -230,7 +230,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 		$uri1 = 'http://5-0.dev.typo3.org/test/1.0/';
 		$uri2 = 'http://5-0.dev.typo3.org/test/2.0/';
 
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->once())->method('addNamespace')->with($this->equalTo($prefix), $this->equalTo($uri1));
 		$mockStorageAccess->expects($this->once())->method('updateNamespaceURI')->with($this->equalTo($prefix), $this->equalTo($uri2));
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
@@ -260,7 +260,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 		$prefix = 'testprefix4';
 		$uri = 'http://5-0.dev.typo3.org/test/3.0/';
 
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->once())->method('addNamespace')->with($this->equalTo($prefix), $this->equalTo($uri));
 		$mockStorageAccess->expects($this->once())->method('deleteNamespace')->with($this->equalTo($prefix));
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
@@ -289,7 +289,7 @@ class F3_TYPO3CR_NamespaceRegistryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function unregisteringBuiltinNamespacesFails() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->never())->method('deleteNamespace');
 		$namespaceRegistry = new F3_TYPO3CR_NamespaceRegistry($mockStorageAccess, $this->componentManager);
 

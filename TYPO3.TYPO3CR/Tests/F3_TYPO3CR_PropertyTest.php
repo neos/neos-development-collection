@@ -36,7 +36,7 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getValueReturnsAValueObject() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$mockNode = $this->getMock('F3_TYPO3CR_Node', array(), array(), '', FALSE);
 
@@ -51,7 +51,7 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getValuesReturnsAnExceptionIfCalledOnSingleValue() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$mockNode = $this->getMock('F3_TYPO3CR_Node', array(), array(), '', FALSE);
 
@@ -70,7 +70,7 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPathReturnsPathToProperty() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager));
 

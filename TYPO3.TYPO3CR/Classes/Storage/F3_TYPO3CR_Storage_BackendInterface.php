@@ -16,19 +16,19 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
- * @subpackage StorageAccess
+ * @subpackage Storage
  * @version $Id$
  */
 
 /**
- * StorageAccess interface
+ * Storage backend interface
  *
  * @package TYPO3CR
- * @subpackage StorageAccess
+ * @subpackage Storage
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_TYPO3CR_StorageAccess_StorageAccessInterface {
+interface F3_TYPO3CR_Storage_BackendInterface {
 
 	/**
 	 * Sets the name of the current workspace

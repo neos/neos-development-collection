@@ -36,7 +36,7 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	protected $componentManager;
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
+	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
 	protected $storageAccess;
 
@@ -54,13 +54,13 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * Constructs a NodeTypeDefinition
 	 *
 	 * @param integer $nodeTypeId The internal id of the nodetype
-	 * @param F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess
+	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
 	 * @param F3_FLOW3_Component_Manager $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check node type handling
 	 */
-	public function __construct($nodeTypeId, F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($nodeTypeId, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->nodeTypeId = $nodeTypeId;
 		$this->componentManager = $componentManager;
 		$this->storageAccess = $storageAccess;

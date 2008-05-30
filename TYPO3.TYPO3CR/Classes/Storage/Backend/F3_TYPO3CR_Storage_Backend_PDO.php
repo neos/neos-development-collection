@@ -16,19 +16,19 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
- * @subpackage StorageAccess
+ * @subpackage Storage
  * @version $Id$
  */
 
 /**
- * A Storage Access object using PDO
+ * A Storage backend using PDO
  *
  * @package TYPO3CR
- * @subpackage StorageAccess
+ * @subpackage Storage
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_StorageAccess_StorageAccessPDO implements F3_TYPO3CR_StorageAccess_StorageAccessInterface {
+class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterface {
 
 	/**
 	 * @var PDO

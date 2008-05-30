@@ -36,7 +36,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function repositoryLoginReturnsASession() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
 		$session = $repository->login();
 		$this->assertType('F3_PHPCR_SessionInterface', $session, 'The repository login did not return a session object.');
@@ -48,7 +48,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function credentialsOfInvalidTypeThrowException() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
 		try {
 			$session = $repository->login(new ArrayObject);
@@ -64,7 +64,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorKeysReturnsAnArray() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
 		$descriptorKeys = $repository->getDescriptorKeys();
 		$this->assertTrue(is_array($descriptorKeys), 'The getDescriptorKeys method did not return an array.');
@@ -79,7 +79,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorReturnsCorrectVersionString() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_StorageAccess_StorageAccessInterface');
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
 		$descriptor = $repository->getDescriptor('SPEC_VERSION_DESC');
 		$this->assertEquals('2.0', $descriptor, 'getDescriptor(\'SPEC_VERSION_DESC\') did not return \'2.0\'.');

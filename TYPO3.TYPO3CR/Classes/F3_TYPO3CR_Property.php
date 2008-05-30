@@ -46,12 +46,12 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * @param F3_TYPO3CR_NodeInterface $parentNode
 	 * @param boolean $isMultiValued Whether this property is multivalued
 	 * @param F3_TYPO3CR_SessionInterface $session
-	 * @param F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess
+	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, $value, F3_PHPCR_NodeInterface $parentNode, $isMultiValued, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($name, $value, F3_PHPCR_NodeInterface $parentNode, $isMultiValued, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;

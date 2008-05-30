@@ -55,7 +55,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	protected $componentManager;
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
+	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
 	protected $storageAccess;
 
@@ -91,11 +91,11 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	 * Constructs a Repository object.
 	 *
 	 * @param F3_FLOW3_Component_Manager $componentManager
-	 * @param F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess
+	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_TYPO3CR_Storage_BackendInterface $storageAccess) {
 		$this->componentManager = $componentManager;
 		$this->storageAccess = $storageAccess;
 

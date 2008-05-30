@@ -44,7 +44,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	protected $workspace;
 
 	/**
-	 * @var F3_TYPO3CR_StorageAccess_StorageAccessInterface
+	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
 	protected $storageAccess;
 
@@ -73,12 +73,12 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param  F3_PHPCR_WorkspaceInterface $workspace
 	 * @param  F3_PHPCR_RepositoryInterface $repository
-	 * @param  F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess
+	 * @param  F3_TYPO3CR_Storage_BackendInterface $storageAccess
 	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @throws InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($workspaceName, F3_PHPCR_RepositoryInterface $repository, F3_TYPO3CR_StorageAccess_StorageAccessInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($workspaceName, F3_PHPCR_RepositoryInterface $repository, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
 
 		$this->componentManager = $componentManager;
