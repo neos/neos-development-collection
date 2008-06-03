@@ -74,15 +74,15 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Checks if getDesciptor('SPEC_VERSION_DESC') returns '2.0'.
+	 * Checks if getDesciptor(SPEC_VERSION_DESC) returns '2.0'.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getDescriptorReturnsCorrectVersionString() {
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
-		$descriptor = $repository->getDescriptor('SPEC_VERSION_DESC');
-		$this->assertEquals('2.0', $descriptor, 'getDescriptor(\'SPEC_VERSION_DESC\') did not return \'2.0\'.');
+		$descriptor = $repository->getDescriptor(F3_TYPO3CR_Repository::SPEC_VERSION_DESC);
+		$this->assertEquals('2.0', $descriptor, 'getDescriptor(SPEC_VERSION_DESC) did not return \'2.0\'.');
 	}
 }
 ?>
