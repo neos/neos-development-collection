@@ -190,6 +190,8 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400031);
 	}
 
+	// non-JSR-283 methods below
+
 	/**
 	 * Returns the node type ID
 	 *

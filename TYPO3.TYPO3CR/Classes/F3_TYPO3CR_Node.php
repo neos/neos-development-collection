@@ -517,5 +517,29 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$property->save();
 		}
 	}
+
+	/**
+	 * If keepChanges is false, this method discards all pending changes
+	 * currently recorded in this Session that apply to this Item or any
+	 * of its descendants (that is, the subtree rooted at this Item) and
+	 * returns all items to reflect the current saved state. Outside a
+	 * transaction this state is simple the current state of persistent
+	 * storage. Within a transaction, this state will reflect persistent
+	 * storage as modified by changes that have been saved but not yet
+	 * committed.
+	 * If keepChanges is true then pending change are not discarded but
+	 * items that do not have changes pending have their state refreshed
+	 * to reflect the current saved state, thus revealing changes made by
+	 * other sessions.
+	 *
+	 * @param boolean $keepChanges a boolean
+	 * @return void
+	 * @throws InvalidItemStateException if this Item object represents a workspace item that has been removed (either by this session or another).
+	 * @throws RepositoryException if another error occurs.
+	*/
+	public function refresh($keepChanges) {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
+	}
+
 }
 ?>
