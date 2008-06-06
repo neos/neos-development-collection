@@ -51,7 +51,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
 		try {
-			$session = $repository->login(new ArrayObject);
+			$repository->login(new ArrayObject);
 			$this->fail('Invalid credentials did not throw an exception.');
 		} catch (Exception $exception) {
 			$this->assertTrue($exception instanceof F3_PHPCR_RepositoryException, 'The thrown exception is not of the expected type.');
@@ -63,13 +63,13 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getDescriptorKeysReturnsAnArray() {
+	public function getDescriptorKeysReturnsAnArrayOfStrings() {
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
 		$descriptorKeys = $repository->getDescriptorKeys();
 		$this->assertTrue(is_array($descriptorKeys), 'The getDescriptorKeys method did not return an array.');
 		foreach ($descriptorKeys as $k => $v) {
-			$this->assertTrue(is_string($v), 'An element (' . $v . ') returned by getDescriptorKeys was not a string.');
+			$this->assertTrue(is_string($v), 'An element (' . $k . ' => ' . $v . ') returned by getDescriptorKeys was not a string.');
 		}
 	}
 

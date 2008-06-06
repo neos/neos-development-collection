@@ -120,7 +120,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 
 		try {
 			$identifier = 'hurzhurz-hurz-hurz-hurz-hurzhurzhurz';
-			$node = $session->getNodeByIdentifier($identifier);
+			$session->getNodeByIdentifier($identifier);
 			$this->fail('getNodeByIdentifier with a non-exsting Identifier must throw a F3_PHPCR_ItemNotFoundException');
 		} catch (F3_PHPCR_ItemNotFoundException $e) {}
 	}

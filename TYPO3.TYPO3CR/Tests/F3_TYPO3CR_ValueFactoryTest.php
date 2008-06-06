@@ -122,7 +122,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueThrowsExceptionIfTypeIsGivenForNonStringValue() {
 		try {
-			$value = $this->valueFactory->createValue(new DateTime('2007-09-22'), F3_PHPCR_PropertyType::BINARY);
+			$this->valueFactory->createValue(new DateTime('2007-09-22'), F3_PHPCR_PropertyType::BINARY);
 			$this->fail('createValue() must throw an exception if type conversion is requested for a non-string value.');
 		} catch (F3_PHPCR_ValueFormatException $e) {
 			// fine

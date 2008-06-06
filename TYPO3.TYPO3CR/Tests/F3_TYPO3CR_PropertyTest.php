@@ -58,7 +58,7 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', $mockNode, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
 
 		try {
-			$valueObject = $property->getValues();
+			$property->getValues();
 			$this->fail('getValues needs to return an exception if called on a single value');
 		} catch (F3_PHPCR_ValueFormatException $e) {
 		}

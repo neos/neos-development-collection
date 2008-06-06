@@ -151,7 +151,6 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function hasPropertyWorks() {
 		$newsNodeIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$newsTitleText = 'News about the TYPO3CR';
 		$newsNode = $this->session->getNodeByIdentifier($newsNodeIdentifier);
 
 		$this->assertTrue($newsNode->hasProperty('title'), 'Expected property was not found (1).');
