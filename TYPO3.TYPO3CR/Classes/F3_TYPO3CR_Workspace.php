@@ -315,7 +315,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function getNodeTypeManager() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406779);
+		return $this->componentManager->getComponent('F3_TYPO3CR_NodeType_NodeTypeManager', $this->storageAccess, $this->componentManager);
 	}
 
 	/**
@@ -524,7 +524,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * The new node is persisted immediately and does not require a save.
 	 *
 	 * @param string $title a String
-	 * @return F3_PHPCR_Node the new activity Node.
+	 * @return F3_PHPCR_NodeInterface the new activity Node.
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if the repository does not support activities.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 */

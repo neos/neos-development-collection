@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:F3_TYPO3CR_Storage_Backend_TestBase.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 /**
@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:F3_TYPO3CR_Storage_Backend_TestBase.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
@@ -42,7 +42,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function addNodeAndRemoveNodeWork() {
-		$identifier = $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
+		$identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
 		$expectedRawNode = array(
 			'id' => NULL,
 			'pid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
@@ -67,7 +67,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function updateNodeAndRemoveNodeWork() {
-		$identifier = $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
+		$identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
 		$expectedRawNode = array(
 			'id' => NULL,
 			'pid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',

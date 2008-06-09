@@ -29,7 +29,7 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_ItemManager implements F3_TYPO3CR_ItemManagerInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_Manager
+	 * @var F3_FLOW3_Component_ManagerInterface
 	 */
 	protected $componentManager;
 

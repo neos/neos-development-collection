@@ -25,6 +25,7 @@ declare(ENCODING = 'utf-8');
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeInterface {
 
@@ -67,7 +68,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
 
-		$this->identifier = $componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID();
+		$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
 	}
 
 
@@ -122,7 +123,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * A F3_PHPCR_RepositoryException is thrown if another error occurs.
 	 *
-	 * @return F3_PHPCR_Node
+	 * @return F3_PHPCR_NodeInterface
 	 * @throws F3_PHPCR_ItemNotFoundException
 	 * @throws F3_PHPCR_AccessDeniedException
 	 * @throws F3_PHPCR_RepositoryException
@@ -270,7 +271,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$newNode->initializeFromArray(array(
 				'pid' => $this->getIdentifier(),
 				'name' => $lastNodeName,
-				'identifier' => $this->componentManager->getComponent('F3_FLOW3_Utility_Algorithms')->generateUUID(),
+				'identifier' => F3_FLOW3_Utility_Algorithms::generateUUID(),
 				'nodetype' => 0,
 			));
 			$newNode->setNew(TRUE);
@@ -726,7 +727,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * or jcr:mixinTypes property if that property has recently been created or
 	 * changed and has not yet been saved.
 	 *
-	 * @param string $nodeTypeName - the name of a node type.
+	 * @param string $nodeTypeName the name of a node type.
 	 * @return boolean true if this node is of the specified primary node type or mixin type, or a subtype thereof. Returns false otherwise.
 	 * @throws F3_PHPCR_RepositoryException  If an error occurs.
 	 */
@@ -978,7 +979,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 */
-	public function doneMerge($version) {
+	public function doneMerge(F3_PHPCR_Version_VersionInterface $version) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667721);
 	}
 
@@ -999,7 +1000,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
 	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
 	 */
-	public function cancelMerge($version) {
+	public function cancelMerge(F3_PHPCR_Version_VersionInterface $version) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667722);
 	}
 
@@ -1095,7 +1096,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if N is not versionable.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 */
-	public function createConfiguration($baseline) {
+	public function createConfiguration(F3_PHPCR_Version_VersionInterface $baseline) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667725);
 	}
 

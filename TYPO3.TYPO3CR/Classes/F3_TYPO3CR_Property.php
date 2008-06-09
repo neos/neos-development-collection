@@ -25,6 +25,7 @@ declare(ENCODING = 'utf-8');
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_PropertyInterface {
 
@@ -34,18 +35,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	protected $value;
 
 	/**
-	 * @var F3_PHPCR_NodeInterface
-	 */
-	protected $parentNode;
-
-	/**
 	 * Constructs a Property
 	 *
 	 * @param string $name The name of the property
 	 * @param string $value The raw value of the property
-	 * @param F3_TYPO3CR_NodeInterface $parentNode
+	 * @param F3_PHPCR_NodeInterface $parentNode
 	 * @param boolean $isMultiValued Whether this property is multivalued
-	 * @param F3_TYPO3CR_SessionInterface $session
+	 * @param F3_PHPCR_NodeInterface $session
 	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @return void
@@ -411,7 +407,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	/**
 	 * Return parent node
 	 *
-	 * @return F3_PHPCR_Node The Parent Node
+	 * @return F3_PHPCR_NodeInterface The Parent Node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getParent() {

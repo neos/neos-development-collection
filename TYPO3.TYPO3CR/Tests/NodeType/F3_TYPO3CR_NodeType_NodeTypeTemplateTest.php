@@ -16,27 +16,42 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
+ * @subpackage Tests
  * @version $Id$
  */
 
 /**
- * A PropertyIterator
+ * Tests for the NodeType implementation of TYPO3CR
  *
  * @package TYPO3CR
+ * @subpackage Tests
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
-class F3_TYPO3CR_PropertyIterator extends F3_TYPO3CR_RangeIterator implements F3_PHPCR_PropertyIteratorInterface {
+class F3_TYPO3CR_NodeType_NodeTypeTemplateTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Returns the next Property in the iteration.
+	 * Make sure the NodeTypeTemplate is protoype
 	 *
-	 * @return F3_PHPCR_PropertyInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
 	 */
-	public function nextProperty() {
-		return $this->next();
+	public function nodeTypeTemplateIsPrototype() {
+		$firstInstance = $this->componentManager->getComponent('F3_TYPO3CR_NodeType_NodeTypeTemplate');
+		$secondInstance = $this->componentManager->getComponent('F3_TYPO3CR_NodeType_NodeTypeTemplate');
+		$this->assertNotSame($firstInstance, $secondInstance, 'F3_TYPO3CR_NodeType_NodeTypeTemplate is not prototype.');
+	}
+
+	/**
+	 * Make sure the NodeTypeTemplate is protoype
+	 *
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function nodeTypeTemplateIsPrototype1() {
+		$firstInstance = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeTemplateInterface');
+		$secondInstance = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeTemplateInterface');
+		$this->assertNotSame($firstInstance, $secondInstance, 'F3_PHPCR_NodeType_NodeTypeTemplateInterface is not prototype.');
 	}
 }
 ?>

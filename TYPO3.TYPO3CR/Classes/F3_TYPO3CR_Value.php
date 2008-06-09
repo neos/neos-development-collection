@@ -26,6 +26,7 @@ declare(ENCODING = 'utf-8');
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 
@@ -112,7 +113,7 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	/**
 	 * Returns a BigDecimal representation of this value (aliased to getDouble()).
 	 *
-	 * @return string A double representation of the value of this property.
+	 * @return float A double representation of the value of this property.
 	 * @throws F3_PHPCR_ValueFormatException if conversion is not possible.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 */
@@ -123,7 +124,7 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	/**
 	 * Returns a double (floating point) representation of this value.
 	 *
-	 * @return string A double representation of the value of this property.
+	 * @return float A double representation of the value of this property.
 	 * @throws F3_PHPCR_ValueFormatException if conversion to a double is not possible.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>

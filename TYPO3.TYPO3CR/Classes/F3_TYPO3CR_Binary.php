@@ -25,6 +25,7 @@ declare(ENCODING = 'utf-8');
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 
@@ -34,9 +35,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 * @return resource A stream representation of this value.
 	 * @throws BadMethodCallException if acquire() has not yet or release() has already been called on this Binary object instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getStream() {}
+	public function getStream() {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021591);
+	}
 
 	/**
 	 * Returns a (native) string representation of this value.
@@ -44,9 +46,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 * @return string A (native) string representation of this value.
 	 * @throws BadMethodCallException if acquire() has not yet or release() has already been called on this Binary object instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getBytes() {}
+	public function getBytes() {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021592);
+	}
 
 	/**
 	 * Returns the size of this value in bytes.
@@ -54,9 +57,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 * @return integer the size of this value in bytes.
 	 * @throws BadMethodCallException if acquire() has not yet or release() has already been called on this Binary object instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getSize() {}
+	public function getSize() {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021593);
+	}
 
 	/**
 	 * Clients must call this method before using any of the other methods of
@@ -70,9 +74,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 * @return void
 	 * @throws BadMethodCallException if release() has already been called on this Binary object instance.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function acquire() {}
+	public function acquire() {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021594);
+	}
 
 	/**
 	 * Clients must call this method when they are finished with a Binary object
@@ -84,9 +89,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 *
 	 * @return void
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function release() {}
+	public function release() {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021595);
+	}
 
 }
 

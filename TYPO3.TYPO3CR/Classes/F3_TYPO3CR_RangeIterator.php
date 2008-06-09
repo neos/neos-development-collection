@@ -25,6 +25,7 @@ declare(ENCODING = 'utf-8');
  * @package TYPO3CR
  * @version  $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_RangeIterator implements F3_PHPCR_RangeIteratorInterface {
 
@@ -174,8 +175,7 @@ class F3_TYPO3CR_RangeIterator implements F3_PHPCR_RangeIteratorInterface {
 		return $this->getSize() - $this->getPosition();
 	}
 
-
-
+	// non-JSR-283 methods below
 
 	/**
 	 * Alias for hasNext(), valid() is required by SPL Iterator

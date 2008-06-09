@@ -95,7 +95,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	}
 
 	/**
-	 * 	Returns an array holding all currently registered URIs.
+	 * Returns an array holding all currently registered URIs.
 	 *
 	 * @return array
 	 * @throws F3_PHPCR_RepositoryException
@@ -140,6 +140,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 * Warning: All methods that use namespace mappings have to use
 	 * Session::getNamespaceURI instead to ensure that "Session namespace
 	 * mappings" work.
+	 *
 	 * @param string $prefix
 	 * @return string
 	 * @throws F3_PHPCR_NamespaceException
@@ -168,10 +169,10 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 * @param string $prefix
 	 * @param string $uri
 	 * @return void
-	 * @throws NamespaceException
-	 * @throws UnsupportedRepositoryOperationException
-	 * @throws AccessDeniedException
-	 * @throws RepositoryException
+	 * @throws F3_PHPCR_NamespaceException
+	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException
+	 * @throws F3_PHPCR_AccessDeniedException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -200,10 +201,10 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 *
 	 * @param string $prefix
 	 * @return void
-	 * @throws NamespaceException
-	 * @throws UnsupportedRepositoryOperationException
-	 * @throws AccessDeniedException
-	 * @throws RepositoryException
+	 * @throws F3_PHPCR_NamespaceException
+	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException
+	 * @throws F3_PHPCR_AccessDeniedException
+	 * @throws F3_PHPCR_RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function unregisterNamespace($prefix) {

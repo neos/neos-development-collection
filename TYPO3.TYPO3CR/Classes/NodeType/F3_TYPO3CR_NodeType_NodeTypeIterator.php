@@ -27,6 +27,7 @@ declare(ENCODING = 'utf-8');
  * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_NodeType_NodeTypeIterator extends F3_TYPO3CR_RangeIterator implements F3_PHPCR_NodeType_NodeTypeIteratorInterface {
 

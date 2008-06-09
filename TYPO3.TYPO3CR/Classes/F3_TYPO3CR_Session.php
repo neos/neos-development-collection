@@ -29,17 +29,17 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_Manager
+	 * @var F3_FLOW3_Component_ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var F3_TYPO3CR_Repository
+	 * @var F3_PHPCR_RepositoryInterface
 	 */
 	protected $repository;
 
 	/**
-	 * @var F3_TYPO3CR_Workspace
+	 * @var F3_PHPCR_WorkspaceInterface
 	 */
 	protected $workspace;
 
@@ -54,12 +54,12 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	protected $isLive = TRUE;
 
 	/**
-	 * @var F3_TYPO3CR_Node
+	 * @var F3_PHPCR_NodeInterface
 	 */
 	protected $rootNode;
 
 	/**
-	 * @var array of F3_TYPO3CR_Node - stores references to all loaded nodes in a Identifier->value fashion.
+	 * @var array of F3_PHPCR_NodeInterface - stores references to all loaded nodes in a Identifier->value fashion.
 	 */
 	protected $currentlyLoadedNodes = array();
 
@@ -71,10 +71,10 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	/**
 	 * Constructs a Session object
 	 *
-	 * @param  F3_PHPCR_WorkspaceInterface $workspace
-	 * @param  F3_PHPCR_RepositoryInterface $repository
-	 * @param  F3_TYPO3CR_Storage_BackendInterface $storageAccess
-	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param string $workspaceName
+	 * @param F3_PHPCR_RepositoryInterface $repository
+	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @throws InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -92,7 +92,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	/**
 	 * Returns the Repository object through which the Session object was aquired.
 	 *
-	 * @return F3_PHPCR_Repository
+	 * @return F3_PHPCR_RepositoryInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRepository() {
@@ -138,7 +138,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	/**
 	 * Returns the Workspace attached to this Session.
 	 *
-	 * @return F3_TYPO3CR_Workspace
+	 * @return F3_PHPCR_WorkspaceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getWorkspace() {
@@ -149,7 +149,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Returns the root node of the workspace, /. This node is the main access
 	 * point to the content of the workspace.
 	 *
-	 * @return F3_TYPO3CR_Node
+	 * @return F3_PHPCR_NodeInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRootNode() {
@@ -185,7 +185,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Get a node by its identifier
 	 *
 	 * @param string $id
-	 * @return F3_TYPO3CR_Node
+	 * @return F3_PHPCR_NodeInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -217,7 +217,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * methods are likely to be more efficient than getItem.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_PHPCR_Item
+	 * @return F3_PHPCR_ItemInterface
 	 * @throws F3_PHPCR_PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -230,7 +230,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Returns the node at the specified absolute path in the workspace.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_PHPCR_Item
+	 * @return F3_PHPCR_NodeInterface
 	 * @throws F3_PHPCR_PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -242,7 +242,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Returns the property at the specified absolute path in the workspace.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_PHPCR_Item
+	 * @return F3_PHPCR_PropertyInterface
 	 * @throws F3_PHPCR_PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -268,7 +268,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $absPath An absolute path.
 	 * @return boolean a boolean
-	 * @throws 3_PHPCR_RepositoryException if absPath is not a well-formed absolute path.
+	 * @throws F3_PHPCR_RepositoryException if absPath is not a well-formed absolute path.
 	 */
 	public function nodeExists($absPath) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485252);

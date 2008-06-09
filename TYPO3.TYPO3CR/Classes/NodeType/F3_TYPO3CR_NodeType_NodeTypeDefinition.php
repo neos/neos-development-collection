@@ -36,6 +36,7 @@ declare(ENCODING = 'utf-8');
  * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTypeDefinitionInterface {
 
@@ -60,23 +61,29 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	protected $name;
 
 	/**
-	 * Constructs a NodeTypeDefinition
-	 *
-	 * @param integer $nodeTypeId The internal id of the nodetype
-	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
-	 * @param F3_FLOW3_Component_Manager $componentManager
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Check node type handling
+	 * @var array
 	 */
-	public function __construct($nodeTypeId, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->nodeTypeId = $nodeTypeId;
-		$this->componentManager = $componentManager;
-		$this->storageAccess = $storageAccess;
+	protected $declaredSuperTypeNames = array();
 
-		$rawNodeTypeData = $this->storageAccess->getRawNodeTypeById($this->nodeTypeId);
-		$this->name = $rawNodeTypeData['name'];
-	}
+	/**
+	 * @var boolean
+	 */
+	protected $abstract = FALSE;
+
+	/**
+	 * @var boolean
+	 */
+	protected $mixin = FALSE;
+
+	/**
+	 * @var boolean
+	 */
+	protected $orderableChildNodes = FALSE;
+
+	/**
+	 * @var string
+	 */
+	protected $primaryItemName;
 
 	/**
 	 * Returns the name of the node type.
@@ -99,9 +106,10 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * single string indicating the node type nt:base.
 	 *
 	 * @return array an array of Strings
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDeclaredSupertypeNames() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400025);
+		return $this->declaredSuperTypeNames;
 	}
 
 	/**
@@ -115,9 +123,10 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * NodeTypeTemplate, then this method will return false.
 	 *
 	 * @return boolean a boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isAbstract() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400026);
+		return $this->abstract;
 	}
 
 	/**
@@ -127,9 +136,10 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * NodeTypeTemplate, then this method will return false.
 	 *
 	 * @return boolean a boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isMixin() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400027);
+		return $this->mixin;
 	}
 
 	/*
@@ -145,9 +155,10 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * NodeTypeTemplate, then this method will return false.
 	 *
 	 * @return boolean a boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasOrderableChildNodes() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400028);
+		return $this->orderableChildNodes;
 	}
 
 	/**
@@ -159,9 +170,10 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * NodeTypeTemplate, then this method will return null.
 	 *
 	 * @return string a String
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPrimaryItemName() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400029);
+		return $this->primaryItemName;
 	}
 
 	/**

@@ -36,7 +36,7 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	/**
 	 * Constructs a ValueFactory
 	 *
-	 * @param F3_FLOW3_Component_Manager $componentManager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -55,6 +55,7 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function createBinary($handle) {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213025145);
 	}
 
 	/**
@@ -169,7 +170,7 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 			$type = F3_PHPCR_PropertyType::STRING;
 		}
 
-		return $this->componentManager->getComponent('F3_PHPCR_ValueInterface', $value, $type);
+		return $this->componentManager->getComponent('F3_TYPO3CR_Value', $value, $type);
 	}
 }
 

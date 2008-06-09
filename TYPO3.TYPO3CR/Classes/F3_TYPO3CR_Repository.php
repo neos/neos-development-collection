@@ -30,7 +30,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 
 
 	/**
-	 * @var F3_FLOW3_Component_Manager
+	 * @var F3_FLOW3_Component_ManagerInterface
 	 */
 	protected $componentManager;
 
@@ -70,7 +70,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	/**
 	 * Constructs a Repository object.
 	 *
-	 * @param F3_FLOW3_Component_Manager $componentManager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -108,7 +108,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function login($credentials = NULL, $workspaceName = 'default') {
-		if ($credentials !== NULL && !($credentials instanceof F3_PHPCR_CredentialsInterface)) throw new F3_PHPCR_RepositoryException('$credentials must be an instance of F3_PHPCR_Credentials', 1181042933);
+		if ($credentials !== NULL && !($credentials instanceof F3_PHPCR_CredentialsInterface)) throw new F3_PHPCR_RepositoryException('$credentials must be an instance of F3_PHPCR_CredentialsInterface', 1181042933);
 		if ($workspaceName !== 'default') {
 			throw new F3_PHPCR_NoSuchWorkspaceException('Only default workspace supported for now', 1181063009);
 		}

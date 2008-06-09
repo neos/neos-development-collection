@@ -25,6 +25,7 @@ declare(ENCODING = 'utf-8');
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 
@@ -39,7 +40,7 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	protected $session;
 
 	/**
-	 * @var F3_FLOW3_Component_Manager
+	 * @var F3_FLOW3_Component_ManagerInterface
 	 */
 	protected $componentManager;
 
@@ -259,14 +260,14 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	public function isSame(F3_PHPCR_ItemInterface $otherItem) {
 		if ($this->getSession()->getWorkspace()->getName() != $otherItem->getSession()->getWorkspace()->getName()) return FALSE;
 
-		if ($this instanceof F3_TYPO3CR_Node) {
+		if ($this instanceof F3_PHPCR_NodeInterface) {
 			return (
-				($otherItem instanceof F3_TYPO3CR_Node) &&
+				($otherItem instanceof F3_PHPCR_NodeInterface) &&
 				($this->getIdentifier() == $otherItem->getIdentifier())
 			);
-		} elseif ($otherItem instanceof F3_TYPO3CR_Property) {
+		} elseif ($otherItem instanceof F3_PHPCR_PropertyInterface) {
 			return (
-				($otherItem instanceof F3_TYPO3CR_Property) &&
+				($otherItem instanceof F3_PHPCR_PropertyInterface) &&
 				($this->getName() == $otherItem->getName()) &&
 				$this->getParent()->isSame($otherItem->getParent())
 			);
