@@ -12,11 +12,11 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * A Page
- * 
+ *
  * @package		CMS
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
@@ -29,27 +29,27 @@ class F3_TYPO3_Domain_Page {
 	 * @var string The UUID of this page
 	 */
 	protected $uuid;
-	
+
 	/**
 	 * @var string The page title
 	 */
 	protected $title;
-	
+
 	/**
 	 * @var boolean Flags if the page is hidden
 	 */
 	protected $hidden = FALSE;
-	
+
 	/**
 	 * @var array Content elements on this page
 	 */
 	protected $contentElements = array();
-	
+
 	/**
 	 * @var array Sub pages of this page
 	 */
 	protected $subPages = array();
-	
+
 	/**
 	 * Constructs the Page
 	 *
@@ -58,8 +58,8 @@ class F3_TYPO3_Domain_Page {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($title, F3_FLOW3_Utility_Algorithms $utilityAlgorithms) {
-		$this->uuid = $utilityAlgorithms->generateUUID();
+	public function __construct($title) {
+		$this->uuid = F3_FLOW3_Utility_Algorithms::generateUUID();
 		$this->setTitle($title);
 	}
 
@@ -83,7 +83,7 @@ class F3_TYPO3_Domain_Page {
 		if (!is_string($title)) throw new InvalidArgumentException('The page title must be of type string.', 1175791409);
 		$this->title = $title;
 	}
-	
+
 	/**
 	 * Returns the page's title
 	 *
@@ -93,7 +93,7 @@ class F3_TYPO3_Domain_Page {
 	public function getTitle() {
 		return $this->title;
 	}
-	
+
 	/**
 	 * Sets the "hidden" flag of the page
 	 *
@@ -105,11 +105,11 @@ class F3_TYPO3_Domain_Page {
 		if (!is_bool($hidden)) throw new InvalidArgumentException('The hidden flag must be of type boolean.', 1175791401);
 		$this->hidden = $hidden;
 	}
-	
+
 	/**
 	 * Sets multiple properties from the keys and values taken from
 	 * the specified array.
-	 * 
+	 *
 	 * @param  array			$array: An array of keys and values of the properties to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -121,7 +121,7 @@ class F3_TYPO3_Domain_Page {
 			$this->$methodName($value);
 		}
 	}
-	
+
 	/**
 	 * Returns the "hidden" flag of the page
 	 *
@@ -131,7 +131,7 @@ class F3_TYPO3_Domain_Page {
 	public function isHidden() {
 		return $this->hidden;
 	}
-	
+
 	/**
 	 * Adds content to the page
 	 *
@@ -142,7 +142,7 @@ class F3_TYPO3_Domain_Page {
 	public function addContentElement(F3_TYPO3_Domain_Content $content) {
 		$this->contentElements[] = $content;
 	}
-	
+
 	/**
 	 * Adds a sub page to the page
 	 *
@@ -153,10 +153,10 @@ class F3_TYPO3_Domain_Page {
 	public function addSubPage(F3_TYPO3_Domain_Page $page) {
 		$this->subPages[] = $page;
 	}
-	
+
 	/**
 	 * Cloning of a page is not allowed
-	 * 
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

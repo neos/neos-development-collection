@@ -12,11 +12,11 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * Some content
- * 
+ *
  * @package		CMS
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
@@ -29,17 +29,17 @@ class F3_TYPO3_Domain_Content {
 	 * @var string The UUID of this content element
 	 */
 	protected $uuid;
-	
+
 	/**
 	 * @var boolean Flags if the content is hidden
 	 */
 	protected $hidden = FALSE;
-	
+
 	/**
 	 * @var string Some content
 	 */
 	protected $content;
-	
+
 	/**
 	 * Constructs the Content
 	 *
@@ -47,10 +47,10 @@ class F3_TYPO3_Domain_Content {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Utility_Algorithms $utilityAlgorithms) {
-		$this->uuid = $utilityAlgorithms->generateUUID();
+	public function __construct() {
+		$this->uuid = F3_FLOW3_Utility_Algorithms::generateUUID();
 	}
-	
+
 	/**
 	 * Sets the content
 	 *
@@ -61,7 +61,7 @@ class F3_TYPO3_Domain_Content {
 	public function setContent($content) {
 		$this->content = $content;
 	}
-	
+
 	/**
 	 * Returns the content
 	 *
