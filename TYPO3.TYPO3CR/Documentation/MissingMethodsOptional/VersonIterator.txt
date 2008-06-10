@@ -1,6 +1,0 @@
-== VersionIterator extends RangeIterator ==
-
-=== Version nextVersion() ===
-Returns the next Version in the iteration. 
-Throws a java.util.NoSuchElementException if the iterator contains 
-no more elements. 

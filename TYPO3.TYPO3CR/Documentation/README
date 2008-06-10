@@ -1,6 +1,0 @@
-The files in the MissingMethods* subfolders contain a plain text API summary
-for JSR-283.
-
-What is in those files is not yet implemented, whenever a method is implemented
-it will be removed from those files. So you can see this as a glorified todo
-list.

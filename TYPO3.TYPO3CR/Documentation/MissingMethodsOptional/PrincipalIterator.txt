@@ -1,9 +1,0 @@
-== PrincipalIterator extends RangeIterator ==
-
-java.security.Principal 
-nextPrincipal() 
-Returns the next 
-Principal in the iteration. 
-Throws a 
-java.util.NoSuchElementException if the iterator contains 
-no more elements. 

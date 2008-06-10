@@ -1,6 +1,0 @@
-== EventIterator extends RangeIterator ==
-
-Event nextEvent() 
-Returns the next Event in the iteration. 
-Throws a java.util.NoSuchElementException if the iterator contains 
-no more elements. 

@@ -1,8 +1,0 @@
-== OnParentVersionAction ==
-
-int COPY 
-int VERSION 
-int INITIALIZE 
-int COMPUTE 
-int IGNORE 
-int ABORT 

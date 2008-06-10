@@ -1,6 +1,0 @@
-== RowIterator extends RangeIterator ==
-
-=== Row nextRow() ===
-Returns the next Row in the iteration.
-Throws a java.util.NoSuchElementException if the iterator contains
-no more elements.
