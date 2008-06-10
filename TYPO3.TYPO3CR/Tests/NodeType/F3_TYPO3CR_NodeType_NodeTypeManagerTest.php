@@ -28,12 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_WorkspaceTest extends F3_Testing_BaseTestCase {
-
-	/**
-	 * @var F3_TYPO3CR_Session
-	 */
-	protected $mockSession;
+class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
@@ -41,54 +36,48 @@ class F3_TYPO3CR_WorkspaceTest extends F3_Testing_BaseTestCase {
 	protected $mockStorageAccess;
 
 	/**
-	 * @var F3_TYPO3CR_Workspace
+	 * @var F3_TYPO3CR_NodeType_NodeTypeManager
 	 */
-	protected $workspace;
+	protected $nodeTypeManager;
 
 	/**
 	 * Set up the test environment
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$this->mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$this->workspace = new F3_TYPO3CR_Workspace('workspaceName', $this->mockSession, $this->mockStorageAccess, $this->componentManager);
+		$this->nodeTypeManager = new F3_TYPO3CR_NodeType_NodeTypeManager($this->mockStorageAccess, $this->componentManager);
 	}
 
 	/**
-	 * Checks if getSession returns the same Session object used to create the Workspace object.
+	 * Checks if createNodeTypeTemplate() returns the an empty nodetype template.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getSessionReturnsCreatingSession() {
-		$this->assertSame($this->mockSession, $this->workspace->getSession(), 'The workspace did not return the session from which it was created.');
+	public function createNodeTypeTemplateReturnsEmptyTemplate() {
+		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
+		$this->assertEquals($nodeTypeTemplate, $this->nodeTypeManager->createNodeTypeTemplate(), 'The nodetype manager did not return the expected empty nodetype template.');
+	}
+
+		/**
+	 * Checks if createNodeDefinitionTemplate() returns the an empty nodetype template.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function createNodeDefinitionTemplateReturnsEmptyTemplate() {
+		$nodeDefinitionTemplate = new F3_TYPO3CR_NodeType_NodeDefinitionTemplate();
+		$this->assertEquals($nodeDefinitionTemplate, $this->nodeTypeManager->createNodeDefinitionTemplate(), 'The nodetype manager did not return the expected empty node definition template.');
 	}
 
 	/**
-	 * Checks if getNamespaceRegistry() returns a NameSpaceRegistry object.
+	 * Checks if createPropertyDefinitionTemplate() returns the an empty propertydefinition template.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNamespaceRegistryReturnsANameSpaceRegistry() {
-		$this->assertType('F3_PHPCR_NamespaceRegistryInterface', $this->workspace->getNamespaceRegistry(), 'The workspace did not return a NamespaceRegistry object on getNamespaceRegistry().');
+	public function createPropertyDefinitionTemplateReturnsEmptyTemplate() {
+		$propertyDefinitionTemplate = new F3_TYPO3CR_NodeType_PropertyDefinitionTemplate();
+		$this->assertEquals($propertyDefinitionTemplate, $this->nodeTypeManager->createPropertyDefinitionTemplate(), 'The nodetype manager did not return the expected empty property definition template.');
 	}
 
-	/**
-	 * Checks if getName() returns the expected string.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getNameReturnsTheExpectedName() {
-		$this->assertSame('workspaceName', $this->workspace->getName(), 'The workspace did not return the expected name on getName().');
-	}
-
-	/**
-	 * Checks if getNodeTypeManager() returns a NodeTypeManager object.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getNodeTypeManagerReturnsANodeTypeManager() {
-		$this->assertType('F3_PHPCR_NodeType_NodeTypeManagerInterface', $this->workspace->getNodeTypeManager(),'The workspace did not return a NodeTypeManager object on getNodeTypeManager().');
-	}
 }
 ?>

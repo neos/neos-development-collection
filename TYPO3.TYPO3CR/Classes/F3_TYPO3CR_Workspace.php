@@ -284,7 +284,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	/**
 	 * Returns the QueryManager object, through search methods are accessed.
 	 *
-	 * @return F3_PHPCR_Query_QueryManager the QueryManager object.
+	 * @return F3_PHPCR_Query_QueryManagerInterface the QueryManager object.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function getQueryManager() {
@@ -296,7 +296,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * between prefixes and namespaces. In level 2 repositories the NamespaceRegistry
 	 * can also be used to change the namespace mappings.
 	 *
-	 * @return F3_TYPO3CR_NamespaceRegistry
+	 * @return F3_PHPCR_NamespaceRegistryInterface
 	 * @throws F3_PHPCR_RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -311,17 +311,18 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * repository-wide set of available node types. In repositories that support it,
 	 * the NodeTypeManager can also be used to register new node types.
 	 *
-	 * @return F3_PHPCR_NodeType_NodeTypeManager a NodeTypeManager object.
+	 * @return F3_PHPCR_NodeType_NodeTypeManagerInterface a NodeTypeManager object.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodeTypeManager() {
-		return $this->componentManager->getComponent('F3_TYPO3CR_NodeType_NodeTypeManager', $this->storageAccess, $this->componentManager);
+		return $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeManagerInterface', $this->storageAccess, $this->componentManager);
 	}
 
 	/**
 	 * Returns the ObservationManager object.
 	 *
-	 * @return F3_PHPCR_Observation_ObservationManager an ObservationManager object.
+	 * @return F3_PHPCR_Observation_ObservationManagerInterface an ObservationManager object.
 	 * @throws F3_PHPCR_F3_PHPCR_UnsupportedRepositoryOperationException if the implementation does not support observation.
 	 * @throws F3_PHPCR_F3_PHPCR_RepositoryException if an error occurs.
 	 */

@@ -58,7 +58,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * Returns the named node type.
 	 *
 	 * @param string $nodeTypeName the name of an existing node type.
-	 * @return F3_TYPO3CR_NodeType_NodeType A NodeType object.
+	 * @return F3_PHPCR_NodeType_NodeTypeInterface A NodeType object.
 	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException if no node type by the given name exists.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 */
@@ -81,7 +81,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	/**
 	 * Returns an iterator over all available node types (primary and mixin).
 	 *
-	 * @return F3_TYPO3CR_NodeType_NodeTypeIterator An NodeTypeIterator.
+	 * @return F3_PHPCR_NodeType_NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function getAllNodeTypes() {
@@ -91,7 +91,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	/**
 	 * Returns an iterator over all available primary node types.
 	 *
-	 * @return F3_TYPO3CR_NodeType_NodeTypeIterator An NodeTypeIterator.
+	 * @return F3_PHPCR_NodeType_NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function getPrimaryNodeTypes() {
@@ -102,7 +102,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * Returns an iterator over all available mixin node types. If none are available,
 	 * an empty iterator is returned.
 	 *
-	 * @return F3_TYPO3CR_NodeType_NodeTypeIterator An NodeTypeIterator.
+	 * @return F3_PHPCR_NodeType_NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function getMixinNodeTypes() {
@@ -117,8 +117,8 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * Returns a NodeTypeTemplate holding the specified node type definition. This
 	 * template can then be altered and passed to NodeTypeManager.registerNodeType.
 	 *
-	 * @param F3_TYPO3CR_NodeType_NodeTypeDefinition $ntd a NodeTypeDefinition.
-	 * @return F3_TYPO3CR_NodeType_NodeTypeTemplate A NodeTypeTemplate.
+	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $ntd a NodeTypeDefinition.
+	 * @return F3_PHPCR_NodeType_NodeTypeTemplateInterface A NodeTypeTemplate.
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -128,7 +128,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 			throw new F3_PHPCR_UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213013720);
 		}
 
-		return $this->componentManager->getComponent('F3_TYPO3CR_NodeType_NodeTypeTemplate');
+		return $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeTemplateInterface');
 	}
 
 	/**
@@ -137,24 +137,26 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * Throws an UnsupportedRepositoryOperationException if this implementation does
 	 * not support node type registration.
 	 *
-	 * @return F3_TYPO3CR_NodeType_NodeDefinitionTemplate A NodeDefinitionTemplate.
+	 * @return F3_PHPCR_NodeType_NodeDefinitionTemplateInterface A NodeDefinitionTemplate.
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createNodeDefinitionTemplate() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012224);
+		return $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeDefinitionTemplateInterface');
 	}
 
 	/**
 	 * Returns an empty PropertyDefinitionTemplate which can then be used to create
 	 * a property definition and attached to a NodeTypeTemplate.
 	 *
-	 * @return F3_TYPO3CR_NodeType_PropertyDefinitionTemplate A PropertyDefinitionTemplate.
+	 * @return F3_PHPCR_NodeType_PropertyDefinitionTemplateInterface A PropertyDefinitionTemplate.
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createPropertyDefinitionTemplate() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012225);
+		return $this->componentManager->getComponent('F3_PHPCR_NodeType_PropertyDefinitionTemplateInterface');
 	}
 
 	/**
@@ -166,7 +168,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 *
 	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $ntd an NodeTypeDefinition.
 	 * @param boolean $allowUpdate a boolean
-	 * @return F3_TYPO3CR_NodeType_NodeType the registered node type
+	 * @return F3_PHPCR_NodeType_NodeTypeInterface the registered node type
 	 * @throws F3_PHPCR_InvalidNodeTypeDefinitionException if the NodeTypeDefinition is invalid.
 	 * @throws F3_PHPCR_NodeType_NodeTypeExistsException if allowUpdate is false and the NodeTypeDefinition specifies a node type name that is already registered.
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support node type registration.
