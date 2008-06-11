@@ -27,8 +27,14 @@ declare(ENCODING = 'utf-8');
  * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
-class  F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_NodeDefinitionInterface {
+class F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_NodeDefinitionInterface {
+
+	/**
+	 * @var boolean
+	 */
+	protected $sameNameSiblings = FALSE;
 
 	/**
 	 * Gets the minimum set of primary node types that the child node must have.
@@ -113,9 +119,10 @@ class  F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefini
 	 * newly-created empty one, then this method will return false.
 	 *
 	 * @return boolean a boolean.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function allowsSameNameSiblings() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097210);
+		return $this->sameNameSiblings;
 	}
 
 }

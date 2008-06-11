@@ -4,15 +4,14 @@ CREATE TABLE namespaces (
 	uri TEXT UNIQUE NOT NULL
 );
 CREATE TABLE nodetypes (
-	id INTEGER PRIMARY KEY NOT NULL,
-	name VARCHAR(255)
+	name VARCHAR(255) PRIMARY KEY NOT NULL
 );
 CREATE TABLE [nodes] (
   [id] INTEGER NOT NULL PRIMARY KEY, 
   [name] VARCHAR(255) NOT NULL, 
   [identifier] VARCHAR(36), 
   [pid] VARCHAR(36) NOT NULL DEFAULT 0, 
-  [nodetype] INTEGER);
+  [nodetype] VARCHAR(255));
 CREATE TABLE [properties] (
   [nodeidentifier] VARCHAR(36) NOT NULL, 
   [name] VARCHAR(255) NOT NULL, 

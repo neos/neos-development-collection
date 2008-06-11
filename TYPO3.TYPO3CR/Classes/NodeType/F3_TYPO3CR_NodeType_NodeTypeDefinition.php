@@ -63,7 +63,7 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	/**
 	 * @var array
 	 */
-	protected $declaredSuperTypeNames = array();
+	protected $declaredSuperTypeNames = array('nt:base');
 
 	/**
 	 * @var boolean
@@ -84,6 +84,16 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * @var string
 	 */
 	protected $primaryItemName;
+
+	/**
+	 * @var array of PropertyDefinition
+	 */
+	protected $declaredPropertyDefinitions;
+
+	/**
+	 * @var array of NodeDefinition
+	 */
+	protected $declaredChildNodeDefinitions;
 
 	/**
 	 * Returns the name of the node type.
@@ -184,9 +194,10 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * NodeTypeTemplate, then this method will return null.
 	 *
 	 * @return array an array of PropertyDefinitions
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDeclaredPropertyDefinitions() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400030);
+		return $this->declaredPropertyDefinitions;
 	}
 
 	/**
@@ -197,9 +208,10 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	 * NodeTypeTemplate, then this method will return null.
 	 *
 	 * @return array an array of NodeDefinitions
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDeclaredChildNodeDefinitions() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400031);
+		return $this->declaredChildNodeDefinitions;
 	}
 
 	// non-JSR-283 methods below

@@ -31,49 +31,14 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_NodeType_NodeTypeTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Checks if the primary NodeType object returned by two different nodes is not the same one.
-	 * This is a check to make sure we don't get singleton NodeType objects from the component manager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function nodeTypeObjectReturnedIsDifferent() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockStorageAccess->expects($this->any())->method('getIdentifiersOfSubNodesOfNode')->will($this->returnValue(array()));
-		$mockStorageAccess->expects($this->any())->method('getRawPropertiesOfNode')->will($this->returnValue(array()));
-		$mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->will($this->returnValue(array('id' => 1, 'name' => 'nodeTypeName')));
-		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockSession = new F3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
-
-		$nodeA = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
-		$nodeA->initializeFromArray(array(
-			'id' => '1',
-			'identifier' => '',
-			'pid' => '0',
-			'nodetype' => '1',
-			'name' => 'nodeA'
-		));
-		$nodeB = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
-		$nodeB->initializeFromArray(array(
-			'id' => '2',
-			'identifier' => '',
-			'pid' => '0',
-			'nodetype' => '1',
-			'name' => 'nodeB'
-		));
-		$this->assertNotSame($nodeA->getPrimaryNodeType(), $nodeB->getPrimaryNodeType(), 'getPrimaryNodeType() did not return a different NodeType object on two different nodes.');
+	public function nodeTypeIsPrototype() {
+		$firstInstance = $this->componentManager->getComponent('F3_TYPO3CR_NodeType_NodeType', 'name');
+		$secondInstance = $this->componentManager->getComponent('F3_TYPO3CR_NodeType_NodeType', 'name');
+		$this->assertNotSame($firstInstance, $secondInstance, 'F3_TYPO3CR_NodeType_NodeType is not prototype.');
 	}
 
-	/**
-	 * Checks if getName() returns the expected name of a NodeType object
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getNameReturnsTheExpectedName() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->with($this->equalTo(1))->will($this->returnValue(array('id' => 1, 'name' => 'nodeTypeName')));
-		$nodeTypeObject = new F3_TYPO3CR_NodeType_NodeType(1, $mockStorageAccess, $this->componentManager);
-
-		$this->assertEquals('nodeTypeName', $nodeTypeObject->getName(), 'getName() on the NodeType object did not return the expected name.');
-	}
 }
 ?>

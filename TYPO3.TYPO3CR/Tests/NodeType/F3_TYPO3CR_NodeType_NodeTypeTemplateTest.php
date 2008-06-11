@@ -43,15 +43,21 @@ class F3_TYPO3CR_NodeType_NodeTypeTemplateTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Make sure the NodeTypeTemplate is protoype
+	 * Checks if a new NodeTypeTemplate has the default values required by JSR-283
 	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function nodeTypeTemplateIsPrototype1() {
-		$firstInstance = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeTemplateInterface');
-		$secondInstance = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeTemplateInterface');
-		$this->assertNotSame($firstInstance, $secondInstance, 'F3_PHPCR_NodeType_NodeTypeTemplateInterface is not prototype.');
+	public function newNodeTypeTemplateHasExpectedDefaults() {
+		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
+		$this->assertNull($nodeTypeTemplate->getName(), 'The name of a new NodeTypeTemplate must be NULL');
+		$this->assertEquals(array('nt:base'), $nodeTypeTemplate->getDeclaredSupertypeNames(), 'The declared supertype names for a new NodeTypeTemplate must contain only nt:base');
+		$this->assertFalse($nodeTypeTemplate->isAbstract(), 'A new NodeTypeTemplate may not be abstract');
+		$this->assertFalse($nodeTypeTemplate->isMixin(), 'A new NodeTypeTemplate must be primary');
+		$this->assertFalse($nodeTypeTemplate->hasOrderableChildNodes(), 'A new NodeTypeTemplate may not have orderable child nodes');
+		$this->assertNull($nodeTypeTemplate->getPrimaryItemName(), 'The name of the primary item must be NULL for a new NodeTypeTemplate');
+		$this->assertNull($nodeTypeTemplate->getDeclaredPropertyDefinitions(), 'The declared property definitions of a new NodeTypeTemplate must be NULL');
+		$this->assertNull($nodeTypeTemplate->getDeclaredChildNodeDefinitions(), 'The declared child node definitions of a new NodeTypeTemplate must be NULL');
 	}
 }
 ?>

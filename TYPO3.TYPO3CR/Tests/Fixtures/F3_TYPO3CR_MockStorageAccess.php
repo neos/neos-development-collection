@@ -201,10 +201,30 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	/**
 	 * Fetches raw nodetype data from the database
 	 *
-	 * @param integer $nodeTypeId The (internal) id of the nodetype record to fetch
+	 * @param string $nodeTypeName The name of the nodetype record to fetch
 	 * @return array
 	 */
-	public function getRawNodeTypeById($nodeTypeId) {
+	public function getRawNodeType($nodeTypeName) {
+
+	}
+
+	/**
+	 * Adds the given nodetype to the database
+	 *
+	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
+	 * @return void
+	 */
+	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition) {
+
+	}
+
+	/**
+	 * Deletes the named nodetype from the database
+	 *
+	 * @param string $name
+	 * @return void
+	 */
+	public function deleteNodeType($name) {
 
 	}
 

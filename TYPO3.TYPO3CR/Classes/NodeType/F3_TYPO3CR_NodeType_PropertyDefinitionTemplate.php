@@ -34,6 +34,7 @@ declare(ENCODING = 'utf-8');
  * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType_PropertyDefinition implements F3_PHPCR_NodeType_PropertyDefinitionTemplateInterface {
 
@@ -42,9 +43,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType
 	 *
 	 * @param string $name a String.
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setName($name) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099140);
+		$this->name = $name;
 	}
 
 	/**
@@ -52,9 +54,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType
 	 *
 	 * @param boolean $autoCreated a boolean.
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setAutoCreated($autoCreated) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099141);
+		$this->autoCreated = $autoCreated;
 	}
 
 	/**
@@ -62,9 +65,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType
 	 *
 	 * @param boolean $mandatory a boolean.
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setMandatory($mandatory) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099142);
+		$this->mandatory = $mandatory;
 	}
 
 	/**
@@ -72,19 +76,21 @@ class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType
 	 *
 	 * @param integer $opv an int constant member of OnParentVersionAction.
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setOnParentVersion($opv) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099143);
+		$this->onParentVersion = $opv;
 	}
 
 	/**
 	 * Sets the protected status of the property.
 	 *
-	 * @param boolean $protectedStatus a boolean.
+	 * @param boolean $protected a boolean.
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setProtected($protectedStatus) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099144);
+	public function setProtected($protected) {
+		$this->protected = $protected;
 	}
 
 	/**
@@ -94,7 +100,7 @@ class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType
 	 * @return void
 	 */
 	public function setRequiredType($type) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099145);
+		$this->requiredType = $type;
 	}
 
 	/**
@@ -102,9 +108,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType
 	 *
 	 * @param array $constraints a String array.
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValueConstraints(array $constraints) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099146);
+		$this->valueConstraints = $constraints;
 	}
 
 	/**
@@ -113,9 +120,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType
 	 *
 	 * @param array $defaultValues a Value array.
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setDefaultValues(array $defaultValues) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099147);
+		$this->defaultValues = $defaultValues;
 	}
 
 	/**
@@ -123,9 +131,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType
 	 *
 	 * @param boolean $multiple a boolean.
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setMultiple($multiple) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099148);
+		$this->multiple = $multiple;
 	}
 
 }

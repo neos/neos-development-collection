@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id$
+ * @version $Id:F3_TYPO3CR_Storage_Backend_PDO.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id$
+ * @version $Id:F3_TYPO3CR_Storage_Backend_PDO.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterface {
@@ -143,14 +143,40 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	/**
 	 * Fetches raw nodetype data from the database
 	 *
-	 * @param integer $nodeTypeId The (internal) id of the nodetype record to fetch
+	 * @param string $nodeTypeNme The name of the nodetype record to fetch
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getRawNodeTypeById($nodeTypeId) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT id, name FROM nodetypes WHERE id = ?');
-		$statementHandle->execute(array($nodeTypeId));
+	public function getRawNodeType($nodeTypeName) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT name FROM nodetypes WHERE name = ?');
+		$statementHandle->execute(array($nodeTypeName));
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
+	}
+
+	/**
+	 * Adds the given nodetype to the database
+	 *
+	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition) {
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO nodetypes (name) VALUES (?)');
+		$statementHandle->execute(array(
+			$nodeTypeDefinition->getName()
+		));
+	}
+
+		/**
+	 * Deletes the named nodetype from the database
+	 *
+	 * @param string $name
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function deleteNodeType($name) {
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM nodetypes WHERE name=?');
+		$statementHandle->execute(array($name));
 	}
 
 	/**
@@ -158,7 +184,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 *
 	 * @param string $identifier Identifier to insert
 	 * @param string $pid Identifier of the parent node
-	 * @param integer $nodetype Nodetype to insert
+	 * @param string $nodetype Nodetype to insert
 	 * @param string $name Name to insert
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
@@ -173,7 +199,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 *
 	 * @param string $identifier Identifier of the node to update
 	 * @param string $pid Identifier of the parent node
-	 * @param integer $nodetype Nodetype to update
+	 * @param string $nodetype Nodetype to update
 	 * @param string $name Name to update
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>

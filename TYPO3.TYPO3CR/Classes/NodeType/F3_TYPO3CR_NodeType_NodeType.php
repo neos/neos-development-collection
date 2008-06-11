@@ -34,20 +34,12 @@ class F3_TYPO3CR_NodeType_NodeType extends F3_TYPO3CR_NodeType_NodeTypeDefinitio
 	/**
 	 * Constructs a NodeType
 	 *
-	 * @param integer $nodeTypeId The internal id of the nodetype
-	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param string $name The name of the nodetype
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Check node type handling
 	 */
-	public function __construct($nodeTypeId, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->nodeTypeId = $nodeTypeId;
-		$this->componentManager = $componentManager;
-		$this->storageAccess = $storageAccess;
-
-		$rawNodeTypeData = $this->storageAccess->getRawNodeTypeById($this->nodeTypeId);
-		$this->name = $rawNodeTypeData['name'];
+	public function __construct($name) {
+		$this->name = $name;
 	}
 
 	/**

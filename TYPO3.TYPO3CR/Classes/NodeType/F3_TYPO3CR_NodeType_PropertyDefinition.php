@@ -27,8 +27,30 @@ declare(ENCODING = 'utf-8');
  * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_NodeType_PropertyDefinition extends F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_PropertyDefinitionInterface {
+
+	/**
+	 * A constant value from F3_PHPCR_PropertyType
+	 * @var integer
+	 */
+	protected $requiredType = F3_PHPCR_PropertyType::STRING;
+
+	/**
+	 * @var array of string
+	 */
+	protected $valueConstraints = NULL;
+
+	/**
+	 * @var array
+	 */
+	protected $defaultValues = NULL;
+
+	/**
+	 * @var boolean
+	 */
+	protected $multiple = FALSE;
 
 	/**
 	 * Gets the required type of the property. One of:
@@ -53,9 +75,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinition extends F3_TYPO3CR_NodeType_ItemDef
 	 * PropertyDefinitionTemplate, then this method will return PropertyType.STRING.
 	 *
 	 * @return integer an int constant member of PropertyType.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRequiredType() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099096);
+		return $this->requiredType;
 	}
 
 	/**
@@ -182,9 +205,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinition extends F3_TYPO3CR_NodeType_ItemDef
 	 * PropertyDefinitionTemplate, then this method will return null.
 	 *
 	 * @return array a String array.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValueConstraints() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099097);
+		return $this->valueConstraints;
 	}
 
 	/**
@@ -214,14 +238,15 @@ class F3_TYPO3CR_NodeType_PropertyDefinition extends F3_TYPO3CR_NodeType_ItemDef
 	 * PropertyDefinitionTemplate, then this method will return null.
 	 *
 	 * @return array an array of Value objects.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDefaultValues() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099098);
+		return $this->defaultValues;
 	}
 
 	/**
-	 * Reports whether this property can have multiple values. Note that the i
-	 * sMultiple flag is special in that a given node type may have two property
+	 * Reports whether this property can have multiple values. Note that the
+	 * isMultiple flag is special in that a given node type may have two property
 	 * definitions that are identical in every respect except for the their
 	 * isMultiple status. For example, a node type can specify two string properties
 	 * both called X, one of which is multi-valued and the other not. An example
@@ -232,9 +257,10 @@ class F3_TYPO3CR_NodeType_PropertyDefinition extends F3_TYPO3CR_NodeType_ItemDef
 	 * PropertyDefinitionTemplate, then this method will return false.
 	 *
 	 * @return boolean a boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isMultiple() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213099099);
+		return $this->multiple;
 	}
 
 }

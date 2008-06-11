@@ -56,7 +56,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 	public function weGetTheRootNode() {
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockStorageAccess->expects($this->any())->method('getIdentifiersOfSubNodesOfNode')->will($this->returnValue(array()));
-		$mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->will($this->returnValue(array('id' => 1, 'name' => 'nodeTypeName')));
+		$mockStorageAccess->expects($this->any())->method('getRawNodeType')->will($this->returnValue(array('name' => 'nodeTypeName')));
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = new F3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
 
@@ -65,7 +65,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			'id' => '1',
 			'identifier' => '',
 			'pid' => '0',
-			'nodetype' => '1',
+			'nodetype' => 'nodeTypeName',
 			'name' => 'nodeA'
 		));
 

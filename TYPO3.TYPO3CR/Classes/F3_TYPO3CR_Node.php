@@ -272,7 +272,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 				'pid' => $this->getIdentifier(),
 				'name' => $lastNodeName,
 				'identifier' => F3_FLOW3_Utility_Algorithms::generateUUID(),
-				'nodetype' => 0,
+				'nodetype' => 'nt:base',
 			));
 			$newNode->setNew(TRUE);
 
@@ -1442,28 +1442,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 
 	// non-JSR-283 methods
 
-
-	/**
-	 * Set the modified flag of Item
-	 *
-	 * @param boolean $isModified The modified state to set
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setModified($isModified) {
-		parent::setModified($isModified);
-	}
-
-	/**
-	 * Set the new flag of Item
-	 *
-	 * @param boolean $isNew The new state to set
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setNew($isNew) {
-		parent::setNew($isNew);
-	}
 
 	/**
 	 * Initializes the Node with data fetched from storage component

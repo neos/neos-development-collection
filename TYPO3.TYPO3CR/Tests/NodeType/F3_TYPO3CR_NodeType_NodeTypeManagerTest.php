@@ -50,7 +50,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Checks if createNodeTypeTemplate() returns the an empty nodetype template.
+	 * Checks if createNodeTypeTemplate() returns an empty nodetype template.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -59,8 +59,8 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals($nodeTypeTemplate, $this->nodeTypeManager->createNodeTypeTemplate(), 'The nodetype manager did not return the expected empty nodetype template.');
 	}
 
-		/**
-	 * Checks if createNodeDefinitionTemplate() returns the an empty nodetype template.
+	/**
+	 * Checks if createNodeDefinitionTemplate() returns an empty nodetype template.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -70,7 +70,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Checks if createPropertyDefinitionTemplate() returns the an empty propertydefinition template.
+	 * Checks if createPropertyDefinitionTemplate() returns an empty propertydefinition template.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -79,5 +79,103 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals($propertyDefinitionTemplate, $this->nodeTypeManager->createPropertyDefinitionTemplate(), 'The nodetype manager did not return the expected empty property definition template.');
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function getNodeTypeThrowsExceptionOnUnknownNodeType() {
+		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('unknownNodeTypeName')->will($this->returnValue(FALSE));
+		try {
+			$this->nodeTypeManager->getNodeType('unknownNodeTypeName');
+			$this->fail('When asked for an unknown NodeType getNodeType must throw a NoSuchNodeTypeException');
+		} catch (F3_PHPCR_NodeType_NoSuchNodeTypeException $e) {
+		}
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function registerNodeTypesAcceptsOnlyNodeTypeDefinitions() {
+		$input = array(
+			new F3_TYPO3CR_NodeType_NodeTypeDefinition(),
+			'some string',
+			123,
+			new F3_TYPO3CR_NodeType_NodeTypeDefinition()
+		);
+		try {
+			$this->nodeTypeManager->registerNodeTypes($input, FALSE);
+			$this->fail('registerNodeTypes must only accept an array of NodeTypeDefinition');
+		} catch (F3_PHPCR_NodeType_InvalidNodeTypeDefinitionException $e) {
+		}
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function registerNodeTypeReturnsNodeTypeOnSuccess() {
+		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
+		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
+		$nodeTypeTemplate->setName('testNodeType');
+		$nodeType = $this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
+		$this->assertType('F3_PHPCR_NodeType_NodeTypeInterface', $nodeType, 'registerNodeType did not return a NodeType');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function registerNodeTypeReturnsCallsStorageBackend() {
+		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
+		$nodeTypeTemplate->setName('testNodeType');
+		$this->mockStorageAccess->expects($this->once())->method('addNodeType')->with($nodeTypeTemplate);
+		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
+		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function unregisterNodeTypeThrowsExceptionOnUnknownNodeType() {
+		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('unknownNodeTypeName')->will($this->returnValue(FALSE));
+		try {
+			$this->nodeTypeManager->unregisterNodeType('unknownNodeTypeName');
+			$this->fail('When asked to unregister an unknown NodeType unregisterNodeType must throw a NoSuchNodeTypeException');
+		} catch (F3_PHPCR_NodeType_NoSuchNodeTypeException $e) {
+		}
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function unregisterNodeTypeRemovesNodeType() {
+		$this->mockStorageAccess->expects($this->exactly(2))->method('getRawNodeType')->with('testNodeTypeName')->will($this->onConsecutiveCalls(array('name' => 'testNodeTypeName'), FALSE));
+		$nodeTypeDefintionTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
+		$nodeTypeDefintionTemplate->setName('testNodeTypeName');
+		$this->nodeTypeManager->registerNodeType($nodeTypeDefintionTemplate, FALSE);
+		$this->nodeTypeManager->unregisterNodeType('testNodeTypeName');
+		try {
+			$this->nodeTypeManager->getNodeType('testNodeTypeName');
+			$this->fail('unregisterNodeType did not remove the nodetype');
+		} catch (F3_PHPCR_NodeType_NoSuchNodeTypeException $e) {
+		}
+	}
+
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function unregisterNodeTypeReturnsCallsStorageBackend() {
+		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
+		$nodeTypeTemplate->setName('testNodeType');
+		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
+		$this->mockStorageAccess->expects($this->once())->method('deleteNodeType')->with('testNodeType');
+		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
+		$this->nodeTypeManager->unregisterNodeType('testNodeType');
+	}
 }
 ?>

@@ -32,7 +32,7 @@ class F3_TYPO3CR_NodeType_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 
 	public function setUp() {
 		$this->mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$this->mockStorageAccess->expects($this->any())->method('getRawNodeTypeById')->will($this->returnValue(array('name' => 'SuperDuperNodeType')));
+		$this->mockStorageAccess->expects($this->any())->method('getRawNodeType')->will($this->returnValue(array('name' => 'SuperDuperNodeType')));
 
 		$this->iterator = new F3_TYPO3CR_NodeType_NodeTypeIterator();
 	}
@@ -43,8 +43,8 @@ class F3_TYPO3CR_NodeType_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResult() {
-		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType(1, $this->mockStorageAccess, $this->componentManager));
-		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType(1, $this->mockStorageAccess, $this->componentManager));
+		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType('SuperDuperNodeType'));
 		$size = $this->iterator->getSize();
 		$this->assertEquals(2, $size, "getSize() does not return correct number.");
 	}
@@ -56,8 +56,8 @@ class F3_TYPO3CR_NodeType_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function hasNextAndNextNodeIterateThroughAllElements() {
-		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType(1, $this->mockStorageAccess, $this->componentManager));
-		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType(1, $this->mockStorageAccess, $this->componentManager));
+		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType('SuperDuperNodeType'));
 		$count = 0;
 		while ($this->iterator->hasNext()) {
 			$this->iterator->nextNodeType();

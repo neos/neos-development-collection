@@ -98,5 +98,26 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$this->assertFalse($rawNode, 'getRawNodeByIdentifier() did return an array for a just removed node entry.');
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function addNodeTypeAndDeleteNodeTypeWork() {
+		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
+		$nodeTypeTemplate->setName('testNodeType');
+
+		$expectedRawNodeType = array(
+			'name' => 'testNodeType'
+		);
+		$this->storageAccess->addNodeType($nodeTypeTemplate);
+		$rawNodeType = $this->storageAccess->getRawNodeType('testNodeType');
+		$this->assertTrue(is_array($rawNodeType), 'getRawNodeType() did not return an array for a just created nodetype entry.');
+		$this->assertSame($expectedRawNodeType, $rawNodeType, 'The returned raw node had not the expected values.');
+
+		$this->storageAccess->deleteNodeType('testNodeType');
+		$rawNodeType = $this->storageAccess->getRawNodeType('testNodeType');
+		$this->assertFalse($rawNodeType, 'getRawNodeType() did return an array for a just removed nodetype entry.');
+	}
+
 }
 ?>

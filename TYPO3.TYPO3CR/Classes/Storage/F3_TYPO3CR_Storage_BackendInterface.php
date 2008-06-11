@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id$
+ * @version $Id:F3_TYPO3CR_Storage_BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id$
+ * @version $Id:F3_TYPO3CR_Storage_BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_TYPO3CR_Storage_BackendInterface {
@@ -119,17 +119,33 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Fetches raw nodetype data from the database
 	 *
-	 * @param integer $nodeTypeId The (internal) id of the nodetype record to fetch
+	 * @param string $nodeTypeName The name of the nodetype record to fetch
 	 * @return array|FALSE
 	 */
-	public function getRawNodeTypeById($nodeTypeId);
+	public function getRawNodeType($nodeTypeName);
+
+	/**
+	 * Adds the given nodetype to the database
+	 *
+	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
+	 * @return void
+	 */
+	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition);
+
+	/**
+	 * Deletes the named nodetype from the database
+	 *
+	 * @param string $name
+	 * @return void
+	 */
+	public function deleteNodeType($name);
 
 	/**
 	 * Adds a node to the storage
 	 *
 	 * @param string $identifier Identifier to insert
 	 * @param string $pid Identifier of the parent node
-	 * @param integer $nodetype Nodetype to insert
+	 * @param string $nodetype Nodetype to insert
 	 * @param string $name Name to insert
 	 * @return void
 	 */
@@ -151,7 +167,7 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	 *
 	 * @param string $identifier Identifier of the node to update
 	 * @param string $pid Identifier of the parent node
-	 * @param integer $nodetype new nodetype
+	 * @param string $nodetype new nodetype
 	 * @param string $name new name
 	 * @return void
 	 */

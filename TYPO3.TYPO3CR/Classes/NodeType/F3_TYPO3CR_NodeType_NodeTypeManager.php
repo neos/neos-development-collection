@@ -42,6 +42,16 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	protected $componentManager;
 
 	/**
+	 * @var array
+	 */
+	protected $registeredPrimaryTypes = array();
+
+	/**
+	 * @var array
+	 */
+	protected $registeredMixinTypes = array();
+
+	/**
 	 * Constructs a NodeTypeManager object
 	 *
 	 * @param string $name
@@ -63,7 +73,24 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 */
 	public function getNodeType($nodeTypeName) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012218);
+		if (isset($this->registeredPrimaryTypes[$nodeTypeName])) {
+			return $this->registeredPrimaryTypes[$nodeTypeName];
+		} elseif (isset($this->registeredMixinTypes[$nodeTypeName])) {
+			return $this->registeredMixinTypes[$nodeTypeName];
+		} else {
+			$rawNodeType = $this->storageAccess->getRawNodeType($nodeTypeName);
+			if($rawNodeType === FALSE) {
+				throw new F3_PHPCR_NodeType_NoSuchNodeTypeException('Nodetype "' . $nodeTypeName .'" is not registered', 1213012218);
+			} else {
+				$nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $nodeTypeName);
+				if($nodeType->isMixin()) {
+					$this->registeredMixinTypes[$nodeTypeName] = $nodeType;
+				} else {
+					$this->registeredPrimaryTypes[$nodeTypeName] = $nodeType;
+				}
+				return $nodeType;
+			}
+		}
 	}
 
 	/**
@@ -75,7 +102,11 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function hasNodeType($name) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012219);
+		if (isset($this->registeredPrimaryTypes[$name]) || isset($this->registeredMixinTypes[$name])) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
 	}
 
 	/**
@@ -83,9 +114,10 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 *
 	 * @return F3_PHPCR_NodeType_NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getAllNodeTypes() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012220);
+		return $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeIteratorInterface', array_merge($this->registeredPrimaryTypes, $this->registeredMixinTypes));
 	}
 
 	/**
@@ -93,9 +125,10 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 *
 	 * @return F3_PHPCR_NodeType_NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPrimaryNodeTypes() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012221);
+		return $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeIteratorInterface', $this->registeredPrimaryTypes);
 	}
 
 	/**
@@ -104,9 +137,10 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 *
 	 * @return F3_PHPCR_NodeType_NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getMixinNodeTypes() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012222);
+		return $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeIteratorInterface', $this->registeredMixinTypes);
 	}
 
 	/**
@@ -171,16 +205,17 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * @return F3_PHPCR_NodeType_NodeTypeInterface the registered node type
 	 * @throws F3_PHPCR_InvalidNodeTypeDefinitionException if the NodeTypeDefinition is invalid.
 	 * @throws F3_PHPCR_NodeType_NodeTypeExistsException if allowUpdate is false and the NodeTypeDefinition specifies a node type name that is already registered.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo check validity of definition
 	 */
 	public function registerNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $ntd, $allowUpdate) {
 		if ($allowUpdate === TRUE) {
 			throw new F3_PHPCR_UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213014462);
 		}
+		$this->storageAccess->addNodeType($ntd);
 
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012226);
+		return $this->getNodeType($ntd->getName());
 	}
 
 	/**
@@ -195,23 +230,44 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * @return F3_PHPCR_NodeType_NodeTypeIteratorInterface the registered node types.
 	 * @throws F3_PHPCR_InvalidNodeTypeDefinitionException if a NodeTypeDefinition within the Collection is invalid or if the Collection contains an object of a type other than NodeTypeDefinition.
 	 * @throws F3_PHPCR_NodeType_NodeTypeExistsException if allowUpdate is false and a NodeTypeDefinition within the Collection specifies a node type name that is already registered.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo check existence (in case of allowUpdate being false) and validity of definitions before handing over to registerNodeType (all-or-nothing effect)
 	 */
 	public function registerNodeTypes(array $definitions, $allowUpdate) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012227);
+		foreach ($definitions as $definition) {
+			if(!($definition instanceof F3_PHPCR_NodeType_NodeTypeDefinitionInterface)) {
+				throw new F3_PHPCR_NodeType_InvalidNodeTypeDefinitionException('Cannot register type as NodeType: ' . gettype($definition), 1213178848);
+			}
+		}
+
+		$nodeTypes = array();
+		foreach ($definitions as $definition) {
+			$nodeTypes[] = $this->registerNodeType($definition, $allowUpdate);
+		}
+
+		return $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeIteratorInterface', $nodeTypes);
 	}
 
 	/**
 	 * Unregisters the specified node type.
 	 *
 	 * @param string $name a String.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support node type registration.
+	 * @return void
 	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException if no registered node type exists with the specified name.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterNodeType($name) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012228);
+			// make sure we have this nodetype
+		$nodeType = $this->getNodeType($name);
+
+		if($nodeType->isMixin()) {
+			unset($this->registeredMixinTypes[$name]);
+		} else {
+			unset($this->registeredPrimaryTypes[$name]);
+		}
+		$this->storageAccess->deleteNodeType($name);
 	}
 
 	/**
@@ -220,12 +276,15 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 *
 	 * @param array $names a String array
 	 * @return void
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException if one of the names listed is not a registered node type.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterNodeTypes(array $names) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213012229);
+		foreach ($names as $name) {
+			$this->unregisterNodeType($name);
+		}
 	}
+
 }
 ?>

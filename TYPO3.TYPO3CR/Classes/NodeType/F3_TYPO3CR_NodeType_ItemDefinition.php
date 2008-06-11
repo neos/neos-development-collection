@@ -27,20 +27,54 @@ declare(ENCODING = 'utf-8');
  * @subpackage NodeType
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefinitionInterface {
 
 	/**
+	 * @var F3_PHPCR_NodeType_NodeTypeInterface
+	 */
+	protected $declaringNodeType = NULL;
+
+	/**
+	 * @var string
+	 */
+	protected $name = NULL;
+
+	/**
+	 * @var boolean
+	 */
+	protected $autoCreated = FALSE;
+
+	/**
+	 * @var boolean
+	 */
+	protected $mandatory = FALSE;
+
+	/**
+	 * A constant value from F3_PHPCR_Version_OnParentVersionAction
+	 * @var integer
+	 */
+	protected $onParentVersion = F3_PHPCR_Version_OnParentVersionAction::COPY;
+
+	/**
+	 * @var boolean
+	 */
+	protected $protected = FALSE;
+
+	/**
 	 * Gets the node type that contains the declaration of this ItemDefinition.
+	 *
 	 * In implementations that support node type registration an ItemDefinition
 	 * object may be acquired (in the form of a NodeDefinitionTemplate or
 	 * PropertyDefinitionTemplate) that is not attached to a live NodeType. In
 	 * such cases this method returns null.
 	 *
 	 * @return F3_PHPCR_NodeType_NodeTypeInterface a NodeType object.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDeclaringNodeType() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097038);
+		return $this->declaringNodeType;
 	}
 
 	/**
@@ -55,9 +89,10 @@ class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefini
 	 * will return null.
 	 *
 	 * @return string a String denoting the name or "*".
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getName() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097039);
+		return $this->name;
 	}
 
 	/**
@@ -76,9 +111,10 @@ class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefini
 	 * will return false.
 	 *
 	 * @return boolean a boolean.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isAutoCreated() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097040);
+		return $this->autoCreated;
 	}
 
 	/**
@@ -100,9 +136,10 @@ class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefini
 	 * An item definition cannot be both residual and mandatory.
 	 *
 	 * @return boolean a boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isMandatory() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097041);
+		return $this->mandatory;
 	}
 
 	/**
@@ -122,9 +159,10 @@ class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefini
 	 * will return OnParentVersionAction.COPY.
 	 *
 	 * @return integer a int constant member of OnParentVersionAction.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getOnParentVersion() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097042);
+		return $this->onParentVersion;
 	}
 
 	/**
@@ -142,11 +180,12 @@ class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefini
 	 * PropertyDefinitionTemplate or NodeDefinitionTemplate, then this method
 	 * will return false.
 	 *
-	 * @return booleana boolean.
+	 * @return boolean a boolean.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	 public function isProtected() {
-	 	throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097043);
-	 }
+	public function isProtected() {
+		return $this->protected;
+	}
 
 }
 
