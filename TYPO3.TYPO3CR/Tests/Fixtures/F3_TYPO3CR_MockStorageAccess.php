@@ -199,6 +199,15 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	}
 
 	/**
+	 * Fetches raw data for all nodetypes from the database
+	 *
+	 * @return array
+	 */
+	public function getRawNodeTypes() {
+
+	}
+
+	/**
 	 * Fetches raw nodetype data from the database
 	 *
 	 * @param string $nodeTypeName The name of the nodetype record to fetch

@@ -141,6 +141,18 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	}
 
 	/**
+	 * Fetches raw data for all nodetypes from the database
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRawNodeTypes() {
+		$statementHandle = $this->databaseHandle->query('SELECT name FROM nodetypes');
+		$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		return $nodetypes;
+	}
+
+	/**
 	 * Fetches raw nodetype data from the database
 	 *
 	 * @param string $nodeTypeNme The name of the nodetype record to fetch

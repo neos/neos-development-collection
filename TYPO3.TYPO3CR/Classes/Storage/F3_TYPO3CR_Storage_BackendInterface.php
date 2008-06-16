@@ -117,6 +117,13 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	public function getRawPropertiesOfNode($nodeIdentifier);
 
 	/**
+	 * Fetches raw data for all nodetypes from the database
+	 *
+	 * @return array
+	 */
+	public function getRawNodeTypes();
+
+	/**
 	 * Fetches raw nodetype data from the database
 	 *
 	 * @param string $nodeTypeName The name of the nodetype record to fetch

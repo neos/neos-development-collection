@@ -53,7 +53,7 @@ class F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefinit
 	 * not attached to a live NodeType. In such cases this method returns an
 	 * array containing only the NodeType object representing nt:base.
 	 *
-	 * @return F3_PHPCR_NodeType_NodeTypeInterface an array of NodeType objects.
+	 * @return array an array of F3_PHPCR_NodeType_NodeTypeInterface instances.
 	 */
 	public function getRequiredPrimaryTypes() {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097206);

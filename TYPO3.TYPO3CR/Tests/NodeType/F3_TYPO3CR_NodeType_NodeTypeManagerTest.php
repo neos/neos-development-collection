@@ -164,7 +164,6 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 		}
 	}
 
-
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
@@ -176,6 +175,16 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 		$this->mockStorageAccess->expects($this->once())->method('deleteNodeType')->with('testNodeType');
 		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		$this->nodeTypeManager->unregisterNodeType('testNodeType');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function nodeTypeManagerLoadsExistingNodeTypes() {
+		$this->mockStorageAccess->expects($this->atLeastOnce())->method('getRawNodeTypes')->will($this->returnValue(array(array('name' => 'nt:base'))));
+		$nodeTypeManager = new F3_TYPO3CR_NodeType_NodeTypeManager($this->mockStorageAccess, $this->componentManager);
+		$this->assertTrue($nodeTypeManager->hasNodeType('nt:base'), 'nt:base is missing');
 	}
 }
 ?>

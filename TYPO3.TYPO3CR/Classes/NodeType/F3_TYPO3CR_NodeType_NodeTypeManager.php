@@ -62,6 +62,29 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
+
+		$this->loadKnownNodeTypes();
+	}
+
+	/**
+	 * Loads all known nodetypes through the storage backend
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function loadKnownNodeTypes() {
+		$rawNodeTypes = $this->storageAccess->getRawNodeTypes();
+		if (is_array($rawNodeTypes)) {
+			foreach ($rawNodeTypes as $rawNodeType) {
+				$nodeTypeName = $rawNodeType['name'];
+				$nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $nodeTypeName);
+				if($nodeType->isMixin()) {
+					$this->registeredMixinTypes[$nodeTypeName] = $nodeType;
+				} else {
+					$this->registeredPrimaryTypes[$nodeTypeName] = $nodeType;
+				}
+			}
+		}
 	}
 
 	/**
