@@ -75,7 +75,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeById($nodeId) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, identifier, nodetype FROM nodes WHERE id = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE parent = ?');
 		$statementHandle->execute(array($nodeId));
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
@@ -88,7 +88,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeByIdentifier($identifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, identifier, nodetype FROM nodes WHERE identifier = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE identifier = ?');
 		$statementHandle->execute(array($identifier));
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
@@ -100,7 +100,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawRootNode() {
-		$statementHandle = $this->databaseHandle->prepare('SELECT id, pid, name, identifier, nodetype FROM nodes WHERE pid = 0');
+		$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE parent = 0');
 		$statementHandle->execute();
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
@@ -114,7 +114,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 */
 	public function getIdentifiersOfSubNodesOfNode($nodeId) {
 		$nodeIdentifiers = array();
-		$statementHandle = $this->databaseHandle->prepare('SELECT identifier FROM nodes WHERE pid = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT identifier FROM nodes WHERE parent = ?');
 		$statementHandle->execute(array($nodeId));
 		$rawNodes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rawNodes as $k => $rawNode) {
@@ -131,7 +131,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawPropertiesOfNode($nodeIdentifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE nodeidentifier = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE parent = ?');
 		$statementHandle->execute(array($nodeIdentifier));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		if (is_array($properties) && $properties['multivalue']) {
@@ -202,7 +202,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function addNode($identifier, $pid, $nodetype, $name) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO nodes (identifier, pid, nodetype, name) VALUES (?, ?, ?, ?)');
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO nodes (identifier, parent, nodetype, name) VALUES (?, ?, ?, ?)');
 		$statementHandle->execute(array($identifier, $pid, $nodetype, $name));
 	}
 
@@ -217,7 +217,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function updateNode($identifier, $pid, $nodetype, $name) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE nodes SET pid=?, nodetype=?, name=? WHERE identifier=?');
+		$statementHandle = $this->databaseHandle->prepare('UPDATE nodes SET parent=?, nodetype=?, name=? WHERE identifier=?');
 		$statementHandle->execute(array($pid, $nodetype, $name, $identifier));
 	}
 
@@ -244,7 +244,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function addProperty($identifier, $name, $value, $isMultiValued) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (nodeidentifier, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, ?)');
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (parent, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, ?)');
 		$statementHandle->execute(array($identifier, $name, $value, $isMultiValued));
 	}
 
@@ -259,7 +259,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function updateProperty($identifier, $name, $value, $isMultiValued) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=?, multivalue=? WHERE nodeidentifier=? AND name=?');
+		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=?, multivalue=? WHERE parent=? AND name=?');
 		$statementHandle->execute(array($value, $isMultiValued, $identifier, $name));
 	}
 
@@ -272,7 +272,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function removeProperty($identifier, $name) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM properties WHERE nodeidentifier=? AND name=?');
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM properties WHERE parent=? AND name=?');
 		$statementHandle->execute(array($identifier, $name));
 	}
 

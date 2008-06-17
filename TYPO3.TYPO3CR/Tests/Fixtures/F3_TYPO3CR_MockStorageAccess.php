@@ -173,7 +173,7 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 		if (key_exists($this->workspaceName, $this->rawNodesByIdentifierGroupedByWorkspace)) {
 			if (key_exists($nodeId, $this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
 				foreach ($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName] as $identifier => $rawNode) {
-					if ($rawNode['pid'] == $nodeId) {
+					if ($rawNode['parent'] == $nodeId) {
 						$identifiers[] = $identifier;
 					}
 				}
@@ -250,7 +250,7 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	public function addNode($identifier, $pid, $nodetype, $name) {
 		$this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier] = array(
 			'identifier' => $identifier,
-			'pid' => $pid,
+			'parent' => $pid,
 			'nodetype' => $nodetype,
 			'name' => $name
 		);

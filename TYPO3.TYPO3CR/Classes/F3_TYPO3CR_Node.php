@@ -63,12 +63,35 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_PHPCR_SessionInterface $session, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(array $rawData = array(), F3_PHPCR_SessionInterface $session, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
 
 		$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+
+		foreach ($rawData as $key => $value) {
+			switch ($key) {
+				case 'identifier':
+					$this->identifier = $value;
+					break;
+				case 'parent':
+					if ($value == '0') {
+						$this->parentNode = NULL;
+					} else {
+						$this->parentNode = $value;
+					}
+					break;
+				case 'name':
+					$this->name = $value;
+					break;
+				case 'nodetype':
+					$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $value, $this->storageAccess);
+					break;
+			}
+
+			$this->initializeProperties();
+		}
 	}
 
 
@@ -99,7 +122,9 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @todo add support for same name siblings
 	 */
 	public function getPath() {
-		try {
+		if ($this->parentNode === NULL) {
+			return "/";
+		} else {
 			$buffer = $this->getParent()->getPath();
 			if (F3_PHP6_Functions::strlen($buffer) > 1) {
 				$buffer .= '/';
@@ -107,8 +132,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 
 			$buffer .= $this->getName();
 			return $buffer;
-		} catch (F3_PHPCR_ItemNotFoundException $e) {
-			return "/";
 		}
 	}
 
@@ -132,7 +155,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 */
 	public function getParent() {
 		if ($this->parentNode === NULL) throw new F3_PHPCR_ItemNotFoundException("root node does not have a parent", 1187530879);
-		return $this->parentNode;
+
+			// when instanciating we lazily store the identifier of the parent
+		if ($this->parentNode instanceof F3_PHPCR_NodeInterface) {
+			return $this->parentNode;
+		} else {
+			$this->parentNode = $this->session->getNodeByIdentifier($this->parentNode);
+			return $this->parentNode;
+		}
 	}
 
 	/**
@@ -177,15 +207,15 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$this->storageAccess->removeNode($this->getIdentifier());
 			// TODO: HOW TO REMOVE THE DELETED NODE FROM THE OBJECT TREE?
 			// $this = NULL; // does not work.
-			// $this->parentNode->remove($this); // would be nice
+			// $this->getParent()->remove($this); // would be nice
 		} elseif ($this->isNew()===TRUE) {
-			$this->storageAccess->addNode($this->getIdentifier(), $this->parentNode->getIdentifier(), $this->nodeType->getId(), $this->name);
+			$this->storageAccess->addNode($this->getIdentifier(), $this->getParent()->getIdentifier(), $this->nodeType->getId(), $this->name);
 			$this->saveProperties();
 		} elseif ($this->isModified()===TRUE) {
 			if ($this->getDepth() == 0) {
 				$this->storageAccess->updateNode($this->getIdentifier(), 0, $this->nodeType->getId(), $this->name);
 			} else {
-				$this->storageAccess->updateNode($this->getIdentifier(), $this->parentNode->getIdentifier(), $this->nodeType->getId(), $this->name);
+				$this->storageAccess->updateNode($this->getIdentifier(), $this->getParent()->getIdentifier(), $this->nodeType->getId(), $this->name);
 			}
 			$this->saveProperties();
 		}
@@ -263,26 +293,25 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			throw new F3_PHPCR_PathNotFoundException('Path not found or not provided', 1187531979);
 		}
 
-		$pathParser = $this->componentManager->getComponent('F3_TYPO3CR_PathParserInterface');
-		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = $pathParser->getLastPathPart($relPath);
+		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = F3_TYPO3CR_PathParser::getLastPathPart($relPath);
 
 		if ($numberOfElementsRemaining===0) {
-			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this->session, $this->storageAccess);
-			$newNode->initializeFromArray(array(
-				'pid' => $this->getIdentifier(),
-				'name' => $lastNodeName,
-				'identifier' => F3_FLOW3_Utility_Algorithms::generateUUID(),
-				'nodetype' => 'nt:base',
-			));
-			$newNode->setNew(TRUE);
-
 			if (!is_array($this->nodes)) {
 				$this->initializeNodes();
 			}
+
+			$rawData = array(
+				'parent' => $this->getIdentifier(),
+				'name' => $lastNodeName,
+				'nodetype' => 'nt:base',
+			);
+			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session, $this->storageAccess);
+			$newNode->setNew(TRUE);
+
 			$this->nodes[$newNode->getIdentifier()] = $newNode;
 			$this->setModified(TRUE);  // JSR-283: (5.1.3.6): This specification provides the following methods on Item for determining whether a particular item has pending changes (isModified) or constitutes part of the pending changes of its parent(isNew)
 		} else {
-			$upperNode = $pathParser->parsePath($remainingPath, $this);
+			$upperNode = F3_TYPO3CR_PathParser::parsePath($remainingPath, $this);
 			$newNode = $upperNode->addNode($lastNodeName);
 		}
 
@@ -403,8 +432,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getNode($relPath) {
-		$pathParser = $this->componentManager->getComponent('F3_TYPO3CR_PathParserInterface');
-		return $pathParser->parsePath($relPath, $this);
+		return F3_TYPO3CR_PathParser::parsePath($relPath, $this);
 	}
 
 	/**
@@ -470,8 +498,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		if (F3_PHP6_Functions::strpos($relPath, '/') === FALSE && isset($this->properties[$relPath])) {
 			return $this->properties[$relPath];
 		} else {
-			$pathParser = $this->componentManager->getComponent('F3_TYPO3CR_PathParserInterface');
-			return $pathParser->parsePath($relPath, $this, F3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
+			return F3_TYPO3CR_PathParser::parsePath($relPath, $this, F3_TYPO3CR_PathParser::SEARCH_MODE_PROPERTIES);
 		}
 	}
 
@@ -1442,33 +1469,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 
 	// non-JSR-283 methods
 
-
-	/**
-	 * Initializes the Node with data fetched from storage component
-	 *
-	 * @param array $rawData
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo The NodeType object should be coming from some factory-thingy. Right now it's protoype (defined in PHPCR Components.php), but actually the same nodetype could be the same object!
-	 */
-	public function initializeFromArray(array $rawData) {
-		if (!isset($this->id)) {
-			if (isset($rawData['id'])) {
-				$this->id = $rawData['id'];
-			}
-			if ($rawData['pid'] == '0') {
-				$this->parentNode = NULL;
-			} else {
-				$this->parentNode = $this->session->getNodeByIdentifier($rawData['pid']);
-			}
-			$this->name = $rawData['name'];
-			$this->identifier = $rawData['identifier'];
-			$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $rawData['nodetype'], $this->storageAccess);
-			$this->initializeProperties();
-		} else {
-			throw new F3_PHPCR_RepositoryException('New node objects can only be initialized from an array once.', 1181076288);
-		}
-	}
 
 	/**
 	 * Fetches the properties of the node from the storage layer

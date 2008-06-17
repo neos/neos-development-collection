@@ -31,23 +31,6 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @var F3_TYPO3CR_Node
-	 */
-	protected $rootNode;
-
-	/**
-	 * @var F3_TYPO3CR_PathParser
-	 */
-	protected $pathParser;
-
-	/**
-	 * Set up the test environment
-	 */
-	public function setUp() {
-		$this->pathParser = new F3_TYPO3CR_PathParser();
-	}
-
-	/**
 	 * Checks if we receive the root node properly
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -60,19 +43,18 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = new F3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
 
-		$rootNode = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
-		$rootNode->initializeFromArray(array(
-			'id' => '1',
+		$rawData = array(
 			'identifier' => '',
-			'pid' => '0',
+			'parent' => 0,
 			'nodetype' => 'nodeTypeName',
 			'name' => 'nodeA'
-		));
+		);
+		$rootNode = new F3_TYPO3CR_Node($rawData, $mockSession, $mockStorageAccess, $this->componentManager);
 
-		$firstNode = $this->pathParser->parsePath('/', $rootNode);
+		$firstNode = F3_TYPO3CR_PathParser::parsePath('/', $rootNode);
 		$this->assertEquals($rootNode, $firstNode, 'The path parser did not return the root node.');
 
-		$secondNode = $this->pathParser->parsePath('/./', $rootNode);
+		$secondNode = F3_TYPO3CR_PathParser::parsePath('/./', $rootNode);
 		$this->assertEquals($rootNode, $secondNode, 'The path parser did not return the root node.');
 	}
 
@@ -88,8 +70,8 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-				'pid' => 0,
-				'nodetype' => 0,
+				'parent' => 0,
+				'nodetype' => 'nt:base',
 				'name' => ''
 			)
 		);
@@ -97,20 +79,20 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'pid' => 0,
-					'nodetype' => 0,
+					'parent' => 0,
+					'nodetype' => 'nt:base',
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'nodetype' => 0,
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 'nt:base',
 					'name' => 'Content'
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'nodetype' => 0,
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 'nt:base',
 					'name' => 'News'
 				),
 			)
@@ -132,7 +114,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$rootNode = $session->getRootNode();
 
 		$expectedTitle = 'News about the TYPO3CR';
-		$newsItem = $this->pathParser->parsePath('Content/News/title', $rootNode, F3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
+		$newsItem = F3_TYPO3CR_PathParser::parsePath('Content/News/title', $rootNode, F3_TYPO3CR_PathParser::SEARCH_MODE_PROPERTIES);
 		$this->assertEquals($expectedTitle, $newsItem->getString(), 'The path parser did not return the expected property value.');
 	}
 
@@ -148,8 +130,8 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-				'pid' => 0,
-				'nodetype' => 0,
+				'parent' => 0,
+				'nodetype' => 'nt:base',
 				'name' => ''
 			)
 		);
@@ -157,14 +139,14 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'pid' => 0,
-					'nodetype' => 0,
+					'parent' => 0,
+					'nodetype' => 'nt:base',
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'nodetype' => 0,
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 'nt:base',
 					'name' => 'Node'
 				),
 			)
@@ -184,8 +166,8 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$rootNode = $session->getRootNode();
-		$property1 = $this->pathParser->parsePath('Node/title', $rootNode, F3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
-		$property2 = $this->pathParser->parsePath('Node/title', $rootNode, F3_TYPO3CR_PathParserInterface::SEARCH_MODE_PROPERTIES);
+		$property1 = F3_TYPO3CR_PathParser::parsePath('Node/title', $rootNode, F3_TYPO3CR_PathParser::SEARCH_MODE_PROPERTIES);
+		$property2 = F3_TYPO3CR_PathParser::parsePath('Node/title', $rootNode, F3_TYPO3CR_PathParser::SEARCH_MODE_PROPERTIES);
 		$this->assertSame($property1, $property2, 'The path parser did not return the same object.');
 	}
 
@@ -204,8 +186,8 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-				'pid' => 0,
-				'nodetype' => 0,
+				'parent' => 0,
+				'nodetype' => 'nt:base',
 				'name' => ''
 			)
 		);
@@ -213,20 +195,20 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'pid' => 0,
-					'nodetype' => 0,
+					'parent' => 0,
+					'nodetype' => 'nt:base',
 					'name' => ''
 				),
 				$expectedContentNodeIdentifier => array(
 					'identifier' => $expectedContentNodeIdentifier,
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'nodetype' => 0,
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 'nt:base',
 					'name' => 'Content'
 				),
 				$expectedHomeNodeIdentifier => array(
 					'identifier' => $expectedHomeNodeIdentifier,
-					'pid' => $expectedContentNodeIdentifier,
-					'nodetype' => 0,
+					'parent' => $expectedContentNodeIdentifier,
+					'nodetype' => 'nt:base',
 					'name' => 'Home'
 				),
 			)
@@ -235,19 +217,19 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
 		$rootNode = $session->getRootNode();
 
-		$node = $this->pathParser->parsePath('/Content', $rootNode);
+		$node = F3_TYPO3CR_PathParser::parsePath('/Content', $rootNode);
 		$this->assertEquals($expectedContentNodeIdentifier, $node->getIdentifier(), 'The path parser did not return the correct content node.');
 
-		$node = $this->pathParser->parsePath('/Content/', $rootNode);
+		$node = F3_TYPO3CR_PathParser::parsePath('/Content/', $rootNode);
 		$this->assertEquals($expectedContentNodeIdentifier, $node->getIdentifier(), 'The path parser did not return the correct content node.');
 
-		$node = $this->pathParser->parsePath('/Content/.', $rootNode);
+		$node = F3_TYPO3CR_PathParser::parsePath('/Content/.', $rootNode);
 		$this->assertEquals($expectedContentNodeIdentifier, $node->getIdentifier(), 'The path parser did not return the correct content node.');
 
-		$node = $this->pathParser->parsePath('Content/..', $rootNode);
+		$node = F3_TYPO3CR_PathParser::parsePath('Content/..', $rootNode);
 		$this->assertEquals($rootNode->getIdentifier(), $node->getIdentifier(), 'The path parser did not return the correct root node.');
 
-		$node = $this->pathParser->parsePath('Content/./Home', $rootNode);
+		$node = F3_TYPO3CR_PathParser::parsePath('Content/./Home', $rootNode);
 		$this->assertEquals($expectedHomeNodeIdentifier, $node->getIdentifier(), 'The path parser did not return the home page.');
 	}
 

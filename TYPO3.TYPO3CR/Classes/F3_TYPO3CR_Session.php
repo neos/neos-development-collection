@@ -103,10 +103,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Gets the user ID associated with this Session. This method is free to return an
 	 * 'anonymous user ID' or NULL.
 	 *
-	 * Currently always returns NULL!
-	 *
 	 * @return mixed
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getUserID() {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408404);
@@ -118,7 +115,6 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * empty array if the Credentials instance did not provide attributes.
 	 *
 	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getAttributeNames() {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408403);
@@ -129,7 +125,6 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * attribute of the given name exists.
 	 *
 	 * @param string $name
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getAttribute($name) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408402);
@@ -154,8 +149,11 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 */
 	public function getRootNode() {
 		if ($this->rootNode === NULL) {
-			$this->rootNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this, $this->storageAccess);
-			$this->rootNode->initializeFromArray($this->storageAccess->getRawRootNode());
+			$this->rootNode = $this->componentManager->getComponent(
+				'F3_PHPCR_NodeInterface',
+				$this->storageAccess->getRawRootNode(),
+				$this,
+				$this->storageAccess);
 			$this->currentlyLoadedNodes[$this->rootNode->getIdentifier()] = $this->rootNode;
 		}
 
@@ -198,8 +196,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		if ($rawNode === FALSE) {
 			throw new F3_PHPCR_ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
 		}
-		$node = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $this, $this->storageAccess);
-		$node->initializeFromArray($rawNode);
+		$node = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawNode, $this, $this->storageAccess);
 		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
 
 		return $node;
@@ -222,8 +219,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getItem($absPath) {
-		$pathParser = $this->componentManager->getComponent('F3_TYPO3CR_PathParserInterface');
-		return $pathParser->parsePath($absPath, $this->getRootNode(), F3_TYPO3CR_PathParserInterface::SEARCH_MODE_ITEMS);
+		return F3_TYPO3CR_PathParser::parsePath($absPath, $this->getRootNode(), F3_TYPO3CR_PathParser::SEARCH_MODE_ITEMS);
 	}
 
 	/**

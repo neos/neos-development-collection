@@ -49,8 +49,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-				'pid' => 0,
-				'nodetype' => 0,
+				'parent' => 0,
+				'nodetype' => 'nt:base',
 				'name' => ''
 			)
 		);
@@ -58,20 +58,20 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'pid' => 0,
-					'nodetype' => 0,
+					'parent' => 0,
+					'nodetype' => 'nt:base',
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'Content'
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'nodetype' => 0,
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 'nt:base',
 					'name' => 'News'
 				),
 			)
@@ -188,6 +188,14 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getPrimaryNodeTypeReturnsANodeType() {
 		$this->assertType('F3_PHPCR_NodeType_NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function getPrimaryNodeTypeReturnsExpectedNodeType() {
+		$this->assertEquals('nt:base', $this->rootNode->getPrimaryNodeType()->getName(), 'getPrimaryNodeType() in the node did not return the expected NodeType.');
 	}
 
 	/**

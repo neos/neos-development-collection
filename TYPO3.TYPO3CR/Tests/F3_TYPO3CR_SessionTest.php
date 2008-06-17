@@ -174,8 +174,8 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-				'pid' => 0,
-				'nodetype' => 0,
+				'parent' => 0,
+				'nodetype' => 'nt:base',
 				'name' => ''
 			)
 		);
@@ -183,14 +183,14 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'pid' => 0,
-					'nodetype' => 0,
+					'parent' => 0,
+					'nodetype' => 'nt:base',
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'nodetype' => 0,
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 'nt:base',
 					'name' => 'News'
 				),
 			)
@@ -243,8 +243,8 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-				'pid' => 0,
-				'nodetype' => 0,
+				'parent' => 0,
+				'nodetype' => 'nt:base',
 				'name' => ''
 			)
 		);
@@ -252,14 +252,14 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'pid' => 0,
-					'nodetype' => 0,
+					'parent' => 0,
+					'nodetype' => 'nt:base',
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'nodetype' => 0,
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 'nt:base',
 					'name' => 'News'
 				),
 			)
@@ -281,8 +281,8 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-				'pid' => 0,
-				'nodetype' => 0,
+				'parent' => 0,
+				'nodetype' => 'nt:base',
 				'name' => ''
 			)
 		);
@@ -290,14 +290,14 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'pid' => 0,
-					'nodetype' => 0,
+					'parent' => 0,
+					'nodetype' => 'nt:base',
 					'name' => ''
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-					'pid' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'nodetype' => 0,
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 'nt:base',
 					'name' => 'News'
 				),
 			)

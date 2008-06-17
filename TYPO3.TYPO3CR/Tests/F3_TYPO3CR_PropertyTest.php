@@ -74,22 +74,19 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager));
 
-		$rootNode = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
-		$rootNode->initializeFromArray(array(
-			'id' => NULL,
-			'pid' => 0,
+		$rawData = array(
+			'parent' => 0,
 			'name' => '',
-			'identifier' => $rootNode->getIdentifier(),
-			'nodetype' => 1)
+			'nodetype' => 'nt:base'
 		);
+		$rootNode = new F3_TYPO3CR_Node($rawData, $mockSession, $mockStorageAccess, $this->componentManager);
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($rootNode));
-		$node = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
-		$node->initializeFromArray(array(
-			'pid' => $rootNode->getIdentifier(),
+		$rawData = array(
+			'parent' => $rootNode->getIdentifier(),
 			'name' => 'testnode',
-			'identifier' => $node->getIdentifier(),
-			'nodetype' => 1,
-		));
+			'nodetype' => 'nt:base'
+		);
+		$node = new F3_TYPO3CR_Node($rawData, $mockSession, $mockStorageAccess, $this->componentManager);
 		$node->setProperty('testproperty', 'some test value');
 
 		$testProperty = $node->getProperty('testproperty');

@@ -27,7 +27,11 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
+class F3_TYPO3CR_PathParser {
+
+	const SEARCH_MODE_NODES = 1;
+	const SEARCH_MODE_PROPERTIES = 2;
+	const SEARCH_MODE_ITEMS = 3;
 
 	/**
 	 * Parse a path - It can be either a relative or an absolute path. We support same-name siblings as well.
@@ -38,13 +42,13 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 	 * @return F3_PHPCR_NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function parsePath($path, F3_PHPCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
-		if ($this->isPathAbsolute($path)) {
-			$currentNode = $this->getRootNode($currentNode);
+	public static function parsePath($path, F3_PHPCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
+		if (self::isPathAbsolute($path)) {
+			$currentNode = self::getRootNode($currentNode);
 			$path = F3_PHP6_Functions::substr($path, 1);
 		}
 
-		return $this->parseRelativePath($path, $currentNode, $searchMode);
+		return self::parseRelativePath($path, $currentNode, $searchMode);
 	}
 
 	/**
@@ -63,8 +67,9 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 		if ($path == '' && ($searchMode & self::SEARCH_MODE_NODES)) {
 			return $currentNode;
 		}
-		list($firstElement, $remainingPath, $numberOfRemainingPathParts) = $this->getFirstPathPart($path);
+		list($firstElement, $remainingPath, $numberOfRemainingPathParts) = self::getFirstPathPart($path);
 
+		$matchResult = array();
 		if (preg_match('/(.*)\[(.*)\]/', $firstElement, $matchResult)) {
 			if ($matchResult[2] < 1) {
 				throw new F3_PHPCR_RepositoryException('Invalid relative path supplied, index must be > 0!', 1189350810);
@@ -78,10 +83,10 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 		}
 
 		if ($name == '.') {
-			return $this->parseRelativePath($remainingPath, $currentNode, $searchMode);
+			return self::parseRelativePath($remainingPath, $currentNode, $searchMode);
 		}
 		if ($name == '..') {
-			return $this->parseRelativePath($remainingPath, $currentNode->getParent(), $searchMode);
+			return self::parseRelativePath($remainingPath, $currentNode->getParent(), $searchMode);
 		}
 
 			// Once NamePatterns are implemented, it will be a lot easier!
@@ -95,7 +100,7 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 							return $currentSubNode;
 						}
 					} else {
-						return $this->parseRelativePath($remainingPath, $currentSubNode, $searchMode);
+						return self::parseRelativePath($remainingPath, $currentSubNode, $searchMode);
 					}
 				} else {
 					$currentNameIndex++;
@@ -126,6 +131,7 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 		} catch (F3_PHPCR_ItemNotFoundException $e) {
 			return $currentNode;
 		}
+		throw new F3_PHPCR_RepositoryException('Root node could not be found!', 1213715217);
 	}
 
 	/**
@@ -135,8 +141,8 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 	 * @return boolean TRUE if path is absolute (e.g. starts with a /), FALSE otherwise
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function isPathAbsolute($path) {
-		return ($path{0} == '/');
+	public static function isPathAbsolute($path) {
+		return ($path{0} === '/');
 	}
 
 	/**
@@ -148,7 +154,7 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
-	public function getFirstPathPart($path) {
+	public static function getFirstPathPart($path) {
 		if (self::isPathAbsolute($path)) {
 			$path = F3_PHP6_Functions::substr($path, 1);
 		}
@@ -167,7 +173,7 @@ class F3_TYPO3CR_PathParser implements F3_TYPO3CR_PathParserInterface {
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
-	public function getLastPathPart($path) {
+	public static function getLastPathPart($path) {
 		$pathArray = explode('/', $path);
 		$lastElement = array_pop($pathArray);
 		$remainingPath = implode('/', $pathArray);

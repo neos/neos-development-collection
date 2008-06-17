@@ -44,16 +44,14 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 	public function addNodeAndRemoveNodeWork() {
 		$identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
 		$expectedRawNode = array(
-			'id' => NULL,
-			'pid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
+			'parent' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
 			'name' => 'TestNode1',
 			'identifier' => $identifier,
-			'nodetype' => '1'
+			'nodetype' => 'nt:base'
 		);
-		$this->storageAccess->addNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', '1', 'TestNode1');
+		$this->storageAccess->addNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', 'nt:base', 'TestNode1');
 		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
 		$this->assertTrue(is_array($rawNode), 'getRawNodeByIdentifier() did not return an array for a just created node entry.');
-		$expectedRawNode['id'] = $rawNode['id'];
 		$this->assertSame($expectedRawNode, $rawNode, 'The returned raw node had not the expected values.');
 
 		$this->storageAccess->removeNode($identifier);
@@ -69,26 +67,23 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 	public function updateNodeAndRemoveNodeWork() {
 		$identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
 		$expectedRawNode = array(
-			'id' => NULL,
-			'pid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
+			'parent' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
 			'name' => 'TestNode2',
 			'identifier' => $identifier,
-			'nodetype' => '1'
+			'nodetype' => 'nt:base'
 		);
-		$this->storageAccess->addNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', '1', 'TestNode2');
+		$this->storageAccess->addNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', 'nt:base', 'TestNode2');
 		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
 		$this->assertTrue(is_array($rawNode), 'getRawNodeByIdentifier() did not return an array for a just created node entry.');
-		$expectedRawNode['id'] = $rawNode['id'];
 		$this->assertSame($expectedRawNode, $rawNode, 'The returned raw node had not the expected values.');
 
 		$expectedRawNodeUpdated = array(
-			'id' => $rawNode['id'],
-			'pid' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d01',
+			'parent' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d01',
 			'name' => 'TestNode2Updated',
 			'identifier' => $identifier,
-			'nodetype' => '3'
+			'nodetype' => 'nt:unstructured'
 		);
-		$this->storageAccess->updateNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d01', '3', 'TestNode2Updated');
+		$this->storageAccess->updateNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d01', 'nt:unstructured', 'TestNode2Updated');
 		$rawNodeUpdated = $this->storageAccess->getRawNodeByIdentifier($identifier);
 		$this->assertTrue(is_array($rawNodeUpdated), 'getRawNodeByIdentifier() did not return an array for an updated node entry.');
 		$this->assertSame($expectedRawNodeUpdated, $rawNodeUpdated, 'The returned raw node had not the expected (updated) values.');

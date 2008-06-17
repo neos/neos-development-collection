@@ -97,10 +97,10 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function createValueFromReferenceGuessesCorrectType() {
+	public function createValueFromNodeGuessesCorrectType() {
 		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
-		$node = new F3_TYPO3CR_Node($mockSession, $mockStorageAccess, $this->componentManager);
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $mockStorageAccess, $this->componentManager);
 		$value = $this->valueFactory->createValue($node);
 		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
 		$this->assertEquals($value->getString(), $node->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');
