@@ -42,14 +42,6 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Fetches raw node data from the database
 	 *
-	 * @param integer $id The (internal) ID of the node to fetch
-	 * @return array|FALSE
-	 */
-	public function getRawNodeById($Id);
-
-	/**
-	 * Fetches raw node data from the database
-	 *
 	 * @param string $identifier The Identifier of the node to fetch
 	 * @return array|FALSE
 	 */

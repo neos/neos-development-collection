@@ -71,22 +71,6 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	/**
 	 * Fetches raw node data from the database
 	 *
-	 * @param  integer $id The (internal) ID of the node to fetch
-	 * @return array|FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getRawNodeById($Id) {
-		if (key_exists($this->workspaceName, $this->rawNodesByIDGroupedByWorkspace)) {
-			if (key_exists($id, $this->rawNodesByIDGroupedByWorkspace[$this->workspaceName])) {
-				return $this->rawNodesByIDGroupedByWorkspace[$this->workspaceName][$id];
-			}
-		}
-		return FALSE;
-	}
-
-	/**
-	 * Fetches raw node data from the database
-	 *
 	 * @param  string $identifier The Identifier of the node to fetch
 	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>

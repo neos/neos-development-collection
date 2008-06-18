@@ -70,19 +70,6 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	/**
 	 * Fetches raw node data from the database
 	 *
-	 * @param integer $nodeId The (internal) ID of the node to fetch
-	 * @return array|FALSE
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getRawNodeById($nodeId) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE parent = ?');
-		$statementHandle->execute(array($nodeId));
-		return $statementHandle->fetch(PDO::FETCH_ASSOC);
-	}
-
-	/**
-	 * Fetches raw node data from the database
-	 *
 	 * @param string $identifier The Identifier of the node to fetch
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
