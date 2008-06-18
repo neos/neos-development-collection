@@ -291,6 +291,17 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406778);
 	}
 
+	/*
+	 * Returns the LockManager object, through which locking methods are accessed.
+	 *
+	 * @return F3_PHPCR_Lock_LockManagerInterface
+	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if the implementation does not support locking.
+	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 */
+	public function getLockManager() {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213801840);
+	}
+
 	/**
 	 * Returns the NamespaceRegistry object, which is used to access the mapping
 	 * between prefixes and namespaces. In level 2 repositories the NamespaceRegistry

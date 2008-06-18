@@ -924,6 +924,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @return void
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException If this node is not versionable.
 	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the checkout.
+	 * @throws F3_PHPCR_Version_ActivityViolationException If the checkout conflicts with the activity present on the current session.
 	 * @throws F3_PHPCR_RepositoryException If another error occurs.
 	 */
 	public function checkout() {
@@ -939,6 +940,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
 	 * @throws F3_PHPCR_InvalidItemStateException if there are unsaved changes pending on this node.
 	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the operation.
+	 * @throws F3_PHPCR_Version_ActivityViolationException If the checkout conflicts with the activity present on the current session.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 */
 	public function checkpoint() {
@@ -1193,6 +1195,76 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	}
 
 	/**
+	 * Places a hold on this node and its properties (if isDeep is false) or
+	 * this node and its subtree (if isDeep is true).
+	 *
+	 * The supplied holdID is added to the jcr:hold multi-value property and the
+	 * corresponding jcr:isDeep value is set accordingly. The corresponding
+	 * jcr:isDeep value is the one with the same index as the holdID value.
+	 *
+	 * The format and interpretation of the holdID is not specified.
+	 * It is expected to be an identifier associated with the application placing
+	 * the hold.
+	 *
+	 * @param string $holdID a string
+	 * @param boolean $isDeep a boolean
+	 * @return void
+	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
+	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 */
+	public function setHold($holdID, $isDeep) {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802139);
+	}
+
+	/**
+	 * Removes the specified holdID and the corresponding boolean flag from the
+	 * jcr:hold and jcr:isDeep properties of this node, respectively.
+	 *
+	 * If this is the last holdID in the property then the hold on this node is
+	 * lifted.
+	 *
+	 * @param string $holdID a string
+	 * @return void
+	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
+	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 */
+	public function removeHold($holdID) {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802140);
+	}
+
+	/**
+	 * Sets the retention policy of this node to that defined in the specified
+	 * policy node. Interpretation and enforcement of this policy is an
+	 * implementation issue.
+	 *
+	 * The jcr:retentionPolicy property of this node is set to
+	 * refer to the policy node.
+	 *
+	 * @param F3_PHPCR_NodeInterface $policy a policy node
+	 * @return void
+	 * @throws F3_PHPCR_NodeType_ConstraintViolationException if the specified node is not a valid retention policy node.
+	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
+	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 */
+	public function setRetentionPolicy(F3_PHPCR_NodeInterface $policy) {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802141);
+	}
+
+	/**
+	 * Causes the current retention policy on this node to no longer apply.
+	 *
+	 * Removes the jcr:retentionPolicy property from this node.
+	 *
+	 * @return void
+	 * @throws F3_PHPCR_NodeType_ConstraintViolationException if this node does not have a retention policy currently assigned.
+	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
+	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 */
+	public function removeRetentionPolicy() {
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802142);
+	}
+
+	/**
 	 * Returns true if this node is either
 	 * versionable (full or simple) and currently checked-out,
 	 * non-versionable and its nearest versionable ancestor is checked-out or
@@ -1328,113 +1400,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	}
 
 	/**
-	 * Places a lock on this node. If successful, this node is said to hold the lock.
-	 * If isDeep is true then the lock applies to this node and all its descendant
-	 * nodes; if false, the lock applies only to this, the holding node.
-	 *
-	 * If isSessionScoped is true then this lock will expire upon the expiration
-	 * of the current session (either through an automatic or explicit Session.logout);
-	 * if false, this lock does not expire until explicitly unlocked or automatically
-	 * unlocked due to a implementation-specific limitation, such as a timeout.
-	 *
-	 * Returns a Lock object reflecting the state of the new lock.
-	 *
-	 * If the lock is open-scoped the returned lock will include a lock token.
-	 *
-	 * The lock token is also automatically added to the set of lock tokens held
-	 * by the current Session.
-	 *
-	 * If successful, then the property jcr:lockOwner is created and set to the
-	 * value of Session.getUserID for the current session and the property
-	 * jcr:lockIsDeep is set to the value passed in as isDeep. These changes are
-	 * persisted automatically; there is no need to call save.
-	 *
-	 * Note that it is possible to lock a node even if it is checked-in (the
-	 * lock-related properties will be changed despite the checked-in status).
-	 *
-	 * @param boolean $isDeep if true this lock will apply to this node and all its descendants; if false, it applies only to this node.
-	 * @param boolean $isSessionScoped if true, this lock expires with the current session; if false it expires when explicitly or automatically unlocked for some other reason.
-	 * @return F3_PHPCR_Lock_LockInterface A Lock object containing a lock token.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support locking.
-	 * @throws F3_PHPCR_Lock_LockException if this node is not mix:lockable or this node is already locked or isDeep is true and a descendant node of this node already holds a lock.
-	 * @throws F3_PHPCR_AccessDeniedException if this session does not have permission to lock this node.
-	 * @throws F3_PHPCR_InvalidItemStateException if this node has pending unsaved changes.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	 */
-	public function lock($isDeep, $isSessionScoped) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667735);
-	}
-
-	/**
-	 * Returns the Lock object that applies to this node. This may be either a
-	 * lock on this node itself or a deep lock on a node above this node.
-	 * If the current session holds the lock token for this lock, then the
-	 * returned Lock object contains that lock token (accessible through
-	 * Lock.getLockToken). If this Session does not hold the applicable lock token,
-	 * then the returned Lock object will not contain the lock token (its
-	 * Lock.getLockToken method will return null).
-	 *
-	 * @return F3_PHPCR_Lock_LockInterface The applicable Lock object, without a contained lock token.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support locking.
-	 * @throws F3_PHPCR_Lock_LockException if no lock applies to this node.
-	 * @throws F3_PHPCR_AccessDeniedException if the current session does not have permission to get the lock.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	 */
-	public function getLock() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667736);
-	}
-
-	/**
-	 * Removes the lock on this node. Also removes the properties jcr:lockOwner
-	 * and jcr:lockIsDeep from this node. These changes are persisted automatically;
-	 * there is no need to call save. As well, the corresponding lock token is
-	 * removed from the set of lock tokens held by the current Session.
-	 * If this node does not currently hold a lock or holds a lock for which this
-	 * Session is not the owner, then a LockException is thrown. Note however that
-	 * the system may give permission to a non-owning session to unlock a lock.
-	 * Typically such "lock-superuser" capability is intended to facilitate
-	 * administrational clean-up of orphaned open-scoped locks.
-	 *
-	 * Note that it is possible to unlock a node even if it is checked-in (the
-	 * lock-related properties will be changed despite the checked-in status).
-	 *
-	 * @return void
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this implementation does not support locking.
-	 * @throws F3_PHPCR_Lock_LockException if this node does not currently hold a lock or holds a lock for which this Session does not have the correct lock token
-	 * @throws F3_PHPCR_AccessDeniedException if the current session does not have permission to unlock this node.
-	 * @throws F3_PHPCR_InvalidItemStateException if this node has pending unsaved changes.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	 */
-	public function unlock() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667737);
-	}
-
-	/**
-	 * Returns true if this node holds a lock; otherwise returns false. To hold
-	 * a lock means that this node has actually had a lock placed on it
-	 * specifically, as opposed to just having a lock apply to it due to a deep
-	 * lock held by a node above.
-	 *
-	 * @return boolean a boolean.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
-	 */
-	public function holdsLock() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667738);
-	}
-
-	/**
-	 * Returns true if this node is locked either as a result of a lock held by
-	 * this node or by a deep lock on a node above this node; otherwise returns
-	 * false.
-	 *
-	 * @return boolean a boolean.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
-	 */
-	public function isLocked() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667739);
-	}
-
-	/**
 	 * Causes the lifecycle state of this node to undergo the specified transition.
 	 * This method may change the value of the jcr:currentLifecycleState property,
 	 * in most cases it is expected that the implementation will change the value
@@ -1463,8 +1428,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	public function getAllowedLifecycleTransitions() {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667741);
 	}
-
-
 
 
 	// non-JSR-283 methods
