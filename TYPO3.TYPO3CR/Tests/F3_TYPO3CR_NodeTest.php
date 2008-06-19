@@ -41,10 +41,15 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	protected $mockStorageAccess;
 
 	/**
+	 * @var F3_TYPO3CR_Session
+	 */
+	protected $session;
+
+	/**
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
 		$this->mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
 		$this->mockStorageAccess->rawRootNodesByWorkspace = array(
 			'default' => array(
@@ -91,6 +96,24 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 
 		$this->session = new F3_TYPO3CR_Session('default', $mockRepository, $this->mockStorageAccess, $this->componentManager);
 		$this->rootNode = $this->session->getRootNode();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function newNodeIsMarkedAsNew() {
+		$newNode = $this->rootNode->addNode('User');
+		$this->assertTrue($newNode->isNew(), 'freshly created node is not marked new');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function newNodeIsNotMarkedAsModified() {
+		$newNode = $this->rootNode->addNode('User');
+		$this->assertFalse($newNode->isModified(), 'freshly created node is marked modified');
 	}
 
 	/**
@@ -420,40 +443,63 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Test if addNode(Content/./Categories/Pages/User) returns a Node.
-	 *
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function addNodeWithRelPathReturnsANode() {
-		$newNode1 = $this->rootNode->addNode('SomeItem');
-		$newNode2 = $this->rootNode->addNode('Content/./News/SomeItem');
-
-		$this->assertType('F3_PHPCR_NodeInterface', $newNode1, 'Function: addNode() - returns not an object from type F3_PHPCR_NodeInterface.');
-		$this->assertType('F3_PHPCR_NodeInterface', $newNode2, 'Function: addNode() - returns not an object from type F3_PHPCR_NodeInterface.');
-
-		$expectedParentNode = $this->rootNode->getNode('Content/News');
-		$this->assertTrue($expectedParentNode->isSame($newNode2->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
+	public function addNodeWithSimpleRelativePathReturnsANode() {
+		$newNode = $this->rootNode->addNode('SomeItem');
+		$this->assertType('F3_PHPCR_NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3_PHPCR_NodeInterface.');
 	}
 
 	/**
-	 * Test save() on a node
-	 *
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function saveWorksAsExpected() {
-		$newNode1 = $this->rootNode->addNode('User');
-		$newNode2 = $this->rootNode->addNode('Content/News/User');
+	public function addNodeWithComplexRelativePathReturnsANode() {
+		$newNode = $this->rootNode->addNode('Content/./News/SomeItem');
+		$this->assertType('F3_PHPCR_NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3_PHPCR_NodeInterface.');
+	}
 
-		$this->rootNode->save();
+	/**
+	 * @author Thomas Peterson <info@thomas-peterson.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function addNodeWithComplexRelativePathReturnsNodeWithExpectedParent() {
+		$newNode = $this->rootNode->addNode('Content/./News/SomeItem');
+		$expectedParentNode = $this->rootNode->getNode('Content/News');
+		$this->assertTrue($expectedParentNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
+	}
 
-		$newNode1 = $this->session->getNodeByIdentifier($newNode1->getIdentifier());
-		$this->assertType('F3_PHPCR_NodeInterface', $newNode1, 'Function: save() - Nodes are not persisted in the CR.');
-		$newNode2 = $this->session->getNodeByIdentifier($newNode2->getIdentifier());
-		$this->assertType('F3_PHPCR_NodeInterface', $newNode2, 'Function: save() - Nodes are not persisted in the CR.');
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function addedNodeIsVisibleInSession() {
+		$newNode = $this->rootNode->addNode('User');
+
+		$retrievedNode = $this->session->getNodeByIdentifier($newNode->getIdentifier());
+		$this->assertSame('User', $retrievedNode->getName(), 'added node is invisible to session');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function addNodeSetsModifiedStatusOfNode() {
+		$this->rootNode->addNode('User');
+		$this->assertTrue($this->rootNode->isModified(), 'addNode does not mark parent as modified');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function setPropertySetsModifiedStatusOfNode() {
+		$this->rootNode->setProperty('someprop', 1);
+		$this->assertTrue($this->rootNode->isModified(), 'setProperty does not mark parent as modified');
 	}
 
 	/**
@@ -461,19 +507,19 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function setPropertyCreatesPropertyAsExpected() {
-		$testPropertyNode = $this->rootNode->addNode('TestPropertyNode');
-		$testPropertyNode->setProperty('title', 'YEAH, it works!');
-		$this->assertEquals($this->session->getItem('/TestPropertyNode/title')->getString(), 'YEAH, it works!', 'Transient storage does not work, title should be "YEAH, it works!", but is "' . $this->session->getItem('/TestPropertyNode/title')->getString() . '"');
-		$this->assertTrue($this->session->getItem('/TestPropertyNode/title')->isNew(), 'isNew() not correctly set. (Needs to be TRUE)');
-		$testPropertyNode->save();
-		$this->assertFalse($this->session->getItem('/TestPropertyNode/title')->isNew(), 'isNew() not correctly set. (Needs to be FALSE)');
+	public function setPropertyIsVisibleToNode() {
+		$this->rootNode->setProperty('someprop', 'somePropValue');
+		$this->assertTrue($this->rootNode->hasProperty('someprop'), 'hasProperty returns FALSE for freshly added property');
+	}
 
-		$testPropertyNode->setProperty('title', 'YEAH, it still works!');
-		$this->assertEquals($this->session->getItem('/TestPropertyNode/title')->getString(), 'YEAH, it still works!', 'Transient storage does not work, title should be "YEAH, it still works!", but is "' . $this->session->getItem('/TestPropertyNode/title')->getString() . '"');
-		$this->assertTrue($this->session->getItem('/TestPropertyNode/title')->isModified(), 'isModified() not correctly set. (Needs to be TRUE)');
-		$testPropertyNode->save();
-		$this->assertFalse($this->session->getItem('/TestPropertyNode/title')->isModified(), 'isModified() not correctly set. (Needs to be FALSE)');
+	/**
+	 * Test set property
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function setPropertySetsValue() {
+		$this->rootNode->setProperty('someprop', 'somePropValue');
+		$this->assertEquals('somePropValue', $this->rootNode->getProperty('someprop')->getString(), 'unexpected value returned for freshly added property');
 	}
 }
 ?>

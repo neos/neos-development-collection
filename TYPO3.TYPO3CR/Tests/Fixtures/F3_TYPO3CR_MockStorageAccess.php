@@ -169,14 +169,14 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	/**
 	 * Returns raw property data for the specified node
 	 *
-	 * @param string $nodeIdentifier The node Identifier to fetch properties for
+	 * @param string $identifier The node Identifier to fetch properties for
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getRawPropertiesOfNode($nodeIdentifier) {
+	public function getRawPropertiesOfNode($identifier) {
 		if (key_exists($this->workspaceName, $this->rawPropertiesByIdentifierGroupedByWorkspace)) {
-			if (key_exists($nodeIdentifier, $this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
-				return $this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$nodeIdentifier];
+			if (key_exists($identifier, $this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+				return $this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier];
 			}
 		}
 		return FALSE;
@@ -224,67 +224,68 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	/**
 	 * Adds a node to the storage
 	 *
-	 * @param string $identifier Identifier to insert
-	 * @param string $pid Identifier of the parent node
-	 * @param integer $nodetype Nodetype to insert
-	 * @param string $name Name to insert
+	 * @param F3_PHPCR_NodeInterface $node node to insert
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function addNode($identifier, $pid, $nodetype, $name) {
-		$this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier] = array(
-			'identifier' => $identifier,
-			'parent' => $pid,
-			'nodetype' => $nodetype,
-			'name' => $name
+	public function addNode(F3_PHPCR_NodeInterface $node) {
+		$this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$node->getIdentifier()] = array(
+			'identifier' => $node->getIdentifier(),
+			'parent' => $node->getParent()->getIdentifier(),
+			'nodetype' => $node->getPrimaryNodeType()->getName(),
+			'name' => $node->getName()
 		);
 	}
 
 	/**
 	 * Updates a node in the storage
 	 *
-	 * @param string $identifier Identifier of the node to update
-	 * @param string $pid Identifier of the parent node
-	 * @param integer $nodetype new nodetype
-	 * @param string $name new name
+	 * @param F3_PHPCR_NodeInterface $node node to update
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function updateNode($identifier, $pid, $nodetype, $name) {
-		$this->addNode($identifier, $pid, $nodetype, $name);
+	public function updateNode(F3_PHPCR_NodeInterface $node) {
+		$this->addNode($node);
+	}
+
+	/**
+	 * Deletes a node in the repository
+	 *
+	 * @param F3_PHPCR_NodeInterface $node node to delete
+	 * @return void
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function removeNode(F3_PHPCR_NodeInterface $node) {
+		unset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$node->getIdentifier()]);
 	}
 
 	/**
 	 * Adds a property in the storage
 	 *
-	 * @param string $identifier Identifier of parent node
-	 * @param string $name Name of property
-	 * @param string $value Value of property
-	 * @param boolean $isMultiValued
+	 * @param F3_PHPCR_PropertyInterface $property property to insert
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo implement support for multi-value properties
 	 */
-	public function addProperty($identifier, $name, $value, $isMultiValued) {
-		$this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier][] = array(
-			'name' => $name,
-			'value' => $value,
+	public function addProperty(F3_PHPCR_PropertyInterface $property) {
+		$this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$property->getParent()->getIdentifier()][] = array(
+			'name' => $property->getName(),
+			'value' => $property->getString(),
 			'namespace' => '',
-			'multivalue' => $isMultiValued
+			'multivalue' => FALSE
 		);
 	}
 
 	/**
 	 * Updates a property in the repository identified by identifier and name
 	 *
-	 * @param string $identifier Identifier of parent node
-	 * @param string $name Name of property
-	 * @param string $value Value of property
-	 * @param boolean $isMultiValued
+	 * @param F3_PHPCR_PropertyInterface $property property to update
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function updateProperty($identifier, $name, $value, $isMultiValued) {
-		$this->addProperty($identifier, $name, $value, $isMultiValued);
+	public function updateProperty(F3_PHPCR_PropertyInterface $property) {
+		$this->addProperty($property);
 	}
 
 }

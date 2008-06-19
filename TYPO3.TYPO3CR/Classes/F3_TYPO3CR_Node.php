@@ -68,7 +68,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
 
-		$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+		if (!isset($rawData['identifier'])) {
+			$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+			$this->session->registerNodeAsNew($this);
+		}
 
 		foreach ($rawData as $key => $value) {
 			switch ($key) {
@@ -89,14 +92,43 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 					$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $value, $this->storageAccess);
 					break;
 			}
-
-			$this->initializeProperties();
 		}
+
+		$this->initializeProperties();
 	}
 
+	/**
+	 * Returns true if this is a new item, meaning that it exists only in
+	 * transient storage on the Session and has not yet been saved. Within a
+	 * transaction, isNew on an Item may return false (because the item has
+	 * been saved) even if that Item is not in persistent storage (because the
+	 * transaction has not yet been committed).
+	 *
+	 * Note that if an item returns true on isNew, then by definition is parent
+	 * will return true on isModified.
+	 *
+	 * @return boolean TRUE if this item is new; FALSE otherwise.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isNew() {
+		return $this->session->isRegisteredAsNewNode($this);
+	}
 
-
-
+	/**
+	 * Returns true if this Item has been saved but has subsequently been
+	 * modified through the current session and therefore the state of this
+	 * item as recorded in the session differs from the state of this item as
+	 * saved. Within a transaction, isModified on an Item may return false
+	 * (because the Item has been saved since the modification) even if the
+	 * modification in question is not in persistent storage (because the
+	 * transaction has not yet been committed).
+	 *
+	 * @return boolean TRUE if this item is modified; FALSE otherwise.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isModified() {
+		return $this->session->isRegisteredAsDirtyNode($this);
+	}
 
 	/**
 	 * Returns FALSE if this Item is a Node; returns FALSE if this Item is a
@@ -184,44 +216,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$property->remove();
 		}
 
-		$this->setRemoved(TRUE);
-	}
-
-	/**
-	 * Save the node
-	 *
-	 * @return void
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function save() {
-		if (!is_array($this->nodes)) {
-			$this->initializeNodes();
-		}
-		foreach ($this->nodes as $node) {
-			$node->save();
-		}
-
-		if ($this->isRemoved()===TRUE) {
-			$this->saveProperties();
-			$this->storageAccess->removeNode($this->getIdentifier());
-			// TODO: HOW TO REMOVE THE DELETED NODE FROM THE OBJECT TREE?
-			// $this = NULL; // does not work.
-			// $this->getParent()->remove($this); // would be nice
-		} elseif ($this->isNew()===TRUE) {
-			$this->storageAccess->addNode($this->getIdentifier(), $this->getParent()->getIdentifier(), $this->nodeType->getId(), $this->name);
-			$this->saveProperties();
-		} elseif ($this->isModified()===TRUE) {
-			if ($this->getDepth() == 0) {
-				$this->storageAccess->updateNode($this->getIdentifier(), 0, $this->nodeType->getId(), $this->name);
-			} else {
-				$this->storageAccess->updateNode($this->getIdentifier(), $this->getParent()->getIdentifier(), $this->nodeType->getId(), $this->name);
-			}
-			$this->saveProperties();
-		}
-
-		$this->setNew(FALSE);
-		$this->setModified(FALSE);
+		$this->session->registerNodeAsRemoved($this);
 	}
 
 	/**
@@ -246,10 +241,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	public function refresh($keepChanges) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
 	}
-
-
-
-
 
 	/**
 	 * Creates a new node at relPath. The new node will only be persisted on
@@ -306,10 +297,9 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 				'nodetype' => 'nt:base',
 			);
 			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session, $this->storageAccess);
-			$newNode->setNew(TRUE);
 
 			$this->nodes[$newNode->getIdentifier()] = $newNode;
-			$this->setModified(TRUE);  // JSR-283: (5.1.3.6): This specification provides the following methods on Item for determining whether a particular item has pending changes (isModified) or constitutes part of the pending changes of its parent(isNew)
+			$this->session->registerNodeAsDirty($this);
 		} else {
 			$upperNode = F3_TYPO3CR_PathParser::parsePath($remainingPath, $this);
 			$newNode = $upperNode->addNode($lastNodeName);
@@ -397,19 +387,28 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo honour requested type conversion
+	 * @todo NULL value must remove property
 	 */
 	public function setProperty($name, $value, $type = NULL) {
 		if ($type !== NULL) throw new F3_PHPCR_RepositoryException('$type is not supported in F3_TYPO3CR_Node::setProperty().', 1189538797);
 
 		if ($this->hasProperty($name)) {
-			$this->getProperty($name)->setValue($value);
+			if ($value === NULL) {
+				$this->session->registerPropertyAsRemoved($this->properties[$name]);
+				unset($this->properties[$name]);
+			} else {
+				$this->getProperty($name)->setValue($value);
+				$this->session->registerPropertyAsDirty($property);
+			}
 		} else {
 			$multiValued = is_array($value) ? TRUE : FALSE;
 			$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $this, $multiValued, $this->session, $this->storageAccess);
-			$property->setNew(TRUE);
 			$this->properties[$name] = $property;
+			$this->session->registerPropertyAsNew($property);
 		}
-		$this->setModified(TRUE);
+
+		$this->session->registerNodeAsDirty($this);
 	}
 
 	/**
@@ -1461,22 +1460,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		foreach ($rawNodeIdentifiers as $rawNodeIdentifier) {
 			$node = $this->session->getNodeByIdentifier($rawNodeIdentifier);
 			$this->nodes[$node->getIdentifier()] = $node;
-		}
-	}
-
-
-	/**
-	 * Save properties.
-	 *
-	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function saveProperties() {
-		if (!isset($this->properties) || count($this->properties) == 0) return;
-
-		foreach ($this->properties as $property) {
-			$property->save();
 		}
 	}
 

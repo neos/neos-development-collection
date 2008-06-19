@@ -37,60 +37,124 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 	protected $storageAccess;
 
 	/**
-	 * Checks if we can store and remove a raw node properly.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function addNodeAndRemoveNodeWork() {
+	public function addNodeWorks() {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
+
+		$rawRootNode = array(
+			'parent' => 0,
+			'name' => '',
+			'identifier' => F3_FLOW3_Utility_Algorithms::generateUUID(),
+			'nodetype' => 'nt:base'
+		);
+		$rootNode = new F3_TYPO3CR_Node($rawRootNode, $mockSession, $this->storageAccess, $this->componentManager);
+
 		$identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
-		$expectedRawNode = array(
-			'parent' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
+		$rawNode = array(
+			'parent' => $rootNode,
 			'name' => 'TestNode1',
 			'identifier' => $identifier,
 			'nodetype' => 'nt:base'
 		);
-		$this->storageAccess->addNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', 'nt:base', 'TestNode1');
-		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
-		$this->assertTrue(is_array($rawNode), 'getRawNodeByIdentifier() did not return an array for a just created node entry.');
-		$this->assertSame($expectedRawNode, $rawNode, 'The returned raw node had not the expected values.');
-
-		$this->storageAccess->removeNode($identifier);
-		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
-		$this->assertFalse($rawNode, 'getRawNodeByIdentifier() did return an array for a just removed node entry.');
-	}
-
-	/**
-	 * Checks if we can update and remove a raw node properly
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @test
-	 */
-	public function updateNodeAndRemoveNodeWork() {
-		$identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+		$node = new F3_TYPO3CR_Node($rawNode, $mockSession, $this->storageAccess, $this->componentManager);
 		$expectedRawNode = array(
-			'parent' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d00',
-			'name' => 'TestNode2',
+			'parent' => $rootNode->getIdentifier(),
+			'name' => 'TestNode1',
 			'identifier' => $identifier,
 			'nodetype' => 'nt:base'
 		);
-		$this->storageAccess->addNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d00', 'nt:base', 'TestNode2');
-		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
-		$this->assertTrue(is_array($rawNode), 'getRawNodeByIdentifier() did not return an array for a just created node entry.');
-		$this->assertSame($expectedRawNode, $rawNode, 'The returned raw node had not the expected values.');
 
-		$expectedRawNodeUpdated = array(
-			'parent' => '96bca35d-1ef5-4a47-8b0c-0bfc69507d01',
-			'name' => 'TestNode2Updated',
+		$this->storageAccess->addNode($node);
+		$retrievedRawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
+		$this->assertSame($expectedRawNode, $retrievedRawNode, 'The returned raw node had not the expected values.');
+	}
+
+	/**
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function removeNodeWorks() {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
+
+		$rawRootNode = array(
+			'parent' => 0,
+			'name' => '',
+			'identifier' => F3_FLOW3_Utility_Algorithms::generateUUID(),
+			'nodetype' => 'nt:base'
+		);
+		$rootNode = new F3_TYPO3CR_Node($rawRootNode, $mockSession, $this->storageAccess, $this->componentManager);
+
+		$identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+		$rawNode = array(
+			'parent' => $rootNode,
+			'name' => 'TestNode1',
+			'identifier' => $identifier,
+			'nodetype' => 'nt:base'
+		);
+		$node = new F3_TYPO3CR_Node($rawNode, $mockSession, $this->storageAccess, $this->componentManager);
+		$this->storageAccess->addNode($node);
+
+		$this->storageAccess->removeNode($node);
+		$retrievedRawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
+		$this->assertFalse($retrievedRawNode, 'getRawNodeByIdentifier() did not return FALSE for a just removed node entry.');
+	}
+
+	/**
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function updateNodeWorks() {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
+
+		$rawRootNode = array(
+			'parent' => 0,
+			'name' => '',
+			'identifier' => F3_FLOW3_Utility_Algorithms::generateUUID(),
+			'nodetype' => 'nt:base'
+		);
+		$rootNode = new F3_TYPO3CR_Node($rawRootNode, $mockSession, $this->storageAccess, $this->componentManager);
+
+		$identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+		$rawNode = array(
+			'parent' => $rootNode,
+			'name' => 'TestNode1',
+			'identifier' => $identifier,
+			'nodetype' => 'nt:base'
+		);
+		$node = new F3_TYPO3CR_Node($rawNode, $mockSession, $this->storageAccess, $this->componentManager);
+		$expectedRawNode = array(
+			'parent' => $rootNode->getIdentifier(),
+			'name' => 'TestNode1',
+			'identifier' => $identifier,
+			'nodetype' => 'nt:base'
+		);
+		$this->storageAccess->addNode($node);
+
+			// recreate node with different name and nodetype
+		$rawNode = array(
+			'parent' => $rootNode,
+			'name' => 'TestNode2',
 			'identifier' => $identifier,
 			'nodetype' => 'nt:unstructured'
 		);
-		$this->storageAccess->updateNode($identifier, '96bca35d-1ef5-4a47-8b0c-0bfc69507d01', 'nt:unstructured', 'TestNode2Updated');
+		$node = new F3_TYPO3CR_Node($rawNode, $mockSession, $this->storageAccess, $this->componentManager);
+		$expectedRawNodeUpdated = array(
+			'parent' => $rootNode->getIdentifier(),
+			'name' => 'TestNode2',
+			'identifier' => $identifier,
+			'nodetype' => 'nt:unstructured'
+		);
+		$this->storageAccess->updateNode($node);
 		$rawNodeUpdated = $this->storageAccess->getRawNodeByIdentifier($identifier);
-		$this->assertTrue(is_array($rawNodeUpdated), 'getRawNodeByIdentifier() did not return an array for an updated node entry.');
 		$this->assertSame($expectedRawNodeUpdated, $rawNodeUpdated, 'The returned raw node had not the expected (updated) values.');
-
-		$this->storageAccess->removeNode($identifier);
-		$rawNode = $this->storageAccess->getRawNodeByIdentifier($identifier);
-		$this->assertFalse($rawNode, 'getRawNodeByIdentifier() did return an array for a just removed node entry.');
 	}
 
 	/**

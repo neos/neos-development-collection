@@ -60,21 +60,6 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	protected $parentNode;
 
 	/**
-	 * @var boolean
-	 */
-	protected $isNew;
-
-	/**
-	 * @var boolean
-	 */
-	protected $isModified;
-
-	/**
-	 * @var boolean
-	 */
-	protected $isRemoved;
-
-	/**
 	 * Returns the name of this item. The name is the last item in the path,
 	 * minus any square-bracket index that may exist. If this item is the root
 	 * node of the workspace (i.e., if this.getDepth() == 0), an empty string
@@ -193,39 +178,6 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	}
 
 	/**
-	 * Returns true if this is a new item, meaning that it exists only in
-	 * transient storage on the Session and has not yet been saved. Within a
-	 * transaction, isNew on an Item may return false (because the item has
-	 * been saved) even if that Item is not in persistent storage (because the
-	 * transaction has not yet been committed).
-	 *
-	 * Note that if an item returns true on isNew, then by definition is parent
-	 * will return true on isModified.
-	 *
-	 * @return boolean TRUE if this item is new; FALSE otherwise.
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 */
-	public function isNew() {
-		return $this->isNew;
-	}
-
-	/**
-	 * Returns true if this Item has been saved but has subsequently been
-	 * modified through the current session and therefore the state of this
-	 * item as recorded in the session differs from the state of this item as
-	 * saved. Within a transaction, isModified on an Item may return false
-	 * (because the Item has been saved since the modification) even if the
-	 * modification in question is not in persistent storage (because the
-	 * transaction has not yet been committed).
-	 *
-	 * @return boolean TRUE if this item is modified; FALSE otherwise.
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 */
-	public function isModified() {
-		return $this->isModified;
-	}
-
-	/**
 	 * Returns TRUE if this Item object represents the same actual workspace
 	 * item as the object otherItem.
 	 *
@@ -285,53 +237,6 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 */
 	public function accept(F3_PHPCR_ItemVisitorInterface $visitor) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577699);
-	}
-
-
-	// non-JSR-283 methods below
-
-
-	/**
-	 * Returns the deleted flag of Item
-	 *
-	 * @return boolean
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 */
-	public function isRemoved() {
-		return $this->isRemoved;
-	}
-
-	/**
-	 * Set the new flag of Item
-	 *
-	 * @param boolean $isNew The new state to set
-	 * @return void
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 */
-	public function setNew($isNew) {
-		$this->isNew = (boolean)$isNew;
-	}
-
-	/**
-	 * Set the modified flag of Item
-	 *
-	 * @param boolean $isModified The modified state to set
-	 * @return void
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 */
-	public function setModified($isModified) {
-		$this->isModified=(boolean)$isModified;
-	}
-
-	/**
-	 * Set the deleted flag of Item
-	 *
-	 * @param boolean $isRemoved The removed state to set
-	 * @return void
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 */
-	public function setRemoved($isRemoved) {
-		$this->isRemoved=(boolean)$isRemoved;
 	}
 
 }

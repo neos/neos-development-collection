@@ -96,8 +96,8 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 */
 	public function setValue($value) {
 		if ($value === NULL) {
-			$this->value = NULL;
-			$this->setRemoved(TRUE);
+				// removes the property, thus delegated to parent
+			$this->getParent->setProperty($this->getName(), NULL);
 		} else {
 			$valueFactory = $this->componentManager->getComponent('F3_PHPCR_ValueFactoryInterface');
 			if (is_array($value)) {
@@ -107,8 +107,9 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 			} else {
 				$this->value = $valueFactory->createValue($value);
 			}
-			$this->setModified(TRUE);
+			$this->session->registerPropertyAsDirty($this);
 		}
+		$this->session->registerNodeAsDirty($this->getParent());
 	}
 
 	/**
@@ -379,6 +380,39 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	}
 
 	/**
+	 * Returns true if this is a new item, meaning that it exists only in
+	 * transient storage on the Session and has not yet been saved. Within a
+	 * transaction, isNew on an Item may return false (because the item has
+	 * been saved) even if that Item is not in persistent storage (because the
+	 * transaction has not yet been committed).
+	 *
+	 * Note that if an item returns true on isNew, then by definition is parent
+	 * will return true on isModified.
+	 *
+	 * @return boolean TRUE if this item is new; FALSE otherwise.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isNew() {
+		return $this->session->isRegisteredAsNewProperty($this);
+	}
+
+	/**
+	 * Returns true if this Item has been saved but has subsequently been
+	 * modified through the current session and therefore the state of this
+	 * item as recorded in the session differs from the state of this item as
+	 * saved. Within a transaction, isModified on an Item may return false
+	 * (because the Item has been saved since the modification) even if the
+	 * modification in question is not in persistent storage (because the
+	 * transaction has not yet been committed).
+	 *
+	 * @return boolean TRUE if this item is modified; FALSE otherwise.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isModified() {
+		return $this->session->isRegisteredAsDirtyProperty($this);
+	}
+
+	/**
 	 * Returns FALSE if this Item is a Node; returns FALSE if this Item is a
 	 * Property.
 	 *
@@ -416,35 +450,9 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 
 	/**
 	 * Remove property
-	 *
-	 * @todo
 	 */
 	public function remove() {
-		$this->setRemoved(TRUE);
-	}
-
-	/**
-	 * Returns an array with data ready to be written into the DB
-	 *
-	 * @return array
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 */
-	public function save() {
-		$value = $this->value;
-		if (is_array($value)) {
-			$value = serialize($value);
-		}
-
-		if ($this->isRemoved()) {
-			$this->storageAccess->removeProperty($this->getParent()->getIdentifier(), $this->getName());
-		} elseif ($this->isModified()) {
-			$this->storageAccess->updateProperty($this->getParent()->getIdentifier(), $this->getName(), $value, is_array($this->value));
-		} elseif ($this->isNew()) {
-			$this->storageAccess->addProperty($this->getParent()->getIdentifier(), $this->getName(), $value, is_array($this->value));
-		}
-
-		$this->setModified(FALSE);
-		$this->setNew(FALSE);
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213869622);
 	}
 
 	/**

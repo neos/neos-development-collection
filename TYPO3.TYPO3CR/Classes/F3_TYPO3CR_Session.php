@@ -64,6 +64,36 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	protected $currentlyLoadedNodes = array();
 
 	/**
+	 * @var array of F3_PHPCR_NodeInterface - stores references to all new nodes (UoW)
+	 */
+	protected $currentlyNewNodes = array();
+
+	/**
+	 * @var array of F3_PHPCR_NodeInterface - stores references to all dirty nodes (UoW)
+	 */
+	protected $currentlyDirtyNodes = array();
+
+	/**
+	 * @var array of F3_PHPCR_NodeInterface - stores references to all removed node (UoW)
+	 */
+	protected $currentlyRemovedNodes = array();
+
+	/**
+	 * @var array of F3_PHPCR_PropertyInterface - stores references to all new properties (UoW)
+	 */
+	protected $currentlyNewProperties = array();
+
+	/**
+	 * @var array of F3_PHPCR_PropertyInterface - stores references to all dirty properties (UoW)
+	 */
+	protected $currentlyDirtyProperties = array();
+
+	/**
+	 * @var array of F3_PHPCR_PropertyInterface - stores references to all removed properties (UoW)
+	 */
+	protected $currentlyRemovedProperties = array();
+
+	/**
 	 * @var array Associative array of local namespace mappings (created either explicitely or implicitely)
 	 */
 	protected $localNamespaceMappings = array();
@@ -869,6 +899,122 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 			$prefix = $this->workspace->getNamespaceRegistry()->getPrefix($uri);
 			$this->localNamespaceMappings[$prefix] = $uri;
 		}
+	}
+
+
+	//UoW methods
+
+
+	/**
+	 * Registers a node as new within this session
+	 *
+	 * @param F3_PHPCR_NodeInterface $item
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function registerNodeAsNew(F3_PHPCR_NodeInterface $node) {
+		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
+		$this->currentlyNewNodes[$node->getIdentifier()] = $node;
+	}
+
+	/**
+	 * Checks if the given node is registered as new
+	 *
+	 * @param F3_PHPCR_NodeInterface $node
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isRegisteredAsNewNode(F3_PHPCR_NodeInterface $node) {
+		return isset($this->currentlyNewNodes[$node->getIdentifier()]);
+	}
+
+	/**
+	 * Registers a node as dirty within this session
+	 *
+	 * @param F3_PHPCR_NodeInterface $item
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function registerNodeAsDirty(F3_PHPCR_NodeInterface $node) {
+		$this->currentlyDirtyNodes[$node->getIdentifier()] = $node;
+	}
+
+	/**
+	 * Checks if the given node is registered as dirty
+	 *
+	 * @param F3_PHPCR_NodeInterface $node
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isRegisteredAsDirtyNode(F3_PHPCR_NodeInterface $node) {
+		return isset($this->currentlyDirtyNodes[$node->getIdentifier()]);
+	}
+
+	/**
+	 * Registers a node as removed within this session
+	 *
+	 * @param F3_PHPCR_NodeInterface $item
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function registerNodeAsRemoved(F3_PHPCR_NodeInterface $node) {
+		$this->currentlyRemovedNodes[$$node->getIdentifier()] = $node;
+		unset($this->currentlyLoadedNodes[$node->getIdentifier()]);
+	}
+
+	/**
+	 * Registers a property as new within this session
+	 *
+	 * @param F3_PHPCR_PropertyInterface $item
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function registerPropertyAsNew(F3_PHPCR_PropertyInterface $property) {
+		$this->currentlyNewProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
+	}
+
+	/**
+	 * Checks if the given property is registered as new
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isRegisteredAsNewProperty(F3_PHPCR_PropertyInterface $property) {
+		return isset($this->currentlyNewProperties[$property->getParent()->getIdentifier()][$property->getName()]);
+	}
+
+	/**
+	 * Registers a property item as dirty within this session
+	 *
+	 * @param F3_PHPCR_PropertyInterface $item
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function registerPropertyAsDirty(F3_PHPCR_PropertyInterface $property) {
+		$this->currentlyDirtyProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
+	}
+
+	/**
+	 * Checks if the given property is registered as new
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isRegisteredAsDirtyProperty(F3_PHPCR_PropertyInterface $property) {
+		return isset($this->currentlyDirtyProperties[$property->getParent()->getIdentifier()][$property->getName()]);
+	}
+
+	/**
+	 * Registers a property as removed within this session
+	 *
+	 * @param F3_PHPCR_PropertyInterface $item
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function registerPropertyAsRemoved(F3_PHPCR_PropertyInterface $property) {
+		$this->currentlyRemovedProperties[$node->getParent()->getIdentifier()][$property->getName()] = $property;
 	}
 }
 ?>

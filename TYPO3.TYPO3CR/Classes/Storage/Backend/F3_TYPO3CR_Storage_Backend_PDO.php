@@ -95,14 +95,14 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	/**
 	 * Fetches sub node Identifiers from the database
 	 *
-	 * @param integer $nodeId The node Identifier to fetch (sub-)nodes for
+	 * @param integer $identifier The node Identifier to fetch (sub-)nodes for
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getIdentifiersOfSubNodesOfNode($nodeId) {
+	public function getIdentifiersOfSubNodesOfNode($identifier) {
 		$nodeIdentifiers = array();
 		$statementHandle = $this->databaseHandle->prepare('SELECT identifier FROM nodes WHERE parent = ?');
-		$statementHandle->execute(array($nodeId));
+		$statementHandle->execute(array($identifier));
 		$rawNodes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rawNodes as $k => $rawNode) {
 			$nodeIdentifiers[] = $rawNode['identifier'];
@@ -113,15 +113,15 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	/**
 	 * Fetches raw property data from the database
 	 *
-	 * @param integer $nodeIdentifier The node Identifier to fetch properties for
+	 * @param integer $identifier The node Identifier to fetch properties for
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getRawPropertiesOfNode($nodeIdentifier) {
+	public function getRawPropertiesOfNode($identifier) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE parent = ?');
-		$statementHandle->execute(array($nodeIdentifier));
+		$statementHandle->execute(array($identifier));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		if (is_array($properties) && $properties['multivalue']) {
+		if (is_array($properties) && count($properties) && $properties['multivalue']) {
 			$properties['value'] = unserialize($properties['value']);
 		}
 		return $properties;
@@ -179,88 +179,83 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	}
 
 	/**
-	 * Adds a node to the repository
+	 * Adds a node to the storage
 	 *
-	 * @param string $identifier Identifier to insert
-	 * @param string $pid Identifier of the parent node
-	 * @param string $nodetype Nodetype to insert
-	 * @param string $name Name to insert
+	 * @param F3_PHPCR_NodeInterface $node node to insert
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function addNode($identifier, $pid, $nodetype, $name) {
+	public function addNode(F3_PHPCR_NodeInterface $node) {
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO nodes (identifier, parent, nodetype, name) VALUES (?, ?, ?, ?)');
-		$statementHandle->execute(array($identifier, $pid, $nodetype, $name));
+		$statementHandle->execute(array($node->getIdentifier(), $node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName()));
 	}
 
 	/**
-	 * Updates a node in the repository
+	 * Updates a node in the storage
 	 *
-	 * @param string $identifier Identifier of the node to update
-	 * @param string $pid Identifier of the parent node
-	 * @param string $nodetype Nodetype to update
-	 * @param string $name Name to update
+	 * @param F3_PHPCR_NodeInterface $node node to update
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function updateNode($identifier, $pid, $nodetype, $name) {
+	public function updateNode(F3_PHPCR_NodeInterface $node) {
 		$statementHandle = $this->databaseHandle->prepare('UPDATE nodes SET parent=?, nodetype=?, name=? WHERE identifier=?');
-		$statementHandle->execute(array($pid, $nodetype, $name, $identifier));
+		$statementHandle->execute(array($node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName(), $node->getIdentifier()));
 	}
 
 	/**
 	 * Deletes a node in the repository
 	 *
-	 * @param string $identifier Identifier of the node to delete
+	 * @param F3_PHPCR_NodeInterface $node node to delete
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function removeNode($identifier) {
+	public function removeNode(F3_PHPCR_NodeInterface $node) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM nodes WHERE identifier=?');
-		$statementHandle->execute(array($identifier));
+		$statementHandle->execute(array($node->getIdentifier()));
 	}
 
 	/**
-	 * Adds a property in the repository
+	 * Adds a property in the storage
 	 *
-	 * @param string $identifier Identifier of parent node
-	 * @param string $name Name of property
-	 * @param string $value Value of property
-	 * @param boolean $isMultiValued
+	 * @param F3_PHPCR_PropertyInterface $property property to insert
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo implement support for multi-valued properties
 	 */
-	public function addProperty($identifier, $name, $value, $isMultiValued) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (parent, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, ?)');
-		$statementHandle->execute(array($identifier, $name, $value, $isMultiValued));
+	public function addProperty(F3_PHPCR_PropertyInterface $property) {
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (parent, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, 1)');
+		$statementHandle->execute(array($property->getParent()->getIdentifier(), $property->getName(), $property->getString()));
 	}
 
 	/**
 	 * Updates a property in the repository identified by identifier and name
 	 *
-	 * @param string $identifier Identifier of parent node
-	 * @param string $name Name of property
-	 * @param string $value Value of property
-	 * @param boolean $isMultiValued
+	 * @param F3_PHPCR_PropertyInterface $property property to update
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo implement support for multi-valued properties
 	 */
-	public function updateProperty($identifier, $name, $value, $isMultiValued) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=?, multivalue=? WHERE parent=? AND name=?');
-		$statementHandle->execute(array($value, $isMultiValued, $identifier, $name));
+	public function updateProperty(F3_PHPCR_PropertyInterface $property) {
+		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=? WHERE parent=? AND name=?');
+		$statementHandle->execute(array($property->getString(), $property->getParent()->getIdentifier(), $property->getName()));
 	}
 
 	/**
 	 * Deletes a property in the repository identified by identifier and name
 	 *
-	 * @param string $identifier Identifier of parent node
-	 * @param string $name Name of property
+	 * @param F3_PHPCR_PropertyInterface $property property to remove
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function removeProperty($identifier, $name) {
+	public function removeProperty(F3_PHPCR_PropertyInterface $property) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM properties WHERE parent=? AND name=?');
-		$statementHandle->execute(array($identifier, $name));
+		$statementHandle->execute(array($property->getParent()->getIdentifier(), $property->getName()));
 	}
 
 	/**

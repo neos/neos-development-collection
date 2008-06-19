@@ -95,18 +95,18 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Fetches sub node Identifiers from the database
 	 *
-	 * @param integer $nodeId The node Identifier to fetch (sub-)nodes for
+	 * @param integer $identifier The node Identifier to fetch (sub-)nodes for
 	 * @return array
 	 */
-	public function getIdentifiersOfSubNodesOfNode($nodeId);
+	public function getIdentifiersOfSubNodesOfNode($identifier);
 
 	/**
 	 * Fetches raw property data from the database
 	 *
-	 * @param integer $nodeIdentifier The node Identifier to fetch properties for
+	 * @param integer $identifier The node Identifier to fetch properties for
 	 * @return array|FALSE
 	 */
-	public function getRawPropertiesOfNode($nodeIdentifier);
+	public function getRawPropertiesOfNode($identifier);
 
 	/**
 	 * Fetches raw data for all nodetypes from the database
@@ -142,45 +142,41 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Adds a node to the storage
 	 *
-	 * @param string $identifier Identifier to insert
-	 * @param string $pid Identifier of the parent node
-	 * @param string $nodetype Nodetype to insert
-	 * @param string $name Name to insert
+	 * @param F3_PHPCR_NodeInterface $node node to insert
 	 * @return void
 	 */
-	public function addNode($identifier, $pid, $nodetype, $name);
+	public function addNode(F3_PHPCR_NodeInterface $node);
 
 	/**
 	 * Adds a property in the storage
 	 *
-	 * @param string $identifier Identifier of parent node
-	 * @param string $name Name of property
-	 * @param string $value Value of property
-	 * @param boolean $isMultiValued
+	 * @param F3_PHPCR_PropertyInterface $property property to insert
 	 * @return void
 	 */
-	public function addProperty($identifier, $name, $value, $isMultiValued);
+	public function addProperty(F3_PHPCR_PropertyInterface $property);
 
 	/**
 	 * Updates a node in the storage
 	 *
-	 * @param string $identifier Identifier of the node to update
-	 * @param string $pid Identifier of the parent node
-	 * @param string $nodetype new nodetype
-	 * @param string $name new name
+	 * @param F3_PHPCR_NodeInterface $node node to update
 	 * @return void
 	 */
-	public function updateNode($identifier, $pid, $nodetype, $name);
+	public function updateNode(F3_PHPCR_NodeInterface $node);
 
 	/**
 	 * Updates a property in the repository identified by identifier and name
 	 *
-	 * @param string $identifier Identifier of parent node
-	 * @param string $name Name of property
-	 * @param string $value Value of property
-	 * @param boolean $isMultiValued
+	 * @param F3_PHPCR_PropertyInterface $property property to update
 	 * @return void
 	 */
-	public function updateProperty($identifier, $name, $value, $isMultiValued);
+	public function updateProperty(F3_PHPCR_PropertyInterface $property);
+
+	/**
+	 * Deletes a node in the repository
+	 *
+	 * @param F3_PHPCR_NodeInterface $node node to delete
+	 * @return void
+	 */
+	public function removeNode(F3_PHPCR_NodeInterface $node);
 }
 ?>
