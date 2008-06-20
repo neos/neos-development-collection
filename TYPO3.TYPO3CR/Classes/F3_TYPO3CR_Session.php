@@ -380,20 +380,26 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @throws F3_PHPCR_Lock_LockException if the save would result in a change to persistent storage that would violate a lock.
 	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException if the save would result in the addition of a node with an unrecognized node type.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function save() {
 		foreach ($this->currentlyNewNodes as $node) {
 			$this->storageAccess->addNode($node);
+			$this->addPropertiesForNode($node);
 			unset($this->currentlyNewNodes[$node->getIdentifier()]);
 		}
 
 		foreach ($this->currentlyDirtyNodes as $node) {
 			$this->storageAccess->updateNode($node);
+			$this->addPropertiesForNode($node);
+			$this->updatePropertiesForNode($node);
+			$this->removePropertiesForNode($node);
 			unset($this->currentlyDirtyNodes[$node->getIdentifier()]);
 		}
 
 		foreach ($this->currentlyRemovedNodes as $node) {
 			$this->storageAccess->removeNode($node);
+			$this->removePropertiesForNode($node);
 			unset($this->currentlyRemovedNodes[$node->getIdentifier()]);
 		}
 	}
@@ -1030,6 +1036,51 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 */
 	public function registerPropertyAsRemoved(F3_PHPCR_PropertyInterface $property) {
 		$this->currentlyRemovedProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
+	}
+
+	/**
+	 * Adds properties for node
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function addPropertiesForNode(F3_PHPCR_NodeInterface $node) {
+		if (key_exists($node->getIdentifier(), $this->currentlyNewProperties)) {
+			foreach ($this->currentlyNewProperties[$node->getIdentifier()] as $property) {
+				$this->storageAccess->addProperty($property);
+				unset($this->currentlyNewProperties[$node->getIdentifier()][$property->getName()]);
+			}
+		}
+	}
+
+	/**
+	 * Updates properties for node
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function updatePropertiesForNode(F3_PHPCR_NodeInterface $node) {
+		if (key_exists($node->getIdentifier(), $this->currentlyDirtyProperties)) {
+			foreach ($this->currentlyDirtyProperties[$node->getIdentifier()] as $property) {
+				$this->storageAccess->updateProperty($property);
+				unset($this->currentlyDirtyProperties[$node->getIdentifier()][$property->getName()]);
+			}
+		}
+	}
+
+	/**
+	 * Removes properties for node
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function removePropertiesForNode(F3_PHPCR_NodeInterface $node) {
+		if (key_exists($node->getIdentifier(), $this->currentlyRemovedProperties)) {
+			foreach ($this->currentlyRemovedProperties[$node->getIdentifier()] as $property) {
+				$this->storageAccess->removeProperty($property);
+				unset($this->currentlyRemovedProperties[$node->getIdentifier()][$property->getName()]);
+			}
+		}
 	}
 }
 ?>

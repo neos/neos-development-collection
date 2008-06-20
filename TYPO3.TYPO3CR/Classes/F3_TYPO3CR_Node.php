@@ -323,7 +323,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Many :)
 	 */
-	public function addNode($relPath, $primaryNodeTypeName = NULL) {
+	public function addNode($relPath, $primaryNodeTypeName = 'nt:base') {
 		if ($relPath === NULL) {
 			throw new F3_PHPCR_PathNotFoundException('Path not found or not provided', 1187531979);
 		}
@@ -334,7 +334,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$rawData = array(
 				'parent' => $this->getIdentifier(),
 				'name' => $lastNodeName,
-				'nodetype' => 'nt:base',
+				'nodetype' => $primaryNodeTypeName,
 			);
 			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session, $this->storageAccess);
 

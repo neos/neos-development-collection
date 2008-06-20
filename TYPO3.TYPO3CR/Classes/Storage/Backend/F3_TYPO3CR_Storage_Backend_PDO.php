@@ -114,14 +114,14 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * Fetches raw property data from the database
 	 *
 	 * @param integer $identifier The node Identifier to fetch properties for
-	 * @return array|FALSE
+	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawPropertiesOfNode($identifier) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE parent = ?');
 		$statementHandle->execute(array($identifier));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		if (is_array($properties) && count($properties) && $properties['multivalue']) {
+		if (is_array($properties) && count($properties) && isset($properties['multivalue']) && $properties['multivalue']) {
 			$properties['value'] = unserialize($properties['value']);
 		}
 		return $properties;
@@ -200,8 +200,10 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateNode(F3_PHPCR_NodeInterface $node) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE nodes SET parent=?, nodetype=?, name=? WHERE identifier=?');
-		$statementHandle->execute(array($node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName(), $node->getIdentifier()));
+		if ($node->getDepth() > 0) {
+			$statementHandle = $this->databaseHandle->prepare('UPDATE nodes SET parent=?, nodetype=?, name=? WHERE identifier=?');
+			$statementHandle->execute(array($node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName(), $node->getIdentifier()));
+		}
 	}
 
 	/**
@@ -227,7 +229,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @todo implement support for multi-valued properties
 	 */
 	public function addProperty(F3_PHPCR_PropertyInterface $property) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (parent, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, 1)');
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (parent, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, 0)');
 		$statementHandle->execute(array($property->getParent()->getIdentifier(), $property->getName(), $property->getString()));
 	}
 

@@ -178,5 +178,71 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$this->assertFalse($rawNodeType, 'getRawNodeType() did return an array for a just removed nodetype entry.');
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function addPropertyWorks() {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
+
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->storageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $this->storageAccess, $this->componentManager);
+		$this->storageAccess->addProperty($property);
+
+		$expectedRawProperties = array(array(
+			'name' => 'someProp',
+			'value' => 'someValue',
+			'namespace' => 0,
+			'multivalue' => 0
+		));
+		$retrievedRawProperties = $this->storageAccess->getRawPropertiesOfNode($node->getIdentifier());
+		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
+
+	}
+
+		/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function updatePropertyWorks() {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
+
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->storageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $this->storageAccess, $this->componentManager);
+		$this->storageAccess->addProperty($property);
+		$property->setValue('newValue');
+		$this->storageAccess->updateProperty($property);
+
+		$expectedRawProperties = array(array(
+			'name' => 'someProp',
+			'value' => 'newValue',
+			'namespace' => 0,
+			'multivalue' => 0
+		));
+		$retrievedRawProperties = $this->storageAccess->getRawPropertiesOfNode($node->getIdentifier());
+		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
+
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function removePropertyWorks() {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
+
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->storageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $this->storageAccess, $this->componentManager);
+		$this->storageAccess->addProperty($property);
+		$this->storageAccess->removeProperty($property);
+
+		$retrievedRawProperties = $this->storageAccess->getRawPropertiesOfNode($node->getIdentifier());
+		$this->assertEquals(array(), $retrievedRawProperties, 'A removed property could be retrieved.');
+
+	}
+
 }
 ?>

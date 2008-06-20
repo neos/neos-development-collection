@@ -373,5 +373,52 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		$mockSession->save();
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function saveProcessesNewProperties() {
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageAccess->expects($this->once())->method('addProperty');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentManager));
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $mockStorageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
+
+		$mockSession->registerPropertyAsNew($property);
+		$mockSession->save();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function saveProcessesDirtyProperties() {
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageAccess->expects($this->once())->method('updateProperty');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentManager));
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $mockStorageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
+
+		$mockSession->registerNodeAsDirty($node);
+		$mockSession->registerPropertyAsDirty($property);
+		$mockSession->save();
+	}
+
+		/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function saveProcessesRemovedProperties() {
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageAccess->expects($this->once())->method('removeProperty');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentManager));
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $mockStorageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
+
+		$mockSession->registerNodeAsDirty($node);
+		$mockSession->registerPropertyAsRemoved($property);
+		$mockSession->save();
+	}
+
 }
 ?>

@@ -104,7 +104,7 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	 * Fetches raw property data from the database
 	 *
 	 * @param integer $identifier The node Identifier to fetch properties for
-	 * @return array|FALSE
+	 * @return array
 	 */
 	public function getRawPropertiesOfNode($identifier);
 
@@ -124,7 +124,7 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	public function getRawNodeType($nodeTypeName);
 
 	/**
-	 * Adds the given nodetype to the database
+	 * Adds the given nodetype to the storage
 	 *
 	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
 	 * @return void
@@ -132,7 +132,7 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition);
 
 	/**
-	 * Deletes the named nodetype from the database
+	 * Deletes the named nodetype from the storage
 	 *
 	 * @param string $name
 	 * @return void
@@ -164,7 +164,7 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	public function updateNode(F3_PHPCR_NodeInterface $node);
 
 	/**
-	 * Updates a property in the repository identified by identifier and name
+	 * Updates a property in the storage
 	 *
 	 * @param F3_PHPCR_PropertyInterface $property property to update
 	 * @return void
@@ -172,11 +172,19 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	public function updateProperty(F3_PHPCR_PropertyInterface $property);
 
 	/**
-	 * Deletes a node in the repository
+	 * Deletes a node in the storage
 	 *
 	 * @param F3_PHPCR_NodeInterface $node node to delete
 	 * @return void
 	 */
 	public function removeNode(F3_PHPCR_NodeInterface $node);
+
+	/**
+	 * Removes a property in the storage
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property property to remove
+	 * @return void
+	 */
+	public function removeProperty(F3_PHPCR_PropertyInterface $property);
 }
 ?>

@@ -170,7 +170,7 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	 * Returns raw property data for the specified node
 	 *
 	 * @param string $identifier The node Identifier to fetch properties for
-	 * @return array|FALSE
+	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawPropertiesOfNode($identifier) {
@@ -179,7 +179,7 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 				return $this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier];
 			}
 		}
-		return FALSE;
+		return array();
 	}
 
 	/**
@@ -269,7 +269,7 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	 * @todo implement support for multi-value properties
 	 */
 	public function addProperty(F3_PHPCR_PropertyInterface $property) {
-		$this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$property->getParent()->getIdentifier()][] = array(
+		$this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$property->getParent()->getIdentifier()][$property->getName()] = array(
 			'name' => $property->getName(),
 			'value' => $property->getString(),
 			'namespace' => '',
@@ -286,6 +286,17 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	 */
 	public function updateProperty(F3_PHPCR_PropertyInterface $property) {
 		$this->addProperty($property);
+	}
+
+	/**
+	 * Removes a property in the storage
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property property to remove
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function removeProperty(F3_PHPCR_PropertyInterface $property) {
+		unset($this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$property->getParent()->getIdentifier()][$property->getName()]);
 	}
 
 }
