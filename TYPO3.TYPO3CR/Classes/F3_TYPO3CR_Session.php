@@ -1029,7 +1029,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerPropertyAsRemoved(F3_PHPCR_PropertyInterface $property) {
-		$this->currentlyRemovedProperties[$node->getParent()->getIdentifier()][$property->getName()] = $property;
+		$this->currentlyRemovedProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
 	}
 }
 ?>

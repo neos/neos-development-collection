@@ -236,6 +236,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove() {
+		if ($this->parentNode === NULL) {
+			throw new F3_PHPCR_NodeType_ConstraintViolationException('The root node is mandatory', 1213960971);
+		}
+
 		foreach ($this->nodes as $node) {
 			$this->session->getNodeByIdentifier($node)->remove();
 		}
@@ -245,6 +249,18 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		}
 
 		$this->session->registerNodeAsRemoved($this);
+		$this->getParent()->removeNode($this->getIdentifier());
+	}
+
+	/**
+	 * Removes the given node from the internal $nodes array
+	 *
+	 * @param string $nodeIdentifier
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function removeNode($nodeIdentifier) {
+		unset($this->nodes[array_search($nodeIdentifier, $this->nodes)]);
 	}
 
 	/**

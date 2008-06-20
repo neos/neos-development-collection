@@ -540,12 +540,12 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->rootNode->getNode('SomeNode');
 			$this->fail('Removed node was still available');
-		} catch (F3_PHPCR_ItemNotFoundException $e) {}
+		} catch (F3_PHPCR_PathNotFoundException $e) {}
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
+	 * @test
 	 */
 	public function removeNodeRemovesNodeInSession() {
 		$node = $this->rootNode->addNode('SomeNode');
@@ -584,5 +584,17 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->rootNode->setProperty('someprop', 'somePropValue');
 		$this->assertEquals('somePropValue', $this->rootNode->getProperty('someprop')->getString(), 'unexpected value returned for freshly added property');
 	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function removeOnRootNodeThrowsException() {
+		try {
+			$this->rootNode->remove();
+			$this->fail('Root node must not be removable');
+		} catch (F3_PHPCR_NodeType_ConstraintViolationException $e) {}
+	}
+
 }
 ?>
