@@ -382,7 +382,20 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 */
 	public function save() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1203091439);
+		foreach ($this->currentlyNewNodes as $node) {
+			$this->storageAccess->addNode($node);
+			unset($this->currentlyNewNodes[$node->getIdentifier()]);
+		}
+
+		foreach ($this->currentlyDirtyNodes as $node) {
+			$this->storageAccess->updateNode($node);
+			unset($this->currentlyDirtyNodes[$node->getIdentifier()]);
+		}
+
+		foreach ($this->currentlyRemovedNodes as $node) {
+			$this->storageAccess->removeNode($node);
+			unset($this->currentlyRemovedNodes[$node->getIdentifier()]);
+		}
 	}
 
 	/**
@@ -925,7 +938,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isRegisteredAsNewNode(F3_PHPCR_NodeInterface $node) {
-		return isset($this->currentlyNewNodes[$node->getIdentifier()]);
+		return key_exists($node->getIdentifier(), $this->currentlyNewNodes);
 	}
 
 	/**
@@ -947,7 +960,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isRegisteredAsDirtyNode(F3_PHPCR_NodeInterface $node) {
-		return isset($this->currentlyDirtyNodes[$node->getIdentifier()]);
+		return key_exists($node->getIdentifier(), $this->currentlyDirtyNodes);
 	}
 
 	/**
@@ -958,7 +971,9 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerNodeAsRemoved(F3_PHPCR_NodeInterface $node) {
-		$this->currentlyRemovedNodes[$$node->getIdentifier()] = $node;
+		if ($this->isRegisteredAsNewNode($node)) {
+			$this->currentlyRemovedNodes[$node->getIdentifier()] = $node;
+		}
 		unset($this->currentlyLoadedNodes[$node->getIdentifier()]);
 	}
 

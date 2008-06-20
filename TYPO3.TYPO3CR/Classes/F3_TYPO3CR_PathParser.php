@@ -63,7 +63,7 @@ class F3_TYPO3CR_PathParser {
 	 * @todo Implementation of Namespaces!
 	 * @todo Add name pattern support
 	 */
-	protected function parseRelativePath($path, F3_PHPCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
+	protected static function parseRelativePath($path, F3_PHPCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
 		if ($path == '' && ($searchMode & self::SEARCH_MODE_NODES)) {
 			return $currentNode;
 		}
@@ -125,7 +125,7 @@ class F3_TYPO3CR_PathParser {
 	 * @return F3_PHPCR_NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	protected function getRootNode(F3_PHPCR_NodeInterface $currentNode) {
+	protected static function getRootNode(F3_PHPCR_NodeInterface $currentNode) {
 		try {
 			return $currentNode->getParent();
 		} catch (F3_PHPCR_ItemNotFoundException $e) {

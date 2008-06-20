@@ -497,6 +497,69 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
+	public function addNodeRegistersNodeAsNewInSession() {
+		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentManager));
+		$mockSession->expects($this->once())->method('registerNodeAsNew');
+		$rootNode = $mockSession->getRootNode();
+		$rootNode->addNode('User');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function addNodeRegistersParentNodeAsDirtyInSession() {
+		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentManager));
+		$mockSession->expects($this->once())->method('registerNodeAsDirty');
+		$rootNode = $mockSession->getRootNode();
+		$rootNode->addNode('User');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function removeNodeRegistersNodeAsRemovedInSession() {
+		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentManager));
+		$mockSession->expects($this->once())->method('registerNodeAsRemoved');
+		$rootNode = $mockSession->getRootNode();
+		$node = $rootNode->addNode('User');
+		$node->remove();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function removeNodeRemovesNode() {
+		$node = $this->rootNode->addNode('SomeNode');
+		$node->remove();
+		try {
+			$this->rootNode->getNode('SomeNode');
+			$this->fail('Removed node was still available');
+		} catch (F3_PHPCR_ItemNotFoundException $e) {}
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @ test
+	 */
+	public function removeNodeRemovesNodeInSession() {
+		$node = $this->rootNode->addNode('SomeNode');
+		$node->remove();
+		try {
+			$this->session->getNodeByIdentifier($node->getIdentifier());
+			$this->fail('Removed node was still available');
+		} catch (F3_PHPCR_ItemNotFoundException $e) {}
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
 	public function setPropertySetsModifiedStatusOfNode() {
 		$this->rootNode->setProperty('someprop', 1);
 		$this->assertTrue($this->rootNode->isModified(), 'setProperty does not mark parent as modified');

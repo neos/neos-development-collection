@@ -47,12 +47,12 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	/**
 	 * @var array
 	 */
-	protected $properties;
+	protected $properties = array();
 
 	/**
-	 * @var array
+	 * @var array of identifiers
 	 */
-	protected $nodes;
+	protected $nodes = array();
 
 	/**
 	 * Constructs a Node
@@ -95,7 +95,39 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		}
 
 		$this->initializeProperties();
+		$this->initializeNodes();
 	}
+
+	/**
+	 * Fetches the properties of the node from the storage layer
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function initializeProperties() {
+		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getIdentifier());
+		if (is_array($rawProperties)) {
+			foreach ($rawProperties as $rawProperty) {
+				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
+				$this->properties[$property->getName()] = $property;
+			}
+		}
+	}
+
+	/**
+	 * Fetches the properties of the node from the storage layer
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function initializeNodes() {
+		$rawNodeIdentifiers = $this->storageAccess->getIdentifiersOfSubNodesOfNode($this->getIdentifier());
+		if (is_array($rawNodeIdentifiers)) {
+			$this->nodes = $rawNodeIdentifiers;
+		}
+	}
+
+
 
 	/**
 	 * Returns true if this is a new item, meaning that it exists only in
@@ -204,12 +236,8 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove() {
-		if (!is_array($this->nodes)) {
-			$this->initializeNodes();
-		}
-
 		foreach ($this->nodes as $node) {
-			$node->remove();
+			$this->session->getNodeByIdentifier($node)->remove();
 		}
 
 		foreach ($this->properties as $property) {
@@ -287,10 +315,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = F3_TYPO3CR_PathParser::getLastPathPart($relPath);
 
 		if ($numberOfElementsRemaining===0) {
-			if (!is_array($this->nodes)) {
-				$this->initializeNodes();
-			}
-
 			$rawData = array(
 				'parent' => $this->getIdentifier(),
 				'name' => $lastNodeName,
@@ -298,7 +322,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			);
 			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session, $this->storageAccess);
 
-			$this->nodes[$newNode->getIdentifier()] = $newNode;
+			$this->nodes[] = $newNode->getIdentifier();
 			$this->session->registerNodeAsDirty($this);
 		} else {
 			$upperNode = F3_TYPO3CR_PathParser::parsePath($remainingPath, $this);
@@ -475,11 +499,12 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	public function getNodes($namePattern = NULL) {
 		if ($namePattern !== NULL) throw new F3_PHPCR_RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
 
-		if (!is_array($this->nodes)) {
-			$this->initializeNodes();
+		$nodes = array();
+		foreach ($this->nodes as $identifier) {
+			$nodes[] = $this->session->getNodeByIdentifier($identifier);
 		}
 
-		return $this->componentManager->getComponent('F3_PHPCR_NodeIteratorInterface', $this->nodes);
+		return $this->componentManager->getComponent('F3_PHPCR_NodeIteratorInterface', $nodes);
 	}
 
 	/**
@@ -693,9 +718,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasNodes() {
-		if (!is_array($this->nodes)) {
-			$this->initializeNodes();
-		}
 		return count($this->nodes) > 0;
 	}
 
@@ -1426,41 +1448,6 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 */
 	public function getAllowedLifecycleTransitions() {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667741);
-	}
-
-
-	// non-JSR-283 methods
-
-
-	/**
-	 * Fetches the properties of the node from the storage layer
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function initializeProperties() {
-		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getIdentifier());
-		if (is_array($rawProperties)) {
-			foreach ($rawProperties as $rawProperty) {
-				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
-				$this->properties[$property->getName()] = $property;
-			}
-		}
-	}
-
-	/**
-	 * Fetches the properties of the node from the storage layer
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function initializeNodes() {
-		$this->nodes = array();
-		$rawNodeIdentifiers = $this->storageAccess->getIdentifiersOfSubNodesOfNode($this->getIdentifier());
-		foreach ($rawNodeIdentifiers as $rawNodeIdentifier) {
-			$node = $this->session->getNodeByIdentifier($rawNodeIdentifier);
-			$this->nodes[$node->getIdentifier()] = $node;
-		}
 	}
 
 }

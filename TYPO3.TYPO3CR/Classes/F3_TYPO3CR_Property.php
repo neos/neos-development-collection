@@ -96,8 +96,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 */
 	public function setValue($value) {
 		if ($value === NULL) {
-				// removes the property, thus delegated to parent
-			$this->getParent->setProperty($this->getName(), NULL);
+			$this->remove();
 		} else {
 			$valueFactory = $this->componentManager->getComponent('F3_PHPCR_ValueFactoryInterface');
 			if (is_array($value)) {
@@ -450,9 +449,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 
 	/**
 	 * Remove property
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213869622);
+			// removes the property, thus delegated to parent
+		$this->getParent()->setProperty($this->getName(), NULL);
 	}
 
 	/**

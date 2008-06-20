@@ -40,7 +40,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	protected $storageAccess;
 
 	/**
-	 * An array with all descriptor keys and their value
+	 * An array with all descriptor keys and their values (yes, all strings!)
 	 * @var array
 	 */
 	protected $descriptors = array(

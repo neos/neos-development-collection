@@ -331,5 +331,47 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 		}
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function saveProcessesNewNodes() {
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageAccess->expects($this->once())->method('addNode');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentManager));
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $mockStorageAccess, $this->componentManager);
+
+		$mockSession->registerNodeAsNew($node);
+		$mockSession->save();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function saveProcessesDirtyNodes() {
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageAccess->expects($this->once())->method('updateNode');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentManager));
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $mockStorageAccess, $this->componentManager);
+
+		$mockSession->registerNodeAsDirty($node);
+		$mockSession->save();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function saveProcessesRemovedNodes() {
+		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageAccess->expects($this->once())->method('removeNode');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentManager));
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $mockStorageAccess, $this->componentManager);
+
+		$mockSession->registerNodeAsRemoved($node);
+		$mockSession->save();
+	}
+
 }
 ?>
