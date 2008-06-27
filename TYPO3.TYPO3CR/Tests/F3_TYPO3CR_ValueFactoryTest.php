@@ -117,22 +117,8 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Checks if type conversion request for a non-string value throw an exception
-	 * @test
-	 */
-	public function createValueThrowsExceptionIfTypeIsGivenForNonStringValue() {
-		try {
-			$this->valueFactory->createValue(new DateTime('2007-09-22'), F3_PHPCR_PropertyType::BINARY);
-			$this->fail('createValue() must throw an exception if type conversion is requested for a non-string value.');
-		} catch (F3_PHPCR_ValueFormatException $e) {
-			// fine
-		}
-	}
-
-	/**
 	 * Checks if type conversion works, if requested using createValue()
 	 * @test
-	 * @todo We cannot see the internal value variable, thus the check is somewhat flaky...
 	 */
 	public function createValueConvertsTypeToBooleanIfRequested() {
 		$value = $this->valueFactory->createValue('Some test string', F3_PHPCR_PropertyType::BOOLEAN);

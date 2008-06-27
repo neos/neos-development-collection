@@ -97,10 +97,6 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 * @todo Make sure the given value is a valid Identifier for reference types
 	 */
 	protected function createValueWithGivenType($value, $type) {
-		if (!is_string($value)) {
-			throw new F3_PHPCR_ValueFormatException('Requesting type conversion is only allowed for string values.', 1203676334);
-		}
-
 		switch ($type) {
 			case F3_PHPCR_PropertyType::REFERENCE:
 			case F3_PHPCR_PropertyType::WEAKREFERENCE:
@@ -148,15 +144,31 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 * @return F3_PHPCR_ValueInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check type guessing/conversion when we go for PHP6
-	 * @todo Make sure conversion is checked for possibility
 	 */
 	public function createValueAndGuessType($value) {
-		if (is_a($value, 'F3_PHPCR_NodeInterface')) {
+		$type = self::guessType($value);
+		if ($type === F3_PHPCR_PropertyType::REFERENCE) {
 			$value = $value->getIdentifier();
+		}
+
+		return $this->componentManager->getComponent('F3_PHPCR_ValueInterface', $value, $type);
+	}
+
+	/**
+	 * Guesses the type for the given value
+	 *
+	 * @param mixed $value
+	 * @return integer
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public static function guessType($value) {
+		$type = F3_PHPCR_PropertyType::UNDEFINED;
+
+		if ($value instanceof F3_PHPCR_NodeInterface) {
 			$type = F3_PHPCR_PropertyType::REFERENCE;
-		} elseif (is_a($value, 'DateTime')) {
+		} elseif ($value instanceof DateTime) {
 			$type = F3_PHPCR_PropertyType::DATE;
-		} elseif (is_a($value, 'F3_PHPCR_BinaryInterface')) {
+		} elseif ($value instanceof F3_PHPCR_BinaryInterface) {
 			$type = F3_PHPCR_PropertyType::BINARY;
 		} elseif (F3_PHP6_Functions::is_binary($value)) {
 			$type = F3_PHPCR_PropertyType::BINARY;
@@ -170,7 +182,7 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 			$type = F3_PHPCR_PropertyType::STRING;
 		}
 
-		return $this->componentManager->getComponent('F3_TYPO3CR_Value', $value, $type);
+		return $type;
 	}
 }
 

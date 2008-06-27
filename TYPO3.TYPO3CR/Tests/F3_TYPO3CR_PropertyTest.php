@@ -40,7 +40,7 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$mockNode = $this->getMock('F3_TYPO3CR_Node', array(), array(), '', FALSE);
 
-		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', $mockNode, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', F3_PHPCR_PropertyType::STRING, $mockNode, $mockSession, $mockStorageAccess, $this->componentManager);
 		$valueObject = $property->getValue();
 		$this->assertType('F3_PHPCR_ValueInterface', $valueObject, 'getValue() a Value object.');
 	}
@@ -55,7 +55,7 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$mockNode = $this->getMock('F3_TYPO3CR_Node', array(), array(), '', FALSE);
 
-		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', $mockNode, FALSE, $mockSession, $mockStorageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', F3_PHPCR_PropertyType::STRING, $mockNode, $mockSession, $mockStorageAccess, $this->componentManager);
 
 		try {
 			$property->getValues();

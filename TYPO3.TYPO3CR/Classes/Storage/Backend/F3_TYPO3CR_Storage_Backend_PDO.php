@@ -87,7 +87,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawRootNode() {
-		$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE parent = 0');
+		$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE parent =\'\'');
 		$statementHandle->execute();
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
@@ -104,7 +104,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 		$statementHandle = $this->databaseHandle->prepare('SELECT identifier FROM nodes WHERE parent = ?');
 		$statementHandle->execute(array($identifier));
 		$rawNodes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		foreach ($rawNodes as $k => $rawNode) {
+		foreach ($rawNodes as $rawNode) {
 			$nodeIdentifiers[] = $rawNode['identifier'];
 		}
 		return $nodeIdentifiers;
@@ -118,11 +118,13 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawPropertiesOfNode($identifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue FROM properties WHERE parent = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue, type FROM properties WHERE parent = ?');
 		$statementHandle->execute(array($identifier));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		if (is_array($properties) && count($properties) && isset($properties['multivalue']) && $properties['multivalue']) {
-			$properties['value'] = unserialize($properties['value']);
+		if (is_array($properties)) {
+			foreach ($properties as &$property) {
+				$property['value'] = unserialize($property['value']);
+			}
 		}
 		return $properties;
 	}
@@ -226,11 +228,16 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo implement support for multi-valued properties
 	 */
 	public function addProperty(F3_PHPCR_PropertyInterface $property) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (parent, name, value, namespace, multivalue) VALUES (?, ?, ?, 0, 0)');
-		$statementHandle->execute(array($property->getParent()->getIdentifier(), $property->getName(), $property->getString()));
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (parent, name, value, namespace, multivalue, type) VALUES (?, ?, ?, \'\', ?, ?)');
+		$statementHandle->execute(array(
+			$property->getParent()->getIdentifier(),
+			$property->getName(),
+			$property->getSerializedValue(),
+			(integer)$property->isMultiple(),
+			$property->getType()
+		));
 	}
 
 	/**
@@ -240,11 +247,10 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo implement support for multi-valued properties
 	 */
 	public function updateProperty(F3_PHPCR_PropertyInterface $property) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=? WHERE parent=? AND name=?');
-		$statementHandle->execute(array($property->getString(), $property->getParent()->getIdentifier(), $property->getName()));
+		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=?, type=? WHERE parent=? AND name=?');
+		$statementHandle->execute(array($property->getSerializedValue(), $property->getType(), $property->getParent()->getIdentifier(), $property->getName()));
 	}
 
 	/**

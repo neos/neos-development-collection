@@ -45,11 +45,6 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	protected $componentManager;
 
 	/**
-	 * @var integer
-	 */
-	protected $id;
-
-	/**
 	 * @var string
 	 */
 	protected $name;

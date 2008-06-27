@@ -108,7 +108,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
-				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $this, $rawProperty['multivalue'], $this->session, $this->storageAccess);
+				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session, $this->storageAccess);
 				$this->properties[$property->getName()] = $property;
 			}
 		}
@@ -427,25 +427,19 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo honour requested type conversion
-	 * @todo NULL value must remove property
 	 */
-	public function setProperty($name, $value, $type = NULL) {
-		if ($type !== NULL) throw new F3_PHPCR_RepositoryException('$type is not supported in F3_TYPO3CR_Node::setProperty().', 1189538797);
-
+	public function setProperty($name, $value, $type = F3_PHPCR_PropertyType::UNDEFINED) {
 		if ($this->hasProperty($name)) {
 			if ($value === NULL) {
 				$this->session->registerPropertyAsRemoved($this->properties[$name]);
 				unset($this->properties[$name]);
 			} else {
-				$this->getProperty($name)->setValue($value);
-				$this->session->registerPropertyAsDirty($property);
+				$this->properties[$name]->setValue($value);
+				$this->session->registerPropertyAsDirty($this->properties[$name]);
 			}
 		} else {
-			$multiValued = is_array($value) ? TRUE : FALSE;
-			$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $this, $multiValued, $this->session, $this->storageAccess);
-			$this->properties[$name] = $property;
-			$this->session->registerPropertyAsNew($property);
+			$this->properties[$name] = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $type, $this, $this->session, $this->storageAccess);
+			$this->session->registerPropertyAsNew($this->properties[$name]);
 		}
 
 		$this->session->registerNodeAsDirty($this);

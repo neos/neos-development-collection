@@ -48,7 +48,7 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($value, $type = F3_PHPCR_PropertyType::UNDEFINED) {
+	public function __construct($value, $type) {
 		$this->value = $value;
 		$this->type = $type;
 	}

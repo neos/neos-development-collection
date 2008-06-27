@@ -104,7 +104,8 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 						'name' => 'title',
 						'value' => 'News about the TYPO3CR',
 						'namespace' => '',
-						'multivalue' => FALSE
+						'multivalue' => FALSE,
+						'type' => F3_PHPCR_PropertyType::STRING
 					)
 				)
 			)
@@ -158,7 +159,8 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 						'name' => 'title',
 						'value' => 'Same title, same object!?',
 						'namespace' => '',
-						'multivalue' => FALSE
+						'multivalue' => FALSE,
+						'type' => F3_PHPCR_PropertyType::STRING
 					)
 				)
 			)

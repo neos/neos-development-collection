@@ -130,12 +130,6 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 			'nodetype' => 'nt:base'
 		);
 		$node = new F3_TYPO3CR_Node($rawNode, $mockSession, $this->storageAccess, $this->componentManager);
-		$expectedRawNode = array(
-			'parent' => $rootNode->getIdentifier(),
-			'name' => 'TestNode1',
-			'identifier' => $identifier,
-			'nodetype' => 'nt:base'
-		);
 		$this->storageAccess->addNode($node);
 
 			// recreate node with different name and nodetype
@@ -187,21 +181,22 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->storageAccess, $this->componentManager);
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $this->storageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $this->storageAccess, $this->componentManager);
 		$this->storageAccess->addProperty($property);
 
 		$expectedRawProperties = array(array(
 			'name' => 'someProp',
 			'value' => 'someValue',
-			'namespace' => 0,
-			'multivalue' => 0
+			'namespace' => '',
+			'multivalue' => 0,
+			'type' => F3_PHPCR_PropertyType::STRING
 		));
 		$retrievedRawProperties = $this->storageAccess->getRawPropertiesOfNode($node->getIdentifier());
 		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
 
 	}
 
-		/**
+	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -210,7 +205,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->storageAccess, $this->componentManager);
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $this->storageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $this->storageAccess, $this->componentManager);
 		$this->storageAccess->addProperty($property);
 		$property->setValue('newValue');
 		$this->storageAccess->updateProperty($property);
@@ -218,8 +213,9 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$expectedRawProperties = array(array(
 			'name' => 'someProp',
 			'value' => 'newValue',
-			'namespace' => 0,
-			'multivalue' => 0
+			'namespace' => '',
+			'multivalue' => 0,
+			'type' => F3_PHPCR_PropertyType::STRING
 		));
 		$retrievedRawProperties = $this->storageAccess->getRawPropertiesOfNode($node->getIdentifier());
 		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
@@ -235,7 +231,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentManager));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->storageAccess, $this->componentManager);
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', $node, FALSE, $mockSession, $this->storageAccess, $this->componentManager);
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $this->storageAccess, $this->componentManager);
 		$this->storageAccess->addProperty($property);
 		$this->storageAccess->removeProperty($property);
 

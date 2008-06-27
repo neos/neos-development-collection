@@ -88,7 +88,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 						'name' => 'title',
 						'value' => 'News about the TYPO3CR',
 						'namespace' => '',
-						'multivalue' => FALSE
+						'multivalue' => FALSE,
+						'type' => F3_PHPCR_PropertyType::STRING
 					)
 				)
 			)
@@ -163,7 +164,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->assertNotEquals(1, $propertyIterator->getSize(), 'getProperties() returned an empty PropertyIterator for a node with properties.');
 
 			// we don't compare the iterators directly here, as this hits the memory limit hard. really hard.
-		$titleProperty = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', 'title', 'News about the TYPO3CR', $node, FALSE, $this->session, $this->mockStorageAccess);
+		$titleProperty = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', 'title', 'News about the TYPO3CR', F3_PHPCR_PropertyType::STRING, $node, $this->session, $this->mockStorageAccess);
 		$this->assertEquals($titleProperty->getString(), $properties->nextProperty()->getString(), 'getProperties() did not return the expected property.');
 	}
 

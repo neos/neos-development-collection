@@ -38,9 +38,6 @@ class F3_TYPO3CR_ValueTest extends F3_Testing_BaseTestCase {
 	 */
 	public function typeAssignmentWorks() {
 
-		$value = new F3_TYPO3CR_Value(NULL);
-		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::UNDEFINED, 'New Value object was not of type UNDEFINED, although expected.');
-
 		$value = new F3_TYPO3CR_Value(NULL, F3_PHPCR_PropertyType::UNDEFINED);
 		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::UNDEFINED, 'New Value object was not of type UNDEFINED, although requested.');
 

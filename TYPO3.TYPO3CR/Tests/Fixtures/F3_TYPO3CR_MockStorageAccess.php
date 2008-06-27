@@ -273,7 +273,8 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 			'name' => $property->getName(),
 			'value' => $property->getString(),
 			'namespace' => '',
-			'multivalue' => FALSE
+			'multivalue' => FALSE,
+			'type' => $property->getType()
 		);
 	}
 
