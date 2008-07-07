@@ -78,7 +78,6 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_TYPO3CR_Storage_BackendInterface $storageAccess) {
 		$this->componentManager = $componentManager;
 		$this->storageAccess = $storageAccess;
-
 	}
 
 	/**

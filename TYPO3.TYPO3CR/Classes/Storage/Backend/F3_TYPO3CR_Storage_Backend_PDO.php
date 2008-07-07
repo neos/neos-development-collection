@@ -95,7 +95,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	/**
 	 * Fetches sub node Identifiers from the database
 	 *
-	 * @param integer $identifier The node Identifier to fetch (sub-)nodes for
+	 * @param string $identifier The node Identifier to fetch (sub-)nodes for
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -113,7 +113,7 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	/**
 	 * Fetches raw property data from the database
 	 *
-	 * @param integer $identifier The node Identifier to fetch properties for
+	 * @param string $identifier The node Identifier to fetch properties for
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

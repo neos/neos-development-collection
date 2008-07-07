@@ -58,14 +58,12 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * Constructs a Node
 	 *
 	 * @param F3_TYPO3CR_SessionInterface $session
-	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(array $rawData = array(), F3_PHPCR_SessionInterface $session, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(array $rawData = array(), F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->session = $session;
-		$this->storageAccess = $storageAccess;
 		$this->componentManager = $componentManager;
 
 		if (!isset($rawData['identifier'])) {
@@ -79,7 +77,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 					$this->identifier = $value;
 					break;
 				case 'parent':
-					if ($value == '0') {
+					if ($value == '') {
 						$this->parentNode = NULL;
 					} else {
 						$this->parentNode = $value;
@@ -89,7 +87,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 					$this->name = $value;
 					break;
 				case 'nodetype':
-					$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $value, $this->storageAccess);
+					$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $value);
 					break;
 			}
 		}
@@ -105,10 +103,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeProperties() {
-		$rawProperties = $this->storageAccess->getRawPropertiesOfNode($this->getIdentifier());
+		$rawProperties = $this->session->getStorageBackend()->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
-				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session, $this->storageAccess);
+				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
 				$this->properties[$property->getName()] = $property;
 			}
 		}
@@ -121,7 +119,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeNodes() {
-		$rawNodeIdentifiers = $this->storageAccess->getIdentifiersOfSubNodesOfNode($this->getIdentifier());
+		$rawNodeIdentifiers = $this->session->getStorageBackend()->getIdentifiersOfSubNodesOfNode($this->getIdentifier());
 		if (is_array($rawNodeIdentifiers)) {
 			$this->nodes = $rawNodeIdentifiers;
 		}
@@ -187,7 +185,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 */
 	public function getPath() {
 		if ($this->parentNode === NULL) {
-			return "/";
+			return '/';
 		} else {
 			$buffer = $this->getParent()->getPath();
 			if (F3_PHP6_Functions::strlen($buffer) > 1) {
@@ -336,7 +334,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 				'name' => $lastNodeName,
 				'nodetype' => $primaryNodeTypeName,
 			);
-			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session, $this->storageAccess);
+			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session);
 
 			$this->nodes[] = $newNode->getIdentifier();
 			$this->session->registerNodeAsDirty($this);
@@ -438,7 +436,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 				$this->session->registerPropertyAsDirty($this->properties[$name]);
 			}
 		} else {
-			$this->properties[$name] = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $type, $this, $this->session, $this->storageAccess);
+			$this->properties[$name] = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $type, $this, $this->session);
 			$this->session->registerPropertyAsNew($this->properties[$name]);
 		}
 

@@ -95,7 +95,7 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Fetches sub node Identifiers from the database
 	 *
-	 * @param integer $identifier The node Identifier to fetch (sub-)nodes for
+	 * @param string $identifier The node Identifier to fetch (sub-)nodes for
 	 * @return array
 	 */
 	public function getIdentifiersOfSubNodesOfNode($identifier);
@@ -103,7 +103,7 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Fetches raw property data from the database
 	 *
-	 * @param integer $identifier The node Identifier to fetch properties for
+	 * @param string $identifier The node Identifier to fetch properties for
 	 * @return array
 	 */
 	public function getRawPropertiesOfNode($identifier);

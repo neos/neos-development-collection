@@ -120,6 +120,16 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	}
 
 	/**
+	 * Returns the F3_TYPO3CR_Storage_BackendInterface instance of the session
+	 *
+	 * @return F3_TYPO3CR_Storage_BackendInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getStorageBackend() {
+		return $this->storageAccess;
+	}
+
+	/**
 	 * Returns the Repository object through which the Session object was aquired.
 	 *
 	 * @return F3_PHPCR_RepositoryInterface
@@ -182,8 +192,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 			$this->rootNode = $this->componentManager->getComponent(
 				'F3_PHPCR_NodeInterface',
 				$this->storageAccess->getRawRootNode(),
-				$this,
-				$this->storageAccess);
+				$this);
 			$this->currentlyLoadedNodes[$this->rootNode->getIdentifier()] = $this->rootNode;
 		}
 
@@ -226,7 +235,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		if ($rawNode === FALSE) {
 			throw new F3_PHPCR_ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
 		}
-		$node = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawNode, $this, $this->storageAccess);
+		$node = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawNode, $this);
 		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
 
 		return $node;

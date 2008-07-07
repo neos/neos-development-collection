@@ -46,11 +46,6 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	protected $componentManager;
 
 	/**
-	 * @var F3_TYPO3CR_Storage_BackendInterface
-	 */
-	protected $storageAccess;
-
-	/**
 	 * @var integer
 	 */
 	protected $nodeTypeId;

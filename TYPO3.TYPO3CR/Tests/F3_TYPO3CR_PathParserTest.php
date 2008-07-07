@@ -49,7 +49,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			'nodetype' => 'nodeTypeName',
 			'name' => 'nodeA'
 		);
-		$rootNode = new F3_TYPO3CR_Node($rawData, $mockSession, $mockStorageAccess, $this->componentManager);
+		$rootNode = new F3_TYPO3CR_Node($rawData, $mockSession, $this->componentManager);
 
 		$firstNode = F3_TYPO3CR_PathParser::parsePath('/', $rootNode);
 		$this->assertEquals($rootNode, $firstNode, 'The path parser did not return the root node.');
