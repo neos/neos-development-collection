@@ -41,9 +41,9 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 	 * @param F3_PHPCR_RepositoryInterface $repository
 	 * @return void
 	 */
-	public function injectContentRepository(F3_PHPCR_RepositoryInterface $repository) {
-		$this->session = $repository->login();
-	}
+#	public function injectContentRepository(F3_PHPCR_RepositoryInterface $repository) {
+#		$this->session = $repository->login();
+#	}
 
 	/**
 	 * Initializes the backend
@@ -53,6 +53,9 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(array $classSchemata) {
+		// DISABLED FOR NOW
+		return;
+
 		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
 
 		foreach($classSchemata as $schema) {
@@ -65,6 +68,46 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 		}
 	}
 
+	/**
+	 * Sets the new objects
+	 *
+	 * @param array $objects
+	 * @return void
+	 */
+	public function setNewObjects(array $objects) {
+
+	}
+
+
+	/**
+	 * Sets the updated objects
+	 *
+	 * @param array $objects
+	 * @return void
+	 */
+	public function setUpdatedObjects(array $objects) {
+
+	}
+
+
+	/**
+	 * Sets the deleted objects
+	 *
+	 * @param array $objects
+	 * @return void
+	 */
+	public function setDeletedObjects(array $objects) {
+
+	}
+
+	/**
+	 * Commits the current persistence session
+	 *
+	 * @return void
+	 */
+	public function commit() {
+
+	}
 }
 
 ?>
