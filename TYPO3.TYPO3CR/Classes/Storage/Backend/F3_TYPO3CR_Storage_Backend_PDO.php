@@ -87,9 +87,13 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawRootNode() {
-		$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE parent =\'\'');
-		$statementHandle->execute();
-		return $statementHandle->fetch(PDO::FETCH_ASSOC);
+		try {
+			$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE parent =\'\'');
+			$statementHandle->execute();
+			return $statementHandle->fetch(PDO::FETCH_ASSOC);
+		} catch (PDOException $e) {
+			throw new F3_TYPO3CR_StorageException('Could not read raw root node. Make sure the database is initialized correctly (php index_dev.php TYPO3CR Setup database).', 1216051737);
+		}
 	}
 
 	/**
@@ -136,9 +140,13 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeTypes() {
-		$statementHandle = $this->databaseHandle->query('SELECT name FROM nodetypes');
-		$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		return $nodetypes;
+		try {
+			$statementHandle = $this->databaseHandle->query('SELECT name FROM nodetypes');
+			$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+			return $nodetypes;
+		} catch (PDOException $e) {
+			throw new F3_TYPO3CR_StorageException('Could not read raw nodetypes. Make sure the database is initialized correctly (php index_dev.php TYPO3CR Setup database).', 1216051821);
+		}
 	}
 
 	/**
