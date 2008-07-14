@@ -68,7 +68,7 @@ class F3_TYPO3CR_Storage_Helper {
 	 */
 	public function initializeNodeTypes() {
 		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name") VALUES (\'nt:base\')');
-		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name") VALUES (\'unstructured\')');
+		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name") VALUES (\'nt:unstructured\')');
 	}
 
 	/**
