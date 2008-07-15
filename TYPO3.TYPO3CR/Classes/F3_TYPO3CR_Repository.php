@@ -82,7 +82,6 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 		$this->componentManager = $componentManager;
 		$this->configuration = $this->componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('TYPO3CR', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS);
 		$this->storageAccess = $this->componentManager->getComponent($this->configuration->storage->backend, $this->configuration->storage->backendOptions);
-		$this->storageAccess->connect();
 	}
 
 	/**
@@ -117,6 +116,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 			throw new F3_PHPCR_NoSuchWorkspaceException('Only default workspace supported for now', 1181063009);
 		}
 
+		$this->storageAccess->connect();
 		$this->session = $this->componentManager->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageAccess);
 		return $this->session;
 	}

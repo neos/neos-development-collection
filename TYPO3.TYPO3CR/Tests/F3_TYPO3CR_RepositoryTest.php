@@ -31,15 +31,24 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Checks of the login() method returns a Session object
+	 * Probably the most mocked & stubbed test in FLOW3.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function repositoryLoginReturnsASession() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
+	public function repositoryLoginAsksForASessionToReturn() {
+		$configuration = new stdClass();
+		$configuration->storage->backend = 'mockStorageBackend';
+		$configuration->storage->backendOptions = array();
+		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockTYPO3CRSession = $this->getMock('F3_PHPCR_SessionInterface', array(), array(), '', FALSE);
+		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
+		$configurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
+		$componentManager = $this->getMock('F3_FLOW3_Component_Manager', array(), array(new F3_FLOW3_Reflection_Service()));
+		$componentManager->expects($this->exactly(3))->method('getComponent')->will($this->onConsecutiveCalls($configurationManager, $mockStorageBackend, $mockTYPO3CRSession));
+
+		$repository = new F3_TYPO3CR_Repository($componentManager);
 		$session = $repository->login();
-		$this->assertType('F3_PHPCR_SessionInterface', $session, 'The repository login did not return a session object.');
+		$this->assertSame($mockTYPO3CRSession, $session, 'The repository login did not return the requested session object.');
 	}
 
 	/**
@@ -48,8 +57,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function credentialsOfInvalidTypeThrowException() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
+		$repository = new F3_TYPO3CR_Repository($this->componentManager);
 		try {
 			$repository->login(new ArrayObject);
 			$this->fail('Invalid credentials did not throw an exception.');
@@ -64,8 +72,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorKeysReturnsAnArrayOfStrings() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
+		$repository = new F3_TYPO3CR_Repository($this->componentManager);
 		$descriptorKeys = $repository->getDescriptorKeys();
 		$this->assertTrue(is_array($descriptorKeys), 'The getDescriptorKeys method did not return an array.');
 		foreach ($descriptorKeys as $k => $v) {
@@ -79,8 +86,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorReturnsCorrectVersionString() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$repository = new F3_TYPO3CR_Repository($this->componentManager, $mockStorageAccess);
+		$repository = new F3_TYPO3CR_Repository($this->componentManager);
 		$descriptor = $repository->getDescriptor(F3_TYPO3CR_Repository::SPEC_VERSION_DESC);
 		$this->assertEquals('2.0', $descriptor, 'getDescriptor(SPEC_VERSION_DESC) did not return \'2.0\'.');
 	}

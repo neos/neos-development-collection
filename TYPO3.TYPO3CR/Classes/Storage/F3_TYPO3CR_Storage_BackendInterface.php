@@ -31,6 +31,13 @@ declare(ENCODING = 'utf-8');
 interface F3_TYPO3CR_Storage_BackendInterface {
 
 	/**
+	 * Connect to the storage backend
+	 *
+	 * @return void
+	 */
+	public function connect();
+
+	/**
 	 * Sets the name of the current workspace
 	 *
 	 * @param string $workspaceName Name of the workspace which should be used for all storage operations

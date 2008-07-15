@@ -56,6 +56,14 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	protected $workspaceName = 'default';
 
 	/**
+	 * To satisfy the interface
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function connect() {}
+
+	/**
 	 * Sets the name of the current workspace
 	 *
 	 * @param  string $workspaceName Name of the workspace which should be used for all storage operations
