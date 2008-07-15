@@ -28,6 +28,10 @@ declare(ENCODING = 'utf-8');
  */
 class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 
+	/**
+	 * @var F3_FLOW3_Configuration_Container
+	 */
+	protected $configuration;
 
 	/**
 	 * @var F3_FLOW3_Component_ManagerInterface
@@ -71,13 +75,14 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	 * Constructs a Repository object.
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
-	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_TYPO3CR_Storage_BackendInterface $storageAccess) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
-		$this->storageAccess = $storageAccess;
+		$this->configuration = $this->componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('TYPO3CR', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS);
+		$this->storageAccess = $this->componentManager->getComponent($this->configuration->storage->backend, $this->configuration->storage->backendOptions);
+		$this->storageAccess->connect();
 	}
 
 	/**

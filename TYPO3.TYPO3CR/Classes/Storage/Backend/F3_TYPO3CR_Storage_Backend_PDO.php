@@ -28,7 +28,22 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_TYPO3CR_Storage_Backend_PDO.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterface {
+class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractBackend {
+
+	/**
+	 * @var string
+	 */
+	protected $dataSourceName;
+
+	/**
+	 * @var string
+	 */
+	protected $username;
+
+	/**
+	 * @var string
+	 */
+	protected $password;
 
 	/**
 	 * @var PDO
@@ -41,16 +56,46 @@ class F3_TYPO3CR_Storage_Backend_PDO implements F3_TYPO3CR_Storage_BackendInterf
 	protected $workspaceName = 'default';
 
 	/**
-	 * Connects to the database using the provided DSN and (optional) user data
+	 * Sets the DSN to use
 	 *
-	 * @param string $dsn The DSN to use for connecting to the DB
-	 * @param string $username The username to use for connecting to the DB
-	 * @param string $password The password to use for connecting to the DB
+	 * @param string $DSN The DSN to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($dsn, $username = NULL, $password = NULL) {
-		$this->databaseHandle = new PDO($dsn, $username, $password);
+	public function setDataSourceName($DSN) {
+		$this->dataSourceName = $DSN;
+	}
+
+	/**
+	 * Sets the username to use
+	 *
+	 * @param string $username The username to use for connecting to the DB
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setUsername($username) {
+		$this->username = $username;
+	}
+
+	/**
+	 * Sets the password to use
+	 *
+	 * @param $password The password to use for connecting to the DB
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setPassword($password) {
+		$this->password = $password;
+	}
+
+	/**
+	 * Connect to the database
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function connect() {
+		$this->databaseHandle = new PDO($this->dataSourceName, $this->username, $this->password);
 		$this->databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}
 

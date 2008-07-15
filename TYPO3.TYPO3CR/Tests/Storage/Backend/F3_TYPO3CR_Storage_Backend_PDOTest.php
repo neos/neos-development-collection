@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
@@ -27,7 +27,7 @@ require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_Storage_Backend_PDOTest extends F3_TYPO3CR_Storage_Backend_TestBase {
@@ -56,7 +56,8 @@ class F3_TYPO3CR_Storage_Backend_PDOTest extends F3_TYPO3CR_Storage_Backend_Test
 		}
 		$this->fixtureDB = uniqid('sqlite') . '.db';
 		copy(FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
-		$this->storageAccess = new F3_TYPO3CR_Storage_Backend_PDO('sqlite:' . $this->fixtureFolder . $this->fixtureDB);
+		$this->storageAccess = new F3_TYPO3CR_Storage_Backend_PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
+		$this->storageAccess->connect();
 	}
 
 	/**
