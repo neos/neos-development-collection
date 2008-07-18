@@ -15,30 +15,25 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * A Page
+ * @package TYPO3
+ * @version $Id$
+ */
+
+/**
+ * Domain model of a page
  *
- * @package		CMS
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- *
+ * @package TYPO3
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
+ * @entity
  */
 class F3_TYPO3_Domain_Page {
-
-	/**
-	 * @var string The UUID of this page
-	 */
-	protected $uuid;
 
 	/**
 	 * @var string The page title
 	 */
 	protected $title;
-
-	/**
-	 * @var boolean Flags if the page is hidden
-	 */
-	protected $hidden = FALSE;
 
 	/**
 	 * @var array Content elements on this page
@@ -53,30 +48,18 @@ class F3_TYPO3_Domain_Page {
 	/**
 	 * Constructs the Page
 	 *
-	 * @param  string			$title: The page title
-	 * @param  F3_FLOW3_Utility_Algorithms $utilityAlgorithms: A reference to the algorithms utility component
+	 * @param string $title The page title
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($title) {
-		$this->uuid = F3_FLOW3_Utility_Algorithms::generateUUID();
 		$this->setTitle($title);
-	}
-
-	/**
-	 * Returns the page's universially unique identifier
-	 *
-	 * @return string			The UUID of the page
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getUUID() {
-		return $this->uuid;
 	}
 
 	/**
 	 * Sets the title of this page
 	 *
-	 * @param  string			$title: The new page title
+	 * @param string $title The new page title
 	 * @return Robert Lemke <robert@typo3.org>
 	 */
 	public function setTitle($title) {
@@ -87,49 +70,11 @@ class F3_TYPO3_Domain_Page {
 	/**
 	 * Returns the page's title
 	 *
-	 * @return string			The title of the page
+	 * @return string The title of the page
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTitle() {
 		return $this->title;
-	}
-
-	/**
-	 * Sets the "hidden" flag of the page
-	 *
-	 * @param  boolean			$hidden: If the page is hidden
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setHidden($hidden) {
-		if (!is_bool($hidden)) throw new InvalidArgumentException('The hidden flag must be of type boolean.', 1175791401);
-		$this->hidden = $hidden;
-	}
-
-	/**
-	 * Sets multiple properties from the keys and values taken from
-	 * the specified array.
-	 *
-	 * @param  array			$array: An array of keys and values of the properties to set
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setFromArray(array $array) {
-		foreach ($array as $key => $value) {
-			$methodName = 'set' . ucfirst($key);
-			if (!method_exists($this, $methodName)) throw new InvalidArgumentException('Cannot set the property "' . $key . '" in class ' . get_class($this) . ' because it doesn\'t exist.', 1176793136);
-			$this->$methodName($value);
-		}
-	}
-
-	/**
-	 * Returns the "hidden" flag of the page
-	 *
-	 * @return boolean			If the page is hidden
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isHidden() {
-		return $this->hidden;
 	}
 
 	/**
@@ -146,7 +91,7 @@ class F3_TYPO3_Domain_Page {
 	/**
 	 * Adds a sub page to the page
 	 *
-	 * @param  F3_TYPO3_Domain_Page $page
+	 * @param F3_TYPO3_Domain_Page $page
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

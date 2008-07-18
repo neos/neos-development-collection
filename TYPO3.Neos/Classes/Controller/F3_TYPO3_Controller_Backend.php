@@ -56,6 +56,7 @@ class F3_TYPO3_Controller_Backend extends F3_FLOW3_MVC_Controller_ActionControll
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
+		var_dump($this->package->getResourcesPath() . 'TypoScript/Backend.ts');
 		$this->view->typoScriptObjectTree = $this->typoScriptParser->parse(file_get_contents($this->package->getResourcesPath() . 'TypoScript/Backend.ts'));
 		return $this->view->render();
 	}

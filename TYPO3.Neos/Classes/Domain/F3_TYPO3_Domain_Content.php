@@ -15,46 +15,30 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * Some content
+ * @package TYPO3
+ * @version $Id$
+ */
+
+/**
+ * Domain model of a generic content element
  *
- * @package		CMS
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- *
+ * @package TYPO3
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
+ * @entity
  */
 class F3_TYPO3_Domain_Content {
 
 	/**
-	 * @var string The UUID of this content element
-	 */
-	protected $uuid;
-
-	/**
-	 * @var boolean Flags if the content is hidden
-	 */
-	protected $hidden = FALSE;
-
-	/**
-	 * @var string Some content
+	 * @var string The content
 	 */
 	protected $content;
 
 	/**
-	 * Constructs the Content
-	 *
-	 * @param  F3_FLOW3_Utility_Algorithms $utilityAlgorithms: A reference to the algorithms utility component
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct() {
-		$this->uuid = F3_FLOW3_Utility_Algorithms::generateUUID();
-	}
-
-	/**
 	 * Sets the content
 	 *
-	 * @param  string			$content: The content
+	 * @param string $content The content
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -65,7 +49,7 @@ class F3_TYPO3_Domain_Content {
 	/**
 	 * Returns the content
 	 *
-	 * @return string			The content
+	 * @return string The content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContent() {

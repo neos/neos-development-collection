@@ -12,17 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package TYPO3
+ * @version $Id$
+ */
 
 /**
  * The Page Repository contains all Pages and provides methods to manage them.
- * 
- * @package		CMS
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package TYPO3
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @repository
  */
-class F3_TYPO3_Domain_PageRepository {
-
+class F3_TYPO3_Domain_PageRepository extends F3_FLOW3_Persistence_Repository {
 
 }
 

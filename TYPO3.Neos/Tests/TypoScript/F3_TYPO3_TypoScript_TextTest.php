@@ -15,11 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3
+ * @subpackage TypoScript
+ * @version $Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the TypoScript Text object
  *
- * @package		CMS
- * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3
+ * @subpackage TypoScript
+ * @version $Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 

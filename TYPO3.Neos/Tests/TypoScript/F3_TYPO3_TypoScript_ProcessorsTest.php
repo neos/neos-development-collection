@@ -15,11 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3
+ * @subpackage TypoScript
+ * @version $Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the TypoScript standard processors
  *
- * @package		CMS
- * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3
+ * @subpackage TypoScript
+ * @version $Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 
@@ -247,7 +254,7 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$subject = 'This is no valid timestamp';
 		$format = 'F j, Y, g:i a';
 		try {
-			$result = $this->processors->processor_date($subject, $format);
+			$this->processors->processor_date($subject, $format);
 			$this->fail('The TypoScript processor "date" did not throw an F3_TypoScript_Exception on transforming an invalid timestamp.');
 		}
 		catch (F3_TypoScript_Exception $exception) {
@@ -265,7 +272,7 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$subject = -1254324643;
 		$format = 'F j, Y, g:i a';
 		try {
-			$result = $this->processors->processor_date($subject, $format);
+			$this->processors->processor_date($subject, $format);
 			$this->fail('The TypoScript processor "date" did not throw an F3_TypoScript_Exception on transforming a negative timestamp value.');
 		}
 		catch (F3_TypoScript_Exception $exception) {
@@ -695,7 +702,7 @@ class F3_TYPO3_TypoScript_ProcessorsTest extends F3_Testing_BaseTestCase {
 		$falseValue = 'I am more than just false!';
 
 		try {
-			$result = $this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
+			$this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
 			$this->fail('The TypoScript processor "if" did not throw an F3_TypoScript_Exception on an invalid condition.');
 		}
 		catch (F3_TypoScript_Exception $exception) {

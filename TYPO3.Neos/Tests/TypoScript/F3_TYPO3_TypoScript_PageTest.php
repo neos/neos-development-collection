@@ -15,19 +15,26 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TYPO3
+ * @subpackage TypoScript
+ * @version $Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the TypoScript Page object
  *
- * @package		CMS
- * @version 	$Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3
+ * @subpackage TypoScript
+ * @version $Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_TypoScript_PageTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if a Page object renders a simple content without any processors involved.
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pageObjectRendersSimpleContentCorrectly() {
 		$page = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Page');
@@ -52,8 +59,8 @@ class F3_TYPO3_TypoScript_PageTest extends F3_Testing_BaseTestCase {
 	/**
 	 * Checks if setBody throws an exception on an invalid body tag.
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function settingInvalidBodyTagThrowsException() {
 		try {
