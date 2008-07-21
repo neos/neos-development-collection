@@ -435,12 +435,12 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 				$this->properties[$name]->setValue($value);
 				$this->session->registerPropertyAsDirty($this->properties[$name]);
 			}
-		} else {
+			$this->session->registerNodeAsDirty($this);
+		} elseif ($value !== NULL) {
 			$this->properties[$name] = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $type, $this, $this->session);
 			$this->session->registerPropertyAsNew($this->properties[$name]);
+			$this->session->registerNodeAsDirty($this);
 		}
-
-		$this->session->registerNodeAsDirty($this);
 	}
 
 	/**
@@ -689,9 +689,16 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param string $relPath The path of a (possible) node.
 	 * @return boolean true if a node exists at relPath; false otherwise.
 	 * @throws F3_PHPCR_RepositoryException If an unspecified error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo Implement without actually getting the node(s)
 	 */
 	public function hasNode($relPath) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667710);
+		try {
+			$this->getNode($relPath);
+		} catch (F3_PHPCR_PathNotFoundException $e) {
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	/**

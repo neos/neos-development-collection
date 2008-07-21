@@ -59,7 +59,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($name, $value, $type, F3_PHPCR_NodeInterface $parentNode, F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_ManagerInterface $componentManager) {
-		if ($value === NULL) throw new F3_TYPO3CR_RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
+		if ($value === NULL) throw new F3_PHPCR_RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
 		if (is_array($value)) {
 			if (F3_FLOW3_Utility_Arrays::containsMultipleTypes($value)) {
 				throw new F3_PHPCR_ValueFormatException('Mixing multiple types in a Value is not allowed.', 1214492501);
@@ -151,7 +151,11 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 			throw new F3_PHPCR_UnsupportedRepositoryOperationException('setValue() can not yet be handed Value objects', 1214493495);
 		}
 
-		$this->value = $value;
+		if ($value instanceof DateTime) {
+			$this->value = date_format($value, DATE_ISO8601);
+		} else {
+			$this->value = $value;
+		}
 		$this->valueObject = NULL;
 		$this->session->registerPropertyAsDirty($this);
 

@@ -139,10 +139,10 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function hasPropertiesWorks() {
 		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$this->assertEquals(TRUE, $node->hasProperties(), 'hasProperties() did not return TRUE for a node with properties.');
+		$this->assertTrue($node->hasProperties(), 'hasProperties() did not return TRUE for a node with properties.');
 
 		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
-		$this->assertEquals(FALSE, $node->hasProperties(), 'hasProperties() did not return FALSE for a node without properties.');
+		$this->assertFalse($node->hasProperties(), 'hasProperties() did not return FALSE for a node without properties.');
 	}
 
 	/**
@@ -229,10 +229,10 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function hasNodesWorks() {
 		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
-		$this->assertEquals(TRUE, $node->hasNodes(), 'hasNodes() did not return TRUE for a node with child nodes.');
+		$this->assertTrue($node->hasNodes(), 'hasNodes() did not return TRUE for a node with child nodes.');
 
 		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$this->assertEquals(FALSE, $node->hasNodes(), 'hasNodes() did not return FALSE for a node without child nodes.');
+		$this->assertFalse($node->hasNodes(), 'hasNodes() did not return FALSE for a node without child nodes.');
 	}
 
 	/**
@@ -253,6 +253,24 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->assertNotEquals(0, $childNodes->getSize(), 'getNodes() returned an empty NodeIterator for a node with child nodes.');
 
 		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', $childNodes->nextNode()->getIdentifier(), 'getNodes() did not return the expected result for a node with child nodes.');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function hasNodeReturnsTrueIfNodeExists() {
+		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
+		$this->assertTrue($node->hasNode('News'), 'hasNode() did not return TRUE for a node with the given child node.');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function hasNodeReturnsFalseIfNodeDoesNotExist() {
+		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
+		$this->assertFalse($node->hasNode('nonExistingNode'), 'hasNode() did not return FALSE for a node without the given child node.');
 	}
 
 	/**
@@ -567,7 +585,6 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Test set property
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -577,13 +594,31 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Test set property
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function setPropertySetsValue() {
 		$this->rootNode->setProperty('someprop', 'somePropValue');
 		$this->assertEquals('somePropValue', $this->rootNode->getProperty('someprop')->getString(), 'unexpected value returned for freshly added property');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function setNewPropertyToNullIsIgnored() {
+		$this->rootNode->setProperty('someNewProp', NULL);
+		$this->assertFalse($this->rootNode->hasProperty('someNewProp'), 'Property added with NULL value was not ignored');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function setExistingPropertyToNullRemovesIt() {
+		$this->rootNode->setProperty('someprop', 'somePropValue');
+		$this->rootNode->setProperty('someprop', NULL);
+		$this->assertFalse($this->rootNode->hasProperty('someprop'), 'hasProperty returns TRUE for removed property');
 	}
 
 	/**
