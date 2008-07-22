@@ -43,7 +43,7 @@ class F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTy
 	/**
 	 * @var F3_FLOW3_Component_Manager
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var integer

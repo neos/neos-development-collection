@@ -34,9 +34,9 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	protected $configuration;
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3_FLOW3_Component_FactoryInterface
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
@@ -74,14 +74,14 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	/**
 	 * Constructs a Repository object.
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
-		$this->configuration = $this->componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('TYPO3CR', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS);
-		$this->storageAccess = $this->componentManager->getComponent($this->configuration->storage->backend, $this->configuration->storage->backendOptions);
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
+		$this->configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('TYPO3CR', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS);
+		$this->storageAccess = $this->componentFactory->getComponent($this->configuration->storage->backend, $this->configuration->storage->backendOptions);
 	}
 
 	/**
@@ -117,7 +117,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 		}
 
 		$this->storageAccess->connect();
-		$this->session = $this->componentManager->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageAccess);
+		$this->session = $this->componentFactory->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageAccess);
 		return $this->session;
 	}
 

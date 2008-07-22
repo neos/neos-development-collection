@@ -41,7 +41,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 		$mockStorageAccess->expects($this->any())->method('getIdentifiersOfSubNodesOfNode')->will($this->returnValue(array()));
 		$mockStorageAccess->expects($this->any())->method('getRawNodeType')->will($this->returnValue(array('name' => 'nodeTypeName')));
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockSession = new F3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$mockSession = new F3_TYPO3CR_Session('workspaceName', $mockRepository, $mockStorageAccess, $this->componentFactory);
 
 		$rawData = array(
 			'identifier' => '',
@@ -49,7 +49,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			'nodetype' => 'nodeTypeName',
 			'name' => 'nodeA'
 		);
-		$rootNode = new F3_TYPO3CR_Node($rawData, $mockSession, $this->componentManager);
+		$rootNode = new F3_TYPO3CR_Node($rawData, $mockSession, $this->componentFactory);
 
 		$firstNode = F3_TYPO3CR_PathParser::parsePath('/', $rootNode);
 		$this->assertEquals($rootNode, $firstNode, 'The path parser did not return the root node.');
@@ -111,7 +111,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			)
 		);
 
-		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentFactory);
 		$rootNode = $session->getRootNode();
 
 		$expectedTitle = 'News about the TYPO3CR';
@@ -166,7 +166,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			)
 		);
 
-		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentFactory);
 		$rootNode = $session->getRootNode();
 		$property1 = F3_TYPO3CR_PathParser::parsePath('Node/title', $rootNode, F3_TYPO3CR_PathParser::SEARCH_MODE_PROPERTIES);
 		$property2 = F3_TYPO3CR_PathParser::parsePath('Node/title', $rootNode, F3_TYPO3CR_PathParser::SEARCH_MODE_PROPERTIES);
@@ -216,7 +216,7 @@ class F3_TYPO3CR_PathParserTest extends F3_Testing_BaseTestCase {
 			)
 		);
 
-		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentManager);
+		$session = new F3_TYPO3CR_Session('default', $mockRepository, $mockStorageAccess, $this->componentFactory);
 		$rootNode = $session->getRootNode();
 
 		$node = F3_TYPO3CR_PathParser::parsePath('/Content', $rootNode);

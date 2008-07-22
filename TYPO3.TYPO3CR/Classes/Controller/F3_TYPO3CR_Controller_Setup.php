@@ -64,7 +64,7 @@ class F3_TYPO3CR_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionControll
 		if ($this->arguments['dsn'] == '') {
 			return $this->helpAction();
 		} else {
-			$helper = $this->componentManager->getComponent('F3_TYPO3CR_Storage_Helper', $this->arguments['dsn'], $this->arguments['userid'], $this->arguments['password']);
+			$helper = $this->componentFactory->getComponent('F3_TYPO3CR_Storage_Helper', $this->arguments['dsn'], $this->arguments['userid'], $this->arguments['password']);
 			$helper->initializeDatabase();
 			return 'Database was initialized.' . chr(10);
 		}

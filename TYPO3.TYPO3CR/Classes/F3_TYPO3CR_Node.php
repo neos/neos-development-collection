@@ -58,13 +58,13 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * Constructs a Node
 	 *
 	 * @param F3_TYPO3CR_SessionInterface $session
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(array $rawData = array(), F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(array $rawData = array(), F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->session = $session;
-		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 
 		if (!isset($rawData['identifier'])) {
 			$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
@@ -87,7 +87,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 					$this->name = $value;
 					break;
 				case 'nodetype':
-					$this->nodeType = $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $value);
+					$this->nodeType = $this->componentFactory->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $value);
 					break;
 			}
 		}
@@ -106,7 +106,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		$rawProperties = $this->session->getStorageBackend()->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
-				$property = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
+				$property = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
 				$this->properties[$property->getName()] = $property;
 			}
 		}
@@ -334,7 +334,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 				'name' => $lastNodeName,
 				'nodetype' => $primaryNodeTypeName,
 			);
-			$newNode = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session);
+			$newNode = $this->componentFactory->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session);
 
 			$this->nodes[] = $newNode->getIdentifier();
 			$this->session->registerNodeAsDirty($this);
@@ -437,7 +437,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			}
 			$this->session->registerNodeAsDirty($this);
 		} elseif ($value !== NULL) {
-			$this->properties[$name] = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $type, $this, $this->session);
+			$this->properties[$name] = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $type, $this, $this->session);
 			$this->session->registerPropertyAsNew($this->properties[$name]);
 			$this->session->registerNodeAsDirty($this);
 		}
@@ -512,7 +512,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$nodes[] = $this->session->getNodeByIdentifier($identifier);
 		}
 
-		return $this->componentManager->getComponent('F3_PHPCR_NodeIteratorInterface', $nodes);
+		return $this->componentFactory->getComponent('F3_PHPCR_NodeIteratorInterface', $nodes);
 	}
 
 	/**
@@ -576,7 +576,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	public function getProperties($namePattern = NULL) {
 		if ($namePattern !== NULL) throw new F3_PHPCR_RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
-		return $this->componentManager->getComponent('F3_PHPCR_PropertyIteratorInterface', $this->properties);
+		return $this->componentFactory->getComponent('F3_PHPCR_PropertyIteratorInterface', $this->properties);
 	}
 
 	/**

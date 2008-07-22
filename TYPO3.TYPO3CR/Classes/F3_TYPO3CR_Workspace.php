@@ -41,7 +41,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	/**
 	 * @var F3_FLOW3_Component_Manager
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
@@ -54,14 +54,14 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * @param string $name
 	 * @param F3_PHPCR_SessionInterface $session
 	 * @param F3_PHPCR_StorageAccess_StorageAccessInterface $storageAccess
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($name, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->name = (F3_PHP6_Functions::strlen($name) ? $name : 'default');
 		$this->session = $session;
 		$this->storageAccess = $storageAccess;
-		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**
@@ -312,7 +312,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNamespaceRegistry() {
-		return $this->componentManager->getComponent('F3_PHPCR_NamespaceRegistryInterface', $this->storageAccess, $this->componentManager);
+		return $this->componentFactory->getComponent('F3_PHPCR_NamespaceRegistryInterface', $this->storageAccess, $this->componentFactory);
 	}
 
 	/**
@@ -327,7 +327,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodeTypeManager() {
-		return $this->componentManager->getComponent('F3_PHPCR_NodeType_NodeTypeManagerInterface', $this->storageAccess, $this->componentManager);
+		return $this->componentFactory->getComponent('F3_PHPCR_NodeType_NodeTypeManagerInterface', $this->storageAccess, $this->componentFactory);
 	}
 
 	/**

@@ -39,7 +39,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$this->valueFactory = new F3_TYPO3CR_ValueFactory($this->componentManager);
+		$this->valueFactory = new F3_TYPO3CR_ValueFactory($this->componentFactory);
 	}
 
 	/**
@@ -98,8 +98,8 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function createValueFromNodeGuessesCorrectType() {
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('getRawPropertiesOfNode'), array('default', $this->getMock('F3_PHPCR_RepositoryInterface'), $this->getMock('F3_TYPO3CR_Storage_BackendInterface'), $this->componentManager));
-		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentManager);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('getRawPropertiesOfNode'), array('default', $this->getMock('F3_PHPCR_RepositoryInterface'), $this->getMock('F3_TYPO3CR_Storage_BackendInterface'), $this->componentFactory));
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 		$value = $this->valueFactory->createValue($node);
 		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
 		$this->assertEquals($value->getString(), $node->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');

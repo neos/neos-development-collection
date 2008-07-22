@@ -95,7 +95,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 			)
 		);
 
-		$this->session = new F3_TYPO3CR_Session('default', $mockRepository, $this->mockStorageAccess, $this->componentManager);
+		$this->session = new F3_TYPO3CR_Session('default', $mockRepository, $this->mockStorageAccess, $this->componentFactory);
 		$this->rootNode = $this->session->getRootNode();
 	}
 
@@ -164,7 +164,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->assertNotEquals(1, $propertyIterator->getSize(), 'getProperties() returned an empty PropertyIterator for a node with properties.');
 
 			// we don't compare the iterators directly here, as this hits the memory limit hard. really hard.
-		$titleProperty = $this->componentManager->getComponent('F3_PHPCR_PropertyInterface', 'title', 'News about the TYPO3CR', F3_PHPCR_PropertyType::STRING, $node, $this->session, $this->componentManager);
+		$titleProperty = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', 'title', 'News about the TYPO3CR', F3_PHPCR_PropertyType::STRING, $node, $this->session, $this->componentFactory);
 		$this->assertEquals($titleProperty->getString(), $properties->nextProperty()->getString(), 'getProperties() did not return the expected property.');
 	}
 
@@ -518,7 +518,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function addNodeRegistersNodeAsNewInSession() {
 		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentManager));
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('User');
@@ -530,7 +530,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function addNodeRegistersParentNodeAsDirtyInSession() {
 		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentManager));
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsDirty');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('User');
@@ -542,7 +542,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function removeNodeRegistersNodeAsRemovedInSession() {
 		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentManager));
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsRemoved');
 		$rootNode = $mockSession->getRootNode();
 		$node = $rootNode->addNode('User');

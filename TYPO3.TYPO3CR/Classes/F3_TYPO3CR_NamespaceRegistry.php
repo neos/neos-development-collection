@@ -31,7 +31,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	/**
 	 * @var F3_FLOW3_Component_Manager
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var array
@@ -53,12 +53,12 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 * Constructs a NamespaceRegistry object
 	 *
 	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->storageAccess = $storageAccess;
-		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 
 		$this->initializeCustomNamespaces();
 	}

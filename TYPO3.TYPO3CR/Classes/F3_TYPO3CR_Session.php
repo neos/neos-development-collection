@@ -29,9 +29,9 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3_FLOW3_Component_FactoryInterface
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_PHPCR_RepositoryInterface
@@ -104,19 +104,19 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param string $workspaceName
 	 * @param F3_PHPCR_RepositoryInterface $repository
 	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @throws InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($workspaceName, F3_PHPCR_RepositoryInterface $repository, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($workspaceName, F3_PHPCR_RepositoryInterface $repository, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
 
-		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 		$this->repository = $repository;
 		$this->storageAccess = $storageAccess;
 		$this->storageAccess->setWorkspaceName($workspaceName);
 
-		$this->workspace = $this->componentManager->getComponent('F3_PHPCR_WorkspaceInterface', $workspaceName, $this, $storageAccess, $this->componentManager);
+		$this->workspace = $this->componentFactory->getComponent('F3_PHPCR_WorkspaceInterface', $workspaceName, $this, $storageAccess);
 	}
 
 	/**
@@ -189,7 +189,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 */
 	public function getRootNode() {
 		if ($this->rootNode === NULL) {
-			$this->rootNode = $this->componentManager->getComponent(
+			$this->rootNode = $this->componentFactory->getComponent(
 				'F3_PHPCR_NodeInterface',
 				$this->storageAccess->getRawRootNode(),
 				$this);
@@ -235,7 +235,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		if ($rawNode === FALSE) {
 			throw new F3_PHPCR_ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
 		}
-		$node = $this->componentManager->getComponent('F3_PHPCR_NodeInterface', $rawNode, $this);
+		$node = $this->componentFactory->getComponent('F3_PHPCR_NodeInterface', $rawNode, $this);
 		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
 
 		return $node;
@@ -450,7 +450,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
 	 */
 	public function getValueFactory() {
-		return $this->componentManager->getComponent('F3_PHPCR_ValueFactoryInterface');
+		return $this->componentFactory->getComponent('F3_PHPCR_ValueFactoryInterface');
 	}
 
 	/**

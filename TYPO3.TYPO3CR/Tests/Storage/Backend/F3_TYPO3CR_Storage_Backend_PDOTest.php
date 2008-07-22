@@ -49,7 +49,7 @@ class F3_TYPO3CR_Storage_Backend_PDOTest extends F3_TYPO3CR_Storage_Backend_Test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->componentManager->getComponent('F3_FLOW3_Utility_Environment');
+		$environment = $this->componentFactory->getComponent('F3_FLOW3_Utility_Environment');
 		$this->fixtureFolder = $environment->getPathToTemporaryDirectory() . 'TYPO3CR/Tests/';
 		F3_FLOW3_Utility_Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('sqlite') . '.db';

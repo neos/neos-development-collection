@@ -43,10 +43,10 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 		$mockTYPO3CRSession = $this->getMock('F3_PHPCR_SessionInterface', array(), array(), '', FALSE);
 		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
 		$configurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
-		$componentManager = $this->getMock('F3_FLOW3_Component_Manager', array(), array(new F3_FLOW3_Reflection_Service()));
-		$componentManager->expects($this->exactly(3))->method('getComponent')->will($this->onConsecutiveCalls($configurationManager, $mockStorageBackend, $mockTYPO3CRSession));
+		$componentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
+		$componentFactory->expects($this->exactly(3))->method('getComponent')->will($this->onConsecutiveCalls($configurationManager, $mockStorageBackend, $mockTYPO3CRSession));
 
-		$repository = new F3_TYPO3CR_Repository($componentManager);
+		$repository = new F3_TYPO3CR_Repository($componentFactory);
 		$session = $repository->login();
 		$this->assertSame($mockTYPO3CRSession, $session, 'The repository login did not return the requested session object.');
 	}
@@ -57,7 +57,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function credentialsOfInvalidTypeThrowException() {
-		$repository = new F3_TYPO3CR_Repository($this->componentManager);
+		$repository = new F3_TYPO3CR_Repository($this->componentFactory);
 		try {
 			$repository->login(new ArrayObject);
 			$this->fail('Invalid credentials did not throw an exception.');
@@ -72,7 +72,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorKeysReturnsAnArrayOfStrings() {
-		$repository = new F3_TYPO3CR_Repository($this->componentManager);
+		$repository = new F3_TYPO3CR_Repository($this->componentFactory);
 		$descriptorKeys = $repository->getDescriptorKeys();
 		$this->assertTrue(is_array($descriptorKeys), 'The getDescriptorKeys method did not return an array.');
 		foreach ($descriptorKeys as $k => $v) {
@@ -86,7 +86,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorReturnsCorrectVersionString() {
-		$repository = new F3_TYPO3CR_Repository($this->componentManager);
+		$repository = new F3_TYPO3CR_Repository($this->componentFactory);
 		$descriptor = $repository->getDescriptor(F3_TYPO3CR_Repository::SPEC_VERSION_DESC);
 		$this->assertEquals('2.0', $descriptor, 'getDescriptor(SPEC_VERSION_DESC) did not return \'2.0\'.');
 	}

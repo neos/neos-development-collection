@@ -54,11 +54,11 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * @param integer $type The type to set for the property (see F3_PHPCR_PropertyTypes)
 	 * @param F3_PHPCR_NodeInterface $parentNode
 	 * @param F3_PHPCR_NodeInterface $session
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, $value, $type, F3_PHPCR_NodeInterface $parentNode, F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct($name, $value, $type, F3_PHPCR_NodeInterface $parentNode, F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		if ($value === NULL) throw new F3_PHPCR_RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
 		if (is_array($value)) {
 			if (F3_FLOW3_Utility_Arrays::containsMultipleTypes($value)) {
@@ -67,7 +67,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 		}
 
 		$this->session = $session;
-		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 		$this->parentNode = $parentNode;
 		$this->name = $name;
 
@@ -176,7 +176,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
 
 		if ($this->valueObject === NULL) {
-			$valueFactory = $this->componentManager->getComponent('F3_PHPCR_ValueFactoryInterface');
+			$valueFactory = $this->componentFactory->getComponent('F3_PHPCR_ValueFactoryInterface');
 			$this->valueObject = $valueFactory->createValue($this->value, $this->type);
 		}
 
@@ -199,7 +199,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 		if (!$this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getValues() cannot be used to access single-valued properties.', 1189512545);
 
 		if ($this->valueObject === NULL) {
-			$valueFactory = $this->componentManager->getComponent('F3_PHPCR_ValueFactoryInterface');
+			$valueFactory = $this->componentFactory->getComponent('F3_PHPCR_ValueFactoryInterface');
 			foreach ($this->value as $value) {
 				$this->valueObject[] = $valueFactory->createValue($value);
 			}

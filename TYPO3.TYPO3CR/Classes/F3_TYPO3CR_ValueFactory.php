@@ -31,17 +31,17 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	/**
 	 * @var F3_FLOW3_Component_Manager
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * Constructs a ValueFactory
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**
@@ -128,7 +128,7 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 					// so we just leave the value as it is
 				break;
 		}
-		return $this->componentManager->getComponent('F3_PHPCR_ValueInterface', $value, $type);
+		return $this->componentFactory->getComponent('F3_PHPCR_ValueInterface', $value, $type);
 	}
 
 	/**
@@ -151,7 +151,7 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 			$value = $value->getIdentifier();
 		}
 
-		return $this->componentManager->getComponent('F3_PHPCR_ValueInterface', $value, $type);
+		return $this->componentFactory->getComponent('F3_PHPCR_ValueInterface', $value, $type);
 	}
 
 	/**
