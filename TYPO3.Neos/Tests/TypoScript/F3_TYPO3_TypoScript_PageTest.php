@@ -37,7 +37,7 @@ class F3_TYPO3_TypoScript_PageTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pageObjectRendersSimpleContentCorrectly() {
-		$page = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Page');
+		$page = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Page');
 		$expectedContent = '<!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 <html>
@@ -64,7 +64,7 @@ class F3_TYPO3_TypoScript_PageTest extends F3_Testing_BaseTestCase {
 	 */
 	public function settingInvalidBodyTagThrowsException() {
 		try {
-			$page = $this->componentManager->getComponent('F3_TYPO3_TypoScript_Page');
+			$page = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Page');
 			$page->setBodyTag('<lotty style="">');
 			$this->fail('setBodyTag accepted an invalid body tag without throwing an exception.');
 		} catch (F3_TypoScript_Exception $exception) {

@@ -33,8 +33,8 @@ class F3_TYPO3_TypoScript_Template extends F3_TypoScript_AbstractContentArrayObj
 	protected $templateCode = '';
 
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->templateCode = $componentManager->getComponent('F3_TYPO3_TypoScript_ContentArray');
-		$this->templateCode[10] = $componentManager->getComponent('F3_TYPO3_TypoScript_Text');
+		$this->templateCode = $componentFactory->getComponent('F3_TYPO3_TypoScript_ContentArray');
+		$this->templateCode[10] = $componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$this->templateCode[10]->setValue('test');
 	}
 	
