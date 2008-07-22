@@ -15,11 +15,16 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package TypoScript
+ * @version $Id$
+ */
+
+/**
  * The TypoScript Parser
  *
- * @package		TypoScript
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TypoScript
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 
@@ -48,6 +53,11 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * @var F3_FLOW3_Component_ManagerInterface
 	 */
 	protected $componentManager;
+
+	/**
+	 * @var F3_FLOW3_Component_FactoryInterface
+	 */
+	protected $componentFactory;
 
 	/**
 	 * @var array The TypoScript object tree, created by this parser.
@@ -89,20 +99,21 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Constructs the parser
 	 *
-	 * @param  F3_FLOW3_ComponentManagerInterface		$componentManager: A reference to the component manager
-	 * @return void
+	 * @param F3_FLOW3_ComponentManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_ComponentFactoryInterface $componentFactory A reference to the component factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**
 	 * Parses the given TypoScript source code and returns an object tree
 	 * as the result.
 	 *
-	 * @param  string								$sourceCode: The TypoScript source code to parse
-	 * @return F3_TypoScript_ObjectTree			A TypoScript object tree, generated from the source code
+	 * @param string $sourceCode The TypoScript source code to parse
+	 * @return F3_TypoScript_ObjectTree A TypoScript object tree, generated from the source code
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parse($sourceCode) {
@@ -120,7 +131,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Sets the default namespace to the given component name prefix
 	 *
-	 * @param  string								$componentNamePrefix: The component name to prepend as the default namespace, without trailing "
+	 * @param string $componentNamePrefix The component name to prepend as the default namespace, without trailing "
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -147,7 +158,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Parses one line of TypoScript
 	 *
-	 * @param  string						$typoScriptLine: One line of TypoScript code
+	 * @param string $typoScriptLine One line of TypoScript code
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -178,7 +189,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Parses a line with comments or a line while parsing is in block comment mode.
 	 *
-	 * @param  string						$typoScriptLine: One line of TypoScript code
+	 * @param string $typoScriptLine One line of TypoScript code
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -206,8 +217,8 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Parses a line which opens or closes a confinement
 	 *
-	 * @param  string						$typoScriptLine: One line of TypoScript code
-	 * @param  boolean						$isOpeningConfinement: Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
+	 * @param string $typoScriptLine One line of TypoScript code
+	 * @param boolean $isOpeningConfinement Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -225,7 +236,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Parses a parser declaration of the form "declarationtype: declaration".
 	 *
-	 * @param  string						$typoScriptLine: One line of TypoScript code
+	 * @param string $typoScriptLine One line of TypoScript code
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -245,7 +256,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Parses an object definition.
 	 *
-	 * @param  string						$typoScriptLine: One line of TypoScript code
+	 * @param string $typoScriptLine One line of TypoScript code
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -276,8 +287,8 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Parses a value operation of the type "assignment".
 	 *
-	 * @param  string						$objectPath: The object path as a string
-	 * @param  string						$value: The unparsed value as a string
+	 * @param string $objectPath The object path as a string
+	 * @param string $value The unparsed value as a string
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -295,7 +306,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Unsets the object, property or variable specified by the object path.
 	 *
-	 * @param  string						$objectPath: The object path as a string
+	 * @param string $objectPath The object path as a string
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -312,8 +323,8 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * Copies the object or value specified by sourcObjectPath and assigns
 	 * it to targetObjectPath.
 	 *
-	 * @param  string						$sourceObjectPath: Specifies the location in the object tree from where the object or value will be taken
-	 * @param  string						$targetObjectPath: Specifies the location in the object tree where the copy will be stored
+	 * @param string $sourceObjectPath Specifies the location in the object tree from where the object or value will be taken
+	 * @param string $targetObjectPath Specifies the location in the object tree where the copy will be stored
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -335,8 +346,8 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * Assigns a reference of an object or value specified by sourcObjectPath to
 	 * the targetObjectPath.
 	 *
-	 * @param  string						$sourceObjectPath: Specifies the location in the object tree from where the object or value will be taken
-	 * @param  string						$targetObjectPath: Specifies the location in the object tree where the reference will be stored
+	 * @param string $sourceObjectPath Specifies the location in the object tree from where the object or value will be taken
+	 * @param string $targetObjectPath Specifies the location in the object tree where the reference will be stored
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -358,8 +369,8 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * and adds it to the position indicated by an index to the processor chain
 	 * of the property specified by the object path.
 	 *
-	 * @param  string						$indexAndMethodCall: The raw string defining the index within the processor chain and the method call. Eg. 3.wrap("<em>", "</em">)
-	 * @param  string						$objectPropertyPath: Specifies the object path of the property to process
+	 * @param string $indexAndMethodCall The raw string defining the index within the processor chain and the method call. Eg. 3.wrap("<em>", "</em">)
+	 * @param string $objectPropertyPath Specifies the object path of the property to process
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -379,7 +390,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 				}
 			}
 
-			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->componentManager->getComponent('F3_TypoScript_ProcessorChain');
+			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->componentFactory->getComponent('F3_TypoScript_ProcessorChain');
 			$processorInvocation = $this->getProcessorInvocation($matches['ComponentAndMethodName'], $processorArguments);
 			$processorChain->setProcessorInvocation((integer)$matches['Index'], $processorInvocation);
 			$typoScriptObject->setPropertyProcessorChain($propertyName, $processorChain);
@@ -391,7 +402,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Parses a namespace declaration and stores the result in the namespace registry.
 	 *
-	 * @param  string						$namespaceDeclaration: The namespace declaration, for example "cms = F3_TYPO3_TypoScript"
+	 * @param string $namespaceDeclaration The namespace declaration, for example "cms = F3_TYPO3_TypoScript"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -408,9 +419,9 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * Parses the given component-and-method-name string and then returns a new processor invocation
 	 * object calling the specified processor with the given arguments.
 	 *
-	 * @param  string						$processorComponentAndMethodName: Either just a method name (then the default namespace is used) or a full component/method name as in "F3_Package_Component->methodName"
-	 * @param  array						$processorArguments: An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
-	 * @return F3_TypoScript_ProcessorInvocation	The prepared processor invocation object
+	 * @param string $processorComponentAndMethodName Either just a method name (then the default namespace is used) or a full component/method name as in "F3_Package_Component->methodName"
+	 * @param array $processorArguments An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
+	 * @return F3_TypoScript_ProcessorInvocation The prepared processor invocation object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getProcessorInvocation($processorComponentAndMethodName, array $processorArguments) {
@@ -419,17 +430,17 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 		$processorComponentName = isset($matchedComponentAndMethodName['ComponentName']) ? $matchedComponentAndMethodName['ComponentName'] : $this->namespaces['default'] . '_Processors';
 		$processorMethodName = isset($matchedComponentAndMethodName['MethodName']) ? 'processor_' . $matchedComponentAndMethodName['MethodName'] : NULL;
 		if (!$this->componentManager->isComponentRegistered($processorComponentName)) throw new F3_TypoScript_Exception('Unknown processor component "' . $processorComponentName . '"', 1181903857);
-		$processor = $this->componentManager->getComponent($processorComponentName);
+		$processor = $this->componentFactory->getComponent($processorComponentName);
 		if (!method_exists($processor, $processorMethodName)) throw new F3_TypoScript_Exception('Unknown processor method "' . $processorComponentName . '->' . $processorMethodName . '"', 1181903857);
 
-		return $this->componentManager->getComponent('F3_TypoScript_ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
+		return $this->componentFactory->getComponent('F3_TypoScript_ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
 	}
 
 	/**
 	 * Parse an object path specified as a string and returns an array.
 	 *
-	 * @param  string						$objectPath: The object path to parse
-	 * @return array						An object path array
+	 * @param string $objectPath The object path to parse
+	 * @return array An object path array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getParsedObjectPath($objectPath) {
@@ -448,9 +459,9 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * Parses the given value (which may be a literal, variable or object type) and returns
 	 * the evaluated result, including variables replaced by their actual value.
 	 *
-	 * @param  array						$objectPathArray: The object path specifying the location of the value in the object tree
-	 * @param  string						$unparsedValue: The unparsed value
-	 * @return mixed						The processed value
+	 * @param array $objectPathArray The object path specifying the location of the value in the object tree
+	 * @param string $unparsedValue The unparsed value
+	 * @return mixed The processed value
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getProcessedValue(array $objectPathArray, $unparsedValue) {
@@ -469,7 +480,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 			if (!$this->componentManager->isComponentRegistered($typoScriptObjectComponentName)) {
 				throw new F3_TypoScript_Exception('Referring to unknown TypoScript Object Type "' . $typoScriptObjectComponentName . '" in object type assignment.', 1180605250);
 			}
-			$processedValue = $this->componentManager->getComponent($typoScriptObjectComponentName);
+			$processedValue = $this->componentFactory->getComponent($typoScriptObjectComponentName);
 		} else {
 			throw new F3_TypoScript_Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
 		}
@@ -480,9 +491,9 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * Analyzes the given string and if variables are found within, they are
 	 * replaced by their actual value.
 	 *
-	 * @param  string						$subject: The string to analyze
-	 * @param  array						$objectPathArray: The current object path, used as a prefix to the variable name
-	 * @return string						The original string but with variables replaced by their values
+	 * @param string $subject The string to analyze
+	 * @param array $objectPathArray The current object path, used as a prefix to the variable name
+	 * @return string The original string but with variables replaced by their values
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getValueWithEvaluatedVariables($subject, $objectPathArray) {
@@ -500,8 +511,8 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Assigns a value to an object variable, specified by the object path array
 	 *
-	 * @param  array						$objectPathArray: The object path, specifying the node and variable name to set
-	 * @param  mixed						$value: The value to assign
+	 * @param array $objectPathArray The object path, specifying the node and variable name to set
+	 * @param mixed $value The value to assign
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -512,9 +523,9 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Assigns a value to a node or a property in the object tree, specified by the object path array.
 	 *
-	 * @param  array						$objectPathArray: The object path, specifying the node / property to set
-	 * @param  mixed						$value: The value to assign
-	 * @param  array						$objectTree: The current (sub-) tree, used internally - don't specify!
+	 * @param array $objectPathArray The object path, specifying the node / property to set
+	 * @param mixed $value The value to assign
+	 * @param array $objectTree The current (sub-) tree, used internally - don't specify!
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -551,9 +562,9 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	/**
 	 * Retrieves a value from a node in the object tree, specified by the object path array.
 	 *
-	 * @param  array						$objectPathArray: The object path, specifying the node to retrieve the value of
-	 * @param  array						$objectTree: The current (sub-) tree, used internally - don't specify!
-	 * @return mixed						The value
+	 * @param array $objectPathArray The object path, specifying the node to retrieve the value of
+	 * @param array $objectTree The current (sub-) tree, used internally - don't specify!
+	 * @return mixed The value
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getValueFromObjectTree(array $objectPathArray, $objectTree = NULL) {
@@ -581,12 +592,12 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * Sets the property of a TypoScript object by calling the setter method
 	 * with the name specified by $propertyName.
 	 *
-	 * @param  F3_TypoScript_Object		$object: The TypoScript object which has the property
-	 * @param  string						$propertyName: Name of the property to set
-	 * @param  mixed						$value: The value to assign to the property
+	 * @param F3_TypoScript_Object $object The TypoScript object which has the property
+	 * @param string $propertyName Name of the property to set
+	 * @param mixed $value The value to assign to the property
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    setValueInObjectTree()
+	 * @see setValueInObjectTree()
 	 */
 	protected function setObjectProperty(&$object, $propertyName, $value) {
 		$setterMethodName = 'set' . ucfirst($propertyName);
@@ -599,11 +610,11 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * Retrieves the property of a TypoScript object by calling the getter method
 	 * with the name specified by $propertyName.
 	 *
-	 * @param  F3_TypoScript_Object		$object: The TypoScript object which has the property
-	 * @param  string						$propertyName: Name of the property to fetch
-	 * @return mixed						$value: The value of the property
+	 * @param F3_TypoScript_Object $object The TypoScript object which has the property
+	 * @param string $propertyName Name of the property to fetch
+	 * @return mixed $value The value of the property
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    getValueFromObjectTree()
+	 * @see getValueFromObjectTree()
 	 */
 	protected function getObjectProperty(&$object, $propertyName) {
 		$getterMethodName = 'get' . ucfirst($propertyName);
@@ -617,11 +628,11 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * if the childNodeKey is not the offset of a Content Array and the child node is
 	 * not already an array or Content Array.
 	 *
-	 * @param  array						&$objectTree: An object tree or sub part of the object tree which contains the child node
-	 * @param  string						$childNodeKey: Key in the objectTree which identifies the child node
+	 * @param array &$objectTree An object tree or sub part of the object tree which contains the child node
+	 * @param string $childNodeKey Key in the objectTree which identifies the child node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    setValueInObjectTree()
+	 * @see setValueInObjectTree()
 	 */
 	protected function setChildNodeToEmptyArrayIfNeccessary(&$objectTree, $childNodeKey) {
 		if (!is_integer($childNodeKey) && !isset($objectTree[$childNodeKey])) {
@@ -633,7 +644,7 @@ class F3_TypoScript_Parser implements F3_TypoScript_ParserInterface {
 	 * Returns the first part of an object path from the current object path stack
 	 * which can be used to prefix a relative object path.
 	 *
-	 * @return string						A part of an object path, ready to use as a prefix
+	 * @return string A part of an object path, ready to use as a prefix
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getCurrentObjectPathPrefix() {
