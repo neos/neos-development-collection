@@ -32,6 +32,15 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_Query_QueryManager implements F3_PHPCR_Query_QueryManagerInterface {
 
 	/**
+	 * @var F3_FLOW3_Component_FactoryInterface
+	 */
+	protected $componentFactory;
+
+	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
+	}
+
+	/**
 	 * Creates a new query by specifying the query statement itself and the language
 	 * in which the query is stated.
 	 *
@@ -64,9 +73,10 @@ class F3_TYPO3CR_Query_QueryManager implements F3_PHPCR_Query_QueryManagerInterf
 	 * programmatically.
 	 *
 	 * @return F3_PHPCR_Query_QOM_QueryObjectModelFactoryInterface a QueryObjectModelFactory object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getQOMFactory() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897624);
+		return $this->componentFactory->getComponent('F3_PHPCR_Query_QOM_QueryObjectModelFactoryInterface');
 	}
 
 	/*
