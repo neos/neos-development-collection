@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_Query_QOM_QueryObjectModelFactoryTest extends F3_Testing_BaseTestCase {
@@ -73,6 +73,17 @@ class F3_TYPO3CR_Query_QOM_QueryObjectModelFactoryTest extends F3_Testing_BaseTe
 	public function bindVariableReturnsBindVariableValue() {
 		$this->assertType('F3_PHPCR_Query_QOM_BindVariableValueInterface', $this->QOMFactory->bindVariable('someName'), 'The QOM factory did not return a BindVariableValue as expected.');
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function createQueryReturnsQueryObjectModel() {
+		$selector = $this->getMock('F3_PHPCR_Query_QOM_SelectorInterface');
+		$constraint = $this->getMock('F3_PHPCR_Query_QOM_ComparisonInterface');
+		$this->assertType('F3_PHPCR_Query_QOM_QueryObjectModelInterface', $this->QOMFactory->createQuery($selector, $constraint, array(), array()), 'The QOM factory did not return a QueryObjectModel as expected.');
+	}
+
 }
 
 

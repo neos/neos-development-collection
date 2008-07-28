@@ -17,27 +17,31 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
- * Testcase for the QOM Comparison
+ * Testcase for the QOM QueryObjectModel
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QOM_ComparisonTest extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_Query_QOM_QueryObjectModelTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function comparisonIsPrototype() {
-		$comparison1 = $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_Comparison', $this->getMock('F3_PHPCR_Query_QOM_DynamicOperandInterface'), 1, $this->getMock('F3_PHPCR_Query_QOM_StaticOperandInterface'));
-		$comparison2 = $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_Comparison', $this->getMock('F3_PHPCR_Query_QOM_DynamicOperandInterface'), 1, $this->getMock('F3_PHPCR_Query_QOM_StaticOperandInterface'));
-		$this->assertNotSame($comparison1, $comparison2, 'Query_QOM_Comparison is not prototype.');
+	public function queryObjectModelIsPrototype() {
+		$selector = $this->getMock('F3_PHPCR_Query_QOM_SelectorInterface');
+		$constraint = $this->getMock('F3_PHPCR_Query_QOM_ComparisonInterface');
+
+		$this->assertNotSame(
+			$this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_QueryObjectModel', $selector, $constraint, array(), array()),
+			$this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_QueryObjectModel', $selector, $constraint, array(), array()),
+			'Query_QOM_QueryObjectModel is not prototype.');
 	}
 }
 

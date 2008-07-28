@@ -16,44 +16,43 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
- * @subpackage Query
+ * @subpackage Tests
  * @version $Id$
  */
 
 /**
- * A prepared query. A new prepared query is created by calling
- * QueryManager->createPreparedQuery.
+ * Testcase for the PreparedQuery
  *
  * @package TYPO3CR
- * @subpackage Query
+ * @subpackage Tests
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
-class F3_TYPO3CR_Query_PreparedQuery extends F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_PreparedQueryInterface {
+class F3_TYPO3CR_Query_PreparedQueryTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @var array
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected $bindVariables = array();
-
-	/**
-	 * Binds the given value to the variable named $varName.
-	 *
-	 * @param string $varName name of variable in query
-	 * @param F3_PHPCR_ValueInterface $value value to bind
-	 * @return void
-	 * @throws InvalidArgumentException if $varName is not a valid variable in this query.
-	 * @throws RepositoryException if an error occurs.
-	 */
-	public function bindValue($varName, F3_PHPCR_ValueInterface $value) {
-		if (!key_exists($varName, $this->bindVariables)) {
-			throw new InvalidArgumentException('Invalid variable name given to bindValue.', 1217241834);
-		}
-
-		$this->bindVariables[$varName] = $value;
+	public function preparedQueryIsPrototype() {
+		$this->assertNotSame(
+			$this->componentFactory->getComponent('F3_TYPO3CR_Query_PreparedQuery'),
+			$this->componentFactory->getComponent('F3_TYPO3CR_Query_PreparedQuery'),
+			'Query_PreparedQuery is not prototype.');
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function bindValueThrowsExceptionOnUnknownVariableName() {
+		$query = new F3_TYPO3CR_Query_PreparedQuery();
+		try {
+			$query->bindValue('someVariable', $this->getMock('F3_PHPCR_ValueInterface'));
+			$this->fail('bindValue() did not throw an exception when given an unknown variable name.');
+		} catch (InvalidArgumentException $e) {}
+	}
 }
+
 
 ?>

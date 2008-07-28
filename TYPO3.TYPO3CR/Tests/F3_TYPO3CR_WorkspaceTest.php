@@ -90,5 +90,14 @@ class F3_TYPO3CR_WorkspaceTest extends F3_Testing_BaseTestCase {
 	public function getNodeTypeManagerReturnsANodeTypeManager() {
 		$this->assertType('F3_PHPCR_NodeType_NodeTypeManagerInterface', $this->workspace->getNodeTypeManager(),'The workspace did not return a NodeTypeManager object on getNodeTypeManager().');
 	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function getQueryManagerReturnsAQueryManager() {
+		$this->assertType('F3_PHPCR_Query_QueryManagerInterface', $this->workspace->getQueryManager(),'The workspace did not return a QueryManager object on getQueryManager().');
+	}
+
 }
 ?>

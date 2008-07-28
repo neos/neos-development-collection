@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Query
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Query
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_Query_QOM_QueryObjectModelFactory implements F3_PHPCR_Query_QOM_QueryObjectModelFactoryInterface {
@@ -57,9 +57,10 @@ class F3_TYPO3CR_Query_QOM_QueryObjectModelFactory implements F3_PHPCR_Query_QOM
 	 * @return F3_PHPCR_Query_QOM_QueryObjectModelInterface the query; non-null
 	 * @throws F3_PHPCR_Query_InvalidQueryException if the query is invalid
 	 * @throws F3_PHPCR_RepositoryException if the operation otherwise fails
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createQuery($selectorOrSource, F3_PHPCR_Query_QOM_ConstraintInterface $constraint, array $orderings, array $columns) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058186);
+	public function createQuery(F3_PHPCR_Query_QOM_SourceInterface $selectorOrSource, F3_PHPCR_Query_QOM_ConstraintInterface $constraint, array $orderings, array $columns) {
+		return $this->componentFactory->getComponent('F3_PHPCR_Query_QOM_QueryObjectModelInterface', $selectorOrSource, $constraint, $orderings, $columns);
 	}
 
 	/**

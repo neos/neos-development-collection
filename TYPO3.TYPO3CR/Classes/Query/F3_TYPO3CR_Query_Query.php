@@ -27,8 +27,19 @@ declare(ENCODING = 'utf-8');
  * @subpackage Query
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
+
+	/**
+	 * integer
+	 */
+	protected $limit;
+
+	/**
+	 * integer
+	 */
+	protected $offset;
 
 	/**
 	 * Executes this query and returns a QueryResult.
@@ -83,9 +94,13 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 *
 	 * @param integer $limit
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setLimit($limit) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897750);
+		if ($limit < 1 || !is_int($limit)) {
+			throw new InvalidArgumentException('setLimit() accepts only integers greater than 0.', 1217244746);
+		}
+		$this->limit = $limit;
 	}
 
 	/**
@@ -93,9 +108,13 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 *
 	 * @param integer $offset
 	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setOffset($offset) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897751);
+		if ($offset < 0 || !is_int($offset)) {
+			throw new InvalidArgumentException('setOffset() accepts only integers greater than or equal to 0.', 1217245454);
+		}
+		$this->offset = $offset;
 	}
 
 	/**

@@ -39,7 +39,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	protected $session;
 
 	/**
-	 * @var F3_FLOW3_Component_Manager
+	 * @var F3_FLOW3_Component_Factory
 	 */
 	protected $componentFactory;
 
@@ -286,9 +286,10 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 *
 	 * @return F3_PHPCR_Query_QueryManagerInterface the QueryManager object.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getQueryManager() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406778);
+		return $this->componentFactory->getComponent('F3_PHPCR_Query_QueryManagerInterface');
 	}
 
 	/*

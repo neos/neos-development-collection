@@ -145,7 +145,7 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check type guessing/conversion when we go for PHP6
 	 */
-	public function createValueAndGuessType($value) {
+	protected function createValueAndGuessType($value) {
 		$type = self::guessType($value);
 		if ($type === F3_PHPCR_PropertyType::REFERENCE) {
 			$value = $value->getIdentifier();

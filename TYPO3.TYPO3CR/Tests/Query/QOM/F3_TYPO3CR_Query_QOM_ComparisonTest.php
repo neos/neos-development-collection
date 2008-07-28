@@ -17,25 +17,27 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
- * Testcase for the QOM BindVariableValue
+ * Testcase for the QOM Comparison
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QOM_BindVariableValueTest extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_Query_QOM_ComparisonTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function bindVariableValueIsPrototype() {
-		$this->assertNotSame($this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_BindVariableValue', ''), $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_BindVariableValue', ''), 'Query_QOM_BindVariableValue is not prototype.');
+	public function comparisonIsPrototype() {
+		$comparison1 = $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_Comparison', $this->getMock('F3_PHPCR_Query_QOM_DynamicOperandInterface'), 1, $this->getMock('F3_PHPCR_Query_QOM_StaticOperandInterface'));
+		$comparison2 = $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_Comparison', $this->getMock('F3_PHPCR_Query_QOM_DynamicOperandInterface'), 1, $this->getMock('F3_PHPCR_Query_QOM_StaticOperandInterface'));
+		$this->assertNotSame($comparison1, $comparison2, 'Query_QOM_Comparison is not prototype.');
 	}
 }
 

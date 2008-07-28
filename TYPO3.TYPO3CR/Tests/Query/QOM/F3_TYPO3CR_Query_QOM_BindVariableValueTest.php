@@ -17,27 +17,25 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
- * Testcase for the QOM PropertyValue
+ * Testcase for the QOM BindVariableValue
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QOM_PropertyValueTest extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_Query_QOM_BindVariableValueTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function propertyValueIsPrototype() {
-		$propertyValue1 = $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_PropertyValue', 'someProp');
-		$propertyValue2 = $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_PropertyValue', 'someProp');
-		$this->assertNotSame($propertyValue1, $propertyValue2, 'Query_QOM_PropertyValue is not prototype.');
+	public function bindVariableValueIsPrototype() {
+		$this->assertNotSame($this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_BindVariableValue', ''), $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_BindVariableValue', ''), 'Query_QOM_BindVariableValue is not prototype.');
 	}
 }
 
