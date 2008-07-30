@@ -31,7 +31,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	/**
 	 * @var F3_FLOW3_Configuration_Container
 	 */
-	protected $configuration;
+	protected $settings;
 
 	/**
 	 * @var F3_FLOW3_Component_FactoryInterface
@@ -80,8 +80,8 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	 */
 	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
-		$this->configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('TYPO3CR', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS);
-		$this->storageAccess = $this->componentFactory->getComponent($this->configuration->storage->backend, $this->configuration->storage->backendOptions);
+		$this->settings = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('TYPO3CR');
+		$this->storageAccess = $this->componentFactory->getComponent($this->settings->storage->backend, $this->settings->storage->backendOptions);
 	}
 
 	/**

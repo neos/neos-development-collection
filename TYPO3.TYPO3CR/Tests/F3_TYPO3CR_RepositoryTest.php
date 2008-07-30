@@ -36,13 +36,15 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function repositoryLoginAsksForASessionToReturn() {
-		$configuration = new stdClass();
-		$configuration->storage->backend = 'mockStorageBackend';
-		$configuration->storage->backendOptions = array();
 		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockTYPO3CRSession = $this->getMock('F3_PHPCR_SessionInterface', array(), array(), '', FALSE);
+
+		$settings = new F3_FLOW3_Configuration_Container();
+		$settings->storage->backend = 'mockStorageBackend';
+		$settings->storage->backendOptions = array();
 		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$configurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
+		$configurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
+
 		$componentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
 		$componentFactory->expects($this->exactly(3))->method('getComponent')->will($this->onConsecutiveCalls($configurationManager, $mockStorageBackend, $mockTYPO3CRSession));
 
@@ -52,18 +54,13 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Credentials of an invalid type must throw an exception
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
+	 * @expectedException F3_PHPCR_RepositoryException
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function credentialsOfInvalidTypeThrowException() {
 		$repository = new F3_TYPO3CR_Repository($this->componentFactory);
-		try {
-			$repository->login(new ArrayObject);
-			$this->fail('Invalid credentials did not throw an exception.');
-		} catch (Exception $exception) {
-			$this->assertTrue($exception instanceof F3_PHPCR_RepositoryException, 'The thrown exception is not of the expected type.');
-		}
+		$repository->login(new ArrayObject);
 	}
 
 	/**
