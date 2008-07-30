@@ -7,14 +7,14 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 /**
- * Example route which acts as a shortcut to /TYPO3/Page/Default
+ * Route which acts as a shortcut to /TYPO3/Backend/Default
  */
-$c->typo3
+$c->TYPO3
 	->setUrlPattern('typo3')
 	->setDefaults(
 		array(
 			'package' => 'TYPO3',
-			'controller' => 'Page',
+			'controller' => 'Backend',
 			'action' => 'Default',
 		)
 	);

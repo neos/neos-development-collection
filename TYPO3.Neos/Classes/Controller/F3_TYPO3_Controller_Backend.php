@@ -29,23 +29,19 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3_Controller_Backend extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
-	 * @var F3_TypoScript_ParserInterface
-	 */
-	protected $typoScriptParser;
-
-	/**
 	 * @var array Only Web Requests are supported
 	 */
 	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
 
 	/**
-	 * Initalizes the page controller
+	 * Initializes this action controller
 	 *
-	 * @param F3_TypoScript_Parser
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectTypoScriptParser(F3_TypoScript_ParserInterface $typoScriptParser) {
-		$this->typoScriptParser = $typoScriptParser;
-		$this->typoScriptParser->setDefaultNamespace('F3_TYPO3_TypoScript');
+	public function initializeController() {
+		$this->arguments->addNewArgument('module');
+		$this->arguments->addNewArgument('submodule');
 	}
 
 	/**
@@ -56,9 +52,10 @@ class F3_TYPO3_Controller_Backend extends F3_FLOW3_MVC_Controller_ActionControll
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
-		var_dump($this->package->getResourcesPath() . 'TypoScript/Backend.ts');
-		$this->view->typoScriptObjectTree = $this->typoScriptParser->parse(file_get_contents($this->package->getResourcesPath() . 'TypoScript/Backend.ts'));
-		return $this->view->render();
+		if (key_exists((string)$this->arguments['module'], $this->settings->backend->modules)) {
+			return 'x';
+		}
+		return 'This is the TYPO3 backend. (Really)';
 	}
 }
 ?>
