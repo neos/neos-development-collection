@@ -48,6 +48,10 @@ class F3_TYPO3_Controller_Page extends F3_FLOW3_MVC_Controller_ActionController 
 		$this->typoScriptParser->setDefaultNamespace('F3_TYPO3_TypoScript');
 	}
 
+	public function initializeController() {
+		$this->arguments->addNewArgument('pagetitle');
+	}
+
 	/**
 	 * Processes a web- request and returns the rendered page as a response
 	 *
@@ -57,7 +61,7 @@ class F3_TYPO3_Controller_Page extends F3_FLOW3_MVC_Controller_ActionController 
 	 */
 	public function defaultAction() {
 		$this->view->typoScriptObjectTree = $this->typoScriptParser->parse(file_get_contents(dirname(__FILE__) . '/../../Tests/Fixtures/PreliminaryPageConfiguration.ts'));
-		$this->response->setContent($this->view->render());
+		return $this->view->render();
 	}
 }
 ?>
