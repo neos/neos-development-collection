@@ -6,10 +6,15 @@ declare(ENCODING="utf-8");
  *                                                                        *
  *                                                                        */
 
-/**
- * Route which acts as a shortcut to /TYPO3/Backend/Default
- */
-$c->TYPO3
+#$c->default->urlPattern = '[pagetitle]';
+#$c->default->defaults =
+#		array(
+#			'package' => 'TYPO3',
+#			'controller' => 'Page',
+#			'action' => 'Default',
+#		);
+
+$c->TYPO3Backend
 	->setUrlPattern('typo3')
 	->setDefaults(
 		array(
@@ -18,5 +23,4 @@ $c->TYPO3
 			'action' => 'Default',
 		)
 	);
-
 ?>
