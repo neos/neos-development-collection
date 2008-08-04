@@ -17,23 +17,14 @@ $c->TYPO3Route1->
 	);
 
 $c->TYPO3Route2
-	->setUrlPattern('typo3')
-	->setDefaults(
-		array(
-			'@package' => 'TYPO3',
-			'@controller' => 'Backend',
-			'@action' => 'Default',
-		)
-	);
-
-$c->TYPO3Route3
-	->setUrlPattern('testing/[@controller]/[@action]')
-	->setDefaults(
-		array(
-			'@package' => 'Testing',
-			'@controller' => 'Default',
-			'@action' => 'Default',
-		)
-	);
-
+->setUrlPattern('typo3/[module]/[submodule]')
+->setDefaults(
+	array(
+		'@package' => 'TYPO3',
+		'@controller' => 'Backend',
+		'@action' => 'ViewModule',
+		'module' => 'Default',
+		'submodule' => 'Default'
+	)
+);
 ?>
