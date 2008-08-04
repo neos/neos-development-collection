@@ -1,19 +1,29 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<packageInfo>
-	<packageKey>TYPO3</packageKey>
-	<version>0.0.1</version>
-	<title>TYPO3 CMS</title>
-	<description>The TYPO3 CMS package</description>
-	<category>system</category>
-	<authorName>Robert Lemke</authorName>
-	<authorEmail>robert@typo3.org</authorEmail>
-	<authorCompany/>
-	<constraints>
-		<depends>
-			<package atLeastVersion="5.0.0">php</package>
-			<package atLeastVersion="5.0.0">typo3</package>
-		</depends>
-		<conflicts/>
-		<suggests/>
-	</constraints>
-</packageInfo>	
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package xmlns="http://typo3.org/ns/2008/flow3/package">
+    <key>TYPO3</key>
+    <title>TYPO3</title>
+    <description></description>
+    <version>5.0.0</version>
+    <state>Development</state>
+    <categories>
+        <category>Frontend</category>
+        <category>Backend</category>
+    </categories>
+    <parties>
+        <person role="LeadDeveloper">
+            <name>Robert Lemke</name>
+            <email>robert@typo3.org</email>
+            <website>typo3.org</website>
+            <organisation>TYPO3 Association</organisation>
+            <repositoryUserName>robert</repositoryUserName>
+        </person>
+    </parties>
+    <constraints>
+        <depends>
+            <package>FLOW3</package>
+            <package>TypoScript</package>
+        </depends>
+        <conflicts/>
+        <suggests/>
+    </constraints>
+</package>
