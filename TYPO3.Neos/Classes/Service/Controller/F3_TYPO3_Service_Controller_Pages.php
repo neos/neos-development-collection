@@ -26,12 +26,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Controller_Page extends F3_FLOW3_MVC_Controller_ActionController {
-
-	/**
-	 * @var F3_TypoScript_ParserInterface
-	 */
-	protected $typoScriptParser;
+class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
 	 * @var array
@@ -49,7 +44,7 @@ class F3_TYPO3_Controller_Page extends F3_FLOW3_MVC_Controller_ActionController 
 	}
 
 	public function initializeController() {
-		$this->arguments->addNewArgument('pagetitle');
+		$this->arguments->addNewArgument('page');
 	}
 
 	/**
@@ -60,7 +55,9 @@ class F3_TYPO3_Controller_Page extends F3_FLOW3_MVC_Controller_ActionController 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
-		$this->view->typoScriptObjectTree = $this->typoScriptParser->parse(file_get_contents(dirname(__FILE__) . '/../../Tests/Fixtures/PreliminaryPageConfiguration.ts'));
+		var_dump($this->arguments['page']->getValue());
+		$ts = file_get_contents(dirname(__FILE__) . '/../../../Tests/Fixtures/PreliminaryPageConfiguration.ts');
+		$this->view->typoScriptObjectTree = $this->typoScriptParser->parse($ts);
 		return $this->view->render();
 	}
 }

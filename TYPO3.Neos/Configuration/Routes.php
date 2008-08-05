@@ -7,24 +7,34 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 $c->TYPO3Route1->
-	setUrlPattern('[pagetitle]')->
+	setUrlPattern('[page]')->
 	setDefaults(
 		array(
-			'@package' => 'TYPO3',
-			'@controller' => 'Page',
+			'@package' => 'TYPO3_Service',
+			'@controller' => 'Pages',
 			'@action' => 'Default',
+			'page' => 'index'
 		)
 	);
 
 $c->TYPO3Route2
-->setUrlPattern('typo3/[module]/[submodule]')
+->setUrlPattern('TYPO3/[module]/[submodule]')
 ->setDefaults(
 	array(
-		'@package' => 'TYPO3',
-		'@controller' => 'Backend',
+		'@package' => 'TYPO3_Backend',
+		'@controller' => 'Default',
 		'@action' => 'ViewModule',
 		'module' => 'Default',
 		'submodule' => 'Default'
 	)
 );
+
+$c->TYPO3Route3
+->setUrlPattern('TYPO3/Service/[@controller]')
+->setDefaults(
+	array(
+		'@package' => 'TYPO3_Service',
+	)
+);
+
 ?>
