@@ -7,13 +7,14 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 $c->TYPO3Route1->
-	setUrlPattern('[page]')->
+	setUrlPattern('[page].[@format]')->
 	setDefaults(
 		array(
 			'@package' => 'TYPO3_Service',
 			'@controller' => 'Pages',
 			'@action' => 'Default',
-			'page' => 'index'
+			'page' => 'index',
+			'@format' => 'html'
 		)
 	);
 

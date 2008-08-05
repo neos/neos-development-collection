@@ -56,6 +56,7 @@ class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionCo
 	 */
 	public function defaultAction() {
 		var_dump($this->arguments['page']->getValue());
+		var_dump($this->request->getFormat());
 		$ts = file_get_contents(dirname(__FILE__) . '/../../../Tests/Fixtures/PreliminaryPageConfiguration.ts');
 		$this->view->typoScriptObjectTree = $this->typoScriptParser->parse($ts);
 		return $this->view->render();
