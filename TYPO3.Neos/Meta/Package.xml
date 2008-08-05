@@ -20,8 +20,9 @@
     </parties>
     <constraints>
         <depends>
-            <package>FLOW3</package>
             <package>TypoScript</package>
+            <package>Widget</package>
+            <package>FLOW3</package>
         </depends>
         <conflicts/>
         <suggests/>
