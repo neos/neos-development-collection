@@ -15,9 +15,6 @@ declare(ENCODING="utf-8");
  *
  * @var array
  */
-
-$c->TYPO3->backend->modules = array(
-	'Content' => 'F3_TYPO3_Module_Content'
-);
+$c->TYPO3->backend->sections = array('System' => 'F3_TYPO3_Backend_Controller_SystemSection');
 
 ?>

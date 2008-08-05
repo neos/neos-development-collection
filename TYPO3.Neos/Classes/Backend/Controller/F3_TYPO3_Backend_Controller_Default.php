@@ -40,8 +40,8 @@ class F3_TYPO3_Backend_Controller_Default extends F3_FLOW3_MVC_Controller_Action
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeController() {
+		$this->arguments->addNewArgument('section');
 		$this->arguments->addNewArgument('module');
-		$this->arguments->addNewArgument('submodule');
 	}
 
 	/**
@@ -52,22 +52,7 @@ class F3_TYPO3_Backend_Controller_Default extends F3_FLOW3_MVC_Controller_Action
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
-		$this->forward('viewModule');
-	}
-
-	/**
-	 * Processes a web- request and returns the rendered page as a response
-	 *
-	 * @param  F3_FLOW3_MVC_Web_Request $request: The request to process
-	 * @param  F3_FLOW3_MVC_Response $response: The response
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function viewModuleAction() {
-		return
-			'<p>This is the TYPO3 backend. (Really)</p>' .
-			'<p>Module: ' . $this->arguments['module'] . '</p>' .
-			'<p>Sub Module: ' . $this->arguments['submodule'] . '</p>';
+		var_dump($this->settings->backend);
 	}
 }
 ?>

@@ -16,28 +16,30 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @subpackage Service
  * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
- *
+ * The TYPO3 Backend controller
  *
  * @package TYPO3
- * @subpackage Service
  * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionController {
+class F3_TYPO3_Backend_Controller_SystemSection extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
-	 * Processes the request
+	 * @var array Only Web Requests are supported
+	 */
+	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
+
+	/**
 	 *
-	 * @param F3_FLOW3_MVC_Request $request: The request to process
-	 * @param F3_FLOW3_MVC_Response $response: The response
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
+		return 'SYSTEM';
 	}
 }
 ?>
