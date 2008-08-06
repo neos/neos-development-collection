@@ -44,7 +44,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserReturnsObjectTreeArray() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture01.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture01.ts', FILE_TEXT);
 		$objectTree = $this->parser->parse($sourceCode);
 		$this->assertType('array', $objectTree, 'The TypoScript parser did not return an array.');
 	}
@@ -56,7 +56,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture01() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture01.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture01.ts', FILE_TEXT);
 
 		$expectedObjectTree['test'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['test']->setValue('Hello world!');
@@ -91,7 +91,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture02() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture02.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture02.ts', FILE_TEXT);
 
 		$expectedObjectTree['myObject'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['myObject']->setValue("Sorry, we're closed.");
@@ -111,7 +111,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture03() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture03.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture03.ts', FILE_TEXT);
 
 		$expectedObjectTree['myObject']['mySubObject']['mySubSubObject'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['myObject']['mySubObject']['mySubSubObject']->setValue("Espresso is a fine beverage.");
@@ -127,7 +127,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture04() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture04.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture04.ts', FILE_TEXT);
 
 		$expectedObjectTree['myArrayObject'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_ContentArray');
 		$expectedObjectTree['myArrayObject'][10] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
@@ -153,7 +153,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture05() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture05.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture05.ts', FILE_TEXT);
 
 		$expectedObjectTree['firstObject'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['firstObject']->setValue('Go outside. The graphics are AMAZING!');
@@ -173,7 +173,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture06() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture06.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture06.ts', FILE_TEXT);
 
 		$expectedObjectTree['object1'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object1']->setValue('Hello world');
@@ -195,7 +195,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture07() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture07.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture07.ts', FILE_TEXT);
 
 		$expectedObjectTree['object2'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object2']->setValue('');
@@ -213,7 +213,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture08() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture08.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture08.ts', FILE_TEXT);
 
 		$expectedObjectTree['object1'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object1']->setValue('Hello world!');
@@ -239,7 +239,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture09() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture09.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture09.ts', FILE_TEXT);
 
 		$expectedObjectTree['object1'] = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
 		$expectedObjectTree['object1']->setValue('Quien busca el peligro, perece en él');
@@ -259,7 +259,7 @@ class F3_TypoScript_ParserTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture10() {
-		$sourceCode = file_get_contents(dirname(__FILE__) . '/Fixtures/ParserTestTypoScriptFixture10.ts', FILE_TEXT);
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture10.ts', FILE_TEXT);
 		$processorObject = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Processors');
 
 		$propertyProcessorChain = $this->componentFactory->getComponent('F3_TypoScript_ProcessorChain');
