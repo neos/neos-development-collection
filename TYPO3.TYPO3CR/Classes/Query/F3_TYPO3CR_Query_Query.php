@@ -32,6 +32,16 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 
 	/**
+	 * @var F3_FLOW3_Component_FactoryInterface
+	 */
+	protected $componentFactory;
+
+	/**
+	 * @var F3_TYPO3CR_Storage_BackendInterface
+	 */
+	protected $storageAccess;
+
+	/**
 	 * integer
 	 */
 	protected $limit;
@@ -40,6 +50,33 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * integer
 	 */
 	protected $offset;
+
+	/**
+	 * @var string
+	 */
+	protected $language;
+
+	/**
+	 * Injects the Component Factory
+	 *
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
+	}
+
+	/**
+	 * Injects the session for this query
+	 *
+	 * @param F3_PHPCR_SessionInterface $session
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectSession(F3_PHPCR_SessionInterface $session) {
+		$this->storageAccess = $session->getStorageBackend();
+	}
 
 	/**
 	 * Executes this query and returns a QueryResult.
@@ -81,12 +118,13 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * version history structure below /jcr:system/jcr:versionHistory.
 	 *
 	 * @param integer $searchSpace flag which determines the scope of the search
-	 * @return F3_PHPCR_Query_QueryInterface a QueryResult object
+	 * @return F3_PHPCR_Query_QueryResultInterface a QueryResult object
 	 * @throws F3_PHPCR_Query_SearchNotSupportedException if the QueryManager does not support the search mode.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function execute($searchSpace = F3_PHPCR_Query_QueryInterface::SEARCH_WORKSPACE) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897749);
+		return $this->componentFactory->getComponent('F3_PHPCR_Query_QueryResultInterface', $this->storageAccess->findNodeIdentifiers($this));
 	}
 
 	/**
@@ -139,9 +177,10 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * constants returned by QueryManager.getSupportedQueryLanguages().
 	 *
 	 * @return string the query language.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getLanguage() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897753);
+		return $this->language;
 	}
 
 	/**

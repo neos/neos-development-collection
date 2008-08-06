@@ -51,6 +51,18 @@ class F3_TYPO3CR_Query_QOM_BindVariableValue extends F3_TYPO3CR_Query_QOM_Static
 	}
 
 	/**
+	 * Fills an array with the names of all bound variables in the operand
+	 *
+	 * @param array &$boundVariableNames
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function collectBoundVariableNames(&$boundVariableNames) {
+		$boundVariableNames[] = $this->variableName;
+	}
+
+
+	/**
 	 * Gets the name of the bind variable.
 	 *
 	 * @return string the bind variable name; non-null

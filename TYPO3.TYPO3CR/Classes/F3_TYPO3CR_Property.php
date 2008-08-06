@@ -344,7 +344,19 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * @throws F3_PHPCR_RepositoryException if another error occurs
 	 */
 	public function getNode() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594798);
+		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getNode() cannot be called on multi-valued properties.', 1217845644);
+
+		switch ($this->type) {
+			case F3_PHPCR_PropertyType::REFERENCE:
+			case F3_PHPCR_PropertyType::WEAKREFERENCE:
+				return $this->session->getNodeByIdentifier($this->getValue()->getString());
+				break;
+			case F3_PHPCR_PropertyType::PATH:
+				throw new F3_PHPCR_UnsupportedRepositoryOperationException('getNode() for PATH properties is not yet supported.', 1217845501);
+			default:
+				throw new F3_PHPCR_ValueFormatException('The property cannot be used as referring type for getNode().', 1217845587);
+				break;
+		}
 	}
 
 	/**

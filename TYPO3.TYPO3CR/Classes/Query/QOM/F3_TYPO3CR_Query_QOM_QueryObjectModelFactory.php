@@ -59,7 +59,7 @@ class F3_TYPO3CR_Query_QOM_QueryObjectModelFactory implements F3_PHPCR_Query_QOM
 	 * @throws F3_PHPCR_RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createQuery(F3_PHPCR_Query_QOM_SourceInterface $selectorOrSource, F3_PHPCR_Query_QOM_ConstraintInterface $constraint, array $orderings, array $columns) {
+	public function createQuery(F3_PHPCR_Query_QOM_SourceInterface $selectorOrSource, $constraint, array $orderings, array $columns) {
 		return $this->componentFactory->getComponent('F3_PHPCR_Query_QOM_QueryObjectModelInterface', $selectorOrSource, $constraint, $orderings, $columns);
 	}
 

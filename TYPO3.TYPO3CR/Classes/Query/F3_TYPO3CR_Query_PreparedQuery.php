@@ -35,7 +35,12 @@ class F3_TYPO3CR_Query_PreparedQuery extends F3_TYPO3CR_Query_Query implements F
 	/**
 	 * @var array
 	 */
-	protected $bindVariables = array();
+	protected $boundVariableNames = array();
+
+	/**
+	 * @var array
+	 */
+	protected $variableValues = array();
 
 	/**
 	 * Binds the given value to the variable named $varName.
@@ -47,13 +52,30 @@ class F3_TYPO3CR_Query_PreparedQuery extends F3_TYPO3CR_Query_Query implements F
 	 * @throws RepositoryException if an error occurs.
 	 */
 	public function bindValue($varName, F3_PHPCR_ValueInterface $value) {
-		if (!key_exists($varName, $this->bindVariables)) {
+		if (!array_search($varName, $this->boundVariableNames)) {
 			throw new InvalidArgumentException('Invalid variable name given to bindValue.', 1217241834);
 		}
 
-		$this->bindVariables[$varName] = $value;
+		switch ($value->getType()) {
+			case F3_PHPCR_PropertyType::STRING:
+				$value = $value->getString();
+				break;
+			default:
+				throw new F3_PHPCR_RepositoryException('Unsupported value type in bindValue encountered.', 1218020658);
+		}
+		$valueIdentifier = ':' . md5('TYPO3CR:properties:value:' . $varName);
+		$this->variableValues[$valueIdentifier] = $value;
 	}
 
+	/**
+	 * Returns the values of all bound variables.
+	 *
+	 * @return array()
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getBoundVariableValues() {
+		return $this->variableValues;
+	}
 }
 
 ?>

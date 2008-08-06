@@ -92,5 +92,13 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 		$propertyPath = $testProperty->getPath();
 		$this->assertEquals($propertyPath, '/testnode/testproperty', 'The path ' . $propertyPath . ' was not correct.');
 	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function getNodeReturnsANode() {
+		$this->markTestIncomplete('Not yet implemented');
+	}
 }
 ?>

@@ -81,16 +81,22 @@ class F3_TYPO3CR_Query_QOM_QueryObjectModel extends F3_TYPO3CR_Query_PreparedQue
 	 * Constructs this QueryObjectModel instance
 	 *
 	 * @param F3_PHPCR_Query_QOM_SourceInterface $selectorOrSource
-	 * @param F3_PHPCR_Query_QOM_ConstraintInterface $constraint
+	 * @param F3_PHPCR_Query_QOM_ConstraintInterface $constraint (null if none)
 	 * @param array $orderings
 	 * @param array $columns
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_PHPCR_Query_QOM_SourceInterface $selectorOrSource, F3_PHPCR_Query_QOM_ConstraintInterface $constraint, array $orderings, array $columns) {
+	public function __construct(F3_PHPCR_Query_QOM_SourceInterface $selectorOrSource, $constraint, array $orderings, array $columns) {
+		$this->language = F3_PHPCR_Query_QueryInterface::JCR_JQOM;
 		$this->source = $selectorOrSource;
 		$this->constraint = $constraint;
 		$this->orderings = $orderings;
 		$this->columns = $columns;
+
+		if ($this->constraint !== NULL) {
+			$this->constraint->collectBoundVariableNames($this->boundVariableNames);
+			$this->boundVariableNames = array_flip($this->boundVariableNames);
+		}
 	}
 
 	/**

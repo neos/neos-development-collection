@@ -57,10 +57,10 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, F3_PHPCR_SessionInterface $session, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct($name, F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->name = (F3_PHP6_Functions::strlen($name) ? $name : 'default');
 		$this->session = $session;
-		$this->storageAccess = $storageAccess;
+		$this->storageAccess = $this->session->getStorageBackend();
 		$this->componentFactory = $componentFactory;
 	}
 

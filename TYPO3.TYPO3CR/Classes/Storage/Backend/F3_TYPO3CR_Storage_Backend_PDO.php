@@ -378,6 +378,86 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractBackend 
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM namespaces WHERE prefix=?');
 		$statementHandle->execute(array($prefix));
 	}
+
+	/**
+	 * Returns an array with identifiers matching the query
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findNodeIdentifiers(F3_PHPCR_Query_QOM_QueryObjectModelInterface $query) {
+		$variables = array();
+
+		if ($query->getConstraint() !== NULL) {
+			$statement = 'SELECT "nodes"."identifier" FROM "nodes" LEFT JOIN "properties" ON ';
+			$statement .= '"nodes"."identifier"="properties"."parent" WHERE ';
+			list($parsedConstraint, $variables) = $this->parseConstraint($query->getConstraint());
+			$statement .= $parsedConstraint;
+			$statement .= ' AND ';
+		} else {
+			$statement = 'SELECT "identifier" FROM "nodes" WHERE ';
+		}
+
+		if ($query->getSource() instanceof F3_PHPCR_Query_QOM_SourceInterface) {
+			$identifier = ':' . md5('TYPO3CR:nodes:nodetype');
+			$statement .= '"nodetype" = ' . $identifier;
+			$variables[$identifier] = $query->getSource()->getNodeTypeName();
+		}
+
+		$boundVariableValues = $query->getBoundVariableValues();
+		array_walk($boundVariableValues, static function (&$value, $key) { $value = serialize($value); });
+		$variables = array_merge($variables, $boundVariableValues);
+
+		$statementHandle = $this->databaseHandle->prepare($statement);
+		$result = $statementHandle->execute($variables);
+		if ($result === FALSE) {
+			throw new F3_TYPO3CR_StorageException($statementHandle->errorInfo(), 1218021423);
+		}
+		$result = $statementHandle->fetchAll(PDO::FETCH_COLUMN, 0);
+
+		return (array)$result;
+	}
+
+	/**
+	 * Transforms a constraint into the corresponding SQL clause
+	 *
+	 * @param F3_PHPCR_Query_QOM_ConstraintInterface $constraint
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function parseConstraint(F3_PHPCR_Query_QOM_ConstraintInterface $constraint) {
+		$statement = '';
+		$variables = array();
+
+		if ($constraint instanceof F3_PHPCR_Query_QOM_ComparisonInterface) {
+			$nameIdentifier = ':' . md5('TYPO3CR:properties:name:' . $constraint->getOperand1()->getPropertyName());
+			$valueIdentifier = ':' . md5('TYPO3CR:properties:value:' . $constraint->getOperand1()->getPropertyName());
+			$variables[$nameIdentifier] = $constraint->getOperand1()->getPropertyName();
+			$statement .= '("properties"."name" = ' . $nameIdentifier . ' AND "properties"."value" ';
+			$statement .= $this->operatorTypeToSQL($constraint->getOperator()) . $valueIdentifier . ')';
+		}
+
+		return array($statement, $variables);
+	}
+
+	/**
+	 * Maps F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface operator constants to SQL operators
+	 *
+	 * @param integer $operatorType
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function operatorTypeToSQL($operatorType) {
+		switch ($operatorType) {
+			case F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO:
+				$operator = '=';
+				break;
+			default:
+				throw new F3_TYPO3CR_StorageException('Unsupported operator in query building encountered.', 1218020096);
+		}
+
+		return $operator;
+	}
 }
 
 ?>

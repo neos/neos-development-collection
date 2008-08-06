@@ -246,5 +246,12 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function findNodeIdentifiersWorks() {
+		$this->markTestIncomplete('Not yet implemented');
+	}
 }
 ?>

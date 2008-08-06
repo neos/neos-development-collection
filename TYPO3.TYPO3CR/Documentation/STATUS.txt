@@ -4,20 +4,3 @@ filled with a single line throwing an exception, like this:
  throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408404);
 
 Thus it is easy to see what is still missing.
-
-
-Next steps in query support:
-
-QOMFactory
-	->selector()
-	->comparison()
-	->propertyValue()
-	->bindVariable
-	->createQuery()
-
-Query
-	->bindValue()
-	->execute()
-
-QueryResult
-	->getNodes()

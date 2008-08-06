@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Query
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Query
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
@@ -58,6 +58,17 @@ class F3_TYPO3CR_Query_QOM_Comparison implements F3_PHPCR_Query_QOM_ComparisonIn
 		$this->operand1 = $operand1;
 		$this->operator = $operator;
 		$this->operand2 = $operand2;
+	}
+
+	/**
+	 * Fills an array with the names of all bound variables in the operand
+	 *
+	 * @param array &$boundVariableNames
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function collectBoundVariableNames(&$boundVariableNames) {
+		$this->operand2->collectBoundVariablenames($boundVariableNames);
 	}
 
 	/**

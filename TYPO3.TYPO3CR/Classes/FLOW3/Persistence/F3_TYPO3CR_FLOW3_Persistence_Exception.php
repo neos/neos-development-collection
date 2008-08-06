@@ -16,31 +16,19 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
- * @subpackage Tests
- * @version $Id$
+ * @subpackage FLOW3
+ * @version $Id:$
  */
 
 /**
- * Testcase for the PreparedQuery
+ * A "FLOW3 Persistence" Exception
  *
  * @package TYPO3CR
- * @subpackage Tests
- * @version $Id$
+ * @subpackage FLOW3
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_PreparedQueryTest extends F3_Testing_BaseTestCase {
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function bindValueThrowsExceptionOnUnknownVariableName() {
-		$query = new F3_TYPO3CR_Query_PreparedQuery();
-		try {
-			$query->bindValue('someVariable', $this->getMock('F3_PHPCR_ValueInterface'));
-			$this->fail('bindValue() did not throw an exception when given an unknown variable name.');
-		} catch (InvalidArgumentException $e) {}
-	}
+class F3_TYPO3CR_FLOW3_Persistence_Exception extends Exception {
 }
 
 

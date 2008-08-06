@@ -27,8 +27,56 @@ declare(ENCODING = 'utf-8');
  * @subpackage Query
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_TYPO3CR_Query_QueryResult implements F3_PHPCR_Query_QueryResultInterface {
+
+	/**
+	 * Injects the Component Factory
+	 */
+	protected $componentFactory;
+
+	/**
+	 * @var F3_TYPO3CR_SessionInterface
+	 */
+	protected $session;
+
+	/**
+	 * @var array
+	 */
+	protected $identifiers;
+
+	/**
+	 * Constructs this QueryResult
+	 *
+	 * @param array $identifiers
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function __construct(array $identifiers) {
+		$this->identifiers = $identifiers;
+	}
+
+	/**
+	 * Injects the Component Factory
+	 *
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
+	}
+
+	/**
+	 * Injects the session for this query
+	 *
+	 * @param F3_PHPCR_SessionInterface $session
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectSession(F3_PHPCR_SessionInterface $session) {
+		$this->session = $session;
+	}
 
 	/**
 	 * Returns an array of all the column names in the table view of this result set.
@@ -57,9 +105,15 @@ class F3_TYPO3CR_Query_QueryResult implements F3_PHPCR_Query_QueryResultInterfac
 	 *
 	 * @return F3_PHPCR_NodeIteratorInterface a NodeIterator
 	 * @throws F3_PHPCR_RepositoryException if the query contains more than one selector or if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodes() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897581);
+		$nodeIterator = $this->componentFactory->getComponent('F3_PHPCR_NodeIteratorInterface');
+		foreach ($this->identifiers as $identifier) {
+			$nodeIterator->append($this->session->getNodeByIdentifier($identifier));
+		}
+
+		return $nodeIterator;
 	}
 
 }

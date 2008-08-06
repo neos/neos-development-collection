@@ -1,20 +1,28 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<packageInfo>
-	<packageKey>TYPO3CR</packageKey>
-	<version>0.0.1</version>
-	<title>TYPO3 Content Repository</title>
-	<description>This package is used for storing stuff</description>
-	<category>system</category>
-	<authorName>Karsten Dambekalns</authorName>
-	<authorEmail>karsten@typo3.org</authorEmail>
-	<authorCompany/>
-	<constraints>
-		<depends>
-			<package atLeastVersion="6.0.0">php</package>
-			<package atLeastVersion="5.0.0">typo3</package>
-			<package>phpcr</package>
-		</depends>
-		<conflicts/>
-		<suggests/>
-	</constraints>
-</packageInfo>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<package xmlns="http://typo3.org/ns/2008/flow3/package">
+    <key>TYPO3CR</key>
+    <title>TYPO3 Content Repository</title>
+    <description>The TYPO3 Content Repository (more or less) implements the JSR-283 specification. It comes with a persistence backend for FLOW3 and a friendly interface for direct interaction with the repository contents.</description>
+    <version>0.0.1</version>
+    <state>Development</state>
+    <categories/>
+    <parties>
+        <person role="LeadDeveloper">
+            <name>Karsten Dambekalns</name>
+            <email>karsten@typo3.org</email>
+            <organisation>TYPO3 Association</organisation>
+            <repositoryUserName>k-fish</repositoryUserName>
+        </person>
+    </parties>
+    <constraints>
+        <depends>
+            <package>FLOW3</package>
+            <system type="PHPExtension">PDO</system>
+        </depends>
+        <conflicts/>
+        <suggests>
+            <system type="PHPExtension">pdo_sqlite</system>
+            <system type="PHPExtension">pdo_mysql</system>
+        </suggests>
+    </constraints>
+</package>

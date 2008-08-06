@@ -63,7 +63,7 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBinary() {
-
+		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217843676);
 	}
 
 	/**

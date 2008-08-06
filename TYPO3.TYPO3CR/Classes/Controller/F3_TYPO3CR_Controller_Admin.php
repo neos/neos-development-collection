@@ -15,77 +15,58 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Tests
+ * @package CRAdmin
  * @version $Id$
  */
 
 /**
- * Testcase for the Query
+ * The default CRAdmin controller
  *
- * @package TYPO3CR
- * @subpackage Tests
+ * @package CRAdmin
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_Controller_Admin extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
+	 * @var F3_PHPCR_SessionInterface
 	 */
-	public function setLimitAcceptsOnlyIntegers() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setLimit(1.5);
+	protected $session;
+
+	/**
+	 * Initializes this controller
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeController() {
+		$this->supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
+		$repository = $this->componentFactory->getComponent('F3_PHPCR_RepositoryInterface');
+
+		$this->session = $repository->login();
 	}
 
 	/**
-	 * @test
+	 * The default action of this phonebook controller
+	 *
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
 	 */
-	public function setLimitRejectsIntegersLessThanOne() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setLimit(0);
+	public function defaultAction() {
+		return $this->showFullTreeAction();
 	}
 
 	/**
-	 * @test
+	 * Displays a full tree of the CR content
+	 *
+	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
 	 */
-	public function setOffsetAcceptsOnlyIntegers() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setOffset(1.5);
+	public function showFullTreeAction() {
+		$view = $this->componentFactory->getComponent('F3_TYPO3CR_View_Admin_FullTree');
+		$view->setRootNode($this->session->getRootNode());
+		return $view->render();
 	}
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setOffsetRejectsIntegersLessThanZero() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setOffset(-1);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function executeReturnsQueryResult() {
-		$this->markTestIncomplete('Not yet implemented');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function executeCallsStorageBackend() {
-		$this->markTestIncomplete('Not yet implemented');
-	}
 }
-
-
 ?>

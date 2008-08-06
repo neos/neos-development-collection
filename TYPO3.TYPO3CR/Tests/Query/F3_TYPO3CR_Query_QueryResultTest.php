@@ -28,64 +28,16 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setLimitAcceptsOnlyIntegers() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setLimit(1.5);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setLimitRejectsIntegersLessThanOne() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setLimit(0);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setOffsetAcceptsOnlyIntegers() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setOffset(1.5);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setOffsetRejectsIntegersLessThanZero() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setOffset(-1);
-	}
+class F3_TYPO3CR_Query_QueryResultTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function executeReturnsQueryResult() {
+	public function getNodesReturnsANodeIterator() {
 		$this->markTestIncomplete('Not yet implemented');
 	}
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function executeCallsStorageBackend() {
-		$this->markTestIncomplete('Not yet implemented');
-	}
 }
-
 
 ?>

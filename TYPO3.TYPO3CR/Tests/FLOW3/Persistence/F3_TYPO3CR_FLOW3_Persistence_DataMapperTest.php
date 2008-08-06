@@ -17,33 +17,27 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:$
  */
 
 /**
- * Testcase for the QOM QueryObjectModel
+ * Testcase for F3_TYPO3CR_FLOW3_Persistence_DataMapper
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QOM_QueryObjectModelTest extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_FLOW3_Persistence_DataMapperTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function queryObjectModelIsPrototype() {
-		$selector = $this->getMock('F3_PHPCR_Query_QOM_SelectorInterface');
-		$constraint = $this->getMock('F3_PHPCR_Query_QOM_ComparisonInterface');
-
-		$this->assertNotSame(
-			$this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_QueryObjectModel', $selector, $constraint, array(), array()),
-			$this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_QueryObjectModel', $selector, $constraint, array(), array()),
-			'Query_QOM_QueryObjectModel is not prototype.');
+	public function mapReturnsObjectsFromNodes() {
+		$this->markTestIncomplete('Not yet implemented');
 	}
-}
 
+}
 
 ?>

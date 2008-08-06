@@ -17,64 +17,24 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:$
  */
 
 /**
- * Testcase for the Query
+ * Testcase for F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setLimitAcceptsOnlyIntegers() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setLimit(1.5);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setLimitRejectsIntegersLessThanOne() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setLimit(0);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setOffsetAcceptsOnlyIntegers() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setOffset(1.5);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException InvalidArgumentException
-	 */
-	public function setOffsetRejectsIntegersLessThanZero() {
-		$query = new F3_TYPO3CR_Query_Query();
-		$query->setOffset(-1);
-	}
+class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackendTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function executeReturnsQueryResult() {
+	public function initializeCreatesNodeTypes() {
 		$this->markTestIncomplete('Not yet implemented');
 	}
 
@@ -82,10 +42,10 @@ class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function executeCallsStorageBackend() {
+	public function commitProcessesNewObjects() {
 		$this->markTestIncomplete('Not yet implemented');
 	}
+
 }
-
 
 ?>
