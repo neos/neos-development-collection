@@ -10,12 +10,14 @@
         <person role="LeadDeveloper">
             <name>Karsten Dambekalns</name>
             <email>karsten@typo3.org</email>
+            <website></website>
             <organisation>TYPO3 Association</organisation>
             <repositoryUserName>k-fish</repositoryUserName>
         </person>
     </parties>
     <constraints>
         <depends>
+            <package>PHPCR</package>
             <package>FLOW3</package>
             <system type="PHPExtension">PDO</system>
         </depends>
