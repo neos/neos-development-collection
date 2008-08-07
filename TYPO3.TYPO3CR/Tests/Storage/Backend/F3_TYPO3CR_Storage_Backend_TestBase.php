@@ -179,7 +179,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function addPropertyWorks() {
+	public function addSingleValuedPropertyWorks() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentFactory));
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageAccess));
@@ -197,14 +197,20 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		));
 		$retrievedRawProperties = $this->storageAccess->getRawPropertiesOfNode($node->getIdentifier());
 		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
+	}
 
+	/**
+	 * @test
+	 */
+	public function addMultiValuedPropertyWorks() {
+		$this->markTestIncomplete('Not yet implemented');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function updatePropertyWorks() {
+	public function updateSingleValuedPropertyWorks() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentFactory));
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageAccess));
@@ -224,14 +230,20 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		));
 		$retrievedRawProperties = $this->storageAccess->getRawPropertiesOfNode($node->getIdentifier());
 		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
+	}
 
+	/**
+	 * @test
+	 */
+	public function updateMultiValuedPropertyWorks() {
+		$this->markTestIncomplete('Not yet implemented');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function removePropertyWorks() {
+	public function removeSingleValuedPropertyWorks() {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageAccess, $this->componentFactory));
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageAccess));
@@ -243,7 +255,13 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 
 		$retrievedRawProperties = $this->storageAccess->getRawPropertiesOfNode($node->getIdentifier());
 		$this->assertEquals(array(), $retrievedRawProperties, 'A removed property could be retrieved.');
+	}
 
+	/**
+	 * @test
+	 */
+	public function removeMultiValuedPropertyWorks() {
+		$this->markTestIncomplete('Not yet implemented');
 	}
 
 	/**

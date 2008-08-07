@@ -115,6 +115,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		$this->repository = $repository;
 		$this->storageAccess = $storageAccess;
 		$this->storageAccess->setWorkspaceName($workspaceName);
+		$this->storageAccess->connect();
 
 		$this->workspace = $this->componentFactory->getComponent('F3_PHPCR_WorkspaceInterface', $workspaceName, $this);
 	}
@@ -165,6 +166,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * attribute of the given name exists.
 	 *
 	 * @param string $name
+	 * @return object The value of the attribute or null if no attribute of the given name exists.
 	 */
 	public function getAttribute($name) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408402);
