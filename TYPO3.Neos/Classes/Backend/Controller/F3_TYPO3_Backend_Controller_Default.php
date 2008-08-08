@@ -52,7 +52,8 @@ class F3_TYPO3_Backend_Controller_Default extends F3_FLOW3_MVC_Controller_Action
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
-		var_dump($this->settings->backend);
+		$this->view->setRequest($this->request);
+		return $this->view->render();
 	}
 }
 ?>
