@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>TYPO3CR Admin</title>
+
+		<base href="###BASEURI###" />
+		<link rel="stylesheet" href="Resources/Web/ExtJS/Public/CSS/ext-all.css" />
+		<link rel="stylesheet" href="Resources/Web/ExtJS/Public/CSS/xtheme-gray.css" />
+		<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/ext-all.js"></script>
+		<script type="text/javascript">
+		Ext.BLANK_IMAGE_URL = 'Resources/Web/ExtJS/Public/images/default/s.gif';
+
+		var toolbar = new Ext.Toolbar({
+			items:[{
+				text:'TYPO3CR',
+				menu: new Ext.menu.Menu({
+					items: [
+						new Ext.menu.TextItem({text: 'About'}),
+						new Ext.menu.TextItem({text: 'Help'})
+					]
+				})
+			}]
+		});
+
+		var statusbar = new Ext.StatusBar({
+			defaultText: 'Welcome!',
+			items: ['TYPO3CR', '0.0.1', ' ']
+		});
+
+		var nodetree = new Ext.tree.TreePanel({
+			useArrows:true,
+			autoScroll:true,
+			animate:false,
+			contextMenu: new Ext.menu.Menu({
+				items: [{
+					id: 'expand-subtree',
+					text: 'Expand subtree'
+				},{
+					id: 'collapse-subtree',
+					text: 'Collapse subtree'
+				}],
+				listeners: {
+					itemclick: function(item) {
+						var node = item.parentMenu.contextNode;
+						switch (item.id) {
+							case 'expand-subtree':
+								node.expandChildNodes(true);
+								node.expand();
+								break;
+							case 'collapse-subtree':
+								node.collapseChildNodes(true);
+								node.collapse();
+								break;
+						}
+					}
+				}
+			}),
+			containerScroll: true,
+			dataUrl: 'TYPO3CR/JSON/getNodes/a',
+			listeners: {
+				click : {
+					fn: showNodeDetails,
+					scope: this,
+					delay: 100
+				},
+				contextmenu: function(node, e) {
+					node.select();
+					var c = node.getOwnerTree().contextMenu;
+					c.contextNode = node;
+					c.showAt(e.getXY());
+				}
+			},
+			root: {
+				nodeType: 'async',
+				id: 'ROOT'
+			}
+		});
+
+		function showNodeDetails(node) {
+			statusbar.setStatus({
+				text: 'Loading...',
+			});
+			statusbar.showBusy();
+			propertygrid.store.baseParams.node = node.id;
+			propertygrid.setTitle('Properties for "' + node.getPath('text') + '"');
+			propertygrid.getStore().reload();
+			propertygrid.getStore().addListener('load', function() {statusbar.clearStatus()});
+		}
+
+		var propertygrid = new Ext.grid.GridPanel({
+			store: new Ext.data.JsonStore({
+				url: 'TYPO3CR/JSON/getProperties/a',
+				root: 'properties',
+				baseParams: {node:'ROOT'},
+				fields: ['name', 'type', 'value']
+			}),
+			columns: [
+				{header: "Name", width: 50, sortable: true, dataIndex: 'name'},
+				{header: "Type", width: 20, sortable: true, dataIndex: 'type'},
+				{header: "Value", sortable: true, dataIndex: 'value'},
+			],
+			viewConfig: {
+				forceFit: true
+			},
+			title:'Properties',
+			iconCls:'icon-grid'
+		});
+
+		var center = [
+			{
+				region:'west',
+				layout:'fit',
+				width: 250,
+				minSize: 175,
+				maxSize: 400,
+				collapsible: true,
+				split:true,
+				items: nodetree
+			},{
+				region:'center',
+				layout:'fit',
+				items:propertygrid
+			}
+		];
+
+		Ext.onReady(function(){
+			var viewport = new Ext.Viewport({
+				layout:'border',
+				items:[
+					{
+						height: 30,
+						region: 'north',
+						items: toolbar
+					},{
+						region: 'center',
+						layout:'border',
+						items: center
+					},{
+						height: 30,
+						region: 'south',
+						items: statusbar
+					}
+				]
+			});
+
+			nodetree.getRootNode().expand();
+			propertygrid.getStore().load();
+		});
+
+		</script>
+
+</head>
+
+<body>
+</body>
+
+</html>
