@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage Backend
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage Backend
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractView {
@@ -44,23 +44,13 @@ class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractVi
 	}
 
 	/**
-	 * Initializes this view.
-	 *
-	 * Override this method for initializing your concrete view implementation.
-	 *
-	 * @return void
-	 */
-	protected function initializeView() {
-	}
-
-	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view
 	 */
 	public function render() {
 		return '<!DOCTYPE html
-	PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
+PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -69,109 +59,108 @@ class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractVi
 		<link rel="stylesheet" href="Resources/Web/ExtJS/Public/CSS/ext-all.css" />
 		<link rel="stylesheet" href="Resources/Web/ExtJS/Public/CSS/xtheme-gray.css" />
 		<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/ext-all-debug.js"></script>
-		<script type="text/javascript">'."
-		Ext.BLANK_IMAGE_URL = 'Packages/ExtJS/Public/Images/default/s.gif';
-		Ext.onReady(function(){
+		<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/ext-all.js"></script>
+		<script type="text/javascript">
+		' . "
+		Ext.BLANK_IMAGE_URL = 'Resources/Web/ExtJS/Public/images/default/s.gif';
 
-			var toolbar = new Ext.Toolbar({
-				id: 'toolbar',
-				items:[{
-					text:'Menu',
-					menu: new Ext.menu.Menu({
-						id: 'main-menu',
-						items: [{
-							text: 'TYPO3 is cool',
-							checked: true,       // when checked has a boolean value, it is assumed to be a CheckItem
-						}]
-					})
-				}]
-			});
+		var toolbar = new Ext.Toolbar({
+			items:[{
+				text:'TYPO3',
+				menu: new Ext.menu.Menu({
+					items: [
+						new Ext.menu.TextItem({text: 'About'}),
+						new Ext.menu.TextItem({text: 'Help'}),
+						new Ext.menu.TextItem({text: 'Log Out'})
+					]
+				})
+			}]
+		});
 
-			var statusbar = new Ext.StatusBar({
-				defaultText: 'Default status',
-				id: 'statusbar',
-				items: [
-					{
-						text: 'A Button'
-					},
-					'-', 'Plain Text', ' ', ' ']
-			});
+		var statusbar = new Ext.StatusBar({
+			defaultText: 'Ready.',
+			items: ['TYPO3 5.0.0-dev', ' ', ' ']
+		});
 
-			var modulebarContent = new Ext.Toolbar({
-				items:[{
-					text:'Page'
-				},{
-					text:'List'
-				},{
-					text:'Info'
-				}]
-			});
+		var modulebarContent = new Ext.Toolbar({
+			items:[{
+				text:'Page'
+			},{
+				text:'List'
+			},{
+				text:'Info'
+			}]
+		});
 
-			var modulebarLayout = new Ext.Toolbar({
-				items:[{
-					text:'Setup'
-				},{
-					text:'Constants'
-				},{
-					text:'Resources'
-				}]
-			});
+		var modulebarLayout = new Ext.Toolbar({
+			items:[{
+				text:'Setup'
+			},{
+				text:'Constants'
+			},{
+				text:'Resources'
+			}]
+		});
 
-			var moduleContent = [
+		var moduleContent = [
+			{
+				region:'west',
+				width: 200,
+				minSize: 175,
+				maxSize: 400,
+				collapsible: true,
+				split:true,
+				html:'west'
+			},{
+				region:'center',
+				html:'center'
+			},{
+				region: 'east',
+				width: 200,
+				minSize: 175,
+				maxSize: 400,
+				collapsible: true,
+				split:true,
+				html:'east'
+			}
+		];
+
+		var sections = new Ext.TabPanel({
+			activeTab:0,
+			items:[{
+				title: 'Content',
+				layout:'border',
+				items:[
 				{
-					region:'west',
-					width: 200,
-					minSize: 175,
-					maxSize: 400,
-					collapsible: true,
-					split:true,
-					html:'west'
+					region:'north',
+					height: 30,
+					items: modulebarContent
 				},{
 					region:'center',
-					html:'center'
-				},{
-					region: 'east',
-					width: 200,
-					minSize: 175,
-					maxSize: 400,
-					collapsible: true,
-					split:true,
-					html:'east'
+					autoScroll:true,
+					layout:'border',
+					items: moduleContent
 				}
-			];
-
-			var sections = new Ext.TabPanel({
-				deferredRender:false,
-				height:500, // this must use the available height!
-				activeTab:0,
-				items:[{
-					title: 'Content',
-					autoScroll:true,
-					items:[
-					{
-						region:'north',
-						height: 30,
-						items: modulebarContent
-					},{
-						region:'center',
-						layout: 'border',
-						height:350, // this must use the available height!
-						items: moduleContent
-					}]
+				]
+			},{
+				title: 'Layout',
+				layout:'border',
+				items:[
+				{
+					region:'north',
+					height: 30,
+					items: modulebarLayout
 				},{
-					title: 'Layout',
+					region:'center',
 					autoScroll:true,
-					items:[{
-						region:'north',
-						height: 30,
-						items: modulebarLayout
-					},{
-						region:'south',
-					}]
-				}]
-			});
+					layout:'border',
+					items: moduleContent
+				}
+				]
+			}]
+		});
 
+		Ext.onReady(function(){
 			var viewport = new Ext.Viewport({
 				layout:'border',
 				items:[
@@ -181,6 +170,7 @@ class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractVi
 						items: toolbar
 					},{
 						region: 'center',
+						layout:'fit',
 						items: sections
 					},{
 						height: 30,
@@ -190,6 +180,7 @@ class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractVi
 				]
 			});
 		});
+
 		</script>
 	</head>
 
