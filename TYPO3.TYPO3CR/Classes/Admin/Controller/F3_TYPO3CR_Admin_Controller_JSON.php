@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Controller_JSON extends F3_FLOW3_MVC_Controller_ActionController {
+class F3_TYPO3CR_Admin_Controller_JSON extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
 	 * @var F3_PHPCR_SessionInterface
@@ -123,11 +123,11 @@ class F3_TYPO3CR_Controller_JSON extends F3_FLOW3_MVC_Controller_ActionControlle
 				$value = '';
 				$propertyValues = $property->getValues();
 				foreach ($propertyValues as $propertyValue) {
-					$value .= $propertyValue->getString() . '<br />';
+					$value[] = $propertyValue->getString();
 				}
 				$data[] = array(
 					'name' => $property->getName(),
-					'type' => '[' . F3_PHPCR_PropertyType::nameFromValue($property->getType()) . ']',
+					'type' => F3_PHPCR_PropertyType::nameFromValue($property->getType()) . '[]',
 					'value' => $value
 				);
 			}

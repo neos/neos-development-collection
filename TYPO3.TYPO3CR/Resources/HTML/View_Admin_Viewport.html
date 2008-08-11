@@ -28,7 +28,7 @@
 
 		var statusbar = new Ext.StatusBar({
 			defaultText: 'Welcome!',
-			items: ['TYPO3CR', '0.0.1', ' ']
+			items: ['User: anonymous', '-', 'Workspace: default', '-', 'TYPO3CR 0.0.1']
 		});
 
 		var nodetree = new Ext.tree.TreePanel({
@@ -60,7 +60,7 @@
 				}
 			}),
 			containerScroll: true,
-			dataUrl: 'TYPO3CR/JSON/getNodes/a',
+			dataUrl: 'TYPO3CR/JSON/getNodes',
 			listeners: {
 				click : {
 					fn: showNodeDetails,
@@ -93,7 +93,7 @@
 
 		var propertygrid = new Ext.grid.GridPanel({
 			store: new Ext.data.JsonStore({
-				url: 'TYPO3CR/JSON/getProperties/a',
+				url: 'TYPO3CR/JSON/getProperties',
 				root: 'properties',
 				baseParams: {node:'ROOT'},
 				fields: ['name', 'type', 'value']
@@ -110,6 +110,21 @@
 			iconCls:'icon-grid'
 		});
 
+		var accordion = new Ext.Panel({
+			layout:'accordion',
+			layoutConfig: {
+				animate: true,
+			},
+			items: [{
+				title: 'Nodes',
+				layout:'fit',
+				items: nodetree
+			},{
+				title: 'Nodetypes',
+				html: '<p>Nodetype tree goes here!</p>'
+			}]
+		});
+
 		var center = [
 			{
 				region:'west',
@@ -119,7 +134,7 @@
 				maxSize: 400,
 				collapsible: true,
 				split:true,
-				items: nodetree
+				items: accordion
 			},{
 				region:'center',
 				layout:'fit',

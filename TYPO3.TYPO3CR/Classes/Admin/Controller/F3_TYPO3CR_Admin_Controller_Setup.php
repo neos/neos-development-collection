@@ -21,7 +21,7 @@ declare(ENCODING = 'utf-8');
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionController {
+class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
 	 * Defines the supported request types of this controller

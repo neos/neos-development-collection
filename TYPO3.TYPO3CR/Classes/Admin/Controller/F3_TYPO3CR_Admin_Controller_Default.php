@@ -21,38 +21,35 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Renders the full viewport for the standalone CR admin
+ * The default Admin controller
  *
  * @package TYPO3CR
  * @subpackage Admin
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_View_Admin_Viewport extends F3_FLOW3_MVC_View_AbstractView {
+class F3_TYPO3CR_Admin_Controller_Default extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Request
-	 */
-	protected $request;
-
-	/**
+	 * Initializes this controller
 	 *
-	 * @param unknown_type $request
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setRequest($request) {
-		$this->request = $request;
+	public function initializeController() {
+		$this->supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
 	}
 
 	/**
-	 * Renders the Admin viewport
+	 * The default action of this controller
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function render() {
-		$HTML = $this->resourceManager->getResource('file://TYPO3CR/HTML/View_Admin_Viewport.html')->getContent();
-		$HTML = str_replace('###BASEURI###', $this->request->getBaseURI(), $HTML);
-		return $HTML;
+	public function defaultAction() {
+		$view = $this->componentFactory->getComponent('F3_TYPO3CR_Admin_View_Viewport');
+		$view->setRequest($this->request);
+		return $view->render();
 	}
 
 }
