@@ -16,45 +16,27 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Domain model of a generic content element
+ * Domain model of a workspace
  *
  * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  * @entity
  */
-class F3_TYPO3_Domain_Content {
+class F3_TYPO3_Domain_Model_Workspace {
 
 	/**
-	 * @var string The content
+	 * @var F3_TYPO3_Domain_Model_Page
 	 */
-	protected $content;
+	protected $rootPage;
 
-	/**
-	 * Sets the content
-	 *
-	 * @param string $content The content
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
-
-	/**
-	 * Returns the content
-	 *
-	 * @return string The content
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getContent() {
-		return $this->content;
-	}
 }
 
 ?>

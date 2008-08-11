@@ -31,29 +31,66 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3_Frontend_Controller_Default extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
-	 * @var array
+	 * @var F3_TYPO3_Domain_Model_PageRepository
 	 */
-	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
+	protected $pageRepository;
 
 	/**
-	 * Initalizes the page controller
+	 * Injects the page repository
 	 *
-	 * @param F3_TypoScript_Parser
+	 * @param F3_TYPO3_Domain_Model_PageRepository $pageRepository The page repository
+	 * @return void
 	 */
-	public function injectTypoScriptParser(F3_TypoScript_ParserInterface $typoScriptParser) {
-		$this->typoScriptParser = $typoScriptParser;
-		$this->typoScriptParser->setDefaultNamespace('F3_TYPO3_TypoScript');
+	public function injectPageRepository(F3_TYPO3_Domain_Model_PageRepository $pageRepository) {
+		$this->pageRepository = $pageRepository;
 	}
 
+
 	/**
-	 * Processes a web- request and returns the rendered page as a response
+	 * Initializes this controller
 	 *
-	 * @param F3_FLOW3_MVC_Web_Request $request: The request to process
-	 * @param F3_FLOW3_MVC_Response $response: The response
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeController() {
+		$this->arguments->addNewArgument('page', 'UUID');
+	}
+
+
+	/**
+	 * Alias for the "show" action
+	 *
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
-		return 'Frontend';
+		$this->forward('show');
+	}
+
+	/**
+	 * Shows the page specified in the "page" argument
+	 *
+	 * @return string View output for the specified page
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function showAction() {
+		$this->prepareFake();
+
+		$pageUUID = $this->arguments['page']->getValue();
+		if ($pageUUID === NULL) return 'Invalid page uuid';
+
+		$pages = $this->pageRepository->findByUUID($pageUUID);
+
+	}
+
+	/**
+	 * Prepares a fake set of pages etc. for testing
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function prepareFake() {
+		$this->arguments['page']->setValue('e0675c97-ffbe-4559-88cb-2da57a6f3064');
 	}
 }
 ?>

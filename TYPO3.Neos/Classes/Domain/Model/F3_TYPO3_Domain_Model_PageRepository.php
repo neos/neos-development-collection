@@ -27,7 +27,18 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @repository
  */
-class F3_TYPO3_Domain_PageRepository extends F3_FLOW3_Persistence_Repository {
+class F3_TYPO3_Domain_Model_PageRepository extends F3_FLOW3_Persistence_Repository {
+
+	/**
+	 * Finds a page by its UUID
+	 *
+	 * @param string $uuid The uuid
+	 * @return array An array of the found page objects
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function findByUUID($uuid) {
+
+	}
 
 }
 
