@@ -38,6 +38,7 @@ class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionCo
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
+		return 'Pages Service. Format: ' . $this->request->getFormat();
 	}
 }
 ?>

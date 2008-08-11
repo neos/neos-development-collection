@@ -7,49 +7,47 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 $c->TYPO3Route1
-	->setUrlPattern('[page]/[@format]')
+	->setUrlPattern('[page].[@format]')
 	->setControllerComponentNamePattern('F3_@package_Frontend_Controller_@controller')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
 			'@controller' => 'Default',
-			'@action' => 'Default',
+			'@action' => 'default',
 			'page' => 'index',
 			'@format' => 'html'
 		)
 	);
 
 $c->TYPO3Route2
-	->setUrlPattern('TYPO3/[section]/[module]')
+	->setUrlPattern('typo3/[section]/[module]')
 	->setControllerComponentNamePattern('F3_@package_Backend_Controller_@controller')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
 			'@controller' => 'Default',
-			'@action' => 'Default',
+			'@action' => 'default',
 			'section' => 'System',
 			'module' => 'Welcome'
 		)
 	);
 
 $c->TYPO3Route3
-	->setUrlPattern('TYPO3/Service/[@controller]')
+	->setUrlPattern('typo3/service/[@controller]')
 	->setControllerComponentNamePattern('F3_@package_Service_Controller_@controller')
 	->setDefaults(
 		array(
-			'@package' => 'TYPO3_Service',
-		)
-	);
-
-$c->TYPO3RouteTesting->
-	setUrlPattern('Testing')->
-	setDefaults(
-		array(
-			'@package' => 'Testing',
-			'@controller' => 'Default',
-			'@action' => 'Default',
+			'@package' => 'TYPO3',
 			'@format' => 'html'
 		)
 	);
 
+$c->TYPO3Route4
+	->setUrlPattern('typo3/service/[@controller].[@format]')
+	->setControllerComponentNamePattern('F3_@package_Service_Controller_@controller')
+	->setDefaults(
+		array(
+			'@package' => 'TYPO3',
+		)
+	);
 ?>
