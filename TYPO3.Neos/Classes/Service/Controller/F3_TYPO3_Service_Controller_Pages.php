@@ -31,14 +31,56 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
-	 * Processes the request
+	 * @var F3_TYPO3_Domain_Model_PageRepository
+	 */
+	protected $pageRepository;
+
+	/**
+	 * Injects the page repository
 	 *
-	 * @param F3_FLOW3_MVC_Request $request: The request to process
-	 * @param F3_FLOW3_MVC_Response $response: The response
+	 * @param F3_TYPO3_Domain_Model_PageRepository $pageRepository A reference to the page repository
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPageRepository(F3_TYPO3_Domain_Model_PageRepository $pageRepository) {
+		$this->pageRepository = $pageRepository;
+	}
+
+	/**
+	 * Initializes this pages controller
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeController() {
+	}
+
+	/**
+	 * Forwards the request to the listAction()
+	 *
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
-		return 'Pages Service. Format: ' . $this->request->getFormat();
+		$this->forward('list');
+	}
+
+	/**
+	 * Lists available pages from the repository
+	 *
+	 * @return string Output of the list view
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function listAction() {
+		$page = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_Page', 'The first page');
+		$this->pageRepository->add($page);
+
+		$page = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_Page', 'The second page');
+		$this->pageRepository->add($page);
+
+		$pages = $this->pageRepository->findAll();
+		$this->view->setPages($pages);
+		return $this->view->render();
 	}
 }
 ?>

@@ -16,22 +16,35 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
+ * @subpackage Service
  * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
- * TypoScript View for a Page
+ *
  *
  * @package TYPO3
+ * @subpackage Service
  * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Service_View_Pages_Default extends F3_FLOW3_MVC_View_AbstractView {
+class F3_TYPO3_Service_View_Pages_ListJSON extends F3_FLOW3_MVC_View_AbstractView {
 
 	/**
-	 * @var array
+	 * @var array An array of pages
 	 */
-	public $typoScriptObjectTree;
+	protected $pages;
+
+	/**
+	 * Sets the pages (model) for this view
+	 *
+	 * @param array $pages An array of F3_TYPO3_Domain_Model_Page objects
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setPages(array $pages) {
+		$this->pages = $pages;
+	}
 
 	/**
 	 * Renders a page from the given TypoScript
@@ -41,16 +54,14 @@ class F3_TYPO3_Service_View_Pages_Default extends F3_FLOW3_MVC_View_AbstractView
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		foreach ($this->typoScriptObjectTree as $name => $typoScriptObject) {
-			if ($typoScriptObject instanceof F3_TYPO3_TypoScript_Page) {
-				$typoScriptPageObjectName = $name;
-			}
+		$pagesArray = array();
+		foreach ($this->pages as $page) {
+			$pagesArray[] = array(
+				'title' => $page->getTitle(),
+				'hidden' => $page->isHidden()
+			);
 		}
-		if (!isset($typoScriptPageObjectName)) {
-			return 'Error: No TypoScript Page object has been defined for this view.';
-		} else {
-			return $this->typoScriptObjectTree[$typoScriptPageObjectName]->getRenderedContent();
-		}
+		return json_encode($pagesArray);
 	}
 }
 ?>
