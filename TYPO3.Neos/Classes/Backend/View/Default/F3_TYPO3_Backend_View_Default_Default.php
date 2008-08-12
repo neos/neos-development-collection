@@ -31,19 +31,6 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractView {
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Request
-	 */
-	protected $request;
-
-	/**
-	 *
-	 * @param unknown_type $request
-	 */
-	public function setRequest($request) {
-		$this->request = $request;
-	}
-
-	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view
@@ -59,7 +46,7 @@ PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 		<link rel="stylesheet" href="Resources/Web/ExtJS/Public/CSS/ext-all.css" />
 		<link rel="stylesheet" href="Resources/Web/ExtJS/Public/CSS/xtheme-gray.css" />
 		<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/ext-all.js"></script>
+		<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/ext-all-debug.js"></script>
 		<script type="text/javascript">
 		' . "
 		Ext.BLANK_IMAGE_URL = 'Resources/Web/ExtJS/Public/images/default/s.gif';
@@ -102,61 +89,56 @@ PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 			}]
 		});
 
-		var moduleContent = [
-			{
-				region:'west',
-				width: 200,
-				minSize: 175,
-				maxSize: 400,
-				collapsible: true,
-				split:true,
-				html:'west'
-			},{
-				region:'center',
-				html:'center'
-			},{
-				region: 'east',
-				width: 200,
-				minSize: 175,
-				maxSize: 400,
-				collapsible: true,
-				split:true,
-				html:'east'
+		var pageTree = new Ext.tree.TreePanel({
+			useArrows:true,
+			autoScroll:true,
+			animate:false,
+			containerScroll: true,
+			dataUrl: 'http://t3v5/typo3/service/pages.json',
+			root: {
+				nodeType: 'async',
+				id:'ROOT',
+				text:'[Site Name]'
 			}
-		];
+		});
 
 		var sections = new Ext.TabPanel({
 			activeTab:0,
 			items:[{
 				title: 'Content',
 				layout:'border',
-				items:[
-				{
+				items:[{
 					region:'north',
 					height: 30,
 					items: modulebarContent
 				},{
-					region:'center',
+					region:'west',
 					autoScroll:true,
-					layout:'border',
-					items: moduleContent
-				}
-				]
+					width: 200,
+					layout:'accordion',
+					layoutConfig:{
+						animate:true
+					},
+					items: [{
+						title:'Pages',
+						items: pageTree,
+						border:false,
+						layout: 'fit',
+						iconCls:'nav'
+					},{
+						title:'Categories',
+						html:'<p>There will be categories.</p>',
+						border:false,
+						iconCls:'settings'
+					}]
+				},{
+					region: 'center',
+					html: 'center'
+				}]
 			},{
 				title: 'Layout',
-				layout:'border',
-				items:[
-				{
-					region:'north',
-					height: 30,
-					items: modulebarLayout
-				},{
-					region:'center',
-					autoScroll:true,
-					layout:'border',
-					items: moduleContent
-				}
-				]
+				layout: 'border',
+				html: 'The Layout section'
 			}]
 		});
 
@@ -179,6 +161,7 @@ PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 					}
 				]
 			});
+//			pageTree.expandAll();
 		});
 
 		</script>

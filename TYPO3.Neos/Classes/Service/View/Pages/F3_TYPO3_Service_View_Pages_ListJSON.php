@@ -55,10 +55,9 @@ class F3_TYPO3_Service_View_Pages_ListJSON extends F3_FLOW3_MVC_View_AbstractVie
 	 */
 	public function render() {
 		$pagesArray = array();
-		foreach ($this->pages as $page) {
+		foreach ($this->pages as $key => $page) {
 			$pagesArray[] = array(
-				'title' => $page->getTitle(),
-				'hidden' => $page->isHidden()
+				'text' => $page->getTitle()
 			);
 		}
 		return json_encode($pagesArray);
