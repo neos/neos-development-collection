@@ -13,7 +13,7 @@ $c->TYPO3CRAdmin
 		array(
 			'@package' => 'TYPO3CR',
 			'@controller' => 'Default',
-			'@action' => 'Default',
+			'@action' => 'default',
 			'@format' => 'html'
 		)
 	);
