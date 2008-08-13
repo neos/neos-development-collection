@@ -94,11 +94,28 @@ PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 			autoScroll:true,
 			animate:false,
 			containerScroll: true,
-			dataUrl: 'http://t3v5/typo3/service/pages.json',
+			dataUrl: 'typo3/service/pages.json',
 			root: {
 				nodeType: 'async',
 				id:'ROOT',
-				text:'[Site Name]'
+				text:'[Site Name]',
+				icon:'Resources/Web/TYPO3/Public/Backend/Media/Icons/Site.png'
+			}
+		});
+
+		var pageModuleToolbar = new Ext.Toolbar({
+			items: [{
+				text: 'Save'
+			},{
+				text: 'Close'
+			}]
+		});
+
+		var pageModule = new Ext.Panel({
+			layout: 'fit',
+			tbar: pageModuleToolbar,
+			items: {
+				xtype: 'htmleditor'
 			}
 		});
 
@@ -113,31 +130,34 @@ PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 					items: modulebarContent
 				},{
 					region:'west',
-					autoScroll:true,
+					title: 'Web',
+					autoScroll: true,
+					collapsible: true,
+					split: true,
 					width: 200,
-					layout:'accordion',
-					layoutConfig:{
-						animate:true
-					},
-					items: [{
-						title:'Pages',
-						items: pageTree,
-						border:false,
-						layout: 'fit',
-						iconCls:'nav'
-					},{
-						title:'Categories',
-						html:'<p>There will be categories.</p>',
-						border:false,
-						iconCls:'settings'
-					}]
+					layout:'fit',
+					items: pageTree,
 				},{
 					region: 'center',
-					html: 'center'
+					layout: 'fit',
+					items: pageModule
+				},{
+					region: 'east',
+					title: 'Helper',
+					collapsible: true,
+					split: true,
+					width: 200,
+					layout: 'accordion',
+					items: [{
+						title: 'Clipboard',
+						html: 'This is your clipboard.'
+					},{
+						title: 'Inspector',
+						html: 'The inspector.'
+					}]
 				}]
 			},{
 				title: 'Layout',
-				layout: 'border',
 				html: 'The Layout section'
 			}]
 		});
@@ -161,7 +181,6 @@ PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 					}
 				]
 			});
-//			pageTree.expandAll();
 		});
 
 		</script>
