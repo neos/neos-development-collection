@@ -185,7 +185,8 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageAccess));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $this->componentFactory);
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
 		$this->storageAccess->addProperty($property);
 
 		$expectedRawProperties = array(array(
@@ -216,7 +217,8 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageAccess));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $this->componentFactory);
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
 		$this->storageAccess->addProperty($property);
 		$property->setValue('newValue');
 		$this->storageAccess->updateProperty($property);
@@ -249,7 +251,8 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageAccess));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $this->componentFactory);
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
+		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
 		$this->storageAccess->addProperty($property);
 		$this->storageAccess->removeProperty($property);
 

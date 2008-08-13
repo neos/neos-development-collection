@@ -39,27 +39,32 @@ class F3_TYPO3CR_PropertyTest extends F3_Testing_BaseTestCase {
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$mockNode = $this->getMock('F3_TYPO3CR_Node', array(), array(), '', FALSE);
 
-		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', F3_PHPCR_PropertyType::STRING, $mockNode, $mockSession, $this->componentFactory);
-		$valueObject = $property->getValue();
-		$this->assertType('F3_PHPCR_ValueInterface', $valueObject, 'getValue() a Value object.');
+		$valueObject = new F3_TYPO3CR_Value('somevalue', F3_PHPCR_PropertyType::STRING);
+
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
+		$mockValueFactory->expects($this->once())->
+			method('createValue')->
+			with('testvalue', F3_PHPCR_PropertyType::STRING)->
+			will($this->returnValue($valueObject));
+
+		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', F3_PHPCR_PropertyType::STRING, $mockNode, $mockSession, $mockValueFactory);
+		$this->assertEquals($valueObject, $property->getValue());
 	}
 
 	/**
 	 * Checks if getValues returns an exception if called with on a single value
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3_PHPCR_ValueFormatException
 	 */
 	public function getValuesReturnsAnExceptionIfCalledOnSingleValue() {
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array(), '', FALSE);
 		$mockNode = $this->getMock('F3_TYPO3CR_Node', array(), array(), '', FALSE);
 
-		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', F3_PHPCR_PropertyType::STRING, $mockNode, $mockSession, $this->componentFactory);
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
 
-		try {
-			$property->getValues();
-			$this->fail('getValues needs to return an exception if called on a single value');
-		} catch (F3_PHPCR_ValueFormatException $e) {
-		}
+		$property = new F3_TYPO3CR_Property('testproperty', 'testvalue', F3_PHPCR_PropertyType::STRING, $mockNode, $mockSession, $mockValueFactory);
+		$property->getValues();
 	}
 
 	/**
