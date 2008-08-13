@@ -24,13 +24,6 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
-	 * Defines the supported request types of this controller
-	 *
-	 * @var array
-	 */
-	protected $supportedRequestTypes = array('F3_FLOW3_MVC_CLI_Request');
-
-	/**
 	 * Initializes this controller
 	 *
 	 * @return void
@@ -60,7 +53,6 @@ class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionCo
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function databaseAction() {
-#		if ($this->argumentMappingResults->hasErrors()) {
 		if ($this->arguments['dsn'] == '') {
 			return $this->helpAction();
 		} else {
@@ -77,10 +69,15 @@ class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionCo
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function helpAction() {
-		return chr(10) .
-			'TYPO3CR Setup' . chr(10) .
-			'Usage: php index_dev.php TYPO3CR Setup database dsn=DSN [userid=USERID] [password=PASSWORD]' . chr(10)
-		;
+		if ($this->request instanceof F3_FLOW3_MVC_CLI_Request) {
+			return chr(10) .
+				'TYPO3CR Setup' . chr(10) .
+				'Usage: php index_dev.php TYPO3CR Setup database --dsn=DSN [--userid=USERID] [--password=PASSWORD]' . chr(10);
+		} else {
+			return chr(10) .
+				'TYPO3CR Setup<br />' .
+				'Usage: .../typo3cr/setup/database/?dsn=DSN[&amp;userid=USERID][&amp;password=PASSWORD]';
+		}
 	}
 }
 

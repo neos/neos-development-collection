@@ -35,13 +35,17 @@
 			useArrows:true,
 			autoScroll:true,
 			animate:false,
+			buttons: [{
+				text: 'Reload tree',
+				handler: function() {nodetree.getRootNode().reload()}
+			}],
 			contextMenu: new Ext.menu.Menu({
 				items: [{
 					id: 'expand-subtree',
-					text: 'Expand subtree'
+					text: 'Expand'
 				},{
 					id: 'collapse-subtree',
-					text: 'Collapse subtree'
+					text: 'Collapse'
 				}],
 				listeners: {
 					itemclick: function(item) {
@@ -60,7 +64,7 @@
 				}
 			}),
 			containerScroll: true,
-			dataUrl: 'TYPO3CR/JSON/getNodes',
+			dataUrl: 'typo3cr/json/getNodes',
 			listeners: {
 				click : {
 					fn: showNodeDetails,
@@ -93,7 +97,7 @@
 
 		var propertygrid = new Ext.grid.GridPanel({
 			store: new Ext.data.JsonStore({
-				url: 'TYPO3CR/JSON/getProperties',
+				url: 'typo3cr/json/getProperties',
 				root: 'properties',
 				baseParams: {node:'ROOT'},
 				fields: ['name', 'type', 'value']
@@ -106,8 +110,7 @@
 			viewConfig: {
 				forceFit: true
 			},
-			title:'Properties',
-			iconCls:'icon-grid'
+			title:'Properties'
 		});
 
 		var accordion = new Ext.Panel({
