@@ -20,6 +20,8 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  */
 
+require_once('Fixtures/F3_TYPO3CR_MockStorageAccess.php');
+
 /**
  * Tests for the Node implementation of TYPO3CR
  *
@@ -609,6 +611,15 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	public function setNewPropertyToNullIsIgnored() {
 		$this->rootNode->setProperty('someNewProp', NULL);
 		$this->assertFalse($this->rootNode->hasProperty('someNewProp'), 'Property added with NULL value was not ignored');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function setPropertyCompactsArraysContainingNull() {
+		$this->rootNode->setProperty('newPropFromArray', array(NULL, 'hi there', NULL));
+		$this->assertTrue(count($this->rootNode->getProperty('newPropFromArray')->getValues()) == 1, 'setProperty() did not remove NULL values from an array');
 	}
 
 	/**

@@ -432,11 +432,17 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 				$this->session->registerPropertyAsRemoved($this->properties[$name]);
 				unset($this->properties[$name]);
 			} else {
+				if (is_array($value)) {
+					$value = F3_TYPO3CR_Utility::removeNullFromArray($value);
+				}
 				$this->properties[$name]->setValue($value);
 				$this->session->registerPropertyAsDirty($this->properties[$name]);
 			}
 			$this->session->registerNodeAsDirty($this);
 		} elseif ($value !== NULL) {
+			if (is_array($value)) {
+				$value = F3_TYPO3CR_Utility::removeNullFromArray($value);
+			}
 			$this->properties[$name] = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $type, $this, $this->session);
 			$this->session->registerPropertyAsNew($this->properties[$name]);
 			$this->session->registerNodeAsDirty($this);

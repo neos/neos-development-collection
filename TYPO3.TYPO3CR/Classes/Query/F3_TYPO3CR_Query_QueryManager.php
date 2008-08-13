@@ -111,9 +111,10 @@ class F3_TYPO3CR_Query_QueryManager implements F3_PHPCR_Query_QueryManagerInterf
 	 *
 	 * @return array A string array.
 	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getSupportedQueryLanguages() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897626);
+		return array(F3_PHPCR_Query_QueryInterface::JCR_JQOM);
 	}
 
 }

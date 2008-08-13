@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage FLOW3
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage FLOW3
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
@@ -121,13 +121,13 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	 */
 	protected function getPropertyValue(F3_PHPCR_PropertyInterface $property) {
 		try {
+			$propertyValue = $this->getValueValue($property->getValue(), $property->getType());
+		} catch (F3_PHPCR_ValueFormatException $e) {
 			$values = $property->getValues();
 			$propertyValue = array();
 			foreach ($values as $value) {
 				$propertyValue[] = $this->getValueValue($value, $property->getType());
 			}
-		} catch (F3_PHPCR_ValueFormatException $e) {
-			$propertyValue = $this->getValueValue($property->getValue(), $property->getType());
 		}
 
 		return $propertyValue;
