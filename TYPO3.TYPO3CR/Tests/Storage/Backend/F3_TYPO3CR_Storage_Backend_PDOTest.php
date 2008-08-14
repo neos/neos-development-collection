@@ -65,6 +65,7 @@ class F3_TYPO3CR_Storage_Backend_PDOTest extends F3_TYPO3CR_Storage_Backend_Test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function tearDown() {
+		$this->storageAccess->disconnect();
 		unlink($this->fixtureFolder . $this->fixtureDB);
 		F3_FLOW3_Utility_Files::removeDirectoryRecursively($this->fixtureFolder);
 	}

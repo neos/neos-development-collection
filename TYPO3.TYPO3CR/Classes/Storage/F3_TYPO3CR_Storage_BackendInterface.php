@@ -38,6 +38,13 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	public function connect();
 
 	/**
+	 * Disconnect from the storage backend
+	 *
+	 * @return void
+	 */
+	public function disconnect();
+
+	/**
 	 * Sets the name of the current workspace
 	 *
 	 * @param string $workspaceName Name of the workspace which should be used for all storage operations

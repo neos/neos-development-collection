@@ -56,6 +56,16 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	}
 
 	/**
+	 * Disconnect from the storage backend
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function disconnect() {
+		$this->databaseHandle = NULL;
+	}
+
+	/**
 	 * Sets the name of the current workspace
 	 *
 	 * @param  string $workspaceName Name of the workspace which should be used for all storage operations
