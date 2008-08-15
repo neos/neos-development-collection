@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_Persistence_BackendInterface {
+class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_BackendInterface {
 
 	/**
 	 * @var F3_FLOW3_Reflection_Service
@@ -51,6 +51,11 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 	protected $classSchemata;
 
 	/**
+	 * @var F3_TYPO3CR_FLOW3_Persistence_IdentityMap
+	 */
+	protected $identityMap;
+
+	/**
 	 * @var array
 	 */
 	protected $newObjects;
@@ -64,11 +69,6 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 	 * @var array
 	 */
 	protected $deletedObjects;
-
-	/**
-	 * @var array
-	 */
-	protected $identityMap = array();
 
 	/**
 	 * Injects A Reflection Service instance used for processing objects
@@ -92,6 +92,18 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 	 */
 	public function injectContentRepository(F3_PHPCR_RepositoryInterface $repository) {
 		$this->session = $repository->login();
+	}
+
+	/**
+	 * Injects the identity map
+	 *
+	 * @param F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @required
+	 */
+	public function injectIdentityMap(F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap) {
+		$this->identityMap = $identityMap;
 	}
 
 	/**
@@ -121,6 +133,7 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 		}
 		$this->classSchemata = $classSchemata;
 	}
+
 
 	/**
 	 * Sets the new objects
@@ -165,25 +178,46 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 	 */
 	public function commit() {
 		foreach ($this->newObjects as $object) {
-			$this->processObject($object);
+			$this->processNewObject($object);
+		}
+		foreach ($this->updatedObjects as $object) {
+			$this->processUpdatedObject($object);
 		}
 
 		$this->session->save();
 	}
 
 	/**
-	 * Stores, updates or removes an object's corresponding node from the repository
+	 * Stores, updates or removes an object's corresponding node in the repository
+	 *
+	 * @param object $object
+	 * @return string Identifier for the corresponding node
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function processObject($object) {
+		if (array_search($object, $this->newObjects)) {
+			return $this->processNewObject($object);
+		} elseif (array_search($object, $this->updatedObjects)) {
+			return $this->processUpdatedObject($object);
+		} elseif ($this->identityMap->hasObject(spl_object_hash($object))) {
+			return $this->identityMap->getIdentifier(spl_object_hash($object));
+		} else {
+			throw new F3_FLOW3_Persistence_Exception('processObject() called for object I cannot handle.', 1218478184);
+		}
+	}
+
+	/**
+	 * Stores an object as node in the repository
 	 *
 	 * @param object $object The object to store, update or delete
 	 * @return string The identifier for the node representing the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo make sure setPropertiesForObject is called only once per commit and object
 	 */
-	protected function processObject($object) {
+	protected function processNewObject($object) {
 		$objectHash = spl_object_hash($object);
-		if (key_exists($objectHash, $this->identityMap)) {
-			$identifier = $this->identityMap[$objectHash];
-			$node = $this->session->getNodeByIdentifier($identifier);
+		if ($this->identityMap->hasObject($objectHash)) {
+			$identifier = $this->identityMap->getIdentifier($objectHash);
 		} else {
 			$className = $object->AOPProxyGetProxyTargetClassName();
 			if (!$this->baseNode->hasNode('flow3:' . $className)) {
@@ -191,9 +225,32 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 			}
 			$node = $this->baseNode->getNode('flow3:' . $className)->addNode('flow3:' . $className . 'Instance', 'flow3:' . $className);
 			$identifier = $node->getIdentifier();
-			$this->identityMap[$objectHash] = $identifier;
+			$this->identityMap->registerObject($objectHash, $identifier);
+			$this->setPropertiesForObject($node, $object);
 		}
-		$this->setPropertiesForObject($node, $object);
+		unset($this->newObjects[$objectHash]);
+
+		return $identifier;
+	}
+
+	/**
+	 * Updates an object stored as node in the repository
+	 *
+	 * @param object $object The object to store, update or delete
+	 * @return string The identifier for the node representing the object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo make sure setPropertiesForObject is called only once per commit and object
+	 */
+	protected function processUpdatedObject($object) {
+		$objectHash = spl_object_hash($object);
+		if ($this->identityMap->hasObject($objectHash)) {
+			$identifier = $this->identityMap->getIdentifier($objectHash);
+			$node = $this->session->getNodeByIdentifier($identifier);
+			$this->setPropertiesForObject($node, $object);
+		} else {
+			throw new F3_FLOW3_Persistence_Exception('How am I supposed to update an object I do not know about?', 1218478512);
+		}
+		unset($this->updatedObjects[$objectHash]);
 
 		return $identifier;
 	}
@@ -211,16 +268,16 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 		foreach ($this->classSchemata[$className]->getProperties() as $propertyName => $propertyType) {
 			$value = $object->AOPProxyGetProperty($propertyName);
 
-			if ($propertyType === 'array' && count($value)) {
-				if (count($value) && is_object(current($value)) && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'reference')) {
-					$value = $this->reduceObjectArrayToIdentifierArray($value);
-					$type = F3_PHPCR_PropertyType::REFERENCE;
-				} elseif (count($value)) {
-					$type = $this->typeStringToInteger(gettype(current($value)));
-				} else {
+			if ($propertyType === 'array') {
+				if (count($value) == 0) {
 						// delete empty array properties
 					$value = NULL;
 					$type = F3_PHPCR_PropertyType::UNDEFINED;
+				} elseif (is_object(current($value)) && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'reference')) {
+					$value = $this->processObjectArray($value);
+					$type = F3_PHPCR_PropertyType::REFERENCE;
+				} else {
+					$type = $this->typeStringToInteger(gettype(current($value)));
 				}
 			} elseif (is_object($value) && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'reference')) {
 				$value = $this->processObject($value);
@@ -241,7 +298,7 @@ class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend implements F3_FLOW3_
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function reduceObjectArrayToIdentifierArray(array $objects) {
+	protected function processObjectArray(array $objects) {
 		$identifiers = array();
 		foreach ($objects as $object) {
 			$identifiers[] = $this->processObject($object);

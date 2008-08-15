@@ -28,4 +28,12 @@ CREATE TABLE "properties" (
   "type" INTEGER NOT NULL DEFAULT 0
 );
 
+CREATE TABLE "multivalueproperties" (
+  "parent" VARCHAR(36) NOT NULL,
+  "name" VARCHAR(255) NOT NULL,
+  "index" INTEGER NOT NULL,
+  "value" TEXT NOT NULL,
+  UNIQUE ("parent", "name","index")
+);
+
 COMMIT;

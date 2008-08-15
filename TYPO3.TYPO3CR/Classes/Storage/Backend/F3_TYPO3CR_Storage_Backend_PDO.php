@@ -86,7 +86,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeByIdentifier($identifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE identifier = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "identifier", "nodetype" FROM "nodes" WHERE "identifier" = ?');
 		$statementHandle->execute(array($identifier));
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
@@ -99,7 +99,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 */
 	public function getRawRootNode() {
 		try {
-			$statementHandle = $this->databaseHandle->prepare('SELECT parent, name, identifier, nodetype FROM nodes WHERE parent =\'\'');
+			$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "identifier", "nodetype" FROM "nodes" WHERE "parent" =\'\'');
 			$statementHandle->execute();
 			return $statementHandle->fetch(PDO::FETCH_ASSOC);
 		} catch (PDOException $e) {
@@ -116,7 +116,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 */
 	public function getIdentifiersOfSubNodesOfNode($identifier) {
 		$nodeIdentifiers = array();
-		$statementHandle = $this->databaseHandle->prepare('SELECT identifier FROM nodes WHERE parent = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "nodes" WHERE "parent" = ?');
 		$statementHandle->execute(array($identifier));
 		$rawNodes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($rawNodes as $rawNode) {
@@ -131,14 +131,28 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @param string $identifier The node Identifier to fetch properties for
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getRawPropertiesOfNode($identifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT name, value, namespace, multivalue, type FROM properties WHERE parent = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT "name", "value", "namespace", "multivalue", "type" FROM "properties" WHERE "parent" = ?');
 		$statementHandle->execute(array($identifier));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		if (is_array($properties)) {
 			foreach ($properties as &$property) {
-				$property['value'] = unserialize($property['value']);
+				if($property['multivalue']) {
+					$statementHandle = $this->databaseHandle->prepare('SELECT "index", "value" FROM "multivalueproperties" WHERE "parent" = ? AND "name" = ?');
+					$statementHandle->execute(array($identifier, $property['name']));
+					$multivalues = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+					if (is_array($multivalues)) {
+						$resultArray = array();
+						foreach ($multivalues as $multivalue) {
+							$resultArray[$multivalue['index']] = $multivalue['value'];
+							$property['value'] = $resultArray;
+						}
+					}
+				} else {
+					$property['value'] = unserialize($property['value']);
+				}
 			}
 		}
 		return $properties;
@@ -152,7 +166,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 */
 	public function getRawNodeTypes() {
 		try {
-			$statementHandle = $this->databaseHandle->query('SELECT name FROM nodetypes');
+			$statementHandle = $this->databaseHandle->query('SELECT "name" FROM "nodetypes"');
 			$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 			return $nodetypes;
 		} catch (PDOException $e) {
@@ -168,7 +182,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawNodeType($nodeTypeName) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT name FROM nodetypes WHERE name = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT "name" FROM "nodetypes" WHERE "name" = ?');
 		$statementHandle->execute(array($nodeTypeName));
 		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
@@ -181,7 +195,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO nodetypes (name) VALUES (?)');
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodetypes" ("name") VALUES (?)');
 		$statementHandle->execute(array(
 			$nodeTypeDefinition->getName()
 		));
@@ -195,7 +209,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function deleteNodeType($name) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM nodetypes WHERE name=?');
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodetypes" WHERE "name"=?');
 		$statementHandle->execute(array($name));
 	}
 
@@ -208,7 +222,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function addNode(F3_PHPCR_NodeInterface $node) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO nodes (identifier, parent, nodetype, name) VALUES (?, ?, ?, ?)');
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "parent", "nodetype", "name") VALUES (?, ?, ?, ?)');
 		$statementHandle->execute(array($node->getIdentifier(), $node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName()));
 	}
 
@@ -222,7 +236,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 */
 	public function updateNode(F3_PHPCR_NodeInterface $node) {
 		if ($node->getDepth() > 0) {
-			$statementHandle = $this->databaseHandle->prepare('UPDATE nodes SET parent=?, nodetype=?, name=? WHERE identifier=?');
+			$statementHandle = $this->databaseHandle->prepare('UPDATE "nodes" SET "parent"=?, "nodetype"=?, "name"=? WHERE "identifier"=?');
 			$statementHandle->execute(array($node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName(), $node->getIdentifier()));
 		}
 	}
@@ -236,7 +250,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeNode(F3_PHPCR_NodeInterface $node) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM nodes WHERE identifier=?');
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodes" WHERE "identifier"=?');
 		$statementHandle->execute(array($node->getIdentifier()));
 	}
 
@@ -247,16 +261,32 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function addProperty(F3_PHPCR_PropertyInterface $property) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO properties (parent, name, value, namespace, multivalue, type) VALUES (?, ?, ?, \'\', ?, ?)');
+		$this->databaseHandle->beginTransaction();
+
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties" ("parent", "name", "value", "namespace", "multivalue", "type") VALUES (?, ?, ?, \'\', ?, ?)');
 		$statementHandle->execute(array(
 			$property->getParent()->getIdentifier(),
 			$property->getName(),
-			$property->getSerializedValue(),
+			($property->isMultiple() ? '' : $property->getSerializedValue()),
 			(integer)$property->isMultiple(),
 			$property->getType()
 		));
+		if ($property->isMultiple()) {
+			foreach ($property->getValues() as $index => $value) {
+				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "multivalueproperties" ("parent", "name", "index", "value") VALUES (?, ?, ?, ?)');
+				$statementHandle->execute(array(
+					$property->getParent()->getIdentifier(),
+					$property->getName(),
+					$index,
+					$value->getString()
+				));
+			}
+		}
+
+		$this->databaseHandle->commit();
 	}
 
 	/**
@@ -266,10 +296,30 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function updateProperty(F3_PHPCR_PropertyInterface $property) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE properties SET value=?, type=? WHERE parent=? AND name=?');
-		$statementHandle->execute(array($property->getSerializedValue(), $property->getType(), $property->getParent()->getIdentifier(), $property->getName()));
+		$this->databaseHandle->beginTransaction();
+
+		$statementHandle = $this->databaseHandle->prepare('UPDATE "properties" SET "value"=?, "type"=? WHERE "parent"=? AND "name"=?');
+		$statementHandle->execute(array(($property->isMultiple() ? '' : $property->getSerializedValue()), $property->getType(), $property->getParent()->getIdentifier(), $property->getName()));
+		if ($property->isMultiple()) {
+			$statementHandle = $this->databaseHandle->prepare('DELETE FROM "multivalueproperties" WHERE "parent"=? AND "name"=?');
+			$statementHandle->execute(array(
+				$property->getParent()->getIdentifier(),
+				$property->getName()
+			));
+			foreach ($property->getValues() as $index => $value) {
+				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "multivalueproperties" ("parent", "name", "index", "value") VALUES (?, ?, ?, ?)');
+				$statementHandle->execute(array(
+					$property->getParent()->getIdentifier(),
+					$property->getName(),
+					$index,
+					$value->getString()
+				));
+			}
+		}
+		$this->databaseHandle->commit();
 	}
 
 	/**
@@ -279,10 +329,17 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function removeProperty(F3_PHPCR_PropertyInterface $property) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM properties WHERE parent=? AND name=?');
+		$this->databaseHandle->beginTransaction();
+
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "properties" WHERE "parent"=? AND "name"=?');
 		$statementHandle->execute(array($property->getParent()->getIdentifier(), $property->getName()));
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "multivalueproperties" WHERE "parent"=? AND "name"=?');
+		$statementHandle->execute(array($property->getParent()->getIdentifier(), $property->getName()));
+
+		$this->databaseHandle->commit();
 	}
 
 	/**
@@ -292,7 +349,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Sebastian Kurfürst <sebastian@ŧypo3.org>
 	 */
 	public function getRawNamespaces() {
-		$statementHandle = $this->databaseHandle->query('SELECT prefix, uri FROM namespaces');
+		$statementHandle = $this->databaseHandle->query('SELECT "prefix", "uri" FROM "namespaces"');
 		$namespaces = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		return $namespaces;
 	}
@@ -306,7 +363,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateNamespacePrefix($prefix, $uri) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE namespaces SET prefix=? WHERE uri=?');
+		$statementHandle = $this->databaseHandle->prepare('UPDATE "namespaces" SET "prefix"=? WHERE "uri"=?');
 		$statementHandle->execute(array($prefix,$uri));
 	}
 
@@ -318,7 +375,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateNamespaceURI($prefix, $uri) {
-		$statementHandle = $this->databaseHandle->prepare('UPDATE namespaces SET uri=? WHERE prefix=?');
+		$statementHandle = $this->databaseHandle->prepare('UPDATE "namespaces" SET "uri"=? WHERE "prefix"=?');
 		$statementHandle->execute(array($uri,$prefix));
 	}
 
@@ -330,7 +387,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function addNamespace($prefix, $uri) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO namespaces (prefix,uri) VALUES (?, ?)');
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "namespaces" ("prefix","uri") VALUES (?, ?)');
 		$statementHandle->execute(array($prefix,$uri));
 	}
 
@@ -341,7 +398,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function deleteNamespace($prefix) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM namespaces WHERE prefix=?');
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "namespaces" WHERE "prefix"=?');
 		$statementHandle->execute(array($prefix));
 	}
 

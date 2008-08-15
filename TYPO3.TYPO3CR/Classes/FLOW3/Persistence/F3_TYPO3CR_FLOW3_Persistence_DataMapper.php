@@ -46,6 +46,11 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	protected $session;
 
 	/**
+	 * @var F3_TYPO3CR_FLOW3_Persistence_IdentityMap
+	 */
+	protected $identityMap;
+
+	/**
 	 * Injects a Component Manager
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
@@ -79,6 +84,18 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	}
 
 	/**
+	 * Injects the identity map
+	 *
+	 * @param F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @required
+	 */
+	public function injectIdentityMap(F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap) {
+		$this->identityMap = $identityMap;
+	}
+
+	/**
 	 * Maps the nodes
 	 *
 	 * @param F3_PHPCR_NodeIteratorInterface $nodes
@@ -108,7 +125,9 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 		foreach ($node->getProperties() as $property) {
 			$properties[$property->getName()] = $this->getPropertyValue($property);
 		}
-		return $this->componentObjectBuilder->reconstituteComponentObject($className, $componentConfiguration, $properties);
+		$object = $this->componentObjectBuilder->reconstituteComponentObject($className, $componentConfiguration, $properties);
+		$this->identityMap->registerObject(spl_object_hash($object), $node->getIdentifier());
+		return $object;
 	}
 
 	/**
