@@ -33,52 +33,42 @@ class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionCo
 		$this->arguments->addNewArgument('dsn');
 		$this->arguments->addNewArgument('userid');
 		$this->arguments->addNewArgument('password');
+		$this->arguments->addNewArgument('indexlocation');
 	}
 
 	/**
-	 * Processes a CLI request.
+	 * Processes a request.
 	 *
-	 * @param  F3_FLOW3_MVC_CLI_Request $request The request to process
+	 * @param  F3_FLOW3_MVC_Request $request The request to process
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function defaultAction() {
-		return $this->helpAction();
+		return '<html><head><title>TYPO3CR setup</title></head><body>
+	<form action="setup">
+		<table>
+		<tr><th>DSN:</th><td><input type="text" name="dsn" size="30" /> (e.g. sqlite:/path/to/typo3cr.db)</td></tr>
+		<tr><th>Username (optional):</th><td><input type="text" name="userid" size="30" /></td></tr>
+		<tr><th>Password (optional):</th><td><input type="passsword" name="password" size="30" /></td></tr>
+		<tr><th>Index location:</th><td><input type="text" name="indexlocation" size="30" /> (e.g. /path/to/index)</td></tr>
+		</table>
+		<input type="submit" value="OK" />
+	</form>
+</body></html>';
 	}
 
 	/**
-	 * Initializes the database with some data
+	 * Initializes the database and index
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function databaseAction() {
-		if ($this->arguments['dsn'] == '') {
-			return $this->helpAction();
-		} else {
-			$helper = $this->componentFactory->getComponent('F3_TYPO3CR_Storage_Helper', $this->arguments['dsn'], $this->arguments['userid'], $this->arguments['password']);
-			$helper->initializeDatabase();
-			return 'Database was initialized.' . chr(10);
-		}
+	public function setupAction() {
+		$helper = $this->componentFactory->getComponent('F3_TYPO3CR_Storage_Helper', $this->arguments);
+		$helper->initialize();
+		return 'TYPO3CR was initialized.';
 	}
 
-	/**
-	 * Displays a help screen
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function helpAction() {
-		if ($this->request instanceof F3_FLOW3_MVC_CLI_Request) {
-			return chr(10) .
-				'TYPO3CR Setup' . chr(10) .
-				'Usage: php index_dev.php TYPO3CR Setup database --dsn=DSN [--userid=USERID] [--password=PASSWORD]' . chr(10);
-		} else {
-			return chr(10) .
-				'TYPO3CR Setup<br />' .
-				'Usage: .../typo3cr/setup/database/?dsn=DSN[&amp;userid=USERID][&amp;password=PASSWORD]';
-		}
-	}
 }
 
 ?>

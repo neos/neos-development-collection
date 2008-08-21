@@ -44,23 +44,16 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	protected $componentFactory;
 
 	/**
-	 * @var F3_TYPO3CR_Storage_BackendInterface
-	 */
-	protected $storageAccess;
-
-	/**
 	 * Constructs a Workspace object
 	 *
 	 * @param string $name
 	 * @param F3_PHPCR_SessionInterface $session
-	 * @param F3_PHPCR_StorageAccess_StorageAccessInterface $storageAccess
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($name, F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_FactoryInterface $componentFactory) {
-		$this->name = (F3_PHP6_Functions::strlen($name) ? $name : 'default');
+		$this->name = $name;
 		$this->session = $session;
-		$this->storageAccess = $this->session->getStorageBackend();
 		$this->componentFactory = $componentFactory;
 	}
 
@@ -313,7 +306,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNamespaceRegistry() {
-		return $this->componentFactory->getComponent('F3_PHPCR_NamespaceRegistryInterface', $this->storageAccess, $this->componentFactory);
+		return $this->componentFactory->getComponent('F3_PHPCR_NamespaceRegistryInterface', $this->session->getStorageBackend(), $this->componentFactory);
 	}
 
 	/**
@@ -328,7 +321,7 @@ class F3_TYPO3CR_Workspace implements F3_PHPCR_WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodeTypeManager() {
-		return $this->componentFactory->getComponent('F3_PHPCR_NodeType_NodeTypeManagerInterface', $this->storageAccess, $this->componentFactory);
+		return $this->componentFactory->getComponent('F3_PHPCR_NodeType_NodeTypeManagerInterface', $this->session->getStorageBackend(), $this->componentFactory);
 	}
 
 	/**

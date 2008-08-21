@@ -78,13 +78,6 @@ class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
 		$this->markTestIncomplete('Not yet implemented');
 	}
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function executeCallsStorageBackend() {
-		$this->markTestIncomplete('Not yet implemented');
-	}
 }
 
 

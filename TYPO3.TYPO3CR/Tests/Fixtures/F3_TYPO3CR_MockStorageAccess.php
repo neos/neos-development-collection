@@ -316,5 +316,24 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 		unset($this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$property->getParent()->getIdentifier()][$property->getName()]);
 	}
 
+	/**
+	 * Returns an array with identifiers matching the query
+	 *
+	 * @param F3_PHPCR_Query_QOM_QueryObjectModelInterface $query
+	 * @return array
+	 */
+	public function findNodeIdentifiers(F3_PHPCR_Query_QOM_QueryObjectModelInterface $query) {
+		return array();
+	}
+
+	/**
+	 * Sets the search engine used by the storage backend.
+	 *
+	 * @param F3_TYPO3CR_Storage_SearchInterface $searchEngine
+	 * @return void
+	 */
+	public function setSearchEngine(F3_TYPO3CR_Storage_SearchInterface $searchEngine) {
+	}
+
 }
 ?>

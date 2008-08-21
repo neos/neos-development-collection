@@ -36,11 +36,6 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	protected $databaseHandle;
 
 	/**
-	 * @var string Name of the current workspace
-	 */
-	protected $workspaceName = 'default';
-
-	/**
 	 * Connect to the database
 	 *
 	 * @return void
@@ -51,7 +46,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 			$this->databaseHandle = new PDO($this->dataSourceName, $this->username, $this->password);
 			$this->databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch (PDOException $e) {
-			throw new F3_TYPO3CR_StorageException('Could not connect to DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage());
+			throw new F3_TYPO3CR_StorageException('Could not connect to DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1219326502);
 		}
 	}
 
@@ -65,31 +60,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$this->databaseHandle = NULL;
 	}
 
-	/**
-	 * Sets the name of the current workspace
-	 *
-	 * @param  string $workspaceName Name of the workspace which should be used for all storage operations
-	 * @return void
-	 * @throws InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setWorkspaceName($workspaceName) {
-		if ($workspaceName == '' || !is_string($workspaceName)) throw new InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1200614989);
-		$this->workspaceName = $workspaceName;
-	}
 
-	/**
-	 * Fetches raw node data from the database
-	 *
-	 * @param string $identifier The Identifier of the node to fetch
-	 * @return array|FALSE
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getRawNodeByIdentifier($identifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "identifier", "nodetype" FROM "nodes" WHERE "identifier" = ?');
-		$statementHandle->execute(array($identifier));
-		return $statementHandle->fetch(PDO::FETCH_ASSOC);
-	}
 
 	/**
 	 * Fetches raw node data of the root node of the current workspace.
@@ -103,8 +74,21 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 			$statementHandle->execute();
 			return $statementHandle->fetch(PDO::FETCH_ASSOC);
 		} catch (PDOException $e) {
-			throw new F3_TYPO3CR_StorageException('Could not read raw root node. Make sure the database is initialized correctly (php index_dev.php TYPO3CR Setup database). PDO error: ' . $e->getMessage(), 1216051737);
+			throw new F3_TYPO3CR_StorageException('Could not read raw root node. Make sure the database is initialized correctly. PDO error: ' . $e->getMessage(), 1216051737);
 		}
+	}
+
+	/**
+	 * Fetches raw node data from the database
+	 *
+	 * @param string $identifier The Identifier of the node to fetch
+	 * @return array|FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRawNodeByIdentifier($identifier) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "identifier", "nodetype" FROM "nodes" WHERE "identifier" = ?');
+		$statementHandle->execute(array($identifier));
+		return $statementHandle->fetch(PDO::FETCH_ASSOC);
 	}
 
 	/**
@@ -124,6 +108,63 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		}
 		return $nodeIdentifiers;
 	}
+
+	/**
+	 * Adds a node to the storage
+	 *
+	 * @param F3_PHPCR_NodeInterface $node node to insert
+	 * @return void
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addNode(F3_PHPCR_NodeInterface $node) {
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "parent", "nodetype", "name") VALUES (?, ?, ?, ?)');
+		$statementHandle->execute(array($node->getIdentifier(), $node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName()));
+		$this->searchEngine->addNode($node);
+	}
+
+	/**
+	 * Updates a node in the storage
+	 *
+	 * @param F3_PHPCR_NodeInterface $node node to update
+	 * @return void
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function updateNode(F3_PHPCR_NodeInterface $node) {
+		if ($node->getDepth() > 0) {
+			$statementHandle = $this->databaseHandle->prepare('UPDATE "nodes" SET "parent"=?, "nodetype"=?, "name"=? WHERE "identifier"=?');
+			$statementHandle->execute(array($node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName(), $node->getIdentifier()));
+			$this->searchEngine->updateNode($node);
+		}
+	}
+
+	/**
+	 * Deletes a node in the repository
+	 *
+	 * @param F3_PHPCR_NodeInterface $node node to delete
+	 * @return void
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function removeNode(F3_PHPCR_NodeInterface $node) {
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodes" WHERE "identifier"=?');
+		$statementHandle->execute(array($node->getIdentifier()));
+		$this->searchEngine->deleteNode($node);
+	}
+
+	/**
+	 * Returns an array with identifiers matching the query
+	 *
+	 * @param F3_PHPCR_Query_QOM_QueryObjectModelInterface $query
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findNodeIdentifiers(F3_PHPCR_Query_QOM_QueryObjectModelInterface $query) {
+		return $this->searchEngine->findNodeIdentifiers($query);
+	}
+
+
 
 	/**
 	 * Fetches raw property data from the database
@@ -156,102 +197,6 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 			}
 		}
 		return $properties;
-	}
-
-	/**
-	 * Fetches raw data for all nodetypes from the database
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getRawNodeTypes() {
-		try {
-			$statementHandle = $this->databaseHandle->query('SELECT "name" FROM "nodetypes"');
-			$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-			return $nodetypes;
-		} catch (PDOException $e) {
-			throw new F3_TYPO3CR_StorageException('Could not read raw nodetypes. Make sure the database is initialized correctly (php index_dev.php TYPO3CR Setup database). PDO error: ' . $e->getMessage(), 1216051821);
-		}
-	}
-
-	/**
-	 * Fetches raw nodetype data from the database
-	 *
-	 * @param string $nodeTypeNme The name of the nodetype record to fetch
-	 * @return array|FALSE
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getRawNodeType($nodeTypeName) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "name" FROM "nodetypes" WHERE "name" = ?');
-		$statementHandle->execute(array($nodeTypeName));
-		return $statementHandle->fetch(PDO::FETCH_ASSOC);
-	}
-
-	/**
-	 * Adds the given nodetype to the database
-	 *
-	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodetypes" ("name") VALUES (?)');
-		$statementHandle->execute(array(
-			$nodeTypeDefinition->getName()
-		));
-	}
-
-		/**
-	 * Deletes the named nodetype from the database
-	 *
-	 * @param string $name
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function deleteNodeType($name) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodetypes" WHERE "name"=?');
-		$statementHandle->execute(array($name));
-	}
-
-	/**
-	 * Adds a node to the storage
-	 *
-	 * @param F3_PHPCR_NodeInterface $node node to insert
-	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function addNode(F3_PHPCR_NodeInterface $node) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "parent", "nodetype", "name") VALUES (?, ?, ?, ?)');
-		$statementHandle->execute(array($node->getIdentifier(), $node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName()));
-	}
-
-	/**
-	 * Updates a node in the storage
-	 *
-	 * @param F3_PHPCR_NodeInterface $node node to update
-	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function updateNode(F3_PHPCR_NodeInterface $node) {
-		if ($node->getDepth() > 0) {
-			$statementHandle = $this->databaseHandle->prepare('UPDATE "nodes" SET "parent"=?, "nodetype"=?, "name"=? WHERE "identifier"=?');
-			$statementHandle->execute(array($node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName(), $node->getIdentifier()));
-		}
-	}
-
-	/**
-	 * Deletes a node in the repository
-	 *
-	 * @param F3_PHPCR_NodeInterface $node node to delete
-	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function removeNode(F3_PHPCR_NodeInterface $node) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodes" WHERE "identifier"=?');
-		$statementHandle->execute(array($node->getIdentifier()));
 	}
 
 	/**
@@ -319,6 +264,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 				));
 			}
 		}
+
 		$this->databaseHandle->commit();
 	}
 
@@ -341,6 +287,65 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 
 		$this->databaseHandle->commit();
 	}
+
+
+
+	/**
+	 * Fetches raw data for all nodetypes from the database
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRawNodeTypes() {
+		try {
+			$statementHandle = $this->databaseHandle->query('SELECT "name" FROM "nodetypes"');
+			$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+			return $nodetypes;
+		} catch (PDOException $e) {
+			throw new F3_TYPO3CR_StorageException('Could not read raw nodetypes. Make sure the database is initialized correctly. PDO error: ' . $e->getMessage(), 1216051821);
+		}
+	}
+
+	/**
+	 * Fetches raw nodetype data from the database
+	 *
+	 * @param string $nodeTypeNme The name of the nodetype record to fetch
+	 * @return array|FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRawNodeType($nodeTypeName) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT "name" FROM "nodetypes" WHERE "name" = ?');
+		$statementHandle->execute(array($nodeTypeName));
+		return $statementHandle->fetch(PDO::FETCH_ASSOC);
+	}
+
+	/**
+	 * Adds the given nodetype to the database
+	 *
+	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition) {
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodetypes" ("name") VALUES (?)');
+		$statementHandle->execute(array(
+			$nodeTypeDefinition->getName()
+		));
+	}
+
+		/**
+	 * Deletes the named nodetype from the database
+	 *
+	 * @param string $name
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function deleteNodeType($name) {
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodetypes" WHERE "name"=?');
+		$statementHandle->execute(array($name));
+	}
+
+
 
 	/**
 	 * Fetches raw namespace data from the database
@@ -402,85 +407,6 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$statementHandle->execute(array($prefix));
 	}
 
-	/**
-	 * Returns an array with identifiers matching the query
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function findNodeIdentifiers(F3_PHPCR_Query_QOM_QueryObjectModelInterface $query) {
-		$variables = array();
-
-		if ($query->getConstraint() !== NULL) {
-			$statement = 'SELECT "nodes"."identifier" FROM "nodes" LEFT JOIN "properties" ON ';
-			$statement .= '"nodes"."identifier"="properties"."parent" WHERE ';
-			list($parsedConstraint, $variables) = $this->parseConstraint($query->getConstraint());
-			$statement .= $parsedConstraint;
-			$statement .= ' AND ';
-		} else {
-			$statement = 'SELECT "identifier" FROM "nodes" WHERE ';
-		}
-
-		if ($query->getSource() instanceof F3_PHPCR_Query_QOM_SourceInterface) {
-			$identifier = ':' . md5('TYPO3CR:nodes:nodetype');
-			$statement .= '"nodetype" = ' . $identifier;
-			$variables[$identifier] = $query->getSource()->getNodeTypeName();
-		}
-
-		$boundVariableValues = $query->getBoundVariableValues();
-		array_walk($boundVariableValues, static function (&$value, $key) { $value = serialize($value); });
-		$variables = array_merge($variables, $boundVariableValues);
-
-		$statementHandle = $this->databaseHandle->prepare($statement);
-		$result = $statementHandle->execute($variables);
-		if ($result === FALSE) {
-			throw new F3_TYPO3CR_StorageException($statementHandle->errorInfo(), 1218021423);
-		}
-		$result = $statementHandle->fetchAll(PDO::FETCH_COLUMN, 0);
-
-		return (array)$result;
-	}
-
-	/**
-	 * Transforms a constraint into the corresponding SQL clause
-	 *
-	 * @param F3_PHPCR_Query_QOM_ConstraintInterface $constraint
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function parseConstraint(F3_PHPCR_Query_QOM_ConstraintInterface $constraint) {
-		$statement = '';
-		$variables = array();
-
-		if ($constraint instanceof F3_PHPCR_Query_QOM_ComparisonInterface) {
-			$nameIdentifier = ':' . md5('TYPO3CR:properties:name:' . $constraint->getOperand1()->getPropertyName());
-			$valueIdentifier = ':' . md5('TYPO3CR:properties:value:' . $constraint->getOperand1()->getPropertyName());
-			$variables[$nameIdentifier] = $constraint->getOperand1()->getPropertyName();
-			$statement .= '("properties"."name" = ' . $nameIdentifier . ' AND "properties"."value" ';
-			$statement .= $this->operatorTypeToSQL($constraint->getOperator()) . $valueIdentifier . ')';
-		}
-
-		return array($statement, $variables);
-	}
-
-	/**
-	 * Maps F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface operator constants to SQL operators
-	 *
-	 * @param integer $operatorType
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function operatorTypeToSQL($operatorType) {
-		switch ($operatorType) {
-			case F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO:
-				$operator = '=';
-				break;
-			default:
-				throw new F3_TYPO3CR_StorageException('Unsupported operator in query building encountered.', 1218020096);
-		}
-
-		return $operator;
-	}
 }
 
 ?>

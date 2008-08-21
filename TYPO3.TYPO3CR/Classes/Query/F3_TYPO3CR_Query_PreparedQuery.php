@@ -63,8 +63,7 @@ class F3_TYPO3CR_Query_PreparedQuery extends F3_TYPO3CR_Query_Query implements F
 			default:
 				throw new F3_PHPCR_RepositoryException('Unsupported value type in bindValue encountered.', 1218020658);
 		}
-		$valueIdentifier = ':' . md5('TYPO3CR:properties:value:' . $varName);
-		$this->variableValues[$valueIdentifier] = $value;
+		$this->variableValues[$varName] = $value;
 	}
 
 	/**

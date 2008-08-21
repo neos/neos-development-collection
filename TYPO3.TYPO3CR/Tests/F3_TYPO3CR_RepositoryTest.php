@@ -38,6 +38,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	public function repositoryLoginAsksForASessionToReturn() {
 		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockTYPO3CRSession = $this->getMock('F3_PHPCR_SessionInterface', array(), array(), '', FALSE);
+		$mockSearchEngine = $this->getMock('F3_TYPO3CR_Storage_SearchInterface');
 
 		$settings = new F3_FLOW3_Configuration_Container();
 		$settings->storage->backend = 'mockStorageBackend';
@@ -46,7 +47,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 		$configurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$componentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
-		$componentFactory->expects($this->exactly(3))->method('getComponent')->will($this->onConsecutiveCalls($configurationManager, $mockStorageBackend, $mockTYPO3CRSession));
+		$componentFactory->expects($this->exactly(4))->method('getComponent')->will($this->onConsecutiveCalls($configurationManager, $mockStorageBackend, $mockSearchEngine, $mockTYPO3CRSession));
 
 		$repository = new F3_TYPO3CR_Repository($componentFactory);
 		$session = $repository->login();

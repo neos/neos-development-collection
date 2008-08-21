@@ -28,4 +28,20 @@ $c->TYPO3CR->storage->backendOptions = array(
 	'password' => NULL
 );
 
+/**
+ * The indexing/search backend to use for TYPO3CR.
+ *
+ * @var F3_TYPO3CR_Storage_SearchInterface
+ */
+$c->TYPO3CR->search->backend = 'F3_TYPO3CR_Storage_Search_Lucene';
+
+/**
+ * Options which are passed to the indexing/search backend used by TYPO3CR
+ *
+ * @var array
+ */
+$c->TYPO3CR->search->backendOptions = array(
+	'indexLocation' => ''
+);
+
 ?>

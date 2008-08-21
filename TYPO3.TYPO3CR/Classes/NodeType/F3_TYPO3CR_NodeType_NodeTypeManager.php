@@ -34,7 +34,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
-	protected $storageAccess;
+	protected $storageBackend;
 
 	/**
 	 * @var F3_FLOW3_Component_FactoryInterface
@@ -55,12 +55,12 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * Constructs a NodeTypeManager object
 	 *
 	 * @param string $name
-	 * @param F3_PHPCR_StorageAccess_StorageAccessInterface $storageAccess
+	 * @param F3_PHPCR_StorageAccess_StorageAccessInterface $storageBackend
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_FactoryInterface $componentFactory) {
-		$this->storageAccess = $storageAccess;
+	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageBackend, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->storageBackend = $storageBackend;
 		$this->componentFactory = $componentFactory;
 
 		$this->loadKnownNodeTypes();
@@ -73,7 +73,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function loadKnownNodeTypes() {
-		$rawNodeTypes = $this->storageAccess->getRawNodeTypes();
+		$rawNodeTypes = $this->storageBackend->getRawNodeTypes();
 		if (is_array($rawNodeTypes)) {
 			foreach ($rawNodeTypes as $rawNodeType) {
 				$nodeTypeName = $rawNodeType['name'];
@@ -101,7 +101,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 		} elseif (isset($this->registeredMixinTypes[$nodeTypeName])) {
 			return $this->registeredMixinTypes[$nodeTypeName];
 		} else {
-			$rawNodeType = $this->storageAccess->getRawNodeType($nodeTypeName);
+			$rawNodeType = $this->storageBackend->getRawNodeType($nodeTypeName);
 			if($rawNodeType === FALSE) {
 				throw new F3_PHPCR_NodeType_NoSuchNodeTypeException('Nodetype "' . $nodeTypeName .'" is not registered', 1213012218);
 			} else {
@@ -236,7 +236,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 		if ($allowUpdate === TRUE) {
 			throw new F3_PHPCR_UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213014462);
 		}
-		$this->storageAccess->addNodeType($ntd);
+		$this->storageBackend->addNodeType($ntd);
 
 		return $this->getNodeType($ntd->getName());
 	}
@@ -290,7 +290,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 		} else {
 			unset($this->registeredPrimaryTypes[$name]);
 		}
-		$this->storageAccess->deleteNodeType($name);
+		$this->storageBackend->deleteNodeType($name);
 	}
 
 	/**

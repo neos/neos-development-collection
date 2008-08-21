@@ -52,12 +52,12 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	/**
 	 * Constructs a NamespaceRegistry object
 	 *
-	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
+	 * @param F3_TYPO3CR_Storage_BackendInterface $storageBackend
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_FactoryInterface $componentFactory) {
-		$this->storageAccess = $storageAccess;
+	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageBackend, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->storageBackend = $storageBackend;
 		$this->componentFactory = $componentFactory;
 
 		$this->initializeCustomNamespaces();
@@ -70,7 +70,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	protected function initializeCustomNamespaces() {
-		$rawNamespaces = $this->storageAccess->getRawNamespaces();
+		$rawNamespaces = $this->storageBackend->getRawNamespaces();
 		if (!count($rawNamespaces))	return;
 		foreach ($rawNamespaces as $rawNamespace) {
 			$this->customNamespaces[$rawNamespace['prefix']] = $rawNamespace['uri'];
@@ -183,15 +183,15 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 
 			// Update a namespace
 		if (in_array($uri, $this->customNamespaces)) {
-			$this->storageAccess->updateNamespacePrefix($prefix, $uri);
+			$this->storageBackend->updateNamespacePrefix($prefix, $uri);
 			$prefixToRemove = array_search($uri, $this->customNamespaces);
 			unset($this->customNamespaces[$prefixToRemove]);
 			$this->customNamespaces[$prefix] = $uri;
 		} elseif (in_array($prefix, array_keys($this->customNamespaces))) {
-			$this->storageAccess->updateNamespaceURI($prefix, $uri);
+			$this->storageBackend->updateNamespaceURI($prefix, $uri);
 			$this->customNamespaces[$prefix] = $uri;
 		} else {
-			$this->storageAccess->addNamespace($prefix, $uri);
+			$this->storageBackend->addNamespace($prefix, $uri);
 			$this->customNamespaces[$prefix] = $uri;
 		}
 	}
@@ -215,7 +215,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 		if (!array_key_exists($prefix, $this->customNamespaces)) {
 			throw new F3_PHPCR_NamespaceException("Attempt to unregister a not registered namespace!", 1184479159);
 		}
-		$this->storageAccess->deleteNamespace($prefix);
+		$this->storageBackend->deleteNamespace($prefix);
 		unset ($this->customNamespaces[$prefix]);
 	}
 

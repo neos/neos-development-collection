@@ -54,8 +54,9 @@ class F3_TYPO3CR_Storage_Backend_PDOTest extends F3_TYPO3CR_Storage_Backend_Test
 		F3_FLOW3_Utility_Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('sqlite') . '.db';
 		copy(FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
-		$this->storageAccess = new F3_TYPO3CR_Storage_Backend_PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
-		$this->storageAccess->connect();
+		$this->storageBackend = new F3_TYPO3CR_Storage_Backend_PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
+		$this->storageBackend->setSearchEngine($this->getMock('F3_TYPO3CR_Storage_SearchInterface'));
+		$this->storageBackend->connect();
 	}
 
 	/**
@@ -65,7 +66,7 @@ class F3_TYPO3CR_Storage_Backend_PDOTest extends F3_TYPO3CR_Storage_Backend_Test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function tearDown() {
-		$this->storageAccess->disconnect();
+		$this->storageBackend->disconnect();
 		unlink($this->fixtureFolder . $this->fixtureDB);
 		F3_FLOW3_Utility_Files::removeDirectoryRecursively($this->fixtureFolder);
 	}

@@ -17,18 +17,18 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
- * Testcase for F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackend
+ * Testcase for F3_TYPO3CR_FLOW3_Persistence_Backend
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_FLOW3_Persistence_ContentRepositoryBackendTest extends F3_Testing_BaseTestCase {
+class F3_TYPO3CR_FLOW3_Persistence_BackendTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test

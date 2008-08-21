@@ -19,6 +19,8 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_TYPO3CR_Storage_Backend_PDO.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
+require_once('Zend/Search/Lucene.php');
+
 /**
  * A helper class for the storage layer
  *
@@ -29,31 +31,57 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_Storage_Helper {
 
 	/**
+	 * @var array
+	 */
+	protected $options;
+
+	/**
 	 * @var PDO
 	 */
 	protected $databaseHandle;
 
 	/**
-	 * Connects to the database using the provided DSN and (optional) user data
-	 *
-	 * @param string $dsn The DSN to use for connecting to the DB
-	 * @param string $username The username to use for connecting to the DB
-	 * @param string $password The password to use for connecting to the DB
+	 * @param array $options
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($dsn, $username = NULL, $password = NULL) {
-		$this->databaseHandle = new PDO($dsn, $username, $password);
+	public function __construct($options) {
+		$this->options = $options;
+	}
+
+	/**
+	 * Performs all-in-one setup of the TYPO3CR storage layer
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initialize() {
+		$this->initializeStorage();
+		$this->initializeSearch();
+	}
+
+	/**
+	 * Sets up tables, nodetypes and root node
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeStorage() {
+		$this->databaseHandle = new PDO($this->options['dsn'], $this->options['userid'], $this->options['password']);
 		$this->databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	}
 
-	public function initializeDatabase() {
 		$this->initializeTables();
-		$this->initializeRootNode();
 		$this->initializeNodeTypes();
+		$this->initializeNodes();
 	}
 
-	public function initializeTables() {
+	/**
+	 * Creates the tables needed
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function initializeTables() {
 		$statements = file(FLOW3_PATH_PACKAGES . 'TYPO3CR/Resources/SQL/TYPO3CR.sql', FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
 		foreach ($statements as $statement) {
 			$this->databaseHandle->query($statement);
@@ -61,29 +89,59 @@ class F3_TYPO3CR_Storage_Helper {
 	}
 
 	/**
-	 * Adds builtin nodetypes to the database
+	 * Clears nodetypes and adds builtin nodetypes to the database
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeNodeTypes() {
+	protected function initializeNodeTypes() {
+		$this->databaseHandle->query('DELETE FROM "nodetypes"');
 		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name") VALUES (\'nt:base\')');
 		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name") VALUES (\'nt:unstructured\')');
 	}
 
 	/**
-	 * Adds a root node to the database
+	 * Clears the nodes table and adds a root node to the database
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeRootNode() {
+	protected function initializeNodes() {
+		$this->databaseHandle->query('DELETE FROM "nodes"');
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "name", "parent", "nodetype") VALUES (?, \'\', \'\', \'nt:unstructured\')');
 		$statementHandle->execute(array(
 			F3_FLOW3_Utility_Algorithms::generateUUID()
 		));
 	}
 
+	/**
+	 * Sets up the search backend
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeSearch() {
+		$index = Zend_Search_Lucene::create($this->options['indexlocation']. '/default');
+		$this->populateIndex();
+	}
+
+	/**
+	 * Adds the root node to the index
+	 *
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function populateIndex() {
+		$statementHandle = $this->databaseHandle->query('SELECT * FROM "nodes" WHERE "parent" = \'\'');
+		$node = $statementHandle->fetch(PDO::FETCH_ASSOC);
+
+		$nodeDocument = new Zend_Search_Lucene_Document();
+		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('identifier', $node['identifier']));
+		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('nodetype', $node['nodetype']));
+		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('path', '/'));
+
+		$index = Zend_Search_Lucene::open($this->options['indexlocation']. '/default');
+		$index->addDocument($nodeDocument);
+	}
 }
 
 ?>

@@ -46,7 +46,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
-	protected $storageAccess;
+	protected $storageBackend;
 
 	/**
 	 * @var boolean
@@ -103,19 +103,17 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $workspaceName
 	 * @param F3_PHPCR_RepositoryInterface $repository
-	 * @param F3_TYPO3CR_Storage_BackendInterface $storageAccess
+	 * @param F3_TYPO3CR_Storage_BackendInterface $storageBackend
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @throws InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($workspaceName, F3_PHPCR_RepositoryInterface $repository, F3_TYPO3CR_Storage_BackendInterface $storageAccess, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct($workspaceName, F3_PHPCR_RepositoryInterface $repository, F3_TYPO3CR_Storage_BackendInterface $storageBackend, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
 
 		$this->componentFactory = $componentFactory;
 		$this->repository = $repository;
-		$this->storageAccess = $storageAccess;
-		$this->storageAccess->setWorkspaceName($workspaceName);
-		$this->storageAccess->connect();
+		$this->storageBackend = $storageBackend;
 
 		$this->workspace = $this->componentFactory->getComponent('F3_PHPCR_WorkspaceInterface', $workspaceName, $this);
 	}
@@ -127,7 +125,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getStorageBackend() {
-		return $this->storageAccess;
+		return $this->storageBackend;
 	}
 
 	/**
@@ -193,7 +191,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		if ($this->rootNode === NULL) {
 			$this->rootNode = $this->componentFactory->getComponent(
 				'F3_PHPCR_NodeInterface',
-				$this->storageAccess->getRawRootNode(),
+				$this->storageBackend->getRawRootNode(),
 				$this);
 			$this->currentlyLoadedNodes[$this->rootNode->getIdentifier()] = $this->rootNode;
 		}
@@ -233,7 +231,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 			return $this->currentlyLoadedNodes[$id];
 		}
 
-		$rawNode = $this->storageAccess->getRawNodeByIdentifier($id);
+		$rawNode = $this->storageBackend->getRawNodeByIdentifier($id);
 		if ($rawNode === FALSE) {
 			throw new F3_PHPCR_ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
 		}
@@ -395,13 +393,13 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 */
 	public function save() {
 		foreach ($this->currentlyNewNodes as $node) {
-			$this->storageAccess->addNode($node);
+			$this->storageBackend->addNode($node);
 			$this->addPropertiesForNode($node);
 			unset($this->currentlyNewNodes[$node->getIdentifier()]);
 		}
 
 		foreach ($this->currentlyDirtyNodes as $node) {
-			$this->storageAccess->updateNode($node);
+			$this->storageBackend->updateNode($node);
 			$this->addPropertiesForNode($node);
 			$this->updatePropertiesForNode($node);
 			$this->removePropertiesForNode($node);
@@ -409,7 +407,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		}
 
 		foreach ($this->currentlyRemovedNodes as $node) {
-			$this->storageAccess->removeNode($node);
+			$this->storageBackend->removeNode($node);
 			$this->removePropertiesForNode($node);
 			unset($this->currentlyRemovedNodes[$node->getIdentifier()]);
 		}
@@ -842,6 +840,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function logout() {
+		$this->storageBackend->disconnect();
 		$this->isLive = FALSE;
 		$this->currentlyLoadedNodes = array();
 	}
@@ -1058,7 +1057,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	protected function addPropertiesForNode(F3_PHPCR_NodeInterface $node) {
 		if (key_exists($node->getIdentifier(), $this->currentlyNewProperties)) {
 			foreach ($this->currentlyNewProperties[$node->getIdentifier()] as $property) {
-				$this->storageAccess->addProperty($property);
+				$this->storageBackend->addProperty($property);
 				unset($this->currentlyNewProperties[$node->getIdentifier()][$property->getName()]);
 			}
 		}
@@ -1073,7 +1072,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	protected function updatePropertiesForNode(F3_PHPCR_NodeInterface $node) {
 		if (key_exists($node->getIdentifier(), $this->currentlyDirtyProperties)) {
 			foreach ($this->currentlyDirtyProperties[$node->getIdentifier()] as $property) {
-				$this->storageAccess->updateProperty($property);
+				$this->storageBackend->updateProperty($property);
 				unset($this->currentlyDirtyProperties[$node->getIdentifier()][$property->getName()]);
 			}
 		}
@@ -1088,7 +1087,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	protected function removePropertiesForNode(F3_PHPCR_NodeInterface $node) {
 		if (key_exists($node->getIdentifier(), $this->currentlyRemovedProperties)) {
 			foreach ($this->currentlyRemovedProperties[$node->getIdentifier()] as $property) {
-				$this->storageAccess->removeProperty($property);
+				$this->storageBackend->removeProperty($property);
 				unset($this->currentlyRemovedProperties[$node->getIdentifier()][$property->getName()]);
 			}
 		}

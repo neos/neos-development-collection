@@ -35,7 +35,9 @@ class F3_TYPO3CR_Query_QueryResultTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodesReturnsANodeIterator() {
-		$this->markTestIncomplete('Not yet implemented');
+		$queryResult = new F3_TYPO3CR_Query_QueryResult(array());
+		$queryResult->injectComponentFactory($this->componentFactory);
+		$this->assertType('F3_PHPCR_NodeIteratorInterface', $queryResult->getNodes(), 'QueryResult did not return a NodeIterator in getNodes().');
 	}
 
 }

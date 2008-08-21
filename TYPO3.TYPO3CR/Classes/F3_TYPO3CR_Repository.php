@@ -41,7 +41,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
-	protected $storageAccess;
+	protected $storageBackend;
 
 	/**
 	 * An array with all descriptor keys and their values (yes, all strings!)
@@ -81,7 +81,6 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 		$this->settings = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('TYPO3CR');
-		$this->storageAccess = $this->componentFactory->getComponent($this->settings->storage->backend, $this->settings->storage->backendOptions);
 	}
 
 	/**
@@ -113,10 +112,15 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	public function login($credentials = NULL, $workspaceName = 'default') {
 		if ($credentials !== NULL && !($credentials instanceof F3_PHPCR_CredentialsInterface)) throw new F3_PHPCR_RepositoryException('$credentials must be an instance of F3_PHPCR_CredentialsInterface', 1181042933);
 		if ($workspaceName !== 'default') {
-			throw new F3_PHPCR_NoSuchWorkspaceException('Only default workspace supported for now', 1181063009);
+			throw new F3_PHPCR_NoSuchWorkspaceException('Only default workspace supported', 1181063009);
 		}
-		$this->storageAccess->connect();
-		return $this->componentFactory->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageAccess);
+
+		$this->storageBackend = $this->componentFactory->getComponent($this->settings->storage->backend, $this->settings->storage->backendOptions);
+		$this->storageBackend->setSearchEngine($this->componentFactory->getComponent($this->settings->search->backend, $this->settings->search->backendOptions));
+		$this->storageBackend->setWorkspaceName($workspaceName);
+		$this->storageBackend->connect();
+
+		return $this->componentFactory->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageBackend);
 	}
 
 	/**

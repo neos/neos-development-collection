@@ -39,7 +39,7 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
-	protected $storageAccess;
+	protected $storageBackend;
 
 	/**
 	 * integer
@@ -75,7 +75,7 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectSession(F3_PHPCR_SessionInterface $session) {
-		$this->storageAccess = $session->getStorageBackend();
+		$this->storageBackend = $session->getStorageBackend();
 	}
 
 	/**
@@ -124,7 +124,7 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function execute($searchSpace = F3_PHPCR_Query_QueryInterface::SEARCH_WORKSPACE) {
-		return $this->componentFactory->getComponent('F3_PHPCR_Query_QueryResultInterface', $this->storageAccess->findNodeIdentifiers($this));
+		return $this->componentFactory->getComponent('F3_PHPCR_Query_QueryResultInterface', $this->storageBackend->findNodeIdentifiers($this));
 	}
 
 	/**
