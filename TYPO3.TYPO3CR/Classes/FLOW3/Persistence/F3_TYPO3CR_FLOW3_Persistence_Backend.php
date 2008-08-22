@@ -199,7 +199,7 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 		} elseif ($this->identityMap->hasObject(spl_object_hash($object))) {
 			return $this->identityMap->getIdentifier(spl_object_hash($object));
 		} else {
-			throw new F3_FLOW3_Persistence_Exception('processObject() called for object I cannot handle.', 1218478184);
+			throw new F3_FLOW3_Persistence_Exception('processObject(' . get_class($object) . ') called for object I cannot handle.', 1218478184);
 		}
 	}
 
@@ -274,13 +274,13 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 					$value = $this->processObjectArray($value);
 					$type = F3_PHPCR_PropertyType::REFERENCE;
 				} else {
-					$type = $this->typeStringToInteger(gettype(current($value)));
+					$type = F3_PHPCR_PropertyType::valueFromType(gettype(current($value)));
 				}
 			} elseif (is_object($value) && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'reference')) {
 				$value = $this->processObject($value);
 				$type = F3_PHPCR_PropertyType::REFERENCE;
 			} else {
-				$type = $this->typeStringToInteger($propertyType);
+				$type = F3_PHPCR_PropertyType::valueFromType($propertyType);
 			}
 
 			$node->setProperty($propertyName, $value, $type);
@@ -301,37 +301,6 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 			$identifiers[] = $this->processObject($object);
 		}
 		return $identifiers;
-	}
-
-	/**
-	 * Returns a constant from F3_PHPCR_PropertyType for the given PHP type name
-	 *
-	 * @param string $type
-	 * @return integer
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function typeStringToInteger($typeName) {
-		switch (F3_PHP6_Functions::strtolower($typeName)) {
-			case 'string':
-				$typeNumber = F3_PHPCR_PropertyType::STRING;
-				break;
-			case 'boolean':
-				$typeNumber = F3_PHPCR_PropertyType::BOOLEAN;
-				break;
-			case 'integer':
-				$typeNumber = F3_PHPCR_PropertyType::LONG;
-				break;
-			case 'float':
-			case 'double':
-				$typeNumber = F3_PHPCR_PropertyType::DOUBLE;
-				break;
-			case 'datetime':
-				$typeNumber = F3_PHPCR_PropertyType::DATE;
-				break;
-			default:
-				$typeNumber = F3_PHPCR_PropertyType::UNDEFINED;
-		}
-		return $typeNumber;
 	}
 
 }
