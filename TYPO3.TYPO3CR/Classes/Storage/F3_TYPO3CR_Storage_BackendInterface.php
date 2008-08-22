@@ -58,9 +58,16 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	 *
 	 * @param F3_TYPO3CR_Storage_SearchInterface $searchEngine
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setSearchEngine(F3_TYPO3CR_Storage_SearchInterface $searchEngine);
+
+	/**
+	 * Returns TRUE if the given identifier is used in storage.
+	 *
+	 * @param string $identifier
+	 * @return boolean
+	 */
+	public function hasIdentifier($identifier);
 
 
 

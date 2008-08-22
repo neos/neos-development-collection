@@ -335,5 +335,14 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	public function setSearchEngine(F3_TYPO3CR_Storage_SearchInterface $searchEngine) {
 	}
 
+	/**
+	 * Returns TRUE if the given identifier is used in storage.
+	 *
+	 * @param string $identifier
+	 * @return boolean
+	 */
+	public function hasIdentifier($identifier) {
+	}
+
 }
 ?>

@@ -60,6 +60,19 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$this->databaseHandle = NULL;
 	}
 
+	/**
+	 * Returns TRUE if the given identifier is used in storage.
+	 *
+	 * @param string $identifier
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasIdentifier($identifier) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "nodes" WHERE "identifier" = ?');
+		$statementHandle->execute(array($identifier));
+		return ($statementHandle->fetchColumn() > 0);
+	}
+
 
 
 	/**

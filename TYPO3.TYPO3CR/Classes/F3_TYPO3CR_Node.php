@@ -66,7 +66,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		$this->session = $session;
 		$this->componentFactory = $componentFactory;
 
-		if (!isset($rawData['identifier'])) {
+		if (isset($rawData['newidentifier'])) {
+			$this->identifier = $rawData['newidentifier'];
+			$this->session->registerNodeAsNew($this);
+		} elseif (!isset($rawData['identifier'])) {
 			$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
 			$this->session->registerNodeAsNew($this);
 		}
@@ -321,7 +324,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Many :)
 	 */
-	public function addNode($relPath, $primaryNodeTypeName = 'nt:base') {
+	public function addNode($relPath, $primaryNodeTypeName = NULL, $identifier = NULL) {
 		if ($relPath === NULL) {
 			throw new F3_PHPCR_PathNotFoundException('Path not found or not provided', 1187531979);
 		}
@@ -332,15 +335,23 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$rawData = array(
 				'parent' => $this->getIdentifier(),
 				'name' => $lastNodeName,
-				'nodetype' => $primaryNodeTypeName,
+				'nodetype' => $primaryNodeTypeName === NULL ? 'nt:base' : $primaryNodeTypeName
 			);
+
+			if ($identifier !== NULL) {
+				if ($this->session->hasIdentifier($identifier)) {
+					throw new F3_PHPCR_ItemExistsException('The identifier requested is already in use.', 1219424096);
+				}
+				$rawData['newidentifier'] = $identifier;
+			}
+
 			$newNode = $this->componentFactory->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session);
 
 			$this->nodes[] = $newNode->getIdentifier();
 			$this->session->registerNodeAsDirty($this);
 		} else {
 			$upperNode = F3_TYPO3CR_PathParser::parsePath($remainingPath, $this);
-			$newNode = $upperNode->addNode($lastNodeName);
+			$newNode = $upperNode->addNode($lastNodeName, $primaryNodeTypeName, $identifier);
 		}
 
 		return $newNode;

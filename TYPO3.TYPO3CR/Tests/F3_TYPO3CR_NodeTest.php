@@ -643,5 +643,37 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		} catch (F3_PHPCR_NodeType_ConstraintViolationException $e) {}
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function addNodeWithIdentifierAcceptsIdentifier() {
+		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';
+		$newNode = $this->rootNode->addNode('WithIdentifier', NULL, $identifier);
+		$this->assertEquals($identifier, $newNode->getIdentifier(), 'The new node did not have the expected identifier.');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function addNodeWithIdentifierRegistersNodeAsNewInSession() {
+		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageAccess, $this->componentFactory));
+		$mockSession->expects($this->once())->method('registerNodeAsNew');
+		$rootNode = $mockSession->getRootNode();
+		$rootNode->addNode('WithIdentifier', NULL, '16bca35d-1ef5-4a47-8b0c-0ddd69507d00');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @expectedException F3_PHPCR_ItemExistsException
+	 */
+	public function addNodeWithUsedIdentifierRejectsIdentifier() {
+		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';
+		$this->rootNode->addNode('WithIdentifier', NULL, $identifier);
+		$this->rootNode->addNode('AgainWithIdentifier', NULL, $identifier);
+	}
 }
 ?>

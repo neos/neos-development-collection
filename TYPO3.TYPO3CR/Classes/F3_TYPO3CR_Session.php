@@ -1092,5 +1092,17 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 			}
 		}
 	}
+
+	/**
+	 * Returns TRUE if the $identifier is in use in the session or the underlying
+	 * storage.
+	 *
+	 * @param string $identifier
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasIdentifier($identifier) {
+		return array_key_exists($identifier, $this->currentlyLoadedNodes) || $this->storageBackend->hasIdentifier($identifier);
+	}
 }
 ?>
