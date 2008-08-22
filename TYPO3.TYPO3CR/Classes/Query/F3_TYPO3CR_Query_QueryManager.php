@@ -42,7 +42,6 @@ class F3_TYPO3CR_Query_QueryManager implements F3_PHPCR_Query_QueryManagerInterf
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @required
 	 */
 	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;

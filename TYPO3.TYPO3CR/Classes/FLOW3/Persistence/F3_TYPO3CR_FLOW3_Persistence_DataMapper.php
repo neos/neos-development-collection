@@ -89,7 +89,6 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	 * @param F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @required
 	 */
 	public function injectIdentityMap(F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap) {
 		$this->identityMap = $identityMap;

@@ -76,7 +76,6 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 	 * @param F3_FLOW3_Reflection_Service $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @required
 	 */
 	public function injectReflectionService(F3_FLOW3_Reflection_Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -88,7 +87,6 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 	 * @param F3_PHPCR_RepositoryInterface $repository
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @required
 	 */
 	public function injectContentRepository(F3_PHPCR_RepositoryInterface $repository) {
 		$this->session = $repository->login();
@@ -100,7 +98,6 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 	 * @param F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @required
 	 */
 	public function injectIdentityMap(F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap) {
 		$this->identityMap = $identityMap;

@@ -87,7 +87,6 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @required
 	 */
 	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
@@ -110,7 +109,6 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	 * @param F3_PHPCR_RepositoryInterface $repository
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @required
 	 */
 	public function injectContentRepository(F3_PHPCR_RepositoryInterface $repository) {
 		$this->session = $repository->login();
