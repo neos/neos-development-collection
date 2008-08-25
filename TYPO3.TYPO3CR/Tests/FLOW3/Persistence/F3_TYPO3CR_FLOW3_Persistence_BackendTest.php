@@ -46,6 +46,14 @@ class F3_TYPO3CR_FLOW3_Persistence_BackendTest extends F3_Testing_BaseTestCase {
 		$this->markTestIncomplete('Not yet implemented');
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function identifierPropertyFromNewObjectIsUsedForNode() {
+		$this->markTestIncomplete('Not yet implemented');
+	}
+
 }
 
 ?>

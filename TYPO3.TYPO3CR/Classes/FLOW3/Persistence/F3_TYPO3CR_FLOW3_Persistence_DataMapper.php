@@ -51,6 +51,11 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	protected $identityMap;
 
 	/**
+	 * @var F3_FLOW3_Persistence_Manager
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Injects a Component Manager
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
@@ -95,6 +100,17 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	}
 
 	/**
+	 * Injects the persistence manager
+	 *
+	 * @param F3_FLOW3_Persistence_Manager $persistenceManager
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectPersistenceManager(F3_FLOW3_Persistence_Manager $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
+	}
+
+	/**
 	 * Maps the nodes
 	 *
 	 * @param F3_PHPCR_NodeIteratorInterface $nodes
@@ -123,6 +139,10 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 		$properties = array();
 		foreach ($node->getProperties() as $property) {
 			$properties[$property->getName()] = $this->getPropertyValue($property);
+		}
+		$identifierProperty = $this->persistenceManager->getClassSchema($className)->getIdentifierProperty();
+		if ($identifierProperty !== NULL) {
+			$properties[$identifierProperty] = $node->getIdentifier();
 		}
 		$object = $this->componentObjectBuilder->reconstituteComponentObject($className, $componentConfiguration, $properties);
 		$this->identityMap->registerObject(spl_object_hash($object), $node->getIdentifier());

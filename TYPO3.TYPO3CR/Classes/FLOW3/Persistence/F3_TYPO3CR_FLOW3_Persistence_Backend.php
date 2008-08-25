@@ -111,6 +111,7 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(array $classSchemata) {
+		$this->classSchemata = $classSchemata;
 		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
 
 		if (!$this->session->getRootNode()->hasNode('flow3:persistence/flow3:objects')) {
@@ -120,7 +121,7 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 			$this->baseNode = $this->session->getRootNode()->getNode('flow3:persistence/flow3:objects');
 		}
 
-		foreach($classSchemata as $schema) {
+		foreach($this->classSchemata as $schema) {
 			if ($nodeTypeManager->hasNodeType($schema->getClassName())) {
 				$nodeTypeManager->unregisterNodeType($schema->getClassName());
 			}
@@ -128,7 +129,6 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 			$nodeTypeTemplate->setName($schema->getClassName());
 			$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		}
-		$this->classSchemata = $classSchemata;
 	}
 
 
@@ -220,7 +220,12 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 			if (!$this->baseNode->hasNode('flow3:' . $className)) {
 				$this->baseNode->addNode('flow3:' . $className);
 			}
-			$node = $this->baseNode->getNode('flow3:' . $className)->addNode('flow3:' . $className . 'Instance', 'flow3:' . $className);
+			$identifierProperty = $this->classSchemata[$className]->getIdentifierProperty();
+			if ($identifierProperty !== NULL) {
+				$node = $this->baseNode->getNode('flow3:' . $className)->addNode('flow3:' . $className . 'Instance', 'flow3:' . $className, $object->AOPProxyGetProperty($identifierProperty));
+			} else {
+				$node = $this->baseNode->getNode('flow3:' . $className)->addNode('flow3:' . $className . 'Instance', 'flow3:' . $className);
+			}
 			$identifier = $node->getIdentifier();
 			$this->identityMap->registerObject($objectHash, $identifier);
 			$this->setPropertiesForObject($node, $object);

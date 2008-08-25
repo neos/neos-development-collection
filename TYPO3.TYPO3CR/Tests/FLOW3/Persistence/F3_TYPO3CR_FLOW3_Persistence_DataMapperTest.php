@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_TYPO3CR_FLOW3_Persistence_DataMapperTest extends F3_Testing_BaseTestCase {
@@ -35,6 +35,14 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapperTest extends F3_Testing_BaseTestCas
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapReturnsObjectsFromNodes() {
+		$this->markTestIncomplete('Not yet implemented');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function identifierIsUsedForIdentifierProperty() {
 		$this->markTestIncomplete('Not yet implemented');
 	}
 
