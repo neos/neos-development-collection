@@ -16,65 +16,67 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @subpackage Service
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @subpackage Domain
+ * @version $Id:$
  */
 
 /**
- *
+ * Testcase for the "Site" domain model
  *
  * @package TYPO3
- * @subpackage Service
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @subpackage Domain
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionController {
+class F3_TYPO3_Domain_Model_SiteTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @var F3_TYPO3_Domain_Model_PageRepository
-	 */
-	protected $pageRepository;
-
-	/**
-	 * Injects the page repository
-	 *
-	 * @param F3_TYPO3_Domain_Model_PageRepository $pageRepository A reference to the page repository
-	 * @return void
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPageRepository(F3_TYPO3_Domain_Model_PageRepository $pageRepository) {
-		$this->pageRepository = $pageRepository;
+	public function aNameCanBeSetAndRetrievedFromTheSite() {
+		$site = new F3_TYPO3_Domain_Model_Site();
+		$site->setName('My cool website');
+		$this->assertEquals('My cool website', $site->getName());
 	}
 
 	/**
-	 * Initializes this pages controller
-	 *
-	 * @return void
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeController() {
+	public function pagesCanBeAddedToASite() {
+		$mockPage = $this->getMock('F3_TYPO3_Domain_Model_Page');
+
+		$site = new F3_TYPO3_Domain_Model_Site();
+		$site->addPage($mockPage);
 	}
 
 	/**
-	 * Forwards the request to the listAction()
-	 *
-	 * @return void
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function defaultAction() {
-		$this->forward('list');
+	public function getRootPageReturnsTheFirstPageOfTheSite() {
+		$mockPage1 = $this->getMock('F3_TYPO3_Domain_Model_Page');
+		$mockPage2 = $this->getMock('F3_TYPO3_Domain_Model_Page');
+		$mockPage3 = $this->getMock('F3_TYPO3_Domain_Model_Page');
+
+		$site = new F3_TYPO3_Domain_Model_Site();
+		$site->addPage($mockPage1);
+		$site->addPage($mockPage2);
+		$site->addPage($mockPage3);
+
+		$this->assertSame($mockPage1, $site->getRootPage());
 	}
 
 	/**
-	 * Lists available pages from the repository
-	 *
-	 * @return string Output of the list view
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function listAction() {
-		$pages = $this->pageRepository->findAll();
-		$this->view->setPages($pages);
-		return $this->view->render();
+	public function getRootPageReturnsNullIfNoRootPageExists() {
+		$site = new F3_TYPO3_Domain_Model_Site();
+		$this->assertNull($site->getRootPage());
 	}
 }
+
+
 ?>

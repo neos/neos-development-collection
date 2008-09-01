@@ -16,65 +16,88 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @subpackage Service
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @subpackage Domain
+ * @version $Id:$
  */
 
 /**
- *
+ * Domain model of a site
  *
  * @package TYPO3
- * @subpackage Service
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @subpackage Domain
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
+ * @entity
  */
-class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionController {
+class F3_TYPO3_Domain_Model_Site {
 
 	/**
-	 * @var F3_TYPO3_Domain_Model_PageRepository
+	 * @var string The site's unique identifier
+	 * @identifier
 	 */
-	protected $pageRepository;
+	protected $identifier;
 
 	/**
-	 * Injects the page repository
+	 * @var string
+	 */
+	protected $name = 'Untitled Site';
+
+	/**
+	 * @var array Pages on the first level of the site
+	 */
+	protected $pages = array();
+
+	/**
+	 * Constructs the new site
 	 *
-	 * @param F3_TYPO3_Domain_Model_PageRepository $pageRepository A reference to the page repository
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPageRepository(F3_TYPO3_Domain_Model_PageRepository $pageRepository) {
-		$this->pageRepository = $pageRepository;
+	public function __construct() {
+
 	}
 
 	/**
-	 * Initializes this pages controller
+	 * Sets the name for this site
 	 *
+	 * @param string $name The site name
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeController() {
+	public function setName($name) {
+		$this->name = $name;
 	}
 
 	/**
-	 * Forwards the request to the listAction()
+	 * Returns the name of this site
 	 *
+	 * @return string The name
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * Adds a page to the first level of the website
+	 *
+	 * @param F3_TYPO3_Domain_Model_Page $page The page to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function defaultAction() {
-		$this->forward('list');
+	public function addPage(F3_TYPO3_Domain_Model_Page $page) {
+		 $this->pages[] = $page;
 	}
 
 	/**
-	 * Lists available pages from the repository
+	 * Returns the first page of the website.
 	 *
-	 * @return string Output of the list view
+	 * @return F3_TYPO3_Domain_Model_Page The root page - or NULL if no root page exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function listAction() {
-		$pages = $this->pageRepository->findAll();
-		$this->view->setPages($pages);
-		return $this->view->render();
+	public function getRootPage() {
+		return (array_key_exists(0, $this->pages)) ? $this->pages[0] : NULL;
 	}
 }
+
 ?>

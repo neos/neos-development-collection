@@ -21,38 +21,29 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- *
+ * The "Sites" service
  *
  * @package TYPO3
  * @subpackage Service
  * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionController {
+class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_ActionController {
 
 	/**
-	 * @var F3_TYPO3_Domain_Model_PageRepository
+	 * @var F3_TYPO3_Domain_Model_SiteRepository
 	 */
-	protected $pageRepository;
+	protected $siteRepository;
 
 	/**
-	 * Injects the page repository
+	 * Injects the site repository
 	 *
-	 * @param F3_TYPO3_Domain_Model_PageRepository $pageRepository A reference to the page repository
+	 * @param F3_TYPO3_Domain_Model_SiteRepository $siteRepository A reference to the site repository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPageRepository(F3_TYPO3_Domain_Model_PageRepository $pageRepository) {
-		$this->pageRepository = $pageRepository;
-	}
-
-	/**
-	 * Initializes this pages controller
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeController() {
+	public function injectSiteRepository(F3_TYPO3_Domain_Model_SiteRepository $siteRepository) {
+		$this->siteRepository = $siteRepository;
 	}
 
 	/**
@@ -66,14 +57,14 @@ class F3_TYPO3_Service_Controller_Pages extends F3_FLOW3_MVC_Controller_ActionCo
 	}
 
 	/**
-	 * Lists available pages from the repository
+	 * Lists available sites from the repository
 	 *
 	 * @return string Output of the list view
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function listAction() {
-		$pages = $this->pageRepository->findAll();
-		$this->view->setPages($pages);
+		$sites = $this->siteRepository->findAll();
+		$this->view->setSites($sites);
 		return $this->view->render();
 	}
 }

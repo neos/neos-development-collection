@@ -73,7 +73,7 @@ class F3_TYPO3_Domain_Model_Page {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($title) {
+	public function __construct($title = 'Untitled') {
 		$this->setTitle($title);
 	}
 

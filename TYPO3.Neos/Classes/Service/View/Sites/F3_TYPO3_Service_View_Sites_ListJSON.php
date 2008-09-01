@@ -16,30 +16,50 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @version $Id$
+ * @subpackage Service
+ * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
- * The Page Repository contains all Pages and provides methods to manage them.
+ * JSON view for the Sites List action
  *
  * @package TYPO3
- * @version $Id$
+ * @subpackage Service
+ * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @repository
  */
-class F3_TYPO3_Domain_Model_PageRepository extends F3_FLOW3_Persistence_Repository {
+class F3_TYPO3_Service_View_Sites_ListJSON extends F3_FLOW3_MVC_View_AbstractView {
 
 	/**
-	 * Finds all pages
+	 * @var array An array of sites
+	 */
+	protected $sites;
+
+	/**
+	 * Sets the sites (model) for this view
 	 *
-	 * @return array An array of the found page objects
+	 * @param array $sites An array of F3_TYPO3_Domain_Model_Site objects
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findAll() {
-		$query = $this->queryFactory->create('F3_TYPO3_Domain_Model_Page');
-		$pages = $query->execute();
-		return $pages;
+	public function setSites(array $sites) {
+		$this->sites = $sites;
+	}
+
+	/**
+	 * Renders this list view
+	 *
+	 * @return string The rendered JSON output
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function render() {
+		$sitesArray = array();
+		foreach ($this->sites as $key => $site) {
+			$sitesArray[] = array(
+				'text' => $site->getName()
+			);
+		}
+		return json_encode($sitesArray);
 	}
 }
-
 ?>

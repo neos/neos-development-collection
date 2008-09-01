@@ -16,29 +16,29 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @version $Id$
+ * @subpackage Domain
+ * @version $Id:$
  */
 
 /**
- * The Page Repository contains all Pages and provides methods to manage them.
+ * The Site Repository
  *
  * @package TYPO3
- * @version $Id$
+ * @subpackage Domain
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @repository
  */
-class F3_TYPO3_Domain_Model_PageRepository extends F3_FLOW3_Persistence_Repository {
+class F3_TYPO3_Domain_Model_SiteRepository extends F3_FLOW3_Persistence_Repository {
 
 	/**
-	 * Finds all pages
+	 * Finds a site by its identifier
 	 *
-	 * @return array An array of the found page objects
+	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findAll() {
-		$query = $this->queryFactory->create('F3_TYPO3_Domain_Model_Page');
-		$pages = $query->execute();
-		return $pages;
+	public function findByIdentifier() {
+
 	}
 }
 
