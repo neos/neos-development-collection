@@ -176,55 +176,49 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function addSingleValuedPropertyWorks() {
-		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
-		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
-
-		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
-		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
-		$this->storageBackend->addProperty($property);
-
-		$expectedRawProperties = array(array(
-			'name' => 'someProp',
-			'value' => 'someValue',
-			'namespace' => '',
-			'multivalue' => 0,
-			'type' => F3_PHPCR_PropertyType::STRING
-		));
-		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
-		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
-	}
-
-	/**
+	 * Provides test data for single valued property test
+	 *
+	 * @return array of arrays with parameters for addSingleValuedStringPropertyWorks, updateSingleValuedPropertyWorks, removeSingleValuedPropertyWorks
 	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
 	 */
-	public function addMultiValuedPropertyWorks() {
+	public function singleValuedProperties() {
+		return array(
+			array(F3_PHPCR_PropertyType::STRING, 'someProp', 'someValue', 'newValue'),
+			array(F3_PHPCR_PropertyType::STRING, 'jcr:someProp', 'someValue', 'newValue'),
+			array(F3_PHPCR_PropertyType::STRING, 'xml:someProp', 'someValue', 'newValue'),
+			array(F3_PHPCR_PropertyType::LONG, 'someProp', 42, 24),
+			array(F3_PHPCR_PropertyType::DOUBLE, 'someProp', 42.5, 52.4),
+			array(F3_PHPCR_PropertyType::BOOLEAN, 'someProp', TRUE, FALSE),
+			array(F3_PHPCR_PropertyType::BOOLEAN, 'someProp', FALSE, TRUE),
+			array(F3_PHPCR_PropertyType::NAME, 'someProp', 'flow3:blub', 'xml:blob'),
+			array(F3_PHPCR_PropertyType::PATH, 'someProp', '/flow3:path1/path2/jcr:path3[2]/xml:path4', '/flow3:path1new/path2new/jcr:path3[5]/jcr:path4new'),
+			array(F3_PHPCR_PropertyType::URI, 'someProp', 'http://typo3.org', 'http://forge.typo3.org'),
+		);
+	}
+
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 * @dataProvider singleValuedProperties
+	 */
+	public function addSingleValuedPropertyWorks($propertyType, $propertyName, $propertyValue) {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
 
-		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
-		$someValue0 = new F3_TYPO3CR_Value('someValue0', F3_PHPCR_PropertyType::STRING);
-		$someValue1 = new F3_TYPO3CR_Value('someValue1', F3_PHPCR_PropertyType::STRING);
-		$mockValueFactory->expects($this->exactly(2))->method('createValue')->will($this->onConsecutiveCalls($someValue0, $someValue1));
-
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
-		$property = new F3_TYPO3CR_Property('someProp', array('someValue0','someValue1'), F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
+		$mockValueFactory->expects($this->any())->method('createValue')->will($this->returnValue(new F3_TYPO3CR_Value($propertyValue, $propertyType)));
+		$property = new F3_TYPO3CR_Property($propertyName, $propertyValue, $propertyType, $node, $mockSession, $mockValueFactory);
 		$this->storageBackend->addProperty($property);
 
 		$expectedRawProperties = array(array(
-			'name' => 'someProp',
-			'value' => array('someValue0', 'someValue1'),
-			'namespace' => '',
-			'multivalue' => 1,
-			'type' => F3_PHPCR_PropertyType::STRING
+			'name' => $propertyName,
+			'value' => $propertyValue,
+			'multivalue' => 0,
+			'type' => $propertyType
 		));
 		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
 		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
@@ -232,78 +226,48 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @test
+	 * @dataProvider singleValuedProperties
 	 */
-	public function updateSingleValuedPropertyWorks() {
+	public function updateSingleValuedPropertyWorks($propertyType, $propertyName, $propertyValue, $newPropertyValue) {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
+		$mockValueFactory->expects($this->any())->method('createValue')->will($this->returnValue(new F3_TYPO3CR_Value($newPropertyValue, $propertyType)));
+		$property = new F3_TYPO3CR_Property($propertyName, $propertyValue, $propertyType, $node, $mockSession, $mockValueFactory);
 		$this->storageBackend->addProperty($property);
-		$property->setValue('newValue');
+		$property->setValue($newPropertyValue);
 		$this->storageBackend->updateProperty($property);
 
 		$expectedRawProperties = array(array(
-			'name' => 'someProp',
-			'value' => 'newValue',
-			'namespace' => '',
+			'name' => $propertyName,
+			'value' => $newPropertyValue,
 			'multivalue' => 0,
-			'type' => F3_PHPCR_PropertyType::STRING
+			'type' => $propertyType
 		));
 		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
 		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
 	}
 
 	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @dataProvider singleValuedProperties
 	 */
-	public function updateMultiValuedPropertyWorks() {
-		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
-		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
-
-		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
-		$someValue0 = new F3_TYPO3CR_Value('someValue0', F3_PHPCR_PropertyType::STRING);
-		$someValue1 = new F3_TYPO3CR_Value('someValue1', F3_PHPCR_PropertyType::STRING);
-		$newValue0 = new F3_TYPO3CR_Value('newValue0', F3_PHPCR_PropertyType::STRING);
-		$newValue1 = new F3_TYPO3CR_Value('newValue1', F3_PHPCR_PropertyType::STRING);
-		$newValue2 = new F3_TYPO3CR_Value('newValue2', F3_PHPCR_PropertyType::STRING);
-		$mockValueFactory->expects($this->exactly(5))->method('createValue')->will($this->onConsecutiveCalls($someValue0, $someValue1, $newValue0, $newValue1, $newValue2));
-
-		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
-		$property = new F3_TYPO3CR_Property('someProp', array('someValue0','someValue1'), F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
-		$this->storageBackend->addProperty($property);
-		$property->setValue(array('newValue0','newValue1','newValue2'));
-		$this->storageBackend->updateProperty($property);
-
-		$expectedRawProperties = array(array(
-			'name' => 'someProp',
-			'value' => array('newValue0','newValue1','newValue2'),
-			'namespace' => '',
-			'multivalue' => 1,
-			'type' => F3_PHPCR_PropertyType::STRING
-		));
-		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
-		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function removeSingleValuedPropertyWorks() {
+	public function removeSingleValuedPropertyWorks($propertyType, $propertyName, $propertyValue) {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
-		$property = new F3_TYPO3CR_Property('someProp', 'someValue', F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
+		$mockValueFactory->expects($this->any())->method('createValue')->will($this->returnValue(new F3_TYPO3CR_Value($propertyValue, $propertyType)));
+		$property = new F3_TYPO3CR_Property($propertyName, $propertyValue, $propertyType, $node, $mockSession, $mockValueFactory);
 		$this->storageBackend->addProperty($property);
 		$this->storageBackend->removeProperty($property);
 
@@ -312,22 +276,114 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 	}
 
 	/**
+	 * Provides test data for multi valued property test
+	 *
+	 * @return array of arrays with parameters for addMultiValuedStringPropertyWorks, updateMultiValuedPropertyWorks, removeMultiValuedPropertyWorks
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function multiValuedProperties() {
+		return array(
+			array(F3_PHPCR_PropertyType::STRING, 'someProp', array('someValue0','someValue1'), array('newValue0','newValue1')),
+			array(F3_PHPCR_PropertyType::STRING, 'jcr:someProp', array('someValue0','someValue1'), array('newValue0','newValue1')),
+			array(F3_PHPCR_PropertyType::STRING, 'xml:someProp', array('someValue0','someValue1'), array('newValue0','newValue1')),
+			array(F3_PHPCR_PropertyType::LONG, 'someProp', array(42,43), array(24,23)),
+			array(F3_PHPCR_PropertyType::DOUBLE, 'someProp', array(42.5, 42.6), array(52.4, 62.4)),
+			array(F3_PHPCR_PropertyType::BOOLEAN, 'someProp', array(TRUE, TRUE), array(FALSE, FALSE)),
+			array(F3_PHPCR_PropertyType::BOOLEAN, 'someProp', array(FALSE, TRUE), array(TRUE, FALSE)),
+			array(F3_PHPCR_PropertyType::NAME, 'someProp', array('flow3:blub','xml:blib'), array('xml:blob', 'jcr:blab')),
+			array(F3_PHPCR_PropertyType::PATH, 'someProp', array('/flow3:path1/path2/jcr:path3[2]/xml:path4', '/jcr:path5'), array('/flow3:path1new/path2new/jcr:path3[5]/jcr:path4new', '/jcr:path5new')),
+			array(F3_PHPCR_PropertyType::URI, 'someProp', array('http://old.typo3.org', 'http://old2.typo3.org'), array('http://forge1.typo3.org', 'http://forge2.typo3.org')),
+		);
+	}
+
+	/**
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @dataProvider multiValuedProperties
 	 */
-	public function removeMultiValuedPropertyWorks() {
+	public function addMultiValuedPropertyWorks($propertyType, $propertyName, $propertyValues) {
 		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
 		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
 
 		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
-		$someValue0 = new F3_TYPO3CR_Value('someValue0', F3_PHPCR_PropertyType::STRING);
-		$someValue1 = new F3_TYPO3CR_Value('someValue1', F3_PHPCR_PropertyType::STRING);
-		$mockValueFactory->expects($this->exactly(2))->method('createValue')->will($this->onConsecutiveCalls($someValue0, $someValue1));
+		foreach($propertyValues as $index => $propertyValue) {
+			$propertyValueObjects[$index] = new F3_TYPO3CR_Value($propertyValue, $propertyType);
+		}
+		$mockValueFactory->expects($this->exactly(2))->method('createValue')->will(call_user_func_array(array($this, 'onConsecutiveCalls'), $propertyValueObjects));
 
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
-		$property = new F3_TYPO3CR_Property('someProp', array('someValue0','someValue1'), F3_PHPCR_PropertyType::STRING, $node, $mockSession, $mockValueFactory);
+		$property = new F3_TYPO3CR_Property($propertyName, array('someValue0','someValue1'), $propertyType, $node, $mockSession, $mockValueFactory);
+		$this->storageBackend->addProperty($property);
+
+		$expectedRawProperties = array(array(
+			'name' => $propertyName,
+			'value' => $propertyValues,
+			'multivalue' => 1,
+			'type' => $propertyType
+		));
+		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
+		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
+	}
+
+	/**
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @dataProvider multiValuedProperties
+	 */
+	public function updateMultiValuedPropertyWorks($propertyType, $propertyName, $propertyValues, $newPropertyValues) {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
+		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
+
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
+		foreach ($propertyValues as $index => $propertyValue) {
+			$propertyValueObjects[$index] = new F3_TYPO3CR_Value($propertyValue, $propertyType);
+		}
+		foreach ($newPropertyValues as $index => $propertyValue) {
+			$newPropertyValueObjects[$index] = new F3_TYPO3CR_Value($propertyValue, $propertyType);
+		}
+		$allPropertyValueObjects = array_merge($propertyValueObjects, $newPropertyValueObjects);
+		$mockValueFactory->expects($this->exactly(count($allPropertyValueObjects)))->method('createValue')->will(call_user_func_array(array($this, 'onConsecutiveCalls'), $allPropertyValueObjects));
+
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
+		$property = new F3_TYPO3CR_Property($propertyName, $propertyValues, $propertyType, $node, $mockSession, $mockValueFactory);
+		$this->storageBackend->addProperty($property);
+		$property->setValue($newPropertyValues);
+		$this->storageBackend->updateProperty($property);
+
+		$expectedRawProperties = array(array(
+			'name' => $propertyName,
+			'value' => $newPropertyValues,
+			'multivalue' => 1,
+			'type' => $propertyType
+		));
+		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
+		$this->assertEquals($expectedRawProperties, $retrievedRawProperties, 'The returned raw property had not the expected values.');
+	}
+
+
+	/**
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @dataProvider multiValuedProperties
+	 */
+	public function removeMultiValuedPropertyWorks($propertyType, $propertyName, $propertyValues) {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
+		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
+
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
+		foreach ($propertyValues as $index => $propertyValue) {
+			$propertyValueObjects[$index] = new F3_TYPO3CR_Value($propertyValue, $propertyType);
+		}
+		$mockValueFactory->expects($this->exactly(2))->method('createValue')->will(call_user_func_array(array($this, 'onConsecutiveCalls'), $propertyValueObjects));
+
+		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
+		$property = new F3_TYPO3CR_Property($propertyName, $propertyValues, $propertyType, $node, $mockSession, $mockValueFactory);
 		$this->storageBackend->addProperty($property);
 		$this->storageBackend->removeProperty($property);
 
@@ -335,13 +391,13 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$this->assertEquals(array(), $retrievedRawProperties, 'A removed property could be retrieved.');
 	}
 
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function hasIdentifierWorks() {
+ 	/**
+ 	 * @author Karsten Dambekalns <karsten@typo3.org>
+ 	 * @test
+ 	 */
+ 	public function hasIdentifierWorks() {
 		$this->assertTrue($this->storageBackend->hasIdentifier('96b4a35d-1ef5-4a47-8b3c-0d6d69507e01'), 'hasIdentifier() did not return TRUE for existing identifier.');
 		$this->assertFalse($this->storageBackend->hasIdentifier('96b4a35d-0000-4a47-8b3c-0d6d69507e01'), 'hasIdentifier() did not return FALSE for non-existing identifier.');
-	}
-}
+ 	}
+ }
 ?>

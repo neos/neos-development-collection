@@ -65,12 +65,14 @@ class F3_TYPO3CR_Storage_Helper {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function initializeStorage() {
 		$this->databaseHandle = new PDO($this->options['dsn'], $this->options['userid'], $this->options['password']);
 		$this->databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		$this->initializeTables();
+		$this->initializeNamespaces();
 		$this->initializeNodeTypes();
 		$this->initializeNodes();
 	}
@@ -89,15 +91,31 @@ class F3_TYPO3CR_Storage_Helper {
 	}
 
 	/**
+	 * Clears the namespaces table and adds builtin namespaces to the database
+	 *
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function initializeNamespaces() {
+		$this->databaseHandle->query('DELETE FROM "namespaces"');
+		$this->databaseHandle->query('INSERT INTO "namespaces" ("prefix", "uri") VALUES (\'jcr\', \'http://www.jcp.org/jcr/1.0\')');
+		$this->databaseHandle->query('INSERT INTO "namespaces" ("prefix", "uri") VALUES (\'nt\', \'http://www.jcp.org/jcr/nt/1.0\')');
+		$this->databaseHandle->query('INSERT INTO "namespaces" ("prefix", "uri") VALUES (\'mix\', \'http://www.jcp.org/jcr/mix/1.0\')');
+		$this->databaseHandle->query('INSERT INTO "namespaces" ("prefix", "uri") VALUES (\'xml\', \'http://www.w3.org/XML/1998/namespace\')');
+		$this->databaseHandle->query('INSERT INTO "namespaces" ("prefix", "uri") VALUES (\'flow3\', \'http://forge.typo3.org/namespaces/flow3\')');
+	}
+
+	/**
 	 * Clears nodetypes and adds builtin nodetypes to the database
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	protected function initializeNodeTypes() {
 		$this->databaseHandle->query('DELETE FROM "nodetypes"');
-		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name") VALUES (\'nt:base\')');
-		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name") VALUES (\'nt:unstructured\')');
+		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name","namespace") VALUES (\'base\',\'http://www.jcp.org/jcr/nt/1.0\')');
+		$this->databaseHandle->query('INSERT INTO "nodetypes" ("name","namespace") VALUES (\'unstructured\',\'http://www.jcp.org/jcr/nt/1.0\')');
 	}
 
 	/**
@@ -105,10 +123,11 @@ class F3_TYPO3CR_Storage_Helper {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	protected function initializeNodes() {
 		$this->databaseHandle->query('DELETE FROM "nodes"');
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "name", "parent", "nodetype") VALUES (?, \'\', \'\', \'nt:unstructured\')');
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "name", "namespace", "parent", "nodetype", "nodetypenamespace") VALUES (?, \'\', \'\', \'\', \'unstructured\',\'http://www.jcp.org/jcr/nt/1.0\')');
 		$statementHandle->execute(array(
 			F3_FLOW3_Utility_Algorithms::generateUUID()
 		));

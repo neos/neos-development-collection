@@ -41,6 +41,11 @@ abstract class F3_TYPO3CR_Storage_AbstractBackend implements F3_TYPO3CR_Storage_
 	protected $searchEngine;
 
 	/**
+	 * @var F3_TYPO3CR_NamespaceRegistryInterface
+	 */
+	protected $namespaceRegistry;
+
+	/**
 	 * Constructs this backend
 	 *
 	 * @param mixed $options Configuration options - depends on the actual backend
@@ -78,6 +83,18 @@ abstract class F3_TYPO3CR_Storage_AbstractBackend implements F3_TYPO3CR_Storage_
 	public function setSearchEngine(F3_TYPO3CR_Storage_SearchInterface $searchEngine) {
 		$this->searchEngine = $searchEngine;
 	}
+
+	/**
+	 * Sets the namespace registry used by the storage backend
+	 *
+	 * @param F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function setNamespaceRegistry(F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry) {
+		$this->namespaceRegistry = $namespaceRegistry;
+	}
+
 
 }
 ?>

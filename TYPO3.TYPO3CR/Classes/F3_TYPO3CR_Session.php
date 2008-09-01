@@ -116,6 +116,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		$this->storageBackend = $storageBackend;
 
 		$this->workspace = $this->componentFactory->getComponent('F3_PHPCR_WorkspaceInterface', $workspaceName, $this);
+		$this->storageBackend->setNamespaceRegistry($this->workspace->getNamespaceRegistry());
 	}
 
 	/**
@@ -870,7 +871,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @return F3_PHPCR_NodeInterface the activity node
 	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if the repository does not support activities or if activity is not a nt:activity node.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
-	*/
+	 */
 	public function setActivity(F3_PHPCR_NodeInterface $activity) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485266);
 	}

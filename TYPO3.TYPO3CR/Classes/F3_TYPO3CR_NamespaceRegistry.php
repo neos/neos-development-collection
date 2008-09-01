@@ -68,12 +68,15 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 *
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	protected function initializeCustomNamespaces() {
 		$rawNamespaces = $this->storageBackend->getRawNamespaces();
 		if (!count($rawNamespaces))	return;
 		foreach ($rawNamespaces as $rawNamespace) {
-			$this->customNamespaces[$rawNamespace['prefix']] = $rawNamespace['uri'];
+			if (!array_key_exists($rawNamespace['prefix'], $this->builtInNamespaces)) {
+				$this->customNamespaces[$rawNamespace['prefix']] = $rawNamespace['uri'];
+			}
 		}
 	}
 

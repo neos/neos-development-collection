@@ -74,6 +74,7 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 	 * @throws F3_PHPCR_ValueFormatException if conversion to a String is not possible.
 	 * @throws F3_PHPCR_RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getString() {
 		switch ($this->type) {
@@ -83,7 +84,8 @@ class F3_TYPO3CR_Value implements F3_PHPCR_ValueInterface {
 				} else {
 					return date_format(new DateTime($this->value), DATE_ISO8601);
 				}
-				break;
+			case F3_PHPCR_PropertyType::BOOLEAN:
+				return (string)(int)$this->value;
 			default:
 				return (string)$this->value;
 		}

@@ -62,6 +62,14 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	public function setSearchEngine(F3_TYPO3CR_Storage_SearchInterface $searchEngine);
 
 	/**
+	 * Sets the namespace registry used by the backend to translate prefixed names into (URI, name) tuples
+	 *
+	 * @param F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry
+	 * @return void
+	 */
+	public function setNamespaceRegistry(F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry);
+
+	/**
 	 * Returns TRUE if the given identifier is used in storage.
 	 *
 	 * @param string $identifier

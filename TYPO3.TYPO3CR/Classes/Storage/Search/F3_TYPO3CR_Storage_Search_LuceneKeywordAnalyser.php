@@ -55,12 +55,12 @@ class F3_TYPO3CR_Storage_Search_LuceneKeywordAnalyser extends Zend_Search_Lucene
 	 */
 	public function nextToken() {
 		if ($this->_input === NULL) {
-			return null;
+			return NULL;
 		}
 
 		do {
 			if (! preg_match('/[\p{L}\p{N}_:]+/u', $this->_input, $match, PREG_OFFSET_CAPTURE, $this->_bytePosition)) {
-				return null;
+				return NULL;
 			}
 
 			// matched string

@@ -80,12 +80,19 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 *
 	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getRawRootNode() {
 		try {
-			$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "identifier", "nodetype" FROM "nodes" WHERE "parent" =\'\'');
+			$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "namespace", "identifier", "nodetype", "nodetypenamespace" FROM "nodes" WHERE "parent" =\'\'');
 			$statementHandle->execute();
-			return $statementHandle->fetch(PDO::FETCH_ASSOC);
+			$result = $statementHandle->fetch(PDO::FETCH_ASSOC);
+			$result['name'] = $this->prefixName(array('namespaceURI' => $result['namespace'], 'name' => $result['name']));
+			unset($result['namespace']);
+			$result['nodetype'] = $this->prefixName(array('namespaceURI' => $result['nodetypenamespace'], 'name' => $result['nodetype']));
+			unset($result['nodetypenamespace']);
+
+			return $result;
 		} catch (PDOException $e) {
 			throw new F3_TYPO3CR_StorageException('Could not read raw root node. Make sure the database is initialized correctly. PDO error: ' . $e->getMessage(), 1216051737);
 		}
@@ -97,11 +104,20 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @param string $identifier The Identifier of the node to fetch
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getRawNodeByIdentifier($identifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "identifier", "nodetype" FROM "nodes" WHERE "identifier" = ?');
+		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "namespace", "identifier", "nodetype", "nodetypenamespace" FROM "nodes" WHERE "identifier" = ?');
 		$statementHandle->execute(array($identifier));
-		return $statementHandle->fetch(PDO::FETCH_ASSOC);
+		$result = $statementHandle->fetch(PDO::FETCH_ASSOC);
+		if (is_array($result)) {
+			$result['name'] = $this->prefixName(array('namespaceURI' => $result['namespace'], 'name' => $result['name']));
+			unset($result['namespace']);
+			$result['nodetype'] = $this->prefixName(array('namespaceURI' => $result['nodetypenamespace'], 'name' => $result['nodetype']));
+			unset($result['nodetypenamespace']);
+			return $result;
+		}
+		return FALSE;
 	}
 
 	/**
@@ -123,16 +139,259 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	}
 
 	/**
+	 * Converts the given string into the given type
+	 *
+	 * @param int $type one of the constants defined in F3_PHPCR_PropertyType
+	 * @param string $string a string representing a value of the given type
+	 *
+	 * @return string|int|float|DateTime|boolean
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function convertFromString($type, $string) {
+		switch ($type) {
+			case F3_PHPCR_PropertyType::LONG:
+				return (int) $string;
+			case F3_PHPCR_PropertyType::DOUBLE:
+			case F3_PHPCR_PropertyType::DECIMAL:
+				return (float) $string;
+			case F3_PHPCR_PropertyType::DATE:
+				return new DateTime($string);
+			case F3_PHPCR_PropertyType::BOOLEAN:
+				return (boolean) $string;
+			default:
+				return $string;
+		}
+	}
+
+	/**
+	 * Fetches raw single valued property of type F3_PHPCR_PropertyType::PATH
+	 *
+	 * @param array &$property The property as read from the "properties" table of the database with $property['type'] == F3_PHPCR_PropertyType::PATH and $property['multivalue'] == FALSE
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function getRawSingleValuedPathProperty(&$property) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT "value", "valuenamespace", "level" FROM "pathproperties" WHERE "parent" = ? AND "name" = ? AND "namespace" = ? ORDER BY "level"');
+		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
+		$levels = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		$result = array();
+		foreach ($levels as $level) {
+			$result[$level['level']] = $this->prefixName(array('namespaceURI' => $level['valuenamespace'], 'name' => $level['value']));
+		}
+		$property['value'] = implode('/', $result);
+		unset($property['parent']);
+	}
+
+	/**
+	 * Fetches raw multi valued property of type F3_PHPCR_PropertyType::PATH
+	 *
+	 * @param array &$property The property as read from the "properties" table of the database with $property['type'] == F3_PHPCR_PropertyType::PATH and $property['multivalue'] == TRUE
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function getRawMultiValuedPathProperty(&$property) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT "value", "valuenamespace", "level", "index" FROM "pathmultivalueproperties" WHERE "parent" = ? AND "name" = ? AND "namespace" = ? ORDER BY "index", "level"');
+		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
+		$values = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		$structuredValues=array();
+		foreach($values as $value) {
+			$structuredValues[$value['index']]['index'] = $value['index'];
+			$structuredValues[$value['index']][$value['level']]['level'] = $value['level'];
+			$structuredValues[$value['index']][$value['level']]['value'] = $value['value'];
+			$structuredValues[$value['index']][$value['level']]['valuenamespace'] = $value['valuenamespace'];
+		}
+		$property['value']=array();
+		foreach ($structuredValues as $structuredValue) {
+			$result = array();
+			$index = $structuredValue['index'];
+			unset($structuredValue['index']);
+			foreach ($structuredValue as $level) {
+				$result[$level['level']] = $this->prefixName(array('namespaceURI' => $level['valuenamespace'], 'name' => $level['value']));
+			}
+			$property['value'][$index] = implode('/', $result);
+		}
+		unset($property['parent']);
+	}
+
+	/**
+	 * Fetches raw single valued property not of type F3_PHPCR_PropertyType::PATH
+	 *
+	 * @param array &$property The property as read from the "properties" table of the database with $property['type'] != F3_PHPCR_PropertyType::PATH and $property['multivalue'] == FALSE
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function getRawSingleValuedProperty(&$property) {
+		$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($property['type']));
+
+		$statementHandle = $this->databaseHandle->prepare('SELECT "value"' . ($property['type'] == F3_PHPCR_PropertyType::NAME ? ',"valuenamespace"' : '') . ' FROM "' . $typeName . 'properties" WHERE "parent" = ? AND "name" = ? AND "namespace" = ?');
+		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
+		$values = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		foreach ($values as $value) {
+			if($property['type'] == F3_PHPCR_PropertyType::NAME && $value['valuenamespace'] != '') {
+				$property['value'] = $this->prefixName(array('namespaceURI' => $value['valuenamespace'], 'name' => $value['value']));
+			}
+			else {
+				$property['value'] = $this->convertFromString($property['type'], $value['value']);
+			}
+		}
+		unset($property['parent']);
+	}
+
+	/**
+	 * Fetches raw multi valued property not of type F3_PHPCR_PropertyType::PATH
+	 *
+	 * @param array &$property The property as read from the "properties" table of the database with $property['type'] != F3_PHPCR_PropertyType::PATH and $property['multivalue'] == TRUE
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function getRawMultiValuedProperty(&$property) {
+		$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($property['type']));
+
+		$statementHandle = $this->databaseHandle->prepare('SELECT "index", "value"' . ($property['type'] == F3_PHPCR_PropertyType::NAME ? ',"valuenamespace"' : '') . ' FROM "' . $typeName . 'multivalueproperties" WHERE "parent" = ? AND "name" = ? AND "namespace" = ?');
+		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
+		$multivalues = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		if (is_array($multivalues)) {
+			$resultArray = array();
+			foreach ($multivalues as $multivalue) {
+
+				if($property['type'] == F3_PHPCR_PropertyType::NAME && $multivalue['valuenamespace'] != '') {
+					$resultArray[$multivalue['index']] = $this->prefixName(array('namespaceURI' => $multivalue['valuenamespace'], 'name' => $multivalue['value']));
+				}
+				else {
+					$resultArray[$multivalue['index']] = $this->convertFromString($property['type'], $multivalue['value']);
+				}
+
+			}
+			$property['value'] = $resultArray;
+		}
+		unset($property['parent']);
+	}
+
+
+	/**
+	 * Fetches raw property data from the database
+	 *
+	 * @param string $identifier The node Identifier to fetch properties for
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function getRawPropertiesOfNode($identifier) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "namespace", "multivalue", "type" FROM "properties" WHERE "parent" = ?');
+		$statementHandle->execute(array($identifier));
+		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		if (is_array($properties)) {
+			foreach ($properties as &$property) {
+				if(! $property['multivalue']) {
+					if($property['type'] == F3_PHPCR_PropertyType::PATH) {
+						$this->getRawSingleValuedPathProperty($property);
+					}
+					else {
+						$this->getRawSingleValuedProperty($property);
+					}
+				}
+				else {
+					if($property['type'] == F3_PHPCR_PropertyType::PATH) {
+						$this->getRawMultiValuedPathProperty($property);
+					}
+					else {
+						$this->getRawMultiValuedProperty($property);
+					}
+				}
+
+				$property['name'] = $this->prefixName(array('name' => $property['name'], 'namespaceURI' => $property['namespace']));
+				unset($property['namespace']);
+			}
+		}
+		return $properties;
+	}
+
+	/**
+	 * Fetches raw data for all nodetypes from the database
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function getRawNodeTypes() {
+		try {
+			$statementHandle = $this->databaseHandle->query('SELECT "name", "namespace" FROM "nodetypes"');
+			$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+			foreach($nodetypes as &$nodetype) {
+				$nodetype['name'] = $this->prefixName(array('namespaceURI' => $nodetype['namespace'], 'name' => $nodetype['name']));
+				unset($nodetype['namespace']);
+			}
+			return $nodetypes;
+		} catch (PDOException $e) {
+			throw new F3_TYPO3CR_StorageException('Could not read raw nodetypes. Make sure the database is initialized correctly (php index_dev.php TYPO3CR Setup database). PDO error: ' . $e->getMessage(), 1216051821);
+		}
+	}
+
+	/**
+	 * Fetches raw nodetype data from the database
+	 *
+	 * @param string $nodeTypeNme The name of the nodetype record to fetch
+	 * @return array|FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function getRawNodeType($nodeTypeName) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT "name", "namespace" FROM "nodetypes" WHERE "name" = ?');
+		$statementHandle->execute(array($nodeTypeName));
+		$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		foreach($nodetypes as &$nodetype) {
+			$nodetype['name'] = $this->prefixName(array('namespaceURI' => $nodetype['namespace'], 'name' => $nodetype['name']));
+			unset($nodetype['namespace']);
+			return $nodetype;
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Adds the given nodetype to the database
+	 *
+	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition) {
+		$splitName = $this->splitName($nodeTypeDefinition->getName());
+
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodetypes" ("name","namespace") VALUES (?,?)');
+		$statementHandle->execute(array($splitName['name'], $splitName['namespaceURI']));
+	}
+
+	/**
+	 * Deletes the named nodetype from the database
+	 *
+	 * @param string $name
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function deleteNodeType($name) {
+		$splitName = $this->splitName($name);
+
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodetypes" WHERE "name"=? AND "namespace"=?');
+		$statementHandle->execute(array($splitName['name'], $splitName['namespaceURI']));
+	}
+
+	/**
 	 * Adds a node to the storage
 	 *
 	 * @param F3_PHPCR_NodeInterface $node node to insert
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function addNode(F3_PHPCR_NodeInterface $node) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "parent", "nodetype", "name") VALUES (?, ?, ?, ?)');
-		$statementHandle->execute(array($node->getIdentifier(), $node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName()));
+		$splitNodeName = $this->splitName($node->getName());
+		$splitNodeTypeName = $this->splitName($node->getPrimaryNodeType()->getName());
+
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "parent", "nodetype", "nodetypenamespace", "name", "namespace") VALUES (?, ?, ?, ?, ?, ?)');
+		$statementHandle->execute(array($node->getIdentifier(), $node->getParent()->getIdentifier(), $splitNodeTypeName['name'], $splitNodeTypeName['namespaceURI'], $splitNodeName['name'], $splitNodeName['namespaceURI']));
 		$this->searchEngine->addNode($node);
 	}
 
@@ -143,11 +402,15 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @return void
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function updateNode(F3_PHPCR_NodeInterface $node) {
 		if ($node->getDepth() > 0) {
-			$statementHandle = $this->databaseHandle->prepare('UPDATE "nodes" SET "parent"=?, "nodetype"=?, "name"=? WHERE "identifier"=?');
-			$statementHandle->execute(array($node->getParent()->getIdentifier(), $node->getPrimaryNodeType()->getName(), $node->getName(), $node->getIdentifier()));
+			$splitNodeName = $this->splitName($node->getName());
+			$splitNodeTypeName = $this->splitName($node->getPrimaryNodeType()->getName());
+
+			$statementHandle = $this->databaseHandle->prepare('UPDATE "nodes" SET "parent"=?, "nodetype"=?, "nodetypenamespace"=?,"name"=?, "namespace"=? WHERE "identifier"=?');
+			$statementHandle->execute(array($node->getParent()->getIdentifier(), $splitNodeTypeName['name'], $splitNodeTypeName['namespaceURI'], $splitNodeName['name'], $splitNodeName['namespaceURI'], $node->getIdentifier()));
 			$this->searchEngine->updateNode($node);
 		}
 	}
@@ -177,40 +440,156 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		return $this->searchEngine->findNodeIdentifiers($query);
 	}
 
-
-
 	/**
-	 * Fetches raw property data from the database
+	 * Adds a single valued property of type F3_PHPCR_PropertyType::PATH to the storage
 	 *
-	 * @param string $identifier The node Identifier to fetch properties for
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param F3_PHPCR_PropertyInterface $property
+	 * @return void
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
-	public function getRawPropertiesOfNode($identifier) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "name", "value", "namespace", "multivalue", "type" FROM "properties" WHERE "parent" = ?');
-		$statementHandle->execute(array($identifier));
-		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		if (is_array($properties)) {
-			foreach ($properties as &$property) {
-				if($property['multivalue']) {
-					$statementHandle = $this->databaseHandle->prepare('SELECT "index", "value" FROM "multivalueproperties" WHERE "parent" = ? AND "name" = ?');
-					$statementHandle->execute(array($identifier, $property['name']));
-					$multivalues = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-					if (is_array($multivalues)) {
-						$resultArray = array();
-						foreach ($multivalues as $multivalue) {
-							$resultArray[$multivalue['index']] = $multivalue['value'];
-							$property['value'] = $resultArray;
-						}
-					}
-				} else {
-					$property['value'] = unserialize($property['value']);
-				}
+	protected function addSingleValuedPathProperty(F3_PHPCR_PropertyInterface $property) {
+		$splitName = $this->splitName($property->getName());
+
+		$pathLevels = explode('/',$property->getValue()->getString());
+		$level = 0;
+		foreach ($pathLevels as $pathLevel) {
+			$splitPathLevel = $this->splitName($pathLevel);
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "pathproperties" ("parent", "name", "namespace", "level", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?)');
+			$statementHandle->execute(array(
+				$property->getParent()->getIdentifier(),
+				$splitName['name'],
+				$splitName['namespaceURI'],
+				$level,
+				$splitPathLevel['name'],
+				$splitPathLevel['namespaceURI']
+			));
+			$level++;
+		}
+	}
+
+	/**
+	 * Adds a multi valued property of type F3_PHPCR_PropertyType::PATH to the storage
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function addMultiValuedPathProperty(F3_PHPCR_PropertyInterface $property) {
+		$splitName = $this->splitName($property->getName());
+
+		foreach ($property->getValues() as $index => $value) {
+			$pathLevels = explode('/',$value->getString());
+			$level = 0;
+			foreach ($pathLevels as $pathLevel) {
+				$splitPathLevel = $this->splitName($pathLevel);
+
+				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "pathmultivalueproperties" ("parent", "name", "namespace", "index", "level", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?, ?)');
+				$statementHandle->execute(array(
+					$property->getParent()->getIdentifier(),
+					$splitName['name'],
+					$splitName['namespaceURI'],
+					$index,
+					$level,
+					$splitPathLevel['name'],
+					$splitPathLevel['namespaceURI']
+				));
+				$level++;
 			}
 		}
-		return $properties;
 	}
+
+	/**
+	 * Adds a single valued property of type F3_PHPCR_PropertyType::NAME to the storage
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function addSingleValuedNameProperty(F3_PHPCR_PropertyInterface $property) {
+		$splitName = $this->splitName($property->getName());
+
+		$splitValue = $this->splitName($property->getValue()->getString());
+
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nameproperties" ("parent", "name", "namespace", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?)');
+		$statementHandle->execute(array(
+			$property->getParent()->getIdentifier(),
+			$splitName['name'],
+			$splitName['namespaceURI'],
+			$splitValue['name'],
+			$splitValue['namespaceURI']
+		));
+	}
+
+	/**
+	 * Adds a multi valued property of type F3_PHPCR_PropertyType::NAME to the storage
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function addMultiValuedNameProperty(F3_PHPCR_PropertyInterface $property) {
+		$splitName = $this->splitName($property->getName());
+
+		foreach ($property->getValues() as $index => $value) {
+			$splitValue = $this->splitName($value->getString());
+
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "namemultivalueproperties" ("parent", "name", "namespace", "index", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?)');
+			$statementHandle->execute(array(
+				$property->getParent()->getIdentifier(),
+				$splitName['name'],
+				$splitName['namespaceURI'],
+				$index,
+				$splitValue['name'],
+				$splitValue['namespaceURI']
+			));
+		}
+	}
+
+	/**
+	 * Adds a single valued property not of type F3_PHPCR_PropertyType::PATH or F3_PHPCR_PropertyType::NAME to the storage
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function addSingleValuedProperty(F3_PHPCR_PropertyInterface $property) {
+		$splitName = $this->splitName($property->getName());
+
+		$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($property->getType()));
+
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $typeName . 'properties" ("parent", "name", "namespace", "value") VALUES (?, ?, ?, ?)');
+		$statementHandle->execute(array(
+			$property->getParent()->getIdentifier(),
+			$splitName['name'],
+			$splitName['namespaceURI'],
+			$property->getValue()->getString()
+		));
+	}
+
+	/**
+	 * Adds a multi valued property not of type F3_PHPCR_PropertyType::PATH or F3_PHPCR_PropertyType::NAME to the storage
+	 *
+	 * @param F3_PHPCR_PropertyInterface $property
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function addMultiValuedProperty(F3_PHPCR_PropertyInterface $property) {
+		$splitName = $this->splitName($property->getName());
+
+		$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($property->getType()));
+
+		foreach ($property->getValues() as $index => $value) {
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $typeName . 'multivalueproperties" ("parent", "name", "namespace", "index", "value") VALUES (?, ?, ?, ?, ?)');
+			$statementHandle->execute(array(
+				$property->getParent()->getIdentifier(),
+				$splitName['name'],
+				$splitName['namespaceURI'],
+				$index,
+				$value->getString()
+			));
+		}
+	}
+
 
 	/**
 	 * Adds a property in the storage
@@ -224,24 +603,40 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	public function addProperty(F3_PHPCR_PropertyInterface $property) {
 		$this->databaseHandle->beginTransaction();
 
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties" ("parent", "name", "value", "namespace", "multivalue", "type") VALUES (?, ?, ?, \'\', ?, ?)');
+		$splitName = $this->splitName($property->getName());
+
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "properties" ("parent", "name", "namespace", "multivalue", "type") VALUES (?, ?, ?, ?, ?)');
 		$statementHandle->execute(array(
 			$property->getParent()->getIdentifier(),
-			$property->getName(),
-			($property->isMultiple() ? '' : $property->getSerializedValue()),
+			$splitName['name'],
+			$splitName['namespaceURI'],
 			(integer)$property->isMultiple(),
 			$property->getType()
 		));
-		if ($property->isMultiple()) {
-			foreach ($property->getValues() as $index => $value) {
-				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "multivalueproperties" ("parent", "name", "index", "value") VALUES (?, ?, ?, ?)');
-				$statementHandle->execute(array(
-					$property->getParent()->getIdentifier(),
-					$property->getName(),
-					$index,
-					$value->getString()
-				));
+
+		if (! $property->isMultiple()) {
+			switch ($property->getType()) {
+				case F3_PHPCR_PropertyType::PATH:
+					$this->addSingleValuedPathProperty($property);
+					break;
+				case F3_PHPCR_PropertyType::NAME:
+					$this->addSingleValuedNameProperty($property);
+					break;
+				default:
+					$this->addSingleValuedProperty($property);
 			}
+		} else {
+			switch ($property->getType()) {
+				case F3_PHPCR_PropertyType::PATH:
+					$this->addMultiValuedPathProperty($property);
+					break;
+				case F3_PHPCR_PropertyType::NAME:
+					$this->addMultiValuedNameProperty($property);
+					break;
+				default:
+					$this->addMultiValuedProperty($property);
+			}
+
 		}
 
 		$this->databaseHandle->commit();
@@ -259,27 +654,63 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	public function updateProperty(F3_PHPCR_PropertyInterface $property) {
 		$this->databaseHandle->beginTransaction();
 
-		$statementHandle = $this->databaseHandle->prepare('UPDATE "properties" SET "value"=?, "type"=? WHERE "parent"=? AND "name"=?');
-		$statementHandle->execute(array(($property->isMultiple() ? '' : $property->getSerializedValue()), $property->getType(), $property->getParent()->getIdentifier(), $property->getName()));
-		if ($property->isMultiple()) {
-			$statementHandle = $this->databaseHandle->prepare('DELETE FROM "multivalueproperties" WHERE "parent"=? AND "name"=?');
+		$splitName = $this->splitName($property->getName());
+
+		$statementHandle = $this->databaseHandle->prepare('SELECT "multivalue", "type" FROM "properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
+		$statementHandle->execute(array(
+			$property->getParent()->getIdentifier(),
+			$splitName['name'],
+			$splitName['namespaceURI']
+		));
+		$rawProperties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		// We are using foreach here but it should only ever return 0 or 1 results (strictly speaking always 1 in "update"Property())
+		foreach ($rawProperties as $rawProperty) {
+			$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($rawProperty['type']));
+			$statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $typeName . ($rawProperty['multivalue'] ? 'multivalue' : '') . 'properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
 			$statementHandle->execute(array(
 				$property->getParent()->getIdentifier(),
-				$property->getName()
+				$splitName['name'],
+				$splitName['namespaceURI']
 			));
-			foreach ($property->getValues() as $index => $value) {
-				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "multivalueproperties" ("parent", "name", "index", "value") VALUES (?, ?, ?, ?)');
-				$statementHandle->execute(array(
-					$property->getParent()->getIdentifier(),
-					$property->getName(),
-					$index,
-					$value->getString()
-				));
+		}
+
+		$statementHandle = $this->databaseHandle->prepare('UPDATE "properties" SET "multivalue"=?, "type"=? WHERE "parent"=? AND "name"=? AND "namespace"=?');
+		$statementHandle->execute(array(
+			(integer)$property->isMultiple(),
+			$property->getType(),
+			$property->getParent()->getIdentifier(),
+			$splitName['name'],
+			$splitName['namespaceURI']
+		));
+
+		if (! $property->isMultiple()) {
+			switch ($property->getType()) {
+				case F3_PHPCR_PropertyType::PATH:
+					$this->addSingleValuedPathProperty($property);
+					break;
+				case F3_PHPCR_PropertyType::NAME:
+					$this->addSingleValuedNameProperty($property);
+					break;
+				default:
+					$this->addSingleValuedProperty($property);
 			}
+		} else {
+			switch ($property->getType()) {
+				case F3_PHPCR_PropertyType::PATH:
+					$this->addMultiValuedPathProperty($property);
+					break;
+				case F3_PHPCR_PropertyType::NAME:
+					$this->addMultiValuedNameProperty($property);
+					break;
+				default:
+					$this->addMultiValuedProperty($property);
+			}
+
 		}
 
 		$this->databaseHandle->commit();
 	}
+
 
 	/**
 	 * Deletes a property in the repository identified by identifier and name
@@ -293,72 +724,31 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	public function removeProperty(F3_PHPCR_PropertyInterface $property) {
 		$this->databaseHandle->beginTransaction();
 
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "properties" WHERE "parent"=? AND "name"=?');
-		$statementHandle->execute(array($property->getParent()->getIdentifier(), $property->getName()));
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "multivalueproperties" WHERE "parent"=? AND "name"=?');
-		$statementHandle->execute(array($property->getParent()->getIdentifier(), $property->getName()));
+		$splitName = $this->splitName($property->getName());
+
+		$statementHandle = $this->databaseHandle->prepare('SELECT "multivalue", "type" FROM "properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
+		$statementHandle->execute(array(
+			$property->getParent()->getIdentifier(),
+			$splitName['name'],
+			$splitName['namespaceURI']
+		));
+		$rawProperties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+			// I am using foreach here but it should only ever return 0 or 1 results (strictly speaking always 1 in "update"Property())
+		foreach ($rawProperties as $rawProperty) {
+			$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($rawProperty['type']));
+			$statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $typeName . ($rawProperty['multivalue'] ? 'multivalue' : '') . 'properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
+			$statementHandle->execute(array(
+				$property->getParent()->getIdentifier(),
+				$splitName['name'],
+				$splitName['namespaceURI']
+			));
+		}
+
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
+		$statementHandle->execute(array($property->getParent()->getIdentifier(), $splitName['name'], $splitName['namespaceURI']));
 
 		$this->databaseHandle->commit();
 	}
-
-
-
-	/**
-	 * Fetches raw data for all nodetypes from the database
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getRawNodeTypes() {
-		try {
-			$statementHandle = $this->databaseHandle->query('SELECT "name" FROM "nodetypes"');
-			$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-			return $nodetypes;
-		} catch (PDOException $e) {
-			throw new F3_TYPO3CR_StorageException('Could not read raw nodetypes. Make sure the database is initialized correctly. PDO error: ' . $e->getMessage(), 1216051821);
-		}
-	}
-
-	/**
-	 * Fetches raw nodetype data from the database
-	 *
-	 * @param string $nodeTypeNme The name of the nodetype record to fetch
-	 * @return array|FALSE
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getRawNodeType($nodeTypeName) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "name" FROM "nodetypes" WHERE "name" = ?');
-		$statementHandle->execute(array($nodeTypeName));
-		return $statementHandle->fetch(PDO::FETCH_ASSOC);
-	}
-
-	/**
-	 * Adds the given nodetype to the database
-	 *
-	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition) {
-		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodetypes" ("name") VALUES (?)');
-		$statementHandle->execute(array(
-			$nodeTypeDefinition->getName()
-		));
-	}
-
-		/**
-	 * Deletes the named nodetype from the database
-	 *
-	 * @param string $name
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function deleteNodeType($name) {
-		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodetypes" WHERE "name"=?');
-		$statementHandle->execute(array($name));
-	}
-
-
 
 	/**
 	 * Fetches raw namespace data from the database
@@ -418,6 +808,74 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	public function deleteNamespace($prefix) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "namespaces" WHERE "prefix"=?');
 		$statementHandle->execute(array($prefix));
+	}
+
+	/**
+	 * Splits the given name string into a namespace URI (using the namespaces table) and a name
+	 *
+	 * @param string $prefixedName the name in prefixed notation (':' between prefix if one exists and name, no ':' in string if there is no prefix)
+	 * @return array (key "namespaceURI" for the namespace, "name" for the name)
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function splitName($prefixedName) {
+		$split = explode(':', $prefixedName, 2);
+
+		if (count($split) != 2) {
+			return array('namespaceURI' => '', 'name' => $prefixedName);
+		}
+
+		$namespacePrefix = $split[0];
+		$name = $split[1];
+
+		if ($this->namespaceRegistry) {
+			return array('namespaceURI' => $this->namespaceRegistry->getURI($namespacePrefix), 'name' => $name);
+		} else {
+				// Fall back to namespaces table when no namespace registry is available
+
+			$statementHandle = $this->databaseHandle->prepare('SELECT "uri" FROM "namespaces" WHERE "prefix"=?');
+			$statementHandle->execute(array($namespacePrefix));
+			$namespaces = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+
+			if (count($namespaces) != 1) {
+					// TODO: throw exception instead of returning once namespace table is properly filled
+				return array('namespaceURI' => '', 'name' => $name);
+			}
+			foreach ($namespaces as $namespace) {
+				return array('namespaceURI' => $namespace['uri'], 'name' => $name);
+			}
+		}
+	}
+
+
+	/**
+	 * Takes the given array of a namespace URI (key 'namespaceURI' in the array) and name (key 'name') and converts it to a prefixed name
+	 *
+	 * @param array $namespacedName key 'namespaceURI' for the namespace, 'name' for the local name
+	 * @return string
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function prefixName($namespacedName) {
+		if (! $namespacedName['namespaceURI']) {
+			return $namespacedName['name'];
+		}
+
+		if ($this->namespaceRegistry) {
+			return $this->namespaceRegistry->getPrefix($namespacedName['namespaceURI']) . ':' . $namespacedName['name'];
+		} else {
+				// Fall back to namespaces table when no namespace registry is available
+			$statementHandle = $this->databaseHandle->prepare('SELECT "prefix" FROM "namespaces" WHERE "uri"=?');
+			$statementHandle->execute(array($namespacedName['namespaceURI']));
+			$namespaces = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+
+			if (count($namespaces) != 1) {
+					// TODO: throw exception instead of returning once namespace table is properly filled
+				return $namespacedName['name'];
+			}
+
+			foreach ($namespaces as $namespace) {
+				return $namespace['prefix'] . ':' . $namespacedName['name'];
+			}
+		}
 	}
 
 }

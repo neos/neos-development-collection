@@ -56,6 +56,11 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	protected $workspaceName = 'default';
 
 	/**
+	 * @var F3_TYPO3CR_NamespaceRegistryInterface
+	 */
+	protected $namespaceRegistry;
+
+	/**
 	 * To satisfy the interface
 	 *
 	 * @return void
@@ -333,6 +338,17 @@ class F3_TYPO3CR_MockStorageAccess implements F3_TYPO3CR_Storage_BackendInterfac
 	 * @return void
 	 */
 	public function setSearchEngine(F3_TYPO3CR_Storage_SearchInterface $searchEngine) {
+	}
+
+	/**
+	 * Sets the namespace registry used by the storage backend
+	 *
+	 * @param F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function setNamespaceRegistry(F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry) {
+		$this->namespaceRegistry = $namespaceRegistry;
 	}
 
 	/**
