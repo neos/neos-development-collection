@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  */
 
-require_once('Fixtures/F3_TYPO3CR_MockStorageAccess.php');
+require_once('Fixtures/F3_TYPO3CR_MockStorageBackend.php');
 
 /**
  * Tests for the Session implementation of TYPO3CR
@@ -38,9 +38,9 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	protected $mockRepository;
 
 	/**
-	 * @var F3_TYPO3CR_MockStorageAccess
+	 * @var F3_TYPO3CR_MockStorageBackend
 	 */
-	protected $mockStorageAccess;
+	protected $mockStorageBackend;
 
 	/**
 	 * @var F3_TYPO3CR_Session
@@ -52,8 +52,8 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 */
 	public function setUp() {
 		$this->mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$this->mockStorageAccess = new F3_TYPO3CR_MockStorageAccess();
-		$this->mockStorageAccess->rawRootNodesByWorkspace = array(
+		$this->mockStorageBackend = new F3_TYPO3CR_MockStorageBackend();
+		$this->mockStorageBackend->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 				'parent' => 0,
@@ -61,7 +61,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 				'name' => ''
 			)
 		);
-		$this->mockStorageAccess->rawNodesByIdentifierGroupedByWorkspace = array(
+		$this->mockStorageBackend->rawNodesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
@@ -83,7 +83,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 				),
 			)
 		);
-		$this->mockStorageAccess->rawPropertiesByIdentifierGroupedByWorkspace = array(
+		$this->mockStorageBackend->rawPropertiesByIdentifierGroupedByWorkspace = array(
 			'default' => array(
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(
@@ -97,7 +97,7 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 			)
 		);
 
-		$this->session = new F3_TYPO3CR_Session('default', $this->mockRepository, $this->mockStorageAccess, $this->componentFactory);
+		$this->session = new F3_TYPO3CR_Session('default', $this->mockRepository, $this->mockStorageBackend, $this->componentFactory);
 	}
 
 	/**
@@ -337,9 +337,9 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesNewNodes() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockStorageAccess->expects($this->once())->method('addNode');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentFactory));
+		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('addNode');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->componentFactory));
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 
 		$mockSession->registerNodeAsNew($node);
@@ -351,9 +351,9 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesDirtyNodes() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockStorageAccess->expects($this->once())->method('updateNode');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentFactory));
+		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('updateNode');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->componentFactory));
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 
 		$mockSession->registerNodeAsDirty($node);
@@ -365,9 +365,9 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesRemovedNodes() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockStorageAccess->expects($this->once())->method('removeNode');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentFactory));
+		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('removeNode');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->componentFactory));
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 
 		$mockSession->registerNodeAsRemoved($node);
@@ -379,9 +379,9 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesNewProperties() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockStorageAccess->expects($this->once())->method('addProperty');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentFactory));
+		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('addProperty');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->componentFactory));
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 
 		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
@@ -396,9 +396,9 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesDirtyProperties() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockStorageAccess->expects($this->once())->method('updateProperty');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentFactory));
+		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('updateProperty');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->componentFactory));
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 
 		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
@@ -414,9 +414,9 @@ class F3_TYPO3CR_SessionTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesRemovedProperties() {
-		$mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockStorageAccess->expects($this->once())->method('removeProperty');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageAccess, $this->componentFactory));
+		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('removeProperty');
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->componentFactory));
 		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
 
 		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');

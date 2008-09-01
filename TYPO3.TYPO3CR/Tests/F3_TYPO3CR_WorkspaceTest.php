@@ -38,7 +38,7 @@ class F3_TYPO3CR_WorkspaceTest extends F3_Testing_BaseTestCase {
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
-	protected $mockStorageAccess;
+	protected $mockStorageBackend;
 
 	/**
 	 * @var F3_TYPO3CR_Workspace

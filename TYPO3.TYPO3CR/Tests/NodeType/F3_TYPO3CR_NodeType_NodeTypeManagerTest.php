@@ -33,7 +33,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	/**
 	 * @var F3_TYPO3CR_Storage_BackendInterface
 	 */
-	protected $mockStorageAccess;
+	protected $mockStorageBackend;
 
 	/**
 	 * @var F3_TYPO3CR_NodeType_NodeTypeManager
@@ -45,8 +45,8 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$this->nodeTypeManager = new F3_TYPO3CR_NodeType_NodeTypeManager($this->mockStorageAccess, $this->componentFactory);
+		$this->mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$this->nodeTypeManager = new F3_TYPO3CR_NodeType_NodeTypeManager($this->mockStorageBackend, $this->componentFactory);
 	}
 
 	/**
@@ -84,7 +84,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getNodeTypeThrowsExceptionOnUnknownNodeType() {
-		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('unknownNodeTypeName')->will($this->returnValue(FALSE));
+		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('unknownNodeTypeName')->will($this->returnValue(FALSE));
 		try {
 			$this->nodeTypeManager->getNodeType('unknownNodeTypeName');
 			$this->fail('When asked for an unknown NodeType getNodeType must throw a NoSuchNodeTypeException');
@@ -115,7 +115,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function registerNodeTypeReturnsNodeTypeOnSuccess() {
-		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
+		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
 		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
 		$nodeTypeTemplate->setName('testNodeType');
 		$nodeType = $this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
@@ -129,8 +129,8 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	public function registerNodeTypeReturnsCallsStorageBackend() {
 		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
 		$nodeTypeTemplate->setName('testNodeType');
-		$this->mockStorageAccess->expects($this->once())->method('addNodeType')->with($nodeTypeTemplate);
-		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
+		$this->mockStorageBackend->expects($this->once())->method('addNodeType')->with($nodeTypeTemplate);
+		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
 		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 	}
 
@@ -139,7 +139,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function unregisterNodeTypeThrowsExceptionOnUnknownNodeType() {
-		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('unknownNodeTypeName')->will($this->returnValue(FALSE));
+		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('unknownNodeTypeName')->will($this->returnValue(FALSE));
 		try {
 			$this->nodeTypeManager->unregisterNodeType('unknownNodeTypeName');
 			$this->fail('When asked to unregister an unknown NodeType unregisterNodeType must throw a NoSuchNodeTypeException');
@@ -152,7 +152,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function unregisterNodeTypeRemovesNodeType() {
-		$this->mockStorageAccess->expects($this->exactly(2))->method('getRawNodeType')->with('testNodeTypeName')->will($this->onConsecutiveCalls(array('name' => 'testNodeTypeName'), FALSE));
+		$this->mockStorageBackend->expects($this->exactly(2))->method('getRawNodeType')->with('testNodeTypeName')->will($this->onConsecutiveCalls(array('name' => 'testNodeTypeName'), FALSE));
 		$nodeTypeDefintionTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
 		$nodeTypeDefintionTemplate->setName('testNodeTypeName');
 		$this->nodeTypeManager->registerNodeType($nodeTypeDefintionTemplate, FALSE);
@@ -171,8 +171,8 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	public function unregisterNodeTypeReturnsCallsStorageBackend() {
 		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
 		$nodeTypeTemplate->setName('testNodeType');
-		$this->mockStorageAccess->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
-		$this->mockStorageAccess->expects($this->once())->method('deleteNodeType')->with('testNodeType');
+		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
+		$this->mockStorageBackend->expects($this->once())->method('deleteNodeType')->with('testNodeType');
 		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		$this->nodeTypeManager->unregisterNodeType('testNodeType');
 	}
@@ -182,8 +182,8 @@ class F3_TYPO3CR_NodeType_NodeTypeManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function nodeTypeManagerLoadsExistingNodeTypes() {
-		$this->mockStorageAccess->expects($this->atLeastOnce())->method('getRawNodeTypes')->will($this->returnValue(array(array('name' => 'nt:base'))));
-		$nodeTypeManager = new F3_TYPO3CR_NodeType_NodeTypeManager($this->mockStorageAccess, $this->componentFactory);
+		$this->mockStorageBackend->expects($this->atLeastOnce())->method('getRawNodeTypes')->will($this->returnValue(array(array('name' => 'nt:base'))));
+		$nodeTypeManager = new F3_TYPO3CR_NodeType_NodeTypeManager($this->mockStorageBackend, $this->componentFactory);
 		$this->assertTrue($nodeTypeManager->hasNodeType('nt:base'), 'nt:base is missing');
 	}
 }

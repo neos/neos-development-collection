@@ -120,7 +120,9 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 		$this->storageBackend->setWorkspaceName($workspaceName);
 		$this->storageBackend->connect();
 
-		return $this->componentFactory->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageBackend);
+		$session = $this->componentFactory->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageBackend);
+		$this->storageBackend->setNamespaceRegistry($session->getWorkspace()->getNamespaceRegistry());
+		return $session;
 	}
 
 	/**

@@ -59,8 +59,6 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageBackend, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->storageBackend = $storageBackend;
 		$this->componentFactory = $componentFactory;
-
-		$this->initializeCustomNamespaces();
 	}
 
 	/**
@@ -70,7 +68,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
-	protected function initializeCustomNamespaces() {
+	public function initializeComponent() {
 		$rawNamespaces = $this->storageBackend->getRawNamespaces();
 		if (!count($rawNamespaces))	return;
 		foreach ($rawNamespaces as $rawNamespace) {

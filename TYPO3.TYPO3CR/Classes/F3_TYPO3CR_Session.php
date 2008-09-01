@@ -116,7 +116,6 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 		$this->storageBackend = $storageBackend;
 
 		$this->workspace = $this->componentFactory->getComponent('F3_PHPCR_WorkspaceInterface', $workspaceName, $this);
-		$this->storageBackend->setNamespaceRegistry($this->workspace->getNamespaceRegistry());
 	}
 
 	/**

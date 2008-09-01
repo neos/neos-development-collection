@@ -31,8 +31,8 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3CR_NodeType_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 
 	public function setUp() {
-		$this->mockStorageAccess = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$this->mockStorageAccess->expects($this->any())->method('getRawNodeType')->will($this->returnValue(array('name' => 'SuperDuperNodeType')));
+		$this->mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$this->mockStorageBackend->expects($this->any())->method('getRawNodeType')->will($this->returnValue(array('name' => 'SuperDuperNodeType')));
 
 		$this->iterator = new F3_TYPO3CR_NodeType_NodeTypeIterator();
 	}

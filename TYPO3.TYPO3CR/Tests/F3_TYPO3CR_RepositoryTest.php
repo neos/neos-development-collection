@@ -36,8 +36,12 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function repositoryLoginAsksForASessionToReturn() {
+		$mockNamespaceRegistry = $this->getMock('F3_TYPO3CR_NamespaceRegistry', array(), array(), '', FALSE);
+		$mockWorkspace = $this->getMock('F3_TYPO3CR_Workspace', array(), array(), '', FALSE);
+		$mockWorkspace->expects($this->once())->method('getNamespaceRegistry')->will($this->returnValue($mockNamespaceRegistry));
 		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
 		$mockTYPO3CRSession = $this->getMock('F3_PHPCR_SessionInterface', array(), array(), '', FALSE);
+		$mockTYPO3CRSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 		$mockSearchEngine = $this->getMock('F3_TYPO3CR_Storage_SearchInterface');
 
 		$settings = new F3_FLOW3_Configuration_Container();
