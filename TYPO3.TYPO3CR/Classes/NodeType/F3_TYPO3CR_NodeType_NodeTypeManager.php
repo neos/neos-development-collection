@@ -55,7 +55,7 @@ class F3_TYPO3CR_NodeType_NodeTypeManager implements F3_PHPCR_NodeType_NodeTypeM
 	 * Constructs a NodeTypeManager object
 	 *
 	 * @param string $name
-	 * @param F3_PHPCR_StorageAccess_StorageAccessInterface $storageBackend
+	 * @param F3_TYPO3CR_Storage_BackendInterface $storageBackend
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
