@@ -66,7 +66,7 @@ class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionCo
 	public function setupAction() {
 		$helper = $this->componentFactory->getComponent('F3_TYPO3CR_Storage_Helper', $this->arguments);
 		$helper->initialize();
-		return 'TYPO3CR was initialized.';
+		return 'Initialization of the TYPO3CR was successful.';
 	}
 
 }
