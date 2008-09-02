@@ -73,7 +73,7 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	 */
 	public function connect() {
 		try {
-			$this->index = Zend_Search_Lucene::open($this->indexLocation . '/' . $this->workspaceName);
+			$this->index = Zend_Search_Lucene::open(F3_FLOW3_Utility_Files::concatenatePaths(array($this->indexLocation, $this->workspaceName)));
 		} catch (Zend_Search_Lucene_Exception $e) {
 			throw new F3_TYPO3CR_StorageException('Could not open Lucene index - did you configure the (correct) location? ' . $e->getMessage(), 1219320933);
 		}
