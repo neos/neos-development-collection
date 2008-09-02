@@ -221,7 +221,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	protected function getRawSingleValuedProperty(&$property) {
-		$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($property['type']));
+		$typeName = F3_PHP6_Functions::strtolower(F3_PHPCR_PropertyType::nameFromValue($property['type']));
 
 		$statementHandle = $this->databaseHandle->prepare('SELECT "value"' . ($property['type'] == F3_PHPCR_PropertyType::NAME ? ',"valuenamespace"' : '') . ' FROM "' . $typeName . 'properties" WHERE "parent" = ? AND "name" = ? AND "namespace" = ?');
 		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
@@ -245,7 +245,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	protected function getRawMultiValuedProperty(&$property) {
-		$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($property['type']));
+		$typeName = F3_PHP6_Functions::strtolower(F3_PHPCR_PropertyType::nameFromValue($property['type']));
 
 		$statementHandle = $this->databaseHandle->prepare('SELECT "index", "value"' . ($property['type'] == F3_PHPCR_PropertyType::NAME ? ',"valuenamespace"' : '') . ' FROM "' . $typeName . 'multivalueproperties" WHERE "parent" = ? AND "name" = ? AND "namespace" = ?');
 		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
@@ -555,7 +555,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	protected function addSingleValuedProperty(F3_PHPCR_PropertyInterface $property) {
 		$splitName = $this->splitName($property->getName());
 
-		$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($property->getType()));
+		$typeName = F3_PHP6_Functions::strtolower(F3_PHPCR_PropertyType::nameFromValue($property->getType()));
 
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $typeName . 'properties" ("parent", "name", "namespace", "value") VALUES (?, ?, ?, ?)');
 		$statementHandle->execute(array(
@@ -576,7 +576,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	protected function addMultiValuedProperty(F3_PHPCR_PropertyInterface $property) {
 		$splitName = $this->splitName($property->getName());
 
-		$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($property->getType()));
+		$typeName = F3_PHP6_Functions::strtolower(F3_PHPCR_PropertyType::nameFromValue($property->getType()));
 
 		foreach ($property->getValues() as $index => $value) {
 			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $typeName . 'multivalueproperties" ("parent", "name", "namespace", "index", "value") VALUES (?, ?, ?, ?, ?)');
@@ -665,7 +665,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$rawProperties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		// We are using foreach here but it should only ever return 0 or 1 results (strictly speaking always 1 in "update"Property())
 		foreach ($rawProperties as $rawProperty) {
-			$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($rawProperty['type']));
+			$typeName = F3_PHP6_Functions::strtolower(F3_PHPCR_PropertyType::nameFromValue($rawProperty['type']));
 			$statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $typeName . ($rawProperty['multivalue'] ? 'multivalue' : '') . 'properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
 			$statementHandle->execute(array(
 				$property->getParent()->getIdentifier(),
@@ -735,7 +735,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$rawProperties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 			// I am using foreach here but it should only ever return 0 or 1 results (strictly speaking always 1 in "update"Property())
 		foreach ($rawProperties as $rawProperty) {
-			$typeName = strtolower(F3_PHPCR_PropertyType::nameFromValue($rawProperty['type']));
+			$typeName = F3_PHP6_Functions::strtolower(F3_PHPCR_PropertyType::nameFromValue($rawProperty['type']));
 			$statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $typeName . ($rawProperty['multivalue'] ? 'multivalue' : '') . 'properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
 			$statementHandle->execute(array(
 				$property->getParent()->getIdentifier(),
