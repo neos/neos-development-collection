@@ -125,7 +125,7 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function deleteNode(F3_PHPCR_NodeInterface $node) {
-		$hits = $this->index->find('identifier:' . $node->getIdentifier());
+		$hits = $this->index->find(new Zend_Search_Lucene_Search_Query_Term(new Zend_Search_Lucene_Index_Term($node->getIdentifier(), 'identifier'), TRUE));
 		foreach ($hits as $hit) {
 			$this->index->delete($hit->id);
 		}
