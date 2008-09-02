@@ -6,6 +6,18 @@ declare(ENCODING="utf-8");
  *                                                                        *
  *                                                                        */
 
+$c->fallback
+	->setUrlPattern('[dummy]')
+	->setControllerComponentNamePattern('F3_@package_Frontend_Controller_@controller')
+	->setDefaults(
+		array(
+			'dummy' => 'foo',
+			'@package' => 'TYPO3',
+			'@controller' => 'Default',
+			'@action' => 'default',
+		)
+	);
+
 $c->TYPO3Route1
 	->setUrlPattern('[page].[@format]')
 	->setControllerComponentNamePattern('F3_@package_Frontend_Controller_@controller')

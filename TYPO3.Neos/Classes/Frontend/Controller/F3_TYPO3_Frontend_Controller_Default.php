@@ -79,7 +79,7 @@ class F3_TYPO3_Frontend_Controller_Default extends F3_FLOW3_MVC_Controller_Actio
 		$pageUUID = $this->arguments['page']->getValue();
 		if ($pageUUID === NULL) return 'Invalid page uuid';
 
-		$pages = $this->pageRepository->findByUUID($pageUUID);
+#		$pages = $this->pageRepository->findByUUID($pageUUID);
 		return 'TYPO3 Frontend: show()';
 	}
 
