@@ -42,7 +42,7 @@ class F3_TYPO3_Domain_Model_Page {
 	protected $title = '';
 
 	/**
-	 * @var If this page is hidden
+	 * @var boolean If this page is hidden
 	 */
 	protected $hidden = FALSE;
 
