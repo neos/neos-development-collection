@@ -27,8 +27,7 @@ declare(ENCODING = 'utf-8');
  * @subpackage Domain
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
- * @entity
+ * @repository
  */
 class F3_TYPO3_Domain_Model_WorkspaceRepository extends F3_FLOW3_Persistence_Repository {
 

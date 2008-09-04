@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  * @entity
@@ -33,18 +33,22 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3_Domain_Model_Site {
 
 	/**
-	 * @var string The site's unique identifier
+	 * The site's unique identifier
+	 * @var string
 	 * @identifier
 	 */
 	protected $identifier;
 
 	/**
+	 * Name of the site
 	 * @var string
 	 */
 	protected $name = 'Untitled Site';
 
 	/**
-	 * @var array Pages on the first level of the site
+	 * Pages on the first level of the site
+	 * @var array
+	 * @reference
 	 */
 	protected $pages = array();
 
@@ -54,7 +58,16 @@ class F3_TYPO3_Domain_Model_Site {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
+		$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+	}
 
+	/**
+	 * Returns the identifier of this site
+	 * @return string The site's UUID
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getIdentifier() {
+		return $this->identifier;
 	}
 
 	/**
@@ -97,6 +110,16 @@ class F3_TYPO3_Domain_Model_Site {
 	 */
 	public function getRootPage() {
 		return (array_key_exists(0, $this->pages)) ? $this->pages[0] : NULL;
+	}
+
+	/**
+	 * Returns the first level pages of the site.
+	 *
+	 * @return array An array of Page models which were previously added with addPage()
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPages() {
+		return $this->pages;
 	}
 }
 

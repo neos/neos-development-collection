@@ -31,7 +31,8 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3_Domain_Model_Content {
 
 	/**
-	 * @var string The content
+	 * The content
+	 * @var string
 	 */
 	protected $content;
 

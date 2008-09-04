@@ -16,21 +16,22 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
  * Domain Model of a TypoScript Template
  *
  * @package TYPO3
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @entity
  */
 class F3_TYPO3_Domain_Model_TypoScriptTemplate {
 
 	/**
-	 * @var string A label for the TypoScript template
+	 * A label for the TypoScript template
+	 * @var string
 	 */
 	protected $label;
 

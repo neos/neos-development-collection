@@ -33,6 +33,7 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3_Domain_Model_Workspace {
 
 	/**
+	 * The Root page
 	 * @var F3_TYPO3_Domain_Model_Page
 	 */
 	protected $rootPage;

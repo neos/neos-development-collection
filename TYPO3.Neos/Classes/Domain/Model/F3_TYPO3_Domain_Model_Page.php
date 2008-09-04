@@ -37,32 +37,47 @@ class F3_TYPO3_Domain_Model_Page {
 	protected $timeService;
 
 	/**
-	 * @var string The page title
+	 * The page's unique identifier
+	 * @var string
+	 * @identifier
+	 */
+	protected $identifier;
+
+	/**
+	 * The page title
+	 * @var string
 	 */
 	protected $title = '';
 
 	/**
-	 * @var boolean If this page is hidden
+	 * If this page is hidden
+	 * @var boolean
 	 */
 	protected $hidden = FALSE;
 
 	/**
-	 * @var DateTime A point in time from when this page should be visible
+	 * A point in time from when this page should be visible
+	 * @var DateTime
 	 */
 	protected $startTime;
 
 	/**
-	 * @var DateTime A point in time from when this page should be not visible anymore
+	 * A point in time from when this page should be not visible anymore
+	 * @var DateTime
 	 */
 	protected $endTime;
 
 	/**
-	 * @var array Content elements on this page
+	 * Content elements on this page
+	 * @var array
+	 * @reference
 	 */
 	protected $contentElements = array();
 
 	/**
-	 * @var array Sub pages of this page
+	 * Sub pages of this page
+	 * @var array
+	 * @reference
 	 */
 	protected $subPages = array();
 
@@ -75,6 +90,7 @@ class F3_TYPO3_Domain_Model_Page {
 	 */
 	public function __construct($title = 'Untitled') {
 		$this->setTitle($title);
+		$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
 	}
 
 	/**
@@ -86,6 +102,16 @@ class F3_TYPO3_Domain_Model_Page {
 	 */
 	public function injectTimeService(F3_TYPO3_Domain_Service_Time $timeService) {
 		$this->timeService = $timeService;
+	}
+
+	/**
+	 * Returns this page's identifier
+	 *
+	 * @return string The UUID of this page
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getIdentifier() {
+		return $this->identifier;
 	}
 
 	/**

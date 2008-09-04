@@ -31,12 +31,14 @@ declare(ENCODING = 'utf-8');
 class F3_TYPO3_Domain_Model_Content_Text extends F3_TYPO3_Domain_Model_Content {
 
 	/**
-	 * @var string Headline for this text element
+	 * Headline for this text element
+	 * @var string
 	 */
  	protected $headline;
 
  	/**
- 	 * @var string The text of this text element
+ 	 * The text of this text element
+ 	 * @var string
  	 */
  	protected $text;
 }
