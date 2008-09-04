@@ -47,6 +47,16 @@ class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_ActionCo
 	}
 
 	/**
+	 * Initializes this controller
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeController() {
+		$this->arguments->addNewArgument('identifier', 'UUID');
+	}
+
+	/**
 	 * Forwards the request to the listAction()
 	 *
 	 * @return void
@@ -66,6 +76,27 @@ class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_ActionCo
 		$sites = $this->siteRepository->findAll();
 		$this->view->setSites($sites);
 		return $this->view->render();
+	}
+
+	/**
+	 * Lists all first-level pages of the specified site
+	 *
+	 * @return string Output of the view
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function pagesAction() {
+		if ($this->argumentMappingResults->hasErrors()) {
+			$this->response->setStatus(400);
+			return 'Invalid Arguments';
+		}
+
+		$siteIdentifier = $this->arguments['identifier']->getValue();
+		$site = $this->siteRepository->findByIdentifier($siteIdentifier);
+		if ($site === NULL) {
+			$this->response->setStatus(404);
+			return 'Site Not Found';
+		}
+		return 'OK';
 	}
 }
 ?>

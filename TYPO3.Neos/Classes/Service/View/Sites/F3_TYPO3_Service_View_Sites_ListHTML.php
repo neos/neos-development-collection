@@ -16,30 +16,56 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @subpackage Service
+ * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
- * The TYPO3 Backend controller
+ * HTML view for the Sites List action
  *
  * @package TYPO3
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @subpackage Service
+ * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Backend_Controller_SystemSection extends F3_FLOW3_MVC_Controller_ActionController {
+class F3_TYPO3_Service_View_Sites_ListHTML extends F3_FLOW3_MVC_View_AbstractView {
 
 	/**
-	 * @var array Only Web Requests are supported
+	 * @var array An array of sites
 	 */
-	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
+	protected $sites;
 
 	/**
+	 * Sets the sites (model) for this view
 	 *
+	 * @param array $sites An array of F3_TYPO3_Domain_Model_Site objects
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function defaultAction() {
-		return 'SYSTEM';
+	public function setSites(array $sites) {
+		$this->sites = $sites;
+	}
+
+	/**
+	 * Renders this list view
+	 *
+	 * @return string The rendered JSON output
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function render() {
+		$output = '<h1>Sites</h1><ul>';
+		foreach ($this->sites as $site) {
+			$output .= '
+				<li>
+					<dl class="F3_TYPO3_Domain_Model_Site">
+						<dt>identifier</dt> <dd>' . $site->getIdentifier() . '</dd>
+						<dt>name</dt> <dd>' . $site->getName() . '</dd>
+					</dl>
+				</li>
+			';
+		}
+		$output .= '</ul>';
+		return $output;
 	}
 }
 ?>

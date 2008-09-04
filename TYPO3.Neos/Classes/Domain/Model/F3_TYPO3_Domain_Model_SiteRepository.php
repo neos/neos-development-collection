@@ -34,11 +34,14 @@ class F3_TYPO3_Domain_Model_SiteRepository extends F3_FLOW3_Persistence_Reposito
 	/**
 	 * Finds a site by its identifier
 	 *
-	 * @return array
+	 * @param string The UUID of the site
+	 * @return F3_TYPO3_Domain_Model_Site The site or NULL if it doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findByIdentifier() {
-
+	public function findByIdentifier($identifier) {
+		$query = $this->queryFactory->create('F3_TYPO3_Domain_Model_Site');
+		$sites = $query->matching($query->equals('identifier', $identifier))->execute();
+		return (is_array($sites)) ? array_shift($sites) : NULL;
 	}
 }
 

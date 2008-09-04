@@ -44,22 +44,51 @@ $c->TYPO3Route2
 		)
 	);
 
-$c->TYPO3Route3
-	->setUrlPattern('typo3/service/[@controller]')
-	->setControllerComponentNamePattern('F3_@package_Service_Controller_@controller')
-	->setDefaults(
-		array(
-			'@package' => 'TYPO3',
-			'@format' => 'html'
-		)
-	);
 
-$c->TYPO3Route4
+/*************************************************************************
+ * Routes definitions for the services
+ */
+
+
+$c->TYPO3Route_ServiceWithControllerAndFormat
 	->setUrlPattern('typo3/service/[@controller].[@format]')
 	->setControllerComponentNamePattern('F3_@package_Service_Controller_@controller')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
+		)
+	);
+
+$c->TYPO3Route_ServiceWithControllerIdentifierActionAndFormat
+	->setUrlPattern('typo3/service/[@controller]/[identifier]/[@action].[@format]')
+	->setControllerComponentNamePattern('F3_@package_Service_Controller_@controller')
+	->setDefaults(
+		array(
+			'@package' => 'TYPO3',
+		)
+	);
+
+/*************************************************************************
+ * Other routes (for experimentation)
+ */
+
+$c->TYPO3Route5
+	->setUrlPattern('typo3/setup')
+	->setControllerComponentNamePattern('F3_TYPO3_Backend_Controller_Default')
+	->setDefaults(
+		array(
+			'@action' => 'setup',
+		)
+	);
+
+$c->TYPO3Route6
+	->setUrlPattern('typo3/test/[action]')
+	->setControllerComponentNamePattern('F3_@package_Backend_Controller_@controller')
+	->setDefaults(
+		array(
+			'@package' => 'TYPO3',
+			'@controller' => 'ServiceTest',
+			'@action' => 'default',
 		)
 	);
 ?>

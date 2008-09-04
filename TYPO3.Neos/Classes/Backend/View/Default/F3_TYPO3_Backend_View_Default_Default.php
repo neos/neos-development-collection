@@ -44,6 +44,7 @@ class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractVi
 					<base href="' . (string)$this->request->getBaseURI() . '" />
 					<link rel="stylesheet" href="Resources/Web/ExtJS/Public/CSS/ext-all.css" />
 					<link rel="stylesheet" href="Resources/Web/ExtJS/Public/CSS/xtheme-gray.css" />
+					<link rel="stylesheet" href="Resources/Web/TYPO3/Public/Backend/Media/Stylesheets/Backend.css" />
 					<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/adapter/ext/ext-base.js"></script>
 					<script type="text/javascript" src="Resources/Web/ExtJS/Public/JavaScript/ext-all-debug.js"></script>
 					<script type="text/javascript">
@@ -88,18 +89,33 @@ class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractVi
 						}]
 					});
 
+					var pageTreeLoader = new Ext.tree.TreeLoader({
+						dataUrl: 'typo3/service/sites.json',
+						baseParams: {
+							test: 123
+						}
+					});
+
+					pageTreeLoader.on('beforeload',
+						function(treeloader, node) {
+							this.baseParams.test = node.attributes.id;
+							if (node.attributes.id != 'ROOT') {
+								this.baseParams.test = 'yep';
+							}
+						}
+					);
+
 					var pageTree = new Ext.tree.TreePanel({
 						useArrows:true,
 						autoScroll:true,
 						animate:false,
 						containerScroll: true,
-						dataUrl: 'typo3/service/pages.json',
+						rootVisible: false,
 						root: {
 							nodeType: 'async',
 							id:'ROOT',
-							text:'[Site Name]',
-							icon:'Resources/Web/TYPO3/Public/Backend/Media/Icons/Site.png'
-						}
+						},
+						loader: pageTreeLoader
 					});
 
 					var pageModuleToolbar = new Ext.Toolbar({

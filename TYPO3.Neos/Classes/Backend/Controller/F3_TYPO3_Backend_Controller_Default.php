@@ -48,11 +48,33 @@ class F3_TYPO3_Backend_Controller_Default extends F3_FLOW3_MVC_Controller_Action
 	 * Default action of the backend controller.
 	 * Forwards the request to the default module.
 	 *
-	 * @return void
+	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
 		return $this->view->render();
+	}
+
+	/**
+	 * Sets up some data for playing around ...
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setupAction() {
+		$site = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_Site');
+		$site->setName('typo3.org');
+
+		$siteRepository = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_SiteRepository');
+		$siteRepository->add($site);
+
+		$page = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_Page', 'Some page');
+		$site->addPage($page);
+
+		$page = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_Page', 'Another page');
+		$site->addPage($page);
+
+		return 'Created some data for playing around.';
 	}
 }
 ?>
