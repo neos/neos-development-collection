@@ -57,13 +57,16 @@ class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_ActionCo
 	}
 
 	/**
-	 * Forwards the request to the listAction()
+	 * Forwards the request to the respective actions
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultAction() {
-		$this->forward('list');
+		switch ($this->request->getMethod()) {
+			case 'GET' : $this->forward('list');
+		}
+		$this->throwStatus(400);
 	}
 
 	/**
@@ -85,17 +88,10 @@ class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_ActionCo
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pagesAction() {
-		if ($this->argumentMappingResults->hasErrors()) {
-			$this->response->setStatus(400);
-			return 'Invalid Arguments';
-		}
-
+		if ($this->argumentMappingResults->hasErrors()) $this->throwStatus(400, 'Invalid Arguments', '<p>The specified arguments were invalid.</p>');
 		$siteIdentifier = $this->arguments['identifier']->getValue();
 		$site = $this->siteRepository->findByIdentifier($siteIdentifier);
-		if ($site === NULL) {
-			$this->response->setStatus(404);
-			return 'Site Not Found';
-		}
+		if ($site === NULL) $this->throwStatus(404, NULL, '<p>The specified site does not exist.</p>');
 		return 'OK';
 	}
 }

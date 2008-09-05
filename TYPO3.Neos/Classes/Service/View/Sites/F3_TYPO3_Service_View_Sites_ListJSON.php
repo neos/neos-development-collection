@@ -55,19 +55,15 @@ class F3_TYPO3_Service_View_Sites_ListJSON extends F3_FLOW3_MVC_View_AbstractVie
 	public function render() {
 		$sitesArray = array();
 		foreach ($this->sites as $site) {
-			$info = key_exists('test', $_POST) ? $_POST['test'] : '';
-
 			$pageIdentifiers = array();
 			foreach ($site->getPages() as $page) {
 				$pageIdentifiers[] = $page->getIdentifier();
 			}
 
 			$sitesArray[] = array(
-				'id' => $site->getIdentifier(),
-				'text' => $site->getName() . $info,
-				'nodeType' => 'F3_TYPO3_Domain_Model_Site',
-				'pages' => $pageIdentifiers,
-				'icon' => 'Resources/Web/TYPO3/Public/Backend/Media/Icons/Site.png'
+				'identifier' => $site->getIdentifier(),
+				'name' => $site->getName(),
+				'pages' => $pageIdentifiers
 			);
 		}
 		return json_encode($sitesArray);
