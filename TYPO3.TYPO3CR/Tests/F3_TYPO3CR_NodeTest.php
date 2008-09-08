@@ -81,6 +81,18 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 					'nodetype' => 'nt:base',
 					'name' => 'News'
 				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 'nt:base',
+					'name' => 'Refparent'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 'nt:base',
+					'name' => 'Refparent'
+				),
 			)
 		);
 		$this->mockStorageBackend->rawPropertiesByIdentifierGroupedByWorkspace = array(
@@ -93,6 +105,36 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 						'multivalue' => FALSE,
 						'type' => F3_PHPCR_PropertyType::STRING
 					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
+					array(
+						'name' => 'ref',
+						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3_PHPCR_PropertyType::REFERENCE
+					),
+					array(
+						'name' => 'wrongref',
+						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3_PHPCR_PropertyType::REFERENCE
+					),
+					array(
+						'name' => 'weakref',
+						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3_PHPCR_PropertyType::WEAKREFERENCE
+					),
+					array(
+						'name' => 'wrongweakref',
+						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3_PHPCR_PropertyType::REFERENCE
+					),
 				)
 			)
 		);
@@ -132,6 +174,120 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$secondExpectedIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
 		$secondNode = $this->session->getNodeByIdentifier($secondExpectedIdentifier);
 		$this->assertEquals($secondExpectedIdentifier, $secondNode->getIdentifier(), 'getIdentifier() did not return the expected Identifier.');
+	}
+
+	/**
+	 * Checks if getReferences returns nothing when called on a node that is not referenced
+	 *
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getReferencesReturnsNothingOnUnReferencedNode() {
+		$node = $this->session->getRootNode();
+		$references = $node->getReferences();
+		$this->assertEquals(0, $references->getSize());
+	}
+
+	/**
+	 * Checks if getReferences returns nothing when called with a non-existant property name
+	 *
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getReferencesReturnsNothingOnNonExistantReferenceName() {
+		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
+		$references = $node->getReferences('notref');
+		$this->assertEquals(0, $references->getSize());
+	}
+
+	/**
+	 * Checks if getReferences returns exactly the one reference referencing the given node when called without a $name parameter
+	 *
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getReferencesReturnsReferenceWithoutNameParameter() {
+		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
+		$references = $node->getReferences();
+		$this->assertEquals(1, $references->getSize());
+		$reference = $references->nextProperty();
+		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
+		$this->assertEquals($reference->getType(), F3_PHPCR_PropertyType::REFERENCE);
+	}
+
+	/**
+	 * Checks if getReferences returns exactly the one reference referencing the given node when called with the correct $name parameter
+	 *
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getReferencesReturnsReferenceWithNameParameter() {
+		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
+		$references = $node->getReferences('ref');
+		$this->assertEquals(1, $references->getSize());
+		$reference = $references->nextProperty();
+		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
+		$this->assertEquals($reference->getType(), F3_PHPCR_PropertyType::REFERENCE);
+	}
+
+	/**
+	 * Checks if getWeakReferences returns nothing when called on a node that is not referenced
+	 *
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getWeakReferencesReturnsNothingOnUnReferencedNode() {
+		$node = $this->session->getRootNode();
+		$references = $node->getWeakReferences();
+		$this->assertEquals(0, $references->getSize());
+	}
+
+	/**
+	 * Checks if getWeakReferences returns nothing when called with a non-existant property name
+	 *
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getWeakReferencesReturnsNothingOnNonExistantReferenceName() {
+		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
+		$references = $node->getWeakReferences('notweakref');
+		$this->assertEquals(0, $references->getSize());
+	}
+
+	/**
+	 * Checks if getWeakReferences returns exactly the one reference referencing the given node when called without a $name parameter
+	 *
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getWeakReferencesReturnsReferenceWithoutNameParameter() {
+		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
+		$references = $node->getWeakReferences();
+		$this->assertEquals(1, $references->getSize());
+		$reference = $references->nextProperty();
+		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
+		$this->assertEquals($reference->getType(), F3_PHPCR_PropertyType::WEAKREFERENCE);
+	}
+
+	/**
+	 * Checks if getWeakReferences returns exactly the one reference referencing the given node when called with the correct $name parameter
+	 *
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getWeakReferencesReturnsReferenceWithNameParameter() {
+		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
+		$references = $node->getWeakReferences('weakref');
+		$this->assertEquals(1, $references->getSize());
+		$reference = $references->nextProperty();
+		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
+		$this->assertEquals($reference->getType(), F3_PHPCR_PropertyType::WEAKREFERENCE);
 	}
 
 	/**

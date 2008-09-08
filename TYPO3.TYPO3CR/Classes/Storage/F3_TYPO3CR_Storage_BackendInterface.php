@@ -145,6 +145,16 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	public function getRawPropertiesOfNode($identifier);
 
 	/**
+	 * Fetches raw properties with the given type and value from the database
+	 *
+	 * @param string $name name of the reference properties considered, if NULL properties of any name will be returned
+	 * @param integer $type one of the types defined in F3_PHPCR_PropertyType
+	 * @param $value a value of the given type
+	 * @return array
+	 */
+	public function getRawPropertiesOfTypedValue($name, $type, $value);
+
+	/**
 	 * Adds a property in the storage
 	 *
 	 * @param F3_PHPCR_PropertyInterface $property property to insert

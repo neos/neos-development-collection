@@ -141,7 +141,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	/**
 	 * Converts the given string into the given type
 	 *
-	 * @param int $type one of the constants defined in F3_PHPCR_PropertyType
+	 * @param integer $type one of the constants defined in F3_PHPCR_PropertyType
 	 * @param string $string a string representing a value of the given type
 	 *
 	 * @return string|int|float|DateTime|boolean
@@ -194,7 +194,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
 		$values = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		$structuredValues=array();
-		foreach($values as $value) {
+		foreach ($values as $value) {
 			$structuredValues[$value['index']]['index'] = $value['index'];
 			$structuredValues[$value['index']][$value['level']]['level'] = $value['level'];
 			$structuredValues[$value['index']][$value['level']]['value'] = $value['value'];
@@ -227,10 +227,9 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
 		$values = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($values as $value) {
-			if($property['type'] == F3_PHPCR_PropertyType::NAME && $value['valuenamespace'] != '') {
+			if ($property['type'] == F3_PHPCR_PropertyType::NAME && $value['valuenamespace'] != '') {
 				$property['value'] = $this->prefixName(array('namespaceURI' => $value['valuenamespace'], 'name' => $value['value']));
-			}
-			else {
+			} else {
 				$property['value'] = $this->convertFromString($property['type'], $value['value']);
 			}
 		}
@@ -254,10 +253,9 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 			$resultArray = array();
 			foreach ($multivalues as $multivalue) {
 
-				if($property['type'] == F3_PHPCR_PropertyType::NAME && $multivalue['valuenamespace'] != '') {
+				if ($property['type'] == F3_PHPCR_PropertyType::NAME && $multivalue['valuenamespace'] != '') {
 					$resultArray[$multivalue['index']] = $this->prefixName(array('namespaceURI' => $multivalue['valuenamespace'], 'name' => $multivalue['value']));
-				}
-				else {
+				} else {
 					$resultArray[$multivalue['index']] = $this->convertFromString($property['type'], $multivalue['value']);
 				}
 
@@ -265,6 +263,37 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 			$property['value'] = $resultArray;
 		}
 		unset($property['parent']);
+	}
+
+	/**
+	 * Fetches raw property values for the given properties from the typed tables in the database
+	 *
+	 * @param array $properties from the "properties" table (at least columns 'parent', 'name', 'namespace', 'type' and 'multivalue')
+	 * @return array
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function getRawPropertyValues($properties) {
+		if (is_array($properties)) {
+			foreach ($properties as &$property) {
+				if (! $property['multivalue']) {
+					if ($property['type'] == F3_PHPCR_PropertyType::PATH) {
+						$this->getRawSingleValuedPathProperty($property);
+					} else {
+						$this->getRawSingleValuedProperty($property);
+					}
+				} else {
+					if ($property['type'] == F3_PHPCR_PropertyType::PATH) {
+						$this->getRawMultiValuedPathProperty($property);
+					} else {
+						$this->getRawMultiValuedProperty($property);
+					}
+				}
+
+				$property['name'] = $this->prefixName(array('name' => $property['name'], 'namespaceURI' => $property['namespace']));
+				unset($property['namespace']);
+			}
+		}
+		return $properties;
 	}
 
 
@@ -280,30 +309,31 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "namespace", "multivalue", "type" FROM "properties" WHERE "parent" = ?');
 		$statementHandle->execute(array($identifier));
 		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		if (is_array($properties)) {
-			foreach ($properties as &$property) {
-				if(! $property['multivalue']) {
-					if($property['type'] == F3_PHPCR_PropertyType::PATH) {
-						$this->getRawSingleValuedPathProperty($property);
-					}
-					else {
-						$this->getRawSingleValuedProperty($property);
-					}
-				}
-				else {
-					if($property['type'] == F3_PHPCR_PropertyType::PATH) {
-						$this->getRawMultiValuedPathProperty($property);
-					}
-					else {
-						$this->getRawMultiValuedProperty($property);
-					}
-				}
+		return $this->getRawPropertyValues($properties);
+	}
 
-				$property['name'] = $this->prefixName(array('name' => $property['name'], 'namespaceURI' => $property['namespace']));
-				unset($property['namespace']);
-			}
+	/**
+	 * Fetches raw properties with the given type and value from the database
+	 *
+	 * @param string $name name of the reference properties considered, if NULL properties of any name will be returned
+	 * @param integer $type one of the types defined in F3_PHPCR_PropertyType (does not work for path or name right now as those are represented by more than the value column in their respective tables)
+	 * @param $value a value of the given type
+	 * @return array
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function getRawPropertiesOfTypedValue($name, $type, $value) {
+		$typeName = F3_PHP6_Functions::strtolower(F3_PHPCR_PropertyType::nameFromValue($type));
+
+		if ($name == NULL) {
+			$statementHandle = $this->databaseHandle->prepare('SELECT "properties"."parent", "properties"."name", "properties"."namespace", "properties"."multivalue", "properties"."type" FROM (SELECT DISTINCT "parent", "name", "namespace", "value" FROM "' . $typeName . 'multivalueproperties" UNION SELECT DISTINCT "parent", "name", "namespace", "value" FROM "' . $typeName . 'properties") AS "pv" JOIN "properties" ON "pv"."parent" = "properties"."parent" AND "pv"."name" = "properties"."name" AND "pv"."namespace" = "properties"."namespace" WHERE "value" = ? ORDER BY "properties"."parent", "properties"."name", "properties"."namespace"');
+			$statementHandle->execute(array($value));
+		} else {
+			$statementHandle = $this->databaseHandle->prepare('SELECT "properties"."parent", "properties"."name", "properties"."namespace", "properties"."multivalue", "properties"."type" FROM (SELECT DISTINCT "parent", "name", "namespace", "value" FROM "' . $typeName . 'multivalueproperties" UNION SELECT DISTINCT "parent", "name", "namespace", "value" FROM "' . $typeName . 'properties") AS "pv" JOIN "properties" ON "pv"."parent" = "properties"."parent" AND "pv"."name" = "properties"."name" AND "pv"."namespace" = "properties"."namespace" WHERE "properties"."name" = ? AND "value" = ? ORDER BY "properties"."parent", "properties"."name", "properties"."namespace"');
+			$statementHandle->execute(array($name, $value));
 		}
-		return $properties;
+
+		$properties = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
+		return $this->getRawPropertyValues($properties);
 	}
 
 	/**
@@ -317,7 +347,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		try {
 			$statementHandle = $this->databaseHandle->query('SELECT "name", "namespace" FROM "nodetypes"');
 			$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-			foreach($nodetypes as &$nodetype) {
+			foreach ($nodetypes as &$nodetype) {
 				$nodetype['name'] = $this->prefixName(array('namespaceURI' => $nodetype['namespace'], 'name' => $nodetype['name']));
 				unset($nodetype['namespace']);
 			}
@@ -339,7 +369,7 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 		$statementHandle = $this->databaseHandle->prepare('SELECT "name", "namespace" FROM "nodetypes" WHERE "name" = ?');
 		$statementHandle->execute(array($nodeTypeName));
 		$nodetypes = $statementHandle->fetchAll(PDO::FETCH_ASSOC);
-		foreach($nodetypes as &$nodetype) {
+		foreach ($nodetypes as &$nodetype) {
 			$nodetype['name'] = $this->prefixName(array('namespaceURI' => $nodetype['namespace'], 'name' => $nodetype['name']));
 			unset($nodetype['namespace']);
 			return $nodetype;

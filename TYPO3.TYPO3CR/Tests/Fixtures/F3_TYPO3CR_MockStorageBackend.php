@@ -204,6 +204,29 @@ class F3_TYPO3CR_MockStorageBackend implements F3_TYPO3CR_Storage_BackendInterfa
 	}
 
 	/**
+	 * Fetches raw properties with the given type and value from the database
+	 *
+	 * @param string $name name of the reference properties considered, if NULL properties of any name will be returned
+	 * @param integer $type one of the types defined in F3_PHPCR_PropertyType
+	 * @param $value a value of the given type
+	 * @return array
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function getRawPropertiesOfTypedValue($name, $type, $value) {
+		$result = array();
+		if (key_exists($this->workspaceName, $this->rawPropertiesByIdentifierGroupedByWorkspace)) {
+			foreach ($this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName] as $rawProperties) {
+				foreach ($rawProperties as $rawProperty) {
+					if ($rawProperty['type'] == $type && $rawProperty['value'] == $value && ($name == NULL || $rawProperty['name'] == $name)) {
+						$result[count($result)] = $rawProperty;
+					}
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
 	 * Fetches raw data for all nodetypes from the database
 	 *
 	 * @return array

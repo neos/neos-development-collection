@@ -282,7 +282,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @return void
 	 * @throws InvalidItemStateException if this Item object represents a workspace item that has been removed (either by this session or another).
 	 * @throws RepositoryException if another error occurs.
-	*/
+	 */
 	public function refresh($keepChanges) {
 		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
 	}
@@ -667,9 +667,18 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param string $name name of referring REFERENCE properties to be returned; if null then all referring REFERENCEs are returned
 	 * @return F3_PHPCR_PropertyIteratorInterface A PropertyIterator.
 	 * @throws F3_PHPCR_RepositoryException  if an error occurs
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getReferences($name = NULL) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667768);
+		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, F3_PHPCR_PropertyType::REFERENCE, $this->getIdentifier());
+		$references = array();
+		if (is_array($rawReferences)) {
+			foreach ($rawReferences as $rawReference) {
+				$reference = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
+				$references[$reference->getName()] = $reference;
+			}
+		}
+		return $this->componentFactory->getComponent('F3_PHPCR_PropertyIteratorInterface', $references);
 	}
 
 	/**
@@ -694,9 +703,19 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param string $name name of referring WEAKREFERENCE properties to be returned; if null then all referring WEAKREFERENCEs are returned
 	 * @return F3_PHPCR_PropertyIteratorInterface A PropertyIterator.
 	 * @throws F3_PHPCR_RepositoryException  if an error occurs
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+
 	 */
 	public function getWeakReferences($name = NULL) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667769);
+		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, F3_PHPCR_PropertyType::WEAKREFERENCE, $this->getIdentifier());
+		$references = array();
+		if (is_array($rawReferences)) {
+			foreach ($rawReferences as $rawReference) {
+				$reference = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
+				$references[$reference->getName()] = $reference;
+			}
+		}
+		return $this->componentFactory->getComponent('F3_PHPCR_PropertyIteratorInterface', $references);
 	}
 
 	/**

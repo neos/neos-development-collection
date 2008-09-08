@@ -391,13 +391,81 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$this->assertEquals(array(), $retrievedRawProperties, 'A removed property could be retrieved.');
 	}
 
- 	/**
- 	 * @author Karsten Dambekalns <karsten@typo3.org>
- 	 * @test
- 	 */
- 	public function hasIdentifierWorks() {
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function hasIdentifierWorks() {
 		$this->assertTrue($this->storageBackend->hasIdentifier('96b4a35d-1ef5-4a47-8b3c-0d6d69507e01'), 'hasIdentifier() did not return TRUE for existing identifier.');
 		$this->assertFalse($this->storageBackend->hasIdentifier('96b4a35d-0000-4a47-8b3c-0d6d69507e01'), 'hasIdentifier() did not return FALSE for non-existing identifier.');
- 	}
- }
+	}
+
+	/**
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getRawPropertiesOfTypedValueReturnsNothingIfNoPropertiesOfTheTypeExist() {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
+		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
+
+		$rawRootNode = $this->storageBackend->getRawRootNode();
+		$rootNode = new F3_TYPO3CR_Node($rawRootNode, $mockSession, $this->componentFactory);
+		$refTargetUUID = F3_FLOW3_Utility_Algorithms::generateUUID();
+
+		$rawNode = array(
+			'parent' => $rootNode,
+			'name' => '',
+			'identifier' => $refTargetUUID,
+			'nodetype' => 'nt:base'
+		);
+		$refTargetNode = new F3_TYPO3CR_Node($rawNode, $mockSession, $this->componentFactory);
+		$this->storageBackend->addNode($refTargetNode);
+
+		$resultReferences = $this->storageBackend->getRawPropertiesOfTypedValue(NULL, F3_PHPCR_PropertyType::REFERENCE, $refTargetUUID);
+		$this->assertEquals(array(), $resultReferences);
+	}
+
+
+
+	/**
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 */
+	public function getRawPropertiesOfTypedValueReturnsExactlyAddedProperty() {
+		$mockRepository = $this->getMock('F3_TYPO3CR_Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3_TYPO3CR_Session', array(), array('default', $mockRepository, $this->storageBackend, $this->componentFactory));
+		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
+
+		$rawRootNode = $this->storageBackend->getRawRootNode();
+		$rootNode = new F3_TYPO3CR_Node($rawRootNode, $mockSession, $this->componentFactory);
+		$refTargetUUID = F3_FLOW3_Utility_Algorithms::generateUUID();
+
+		$rawNode = array(
+			'parent' => $rootNode,
+			'name' => '',
+			'identifier' => $refTargetUUID,
+			'nodetype' => 'nt:base'
+		);
+		$refTargetNode = new F3_TYPO3CR_Node($rawNode, $mockSession, $this->componentFactory);
+		$this->storageBackend->addNode($refTargetNode);
+
+		$expectedReferences = array(
+			array(
+				'type' => F3_PHPCR_PropertyType::REFERENCE,
+				'name' => 'ref',
+				'multivalue' => 0,
+				'value' => $refTargetUUID
+			));
+
+		$mockValueFactory = $this->getMock('F3_PHPCR_ValueFactoryInterface');
+		$mockValueFactory->expects($this->any())->method('createValue')->will($this->returnValue(new F3_TYPO3CR_Value($refTargetUUID, F3_PHPCR_PropertyType::REFERENCE)));
+		$property = new F3_TYPO3CR_Property('ref', $refTargetUUID, F3_PHPCR_PropertyType::REFERENCE, $rootNode, $mockSession, $mockValueFactory);
+		$this->storageBackend->addProperty($property);
+
+		$resultReferences = $this->storageBackend->getRawPropertiesOfTypedValue(NULL, F3_PHPCR_PropertyType::REFERENCE, $refTargetUUID);
+		$this->assertEquals($expectedReferences, $resultReferences);
+	}
+
+}
 ?>
