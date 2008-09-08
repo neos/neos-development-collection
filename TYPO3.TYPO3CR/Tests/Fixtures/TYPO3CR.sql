@@ -3,7 +3,7 @@ BEGIN;
 CREATE TABLE "namespaces" (
 	"prefix" VARCHAR(255) PRIMARY KEY NOT NULL,
 	"uri" TEXT NOT NULL,
-	UNIQUE ("uri"(255))
+	UNIQUE ("uri")
 );
 INSERT INTO "namespaces" ("prefix", "uri") VALUES ('jcr', 'http://www.jcp.org/jcr/1.0');
 INSERT INTO "namespaces" ("prefix", "uri") VALUES ('nt', 'http://www.jcp.org/jcr/nt/1.0');

@@ -275,6 +275,9 @@ class F3_TYPO3CR_Storage_Backend_PDO extends F3_TYPO3CR_Storage_AbstractSQLBacke
 	protected function getRawPropertyValues($properties) {
 		if (is_array($properties)) {
 			foreach ($properties as &$property) {
+				if($property['multivalue'] == 0) $property['multivalue'] = FALSE;
+				if($property['multivalue'] == 1) $property['multivalue'] = TRUE;
+
 				if (! $property['multivalue']) {
 					if ($property['type'] == F3_PHPCR_PropertyType::PATH) {
 						$this->getRawSingleValuedPathProperty($property);

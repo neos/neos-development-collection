@@ -23,14 +23,14 @@ declare(ENCODING = 'utf-8');
 require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
 
 /**
- * Tests for the Storage_Backend_PDO implementation of TYPO3CR
+ * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the Sqlite PDO driver
  *
  * @package TYPO3CR
  * @subpackage Tests
  * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Storage_Backend_PDOTest extends F3_TYPO3CR_Storage_Backend_TestBase {
+class F3_TYPO3CR_Storage_Backend_PDO_SqliteTest extends F3_TYPO3CR_Storage_Backend_TestBase {
 
 	/**
 	 * @var string

@@ -217,7 +217,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$expectedRawProperties = array(array(
 			'name' => $propertyName,
 			'value' => $propertyValue,
-			'multivalue' => 0,
+			'multivalue' => FALSE,
 			'type' => $propertyType
 		));
 		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
@@ -246,7 +246,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$expectedRawProperties = array(array(
 			'name' => $propertyName,
 			'value' => $newPropertyValue,
-			'multivalue' => 0,
+			'multivalue' => FALSE,
 			'type' => $propertyType
 		));
 		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
@@ -320,7 +320,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$expectedRawProperties = array(array(
 			'name' => $propertyName,
 			'value' => $propertyValues,
-			'multivalue' => 1,
+			'multivalue' => TRUE,
 			'type' => $propertyType
 		));
 		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
@@ -357,7 +357,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 		$expectedRawProperties = array(array(
 			'name' => $propertyName,
 			'value' => $newPropertyValues,
-			'multivalue' => 1,
+			'multivalue' => TRUE,
 			'type' => $propertyType
 		));
 		$retrievedRawProperties = $this->storageBackend->getRawPropertiesOfNode($node->getIdentifier());
@@ -454,7 +454,7 @@ class F3_TYPO3CR_Storage_Backend_TestBase extends F3_Testing_BaseTestCase {
 			array(
 				'type' => F3_PHPCR_PropertyType::REFERENCE,
 				'name' => 'ref',
-				'multivalue' => 0,
+				'multivalue' => FALSE,
 				'value' => $refTargetUUID
 			));
 
