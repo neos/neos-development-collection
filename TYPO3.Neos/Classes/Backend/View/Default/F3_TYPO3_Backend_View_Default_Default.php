@@ -90,7 +90,7 @@ class F3_TYPO3_Backend_View_Default_Default extends F3_FLOW3_MVC_View_AbstractVi
 					});
 
 					var pageTreeLoader = new Ext.tree.TreeLoader({
-						dataUrl: 'typo3/service/sites.json',
+						dataUrl: 'typo3/service/v1/sites.json',
 						baseParams: {
 							test: 123
 						}

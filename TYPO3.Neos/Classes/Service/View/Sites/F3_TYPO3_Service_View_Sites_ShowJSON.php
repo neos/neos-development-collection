@@ -16,33 +16,54 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @subpackage Domain
- * @version $Id$
+ * @subpackage Service
+ * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
- * The Site Repository
+ * JSON view for the Site Show action
  *
  * @package TYPO3
- * @subpackage Domain
- * @version $Id$
+ * @subpackage Service
+ * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @repository
  */
-class F3_TYPO3_Domain_Model_SiteRepository extends F3_FLOW3_Persistence_Repository {
+class F3_TYPO3_Service_View_Sites_ShowJSON extends F3_FLOW3_MVC_View_AbstractView {
 
 	/**
-	 * Finds a site by its identifier
+	 * @var F3_TYPO3_Domain_Model_Site
+	 */
+	protected $site;
+
+	/**
+	 * Sets the site (model) for this view
 	 *
-	 * @param string The UUID of the site
-	 * @return F3_TYPO3_Domain_Model_Site The site or NULL if it doesn't exist
+	 * @param array $sites An array of F3_TYPO3_Domain_Model_Site objects
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findByIdentifier($identifier) {
-		$query = $this->queryFactory->create('F3_TYPO3_Domain_Model_Site');
-		$sites = $query->matching($query->equals('identifier', (string)$identifier))->execute();
-		return (is_array($sites)) ? array_shift($sites) : NULL;
+	public function setSite(F3_TYPO3_Domain_Model_Site $site) {
+		$this->site = $site;
+	}
+
+	/**
+	 * Renders this show view
+	 *
+	 * @return string The rendered JSON output
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function render() {
+		$pageIdentifiers = array();
+		foreach ($this->site->getPages() as $page) {
+			$pageIdentifiers[] = $page->getIdentifier();
+		}
+
+		$siteArray[] = array(
+			'identifier' => $this->site->getIdentifier(),
+			'name' => $this->site->getName(),
+			'pages' => $pageIdentifiers
+		);
+		return json_encode($siteArray);
 	}
 }
-
 ?>

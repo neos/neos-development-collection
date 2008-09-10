@@ -69,8 +69,18 @@ $c->TYPO3Route_ServiceWithControllerAndFormat
 		)
 	);
 
+$c->TYPO3Route_ServiceWithControllerIdentifierAction
+	->setUrlPattern('typo3/service/v1/[@controller]/[identifier]')
+	->setControllerComponentNamePattern('F3_@package_Service_Controller_@controller')
+	->setDefaults(
+		array(
+			'@package' => 'TYPO3',
+			'@format' => 'json'
+		)
+	);
+
 $c->TYPO3Route_ServiceWithControllerIdentifierActionAndFormat
-	->setUrlPattern('typo3/service/v1/[@controller]/[identifier]/[@action].[@format]')
+	->setUrlPattern('typo3/service/v1/[@controller]/[identifier].[@format]')
 	->setControllerComponentNamePattern('F3_@package_Service_Controller_@controller')
 	->setDefaults(
 		array(

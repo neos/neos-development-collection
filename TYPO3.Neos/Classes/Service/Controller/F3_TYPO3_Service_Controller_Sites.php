@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_ActionController {
+class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_RESTController {
 
 	/**
 	 * @var F3_TYPO3_Domain_Model_SiteRepository
@@ -47,29 +47,6 @@ class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_ActionCo
 	}
 
 	/**
-	 * Initializes this controller
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeController() {
-		$this->arguments->addNewArgument('identifier', 'UUID');
-	}
-
-	/**
-	 * Forwards the request to the respective actions
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function defaultAction() {
-		switch ($this->request->getMethod()) {
-			case 'GET' : $this->forward('list');
-		}
-		$this->throwStatus(400);
-	}
-
-	/**
 	 * Lists available sites from the repository
 	 *
 	 * @return string Output of the list view
@@ -82,17 +59,14 @@ class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_ActionCo
 	}
 
 	/**
-	 * Lists all first-level pages of the specified site
+	 * Shows properties of a specific site
 	 *
-	 * @return string Output of the view
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function pagesAction() {
-		if ($this->argumentMappingResults->hasErrors()) $this->throwStatus(400, 'Invalid Arguments', '<p>The specified arguments were invalid.</p>');
-		$siteIdentifier = $this->arguments['identifier']->getValue();
-		$site = $this->siteRepository->findByIdentifier($siteIdentifier);
-		if ($site === NULL) $this->throwStatus(404, NULL, '<p>The specified site does not exist.</p>');
-		return 'OK';
+	public function showAction() {
+		$site = $this->siteRepository->findByIdentifier($this->arguments['identifier']);
+		if ($site === NULL) $this->throwStatus(404);
+		$this->view->setSite($site);
+		return $this->view->render();
 	}
 }
 ?>
