@@ -32,31 +32,31 @@ namespace F3::TYPO3::Domain::Model;
 class Content {
 
 	/**
-	 * The content
-	 * @var string
+	 * @var unknown_type
+	 * @transient
 	 */
-	protected $content;
+	protected $languageLocale = 'und';
 
 	/**
-	 * Sets the content
-	 *
-	 * @param string $content The content
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var unknown_type
+	 * @transient
 	 */
-	public function setContent($content) {
-		$this->content = $content;
+	protected $countryLocale = 'ZZ';
+
+	public function getLanguageLocale() {
+		return $this->languageLocale;
 	}
 
-	/**
-	 * Returns the content
-	 *
-	 * @return string The content
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getContent() {
-		return $this->content;
+	public function setLanguageLocal($languageLocale) {
+		$this->languageLocale = $languageLocale;
+	}
+
+	public function getCountryLocale() {
+		return $this->countryLocale;
+	}
+
+	public function setCountryLocale($countryLocale) {
+		$this->countryLocale = $countryLocale;
 	}
 }
-
 ?>

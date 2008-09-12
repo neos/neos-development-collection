@@ -18,41 +18,44 @@ namespace F3::TYPO3::Domain::Model;
 /**
  * @package TYPO3
  * @subpackage Domain
- * @version $Id$
+ * @version $Id:$
  */
 
 /**
- * Testcase for the "Site" domain model
+ * A Structure Node
  *
  * @package TYPO3
  * @subpackage Domain
- * @version $Id$
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
+ * @entity
  */
-class SiteTest extends F3::Testing::BaseTestCase {
+class StructureNode {
 
 	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * The content objects which are assigned to this structure node
+	 *
+	 * @var array
+	 * @reference
 	 */
-	public function aNameCanBeSetAndRetrievedFromTheSite() {
-		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$site = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
-		$site->setName('My cool website');
-		$this->assertEquals('My cool website', $site->getName());
-	}
+	protected $contents = array();
 
 	/**
-	 * @test
+	 * Returns the content which is assigned to this structure node.
+	 *
+	 * If a locale is specified, this node will try to return a matching content object based on the
+	 * globally defined fallback rules.
+	 *
+	 * @param string $languageLocale The language locale of the desired content. Use "und" for undefined language
+	 * @param string $countryLocale The country locale of the desired content. Use "ZZ" for any country
+	 * @return F3::TYPO3::Domain::Model::Content The content object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aRootNodeIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
-		$mockRootNode = $this->getMock('F3::TYPO3::Domain::Model::StructureNode');
-		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($mockRootNode));
+	public function getContent($languageLocale = 'und', $countryLocale = 'ZZ') {
+		foreach ($this->contents as $content) {
 
-		$site = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
-		$this->assertSame($mockRootNode, $site->getRootNode());
+		}
 	}
 }
 

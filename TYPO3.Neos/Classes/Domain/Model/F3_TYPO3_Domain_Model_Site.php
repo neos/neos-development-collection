@@ -47,19 +47,18 @@ class Site {
 	protected $name = 'Untitled Site';
 
 	/**
-	 * Pages on the first level of the site
-	 * @var array
-	 * @reference
+	 * @var F3::TYPO3::Domain::StructureNode
 	 */
-	protected $pages = array();
+	protected $rootNode;
 
 	/**
 	 * Constructs the new site
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct() {
+	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->identifier = F3::FLOW3::Utility::Algorithms::generateUUID();
+		$this->rootNode = $componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
 	}
 
 	/**
@@ -93,34 +92,24 @@ class Site {
 	}
 
 	/**
-	 * Adds a page to the first level of the website
+	 * Sets the root node of this site's structure tree
 	 *
-	 * @param F3::TYPO3::Domain::Model::Page $page The page to add
+	 * @param F3::TYPO3::Domain::Model::StructureNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addPage(F3::TYPO3::Domain::Model::Page $page) {
-		 $this->pages[] = $page;
+	public function setRootNode(F3::TYPO3::Domain::Model::StructureNode $rootNode) {
+		$this->rootNode = $rootNode;
 	}
 
 	/**
-	 * Returns the first page of the website.
+	 * Returns the root node of this site
 	 *
-	 * @return F3::TYPO3::Domain::Model::Page The root page - or NULL if no root page exists
+	 * @return F3::TYPO3::Domain::Model::StructureNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRootPage() {
-		return (array_key_exists(0, $this->pages)) ? $this->pages[0] : NULL;
-	}
-
-	/**
-	 * Returns the first level pages of the site.
-	 *
-	 * @return array An array of Page models which were previously added with addPage()
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getPages() {
-		return $this->pages;
+	public function getRootNode() {
+		return $this->rootNode;
 	}
 }
 
