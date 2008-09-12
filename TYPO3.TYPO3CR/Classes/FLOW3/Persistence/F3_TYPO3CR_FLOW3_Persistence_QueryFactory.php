@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,21 +29,21 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_FLOW3_Persistence_QueryFactory implements F3_FLOW3_Persistence_QueryFactoryInterface {
+class QueryFactory implements F3::FLOW3::Persistence::QueryFactoryInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
 	 * Injects the FLOW3 component factory
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
@@ -50,10 +51,10 @@ class F3_TYPO3CR_FLOW3_Persistence_QueryFactory implements F3_FLOW3_Persistence_
 	 * Creates a query object working on the given class name
 	 *
 	 * @param string $className
-	 * @return F3_TYPO3CR_FLOW3_Persistence_Query
+	 * @return F3::TYPO3CR::FLOW3::Persistence::Query
 	 */
 	public function create($className) {
-		return $this->componentFactory->getComponent('F3_TYPO3CR_FLOW3_Persistence_Query', $className);
+		return $this->componentFactory->getComponent('F3::TYPO3CR::FLOW3::Persistence::Query', $className);
 	}
 
 }

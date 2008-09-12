@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Storage::Search;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:F3_TYPO3CR_Storage_Backend_PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3::TYPO3CR::Storage::Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 require_once('Zend/Search/Lucene.php');
@@ -27,10 +28,10 @@ require_once('Zend/Search/Lucene.php');
  *
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:F3_TYPO3CR_Storage_Backend_PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3::TYPO3CR::Storage::Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch {
+class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 
 	/**
 	 * @var string
@@ -38,7 +39,7 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	protected $indexLocation;
 
 	/**
-	 * @var Zend_Search_Lucene_Interface
+	 * @var ::Zend_Search_Lucene_Interface
 	 */
 	protected $index;
 
@@ -50,7 +51,7 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	 */
 	public function __construct($options = array()) {
 		parent::__construct($options);
-		Zend_Search_Lucene_Analysis_Analyzer::setDefault(new F3_TYPO3CR_Storage_Search_LuceneKeywordAnalyser());
+		::Zend_Search_Lucene_Analysis_Analyzer::setDefault(new F3::TYPO3CR::Storage::Search::LuceneKeywordAnalyser());
 	}
 
 	/**
@@ -73,31 +74,31 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	 */
 	public function connect() {
 		try {
-			$this->index = Zend_Search_Lucene::open(F3_FLOW3_Utility_Files::concatenatePaths(array($this->indexLocation, $this->workspaceName)));
-		} catch (Zend_Search_Lucene_Exception $e) {
-			throw new F3_TYPO3CR_StorageException('Could not open Lucene index - did you configure the (correct) location? ' . $e->getMessage(), 1219320933);
+			$this->index = ::Zend_Search_Lucene::open(F3::FLOW3::Utility::Files::concatenatePaths(array($this->indexLocation, $this->workspaceName)));
+		} catch (::Zend_Search_Lucene_Exception $e) {
+			throw new F3::TYPO3CR::StorageException('Could not open Lucene index - did you configure the (correct) location? ' . $e->getMessage(), 1219320933);
 		}
 	}
 
 	/**
 	 * Adds the given node to the index
 	 *
-	 * @param F3_PHPCR_NodeInterface $node
+	 * @param F3::PHPCR::NodeInterface $node
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function addNode(F3_PHPCR_NodeInterface $node) {
-		$nodeDocument = new Zend_Search_Lucene_Document();
-		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('identifier', $node->getIdentifier()));
-		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('nodetype', $node->getPrimaryNodeType()->getName()));
-		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('path', $node->getPath()));
+	public function addNode(F3::PHPCR::NodeInterface $node) {
+		$nodeDocument = new ::Zend_Search_Lucene_Document();
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('identifier', $node->getIdentifier()));
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('nodetype', $node->getPrimaryNodeType()->getName()));
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('path', $node->getPath()));
 
 		foreach ($node->getProperties() as $property) {
 			try {
-				$nodeDocument->addField(Zend_Search_Lucene_Field::UnStored($property->getName(), $property->getString()));
-			} catch (F3_PHPCR_ValueFormatException $e) {
+				$nodeDocument->addField(::Zend_Search_Lucene_Field::UnStored($property->getName(), $property->getString()));
+			} catch (F3::PHPCR::ValueFormatException $e) {
 				foreach ($property->getValues() as $value) {
-					$nodeDocument->addField(Zend_Search_Lucene_Field::UnStored($property->getName(), $value->getString()));
+					$nodeDocument->addField(::Zend_Search_Lucene_Field::UnStored($property->getName(), $value->getString()));
 				}
 			}
 		}
@@ -108,11 +109,11 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	/**
 	 * Updates the given node in the index
 	 *
-	 * @param F3_PHPCR_NodeInterface $node
+	 * @param F3::PHPCR::NodeInterface $node
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function updateNode(F3_PHPCR_NodeInterface $node) {
+	public function updateNode(F3::PHPCR::NodeInterface $node) {
 		$this->deleteNode($node);
 		$this->addNode($node);
 	}
@@ -120,12 +121,12 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	/**
 	 * Deletes the given node from the index
 	 *
-	 * @param F3_PHPCR_NodeInterface $node
+	 * @param F3::PHPCR::NodeInterface $node
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function deleteNode(F3_PHPCR_NodeInterface $node) {
-		$hits = $this->index->find(new Zend_Search_Lucene_Search_Query_Term(new Zend_Search_Lucene_Index_Term($node->getIdentifier(), 'identifier'), TRUE));
+	public function deleteNode(F3::PHPCR::NodeInterface $node) {
+		$hits = $this->index->find(new ::Zend_Search_Lucene_Search_Query_Term(new ::Zend_Search_Lucene_Index_Term($node->getIdentifier(), 'identifier'), TRUE));
 		foreach ($hits as $hit) {
 			$this->index->delete($hit->id);
 		}
@@ -134,15 +135,15 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	/**
 	 * Returns an array with identifiers matching the query
 	 *
-	 * @param F3_PHPCR_Query_QOM_QueryObjectModelInterface $query
+	 * @param F3::PHPCR::Query::QOM::QueryObjectModelInterface $query
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findNodeIdentifiers(F3_PHPCR_Query_QOM_QueryObjectModelInterface $query) {
-		$luceneQuery = new Zend_Search_Lucene_Search_Query_MultiTerm();
+	public function findNodeIdentifiers(F3::PHPCR::Query::QOM::QueryObjectModelInterface $query) {
+		$luceneQuery = new ::Zend_Search_Lucene_Search_Query_MultiTerm();
 
-		if ($query->getSource() instanceof F3_PHPCR_Query_QOM_SourceInterface) {
-			$term  = new Zend_Search_Lucene_Index_Term($query->getSource()->getNodeTypeName(), 'nodetype');
+		if ($query->getSource() instanceof F3::PHPCR::Query::QOM::SourceInterface) {
+			$term  = new ::Zend_Search_Lucene_Index_Term($query->getSource()->getNodeTypeName(), 'nodetype');
 			$luceneQuery->addTerm($term, TRUE);
 		}
 
@@ -163,14 +164,14 @@ class F3_TYPO3CR_Storage_Search_Lucene extends F3_TYPO3CR_Storage_AbstractSearch
 	/**
 	 * Transforms a constraint into Lucene search terms added to the query
 	 *
-	 * @param F3_PHPCR_Query_QOM_ConstraintInterface $constraint
-	 * @param Zend_Search_Lucene_Search_Query_MultiTerm $luceneQuery
+	 * @param F3::PHPCR::Query::QOM::ConstraintInterface $constraint
+	 * @param ::Zend_Search_Lucene_Search_Query_MultiTerm $luceneQuery
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseConstraint(F3_PHPCR_Query_QOM_ConstraintInterface $constraint, array $boundVariableValues, Zend_Search_Lucene_Search_Query_MultiTerm $luceneQuery) {
-		if ($constraint instanceof F3_PHPCR_Query_QOM_ComparisonInterface) {
-			$term  = new Zend_Search_Lucene_Index_Term($boundVariableValues[$constraint->getOperand1()->getPropertyName()], $constraint->getOperand1()->getPropertyName());
+	protected function parseConstraint(F3::PHPCR::Query::QOM::ConstraintInterface $constraint, array $boundVariableValues, ::Zend_Search_Lucene_Search_Query_MultiTerm $luceneQuery) {
+		if ($constraint instanceof F3::PHPCR::Query::QOM::ComparisonInterface) {
+			$term  = new ::Zend_Search_Lucene_Index_Term($boundVariableValues[$constraint->getOperand1()->getPropertyName()], $constraint->getOperand1()->getPropertyName());
 			$luceneQuery->addTerm($term, TRUE);
 		}
 	}

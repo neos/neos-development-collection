@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,15 +28,15 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
+abstract class AbstractItem implements F3::PHPCR::ItemInterface {
 
 	/**
-	 * @var F3_TYPO3CR_Session
+	 * @var F3::TYPO3CR::Session
 	 */
 	protected $session;
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
@@ -45,7 +46,7 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	protected $name;
 
 	/**
-	 * @var F3_TYPO3CR_Node
+	 * @var F3::TYPO3CR::Node
 	 */
 	protected $parentNode;
 
@@ -56,7 +57,7 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 * will be returned.
 	 *
 	 * @return string The name of the item
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::RepositoryException
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function getName() {
@@ -87,15 +88,15 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 * node as returned by Item->getPath().
 	 *
 	 * @param integer $depth An integer, 0 <= depth <= n where n is the depth of this Item.
-	 * @return F3_PHPCR_ItemInterface The ancestor of this Item at the specified depth.
-	 * @throws F3_PHPCR_ItemNotFoundException if depth &lt; 0 or depth &gt; n where n is the depth of this item.
-	 * @throws F3_PHPCR_AccessDeniedException if the current session does not have sufficient access rights to retrieve the specified node.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @return F3::PHPCR::ItemInterface The ancestor of this Item at the specified depth.
+	 * @throws F3::PHPCR::ItemNotFoundException if depth &lt; 0 or depth &gt; n where n is the depth of this item.
+	 * @throws F3::PHPCR::AccessDeniedException if the current session does not have sufficient access rights to retrieve the specified node.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function getAncestor($depth) {
 		if ($depth < 0 || $depth > $this->getDepth()) {
-			throw new F3_PHPCR_ItemNotFoundException('Invalid ancestor depth (' . $depth . ')', 1187530802);
+			throw new F3::PHPCR::ItemNotFoundException('Invalid ancestor depth (' . $depth . ')', 1187530802);
 		}
 
 		if ($depth == 0) {
@@ -105,20 +106,20 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 		$path = $this->getPath();
 		$slash = 0;
 		for ($i = 0; $i < $depth-1; $i++) {
-			$slash = F3_PHP6_Functions::strpos($path, '/', $slash+1);
+			$slash = F3::PHP6::Functions::strpos($path, '/', $slash+1);
 			if ($slash === FALSE) {
-				throw new F3_PHPCR_ItemNotFoundException('Invalid ancestor depth (' . $depth . ')', 1187530839);
+				throw new F3::PHPCR::ItemNotFoundException('Invalid ancestor depth (' . $depth . ')', 1187530839);
 			}
 		}
-		$slash = F3_PHP6_Functions::strpos($path, '/', $slash+1);
+		$slash = F3::PHP6::Functions::strpos($path, '/', $slash+1);
 		if ($slash == -1) {
 			return $this;
 		}
 
 		try {
-			return $this->getSession()->getItem(F3_PHP6_Functions::substr($path, 0, $slash));
-		} catch (F3_PHPCR_ItemNotFoundException $e) {
-			throw new F3_PHPCR_AccessDeniedException('Ancestor access denied (' . $depth . ')', 1187530845);
+			return $this->getSession()->getItem(F3::PHP6::Functions::substr($path, 0, $slash));
+		} catch (F3::PHPCR::ItemNotFoundException $e) {
+			throw new F3::PHPCR::AccessDeniedException('Ancestor access denied (' . $depth . ')', 1187530845);
 		}
 	}
 
@@ -135,7 +136,7 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 * slashes in the path returned by getPath().
 	 *
 	 * @return integer The depth of this Item in the workspace hierarchy.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function getDepth() {
@@ -144,10 +145,10 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 			return 0;
 		} else {
 			$depth = 1;
-			$slash = F3_PHP6_Functions::strpos($path, '/', 1);
+			$slash = F3::PHP6::Functions::strpos($path, '/', 1);
 			while ($slash !== FALSE) {
 				$depth++;
-				$slash = F3_PHP6_Functions::strpos($path, '/', $slash+1);
+				$slash = F3::PHP6::Functions::strpos($path, '/', $slash+1);
 			}
 			return $depth;
 		}
@@ -159,8 +160,8 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 * call Session->getRootNode(), Session->getItem() or
 	 * Session->getNodeByIdentifier(). This method returns that Session object.
 	 *
-	 * @return F3_PHPCR_SessionInterface the Session through which this Item was acquired.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @return F3::PHPCR::SessionInterface the Session through which this Item was acquired.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function getSession() {
@@ -192,24 +193,24 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 * same state (see section 5.1.3 Reflecting Item State in the JSR 283 specification
 	 * document) so comparing state is not an issue.
 	 *
-	 * @param F3_PHPCR_ItemInterface $otherItem the Item object to be tested for identity with this Item.
+	 * @param F3::PHPCR::ItemInterface $otherItem the Item object to be tested for identity with this Item.
 	 * @return boolean TRUE if this Item object and otherItem represent the same actual repository item; FALSE otherwise.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Add (proper) checks for the repository and workspace conditions
 	 */
-	public function isSame(F3_PHPCR_ItemInterface $otherItem) {
+	public function isSame(F3::PHPCR::ItemInterface $otherItem) {
 		if ($this->getSession()->getWorkspace()->getName() != $otherItem->getSession()->getWorkspace()->getName()) return FALSE;
 
-		if ($this instanceof F3_PHPCR_NodeInterface) {
+		if ($this instanceof F3::PHPCR::NodeInterface) {
 			return (
-				($otherItem instanceof F3_PHPCR_NodeInterface) &&
+				($otherItem instanceof F3::PHPCR::NodeInterface) &&
 				($this->getIdentifier() == $otherItem->getIdentifier())
 			);
-		} elseif ($otherItem instanceof F3_PHPCR_PropertyInterface) {
+		} elseif ($otherItem instanceof F3::PHPCR::PropertyInterface) {
 			return (
-				($otherItem instanceof F3_PHPCR_PropertyInterface) &&
+				($otherItem instanceof F3::PHPCR::PropertyInterface) &&
 				($this->getName() == $otherItem->getName()) &&
 				$this->getParent()->isSame($otherItem->getParent())
 			);
@@ -222,11 +223,11 @@ abstract class F3_TYPO3CR_AbstractItem implements F3_PHPCR_ItemInterface {
 	 * Accepts an ItemVistor. Calls the appropriate ItemVistor visit method of
 	 * the visitor according to whether this Item is a Node or a Property.
 	 *
-	 * @param F3_PHPCR_ItemVisitorInterface $visitor The ItemVisitor to be accepted.
+	 * @param F3::PHPCR::ItemVisitorInterface $visitor The ItemVisitor to be accepted.
 	 * @throws RepositoryException if an error occurs.
 	 */
-	public function accept(F3_PHPCR_ItemVisitorInterface $visitor) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577699);
+	public function accept(F3::PHPCR::ItemVisitorInterface $visitor) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577699);
 	}
 
 }

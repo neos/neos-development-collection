@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Storage;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,7 +17,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
- * @version $Id:F3_TYPO3CR_Storage_Backend_PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3::TYPO3CR::Storage::Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 require_once('Zend/Search/Lucene.php');
@@ -25,10 +26,10 @@ require_once('Zend/Search/Lucene.php');
  * A helper class for the storage layer
  *
  * @package TYPO3CR
- * @version $Id:F3_TYPO3CR_Storage_Backend_PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3::TYPO3CR::Storage::Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Storage_Helper {
+class Helper {
 
 	/**
 	 * @var array
@@ -129,7 +130,7 @@ class F3_TYPO3CR_Storage_Helper {
 		$this->databaseHandle->query('DELETE FROM "nodes"');
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "name", "namespace", "parent", "nodetype", "nodetypenamespace") VALUES (?, \'\', \'\', \'\', \'unstructured\',\'http://www.jcp.org/jcr/nt/1.0\')');
 		$statementHandle->execute(array(
-			F3_FLOW3_Utility_Algorithms::generateUUID()
+			F3::FLOW3::Utility::Algorithms::generateUUID()
 		));
 	}
 

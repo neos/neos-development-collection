@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryInterface {
+class Query implements F3::FLOW3::Persistence::QueryInterface {
 
 	/**
 	 * @var string
@@ -36,32 +37,32 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	protected $className;
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_TYPO3CR_FLOW3_Persistence_DataMapper
+	 * @var F3::TYPO3CR::FLOW3::Persistence::DataMapper
 	 */
 	protected $dataMapper;
 
 	/**
-	 * @var F3_PHPCR_SessionInterface
+	 * @var F3::PHPCR::SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @var F3_PHPCR_Query_QueryObjectModelFactoryInterface
+	 * @var F3::PHPCR::Query::QueryObjectModelFactoryInterface
 	 */
 	protected $QOMFactory;
 
 	/**
-	 * @var F3_PHPCR_ValueFactoryInterface
+	 * @var F3::PHPCR::ValueFactoryInterface
 	 */
 	protected $valueFactory;
 
 	/**
-	 * @var F3_PHPCR_Query_QOM_ConstraintInterface
+	 * @var F3::PHPCR::Query::QOM::ConstraintInterface
 	 */
 	protected $constraint;
 
@@ -84,33 +85,33 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	/**
 	 * Injects the FLOW3 component factory
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
 	/**
 	 * Injects the DataMapper to map nodes to objects
 	 *
-	 * @param F3_TYPO3CR_FLOW3_Persistence_DataMapper $dataMapper
+	 * @param F3::TYPO3CR::FLOW3::Persistence::DataMapper $dataMapper
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectDataMapper(F3_TYPO3CR_FLOW3_Persistence_DataMapper $dataMapper) {
+	public function injectDataMapper(F3::TYPO3CR::FLOW3::Persistence::DataMapper $dataMapper) {
 		$this->dataMapper = $dataMapper;
 	}
 
 	/**
 	 * Injects the Content Repository used to persist data
 	 *
-	 * @param F3_PHPCR_RepositoryInterface $repository
+	 * @param F3::PHPCR::RepositoryInterface $repository
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectContentRepository(F3_PHPCR_RepositoryInterface $repository) {
+	public function injectContentRepository(F3::PHPCR::RepositoryInterface $repository) {
 		$this->session = $repository->login();
 		$this->QOMFactory = $this->session->getWorkspace()->getQueryManager()->getQOMFactory();
 		$this->valueFactory = $this->session->getValueFactory();
@@ -119,7 +120,7 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	/**
 	 * Executes the query against TYPO3CR and returns the result
 	 *
-	 * @return F3_PHPCR_Query_QueryResultInterface The query result
+	 * @return F3::PHPCR::Query::QueryResultInterface The query result
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function execute() {
@@ -136,8 +137,8 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	/**
 	 * The constraint used to limit the result set
 	 *
-	 * @param F3_PHPCR_Query_QOM_ConstraintInterface $constraint
-	 * @return F3_FLOW3_Persistence_QueryInterface
+	 * @param F3::PHPCR::Query::QOM::ConstraintInterface $constraint
+	 * @return F3::FLOW3::Persistence::QueryInterface
 	 */
 	public function matching($constraint) {
 		$this->constraint = $constraint;
@@ -149,14 +150,14 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_PHPCR_Query_QOM_ComparisonInterface
+	 * @return F3::PHPCR::Query::QOM::ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function equals($property, $operand) {
 		$this->operands[$property] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue($property),
-			F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+			F3::PHPCR::Query::QOM::QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
 			$this->QOMFactory->bindVariable($property)
 		);
 	}
@@ -166,14 +167,14 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_PHPCR_Query_QOM_ComparisonInterface
+	 * @return F3::PHPCR::Query::QOM::ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function like($property, $operand) {
 		$this->operands[$property] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue($property),
-			F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_LIKE,
+			F3::PHPCR::Query::QOM::QueryObjectModelConstantsInterface::OPERATOR_LIKE,
 			$this->QOMFactory->bindVariable($property)
 		);
 	}
@@ -183,14 +184,14 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_PHPCR_Query_QOM_ComparisonInterface
+	 * @return F3::PHPCR::Query::QOM::ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function lessThan($property, $operand) {
 		$this->operands[$property] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue($property),
-			F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_LESS_THAN,
+			F3::PHPCR::Query::QOM::QueryObjectModelConstantsInterface::OPERATOR_LESS_THAN,
 			$this->QOMFactory->bindVariable($property)
 		);
 	}
@@ -200,14 +201,14 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_PHPCR_Query_QOM_ComparisonInterface
+	 * @return F3::PHPCR::Query::QOM::ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function lessThanOrEqual($property, $operand) {
 		$this->operands[$property] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue($property),
-			F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
+			F3::PHPCR::Query::QOM::QueryObjectModelConstantsInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
 			$this->QOMFactory->bindVariable($property)
 		);
 	}
@@ -217,14 +218,14 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_PHPCR_Query_QOM_ComparisonInterface
+	 * @return F3::PHPCR::Query::QOM::ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function greaterThan($property, $operand) {
 		$this->operands[$property] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue($property),
-			F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_GREATER_THAN,
+			F3::PHPCR::Query::QOM::QueryObjectModelConstantsInterface::OPERATOR_GREATER_THAN,
 			$this->QOMFactory->bindVariable($property)
 		);
 	}
@@ -234,14 +235,14 @@ class F3_TYPO3CR_FLOW3_Persistence_Query implements F3_FLOW3_Persistence_QueryIn
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_PHPCR_Query_QOM_ComparisonInterface
+	 * @return F3::PHPCR::Query::QOM::ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function greaterThanOrEqual($property, $operand) {
 		$this->operands[$property] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue($property),
-			F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+			F3::PHPCR::Query::QOM::QueryObjectModelConstantsInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
 			$this->QOMFactory->bindVariable($property)
 		);
 	}

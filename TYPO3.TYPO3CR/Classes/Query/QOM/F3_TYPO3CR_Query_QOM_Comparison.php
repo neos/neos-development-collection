@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query::QOM;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,10 +30,10 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_Query_QOM_Comparison implements F3_PHPCR_Query_QOM_ComparisonInterface {
+class Comparison implements F3::PHPCR::Query::QOM::ComparisonInterface {
 
 	/**
-	 * @var F3_PHPCR_Query_QOM_DynamicOperandInterface
+	 * @var F3::PHPCR::Query::QOM::DynamicOperandInterface
 	 */
 	protected $operand1;
 
@@ -42,19 +43,19 @@ class F3_TYPO3CR_Query_QOM_Comparison implements F3_PHPCR_Query_QOM_ComparisonIn
 	protected $operator;
 
 	/**
-	 * @var F3_PHPCR_Query_QOM_StaticOperandInterface
+	 * @var F3::PHPCR::Query::QOM::StaticOperandInterface
 	 */
 	protected $operand2;
 
 	/**
 	 * Constructs this Comparison instance
 	 *
-	 * @param F3_PHPCR_Query_QOM_DynamicOperandInterface $operand1
+	 * @param F3::PHPCR::Query::QOM::DynamicOperandInterface $operand1
 	 * @param unknown_type $operator
-	 * @param F3_PHPCR_Query_QOM_StaticOperandInterface $operand2
+	 * @param F3::PHPCR::Query::QOM::StaticOperandInterface $operand2
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_PHPCR_Query_QOM_DynamicOperandInterface $operand1, $operator, F3_PHPCR_Query_QOM_StaticOperandInterface $operand2) {
+	public function __construct(F3::PHPCR::Query::QOM::DynamicOperandInterface $operand1, $operator, F3::PHPCR::Query::QOM::StaticOperandInterface $operand2) {
 		$this->operand1 = $operand1;
 		$this->operator = $operator;
 		$this->operand2 = $operand2;
@@ -75,7 +76,7 @@ class F3_TYPO3CR_Query_QOM_Comparison implements F3_PHPCR_Query_QOM_ComparisonIn
 	 *
 	 * Gets the first operand.
 	 *
-	 * @return F3_PHPCR_Query_QOM_DynamicOperandInterface the operand; non-null
+	 * @return F3::PHPCR::Query::QOM::DynamicOperandInterface the operand; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getOperand1() {
@@ -85,7 +86,7 @@ class F3_TYPO3CR_Query_QOM_Comparison implements F3_PHPCR_Query_QOM_ComparisonIn
 	/**
 	 * Gets the operator.
 	 *
-	 * @return integer one of F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface.OPERATOR_*
+	 * @return integer one of F3::PHPCR::Query::QOM::QueryObjectModelConstantsInterface.OPERATOR_*
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getOperator() {
@@ -95,7 +96,7 @@ class F3_TYPO3CR_Query_QOM_Comparison implements F3_PHPCR_Query_QOM_ComparisonIn
 	/**
 	 * Gets the second operand.
 	 *
-	 * @return F3_PHPCR_Query_QOM_StaticOperandInterface the operand; non-null
+	 * @return F3::PHPCR::Query::QOM::StaticOperandInterface the operand; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getOperand2() {

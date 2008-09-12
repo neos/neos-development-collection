@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,16 +29,16 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeType_NodeTypeTest extends F3_Testing_BaseTestCase {
+class NodeTypeTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function nodeTypeIsPrototype() {
-		$firstInstance = $this->componentFactory->getComponent('F3_TYPO3CR_NodeType_NodeType', 'name');
-		$secondInstance = $this->componentFactory->getComponent('F3_TYPO3CR_NodeType_NodeType', 'name');
-		$this->assertNotSame($firstInstance, $secondInstance, 'F3_TYPO3CR_NodeType_NodeType is not prototype.');
+		$firstInstance = $this->componentFactory->getComponent('F3::TYPO3CR::NodeType::NodeType', 'name');
+		$secondInstance = $this->componentFactory->getComponent('F3::TYPO3CR::NodeType::NodeType', 'name');
+		$this->assertNotSame($firstInstance, $secondInstance, 'F3::TYPO3CR::NodeType::NodeType is not prototype.');
 	}
 
 }

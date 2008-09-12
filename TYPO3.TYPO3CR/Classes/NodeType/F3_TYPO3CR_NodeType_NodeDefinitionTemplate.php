@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -35,7 +36,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_NodeType_NodeDefinitionTemplate extends F3_TYPO3CR_NodeType_NodeDefinition implements F3_PHPCR_NodeType_NodeDefinitionTemplateInterface {
+class NodeDefinitionTemplate extends F3::TYPO3CR::NodeType::NodeDefinition implements F3::PHPCR::NodeType::NodeDefinitionTemplateInterface {
 
 	/**
 	 * Sets the name of the node.
@@ -99,7 +100,7 @@ class F3_TYPO3CR_NodeType_NodeDefinitionTemplate extends F3_TYPO3CR_NodeType_Nod
 	 * @return void
 	 */
 	public function setRequiredPrimaryTypes(array $requiredPrimaryTypes) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097328);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097328);
 	}
 
 	/**
@@ -109,7 +110,7 @@ class F3_TYPO3CR_NodeType_NodeDefinitionTemplate extends F3_TYPO3CR_NodeType_Nod
 	 * @return void
 	 */
 	public function setDefaultPrimaryType($defaultPrimaryType) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097329);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097329);
 	}
 
 	/**

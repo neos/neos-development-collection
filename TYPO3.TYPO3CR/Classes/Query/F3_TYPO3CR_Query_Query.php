@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,15 +30,15 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
+class Query implements F3::PHPCR::Query::QueryInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_TYPO3CR_Storage_BackendInterface
+	 * @var F3::TYPO3CR::Storage::BackendInterface
 	 */
 	protected $storageBackend;
 
@@ -59,22 +60,22 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	/**
 	 * Injects the Component Factory
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
 	/**
 	 * Injects the session for this query
 	 *
-	 * @param F3_PHPCR_SessionInterface $session
+	 * @param F3::PHPCR::SessionInterface $session
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectSession(F3_PHPCR_SessionInterface $session) {
+	public function injectSession(F3::PHPCR::SessionInterface $session) {
 		$this->storageBackend = $session->getStorageBackend();
 	}
 
@@ -118,13 +119,13 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * version history structure below /jcr:system/jcr:versionHistory.
 	 *
 	 * @param integer $searchSpace flag which determines the scope of the search
-	 * @return F3_PHPCR_Query_QueryResultInterface a QueryResult object
-	 * @throws F3_PHPCR_Query_SearchNotSupportedException if the QueryManager does not support the search mode.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs
+	 * @return F3::PHPCR::Query::QueryResultInterface a QueryResult object
+	 * @throws F3::PHPCR::Query::SearchNotSupportedException if the QueryManager does not support the search mode.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function execute($searchSpace = F3_PHPCR_Query_QueryInterface::SEARCH_WORKSPACE) {
-		return $this->componentFactory->getComponent('F3_PHPCR_Query_QueryResultInterface', $this->storageBackend->findNodeIdentifiers($this));
+	public function execute($searchSpace = F3::PHPCR::Query::QueryInterface::SEARCH_WORKSPACE) {
+		return $this->componentFactory->getComponent('F3::PHPCR::Query::QueryResultInterface', $this->storageBackend->findNodeIdentifiers($this));
 	}
 
 	/**
@@ -169,7 +170,7 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * @return string the query statement.
 	 */
 	public function getStatement() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897752);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897752);
 	}
 
 	/**
@@ -190,11 +191,11 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * of the nt:query node that stores the query.
 	 *
 	 * @return string path of the node representing this query.
-	 * @throws F3_PHPCR_ItemNotFoundException if this query is not a stored query.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::ItemNotFoundException if this query is not a stored query.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getStoredQueryPath() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897754);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897754);
 	}
 
 	/**
@@ -215,17 +216,17 @@ class F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_QueryInterface {
 	 * then the new node is appended to the end of the child node list.
 	 *
 	 * @param string $absPath absolute path the query should be stored at
-	 * @return F3_PHPCR_NodeInterface the newly created node.
-	 * @throws F3_PHPCR_ItemExistsException if an item at the specified path already exists, same-name siblings are not allowed and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_PathNotFoundException if the specified path implies intermediary Nodes that do not exist or the last element of relPath has an index, and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_NodeType_ConstraintViolationException if a node type or implementation-specific constraint is violated or if an attempt is made to add a node as the child of a property and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Version_VersionException if the node to which the new child is being added is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the addition of the node and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException in a level 1 implementation.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs or if the absPath provided has an index on its final element.
+	 * @return F3::PHPCR::NodeInterface the newly created node.
+	 * @throws F3::PHPCR::ItemExistsException if an item at the specified path already exists, same-name siblings are not allowed and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::PathNotFoundException if the specified path implies intermediary Nodes that do not exist or the last element of relPath has an index, and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::NodeType::ConstraintViolationException if a node type or implementation-specific constraint is violated or if an attempt is made to add a node as the child of a property and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Version::VersionException if the node to which the new child is being added is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the addition of the node and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException in a level 1 implementation.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs or if the absPath provided has an index on its final element.
 	 */
 	public function storeAsNode($absPath) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897755);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897755);
 	}
 
 }

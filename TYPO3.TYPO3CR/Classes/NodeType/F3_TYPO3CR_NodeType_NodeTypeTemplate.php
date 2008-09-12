@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -40,7 +41,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_NodeType_NodeTypeTemplate extends F3_TYPO3CR_NodeType_NodeTypeDefinition implements F3_PHPCR_NodeType_NodeTypeTemplateInterface {
+class NodeTypeTemplate extends F3::TYPO3CR::NodeType::NodeTypeDefinition implements F3::PHPCR::NodeType::NodeTypeTemplateInterface {
 
 	/**
 	 * Sets the name of the node type.
@@ -116,7 +117,7 @@ class F3_TYPO3CR_NodeType_NodeTypeTemplate extends F3_TYPO3CR_NodeType_NodeTypeD
 	 * @return array a mutable List of PropertyDefinitionTemplate objects.
 	 */
 	public function getPropertyDefinitionTemplates() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213014854);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213014854);
 	}
 
 	/**
@@ -127,7 +128,7 @@ class F3_TYPO3CR_NodeType_NodeTypeTemplate extends F3_TYPO3CR_NodeType_NodeTypeD
 	 * @return array a mutable List of NodeDefinitionTemplate objects.
 	 */
 	public function getNodeDefinitionTemplates() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213014853);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213014853);
 	}
 }
 

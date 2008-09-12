@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeType_NodeTypeTemplateTest extends F3_Testing_BaseTestCase {
+class NodeTypeTemplateTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Make sure the NodeTypeTemplate is protoype
@@ -37,9 +38,9 @@ class F3_TYPO3CR_NodeType_NodeTypeTemplateTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function nodeTypeTemplateIsPrototype() {
-		$firstInstance = $this->componentFactory->getComponent('F3_TYPO3CR_NodeType_NodeTypeTemplate');
-		$secondInstance = $this->componentFactory->getComponent('F3_TYPO3CR_NodeType_NodeTypeTemplate');
-		$this->assertNotSame($firstInstance, $secondInstance, 'F3_TYPO3CR_NodeType_NodeTypeTemplate is not prototype.');
+		$firstInstance = $this->componentFactory->getComponent('F3::TYPO3CR::NodeType::NodeTypeTemplate');
+		$secondInstance = $this->componentFactory->getComponent('F3::TYPO3CR::NodeType::NodeTypeTemplate');
+		$this->assertNotSame($firstInstance, $secondInstance, 'F3::TYPO3CR::NodeType::NodeTypeTemplate is not prototype.');
 	}
 
 	/**
@@ -49,7 +50,7 @@ class F3_TYPO3CR_NodeType_NodeTypeTemplateTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function newNodeTypeTemplateHasExpectedDefaults() {
-		$nodeTypeTemplate = new F3_TYPO3CR_NodeType_NodeTypeTemplate();
+		$nodeTypeTemplate = new F3::TYPO3CR::NodeType::NodeTypeTemplate();
 		$this->assertNull($nodeTypeTemplate->getName(), 'The name of a new NodeTypeTemplate must be NULL');
 		$this->assertEquals(array('nt:base'), $nodeTypeTemplate->getDeclaredSupertypeNames(), 'The declared supertype names for a new NodeTypeTemplate must contain only nt:base');
 		$this->assertFalse($nodeTypeTemplate->isAbstract(), 'A new NodeTypeTemplate may not be abstract');

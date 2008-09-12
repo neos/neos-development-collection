@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_PathParser {
+class PathParser {
 
 	const SEARCH_MODE_NODES = 1;
 	const SEARCH_MODE_PROPERTIES = 2;
@@ -37,15 +38,15 @@ class F3_TYPO3CR_PathParser {
 	 * Parse a path - It can be either a relative or an absolute path. We support same-name siblings as well.
 	 *
 	 * @param string $path Relative or absolute path according to the specification (Section 3.6)
-	 * @param F3_PHPCR_NodeInterface $currentNode current node
+	 * @param F3::PHPCR::NodeInterface $currentNode current node
 	 * @param integer $searchMode 1 (default) for returning only Nodes, 2 for returning only Properties, 3 for returning both
-	 * @return F3_PHPCR_NodeInterface the root node
+	 * @return F3::PHPCR::NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public static function parsePath($path, F3_PHPCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
+	public static function parsePath($path, F3::PHPCR::NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
 		if (self::isPathAbsolute($path)) {
 			$currentNode = self::getRootNode($currentNode);
-			$path = F3_PHP6_Functions::substr($path, 1);
+			$path = F3::PHP6::Functions::substr($path, 1);
 		}
 
 		return self::parseRelativePath($path, $currentNode, $searchMode);
@@ -55,15 +56,15 @@ class F3_TYPO3CR_PathParser {
 	 * Parse a relative path.
 	 *
 	 * @param string $path Relative path according to the specification (Section 3.6)
-	 * @param F3_PHPCR_NodeInterface $currentNode current node
+	 * @param F3::PHPCR::NodeInterface $currentNode current node
 	 * @param integer $searchMode 1 (default) for returning only Nodes, 2 for returning only Properties, 3 for returning both
-	 * @return F3_PHPCR_NodeInterface the root node
+	 * @return F3::PHPCR::NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implementation of Namespaces!
 	 * @todo Add name pattern support
 	 */
-	protected static function parseRelativePath($path, F3_PHPCR_NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
+	protected static function parseRelativePath($path, F3::PHPCR::NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
 		if ($path == '' && ($searchMode & self::SEARCH_MODE_NODES)) {
 			return $currentNode;
 		}
@@ -72,7 +73,7 @@ class F3_TYPO3CR_PathParser {
 		$matchResult = array();
 		if (preg_match('/(.*)\[(.*)\]/', $firstElement, $matchResult)) {
 			if ($matchResult[2] < 1) {
-				throw new F3_PHPCR_RepositoryException('Invalid relative path supplied, index must be > 0!', 1189350810);
+				throw new F3::PHPCR::RepositoryException('Invalid relative path supplied, index must be > 0!', 1189350810);
 			}
 
 			$name = $matchResult[1];
@@ -115,23 +116,23 @@ class F3_TYPO3CR_PathParser {
 			}
 		}
 
-		throw new F3_PHPCR_PathNotFoundException('Node or property not found!', 1189351448);
+		throw new F3::PHPCR::PathNotFoundException('Node or property not found!', 1189351448);
 	}
 
 	/**
 	 * Get root node by traversing the tree up
 	 *
-	 * @param F3_PHPCR_NodeInterface $currentNode current node
-	 * @return F3_PHPCR_NodeInterface the root node
+	 * @param F3::PHPCR::NodeInterface $currentNode current node
+	 * @return F3::PHPCR::NodeInterface the root node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	protected static function getRootNode(F3_PHPCR_NodeInterface $currentNode) {
+	protected static function getRootNode(F3::PHPCR::NodeInterface $currentNode) {
 		try {
 			return $currentNode->getParent();
-		} catch (F3_PHPCR_ItemNotFoundException $e) {
+		} catch (F3::PHPCR::ItemNotFoundException $e) {
 			return $currentNode;
 		}
-		throw new F3_PHPCR_RepositoryException('Root node could not be found!', 1213715217);
+		throw new F3::PHPCR::RepositoryException('Root node could not be found!', 1213715217);
 	}
 
 	/**
@@ -147,7 +148,7 @@ class F3_TYPO3CR_PathParser {
 
 	/**
 	 * Returns the first element of the path and the remainder.
-	 * Usage: list($firstElement, $remainingPath, $numberOfElementsRemaining) = F3_TYPO3CR_PathParser::getFirstPathPart($path);
+	 * Usage: list($firstElement, $remainingPath, $numberOfElementsRemaining) = F3::TYPO3CR::PathParser::getFirstPathPart($path);
 	 *
 	 * @param string $path relative or absolute path
 	 * @return array array[0] is first element, array[1] is the rest, and array[2] is the number of parts remaining in array[1]
@@ -156,7 +157,7 @@ class F3_TYPO3CR_PathParser {
 	 */
 	public static function getFirstPathPart($path) {
 		if (self::isPathAbsolute($path)) {
-			$path = F3_PHP6_Functions::substr($path, 1);
+			$path = F3::PHP6::Functions::substr($path, 1);
 		}
 		$pathArray = explode('/', $path);
 		$firstElement = array_shift($pathArray);
@@ -166,7 +167,7 @@ class F3_TYPO3CR_PathParser {
 
 	/**
 	 * Returns the last element of the path and the remainder.
-	 * Usage: list($lastElement, $remainingPath, $numberOfElementsRemaining) = F3_TYPO3CR_PathParser::getLastPathPart($pathString);
+	 * Usage: list($lastElement, $remainingPath, $numberOfElementsRemaining) = F3::TYPO3CR::PathParser::getLastPathPart($pathString);
 	 *
 	 * @param string $path relative or absolute path
 	 * @return array array[0] is last element, array[1] is the first part, and array[2] is the number of parts remaining in array[1]

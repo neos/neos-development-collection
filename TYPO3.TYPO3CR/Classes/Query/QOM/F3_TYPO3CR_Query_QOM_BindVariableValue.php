@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query::QOM;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -33,7 +34,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_Query_QOM_BindVariableValue extends F3_TYPO3CR_Query_QOM_StaticOperand implements F3_PHPCR_Query_QOM_BindVariableValueInterface {
+class BindVariableValue extends F3::TYPO3CR::Query::QOM::StaticOperand implements F3::PHPCR::Query::QOM::BindVariableValueInterface {
 
 	/**
 	 * @var string

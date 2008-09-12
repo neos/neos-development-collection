@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,25 +27,25 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
+class Session implements F3::PHPCR::SessionInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_PHPCR_RepositoryInterface
+	 * @var F3::PHPCR::RepositoryInterface
 	 */
 	protected $repository;
 
 	/**
-	 * @var F3_PHPCR_WorkspaceInterface
+	 * @var F3::PHPCR::WorkspaceInterface
 	 */
 	protected $workspace;
 
 	/**
-	 * @var F3_TYPO3CR_Storage_BackendInterface
+	 * @var F3::TYPO3CR::Storage::BackendInterface
 	 */
 	protected $storageBackend;
 
@@ -54,42 +55,42 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	protected $isLive = TRUE;
 
 	/**
-	 * @var F3_PHPCR_NodeInterface
+	 * @var F3::PHPCR::NodeInterface
 	 */
 	protected $rootNode;
 
 	/**
-	 * @var array of F3_PHPCR_NodeInterface - stores references to all loaded nodes in a Identifier->value fashion.
+	 * @var array of F3::PHPCR::NodeInterface - stores references to all loaded nodes in a Identifier->value fashion.
 	 */
 	protected $currentlyLoadedNodes = array();
 
 	/**
-	 * @var array of F3_PHPCR_NodeInterface - stores references to all new nodes (UoW)
+	 * @var array of F3::PHPCR::NodeInterface - stores references to all new nodes (UoW)
 	 */
 	protected $currentlyNewNodes = array();
 
 	/**
-	 * @var array of F3_PHPCR_NodeInterface - stores references to all dirty nodes (UoW)
+	 * @var array of F3::PHPCR::NodeInterface - stores references to all dirty nodes (UoW)
 	 */
 	protected $currentlyDirtyNodes = array();
 
 	/**
-	 * @var array of F3_PHPCR_NodeInterface - stores references to all removed node (UoW)
+	 * @var array of F3::PHPCR::NodeInterface - stores references to all removed node (UoW)
 	 */
 	protected $currentlyRemovedNodes = array();
 
 	/**
-	 * @var array of F3_PHPCR_PropertyInterface - stores references to all new properties (UoW)
+	 * @var array of F3::PHPCR::PropertyInterface - stores references to all new properties (UoW)
 	 */
 	protected $currentlyNewProperties = array();
 
 	/**
-	 * @var array of F3_PHPCR_PropertyInterface - stores references to all dirty properties (UoW)
+	 * @var array of F3::PHPCR::PropertyInterface - stores references to all dirty properties (UoW)
 	 */
 	protected $currentlyDirtyProperties = array();
 
 	/**
-	 * @var array of F3_PHPCR_PropertyInterface - stores references to all removed properties (UoW)
+	 * @var array of F3::PHPCR::PropertyInterface - stores references to all removed properties (UoW)
 	 */
 	protected $currentlyRemovedProperties = array();
 
@@ -102,26 +103,26 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Constructs a Session object
 	 *
 	 * @param string $workspaceName
-	 * @param F3_PHPCR_RepositoryInterface $repository
-	 * @param F3_TYPO3CR_Storage_BackendInterface $storageBackend
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::PHPCR::RepositoryInterface $repository
+	 * @param F3::TYPO3CR::Storage::BackendInterface $storageBackend
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @throws InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($workspaceName, F3_PHPCR_RepositoryInterface $repository, F3_TYPO3CR_Storage_BackendInterface $storageBackend, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct($workspaceName, F3::PHPCR::RepositoryInterface $repository, F3::TYPO3CR::Storage::BackendInterface $storageBackend, F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
 
 		$this->componentFactory = $componentFactory;
 		$this->repository = $repository;
 		$this->storageBackend = $storageBackend;
 
-		$this->workspace = $this->componentFactory->getComponent('F3_PHPCR_WorkspaceInterface', $workspaceName, $this);
+		$this->workspace = $this->componentFactory->getComponent('F3::PHPCR::WorkspaceInterface', $workspaceName, $this);
 	}
 
 	/**
-	 * Returns the F3_TYPO3CR_Storage_BackendInterface instance of the session
+	 * Returns the F3::TYPO3CR::Storage::BackendInterface instance of the session
 	 *
-	 * @return F3_TYPO3CR_Storage_BackendInterface
+	 * @return F3::TYPO3CR::Storage::BackendInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getStorageBackend() {
@@ -131,7 +132,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	/**
 	 * Returns the Repository object through which the Session object was aquired.
 	 *
-	 * @return F3_PHPCR_RepositoryInterface
+	 * @return F3::PHPCR::RepositoryInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRepository() {
@@ -145,7 +146,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @return mixed
 	 */
 	public function getUserID() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408404);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408404);
 	}
 
 	/**
@@ -156,7 +157,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @return array
 	 */
 	public function getAttributeNames() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408403);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408403);
 	}
 
 	/**
@@ -167,13 +168,13 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @return object The value of the attribute or null if no attribute of the given name exists.
 	 */
 	public function getAttribute($name) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408402);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408402);
 	}
 
 	/**
 	 * Returns the Workspace attached to this Session.
 	 *
-	 * @return F3_PHPCR_WorkspaceInterface
+	 * @return F3::PHPCR::WorkspaceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getWorkspace() {
@@ -184,13 +185,13 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Returns the root node of the workspace, /. This node is the main access
 	 * point to the content of the workspace.
 	 *
-	 * @return F3_PHPCR_NodeInterface
+	 * @return F3::PHPCR::NodeInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRootNode() {
 		if ($this->rootNode === NULL) {
 			$this->rootNode = $this->componentFactory->getComponent(
-				'F3_PHPCR_NodeInterface',
+				'F3::PHPCR::NodeInterface',
 				$this->storageBackend->getRawRootNode(),
 				$this);
 			$this->currentlyLoadedNodes[$this->rootNode->getIdentifier()] = $this->rootNode;
@@ -209,20 +210,20 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * the same actual persistent workspace entity in the repository as is represented
 	 * by the Workspace object tied to this Session.
 	 *
-	 * @param F3_PHPCR_CredentialsInterface $credentials A Credentials object
-	 * @return F3_PHPCR_SessionInterface a Session object
-	 * @throws F3_PHPCR_LoginException if the current session does not have sufficient permissions to perform the operation.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @param F3::PHPCR::CredentialsInterface $credentials A Credentials object
+	 * @return F3::PHPCR::SessionInterface a Session object
+	 * @throws F3::PHPCR::LoginException if the current session does not have sufficient permissions to perform the operation.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
-	public function impersonate(F3_PHPCR_CredentialsInterface $credentials) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408401);
+	public function impersonate(F3::PHPCR::CredentialsInterface $credentials) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408401);
 	}
 
 	/**
 	 * Get a node by its identifier
 	 *
 	 * @param string $id
-	 * @return F3_PHPCR_NodeInterface
+	 * @return F3::PHPCR::NodeInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -233,9 +234,9 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 
 		$rawNode = $this->storageBackend->getRawNodeByIdentifier($id);
 		if ($rawNode === FALSE) {
-			throw new F3_PHPCR_ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
+			throw new F3::PHPCR::ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
 		}
-		$node = $this->componentFactory->getComponent('F3_PHPCR_NodeInterface', $rawNode, $this);
+		$node = $this->componentFactory->getComponent('F3::PHPCR::NodeInterface', $rawNode, $this);
 		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
 
 		return $node;
@@ -253,20 +254,20 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * methods are likely to be more efficient than getItem.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_PHPCR_ItemInterface
-	 * @throws F3_PHPCR_PathNotFoundException
+	 * @return F3::PHPCR::ItemInterface
+	 * @throws F3::PHPCR::PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getItem($absPath) {
-		return F3_TYPO3CR_PathParser::parsePath($absPath, $this->getRootNode(), F3_TYPO3CR_PathParser::SEARCH_MODE_ITEMS);
+		return F3::TYPO3CR::PathParser::parsePath($absPath, $this->getRootNode(), F3::TYPO3CR::PathParser::SEARCH_MODE_ITEMS);
 	}
 
 	/**
 	 * Returns the node at the specified absolute path in the workspace.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_PHPCR_NodeInterface
-	 * @throws F3_PHPCR_PathNotFoundException
+	 * @return F3::PHPCR::NodeInterface
+	 * @throws F3::PHPCR::PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getNode($absPath) {
@@ -277,8 +278,8 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Returns the property at the specified absolute path in the workspace.
 	 *
 	 * @param string $absPath absolute path
-	 * @return F3_PHPCR_PropertyInterface
-	 * @throws F3_PHPCR_PathNotFoundException
+	 * @return F3::PHPCR::PropertyInterface
+	 * @throws F3::PHPCR::PathNotFoundException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getProperty($absPath) {
@@ -291,10 +292,10 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $absPath An absolute path.
 	 * @return boolean a boolean
-	 * @throws F3_PHPCR_RepositoryException if absPath is not a well-formed absolute path.
+	 * @throws F3::PHPCR::RepositoryException if absPath is not a well-formed absolute path.
 	 */
 	public function itemExists($absPath) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485251);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485251);
 	}
 
 	/**
@@ -303,10 +304,10 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $absPath An absolute path.
 	 * @return boolean a boolean
-	 * @throws F3_PHPCR_RepositoryException if absPath is not a well-formed absolute path.
+	 * @throws F3::PHPCR::RepositoryException if absPath is not a well-formed absolute path.
 	 */
 	public function nodeExists($absPath) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485252);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485252);
 	}
 
 	/**
@@ -315,10 +316,10 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $absPath An absolute path.
 	 * @return boolean a boolean
-	 * @throws F3_PHPCR_RepositoryException if absPath is not a well-formed absolute path.
+	 * @throws F3::PHPCR::RepositoryException if absPath is not a well-formed absolute path.
 	 */
 	public function propertyExists($absPath) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485253);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485253);
 	}
 
 	/**
@@ -355,15 +356,15 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param string $srcAbsPath the root of the subtree to be moved.
 	 * @param string $destAbsPath the location to which the subtree is to be moved.
 	 * @return void
-	 * @throws F3_PHPCR_ItemExistsException - if a node already exists at destAbsPath and same-name siblings are not allowed.
-	 * @throws F3_PHPCR_PathNotFoundException - if either srcAbsPath or destAbsPath cannot be found and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Version_VersionException - if the parent node of destAbsPath or the parent node of srcAbsPath is versionable and checked-in, or or is non-versionable and its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_ConstraintViolationException - if a node-type or other constraint violation is detected immediately and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Lock_LockException - if the move operation would violate a lock and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_RepositoryException - if the last element of destAbsPath has an index or if another error occurs.
+	 * @throws F3::PHPCR::ItemExistsException - if a node already exists at destAbsPath and same-name siblings are not allowed.
+	 * @throws F3::PHPCR::PathNotFoundException - if either srcAbsPath or destAbsPath cannot be found and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Version::VersionException - if the parent node of destAbsPath or the parent node of srcAbsPath is versionable and checked-in, or or is non-versionable and its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException - if a node-type or other constraint violation is detected immediately and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException - if the move operation would violate a lock and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::RepositoryException - if the last element of destAbsPath has an index or if another error occurs.
 	 */
 	public function move($srcAbsPath, $destAbsPath) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485254);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485254);
 	}
 
 	/**
@@ -380,15 +381,15 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * by matching identifiers and paths.
 	 *
 	 * @return void
-	 * @throws F3_PHPCR_AccessDeniedException if any of the changes to be persisted would violate the access privileges of the this Session. Also thrown if any of the changes to be persisted would cause the removal of a node that is currently referenced by a REFERENCE property that this Session does not have read access to.
-	 * @throws F3_PHPCR_ItemExistsException if any of the changes to be persisted would be prevented by the presence of an already existing item in the workspace.
-	 * @throws F3_PHPCR_ConstraintViolationException if any of the changes to be persisted would violate a node type or restriction. Additionally, a repository may use this exception to enforce implementation- or configuration-dependent restrictions.
-	 * @throws F3_PHPCR_InvalidItemStateException if any of the changes to be persisted conflicts with a change already persisted through another session and the implementation is such that this conflict can only be detected at save-time and therefore was not detected earlier, at change-time.
-	 * @throws F3_PHPCR_ReferentialIntegrityException if any of the changes to be persisted would cause the removal of a node that is currently referenced by a REFERENCE property that this Session has read access to.
-	 * @throws F3_PHPCR_Version_VersionException if the save would make a result in a change to persistent storage that would violate the read-only status of a checked-in node.
-	 * @throws F3_PHPCR_Lock_LockException if the save would result in a change to persistent storage that would violate a lock.
-	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException if the save would result in the addition of a node with an unrecognized node type.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::AccessDeniedException if any of the changes to be persisted would violate the access privileges of the this Session. Also thrown if any of the changes to be persisted would cause the removal of a node that is currently referenced by a REFERENCE property that this Session does not have read access to.
+	 * @throws F3::PHPCR::ItemExistsException if any of the changes to be persisted would be prevented by the presence of an already existing item in the workspace.
+	 * @throws F3::PHPCR::ConstraintViolationException if any of the changes to be persisted would violate a node type or restriction. Additionally, a repository may use this exception to enforce implementation- or configuration-dependent restrictions.
+	 * @throws F3::PHPCR::InvalidItemStateException if any of the changes to be persisted conflicts with a change already persisted through another session and the implementation is such that this conflict can only be detected at save-time and therefore was not detected earlier, at change-time.
+	 * @throws F3::PHPCR::ReferentialIntegrityException if any of the changes to be persisted would cause the removal of a node that is currently referenced by a REFERENCE property that this Session has read access to.
+	 * @throws F3::PHPCR::Version::VersionException if the save would make a result in a change to persistent storage that would violate the read-only status of a checked-in node.
+	 * @throws F3::PHPCR::Lock::LockException if the save would result in a change to persistent storage that would violate a lock.
+	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException if the save would result in the addition of a node with an unrecognized node type.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function save() {
@@ -425,10 +426,10 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param boolean $keepChanges a boolean
 	 * @return void
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function refresh($keepChanges) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485255);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485255);
 	}
 
 	/**
@@ -436,21 +437,21 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * otherwise returns false.
 	 *
 	 * @return boolean a boolean
-	 * @throws F3_PHPCR_RepositoryException if an error occurs
+	 * @throws F3::PHPCR::RepositoryException if an error occurs
 	 */
 	public function hasPendingChanges() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485256);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485256);
 	}
 
 	/**
 	 * This method returns a ValueFactory that is used to create Value objects for
 	 * use when setting repository properties.
 	 *
-	 * @return F3_PHPCR_ValueFactoryInterface
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @return F3::PHPCR::ValueFactoryInterface
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function getValueFactory() {
-		return $this->componentFactory->getComponent('F3_PHPCR_ValueFactoryInterface');
+		return $this->componentFactory->getComponent('F3::PHPCR::ValueFactoryInterface');
 	}
 
 	/**
@@ -480,10 +481,10 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param string $absPath an absolute path.
 	 * @param string $actions a comma separated list of action strings.
 	 * @return boolean true if this Session has permission to perform the specified actions at the specified absPath.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function hasPermission($absPath, $actions) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485257);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485257);
 	}
 
 	/**
@@ -515,10 +516,10 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param string $actions a comma separated list of action strings.
 	 * @return void
 	 * @throws java.security.AccessControlException If permission is denied.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function checkPermission($absPath, $actions) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485258);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485258);
 	}
 
 	/**
@@ -575,14 +576,14 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param string $parentAbsPath the absolute path of a node under which (as child) the imported subtree will be built.
 	 * @param integer $uuidBehavior a four-value flag that governs how incoming identifiers are handled.
 	 * @return org.xml.sax.ContentHandler whose methods may be called to feed SAX events into the deserializer.
-	 * @throws F3_PHPCR_PathNotFoundException - if no node exists at parentAbsPath and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_ConstraintViolationException - if the new subtree cannot be added to the node at parentAbsPath due to node-type or other implementation-specific constraints, and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Version_VersionException - if the node at parentAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_Lock_LockException - if a lock prevents the addition of the subtree and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_RepositoryException - if another error occurs.
+	 * @throws F3::PHPCR::PathNotFoundException - if no node exists at parentAbsPath and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException - if the new subtree cannot be added to the node at parentAbsPath due to node-type or other implementation-specific constraints, and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Version::VersionException - if the node at parentAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::Lock::LockException - if a lock prevents the addition of the subtree and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::RepositoryException - if another error occurs.
 	 */
 	public function getImportContentHandler($parentAbsPath, $uuidBehavior) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485259);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485259);
 	}
 
 	/**
@@ -645,16 +646,16 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param integer $uuidBehavior a four-value flag that governs how incoming identifiers are handled.
 	 * @return void
 	 * @throws RuntimeException if an error during an I/O operation occurs.
-	 * @throws F3_PHPCR_PathNotFoundException if no node exists at parentAbsPath and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_ItemExistsException if deserialization would overwrite an existing item and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_ConstraintViolationException if a node type or other implementation-specific constraint is violated that would be checked on a normal write method or if uuidBehavior is set to IMPORT_UUID_COLLISION_REMOVE_EXISTING and an incoming node has the same UUID as the node at parentAbsPath or one of its ancestors.
-	 * @throws F3_PHPCR_Version_VersionException if the node at parentAbsPath is versionable and checked-in, or its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_InvalidSerializedDataException if incoming stream is not a valid XML document.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the addition of the subtree and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_RepositoryException is another error occurs.
+	 * @throws F3::PHPCR::PathNotFoundException if no node exists at parentAbsPath and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::ItemExistsException if deserialization would overwrite an existing item and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::ConstraintViolationException if a node type or other implementation-specific constraint is violated that would be checked on a normal write method or if uuidBehavior is set to IMPORT_UUID_COLLISION_REMOVE_EXISTING and an incoming node has the same UUID as the node at parentAbsPath or one of its ancestors.
+	 * @throws F3::PHPCR::Version::VersionException if the node at parentAbsPath is versionable and checked-in, or its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::InvalidSerializedDataException if incoming stream is not a valid XML document.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the addition of the subtree and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::RepositoryException is another error occurs.
 	 */
 	public function importXML($parentAbsPath, $in, $uuidBehavior) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485260);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485260);
 	}
 
 	/**
@@ -698,14 +699,14 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param boolean $skipBinary A boolean governing whether binary properties are to be serialized.
 	 * @param boolean $noRecurse A boolean governing whether the subtree at absPath is to be recursed.
 	 * @return void
-	 * @throws F3_PHPCR_PathNotFoundException if no node exists at absPath.
+	 * @throws F3::PHPCR::PathNotFoundException if no node exists at absPath.
 	 * @throws java.io.IOException if an error during an I/O operation occurs.
 	 * @throws org.xml.sax.SAXException if an error occurs while feeding events to the org.xml.sax.ContentHandler.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @todo Decide in what to use for org.xml.sax.ContentHandler
 	 */
 	public function exportSystemView($absPath, $out, $skipBinary, $noRecurse) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485261);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485261);
 	}
 
 	/**
@@ -744,14 +745,14 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param boolean $skipBinary A boolean governing whether binary properties are to be serialized.
 	 * @param boolean $noRecurse A boolean governing whether the subtree at absPath is to be recursed.
 	 * @return void
-	 * @throws F3_PHPCR_PathNotFoundException if no node exists at absPath.
+	 * @throws F3::PHPCR::PathNotFoundException if no node exists at absPath.
 	 * @throws RuntimeException if an error during an I/O operation occurs.
 	 * @throws org.xml.sax.SAXException if an error occurs while feeding events to the org.xml.sax.ContentHandler.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @todo Decide in what to use for org.xml.sax.ContentHandler
 	 */
 	public function exportDocumentView($absPath, $out, $skipBinary, $noRecurse) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485262);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485262);
 	}
 
 	/**
@@ -765,17 +766,17 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @param string $prefix a string
 	 * @param string $uri a string
 	 * @return void
-	 * @throws F3_PHPCR_NamespaceException if the local mapping cannot be done.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::NamespaceException if the local mapping cannot be done.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function setNamespacePrefix($prefix, $uri) {
-		if (F3_PHP6_Functions::strtolower(F3_PHP6_Functions::substr($prefix, 0, 3)) == 'xml') {
-			throw new F3_PHPCR_NamespaceException('Attempt to register a prefix which starts with "XML" (in any combination of case)', 1190282877);
+		if (F3::PHP6::Functions::strtolower(F3::PHP6::Functions::substr($prefix, 0, 3)) == 'xml') {
+			throw new F3::PHPCR::NamespaceException('Attempt to register a prefix which starts with "XML" (in any combination of case)', 1190282877);
 		}
 
 		if (empty($prefix) || empty($uri)) {
-			throw new F3_PHPCR_NamespaceException('Attempt to map the empty prefix or the empty namespace.', 1190282972);
+			throw new F3::PHPCR::NamespaceException('Attempt to map the empty prefix or the empty namespace.', 1190282972);
 		}
 
 		if (in_array($uri, $this->localNamespaceMappings)) {
@@ -790,7 +791,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * Returns all prefixes currently mapped to URIs in this Session.
 	 *
 	 * @return array a string array
-	 * @throws F3_PHPCR_RepositoryException if an error occurs
+	 * @throws F3::PHPCR::RepositoryException if an error occurs
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getNamespacePrefixes() {
@@ -808,8 +809,8 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $prefix a string
 	 * @return string a string
-	 * @throws F3_PHPCR_NamespaceException if the specified prefix is unknown.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @throws F3::PHPCR::NamespaceException if the specified prefix is unknown.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getNamespaceURI($prefix) {
@@ -823,8 +824,8 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $uri a string
 	 * @return string a string
-	 * @throws F3_PHPCR_NamespaceException if the specified uri is unknown.
-	 * @throws F3_PHPCR_RepositoryException - if another error occurs
+	 * @throws F3::PHPCR::NamespaceException if the specified uri is unknown.
+	 * @throws F3::PHPCR::RepositoryException - if another error occurs
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getNamespacePrefix($uri) {
@@ -866,35 +867,35 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * An UnsupportedRepositoryOperationException is thrown if the repository
 	 * does not support activities or if activity is not a nt:activity node.
 	 *
-	 * @param F3_PHPCR_NodeInterface $activity an activity node
-	 * @return F3_PHPCR_NodeInterface the activity node
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if the repository does not support activities or if activity is not a nt:activity node.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @param F3::PHPCR::NodeInterface $activity an activity node
+	 * @return F3::PHPCR::NodeInterface the activity node
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support activities or if activity is not a nt:activity node.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
-	public function setActivity(F3_PHPCR_NodeInterface $activity) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485266);
+	public function setActivity(F3::PHPCR::NodeInterface $activity) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485266);
 	}
 
 	/**
 	 * Returns the access control manager for this Session.
 	 *
-	 * @return F3_PHPCR_Security_AccessControlManager the access control manager for this Session
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if access control is not supported.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @return F3::PHPCR::Security::AccessControlManager the access control manager for this Session
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if access control is not supported.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getAccessControlManager() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485267);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485267);
 	}
 
 	/**
 	 * Returns the retention and hold manager for this Session.
 	 *
-	 * @return F3_PHPCR_Retention_RetentionManagerInterface the retention manager for this Session.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if retention and hold are not supported.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @return F3::PHPCR::Retention::RetentionManagerInterface the retention manager for this Session.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if retention and hold are not supported.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getRetentionManager() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213801951);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213801951);
 	}
 
 
@@ -907,7 +908,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $prefix
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @throws F3_PHPCR_NamespaceException if prefix is unknown
+	 * @throws F3::PHPCR::NamespaceException if prefix is unknown
 	 */
 	protected function loadNamespaceFromPrefix($prefix) {
 		if (!isset($this->localNamespaceMappings[$prefix])) {
@@ -921,7 +922,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 *
 	 * @param string $uri
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
-	 * @throws F3_PHPCR_NamespaceException if prefix is unknown
+	 * @throws F3::PHPCR::NamespaceException if prefix is unknown
 	 */
 	protected function loadNamespaceFromURI($uri) {
 		if (!in_array($uri, $this->localNamespaceMappings)) {
@@ -937,11 +938,11 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	/**
 	 * Registers a node as new within this session
 	 *
-	 * @param F3_PHPCR_NodeInterface $item
+	 * @param F3::PHPCR::NodeInterface $item
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerNodeAsNew(F3_PHPCR_NodeInterface $node) {
+	public function registerNodeAsNew(F3::PHPCR::NodeInterface $node) {
 		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
 		$this->currentlyNewNodes[$node->getIdentifier()] = $node;
 	}
@@ -949,44 +950,44 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	/**
 	 * Checks if the given node is registered as new
 	 *
-	 * @param F3_PHPCR_NodeInterface $node
+	 * @param F3::PHPCR::NodeInterface $node
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isRegisteredAsNewNode(F3_PHPCR_NodeInterface $node) {
+	public function isRegisteredAsNewNode(F3::PHPCR::NodeInterface $node) {
 		return key_exists($node->getIdentifier(), $this->currentlyNewNodes);
 	}
 
 	/**
 	 * Registers a node as dirty within this session
 	 *
-	 * @param F3_PHPCR_NodeInterface $item
+	 * @param F3::PHPCR::NodeInterface $item
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerNodeAsDirty(F3_PHPCR_NodeInterface $node) {
+	public function registerNodeAsDirty(F3::PHPCR::NodeInterface $node) {
 		$this->currentlyDirtyNodes[$node->getIdentifier()] = $node;
 	}
 
 	/**
 	 * Checks if the given node is registered as dirty
 	 *
-	 * @param F3_PHPCR_NodeInterface $node
+	 * @param F3::PHPCR::NodeInterface $node
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isRegisteredAsDirtyNode(F3_PHPCR_NodeInterface $node) {
+	public function isRegisteredAsDirtyNode(F3::PHPCR::NodeInterface $node) {
 		return key_exists($node->getIdentifier(), $this->currentlyDirtyNodes);
 	}
 
 	/**
 	 * Registers a node as removed within this session
 	 *
-	 * @param F3_PHPCR_NodeInterface $item
+	 * @param F3::PHPCR::NodeInterface $item
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerNodeAsRemoved(F3_PHPCR_NodeInterface $node) {
+	public function registerNodeAsRemoved(F3::PHPCR::NodeInterface $node) {
 		if ($this->isRegisteredAsNewNode($node)) {
 			$this->currentlyRemovedNodes[$node->getIdentifier()] = $node;
 		}
@@ -996,55 +997,55 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	/**
 	 * Registers a property as new within this session
 	 *
-	 * @param F3_PHPCR_PropertyInterface $item
+	 * @param F3::PHPCR::PropertyInterface $item
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerPropertyAsNew(F3_PHPCR_PropertyInterface $property) {
+	public function registerPropertyAsNew(F3::PHPCR::PropertyInterface $property) {
 		$this->currentlyNewProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
 	}
 
 	/**
 	 * Checks if the given property is registered as new
 	 *
-	 * @param F3_PHPCR_PropertyInterface $property
+	 * @param F3::PHPCR::PropertyInterface $property
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isRegisteredAsNewProperty(F3_PHPCR_PropertyInterface $property) {
+	public function isRegisteredAsNewProperty(F3::PHPCR::PropertyInterface $property) {
 		return isset($this->currentlyNewProperties[$property->getParent()->getIdentifier()][$property->getName()]);
 	}
 
 	/**
 	 * Registers a property item as dirty within this session
 	 *
-	 * @param F3_PHPCR_PropertyInterface $item
+	 * @param F3::PHPCR::PropertyInterface $item
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerPropertyAsDirty(F3_PHPCR_PropertyInterface $property) {
+	public function registerPropertyAsDirty(F3::PHPCR::PropertyInterface $property) {
 		$this->currentlyDirtyProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
 	}
 
 	/**
 	 * Checks if the given property is registered as new
 	 *
-	 * @param F3_PHPCR_PropertyInterface $property
+	 * @param F3::PHPCR::PropertyInterface $property
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isRegisteredAsDirtyProperty(F3_PHPCR_PropertyInterface $property) {
+	public function isRegisteredAsDirtyProperty(F3::PHPCR::PropertyInterface $property) {
 		return isset($this->currentlyDirtyProperties[$property->getParent()->getIdentifier()][$property->getName()]);
 	}
 
 	/**
 	 * Registers a property as removed within this session
 	 *
-	 * @param F3_PHPCR_PropertyInterface $item
+	 * @param F3::PHPCR::PropertyInterface $item
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerPropertyAsRemoved(F3_PHPCR_PropertyInterface $property) {
+	public function registerPropertyAsRemoved(F3::PHPCR::PropertyInterface $property) {
 		$this->currentlyRemovedProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
 	}
 
@@ -1054,7 +1055,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function addPropertiesForNode(F3_PHPCR_NodeInterface $node) {
+	protected function addPropertiesForNode(F3::PHPCR::NodeInterface $node) {
 		if (key_exists($node->getIdentifier(), $this->currentlyNewProperties)) {
 			foreach ($this->currentlyNewProperties[$node->getIdentifier()] as $property) {
 				$this->storageBackend->addProperty($property);
@@ -1069,7 +1070,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function updatePropertiesForNode(F3_PHPCR_NodeInterface $node) {
+	protected function updatePropertiesForNode(F3::PHPCR::NodeInterface $node) {
 		if (key_exists($node->getIdentifier(), $this->currentlyDirtyProperties)) {
 			foreach ($this->currentlyDirtyProperties[$node->getIdentifier()] as $property) {
 				$this->storageBackend->updateProperty($property);
@@ -1084,7 +1085,7 @@ class F3_TYPO3CR_Session implements F3_PHPCR_SessionInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function removePropertiesForNode(F3_PHPCR_NodeInterface $node) {
+	protected function removePropertiesForNode(F3::PHPCR::NodeInterface $node) {
 		if (key_exists($node->getIdentifier(), $this->currentlyRemovedProperties)) {
 			foreach ($this->currentlyRemovedProperties[$node->getIdentifier()] as $property) {
 				$this->storageBackend->removeProperty($property);

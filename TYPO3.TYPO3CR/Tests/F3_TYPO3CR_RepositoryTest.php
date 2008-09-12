@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
+class RepositoryTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Probably the most mocked & stubbed test in FLOW3.
@@ -36,36 +37,36 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function repositoryLoginAsksForASessionToReturn() {
-		$mockNamespaceRegistry = $this->getMock('F3_TYPO3CR_NamespaceRegistry', array(), array(), '', FALSE);
-		$mockWorkspace = $this->getMock('F3_TYPO3CR_Workspace', array(), array(), '', FALSE);
+		$mockNamespaceRegistry = $this->getMock('F3::TYPO3CR::NamespaceRegistry', array(), array(), '', FALSE);
+		$mockWorkspace = $this->getMock('F3::TYPO3CR::Workspace', array(), array(), '', FALSE);
 		$mockWorkspace->expects($this->once())->method('getNamespaceRegistry')->will($this->returnValue($mockNamespaceRegistry));
-		$mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
-		$mockTYPO3CRSession = $this->getMock('F3_PHPCR_SessionInterface', array(), array(), '', FALSE);
+		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
+		$mockTYPO3CRSession = $this->getMock('F3::PHPCR::SessionInterface', array(), array(), '', FALSE);
 		$mockTYPO3CRSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSearchEngine = $this->getMock('F3_TYPO3CR_Storage_SearchInterface');
+		$mockSearchEngine = $this->getMock('F3::TYPO3CR::Storage::SearchInterface');
 
-		$settings = new F3_FLOW3_Configuration_Container();
+		$settings = new F3::FLOW3::Configuration::Container();
 		$settings->storage->backend = 'mockStorageBackend';
 		$settings->storage->backendOptions = array();
-		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
+		$configurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
 		$configurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$componentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
+		$componentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
 		$componentFactory->expects($this->exactly(4))->method('getComponent')->will($this->onConsecutiveCalls($configurationManager, $mockStorageBackend, $mockSearchEngine, $mockTYPO3CRSession));
 
-		$repository = new F3_TYPO3CR_Repository($componentFactory);
+		$repository = new F3::TYPO3CR::Repository($componentFactory);
 		$session = $repository->login();
 		$this->assertSame($mockTYPO3CRSession, $session, 'The repository login did not return the requested session object.');
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3_PHPCR_RepositoryException
+	 * @expectedException F3::PHPCR::RepositoryException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function credentialsOfInvalidTypeThrowException() {
-		$repository = new F3_TYPO3CR_Repository($this->componentFactory);
-		$repository->login(new ArrayObject);
+		$repository = new F3::TYPO3CR::Repository($this->componentFactory);
+		$repository->login(new ::ArrayObject);
 	}
 
 	/**
@@ -74,7 +75,7 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorKeysReturnsAnArrayOfStrings() {
-		$repository = new F3_TYPO3CR_Repository($this->componentFactory);
+		$repository = new F3::TYPO3CR::Repository($this->componentFactory);
 		$descriptorKeys = $repository->getDescriptorKeys();
 		$this->assertTrue(is_array($descriptorKeys), 'The getDescriptorKeys method did not return an array.');
 		foreach ($descriptorKeys as $k => $v) {
@@ -88,8 +89,8 @@ class F3_TYPO3CR_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorReturnsCorrectVersionString() {
-		$repository = new F3_TYPO3CR_Repository($this->componentFactory);
-		$descriptor = $repository->getDescriptor(F3_TYPO3CR_Repository::SPEC_VERSION_DESC);
+		$repository = new F3::TYPO3CR::Repository($this->componentFactory);
+		$descriptor = $repository->getDescriptor(F3::TYPO3CR::Repository::SPEC_VERSION_DESC);
 		$this->assertEquals('2.0', $descriptor, 'getDescriptor(SPEC_VERSION_DESC) did not return \'2.0\'.');
 	}
 }

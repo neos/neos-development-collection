@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeInterface {
+class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface {
 
 	/**
 	 * @var string
@@ -35,7 +36,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	protected $identifier;
 
 	/**
-	 * @var F3_PHPCR_NodeType_NodeTypeInterface
+	 * @var F3::PHPCR::NodeType::NodeTypeInterface
 	 */
 	protected $nodeType;
 
@@ -57,12 +58,12 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	/**
 	 * Constructs a Node
 	 *
-	 * @param F3_TYPO3CR_SessionInterface $session
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::TYPO3CR::SessionInterface $session
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(array $rawData = array(), F3_PHPCR_SessionInterface $session, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(array $rawData = array(), F3::PHPCR::SessionInterface $session, F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->session = $session;
 		$this->componentFactory = $componentFactory;
 
@@ -70,7 +71,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$this->identifier = $rawData['newidentifier'];
 			$this->session->registerNodeAsNew($this);
 		} elseif (!isset($rawData['identifier'])) {
-			$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+			$this->identifier = F3::FLOW3::Utility::Algorithms::generateUUID();
 			$this->session->registerNodeAsNew($this);
 		}
 
@@ -90,7 +91,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 					$this->name = $value;
 					break;
 				case 'nodetype':
-					$this->nodeType = $this->componentFactory->getComponent('F3_PHPCR_NodeType_NodeTypeInterface', $value);
+					$this->nodeType = $this->componentFactory->getComponent('F3::PHPCR::NodeType::NodeTypeInterface', $value);
 					break;
 			}
 		}
@@ -109,7 +110,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		$rawProperties = $this->session->getStorageBackend()->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
-				$property = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
+				$property = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
 				$this->properties[$property->getName()] = $property;
 			}
 		}
@@ -191,7 +192,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			return '/';
 		} else {
 			$buffer = $this->getParent()->getPath();
-			if (F3_PHP6_Functions::strlen($buffer) > 1) {
+			if (F3::PHP6::Functions::strlen($buffer) > 1) {
 				$buffer .= '/';
 			}
 
@@ -203,26 +204,26 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	/**
 	 * Returns the parent of this Node.
 	 *
-	 * An F3_PHPCR_ItemNotFoundException is thrown if there is no parent node. This
+	 * An F3::PHPCR::ItemNotFoundException is thrown if there is no parent node. This
 	 * only happens if this item is the root node of a workspace.
 	 *
-	 * An F3_PHPCR_AccessDeniedException is thrown if the current session does not
+	 * An F3::PHPCR::AccessDeniedException is thrown if the current session does not
 	 * have sufficient access permissions to retrieve the parent of this item.
 	 *
-	 * A F3_PHPCR_RepositoryException is thrown if another error occurs.
+	 * A F3::PHPCR::RepositoryException is thrown if another error occurs.
 	 *
-	 * @return F3_PHPCR_NodeInterface
-	 * @throws F3_PHPCR_ItemNotFoundException
-	 * @throws F3_PHPCR_AccessDeniedException
-	 * @throws F3_PHPCR_RepositoryException
+	 * @return F3::PHPCR::NodeInterface
+	 * @throws F3::PHPCR::ItemNotFoundException
+	 * @throws F3::PHPCR::AccessDeniedException
+	 * @throws F3::PHPCR::RepositoryException
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getParent() {
-		if ($this->parentNode === NULL) throw new F3_PHPCR_ItemNotFoundException("root node does not have a parent", 1187530879);
+		if ($this->parentNode === NULL) throw new F3::PHPCR::ItemNotFoundException("root node does not have a parent", 1187530879);
 
 			// when instanciating we lazily store the identifier of the parent
-		if ($this->parentNode instanceof F3_PHPCR_NodeInterface) {
+		if ($this->parentNode instanceof F3::PHPCR::NodeInterface) {
 			return $this->parentNode;
 		} else {
 			$this->parentNode = $this->session->getNodeByIdentifier($this->parentNode);
@@ -238,7 +239,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 */
 	public function remove() {
 		if ($this->parentNode === NULL) {
-			throw new F3_PHPCR_NodeType_ConstraintViolationException('The root node is mandatory', 1213960971);
+			throw new F3::PHPCR::NodeType::ConstraintViolationException('The root node is mandatory', 1213960971);
 		}
 
 		foreach ($this->nodes as $node) {
@@ -284,7 +285,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @throws RepositoryException if another error occurs.
 	 */
 	public function refresh($keepChanges) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
 	}
 
 	/**
@@ -312,13 +313,13 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $relPath The path of the new node to be created.
 	 * @param string $primaryNodeTypeName The name of the primary node type of the new node.
-	 * @return F3_PHPCR_NodeInterface The node that was added.
-	 * @throws F3_PHPCR_ItemExistsException if an item at the specified path already exists, same-name siblings are not allowed and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_PathNotFoundException if the specified path implies intermediary Nodes that do not exist or the last element of relPath has an index, and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_ConstraintViolationException if a node type or implementation-specific constraint is violated or if an attempt is made to add a node as the child of a property and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Version_VersionException if the node to which the new child is being added is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the addition of the node and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_RepositoryException If the last element of relPath has an index or if another error occurs.
+	 * @return F3::PHPCR::NodeInterface The node that was added.
+	 * @throws F3::PHPCR::ItemExistsException if an item at the specified path already exists, same-name siblings are not allowed and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::PathNotFoundException if the specified path implies intermediary Nodes that do not exist or the last element of relPath has an index, and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException if a node type or implementation-specific constraint is violated or if an attempt is made to add a node as the child of a property and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Version::VersionException if the node to which the new child is being added is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the addition of the node and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::RepositoryException If the last element of relPath has an index or if another error occurs.
 	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -326,10 +327,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 */
 	public function addNode($relPath, $primaryNodeTypeName = NULL, $identifier = NULL) {
 		if ($relPath === NULL) {
-			throw new F3_PHPCR_PathNotFoundException('Path not found or not provided', 1187531979);
+			throw new F3::PHPCR::PathNotFoundException('Path not found or not provided', 1187531979);
 		}
 
-		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = F3_TYPO3CR_PathParser::getLastPathPart($relPath);
+		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = F3::TYPO3CR::PathParser::getLastPathPart($relPath);
 
 		if ($numberOfElementsRemaining===0) {
 			$rawData = array(
@@ -340,17 +341,17 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 
 			if ($identifier !== NULL) {
 				if ($this->session->hasIdentifier($identifier)) {
-					throw new F3_PHPCR_ItemExistsException('The identifier requested is already in use.', 1219424096);
+					throw new F3::PHPCR::ItemExistsException('The identifier requested is already in use.', 1219424096);
 				}
 				$rawData['newidentifier'] = $identifier;
 			}
 
-			$newNode = $this->componentFactory->getComponent('F3_PHPCR_NodeInterface', $rawData, $this->session);
+			$newNode = $this->componentFactory->getComponent('F3::PHPCR::NodeInterface', $rawData, $this->session);
 
 			$this->nodes[] = $newNode->getIdentifier();
 			$this->session->registerNodeAsDirty($this);
 		} else {
-			$upperNode = F3_TYPO3CR_PathParser::parsePath($remainingPath, $this);
+			$upperNode = F3::TYPO3CR::PathParser::parsePath($remainingPath, $this);
 			$newNode = $upperNode->addNode($lastNodeName, $primaryNodeTypeName, $identifier);
 		}
 
@@ -377,15 +378,15 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param string $srcChildRelPath the relative path to the child node (that is, name plus possible index) to be moved in the ordering
 	 * @param string $destChildRelPath the the relative path to the child node (that is, name plus possible index) before which the node srcChildRelPath will be placed.
 	 * @return void
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException  if ordering is not supported.
-	 * @throws F3_PHPCR_ConstraintViolationException if an implementation-specific ordering restriction is violated and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_ItemNotFoundException if either parameter is not the relative path of a child node of this node.
-	 * @throws F3_PHPCR_Version_VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the re-ordering and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException  if ordering is not supported.
+	 * @throws F3::PHPCR::ConstraintViolationException if an implementation-specific ordering restriction is violated and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ItemNotFoundException if either parameter is not the relative path of a child node of this node.
+	 * @throws F3::PHPCR::Version::VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the re-ordering and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function orderBefore($srcChildRelPath, $destChildRelPath) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667765);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667765);
 	}
 
 	/**
@@ -428,23 +429,23 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param string $name The name of a property of this node
 	 * @param mixed $value The value to be assigned
 	 * @param integer $type The type to set for the property
-	 * @return F3_PHPCR_PropertyInterface The updated Property object
-	 * @throws F3_PHPCR_ValueFormatException if value cannot be converted to the type of the specified property or if the property already exists and is multi-valued.
-	 * @throws F3_PHPCR_Version_VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Lock_LockException  if a lock prevents the setting of the property and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
+	 * @return F3::PHPCR::PropertyInterface The updated Property object
+	 * @throws F3::PHPCR::ValueFormatException if value cannot be converted to the type of the specified property or if the property already exists and is multi-valued.
+	 * @throws F3::PHPCR::Version::VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException  if a lock prevents the setting of the property and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::RepositoryException  if another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setProperty($name, $value, $type = F3_PHPCR_PropertyType::UNDEFINED) {
+	public function setProperty($name, $value, $type = F3::PHPCR::PropertyType::UNDEFINED) {
 		if ($this->hasProperty($name)) {
 			if ($value === NULL) {
 				$this->session->registerPropertyAsRemoved($this->properties[$name]);
 				unset($this->properties[$name]);
 			} else {
 				if (is_array($value)) {
-					$value = F3_TYPO3CR_Utility::removeNullFromArray($value);
+					$value = F3::TYPO3CR::Utility::removeNullFromArray($value);
 				}
 				$this->properties[$name]->setValue($value);
 				$this->session->registerPropertyAsDirty($this->properties[$name]);
@@ -452,9 +453,9 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 			$this->session->registerNodeAsDirty($this);
 		} elseif ($value !== NULL) {
 			if (is_array($value)) {
-				$value = F3_TYPO3CR_Utility::removeNullFromArray($value);
+				$value = F3::TYPO3CR::Utility::removeNullFromArray($value);
 			}
-			$this->properties[$name] = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $name, $value, $type, $this, $this->session);
+			$this->properties[$name] = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $name, $value, $type, $this, $this->session);
 			$this->session->registerPropertyAsNew($this->properties[$name]);
 			$this->session->registerNodeAsDirty($this);
 		}
@@ -474,13 +475,13 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * wrapping the same state, is up to the implementation.
 	 *
 	 * @param string $relPath The relative path of the node to retrieve.
-	 * @return F3_PHPCR_NodeInterface The node at relPath.
-	 * @throws F3_PHPCR_PathNotFoundException If no node exists at the specified path or the current Session does not read access to the node at the specified path.
-	 * @throws F3_PHPCR_RepositoryException  If another error occurs.
+	 * @return F3::PHPCR::NodeInterface The node at relPath.
+	 * @throws F3::PHPCR::PathNotFoundException If no node exists at the specified path or the current Session does not read access to the node at the specified path.
+	 * @throws F3::PHPCR::RepositoryException  If another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getNode($relPath) {
-		return F3_TYPO3CR_PathParser::parsePath($relPath, $this);
+		return F3::TYPO3CR::PathParser::parsePath($relPath, $this);
 	}
 
 	/**
@@ -517,19 +518,19 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * The same reacquisition semantics apply as with getNode(String).
 	 *
 	 * @param string $namePattern a name pattern
-	 * @return F3_PHPCR_NodeIteratorInterface a NodeIterator over all (matching) child Nodes
-	 * @throws F3_PHPCR_RepositoryException  If an unexpected error occurs.
+	 * @return F3::PHPCR::NodeIteratorInterface a NodeIterator over all (matching) child Nodes
+	 * @throws F3::PHPCR::RepositoryException  If an unexpected error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodes($namePattern = NULL) {
-		if ($namePattern !== NULL) throw new F3_PHPCR_RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
+		if ($namePattern !== NULL) throw new F3::PHPCR::RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
 
 		$nodes = array();
 		foreach ($this->nodes as $identifier) {
 			$nodes[] = $this->session->getNodeByIdentifier($identifier);
 		}
 
-		return $this->componentFactory->getComponent('F3_PHPCR_NodeIteratorInterface', $nodes);
+		return $this->componentFactory->getComponent('F3::PHPCR::NodeIteratorInterface', $nodes);
 	}
 
 	/**
@@ -537,17 +538,17 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * reacquisition semantics apply as with getNode(String).
 	 *
 	 * @param string $relPath The relative path of the property to retrieve.
-	 * @return F3_PHPCR_PropertyInterface The property at relPath.
-	 * @throws F3_PHPCR_PathNotFoundException If no property exists at the specified path.
-	 * @throws F3_PHPCR_RepositoryException  If another error occurs.
+	 * @return F3::PHPCR::PropertyInterface The property at relPath.
+	 * @throws F3::PHPCR::PathNotFoundException If no property exists at the specified path.
+	 * @throws F3::PHPCR::RepositoryException  If another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getProperty($relPath) {
-		if (F3_PHP6_Functions::strpos($relPath, '/') === FALSE && isset($this->properties[$relPath])) {
+		if (F3::PHP6::Functions::strpos($relPath, '/') === FALSE && isset($this->properties[$relPath])) {
 			return $this->properties[$relPath];
 		} else {
-			return F3_TYPO3CR_PathParser::parsePath($relPath, $this, F3_TYPO3CR_PathParser::SEARCH_MODE_PROPERTIES);
+			return F3::TYPO3CR::PathParser::parsePath($relPath, $this, F3::TYPO3CR::PathParser::SEARCH_MODE_PROPERTIES);
 		}
 	}
 
@@ -585,15 +586,15 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * The same reacquisition semantics apply as with getNode(String).
 	 *
 	 * @param string $namePattern a name pattern
-	 * @return F3_PHPCR_PropertyIteratorInterface a PropertyIterator
-	 * @throws F3_PHPCR_RepositoryException  If an unexpected error occurs.
+	 * @return F3::PHPCR::PropertyIteratorInterface a PropertyIterator
+	 * @throws F3::PHPCR::RepositoryException  If an unexpected error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implement support for $namePattern
 	 */
 	public function getProperties($namePattern = NULL) {
-		if ($namePattern !== NULL) throw new F3_PHPCR_RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
+		if ($namePattern !== NULL) throw new F3::PHPCR::RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
-		return $this->componentFactory->getComponent('F3_PHPCR_PropertyIteratorInterface', $this->properties);
+		return $this->componentFactory->getComponent('F3::PHPCR::PropertyIteratorInterface', $this->properties);
 	}
 
 	/**
@@ -606,12 +607,12 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * The same reacquisition semantics apply as with getNode(String).
 	 *
-	 * @return F3_PHPCR_ItemInterface the primary child item.
-	 * @throws F3_PHPCR_ItemNotFoundException if this node does not have a primary child item, either because none is declared in the node type or because a declared primary item is not present on this node instance, or not accessible through the current Session
-	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
+	 * @return F3::PHPCR::ItemInterface the primary child item.
+	 * @throws F3::PHPCR::ItemNotFoundException if this node does not have a primary child item, either because none is declared in the node type or because a declared primary item is not present on this node instance, or not accessible through the current Session
+	 * @throws F3::PHPCR::RepositoryException  if another error occurs.
 	 */
 	public function getPrimaryItem() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667766);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667766);
 	}
 
 	/**
@@ -619,7 +620,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * non-referenceable nodes.
 	 *
 	 * @return string the identifier of this node
-	 * @throws F3_PHPCR_RepositoryException If an error occurs.
+	 * @throws F3::PHPCR::RepositoryException If an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check for mix:referenceable on node to determine if an UnsupportedRepositoryOperationException should be thrown. Then throw RepositoryException if still no Identifier is available.
 	 */
@@ -627,7 +628,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 		if (isset($this->identifier)) {
 			return $this->identifier;
 		} else {
-			throw new F3_PHPCR_UnsupportedRepositoryOperationException('Node has no Identifier', 1181070099);
+			throw new F3::PHPCR::UnsupportedRepositoryOperationException('Node has no Identifier', 1181070099);
 		}
 	}
 
@@ -640,10 +641,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * always return 1.
 	 *
 	 * @return integer The index of this node within the ordered set of its same-name sibling nodes.
-	 * @throws F3_PHPCR_RepositoryException  if an error occurs.
+	 * @throws F3::PHPCR::RepositoryException  if an error occurs.
 	 */
 	public function getIndex() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667767);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667767);
 	}
 
 	/**
@@ -665,20 +666,20 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * iterator is returned.
 	 *
 	 * @param string $name name of referring REFERENCE properties to be returned; if null then all referring REFERENCEs are returned
-	 * @return F3_PHPCR_PropertyIteratorInterface A PropertyIterator.
-	 * @throws F3_PHPCR_RepositoryException  if an error occurs
+	 * @return F3::PHPCR::PropertyIteratorInterface A PropertyIterator.
+	 * @throws F3::PHPCR::RepositoryException  if an error occurs
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getReferences($name = NULL) {
-		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, F3_PHPCR_PropertyType::REFERENCE, $this->getIdentifier());
+		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, F3::PHPCR::PropertyType::REFERENCE, $this->getIdentifier());
 		$references = array();
 		if (is_array($rawReferences)) {
 			foreach ($rawReferences as $rawReference) {
-				$reference = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
+				$reference = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
 				$references[$reference->getName()] = $reference;
 			}
 		}
-		return $this->componentFactory->getComponent('F3_PHPCR_PropertyIteratorInterface', $references);
+		return $this->componentFactory->getComponent('F3::PHPCR::PropertyIteratorInterface', $references);
 	}
 
 	/**
@@ -701,21 +702,21 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * iterator is returned.
 	 *
 	 * @param string $name name of referring WEAKREFERENCE properties to be returned; if null then all referring WEAKREFERENCEs are returned
-	 * @return F3_PHPCR_PropertyIteratorInterface A PropertyIterator.
-	 * @throws F3_PHPCR_RepositoryException  if an error occurs
+	 * @return F3::PHPCR::PropertyIteratorInterface A PropertyIterator.
+	 * @throws F3::PHPCR::RepositoryException  if an error occurs
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 
 	 */
 	public function getWeakReferences($name = NULL) {
-		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, F3_PHPCR_PropertyType::WEAKREFERENCE, $this->getIdentifier());
+		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, F3::PHPCR::PropertyType::WEAKREFERENCE, $this->getIdentifier());
 		$references = array();
 		if (is_array($rawReferences)) {
 			foreach ($rawReferences as $rawReference) {
-				$reference = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
+				$reference = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
 				$references[$reference->getName()] = $reference;
 			}
 		}
-		return $this->componentFactory->getComponent('F3_PHPCR_PropertyIteratorInterface', $references);
+		return $this->componentFactory->getComponent('F3::PHPCR::PropertyIteratorInterface', $references);
 	}
 
 	/**
@@ -724,14 +725,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $relPath The path of a (possible) node.
 	 * @return boolean true if a node exists at relPath; false otherwise.
-	 * @throws F3_PHPCR_RepositoryException If an unspecified error occurs.
+	 * @throws F3::PHPCR::RepositoryException If an unspecified error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implement without actually getting the node(s)
 	 */
 	public function hasNode($relPath) {
 		try {
 			$this->getNode($relPath);
-		} catch (F3_PHPCR_PathNotFoundException $e) {
+		} catch (F3::PHPCR::PathNotFoundException $e) {
 			return FALSE;
 		}
 		return TRUE;
@@ -743,18 +744,18 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $relPath The path of a (possible) property.
 	 * @return boolean true if a property exists at relPath; false otherwise.
-	 * @throws F3_PHPCR_RepositoryException If an unspecified error occurs.
+	 * @throws F3::PHPCR::RepositoryException If an unspecified error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperty($relPath) {
-		if (F3_PHP6_Functions::strpos($relPath, '/') === FALSE) {
+		if (F3::PHP6::Functions::strpos($relPath, '/') === FALSE) {
 			return isset($this->properties[$relPath]);
 		} else {
 			try {
 				$this->getProperty($relPath);
 				return TRUE;
-			} catch (F3_PHPCR_PathNotFoundException $e) {
+			} catch (F3::PHPCR::PathNotFoundException $e) {
 				return FALSE;
 			}
 		}
@@ -765,7 +766,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * one or more child nodes accessible through the current Session; false otherwise.
 	 *
 	 * @return boolean true if this node has one or more child nodes; false otherwise.
-	 * @throws F3_PHPCR_RepositoryException  If an unspecified error occurs.
+	 * @throws F3::PHPCR::RepositoryException  If an unspecified error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasNodes() {
@@ -777,7 +778,7 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * one or more properties accessible through the current Session; false otherwise.
 	 *
 	 * @return boolean true if this node has one or more properties; false otherwise.
-	 * @throws F3_PHPCR_RepositoryException  If an unspecified error occurs.
+	 * @throws F3::PHPCR::RepositoryException  If an unspecified error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperties() {
@@ -793,8 +794,8 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * must, of course, be consistent with the child nodes and properties of the
 	 * root node.
 	 *
-	 * @return F3_PHPCR_NodeType_NodeTypeInterface a NodeType object.
-	 * @throws F3_PHPCR_RepositoryException  if an error occurs
+	 * @return F3::PHPCR::NodeType::NodeTypeInterface a NodeType object.
+	 * @throws F3::PHPCR::RepositoryException  if an error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPrimaryNodeType() {
@@ -811,11 +812,11 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * jcr:mixinTypes property if that property has recently been created or
 	 * changed and has not yet been saved.
 	 *
-	 * @return array of F3_PHPCR_NodeType_NodeTypeInterface objects.
-	 * @throws F3_PHPCR_RepositoryException  if an error occurs
+	 * @return array of F3::PHPCR::NodeType::NodeTypeInterface objects.
+	 * @throws F3::PHPCR::RepositoryException  if an error occurs
 	 */
 	public function getMixinNodeTypes() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667711);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667711);
 	}
 
 	/**
@@ -828,10 +829,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $nodeTypeName the name of a node type.
 	 * @return boolean true if this node is of the specified primary node type or mixin type, or a subtype thereof. Returns false otherwise.
-	 * @throws F3_PHPCR_RepositoryException  If an error occurs.
+	 * @throws F3::PHPCR::RepositoryException  If an error occurs.
 	 */
 	public function isNodeType($nodeTypeName) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667712);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667712);
 	}
 
 	/**
@@ -847,14 +848,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $nodeTypeName the name of the new node type.
 	 * @return void
-	 * @throws F3_PHPCR_ConstraintViolationException If the specified primary node type is prevented from being assigned.
-	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException If the specified nodeTypeName is not recognized and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Version_VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the change of the primary node type and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::ConstraintViolationException If the specified primary node type is prevented from being assigned.
+	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException If the specified nodeTypeName is not recognized and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Version::VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the change of the primary node type and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function setPrimaryType($nodeTypeName) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667713);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667713);
 	}
 
 	/**
@@ -870,14 +871,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $mixinName the name of the mixin node type to be added
 	 * @return void
-	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException If the specified mixinName is not recognized and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_ConstraintViolationException If the specified mixin node type is prevented from being assigned.
-	 * @throws F3_PHPCR_Version_VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the addition of the mixin and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException If the specified mixinName is not recognized and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException If the specified mixin node type is prevented from being assigned.
+	 * @throws F3::PHPCR::Version::VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the addition of the mixin and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function addMixin($mixinName) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667714);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667714);
 	}
 
 	/**
@@ -888,14 +889,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $mixinName the name of the mixin node type to be removed.
 	 * @return void
-	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException if the specified mixinName is not currently assigned to this node and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_ConstraintViolationException if the specified mixin node type is prevented from being removed and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Version_VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the removal of the mixin and this implementation performs this validation immediately instead of waiting until save..
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException if the specified mixinName is not currently assigned to this node and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException if the specified mixin node type is prevented from being removed and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Version::VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the removal of the mixin and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function removeMixin($mixinName) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667715);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667715);
 	}
 
 	/**
@@ -914,11 +915,11 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $mixinName The name of the mixin to be tested.
 	 * @return boolean true if the specified mixin node type, mixinName, can be added to this node; false otherwise.
-	 * @throws F3_PHPCR_NodeType_NoSuchNodeTypeException if the specified mixin node type name is not recognized.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException if the specified mixin node type name is not recognized.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function canAddMixin($mixinName) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667716);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667716);
 	}
 
 	/**
@@ -932,11 +933,11 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * method is called on the root node of a workspace is also up to the
 	 * implementation.
 	 *
-	 * @return F3_PHPCR_NodeType_NodeDefinitionInterface a NodeDefinition object.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @return F3::PHPCR::NodeType::NodeDefinitionInterface a NodeDefinition object.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function getDefinition() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667717);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667717);
 	}
 
 	/**
@@ -968,15 +969,15 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * If checkin succeeds, the change to the jcr:isCheckedOut property is
 	 * automatically persisted (there is no need to do an additional save).
 	 *
-	 * @return F3_PHPCR_Version_VersionInterface the created version.
-	 * @throws F3_PHPCR_Verson_VersionException if jcr:predecessors does not contain at least one value or if a child item of this node has an OnParentVersion status of ABORT. This includes the case where an unresolved merge failure exists on this node, as indicated by the presence of a jcr:mergeFailed property.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException If this node is not versionable.
-	 * @throws F3_PHPCR_InvalidItemStateException If unsaved changes exist on this node.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the operation.
-	 * @throws F3_PHPCR_RepositoryException If another error occurs.
+	 * @return F3::PHPCR::Version::VersionInterface the created version.
+	 * @throws F3::PHPCR::Verson::VersionException if jcr:predecessors does not contain at least one value or if a child item of this node has an OnParentVersion status of ABORT. This includes the case where an unresolved merge failure exists on this node, as indicated by the presence of a jcr:mergeFailed property.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException If this node is not versionable.
+	 * @throws F3::PHPCR::InvalidItemStateException If unsaved changes exist on this node.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the operation.
+	 * @throws F3::PHPCR::RepositoryException If another error occurs.
 	 */
 	public function checkin() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667718);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667718);
 	}
 
 	/**
@@ -994,29 +995,29 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * If this node is already checked-out, this method has no effect.
 	 *
 	 * @return void
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException If this node is not versionable.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the checkout.
-	 * @throws F3_PHPCR_Version_ActivityViolationException If the checkout conflicts with the activity present on the current session.
-	 * @throws F3_PHPCR_RepositoryException If another error occurs.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException If this node is not versionable.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the checkout.
+	 * @throws F3::PHPCR::Version::ActivityViolationException If the checkout conflicts with the activity present on the current session.
+	 * @throws F3::PHPCR::RepositoryException If another error occurs.
 	 */
 	public function checkout() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667719);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667719);
 	}
 
 	/**
 	 * Performs a checkin() followed by a checkout().
 	 * If this node is already checked-in, this method is equivalent to checkout().
 	 *
-	 * @return F3_PHPCR_Version_VersionInterface the created version.
-	 * @throws F3_PHPCR_Version_VersionException if a child item of this node has an OnParentVersion of ABORT. This includes the case where an unresolved merge failure exists on this node, as indicated by the presence of the jcr:mergeFailed.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
-	 * @throws F3_PHPCR_InvalidItemStateException if there are unsaved changes pending on this node.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the operation.
-	 * @throws F3_PHPCR_Version_ActivityViolationException If the checkout conflicts with the activity present on the current session.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @return F3::PHPCR::Version::VersionInterface the created version.
+	 * @throws F3::PHPCR::Version::VersionException if a child item of this node has an OnParentVersion of ABORT. This includes the case where an unresolved merge failure exists on this node, as indicated by the presence of the jcr:mergeFailed.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not versionable.
+	 * @throws F3::PHPCR::InvalidItemStateException if there are unsaved changes pending on this node.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the operation.
+	 * @throws F3::PHPCR::Version::ActivityViolationException If the checkout conflicts with the activity present on the current session.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function checkpoint() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667720);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667720);
 	}
 
 	/**
@@ -1073,15 +1074,15 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * If successful, these changes are persisted immediately, there is no need
 	 * to call save.
 	 *
-	 * @param F3_PHPCR_Version_VersionInterface $version a version referred to by this node's jcr:mergeFailed property.
+	 * @param F3::PHPCR::Version::VersionInterface $version a version referred to by this node's jcr:mergeFailed property.
 	 * @return void
-	 * @throws F3_PHPCR_Version_VersionException if the version specified is not among those referenced in this node's jcr:mergeFailed or if this node is currently checked-in.
-	 * @throws F3_PHPCR_InvalidItemStateException if there are unsaved changes pending on this node.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::Version::VersionException if the version specified is not among those referenced in this node's jcr:mergeFailed or if this node is currently checked-in.
+	 * @throws F3::PHPCR::InvalidItemStateException if there are unsaved changes pending on this node.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not versionable.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
-	public function doneMerge(F3_PHPCR_Version_VersionInterface $version) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667721);
+	public function doneMerge(F3::PHPCR::Version::VersionInterface $version) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667721);
 	}
 
 	/**
@@ -1094,15 +1095,15 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * If successful, these changes are persisted immediately, there is no need
 	 * to call save.
 	 *
-	 * @param F3_PHPCR_Version_VersionInterface $version a version referred to by this node's jcr:mergeFailed property.
+	 * @param F3::PHPCR::Version::VersionInterface $version a version referred to by this node's jcr:mergeFailed property.
 	 * @return void
-	 * @throws F3_PHPCR_Version_VersionException if the version specified is not among those referenced in this node's jcr:mergeFailed or if this node is currently checked-in.
-	 * @throws F3_PHPCR_InvalidItemStateException  if there are unsaved changes pending on this node.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
-	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
+	 * @throws F3::PHPCR::Version::VersionException if the version specified is not among those referenced in this node's jcr:mergeFailed or if this node is currently checked-in.
+	 * @throws F3::PHPCR::InvalidItemStateException  if there are unsaved changes pending on this node.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not versionable.
+	 * @throws F3::PHPCR::RepositoryException  if another error occurs.
 	 */
-	public function cancelMerge(F3_PHPCR_Version_VersionInterface $version) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667722);
+	public function cancelMerge(F3::PHPCR::Version::VersionInterface $version) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667722);
 	}
 
 	/**
@@ -1121,14 +1122,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $srcWorkspace the name of the source workspace.
 	 * @return void
-	 * @throws F3_PHPCR_NoSuchWorkspaceException if srcWorkspace does not exist.
-	 * @throws F3_PHPCR_InvalidItemStateException if this Session (not necessarily this Node) has pending unsaved changes.
-	 * @throws F3_PHPCR_AccessDeniedException if the current session does not have sufficient rights to perform the operation.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the update.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::NoSuchWorkspaceException if srcWorkspace does not exist.
+	 * @throws F3::PHPCR::InvalidItemStateException if this Session (not necessarily this Node) has pending unsaved changes.
+	 * @throws F3::PHPCR::AccessDeniedException if the current session does not have sufficient rights to perform the operation.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the update.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function update($srcWorkspace) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667723);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667723);
 	}
 
 	/**
@@ -1167,16 +1168,16 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param string $srcWorkspace the name of the source workspace.
 	 * @param boolean $bestEffort a boolean
 	 * @param boolean $isShallow a boolean
-	 * @return F3_PHPCR_NodeIteratorInterface iterator over all nodes that received a merge result of "fail" in the course of this operation.
-	 * @throws F3_PHPCR_MergeException if bestEffort is false and a failed merge result is encountered.
-	 * @throws F3_PHPCR_InvalidItemStateException  if this session (not necessarily this node) has pending unsaved changes.
-	 * @throws F3_PHPCR_NoSuchWorkspaceException if srcWorkspace does not exist.
-	 * @throws F3_PHPCR_AccessDeniedException  if the current session does not have sufficient rights to perform the operation.
-	 * @throws F3_PHPCR_Lock_LockException  if a lock prevents the merge.
-	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
+	 * @return F3::PHPCR::NodeIteratorInterface iterator over all nodes that received a merge result of "fail" in the course of this operation.
+	 * @throws F3::PHPCR::MergeException if bestEffort is false and a failed merge result is encountered.
+	 * @throws F3::PHPCR::InvalidItemStateException  if this session (not necessarily this node) has pending unsaved changes.
+	 * @throws F3::PHPCR::NoSuchWorkspaceException if srcWorkspace does not exist.
+	 * @throws F3::PHPCR::AccessDeniedException  if the current session does not have sufficient rights to perform the operation.
+	 * @throws F3::PHPCR::Lock::LockException  if a lock prevents the merge.
+	 * @throws F3::PHPCR::RepositoryException  if another error occurs.
 	 */
 	public function merge($srcWorkspace, $bestEffort, $isShallow = NULL) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667724);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667724);
 	}
 
 	/**
@@ -1192,13 +1193,13 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * The changes are persisted immediately, a save is not required.
 	 *
-	 * @param F3_PHPCR_Version_VersionInterface $baseline a Version
-	 * @return F3_PHPCR_NodeInterface a new nt:configuration node
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if N is not versionable.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @param F3::PHPCR::Version::VersionInterface $baseline a Version
+	 * @return F3::PHPCR::NodeInterface a new nt:configuration node
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if N is not versionable.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
-	public function createConfiguration(F3_PHPCR_Version_VersionInterface $baseline) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667725);
+	public function createConfiguration(F3::PHPCR::Version::VersionInterface $baseline) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667725);
 	}
 
 	/**
@@ -1208,24 +1209,24 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $workspaceName the name of the workspace.
 	 * @return string the absolute path to the corresponding node.
-	 * @throws F3_PHPCR_ItemNotFoundException if no corresponding node is found.
-	 * @throws F3_PHPCR_NoSuchWorkspaceException if the workspace is unknown.
-	 * @throws F3_PHPCR_AccessDeniedException if the current session has insufficient rights to perform this operation.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::ItemNotFoundException if no corresponding node is found.
+	 * @throws F3::PHPCR::NoSuchWorkspaceException if the workspace is unknown.
+	 * @throws F3::PHPCR::AccessDeniedException if the current session has insufficient rights to perform this operation.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getCorrespondingNodePath($workspaceName) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667726);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667726);
 	}
 
 	/**
 	 * Returns an iterator over all nodes that are in the shared set of this node.
 	 * If this node is not shared then the returned iterator contains only this node.
 	 *
-	 * @return F3_PHPCR_NodeIteratorInterface a NodeIterator
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @return F3::PHPCR::NodeIteratorInterface a NodeIterator
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function getSharedSet() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667727);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667727);
 	}
 
 	/**
@@ -1238,13 +1239,13 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * If this node is not shared this method removes only this node.
 	 *
 	 * @return void
-	 * @throws F3_PHPCR_Version_VersionException
-	 * @throws F3_PHPCR_Lock_LockException
-	 * @throws F3_PHPCR_ConstraintViolationException
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::Version::VersionException
+	 * @throws F3::PHPCR::Lock::LockException
+	 * @throws F3::PHPCR::ConstraintViolationException
+	 * @throws F3::PHPCR::RepositoryException
 	 */
 	public function removeSharedSet() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667728);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667728);
 	}
 
 	/**
@@ -1257,13 +1258,13 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * If this node is not shared this method removes only this node.
 	 *
 	 * @return void
-	 * @throws F3_PHPCR_Version_VersionException
-	 * @throws F3_PHPCR_Lock_LockException
-	 * @throws F3_PHPCR_ConstraintViolationException
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::Version::VersionException
+	 * @throws F3::PHPCR::Lock::LockException
+	 * @throws F3::PHPCR::ConstraintViolationException
+	 * @throws F3::PHPCR::RepositoryException
 	 */
 	public function removeShare() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667729);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667729);
 	}
 
 	/**
@@ -1281,11 +1282,11 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param string $holdID a string
 	 * @param boolean $isDeep a boolean
 	 * @return void
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function setHold($holdID, $isDeep) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802139);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802139);
 	}
 
 	/**
@@ -1297,11 +1298,11 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $holdID a string
 	 * @return void
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function removeHold($holdID) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802140);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802140);
 	}
 
 	/**
@@ -1312,14 +1313,14 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * The jcr:retentionPolicy property of this node is set to
 	 * refer to the policy node.
 	 *
-	 * @param F3_PHPCR_NodeInterface $policy a policy node
+	 * @param F3::PHPCR::NodeInterface $policy a policy node
 	 * @return void
-	 * @throws F3_PHPCR_NodeType_ConstraintViolationException if the specified node is not a valid retention policy node.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::NodeType::ConstraintViolationException if the specified node is not a valid retention policy node.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
-	public function setRetentionPolicy(F3_PHPCR_NodeInterface $policy) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802141);
+	public function setRetentionPolicy(F3::PHPCR::NodeInterface $policy) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802141);
 	}
 
 	/**
@@ -1328,12 +1329,12 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * Removes the jcr:retentionPolicy property from this node.
 	 *
 	 * @return void
-	 * @throws F3_PHPCR_NodeType_ConstraintViolationException if this node does not have a retention policy currently assigned.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::NodeType::ConstraintViolationException if this node does not have a retention policy currently assigned.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not of type mix:managedRetention.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function removeRetentionPolicy() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802142);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213802142);
 	}
 
 	/**
@@ -1346,10 +1347,10 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * non-versionable and its nearest versionable ancestor is checked-in.
 	 *
 	 * @return boolean a boolean
-	 * @throws F3_PHPCR_RepositoryException If another error occurs.
+	 * @throws F3::PHPCR::RepositoryException If another error occurs.
 	 */
 	public function isCheckedOut() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667730);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667730);
 	}
 
 	/**
@@ -1394,21 +1395,21 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * If the restore succeeds, the changes made to this node are persisted
 	 * immediately, there is no need to call save.
 	 *
-	 * @param string|F3_PHPCR_Version_VersionInterface $version a version object or a version name
+	 * @param string|F3::PHPCR::Version::VersionInterface $version a version object or a version name
 	 * @param boolean $removeExisting covers what happens on identifier collision.
 	 * @param string $relPath the path to which the version is to be restored
 	 * @return void
-	 * @throws F3_PHPCR_PathNotFoundException if the parent of relPath does not exist.
-	 * @throws F3_PHPCR_ItemExistsException if removeExisting is false and an identifier collision occurs
-	 * @throws F3_PHPCR_ConstraintViolationException If the would-be parent of the location relPath is actually a property, or if a node type restriction would be violated
-	 * @throws F3_PHPCR_Version_VersionException if the parent node of relPath is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in or if a node exists at relPath that is not the node corresponding to the specified version or if an attempt is made to restore the root version (jcr:rootVersion).
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if versioning is not supported.
-	 * @throws F3_PHPCR_Lock_LockException  if a lock prevents the restore.
-	 * @throws F3_PHPCR_InvalidItemStateException  if this Session (not necessarily this Node) has pending unsaved changes.
-	 * @throws F3_PHPCR_RepositoryException  if another error occurs
+	 * @throws F3::PHPCR::PathNotFoundException if the parent of relPath does not exist.
+	 * @throws F3::PHPCR::ItemExistsException if removeExisting is false and an identifier collision occurs
+	 * @throws F3::PHPCR::ConstraintViolationException If the would-be parent of the location relPath is actually a property, or if a node type restriction would be violated
+	 * @throws F3::PHPCR::Version::VersionException if the parent node of relPath is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in or if a node exists at relPath that is not the node corresponding to the specified version or if an attempt is made to restore the root version (jcr:rootVersion).
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if versioning is not supported.
+	 * @throws F3::PHPCR::Lock::LockException  if a lock prevents the restore.
+	 * @throws F3::PHPCR::InvalidItemStateException  if this Session (not necessarily this Node) has pending unsaved changes.
+	 * @throws F3::PHPCR::RepositoryException  if another error occurs
 	 */
 	public function restore($version, $removeExisting, $relPath = NULL) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667731);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667731);
 	}
 
 	/**
@@ -1437,38 +1438,38 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 * @param string $versionLabel a String
 	 * @param boolean $removeExisting a boolean flag that governs what happens in case of an identifier collision.
 	 * @return void
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
-	 * @throws F3_PHPCR_Version_VersionException if the specified versionLabel does not exist in this node's version history.
-	 * @throws F3_PHPCR_ItemExistsException if removeExisting is false and an identifier collision occurs.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the restore.
-	 * @throws F3_PHPCR_InvalidItemStateException if this Session (not necessarily this Node) has pending unsaved changes.
-	 * @throws F3_PHPCR_RepositoryException If another error occurs.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not versionable.
+	 * @throws F3::PHPCR::Version::VersionException if the specified versionLabel does not exist in this node's version history.
+	 * @throws F3::PHPCR::ItemExistsException if removeExisting is false and an identifier collision occurs.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the restore.
+	 * @throws F3::PHPCR::InvalidItemStateException if this Session (not necessarily this Node) has pending unsaved changes.
+	 * @throws F3::PHPCR::RepositoryException If another error occurs.
 	 */
 	public function restoreByLabel($versionLabel, $removeExisting) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667732);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667732);
 	}
 
 	/**
 	 * Returns the VersionHistory object of this node. This object provides access
 	 * to the nt:versionHistory node holding this node's versions.
 	 *
-	 * @return F3_PHPCR_Version_VersionHistoryInterface a VersionHistory object
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
-	 * @throws F3_PHPCR_RepositoryException If another error occurs.
+	 * @return F3::PHPCR::Version::VersionHistoryInterface a VersionHistory object
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not versionable.
+	 * @throws F3::PHPCR::RepositoryException If another error occurs.
 	 */
 	public function getVersionHistory() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667733);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667733);
 	}
 
 	/**
 	 * Returns the current base version of this versionable node.
 	 *
-	 * @return F3_PHPCR_Version_VersionInterface a Version object.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException if this node is not versionable.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @return F3::PHPCR::Version::VersionInterface a Version object.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this node is not versionable.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getBaseVersion() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667734);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667734);
 	}
 
 	/**
@@ -1482,23 +1483,23 @@ class F3_TYPO3CR_Node extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_NodeIn
 	 *
 	 * @param string $transition a state transition
 	 * @return void
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException  if this implementation does not support lifecycle actions or if this node does not have the mix:lifecycle mixin.
-	 * @throws F3_PHPCR_InvalidLifecycleTransitionException if the lifecycle transition is not successful.
-	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException  if this implementation does not support lifecycle actions or if this node does not have the mix:lifecycle mixin.
+	 * @throws F3::PHPCR::InvalidLifecycleTransitionException if the lifecycle transition is not successful.
+	 * @throws F3::PHPCR::RepositoryException  if another error occurs.
 	 */
 	public function followLifecycleTransition($transition) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667740);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667740);
 	}
 
 	/**
 	 * Returns the list of valid state transitions for this node.
 	 *
 	 * @return array a string array.
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException  if this implementation does not support lifecycle actions or if this node does not have the mix:lifecycle mixin.
-	 * @throws F3_PHPCR_RepositoryException  if another error occurs.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException  if this implementation does not support lifecycle actions or if this node does not have the mix:lifecycle mixin.
+	 * @throws F3::PHPCR::RepositoryException  if another error occurs.
 	 */
 	public function getAllowedLifecycleTransitions() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667741);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667741);
 	}
 
 }

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_NodeDefinitionInterface {
+class NodeDefinition extends F3::TYPO3CR::NodeType::ItemDefinition implements F3::PHPCR::NodeType::NodeDefinitionInterface {
 
 	/**
 	 * @var boolean
@@ -53,10 +54,10 @@ class F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefinit
 	 * not attached to a live NodeType. In such cases this method returns an
 	 * array containing only the NodeType object representing nt:base.
 	 *
-	 * @return array an array of F3_PHPCR_NodeType_NodeTypeInterface instances.
+	 * @return array an array of F3::PHPCR::NodeType::NodeTypeInterface instances.
 	 */
 	public function getRequiredPrimaryTypes() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097206);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097206);
 	}
 
 	/**
@@ -73,7 +74,7 @@ class F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefinit
 	 * @return array a String array
 	 */
 	public function getRequiredPrimaryTypeNames() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097207);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097207);
 	}
 
 	/**
@@ -88,10 +89,10 @@ class F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefinit
 	 * object may be acquired (in the form of a NodeDefinitionTemplate) that is
 	 * not attached to a live NodeType. In such cases this method returns null.
 	 *
-	 * @return F3_PHPCR_NodeType_NodeTypeInterface a NodeType.
+	 * @return F3::PHPCR::NodeType::NodeTypeInterface a NodeType.
 	 */
 	public function getDefaultPrimaryType() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097208);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097208);
 	}
 
 	/**
@@ -107,7 +108,7 @@ class F3_TYPO3CR_NodeType_NodeDefinition extends F3_TYPO3CR_NodeType_ItemDefinit
 	 * @return string a String
 	 */
 	public function getDefaultPrimaryTypeName() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097209);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097209);
 	}
 
 	/**

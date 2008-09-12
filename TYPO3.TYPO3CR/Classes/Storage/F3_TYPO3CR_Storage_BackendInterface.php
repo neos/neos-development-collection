@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Storage;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:F3_TYPO3CR_Storage_BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3::TYPO3CR::Storage::BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:F3_TYPO3CR_Storage_BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3::TYPO3CR::Storage::BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_TYPO3CR_Storage_BackendInterface {
+interface BackendInterface {
 
 	/**
 	 * Connect to the storage backend
@@ -56,18 +57,18 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Sets the search engine used by the storage backend.
 	 *
-	 * @param F3_TYPO3CR_Storage_SearchInterface $searchEngine
+	 * @param F3::TYPO3CR::Storage::SearchInterface $searchEngine
 	 * @return void
 	 */
-	public function setSearchEngine(F3_TYPO3CR_Storage_SearchInterface $searchEngine);
+	public function setSearchEngine(F3::TYPO3CR::Storage::SearchInterface $searchEngine);
 
 	/**
 	 * Sets the namespace registry used by the backend to translate prefixed names into (URI, name) tuples
 	 *
-	 * @param F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry
+	 * @param F3::PHPCR::NamespaceRegistryInterface $namespaceRegistry
 	 * @return void
 	 */
-	public function setNamespaceRegistry(F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry);
+	public function setNamespaceRegistry(F3::PHPCR::NamespaceRegistryInterface $namespaceRegistry);
 
 	/**
 	 * Returns TRUE if the given identifier is used in storage.
@@ -105,34 +106,34 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Adds a node to the storage
 	 *
-	 * @param F3_PHPCR_NodeInterface $node node to insert
+	 * @param F3::PHPCR::NodeInterface $node node to insert
 	 * @return void
 	 */
-	public function addNode(F3_PHPCR_NodeInterface $node);
+	public function addNode(F3::PHPCR::NodeInterface $node);
 
 	/**
 	 * Updates a node in the storage
 	 *
-	 * @param F3_PHPCR_NodeInterface $node node to update
+	 * @param F3::PHPCR::NodeInterface $node node to update
 	 * @return void
 	 */
-	public function updateNode(F3_PHPCR_NodeInterface $node);
+	public function updateNode(F3::PHPCR::NodeInterface $node);
 
 	/**
 	 * Deletes a node in the storage
 	 *
-	 * @param F3_PHPCR_NodeInterface $node node to delete
+	 * @param F3::PHPCR::NodeInterface $node node to delete
 	 * @return void
 	 */
-	public function removeNode(F3_PHPCR_NodeInterface $node);
+	public function removeNode(F3::PHPCR::NodeInterface $node);
 
 	/**
 	 * Returns an array with identifiers matching the query
 	 *
-	 * @param F3_PHPCR_Query_QOM_QueryObjectModelInterface $query
+	 * @param F3::PHPCR::Query::QOM::QueryObjectModelInterface $query
 	 * @return array
 	 */
-	public function findNodeIdentifiers(F3_PHPCR_Query_QOM_QueryObjectModelInterface $query);
+	public function findNodeIdentifiers(F3::PHPCR::Query::QOM::QueryObjectModelInterface $query);
 
 
 
@@ -148,7 +149,7 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	 * Fetches raw properties with the given type and value from the database
 	 *
 	 * @param string $name name of the reference properties considered, if NULL properties of any name will be returned
-	 * @param integer $type one of the types defined in F3_PHPCR_PropertyType
+	 * @param integer $type one of the types defined in F3::PHPCR::PropertyType
 	 * @param $value a value of the given type
 	 * @return array
 	 */
@@ -157,26 +158,26 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Adds a property in the storage
 	 *
-	 * @param F3_PHPCR_PropertyInterface $property property to insert
+	 * @param F3::PHPCR::PropertyInterface $property property to insert
 	 * @return void
 	 */
-	public function addProperty(F3_PHPCR_PropertyInterface $property);
+	public function addProperty(F3::PHPCR::PropertyInterface $property);
 
 	/**
 	 * Updates a property in the storage
 	 *
-	 * @param F3_PHPCR_PropertyInterface $property property to update
+	 * @param F3::PHPCR::PropertyInterface $property property to update
 	 * @return void
 	 */
-	public function updateProperty(F3_PHPCR_PropertyInterface $property);
+	public function updateProperty(F3::PHPCR::PropertyInterface $property);
 
 	/**
 	 * Removes a property in the storage
 	 *
-	 * @param F3_PHPCR_PropertyInterface $property property to remove
+	 * @param F3::PHPCR::PropertyInterface $property property to remove
 	 * @return void
 	 */
-	public function removeProperty(F3_PHPCR_PropertyInterface $property);
+	public function removeProperty(F3::PHPCR::PropertyInterface $property);
 
 
 
@@ -238,10 +239,10 @@ interface F3_TYPO3CR_Storage_BackendInterface {
 	/**
 	 * Adds the given nodetype to the storage
 	 *
-	 * @param F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition
+	 * @param F3::PHPCR::NodeType::NodeTypeDefinitionInterface $nodeTypeDefinition
 	 * @return void
 	 */
-	public function addNodeType(F3_PHPCR_NodeType_NodeTypeDefinitionInterface $nodeTypeDefinition);
+	public function addNodeType(F3::PHPCR::NodeType::NodeTypeDefinitionInterface $nodeTypeDefinition);
 
 	/**
 	 * Deletes the named nodetype from the storage

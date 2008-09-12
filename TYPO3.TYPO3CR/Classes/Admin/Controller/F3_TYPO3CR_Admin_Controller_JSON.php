@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Admin::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,26 +29,26 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Admin_Controller_JSON extends F3_FLOW3_MVC_Controller_ActionController {
+class JSON extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
-	 * @var F3_PHPCR_SessionInterface
+	 * @var F3::PHPCR::SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @var F3_PHPCR_NodeInterface
+	 * @var F3::PHPCR::NodeInterface
 	 */
 	protected $node;
 
 	/**
 	 * Injects a Content Repository instance
 	 *
-	 * @param F3_PHPCR_RepositoryInterface $contentRepository
+	 * @param F3::PHPCR::RepositoryInterface $contentRepository
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectContentRepository(F3_PHPCR_RepositoryInterface $contentRepository) {
+	public function injectContentRepository(F3::PHPCR::RepositoryInterface $contentRepository) {
 		$this->session = $contentRepository->login();
 		$this->rootNode = $this->session->getRootNode();
 	}
@@ -59,10 +60,10 @@ class F3_TYPO3CR_Admin_Controller_JSON extends F3_FLOW3_MVC_Controller_ActionCon
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeController() {
-		$this->supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
+		$this->supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
 		$this->arguments->addNewArgument('node');
 #		if ($this->request->getFormat() != 'json') {
-#			throw new F3_FLOW3_MVC_Exception_InvalidFormat('Only JSON requests, please... You asked for ' . $this->request->getFormat(), 1218198618);
+#			throw new F3::FLOW3::MVC::Exception::InvalidFormat('Only JSON requests, please... You asked for ' . $this->request->getFormat(), 1218198618);
 #		}
 	}
 
@@ -116,10 +117,10 @@ class F3_TYPO3CR_Admin_Controller_JSON extends F3_FLOW3_MVC_Controller_ActionCon
 			try {
 				$data[] = array(
 					'name' => $property->getName(),
-					'type' => F3_PHPCR_PropertyType::nameFromValue($property->getType()),
+					'type' => F3::PHPCR::PropertyType::nameFromValue($property->getType()),
 					'value' => $property->getValue()->getString()
 				);
-			} catch (F3_PHPCR_ValueFormatException $e) {
+			} catch (F3::PHPCR::ValueFormatException $e) {
 				$value = '';
 				$propertyValues = $property->getValues();
 				foreach ($propertyValues as $propertyValue) {
@@ -127,7 +128,7 @@ class F3_TYPO3CR_Admin_Controller_JSON extends F3_FLOW3_MVC_Controller_ActionCon
 				}
 				$data[] = array(
 					'name' => $property->getName(),
-					'type' => F3_PHPCR_PropertyType::nameFromValue($property->getType()) . '[]',
+					'type' => F3::PHPCR::PropertyType::nameFromValue($property->getType()) . '[]',
 					'value' => $value
 				);
 			}

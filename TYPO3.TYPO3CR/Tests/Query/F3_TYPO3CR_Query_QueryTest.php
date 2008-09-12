@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
+class QueryTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
@@ -36,7 +37,7 @@ class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
 	 * @expectedException InvalidArgumentException
 	 */
 	public function setLimitAcceptsOnlyIntegers() {
-		$query = new F3_TYPO3CR_Query_Query();
+		$query = new F3::TYPO3CR::Query::Query();
 		$query->setLimit(1.5);
 	}
 
@@ -46,7 +47,7 @@ class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
 	 * @expectedException InvalidArgumentException
 	 */
 	public function setLimitRejectsIntegersLessThanOne() {
-		$query = new F3_TYPO3CR_Query_Query();
+		$query = new F3::TYPO3CR::Query::Query();
 		$query->setLimit(0);
 	}
 
@@ -56,7 +57,7 @@ class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
 	 * @expectedException InvalidArgumentException
 	 */
 	public function setOffsetAcceptsOnlyIntegers() {
-		$query = new F3_TYPO3CR_Query_Query();
+		$query = new F3::TYPO3CR::Query::Query();
 		$query->setOffset(1.5);
 	}
 
@@ -66,7 +67,7 @@ class F3_TYPO3CR_Query_QueryTest extends F3_Testing_BaseTestCase {
 	 * @expectedException InvalidArgumentException
 	 */
 	public function setOffsetRejectsIntegersLessThanZero() {
-		$query = new F3_TYPO3CR_Query_Query();
+		$query = new F3::TYPO3CR::Query::Query();
 		$query->setOffset(-1);
 	}
 

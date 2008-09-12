@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,9 +28,9 @@ declare(ENCODING = 'utf-8');
  * @subpackage FLOW3
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @see F3_TYPO3CR_FLOW3_Persistence_DataMapper, F3_TYPO3CR_FLOW3_Persistence_Backend
+ * @see F3::TYPO3CR::FLOW3::Persistence::DataMapper, F3::TYPO3CR::FLOW3::Persistence::Backend
  */
-class F3_TYPO3CR_FLOW3_Persistence_IdentityMap {
+class IdentityMap {
 
 	/**
 	 * @var array

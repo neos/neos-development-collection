@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,17 +28,17 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
+class Binary implements F3::PHPCR::BinaryInterface {
 
 	/**
 	 * Returns a stream representation of this value.
 	 *
 	 * @return resource A stream representation of this value.
 	 * @throws BadMethodCallException if acquire() has not yet or release() has already been called on this Binary object instance.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getStream() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021591);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021591);
 	}
 
 	/**
@@ -45,10 +46,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 *
 	 * @return string A (native) string representation of this value.
 	 * @throws BadMethodCallException if acquire() has not yet or release() has already been called on this Binary object instance.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getBytes() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021592);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021592);
 	}
 
 	/**
@@ -56,10 +57,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 *
 	 * @return integer the size of this value in bytes.
 	 * @throws BadMethodCallException if acquire() has not yet or release() has already been called on this Binary object instance.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getSize() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021593);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021593);
 	}
 
 	/**
@@ -73,10 +74,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 *
 	 * @return void
 	 * @throws BadMethodCallException if release() has already been called on this Binary object instance.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function acquire() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021594);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021594);
 	}
 
 	/**
@@ -88,10 +89,10 @@ class F3_TYPO3CR_Binary implements F3_PHPCR_BinaryInterface {
 	 * called, though in a typical implementation this will have no effect.
 	 *
 	 * @return void
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function release() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021595);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021595);
 	}
 
 }

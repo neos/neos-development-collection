@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Admin::View;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,10 +29,10 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Admin_View_Viewport extends F3_FLOW3_MVC_View_AbstractView {
+class Viewport extends F3::FLOW3::MVC::View::AbstractView {
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Request
+	 * @var F3::FLOW3::MVC::Web::Request
 	 */
 	protected $request;
 

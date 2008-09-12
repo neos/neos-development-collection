@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query::QOM;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,14 +29,14 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QOM_BindVariableValueTest extends F3_Testing_BaseTestCase {
+class BindVariableValueTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function bindVariableValueIsPrototype() {
-		$this->assertNotSame($this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_BindVariableValue', ''), $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_BindVariableValue', ''), 'Query_QOM_BindVariableValue is not prototype.');
+		$this->assertNotSame($this->componentFactory->getComponent('F3::TYPO3CR::Query::QOM::BindVariableValue', ''), $this->componentFactory->getComponent('F3::TYPO3CR::Query::QOM::BindVariableValue', ''), 'Query_QOM_BindVariableValue is not prototype.');
 	}
 }
 

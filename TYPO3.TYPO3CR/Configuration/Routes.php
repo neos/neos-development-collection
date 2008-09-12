@@ -8,11 +8,11 @@ declare(ENCODING="utf-8");
 
 $c->TYPO3CRAdmin
 	->setUrlPattern('typo3cr/[@controller]/[@action]')
-	->setControllerComponentNamePattern('F3_@package_Admin_Controller_@controller')
+	->setControllerComponentNamePattern('F3::@package::Admin::Controller::@controller')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3CR',
-			'@controller' => 'Default',
+			'@controller' => 'DefaultController',
 			'@action' => 'default',
 			'@format' => 'html'
 		)

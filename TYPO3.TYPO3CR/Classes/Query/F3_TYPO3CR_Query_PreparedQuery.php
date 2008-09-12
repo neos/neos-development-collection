@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +31,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_Query_PreparedQuery extends F3_TYPO3CR_Query_Query implements F3_PHPCR_Query_PreparedQueryInterface {
+class PreparedQuery extends F3::TYPO3CR::Query::Query implements F3::PHPCR::Query::PreparedQueryInterface {
 
 	/**
 	 * @var array
@@ -46,22 +47,22 @@ class F3_TYPO3CR_Query_PreparedQuery extends F3_TYPO3CR_Query_Query implements F
 	 * Binds the given value to the variable named $varName.
 	 *
 	 * @param string $varName name of variable in query
-	 * @param F3_PHPCR_ValueInterface $value value to bind
+	 * @param F3::PHPCR::ValueInterface $value value to bind
 	 * @return void
 	 * @throws InvalidArgumentException if $varName is not a valid variable in this query.
 	 * @throws RepositoryException if an error occurs.
 	 */
-	public function bindValue($varName, F3_PHPCR_ValueInterface $value) {
+	public function bindValue($varName, F3::PHPCR::ValueInterface $value) {
 		if (!array_search($varName, $this->boundVariableNames)) {
 			throw new InvalidArgumentException('Invalid variable name given to bindValue.', 1217241834);
 		}
 
 		switch ($value->getType()) {
-			case F3_PHPCR_PropertyType::STRING:
+			case F3::PHPCR::PropertyType::STRING:
 				$value = $value->getString();
 				break;
 			default:
-				throw new F3_PHPCR_RepositoryException('Unsupported value type in bindValue encountered.', 1218020658);
+				throw new F3::PHPCR::RepositoryException('Unsupported value type in bindValue encountered.', 1218020658);
 		}
 		$this->variableValues[$varName] = $value;
 	}

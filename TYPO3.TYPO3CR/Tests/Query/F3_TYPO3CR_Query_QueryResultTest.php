@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,16 +29,16 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QueryResultTest extends F3_Testing_BaseTestCase {
+class QueryResultTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodesReturnsANodeIterator() {
-		$queryResult = new F3_TYPO3CR_Query_QueryResult(array());
+		$queryResult = new F3::TYPO3CR::Query::QueryResult(array());
 		$queryResult->injectComponentFactory($this->componentFactory);
-		$this->assertType('F3_PHPCR_NodeIteratorInterface', $queryResult->getNodes(), 'QueryResult did not return a NodeIterator in getNodes().');
+		$this->assertType('F3::PHPCR::NodeIteratorInterface', $queryResult->getNodes(), 'QueryResult did not return a NodeIterator in getNodes().');
 	}
 
 }

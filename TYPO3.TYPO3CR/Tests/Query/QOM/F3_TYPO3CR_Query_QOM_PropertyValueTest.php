@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query::QOM;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,15 +29,15 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QOM_PropertyValueTest extends F3_Testing_BaseTestCase {
+class PropertyValueTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function propertyValueIsPrototype() {
-		$propertyValue1 = $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_PropertyValue', 'someProp');
-		$propertyValue2 = $this->componentFactory->getComponent('F3_TYPO3CR_Query_QOM_PropertyValue', 'someProp');
+		$propertyValue1 = $this->componentFactory->getComponent('F3::TYPO3CR::Query::QOM::PropertyValue', 'someProp');
+		$propertyValue2 = $this->componentFactory->getComponent('F3::TYPO3CR::Query::QOM::PropertyValue', 'someProp');
 		$this->assertNotSame($propertyValue1, $propertyValue2, 'Query_QOM_PropertyValue is not prototype.');
 	}
 }

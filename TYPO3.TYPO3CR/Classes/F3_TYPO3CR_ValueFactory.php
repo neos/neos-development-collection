@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,36 +27,36 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
+class ValueFactory implements F3::PHPCR::ValueFactoryInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_Manager
+	 * @var F3::FLOW3::Component::Manager
 	 */
 	protected $componentFactory;
 
 	/**
 	 * Constructs a ValueFactory
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
 	/**
-	 * Returns a F3_TYPO3CR_Binary object with a value consisting of the content of
+	 * Returns a F3::TYPO3CR::Binary object with a value consisting of the content of
 	 * the specified resource handle.
 	 * The passed resource handle is closed before this method returns either normally
 	 * or because of an exception.
 	 *
 	 * @param resource $handle
-	 * @return F3_TYPO3CR_Binary
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @return F3::TYPO3CR::Binary
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function createBinary($handle) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213025145);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213025145);
 	}
 
 	/**
@@ -71,14 +72,14 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 *
 	 * @param mixed $value
 	 * @param integer $type
-	 * @return F3_PHPCR_ValueInterface
-	 * @throws F3_PHPCR_ValueFormatException is thrown if the specified value cannot be converted to the specified type.
-	 * @throws F3_PHPCR_RepositoryException if the specified Node is not referenceable, the current Session is no longer active, or another error occurs.
+	 * @return F3::PHPCR::ValueInterface
+	 * @throws F3::PHPCR::ValueFormatException is thrown if the specified value cannot be converted to the specified type.
+	 * @throws F3::PHPCR::RepositoryException if the specified Node is not referenceable, the current Session is no longer active, or another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createValue($value, $type = F3_PHPCR_PropertyType::UNDEFINED) {
+	public function createValue($value, $type = F3::PHPCR::PropertyType::UNDEFINED) {
 			// try to do requested conversion, else guess the type
-		if ($type !== F3_PHPCR_PropertyType::UNDEFINED) {
+		if ($type !== F3::PHPCR::PropertyType::UNDEFINED) {
 			return $this->createValueWithGivenType($value, $type);
 		} else {
 			return $this->createValueAndGuessType($value);
@@ -91,44 +92,44 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 *
 	 * @param mixed $value
 	 * @param integer $type
-	 * @return F3_PHPCR_ValueInterface
-	 * @throws F3_PHPCR_ValueFormatException is thrown if the specified value cannot be converted to the specified type.
+	 * @return F3::PHPCR::ValueInterface
+	 * @throws F3::PHPCR::ValueFormatException is thrown if the specified value cannot be converted to the specified type.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Make sure the given value is a valid Identifier for reference types
 	 */
 	protected function createValueWithGivenType($value, $type) {
 		switch ($type) {
-			case F3_PHPCR_PropertyType::REFERENCE:
-			case F3_PHPCR_PropertyType::WEAKREFERENCE:
+			case F3::PHPCR::PropertyType::REFERENCE:
+			case F3::PHPCR::PropertyType::WEAKREFERENCE:
 					// for REFERENCE make sure we really have a node with that Identifier
 				break;
-			case F3_PHPCR_PropertyType::DATE:
+			case F3::PHPCR::PropertyType::DATE:
 				try {
 					$value = new DateTime($value);
-				} catch (Exception $e) {
-					throw new F3_PHPCR_ValueFormatException('The given value could not be converted to a DateTime object.', 1211372741);
+				} catch (::Exception $e) {
+					throw new F3::PHPCR::ValueFormatException('The given value could not be converted to a DateTime object.', 1211372741);
 				}
 				break;
-			case F3_PHPCR_PropertyType::BINARY:
+			case F3::PHPCR::PropertyType::BINARY:
 					// we do not do anything here, getBinary on Value objects does the hard work
 				break;
-			case F3_PHPCR_PropertyType::DECIMAL:
-			case F3_PHPCR_PropertyType::DOUBLE:
+			case F3::PHPCR::PropertyType::DECIMAL:
+			case F3::PHPCR::PropertyType::DOUBLE:
 				$value = (float)$value;
 				break;
-			case F3_PHPCR_PropertyType::BOOLEAN:
+			case F3::PHPCR::PropertyType::BOOLEAN:
 				$value = (boolean)$value;
 				break;
-			case F3_PHPCR_PropertyType::LONG:
+			case F3::PHPCR::PropertyType::LONG:
 				$value = (int)$value;
 				break;
-			case F3_PHPCR_PropertyType::URI:
+			case F3::PHPCR::PropertyType::URI:
 					// we cannot really use parse_url to check for a syntactically valid URI
 					// as it emits an E_WARNING on failure and "correctly" parses about everything
 					// so we just leave the value as it is
 				break;
 		}
-		return $this->componentFactory->getComponent('F3_PHPCR_ValueInterface', $value, $type);
+		return $this->componentFactory->getComponent('F3::PHPCR::ValueInterface', $value, $type);
 	}
 
 	/**
@@ -141,17 +142,17 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 * If guessing fails the type will be UNDEFINED.
 	 *
 	 * @param mixed $value
-	 * @return F3_PHPCR_ValueInterface
+	 * @return F3::PHPCR::ValueInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check type guessing/conversion when we go for PHP6
 	 */
 	protected function createValueAndGuessType($value) {
 		$type = self::guessType($value);
-		if ($type === F3_PHPCR_PropertyType::REFERENCE) {
+		if ($type === F3::PHPCR::PropertyType::REFERENCE) {
 			$value = $value->getIdentifier();
 		}
 
-		return $this->componentFactory->getComponent('F3_PHPCR_ValueInterface', $value, $type);
+		return $this->componentFactory->getComponent('F3::PHPCR::ValueInterface', $value, $type);
 	}
 
 	/**
@@ -162,24 +163,24 @@ class F3_TYPO3CR_ValueFactory implements F3_PHPCR_ValueFactoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public static function guessType($value) {
-		$type = F3_PHPCR_PropertyType::UNDEFINED;
+		$type = F3::PHPCR::PropertyType::UNDEFINED;
 
-		if ($value instanceof F3_PHPCR_NodeInterface) {
-			$type = F3_PHPCR_PropertyType::REFERENCE;
+		if ($value instanceof F3::PHPCR::NodeInterface) {
+			$type = F3::PHPCR::PropertyType::REFERENCE;
 		} elseif ($value instanceof DateTime) {
-			$type = F3_PHPCR_PropertyType::DATE;
-		} elseif ($value instanceof F3_PHPCR_BinaryInterface) {
-			$type = F3_PHPCR_PropertyType::BINARY;
-		} elseif (F3_PHP6_Functions::is_binary($value)) {
-			$type = F3_PHPCR_PropertyType::BINARY;
+			$type = F3::PHPCR::PropertyType::DATE;
+		} elseif ($value instanceof F3::PHPCR::BinaryInterface) {
+			$type = F3::PHPCR::PropertyType::BINARY;
+		} elseif (F3::PHP6::Functions::is_binary($value)) {
+			$type = F3::PHPCR::PropertyType::BINARY;
 		} elseif (is_double($value)) {
-			$type = F3_PHPCR_PropertyType::DOUBLE;
+			$type = F3::PHPCR::PropertyType::DOUBLE;
 		} elseif (is_bool($value)) {
-			$type = F3_PHPCR_PropertyType::BOOLEAN;
+			$type = F3::PHPCR::PropertyType::BOOLEAN;
 		} elseif (is_long($value)) {
-			$type = F3_PHPCR_PropertyType::LONG;
+			$type = F3::PHPCR::PropertyType::LONG;
 		} elseif (is_string($value)) {
-			$type = F3_PHPCR_PropertyType::STRING;
+			$type = F3::PHPCR::PropertyType::STRING;
 		}
 
 		return $type;

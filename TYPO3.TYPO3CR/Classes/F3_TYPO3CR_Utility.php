@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,17 +17,17 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3CR
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
  * A set of helpers for the TYPO3CR
  *
  * @package TYPO3CR
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Utility {
+class Utility {
 
 	/**
 	 * Removes all NULL values from an array.

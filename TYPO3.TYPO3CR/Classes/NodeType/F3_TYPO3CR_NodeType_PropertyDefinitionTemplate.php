@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -36,7 +37,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_NodeType_PropertyDefinitionTemplate extends F3_TYPO3CR_NodeType_PropertyDefinition implements F3_PHPCR_NodeType_PropertyDefinitionTemplateInterface {
+class PropertyDefinitionTemplate extends F3::TYPO3CR::NodeType::PropertyDefinition implements F3::PHPCR::NodeType::PropertyDefinitionTemplateInterface {
 
 	/**
 	 * Sets the name of the property.

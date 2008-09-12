@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,10 +29,10 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
+class ValueFactoryTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_PHPCR_ValueFactory
+	 * @var F3::PHPCR::ValueFactory
 	 */
 	protected $valueFactory;
 
@@ -39,7 +40,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$this->valueFactory = new F3_TYPO3CR_ValueFactory($this->componentFactory);
+		$this->valueFactory = new F3::TYPO3CR::ValueFactory($this->componentFactory);
 	}
 
 	/**
@@ -49,7 +50,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromStringGuessesCorrectType() {
 		$value = $this->valueFactory->createValue('This is a string');
-		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::STRING, 'New Value object was not of type STRING.');
+		$this->assertEquals($value->getType(), F3::PHPCR::PropertyType::STRING, 'New Value object was not of type STRING.');
 	}
 
 	/**
@@ -59,7 +60,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromLongGuessesCorrectType() {
 		$value = $this->valueFactory->createValue(10);
-		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::LONG, 'New Value object was not of type LONG.');
+		$this->assertEquals($value->getType(), F3::PHPCR::PropertyType::LONG, 'New Value object was not of type LONG.');
 	}
 
 	/**
@@ -69,7 +70,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromDoubleGuessesCorrectType() {
 		$value = $this->valueFactory->createValue(1.5);
-		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::DOUBLE, 'New Value object was not of type DOUBLE.');
+		$this->assertEquals($value->getType(), F3::PHPCR::PropertyType::DOUBLE, 'New Value object was not of type DOUBLE.');
 	}
 
 	/**
@@ -79,7 +80,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromBooleanGuessesCorrectType() {
 		$value = $this->valueFactory->createValue(FALSE);
-		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
+		$this->assertEquals($value->getType(), F3::PHPCR::PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
 	}
 
 	/**
@@ -89,7 +90,7 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createValueFromDateGuessesCorrectType() {
 		$value = $this->valueFactory->createValue(new DateTime('2007-09-22'));
-		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::DATE, 'New Value object was not of type DATE.');
+		$this->assertEquals($value->getType(), F3::PHPCR::PropertyType::DATE, 'New Value object was not of type DATE.');
 	}
 
 	/**
@@ -98,10 +99,10 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function createValueFromNodeGuessesCorrectType() {
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('getRawPropertiesOfNode'), array('default', $this->getMock('F3_PHPCR_RepositoryInterface'), $this->getMock('F3_TYPO3CR_Storage_BackendInterface'), $this->componentFactory));
-		$node = new F3_TYPO3CR_Node(array(), $mockSession, $this->componentFactory);
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('getRawPropertiesOfNode'), array('default', $this->getMock('F3::PHPCR::RepositoryInterface'), $this->getMock('F3::TYPO3CR::Storage::BackendInterface'), $this->componentFactory));
+		$node = new F3::TYPO3CR::Node(array(), $mockSession, $this->componentFactory);
 		$value = $this->valueFactory->createValue($node);
-		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
+		$this->assertEquals($value->getType(), F3::PHPCR::PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
 		$this->assertEquals($value->getString(), $node->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');
 	}
 
@@ -111,8 +112,8 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function createValueFromBinaryGuessesCorrectType() {
-		$value = $this->valueFactory->createValue(new F3_TYPO3CR_Binary());
-		$this->assertEquals($value->getType(), F3_PHPCR_PropertyType::BINARY, 'New Value object was not of type BINARY.');
+		$value = $this->valueFactory->createValue(new F3::TYPO3CR::Binary());
+		$this->assertEquals($value->getType(), F3::PHPCR::PropertyType::BINARY, 'New Value object was not of type BINARY.');
 	}
 
 	/**
@@ -120,8 +121,8 @@ class F3_TYPO3CR_ValueFactoryTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function createValueConvertsTypeToBooleanIfRequested() {
-		$value = $this->valueFactory->createValue('Some test string', F3_PHPCR_PropertyType::BOOLEAN);
-		$this->assertSame($value->getType(), F3_PHPCR_PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
+		$value = $this->valueFactory->createValue('Some test string', F3::PHPCR::PropertyType::BOOLEAN);
+		$this->assertSame($value->getType(), F3::PHPCR::PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
 	}
 }
 ?>

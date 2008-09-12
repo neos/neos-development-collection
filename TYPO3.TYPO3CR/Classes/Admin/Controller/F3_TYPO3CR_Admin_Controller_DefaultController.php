@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Admin::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Admin_Controller_Default extends F3_FLOW3_MVC_Controller_ActionController {
+class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
 	 * Initializes this controller
@@ -37,7 +38,7 @@ class F3_TYPO3CR_Admin_Controller_Default extends F3_FLOW3_MVC_Controller_Action
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeController() {
-		$this->supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
+		$this->supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
 	}
 
 	/**
@@ -47,7 +48,7 @@ class F3_TYPO3CR_Admin_Controller_Default extends F3_FLOW3_MVC_Controller_Action
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function defaultAction() {
-		$view = $this->componentFactory->getComponent('F3_TYPO3CR_Admin_View_Viewport');
+		$view = $this->componentFactory->getComponent('F3::TYPO3CR::Admin::View::Viewport');
 		$view->setRequest($this->request);
 		return $view->render();
 	}

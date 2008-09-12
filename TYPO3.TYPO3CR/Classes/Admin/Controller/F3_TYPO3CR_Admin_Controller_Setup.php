@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Admin::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,7 +22,7 @@ declare(ENCODING = 'utf-8');
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionController {
+class Setup extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
 	 * Initializes this controller
@@ -39,7 +40,7 @@ class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionCo
 	/**
 	 * Processes a request.
 	 *
-	 * @param  F3_FLOW3_MVC_Request $request The request to process
+	 * @param  F3::FLOW3::MVC::Request $request The request to process
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -64,7 +65,7 @@ class F3_TYPO3CR_Admin_Controller_Setup extends F3_FLOW3_MVC_Controller_ActionCo
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setupAction() {
-		$helper = $this->componentFactory->getComponent('F3_TYPO3CR_Storage_Helper', $this->arguments);
+		$helper = $this->componentFactory->getComponent('F3::TYPO3CR::Storage::Helper', $this->arguments);
 		$helper->initialize();
 		return 'Initialization of the TYPO3CR was successful.';
 	}

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_PropertyInterface {
+class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyInterface {
 
 	/**
 	 * @var mixed The raw value of the property
@@ -45,7 +46,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	protected $valueObject;
 
 	/**
-	 * @var F3_PHPCR_ValueFactoryInterface
+	 * @var F3::PHPCR::ValueFactoryInterface
 	 */
 	protected $valueFactory;
 
@@ -54,17 +55,17 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 *
 	 * @param string $name The name of the property
 	 * @param mixed $value The raw value of the property
-	 * @param integer $type The type to set for the property (see F3_PHPCR_PropertyTypes)
-	 * @param F3_PHPCR_NodeInterface $parentNode
-	 * @param F3_PHPCR_NodeInterface $session
-	 * @param F3_PHPCR_ValueFactoryInterface $valueFactory
+	 * @param integer $type The type to set for the property (see F3::PHPCR::PropertyTypes)
+	 * @param F3::PHPCR::NodeInterface $parentNode
+	 * @param F3::PHPCR::NodeInterface $session
+	 * @param F3::PHPCR::ValueFactoryInterface $valueFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, $value, $type, F3_PHPCR_NodeInterface $parentNode, F3_PHPCR_SessionInterface $session, F3_PHPCR_ValueFactoryInterface $valueFactory) {
-		if ($value === NULL) throw new F3_PHPCR_RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
+	public function __construct($name, $value, $type, F3::PHPCR::NodeInterface $parentNode, F3::PHPCR::SessionInterface $session, F3::PHPCR::ValueFactoryInterface $valueFactory) {
+		if ($value === NULL) throw new F3::PHPCR::RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
 		if (is_array($value)) {
-			if (F3_FLOW3_Utility_Arrays::containsMultipleTypes($value)) {
-				throw new F3_PHPCR_ValueFormatException('Mixing multiple types in a Value is not allowed.', 1214492501);
+			if (F3::FLOW3::Utility::Arrays::containsMultipleTypes($value)) {
+				throw new F3::PHPCR::ValueFormatException('Mixing multiple types in a Value is not allowed.', 1214492501);
 			}
 		}
 
@@ -73,8 +74,8 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 		$this->parentNode = $parentNode;
 		$this->name = $name;
 
-		if ($type === F3_PHPCR_PropertyType::UNDEFINED) {
-			$this->type = F3_TYPO3CR_ValueFactory::guessType($value);
+		if ($type === F3::PHPCR::PropertyType::UNDEFINED) {
+			$this->type = F3::TYPO3CR::ValueFactory::guessType($value);
 		} else {
 			$this->type = $type;
 		}
@@ -126,11 +127,11 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 *
 	 * @param mixed $value The value to set
 	 * @return void
-	 * @throws F3_PHPCR_ValueFormatException if the type or format of the specified value is incompatible with the type of this property.
-	 * @throws F3_PHPCR_Version_VersionException if this property belongs to a node that is versionable and checked-in or is non-versionable but whose nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_Lock_LockException if a lock prevents the setting of the value and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::ValueFormatException if the type or format of the specified value is incompatible with the type of this property.
+	 * @throws F3::PHPCR::Version::VersionException if this property belongs to a node that is versionable and checked-in or is non-versionable but whose nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the setting of the value and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo implement handling of Value objects as input
@@ -142,15 +143,15 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 		}
 
 		if (is_array($value) && !$this->isMultiple()) {
-			throw new F3_PHPCR_ValueFormatException('Only multi-valued properties can be set to an array.', 1214481182);
+			throw new F3::PHPCR::ValueFormatException('Only multi-valued properties can be set to an array.', 1214481182);
 		} elseif (is_array($value)) {
-			if (F3_FLOW3_Utility_Arrays::containsMultipleTypes($value)) {
-				throw new F3_PHPCR_ValueFormatException('Mixing multiple types in a Value is not allowed.', 1214492501);
+			if (F3::FLOW3::Utility::Arrays::containsMultipleTypes($value)) {
+				throw new F3::PHPCR::ValueFormatException('Mixing multiple types in a Value is not allowed.', 1214492501);
 			}
 		}
 
-		if($value instanceof F3_PHPCR_ValueInterface || (is_array($value) && current($value) instanceof F3_PHPCR_ValueInterface)) {
-			throw new F3_PHPCR_UnsupportedRepositoryOperationException('setValue() can not yet be handed Value objects', 1214493495);
+		if($value instanceof F3::PHPCR::ValueInterface || (is_array($value) && current($value) instanceof F3::PHPCR::ValueInterface)) {
+			throw new F3::PHPCR::UnsupportedRepositoryOperationException('setValue() can not yet be handed Value objects', 1214493495);
 		}
 
 		if ($value instanceof DateTime) {
@@ -169,13 +170,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 *
 	 * The object returned is a copy of the stored value and is immutable.
 	 *
-	 * @return F3_PHPCR_ValueInterface the value
-	 * @throws F3_PHPCR_ValueFormatException if the property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @return F3::PHPCR::ValueInterface the value
+	 * @throws F3::PHPCR::ValueFormatException if the property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValue() {
-		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
+		if ($this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
 		if ($this->valueObject === NULL) {
 			$this->valueObject = $this->valueFactory->createValue($this->value, $this->type);
 		}
@@ -189,14 +190,14 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * throws a ValueFormatException. The array returned is a copy of the
 	 * stored values, so changes to it are not reflected in internal storage.
 	 *
-	 * @return array of F3_PHPCR_ValueInterface
-	 * @throws F3_PHPCR_ValueFormatException if the property is single-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @return array of F3::PHPCR::ValueInterface
+	 * @throws F3::PHPCR::ValueFormatException if the property is single-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValues() {
-		if (!$this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getValues() cannot be used to access single-valued properties.', 1189512545);
+		if (!$this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getValues() cannot be used to access single-valued properties.', 1189512545);
 
 		if ($this->valueObject === NULL) {
 			$this->valueObject = array();
@@ -218,13 +219,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * shortcut for Property.getValue().getString(). See Value.
 	 *
 	 * @return string A string representation of the value of this property.
-	 * @throws F3_PHPCR_ValueFormatException if conversion to a String is not possible or if the property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::ValueFormatException if conversion to a String is not possible or if the property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getString() {
-		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getString() cannot be called on multi-valued properties.', 1203338111);
+		if ($this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getString() cannot be called on multi-valued properties.', 1203338111);
 
 		return $this->getValue()->getString();
 	}
@@ -242,12 +243,12 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * Returns a Binary representation of the value of this property. A
 	 * shortcut for Property.getValue().getBinary(). See Value.
 	 *
-	 * @return F3_PHPCR_BinaryInterface A Binary representation of the value of this property.
-	 * @throws F3_PHPCR_ValueFormatException if the property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @return F3::PHPCR::BinaryInterface A Binary representation of the value of this property.
+	 * @throws F3::PHPCR::ValueFormatException if the property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 */
 	public function getBinary() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594477);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594477);
 	}
 
 	/**
@@ -255,13 +256,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * for Property.getValue().getLong(). See Value.
 	 *
 	 * @return integer An integer representation of the value of this property.
-	 * @throws F3_PHPCR_ValueFormatException if conversion to a long is not possible or if the property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @throws F3::PHPCR::ValueFormatException if conversion to a long is not possible or if the property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getLong() {
-		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getLong() cannot be called on multi-valued properties.', 1203338188);
+		if ($this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getLong() cannot be called on multi-valued properties.', 1203338188);
 
 		return $this->getValue()->getLong();
 	}
@@ -271,13 +272,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * shortcut for Property.getValue().getDouble(). See Value.
 	 *
 	 * @return float A float representation of the value of this property.
-	 * @throws F3_PHPCR_ValueFormatException if conversion to a double is not possible or if the property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @throws F3::PHPCR::ValueFormatException if conversion to a double is not possible or if the property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDouble() {
-		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getDouble() cannot be called on multi-valued properties.', 1203338189);
+		if ($this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getDouble() cannot be called on multi-valued properties.', 1203338189);
 
 		return $this->getValue()->getDouble();
 	}
@@ -287,11 +288,11 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * shortcut for Property.getValue().getDecimal(). See Value.
 	 *
 	 * @return float A float representation of the value of this property.
-	 * @throws F3_PHPCR_ValueFormatException if conversion to a BigDecimal is not possible or if the property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @throws F3::PHPCR::ValueFormatException if conversion to a BigDecimal is not possible or if the property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 */
 	public function getDecimal() {
-		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getDecimal() cannot be called on multi-valued properties.', 1212594888);
+		if ($this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getDecimal() cannot be called on multi-valued properties.', 1212594888);
 
 		return $this->getValue()->getDecimal();
 	}
@@ -303,12 +304,12 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * are not reflected in internal storage.
 	 *
 	 * @return DateTime A date representation of the value of this property.
-	 * @throws F3_PHPCR_ValueFormatException if conversion to a string is not possible or if the property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @throws F3::PHPCR::ValueFormatException if conversion to a string is not possible or if the property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDate() {
-		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getDate() cannot be called on multi-valued properties.', 1203338327);
+		if ($this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getDate() cannot be called on multi-valued properties.', 1203338327);
 
 		return $this->getValue()->getDate();
 	}
@@ -318,13 +319,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * shortcut for Property.getValue().getBoolean(). See Value.
 	 *
 	 * @return boolean A boolean representation of the value of this property.
-	 * @throws F3_PHPCR_ValueFormatException if conversion to a boolean is not possible or if the property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @throws F3::PHPCR::ValueFormatException if conversion to a boolean is not possible or if the property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBoolean() {
-		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getBoolean() cannot be called on multi-valued properties.', 1203338188);
+		if ($this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getBoolean() cannot be called on multi-valued properties.', 1203338188);
 
 		return $this->getValue()->getBoolean();
 	}
@@ -338,23 +339,23 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * refers to the parent node itself, ".." to the parent of the parent node
 	 * and "foo" to a sibling node of this property.
 	 *
-	 * @return F3_PHPCR_NodeInterface the referenced Node
-	 * @throws F3_PHPCR_ValueFormatException if this property cannot be converted to a referring type (REFERENCE, WEAKREFERENCE or PATH), if the property is multi-valued or if this property is a referring type but is currently part of the frozen state of a version in version storage.
-	 * @throws F3_PHPCR_ItemNotFoundException If this property is of type PATH and no node accessible by the current Session exists in this workspace at the specified path.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @return F3::PHPCR::NodeInterface the referenced Node
+	 * @throws F3::PHPCR::ValueFormatException if this property cannot be converted to a referring type (REFERENCE, WEAKREFERENCE or PATH), if the property is multi-valued or if this property is a referring type but is currently part of the frozen state of a version in version storage.
+	 * @throws F3::PHPCR::ItemNotFoundException If this property is of type PATH and no node accessible by the current Session exists in this workspace at the specified path.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 */
 	public function getNode() {
-		if ($this->isMultiple()) throw new F3_PHPCR_ValueFormatException('getNode() cannot be called on multi-valued properties.', 1217845644);
+		if ($this->isMultiple()) throw new F3::PHPCR::ValueFormatException('getNode() cannot be called on multi-valued properties.', 1217845644);
 
 		switch ($this->type) {
-			case F3_PHPCR_PropertyType::REFERENCE:
-			case F3_PHPCR_PropertyType::WEAKREFERENCE:
+			case F3::PHPCR::PropertyType::REFERENCE:
+			case F3::PHPCR::PropertyType::WEAKREFERENCE:
 				return $this->session->getNodeByIdentifier($this->getValue()->getString());
 				break;
-			case F3_PHPCR_PropertyType::PATH:
-				throw new F3_PHPCR_UnsupportedRepositoryOperationException('getNode() for PATH properties is not yet supported.', 1217845501);
+			case F3::PHPCR::PropertyType::PATH:
+				throw new F3::PHPCR::UnsupportedRepositoryOperationException('getNode() for PATH properties is not yet supported.', 1217845501);
 			default:
-				throw new F3_PHPCR_ValueFormatException('The property cannot be used as referring type for getNode().', 1217845587);
+				throw new F3::PHPCR::ValueFormatException('The property cannot be used as referring type for getNode().', 1217845587);
 				break;
 		}
 	}
@@ -367,13 +368,13 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * parent node itself, ".." to the parent of the parent node and "foo" to a
 	 * sibling property of this property or this property itself.
 	 *
-	 * @return F3_PHPCR_PropertyInterface the referenced property
-	 * @throws F3_PHPCR_ValueFormatException if this property cannot be converted to a PATH, if the property is multi-valued or if this property is a referring type but is currently part of the frozen state of a version in version storage.
-	 * @throws F3_PHPCR_ItemNotFoundException If this property is of type PATH and no property accessible by the current Session exists in this workspace at the specified path.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @return F3::PHPCR::PropertyInterface the referenced property
+	 * @throws F3::PHPCR::ValueFormatException if this property cannot be converted to a PATH, if the property is multi-valued or if this property is a referring type but is currently part of the frozen state of a version in version storage.
+	 * @throws F3::PHPCR::ItemNotFoundException If this property is of type PATH and no property accessible by the current Session exists in this workspace at the specified path.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 */
 	public function getProperty() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594797);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594797);
 	}
 
 	/**
@@ -385,11 +386,11 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * Returns -1 if the implementation cannot determine the length.
 	 *
 	 * @return integer an integer.
-	 * @throws F3_PHPCR_ValueFormatException if this property is multi-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::ValueFormatException if this property is multi-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getLength() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594796);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594796);
 	}
 
 	/**
@@ -402,11 +403,11 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * determine the length of a value.
 	 *
 	 * @return array an array of lengths
-	 * @throws F3_PHPCR_ValueFormatException if this property is single-valued.
-	 * @throws F3_PHPCR_RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::ValueFormatException if this property is single-valued.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function getLengths() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594795);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594795);
 	}
 
 	/**
@@ -419,11 +420,11 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * among others which may have been applicable is an implementation issue
 	 * and is not covered by this specification.
 	 *
-	 * @return F3_PHPCR_NodeType_PropertyDefinitionInterface a PropertyDefinition object.
-	 * @throws F3_PHPCR_RepositoryException if an error occurs.
+	 * @return F3::PHPCR::NodeType::PropertyDefinitionInterface a PropertyDefinition object.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function getDefinition() {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594794);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594794);
 	}
 
 	/**
@@ -447,7 +448,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * never UNDEFINED (it must always have some actual type).
 	 *
 	 * @return integer an int
-	 * @throws F3_PHPCR_RepositoryException if an error occurs
+	 * @throws F3::PHPCR::RepositoryException if an error occurs
 	 */
 	public function getType() {
 		return $this->type;
@@ -505,7 +506,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 */
 	public function getPath() {
 		$buffer = $this->getParent()->getPath();
-		if (F3_PHP6_Functions::strlen($buffer) > 1) {
+		if (F3::PHP6::Functions::strlen($buffer) > 1) {
 			$buffer .= '/';
 		}
 		$buffer .= $this->getName();
@@ -515,7 +516,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	/**
 	 * Return parent node
 	 *
-	 * @return F3_PHPCR_NodeInterface The Parent Node
+	 * @return F3::PHPCR::NodeInterface The Parent Node
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function getParent() {
@@ -553,7 +554,7 @@ class F3_TYPO3CR_Property extends F3_TYPO3CR_AbstractItem implements F3_PHPCR_Pr
 	 * @throws RepositoryException if another error occurs.
 	*/
 	public function refresh($keepChanges) {
-		throw new F3_PHPCR_UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
 	}
 
 }

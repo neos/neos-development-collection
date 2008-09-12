@@ -13,9 +13,9 @@ declare(ENCODING="utf-8");
 /**
  * The storage backend to use for TYPO3CR.
  *
- * @var F3_TYPO3CR_Storage_BackendInterface
+ * @var F3::TYPO3CR::Storage::BackendInterface
  */
-$c->TYPO3CR->storage->backend = 'F3_TYPO3CR_Storage_Backend_PDO';
+$c->TYPO3CR->storage->backend = 'F3::TYPO3CR::Storage::Backend::PDO';
 
 /**
  * Options which are passed to the storage backend used by TYPO3CR
@@ -31,9 +31,9 @@ $c->TYPO3CR->storage->backendOptions = array(
 /**
  * The indexing/search backend to use for TYPO3CR.
  *
- * @var F3_TYPO3CR_Storage_SearchInterface
+ * @var F3::TYPO3CR::Storage::SearchInterface
  */
-$c->TYPO3CR->search->backend = 'F3_TYPO3CR_Storage_Search_Lucene';
+$c->TYPO3CR->search->backend = 'F3::TYPO3CR::Storage::Search::Lucene';
 
 /**
  * Options which are passed to the indexing/search backend used by TYPO3CR

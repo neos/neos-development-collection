@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query::QOM;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,15 +29,15 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QOM_QueryObjectModelFactoryTest extends F3_Testing_BaseTestCase {
+class QueryObjectModelFactoryTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_PHPCR_Query_QOM_QueryObjectModelFactoryInterface
+	 * @var F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface
 	 */
 	protected $QOMFactory;
 
 	public function setUp() {
-		$this->QOMFactory = new F3_TYPO3CR_Query_QOM_QueryObjectModelFactory();
+		$this->QOMFactory = new F3::TYPO3CR::Query::QOM::QueryObjectModelFactory();
 		$this->QOMFactory->injectComponentFactory($this->componentFactory);
 	}
 
@@ -45,7 +46,7 @@ class F3_TYPO3CR_Query_QOM_QueryObjectModelFactoryTest extends F3_Testing_BaseTe
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function selectorReturnsSelector() {
-		$this->assertType('F3_PHPCR_Query_QOM_SelectorInterface', $this->QOMFactory->selector('nt:base'), 'The QOM factory did not return a Selector as expected.');
+		$this->assertType('F3::PHPCR::Query::QOM::SelectorInterface', $this->QOMFactory->selector('nt:base'), 'The QOM factory did not return a Selector as expected.');
 	}
 
 	/**
@@ -53,9 +54,9 @@ class F3_TYPO3CR_Query_QOM_QueryObjectModelFactoryTest extends F3_Testing_BaseTe
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function comparisonReturnsComparison() {
-		$operand1 = $this->getMock('F3_PHPCR_Query_QOM_DynamicOperandInterface');
-		$operand2 = $this->getMock('F3_PHPCR_Query_QOM_StaticOperandInterface');
-		$this->assertType('F3_PHPCR_Query_QOM_ComparisonInterface', $this->QOMFactory->comparison($operand1, F3_PHPCR_Query_QOM_QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO, $operand2), 'The QOM factory did not return a Comparison as expected.');
+		$operand1 = $this->getMock('F3::PHPCR::Query::QOM::DynamicOperandInterface');
+		$operand2 = $this->getMock('F3::PHPCR::Query::QOM::StaticOperandInterface');
+		$this->assertType('F3::PHPCR::Query::QOM::ComparisonInterface', $this->QOMFactory->comparison($operand1, F3::PHPCR::Query::QOM::QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO, $operand2), 'The QOM factory did not return a Comparison as expected.');
 	}
 
 	/**
@@ -63,7 +64,7 @@ class F3_TYPO3CR_Query_QOM_QueryObjectModelFactoryTest extends F3_Testing_BaseTe
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function propertyValueReturnsPropertyValue() {
-		$this->assertType('F3_PHPCR_Query_QOM_PropertyValueInterface', $this->QOMFactory->propertyValue('someProp'), 'The QOM factory did not return a PropertyValue as expected.');
+		$this->assertType('F3::PHPCR::Query::QOM::PropertyValueInterface', $this->QOMFactory->propertyValue('someProp'), 'The QOM factory did not return a PropertyValue as expected.');
 	}
 
 	/**
@@ -71,7 +72,7 @@ class F3_TYPO3CR_Query_QOM_QueryObjectModelFactoryTest extends F3_Testing_BaseTe
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function bindVariableReturnsBindVariableValue() {
-		$this->assertType('F3_PHPCR_Query_QOM_BindVariableValueInterface', $this->QOMFactory->bindVariable('someName'), 'The QOM factory did not return a BindVariableValue as expected.');
+		$this->assertType('F3::PHPCR::Query::QOM::BindVariableValueInterface', $this->QOMFactory->bindVariable('someName'), 'The QOM factory did not return a BindVariableValue as expected.');
 	}
 
 }

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,10 +30,10 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefinitionInterface {
+class ItemDefinition implements F3::PHPCR::NodeType::ItemDefinitionInterface {
 
 	/**
-	 * @var F3_PHPCR_NodeType_NodeTypeInterface
+	 * @var F3::PHPCR::NodeType::NodeTypeInterface
 	 */
 	protected $declaringNodeType = NULL;
 
@@ -52,10 +53,10 @@ class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefini
 	protected $mandatory = FALSE;
 
 	/**
-	 * A constant value from F3_PHPCR_Version_OnParentVersionAction
+	 * A constant value from F3::PHPCR::Version::OnParentVersionAction
 	 * @var integer
 	 */
-	protected $onParentVersion = F3_PHPCR_Version_OnParentVersionAction::COPY;
+	protected $onParentVersion = F3::PHPCR::Version::OnParentVersionAction::COPY;
 
 	/**
 	 * @var boolean
@@ -70,7 +71,7 @@ class F3_TYPO3CR_NodeType_ItemDefinition implements F3_PHPCR_NodeType_ItemDefini
 	 * PropertyDefinitionTemplate) that is not attached to a live NodeType. In
 	 * such cases this method returns null.
 	 *
-	 * @return F3_PHPCR_NodeType_NodeTypeInterface a NodeType object.
+	 * @return F3::PHPCR::NodeType::NodeTypeInterface a NodeType object.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDeclaringNodeType() {

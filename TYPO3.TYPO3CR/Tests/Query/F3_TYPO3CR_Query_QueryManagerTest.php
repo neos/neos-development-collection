@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,13 +26,13 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Query_QueryManagerTest extends F3_Testing_BaseTestCase {
+class QueryManagerTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_PHPCR_Query_QueryManagerInterface
+	 * @var F3::PHPCR::Query::QueryManagerInterface
 	 */
 	protected $queryManager;
 
@@ -39,7 +40,7 @@ class F3_TYPO3CR_Query_QueryManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$this->queryManager = new F3_TYPO3CR_Query_QueryManager();
+		$this->queryManager = new F3::TYPO3CR::Query::QueryManager();
 		$this->queryManager->injectComponentFactory($this->componentFactory);
 	}
 
@@ -48,7 +49,7 @@ class F3_TYPO3CR_Query_QueryManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function queryManagerReturnsAQOMFactoryOnGetQOMFactory() {
-		$this->assertType('F3_PHPCR_Query_QOM_QueryObjectModelFactoryInterface', $this->queryManager->getQOMFactory(), 'The query manager did not return a QOMFactory as expected.');
+		$this->assertType('F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface', $this->queryManager->getQOMFactory(), 'The query manager did not return a QOMFactory as expected.');
 	}
 }
 

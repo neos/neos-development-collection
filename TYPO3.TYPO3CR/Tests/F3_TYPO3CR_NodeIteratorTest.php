@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version  $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
+class NodeIteratorTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Tests if getSize() returns the correct size.
@@ -36,7 +37,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResult() {
-		$iterator = new F3_TYPO3CR_NodeIterator();
+		$iterator = new F3::TYPO3CR::NodeIterator();
 		$iterator->append('one');
 		$iterator->append('two');
 		$iterator->append('three');
@@ -54,7 +55,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function hasNextAndNextNodeIterateThroughAllElements() {
-		$iterator = new F3_TYPO3CR_NodeIterator();
+		$iterator = new F3::TYPO3CR::NodeIterator();
 		$iterator->append('one');
 		$iterator->append('two');
 		$iterator->append('three');
@@ -76,7 +77,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPositionWorks() {
-		$iterator = new F3_TYPO3CR_NodeIterator();
+		$iterator = new F3::TYPO3CR::NodeIterator();
 		$iterator->append('one');
 		$iterator->append('two');
 		$iterator->append('three');
@@ -98,7 +99,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function throwsOutOfBoundsExceptionIfNoNodesAvailable() {
-		$iterator = new F3_TYPO3CR_NodeIterator();
+		$iterator = new F3::TYPO3CR::NodeIterator();
 		try {
 			$iterator->nextNode();
 			$this->fail("nextNode() must throw a OutOfBoundsException when no nodes are available");
@@ -114,7 +115,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function skipToEndOfIteratorSetsPositionCorrectly() {
-		$iterator = new F3_TYPO3CR_NodeIterator();
+		$iterator = new F3::TYPO3CR::NodeIterator();
 		$iterator->append('one');
 		$iterator->append('two');
 		$iterator->append('three');
@@ -137,7 +138,7 @@ class F3_TYPO3CR_NodeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function skipPastEndOfIteratorThrowsOutOfBoundsException() {
-		$iterator = new F3_TYPO3CR_NodeIterator();
+		$iterator = new F3::TYPO3CR::NodeIterator();
 		$iterator->append('one');
 		$iterator->append('two');
 		$iterator->append('three');

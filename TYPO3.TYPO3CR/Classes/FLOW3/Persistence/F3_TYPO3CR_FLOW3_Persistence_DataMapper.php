@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,96 +29,96 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
+class DataMapper {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Component_ObjectBuilder
+	 * @var F3::FLOW3::Component::ObjectBuilder
 	 */
 	protected $componentObjectBuilder;
 
 	/**
-	 * @var F3_PHPCR_SessionInterface
+	 * @var F3::PHPCR::SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @var F3_TYPO3CR_FLOW3_Persistence_IdentityMap
+	 * @var F3::TYPO3CR::FLOW3::Persistence::IdentityMap
 	 */
 	protected $identityMap;
 
 	/**
-	 * @var F3_FLOW3_Persistence_Manager
+	 * @var F3::FLOW3::Persistence::Manager
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects a Component Manager
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 	}
 
 	/**
 	 * Injects a Component Object Builder
 	 *
-	 * @param F3_FLOW3_Component_ObjectBuilder $componentObjectBuilder
+	 * @param F3::FLOW3::Component::ObjectBuilder $componentObjectBuilder
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentObjectBuilder(F3_FLOW3_Component_ObjectBuilder $componentObjectBuilder) {
+	public function injectComponentObjectBuilder(F3::FLOW3::Component::ObjectBuilder $componentObjectBuilder) {
 		$this->componentObjectBuilder = $componentObjectBuilder;
 	}
 
 	/**
 	 * Injects a Content Repository instance used to get the current session from
 	 *
-	 * @param F3_PHPCR_RepositoryInterface $contentRepository
+	 * @param F3::PHPCR::RepositoryInterface $contentRepository
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectContentRepository(F3_PHPCR_RepositoryInterface $contentRepository) {
+	public function injectContentRepository(F3::PHPCR::RepositoryInterface $contentRepository) {
 		$this->session = $contentRepository->login();
 	}
 
 	/**
 	 * Injects the identity map
 	 *
-	 * @param F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap
+	 * @param F3::TYPO3CR::FLOW3::Persistence::IdentityMap $identityMap
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectIdentityMap(F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap) {
+	public function injectIdentityMap(F3::TYPO3CR::FLOW3::Persistence::IdentityMap $identityMap) {
 		$this->identityMap = $identityMap;
 	}
 
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param F3_FLOW3_Persistence_Manager $persistenceManager
+	 * @param F3::FLOW3::Persistence::Manager $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(F3_FLOW3_Persistence_Manager $persistenceManager) {
+	public function injectPersistenceManager(F3::FLOW3::Persistence::Manager $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
 	 * Maps the nodes
 	 *
-	 * @param F3_PHPCR_NodeIteratorInterface $nodes
+	 * @param F3::PHPCR::NodeIteratorInterface $nodes
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function map(F3_PHPCR_NodeIteratorInterface $nodes) {
+	public function map(F3::PHPCR::NodeIteratorInterface $nodes) {
 		$objects = array();
 		foreach ($nodes as $node) {
 			$objects[] = $this->mapSingleNode($node);
@@ -129,12 +130,12 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	/**
 	 * Maps a single node into the object it represents
 	 *
-	 * @param F3_PHPCR_NodeInterface $node
+	 * @param F3::PHPCR::NodeInterface $node
 	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function mapSingleNode(F3_PHPCR_NodeInterface $node) {
-		$className = array_pop(explode(':', $node->getPrimaryNodeType()->getName()));
+	protected function mapSingleNode(F3::PHPCR::NodeInterface $node) {
+		$className = array_pop(explode(':', $node->getPrimaryNodeType()->getName(), 2));
 		$componentConfiguration = $this->componentManager->getComponentConfiguration($className);
 		$properties = array();
 		foreach ($node->getProperties() as $property) {
@@ -152,15 +153,15 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	/**
 	 * Determines the type of a property and returns the value as corresponding native PHP type
 	 *
-	 * @param F3_PHPCR_PropertyInterface $property
+	 * @param F3::PHPCR::PropertyInterface $property
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo replace try/catch block with check against the PropertyDefinition when implemented
 	 */
-	protected function getPropertyValue(F3_PHPCR_PropertyInterface $property) {
+	protected function getPropertyValue(F3::PHPCR::PropertyInterface $property) {
 		try {
 			$propertyValue = $this->getValueValue($property->getValue(), $property->getType());
-		} catch (F3_PHPCR_ValueFormatException $e) {
+		} catch (F3::PHPCR::ValueFormatException $e) {
 			$values = $property->getValues();
 			$propertyValue = array();
 			foreach ($values as $value) {
@@ -174,33 +175,33 @@ class F3_TYPO3CR_FLOW3_Persistence_DataMapper {
 	/**
 	 * Determines the type of a Value and returns the value as corresponding native PHP type
 	 *
-	 * @param F3_PHPCR_ValueInterface $value
+	 * @param F3::PHPCR::ValueInterface $value
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function getValueValue(F3_PHPCR_ValueInterface $value, $type) {
+	protected function getValueValue(F3::PHPCR::ValueInterface $value, $type) {
 		switch ($type) {
-			case F3_PHPCR_PropertyType::BOOLEAN:
+			case F3::PHPCR::PropertyType::BOOLEAN:
 				$value = $value->getBoolean();
 				break;
-			case F3_PHPCR_PropertyType::DATE:
+			case F3::PHPCR::PropertyType::DATE:
 				$value = $value->getDate();
 				break;
-			case F3_PHPCR_PropertyType::DECIMAL:
-			case F3_PHPCR_PropertyType::DOUBLE:
+			case F3::PHPCR::PropertyType::DECIMAL:
+			case F3::PHPCR::PropertyType::DOUBLE:
 				$value = $value->getDouble();
 				break;
-			case F3_PHPCR_PropertyType::LONG:
+			case F3::PHPCR::PropertyType::LONG:
 				$value = $value->getLong();
 				break;
-			case F3_PHPCR_PropertyType::STRING:
+			case F3::PHPCR::PropertyType::STRING:
 				$value = $value->getString();
 				break;
-			case F3_PHPCR_PropertyType::REFERENCE:
+			case F3::PHPCR::PropertyType::REFERENCE:
 				$value = $this->mapSingleNode($this->session->getNodeByIdentifier($value->getString()));
 				break;
 			default:
-				throw new F3_TYPO3CR_FLOW3_Persistence_Exception_UnsupportedTypeException('The encountered value type (' . F3_PHPCR_PropertyType::nameFromValue($value->getType()) . ') cannot be mapped.', 1217843827);
+				throw new F3::TYPO3CR::FLOW3::Persistence::Exception::UnsupportedTypeException('The encountered value type (' . F3::PHPCR::PropertyType::nameFromValue($value->getType()) . ') cannot be mapped.', 1217843827);
 				break;
 		}
 

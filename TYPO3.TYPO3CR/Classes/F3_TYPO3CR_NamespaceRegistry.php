@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,10 +27,10 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterface {
+class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_Manager
+	 * @var F3::FLOW3::Component::Manager
 	 */
 	protected $componentFactory;
 
@@ -52,11 +53,11 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	/**
 	 * Constructs a NamespaceRegistry object
 	 *
-	 * @param F3_TYPO3CR_Storage_BackendInterface $storageBackend
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::TYPO3CR::Storage::BackendInterface $storageBackend
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_TYPO3CR_Storage_BackendInterface $storageBackend, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(F3::TYPO3CR::Storage::BackendInterface $storageBackend, F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->storageBackend = $storageBackend;
 		$this->componentFactory = $componentFactory;
 	}
@@ -85,7 +86,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 * mappings" work.
 	 *
 	 * @return array
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPrefixes() {
@@ -99,7 +100,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 * Returns an array holding all currently registered URIs.
 	 *
 	 * @return array
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getURIs() {
@@ -118,8 +119,8 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 *
 	 * @param string $uri
 	 * @return string
-	 * @throws F3_PHPCR_NamespaceException
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::NamespaceException
+	 * @throws F3::PHPCR::RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -128,7 +129,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 		if ($prefix === FALSE) {
 			$prefix = array_search($uri, $this->customNamespaces);
 			if ($prefix === FALSE) {
-				throw new F3_PHPCR_NamespaceException('URI ' . $uri . ' not registered in NamespaceRegistry', 1184478139);
+				throw new F3::PHPCR::NamespaceException('URI ' . $uri . ' not registered in NamespaceRegistry', 1184478139);
 			}
 		}
 		return $prefix;
@@ -144,8 +145,8 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 *
 	 * @param string $prefix
 	 * @return string
-	 * @throws F3_PHPCR_NamespaceException
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::NamespaceException
+	 * @throws F3::PHPCR::RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -155,7 +156,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 		} elseif (array_key_exists($prefix, $this->customNamespaces)) {
 			return $this->customNamespaces[$prefix];
 		} else {
-			throw new F3_PHPCR_NamespaceException('Prefix ' . $prefix . ' not registered in NamespaceRegistry', 1184478140);
+			throw new F3::PHPCR::NamespaceException('Prefix ' . $prefix . ' not registered in NamespaceRegistry', 1184478140);
 		}
 	}
 
@@ -170,16 +171,16 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 * @param string $prefix
 	 * @param string $uri
 	 * @return void
-	 * @throws F3_PHPCR_NamespaceException
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException
-	 * @throws F3_PHPCR_AccessDeniedException
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::NamespaceException
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException
+	 * @throws F3::PHPCR::AccessDeniedException
+	 * @throws F3::PHPCR::RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerNamespace($prefix, $uri) {
 		if (!$this->isAllowedToModifyNamespace($prefix)) {
-			throw new F3_PHPCR_NamespaceException('Attempt to register a protected namespace!', 1184478152);
+			throw new F3::PHPCR::NamespaceException('Attempt to register a protected namespace!', 1184478152);
 		}
 
 			// Update a namespace
@@ -202,19 +203,19 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 *
 	 * @param string $prefix
 	 * @return void
-	 * @throws F3_PHPCR_NamespaceException
-	 * @throws F3_PHPCR_UnsupportedRepositoryOperationException
-	 * @throws F3_PHPCR_AccessDeniedException
-	 * @throws F3_PHPCR_RepositoryException
+	 * @throws F3::PHPCR::NamespaceException
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException
+	 * @throws F3::PHPCR::AccessDeniedException
+	 * @throws F3::PHPCR::RepositoryException
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
 	public function unregisterNamespace($prefix) {
 		if (!$this->isAllowedToModifyNamespace($prefix)) {
-			throw new F3_PHPCR_NamespaceException('Attempt to unregister a protected namespace!', 1184478149);
+			throw new F3::PHPCR::NamespaceException('Attempt to unregister a protected namespace!', 1184478149);
 		}
 
 		if (!array_key_exists($prefix, $this->customNamespaces)) {
-			throw new F3_PHPCR_NamespaceException("Attempt to unregister a not registered namespace!", 1184479159);
+			throw new F3::PHPCR::NamespaceException("Attempt to unregister a not registered namespace!", 1184479159);
 		}
 		$this->storageBackend->deleteNamespace($prefix);
 		unset ($this->customNamespaces[$prefix]);
@@ -225,7 +226,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 	 *
 	 * @param string $prefix Prefix of namespace
 	 * @return boolean TRUE if we are allowed to modify the namespace
-	 * @throws F3_PHPCR_NamespaceException
+	 * @throws F3::PHPCR::NamespaceException
 	 * @todo Throws an AccessDeniedException if this Session does not have permission to add/remove a Namespace
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
@@ -234,7 +235,7 @@ class F3_TYPO3CR_NamespaceRegistry implements F3_PHPCR_NamespaceRegistryInterfac
 			return FALSE;
 		}
 
-		if (F3_PHP6_Functions::strtolower(F3_PHP6_Functions::substr($prefix, 0,3)) == 'xml') {
+		if (F3::PHP6::Functions::strtolower(F3::PHP6::Functions::substr($prefix, 0,3)) == 'xml') {
 			return FALSE;
 		}
 

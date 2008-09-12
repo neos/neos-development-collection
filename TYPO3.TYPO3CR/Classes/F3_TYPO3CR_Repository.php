@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,20 +27,20 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
+class Repository implements F3::PHPCR::RepositoryInterface {
 
 	/**
-	 * @var F3_FLOW3_Configuration_Container
+	 * @var F3::FLOW3::Configuration::Container
 	 */
 	protected $settings;
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_TYPO3CR_Storage_BackendInterface
+	 * @var F3::TYPO3CR::Storage::BackendInterface
 	 */
 	protected $storageBackend;
 
@@ -74,13 +75,13 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	/**
 	 * Constructs a Repository object.
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
-		$this->settings = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('TYPO3CR');
+		$this->settings = $this->componentFactory->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('TYPO3CR');
 	}
 
 	/**
@@ -100,19 +101,19 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 	 * method Workspace.getAccessibleWorkspaceNames(), allowing the client to select from among
 	 * available "real" workspaces.
 	 *
-	 * @param F3_PHPCR_Credentials $credentials The credentials of the user
+	 * @param F3::PHPCR::Credentials $credentials The credentials of the user
 	 * @param string $workspaceName the name of a workspace
-	 * @return F3_TYPO3CR_Session a valid session for the user to access the repository
-	 * @throws F3_PHPCR_LoginException If the login fails
-	 * @throws F3_PHPCR_NoSuchWorkspacexception If the specified workspaceName is not recognized
-	 * @throws F3_PHPCR_RepositoryException if another error occurs
+	 * @return F3::TYPO3CR::Session a valid session for the user to access the repository
+	 * @throws F3::PHPCR::LoginException If the login fails
+	 * @throws F3::PHPCR::NoSuchWorkspacexception If the specified workspaceName is not recognized
+	 * @throws F3::PHPCR::RepositoryException if another error occurs
 	 * @todo Currently given credentials are not checked at all!
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function login($credentials = NULL, $workspaceName = 'default') {
-		if ($credentials !== NULL && !($credentials instanceof F3_PHPCR_CredentialsInterface)) throw new F3_PHPCR_RepositoryException('$credentials must be an instance of F3_PHPCR_CredentialsInterface', 1181042933);
+		if ($credentials !== NULL && !($credentials instanceof F3::PHPCR::CredentialsInterface)) throw new F3::PHPCR::RepositoryException('$credentials must be an instance of F3::PHPCR::CredentialsInterface', 1181042933);
 		if ($workspaceName !== 'default') {
-			throw new F3_PHPCR_NoSuchWorkspaceException('Only default workspace supported', 1181063009);
+			throw new F3::PHPCR::NoSuchWorkspaceException('Only default workspace supported', 1181063009);
 		}
 
 		$this->storageBackend = $this->componentFactory->getComponent($this->settings->storage->backend, $this->settings->storage->backendOptions);
@@ -120,7 +121,7 @@ class F3_TYPO3CR_Repository implements F3_PHPCR_RepositoryInterface {
 		$this->storageBackend->setWorkspaceName($workspaceName);
 		$this->storageBackend->connect();
 
-		$session = $this->componentFactory->getComponent('F3_PHPCR_SessionInterface', $workspaceName, $this, $this->storageBackend);
+		$session = $this->componentFactory->getComponent('F3::PHPCR::SessionInterface', $workspaceName, $this, $this->storageBackend);
 		$this->storageBackend->setNamespaceRegistry($session->getWorkspace()->getNamespaceRegistry());
 		return $session;
 	}

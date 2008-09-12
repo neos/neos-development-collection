@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,20 +29,20 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_BackendInterface {
+class Backend implements F3::FLOW3::Persistence::BackendInterface {
 
 	/**
-	 * @var F3_FLOW3_Reflection_Service
+	 * @var F3::FLOW3::Reflection::Service
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var F3_PHPCR_SessionInterface
+	 * @var F3::PHPCR::SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @var F3_PHPCR_NodeInterface
+	 * @var F3::PHPCR::NodeInterface
 	 */
 	protected $baseNode;
 
@@ -51,7 +52,7 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 	protected $classSchemata;
 
 	/**
-	 * @var F3_TYPO3CR_FLOW3_Persistence_IdentityMap
+	 * @var F3::TYPO3CR::FLOW3::Persistence::IdentityMap
 	 */
 	protected $identityMap;
 
@@ -73,33 +74,33 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 	/**
 	 * Injects A Reflection Service instance used for processing objects
 	 *
-	 * @param F3_FLOW3_Reflection_Service $reflectionService
+	 * @param F3::FLOW3::Reflection::Service $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(F3_FLOW3_Reflection_Service $reflectionService) {
+	public function injectReflectionService(F3::FLOW3::Reflection::Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the Content Repository used to persist data
 	 *
-	 * @param F3_PHPCR_RepositoryInterface $repository
+	 * @param F3::PHPCR::RepositoryInterface $repository
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectContentRepository(F3_PHPCR_RepositoryInterface $repository) {
+	public function injectContentRepository(F3::PHPCR::RepositoryInterface $repository) {
 		$this->session = $repository->login();
 	}
 
 	/**
 	 * Injects the identity map
 	 *
-	 * @param F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap
+	 * @param F3::TYPO3CR::FLOW3::Persistence::IdentityMap $identityMap
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectIdentityMap(F3_TYPO3CR_FLOW3_Persistence_IdentityMap $identityMap) {
+	public function injectIdentityMap(F3::TYPO3CR::FLOW3::Persistence::IdentityMap $identityMap) {
 		$this->identityMap = $identityMap;
 	}
 
@@ -122,11 +123,12 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 		}
 
 		foreach($this->classSchemata as $schema) {
-			if ($nodeTypeManager->hasNodeType($schema->getClassName())) {
-				$nodeTypeManager->unregisterNodeType($schema->getClassName());
+			$className = str_replace('::', '_', $schema->getClassName());
+			if ($nodeTypeManager->hasNodeType($className)) {
+				$nodeTypeManager->unregisterNodeType($className);
 			}
 			$nodeTypeTemplate = $nodeTypeManager->createNodeTypeTemplate();
-			$nodeTypeTemplate->setName($schema->getClassName());
+			$nodeTypeTemplate->setName($className);
 			$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		}
 	}
@@ -199,7 +201,7 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 		} elseif ($this->identityMap->hasObject(spl_object_hash($object))) {
 			return $this->identityMap->getIdentifier(spl_object_hash($object));
 		} else {
-			throw new F3_FLOW3_Persistence_Exception('processObject(' . get_class($object) . ') called for object I cannot handle.', 1218478184);
+			throw new F3::FLOW3::Persistence::Exception('processObject(' . get_class($object) . ') called for object I cannot handle.', 1218478184);
 		}
 	}
 
@@ -250,7 +252,7 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 			$node = $this->session->getNodeByIdentifier($identifier);
 			$this->setPropertiesForObject($node, $object);
 		} else {
-			throw new F3_FLOW3_Persistence_Exception('How am I supposed to update an object I do not know about?', 1218478512);
+			throw new F3::FLOW3::Persistence::Exception('How am I supposed to update an object I do not know about?', 1218478512);
 		}
 		unset($this->updatedObjects[$objectHash]);
 
@@ -260,12 +262,12 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 	/**
 	 * Iterates over the properties of an object and sets them on the given node
 	 *
-	 * @param F3_PHPCR_NodeInterface $node
+	 * @param F3::PHPCR::NodeInterface $node
 	 * @param object $object
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function setPropertiesForObject(F3_PHPCR_NodeInterface $node, $object) {
+	protected function setPropertiesForObject(F3::PHPCR::NodeInterface $node, $object) {
 		$className = $object->AOPProxyGetProxyTargetClassName();
 		foreach ($this->classSchemata[$className]->getProperties() as $propertyName => $propertyType) {
 			$value = $object->AOPProxyGetProperty($propertyName);
@@ -274,18 +276,18 @@ class F3_TYPO3CR_FLOW3_Persistence_Backend implements F3_FLOW3_Persistence_Backe
 				if (count($value) == 0) {
 						// delete empty array properties
 					$value = NULL;
-					$type = F3_PHPCR_PropertyType::UNDEFINED;
+					$type = F3::PHPCR::PropertyType::UNDEFINED;
 				} elseif (is_object(current($value)) && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'reference')) {
 					$value = $this->processObjectArray($value);
-					$type = F3_PHPCR_PropertyType::REFERENCE;
+					$type = F3::PHPCR::PropertyType::REFERENCE;
 				} else {
-					$type = F3_PHPCR_PropertyType::valueFromType(gettype(current($value)));
+					$type = F3::PHPCR::PropertyType::valueFromType(gettype(current($value)));
 				}
 			} elseif (is_object($value) && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'reference')) {
 				$value = $this->processObject($value);
-				$type = F3_PHPCR_PropertyType::REFERENCE;
+				$type = F3::PHPCR::PropertyType::REFERENCE;
 			} else {
-				$type = F3_PHPCR_PropertyType::valueFromType($propertyType);
+				$type = F3::PHPCR::PropertyType::valueFromType($propertyType);
 			}
 
 			$node->setProperty($propertyName, $value, $type);

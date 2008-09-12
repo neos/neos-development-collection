@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Storage::Backend::PDO;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3::TYPO3CR::Storage::Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
@@ -27,10 +28,10 @@ require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3::TYPO3CR::Storage::Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_Storage_Backend_PDO_PostgreSQLTest extends F3_TYPO3CR_Storage_Backend_TestBase {
+class PostgreSQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 
 	/**
 	 * @var string
@@ -75,8 +76,8 @@ class F3_TYPO3CR_Storage_Backend_PDO_PostgreSQLTest extends F3_TYPO3CR_Storage_B
 
 		$databaseHandle = NULL;
 
-		$this->storageBackend = new F3_TYPO3CR_Storage_Backend_PDO(array('dataSourceName' => 'pgsql:dbname=' . $this->fixtureDB, 'username' => $this->dbuser, 'password' => $this->dbpass));
-		$this->storageBackend->setSearchEngine($this->getMock('F3_TYPO3CR_Storage_SearchInterface'));
+		$this->storageBackend = new F3::TYPO3CR::Storage::Backend::PDO(array('dataSourceName' => 'pgsql:dbname=' . $this->fixtureDB, 'username' => $this->dbuser, 'password' => $this->dbpass));
+		$this->storageBackend->setSearchEngine($this->getMock('F3::TYPO3CR::Storage::SearchInterface'));
 		$this->storageBackend->connect();
 	}
 
@@ -96,7 +97,7 @@ class F3_TYPO3CR_Storage_Backend_PDO_PostgreSQLTest extends F3_TYPO3CR_Storage_B
 			$databaseHandle = new PDO($templatedsn, $this->dbuser, $this->dbpass);
 			$databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch (PDOException $e) {
-			throw new F3_TYPO3CR_StorageException('Could not connect to DSN "' . $templatedsn . '". PDO error: ' . $e->getMessage(), 1220609558);
+			throw new F3::TYPO3CR::StorageException('Could not connect to DSN "' . $templatedsn . '". PDO error: ' . $e->getMessage(), 1220609558);
 		}
 
 		$databaseHandle->exec('DROP DATABASE ' . $this->fixtureDB . ';');

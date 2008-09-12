@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,20 +31,20 @@ require_once('Fixtures/F3_TYPO3CR_MockStorageBackend.php');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
+class NodeTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_TYPO3CR_Node
+	 * @var F3::TYPO3CR::Node
 	 */
 	protected $rootNode;
 
 	/**
-	 * @var F3_TYPO3CR_MockStorageBackend
+	 * @var F3::TYPO3CR::MockStorageBackend
 	 */
 	protected $mockStorageBackend;
 
 	/**
-	 * @var F3_TYPO3CR_Session
+	 * @var F3::TYPO3CR::Session
 	 */
 	protected $session;
 
@@ -51,8 +52,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$this->mockStorageBackend = new F3_TYPO3CR_MockStorageBackend();
+		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
+		$this->mockStorageBackend = new F3::TYPO3CR::MockStorageBackend();
 		$this->mockStorageBackend->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
@@ -103,7 +104,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 						'value' => 'News about the TYPO3CR',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3_PHPCR_PropertyType::STRING
+						'type' => F3::PHPCR::PropertyType::STRING
 					)
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
@@ -112,34 +113,34 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3_PHPCR_PropertyType::REFERENCE
+						'type' => F3::PHPCR::PropertyType::REFERENCE
 					),
 					array(
 						'name' => 'wrongref',
 						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3_PHPCR_PropertyType::REFERENCE
+						'type' => F3::PHPCR::PropertyType::REFERENCE
 					),
 					array(
 						'name' => 'weakref',
 						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3_PHPCR_PropertyType::WEAKREFERENCE
+						'type' => F3::PHPCR::PropertyType::WEAKREFERENCE
 					),
 					array(
 						'name' => 'wrongweakref',
 						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3_PHPCR_PropertyType::REFERENCE
+						'type' => F3::PHPCR::PropertyType::REFERENCE
 					),
 				)
 			)
 		);
 
-		$this->session = new F3_TYPO3CR_Session('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory);
+		$this->session = new F3::TYPO3CR::Session('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory);
 		$this->rootNode = $this->session->getRootNode();
 	}
 
@@ -214,7 +215,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), F3_PHPCR_PropertyType::REFERENCE);
+		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::REFERENCE);
 	}
 
 	/**
@@ -230,7 +231,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), F3_PHPCR_PropertyType::REFERENCE);
+		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::REFERENCE);
 	}
 
 	/**
@@ -271,7 +272,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), F3_PHPCR_PropertyType::WEAKREFERENCE);
+		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::WEAKREFERENCE);
 	}
 
 	/**
@@ -287,7 +288,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), F3_PHPCR_PropertyType::WEAKREFERENCE);
+		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::WEAKREFERENCE);
 	}
 
 	/**
@@ -311,18 +312,18 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	public function getPropertiesWorks() {
 		$emptyNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noProperties = $emptyNode->getProperties();
-		$this->assertType('F3_PHPCR_PropertyIteratorInterface', $noProperties, 'getProperties() did not return a PropertyIterator for a node without properties.');
+		$this->assertType('F3::PHPCR::PropertyIteratorInterface', $noProperties, 'getProperties() did not return a PropertyIterator for a node without properties.');
 
 		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$properties = $node->getProperties();
-		$this->assertType('F3_PHPCR_PropertyIteratorInterface', $properties, 'getProperties() did not return a PropertyIterator for a node with properties.');
+		$this->assertType('F3::PHPCR::PropertyIteratorInterface', $properties, 'getProperties() did not return a PropertyIterator for a node with properties.');
 
-		$propertyIterator = new F3_TYPO3CR_PropertyIterator;
+		$propertyIterator = new F3::TYPO3CR::PropertyIterator;
 		$this->assertEquals(0, $propertyIterator->getSize(), 'getProperties() did not return an empty PropertyIterator for a node without properties.');
 		$this->assertNotEquals(1, $propertyIterator->getSize(), 'getProperties() returned an empty PropertyIterator for a node with properties.');
 
 			// we don't compare the iterators directly here, as this hits the memory limit hard. really hard.
-		$titleProperty = $this->componentFactory->getComponent('F3_PHPCR_PropertyInterface', 'title', 'News about the TYPO3CR', F3_PHPCR_PropertyType::STRING, $node, $this->session);
+		$titleProperty = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', 'title', 'News about the TYPO3CR', F3::PHPCR::PropertyType::STRING, $node, $this->session);
 		$this->assertEquals($titleProperty->getString(), $properties->nextProperty()->getString(), 'getProperties() did not return the expected property.');
 	}
 
@@ -369,7 +370,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getPrimaryNodeTypeReturnsANodeType() {
-		$this->assertType('F3_PHPCR_NodeType_NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
+		$this->assertType('F3::PHPCR::NodeType::NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
 	}
 
 	/**
@@ -401,11 +402,11 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	public function getNodesWorks() {
 		$leaf = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noChildNodes = $leaf->getNodes();
-		$this->assertType('F3_PHPCR_NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
+		$this->assertType('F3::PHPCR::NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
 
 		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$childNodes = $node->getNodes();
-		$this->assertType('F3_PHPCR_NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
+		$this->assertType('F3::PHPCR::NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
 
 		$this->assertEquals(0, $noChildNodes->getSize(), 'getNodes() did not return an empty NodeIterator for a node without child nodes.');
 		$this->assertNotEquals(0, $childNodes->getSize(), 'getNodes() returned an empty NodeIterator for a node with child nodes.');
@@ -479,7 +480,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$node->getAncestor($node->getDepth() + 1);
 			$this->fail("Getting ancestor of depth n, where n is greater than depth of this Node must throw an ItemNotFoundException");
-		} catch (F3_PHPCR_ItemNotFoundException $e) {
+		} catch (F3::PHPCR::ItemNotFoundException $e) {
 			// success
 		}
 	}
@@ -497,7 +498,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$node->getAncestor($node->getDepth() + 1);
 			$this->fail("Getting ancestor of depth n, where n is greater than depth of this Node must throw an ItemNotFoundException");
-		} catch (F3_PHPCR_ItemNotFoundException $e) {
+		} catch (F3::PHPCR::ItemNotFoundException $e) {
 			// success
 		}
 	}
@@ -512,7 +513,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->rootNode->getAncestor(-1);
 			$this->fail("Getting ancestor of depth < 0 must throw an ItemNotFoundException.");
-		} catch (F3_PHPCR_ItemNotFoundException $e) {
+		} catch (F3::PHPCR::ItemNotFoundException $e) {
 			// success
 		}
 	}
@@ -552,7 +553,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->rootNode->getParent();
 			$this->fail("getParent() of root must throw an ItemNotFoundException.");
-		} catch (F3_PHPCR_ItemNotFoundException $e) {
+		} catch (F3::PHPCR::ItemNotFoundException $e) {
 			// success
 		}
 	}
@@ -615,7 +616,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function addNodeReturnsANode() {
 		$newNode = $this->rootNode->addNode('User');
-		$this->assertType('F3_PHPCR_NodeInterface', $newNode, 'addNode() does not return an object of type F3_PHPCR_NodeInterface.');
+		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'addNode() does not return an object of type F3::PHPCR::NodeInterface.');
 		$this->assertTrue($this->rootNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
 	}
 
@@ -626,7 +627,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function addNodeWithSimpleRelativePathReturnsANode() {
 		$newNode = $this->rootNode->addNode('SomeItem');
-		$this->assertType('F3_PHPCR_NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3_PHPCR_NodeInterface.');
+		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3::PHPCR::NodeInterface.');
 	}
 
 	/**
@@ -636,7 +637,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 */
 	public function addNodeWithComplexRelativePathReturnsANode() {
 		$newNode = $this->rootNode->addNode('Content/./News/SomeItem');
-		$this->assertType('F3_PHPCR_NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3_PHPCR_NodeInterface.');
+		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3::PHPCR::NodeInterface.');
 	}
 
 	/**
@@ -675,8 +676,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function addNodeRegistersNodeAsNewInSession() {
-		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
+		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('User');
@@ -687,8 +688,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function addNodeRegistersParentNodeAsDirtyInSession() {
-		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
+		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsDirty');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('User');
@@ -699,8 +700,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function removeNodeRegistersNodeAsRemovedInSession() {
-		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
+		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsRemoved');
 		$rootNode = $mockSession->getRootNode();
 		$node = $rootNode->addNode('User');
@@ -717,7 +718,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->rootNode->getNode('SomeNode');
 			$this->fail('Removed node was still available');
-		} catch (F3_PHPCR_PathNotFoundException $e) {}
+		} catch (F3::PHPCR::PathNotFoundException $e) {}
 	}
 
 	/**
@@ -730,7 +731,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->session->getNodeByIdentifier($node->getIdentifier());
 			$this->fail('Removed node was still available');
-		} catch (F3_PHPCR_ItemNotFoundException $e) {}
+		} catch (F3::PHPCR::ItemNotFoundException $e) {}
 	}
 
 	/**
@@ -796,7 +797,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 		try {
 			$this->rootNode->remove();
 			$this->fail('Root node must not be removable');
-		} catch (F3_PHPCR_NodeType_ConstraintViolationException $e) {}
+		} catch (F3::PHPCR::NodeType::ConstraintViolationException $e) {}
 	}
 
 	/**
@@ -814,8 +815,8 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function addNodeWithIdentifierRegistersNodeAsNewInSession() {
-		$mockRepository = $this->getMock('F3_PHPCR_RepositoryInterface');
-		$mockSession = $this->getMock('F3_TYPO3CR_Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
+		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('WithIdentifier', NULL, '16bca35d-1ef5-4a47-8b0c-0ddd69507d00');
@@ -824,7 +825,7 @@ class F3_TYPO3CR_NodeTest extends F3_Testing_BaseTestCase {
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3_PHPCR_ItemExistsException
+	 * @expectedException F3::PHPCR::ItemExistsException
 	 */
 	public function addNodeWithUsedIdentifierRejectsIdentifier() {
 		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';

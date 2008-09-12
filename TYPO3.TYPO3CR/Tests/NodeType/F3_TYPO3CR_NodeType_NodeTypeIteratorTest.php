@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,13 +29,13 @@ declare(ENCODING = 'utf-8');
  * @version  $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3CR_NodeType_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
+class NodeTypeIteratorTest extends F3::Testing::BaseTestCase {
 
 	public function setUp() {
-		$this->mockStorageBackend = $this->getMock('F3_TYPO3CR_Storage_BackendInterface');
+		$this->mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$this->mockStorageBackend->expects($this->any())->method('getRawNodeType')->will($this->returnValue(array('name' => 'SuperDuperNodeType')));
 
-		$this->iterator = new F3_TYPO3CR_NodeType_NodeTypeIterator();
+		$this->iterator = new F3::TYPO3CR::NodeType::NodeTypeIterator();
 	}
 
 	/**
@@ -43,8 +44,8 @@ class F3_TYPO3CR_NodeType_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResult() {
-		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType('SuperDuperNodeType'));
-		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new F3::TYPO3CR::NodeType::NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new F3::TYPO3CR::NodeType::NodeType('SuperDuperNodeType'));
 		$size = $this->iterator->getSize();
 		$this->assertEquals(2, $size, "getSize() does not return correct number.");
 	}
@@ -56,8 +57,8 @@ class F3_TYPO3CR_NodeType_NodeTypeIteratorTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 */
 	public function hasNextAndNextNodeIterateThroughAllElements() {
-		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType('SuperDuperNodeType'));
-		$this->iterator->append(new F3_TYPO3CR_NodeType_NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new F3::TYPO3CR::NodeType::NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new F3::TYPO3CR::NodeType::NodeType('SuperDuperNodeType'));
 		$count = 0;
 		while ($this->iterator->hasNext()) {
 			$this->iterator->nextNodeType();

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3CR::Storage;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class F3_TYPO3CR_Storage_AbstractBackend implements F3_TYPO3CR_Storage_BackendInterface {
+abstract class AbstractBackend implements F3::TYPO3CR::Storage::BackendInterface {
 
 	/**
 	 * @var string Name of the current workspace
@@ -36,12 +37,12 @@ abstract class F3_TYPO3CR_Storage_AbstractBackend implements F3_TYPO3CR_Storage_
 	protected $workspaceName = 'default';
 
 	/**
-	 * @var F3_TYPO3CR_Storage_SearchInterface
+	 * @var F3::TYPO3CR::Storage::SearchInterface
 	 */
 	protected $searchEngine;
 
 	/**
-	 * @var F3_TYPO3CR_NamespaceRegistryInterface
+	 * @var F3::TYPO3CR::NamespaceRegistryInterface
 	 */
 	protected $namespaceRegistry;
 
@@ -76,22 +77,22 @@ abstract class F3_TYPO3CR_Storage_AbstractBackend implements F3_TYPO3CR_Storage_
 	/**
 	 * Sets the search engine used by the storage backend.
 	 *
-	 * @param F3_TYPO3CR_Storage_SearchInterface $searchEngine
+	 * @param F3::TYPO3CR::Storage::SearchInterface $searchEngine
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setSearchEngine(F3_TYPO3CR_Storage_SearchInterface $searchEngine) {
+	public function setSearchEngine(F3::TYPO3CR::Storage::SearchInterface $searchEngine) {
 		$this->searchEngine = $searchEngine;
 	}
 
 	/**
 	 * Sets the namespace registry used by the storage backend
 	 *
-	 * @param F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry
+	 * @param F3::PHPCR::NamespaceRegistryInterface $namespaceRegistry
 	 * @return void
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
-	public function setNamespaceRegistry(F3_PHPCR_NamespaceRegistryInterface $namespaceRegistry) {
+	public function setNamespaceRegistry(F3::PHPCR::NamespaceRegistryInterface $namespaceRegistry) {
 		$this->namespaceRegistry = $namespaceRegistry;
 	}
 
