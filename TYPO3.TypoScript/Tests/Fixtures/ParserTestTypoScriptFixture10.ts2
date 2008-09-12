@@ -4,7 +4,7 @@
  *  This fixture serves for testing the processors syntax
  *
  */
-namespace: default = F3_TYPO3_TypoScript
+namespace: default = F3::TYPO3::TypoScript
  
 object1 = Text
 object1.value = "Hello world!"

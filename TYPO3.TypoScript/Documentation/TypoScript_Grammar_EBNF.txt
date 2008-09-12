@@ -29,7 +29,7 @@ Literal = DoubleQuotedLiteral | SingleQuotedLiteral;
 DoubleQuotedLiteral = DoubleQuote ( { EscapedUnicodeCharacter } | VariableName ) DoubleQuote;
 SingleQuotedLiteral = SingleQuote ( { EscapedUnicodeCharacter } | VariableName ) SingleQuote;
 
-ObjectType = ( NamespaceIdentifier ":" Identifier ) | ComponentName;
+ObjectType = ( NamespaceIdentifier "::" Identifier ) | ComponentName;
 
 Constant = (* ... to be defined *);
 
@@ -39,7 +39,7 @@ NamespaceIdentifier = Identifier;
 ObjectIdentifier = Identifier;
 MethodName = Identifier;
 Identifier = Character { CharacterOrDigit };
-ComponentName = Character { "_" CharacterOrDigit } { CharacterOrDigit };
+ComponentName = Character { "::" CharacterOrDigit } { CharacterOrDigit };
 ArrayOffset = Digit;
 
 CharacterOrDigit = Character | Digit;

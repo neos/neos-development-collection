@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -23,7 +24,7 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class F3_TypoScript_ProcessorInvocation {
+class ProcessorInvocation {
 	
 	/**
 	 * @var object An instance of the class providing the processor

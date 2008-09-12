@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -23,7 +24,7 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class F3_TypoScript_ProcessorChain {
+class ProcessorChain {
 	
 	/**
 	 * @var An array of 
@@ -35,12 +36,12 @@ class F3_TypoScript_ProcessorChain {
 	 * in the processor chain.
 	 *
 	 * @param  integer					$index: A numeric index expressing the order of the processor in the overall chain
-	 * @param  F3_TypoScript_ProcessorInvocation $processorInvocation: The processor invocation
+	 * @param  F3::TypoScript::ProcessorInvocation $processorInvocation: The processor invocation
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws InvalidArgumentException
 	 */
-	public function setProcessorInvocation($index, F3_TypoScript_ProcessorInvocation $processorInvocation) {
+	public function setProcessorInvocation($index, F3::TypoScript::ProcessorInvocation $processorInvocation) {
 		if (!is_integer($index)) throw new InvalidArgumentException('Index must be of type integer, ' . gettype($index) . ' given.', 1179416592);
 		$this->processorInvocations[$index] = $processorInvocation;
 		ksort($this->processorInvocations);

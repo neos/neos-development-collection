@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,7 +27,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class F3_TypoScript_AbstractContentArrayObject extends F3_TypoScript_AbstractContentObject implements ArrayAccess {
+abstract class AbstractContentArrayObject extends F3::TypoScript::AbstractContentObject implements ArrayAccess {
 
 	/**
 	 * @var array An array which contains further content objects which can be set and retrieved through numeric indexes
@@ -112,7 +113,7 @@ abstract class F3_TypoScript_AbstractContentArrayObject extends F3_TypoScript_Ab
 		ksort($this->contentArray);
 		$content = '';
 		foreach ($this->contentArray as $contentItem) {
-			if ($contentItem instanceof F3_TypoScript_AbstractContentObject) {
+			if ($contentItem instanceof F3::TypoScript::AbstractContentObject) {
 				$content .= $contentItem->getRenderedContent();
 			}
 		}

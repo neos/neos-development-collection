@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,10 +27,10 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class F3_TypoScript_AbstractObject implements F3_TypoScript_ObjectInterface {
+abstract class AbstractObject implements F3::TypoScript::ObjectInterface {
 
 	/**
-	 * @var array An array of F3_TypoScript_ProcessorChain objects
+	 * @var array An array of F3::TypoScript::ProcessorChain objects
 	 */
 	protected $propertyProcessorChains = array();
 
@@ -37,11 +38,11 @@ abstract class F3_TypoScript_AbstractObject implements F3_TypoScript_ObjectInter
 	 * Sets the property processor chain for a specific property
 	 *
 	 * @param string $propertyName Name of the property to set the chain for
-	 * @param F3_TypoScript_ProcessorChain $propertyProcessorChain The property processor chain for that property
+	 * @param F3::TypoScript::ProcessorChain $propertyProcessorChain The property processor chain for that property
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPropertyProcessorChain($propertyName, F3_TypoScript_ProcessorChain $propertyProcessorChain) {
+	public function setPropertyProcessorChain($propertyName, F3::TypoScript::ProcessorChain $propertyProcessorChain) {
 		$this->propertyProcessorChains[$propertyName] = $propertyProcessorChain;
 	}
 
@@ -62,7 +63,7 @@ abstract class F3_TypoScript_AbstractObject implements F3_TypoScript_ObjectInter
 	 * Returns the property processor chain for a specific property
 	 *
 	 * @param string $propertyName: Name of the property to return the chain of
-	 * @return F3_TypoScript_ProcessorChain $propertyProcessorChain: The property processor chain of that property
+	 * @return F3::TypoScript::ProcessorChain $propertyProcessorChain: The property processor chain of that property
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws LogicException
 	 */
