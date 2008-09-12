@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Service::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
@@ -25,24 +26,24 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Service_Controller_Sites extends F3_FLOW3_MVC_Controller_RESTController {
+class Sites extends F3::FLOW3::MVC::Controller::RESTController {
 
 	/**
-	 * @var F3_TYPO3_Domain_Model_SiteRepository
+	 * @var F3::TYPO3::Domain::Model::SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * Injects the site repository
 	 *
-	 * @param F3_TYPO3_Domain_Model_SiteRepository $siteRepository A reference to the site repository
+	 * @param F3::TYPO3::Domain::Model::SiteRepository $siteRepository A reference to the site repository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSiteRepository(F3_TYPO3_Domain_Model_SiteRepository $siteRepository) {
+	public function injectSiteRepository(F3::TYPO3::Domain::Model::SiteRepository $siteRepository) {
 		$this->siteRepository = $siteRepository;
 	}
 

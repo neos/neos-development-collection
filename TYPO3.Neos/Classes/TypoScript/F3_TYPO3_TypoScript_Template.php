@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -23,7 +24,7 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class F3_TYPO3_TypoScript_Template extends F3_TypoScript_AbstractContentArrayObject {
+class Template extends F3::TypoScript::AbstractContentArrayObject {
 
 	/**
 	 * This property must be loaded with the template source code, otherwise this content object will return an empty string.
@@ -32,9 +33,9 @@ class F3_TYPO3_TypoScript_Template extends F3_TypoScript_AbstractContentArrayObj
 	 */
 	protected $templateCode = '';
 
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->templateCode = $componentFactory->getComponent('F3_TYPO3_TypoScript_ContentArray');
-		$this->templateCode[10] = $componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
+		$this->templateCode = $componentFactory->getComponent('F3::TYPO3::TypoScript::ContentArray');
+		$this->templateCode[10] = $componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
 		$this->templateCode[10]->setValue('test');
 	}
 	

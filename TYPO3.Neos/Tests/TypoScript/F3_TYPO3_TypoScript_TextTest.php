@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage TypoScript
- * @version $Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage TypoScript
- * @version $Id:F3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
+class TextTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if a Text object renders a simple content without any processors involved.
@@ -38,7 +39,7 @@ class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 	 */
 	public function textObjectRendersSimpleContentCorrectly() {
 		$testString = 'Skårhøj is a nice name for special character testing.';
-		$text = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
+		$text = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
 		$text->setValue($testString);
 		$this->assertEquals($testString, $text->getRenderedContent(), 'The Text object did not return the expected content during the basic check.');
 	}
@@ -51,14 +52,14 @@ class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 	 */
 	public function textObjectRendersContentWithWrapProcessorCorrectly() {
 		$testString = 'Blåbärskaka';
-		$text = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
+		$text = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
 		$text->setValue($testString);
 
-		$processorChain = $this->componentFactory->getComponent('F3_TypoScript_ProcessorChain');
-		$processors = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Processors');
+		$processorChain = $this->componentFactory->getComponent('F3::TypoScript::ProcessorChain');
+		$processors = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Processors');
 
-		$processorChain->setProcessorInvocation(1, $this->componentFactory->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_crop', array(9, ' ...')));
-		$processorChain->setProcessorInvocation(2, $this->componentFactory->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
+		$processorChain->setProcessorInvocation(1, $this->componentFactory->getComponent('F3::TypoScript::ProcessorInvocation', $processors, 'processor_crop', array(9, ' ...')));
+		$processorChain->setProcessorInvocation(2, $this->componentFactory->getComponent('F3::TypoScript::ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
 
 		$text->setPropertyProcessorChain('value', $processorChain);
 
@@ -73,20 +74,20 @@ class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function textObjectRendersContentOfOtherTextObjectCorrectly() {
-		$processors = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Processors');
+		$processors = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Processors');
 
-		$firstText = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
+		$firstText = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
 		$firstText->setValue('first text object');
 
-		$processorChain = $this->componentFactory->getComponent('F3_TypoScript_ProcessorChain');
-		$processorChain->setProcessorInvocation(1, $this->componentFactory->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<em>', '</em>')));
+		$processorChain = $this->componentFactory->getComponent('F3::TypoScript::ProcessorChain');
+		$processorChain->setProcessorInvocation(1, $this->componentFactory->getComponent('F3::TypoScript::ProcessorInvocation', $processors, 'processor_wrap', array('<em>', '</em>')));
 		$firstText->setPropertyProcessorChain('value', $processorChain);
 
-		$secondText = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
+		$secondText = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
 		$secondText->setValue($firstText);
 
-		$secondProcessorChain = $this->componentFactory->getComponent('F3_TypoScript_ProcessorChain');
-		$secondProcessorChain->setProcessorInvocation(1, $this->componentFactory->getComponent('F3_TypoScript_ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
+		$secondProcessorChain = $this->componentFactory->getComponent('F3::TypoScript::ProcessorChain');
+		$secondProcessorChain->setProcessorInvocation(1, $this->componentFactory->getComponent('F3::TypoScript::ProcessorInvocation', $processors, 'processor_wrap', array('<strong>', '</strong>')));
 		$secondText->setPropertyProcessorChain('value', $secondProcessorChain);
 
 		$expectedResult = '<strong><em>first text object</em></strong>';
@@ -101,13 +102,13 @@ class F3_TYPO3_TypoScript_TextTest extends F3_Testing_BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textObjectRendersItselfOnStringCast() {
-		$firstText = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
+		$firstText = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
 		$firstText->setValue('first text object');
 
 		$expectedResult = 'first text object';
 		$this->assertEquals($expectedResult, (string)$firstText, 'The Text object did not return the expected content while casting it to string.');
 
-		$secondText = $this->componentFactory->getComponent('F3_TYPO3_TypoScript_Text');
+		$secondText = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
 		$secondText->setValue(12345343232);
 
 		$expectedResult = '12345343232';

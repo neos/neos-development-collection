@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @repository
  */
-class F3_TYPO3_Domain_Model_WorkspaceRepository extends F3_FLOW3_Persistence_Repository {
+class WorkspaceRepository extends F3::FLOW3::Persistence::Repository {
 
 }
 

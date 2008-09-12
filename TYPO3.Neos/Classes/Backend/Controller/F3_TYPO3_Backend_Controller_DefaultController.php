@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Backend::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,22 +17,22 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
  * The TYPO3 Backend controller
  *
  * @package TYPO3
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Backend_Controller_Default extends F3_FLOW3_MVC_Controller_ActionController {
+class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
 	 * @var array Only Web Requests are supported
 	 */
-	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Web_Request');
+	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
 
 	/**
 	 * Initializes this action controller
@@ -62,16 +63,16 @@ class F3_TYPO3_Backend_Controller_Default extends F3_FLOW3_MVC_Controller_Action
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setupAction() {
-		$site = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_Site');
+		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
 		$site->setName('typo3.org');
 
-		$siteRepository = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_SiteRepository');
+		$siteRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::SiteRepository');
 		$siteRepository->add($site);
 
-		$page = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_Page', 'Some page');
+		$page = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Page', 'Some page');
 		$site->addPage($page);
 
-		$page = $this->componentFactory->getComponent('F3_TYPO3_Domain_Model_Page', 'Another page');
+		$page = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Page', 'Another page');
 		$site->addPage($page);
 
 		return 'Created some data for playing around.';

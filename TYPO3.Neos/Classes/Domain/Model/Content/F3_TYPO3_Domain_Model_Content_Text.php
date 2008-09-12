@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Model::Content;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @scope prototype
  * @entity
  */
-class F3_TYPO3_Domain_Model_Content_Text extends F3_TYPO3_Domain_Model_Content {
+class Text extends F3::TYPO3::Domain::Model::Content {
 
 	/**
 	 * Headline for this text element

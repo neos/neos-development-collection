@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +31,7 @@ declare(ENCODING = 'utf-8');
  * @scope prototype
  * @entity
  */
-class F3_TYPO3_Domain_Model_Site {
+class Site {
 
 	/**
 	 * The site's unique identifier
@@ -58,7 +59,7 @@ class F3_TYPO3_Domain_Model_Site {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
-		$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+		$this->identifier = F3::FLOW3::Utility::Algorithms::generateUUID();
 	}
 
 	/**
@@ -94,18 +95,18 @@ class F3_TYPO3_Domain_Model_Site {
 	/**
 	 * Adds a page to the first level of the website
 	 *
-	 * @param F3_TYPO3_Domain_Model_Page $page The page to add
+	 * @param F3::TYPO3::Domain::Model::Page $page The page to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addPage(F3_TYPO3_Domain_Model_Page $page) {
+	public function addPage(F3::TYPO3::Domain::Model::Page $page) {
 		 $this->pages[] = $page;
 	}
 
 	/**
 	 * Returns the first page of the website.
 	 *
-	 * @return F3_TYPO3_Domain_Model_Page The root page - or NULL if no root page exists
+	 * @return F3::TYPO3::Domain::Model::Page The root page - or NULL if no root page exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRootPage() {

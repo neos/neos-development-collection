@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,24 +17,24 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
  * Testcase for the domain model of a Page
  *
  * @package TYPO3
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Domain_Model_PageTest extends F3_Testing_BaseTestCase {
+class PageTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author robert
 	 */
 	public function aPageCanBeHidden() {
-		$page = new F3_TYPO3_Domain_Model_Page('Untitled');
+		$page = new F3::TYPO3::Domain::Model::Page('Untitled');
 		$page->hide();
 		$this->assertTrue($page->isHidden());
 	}
@@ -43,8 +44,8 @@ class F3_TYPO3_Domain_Model_PageTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function byDefaultAPageIsVisible() {
-		$page = new F3_TYPO3_Domain_Model_Page('Untitled');
-		$page->injectTimeService(new F3_TYPO3_Domain_Service_Time());
+		$page = new F3::TYPO3::Domain::Model::Page('Untitled');
+		$page->injectTimeService(new F3::TYPO3::Domain::Service::Time());
 		$this->assertTrue($page->isVisible());
 	}
 
@@ -53,10 +54,10 @@ class F3_TYPO3_Domain_Model_PageTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPageIsInvisibleIfAStartTimeIsSetWhichLiesInTheFuture() {
-		$timeService = new F3_TYPO3_Domain_Service_Time();
+		$timeService = new F3::TYPO3::Domain::Service::Time();
 		$timeService->setSimulatedDateTime(new DateTime('2008-08-08T10:00+01:00'));
 
-		$page = new F3_TYPO3_Domain_Model_Page('Untitled');
+		$page = new F3::TYPO3::Domain::Model::Page('Untitled');
 		$page->injectTimeService($timeService);
 
 		$page->setStartTime(new DateTime('2008-08-08T18:00+01:00'));
@@ -68,10 +69,10 @@ class F3_TYPO3_Domain_Model_PageTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPageIsInvisibleIfAnEndTimeIsSetWhichLiesInThePast() {
-		$timeService = new F3_TYPO3_Domain_Service_Time();
+		$timeService = new F3::TYPO3::Domain::Service::Time();
 		$timeService->setSimulatedDateTime(new DateTime('2008-08-08T10:00+01:00'));
 
-		$page = new F3_TYPO3_Domain_Model_Page('Untitled');
+		$page = new F3::TYPO3::Domain::Model::Page('Untitled');
 		$page->injectTimeService($timeService);
 
 		$page->setEndTime(new DateTime('2008-08-07T12:00+01:00'));
@@ -84,7 +85,7 @@ class F3_TYPO3_Domain_Model_PageTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aTitleMustNotExceed250Characters() {
-		new F3_TYPO3_Domain_Model_Page(str_repeat('x', 255));
+		new F3::TYPO3::Domain::Model::Page(str_repeat('x', 255));
 	}
 }
 

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Service;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Domain_Service_TimeTest extends F3_Testing_BaseTestCase {
+class TimeTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
@@ -38,7 +39,7 @@ class F3_TYPO3_Domain_Service_TimeTest extends F3_Testing_BaseTestCase {
 		$almostCurrentTime = new DateTime();
 		date_sub($almostCurrentTime, new DateInterval('P0DT1S'));
 
-		$timeService = new F3_TYPO3_Domain_Service_Time();
+		$timeService = new F3::TYPO3::Domain::Service::Time();
 		$currentTime = $timeService->getCurrentDateTime();
 		$this->assertTrue($almostCurrentTime < $currentTime);
 	}
@@ -51,7 +52,7 @@ class F3_TYPO3_Domain_Service_TimeTest extends F3_Testing_BaseTestCase {
 		$simulatedCurrentTime = new DateTime();
 		date_add($simulatedCurrentTime, new DateInterval('P1D'));
 
-		$timeService = new F3_TYPO3_Domain_Service_Time();
+		$timeService = new F3::TYPO3::Domain::Service::Time();
 		$timeService->setSimulatedDateTime($simulatedCurrentTime);
 
 		$this->assertEquals($simulatedCurrentTime, $timeService->getCurrentDateTime());

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,7 +23,7 @@ declare(ENCODING = 'utf-8');
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_TypoScript_Processors {
+class Processors {
 
 	const CROP_FROM_BEGINNING = 1;
 	const CROP_AT_WORD = 2;
@@ -49,24 +50,24 @@ class F3_TYPO3_TypoScript_Processors {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processor_crop($subject, $maximumNumberOfCharacters, $preOrSuffixString = '', $options = 0) {
-		if (F3_PHP6_Functions::strlen($subject) > $maximumNumberOfCharacters) {
+		if (F3::PHP6::Functions::strlen($subject) > $maximumNumberOfCharacters) {
 			if ($options & self::CROP_FROM_BEGINNING) {
 				if ($options & self::CROP_AT_WORD) {
-					$iterator = new F3_PHP6_TextIterator($subject, F3_PHP6_TextIterator::WORD);
-					$processedSubject = F3_PHP6_Functions::substr($subject, $iterator->following($maximumNumberOfCharacters));
+					$iterator = new F3::PHP6::TextIterator($subject, F3::PHP6::TextIterator::WORD);
+					$processedSubject = F3::PHP6::Functions::substr($subject, $iterator->following($maximumNumberOfCharacters));
 				} else {
-					$processedSubject = F3_PHP6_Functions::substr($subject, $maximumNumberOfCharacters);
+					$processedSubject = F3::PHP6::Functions::substr($subject, $maximumNumberOfCharacters);
 				}
 				$processedSubject = $preOrSuffixString . $processedSubject;
 			} else {
 				if ($options & self::CROP_AT_WORD) {
-					$iterator = new F3_PHP6_TextIterator($subject, F3_PHP6_TextIterator::WORD);
-					$processedSubject = F3_PHP6_Functions::substr($subject, 0, $iterator->preceding($maximumNumberOfCharacters));
+					$iterator = new F3::PHP6::TextIterator($subject, F3::PHP6::TextIterator::WORD);
+					$processedSubject = F3::PHP6::Functions::substr($subject, 0, $iterator->preceding($maximumNumberOfCharacters));
 				} elseif ($options & self::CROP_AT_SENTENCE) {
-					$iterator = new F3_PHP6_TextIterator($subject, F3_PHP6_TextIterator::SENTENCE);
-					$processedSubject = F3_PHP6_Functions::substr($subject, 0, $iterator->preceding($maximumNumberOfCharacters));
+					$iterator = new F3::PHP6::TextIterator($subject, F3::PHP6::TextIterator::SENTENCE);
+					$processedSubject = F3::PHP6::Functions::substr($subject, 0, $iterator->preceding($maximumNumberOfCharacters));
 				} else {
-					$processedSubject = F3_PHP6_Functions::substr($subject, 0, $maximumNumberOfCharacters);
+					$processedSubject = F3::PHP6::Functions::substr($subject, 0, $maximumNumberOfCharacters);
 				}
 				$processedSubject .= $preOrSuffixString;
 			}
@@ -98,16 +99,16 @@ class F3_TYPO3_TypoScript_Processors {
 	public function processor_shiftCase($subject, $direction) {
 		switch ($direction) {
 			case self::SHIFT_CASE_TO_LOWER :
-				$processedSubject = F3_PHP6_Functions::strtolower($subject);
+				$processedSubject = F3::PHP6::Functions::strtolower($subject);
 				break;
 			case self::SHIFT_CASE_TO_UPPER :
-				$processedSubject = F3_PHP6_Functions::strtoupper($subject);
+				$processedSubject = F3::PHP6::Functions::strtoupper($subject);
 				break;
 			case self::SHIFT_CASE_TO_TITLE :
-				$processedSubject = F3_PHP6_Functions::strtotitle($subject);
+				$processedSubject = F3::PHP6::Functions::strtotitle($subject);
 				break;
 			default:
-				throw new F3_TypoScript_Exception('Invalid direction specified for case shift. Please use one of the SHIFT_CASE_* constants.', 1179399480);
+				throw new F3::TypoScript::Exception('Invalid direction specified for case shift. Please use one of the SHIFT_CASE_* constants.', 1179399480);
 		}
 		return $processedSubject;
 	}
@@ -125,7 +126,7 @@ class F3_TYPO3_TypoScript_Processors {
 
 		$timestamp = is_object($subject) ? (string)$subject : $subject;
 		$format = (string)$format;
-		if ($timestamp <= 0) throw new F3_TypoScript_Exception('The given timestamp value was zero or negative, sorry this is not allowed.', 1185282371);
+		if ($timestamp <= 0) throw new F3::TypoScript::Exception('The given timestamp value was zero or negative, sorry this is not allowed.', 1185282371);
 
 		return date($format, $timestamp);
 	}
@@ -165,7 +166,7 @@ class F3_TYPO3_TypoScript_Processors {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_ifBlank($subject, $replacement) {
-		return (!F3_PHP6_Functions::strlen((string)$subject)) ? $replacement : $subject;
+		return (!F3::PHP6::Functions::strlen((string)$subject)) ? $replacement : $subject;
 	}
 
 	/**
@@ -208,9 +209,9 @@ class F3_TYPO3_TypoScript_Processors {
 		if (!is_bool($condition)) {
 			if (is_object($condition)) $condition = (string)$condition;
 			if ((is_numeric($condition) && $condition <= 0) || $condition === '') $condition = FALSE;
-			if ($condition === 1 || (is_string($condition) && F3_PHP6_Functions::strlen($condition) > 0)) $condition = TRUE;
+			if ($condition === 1 || (is_string($condition) && F3::PHP6::Functions::strlen($condition) > 0)) $condition = TRUE;
 		}
-		if (!is_bool($condition)) throw new F3_TypoScript_Exception('The condition in the if processor could not be converted to boolean. Got: (' . gettype($condition) . ')' . (string)$condition, 1185355020);
+		if (!is_bool($condition)) throw new F3::TypoScript::Exception('The condition in the if processor could not be converted to boolean. Got: (' . gettype($condition) . ')' . (string)$condition, 1185355020);
 
 		return ($condition ? $trueValue : $falseValue);
 	}
@@ -234,7 +235,7 @@ class F3_TYPO3_TypoScript_Processors {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_isBlank($subject) {
-		return (!F3_PHP6_Functions::strlen((string)$subject));
+		return (!F3::PHP6::Functions::strlen((string)$subject));
 	}
 }
 ?>

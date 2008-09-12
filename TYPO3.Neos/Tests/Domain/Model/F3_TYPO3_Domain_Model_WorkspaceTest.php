@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Domain_Model_WorkspaceTest extends F3_Testing_BaseTestCase {
+class WorkspaceTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test

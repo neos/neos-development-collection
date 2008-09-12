@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -23,6 +24,6 @@ declare(ENCODING = 'utf-8');
  *
  * @scope prototype
  */
-class F3_TYPO3_TypoScript_ContentArray extends F3_TypoScript_AbstractContentArrayObject {
+class ContentArray extends F3::TypoScript::AbstractContentArrayObject {
 }
 ?>

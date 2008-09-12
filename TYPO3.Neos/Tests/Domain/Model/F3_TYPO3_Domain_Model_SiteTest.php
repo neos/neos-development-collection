@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,17 +26,17 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Domain_Model_SiteTest extends F3_Testing_BaseTestCase {
+class SiteTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aNameCanBeSetAndRetrievedFromTheSite() {
-		$site = new F3_TYPO3_Domain_Model_Site();
+		$site = new F3::TYPO3::Domain::Model::Site();
 		$site->setName('My cool website');
 		$this->assertEquals('My cool website', $site->getName());
 	}
@@ -45,9 +46,9 @@ class F3_TYPO3_Domain_Model_SiteTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pagesCanBeAddedToASite() {
-		$mockPage = $this->getMock('F3_TYPO3_Domain_Model_Page');
+		$mockPage = $this->getMock('F3::TYPO3::Domain::Model::Page');
 
-		$site = new F3_TYPO3_Domain_Model_Site();
+		$site = new F3::TYPO3::Domain::Model::Site();
 		$site->addPage($mockPage);
 	}
 
@@ -56,11 +57,11 @@ class F3_TYPO3_Domain_Model_SiteTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRootPageReturnsTheFirstPageOfTheSite() {
-		$mockPage1 = $this->getMock('F3_TYPO3_Domain_Model_Page');
-		$mockPage2 = $this->getMock('F3_TYPO3_Domain_Model_Page');
-		$mockPage3 = $this->getMock('F3_TYPO3_Domain_Model_Page');
+		$mockPage1 = $this->getMock('F3::TYPO3::Domain::Model::Page');
+		$mockPage2 = $this->getMock('F3::TYPO3::Domain::Model::Page');
+		$mockPage3 = $this->getMock('F3::TYPO3::Domain::Model::Page');
 
-		$site = new F3_TYPO3_Domain_Model_Site();
+		$site = new F3::TYPO3::Domain::Model::Site();
 		$site->addPage($mockPage1);
 		$site->addPage($mockPage2);
 		$site->addPage($mockPage3);
@@ -73,7 +74,7 @@ class F3_TYPO3_Domain_Model_SiteTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRootPageReturnsNullIfNoRootPageExists() {
-		$site = new F3_TYPO3_Domain_Model_Site();
+		$site = new F3::TYPO3::Domain::Model::Site();
 		$this->assertNull($site->getRootPage());
 	}
 }

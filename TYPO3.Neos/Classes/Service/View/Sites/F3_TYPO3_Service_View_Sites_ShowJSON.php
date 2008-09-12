@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Service::View::Sites;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
@@ -25,24 +26,24 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Service_View_Sites_ShowJSON extends F3_FLOW3_MVC_View_AbstractView {
+class ShowJSON extends F3::FLOW3::MVC::View::AbstractView {
 
 	/**
-	 * @var F3_TYPO3_Domain_Model_Site
+	 * @var F3::TYPO3::Domain::Model::Site
 	 */
 	protected $site;
 
 	/**
 	 * Sets the site (model) for this view
 	 *
-	 * @param array $sites An array of F3_TYPO3_Domain_Model_Site objects
+	 * @param array $sites An array of F3::TYPO3::Domain::Model::Site objects
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSite(F3_TYPO3_Domain_Model_Site $site) {
+	public function setSite(F3::TYPO3::Domain::Model::Site $site) {
 		$this->site = $site;
 	}
 

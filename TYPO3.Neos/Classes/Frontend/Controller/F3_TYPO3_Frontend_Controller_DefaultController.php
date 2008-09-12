@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Frontend::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package TYPO3
  * @subpackage Frontend
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
@@ -25,23 +26,23 @@ declare(ENCODING = 'utf-8');
  *
  * @package TYPO3
  * @subpackage Frontend
- * @version $Id:F3_TYPO3_Controller_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Frontend_Controller_Default extends F3_FLOW3_MVC_Controller_ActionController {
+class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
-	 * @var F3_TYPO3_Domain_Model_PageRepository
+	 * @var F3::TYPO3::Domain::Model::PageRepository
 	 */
 	protected $pageRepository;
 
 	/**
 	 * Injects the page repository
 	 *
-	 * @param F3_TYPO3_Domain_Model_PageRepository $pageRepository The page repository
+	 * @param F3::TYPO3::Domain::Model::PageRepository $pageRepository The page repository
 	 * @return void
 	 */
-	public function injectPageRepository(F3_TYPO3_Domain_Model_PageRepository $pageRepository) {
+	public function injectPageRepository(F3::TYPO3::Domain::Model::PageRepository $pageRepository) {
 		$this->pageRepository = $pageRepository;
 	}
 

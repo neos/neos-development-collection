@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,17 +30,17 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @repository
  */
-class F3_TYPO3_Domain_Model_SiteRepository extends F3_FLOW3_Persistence_Repository {
+class SiteRepository extends F3::FLOW3::Persistence::Repository {
 
 	/**
 	 * Finds a site by its identifier
 	 *
 	 * @param string The UUID of the site
-	 * @return F3_TYPO3_Domain_Model_Site The site or NULL if it doesn't exist
+	 * @return F3::TYPO3::Domain::Model::Site The site or NULL if it doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findByIdentifier($identifier) {
-		$query = $this->queryFactory->create('F3_TYPO3_Domain_Model_Site');
+		$query = $this->queryFactory->create('F3::TYPO3::Domain::Model::Site');
 		$sites = $query->matching($query->equals('identifier', (string)$identifier))->execute();
 		return (is_array($sites)) ? array_shift($sites) : NULL;
 	}

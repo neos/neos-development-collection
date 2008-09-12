@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,10 +29,10 @@ declare(ENCODING = 'utf-8');
  * @scope prototype
  * @entity
  */
-class F3_TYPO3_Domain_Model_Page {
+class Page {
 
 	/**
-	 * @var F3_TYPO3_Domain_Service_Time
+	 * @var F3::TYPO3::Domain::Service::Time
 	 * @transient
 	 */
 	protected $timeService;
@@ -90,17 +91,17 @@ class F3_TYPO3_Domain_Model_Page {
 	 */
 	public function __construct($title = 'Untitled') {
 		$this->setTitle($title);
-		$this->identifier = F3_FLOW3_Utility_Algorithms::generateUUID();
+		$this->identifier = F3::FLOW3::Utility::Algorithms::generateUUID();
 	}
 
 	/**
 	 * Injects the time service
 	 *
-	 * @param F3_TYPO3_Domain_Service_Time $timeService A reference to the time service
+	 * @param F3::TYPO3::Domain::Service::Time $timeService A reference to the time service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectTimeService(F3_TYPO3_Domain_Service_Time $timeService) {
+	public function injectTimeService(F3::TYPO3::Domain::Service::Time $timeService) {
 		$this->timeService = $timeService;
 	}
 
@@ -205,7 +206,7 @@ class F3_TYPO3_Domain_Model_Page {
 	 */
 	public function setTitle($title) {
 		if (!is_string($title)) throw new InvalidArgumentException('The page title must be of type string.', 1175791409);
-		if (F3_PHP6_Functions::strlen($title) > 250) throw new InvalidArgumentException('The page title must not exceed 250 characters in length.', 1218199246);
+		if (F3::PHP6::Functions::strlen($title) > 250) throw new InvalidArgumentException('The page title must not exceed 250 characters in length.', 1218199246);
 
 		$this->title = $title;
 	}
@@ -223,22 +224,22 @@ class F3_TYPO3_Domain_Model_Page {
 	/**
 	 * Adds content to the page
 	 *
-	 * @param  F3_TYPO3_Domain_Model_Content $content: The content to add
+	 * @param  F3::TYPO3::Domain::Model::Content $content: The content to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addContentElement(F3_TYPO3_Domain_Model_Content $content) {
+	public function addContentElement(F3::TYPO3::Domain::Model::Content $content) {
 		$this->contentElements[] = $content;
 	}
 
 	/**
 	 * Adds a sub page to the page
 	 *
-	 * @param F3_TYPO3_Domain_Model_Page $page
+	 * @param F3::TYPO3::Domain::Model::Page $page
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addSubPage(F3_TYPO3_Domain_Model_Page $page) {
+	public function addSubPage(F3::TYPO3::Domain::Model::Page $page) {
 		$this->subPages[] = $page;
 	}
 

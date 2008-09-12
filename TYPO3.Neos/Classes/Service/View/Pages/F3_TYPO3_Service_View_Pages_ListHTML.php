@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::TYPO3::Service::View::Pages;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,17 +17,17 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package TYPO3
- * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
  * TypoScript View for a Page
  *
  * @package TYPO3
- * @version $Id:F3_TYPO3_View_Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_TYPO3_Service_View_Pages_ListHTML extends F3_FLOW3_MVC_View_AbstractView {
+class ListHTML extends F3::FLOW3::MVC::View::AbstractView {
 
 	/**
 	 * @var array An array of pages
@@ -36,7 +37,7 @@ class F3_TYPO3_Service_View_Pages_ListHTML extends F3_FLOW3_MVC_View_AbstractVie
 	/**
 	 * Sets the pages (model) for this view
 	 *
-	 * @param array $pages An array of F3_TYPO3_Domain_Model_Page objects
+	 * @param array $pages An array of F3::TYPO3::Domain::Model::Page objects
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
