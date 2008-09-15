@@ -236,7 +236,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if fetching the URI for the jcr namespace prefix is as expected
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -248,7 +248,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if setNameSpacePrefix follows the rules of the specification
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -262,7 +262,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if setNameSpacePrefix follows the rules of the specification
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -276,7 +276,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if setNameSpacePrefix follows the rules of the specification
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -289,7 +289,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -302,7 +302,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -319,7 +319,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */

@@ -416,7 +416,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 *
 	 * @param F3::PHPCR::NodeInterface $node node to insert
 	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
@@ -434,7 +434,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 *
 	 * @param F3::PHPCR::NodeInterface $node node to update
 	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
@@ -454,7 +454,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 *
 	 * @param F3::PHPCR::NodeInterface $node node to delete
 	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeNode(F3::PHPCR::NodeInterface $node) {
@@ -630,7 +630,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 *
 	 * @param F3::PHPCR::PropertyInterface $property property to insert
 	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
@@ -681,7 +681,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 *
 	 * @param F3::PHPCR::PropertyInterface $property property to update
 	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
@@ -751,7 +751,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 *
 	 * @param F3::PHPCR::PropertyInterface $property property to remove
 	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
@@ -788,7 +788,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 * Fetches raw namespace data from the database
 	 *
 	 * @return array
-	 * @author Sebastian Kurfürst <sebastian@ŧypo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getRawNamespaces() {
 		$statementHandle = $this->databaseHandle->query('SELECT "prefix", "uri" FROM "namespaces"');
@@ -801,7 +801,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 *
 	 * @param string $prefix The prefix of the namespace to update
 	 * @param string $uri The URI of the namespace to update
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function updateNamespacePrefix($prefix, $uri) {
@@ -826,7 +826,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 *
 	 * @param string $prefix The namespace prefix to register
 	 * @param string $uri The namespace URI to register
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function addNamespace($prefix, $uri) {
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "namespaces" ("prefix","uri") VALUES (?, ?)');
@@ -837,7 +837,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 * Deletes the namespace identified by $prefix.
 	 *
 	 * @param string $prefix The prefix of the namespace to delete
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function deleteNamespace($prefix) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "namespaces" WHERE "prefix"=?');

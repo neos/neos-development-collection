@@ -66,7 +66,7 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * Loads the custom namespaces from the persistent storage
 	 *
 	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function initializeComponent() {
@@ -122,7 +122,7 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * @throws F3::PHPCR::NamespaceException
 	 * @throws F3::PHPCR::RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPrefix($uri) {
 		$prefix = array_search($uri, $this->builtInNamespaces);
@@ -148,7 +148,7 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * @throws F3::PHPCR::NamespaceException
 	 * @throws F3::PHPCR::RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getURI($prefix) {
 		if (array_key_exists($prefix, $this->builtInNamespaces)) {
@@ -175,7 +175,7 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException
 	 * @throws F3::PHPCR::AccessDeniedException
 	 * @throws F3::PHPCR::RepositoryException
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerNamespace($prefix, $uri) {
@@ -207,7 +207,7 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException
 	 * @throws F3::PHPCR::AccessDeniedException
 	 * @throws F3::PHPCR::RepositoryException
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function unregisterNamespace($prefix) {
 		if (!$this->isAllowedToModifyNamespace($prefix)) {
@@ -228,7 +228,7 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * @return boolean TRUE if we are allowed to modify the namespace
 	 * @throws F3::PHPCR::NamespaceException
 	 * @todo Throws an AccessDeniedException if this Session does not have permission to add/remove a Namespace
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function isAllowedToModifyNamespace($prefix) {
 		if (array_key_exists($prefix, $this->builtInNamespaces)) {

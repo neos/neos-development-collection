@@ -38,7 +38,7 @@ class TestBase extends F3::Testing::BaseTestCase {
 	protected $storageBackend;
 
 	/**
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -76,7 +76,7 @@ class TestBase extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -109,7 +109,7 @@ class TestBase extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */

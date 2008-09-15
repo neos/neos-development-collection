@@ -225,7 +225,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @param string $id
 	 * @return F3::PHPCR::NodeInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getNodeByIdentifier($id) {
 		if (array_key_exists($id, $this->currentlyLoadedNodes)) {
@@ -256,7 +256,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @param string $absPath absolute path
 	 * @return F3::PHPCR::ItemInterface
 	 * @throws F3::PHPCR::PathNotFoundException
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getItem($absPath) {
 		return F3::TYPO3CR::PathParser::parsePath($absPath, $this->getRootNode(), F3::TYPO3CR::PathParser::SEARCH_MODE_ITEMS);
@@ -268,7 +268,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @param string $absPath absolute path
 	 * @return F3::PHPCR::NodeInterface
 	 * @throws F3::PHPCR::PathNotFoundException
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getNode($absPath) {
 		return $this->getRootNode()->getNode($absPath);
@@ -280,7 +280,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @param string $absPath absolute path
 	 * @return F3::PHPCR::PropertyInterface
 	 * @throws F3::PHPCR::PathNotFoundException
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getProperty($absPath) {
 		return $this->getRootNode()->getProperty($absPath);
@@ -768,7 +768,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @return void
 	 * @throws F3::PHPCR::NamespaceException if the local mapping cannot be done.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setNamespacePrefix($prefix, $uri) {
 		if (F3::PHP6::Functions::strtolower(F3::PHP6::Functions::substr($prefix, 0, 3)) == 'xml') {
@@ -792,7 +792,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 *
 	 * @return array a string array
 	 * @throws F3::PHPCR::RepositoryException if an error occurs
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getNamespacePrefixes() {
 		$globalPrefixes = $this->workspace->getNamespaceRegistry()->getPrefixes();
@@ -811,7 +811,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @return string a string
 	 * @throws F3::PHPCR::NamespaceException if the specified prefix is unknown.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getNamespaceURI($prefix) {
 		$this->loadNamespaceFromPrefix($prefix);
@@ -826,7 +826,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @return string a string
 	 * @throws F3::PHPCR::NamespaceException if the specified uri is unknown.
 	 * @throws F3::PHPCR::RepositoryException - if another error occurs
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getNamespacePrefix($uri) {
 		$this->loadNamespaceFromURI($uri);
@@ -907,7 +907,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * the persistent namespace registry if it is not set locally.
 	 *
 	 * @param string $prefix
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @throws F3::PHPCR::NamespaceException if prefix is unknown
 	 */
 	protected function loadNamespaceFromPrefix($prefix) {
@@ -921,7 +921,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * the persistent namespace registry if it is not set locally.
 	 *
 	 * @param string $uri
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @throws F3::PHPCR::NamespaceException if prefix is unknown
 	 */
 	protected function loadNamespaceFromURI($uri) {

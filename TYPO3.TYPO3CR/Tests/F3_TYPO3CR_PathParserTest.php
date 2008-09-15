@@ -33,7 +33,7 @@ class PathParserTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if we receive the root node properly
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -61,7 +61,7 @@ class PathParserTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if we receive a sub node property properly
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -122,7 +122,7 @@ class PathParserTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if we receive the same sub node property twice
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -176,7 +176,7 @@ class PathParserTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if we receive a sub node properly
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */

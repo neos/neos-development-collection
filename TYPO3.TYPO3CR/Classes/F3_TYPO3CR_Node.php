@@ -217,7 +217,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @throws F3::PHPCR::AccessDeniedException
 	 * @throws F3::PHPCR::RepositoryException
 	 * @author Ronny Unger <ru@php-workx.de>
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getParent() {
 		if ($this->parentNode === NULL) throw new F3::PHPCR::ItemNotFoundException("root node does not have a parent", 1187530879);
@@ -321,7 +321,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the addition of the node and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws F3::PHPCR::RepositoryException If the last element of relPath has an index or if another error occurs.
 	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Many :)
 	 */
@@ -435,7 +435,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @throws F3::PHPCR::Lock::LockException  if a lock prevents the setting of the property and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws F3::PHPCR::ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws F3::PHPCR::RepositoryException  if another error occurs.
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setProperty($name, $value, $type = F3::PHPCR::PropertyType::UNDEFINED) {
@@ -478,7 +478,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @return F3::PHPCR::NodeInterface The node at relPath.
 	 * @throws F3::PHPCR::PathNotFoundException If no node exists at the specified path or the current Session does not read access to the node at the specified path.
 	 * @throws F3::PHPCR::RepositoryException  If another error occurs.
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getNode($relPath) {
 		return F3::TYPO3CR::PathParser::parsePath($relPath, $this);
@@ -541,7 +541,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @return F3::PHPCR::PropertyInterface The property at relPath.
 	 * @throws F3::PHPCR::PathNotFoundException If no property exists at the specified path.
 	 * @throws F3::PHPCR::RepositoryException  If another error occurs.
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getProperty($relPath) {
@@ -745,7 +745,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @param string $relPath The path of a (possible) property.
 	 * @return boolean true if a property exists at relPath; false otherwise.
 	 * @throws F3::PHPCR::RepositoryException If an unspecified error occurs.
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperty($relPath) {

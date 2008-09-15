@@ -298,7 +298,7 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 *
 	 * @param F3::PHPCR::NodeInterface $node node to delete
 	 * @return void
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeNode(F3::PHPCR::NodeInterface $node) {

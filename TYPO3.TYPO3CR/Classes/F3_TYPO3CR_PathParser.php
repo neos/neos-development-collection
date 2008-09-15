@@ -41,7 +41,7 @@ class PathParser {
 	 * @param F3::PHPCR::NodeInterface $currentNode current node
 	 * @param integer $searchMode 1 (default) for returning only Nodes, 2 for returning only Properties, 3 for returning both
 	 * @return F3::PHPCR::NodeInterface the root node
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public static function parsePath($path, F3::PHPCR::NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
 		if (self::isPathAbsolute($path)) {
@@ -59,7 +59,7 @@ class PathParser {
 	 * @param F3::PHPCR::NodeInterface $currentNode current node
 	 * @param integer $searchMode 1 (default) for returning only Nodes, 2 for returning only Properties, 3 for returning both
 	 * @return F3::PHPCR::NodeInterface the root node
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implementation of Namespaces!
 	 * @todo Add name pattern support
@@ -124,7 +124,7 @@ class PathParser {
 	 *
 	 * @param F3::PHPCR::NodeInterface $currentNode current node
 	 * @return F3::PHPCR::NodeInterface the root node
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected static function getRootNode(F3::PHPCR::NodeInterface $currentNode) {
 		try {
@@ -140,7 +140,7 @@ class PathParser {
 	 *
 	 * @param string $path Absolute or relative path to check
 	 * @return boolean TRUE if path is absolute (e.g. starts with a /), FALSE otherwise
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public static function isPathAbsolute($path) {
 		return ($path{0} === '/');
@@ -152,7 +152,7 @@ class PathParser {
 	 *
 	 * @param string $path relative or absolute path
 	 * @return array array[0] is first element, array[1] is the rest, and array[2] is the number of parts remaining in array[1]
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
 	public static function getFirstPathPart($path) {
@@ -171,7 +171,7 @@ class PathParser {
 	 *
 	 * @param string $path relative or absolute path
 	 * @return array array[0] is last element, array[1] is the first part, and array[2] is the number of parts remaining in array[1]
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
 	public static function getLastPathPart($path) {

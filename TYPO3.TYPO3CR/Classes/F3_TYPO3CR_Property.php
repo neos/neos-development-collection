@@ -132,7 +132,7 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the setting of the value and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws F3::PHPCR::ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo implement handling of Value objects as input
 	 */
@@ -193,7 +193,7 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 * @return array of F3::PHPCR::ValueInterface
 	 * @throws F3::PHPCR::ValueFormatException if the property is single-valued.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getValues() {
@@ -221,7 +221,7 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 * @return string A string representation of the value of this property.
 	 * @throws F3::PHPCR::ValueFormatException if conversion to a String is not possible or if the property is multi-valued.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getString() {
@@ -258,7 +258,7 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 * @return integer An integer representation of the value of this property.
 	 * @throws F3::PHPCR::ValueFormatException if conversion to a long is not possible or if the property is multi-valued.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getLong() {
@@ -274,7 +274,7 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 * @return float A float representation of the value of this property.
 	 * @throws F3::PHPCR::ValueFormatException if conversion to a double is not possible or if the property is multi-valued.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDouble() {
@@ -321,7 +321,7 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 * @return boolean A boolean representation of the value of this property.
 	 * @throws F3::PHPCR::ValueFormatException if conversion to a boolean is not possible or if the property is multi-valued.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBoolean() {
@@ -502,7 +502,7 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 * Get path of property
 	 *
 	 * @return string Path to the property
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getPath() {
 		$buffer = $this->getParent()->getPath();
@@ -517,7 +517,7 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 * Return parent node
 	 *
 	 * @return F3::PHPCR::NodeInterface The Parent Node
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getParent() {
 		return $this->parentNode;
