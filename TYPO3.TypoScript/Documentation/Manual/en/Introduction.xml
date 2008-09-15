@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section version="5.0" xmlns="http://docbook.org/ns/docbook"
-      xmlns:xl="http://www.w3.org/1999/xlink"
-      xmlns:xi="http://www.w3.org/2001/XInclude"
-      xmlns:xhtml="http://www.w3.org/1999/xhtml"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns:ns="http://docbook.org/ns/docbook"
-      xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
   <title>Introduction</title>
 
   <para>TYPO3 is known to be a very powerful, yet complex content management
@@ -146,9 +146,9 @@ somePerson.address.city = "København" </programlisting>
           property</title>
 
           <programlisting language="typoscript"><co
-              xml:id="co-syntax-01-objectname"/><replaceable>objectName</replaceable> = <co
-              xml:id="co-syntax-01-objecttype"/><replaceable>ObjectType</replaceable>
-<replaceable>objectName</replaceable>.<co xml:id="co-syntax-01-propertyname"/><replaceable>propertyName</replaceable> = <replaceable>value</replaceable></programlisting>
+              xml:id="co-syntax-01-objectname" /><replaceable>objectName</replaceable> = <co
+              xml:id="co-syntax-01-objecttype" /><replaceable>ObjectType</replaceable>
+<replaceable>objectName</replaceable>.<co xml:id="co-syntax-01-propertyname" /><replaceable>propertyName</replaceable> = <replaceable>value</replaceable></programlisting>
         </example></para>
 
       <para>The example above demonstrates how an object is defined and how a
@@ -198,7 +198,7 @@ myText.value = "Hello world!"</programlisting>
 
           <mediaobject>
             <imageobject>
-              <imagedata fileref="TypoScript-Illustration01-SimpleObjectTree.png"/>
+              <imagedata fileref="TypoScript-Illustration01-SimpleObjectTree.png"></imagedata>
             </imageobject>
           </mediaobject>
         </figure></para>
@@ -293,7 +293,7 @@ myObject.value = "&lt;div&gt;some HTML code&lt;/div&gt;"</programlisting>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="TypoScript-Illustration02-SimpleHTMLObject.png"/>
+            <imagedata fileref="TypoScript-Illustration02-SimpleHTMLObject.png"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -388,7 +388,7 @@ library.anotherObject.value &gt;</programlisting>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="TypoScript-Illustration03-UnsettingOperator.png"/>
+            <imagedata fileref="TypoScript-Illustration03-UnsettingOperator.png"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -421,7 +421,7 @@ myOtherObject &lt; myObject</programlisting>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="TypoScript-Illustration04-CopyingObjects.png"/>
+            <imagedata fileref="TypoScript-Illustration04-CopyingObjects.png"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -461,7 +461,7 @@ myObject.secondObject.firstProperty = "Johannes"</programlisting>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="TypoScript-Illustration05-CopyingObjects.png"/>
+            <imagedata fileref="TypoScript-Illustration05-CopyingObjects.png"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -491,7 +491,7 @@ myOtherObject =&lt; myObject</programlisting>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="TypoScript-Illustration06-ReferencingObjects.png"/>
+            <imagedata fileref="TypoScript-Illustration06-ReferencingObjects.png"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -521,7 +521,7 @@ myObject.secondObject.firstProperty = "Johannes"</programlisting>
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="TypoScript-Illustration07-ReferencingObjects.png"/>
+            <imagedata fileref="TypoScript-Illustration07-ReferencingObjects.png"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -683,9 +683,9 @@ myObject.value = "&lt;div&gt;some HTML code&lt;/div&gt;"
 # This line is also a comment</programlisting>
       </example>
 
-      <para>A block of comment is indicated by enclosing it into "<literal>/*</literal>"
-      and "<literal>*/</literal>". Anything within that comment
-      block will be ignored.</para>
+      <para>A block of comment is indicated by enclosing it into
+      "<literal>/*</literal>" and "<literal>*/</literal>". Anything within
+      that comment block will be ignored.</para>
 
       <example>
         <title>Comment blocks</title>
@@ -788,7 +788,7 @@ myObject.value = "$hello&lt;br /&gt;Nice that you\'re here again.&lt;br /&gt;$go
     <section>
       <title>Constants</title>
 
-      <para/>
+      <para></para>
     </section>
 
     <section>
@@ -801,33 +801,33 @@ myObject.value = "$hello&lt;br /&gt;Nice that you\'re here again.&lt;br /&gt;$go
       or <classname>HTML</classname> are mapped to class names (more
       precisely: component names). The Typoscript Object called
       <classname>Text</classname> is represented by a class with the full name
-      <classname>F3_CMS_TypoScript_Text</classname>.</para>
+      <classname>F3::CMS::TypoScript::Text</classname>.</para>
 
       <para>The reason why this mapping works is that a <emphasis>default
       namespace</emphasis> has been defined for the TypoScript object types.
       In the TYPO3 CMS the default namespace is
-      <classname>F3_CMS_TypoScript</classname> but it is possible to define
+      <classname>F3::CMS::TypoScript</classname> but it is possible to define
       additional namespaces in order to use TypoScript object types which are
       not available in the <package>CMS</package> package. It is even possible
       to define a different default namespace.</para>
 
       <para>Consider a package <package>CoolForms</package> which provides a
       new kind of TypoScript object implemented by a class called
-      <classname>F3_CoolForms_TypoScript_Form</classname>. The following
+      <classname>F3::CoolForms::TypoScript::Form</classname>. The following
       TypoScript code would use that new object type by declaring a new
       namespace:</para>
 
       <example>
         <title>Using namespaces</title>
 
-        <programlisting language="TypoScript">namespace: forms = F3_CoolForms_TypoScript
+        <programlisting language="TypoScript">namespace: forms = F3::CoolForms::TypoScript
 
 
 lib.someTextObject = Text
 lib.someTextObject.value = "Hello, this is a regular Text object."
 
-lib.someFormObject = forms:Form
-lib.someFormObject.fields.1 = forms:InputField
+lib.someFormObject = forms::Form
+lib.someFormObject.fields.1 = forms::InputField
 lib.someFormObject.fields.1.label = "Your name"</programlisting>
       </example>
     </section>
@@ -860,6 +860,6 @@ lib.someFormObject.fields.1.label = "Your name"</programlisting>
   <section>
     <title>What's new in TypoScript 2.0?</title>
 
-    <para/>
+    <para></para>
   </section>
 </section>
