@@ -151,9 +151,9 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getURI($prefix) {
-		if (array_key_exists($prefix, $this->builtInNamespaces)) {
+		if (isset($this->builtInNamespaces[$prefix])) {
 			return $this->builtInNamespaces[$prefix];
-		} elseif (array_key_exists($prefix, $this->customNamespaces)) {
+		} elseif (isset($this->customNamespaces[$prefix])) {
 			return $this->customNamespaces[$prefix];
 		} else {
 			throw new F3::PHPCR::NamespaceException('Prefix ' . $prefix . ' not registered in NamespaceRegistry', 1184478140);

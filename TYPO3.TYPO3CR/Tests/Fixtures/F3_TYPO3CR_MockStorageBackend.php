@@ -98,8 +98,8 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawNodeByIdentifier($identifier) {
-		if (key_exists($this->workspaceName, $this->rawNodesByIdentifierGroupedByWorkspace)) {
-			if (key_exists($identifier, $this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+		if (isset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			if (isset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier])) {
 				return $this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier];
 			}
 		}
@@ -113,7 +113,7 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRawRootNode() {
-		if (key_exists($this->workspaceName, $this->rawRootNodesByWorkspace)) {
+		if (isset($this->rawRootNodesByWorkspace[$this->workspaceName])) {
 			return $this->rawRootNodesByWorkspace[$this->workspaceName];
 		}
 		return FALSE;
@@ -176,8 +176,8 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 */
 	public function getIdentifiersOfSubNodesOfNode($nodeId) {
 		$identifiers = array();
-		if (key_exists($this->workspaceName, $this->rawNodesByIdentifierGroupedByWorkspace)) {
-			if (key_exists($nodeId, $this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+		if (isset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			if (isset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$nodeId])) {
 				foreach ($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName] as $identifier => $rawNode) {
 					if ($rawNode['parent'] == $nodeId) {
 						$identifiers[] = $identifier;
@@ -196,8 +196,8 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRawPropertiesOfNode($identifier) {
-		if (key_exists($this->workspaceName, $this->rawPropertiesByIdentifierGroupedByWorkspace)) {
-			if (key_exists($identifier, $this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+		if (isset($this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			if (isset($this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier])) {
 				return $this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier];
 			}
 		}
@@ -215,7 +215,7 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 */
 	public function getRawPropertiesOfTypedValue($name, $type, $value) {
 		$result = array();
-		if (key_exists($this->workspaceName, $this->rawPropertiesByIdentifierGroupedByWorkspace)) {
+		if (isset($this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
 			foreach ($this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName] as $rawProperties) {
 				foreach ($rawProperties as $rawProperty) {
 					if ($rawProperty['type'] == $type && $rawProperty['value'] == $value && ($name == NULL || $rawProperty['name'] == $name)) {

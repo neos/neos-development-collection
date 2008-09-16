@@ -955,7 +955,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isRegisteredAsNewNode(F3::PHPCR::NodeInterface $node) {
-		return key_exists($node->getIdentifier(), $this->currentlyNewNodes);
+		return isset($this->currentlyNewNodes[$node->getIdentifier()]);
 	}
 
 	/**
@@ -977,7 +977,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isRegisteredAsDirtyNode(F3::PHPCR::NodeInterface $node) {
-		return key_exists($node->getIdentifier(), $this->currentlyDirtyNodes);
+		return isset($this->currentlyDirtyNodes[$node->getIdentifier()]);
 	}
 
 	/**
@@ -1056,10 +1056,11 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function addPropertiesForNode(F3::PHPCR::NodeInterface $node) {
-		if (key_exists($node->getIdentifier(), $this->currentlyNewProperties)) {
-			foreach ($this->currentlyNewProperties[$node->getIdentifier()] as $property) {
+		$nodeIdentifier = $node->getIdentifier();
+		if (isset($this->currentlyNewProperties[$nodeIdentifier])) {
+			foreach ($this->currentlyNewProperties[$nodeIdentifier] as $property) {
 				$this->storageBackend->addProperty($property);
-				unset($this->currentlyNewProperties[$node->getIdentifier()][$property->getName()]);
+				unset($this->currentlyNewProperties[$nodeIdentifier][$property->getName()]);
 			}
 		}
 	}
@@ -1071,10 +1072,11 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function updatePropertiesForNode(F3::PHPCR::NodeInterface $node) {
-		if (key_exists($node->getIdentifier(), $this->currentlyDirtyProperties)) {
-			foreach ($this->currentlyDirtyProperties[$node->getIdentifier()] as $property) {
+		$nodeIdentifier = $node->getIdentifier();
+		if (isset($this->currentlyDirtyProperties[$nodeIdentifier])) {
+			foreach ($this->currentlyDirtyProperties[$nodeIdentifier] as $property) {
 				$this->storageBackend->updateProperty($property);
-				unset($this->currentlyDirtyProperties[$node->getIdentifier()][$property->getName()]);
+				unset($this->currentlyDirtyProperties[$nodeIdentifier][$property->getName()]);
 			}
 		}
 	}
@@ -1086,10 +1088,11 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function removePropertiesForNode(F3::PHPCR::NodeInterface $node) {
-		if (key_exists($node->getIdentifier(), $this->currentlyRemovedProperties)) {
-			foreach ($this->currentlyRemovedProperties[$node->getIdentifier()] as $property) {
+		$nodeIdentifier = $node->getIdentifier();
+		if (isset($this->currentlyRemovedProperties[$nodeIdentifier])) {
+			foreach ($this->currentlyRemovedProperties[$nodeIdentifier] as $property) {
 				$this->storageBackend->removeProperty($property);
-				unset($this->currentlyRemovedProperties[$node->getIdentifier()][$property->getName()]);
+				unset($this->currentlyRemovedProperties[$nodeIdentifier][$property->getName()]);
 			}
 		}
 	}
@@ -1103,7 +1106,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasIdentifier($identifier) {
-		return array_key_exists($identifier, $this->currentlyLoadedNodes) || $this->storageBackend->hasIdentifier($identifier);
+		return isset($this->currentlyLoadedNodes[$identifier]) || $this->storageBackend->hasIdentifier($identifier);
 	}
 }
 ?>

@@ -45,7 +45,7 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasObject($hash) {
-		return key_exists($hash, $this->identityMap);
+		return array_key_exists($hash, $this->identityMap);
 	}
 
 	/**
