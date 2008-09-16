@@ -8,24 +8,26 @@ declare(ENCODING="utf-8");
 
 $c->fallback
 	->setUrlPattern('[dummy]')
-	->setControllerComponentNamePattern('F3::@package::Frontend::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::Frontend::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Frontend::View::@controller@action@format')
 	->setDefaults(
 		array(
 			'dummy' => 'foo',
 			'@package' => 'TYPO3',
-			'@controller' => 'DefaultController',
-			'@action' => 'default',
+			'@controller' => 'Default',
+			'@action' => 'index',
 		)
 	);
 
 $c->TYPO3Route1
 	->setUrlPattern('[page].[@format]')
-	->setControllerComponentNamePattern('F3::@package::Frontend::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::Frontend::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Frontend::View::@controller@action@format')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
-			'@controller' => 'DefaultController',
-			'@action' => 'default',
+			'@controller' => 'Default',
+			'@action' => 'index',
 			'page' => 'index',
 			'@format' => 'html'
 		)
@@ -33,12 +35,13 @@ $c->TYPO3Route1
 
 $c->TYPO3Route2
 	->setUrlPattern('typo3/[section]/[module]')
-	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Backend::View::@controller@action@format')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
-			'@controller' => 'DefaultController',
-			'@action' => 'default',
+			'@controller' => 'Default',
+			'@action' => 'index',
 			'section' => 'System',
 			'module' => 'Welcome'
 		)
@@ -52,7 +55,8 @@ $c->TYPO3Route2
 
 $c->TYPO3Route_ServiceWithControllerOnly
 	->setUrlPattern('typo3/service/v1/[@controller]')
-	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
@@ -62,7 +66,8 @@ $c->TYPO3Route_ServiceWithControllerOnly
 
 $c->TYPO3Route_ServiceWithControllerAndFormat
 	->setUrlPattern('typo3/service/v1/[@controller].[@format]')
-	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3'
@@ -71,7 +76,8 @@ $c->TYPO3Route_ServiceWithControllerAndFormat
 
 $c->TYPO3Route_ServiceWithControllerIdentifierAction
 	->setUrlPattern('typo3/service/v1/[@controller]/[identifier]')
-	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
@@ -81,7 +87,8 @@ $c->TYPO3Route_ServiceWithControllerIdentifierAction
 
 $c->TYPO3Route_ServiceWithControllerIdentifierActionAndFormat
 	->setUrlPattern('typo3/service/v1/[@controller]/[identifier].[@format]')
-	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
@@ -103,12 +110,12 @@ $c->TYPO3Route5
 
 $c->TYPO3Route6
 	->setUrlPattern('typo3/test/[action]')
-	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controllerController')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
 			'@controller' => 'ServiceTest',
-			'@action' => 'default',
+			'@action' => 'index',
 		)
 	);
 ?>

@@ -29,7 +29,7 @@ namespace F3::TYPO3::Backend::View;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
+class DefaultIndexHTML extends F3::FLOW3::MVC::View::AbstractView {
 
 	/**
 	 * Renders the view
