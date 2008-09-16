@@ -141,7 +141,7 @@ class Helper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeSearch() {
-		$index = Zend_Search_Lucene::create($this->options['indexlocation']. '/default');
+		$index = ::Zend_Search_Lucene::create($this->options['indexlocation']. '/default');
 		$this->populateIndex();
 	}
 
@@ -154,12 +154,12 @@ class Helper {
 		$statementHandle = $this->databaseHandle->query('SELECT * FROM "nodes" WHERE "parent" = \'\'');
 		$node = $statementHandle->fetch(PDO::FETCH_ASSOC);
 
-		$nodeDocument = new Zend_Search_Lucene_Document();
-		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('identifier', $node['identifier']));
-		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('nodetype', $node['nodetype']));
-		$nodeDocument->addField(Zend_Search_Lucene_Field::Keyword('path', '/'));
+		$nodeDocument = new ::Zend_Search_Lucene_Document();
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('identifier', $node['identifier']));
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('nodetype', $node['nodetype']));
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('path', '/'));
 
-		$index = Zend_Search_Lucene::open($this->options['indexlocation']. '/default');
+		$index = ::Zend_Search_Lucene::open($this->options['indexlocation']. '/default');
 		$index->addDocument($nodeDocument);
 	}
 }
