@@ -29,7 +29,14 @@ namespace F3::TYPO3CR::Admin::Controller;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class JSON extends F3::FLOW3::MVC::Controller::ActionController {
+class JSONController extends F3::FLOW3::MVC::Controller::ActionController {
+
+	/**
+	 * The supported request types of this controller
+	 *
+	 * @var array
+	 */
+	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
 
 	/**
 	 * @var F3::PHPCR::SessionInterface
@@ -59,12 +66,8 @@ class JSON extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeController() {
-		$this->supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
+	public function initializeArguments() {
 		$this->arguments->addNewArgument('node');
-#		if ($this->request->getFormat() != 'json') {
-#			throw new F3::FLOW3::MVC::Exception::InvalidFormat('Only JSON requests, please... You asked for ' . $this->request->getFormat(), 1218198618);
-#		}
 	}
 
 	/**
@@ -74,7 +77,7 @@ class JSON extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeAction() {
-		$requestedNode = $this->request->getArgument('node');
+		$requestedNode = (string)$this->arguments['node'];
 		if ($requestedNode == 'ROOT') {
 			$this->node = $this->rootNode;
 		} else {

@@ -47,7 +47,7 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function defaultAction() {
+	public function indexAction() {
 		$view = $this->componentFactory->getComponent('F3::TYPO3CR::Admin::View::Viewport');
 		$view->setRequest($this->request);
 		return $view->render();

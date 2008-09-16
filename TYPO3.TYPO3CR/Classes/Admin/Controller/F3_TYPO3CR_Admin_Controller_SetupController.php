@@ -22,7 +22,7 @@ namespace F3::TYPO3CR::Admin::Controller;
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Setup extends F3::FLOW3::MVC::Controller::ActionController {
+class SetupController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
 	 * Initializes this controller
@@ -44,7 +44,7 @@ class Setup extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function defaultAction() {
+	public function indexAction() {
 		return '<html><head><title>TYPO3CR setup</title></head><body>
 	<form action="setup">
 		<table>
