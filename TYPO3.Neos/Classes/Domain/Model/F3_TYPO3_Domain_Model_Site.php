@@ -48,6 +48,7 @@ class Site {
 
 	/**
 	 * @var F3::TYPO3::Domain::StructureNode
+	 * @transient
 	 */
 	protected $rootNode;
 

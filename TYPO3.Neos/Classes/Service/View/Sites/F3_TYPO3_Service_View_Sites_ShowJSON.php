@@ -34,18 +34,7 @@ class ShowJSON extends F3::FLOW3::MVC::View::AbstractView {
 	/**
 	 * @var F3::TYPO3::Domain::Model::Site
 	 */
-	protected $site;
-
-	/**
-	 * Sets the site (model) for this view
-	 *
-	 * @param array $sites An array of F3::TYPO3::Domain::Model::Site objects
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setSite(F3::TYPO3::Domain::Model::Site $site) {
-		$this->site = $site;
-	}
+	public $site;
 
 	/**
 	 * Renders this show view
@@ -55,14 +44,10 @@ class ShowJSON extends F3::FLOW3::MVC::View::AbstractView {
 	 */
 	public function render() {
 		$pageIdentifiers = array();
-		foreach ($this->site->getPages() as $page) {
-			$pageIdentifiers[] = $page->getIdentifier();
-		}
 
 		$siteArray[] = array(
 			'identifier' => $this->site->getIdentifier(),
 			'name' => $this->site->getName(),
-			'pages' => $pageIdentifiers
 		);
 		return json_encode($siteArray);
 	}

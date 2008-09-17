@@ -48,6 +48,18 @@ class SitesController extends F3::FLOW3::MVC::Controller::RESTController {
 	}
 
 	/**
+	 * Initializes the arguments of this controller
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeArguments() {
+		parent::initializeArguments();
+
+		$this->arguments->addNewArgument('name', 'Text');
+	}
+
+	/**
 	 * Lists available sites from the repository
 	 *
 	 * @return string Output of the list view
@@ -55,19 +67,51 @@ class SitesController extends F3::FLOW3::MVC::Controller::RESTController {
 	 */
 	public function listAction() {
 		$sites = $this->siteRepository->findAll();
-		$this->view->setSites($sites);
+		$this->view->sites = $sites;
 		return $this->view->render();
 	}
 
 	/**
 	 * Shows properties of a specific site
 	 *
+	 * @return string Output of the show view
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function showAction() {
 		$site = $this->siteRepository->findByIdentifier($this->arguments['identifier']);
 		if ($site === NULL) $this->throwStatus(404);
-		$this->view->setSite($site);
+		$this->view->site = $site;
 		return $this->view->render();
+	}
+
+	/**
+	 * Creates a new site
+	 *
+	 * @return string The status message
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createAction() {
+		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
+		$site->setName($this->arguments['name']->getValue());
+		$this->siteRepository->add($site);
+
+		$this->response->setStatus(201);
+		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getIdentifier() . '.json');
+	}
+
+	/**
+	 * Updates an existing site
+	 *
+	 * @return string The status message
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function updateAction() {
+		$site = $this->siteRepository->findByIdentifier($this->arguments['identifier']);
+		if ($site === NULL) $this->throwStatus(404, NULL, 'Unknown Site');
+		if ($this->arguments['name']->getValue() !== NULL) $site->setName($this->arguments['name']->getValue());
+
+		$this->response->setStatus(200);
+		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getIdentifier() . '.json');
 	}
 }
 ?>

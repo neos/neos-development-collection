@@ -42,7 +42,9 @@ class SiteRepository extends F3::FLOW3::Persistence::Repository {
 	public function findByIdentifier($identifier) {
 		$query = $this->queryFactory->create('F3::TYPO3::Domain::Model::Site');
 		$sites = $query->matching($query->equals('identifier', (string)$identifier))->execute();
-		return (is_array($sites)) ? array_shift($sites) : NULL;
+		$site = (is_array($sites)) ? array_shift($sites) : NULL;
+		if ($site !== NULL) $this->objects[spl_object_hash($site)] = $site;
+		return $site;
 	}
 }
 

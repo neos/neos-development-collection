@@ -34,18 +34,7 @@ class ListJSON extends F3::FLOW3::MVC::View::AbstractView {
 	/**
 	 * @var array An array of sites
 	 */
-	protected $sites;
-
-	/**
-	 * Sets the sites (model) for this view
-	 *
-	 * @param array $sites An array of F3::TYPO3::Domain::Model::Site objects
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setSites(array $sites) {
-		$this->sites = $sites;
-	}
+	public $sites = array();
 
 	/**
 	 * Renders this list view
@@ -56,15 +45,9 @@ class ListJSON extends F3::FLOW3::MVC::View::AbstractView {
 	public function render() {
 		$sitesArray = array();
 		foreach ($this->sites as $site) {
-			$pageIdentifiers = array();
-			foreach ($site->getPages() as $page) {
-				$pageIdentifiers[] = $page->getIdentifier();
-			}
-
 			$sitesArray[] = array(
 				'identifier' => $site->getIdentifier(),
 				'name' => $site->getName(),
-				'pages' => $pageIdentifiers
 			);
 		}
 		return json_encode($sitesArray);
