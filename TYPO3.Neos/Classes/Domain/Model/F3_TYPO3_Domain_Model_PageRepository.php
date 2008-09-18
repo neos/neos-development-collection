@@ -26,7 +26,6 @@ namespace F3::TYPO3::Domain::Model;
  * @package TYPO3
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @repository
  */
 class PageRepository extends F3::FLOW3::Persistence::Repository {
 

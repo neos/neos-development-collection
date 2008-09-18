@@ -28,7 +28,6 @@ namespace F3::TYPO3::Domain::Model;
  * @subpackage Domain
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @repository
  */
 class WorkspaceRepository extends F3::FLOW3::Persistence::Repository {
 
