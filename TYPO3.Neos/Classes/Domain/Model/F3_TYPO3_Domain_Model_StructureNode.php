@@ -18,7 +18,7 @@ namespace F3::TYPO3::Domain::Model;
 /**
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::TYPO3::Domain::Model;
  *
  * @package TYPO3
  * @subpackage Domain
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  * @entity
