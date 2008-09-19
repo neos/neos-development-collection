@@ -109,7 +109,7 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 		$dataMapper->injectIdentityMap($identityMap);
 		$dataMapper->injectPersistenceManager($mockPersistenceManager);
 
-		$identityMap->expects($this->once())->method('registerObject')->with(spl_object_hash($mockEntity), 1221819436);
+		$identityMap->expects($this->once())->method('registerObject')->with($mockEntity, 1221819436);
 
 		$dataMapper->map($nodeIterator);
 	}

@@ -38,36 +38,47 @@ class IdentityMap {
 	protected $identityMap = array();
 
 	/**
-	 * Checks whether the given (object) has is known to the identity map
+	 * Checks whether the given object is known to the identity map
 	 *
-	 * @param string $hash
+	 * @param object $object
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function hasObject($hash) {
-		return array_key_exists($hash, $this->identityMap);
+	public function hasObject($object) {
+		return array_key_exists(spl_object_hash($object), $this->identityMap);
 	}
 
 	/**
-	 * Returns the (node) identifier for the given (object) hash
+	 * Returns the (node) identifier for the given object
 	 *
-	 * @param string $hash
+	 * @param object $object
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getIdentifier($hash) {
-		return $this->identityMap[$hash];
+	public function getIdentifier($object) {
+		return $this->identityMap[spl_object_hash($object)];
 	}
 
 	/**
-	 * Register a (node) identifier for an (object) hash
+	 * Register a (node) identifier for an object
 	 *
+	 * @param object $object
 	 * @param string $identifier
-	 * @param string $hash
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerObject($hash, $identifier) {
-		$this->identityMap[$hash] = $identifier;
+	public function registerObject($object, $identifier) {
+		$this->identityMap[spl_object_hash($object)] = $identifier;
+	}
+
+	/**
+	 * Unregister an object
+	 *
+	 * @param string $object
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function unregisterObject($object) {
+		unset($this->identityMap[spl_object_hash($object)]);
 	}
 
 }

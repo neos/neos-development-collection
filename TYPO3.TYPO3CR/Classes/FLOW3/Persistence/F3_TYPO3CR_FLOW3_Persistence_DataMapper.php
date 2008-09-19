@@ -147,7 +147,7 @@ class DataMapper {
 		}
 		$object = $this->componentObjectBuilder->reconstituteComponentObject($className, $componentConfiguration, $properties);
 		$this->persistenceManager->getSession()->registerReconstitutedObject($object);
-		$this->identityMap->registerObject(spl_object_hash($object), $node->getIdentifier());
+		$this->identityMap->registerObject($object, $node->getIdentifier());
 		return $object;
 	}
 

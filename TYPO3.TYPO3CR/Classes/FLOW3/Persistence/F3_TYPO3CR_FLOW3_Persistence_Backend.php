@@ -166,7 +166,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setDeletedObjects(array $objects) {
-		$this->deleteObjects = $objects;
+		$this->deletedObjects = $objects;
 	}
 
 	/**
@@ -189,7 +189,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	/**
 	 * Stores, updates or removes an object's corresponding node in the repository
 	 *
-	 * @param object $object
+	 * @param object $object The object to store, update or delete
 	 * @return string Identifier for the corresponding node
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -198,8 +198,8 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 			return $this->processNewObject($object);
 		} elseif (array_search($object, $this->updatedObjects)) {
 			return $this->processUpdatedObject($object);
-		} elseif ($this->identityMap->hasObject(spl_object_hash($object))) {
-			return $this->identityMap->getIdentifier(spl_object_hash($object));
+		} elseif ($this->identityMap->hasObject($object)) {
+			return $this->identityMap->getIdentifier($object);
 		} else {
 			throw new F3::FLOW3::Persistence::Exception('processObject(' . get_class($object) . ') called for object I cannot handle.', 1218478184);
 		}
@@ -208,15 +208,14 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	/**
 	 * Stores an object as node in the repository
 	 *
-	 * @param object $object The object to store, update or delete
+	 * @param object $object The object to store
 	 * @return string The identifier for the node representing the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo make sure setPropertiesForObject is called only once per commit and object
 	 */
 	protected function processNewObject($object) {
-		$objectHash = spl_object_hash($object);
-		if ($this->identityMap->hasObject($objectHash)) {
-			$identifier = $this->identityMap->getIdentifier($objectHash);
+		if ($this->identityMap->hasObject($object)) {
+			$identifier = $this->identityMap->getIdentifier($object);
 		} else {
 			$className = $object->AOPProxyGetProxyTargetClassName();
 			if (!$this->baseNode->hasNode('flow3:' . $className)) {
@@ -229,10 +228,10 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 				$node = $this->baseNode->getNode('flow3:' . $className)->addNode('flow3:' . $className . 'Instance', 'flow3:' . $className);
 			}
 			$identifier = $node->getIdentifier();
-			$this->identityMap->registerObject($objectHash, $identifier);
+			$this->identityMap->registerObject($object, $identifier);
 			$this->setPropertiesForObject($node, $object);
 		}
-		unset($this->newObjects[$objectHash]);
+		unset($this->newObjects[spl_object_hash($object)]);
 
 		return $identifier;
 	}
@@ -240,21 +239,20 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	/**
 	 * Updates an object stored as node in the repository
 	 *
-	 * @param object $object The object to store, update or delete
+	 * @param object $object The object to update
 	 * @return string The identifier for the node representing the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo make sure setPropertiesForObject is called only once per commit and object
 	 */
 	protected function processUpdatedObject($object) {
-		$objectHash = spl_object_hash($object);
-		if ($this->identityMap->hasObject($objectHash)) {
-			$identifier = $this->identityMap->getIdentifier($objectHash);
+		if ($this->identityMap->hasObject($object)) {
+			$identifier = $this->identityMap->getIdentifier($object);
 			$node = $this->session->getNodeByIdentifier($identifier);
 			$this->setPropertiesForObject($node, $object);
 		} else {
 			throw new F3::FLOW3::Persistence::Exception('How am I supposed to update an object I do not know about?', 1218478512);
 		}
-		unset($this->updatedObjects[$objectHash]);
+		unset($this->updatedObjects[spl_object_hash($object)]);
 
 		return $identifier;
 	}
