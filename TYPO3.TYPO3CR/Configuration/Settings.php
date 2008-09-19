@@ -23,7 +23,7 @@ $c->TYPO3CR->storage->backend = 'F3::TYPO3CR::Storage::Backend::PDO';
  * @var array
  */
 $c->TYPO3CR->storage->backendOptions = array(
-	'dataSourceName' => '',
+	'dataSourceName' => 'sqlite:' . FLOW3_PATH_DATA . 'Persistent/TYPO3CR.db',
 	'username' => NULL,
 	'password' => NULL
 );
@@ -41,7 +41,7 @@ $c->TYPO3CR->search->backend = 'F3::TYPO3CR::Storage::Search::Lucene';
  * @var array
  */
 $c->TYPO3CR->search->backendOptions = array(
-	'indexLocation' => ''
+	'indexLocation' => FLOW3_PATH_DATA . 'Persistent/Index/'
 );
 
 ?>
