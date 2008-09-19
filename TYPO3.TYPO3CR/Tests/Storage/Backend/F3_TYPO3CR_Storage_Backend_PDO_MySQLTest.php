@@ -18,20 +18,20 @@ namespace F3::TYPO3CR::Storage::Backend::PDO;
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3::TYPO3CR::Storage::Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
 
 /**
- * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the PDO PostgreSQL driver
+ * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the PDO MySQL driver
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3::TYPO3CR::Storage::Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PostgreSQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
+class MySQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 
 	/**
 	 * @var string
@@ -58,45 +58,46 @@ class PostgreSQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias Hörmann <hoermann@saltation.de>
+	 * @author Matthias H√∂rmann <hoermann@saltation.de>
 	 */
 	public function setUp() {
 		$this->config = FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/testdb.conf';
 		$lines = file($this->config, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
 		foreach ($lines as $line) {
 			$line = trim($line);
-			$prefix = 'PGSQL_DB="';
+			$prefix = 'MYSQL_DB="';
 			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
 				$this->db = substr($line, strlen($prefix), -1);
 			}
-			$prefix = 'PGSQL_USER="';
+			$prefix = 'MYSQL_USER="';
 			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
 				$this->dbuser = substr($line, strlen($prefix), -1);
 			}
-			$prefix = 'PGSQL_PASS="';
+			$prefix = 'MYSQL_PASS="';
 			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
-				$this->dbpass = substr($line, strlen($prefix), -1);
+				$this->dbpass = substr($line, strlen($prefix) , -1);
 			}
 		}
 
 		if ($this->db != '' && $this->dbuser != '' && $this->dbpass != '') {
 			try {
-				$databaseHandle = new PDO('pgsql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
+				$databaseHandle = new PDO('mysql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
 				$databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				$databaseHandle = NULL;
 			} catch (PDOException $e) {
-				$this->markTestSkipped('Could not connect to PostgreSQL database ' . $this->db . ', user ' . $this->dbuser . ', password ' . $this->dbpass . ', skipping PostgreSQL tests');
+				$this->markTestSkipped('Could not connect to MySQL database ' . $this->db . ', user ' . $this->dbuser . ', password ' . $this->dbpass . ', skipping MySQL tests');
 				return;
 			}
 		} else {
-			$this->markTestSkipped('PostgreSQL tests not configured');
+			$this->markTestSkipped('MySQL tests not configured');
 		}
+
 
 		$scriptpath = FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/';
 
-		exec($scriptpath . 'testdb.sh postgres reset');
+		exec($scriptpath . 'testdb.sh mysql reset');
 
-		$this->storageBackend = new F3::TYPO3CR::Storage::Backend::PDO(array('dataSourceName' => 'pgsql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
+		$this->storageBackend = new F3::TYPO3CR::Storage::Backend::PDO(array('dataSourceName' => 'mysql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
 		$this->storageBackend->setSearchEngine($this->getMock('F3::TYPO3CR::Storage::SearchInterface'));
 		$this->storageBackend->connect();
 	}
@@ -106,7 +107,7 @@ class PostgreSQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias Hörmann <hoermann@saltation.de>
+	 * @author Matthias H√∂rmann <hoermann@saltation.de>
 	 */
 	public function tearDown() {
 		$this->storageBackend->disconnect();

@@ -37,6 +37,11 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	protected $databaseHandle;
 
 	/**
+	 * @var string
+	 */
+	protected $PDODriver;
+
+	/**
 	 * Connect to the database
 	 *
 	 * @return void
@@ -46,6 +51,12 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 		try {
 			$this->databaseHandle = new ::PDO($this->dataSourceName, $this->username, $this->password);
 			$this->databaseHandle->setAttribute(::PDO::ATTR_ERRMODE, ::PDO::ERRMODE_EXCEPTION);
+			$splitdsn = explode(':', $this->dataSourceName, 2);
+			$this->PDODriver = $splitdsn[0];
+
+			if ($this->PDODriver == 'mysql') {
+				$this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
+			}
 		} catch (::PDOException $e) {
 			throw new F3::TYPO3CR::StorageException('Could not connect to DSN "' . $this->dataSourceName . '". PDO error: ' . $e->getMessage(), 1219326502);
 		}
@@ -652,10 +663,10 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 			switch ($property->getType()) {
 				case F3::PHPCR::PropertyType::PATH:
 					$this->addSingleValuedPathProperty($property);
-					break;
+				break;
 				case F3::PHPCR::PropertyType::NAME:
 					$this->addSingleValuedNameProperty($property);
-					break;
+				break;
 				default:
 					$this->addSingleValuedProperty($property);
 			}
@@ -663,10 +674,10 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 			switch ($property->getType()) {
 				case F3::PHPCR::PropertyType::PATH:
 					$this->addMultiValuedPathProperty($property);
-					break;
+				break;
 				case F3::PHPCR::PropertyType::NAME:
 					$this->addMultiValuedNameProperty($property);
-					break;
+				break;
 				default:
 					$this->addMultiValuedProperty($property);
 			}
@@ -721,10 +732,10 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 			switch ($property->getType()) {
 				case F3::PHPCR::PropertyType::PATH:
 					$this->addSingleValuedPathProperty($property);
-					break;
+				break;
 				case F3::PHPCR::PropertyType::NAME:
 					$this->addSingleValuedNameProperty($property);
-					break;
+				break;
 				default:
 					$this->addSingleValuedProperty($property);
 			}
@@ -732,10 +743,10 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 			switch ($property->getType()) {
 				case F3::PHPCR::PropertyType::PATH:
 					$this->addMultiValuedPathProperty($property);
-					break;
+				break;
 				case F3::PHPCR::PropertyType::NAME:
 					$this->addMultiValuedNameProperty($property);
-					break;
+				break;
 				default:
 					$this->addMultiValuedProperty($property);
 			}

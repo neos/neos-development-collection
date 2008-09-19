@@ -42,12 +42,19 @@ class Helper {
 	protected $databaseHandle;
 
 	/**
+	 * @var string
+	 */
+	protected $PDODriver;
+
+	/**
 	 * @param array $options
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($options) {
 		$this->options = $options;
+		$splitdsn = explode(':', $this->options['dsn'], 2);
+		$this->PDODriver = $splitdsn[0];
 	}
 
 	/**
@@ -71,6 +78,9 @@ class Helper {
 	public function initializeStorage() {
 		$this->databaseHandle = new PDO($this->options['dsn'], $this->options['userid'], $this->options['password']);
 		$this->databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		if ($this->PDODriver == 'mysql') {
+			$this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI_QUOTES\';');
+		}
 
 		$this->initializeTables();
 		$this->initializeNamespaces();
@@ -85,9 +95,20 @@ class Helper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeTables() {
-		$statements = file(FLOW3_PATH_PACKAGES . 'TYPO3CR/Resources/SQL/TYPO3CR.sql', FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
-		foreach ($statements as $statement) {
-			$this->databaseHandle->query($statement);
+		$lines = file(FLOW3_PATH_PACKAGES . 'TYPO3CR/Resources/SQL/TYPO3CR_schema.sql', FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
+		$statement = '';
+		foreach ($lines as $line) {
+			$line = trim($line);
+			if ($this->PDODriver != 'mysql') {
+					// Remove MySQL style key length delimiters if we are not setting up a mysql db
+				$line = preg_replace('/"\([0-9]+\)/', '"', $line);
+			}
+
+			$statement .= ' ' . $line;
+			if (substr($statement, -1) == ';') {
+				$this->databaseHandle->query($statement);
+				$statement = '';
+			}
 		}
 	}
 
