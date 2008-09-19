@@ -58,7 +58,7 @@ class MySQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias H√∂rmann <hoermann@saltation.de>
+	 * @author Matthias Hörmann <hoermann@saltation.de>
 	 */
 	public function setUp() {
 		$this->config = FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/testdb.conf';
@@ -107,7 +107,7 @@ class MySQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias H√∂rmann <hoermann@saltation.de>
+	 * @author Matthias Hörmann <hoermann@saltation.de>
 	 */
 	public function tearDown() {
 		$this->storageBackend->disconnect();
