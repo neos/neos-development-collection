@@ -17,15 +17,15 @@
     </parties>
     <constraints>
         <depends>
-            <package minVersion="1.5.3">Lucene</package>
-            <package>PHPCR</package>
             <package>FLOW3</package>
+            <package minVersion="1.6.0">Lucene</package>
+            <package>PHPCR</package>
             <system type="PHPExtension">PDO</system>
         </depends>
         <conflicts/>
         <suggests>
-            <system type="PHPExtension">pdo_mysql</system>
             <system type="PHPExtension">pdo_sqlite</system>
+            <system type="PHPExtension">pdo_mysql</system>
         </suggests>
     </constraints>
 </package>
