@@ -19,7 +19,7 @@ $c->fallback
 		)
 	);
 
-$c->TYPO3Route1
+$c->TYPO3Frontend
 	->setUrlPattern('[page].[@format]')
 	->setControllerComponentNamePattern('F3::@package::Frontend::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Frontend::View::@controller@action@format')
@@ -32,21 +32,6 @@ $c->TYPO3Route1
 			'@format' => 'html'
 		)
 	);
-
-$c->TYPO3Route2
-	->setUrlPattern('typo3/[section]/[module]')
-	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controllerController')
-	->setViewComponentNamePattern('F3::@package::Backend::View::@controller@action@format')
-	->setDefaults(
-		array(
-			'@package' => 'TYPO3',
-			'@controller' => 'Default',
-			'@action' => 'index',
-			'section' => 'System',
-			'module' => 'Welcome'
-		)
-	);
-
 
 /*************************************************************************
  * Routes definitions for the services
@@ -111,6 +96,7 @@ $c->TYPO3Route5
 $c->TYPO3Route7
 	->setUrlPattern('typo3/login')
 	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Backend::View::@controller::@action@format')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',

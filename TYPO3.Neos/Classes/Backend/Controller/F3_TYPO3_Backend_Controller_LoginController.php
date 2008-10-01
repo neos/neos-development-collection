@@ -38,6 +38,7 @@ class LoginController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
+		return $this->view->render();
 		$output = '
 			<form action="" method="post">
 	 			User: <input type="text" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::username" />
