@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Service::Controller;
+namespace F3::TYPO3::Backend::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,41 +16,36 @@ namespace F3::TYPO3::Service::Controller;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Service
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @package
+ * @subpackage
+ * @version $Id:$
  */
-
 /**
- * The "Tree" service
  *
- * @package TYPO3
- * @subpackage Service
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ *
+ * @package
+ * @subpackage
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TreeController extends F3::FLOW3::MVC::Controller::RESTController {
+class LoginController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
-	 * Initializes the arguments of this controller
+	 * Default action for this controller
 	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return string The rendered view
+	 * @author robert
 	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-
-		$this->arguments->addNewArgument('locale', 'Text');
-	}
-
-	/**
-	 * A demo show action
-	 *
-	 * @return string Output of the list view
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function showAction() {
-		return $this->view->render();
+	public function indexAction() {
+		$output = '
+			<form action="" method="post">
+	 			User: <input type="text" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::username" />
+				Password <input type="password" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::password" />
+				<input type="submit" value="Login" />
+			</form>
+		';
+		return $output;
 	}
 }
+
 ?>

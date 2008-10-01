@@ -34,28 +34,74 @@ namespace F3::TYPO3::Domain::Model;
 class StructureNode {
 
 	/**
-	 * The content objects which are assigned to this structure node
+	 * The identifier of this node (a UUID)
+	 *
+	 * @var string
+	 * @identifier
+	 */
+	protected $id;
+
+	/**
+	 * Child nodes of this structure node
 	 *
 	 * @var array
 	 * @reference
-	 */
-	protected $contents = array();
-
-	/**
-	 * Returns the content which is assigned to this structure node.
-	 *
-	 * If a locale is specified, this node will try to return a matching content object based on the
-	 * globally defined fallback rules.
-	 *
-	 * @param string $languageLocale The language locale of the desired content. Use "und" for undefined language
-	 * @param string $countryLocale The country locale of the desired content. Use "ZZ" for any country
-	 * @return F3::TYPO3::Domain::Model::Content The content object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getContent($languageLocale = 'und', $countryLocale = 'ZZ') {
-		foreach ($this->contents as $content) {
+	protected $childNodes = array();
 
-		}
+	/**
+	 * Constructs the structure node
+	 *
+	 * @param string $title The page title
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct() {
+		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
+	}
+
+	/**
+	 * Returns the identifier of this node
+	 *
+	 * @return string The UUID of this structure node
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getId() {
+		return $this->id;
+	}
+
+	/**
+	 * Adds a child node to this node
+	 *
+	 * @param F3::TYPO3::Domain::Model::StructureNode $node The node to add
+	 * @return void
+	 */
+	public function addChildNode(F3::TYPO3::Domain::Model::StructureNode $node) {
+		$this->childNodes[] = $node;
+	}
+
+	/**
+	 * Returns the child nodes of this node, if any.
+	 *
+	 * @return array An array of child nodes or an empty array if no children exist
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getChildNodes() {
+		return $this->childNodes;
+	}
+
+	/**
+	 * Returns a label which can be used to describe this structure node.
+	 *
+	 * The label is no real property of a structure node but is rendered dynamically
+	 * from the content which is attached to the node.
+	 *
+	 * @return string A label describing the node
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLabel() {
+		return '[No Label]';
 	}
 }
 

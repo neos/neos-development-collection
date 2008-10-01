@@ -63,17 +63,23 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setupAction() {
-		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
-		$site->setName('typo3.org');
+#		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
+#		$site->setName('typo3.org');
 
-		$siteRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::SiteRepository');
-		$siteRepository->add($site);
+#		$siteRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::SiteRepository');
+#		$siteRepository->add($site);
 
-		$page = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Page', 'Some page');
-		$site->addPage($page);
+		$structureNodeRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNodeRepository');
 
-		$page = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Page', 'Another page');
-		$site->addPage($page);
+		$structureNode4 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode3 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode2 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+
+		$structureNode1->addChildNode($structureNode2);
+		$structureNode2->addChildNode($structureNode3);
+		$structureNode1->addChildNode($structureNode4);
+		$structureNodeRepository->add($structureNode1);
 
 		return 'Created some data for playing around.';
 	}

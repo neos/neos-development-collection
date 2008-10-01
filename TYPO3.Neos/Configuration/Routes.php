@@ -75,7 +75,7 @@ $c->TYPO3Route_ServiceWithControllerAndFormat
 	);
 
 $c->TYPO3Route_ServiceWithControllerIdentifierAction
-	->setUrlPattern('typo3/service/v1/[@controller]/[identifier]')
+	->setUrlPattern('typo3/service/v1/[@controller]/[id]')
 	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
 	->setDefaults(
@@ -86,7 +86,7 @@ $c->TYPO3Route_ServiceWithControllerIdentifierAction
 	);
 
 $c->TYPO3Route_ServiceWithControllerIdentifierActionAndFormat
-	->setUrlPattern('typo3/service/v1/[@controller]/[identifier].[@format]')
+	->setUrlPattern('typo3/service/v1/[@controller]/[id].[@format]')
 	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
 	->setDefaults(
@@ -108,13 +108,13 @@ $c->TYPO3Route5
 		)
 	);
 
-$c->TYPO3Route6
-	->setUrlPattern('typo3/test/[action]')
+$c->TYPO3Route7
+	->setUrlPattern('typo3/login')
 	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controllerController')
 	->setDefaults(
 		array(
 			'@package' => 'TYPO3',
-			'@controller' => 'ServiceTest',
+			'@controller' => 'Login',
 			'@action' => 'index',
 		)
 	);
