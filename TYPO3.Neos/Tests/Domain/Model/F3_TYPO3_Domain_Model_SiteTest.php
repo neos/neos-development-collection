@@ -52,7 +52,7 @@ class SiteTest extends F3::Testing::BaseTestCase {
 		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($mockRootNode));
 
 		$site = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
-		$this->assertSame($mockRootNode, $site->getRootNode());
+		$this->assertSame($mockRootNode, $site->getRootStructureNode());
 	}
 }
 
