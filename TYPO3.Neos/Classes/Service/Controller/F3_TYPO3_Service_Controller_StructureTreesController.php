@@ -75,8 +75,8 @@ class StructureTreesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function showAction() {
-		$rootNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
-		$this->view->structureTree = $this->buildStructureTreeArray($rootNode);
+		$rootStructureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
+		$this->view->structureTree = $this->buildStructureTreeArray($rootStructureNode);
 		return $this->view->render();
 	}
 

@@ -16,16 +16,17 @@ namespace F3::TYPO3::Backend::Controller;
  *                                                                        */
 
 /**
- * @package
- * @subpackage
- * @version $Id:$
+ * @package TYPO3
+ * @subpackage Backend
+ * @version $Id$
  */
+
 /**
+ * A controller which allows for loggin into the backend
  *
- *
- * @package
- * @subpackage
- * @version $Id:$
+ * @package TYPO3
+ * @subpackage Backend
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class LoginController extends F3::FLOW3::MVC::Controller::ActionController {
@@ -33,8 +34,8 @@ class LoginController extends F3::FLOW3::MVC::Controller::ActionController {
 	/**
 	 * Default action for this controller
 	 *
-	 * @return string The rendered view
-	 * @author robert
+	 * @return string Some login form
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
 		$output = '

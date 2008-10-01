@@ -51,7 +51,7 @@ class ListXML extends F3::FLOW3::MVC::View::AbstractView {
 		$domSites = $dom->appendChild(new DOMElement('sites'));
 		foreach ($this->sites as $site) {
 			$domSite = $domSites->appendChild(new DOMElement('site'));
-			$domSite->appendChild(new DOMAttr('identifier', $site->getIdentifier()));
+			$domSite->appendChild(new DOMAttr('id', $site->getId()));
 			$domSite->appendChild(new DOMElement('name', $site->getName()));
 		}
 		return $dom->saveXML();

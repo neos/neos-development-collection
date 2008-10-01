@@ -38,7 +38,7 @@ class Site {
 	 * @var string
 	 * @identifier
 	 */
-	protected $identifier;
+	protected $id;
 
 	/**
 	 * Name of the site
@@ -47,10 +47,10 @@ class Site {
 	protected $name = 'Untitled Site';
 
 	/**
-	 * @var F3::TYPO3::Domain::StructureNode
-	 * @transient
+	 * @var F3::TYPO3::Domain::Model::StructureNode
+	 * @reference
 	 */
-	protected $rootNode;
+	protected $rootStructureNode;
 
 	/**
 	 * Constructs the new site
@@ -58,8 +58,8 @@ class Site {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->identifier = F3::FLOW3::Utility::Algorithms::generateUUID();
-		$this->rootNode = $componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
+		$this->rootStructureNode = $componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
 	}
 
 	/**
@@ -67,8 +67,8 @@ class Site {
 	 * @return string The site's UUID
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getIdentifier() {
-		return $this->identifier;
+	public function getId() {
+		return $this->id;
 	}
 
 	/**
@@ -99,8 +99,8 @@ class Site {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRootNode(F3::TYPO3::Domain::Model::StructureNode $rootNode) {
-		$this->rootNode = $rootNode;
+	public function setRootStructureNode(F3::TYPO3::Domain::Model::StructureNode $rootStructureNode) {
+		$this->rootStructureNode = $rootStructureNode;
 	}
 
 	/**
@@ -109,8 +109,8 @@ class Site {
 	 * @return F3::TYPO3::Domain::Model::StructureNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRootNode() {
-		return $this->rootNode;
+	public function getRootStructureNode() {
+		return $this->rootStructureNode;
 	}
 }
 

@@ -43,10 +43,10 @@ class ShowJSON extends F3::FLOW3::MVC::View::AbstractView {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		$pageIdentifiers = array();
+		$pageIds = array();
 
 		$siteArray[] = array(
-			'identifier' => $this->site->getIdentifier(),
+			'id' => $this->site->getId(),
 			'name' => $this->site->getName(),
 		);
 		return json_encode($siteArray);

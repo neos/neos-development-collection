@@ -48,7 +48,7 @@ class ShowXML extends F3::FLOW3::MVC::View::AbstractView {
 		$dom->formatOutput = TRUE;
 
 		$domSite = $dom->appendChild(new DOMElement('site'));
-		$domSite->appendChild(new DOMAttr('identifier', $this->site->getIdentifier()));
+		$domSite->appendChild(new DOMAttr('id', $this->site->getId()));
 		$domSite->appendChild(new DOMElement('name', $this->site->getName()));
 
 		return $dom->saveXML();

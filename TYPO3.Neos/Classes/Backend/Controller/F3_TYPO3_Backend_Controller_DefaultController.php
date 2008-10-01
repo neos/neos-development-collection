@@ -35,17 +35,6 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
 
 	/**
-	 * Initializes this action controller
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeController() {
-		$this->arguments->addNewArgument('section');
-		$this->arguments->addNewArgument('module');
-	}
-
-	/**
 	 * Default action of the backend controller.
 	 * Forwards the request to the default module.
 	 *
@@ -63,12 +52,6 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setupAction() {
-#		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
-#		$site->setName('typo3.org');
-
-#		$siteRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::SiteRepository');
-#		$siteRepository->add($site);
-
 		$structureNodeRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNodeRepository');
 
 		$structureNode4 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
@@ -80,6 +63,17 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 		$structureNode2->addChildNode($structureNode3);
 		$structureNode1->addChildNode($structureNode4);
 		$structureNodeRepository->add($structureNode1);
+
+		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
+		$site->setName('typo3.org');
+		$site->setRootStructureNode($structureNode1);
+
+		$siteRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::SiteRepository');
+		$siteRepository->add($site);
+
+		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
+		$site->setName('flow3.typo3.org');
+		$siteRepository->add($site);
 
 		return 'Created some data for playing around.';
 	}

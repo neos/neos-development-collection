@@ -48,7 +48,7 @@ class ListHTML extends F3::FLOW3::MVC::View::AbstractView {
 			$output .= '
 				<li>
 					<dl class="F3::TYPO3::Domain::Model::Site">
-						<dt>identifier</dt> <dd>' . $site->getIdentifier() . '</dd>
+						<dt>id</dt> <dd>' . $site->getId() . '</dd>
 						<dt>name</dt> <dd>' . $site->getName() . '</dd>
 					</dl>
 				</li>

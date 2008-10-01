@@ -78,7 +78,7 @@ class SitesController extends F3::FLOW3::MVC::Controller::RESTController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function showAction() {
-		$site = $this->siteRepository->findByIdentifier($this->arguments['identifier']);
+		$site = $this->siteRepository->findById($this->arguments['id']);
 		if ($site === NULL) $this->throwStatus(404);
 		$this->view->site = $site;
 		return $this->view->render();
@@ -96,7 +96,7 @@ class SitesController extends F3::FLOW3::MVC::Controller::RESTController {
 		$this->siteRepository->add($site);
 
 		$this->response->setStatus(201);
-		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getIdentifier() . '.json');
+		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getId() . '.json');
 	}
 
 	/**
@@ -106,12 +106,12 @@ class SitesController extends F3::FLOW3::MVC::Controller::RESTController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function updateAction() {
-		$site = $this->siteRepository->findByIdentifier($this->arguments['identifier']);
+		$site = $this->siteRepository->findById($this->arguments['id']);
 		if ($site === NULL) $this->throwStatus(404, NULL, 'Unknown Site');
 		if ($this->arguments['name']->getValue() !== NULL) $site->setName($this->arguments['name']->getValue());
 
 		$this->response->setStatus(200);
-		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getIdentifier() . '.json');
+		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getId() . '.json');
 	}
 }
 ?>

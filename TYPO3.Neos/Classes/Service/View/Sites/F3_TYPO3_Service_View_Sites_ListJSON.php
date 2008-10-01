@@ -46,8 +46,9 @@ class ListJSON extends F3::FLOW3::MVC::View::AbstractView {
 		$sitesArray = array();
 		foreach ($this->sites as $site) {
 			$sitesArray[] = array(
-				'identifier' => $site->getIdentifier(),
+				'id' => $site->getId(),
 				'name' => $site->getName(),
+				'rootStructureNode' => $site->getRootStructureNode()->getId()
 			);
 		}
 		return json_encode($sitesArray);

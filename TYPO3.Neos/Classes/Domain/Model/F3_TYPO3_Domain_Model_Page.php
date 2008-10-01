@@ -42,7 +42,7 @@ class Page {
 	 * @var string
 	 * @identifier
 	 */
-	protected $identifier;
+	protected $id;
 
 	/**
 	 * The page title
@@ -91,7 +91,7 @@ class Page {
 	 */
 	public function __construct($title = 'Untitled') {
 		$this->setTitle($title);
-		$this->identifier = F3::FLOW3::Utility::Algorithms::generateUUID();
+		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
 	}
 
 	/**
@@ -111,8 +111,8 @@ class Page {
 	 * @return string The UUID of this page
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getIdentifier() {
-		return $this->identifier;
+	public function getId() {
+		return $this->id;
 	}
 
 	/**
