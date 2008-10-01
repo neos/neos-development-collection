@@ -60,9 +60,6 @@ class StructureNodeTest extends F3::Testing::BaseTestCase {
 
 		$this->assertSame(array($node1, $node3, $node2), $rootNode->getChildNodes());
 	}
-
-	public function 
-
 }
 
 ?>
