@@ -46,13 +46,27 @@ class SiteTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aRootNodeIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
-		$mockRootNode = $this->getMock('F3::TYPO3::Domain::Model::StructureNode');
+	public function aUniqueIDIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($mockRootNode));
+		$site1 = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
+		$site2 = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
+
+		$this->assertEquals(36, strlen($site1->getId()));
+		$this->assertEquals(36, strlen($site2->getId()));
+		$this->assertNotEquals($site1->getId(), $site2->getId());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function aRootStructureNodeIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
+		$mockRootStructureNode = $this->getMock('F3::TYPO3::Domain::Model::StructureNode');
+		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
+		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($mockRootStructureNode));
 
 		$site = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
-		$this->assertSame($mockRootNode, $site->getRootStructureNode());
+		$this->assertSame($mockRootStructureNode, $site->getRootStructureNode());
 	}
 }
 
