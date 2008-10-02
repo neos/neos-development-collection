@@ -141,10 +141,6 @@ class DataMapper {
 		foreach ($node->getProperties() as $property) {
 			$properties[$property->getName()] = $this->getPropertyValue($property);
 		}
-		$identifierProperty = $this->persistenceManager->getClassSchema($className)->getIdentifierProperty();
-		if ($identifierProperty !== NULL) {
-			$properties[$identifierProperty] = $node->getIdentifier();
-		}
 		$object = $this->componentObjectBuilder->reconstituteComponentObject($className, $componentConfiguration, $properties);
 		$this->persistenceManager->getSession()->registerReconstitutedObject($object);
 		$this->identityMap->registerObject($object, $node->getIdentifier());
