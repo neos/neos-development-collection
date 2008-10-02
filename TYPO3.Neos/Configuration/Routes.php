@@ -33,6 +33,18 @@ $c->TYPO3Frontend
 		)
 	);
 
+$c->TYPO3Backend
+	->setUrlPattern('typo3')
+	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Backend::View::@controller@action@format')
+	->setDefaults(
+		array(
+			'@package' => 'TYPO3',
+			'@controller' => 'Default',
+			'@action' => 'index'
+		)
+	);
+
 /*************************************************************************
  * Routes definitions for the services
  */
@@ -58,8 +70,17 @@ $c->TYPO3Route_ServiceWithControllerAndFormat
 			'@package' => 'TYPO3'
 		)
 	);
+$c->TYPO3Route_ServiceWithControllerAndFormatAndDummy
+	->setUrlPattern('typo3/service/v1/[@controller].[@format]?[@dummy]')
+	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
+	->setDefaults(
+		array(
+			'@package' => 'TYPO3'
+		)
+	);
 
-$c->TYPO3Route_ServiceWithControllerIdentifierAction
+$c->TYPO3Route_ServiceWithControllerAndId
 	->setUrlPattern('typo3/service/v1/[@controller]/[id]')
 	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
@@ -70,8 +91,18 @@ $c->TYPO3Route_ServiceWithControllerIdentifierAction
 		)
 	);
 
-$c->TYPO3Route_ServiceWithControllerIdentifierActionAndFormat
+$c->TYPO3Route_ServiceWithControllerAndIdAndFormat
 	->setUrlPattern('typo3/service/v1/[@controller]/[id].[@format]')
+	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
+	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
+	->setDefaults(
+		array(
+			'@package' => 'TYPO3',
+		)
+	);
+
+$c->TYPO3Route_ServiceWithControllerAndIdAndFormatAndDummy
+	->setUrlPattern('typo3/service/v1/[@controller]/[id].[@format]?[@dummy]')
 	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
 	->setDefaults(

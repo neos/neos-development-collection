@@ -1,7 +1,3 @@
-<?php
-declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Service::View::Sites;
-
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
  *                                                                        *
@@ -22,36 +18,29 @@ namespace F3::TYPO3::Service::View::Sites;
  */
 
 /**
- * XML view for the Site Show action
+ * A sites tree loader. It attaches a structure tree loader to nodes loaded.
  *
  * @package TYPO3
  * @subpackage Service
  * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ShowXML extends F3::FLOW3::MVC::View::AbstractView {
+Ext.app.SitesTreeLoader = Ext.extend(Ext.ux.ProcessingTreeLoader, {
 
 	/**
-	 * @var F3::TYPO3::Domain::Model::Site
+	 * Set text, iconCls and loader
 	 */
-	public $site;
-
-	/**
-	 * Renders this show view
-	 *
-	 * @return string The rendered XML output
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function render() {
-
-		$dom = new ::DOMDocument ('1.0', 'utf-8');
-		$dom->formatOutput = TRUE;
-
-		$domSite = $dom->appendChild(new ::DOMElement('site'));
-		$domSite->appendChild(new ::DOMAttr('id', $this->site->getId()));
-		$domSite->appendChild(new ::DOMElement('name', $this->site->getName()));
-
-		return $dom->saveXML();
+	processAttributes : function(attributes) {
+		attributes.text = attributes.name;
+		attributes.iconCls = 'F3_TYPO3_Backend_Icon_Site';
+		if (attributes.id !== 'ROOT') {
+			attributes.loader = structureTreeLoader;
+		}
 	}
-}
-?>
+});
+
+
+var sitesTreeLoader = new Ext.app.SitesTreeLoader({
+	dataUrl:'typo3/service/v1/sites.json',
+	requestMethod: 'GET'
+});

@@ -1,7 +1,3 @@
-<?php
-declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Service::View::Sites;
-
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
  *                                                                        *
@@ -22,36 +18,42 @@ namespace F3::TYPO3::Service::View::Sites;
  */
 
 /**
- * XML view for the Site Show action
+ * A processing tree loader for ExtJS, allowing to post-process JSON data before
+ * it is handed over to the actual tree.
  *
  * @package TYPO3
  * @subpackage Service
  * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ShowXML extends F3::FLOW3::MVC::View::AbstractView {
+Ext.ux.ProcessingTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
 	/**
-	 * @var F3::TYPO3::Domain::Model::Site
+	 * Get rid of the node=[id] automatism...
 	 */
-	public $site;
+	getParams: function(node){
+		var buf = [], bp = this.baseParams;
+		for (var key in bp) {
+			if (typeof bp[key] != "function") {
+				buf.push(encodeURIComponent(key), "=", encodeURIComponent(bp[key]), "&");
+			}
+		}
+		return buf.join("");
+	},
 
 	/**
-	 * Renders this show view
-	 *
-	 * @return string The rendered XML output
-	 * @author Robert Lemke <robert@typo3.org>
+	 * Introduces preprocessing of attributes before node creation
 	 */
-	public function render() {
+	createNode : function(attributes){
+		this.processAttributes(attributes);
+		return Ext.ux.ProcessingTreeLoader.superclass.createNode.call(this, attributes);
+	},
 
-		$dom = new ::DOMDocument ('1.0', 'utf-8');
-		$dom->formatOutput = TRUE;
-
-		$domSite = $dom->appendChild(new ::DOMElement('site'));
-		$domSite->appendChild(new ::DOMAttr('id', $this->site->getId()));
-		$domSite->appendChild(new ::DOMElement('name', $this->site->getName()));
-
-		return $dom->saveXML();
-	}
-}
-?>
+	/**
+	 * Template method intended to be overridden by subclasses that need to provide
+	 * custom attribute processing prior to the creation of each TreeNode. This method
+	 * will be passed a config object containing existing TreeNode attribute name/value
+	 * pairs which can be modified as needed directly (no need to return the object).
+	 */
+	processAttributes: Ext.emptyFn
+});

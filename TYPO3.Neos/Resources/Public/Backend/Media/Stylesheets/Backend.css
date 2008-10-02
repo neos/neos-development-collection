@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
 .F3_TYPO3_Backend_Icon_Page {
-	background-image: url(Resources/Web/TYPO3/Public/Backend/Media/Icons/Page.png);
+	background-image: url(../Icons/Page.png) !important;
+}
+
+.F3_TYPO3_Backend_Icon_Site {
+	background-image: url(../Icons/Site.png) !important;
 }

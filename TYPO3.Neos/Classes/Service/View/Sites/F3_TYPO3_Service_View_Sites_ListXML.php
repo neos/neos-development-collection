@@ -45,14 +45,14 @@ class ListXML extends F3::FLOW3::MVC::View::AbstractView {
 	public function render() {
 		$sitesArray = array();
 
-		$dom = new DOMDocument ('1.0', 'utf-8');
+		$dom = new ::DOMDocument ('1.0', 'utf-8');
 		$dom->formatOutput = TRUE;
 
-		$domSites = $dom->appendChild(new DOMElement('sites'));
+		$domSites = $dom->appendChild(new ::DOMElement('sites'));
 		foreach ($this->sites as $site) {
-			$domSite = $domSites->appendChild(new DOMElement('site'));
-			$domSite->appendChild(new DOMAttr('id', $site->getId()));
-			$domSite->appendChild(new DOMElement('name', $site->getName()));
+			$domSite = $domSites->appendChild(new ::DOMElement('site'));
+			$domSite->appendChild(new ::DOMAttr('id', $site->getId()));
+			$domSite->appendChild(new ::DOMElement('name', $site->getName()));
 		}
 		return $dom->saveXML();
 	}
