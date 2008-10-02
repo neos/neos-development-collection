@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3::TYPO3::Domain::Model::Content;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3::Domain::Model;
  * @scope prototype
  * @entity
  */
-class Page {
+class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 
 	/**
 	 * @var F3::TYPO3::Domain::Service::Time
@@ -67,20 +67,6 @@ class Page {
 	 * @var DateTime
 	 */
 	protected $endTime;
-
-	/**
-	 * Content elements on this page
-	 * @var array
-	 * @reference
-	 */
-	protected $contentElements = array();
-
-	/**
-	 * Sub pages of this page
-	 * @var array
-	 * @reference
-	 */
-	protected $subPages = array();
 
 	/**
 	 * Constructs the Page
@@ -222,25 +208,13 @@ class Page {
 	}
 
 	/**
-	 * Adds content to the page
+	 * Returns a label for this page
 	 *
-	 * @param  F3::TYPO3::Domain::Model::Content $content: The content to add
-	 * @return void
+	 * @return string A label for this page
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addContentElement(F3::TYPO3::Domain::Model::Content $content) {
-		$this->contentElements[] = $content;
-	}
-
-	/**
-	 * Adds a sub page to the page
-	 *
-	 * @param F3::TYPO3::Domain::Model::Page $page
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function addSubPage(F3::TYPO3::Domain::Model::Page $page) {
-		$this->subPages[] = $page;
+	public function getLabel() {
+		return $this->title;
 	}
 
 	/**

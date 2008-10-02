@@ -135,18 +135,17 @@ class StructureTreesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @return array The structure tree as an array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildStructureTreeArray(F3::TYPO3::Domain::Model::StructureNode $node, $maximumLevels = 30, $currentLevel = 1, $structureTreeArray = array()) {
+	protected function buildStructureTreeArray(F3::TYPO3::Domain::Model::StructureNode $structureNode, $maximumLevels = 30, $currentLevel = 1, $structureTreeArray = array()) {
 		$structureTreeArray = array(
-			'id' => $node->getId(),
-			'label' => $node->getLabel(),
+			'id' => $structureNode->getId(),
+			'label' => $structureNode->getLabel(),
+			'hasChildNodes' => $structureNode->hasChildNodes(),
 			'childNodes' => array()
 		);
 
-		foreach ($node->getChildNodes() as $childNode) {
-			if ($currentLevel < $maximumLevels) {
+		if ($currentLevel < $maximumLevels) {
+			foreach ($structureNode->getChildNodes() as $childNode) {
 				$structureTreeArray['childNodes'][] = $this->buildStructureTreeArray($childNode, $maximumLevels, ($currentLevel + 1));
-			} else {
-				$structureTreeArray['childNodes'][] = $childNode->getId();
 			}
 		}
 

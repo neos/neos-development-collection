@@ -50,10 +50,14 @@ class ListJSON extends F3::FLOW3::MVC::View::AbstractView {
 				$childNodesIds[] = $childNode->getId();
 			}
 
+			$contentId = ($structureNode->getContent() !== NULL) ? $structureNode->getContent()->getId() : '';
+
 			$structureNodesArray[] = array(
 				'id' => $structureNode->getId(),
 				'label' => $structureNode->getLabel(),
 				'childNodes' => $childNodesIds,
+				'hasChildNodes' => $structureNode->hasChildNodes(),
+			'content' => $contentId
 			);
 		}
 		return json_encode($structureNodesArray);

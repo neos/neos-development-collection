@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Service::View::Pages;
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,51 +17,56 @@ namespace F3::TYPO3::Service::View::Pages;
 
 /**
  * @package TYPO3
- * @subpackage Service
- * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id$
  */
 
 /**
- *
+ * Domain model of a generic content element
  *
  * @package TYPO3
- * @subpackage Service
- * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
+ * @entity
  */
-class ListJSON extends F3::FLOW3::MVC::View::AbstractView {
+abstract class AbstractContent implements F3::TYPO3::Domain::Model::ContentInterface {
 
 	/**
-	 * @var array An array of pages
+	 * @var F3::FLOW3::Locale::Locale
 	 */
-	protected $pages;
+	protected $locale;
 
 	/**
-	 * Sets the pages (model) for this view
+	 * Specifies the locale of the content object
 	 *
-	 * @param array $pages An array of F3::TYPO3::Domain::Model::Page objects
+	 * @param F3::FLOW3::Locale::Locale $locale The locale of the content
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPages(array $pages) {
-		$this->pages = $pages;
+	public function setLocale(F3::FLOW3::Locale::Locale $locale) {
+		$this->locale = $locale;
 	}
 
 	/**
-	 * Renders a page from the given TypoScript
+	 * Returns the locale of the content object
 	 *
-	 * @param  array $typoScriptObjectTree: The TypoScript tree (model)
-	 * @return string The rendered content
+	 * @return F3::FLOW3::Locale::Locale $locale The locale of the content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function render() {
-		$pagesArray = array();
-		foreach ($this->pages as $key => $page) {
-			$pagesArray[] = array(
-				'text' => $page->getTitle()
-			);
-		}
-		return json_encode($pagesArray);
+	public function getLocale() {
+		return $this->locale;
 	}
+
+
+	/**
+	 * Returns a short string which can be used to label the content object
+	 *
+	 * @return string A label for the content object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLabel() {
+		return '[' . get_class($this) . ']';
+	}
+
 }
 ?>

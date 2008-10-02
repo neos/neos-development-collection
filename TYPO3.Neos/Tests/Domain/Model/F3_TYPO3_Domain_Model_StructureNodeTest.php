@@ -60,6 +60,35 @@ class StructureNodeTest extends F3::Testing::BaseTestCase {
 
 		$this->assertSame(array($node1, $node3, $node2), $rootNode->getChildNodes());
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function hasChildNodesTellsIfTheStructureNodeHasChildNodes() {
+		$rootNode = new F3::TYPO3::Domain::Model::StructureNode();
+		$node1 = new F3::TYPO3::Domain::Model::StructureNode();
+		$node2 = new F3::TYPO3::Domain::Model::StructureNode();
+
+		$this->assertFalse($rootNode->hasChildNodes());
+
+		$rootNode->addChildNode($node1);
+		$rootNode->addChildNode($node2);
+
+		$this->assertTrue($rootNode->hasChildNodes());
+	}
+
+	/**
+	 * @test
+	 * @author
+	 */
+	public function oneContentObjectCanBeAttachedToAStructureNode() {
+		$structureNode = new F3::TYPO3::Domain::Model::StructureNode();
+		$content = new F3::TYPO3::Domain::Model::Content::Text();
+
+		$structureNode->setContent($content);
+		$this->assertSame($content, $structureNode->getContent());
+	}
 }
 
 ?>

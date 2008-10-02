@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Service::View::Pages;
+namespace F3::TYPO3::Domain::Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,51 +17,42 @@ namespace F3::TYPO3::Service::View::Pages;
 
 /**
  * @package TYPO3
- * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @subpackage Domain
+ * @version $Id:$
  */
 
 /**
- * TypoScript View for a Page
+ * Contract for a Content object
  *
  * @package TYPO3
- * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @subpackage Domain
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @author Robert Lemke <robert@typo3.org>
  */
-class ListHTML extends F3::FLOW3::MVC::View::AbstractView {
+interface ContentInterface {
 
 	/**
-	 * @var array An array of pages
-	 */
-	protected $pages;
-
-	/**
-	 * Sets the pages (model) for this view
+	 * Specifies the locale of the content object
 	 *
-	 * @param array $pages An array of F3::TYPO3::Domain::Model::Page objects
+	 * @param F3::FLOW3::Locale::Locale $locale The locale of the content
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPages(array $pages) {
-		$this->pages = $pages;
-	}
+	public function setLocale(F3::FLOW3::Locale::Locale $locale);
 
 	/**
-	 * Renders a page from the given TypoScript
+	 * Returns the locale of the content object
 	 *
-	 * @param  array $typoScriptObjectTree: The TypoScript tree (model)
-	 * @return string The rendered content
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return F3::FLOW3::Locale::Locale $locale The locale of the content
 	 */
-	public function render() {
-		$listItems = array();
-		foreach ($this->pages as $page) {
-			$listItems[] = '<li>' . $page->getTitle() . '</li>';
-		}
-		$output = '
-			<h2>Pages</h2>
-			<ul>' . implode('', $listItems) . '</ul>
-		';
-		return $output;
-	}
+	public function getLocale();
+
+	/**
+	 * Returns a short string which can be used to label the content object
+	 *
+	 * @return string A label for the content object
+	 */
+	public function getLabel();
+
 }
 ?>

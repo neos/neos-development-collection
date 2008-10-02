@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3::TYPO3::Domain::Model::Content;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -34,7 +34,7 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author robert
 	 */
 	public function aPageCanBeHidden() {
-		$page = new F3::TYPO3::Domain::Model::Page('Untitled');
+		$page = new F3::TYPO3::Domain::Model::Content::Page('Untitled');
 		$page->hide();
 		$this->assertTrue($page->isHidden());
 	}
@@ -44,7 +44,7 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function byDefaultAPageIsVisible() {
-		$page = new F3::TYPO3::Domain::Model::Page('Untitled');
+		$page = new F3::TYPO3::Domain::Model::Content::Page('Untitled');
 		$page->injectTimeService(new F3::TYPO3::Domain::Service::Time());
 		$this->assertTrue($page->isVisible());
 	}
@@ -57,7 +57,7 @@ class PageTest extends F3::Testing::BaseTestCase {
 		$timeService = new F3::TYPO3::Domain::Service::Time();
 		$timeService->setSimulatedDateTime(new DateTime('2008-08-08T10:00+01:00'));
 
-		$page = new F3::TYPO3::Domain::Model::Page('Untitled');
+		$page = new F3::TYPO3::Domain::Model::Content::Page('Untitled');
 		$page->injectTimeService($timeService);
 
 		$page->setStartTime(new DateTime('2008-08-08T18:00+01:00'));
@@ -72,7 +72,7 @@ class PageTest extends F3::Testing::BaseTestCase {
 		$timeService = new F3::TYPO3::Domain::Service::Time();
 		$timeService->setSimulatedDateTime(new DateTime('2008-08-08T10:00+01:00'));
 
-		$page = new F3::TYPO3::Domain::Model::Page('Untitled');
+		$page = new F3::TYPO3::Domain::Model::Content::Page('Untitled');
 		$page->injectTimeService($timeService);
 
 		$page->setEndTime(new DateTime('2008-08-07T12:00+01:00'));
@@ -85,7 +85,16 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aTitleMustNotExceed250Characters() {
-		new F3::TYPO3::Domain::Model::Page(str_repeat('x', 255));
+		new F3::TYPO3::Domain::Model::Content::Page(str_repeat('x', 255));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theTitleIsUsedAsTheLabel() {
+		$page = new F3::TYPO3::Domain::Model::Content::Page('El título');
+		$this->assertSame('El título', $page->getLabel());
 	}
 }
 

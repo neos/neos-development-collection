@@ -29,19 +29,30 @@ namespace F3::TYPO3::Domain::Model::Content;
  * @scope prototype
  * @entity
  */
-class Text extends F3::TYPO3::Domain::Model::Content {
+class Text extends F3::TYPO3::Domain::Model::AbstractContent {
 
 	/**
 	 * Headline for this text element
 	 * @var string
 	 */
- 	protected $headline;
+ 	protected $headline = '';
 
  	/**
- 	 * The text of this text element
- 	 * @var string
- 	 */
- 	protected $text;
+	 * The text of this text element
+	 * @var string
+	 */
+ 	protected $text = '';
+
+	/**
+	 * Returns a label for this Text element
+	 *
+	 * @return string The label
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLabel() {
+		return $this->headline;
+	}
+
 }
 
 ?>

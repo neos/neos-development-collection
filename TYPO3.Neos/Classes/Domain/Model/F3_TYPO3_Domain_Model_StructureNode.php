@@ -51,6 +51,14 @@ class StructureNode {
 	protected $childNodes = array();
 
 	/**
+	 * Content attached to this structure node
+	 *
+	 * @var F3::TYPO3::Domain::Model::ContentInterface
+	 * @reference
+	 */
+	protected $content;
+
+	/**
 	 * Constructs the structure node
 	 *
 	 * @param string $title The page title
@@ -92,6 +100,37 @@ class StructureNode {
 	}
 
 	/**
+	 * If this structure node has child nodes
+	 *
+	 * @return boolean TRUE if child nodes exist, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function hasChildNodes() {
+		return (count($this->childNodes) > 0);
+	}
+
+	/**
+	 * Attaches a content object to this structure node
+	 *
+	 * @param F3::TYPO3::Domain::Model::ContentInterface $content The content object
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setContent(F3::TYPO3::Domain::Model::ContentInterface $content) {
+		$this->content = $content;
+	}
+
+	/**
+	 * Returns the content object attached to this structure node (if any)
+	 *
+	 * @return mixed The content object or NULL if none exists
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContent() {
+		return $this->content;
+	}
+
+	/**
 	 * Returns a label which can be used to describe this structure node.
 	 *
 	 * The label is no real property of a structure node but is rendered dynamically
@@ -101,7 +140,7 @@ class StructureNode {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLabel() {
-		return '[No Label]';
+		return ($this->content !== NULL) ? $this->content->getLabel() : '[No Content]';
 	}
 }
 

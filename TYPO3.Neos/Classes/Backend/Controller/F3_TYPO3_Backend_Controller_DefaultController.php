@@ -54,10 +54,21 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 	public function setupAction() {
 		$structureNodeRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNodeRepository');
 
+		$page4 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Page', 'Page 4');
 		$structureNode4 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode4->setContent($page4);
+
+		$page3 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Page', 'Page 3');
 		$structureNode3 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode3->setContent($page3);
+
+		$page2 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Page', 'Page 2');
 		$structureNode2 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode2->setContent($page2);
+
+		$page1 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Page', 'Page 1');
 		$structureNode1 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1->setContent($page1);
 
 		$structureNode1->addChildNode($structureNode2);
 		$structureNode2->addChildNode($structureNode3);

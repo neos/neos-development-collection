@@ -65,9 +65,9 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function showAction() {
-		$node = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
-		if ($node === NULL) $this->throwStatus(404);
-		$this->view->node = $node;
+		$structureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
+		if ($structureNode === NULL) $this->throwStatus(404);
+		$this->view->structureNode = $structureNode;
 		return $this->view->render();
 	}
 
@@ -78,10 +78,11 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAction() {
-		$node = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
-		$node->structureNodeRepository->add($node);
+		$this->throwStatus(501);
+#		$node = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+#		$node->structureNodeRepository->add($node);
 
-		$this->response->setStatus(201);
+#		$this->response->setStatus(201);
 #		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/structurenodes/' . $node->getId() . '.json');
 	}
 
@@ -92,11 +93,23 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function updateAction() {
-		$node = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
-		if ($node === NULL) $this->throwStatus(404);
+		$this->throwStatus(501);
+
+		$structureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
+		if ($structureNode === NULL) $this->throwStatus(404);
 # ...
 		$this->response->setStatus(200);
 #		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getId() . '.json');
+	}
+
+	/**
+	 * Deletes a structure node
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function deleteAction() {
+		$this->throwStatus(501);
 	}
 }
 ?>
