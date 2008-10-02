@@ -32,22 +32,6 @@ namespace F3::TYPO3::Frontend::Controller;
 class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
-	 * @var F3::TYPO3::Domain::Model::PageRepository
-	 */
-	protected $pageRepository;
-
-	/**
-	 * Injects the page repository
-	 *
-	 * @param F3::TYPO3::Domain::Model::PageRepository $pageRepository The page repository
-	 * @return void
-	 */
-	public function injectPageRepository(F3::TYPO3::Domain::Model::PageRepository $pageRepository) {
-		$this->pageRepository = $pageRepository;
-	}
-
-
-	/**
 	 * Initializes this controller
 	 *
 	 * @return void

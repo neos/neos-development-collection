@@ -37,6 +37,8 @@ class IndexHTML extends F3::FLOW3::MVC::View::AbstractView {
 	 * @return string The rendered view
 	 */
 	public function render() {
+		$baseURI = $this->request->getBaseURI();
+
 		return '<!DOCTYPE html
 					 PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 					 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -47,57 +49,55 @@ class IndexHTML extends F3::FLOW3::MVC::View::AbstractView {
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 					<meta name="generator" content="TYPO3, http://typo3.org, &#169; The TYPO3 Development Team" />
 					<title>TYPO3 Login</title>
-					<base href="http://typo3.org/typo3/" />
-					<link rel="stylesheet" type="text/css" href="stylesheet.css" />
-					<style type="text/css" id="internalStyle">
-						/*<![CDATA[*/
+					<base href="' . $baseURI .'" onload="document.getElementById(\'username\').focus();" />
+					<style type="text/css">
+						body, div, form {
+							background-color: #4E4949;
+							margin: 0;
+							padding: 0;
+						}
+						#loginscreen {
+							width: 1024px;
+							height: 768px;
+							background-image: url(Resources/Web/TYPO3/Public/Backend/Media/Images/Login/MockLoginScreen.png);
+							background-repeat: no-repeat;
+							background-position: center;
+						}
+						#username {
+							background-color: transparent;
+							position: absolute;
+							top: 407px;
+							left: 340px;
+							width: 180px;
+							border: none;
+						}
+						#password {
+							background-color: transparent;
+							border: none;
+							position: absolute;
+							top: 448px;
+							left: 340px;
+							width: 180px;
+						}
+						#loginbutton {
+							position: absolute;
+							top: 479px;
+							left: 325px;
+							width: 85px;
+							border: none;
+							background-color: transparent;
+						}
 
-							/*###POSTCSSMARKER###*/
-						/*]]>*/
-					</style>
-					<link rel="stylesheet" type="text/css" href="sysext/t3skin/stylesheets/stylesheet_post.css" />
+						</style>
 				</head>
-				<body id="typo3-index-php">
-					<form action="" method="post" name="loginform">
-					<table cellspacing="0" cellpadding="0" border="0" id="wrapper">
-						<tr>
-							<td class="c-wrappercell" align="center">
-								<div id="loginimage">
-									<img src="sysext/t3skin/icons/gfx/typo3logo.gif" width="128" height="59" alt="" />
-								</div>
-								<table cellspacing="0" cellpadding="0" border="0" id="loginwrapper">
-									<tr>
-										<td><img src="sysext/t3skin/images/login/loginimage_4_2.jpg" width="500" height="100" id="loginbox-image" alt="Photo by Photo by J.C. Franca (www.digitalphoto.com.br)" title="Photo by Photo by J.C. Franca (www.digitalphoto.com.br)" />
-											<table cellspacing="0" cellpadding="0" border="0" id="logintable">
-												<tr>
-													<td colspan="2"><h2>Administration Login</h2></td>
-												</tr>
-												<tr class="c-username">
-													<td><label for="username" class="c-username">Username:</label></td>
-													<td><input type="text" id="username" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::username" value="" class="c-username" /></td>
-												</tr>
-												<tr class="c-password">
-													<td><label for="password" class="c-password">Password:</label></td>
-													<td><input type="password" id="password" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::password" value="" class="c-password" /></td>
-												</tr>
-												<tr class="c-submit">
-													<td></td>
-													<td><input type="submit" name="commandLI" value="Log In" class="c-submit" /></td>
-												</tr>
-												<tr class="c-info">
-													<td colspan="2"><p class="c-info">(Note: Cookies and JavaScript must be enabled!)</p></td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-								</table>
-								<div id="copyrightnotice">
-									<a href="http://typo3.com/" target="_blank"><img src="gfx/loginlogo_transp.gif" alt="TYPO3 logo" align="left" />TYPO3 CMS</a>. Copyright &copy; The TYPO3 Development Team. Go to <a href="http://typo3.com/" target="_blank">http://typo3.com/</a> for details. TYPO3 comes with ABSOLUTELY NO WARRANTY; <a href="http://typo3.com/1316.0.html" target="_blank">click for details.</a> This is free software, and you are welcome to redistribute it under certain conditions; <a href="http://typo3.com/1316.0.html" target="_blank">click for details</a>. Obstructing the appearance of this notice is prohibited by law.
-								</div>
-							</td>
-						</tr>
-					</table>
-				</form>
+				<body>
+					<div id="loginscreen">
+						<form action="typo3" method="post" name="loginform">
+							<input type="text" id="username" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::username" value="" tabindex="1" />
+							<input type="password" id="password" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::password" value="" tabindex="2" />
+							<input type="submit" id="loginbutton" name="submitlogin" value="" tabindex="3" />
+						</form>
+					</div>
 				</body>
 			</html>
 		';
