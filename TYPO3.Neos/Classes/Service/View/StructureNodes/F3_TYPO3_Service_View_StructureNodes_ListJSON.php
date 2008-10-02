@@ -43,24 +43,7 @@ class ListJSON extends F3::FLOW3::MVC::View::AbstractView {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		$structureNodesArray = array();
-		foreach ($this->structureNodes as $structureNode) {
-			$childNodesIds = array();
-			foreach ($structureNode->getChildNodes() as $childNode) {
-				$childNodesIds[] = $childNode->getId();
-			}
-
-			$contentId = ($structureNode->getContent() !== NULL) ? $structureNode->getContent()->getId() : '';
-
-			$structureNodesArray[] = array(
-				'id' => $structureNode->getId(),
-				'label' => $structureNode->getLabel(),
-				'childNodes' => $childNodesIds,
-				'hasChildNodes' => $structureNode->hasChildNodes(),
-			'content' => $contentId
-			);
-		}
-		return json_encode($structureNodesArray);
+		return json_encode($this->structureNodes);
 	}
 }
 ?>

@@ -54,7 +54,11 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function listAction() {
-		$this->view->structureNodes = $this->structureNodeRepository->findAll();
+		$preparedStructureNodes = array();
+		foreach ($this->structureNodeRepository->findAll() as $structureNode) {
+			$preparedStructureNodes[] = $this->convertStructureNodeToArray($structureNode);
+		}
+		$this->view->structureNodes = $preparedStructureNodes;
 		return $this->view->render();
 	}
 
@@ -67,7 +71,7 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	public function showAction() {
 		$structureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
 		if ($structureNode === NULL) $this->throwStatus(404);
-		$this->view->structureNode = $structureNode;
+		$this->view->structureNode = $this->convertStructureNodeToArray($structureNode);
 		return $this->view->render();
 	}
 
@@ -110,6 +114,40 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 */
 	public function deleteAction() {
 		$this->throwStatus(501);
+	}
+
+	/**
+	 * Converts an array of structure node objects into an array with simple types
+	 * suitable for a view
+	 *
+	 * @param array An array of structure node objects
+	 * @return array The converted structure nodes
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function convertStructureNodeToArray(F3::TYPO3::Domain::Model::StructureNode $structureNode) {
+		$childNodesIds = array();
+		foreach ($structureNode->getChildNodes() as $childNode) {
+			$childNodesIds[] = $childNode->getId();
+		}
+
+		$content = $structureNode->getContent();
+		if ($content !== NULL) {
+			$contentId = $content->getId();
+			$contentClass = ($content instanceof F3::FLOW3::AOP::ProxyInterface) ? $content->AOPProxyGetProxyTargetClassName() : get_class($content);
+		} else {
+			$contentId = '';
+			$contentClass = '';
+		}
+
+		$structureNodeArray = array(
+			'id' => $structureNode->getId(),
+			'label' => $structureNode->getLabel(),
+			'childNodes' => $childNodesIds,
+			'hasChildNodes' => $structureNode->hasChildNodes(),
+			'contentId' => $contentId,
+			'contentClass' => $contentClass,
+		);
+		return $structureNodeArray;
 	}
 }
 ?>

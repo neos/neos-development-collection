@@ -43,22 +43,7 @@ class ShowJSON extends F3::FLOW3::MVC::View::AbstractView {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		$childNodesIds = array();
-		foreach ($this->structureNode->getChildNodes() as $childNode) {
-			$childNodesIds[] = $childNode->getId();
-		}
-
-		$contentId = ($this->structureNode->getContent() !== NULL) ? $this->structureNode->getContent()->getId() : '';
-
-		$structureNodeArray = array(
-			'id' => $this->structureNode->getId(),
-			'label' => $this->structureNode->getLabel(),
-			'childNodes' => $childNodesIds,
-			'hasChildNodes' => $this->structureNode->hasChildNodes(),
-			'content' => $contentId
-		);
-
-		return json_encode($structureNodeArray);
+		return json_encode($this->structureNode);
 	}
 }
 ?>

@@ -32,6 +32,13 @@ namespace F3::TYPO3::Domain::Model::Content;
 class Text extends F3::TYPO3::Domain::Model::AbstractContent {
 
 	/**
+	 * The text's unique identifier
+	 * @var string
+	 * @identifier
+	 */
+	protected $id;
+
+	/**
 	 * Headline for this text element
 	 * @var string
 	 */
@@ -44,13 +51,35 @@ class Text extends F3::TYPO3::Domain::Model::AbstractContent {
  	protected $text = '';
 
 	/**
+	 * Constructs the Page
+	 *
+	 * @param string $title The page title
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($headline = '') {
+		$this->headline = $headline;
+		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
+	}
+
+	/**
+	 * Returns this text's identifier
+	 *
+	 * @return string The UUID of this text
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getId() {
+		return $this->id;
+	}
+
+	/**
 	 * Returns a label for this Text element
 	 *
 	 * @return string The label
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLabel() {
-		return $this->headline;
+		return ($this->headline != '') ? $this->headline : '[Untitled]';
 	}
 
 }
