@@ -76,6 +76,8 @@ class StructureTreesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 */
 	public function showAction() {
 		$rootStructureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
+		if ($rootStructureNode === NULL) $this->throwStatus(404);
+
 		$this->view->structureTree = $this->buildStructureTreeArray($rootStructureNode);
 		return $this->view->render();
 	}
