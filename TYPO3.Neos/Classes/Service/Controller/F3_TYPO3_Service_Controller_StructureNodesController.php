@@ -101,7 +101,7 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 
 		$structureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
 		if ($structureNode === NULL) $this->throwStatus(404);
-# ...
+
 		$this->response->setStatus(200);
 #		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getId() . '.json');
 	}
@@ -127,7 +127,7 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	protected function convertStructureNodeToArray(F3::TYPO3::Domain::Model::StructureNode $structureNode) {
 		$childNodesIds = array();
 		foreach ($structureNode->getChildNodes() as $childNode) {
-			$childNodesIds[] = $childNode->getId();
+			$childNodes[] = $this->convertStructureNodeToArray($childNode);
 		}
 
 		$content = $structureNode->getContent();
@@ -142,10 +142,10 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 		$structureNodeArray = array(
 			'id' => $structureNode->getId(),
 			'label' => $structureNode->getLabel(),
-			'childNodes' => $childNodesIds,
+			'childNodes' => $childNodes,
 			'hasChildNodes' => $structureNode->hasChildNodes(),
 			'contentId' => $contentId,
-			'contentClass' => $contentClass,
+			'contentClass' => $contentClass
 		);
 		return $structureNodeArray;
 	}

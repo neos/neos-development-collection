@@ -40,8 +40,8 @@ class IndexHTML extends F3::FLOW3::MVC::View::AbstractView {
 		$baseURI = $this->request->getBaseURI();
 
 		return '<!DOCTYPE html
-					 PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-					 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+					PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+					"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 			<?xml version="1.0" encoding="utf-8"?>
 
 			<html>
@@ -70,12 +70,13 @@ class IndexHTML extends F3::FLOW3::MVC::View::AbstractView {
 							left: 340px;
 							width: 180px;
 							border: none;
+							font-family: Handwerk, "Comic Sans MS", sans-serif; font-size:14px;
 						}
 						#password {
 							background-color: transparent;
 							border: none;
 							position: absolute;
-							top: 448px;
+							top: 445px;
 							left: 340px;
 							width: 180px;
 						}

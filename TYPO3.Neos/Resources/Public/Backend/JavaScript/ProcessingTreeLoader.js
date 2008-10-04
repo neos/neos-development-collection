@@ -13,7 +13,7 @@
 
 /**
  * @package TYPO3
- * @subpackage Service
+ * @subpackage Backend
  * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
@@ -22,7 +22,7 @@
  * it is handed over to the actual tree.
  *
  * @package TYPO3
- * @subpackage Service
+ * @subpackage Backend
  * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */

@@ -1,7 +1,3 @@
-<?php
-declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Backend::View;
-
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
  *                                                                        *
@@ -18,29 +14,46 @@ namespace F3::TYPO3::Backend::View;
 /**
  * @package TYPO3
  * @subpackage Backend
- * @version $Id$
+ * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
-/**
- * The TYPO3 Backend View
- *
- * @package TYPO3
- * @subpackage Backend
- * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- */
-class DefaultIndexHTML extends F3::Smarty::View {
+var pageModuleToolbar = new Ext.Toolbar({
+	items: [{
+		text: 'Save'
+	}, {
+		text: 'Close'
+	}]
+});
 
-	/**
-	 * Initializes the view
-	 *
-	 * @return void
-	 */
-	protected function initializeView() {
-		parent::initializeView();
-		$this->setTemplateFileName($this->resourceManager->getResource('file://TYPO3/Private/Backend/HTML/Index.html')->getPathAndFileName());
+
+var pageModule = new Ext.Panel({
+	title: 'Page Module',
+	layout: 'anchor'
+	//tbar: pageModuleToolbar
+});
+
+
+function showPageDetail(conn, response, options) {
+	var structureTree = eval("(" + response.responseText + ")");
+	if (structureTree.hasChildNodes) {
+		var childNodes = structureTree.childNodes;
+		var j = 0;
+		for (var i = 0; i < childNodes.length; i++) {
+			var node = childNodes[i];
+			if (node.contentClass !== 'F3::TYPO3::Domain::Model::Content::Page') {
+				pageModule.add(new Ext.Panel({
+					anchor: '-10',
+					height: 100,
+					frame: true,
+					draggable: true,
+					title: node.label,
+					style: 'margin:5px;',
+					html: '<p>Lorm ipsum dolor sit amet...</p>'
+				}));
+			}
+		}
+		pageModule.doLayout();
 	}
 
+	statusBar.clearStatus();
 }
-
-?>

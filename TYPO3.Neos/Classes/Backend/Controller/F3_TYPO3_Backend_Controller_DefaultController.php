@@ -42,6 +42,7 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
+		$this->view->assign('baseURI', $this->request->getBaseURI());
 		return $this->view->render();
 	}
 

@@ -13,7 +13,7 @@
 
 /**
  * @package TYPO3
- * @subpackage Service
+ * @subpackage Backend
  * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
@@ -21,7 +21,7 @@
  * A structure tree loader.
  *
  * @package TYPO3
- * @subpackage Service
+ * @subpackage Backend
  * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -35,7 +35,7 @@ Ext.app.StructureTreeLoader = Ext.extend(Ext.ux.ProcessingTreeLoader, {
 		attributes.text = attributes.label;
 		attributes.children = attributes.childNodes;
 		attributes.leaf = !attributes.hasChildNodes;
-		attributes.iconCls = attributes.contentCLass || 'F3_TYPO3_Backend_Icon_Page';
+		attributes.iconCls = attributes.contentClass || 'F3_TYPO3_Backend_Icon_Page';
 	},
 
 	/**
