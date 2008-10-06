@@ -28,18 +28,22 @@ var pageModuleToolbar = new Ext.Toolbar({
 
 var pageModule = new Ext.Panel({
 	title: 'Page Module',
-	layout: 'anchor'
+	layout: 'anchor',
 	//tbar: pageModuleToolbar
 });
 
 
 function showPageDetail(conn, response, options) {
-	var structureTree = eval("(" + response.responseText + ")");
+	var childNodes, node, i, j = 0, structureTree = Ext.decode(response.responseText);
+
+	while (pageModule.items.items.length > 0) {
+		pageModule.remove(pageModule.items.items[0]);
+	}
+
 	if (structureTree.hasChildNodes) {
-		var childNodes = structureTree.childNodes;
-		var j = 0;
-		for (var i = 0; i < childNodes.length; i++) {
-			var node = childNodes[i];
+		childNodes = structureTree.childNodes;
+		for (i = 0; i < childNodes.length; i++) {
+			node = childNodes[i];
 			if (node.contentClass !== 'F3::TYPO3::Domain::Model::Content::Page') {
 				pageModule.add(new Ext.Panel({
 					anchor: '-10',
@@ -48,12 +52,13 @@ function showPageDetail(conn, response, options) {
 					draggable: true,
 					title: node.label,
 					style: 'margin:5px;',
-					html: '<p>Lorm ipsum dolor sit amet...</p>'
+					html: '<p>' + (node.content || '[empty]') + '</p>'
 				}));
 			}
 		}
 		pageModule.doLayout();
 	}
 
+	pageModule.loadMask.hide();
 	statusBar.clearStatus();
 }

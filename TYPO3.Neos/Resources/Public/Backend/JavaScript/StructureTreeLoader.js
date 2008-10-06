@@ -30,7 +30,7 @@ Ext.app.StructureTreeLoader = Ext.extend(Ext.ux.ProcessingTreeLoader, {
 	/**
 	 * Set text, children, lead and iconCls
 	 */
-	processAttributes : function(attributes) {
+	processAttributes: function (attributes) {
 			// Set the node text that will show in the tree since our raw data does not include a text attribute:
 		attributes.text = attributes.label;
 		attributes.children = attributes.childNodes;
@@ -42,7 +42,7 @@ Ext.app.StructureTreeLoader = Ext.extend(Ext.ux.ProcessingTreeLoader, {
 	 * Set the URL depending on current node
 	 * @todo replace by something less intrusive
 	 */
-	requestData : function(node, callback){
+	requestData: function (node, callback) {
 		if (this.fireEvent("beforeload", this, node, callback) !== false) {
 			this.transId = Ext.Ajax.request({
 				method: 'GET',
@@ -56,7 +56,7 @@ Ext.app.StructureTreeLoader = Ext.extend(Ext.ux.ProcessingTreeLoader, {
 		} else {
 			// if the load is cancelled, make sure we notify
 			// the node that we are done
-			if (typeof callback == "function") {
+			if (typeof callback === "function") {
 				callback();
 			}
 		}
@@ -65,7 +65,7 @@ Ext.app.StructureTreeLoader = Ext.extend(Ext.ux.ProcessingTreeLoader, {
 
 
 var structureTreeLoader = new Ext.app.StructureTreeLoader({
-	dataUrl:'typo3/service/v1/structuretrees/',
+	dataUrl: 'typo3/service/v1/structuretrees/',
 	preloadChildren: true,
-	requestMethod:'GET'
+	requestMethod: 'GET'
 });

@@ -30,7 +30,7 @@ Ext.app.SitesTreeLoader = Ext.extend(Ext.ux.ProcessingTreeLoader, {
 	/**
 	 * Set text, iconCls and loader
 	 */
-	processAttributes : function(attributes) {
+	processAttributes: function (attributes) {
 		attributes.text = attributes.name;
 		attributes.iconCls = 'F3_TYPO3_Backend_Icon_Site';
 		if (attributes.id !== 'ROOT') {
@@ -41,6 +41,15 @@ Ext.app.SitesTreeLoader = Ext.extend(Ext.ux.ProcessingTreeLoader, {
 
 
 var sitesTreeLoader = new Ext.app.SitesTreeLoader({
-	dataUrl:'typo3/service/v1/sites.json',
-	requestMethod: 'GET'
+	dataUrl: 'typo3/service/v1/sites.json',
+	requestMethod: 'GET',
+	listeners: {
+		load: function (loader, node, response) {
+			backendLoadMask.hide();
+		},
+		loadexception: function (loader, node, response) {
+			backendLoadMask.hide();
+			Ext.Msg.alert('Error', 'Site data could not be loaded.');
+		}
+	}
 });

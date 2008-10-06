@@ -31,10 +31,10 @@ Ext.ux.ProcessingTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 	/**
 	 * Get rid of the node=[id] automatism...
 	 */
-	getParams: function(node){
-		var buf = [], bp = this.baseParams;
-		for (var key in bp) {
-			if (typeof bp[key] != "function") {
+	getParams: function (node) {
+		var key, buf = [], bp = this.baseParams;
+		for (key in bp) {
+			if (typeof bp[key] !== "function") {
 				buf.push(encodeURIComponent(key), "=", encodeURIComponent(bp[key]), "&");
 			}
 		}
@@ -44,7 +44,7 @@ Ext.ux.ProcessingTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 	/**
 	 * Introduces preprocessing of attributes before node creation
 	 */
-	createNode : function(attributes){
+	createNode: function (attributes) {
 		this.processAttributes(attributes);
 		return Ext.ux.ProcessingTreeLoader.superclass.createNode.call(this, attributes);
 	},

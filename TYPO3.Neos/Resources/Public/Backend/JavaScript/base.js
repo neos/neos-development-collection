@@ -21,13 +21,13 @@ Ext.BLANK_IMAGE_URL = 'Resources/Web/ExtJS/Public/images/default/s.gif';
 
 var F3_TYPO3_Backend_ApplicationToolBar = new Ext.Toolbar({
 	items: [{
-		text:'TYPO3',
+		text: 'TYPO3',
 		menu: new Ext.menu.Menu({
 			items: [
-					new Ext.menu.TextItem({text: 'About'}),
-					new Ext.menu.TextItem({text: 'Help'}),
-					new Ext.menu.TextItem({text: 'Log Out'})
-					]
+				new Ext.menu.TextItem({text: 'About'}),
+				new Ext.menu.TextItem({text: 'Help'}),
+				new Ext.menu.TextItem({text: 'Log Out'})
+			]
 		})
 	}]
 });
@@ -38,7 +38,7 @@ var statusBar = new Ext.StatusBar({
 });
 
 var modulebarContent = new Ext.Toolbar({
-	items:[{
+	items: [{
 		text: 'Page'
 	}, {
 		text: 'List'
@@ -63,8 +63,10 @@ function handleStructureNodeClick(node) {
 			text: 'Loading...'
 		});
 		statusBar.showBusy();
+		pageModule.loadMask.show();
 		pageModule.setTitle(node.attributes.label);
-		var c = new Ext.data.Connection({
+
+		new Ext.data.Connection({
 			listeners: {
 				requestcomplete: {
 					fn: showPageDetail
@@ -99,7 +101,7 @@ var sections = new Ext.TabPanel({
 	activeTab: 0,
 	items: [{
 		title: 'Content',
-		layout:'border',
+		layout: 'border',
 		items: [{
 			region: 'north',
 			height: 30,
@@ -111,7 +113,7 @@ var sections = new Ext.TabPanel({
 			collapsible: true,
 			split: true,
 			width: 200,
-			layout:'fit',
+			layout: 'fit',
 			items: pageTree
 		}, {
 			region: 'center',
@@ -138,10 +140,17 @@ var sections = new Ext.TabPanel({
 	}]
 });
 
-Ext.onReady(function(){
+var backendLoadMask;
+
+Ext.onReady(function () {
+	backendLoadMask = new Ext.LoadMask(Ext.getBody(), {
+		msg: 'Please wait...'
+	});
+	backendLoadMask.show();
+
 	var viewport = new Ext.Viewport({
 		layout: 'border',
-		items:[
+		items: [
 			{
 				height: 30,
 				region: 'north',
@@ -155,6 +164,8 @@ Ext.onReady(function(){
 				region: 'south',
 				items: statusBar
 			}
-			]
+		]
 	});
+
+	pageModule.loadMask = new Ext.LoadMask(pageModule.getEl());
 });
