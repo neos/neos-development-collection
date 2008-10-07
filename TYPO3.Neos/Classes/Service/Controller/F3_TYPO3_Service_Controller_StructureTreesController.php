@@ -136,11 +136,19 @@ class StructureTreesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildStructureTreeArray(F3::TYPO3::Domain::Model::StructureNode $structureNode, $maximumLevels = 30, $currentLevel = 1, $structureTreeArray = array()) {
+
+		$content = $structureNode->getContent();
+		if ($content !== NULL) {
+			$contentClass = ($content instanceof F3::FLOW3::AOP::ProxyInterface) ? $content->AOPProxyGetProxyTargetClassName() : get_class($content);
+		} else {
+			$contentClass = '';
+		}
 		$structureTreeArray = array(
 			'id' => $structureNode->getId(),
 			'label' => $structureNode->getLabel(),
 			'hasChildNodes' => $structureNode->hasChildNodes(),
-			'childNodes' => array()
+			'childNodes' => array(),
+			'contentClass' => $contentClass
 		);
 
 		if ($currentLevel < $maximumLevels) {
