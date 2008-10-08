@@ -29,20 +29,7 @@ namespace F3::TYPO3CR::Admin::View;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Viewport extends F3::FLOW3::MVC::View::AbstractView {
-
-	/**
-	 * @var F3::FLOW3::MVC::Web::Request
-	 */
-	protected $request;
-
-	/**
-	 *
-	 * @param unknown_type $request
-	 */
-	public function setRequest($request) {
-		$this->request = $request;
-	}
+class DefaultIndexHTML extends F3::FLOW3::MVC::View::AbstractView {
 
 	/**
 	 * Renders the Admin viewport
@@ -51,7 +38,9 @@ class Viewport extends F3::FLOW3::MVC::View::AbstractView {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function render() {
-		return str_replace('###BASEURI###', $this->request->getBaseURI(), $this->resourceManager->getResource('file://TYPO3CR/HTML/View_Admin_Viewport.html')->getContent());
+		$template = $this->resourceManager->getResource('file://TYPO3CR/HTML/View_Admin_Viewport.html')->getContent();
+		return $template;
+		return str_replace('###BASEURI###', $this->request->getBaseURI(), $template);
 	}
 
 }

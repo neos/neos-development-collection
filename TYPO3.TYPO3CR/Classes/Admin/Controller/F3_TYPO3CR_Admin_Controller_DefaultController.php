@@ -32,25 +32,13 @@ namespace F3::TYPO3CR::Admin::Controller;
 class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
-	 * Initializes this controller
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function initializeController() {
-		$this->supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
-	}
-
-	/**
 	 * The default action of this controller
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function indexAction() {
-		$view = $this->componentFactory->getComponent('F3::TYPO3CR::Admin::View::Viewport');
-		$view->setRequest($this->request);
-		return $view->render();
+		return $this->view->render();
 	}
 
 }
