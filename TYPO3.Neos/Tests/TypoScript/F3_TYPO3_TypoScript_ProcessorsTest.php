@@ -37,7 +37,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->processors = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Processors');
+		$this->processors = new F3::TYPO3::TypoScript::Processors;
 	}
 
 	/**
@@ -843,6 +843,48 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isBlank" returned true on a subject wich has a zero value. (We called it with objects that return integers as parameters)');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function substringReturnsASubstringDefinedByStartAndLength() {
+		$testString = 'The Transition Days rock!';
+		$expectedResult = 'Transition Days';
+
+		$actualResult = $this->processors->processor_substring($testString, 4, 15);
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theLengthOfSubstringIsOptional() {
+		$testString = 'I already had 5 coffees today';
+		$expectedResult = 'already had 5 coffees today';
+
+		$actualResult = $this->processors->processor_substring($testString, 2);
+		$this->assertSame($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3::TypoScript::Exception
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function passingAStringInsteadOfTheStartPositionThrowsAnException() {
+		$this->processors->processor_substring('the subject', 'a string');
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3::TypoScript::Exception
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function passingAStringInsteadOfTheLengthThrowsAnException() {
+		$this->processors->processor_substring('the subject', 2, 'a string');
 	}
 }
 ?>

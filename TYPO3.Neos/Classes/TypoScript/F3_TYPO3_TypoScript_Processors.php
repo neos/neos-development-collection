@@ -16,12 +16,19 @@ namespace F3::TYPO3::TypoScript;
  *                                                                        */
 
 /**
+ * @package TYPO3
+ * @subpackage TypoScript
+ * @version $Id$
+ */
+
+/**
  * A library of standard processors for TypoScript objects. Most of these functions
  * were known as "standard wrap" properties / functions in TYPO3 4.x.
  *
- * @package		CMS
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3
+ * @subpackage TypoScript
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Processors {
 
@@ -39,8 +46,8 @@ class Processors {
 	 *
 	 * The third parameter is a bitmask combination of the CROP_* constants:
 	 *
-	 *    CROP_FROM_BEGINNING:		If set, the beginning of the string will be cropped instead of the end.
-	 *    CROP_AT_WORD:				The string will be of the maximum length specified by $maximumNumberOfCharacters, but it will be cropped after the last (or before the first) space instead of the probably the middle of a word.
+	 *    CROP_FROM_BEGINNING: If set, the beginning of the string will be cropped instead of the end.
+	 *    CROP_AT_WORD: The string will be of the maximum length specified by $maximumNumberOfCharacters, but it will be cropped after the last (or before the first) space instead of the probably the middle of a word.
 	 *
 	 * @param  string				$subject: The string to crop
 	 * @param  integer				$maximumNumberOfCharacters: The maximum number of characters to which the subject shall be shortened
@@ -236,6 +243,22 @@ class Processors {
 	 */
 	public function processor_isBlank($subject) {
 		return (!F3::PHP6::Functions::strlen((string)$subject));
+	}
+
+	/**
+	 * Returns a substring.
+	 *
+	 * @param string $subject The current subject in the processor chain
+	 * @param integer $start The left boundary of the substring
+	 * @param integer $length The length of the substring
+	 * @return string The substring
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function processor_substring($subject, $start, $length = NULL) {
+		if (!is_integer($start)) throw new F3::TypoScript::Exception('Expected an integer as start position, ' . gettype($start) . ' given.', 1224003810);
+		if ($length !== NULL && !is_integer($length)) throw new F3::TypoScript::Exception('Expected an integer as length, ' . gettype($length) . ' given.', 1224003811);
+
+		return F3::PHP6::Functions::substr((string)$subject, $start, $length);
 	}
 }
 ?>
