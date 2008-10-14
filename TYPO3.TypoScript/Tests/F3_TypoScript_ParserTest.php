@@ -303,6 +303,34 @@ class ParserTest extends F3::Testing::BaseTestCase {
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 10.');
 	}
+
+	/**
+	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 11
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parserCorrectlyParsesFixture11() {
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture11.ts2', FILE_TEXT);
+
+		$processorObject = new F3::TYPO3::TypoScript::Processors;
+		$processorInvocation = new F3::TypoScript::ProcessorInvocation($processorObject, 'processor_substring', array(6, 5));
+		$propertyProcessorChain = new F3::TypoScript::ProcessorChain();
+		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
+
+		$processorInvocation2 = new F3::TypoScript::ProcessorInvocation($processorObject, 'processor_substring', array(-6));
+		$propertyProcessorChain->setProcessorInvocation(2, $processorInvocation2);
+
+		$expectedObjectTree = array();
+		$expectedObjectTree['page'] = new F3::TYPO3::TypoScript::Page;
+		$expectedObjectTree['page'][10] = new F3::TYPO3::TypoScript::Text;
+		$expectedObjectTree['page'][10]->setValue('Hello World!');
+		$expectedObjectTree['page'][10]->setPropertyProcessorChain('value', $propertyProcessorChain);
+
+		$actualObjectTree = $this->parser->parse($sourceCode);
+		$this->assertEquals($expectedObjectTree, $actualObjectTree);
+	}
+
 }
 
 ?>

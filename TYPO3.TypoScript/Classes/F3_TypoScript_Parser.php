@@ -41,14 +41,14 @@ class Parser implements F3::TypoScript::ParserInterface {
 	const SPLIT_PATTERN_DECLARATION = "/([a-zA-Z]+[a-zA-Z0-9]*)\s*:(.*)/";
 	const SPLIT_PATTERN_NAMESPACEDECLARATION = "/\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(F3::(?:\w+|::)+)/";
 	const SPLIT_PATTERN_OBJECTDEFINITION = '/\s*(?P<ObjectPath>[a-zA-Z0-9.\$]+)\s*(?P<Operator>=<|=|<<|<|>)\s*(?P<Value>.+|$)/';
-	const SPLIT_PATTERN_VALUENUMBER = '/^\s*\d+\s*$/';
+	const SPLIT_PATTERN_VALUENUMBER = '/^\s*-?\d+\s*$/';
 	const SPLIT_PATTERN_VALUELITERAL = '/"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'/';
 	const SPLIT_PATTERN_VALUEVARIABLE = '/(\$[a-zA-Z][a-zA-Z0-9]*)/';
 	const SPLIT_PATTERN_VALUEVARIABLES = '/\$[a-zA-Z][a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)/';
 	const SPLIT_PATTERN_VALUEOBJECTTYPE = "/^\s*(?:(?:([a-zA-Z]+[a-zA-Z0-9*]*)::)?([a-zA-Z][a-zA-Z0-9]*)$)|(F3::(?:\w+|::)+)/";
 	const SPLIT_PATTERN_INDEXANDMETHODCALL = '/(?P<Index>\d+)\.(?P<ComponentAndMethodName>\w+)\s*\((?P<Arguments>.*?)\)\s*$/';
 	const SPLIT_PATTERN_COMPONENTANDMETHODNAME = '/(?:(<?P<ComponentName>(F3::(?:\w+|::)+))->)?(?P<MethodName>\w+)/';
-	const SPLIT_PATTERN_METHODARGUMENTS = '/("(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+)/';
+	const SPLIT_PATTERN_METHODARGUMENTS = '/("(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+|-?[0-9]+)/';
 
 	/**
 	 * @var F3::FLOW3::Component::ManagerInterface

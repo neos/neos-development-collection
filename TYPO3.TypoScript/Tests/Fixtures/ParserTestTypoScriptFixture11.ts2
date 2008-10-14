@@ -1,0 +1,14 @@
+/**
+ *  TypoScript Fixture 11
+ *
+ *  This fixture serves for testing the processors syntax
+ *  Do processors really get integer values?
+ *
+ */
+namespace: default = F3::TYPO3::TypoScript
+
+page = Page
+page.10 = Text
+page.10.value = "Hello World!"
+page.10.value << 1.substring(6, 5)
+page.10.value << 2.substring(-6)
