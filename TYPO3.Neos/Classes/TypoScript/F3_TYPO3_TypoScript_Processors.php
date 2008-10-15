@@ -260,5 +260,19 @@ class Processors {
 
 		return F3::PHP6::Functions::substr((string)$subject, $start, $length);
 	}
+	
+	/**
+	 * Rounds a given float value. If integer given, nothing happens.
+	 *
+	 * @param float $subject The subject to round.
+	 * @param float $precision Number of digits after the decimal point. Negative values are also supported. (-1 rounds to full 10ths)
+	 * @return integer Rounded value
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function processor_round($subject, $precision = NULL) {
+		if (!is_float($subject) && !is_integer($subject)) throw new F3::TypoScript::Exception('Expected an integer or float passed, ' . gettype($subject) . ' given.', 1224053300);
+		if ($precision != NULL && !is_int($precision)) throw new F3::TypoScript::Exception('Precision must be an integer.');
+		return round($subject, $precision);
+	}
 }
 ?>
