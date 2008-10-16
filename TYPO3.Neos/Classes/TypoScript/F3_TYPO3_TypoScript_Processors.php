@@ -264,15 +264,30 @@ class Processors {
 	/**
 	 * Rounds a given float value. If integer given, nothing happens.
 	 *
-	 * @param float $subject The subject to round.
-	 * @param float $precision Number of digits after the decimal point. Negative values are also supported. (-1 rounds to full 10ths)
-	 * @return integer Rounded value
+	 * @param float/string $subject The subject to round.
+	 * @param integer $precision Number of digits after the decimal point. Negative values are also supported. (-1 rounds to full 10ths)
+	 * @return float Rounded value
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function processor_round($subject, $precision = NULL) {
-		if (!is_float($subject) && !is_integer($subject)) throw new F3::TypoScript::Exception('Expected an integer or float passed, ' . gettype($subject) . ' given.', 1224053300);
+		if (!is_numeric($subject)) throw new F3::TypoScript::Exception('Expected an integer or float passed, ' . gettype($subject) . ' given.', 1224053300);
+		$subject = floatval($subject);
 		if ($precision != NULL && !is_int($precision)) throw new F3::TypoScript::Exception('Precision must be an integer.');
 		return round($subject, $precision);
+	}
+	
+	/**
+	 * Multiplies a given number or numeric string $subject with $factor.
+	 * 
+	 * @param float/string $subject The first factor
+	 * @param float $factor The second factor
+	 * @return float $subject*$factor
+	 */
+	public function processor_multiply($subject, $factor) {
+		if (!is_numeric($subject)) throw new F3::TypoScript::Exception('Expected a numeric string as first parameter.', 1224146988);
+		if (!is_float($factor) && !is_int($factor)) throw new F3::TypoScript::Exception('Expected a float as second parameter.', 1224146995);
+		$subject = floatval($subject);
+		return $subject*$factor;
 	}
 }
 ?>

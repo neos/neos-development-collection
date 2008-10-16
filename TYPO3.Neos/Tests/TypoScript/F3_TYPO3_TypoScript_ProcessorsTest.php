@@ -959,7 +959,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @expectedException F3::TypoScript::Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function passingAStringInsteadOfTheStartPositionThrowsAnException() {
+	public function passingAStringInsteadOfTheStartPositionIntoSubstringThrowsAnException() {
 		$this->processors->processor_substring('the subject', 'a string');
 	}
 
@@ -968,8 +968,40 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @expectedException F3::TypoScript::Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function passingAStringInsteadOfTheLengthThrowsAnException() {
+	public function passingAStringInsteadOfTheLengthIntoSubstringThrowsAnException() {
 		$this->processors->processor_substring('the subject', 2, 'a string');
+	}
+	
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function multiplyReturnsTheCorrectNumbers() {
+		$subject = '1';
+		$result = $this->processors->processor_multiply($subject, 1.5);
+		$this->assertEquals($result, 1.5, 'Multiply does not output the right result.');
+		
+		$subject = '1.5';
+		$result = $this->processors->processor_multiply($subject, 2);
+		$this->assertEquals($result, 3, 'Multiply does not output the right result (2).');
+	}
+	
+	/**
+	 * @test
+	 * @expectedException F3::TypoScript::Exception
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function multiplyThrowsExceptionIfNonNumericStringPassedAsSubject() {
+		$this->processors->processor_multiply(' ', 1);
+	}
+	
+	/**
+	 * @test
+	 * @expectedException F3::TypoScript::Exception
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function multiplyThrowsExceptionIfStringPassedAsFactor() {
+		$this->processors->processor_multiply('1.43', 'bla');
 	}
 }
 ?>
