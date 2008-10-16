@@ -1,0 +1,13 @@
+/**
+ *  TypoScript Fixture 12
+ *
+ *  This fixture serves for testing the processors syntax
+ *  Do they really get float values?
+ *
+ */
+namespace: default = F3::TYPO3::TypoScript
+
+page = Page
+page.10 = Text
+page.10.value = "10"
+page.10.value << 1.multiply(1.5)

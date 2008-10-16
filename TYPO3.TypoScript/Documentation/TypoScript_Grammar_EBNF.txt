@@ -21,11 +21,11 @@ ValueAssignment = "=" ( Literal | ObjectType | Constant );
 ValueCopy = "<" ObjectPath;
 ValueReference = "=<" ObjectPath;                            
 ValueUnset = ">";
-ValueProcessing = "<<" ArrayOffset "." [ ComponentName "->" ] MethodName "(" { MethodArgument [ "," ] }")"
+ValueProcessing = "<<" ArrayOffset "." [ ComponentName "->" ] MethodName "(" { MethodArgument [ "," ] }")";
 
-MethodArgument = Literal | VariableName
+MethodArgument = Literal | VariableName;
 
-Literal = DoubleQuotedLiteral | SingleQuotedLiteral;
+Literal = DoubleQuotedLiteral | SingleQuotedLiteral | Number;
 DoubleQuotedLiteral = DoubleQuote ( { EscapedUnicodeCharacter } | VariableName ) DoubleQuote;
 SingleQuotedLiteral = SingleQuote ( { EscapedUnicodeCharacter } | VariableName ) SingleQuote;
 
@@ -42,12 +42,15 @@ Identifier = Character { CharacterOrDigit };
 ComponentName = Character { "::" CharacterOrDigit } { CharacterOrDigit };
 ArrayOffset = Digit;
 
+Number = FloatNumber | IntegerNumber;
+FloatNumber = IntegerNumber "." Digit { Digit };
+IntegerNumber = [ "-" ] Digit { Digit };
 CharacterOrDigit = Character | Digit;
 UnicodeCharacter = ? All Unicode characters, except line break ?;
 EscapedUnicodeCharacter = ? All Unicode characters, except line break. Double quote must be escaped when enclosed in double quotes, single quote must be escaped, when enclosed in single quotes, backslash and dollar sign must always be escaped. Escape character is the backslash ?;
-UpperCaseCharacter = ? Character, but only upper case ?
-Character = ? All lower- and uppercase characters between "a" and "z" ?
-Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+UpperCaseCharacter = ? Character, but only upper case ?;
+Character = ? All lower- and uppercase characters between "a" and "z" ?;
+Digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
 LineBreak = "\n";
 DoubleQuote = '"';
 SingleQuote = "'";
