@@ -282,6 +282,7 @@ class Processors {
 	 * @param float/string $subject The first factor
 	 * @param float $factor The second factor
 	 * @return float $subject*$factor
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function processor_multiply($subject, $factor) {
 		if (!is_numeric($subject)) throw new F3::TypoScript::Exception('Expected a numeric string as first parameter.', 1224146988);
