@@ -25,6 +25,13 @@ namespace F3::TYPO3CR::Admin::Controller;
 class SetupController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
+	 * The supported request types of this controller
+	 *
+	 * @var array
+	 */
+	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request', 'F3::FLOW3::MVC::CLI::Request');
+
+	/**
 	 * Initializes this controller
 	 *
 	 * @return void
