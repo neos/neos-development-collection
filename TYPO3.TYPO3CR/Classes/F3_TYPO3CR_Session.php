@@ -150,6 +150,16 @@ class Session implements F3::PHPCR::SessionInterface {
 	}
 
 	/**
+	 * Returns a javax.security.auth.Subject representing the user of this Session.
+	 *
+	 * @return Subject a Subject representing the user of this Session.
+	 * @todo find replacement for javax.security.auth.Subject
+	 */
+	public function getSubject() {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674029);
+	}
+
+	/**
 	 * Returns the names of the attributes set in this session as a result of the
 	 * Credentials that were used to acquire it. This method returns an
 	 * empty array if the Credentials instance did not provide attributes.
@@ -456,9 +466,9 @@ class Session implements F3::PHPCR::SessionInterface {
 
 	/**
 	 * Returns true if this Session has permission to perform the specified
-	 * actions at the specified absPath.
-	 * The actions parameter is a comma separated list of action strings. The
-	 * following action strings are defined:
+	 * actions at the specified absPath and false otherwise.
+	 * The actions parameter is a comma separated list of action strings.
+	 * The following action strings are defined:
 	 *
 	 * add_node: If hasPermission(path, "add_node") returns true, then this
 	 * Session has permission to add a node at path.
@@ -469,14 +479,17 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * read: If hasPermission(path, "read") returns true, then this Session has
 	 * permission to retrieve (and read the value of, in the case of a property)
 	 * an item at path.
+	 *
 	 * When more than one action is specified in the actions parameter, this method
 	 * will only return true if this Session has permission to perform all of the
 	 * listed actions at the specified path.
+	 *
 	 * The information returned through this method will only reflect the access
-	 * control status and not other restrictions that may exist. For example, even
-	 * though hasPermission may indicate that a particular Session may add a
-	 * property at /A/B/C, the node type of the node at /A/B may prevent the
-	 * addition of a property called C.
+	 * control status (both JCR defined and implementation-specific) and not
+	 * other restrictions that may exist, such as node type constraints. For
+	 * example, even though hasPermission may indicate that a particular Session
+	 * may add a property at /A/B/C, the node type of the node at /A/B may
+	 * prevent the addition of a property called C.
 	 *
 	 * @param string $absPath an absolute path.
 	 * @param string $actions a comma separated list of action strings.
@@ -504,13 +517,17 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * read: If checkPermission(path, "read") returns quietly, then this Session has
 	 * permission to retrieve (and read the value of, in the case of a property) an
 	 * item at path, otherwise permission is denied.
+	 *
 	 * When more than one action is specified in the actions parameter, this method
 	 * will only return quietly if this Session has permission to perform all of the
 	 * listed actions at the specified path.
-	 * The information returned through this method will only reflect access control
-	 * status and not other restrictions that may exist. For example, even though
-	 * checkPermission may indicate that a particular Session may add a property at /A/B/C,
-	 * the node type of the node at /A/B may prevent the addition of a property called C.
+	 *
+	 * The information returned through this method will only reflect the access
+	 * control status (both JCR defined and implementation-specific) and not
+	 * other restrictions that may exist, such as node type constraints. For
+	 * example, even though hasPermission may indicate that a particular Session
+	 * may add a property at /A/B/C, the node type of the node at /A/B may
+	 * prevent the addition of a property called C.
 	 *
 	 * @param string $absPath an absolute path.
 	 * @param string $actions a comma separated list of action strings.
@@ -520,6 +537,49 @@ class Session implements F3::PHPCR::SessionInterface {
 	 */
 	public function checkPermission($absPath, $actions) {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485258);
+	}
+
+	/**
+	 * Checks whether an operation can be performed given as much context as can be determined
+	 * by the repsoitory, including:
+	 * * Target object (reflecting the current selection in the application) and its current state
+	 *   (locks etc.).
+	 * * Current user (the current session).
+	 * * Access control rules (permissions granted to the current user).
+	 * * Repository capabilities.
+	 * * Schema information (rules embodied in the node type structure or more
+	 *   repository specific rules).
+	 *
+	 * The implementation of this method is best effort: returning false guarantees
+	 * that the operation cannot be performed, but returning true does not guarantee
+	 * the opposite. The repository implementation should use this to give priority to
+	 * performance over completeness. An exception should be thrown only for important
+	 * failures such as loss of connectivity to the back-end.
+	 *
+	 * The methodType parameter identifies the operation using the method event
+	 * constants defined for Event::getMethod.
+	 *
+	 * The target parameter identifies the object on which the specified method is
+	 * called. For example, for method Node.addNode, target would identify
+	 * the Node object. The target is an optional parameter, but must be
+	 * supplied if the specified method is defined on Item or any of its subtypes.
+	 * To not supply a target, a NULL is passed as the second parameter.
+	 *
+	 * The arguments parameter contains method arguments as defined for
+	 * Event::getMethodInfo. The arguments parameter is optional, and even when
+	 * specified, not all arguments to the corresponding operation need to
+	 * be specified. In such a case, the repository should check whether there exists a
+	 * set of arguments for which the operation could succeed. To not supply arguments,
+	 * either a NULL or an empty Map is passed as the third parameter.
+
+	 * @param string $methodType the operation.
+	 * @param object $target the target object of the operation.
+	 * @param array $arguments the arguments of the operation.
+	 * @return boolean FALSE if the operation cannot be performed, TRUE if the operation can be performed or if the repository cannot determine whether the operation can be performed.
+	 * @throws F3::PHPCR::RepositoryException if an error occurs
+	 */
+	public function checkCapability($methodType, $target, array $arguments) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224508902);
 	}
 
 	/**
@@ -856,24 +916,6 @@ class Session implements F3::PHPCR::SessionInterface {
 	 */
 	public function isLive() {
 		return $this->isLive;
-	}
-
-	/**
-	 * This method is called by the client to set the current activity on the
-	 * session. Changing the current activity is done by calling setActivity
-	 * again. Cancelling the current activity (so that the session has no
-	 * current activity) is done by calling setActivity(null). The activity
-	 * Node is returned.
-	 * An UnsupportedRepositoryOperationException is thrown if the repository
-	 * does not support activities or if activity is not a nt:activity node.
-	 *
-	 * @param F3::PHPCR::NodeInterface $activity an activity node
-	 * @return F3::PHPCR::NodeInterface the activity node
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support activities or if activity is not a nt:activity node.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
-	 */
-	public function setActivity(F3::PHPCR::NodeInterface $activity) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485266);
 	}
 
 	/**

@@ -168,6 +168,23 @@ class NodeTypeDefinition implements F3::PHPCR::NodeType::NodeTypeDefinitionInter
 	}
 
 	/**
+	 * Returns TRUE if the node type is queryable, meaning that all properties
+	 * of all nodes of this type are accessible to query and full text search
+	 * and can be used in the order by clause of a query, except where
+	 * explicitly indicated otherwise in a particular PropertyDefinition
+	 *
+	 * If a node type is declared queryable, then the queryable, full-text searchable
+	 * and query-orderable attributes of its property definitons take effect.
+	 * If a node type is declared non-queryable then these attributes of its property
+	 * definitions are all set automatically to FALSE.
+	 *
+	 * @return boolean a boolean
+	 */
+	public function isQueryable() {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224679680);
+	}
+
+	/**
 	 * Returns the name of the primary item (one of the child items of the nodes
 	 * of this node type). If this node has no primary item, then this method
 	 * returns null. This indicator is used by the method Node.getPrimaryItem().

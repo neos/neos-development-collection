@@ -82,7 +82,7 @@ class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 	/**
 	 * Returns an array of all the column names in the table view of this result set.
 	 *
-	 * @return array
+	 * @return array array holding the column names.
 	 * @throws F3::PHPCR::RepositoryException if an error occurs.
 	 */
 	public function getColumnNames() {
@@ -94,18 +94,18 @@ class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 	 * returned according to the ordering specified in the query.
 	 *
 	 * @return F3::PHPCR::Query::RowIteratorInterface a RowIterator
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @throws F3::PHPCR::RepositoryException if this call is the second time either getRows() or getNodes() has been called on the same QueryResult object or if another error occurs.
 	*/
 	public function getRows() {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897580);
 	}
 
 	/**
-	 * Returns an iterator over all nodes that match the query. The rows are
+	 * Returns an iterator over all nodes that match the query. The nodes are
 	 * returned according to the ordering specified in the query.
 	 *
 	 * @return F3::PHPCR::NodeIteratorInterface a NodeIterator
-	 * @throws F3::PHPCR::RepositoryException if the query contains more than one selector or if another error occurs.
+	 * @throws F3::PHPCR::RepositoryException if the query contains more than one selector, if this call is the second time either getRows() or getNodes() has been called on the same QueryResult object or if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodes() {

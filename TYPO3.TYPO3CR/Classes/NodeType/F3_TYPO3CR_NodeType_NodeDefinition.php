@@ -51,8 +51,7 @@ class NodeDefinition extends F3::TYPO3CR::NodeType::ItemDefinition implements F3
 	 * set of node types.
 	 * In implementations that support node type registration an NodeDefinition
 	 * object may be acquired (in the form of a NodeDefinitionTemplate) that is
-	 * not attached to a live NodeType. In such cases this method returns an
-	 * array containing only the NodeType object representing nt:base.
+	 * not attached to a live NodeType. In such cases this method returns NULL.
 	 *
 	 * @return array an array of F3::PHPCR::NodeType::NodeTypeInterface instances.
 	 */
@@ -68,8 +67,7 @@ class NodeDefinition extends F3::TYPO3CR::NodeType::ItemDefinition implements F3
 	 * If this NodeDefinition is actually a NodeDefinitionTemplate that is not
 	 * part of a registered node type, then this method will return the required
 	 * primary types as set in that template. If that template is a newly-created
-	 * empty one, then this method will return an array containing a single
-	 * string indicating the node type nt:base.
+	 * empty one, then this method will return NULL.
 	 *
 	 * @return array a String array
 	 */

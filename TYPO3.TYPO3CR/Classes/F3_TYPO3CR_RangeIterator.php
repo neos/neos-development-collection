@@ -155,27 +155,6 @@ class RangeIterator implements F3::PHPCR::RangeIteratorInterface {
 		return $this->position;
 	}
 
-	/**
-	 * Returns the number of subsequent next() calls that can be
-	 * successfully performed on this iterator.
-	 *
-	 * This is the  number of items still available through this iterator. For
-	 * example, for some node $n, $n->getNodes()->getSize() returns the number
-	 * of child nodes of N visible through the current Session that have not
-	 * yet been returned.
-	 *
-	 * In some implementations precise information about the number of remaining
-	 * elements may not be available. In such cases this method should return
-	 * a reasonable upper bound on the number if such an estimate is available
-	 * and -1 if it is not.
-	 *
-	 * @return integer
-	 * @author Ronny Unger <ru@php-workx.de>
-	 */
-	public function getNumberRemaining() {
-		return $this->getSize() - $this->getPosition();
-	}
-
 	// non-JSR-283 methods below
 
 	/**

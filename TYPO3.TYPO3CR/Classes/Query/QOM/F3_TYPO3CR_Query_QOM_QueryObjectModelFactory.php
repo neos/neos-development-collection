@@ -367,7 +367,23 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	}
 
 	/**
+	 * Evaluates to a literal value.
+	 *
+	 * The query is invalid if no value is bound to $literalValue.
+	 *
+	 * @param F3::PHPCR::ValueInterface $literalValue the value
+	 * @return F3::PHPCR::ValueInterface the operand; non-null
+	 * @throws F3::PHPCR::Query::InvalidQueryException if a particular validity test is possible on this method, the implemention chooses to perform that test (and not leave it until later) on createQuery, and the parameters given fail that test
+	 * @throws F3::PHPCR::RepositoryException if the operation otherwise fails
+	 */
+	public function literal(F3::PHPCR::ValueInterface $literalValue) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224520629);
+	}
+
+	/**
 	 * Orders by the value of the specified operand, in ascending order.
+	 *
+	 * The query is invalid if $operand does not evaluate to a scalar value.
 	 *
 	 * @param F3::PHPCR::Query::QOM::DynamicOperandInterface $operand the operand by which to order; non-null
 	 * @return F3::PHPCR::Query::QOM::OrderingInterface the ordering
@@ -381,6 +397,8 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	/**
 	 * Orders by the value of the specified operand, in descending order.
 	 *
+	 * The query is invalid if $operand does not evaluate to a scalar value.
+	 *
 	 * @param F3::PHPCR::Query::QOM::DynamicOperandInterface $operand the operand by which to order; non-null
 	 * @return F3::PHPCR::Query::QOM::OrderingInterface the ordering
 	 * @throws F3::PHPCR::Query::InvalidQueryException if the query is invalid
@@ -391,8 +409,23 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	}
 
 	/**
-	 * Identifies a property in the specified or default selector to include in the tabular view of query results.
+	 * Identifies a property in the specified or default selector to include in
+	 * the tabular view of query results.
 	 * The column name is the property name if not given.
+	 *
+	 * The query is invalid if:
+	 * $selectorName is not the name of a selector in the query, or
+	 * $propertyName is specified but it is not a syntactically valid JCR name, or
+	 * $propertyName is specified but does not evaluate to a scalar value, or
+	 * $propertyName is specified but $columnName is omitted, or
+	 * $propertyName is omitted but $columnName is specified, or
+	 * the columns in the tabular view are not uniquely named, whether those
+	 * column names are specified by $columnName (if $propertyName is specified)
+	 * or generated as described above (if $propertyName is omitted).
+	 *
+	 * If $propertyName is specified but, for a node-tuple, the selector node
+	 * does not have a property named $propertyName, the query is valid and the
+	 * column has null value.
 	 *
 	 * @param string $propertyName the property name, or null to include a column for each single-value non-residual property of the selector's node type
 	 * @param string $columnName the column name; must be null if propertyName is null

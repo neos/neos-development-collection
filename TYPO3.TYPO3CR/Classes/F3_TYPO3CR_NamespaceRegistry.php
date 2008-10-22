@@ -38,11 +38,11 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * @var array
 	 */
 	protected $builtInNamespaces = array(
-		'jcr' => 'http://www.jcp.org/jcr/1.0',
-		'nt' => 'http://www.jcp.org/jcr/nt/1.0',
-		'mix' => 'http://www.jcp.org/jcr/mix/1.0',
-		'xml' => 'http://www.w3.org/XML/1998/namespace',
-		'' => ''
+		self::PREFIX_JCR => self::NAMESPACE_JCR,
+		self::PREFIX_NT => self::NAMESPACE_NT,
+		self::PREFIX_MIX => self::NAMESPACE_MIX,
+		self::PREFIX_XML => self::NAMESPACE_XML,
+		self::PREFIX_EMPTY => self::NAMESPACE_EMPTY
 	);
 
 	/**

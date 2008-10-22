@@ -198,35 +198,6 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * Tests if getNumberRemaining() works correctly.
-	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getNumberRemainingTellsTheTruth() {
-		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
-
-		$this->assertEquals(4, $iterator->getNumberRemaining(), 'Call to getNumberRemaining() must return 4.');
-		$iterator->next();
-		$this->assertEquals(3, $iterator->getNumberRemaining(), 'Call to getNumberRemaining() must return 3.');
-		$iterator->next();
-		$this->assertEquals(2, $iterator->getNumberRemaining(), 'Call to getNumberRemaining() must return 2.');
-		$iterator->next();
-		$this->assertEquals(1, $iterator->getNumberRemaining(), 'Call to getNumberRemaining() must return 1.');
-		$iterator->next();
-		$this->assertEquals(0, $iterator->getNumberRemaining(), 'Call to getNumberRemaining() must return 0.');
-
-		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
-
-		$this->assertEquals(4, $iterator->getNumberRemaining(), 'Call to getNumberRemaining() must return 4.');
-		$iterator->next();
-		$iterator->remove();
-		$this->assertEquals(3, $iterator->getNumberRemaining(), 'Call to getNumberRemaining() must return 3.');
-	}
-
-	/**
 	 * Tests if next() returns the correct element after remove().
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test

@@ -68,6 +68,31 @@ class NodeType extends F3::TYPO3CR::NodeType::NodeTypeDefinition implements F3::
 	}
 
 	/**
+	 * Returns all subtypes of this node type in the node type inheritance
+	 * hierarchy.
+	 *
+	 * @see getDeclaredSubtypes()
+	 *
+	 * @return F3::PHPCR::NodeType::NodeTypeIteratorInterface a NodeTypeIterator.
+	 */
+	public function getSubtypes() {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224589838);
+	}
+
+	/**
+	 * Returns the direct subtypes of this node type in the node type inheritance
+	 * hierarchy, that is, those which actually declared this node type in their
+	 * list of supertypes.
+	 *
+	 * @see getSubtypes()
+	 *
+	 * @return F3::PHPCR::NodeType::NodeTypeIteratorInterface a NodeTypeIterator.
+	 */
+	public function getDeclaredSubtypes() {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224589890);
+	}
+
+	/**
 	 * Returns true if this node type is nodeTypeName or a subtype of
 	 * nodeTypeName, otherwise returns false.
 	 *

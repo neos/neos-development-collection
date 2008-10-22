@@ -22,7 +22,15 @@ namespace F3::TYPO3CR::Query::QOM;
  */
 
 /**
- * A Selector for the JSR-283 QOM
+ * Selects a subset of the nodes in the repository based on node type.
+ *
+ * A selector selects every node in the repository, subject to access control
+ * constraints, that satisfies at least one of the following conditions:
+ *
+ * the node's primary node type is nodeType, or
+ * the node's primary node type is a subtype of nodeType, or
+ * the node has a mixin node type that is nodeType, or
+ * the node has a mixin node type that is a subtype of nodeType.
  *
  * @package TYPO3CR
  * @subpackage Query

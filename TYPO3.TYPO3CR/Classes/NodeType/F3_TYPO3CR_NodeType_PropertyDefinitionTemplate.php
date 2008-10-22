@@ -138,6 +138,36 @@ class PropertyDefinitionTemplate extends F3::TYPO3CR::NodeType::PropertyDefiniti
 		$this->multiple = $multiple;
 	}
 
+	/**
+	 * Sets the queryable status of the property.
+	 *
+	 * @param boolean $queryable a boolean.
+	 * @return void
+	 */
+	public function setQueryable($queryable) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674192);
+	}
+
+	/**
+	 * Sets the full-text-searchable status of the property.
+	 *
+	 * @param boolean $fullTextSearchable a boolean.
+	 * @return void
+	 */
+	public function setFullTextSearchable($fullTextSearchable) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674197);
+	}
+
+	/**
+	 * Sets the query-orderable status of the property.
+	 *
+	 * @param boolean $queryOrderable a boolean.
+	 * @return void
+	 */
+	public function setQueryOrderable($queryOrderable) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674201);
+	}
+
 }
 
 ?>

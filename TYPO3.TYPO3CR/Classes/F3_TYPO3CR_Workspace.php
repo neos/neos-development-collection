@@ -502,6 +502,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @return void
 	 * @throws F3::PHPCR::AccessDeniedException if the session through which this Workspace object was acquired does not have permission to create the new workspace.
 	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support the creation of workspaces.
+	 * @throws F3::PHPCR::NoSuchWorkspaceException if $srcWorkspace does not exist.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function createWorkspace($name, $srcWorkspace = NULL) {
@@ -516,6 +517,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @return void
 	 * @throws F3::PHPCR::AccessDeniedException if the session through which this Workspace object was acquired does not have permission to remove the workspace.
 	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support the removal of workspaces.
+	 * @throws F3::PHPCR::NoSuchWorkspaceException if $name does not exist.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 */
 	public function deleteWorkspace($name) {
@@ -537,6 +539,34 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 */
 	public function createActivity($title) {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406785);
+	}
+
+	/**
+	 * This method is called by the user to set the current activity.
+	 * Changing the current activity is done by calling setActivity() again.
+	 * Cancelling the current activity (so that there is no current activity)
+	 * is done by calling setActivity(NULL) which returns the current activity
+	 * node or NULL if there is no current activity.
+	 *
+	 * @param F3::PHPCR::NodeInterface $activity an activity node
+	 * @return F3::PHPCR::NodeInterface the activity node
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support activities or if activity is not a nt:activity node.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 */
+	public function setActivity(F3::PHPCR::NodeInterface $activity) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224512135);
+	}
+
+	/**
+	 * Returns the node representing the current activity or NULL if there is no
+	 * current activity.
+	 *
+	 * @return F3::PHPCR::NodeInterface An nt:activity node or NULL.
+	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support activities.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 */
+	public function getActivity() {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224512136);
 	}
 
 	/**
@@ -574,6 +604,30 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 */
 	public function merge(F3::PHPCR::NodeInterface $activityNode) {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406786);
+	}
+
+	/**
+	 * Removes the specified item (and its subtree).
+	 * To persist a removal, a save must be performed.
+	 *
+	 * If a node with same-name siblings is removed, this decrements by one the
+	 * indices of all the siblings with indices greater than that of the removed
+	 * node. In other words, a removal compacts the array of same-name siblings
+	 * and causes the minimal re-numbering required to maintain the original
+	 * order but leave no gaps in the numbering.
+	 *
+	 * @param string $absPath the absolute path of the item to be removed.
+	 * @return void
+	 * @throws F3::PHPCR::Version::VersionException if the parent node of the item at absPath is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the removal of the specified item and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ReferentialIntegrityException will be thrown on save if the specified item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside the specified item's subtree and the current Session has read access to that REFERENCE property.
+	 * @throws F3::PHPCR::AccessDeniedException will be thrown on save if the specified item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside the specified item's subtree and the current Session does not have read access to that REFERENCE property.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @see Item::remove()
+	 */
+	public function removeItem($absPath) {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224512858);
 	}
 
 }

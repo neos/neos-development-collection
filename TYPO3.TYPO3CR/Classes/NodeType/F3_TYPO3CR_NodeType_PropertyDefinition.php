@@ -264,6 +264,50 @@ class PropertyDefinition extends F3::TYPO3CR::NodeType::ItemDefinition implement
 		return $this->multiple;
 	}
 
+	/**
+	 * Returns TRUE if this property is queryable,
+	 * meaning that its value is accessible through query
+	 *
+	 * This attribute only takes effect if the node type holding the
+	 * property definition has a queryable setting of TRUE,
+	 * otherwise this attribute is automatically set to FALSE.
+	 *
+	 * @return boolean a boolean
+	 */
+	public function isQueryable() {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674119);
+	}
+
+	/**
+	 * Returns TRUE if this property is full-text searchable,
+	 * meaning that its value is accessible through the full-text search
+	 * function within a query.
+	 *
+	 * This attribute only takes effect if the node type holding the
+	 * property definition has a queryable setting of TRUE,
+	 * otherwise this attribute is automatically set to FALSE.
+	 *
+	 * @return boolean a boolean
+	 */
+	public function isFullTextSearchable() {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674125);
+	}
+
+	/**
+	 * Returns TRUE if this property is query orderable,
+	 * meaning that query results may be ordered by this property
+	 * using the order by clause of a query.
+	 *
+	 * This attribute only takes effect if the node type holding the
+	 * property definition has a queryable setting of TRUE,
+	 * otherwise this attribute is automatically set to FALSE.
+	 *
+	 * @return boolean a boolean
+	 */
+	public function isQueryOrderable() {
+		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674130);
+	}
+
 }
 
 ?>

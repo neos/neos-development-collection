@@ -40,11 +40,11 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	 * @var array
 	 */
 	protected $expectedBuiltInNameSpaces = array(
-		'jcr' => 'http://www.jcp.org/jcr/1.0',
-		'nt' => 'http://www.jcp.org/jcr/nt/1.0',
-		'mix' => 'http://www.jcp.org/jcr/mix/1.0',
-		'xml' => 'http://www.w3.org/XML/1998/namespace',
-		'' => ''
+		F3::PHPCR::NamespaceRegistryInterface::PREFIX_JCR => F3::PHPCR::NamespaceRegistryInterface::NAMESPACE_JCR,
+		F3::PHPCR::NamespaceRegistryInterface::PREFIX_NT => F3::PHPCR::NamespaceRegistryInterface::NAMESPACE_NT,
+		F3::PHPCR::NamespaceRegistryInterface::PREFIX_MIX => F3::PHPCR::NamespaceRegistryInterface::NAMESPACE_MIX,
+		F3::PHPCR::NamespaceRegistryInterface::PREFIX_XML => F3::PHPCR::NamespaceRegistryInterface::NAMESPACE_XML,
+		F3::PHPCR::NamespaceRegistryInterface::PREFIX_EMPTY => F3::PHPCR::NamespaceRegistryInterface::NAMESPACE_EMPTY
 	);
 
 	/**

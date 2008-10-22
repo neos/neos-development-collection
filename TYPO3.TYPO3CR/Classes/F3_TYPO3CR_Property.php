@@ -379,9 +379,11 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 
 	/**
 	 * Returns the length of the value of this property.
-	 * Returns the length in bytes if the value is a BINARY, otherwise it
-	 * returns the number of characters needed to display the value in its
-	 * string form.
+	 *
+	 * For a BINARY property, getLength returns the number of bytes.
+	 * For other property types, getLength returns the same value that would be
+	 * returned by calling strlen() on the value when it has been converted to a
+	 * STRING according to standard JCR propety type conversion.
 	 *
 	 * Returns -1 if the implementation cannot determine the length.
 	 *
@@ -395,12 +397,8 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 
 	/**
 	 * Returns an array holding the lengths of the values of this (multi-value)
-	 * property in bytes if the values are PropertyType.BINARY, otherwise it
-	 * returns the number of characters needed to display the value in its
-	 * string form. The order of the length values corresponds to the order of
-	 * the values in the property.
-	 * Returns a -1 in the appropriate position if the implementation cannot
-	 * determine the length of a value.
+	 * property in bytes where each is individually calculated as described in
+	 * getLength().
 	 *
 	 * @return array an array of lengths
 	 * @throws F3::PHPCR::ValueFormatException if this property is single-valued.
