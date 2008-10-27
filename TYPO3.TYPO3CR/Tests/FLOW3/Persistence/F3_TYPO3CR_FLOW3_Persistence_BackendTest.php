@@ -55,6 +55,22 @@ class BackendTest extends F3::Testing::BaseTestCase {
 		$this->markTestIncomplete('Not yet implemented');
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function commitProcessesUpdatedObjects() {
+		$this->markTestIncomplete('Not yet implemented');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function commitProcessesDeletedObjects() {
+		$this->markTestIncomplete('Not yet implemented');
+	}
+
 }
 
 ?>
