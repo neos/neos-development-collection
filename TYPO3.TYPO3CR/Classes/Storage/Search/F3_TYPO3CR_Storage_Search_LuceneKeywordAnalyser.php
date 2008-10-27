@@ -30,8 +30,6 @@ require_once('Zend/Search/Lucene/Analysis/Analyzer.php');
  * @subpackage Storage
  * @version $Id:F3::TYPO3CR::Storage::Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @todo Make it use the PHP6 package or get rid of the iconv dependency in some other way
- * @todo Remove the require statement again after Karsten understood the problem fully and fixed it.
  */
 class LuceneKeywordAnalyser extends ::Zend_Search_Lucene_Analysis_Analyzer_Common {
 
