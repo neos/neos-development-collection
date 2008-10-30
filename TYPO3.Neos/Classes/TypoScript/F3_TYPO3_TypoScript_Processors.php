@@ -260,6 +260,17 @@ class Processors {
 
 		return F3::PHP6::Functions::substr((string)$subject, $start, $length);
 	}
+
+	/**
+	 * Converts the subject into an integer.
+	 *
+	 * @param string $subject The current subject in the processor chain
+	 * @return integer The integer value
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function processor_toInteger($subject) {
+		return intval((string)$subject);
+	}
 	
 	/**
 	 * Rounds a given float value. If integer given, nothing happens.
@@ -267,7 +278,7 @@ class Processors {
 	 * @param float/string $subject The subject to round.
 	 * @param integer $precision Number of digits after the decimal point. Negative values are also supported. (-1 rounds to full 10ths)
 	 * @return float Rounded value
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian Kurf√ºrst <sebastian@typo3.org>
 	 */
 	public function processor_round($subject, $precision = NULL) {
 		if (!is_numeric($subject)) throw new F3::TypoScript::Exception('Expected an integer or float passed, ' . gettype($subject) . ' given.', 1224053300);
@@ -282,7 +293,7 @@ class Processors {
 	 * @param float/string $subject The first factor
 	 * @param float $factor The second factor
 	 * @return float $subject*$factor
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian Kurf√ºrst <sebastian@typo3.org>
 	 */
 	public function processor_multiply($subject, $factor) {
 		if (!is_numeric($subject)) throw new F3::TypoScript::Exception('Expected a numeric string as first parameter.', 1224146988);

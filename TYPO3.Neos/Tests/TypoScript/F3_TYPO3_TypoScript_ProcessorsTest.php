@@ -21,6 +21,8 @@ namespace F3::TYPO3::TypoScript;
  * @version $Id:F3::FLOW3::Component::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
+require_once (__DIR__ . '/../Fixtures/F3_TYPO3_TypoScript_MockTypoScriptObject.php');
+
 /**
  * Testcase for the TypoScript standard processors
  *
@@ -849,7 +851,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * Checks if the round function works as expected when having regular input
 	 * 
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian KurfÔøΩrst <sebastian@typo3.org>
 	 */
 	public function roundWorksForFloatParameters() {
 		$subject = 5.3;
@@ -887,7 +889,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * Checks if the round function works as expected when having an additional precision parameter
 	 * 
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian KurfÔøΩrst <sebastian@typo3.org>
 	 */
 	public function roundWorksWithPrecisionParameter() {
 		$subject = 5.31;
@@ -910,7 +912,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * Checks if the round function fails if passed a string
 	 * 
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian KurfÔøΩrst <sebastian@typo3.org>
 	 * @expectedException F3::TypoScript::Exception
 	 */
 	public function roundThrowsExceptionOnInvalidParameters() {
@@ -922,7 +924,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * Checks if the round function fails if precision is a string
 	 * 
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian KurfÔøΩrst <sebastian@typo3.org>
 	 * @expectedException F3::TypoScript::Exception
 	 */
 	public function roundThrowsExceptionOnInvalidPrecisionParameters() {
@@ -971,10 +973,40 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	public function passingAStringInsteadOfTheLengthIntoSubstringThrowsAnException() {
 		$this->processors->processor_substring('the subject', 2, 'a string');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function toIntegerConvertsATheNumberFivePassedAsAStringIntoAnInteger() {
+		$result = $this->processors->processor_toInteger('5');
+		$this->assertSame(5, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function toIntegerConvertsATheNumberFourtyThreePassedAsAStringIntoAnInteger() {
+		$result = $this->processors->processor_toInteger('43');
+		$this->assertSame(43, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function toIntegerConvertsAnObjectToStringBeforeConvertingItToAnInteger() {
+		$mockObject = new F3::TYPO3::TypoScript::MockTypoScriptObject();
+		$mockObject->setValue('25');
+
+		$result = $this->processors->processor_toInteger($mockObject);
+		$this->assertSame(25, $result);
+	}
 	
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian Kurf√ºrst <sebastian@typo3.org>
 	 */
 	public function multiplyReturnsTheCorrectNumbers() {
 		$subject = '1';
@@ -989,7 +1021,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @test
 	 * @expectedException F3::TypoScript::Exception
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian Kurf√ºrst <sebastian@typo3.org>
 	 */
 	public function multiplyThrowsExceptionIfNonNumericStringPassedAsSubject() {
 		$this->processors->processor_multiply(' ', 1);
@@ -998,7 +1030,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @test
 	 * @expectedException F3::TypoScript::Exception
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian Kurf√ºrst <sebastian@typo3.org>
 	 */
 	public function multiplyThrowsExceptionIfStringPassedAsFactor() {
 		$this->processors->processor_multiply('1.43', 'bla');
