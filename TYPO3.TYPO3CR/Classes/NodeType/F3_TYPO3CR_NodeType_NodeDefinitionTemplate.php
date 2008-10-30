@@ -94,22 +94,22 @@ class NodeDefinitionTemplate extends F3::TYPO3CR::NodeType::NodeDefinition imple
 	}
 
 	/**
-	 * Sets the required primary types of this node.
+	 * Sets the names of the required primary types of this node.
 	 *
-	 * @param array $requiredPrimaryTypes a String array.
+	 * @param array $requiredPrimaryTypeNames a String array.
 	 * @return void
 	 */
-	public function setRequiredPrimaryTypes(array $requiredPrimaryTypes) {
+	public function setRequiredPrimaryTypeNames(array $requiredPrimaryTypeNames) {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097328);
 	}
 
 	/**
-	 * Sets the default primary type of this node.
+	 * Sets the name of the default primary type of this node.
 	 *
-	 * @param string $defaultPrimaryType a String.
+	 * @param string $defaultPrimaryTypeName a String.
 	 * @return void
 	 */
-	public function setDefaultPrimaryType($defaultPrimaryType) {
+	public function setDefaultPrimaryTypeName($defaultPrimaryTypeName) {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097329);
 	}
 
