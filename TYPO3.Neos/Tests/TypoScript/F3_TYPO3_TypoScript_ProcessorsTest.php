@@ -846,34 +846,34 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 		$result = $this->processors->processor_isBlank($subject);
 		$this->assertFalse($result, 'The TypoScript processor "isBlank" returned true on a subject wich has a zero value. (We called it with objects that return integers as parameters)');
 	}
-	
+
 	/**
 	 * Checks if the round function works as expected when having regular input
-	 * 
+	 *
 	 * @test
-	 * @author Sebastian Kurf�rst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function roundWorksForFloatParameters() {
 		$subject = 5.3;
 		$expected = 5;
 		$result = $this->processors->processor_round($subject);
 		$this->assertEquals($expected, $result, 'Rounding of a float value did not return the expected result.');
-		
+
 		$subject = 41.7;
 		$expected = 42;
 		$result = $this->processors->processor_round($subject);
 		$this->assertEquals($expected, $result, 'Rounding of a float value did not return the expected result.');
-		
+
 		$subject = 41.50001;
 		$expected = 42;
 		$result = $this->processors->processor_round($subject);
 		$this->assertEquals($expected, $result, 'Rounding of a float value did not return the expected result.');
-		
+
 		$subject = 41.499999;
 		$expected = 41;
 		$result = $this->processors->processor_round($subject);
 		$this->assertEquals($expected, $result, 'Rounding of a float value did not return the expected result.');
-		
+
 		$subject = 41.5;
 		$expected = 42;
 		$result = $this->processors->processor_round($subject);
@@ -884,47 +884,47 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 		$result = $this->processors->processor_round($subject);
 		$this->assertEquals($expected, $result, 'Rounding of a float value did not return the expected result.');
 	}
-	
+
 	/**
 	 * Checks if the round function works as expected when having an additional precision parameter
-	 * 
+	 *
 	 * @test
-	 * @author Sebastian Kurf�rst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function roundWorksWithPrecisionParameter() {
 		$subject = 5.31;
 		$expected = 5.3;
 		$result = $this->processors->processor_round($subject, 1);
 		$this->assertEquals($expected, $result, 'Rounding of a float value did not return the expected result.');
-		
+
 		$subject = 41.7;
 		$expected = 40;
 		$result = $this->processors->processor_round($subject, -1);
 		$this->assertEquals($expected, $result, 'Rounding of a float value did not return the expected result.');
-		
+
 		$subject = 41.50001;
 		$expected = 41.5;
 		$result = $this->processors->processor_round($subject,1);
 		$this->assertEquals($expected, $result, 'Rounding of a float value did not return the expected result.');
 	}
-	
+
 	/**
 	 * Checks if the round function fails if passed a string
-	 * 
+	 *
 	 * @test
-	 * @author Sebastian Kurf�rst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException F3::TypoScript::Exception
 	 */
 	public function roundThrowsExceptionOnInvalidParameters() {
 		$subject = 'Transition days rock.';
 		$result = $this->processors->processor_round($subject);
 	}
-	
+
 	/**
 	 * Checks if the round function fails if precision is a string
-	 * 
+	 *
 	 * @test
-	 * @author Sebastian Kurf�rst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException F3::TypoScript::Exception
 	 */
 	public function roundThrowsExceptionOnInvalidPrecisionParameters() {
@@ -978,7 +978,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function toIntegerConvertsATheNumberFivePassedAsAStringIntoAnInteger() {
+	public function toIntegerConvertsTheNumberFivePassedAsAStringIntoAnInteger() {
 		$result = $this->processors->processor_toInteger('5');
 		$this->assertSame(5, $result);
 	}
@@ -987,7 +987,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function toIntegerConvertsATheNumberFourtyThreePassedAsAStringIntoAnInteger() {
+	public function toIntegerConvertsTheNumberFourtyThreePassedAsAStringIntoAnInteger() {
 		$result = $this->processors->processor_toInteger('43');
 		$this->assertSame(43, $result);
 	}
@@ -1003,7 +1003,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 		$result = $this->processors->processor_toInteger($mockObject);
 		$this->assertSame(25, $result);
 	}
-	
+
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
@@ -1012,12 +1012,12 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 		$subject = '1';
 		$result = $this->processors->processor_multiply($subject, 1.5);
 		$this->assertEquals($result, 1.5, 'Multiply does not output the right result.');
-		
+
 		$subject = '1.5';
 		$result = $this->processors->processor_multiply($subject, 2);
 		$this->assertEquals($result, 3, 'Multiply does not output the right result (2).');
 	}
-	
+
 	/**
 	 * @test
 	 * @expectedException F3::TypoScript::Exception
@@ -1026,7 +1026,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	public function multiplyThrowsExceptionIfNonNumericStringPassedAsSubject() {
 		$this->processors->processor_multiply(' ', 1);
 	}
-	
+
 	/**
 	 * @test
 	 * @expectedException F3::TypoScript::Exception
