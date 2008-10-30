@@ -98,16 +98,6 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	}
 
 	/**
-	 * Returns a serialized representation of the raw internal value
-	 *
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getSerializedValue() {
-		return serialize($this->value);
-	}
-
-	/**
 	 * Sets the value of this property to value. If this property's property
 	 * type is not constrained by the node type of its parent node, then the
 	 * property type is changed to that of the supplied value. If the property

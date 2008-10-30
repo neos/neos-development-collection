@@ -71,6 +71,7 @@ class PropertyTest extends F3::Testing::BaseTestCase {
 	/**
 	 * Checks if getPath works as expected
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @test
 	 */
 	public function getPathReturnsPathToProperty() {
@@ -92,7 +93,7 @@ class PropertyTest extends F3::Testing::BaseTestCase {
 			'nodetype' => 'nt:base'
 		);
 		$node = new F3::TYPO3CR::Node($rawData, $mockSession, $this->componentFactory);
-		$node->setProperty('testproperty', 'some test value');
+		$node->setProperty('testproperty', 'some test value', F3::PHPCR::PropertyType::STRING);
 
 		$testProperty = $node->getProperty('testproperty');
 		$propertyPath = $testProperty->getPath();

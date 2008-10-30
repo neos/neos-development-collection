@@ -30,6 +30,13 @@ namespace F3::TYPO3CR;
  */
 class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface {
 
+	const PATTERN_MATCH_WEAKREFERENCE = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
+	const PATTERN_MATCH_REFERENCE = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
+	const PATTERN_MATCH_URI = '!^([a-zA-Z][a-zA-Z0-9+.-]*):(?:(?://(?:(?:((?:[-a-zA-Z0-9._~\!\$&\'()*+,;=:]|%[0-9a-fA-F]{2,2})*)@)?((?:\[(?:(?:v[0-9a-fA-F]\.[-0-9a-zA-Z._~\!$&\'()*+,;=:]+)|(?:(?:(?:(?:[0-9a-fA-F]{1,4}:){6,6}|::(?:[0-9a-fA-F]{1,4}:){5,5}|(?:[0-9a-fA-F]{1,4})?::(?:[0-9a-fA-F]{1,4}:){4,4}|(?:(?:[0-9a-fA-F]{1,4}:){0,1}(?:[0-9a-fA-F]{1,4}))?::(?:[0-9a-fA-F]{1,4}:){3,3}|(?:(?:[0-9a-fA-F]{1,4}:){0,2}(?:[0-9a-fA-F]{1,4}))?::(?:[0-9a-fA-F]{1,4}:){2,2}|(?:(?:[0-9a-fA-F]{1,4}:){0,3}(?:[0-9a-fA-F]{1,4}))?::(?:[0-9a-fA-F]{1,4}:)|(?:(?:[0-9a-fA-F]{1,4}:){0,4}(?:[0-9a-fA-F]{1,4}))?::)(?:(?:[0-9a-fA-F]{1,4}):(?:[0-9a-fA-F]{1,4})|(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2,2}|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9]{2,2}|2[0-4][0-9]|25[0-5])){3,3})))|(?:(?:(?:[0-9a-fA-F]{1,4}:){0,5}(?:[0-9a-fA-F]{1,4}))?::(?:[0-9a-fA-F]{1,4}))|(?:(?:(?:[0-9a-fA-F]{1,4}:){0,6}(?:[0-9a-fA-F]{1,4}))?::)))\])|(?:(?:[0-9]|[1-9][0-9]|1[0-9]{2,2}|2[0-4][0-9]|25[0-5])(?:\.(?:[0-9]|[1-9][0-9]|1[0-9]{2,2}|2[0-4][0-9]|25[0-5])){3,3})|(?:(?:[-a-zA-Z0-9_~.\!\$&\'()*+,;=]|%[0-9a-fA-F]{2,2})*))(?::([0-9]*))?)((?:/(?:(?:[-a-zA-Z0-9_~.\!\$&\'()*+,;=:@]|%[0-9a-fA-F]{2,2})*))*))|((?:/(?:(?:(?:[-a-zA-Z0-9_~.\!\$&\'()*+,;=:@]|%[0-9a-fA-F]{2,2})+)(?:/(?:(?:[-a-zA-Z0-9_~.\!\$&\'()*+,;=:@]|%[0-9a-fA-F]{2,2})*))*)?)|(?:(?:(?:(?:[-a-zA-Z0-9_~.\!\$&\'()*+,;=:@]|%[0-9a-fA-F]{2,2})+)(?:/(?:(?:[-a-zA-Z0-9_~.\!\$&\'()*+,;=:@]|%[0-9a-fA-F]{2,2})*))*))|(?:)))(?:\?((?:[-a-zA-Z0-9_~.\!\$&\'()*+,;=:@/?]|%[0-9a-fA-F]{2,2})*))?(?:\#((?:[-a-zA-Z0-9_~.\!\$&\'()*+,;=:@/?]|%[0-9a-fA-F]{2,2})*))?$!';
+	const PATTERN_MATCH_DATE = '/^[+-]?[0-9]{4,4}(?:-(?:0[1-9]|1[0-2])|-(?:0[13578]|1[02])-(?:0[1-9]|[12][0-9]|3[01])|-02-(?:0[1-9]|[12][0-9])|-(?:0[469]|11)-(?:0[1-9]|[12][0-9]|30)|(?:0[13578]|1[02])(?:0[1-9]|[12][0-9]|3[01])|02(?:0[1-9]|[12][0-9])|(?:0[469]|11)(?:0[1-9]|[12][0-9]|30))T(?:[01][0-9]|2[0-4])(?:(?::[0-5][0-9](?::(?:[0-5][0-9]|60))?)|[0-5][0-9](?:[0-5][0-9]|60)?)??(?:Z|[+-](?:0[0-9]|1[0-2])[0-5][0-9])?$/';
+	const PATTERN_MATCH_DOUBLE = '/^[+-]?[0-9]+\.[0-9]+(?:[eE][+-][0-9]+)?[fd]?$/';
+	const PATTERN_MATCH_LONG = '/^[+-]?[0-9]+$/';
+
 	/**
 	 * @var string
 	 */
@@ -129,6 +136,8 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 		}
 	}
 
+
+	// JSR-283 methods
 
 
 	/**
@@ -437,28 +446,41 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @throws F3::PHPCR::RepositoryException  if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function setProperty($name, $value, $type = F3::PHPCR::PropertyType::UNDEFINED) {
-		if ($this->hasProperty($name)) {
-			if ($value === NULL) {
+		if ($type === F3::PHPCR::PropertyType::DECIMAL || $type === F3::PHPCR::PropertyType::PATH) {
+			throw new F3::PHPCR::RepositoryException(F3::PHPCR::PropertyType::nameFromValue($type) . ' is not implemented yet', 1221821847);
+		}
+
+		if ($value === NULL) {
+			if($this->hasProperty($name)) {
 				$this->session->registerPropertyAsRemoved($this->properties[$name]);
 				unset($this->properties[$name]);
-			} else {
-				if (is_array($value)) {
-					$value = F3::TYPO3CR::Utility::removeNullFromArray($value);
+				$this->session->registerNodeAsDirty($this);
+			}
+		} else {
+			if (is_array($value)) {
+				if ($this->hasProperty($name) && ! $this->property[$name]->isMultiple()) {
+					throw new F3::PHPCR::ValueFormatException('Tried to set array value on non-multivalued property', 1184868411);
 				}
+				list($value, $type) = $this->convertValue($value, $type, TRUE);
+			} else {
+				if ($this->hasProperty($name) && $this->property[$name]->isMultiple()) {
+					throw new F3::PHPCR::ValueFormatException('Tried to set non-array value on multivalued property', 1221819668);
+				}
+				list($value, $type) = $this->convertValue($value, $type, FALSE);
+			}
+
+			if ($this->hasProperty($name)) {
 				$this->properties[$name]->setValue($value);
 				$this->session->registerPropertyAsDirty($this->properties[$name]);
+			} else {
+				$this->properties[$name] = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $name, $value, $type, $this, $this->session);
+				$this->session->registerPropertyAsNew($this->properties[$name]);
 			}
-			$this->session->registerNodeAsDirty($this);
-		} elseif ($value !== NULL) {
-			if (is_array($value)) {
-				$value = F3::TYPO3CR::Utility::removeNullFromArray($value);
-			}
-			$this->properties[$name] = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $name, $value, $type, $this, $this->session);
-			$this->session->registerPropertyAsNew($this->properties[$name]);
-			$this->session->registerNodeAsDirty($this);
 		}
+		$this->session->registerNodeAsDirty($this);
 	}
 
 	/**
@@ -1448,6 +1470,201 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 */
 	public function getAllowedLifecycleTransitions() {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667741);
+	}
+
+
+	// non-JSR-283 methods
+
+
+	/**
+	 * Provides validation and conversion functions for all kinds of combinations of a PHPCR property type and a PHP type as an array of arrays
+	 * Please use gettype() instead of a string in the definition and the use of the PHP type array keys to avoid problems if the strings returned by
+	 * gettype() ever change
+	 *
+	 * @return array of array of functions (mixed $element, $type (one of those defined in F3::PHPCR::PropertyType)) -> array(bool $success, mixed $resultElement, $resultType (again, a propertytype), string $errorMessage)
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function getValueConverters() {
+
+		$matchRegexps = array(
+			F3::PHPCR::PropertyType::WEAKREFERENCE => self::PATTERN_MATCH_WEAKREFERENCE,
+			F3::PHPCR::PropertyType::REFERENCE     => self::PATTERN_MATCH_REFERENCE,
+			F3::PHPCR::PropertyType::URI => self::PATTERN_MATCH_URI,
+			F3::PHPCR::PropertyType::DATE => self::PATTERN_MATCH_DATE,
+			F3::PHPCR::PropertyType::DOUBLE => self::PATTERN_MATCH_DOUBLE,
+			F3::PHPCR::PropertyTYpe::LONG => self::PATTERN_MATCH_LONG
+		);
+
+		$session = $this->session;
+
+		$converters = array(
+			F3::PHPCR::PropertyType::UNDEFINED => array(),
+			F3::PHPCR::PropertyType::STRING => array(
+				gettype('') => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
+				gettype(1) => function($element, $type) { return array(true, (string)$element, $type, 'Converted integer to string'); },
+				gettype(1.1) => function($element, $type) { return array(true, (string)$element, $type, 'Converted float to string'); },
+				gettype(TRUE) => function($element, $type) { return array(true, $element ? 'true' : 'false', $type, 'Converted boolean to string'); },
+				gettype(new DateTime('now')) => function($element, $type) { return array(true, $element->format('c'), $type, 'Converted date to string'); }
+			),
+			F3::PHPCR::PropertyType::BINARY => array(
+				gettype('') => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
+				gettype(1) => function($element, $type) { return array(true, (string)$element, $type, 'Converted integer to binary'); },
+				gettype(1.1) => function($element, $type) { return array(true, (string)$element, $type, 'Converted float to binary'); },
+				gettype(TRUE) => function($element, $type) { return array(true, $element ? 'true' : 'false', $type, 'Converted boolean to binary'); }
+			),
+			F3::PHPCR::PropertyType::LONG => array(
+				gettype(1) => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
+				gettype(1.1) => function($element, $type) { return array(true, (integer)$element, $type, 'Converted float to integer'); },
+				gettype('') => function($element, $type) use ($matchRegexps) { $correntFormat = preg_match($matchRegexps[$type], $element); return array($correntFormat, $correntFormat ? (integer)$element : $element, $type, 'Must be a valid integer string representation'); }
+			),
+			F3::PHPCR::PropertyType::DOUBLE => array(
+				gettype(1.1) => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
+				gettype(1) => function($element, $type) { return array(true, (float)$element, $type, 'Converted integer to float'); },
+				gettype('') => function($element, $type) use ($matchRegexps) { $correntFormat = preg_match($matchRegexps[$type], $element); return array($correntFormat, $correntFormat ? (float)$element : $element, $type, 'Must be a valid floating point string representation'); }
+			),
+			F3::PHPCR::PropertyType::DECIMAL => array(),
+			F3::PHPCR::PropertyType::DATE => array(
+				gettype(new DateTime('now')) => function($element, $type) { return array($element instanceof DateTime, $element, $type, 'No conversion necessary'); },
+				gettype('') => function($element, $type) use ($matchRegexps) { $correctFormat = preg_match($matchRegexps[$type], $element); return array($correctFormat, $correctFormat ? new DateTime($element) : $element, $type, 'Must be valid ISO 8601 date'); }
+			),
+			F3::PHPCR::PropertyType::BOOLEAN => array(
+				gettype(TRUE) => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
+				gettype('') => function($element, $type) { return array(true, preg_match('/^true$/i', $element), $type, 'Converted string to boolean'); }
+			),
+			F3::PHPCR::PropertyType::NAME => array(
+				gettype('') => function($element, $type) use ($session) {
+					$parts = explode(':', $element);
+					if (count($parts) > 2) {
+						return array(false, $element, $type, 'More than one : in JCR name is not allowed');
+					}
+					if (! preg_match('!^(?:[^./:\[\]*| 	]|\.[^./:\[\]*| 	]|[^./:\[\]*| 	]\.|[^./:\[\]*| 	]{2,2}|[^/:\[\]*| 	][^/:\[\]*|	]+[^/:\[\]*| 	])$!', $parts[count($parts)-1])) {
+						return array(false, $element, $type, 'Local name does not conform to JCR spec rules');
+					}
+					if (count($parts) === 2 && array_search($parts[0],  $session->getNamespacePrefixes()) === FALSE) {
+						return array(false, $element, $type, 'Namespace prefix is invalid');
+					}
+					return array(true, $element, $type, 'Valid JCR name');
+				}
+			),
+			F3::PHPCR::PropertyType::PATH => array(),
+			F3::PHPCR::PropertyType::REFERENCE => array(
+				gettype('') => function($element, $type) use ($matchRegexps, $session) {
+					if (!preg_match($matchRegexps[$type], $element)) {
+						return array(false, $element, $type, 'Must be a valid UUID');
+					}
+					try {
+						$session->getNodeByIdentifier($element);
+						return array(true, $element, $type, 'Valid reference');
+					} catch (F3::PHPCR::ItemNotFoundException $e) {
+						return array(false, $element, $type, 'Must reference existing node');
+					}
+				}
+			),
+			F3::PHPCR::PropertyType::WEAKREFERENCE => array(
+				gettype('') => function($element, $type) use ($matchRegexps) { return array(preg_match($matchRegexps[$type], $element), $element, $type, 'Must be a valid UUID'); }
+			),
+			F3::PHPCR::PropertyType::URI => array(
+				gettype('') => function($element, $type) use ($matchRegexps) { return array(preg_match($matchRegexps[$type], $element), $element, $type, 'Must be a valid RFC 3986 URI'); }
+			)
+		);
+
+		return $converters;
+	}
+
+	/**
+	 * Converts given value into given type (one of those defined in F3::PHPCR::PropertyType) if possible and necessary or throws exception if conversion is not possible
+	 *
+	 * @param mixed $value
+	 * @param $type
+	 * @param bool $isMultivalue
+	 * @return array(mixed $value, $type)
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function convertValue($value, $type, $isMultivalue) {
+		$converters = $this->getValueConverters();
+
+		if($type === F3::PHPCR::PropertyType::UNDEFINED) {
+			$typesToTry = array(
+				F3::PHPCR::PropertyType::LONG,
+				F3::PHPCR::PropertyType::DOUBLE,
+				F3::PHPCR::PropertyType::URI,
+				F3::PHPCR::PropertyType::REFERENCE,
+				F3::PHPCR::PropertyType::WEAKREFERENCE,
+				F3::PHPCR::PropertyType::DATE);
+			if (is_string($value)) {
+				$typesToTry = array_merge($typesToTry, array(F3::PHPCR::PropertyType::STRING));
+			} else {
+				$typesToTry = array_merge($typesToTry, array(F3::PHPCR::PropertyType::BOOLEAN));
+			}
+		} else {
+			$typesToTry = array($type);
+		}
+
+		$typesLeft = count($typesToTry);
+
+		foreach ($typesToTry as $type) {
+			$typesLeft--;
+
+			try {
+				if ($isMultivalue) {
+					$value = array_filter($value, function($element) { return $element !== NULL; });
+
+					list($conversionSuccess, $conversionResultType, $convertedElements, $conversionErrors) = F3::FLOW3::Utility::Arrays::array_reduce(
+						$value,
+						function($result, $element) use ($converters) {
+							list($success, $type, $resultElements, $errorMessages) = $result;
+							$conversionFunction = FALSE;
+							if (array_key_exists($type, $converters) && array_key_exists(gettype($element), $converters[$type])) {
+								$conversionFunction = $converters[$type][gettype($element)];
+							}
+							if (! $conversionFunction) {
+								return array(
+									FALSE,
+									$type,
+									array(),
+									array_merge($errorMessages, array('Conversion of ' . gettype($element) . ' to ' . F3::PHPCR::PropertyType::nameFromValue($type) . ' not possible or not implemented yet')));
+							}
+							list($conversionSuccess, $convertedElement, $conversionResultType, $errorMessage) = $conversionFunction($element, $type);
+							return array(
+								$success && $conversionSuccess && ($type === F3::PHPCR::PropertyType::UNDEFINED || $type === $conversionResultType),
+								$type,
+								array_merge($resultElements, array($convertedElement)),
+								array_merge($errorMessages, array($errorMessage))
+							);
+						},
+						array(TRUE, $type, array(), array($converters))
+					);
+
+					if (! $conversionSuccess) {
+						$errors = '';
+						foreach ($conversionErrors as $error) {
+							$errors .= $error . chr(10);
+						}
+
+						throw new F3::PHPCR::ValueFormatException('Unable to convert values in multi-valued property:' . $errors, 1222853061);
+					};
+					$value = $convertedElements;
+					$type = $conversionResultType;
+				} else {
+					$conversionFunction = FALSE;
+					if (array_key_exists($type, $converters) && array_key_exists(gettype($value), $converters[$type])) {
+						$conversionFunction = $converters[$type][gettype($value)];
+					}
+					if (! $conversionFunction) {
+						throw new F3::PHPCR::ValueFormatException('Conversion of ' . gettype($value) . ' to ' . F3::PHPCR::PropertyType::nameFromValue($type) . ' not possible or not implemented yet', 1222853255);
+					}
+					list($conversionSuccess, $convertedElement, $conversionResultType, $conversionError) = $conversionFunction($value, $type);
+					if (! $conversionSuccess) {
+						throw new F3::PHPCR::ValueFormatException('Unable to convert value of type ' . gettype($value) . ' to ' . F3::PHPCR::PropertyType::nameFromValue($type) . ': ' . $conversionError, 1222853473);
+					}
+					$value = $convertedElement;
+					$type = $conversionResultType;
+				}
+				return array($value, $type);
+			} catch (F3::PHPCR::ValueFormatException $e) {
+				if ($typesLeft === 0) throw $e;
+			}
+		}
 	}
 
 }

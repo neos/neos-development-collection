@@ -51,15 +51,8 @@ class LuceneKeywordAnalyser extends ::Zend_Search_Lucene_Analysis_Analyzer_Commo
 	 * Reset token stream
 	 */
 	public function reset() {
-		$this->_position     = 0;
+		$this->_position = 0;
 		$this->_bytePosition = 0;
-
-			// convert input into UTF-8
-		if (strcasecmp($this->_encoding, 'utf8' ) != 0  &&
-			strcasecmp($this->_encoding, 'utf-8') != 0 ) {
-				$this->_input = iconv($this->_encoding, 'UTF-8', $this->_input);
-				$this->_encoding = 'UTF-8';
-		}
 	}
 
 	/**
@@ -81,21 +74,15 @@ class LuceneKeywordAnalyser extends ::Zend_Search_Lucene_Analysis_Analyzer_Commo
 
 				// matched string
 			$matchedWord = $match[0][0];
-
 				// binary position of the matched word in the input stream
 			$binStartPos = $match[0][1];
-
 				// character position of the matched word in the input stream
-			$startPos = $this->_position +
-				iconv_strlen(substr($this->_input,
-					$this->_bytePosition,
-					$binStartPos - $this->_bytePosition),
-					'UTF-8');
+			$startPos = $this->_position + F3::PHP6::Functions::strlen(F3::PHP6::Functions::substr($this->_input, $this->_bytePosition, $binStartPos - $this->_bytePosition));
 				// character postion of the end of matched word in the input stream
-			$endPos = $startPos + iconv_strlen($matchedWord, 'UTF-8');
+			$endPos = $startPos + F3::PHP6::Functions::strlen($matchedWord);
 
 			$this->_bytePosition = $binStartPos + strlen($matchedWord);
-			$this->_position     = $endPos;
+			$this->_position = $endPos;
 
 			$token = $this->normalize(new ::Zend_Search_Lucene_Analysis_Token($matchedWord, $startPos, $endPos));
 		} while ($token === NULL); // try again if token is skipped
