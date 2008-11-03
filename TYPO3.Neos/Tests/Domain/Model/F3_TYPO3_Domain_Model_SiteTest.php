@@ -63,7 +63,7 @@ class SiteTest extends F3::Testing::BaseTestCase {
 	public function aRootStructureNodeIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
 		$mockRootStructureNode = $this->getMock('F3::TYPO3::Domain::Model::StructureNode');
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($mockRootStructureNode));
+		$mockComponentFactory->expects($this->once())->method('create')->will($this->returnValue($mockRootStructureNode));
 
 		$site = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
 		$this->assertSame($mockRootStructureNode, $site->getRootStructureNode());

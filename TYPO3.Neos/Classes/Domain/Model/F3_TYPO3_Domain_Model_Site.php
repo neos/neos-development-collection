@@ -59,7 +59,7 @@ class Site {
 	 */
 	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
-		$this->rootStructureNode = $componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$this->rootStructureNode = $componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
 	}
 
 	/**

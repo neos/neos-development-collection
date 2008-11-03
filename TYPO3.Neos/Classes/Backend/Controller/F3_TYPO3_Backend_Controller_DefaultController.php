@@ -55,12 +55,12 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 	public function setupAction() {
 
 			// Create structure nodes
-		$structureNode1 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1a = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1aa = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1b = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1c = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1d = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1 = $this->componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1a = $this->componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1aa = $this->componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1b = $this->componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1c = $this->componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1d = $this->componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
 
 		$structureNode1->addChildNode($structureNode1a);
 		$structureNode1->addChildNode($structureNode1b);
@@ -69,35 +69,35 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 		$structureNode1a->addChildNode($structureNode1aa);
 
 			// Create pages
-		$page1 = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Page', 'Page 1');
+		$page1 = $this->componentFactory->create('F3::TYPO3::Domain::Model::Content::Page', 'Page 1');
 		$structureNode1->setContent($page1);
 
-		$page1a = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Page', 'Page 1a');
+		$page1a = $this->componentFactory->create('F3::TYPO3::Domain::Model::Content::Page', 'Page 1a');
 		$structureNode1a->setContent($page1a);
 
-		$page1aa = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Page', 'Page 1aa');
+		$page1aa = $this->componentFactory->create('F3::TYPO3::Domain::Model::Content::Page', 'Page 1aa');
 		$structureNode1aa->setContent($page1aa);
 
-		$page1b = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Page', 'Page 1b');
+		$page1b = $this->componentFactory->create('F3::TYPO3::Domain::Model::Content::Page', 'Page 1b');
 		$structureNode1b->setContent($page1b);
 
 			// Create text content
-		$text1c = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Text', 'Text 1c');
+		$text1c = $this->componentFactory->create('F3::TYPO3::Domain::Model::Content::Text', 'Text 1c');
 		$structureNode1c->setContent($text1c);
 
-		$text1d = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Content::Text', 'Text 1d');
+		$text1d = $this->componentFactory->create('F3::TYPO3::Domain::Model::Content::Text', 'Text 1d');
 		$structureNode1d->setContent($text1d);
 
 			// Create a sample site
-		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
+		$site = $this->componentFactory->create('F3::TYPO3::Domain::Model::Site');
 		$site->setName('typo3.org');
 		$site->setRootStructureNode($structureNode1);
 
-		$siteRepository = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::SiteRepository');
+		$siteRepository = $this->componentFactory->create('F3::TYPO3::Domain::Model::SiteRepository');
 		$siteRepository->add($site);
 
 			// Create a second sample site
-		$site = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::Site');
+		$site = $this->componentFactory->create('F3::TYPO3::Domain::Model::Site');
 		$site->setName('flow3.typo3.org');
 		$siteRepository->add($site);
 

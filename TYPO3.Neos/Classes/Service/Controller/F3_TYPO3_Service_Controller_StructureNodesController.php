@@ -83,7 +83,7 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 */
 	public function createAction() {
 		$this->throwStatus(501);
-#		$node = $this->componentFactory->getComponent('F3::TYPO3::Domain::Model::StructureNode');
+#		$node = $this->componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
 #		$node->structureNodeRepository->add($node);
 
 #		$this->response->setStatus(201);

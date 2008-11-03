@@ -115,7 +115,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function cropCanHandleObjectsAsParameters() {
 		$testText = 'Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testText);
 
 		$expectedResult = 'Kasper Skårhøj implemented the original version of the crop function. ...';
@@ -144,12 +144,12 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function wrapCanHandleObjectsAsParameters() {
 		$testText = 'Kasper Skårhøj';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testText);
 
-		$openStrongTag = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$openStrongTag = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$openStrongTag->setValue('<strong>');
-		$closeStrongTag = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$closeStrongTag = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$closeStrongTag->setValue('</strong>');
 
 		$result = $this->processors->processor_wrap($subject, $openStrongTag, $closeStrongTag);
@@ -225,7 +225,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function shiftCaseCanHandleObjectsAsParameters() {
 		$testText = 'Kasper Skårhøj';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testText);
 
 		$result = $this->processors->processor_shiftCase($subject, F3::TYPO3::TypoScript::Processors::SHIFT_CASE_TO_UPPER);
@@ -305,11 +305,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function dateCanHandleObjectsAsParameters() {
 		$testTimestamp = '1185279917';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testTimestamp);
 
 		$testFormat = 'F j, Y, g:i a';
-		$format = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$format = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$format->setValue($testFormat);
 
 		$expectedResult = 'July 24, 2007, 2:25 pm';
@@ -318,11 +318,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testTimestamp = 1254324643;
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testTimestamp);
 
 		$testFormat = 246896744;
-		$format = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$format = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$format->setValue($testFormat);
 
 		$expectedResult = '246896744';
@@ -394,11 +394,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function overrideCanHandleObjectsAsParameters() {
 		$testString = 'To be killed!';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 'I shot the subject!';
-		$overrideValue = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 'I shot the subject!';
@@ -407,11 +407,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testString = 1132435454;
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 0;
-		$overrideValue = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 1132435454;
@@ -483,11 +483,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function ifEmptyCanHandleObjectsAsParameters() {
 		$testString = '';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 'I shot the subject!';
-		$overrideValue = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 'I shot the subject!';
@@ -496,11 +496,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testString = 0;
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 1132435454;
-		$overrideValue = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 1132435454;
@@ -586,11 +586,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function ifBlankCanHandleObjectsAsParameters() {
 		$testString = '';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 'I shot the subject!';
-		$overrideValue = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 'I shot the subject!';
@@ -599,11 +599,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testString = 0;
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 1132435454;
-		$overrideValue = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 0;
@@ -632,7 +632,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function trimCanHandleObjects() {
 		$testString = '  I am not trimmed     ';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$expectedResult = 'I am not trimmed';
@@ -670,11 +670,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function ifCanHandleObjects() {
 		$subject = 'not needed here';
-		$condition = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$condition = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$condition->setValue(TRUE);
-		$trueValue = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$trueValue = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$trueValue->setValue('I am really true!');
-		$falseValue = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$falseValue = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$falseValue->setValue('I am more than just false!');
 
 		$expectedResult = 'I am really true!';
@@ -753,7 +753,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isEmptyCanHandleObjects() {
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue('I am not empty');
 
 		$result = $this->processors->processor_isEmpty($subject);
@@ -832,7 +832,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function isBlankCanHandleObjectsAsParameters() {
 		$testString = '';
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$result = $this->processors->processor_isBlank($subject);
@@ -840,7 +840,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testString = 0;
-		$subject = $this->componentFactory->getComponent('F3::TYPO3::TypoScript::Text');
+		$subject = $this->componentFactory->create('F3::TYPO3::TypoScript::Text');
 		$subject->setValue($testString);
 
 		$result = $this->processors->processor_isBlank($subject);
