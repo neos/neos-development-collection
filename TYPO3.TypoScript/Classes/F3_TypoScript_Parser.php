@@ -392,7 +392,7 @@ class Parser implements F3::TypoScript::ParserInterface {
 				}
 			}
 
-			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->componentFactory->getComponent('F3::TypoScript::ProcessorChain');
+			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->componentFactory->create('F3::TypoScript::ProcessorChain');
 			$processorInvocation = $this->getProcessorInvocation($matches['ComponentAndMethodName'], $processorArguments);
 			$processorChain->setProcessorInvocation((integer)$matches['Index'], $processorInvocation);
 			$typoScriptObject->setPropertyProcessorChain($propertyName, $processorChain);
@@ -432,10 +432,10 @@ class Parser implements F3::TypoScript::ParserInterface {
 		$processorComponentName = isset($matchedComponentAndMethodName['ComponentName']) ? $matchedComponentAndMethodName['ComponentName'] : $this->namespaces['default'] . '::Processors';
 		$processorMethodName = isset($matchedComponentAndMethodName['MethodName']) ? 'processor_' . $matchedComponentAndMethodName['MethodName'] : NULL;
 		if (!$this->componentManager->isComponentRegistered($processorComponentName)) throw new F3::TypoScript::Exception('Unknown processor component "' . $processorComponentName . '"', 1181903857);
-		$processor = $this->componentFactory->getComponent($processorComponentName);
+		$processor = $this->componentManager->getComponent($processorComponentName);
 		if (!method_exists($processor, $processorMethodName)) throw new F3::TypoScript::Exception('Unknown processor method "' . $processorComponentName . '->' . $processorMethodName . '"', 1181903857);
 
-		return $this->componentFactory->getComponent('F3::TypoScript::ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
+		return $this->componentFactory->create('F3::TypoScript::ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
 	}
 
 	/**
@@ -488,7 +488,7 @@ class Parser implements F3::TypoScript::ParserInterface {
 			if (!$this->componentManager->isComponentRegistered($typoScriptObjectComponentName)) {
 				throw new F3::TypoScript::Exception('Referring to unknown TypoScript Object Type "' . $typoScriptObjectComponentName . '" in object type assignment.', 1180605250);
 			}
-			$processedValue = $this->componentFactory->getComponent($typoScriptObjectComponentName);
+			$processedValue = $this->componentFactory->create($typoScriptObjectComponentName);
 		} else {
 			throw new F3::TypoScript::Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
 		}
