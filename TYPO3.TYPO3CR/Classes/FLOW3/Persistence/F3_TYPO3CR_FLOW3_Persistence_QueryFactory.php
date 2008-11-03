@@ -54,7 +54,7 @@ class QueryFactory implements F3::FLOW3::Persistence::QueryFactoryInterface {
 	 * @return F3::TYPO3CR::FLOW3::Persistence::Query
 	 */
 	public function create($className) {
-		return $this->componentFactory->getComponent('F3::TYPO3CR::FLOW3::Persistence::Query', $className);
+		return $this->componentFactory->create('F3::TYPO3CR::FLOW3::Persistence::Query', $className);
 	}
 
 }

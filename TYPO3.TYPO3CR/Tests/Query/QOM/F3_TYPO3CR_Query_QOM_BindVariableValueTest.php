@@ -36,7 +36,7 @@ class BindVariableValueTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function bindVariableValueIsPrototype() {
-		$this->assertNotSame($this->componentFactory->getComponent('F3::TYPO3CR::Query::QOM::BindVariableValue', ''), $this->componentFactory->getComponent('F3::TYPO3CR::Query::QOM::BindVariableValue', ''), 'Query_QOM_BindVariableValue is not prototype.');
+		$this->assertNotSame($this->componentFactory->create('F3::TYPO3CR::Query::QOM::BindVariableValue', ''), $this->componentFactory->create('F3::TYPO3CR::Query::QOM::BindVariableValue', ''), 'Query_QOM_BindVariableValue is not prototype.');
 	}
 }
 

@@ -36,8 +36,8 @@ class NodeTypeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function nodeTypeIsPrototype() {
-		$firstInstance = $this->componentFactory->getComponent('F3::TYPO3CR::NodeType::NodeType', 'name');
-		$secondInstance = $this->componentFactory->getComponent('F3::TYPO3CR::NodeType::NodeType', 'name');
+		$firstInstance = $this->componentFactory->create('F3::TYPO3CR::NodeType::NodeType', 'name');
+		$secondInstance = $this->componentFactory->create('F3::TYPO3CR::NodeType::NodeType', 'name');
 		$this->assertNotSame($firstInstance, $secondInstance, 'F3::TYPO3CR::NodeType::NodeType is not prototype.');
 	}
 

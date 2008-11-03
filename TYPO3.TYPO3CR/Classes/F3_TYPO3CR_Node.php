@@ -203,7 +203,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 					$this->name = $value;
 					break;
 				case 'nodetype':
-					$this->nodeType = $this->componentFactory->getComponent('F3::PHPCR::NodeType::NodeTypeInterface', $value);
+					$this->nodeType = $this->componentFactory->create('F3::PHPCR::NodeType::NodeTypeInterface', $value);
 					break;
 			}
 		}
@@ -222,7 +222,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 		$rawProperties = $this->session->getStorageBackend()->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
-				$property = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
+				$property = $this->componentFactory->create('F3::PHPCR::PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
 				$this->properties[$property->getName()] = $property;
 			}
 		}
@@ -460,7 +460,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 				$rawData['newidentifier'] = $identifier;
 			}
 
-			$newNode = $this->componentFactory->getComponent('F3::PHPCR::NodeInterface', $rawData, $this->session);
+			$newNode = $this->componentFactory->create('F3::PHPCR::NodeInterface', $rawData, $this->session);
 
 			$this->nodes[] = $newNode->getIdentifier();
 			$this->session->registerNodeAsDirty($this);
@@ -566,7 +566,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 			}
 		} else {
 			if (is_array($value)) {
-				if ($this->hasProperty($name) && ! $this->property[$name]->isMultiple()) {
+				if ($this->hasProperty($name) && !$this->property[$name]->isMultiple()) {
 					throw new F3::PHPCR::ValueFormatException('Tried to set array value on non-multivalued property', 1184868411);
 				}
 				list($value, $type) = $this->convertValue($value, $type, TRUE);
@@ -581,7 +581,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 				$this->properties[$name]->setValue($value);
 				$this->session->registerPropertyAsDirty($this->properties[$name]);
 			} else {
-				$this->properties[$name] = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $name, $value, $type, $this, $this->session);
+				$this->properties[$name] = $this->componentFactory->create('F3::PHPCR::PropertyInterface', $name, $value, $type, $this, $this->session);
 				$this->session->registerPropertyAsNew($this->properties[$name]);
 			}
 		}
@@ -657,7 +657,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 			$nodes[] = $this->session->getNodeByIdentifier($identifier);
 		}
 
-		return $this->componentFactory->getComponent('F3::PHPCR::NodeIteratorInterface', $nodes);
+		return $this->componentFactory->create('F3::PHPCR::NodeIteratorInterface', $nodes);
 	}
 
 	/**
@@ -721,7 +721,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	public function getProperties($namePattern = NULL) {
 		if ($namePattern !== NULL) throw new F3::PHPCR::RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
-		return $this->componentFactory->getComponent('F3::PHPCR::PropertyIteratorInterface', $this->properties);
+		return $this->componentFactory->create('F3::PHPCR::PropertyIteratorInterface', $this->properties);
 	}
 
 	/**
@@ -802,11 +802,11 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 		$references = array();
 		if (is_array($rawReferences)) {
 			foreach ($rawReferences as $rawReference) {
-				$reference = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
+				$reference = $this->componentFactory->create('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
 				$references[$reference->getName()] = $reference;
 			}
 		}
-		return $this->componentFactory->getComponent('F3::PHPCR::PropertyIteratorInterface', $references);
+		return $this->componentFactory->create('F3::PHPCR::PropertyIteratorInterface', $references);
 	}
 
 	/**
@@ -839,11 +839,11 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 		$references = array();
 		if (is_array($rawReferences)) {
 			foreach ($rawReferences as $rawReference) {
-				$reference = $this->componentFactory->getComponent('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
+				$reference = $this->componentFactory->create('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
 				$references[$reference->getName()] = $reference;
 			}
 		}
-		return $this->componentFactory->getComponent('F3::PHPCR::PropertyIteratorInterface', $references);
+		return $this->componentFactory->create('F3::PHPCR::PropertyIteratorInterface', $references);
 	}
 
 	/**
@@ -1593,7 +1593,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 
 		$matchRegexps = array(
 			F3::PHPCR::PropertyType::WEAKREFERENCE => self::PATTERN_MATCH_WEAKREFERENCE,
-			F3::PHPCR::PropertyType::REFERENCE     => self::PATTERN_MATCH_REFERENCE,
+			F3::PHPCR::PropertyType::REFERENCE => self::PATTERN_MATCH_REFERENCE,
 			F3::PHPCR::PropertyType::URI => self::PATTERN_MATCH_URI,
 			F3::PHPCR::PropertyType::DATE => self::PATTERN_MATCH_DATE,
 			F3::PHPCR::PropertyType::DOUBLE => self::PATTERN_MATCH_DOUBLE,
@@ -1642,7 +1642,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 					if (count($parts) > 2) {
 						return array(false, $element, $type, 'More than one : in JCR name is not allowed');
 					}
-					if (! preg_match('!^(?:[^./:\[\]*| 	]|\.[^./:\[\]*| 	]|[^./:\[\]*| 	]\.|[^./:\[\]*| 	]{2,2}|[^/:\[\]*| 	][^/:\[\]*|	]+[^/:\[\]*| 	])$!', $parts[count($parts)-1])) {
+					if (!preg_match('!^(?:[^./:\[\]*| 	]|\.[^./:\[\]*| 	]|[^./:\[\]*| 	]\.|[^./:\[\]*| 	]{2,2}|[^/:\[\]*| 	][^/:\[\]*|	]+[^/:\[\]*| 	])$!', $parts[count($parts)-1])) {
 						return array(false, $element, $type, 'Local name does not conform to JCR spec rules');
 					}
 					if (count($parts) === 2 && array_search($parts[0],  $session->getNamespacePrefixes()) === FALSE) {
@@ -1722,7 +1722,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 							if (array_key_exists($type, $converters) && array_key_exists(gettype($element), $converters[$type])) {
 								$conversionFunction = $converters[$type][gettype($element)];
 							}
-							if (! $conversionFunction) {
+							if (!$conversionFunction) {
 								return array(
 									FALSE,
 									$type,
@@ -1740,7 +1740,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 						array(TRUE, $type, array(), array($converters))
 					);
 
-					if (! $conversionSuccess) {
+					if (!$conversionSuccess) {
 						$errors = '';
 						foreach ($conversionErrors as $error) {
 							$errors .= $error . chr(10);
@@ -1755,11 +1755,11 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 					if (array_key_exists($type, $converters) && array_key_exists(gettype($value), $converters[$type])) {
 						$conversionFunction = $converters[$type][gettype($value)];
 					}
-					if (! $conversionFunction) {
+					if (!$conversionFunction) {
 						throw new F3::PHPCR::ValueFormatException('Conversion of ' . gettype($value) . ' to ' . F3::PHPCR::PropertyType::nameFromValue($type) . ' not possible or not implemented yet', 1222853255);
 					}
 					list($conversionSuccess, $convertedElement, $conversionResultType, $conversionError) = $conversionFunction($value, $type);
-					if (! $conversionSuccess) {
+					if (!$conversionSuccess) {
 						throw new F3::PHPCR::ValueFormatException('Unable to convert value of type ' . gettype($value) . ' to ' . F3::PHPCR::PropertyType::nameFromValue($type) . ': ' . $conversionError, 1222853473);
 					}
 					$value = $convertedElement;

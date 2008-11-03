@@ -88,7 +88,7 @@ class Query implements F3::PHPCR::Query::QueryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function execute() {
-		return $this->componentFactory->getComponent('F3::PHPCR::Query::QueryResultInterface', $this->storageBackend->findNodeIdentifiers($this));
+		return $this->componentFactory->create('F3::PHPCR::Query::QueryResultInterface', $this->storageBackend->findNodeIdentifiers($this));
 	}
 
 	/**

@@ -109,7 +109,7 @@ class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodes() {
-		$nodeIterator = $this->componentFactory->getComponent('F3::PHPCR::NodeIteratorInterface');
+		$nodeIterator = $this->componentFactory->create('F3::PHPCR::NodeIteratorInterface');
 		foreach ($this->identifiers as $identifier) {
 			$nodeIterator->append($this->session->getNodeByIdentifier($identifier));
 		}

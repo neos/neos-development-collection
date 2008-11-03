@@ -48,13 +48,14 @@ class RepositoryTest extends F3::Testing::BaseTestCase {
 		$settings = new F3::FLOW3::Configuration::Container();
 		$settings->storage->backend = 'mockStorageBackend';
 		$settings->storage->backendOptions = array();
-		$configurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$configurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
+		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$componentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
-		$componentFactory->expects($this->exactly(4))->method('getComponent')->will($this->onConsecutiveCalls($configurationManager, $mockStorageBackend, $mockSearchEngine, $mockTYPO3CRSession));
+		$componentFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($mockStorageBackend, $mockSearchEngine, $mockTYPO3CRSession));
 
 		$repository = new F3::TYPO3CR::Repository($componentFactory);
+		$repository->injectConfigurationManager($mockConfigurationManager);
 		$session = $repository->login();
 		$this->assertSame($mockTYPO3CRSession, $session, 'The repository login did not return the requested session object.');
 	}

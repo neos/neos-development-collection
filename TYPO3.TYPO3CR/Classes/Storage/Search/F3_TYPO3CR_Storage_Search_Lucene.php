@@ -30,6 +30,7 @@ require_once('Zend/Search/Lucene.php');
  * @subpackage Storage
  * @version $Id:F3::TYPO3CR::Storage::Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 

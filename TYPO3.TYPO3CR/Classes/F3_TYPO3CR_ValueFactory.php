@@ -129,7 +129,7 @@ class ValueFactory implements F3::PHPCR::ValueFactoryInterface {
 					// so we just leave the value as it is
 				break;
 		}
-		return $this->componentFactory->getComponent('F3::PHPCR::ValueInterface', $value, $type);
+		return $this->componentFactory->create('F3::PHPCR::ValueInterface', $value, $type);
 	}
 
 	/**
@@ -152,7 +152,7 @@ class ValueFactory implements F3::PHPCR::ValueFactoryInterface {
 			$value = $value->getIdentifier();
 		}
 
-		return $this->componentFactory->getComponent('F3::PHPCR::ValueInterface', $value, $type);
+		return $this->componentFactory->create('F3::PHPCR::ValueInterface', $value, $type);
 	}
 
 	/**

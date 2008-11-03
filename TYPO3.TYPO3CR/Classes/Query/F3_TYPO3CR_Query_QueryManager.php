@@ -33,19 +33,19 @@ namespace F3::TYPO3CR::Query;
 class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface
 	 */
-	protected $componentFactory;
+	protected $queryObjectModelFactory;
 
 	/**
-	 * Injects the Component Factory
+	 * Injects the Query Object Model Factory
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface $queryObjectModelFactory
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function injectQueryObjectModelFactory(F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface $queryObjectModelFactory) {
+		$this->queryObjectModelFactory = $queryObjectModelFactory;
 	}
 
 	/**
@@ -84,7 +84,7 @@ class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getQOMFactory() {
-		return $this->componentFactory->getComponent('F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface');
+		return $this->queryObjectModelFactory;
 	}
 
 	/*

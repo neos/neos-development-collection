@@ -41,7 +41,7 @@ class QueryManagerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setUp() {
 		$this->queryManager = new F3::TYPO3CR::Query::QueryManager();
-		$this->queryManager->injectComponentFactory($this->componentFactory);
+		$this->queryManager->injectQueryObjectModelFactory(new F3::TYPO3CR::Query::QOM::QueryObjectModelFactory());
 	}
 
 	/**

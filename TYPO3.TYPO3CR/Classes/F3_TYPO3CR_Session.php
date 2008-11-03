@@ -26,6 +26,7 @@ namespace F3::TYPO3CR;
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Session implements F3::PHPCR::SessionInterface {
 
@@ -48,6 +49,11 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @var F3::TYPO3CR::Storage::BackendInterface
 	 */
 	protected $storageBackend;
+
+	/**
+	 * @var F3::PHPCR::ValueFactoryInterface
+	 */
+	protected $valueFactory;
 
 	/**
 	 * @var boolean
@@ -116,7 +122,18 @@ class Session implements F3::PHPCR::SessionInterface {
 		$this->repository = $repository;
 		$this->storageBackend = $storageBackend;
 
-		$this->workspace = $this->componentFactory->getComponent('F3::PHPCR::WorkspaceInterface', $workspaceName, $this);
+		$this->workspace = $this->componentFactory->create('F3::PHPCR::WorkspaceInterface', $workspaceName, $this);
+	}
+
+	/**
+	 * Injects the value factory
+	 *
+	 * @param F3::PHPCR::ValueFactoryInterface $valueFactory The value factory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectValueFactory(F3::PHPCR::ValueFactoryInterface $valueFactory) {
+		$this->valueFactory = $valueFactory;
 	}
 
 	/**
@@ -200,7 +217,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 */
 	public function getRootNode() {
 		if ($this->rootNode === NULL) {
-			$this->rootNode = $this->componentFactory->getComponent(
+			$this->rootNode = $this->componentFactory->create(
 				'F3::PHPCR::NodeInterface',
 				$this->storageBackend->getRawRootNode(),
 				$this);
@@ -246,7 +263,7 @@ class Session implements F3::PHPCR::SessionInterface {
 		if ($rawNode === FALSE) {
 			throw new F3::PHPCR::ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
 		}
-		$node = $this->componentFactory->getComponent('F3::PHPCR::NodeInterface', $rawNode, $this);
+		$node = $this->componentFactory->create('F3::PHPCR::NodeInterface', $rawNode, $this);
 		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
 
 		return $node;
@@ -482,10 +499,10 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * use when setting repository properties.
 	 *
 	 * @return F3::PHPCR::ValueFactoryInterface
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueFactory() {
-		return $this->componentFactory->getComponent('F3::PHPCR::ValueFactoryInterface');
+		return $this->valueFactory;
 	}
 
 	/**

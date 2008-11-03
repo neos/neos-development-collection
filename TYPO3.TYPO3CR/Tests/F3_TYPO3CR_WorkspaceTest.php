@@ -53,7 +53,7 @@ class WorkspaceTest extends F3::Testing::BaseTestCase {
 	public function setUp() {
 		$this->mockSession = $this->getMock('F3::TYPO3CR::Session', array(), array(), '', FALSE);
 		$this->mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->getMock('F3::TYPO3CR::Storage::BackendInterface')));
-		$this->workspace = new F3::TYPO3CR::Workspace('workspaceName', $this->mockSession, $this->componentFactory);
+		$this->workspace = new F3::TYPO3CR::Workspace('workspaceName', $this->mockSession, $this->componentManager);
 	}
 
 	/**

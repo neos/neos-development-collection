@@ -44,6 +44,11 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	protected $mockStorageBackend;
 
 	/**
+	 * @var F3::TYPO3CR::MockValueFactory
+	 */
+	protected $mockValueFactory;
+
+	/**
 	 * @var F3::TYPO3CR::Session
 	 */
 	protected $session;
@@ -52,6 +57,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	 * Set up the test environment
 	 */
 	public function setUp() {
+		$this->mockValueFactory = $this->getMock('F3::PHPCR::ValueFactoryInterface');
 		$this->mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
 		$this->mockStorageBackend = new F3::TYPO3CR::MockStorageBackend();
 		$this->mockStorageBackend->rawRootNodesByWorkspace = array(
@@ -99,6 +105,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 		);
 
 		$this->session = new F3::TYPO3CR::Session('default', $this->mockRepository, $this->mockStorageBackend, $this->componentFactory);
+		$this->session->injectValueFactory($this->mockValueFactory);
 	}
 
 	/**

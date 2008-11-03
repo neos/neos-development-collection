@@ -26,13 +26,9 @@ namespace F3::TYPO3CR;
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
-
-	/**
-	 * @var F3::FLOW3::Component::Manager
-	 */
-	protected $componentFactory;
 
 	/**
 	 * @var array
@@ -54,12 +50,11 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * Constructs a NamespaceRegistry object
 	 *
 	 * @param F3::TYPO3CR::Storage::BackendInterface $storageBackend
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::TYPO3CR::Storage::BackendInterface $storageBackend, F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct(F3::TYPO3CR::Storage::BackendInterface $storageBackend) {
 		$this->storageBackend = $storageBackend;
-		$this->componentFactory = $componentFactory;
 	}
 
 	/**
