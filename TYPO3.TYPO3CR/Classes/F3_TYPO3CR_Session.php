@@ -167,16 +167,6 @@ class Session implements F3::PHPCR::SessionInterface {
 	}
 
 	/**
-	 * Returns a javax.security.auth.Subject representing the user of this Session.
-	 *
-	 * @return Subject a Subject representing the user of this Session.
-	 * @todo find replacement for javax.security.auth.Subject
-	 */
-	public function getSubject() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674029);
-	}
-
-	/**
 	 * Returns the names of the attributes set in this session as a result of the
 	 * Credentials that were used to acquire it. This method returns an
 	 * empty array if the Credentials instance did not provide attributes.

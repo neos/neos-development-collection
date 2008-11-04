@@ -31,6 +31,20 @@ namespace F3::TYPO3CR;
 abstract class AbstractItem implements F3::PHPCR::ItemInterface {
 
 	/**
+	 * Pattern to match valid local JCR names
+	 */
+	const PATTERN_NAME =
+		"!\A(?:
+			[^./:[*| \]\t\r\n] # onechar
+			|
+			\.[^./:[*| \]\t\r\n] # twochar
+			|
+			[^./:[*| \]\t\r\n]\. # twochar
+			|
+			[^/:[*| \]\t\r\n][^/:[*|\]\t\r\n]+[^/:[*| \]\t\r\n] # multichar
+		)\Z!Sux";
+
+	/**
 	 * @var F3::TYPO3CR::Session
 	 */
 	protected $session;
@@ -228,6 +242,21 @@ abstract class AbstractItem implements F3::PHPCR::ItemInterface {
 	 */
 	public function accept(F3::PHPCR::ItemVisitorInterface $visitor) {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577699);
+	}
+
+
+	// non-JSR-283 methods
+
+
+	/**
+	 * Returns true of the given name is a valid JCR name.
+	 *
+	 * @param string $name
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function isValidName($name) {
+		return preg_match(self::PATTERN_NAME, $name);
 	}
 
 }

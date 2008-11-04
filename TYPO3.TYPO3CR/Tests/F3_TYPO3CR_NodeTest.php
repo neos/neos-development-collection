@@ -781,7 +781,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 			array(F3::PHPCR::PropertyType::BOOLEAN, 'yes', new F3::TYPO3CR::Value(FALSE, F3::PHPCR::PropertyType::BOOLEAN)),
 			array(F3::PHPCR::PropertyType::BOOLEAN, '1', new F3::TYPO3CR::Value(FALSE, F3::PHPCR::PropertyType::BOOLEAN)),
 			array(F3::PHPCR::PropertyType::BOOLEAN, '', new F3::TYPO3CR::Value(FALSE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::NAME, 'flow3:page', new F3::TYPO3CR::Value('flow3:page', F3::PHPCR::PropertyType::NAME)),
+			array(F3::PHPCR::PropertyType::NAME, 'nt:page', new F3::TYPO3CR::Value('nt:page', F3::PHPCR::PropertyType::NAME)),
 			array(F3::PHPCR::PropertyType::NAME, 'text', new F3::TYPO3CR::Value('text', F3::PHPCR::PropertyType::NAME)),
 			array(F3::PHPCR::PropertyType::REFERENCE, '96bca35d-1ef5-4a47-8b0c-0ddd69507d00', new F3::TYPO3CR::Value('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', F3::PHPCR::PropertyType::REFERENCE))
 		);
@@ -900,5 +900,77 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$this->rootNode->addNode('WithIdentifier', NULL, $identifier);
 		$this->rootNode->addNode('AgainWithIdentifier', NULL, $identifier);
 	}
+
+	/**
+	 * Data provider for addNodeRejectsInvalidNames()
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function invalidLocalNames() {
+		$nonSpace = array(
+			array('/'),
+			array(':'),
+			array('['),
+			array(']'),
+			array('*'),
+			array('|'),
+			array(' '),
+			array(chr(9)), // tab
+			array(chr(10)), // line feed
+			array(chr(13)) // carriage return
+		);
+
+		$oneChar = $nonSpace;
+		$oneChar[] = array('');
+		$oneChar[] = array('.');
+
+		$twoChar = array();
+		foreach ($oneChar as $character) {
+			$twoChar[] = array($character[0] . $character[0]);
+			$twoChar[] = array('.' . $character[0]);
+			$twoChar[] = array($character[0] . '.');
+		}
+
+		$multiChar = array();
+		foreach ($nonSpace as $character) {
+			$multiChar[] = array($character[0] . $character[0] . $character[0]);
+			$multiChar[] = array($character[0] . 'middle' . $character[0]);
+		}
+
+		return array_merge($oneChar, $twoChar, $multiChar);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @dataProvider invalidLocalNames
+	 * @expectedException F3::PHPCR::RepositoryException
+	 */
+	public function addNodeRejectsInvalidNames($name) {
+		$newNode = $this->rootNode->addNode($name);
+	}
+
+	/**
+	 * Data provider for addNodeAcceptsValidNames(), tests some not too
+	 * obvious valid names.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function validLocalNames() {
+		return array(
+			array('. .'),
+			array('...'),
+			array('.a'),
+			array('a.')
+		);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @dataProvider validLocalNames
+	 */
+	public function addNodeAcceptsValidNames($name) {
+		$newNode = $this->rootNode->addNode($name);
+	}
+
 }
 ?>

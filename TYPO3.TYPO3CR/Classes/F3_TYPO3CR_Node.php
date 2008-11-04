@@ -30,8 +30,8 @@ namespace F3::TYPO3CR;
  */
 class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface {
 
-	const PATTERN_MATCH_WEAKREFERENCE = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
-	const PATTERN_MATCH_REFERENCE = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
+	const PATTERN_MATCH_WEAKREFERENCE = '/(?:[a-f0-9]){8}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){12}/';
+	const PATTERN_MATCH_REFERENCE = '/(?:[a-f0-9]){8}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){12}/';
 	const PATTERN_MATCH_URI = '!^
 		# scheme
 		([a-zA-Z][a-zA-Z0-9+.-]*):
@@ -446,6 +446,10 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 
 		list($lastNodeName, $remainingPath, $numberOfElementsRemaining) = F3::TYPO3CR::PathParser::getLastPathPart($relPath);
 
+		if (!$this->isValidName($lastNodeName)) {
+			throw new F3::PHPCR::RepositoryException('Invalid node name given: ' . $lastNodeName, 1225715640);
+		}
+
 		if ($numberOfElementsRemaining===0) {
 			$rawData = array(
 				'parent' => $this->getIdentifier(),
@@ -554,6 +558,10 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function setProperty($name, $value, $type = F3::PHPCR::PropertyType::UNDEFINED) {
+		if (!$this->isValidName($name)) {
+			throw new F3::PHPCR::RepositoryException('Property with invalid name could not be set: ' . $name, 1225729792);
+		}
+
 		if ($type === F3::PHPCR::PropertyType::DECIMAL || $type === F3::PHPCR::PropertyType::PATH) {
 			throw new F3::PHPCR::RepositoryException(F3::PHPCR::PropertyType::nameFromValue($type) . ' is not implemented yet', 1221821847);
 		}
@@ -1317,18 +1325,23 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * storage, a new nt:configuration node whose root is N. A reference to N is
 	 * recorded in the jcr:root property of the new configuration, and a reference
 	 * to the new configuration is recorded in the jcr:configuration property of N.
-	 * If the specified baseline is null, a new version history is created to store
+	 *
+	 * Changes made by a successful call to this method are persisted immediately,
+	 * a save() is not required.
+	 *
+	 * If the parameter $baseline is null, a new version history is created to store
 	 * baselines of the new configuration, and the jcr:baseVersion of the new
-	 * configuration references the root of the new version history. If the specified
-	 * baseline is not null, the jcr:baseVersion of the new configuration references
-	 * the specified baseline.
+	 * configuration references the root of the new version history.
 	 *
-	 * The changes are persisted immediately, a save is not required.
+	 * If the parameter $baseline is a Version object that represents a baseline,
+	 * the jcr:baseVersion property of the new configuration references that
+	 * Version.
 	 *
-	 * @param F3::PHPCR::Version::VersionInterface $baseline a Version
+	 * @param F3::PHPCR::Version::VersionInterface $baseline a Version object representing a baseline.
 	 * @return F3::PHPCR::NodeInterface a new nt:configuration node
 	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if N is not versionable.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws F3::PHPCR::Version::VersionException if N is already a configuration root or if the specified $baseline is already part of version history selected by another configuration.
+	 * @throws F3::PHPCR::RepositoryException if a non-null Version is passed that is not a baseline or if another error occurs.
 	 */
 	public function createConfiguration(F3::PHPCR::Version::VersionInterface $baseline) {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667725);
@@ -1642,11 +1655,11 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 					if (count($parts) > 2) {
 						return array(false, $element, $type, 'More than one : in JCR name is not allowed');
 					}
-					if (!preg_match('!^(?:[^./:\[\]*| 	]|\.[^./:\[\]*| 	]|[^./:\[\]*| 	]\.|[^./:\[\]*| 	]{2,2}|[^/:\[\]*| 	][^/:\[\]*|	]+[^/:\[\]*| 	])$!', $parts[count($parts)-1])) {
+					if (!$this->isValidName($parts[count($parts)-1])) {
 						return array(false, $element, $type, 'Local name does not conform to JCR spec rules');
 					}
 					if (count($parts) === 2 && array_search($parts[0],  $session->getNamespacePrefixes()) === FALSE) {
-						return array(false, $element, $type, 'Namespace prefix is invalid');
+						return array(false, $element, $type, 'Namespace prefix (' . $parts[0] . ') is invalid');
 					}
 					return array(true, $element, $type, 'Valid JCR name');
 				}
