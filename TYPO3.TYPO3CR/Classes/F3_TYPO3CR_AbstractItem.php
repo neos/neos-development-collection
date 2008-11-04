@@ -254,8 +254,17 @@ abstract class AbstractItem implements F3::PHPCR::ItemInterface {
 	 * @param string $name
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo add support for extended names
+	 * @todo check namespace if given!?
 	 */
 	protected function isValidName($name) {
+		$prefix = '';
+
+		if ($name{0} === '{') {
+			throw new F3::PHPCR::UnsupportedRepositoryOperationException('Extended names are not yet supported, sorry', 1225814871);
+		} elseif (strpos($name, ':') !== FALSE) {
+			list($prefix, $name) = explode(':', $name, 2);
+		}
 		return preg_match(self::PATTERN_NAME, $name);
 	}
 
