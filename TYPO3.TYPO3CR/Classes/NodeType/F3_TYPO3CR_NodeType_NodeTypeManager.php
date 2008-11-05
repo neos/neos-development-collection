@@ -193,8 +193,6 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	/**
 	 * Returns an empty NodeDefinitionTemplate which can then be used to create a
 	 * child node definition and attached to a NodeTypeTemplate.
-	 * Throws an UnsupportedRepositoryOperationException if this implementation does
-	 * not support node type registration.
 	 *
 	 * @return F3::PHPCR::NodeType::NodeDefinitionTemplateInterface A NodeDefinitionTemplate.
 	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this implementation does not support node type registration.
@@ -235,8 +233,12 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * @todo check validity of definition
 	 */
 	public function registerNodeType(F3::PHPCR::NodeType::NodeTypeDefinitionInterface $ntd, $allowUpdate) {
-		if ($allowUpdate === TRUE) {
+		if ($allowUpdate === TRUE && $this->hasNodeType($ntd->getName())) {
 			throw new F3::PHPCR::UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213014462);
+		}
+
+		if ($allowUpdate === FALSE && $this->hasNodeType($ntd->getName())) {
+			throw new F3::PHPCR::NodeType::NodeTypeExistsException('Node type ' . $ntd->getName() . ' is already registered.', 1225889033);
 		}
 		$this->storageBackend->addNodeType($ntd);
 
@@ -257,12 +259,14 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * @throws F3::PHPCR::NodeType::NodeTypeExistsException if allowUpdate is false and a NodeTypeDefinition within the Collection specifies a node type name that is already registered.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo check existence (in case of allowUpdate being false) and validity of definitions before handing over to registerNodeType (all-or-nothing effect)
+	 * @todo check validity of definitions before handing over to registerNodeType (all-or-nothing effect)
 	 */
 	public function registerNodeTypes(array $definitions, $allowUpdate) {
 		foreach ($definitions as $definition) {
 			if(!($definition instanceof F3::PHPCR::NodeType::NodeTypeDefinitionInterface)) {
 				throw new F3::PHPCR::NodeType::InvalidNodeTypeDefinitionException('Cannot register type as NodeType: ' . gettype($definition), 1213178848);
+			} elseif ($allowUpdate === FALSE && $this->hasNodeType($definition->getName())) {
+				throw new F3::PHPCR::NodeType::NodeTypeExistsException('Node type ' . $definition->getName() . ' is already registered.', 1225889855);
 			}
 		}
 
@@ -277,11 +281,18 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	/**
 	 * Unregisters the specified node type.
 	 *
+	 * In order to be unregistered it must meet the following conditions:
+	 *  the node type must be registered
+	 *  a built-in node type can not be unregistered
+	 *  the node type must not have other node types that are referencing it
+	 *  the node type must not be currently used
+	 *
 	 * @param string $name a String.
 	 * @return void
 	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException if no registered node type exists with the specified name.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo check if the nodetype is a builtin or needed by other types and/or nodes
 	 */
 	public function unregisterNodeType($name) {
 			// make sure we have this nodetype
@@ -296,14 +307,16 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	}
 
 	/**
-	 * Unregisters the specified set of node types. Used to unregister a set of node
-	 * types with mutual dependencies.
+	 * Unregisters the specified set of node types. Used to unregister a set of
+	 * node types with mutual dependencies. Otherwise the same restrictions as
+	 * with unregisterNodeType() apply.
 	 *
 	 * @param array $names a String array
 	 * @return void
 	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException if one of the names listed is not a registered node type.
 	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo make sure interdependent types can be unregistered by this
 	 */
 	public function unregisterNodeTypes(array $names) {
 		foreach ($names as $name) {
