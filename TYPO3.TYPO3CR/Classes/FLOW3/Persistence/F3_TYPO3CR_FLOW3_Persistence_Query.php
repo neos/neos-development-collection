@@ -28,6 +28,7 @@ namespace F3::TYPO3CR::FLOW3::Persistence;
  * @subpackage FLOW3
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Query implements F3::FLOW3::Persistence::QueryInterface {
 
@@ -124,7 +125,7 @@ class Query implements F3::FLOW3::Persistence::QueryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function execute() {
-		$query = $this->QOMFactory->createQuery($this->QOMFactory->selector('flow3:' . $this->className), $this->constraint, array(), array());
+		$query = $this->QOMFactory->createQuery($this->QOMFactory->selector('flow3:' . str_replace('::', '_', $this->className)), $this->constraint, array(), array());
 		foreach ($this->operands as $name => $value) {
 			$valueObject = $this->valueFactory->createValue($value);
 			$query->bindValue($name, $valueObject);
