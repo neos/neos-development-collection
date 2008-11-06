@@ -41,6 +41,8 @@ abstract class AbstractItem implements F3::PHPCR::ItemInterface {
 			|
 			[^./:[*| \]\t\r\n]\. # twochar
 			|
+			[^./:[*| \]\t\r\n]{2,2} # twochar
+			|
 			[^/:[*| \]\t\r\n][^/:[*|\]\t\r\n]+[^/:[*| \]\t\r\n] # multichar
 		)\Z!Sux";
 

@@ -959,7 +959,8 @@ class NodeTest extends F3::Testing::BaseTestCase {
 			array('. .'),
 			array('...'),
 			array('.a'),
-			array('a.')
+			array('a.'),
+			array('id')
 		);
 	}
 

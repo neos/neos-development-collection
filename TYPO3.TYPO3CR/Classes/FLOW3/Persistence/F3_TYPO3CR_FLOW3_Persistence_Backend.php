@@ -123,16 +123,25 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 		}
 
 		foreach($this->classSchemata as $schema) {
-			$className = str_replace('::', '_', $schema->getClassName());
-			if ($nodeTypeManager->hasNodeType($className)) {
-				$nodeTypeManager->unregisterNodeType($className);
+			$nodeTypeName = $this->convertClassNameToJCRName($schema->getClassName());
+			if (!$nodeTypeManager->hasNodeType($nodeTypeName)) {
+				$nodeTypeTemplate = $nodeTypeManager->createNodeTypeTemplate();
+				$nodeTypeTemplate->setName($nodeTypeName);
+				$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 			}
-			$nodeTypeTemplate = $nodeTypeManager->createNodeTypeTemplate();
-			$nodeTypeTemplate->setName($className);
-			$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		}
 	}
 
+	/**
+	 * Converts a given class name to a legal JCR node name
+	 *
+	 * @param string $className
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function convertClassNameToJCRName($className) {
+		return str_replace('::', '_', $className);
+	}
 
 	/**
 	 * Sets the new objects
@@ -218,14 +227,15 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 			$identifier = $this->identityMap->getIdentifier($object);
 		} else {
 			$className = $object->AOPProxyGetProxyTargetClassName();
-			if (!$this->baseNode->hasNode('flow3:' . $className)) {
-				$this->baseNode->addNode('flow3:' . $className);
+			$nodeName = $this->convertClassNameToJCRName($className);
+			if (!$this->baseNode->hasNode('flow3:' . $nodeName)) {
+				$this->baseNode->addNode('flow3:' . $nodeName);
 			}
 			$identifierProperty = $this->classSchemata[$className]->getIdentifierProperty();
 			if ($identifierProperty !== NULL) {
-				$node = $this->baseNode->getNode('flow3:' . $className)->addNode('flow3:' . $className . 'Instance', 'flow3:' . $className, $object->AOPProxyGetProperty($identifierProperty));
+				$node = $this->baseNode->getNode('flow3:' . $nodeName)->addNode('flow3:' . $nodeName . 'Instance', 'flow3:' . $nodeName, $object->AOPProxyGetProperty($identifierProperty));
 			} else {
-				$node = $this->baseNode->getNode('flow3:' . $className)->addNode('flow3:' . $className . 'Instance', 'flow3:' . $className);
+				$node = $this->baseNode->getNode('flow3:' . $nodeName)->addNode('flow3:' . $nodeName . 'Instance', 'flow3:' . $nodeName);
 			}
 			$identifier = $node->getIdentifier();
 			$this->identityMap->registerObject($object, $identifier);
