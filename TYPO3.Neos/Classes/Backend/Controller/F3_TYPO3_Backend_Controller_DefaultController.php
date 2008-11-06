@@ -93,7 +93,7 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 		$site->setName('typo3.org');
 		$site->setRootStructureNode($structureNode1);
 
-		$siteRepository = $this->componentFactory->create('F3::TYPO3::Domain::Model::SiteRepository');
+		$siteRepository = $this->componentManager->getComponent('F3::TYPO3::Domain::Model::SiteRepository');
 		$siteRepository->add($site);
 
 			// Create a second sample site
