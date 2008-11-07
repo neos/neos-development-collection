@@ -6,7 +6,7 @@ declare(ENCODING="utf-8");
  *                                                                        *
  *                                                                        */
 
-$c->fallback
+$c->TYPO3_Fallback
 	->setUriPattern('')
 	->setControllerComponentNamePattern('F3::@package::Frontend::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Frontend::View::@controller@action@format')
@@ -18,7 +18,7 @@ $c->fallback
 		)
 	);
 
-$c->TYPO3Frontend
+$c->TYPO3_Frontend
 	->setUriPattern('[page].[@format]')
 	->setControllerComponentNamePattern('F3::@package::Frontend::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Frontend::View::@controller@action@format')
@@ -32,7 +32,7 @@ $c->TYPO3Frontend
 		)
 	);
 
-$c->TYPO3Backend
+$c->TYPO3_Backend
 	->setUriPattern('typo3')
 	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Backend::View::@controller@action@format')
@@ -49,7 +49,7 @@ $c->TYPO3Backend
  */
 
 
-$c->TYPO3Route_ServiceWithControllerOnly
+$c->TYPO3_ServiceWithControllerOnly
 	->setUriPattern('typo3/service/v1/[@controller]')
 	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
@@ -60,7 +60,7 @@ $c->TYPO3Route_ServiceWithControllerOnly
 		)
 	);
 
-$c->TYPO3Route_ServiceWithControllerAndFormat
+$c->TYPO3_ServiceWithControllerAndFormat
 	->setUriPattern('typo3/service/v1/[@controller].[@format]')
 	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
@@ -70,7 +70,7 @@ $c->TYPO3Route_ServiceWithControllerAndFormat
 		)
 	);
 
-$c->TYPO3Route_ServiceWithControllerAndId
+$c->TYPO3_ServiceWithControllerAndId
 	->setUriPattern('typo3/service/v1/[@controller]/[id]')
 	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
@@ -81,7 +81,7 @@ $c->TYPO3Route_ServiceWithControllerAndId
 		)
 	);
 
-$c->TYPO3Route_ServiceWithControllerAndIdAndFormat
+$c->TYPO3_ServiceWithControllerAndIdAndFormat
 	->setUriPattern('typo3/service/v1/[@controller]/[id].[@format]')
 	->setControllerComponentNamePattern('F3::@package::Service::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Service::View::@controller::@action@format')
@@ -95,7 +95,7 @@ $c->TYPO3Route_ServiceWithControllerAndIdAndFormat
  * Other routes (for experimentation)
  */
 
-$c->TYPO3Route5
+$c->TYPO3_Route5
 	->setUriPattern('typo3/setup')
 	->setControllerComponentNamePattern('F3::TYPO3::Backend::Controller::DefaultController')
 	->setDefaults(
@@ -104,7 +104,7 @@ $c->TYPO3Route5
 		)
 	);
 
-$c->TYPO3Route7
+$c->TYPO3_Route7
 	->setUriPattern('typo3/login')
 	->setControllerComponentNamePattern('F3::@package::Backend::Controller::@controllerController')
 	->setViewComponentNamePattern('F3::@package::Backend::View::@controller::@action@format')
