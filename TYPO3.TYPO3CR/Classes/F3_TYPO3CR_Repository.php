@@ -30,7 +30,7 @@ namespace F3::TYPO3CR;
 class Repository implements F3::PHPCR::RepositoryInterface {
 
 	/**
-	 * @var F3::FLOW3::Configuration::Container
+	 * @var array
 	 */
 	protected $settings;
 
@@ -103,16 +103,16 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
-	
+
 	/**
 	 * Injects the configuration manager
-	 * 
+	 *
 	 * @param F3::FLOW3::Configuration::Manager $configurationManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationManager(F3::FLOW3::Configuration::Manager $configurationManager) {
-		$this->settings = $configurationManager->getSettings('TYPO3CR');		
+		$this->settings = $configurationManager->getSettings('TYPO3CR');
 	}
 
 	/**
@@ -146,9 +146,8 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 		if ($workspaceName !== 'default') {
 			throw new F3::PHPCR::NoSuchWorkspaceException('Only default workspace supported', 1181063009);
 		}
-
-		$this->storageBackend = $this->componentFactory->create($this->settings->storage->backend, $this->settings->storage->backendOptions);
-		$this->storageBackend->setSearchEngine($this->componentFactory->create($this->settings->search->backend, $this->settings->search->backendOptions));
+		$this->storageBackend = $this->componentFactory->create($this->settings['storage']['backend'], $this->settings['storage']['backendOptions']);
+		$this->storageBackend->setSearchEngine($this->componentFactory->create($this->settings['search']['backend'], $this->settings['search']['backendOptions']));
 		$this->storageBackend->setWorkspaceName($workspaceName);
 		$this->storageBackend->connect();
 
