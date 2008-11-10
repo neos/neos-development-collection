@@ -45,9 +45,9 @@ class RepositoryTest extends F3::Testing::BaseTestCase {
 		$mockTYPO3CRSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 		$mockSearchEngine = $this->getMock('F3::TYPO3CR::Storage::SearchInterface');
 
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->storage->backend = 'mockStorageBackend';
-		$settings->storage->backendOptions = array();
+		$settings = array();
+		$settings['storage']['backend'] = 'mockStorageBackend';
+		$settings['storage']['backendOptions'] = array();
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
