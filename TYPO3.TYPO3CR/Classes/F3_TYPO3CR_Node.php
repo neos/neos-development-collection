@@ -574,12 +574,12 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 			}
 		} else {
 			if (is_array($value)) {
-				if ($this->hasProperty($name) && !$this->property[$name]->isMultiple()) {
+				if ($this->hasProperty($name) && !$this->properties[$name]->isMultiple()) {
 					throw new F3::PHPCR::ValueFormatException('Tried to set array value on non-multivalued property', 1184868411);
 				}
 				list($value, $type) = $this->convertValue($value, $type, TRUE);
 			} else {
-				if ($this->hasProperty($name) && $this->property[$name]->isMultiple()) {
+				if ($this->hasProperty($name) && $this->properties[$name]->isMultiple()) {
 					throw new F3::PHPCR::ValueFormatException('Tried to set non-array value on multivalued property', 1221819668);
 				}
 				list($value, $type) = $this->convertValue($value, $type, FALSE);
