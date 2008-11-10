@@ -284,7 +284,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getQueryManager() {
-		return $this->componentManager->getComponent('F3::PHPCR::Query::QueryManagerInterface');
+		return $this->componentManager->getComponent('F3::PHPCR::Query::QueryManagerInterface', $this->session);
 	}
 
 	/*

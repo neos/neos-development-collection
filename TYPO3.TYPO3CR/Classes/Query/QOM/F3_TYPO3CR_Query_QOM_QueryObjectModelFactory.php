@@ -37,13 +37,19 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	protected $componentFactory;
 
 	/**
-	 * Injects a Component Factory
+	 * @var F3::TYPO3CR::Storage::BackendInterface
+	 */
+	protected $storageBackend;
+
+	/**
+	 * Constructs the Component Factory
 	 *
+	 * @param F3::PHPCR::SessionInterface $session
 	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
-	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct(F3::PHPCR::SessionInterface $session, F3::FLOW3::Component::FactoryInterface $componentFactory) {
+		$this->session = $session;
 		$this->componentFactory = $componentFactory;
 	}
 
@@ -61,7 +67,9 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createQuery(F3::PHPCR::Query::QOM::SourceInterface $selectorOrSource, $constraint, array $orderings, array $columns) {
-		return $this->componentFactory->create('F3::PHPCR::Query::QOM::QueryObjectModelInterface', $selectorOrSource, $constraint, $orderings, $columns);
+		$query = $this->componentFactory->create('F3::PHPCR::Query::QOM::QueryObjectModelInterface', $selectorOrSource, $constraint, $orderings, $columns);
+		$query->setSession($this->session);
+		return $query;
 	}
 
 	/**

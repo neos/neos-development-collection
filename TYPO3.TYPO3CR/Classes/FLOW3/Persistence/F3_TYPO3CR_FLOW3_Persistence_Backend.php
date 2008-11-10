@@ -72,6 +72,16 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	protected $deletedObjects;
 
 	/**
+	 * Constructs the backend
+	 *
+	 * @param F3::PHPCR::SessionInterface $session the Content Repository session used to persist data
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function __construct(F3::PHPCR::SessionInterface $session) {
+		$this->session = $session;
+	}
+
+	/**
 	 * Injects A Reflection Service instance used for processing objects
 	 *
 	 * @param F3::FLOW3::Reflection::Service $reflectionService
@@ -80,17 +90,6 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	 */
 	public function injectReflectionService(F3::FLOW3::Reflection::Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Injects the Content Repository used to persist data
-	 *
-	 * @param F3::PHPCR::RepositoryInterface $repository
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectContentRepository(F3::PHPCR::RepositoryInterface $repository) {
-		$this->session = $repository->login();
 	}
 
 	/**
@@ -130,6 +129,16 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 				$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 			}
 		}
+	}
+
+	/**
+	 * Returns the repository session
+	 *
+	 * @return F3::PHPCR::SessionInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getSession() {
+		return $this->session;
 	}
 
 	/**

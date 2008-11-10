@@ -48,6 +48,8 @@ class RepositoryTest extends F3::Testing::BaseTestCase {
 		$settings = array();
 		$settings['storage']['backend'] = 'mockStorageBackend';
 		$settings['storage']['backendOptions'] = array();
+		$settings['search']['backend'] = 'mockSearchEngine';
+		$settings['search']['backendOptions'] = array();
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 

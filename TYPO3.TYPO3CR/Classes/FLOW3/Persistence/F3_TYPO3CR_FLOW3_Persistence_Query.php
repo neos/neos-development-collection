@@ -106,16 +106,16 @@ class Query implements F3::FLOW3::Persistence::QueryInterface {
 	}
 
 	/**
-	 * Injects the Content Repository used to persist data
+	 * Injects the persistence manager, used to fetch the CR session
 	 *
-	 * @param F3::PHPCR::RepositoryInterface $repository
+	 * @param F3::FLOW3::Persistence::Manager $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectContentRepository(F3::PHPCR::RepositoryInterface $repository) {
-		$this->session = $repository->login();
-		$this->QOMFactory = $this->session->getWorkspace()->getQueryManager()->getQOMFactory();
-		$this->valueFactory = $this->session->getValueFactory();
+	public function injectPersistenceManager(F3::FLOW3::Persistence::Manager $persistenceManager) {
+		$session = $persistenceManager->getBackend()->getSession();
+		$this->QOMFactory = $session->getWorkspace()->getQueryManager()->getQOMFactory();
+		$this->valueFactory = $session->getValueFactory();
 	}
 
 	/**

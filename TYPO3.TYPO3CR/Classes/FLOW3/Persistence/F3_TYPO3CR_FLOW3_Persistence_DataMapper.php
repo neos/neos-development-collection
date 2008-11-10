@@ -42,11 +42,6 @@ class DataMapper {
 	protected $componentObjectBuilder;
 
 	/**
-	 * @var F3::PHPCR::SessionInterface
-	 */
-	protected $session;
-
-	/**
 	 * @var F3::TYPO3CR::FLOW3::Persistence::IdentityMap
 	 */
 	protected $identityMap;
@@ -76,17 +71,6 @@ class DataMapper {
 	 */
 	public function injectComponentObjectBuilder(F3::FLOW3::Component::ObjectBuilder $componentObjectBuilder) {
 		$this->componentObjectBuilder = $componentObjectBuilder;
-	}
-
-	/**
-	 * Injects a Content Repository instance used to get the current session from
-	 *
-	 * @param F3::PHPCR::RepositoryInterface $contentRepository
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectContentRepository(F3::PHPCR::RepositoryInterface $contentRepository) {
-		$this->session = $contentRepository->login();
 	}
 
 	/**
@@ -135,8 +119,9 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mapSingleNode(F3::PHPCR::NodeInterface $node) {
-		$className = array_pop(explode(':', $node->getPrimaryNodeType()->getName(), 2));
-		$componentConfiguration = $this->componentManager->getComponentConfiguration($className);
+		$nodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
+		$className = array_pop($nodeTypeName);
+		$componentConfiguration = $this->componentManager->getComponentConfiguration(str_replace('_', '::', $className));
 		$properties = array();
 		foreach ($node->getProperties() as $property) {
 			$properties[$property->getName()] = $this->getPropertyValue($property);
@@ -195,7 +180,7 @@ class DataMapper {
 				$value = $value->getString();
 				break;
 			case F3::PHPCR::PropertyType::REFERENCE:
-				$value = $this->mapSingleNode($this->session->getNodeByIdentifier($value->getString()));
+				$value = $this->mapSingleNode($this->persistenceManager->getBackend()->getSession()->getNodeByIdentifier($value->getString()));
 				break;
 			default:
 				throw new F3::TYPO3CR::FLOW3::Persistence::Exception::UnsupportedTypeException('The encountered value type (' . F3::PHPCR::PropertyType::nameFromValue($value->getType()) . ') cannot be mapped.', 1217843827);

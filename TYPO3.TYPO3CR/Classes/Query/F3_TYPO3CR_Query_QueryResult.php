@@ -38,7 +38,7 @@ class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 	protected $componentFactory;
 
 	/**
-	 * @var F3::TYPO3CR::SessionInterface
+	 * @var F3::PHPCR::SessionInterface
 	 */
 	protected $session;
 
@@ -51,10 +51,12 @@ class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 	 * Constructs this QueryResult
 	 *
 	 * @param array $identifiers
+	 * @param F3::PHPCR::SessionInterface $session
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(array $identifiers) {
+	public function __construct(array $identifiers, F3::PHPCR::SessionInterface $session) {
 		$this->identifiers = $identifiers;
+		$this->session = $session;
 	}
 
 	/**
@@ -66,17 +68,6 @@ class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 	 */
 	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
-	}
-
-	/**
-	 * Injects the session for this query
-	 *
-	 * @param F3::PHPCR::SessionInterface $session
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectSession(F3::PHPCR::SessionInterface $session) {
-		$this->session = $session;
 	}
 
 	/**

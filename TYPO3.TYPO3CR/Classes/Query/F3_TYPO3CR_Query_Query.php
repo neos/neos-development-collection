@@ -43,6 +43,11 @@ class Query implements F3::PHPCR::Query::QueryInterface {
 	protected $storageBackend;
 
 	/**
+	 * @var F3::PHPCR::SessionInterface
+	 */
+	protected $session;
+
+	/**
 	 * integer
 	 */
 	protected $limit;
@@ -75,7 +80,8 @@ class Query implements F3::PHPCR::Query::QueryInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectSession(F3::PHPCR::SessionInterface $session) {
+	public function setSession(F3::PHPCR::SessionInterface $session) {
+		$this->session = $session;
 		$this->storageBackend = $session->getStorageBackend();
 	}
 
@@ -88,7 +94,7 @@ class Query implements F3::PHPCR::Query::QueryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function execute() {
-		return $this->componentFactory->create('F3::PHPCR::Query::QueryResultInterface', $this->storageBackend->findNodeIdentifiers($this));
+		return $this->componentFactory->create('F3::PHPCR::Query::QueryResultInterface', $this->storageBackend->findNodeIdentifiers($this), $this->session);
 	}
 
 	/**
