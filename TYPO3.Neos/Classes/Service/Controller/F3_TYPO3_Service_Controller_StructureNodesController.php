@@ -125,7 +125,7 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function convertStructureNodeToArray(F3::TYPO3::Domain::Model::StructureNode $structureNode) {
-		$childNodesIds = array();
+		$childNodes = array();
 		foreach ($structureNode->getChildNodes() as $childNode) {
 			$childNodes[] = $this->convertStructureNodeToArray($childNode);
 		}
