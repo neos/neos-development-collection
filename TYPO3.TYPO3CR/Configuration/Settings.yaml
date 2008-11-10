@@ -1,0 +1,20 @@
+#                                                                        #
+# Settings Configuration for the TYPO3CR Package                         #
+#                                                                        #
+
+# $Id$
+
+TYPO3CR:
+  # The storage backend configuration
+  storage:
+    backend: 'F3::TYPO3CR::Storage::Backend::PDO'
+    backendOptions:
+      dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
+      username: 
+      password: 
+
+  # The indexing/search backend configuration
+  search:
+    backend: 'F3::TYPO3CR::Storage::Search::Lucene'
+    backendOptions:
+      indexLocation: '%FLOW3_PATH_DATA%Persistent/Index/'
