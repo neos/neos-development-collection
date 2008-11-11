@@ -72,7 +72,7 @@ class SetupController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setupAction() {
-		$helper = $this->componentFactory->create('F3::TYPO3CR::Storage::Helper', $this->arguments);
+		$helper = $this->objectFactory->create('F3::TYPO3CR::Storage::Helper', $this->arguments);
 		$helper->initialize();
 		return 'Initialization of the TYPO3CR was successful.';
 	}

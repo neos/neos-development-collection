@@ -30,19 +30,19 @@ namespace F3::TYPO3CR;
 class ValueFactory implements F3::PHPCR::ValueFactoryInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::Manager
+	 * @var F3::FLOW3::Object::Manager
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * Constructs a ValueFactory
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -129,7 +129,7 @@ class ValueFactory implements F3::PHPCR::ValueFactoryInterface {
 					// so we just leave the value as it is
 				break;
 		}
-		return $this->componentFactory->create('F3::PHPCR::ValueInterface', $value, $type);
+		return $this->objectFactory->create('F3::PHPCR::ValueInterface', $value, $type);
 	}
 
 	/**
@@ -152,7 +152,7 @@ class ValueFactory implements F3::PHPCR::ValueFactoryInterface {
 			$value = $value->getIdentifier();
 		}
 
-		return $this->componentFactory->create('F3::PHPCR::ValueInterface', $value, $type);
+		return $this->objectFactory->create('F3::PHPCR::ValueInterface', $value, $type);
 	}
 
 	/**

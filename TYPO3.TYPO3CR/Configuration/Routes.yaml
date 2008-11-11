@@ -6,8 +6,8 @@
 
 TYPO3CR_Default:
   uriPattern: 'typo3cr/[@controller]/[@action]'
-  controllerComponentNamePattern: 'F3::@package::Admin::Controller::@controllerController'
-  viewComponentNamePattern: 'F3::@package::Admin::View::@controller@action@format'
+  controllerObjectNamePattern: 'F3::@package::Admin::Controller::@controllerController'
+  viewObjectNamePattern: 'F3::@package::Admin::View::@controller@action@format'
   defaults:
     @package:    'TYPO3CR'
     @controller: 'Default'

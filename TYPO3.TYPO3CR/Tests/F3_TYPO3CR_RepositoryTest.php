@@ -53,10 +53,10 @@ class RepositoryTest extends F3::Testing::BaseTestCase {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$componentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
-		$componentFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($mockStorageBackend, $mockSearchEngine, $mockTYPO3CRSession));
+		$objectFactory = $this->getMock('F3::FLOW3::Object::Factory', array(), array(), '', FALSE);
+		$objectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($mockStorageBackend, $mockSearchEngine, $mockTYPO3CRSession));
 
-		$repository = new F3::TYPO3CR::Repository($componentFactory);
+		$repository = new F3::TYPO3CR::Repository($objectFactory);
 		$repository->injectConfigurationManager($mockConfigurationManager);
 		$session = $repository->login();
 		$this->assertSame($mockTYPO3CRSession, $session, 'The repository login did not return the requested session object.');
@@ -68,7 +68,7 @@ class RepositoryTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function credentialsOfInvalidTypeThrowException() {
-		$repository = new F3::TYPO3CR::Repository($this->componentFactory);
+		$repository = new F3::TYPO3CR::Repository($this->objectFactory);
 		$repository->login(new ::ArrayObject);
 	}
 
@@ -78,7 +78,7 @@ class RepositoryTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorKeysReturnsAnArrayOfStrings() {
-		$repository = new F3::TYPO3CR::Repository($this->componentFactory);
+		$repository = new F3::TYPO3CR::Repository($this->objectFactory);
 		$descriptorKeys = $repository->getDescriptorKeys();
 		$this->assertTrue(is_array($descriptorKeys), 'The getDescriptorKeys method did not return an array.');
 		foreach ($descriptorKeys as $k => $v) {
@@ -92,7 +92,7 @@ class RepositoryTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorReturnsCorrectVersionString() {
-		$repository = new F3::TYPO3CR::Repository($this->componentFactory);
+		$repository = new F3::TYPO3CR::Repository($this->objectFactory);
 		$descriptor = $repository->getDescriptor(F3::TYPO3CR::Repository::SPEC_VERSION_DESC);
 		$this->assertEquals('2.0', $descriptor, 'getDescriptor(SPEC_VERSION_DESC) did not return \'2.0\'.');
 	}

@@ -41,12 +41,12 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 	 */
 	public function mapReturnsCorrectObjectsFromNodes() {
 		$mockClassSchema = $this->getMock('F3::FLOW3::Persistence::ClassSchema', array(), array(), '', FALSE);
-		$mockComponentConfiguration = $this->getMock('F3::FLOW3::Component::Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration = $this->getMock('F3::FLOW3::Object::Configuration', array(), array(), '', FALSE);
 		$mockEntity = $this->getMock('stdClass', array(), array(), 'Tests::Virtual::Entity');
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->any())->method('getComponentConfiguration')->will($this->returnValue($mockComponentConfiguration));
-		$mockComponentObjectBuilder = $this->getMock('F3::FLOW3::Component::ObjectBuilder', array(), array(), '', FALSE);
-		$mockComponentObjectBuilder->expects($this->exactly(2))->method('reconstituteComponentObject')->with('Tests::Virtual::Entity', $mockComponentConfiguration, array())->will($this->returnValue($mockEntity));
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
+		$mockObjectBuilder = $this->getMock('F3::FLOW3::Object::Builder', array(), array(), '', FALSE);
+		$mockObjectBuilder->expects($this->exactly(2))->method('reconstituteObject')->with('Tests::Virtual::Entity', $mockObjectConfiguration, array())->will($this->returnValue($mockEntity));
 		$identityMap = new F3::TYPO3CR::FLOW3::Persistence::IdentityMap();
 		$persistenceSession = new F3::FLOW3::Persistence::Session();
 		$mockPersistenceManager = $this->getMock('F3::FLOW3::Persistence::Manager', array(), array(), '', FALSE);
@@ -64,8 +64,8 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 		$nodeIterator = new F3::TYPO3CR::NodeIterator(array($node1, $node2));
 
 		$dataMapper = new F3::TYPO3CR::FLOW3::Persistence::DataMapper();
-		$dataMapper->injectComponentManager($mockComponentManager);
-		$dataMapper->injectComponentObjectBuilder($mockComponentObjectBuilder);
+		$dataMapper->injectObjectManager($mockObjectManager);
+		$dataMapper->injectObjectBuilder($mockObjectBuilder);
 		$dataMapper->injectIdentityMap($identityMap);
 		$dataMapper->injectPersistenceManager($mockPersistenceManager);
 
@@ -84,12 +84,12 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 	 */
 	public function mapRegistersObjectsInIdentityMap() {
 		$mockClassSchema = $this->getMock('F3::FLOW3::Persistence::ClassSchema', array(), array(), '', FALSE);
-		$mockComponentConfiguration = $this->getMock('F3::FLOW3::Component::Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration = $this->getMock('F3::FLOW3::Object::Configuration', array(), array(), '', FALSE);
 		$mockEntity = $this->getMock('stdClass');
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->any())->method('getComponentConfiguration')->will($this->returnValue($mockComponentConfiguration));
-		$mockComponentObjectBuilder = $this->getMock('F3::FLOW3::Component::ObjectBuilder', array(), array(), '', FALSE);
-		$mockComponentObjectBuilder->expects($this->any())->method('reconstituteComponentObject')->will($this->returnValue($mockEntity));
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
+		$mockObjectBuilder = $this->getMock('F3::FLOW3::Object::Builder', array(), array(), '', FALSE);
+		$mockObjectBuilder->expects($this->any())->method('reconstituteObject')->will($this->returnValue($mockEntity));
 		$persistenceSession = new F3::FLOW3::Persistence::Session();
 		$mockPersistenceManager = $this->getMock('F3::FLOW3::Persistence::Manager', array(), array(), '', FALSE);
 		$mockPersistenceManager->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
@@ -104,8 +104,8 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 		$identityMap = $this->getMock('F3::TYPO3CR::FLOW3::Persistence::IdentityMap');
 
 		$dataMapper = new F3::TYPO3CR::FLOW3::Persistence::DataMapper();
-		$dataMapper->injectComponentManager($mockComponentManager);
-		$dataMapper->injectComponentObjectBuilder($mockComponentObjectBuilder);
+		$dataMapper->injectObjectManager($mockObjectManager);
+		$dataMapper->injectObjectBuilder($mockObjectBuilder);
 		$dataMapper->injectIdentityMap($identityMap);
 		$dataMapper->injectPersistenceManager($mockPersistenceManager);
 
@@ -124,12 +124,12 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 	 */
 	public function mapRegistersObjectsAsReconstitutedWithPersistentSession() {
 		$mockClassSchema = $this->getMock('F3::FLOW3::Persistence::ClassSchema', array(), array(), '', FALSE);
-		$mockComponentConfiguration = $this->getMock('F3::FLOW3::Component::Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration = $this->getMock('F3::FLOW3::Object::Configuration', array(), array(), '', FALSE);
 		$mockEntity = $this->getMock('stdClass');
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->any())->method('getComponentConfiguration')->will($this->returnValue($mockComponentConfiguration));
-		$mockComponentObjectBuilder = $this->getMock('F3::FLOW3::Component::ObjectBuilder', array(), array(), '', FALSE);
-		$mockComponentObjectBuilder->expects($this->any())->method('reconstituteComponentObject')->will($this->returnValue($mockEntity));
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
+		$mockObjectBuilder = $this->getMock('F3::FLOW3::Object::Builder', array(), array(), '', FALSE);
+		$mockObjectBuilder->expects($this->any())->method('reconstituteObject')->will($this->returnValue($mockEntity));
 		$identityMap = new F3::TYPO3CR::FLOW3::Persistence::IdentityMap();
 		$mockPersistenceSession = $this->getMock('F3::FLOW3::Persistence::Session');
 		$mockPersistenceManager = $this->getMock('F3::FLOW3::Persistence::Manager', array(), array(), '', FALSE);
@@ -144,8 +144,8 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 		$nodeIterator = new F3::TYPO3CR::NodeIterator(array($node));
 
 		$dataMapper = new F3::TYPO3CR::FLOW3::Persistence::DataMapper();
-		$dataMapper->injectComponentManager($mockComponentManager);
-		$dataMapper->injectComponentObjectBuilder($mockComponentObjectBuilder);
+		$dataMapper->injectObjectManager($mockObjectManager);
+		$dataMapper->injectObjectBuilder($mockObjectBuilder);
 		$dataMapper->injectIdentityMap($identityMap);
 		$dataMapper->injectPersistenceManager($mockPersistenceManager);
 

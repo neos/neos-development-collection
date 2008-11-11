@@ -36,7 +36,7 @@ class SelectorTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function selectorIsPrototype() {
-		$this->assertNotSame($this->componentFactory->create('F3::TYPO3CR::Query::QOM::Selector', ''), $this->componentFactory->create('F3::TYPO3CR::Query::QOM::Selector', ''), 'Query_QOM_Selector is not prototype.');
+		$this->assertNotSame($this->objectFactory->create('F3::TYPO3CR::Query::QOM::Selector', ''), $this->objectFactory->create('F3::TYPO3CR::Query::QOM::Selector', ''), 'Query_QOM_Selector is not prototype.');
 	}
 }
 

@@ -38,8 +38,8 @@ class NodeTypeTemplateTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function nodeTypeTemplateIsPrototype() {
-		$firstInstance = $this->componentFactory->create('F3::TYPO3CR::NodeType::NodeTypeTemplate');
-		$secondInstance = $this->componentFactory->create('F3::TYPO3CR::NodeType::NodeTypeTemplate');
+		$firstInstance = $this->objectFactory->create('F3::TYPO3CR::NodeType::NodeTypeTemplate');
+		$secondInstance = $this->objectFactory->create('F3::TYPO3CR::NodeType::NodeTypeTemplate');
 		$this->assertNotSame($firstInstance, $secondInstance, 'F3::TYPO3CR::NodeType::NodeTypeTemplate is not prototype.');
 	}
 

@@ -50,7 +50,7 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * Constructs a NamespaceRegistry object
 	 *
 	 * @param F3::TYPO3CR::Storage::BackendInterface $storageBackend
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(F3::TYPO3CR::Storage::BackendInterface $storageBackend) {
@@ -64,7 +64,7 @@ class NamespaceRegistry implements F3::PHPCR::NamespaceRegistryInterface {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
-	public function initializeComponent() {
+	public function initializeObject() {
 		$rawNamespaces = $this->storageBackend->getRawNamespaces();
 		if (!count($rawNamespaces))	return;
 		foreach ($rawNamespaces as $rawNamespace) {

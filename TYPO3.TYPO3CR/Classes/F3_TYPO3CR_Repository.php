@@ -35,9 +35,9 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	protected $settings;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::TYPO3CR::Storage::BackendInterface
@@ -96,12 +96,12 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	/**
 	 * Constructs a Repository object.
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -146,12 +146,12 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 		if ($workspaceName !== 'default') {
 			throw new F3::PHPCR::NoSuchWorkspaceException('Only default workspace supported', 1181063009);
 		}
-		$this->storageBackend = $this->componentFactory->create($this->settings['storage']['backend'], $this->settings['storage']['backendOptions']);
-		$this->storageBackend->setSearchEngine($this->componentFactory->create($this->settings['search']['backend'], $this->settings['search']['backendOptions']));
+		$this->storageBackend = $this->objectFactory->create($this->settings['storage']['backend'], $this->settings['storage']['backendOptions']);
+		$this->storageBackend->setSearchEngine($this->objectFactory->create($this->settings['search']['backend'], $this->settings['search']['backendOptions']));
 		$this->storageBackend->setWorkspaceName($workspaceName);
 		$this->storageBackend->connect();
 
-		$session = $this->componentFactory->create('F3::PHPCR::SessionInterface', $workspaceName, $this, $this->storageBackend);
+		$session = $this->objectFactory->create('F3::PHPCR::SessionInterface', $workspaceName, $this, $this->storageBackend);
 		$this->storageBackend->setNamespaceRegistry($session->getWorkspace()->getNamespaceRegistry());
 		return $session;
 	}

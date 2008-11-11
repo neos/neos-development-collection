@@ -38,7 +38,7 @@ class QueryObjectModelFactoryTest extends F3::Testing::BaseTestCase {
 
 	public function setUp() {
 		$mockSession = $this->getMock('F3::PHPCR::SessionInterface');
-		$this->QOMFactory = new F3::TYPO3CR::Query::QOM::QueryObjectModelFactory($mockSession, $this->componentFactory);
+		$this->QOMFactory = new F3::TYPO3CR::Query::QOM::QueryObjectModelFactory($mockSession, $this->objectFactory);
 	}
 
 	/**

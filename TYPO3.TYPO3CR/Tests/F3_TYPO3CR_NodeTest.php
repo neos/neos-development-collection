@@ -140,7 +140,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$this->session = new F3::TYPO3CR::Session('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory);
+		$this->session = new F3::TYPO3CR::Session('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory);
 		$this->rootNode = $this->session->getRootNode();
 	}
 
@@ -323,7 +323,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$this->assertNotEquals(1, $propertyIterator->getSize(), 'getProperties() returned an empty PropertyIterator for a node with properties.');
 
 			// we don't compare the iterators directly here, as this hits the memory limit hard. really hard.
-		$titleProperty = $this->componentFactory->create('F3::PHPCR::PropertyInterface', 'title', 'News about the TYPO3CR', F3::PHPCR::PropertyType::STRING, $node, $this->session);
+		$titleProperty = $this->objectFactory->create('F3::PHPCR::PropertyInterface', 'title', 'News about the TYPO3CR', F3::PHPCR::PropertyType::STRING, $node, $this->session);
 		$this->assertEquals($titleProperty->getString(), $properties->nextProperty()->getString(), 'getProperties() did not return the expected property.');
 	}
 
@@ -661,7 +661,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function addNodeRegistersNodeAsNewInSession() {
 		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('User');
@@ -673,7 +673,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function addNodeRegistersParentNodeAsDirtyInSession() {
 		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsDirty');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('User');
@@ -685,7 +685,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function removeNodeRegistersNodeAsRemovedInSession() {
 		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsRemoved');
 		$rootNode = $mockSession->getRootNode();
 		$node = $rootNode->addNode('User');
@@ -884,7 +884,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function addNodeWithIdentifierRegistersNodeAsNewInSession() {
 		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->componentFactory));
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('WithIdentifier', NULL, '16bca35d-1ef5-4a47-8b0c-0ddd69507d00');

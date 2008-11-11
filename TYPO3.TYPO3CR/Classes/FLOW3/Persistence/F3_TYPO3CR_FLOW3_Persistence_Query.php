@@ -38,9 +38,9 @@ class Query implements F3::FLOW3::Persistence::QueryInterface {
 	protected $className;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::TYPO3CR::FLOW3::Persistence::DataMapper
@@ -84,14 +84,14 @@ class Query implements F3::FLOW3::Persistence::QueryInterface {
 	}
 
 	/**
-	 * Injects the FLOW3 component factory
+	 * Injects the FLOW3 object factory
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**

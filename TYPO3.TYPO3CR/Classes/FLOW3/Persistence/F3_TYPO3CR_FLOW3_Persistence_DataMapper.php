@@ -32,14 +32,14 @@ namespace F3::TYPO3CR::FLOW3::Persistence;
 class DataMapper {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Component::ObjectBuilder
+	 * @var F3::FLOW3::Object::Builder
 	 */
-	protected $componentObjectBuilder;
+	protected $objectBuilder;
 
 	/**
 	 * @var F3::TYPO3CR::FLOW3::Persistence::IdentityMap
@@ -52,25 +52,25 @@ class DataMapper {
 	protected $persistenceManager;
 
 	/**
-	 * Injects a Component Manager
+	 * Injects a Object Manager
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
-	 * Injects a Component Object Builder
+	 * Injects a Object Object Builder
 	 *
-	 * @param F3::FLOW3::Component::ObjectBuilder $componentObjectBuilder
+	 * @param F3::FLOW3::Object::Builder $objectBuilder
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentObjectBuilder(F3::FLOW3::Component::ObjectBuilder $componentObjectBuilder) {
-		$this->componentObjectBuilder = $componentObjectBuilder;
+	public function injectObjectBuilder(F3::FLOW3::Object::Builder $objectBuilder) {
+		$this->objectBuilder = $objectBuilder;
 	}
 
 	/**
@@ -119,14 +119,14 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mapSingleNode(F3::PHPCR::NodeInterface $node) {
-		$nodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
-		$className = array_pop($nodeTypeName);
-		$componentConfiguration = $this->componentManager->getComponentConfiguration(str_replace('_', '::', $className));
+		$explodedNodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
+		$className = str_replace('_', '::', array_pop($explodedNodeTypeName));
+		$objectConfiguration = $this->objectManager->getObjectConfiguration($className);
 		$properties = array();
 		foreach ($node->getProperties() as $property) {
 			$properties[$property->getName()] = $this->getPropertyValue($property);
 		}
-		$object = $this->componentObjectBuilder->reconstituteComponentObject($className, $componentConfiguration, $properties);
+		$object = $this->objectBuilder->reconstituteObject($className, $objectConfiguration, $properties);
 		$this->persistenceManager->getSession()->registerReconstitutedObject($object);
 		$this->identityMap->registerObject($object, $node->getIdentifier());
 		return $object;

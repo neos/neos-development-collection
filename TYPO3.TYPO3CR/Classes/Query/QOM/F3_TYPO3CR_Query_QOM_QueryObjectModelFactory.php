@@ -32,9 +32,9 @@ namespace F3::TYPO3CR::Query::QOM;
 class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::TYPO3CR::Storage::BackendInterface
@@ -44,13 +44,12 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	/**
 	 * Constructs the Component Factory
 	 *
-	 * @param F3::PHPCR::SessionInterface $session
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::PHPCR:SessionInterface $session
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::PHPCR::SessionInterface $session, F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->session = $session;
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -67,7 +66,7 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createQuery(F3::PHPCR::Query::QOM::SourceInterface $selectorOrSource, $constraint, array $orderings, array $columns) {
-		$query = $this->componentFactory->create('F3::PHPCR::Query::QOM::QueryObjectModelInterface', $selectorOrSource, $constraint, $orderings, $columns);
+		$query =  $this->objectFactory->create('F3::PHPCR::Query::QOM::QueryObjectModelInterface', $selectorOrSource, $constraint, $orderings, $columns);
 		$query->setSession($this->session);
 		return $query;
 	}
@@ -83,7 +82,7 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function selector($nodeTypeName, $selectorName = '') {
-		return $this->componentFactory->create('F3::PHPCR::Query::QOM::SelectorInterface', $nodeTypeName, $selectorName);
+		return $this->objectFactory->create('F3::PHPCR::Query::QOM::SelectorInterface', $nodeTypeName, $selectorName);
 	}
 
 	/**
@@ -206,7 +205,7 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function comparison(F3::PHPCR::Query::QOM::DynamicOperandInterface $operand1, $operator, F3::PHPCR::Query::QOM::StaticOperandInterface $operand2) {
-		return $this->componentFactory->create('F3::PHPCR::Query::QOM::ComparisonInterface', $operand1, $operator, $operand2);
+		return $this->objectFactory->create('F3::PHPCR::Query::QOM::ComparisonInterface', $operand1, $operator, $operand2);
 	}
 
 	/**
@@ -286,7 +285,7 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function propertyValue($propertyName, $selectorName = '') {
-		return $this->componentFactory->create('F3::PHPCR::Query::QOM::PropertyValueInterface', $propertyName, $selectorName);
+		return $this->objectFactory->create('F3::PHPCR::Query::QOM::PropertyValueInterface', $propertyName, $selectorName);
 	}
 
 	/**
@@ -371,7 +370,7 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function bindVariable($bindVariableName) {
-		return $this->componentFactory->create('F3::PHPCR::Query::QOM::BindVariableValueInterface', $bindVariableName);
+		return $this->objectFactory->create('F3::PHPCR::Query::QOM::BindVariableValueInterface', $bindVariableName);
 	}
 
 	/**

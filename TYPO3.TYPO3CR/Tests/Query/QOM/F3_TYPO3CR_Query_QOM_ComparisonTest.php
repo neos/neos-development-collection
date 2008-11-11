@@ -36,8 +36,8 @@ class ComparisonTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function comparisonIsPrototype() {
-		$comparison1 = $this->componentFactory->create('F3::TYPO3CR::Query::QOM::Comparison', $this->getMock('F3::PHPCR::Query::QOM::DynamicOperandInterface'), 1, $this->getMock('F3::PHPCR::Query::QOM::StaticOperandInterface'));
-		$comparison2 = $this->componentFactory->create('F3::TYPO3CR::Query::QOM::Comparison', $this->getMock('F3::PHPCR::Query::QOM::DynamicOperandInterface'), 1, $this->getMock('F3::PHPCR::Query::QOM::StaticOperandInterface'));
+		$comparison1 = $this->objectFactory->create('F3::TYPO3CR::Query::QOM::Comparison', $this->getMock('F3::PHPCR::Query::QOM::DynamicOperandInterface'), 1, $this->getMock('F3::PHPCR::Query::QOM::StaticOperandInterface'));
+		$comparison2 = $this->objectFactory->create('F3::TYPO3CR::Query::QOM::Comparison', $this->getMock('F3::PHPCR::Query::QOM::DynamicOperandInterface'), 1, $this->getMock('F3::PHPCR::Query::QOM::StaticOperandInterface'));
 		$this->assertNotSame($comparison1, $comparison2, 'Query_QOM_Comparison is not prototype.');
 	}
 }

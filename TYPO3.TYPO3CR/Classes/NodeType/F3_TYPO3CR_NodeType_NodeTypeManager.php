@@ -39,9 +39,9 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	protected $storageBackend;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var array
@@ -58,12 +58,12 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 *
 	 * @param string $name
 	 * @param F3::TYPO3CR::Storage::BackendInterface $storageBackend
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::TYPO3CR::Storage::BackendInterface $storageBackend, F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct(F3::TYPO3CR::Storage::BackendInterface $storageBackend, F3::FLOW3::Object::FactoryInterface $objectFactory) {
 		$this->storageBackend = $storageBackend;
-		$this->componentFactory = $componentFactory;
+		$this->objectFactory = $objectFactory;
 
 		$this->loadKnownNodeTypes();
 	}
@@ -79,7 +79,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 		if (is_array($rawNodeTypes)) {
 			foreach ($rawNodeTypes as $rawNodeType) {
 				$nodeTypeName = $rawNodeType['name'];
-				$nodeType = $this->componentFactory->create('F3::PHPCR::NodeType::NodeTypeInterface', $nodeTypeName);
+				$nodeType = $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeInterface', $nodeTypeName);
 				if($nodeType->isMixin()) {
 					$this->registeredMixinTypes[$nodeTypeName] = $nodeType;
 				} else {
@@ -107,7 +107,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 			if($rawNodeType === FALSE) {
 				throw new F3::PHPCR::NodeType::NoSuchNodeTypeException('Nodetype "' . $nodeTypeName .'" is not registered', 1213012218);
 			} else {
-				$nodeType = $this->componentFactory->create('F3::PHPCR::NodeType::NodeTypeInterface', $nodeTypeName);
+				$nodeType = $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeInterface', $nodeTypeName);
 				if($nodeType->isMixin()) {
 					$this->registeredMixinTypes[$nodeTypeName] = $nodeType;
 				} else {
@@ -142,7 +142,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getAllNodeTypes() {
-		return $this->componentFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', array_merge($this->registeredPrimaryTypes, $this->registeredMixinTypes));
+		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', array_merge($this->registeredPrimaryTypes, $this->registeredMixinTypes));
 	}
 
 	/**
@@ -153,7 +153,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPrimaryNodeTypes() {
-		return $this->componentFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $this->registeredPrimaryTypes);
+		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $this->registeredPrimaryTypes);
 	}
 
 	/**
@@ -165,7 +165,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getMixinNodeTypes() {
-		return $this->componentFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $this->registeredMixinTypes);
+		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $this->registeredMixinTypes);
 	}
 
 	/**
@@ -187,7 +187,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 			throw new F3::PHPCR::UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213013720);
 		}
 
-		return $this->componentFactory->create('F3::PHPCR::NodeType::NodeTypeTemplateInterface');
+		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeTemplateInterface');
 	}
 
 	/**
@@ -200,7 +200,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createNodeDefinitionTemplate() {
-		return $this->componentFactory->create('F3::PHPCR::NodeType::NodeDefinitionTemplateInterface');
+		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeDefinitionTemplateInterface');
 	}
 
 	/**
@@ -213,7 +213,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createPropertyDefinitionTemplate() {
-		return $this->componentFactory->create('F3::PHPCR::NodeType::PropertyDefinitionTemplateInterface');
+		return $this->objectFactory->create('F3::PHPCR::NodeType::PropertyDefinitionTemplateInterface');
 	}
 
 	/**
@@ -275,7 +275,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 			$nodeTypes[] = $this->registerNodeType($definition, $allowUpdate);
 		}
 
-		return $this->componentFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $nodeTypes);
+		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $nodeTypes);
 	}
 
 	/**

@@ -54,7 +54,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getPrefixesReturnsRequiredNamepacePrefixes() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		$foundPrefixes = array_intersect_assoc(array_keys($this->expectedBuiltInNameSpaces), $namespaceRegistry->getPrefixes());
 		$this->assertSame(array_keys($this->expectedBuiltInNameSpaces), $foundPrefixes, 'The NamespaceRegistry did not return the prefixes of the required namespaces.');
@@ -67,7 +67,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getPrefixReturnsRequiredURI() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		foreach ($this->expectedBuiltInNameSpaces as $prefix => $URI) {
 			$this->assertSame($prefix, $namespaceRegistry->getPrefix($URI), 'The NamespaceRegistry did not return the prefix (' . $prefix . ' != ' . $namespaceRegistry->getPrefix($URI) . ') for the requested URI (' . $URI . ').');
@@ -81,7 +81,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getURIsReturnsRequiredNamepaceURIs() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		$foundURIs = array_intersect_assoc(array_values($this->expectedBuiltInNameSpaces), $namespaceRegistry->getURIs());
 		$this->assertSame(array_values($this->expectedBuiltInNameSpaces), $foundURIs, 'The NamespaceRegistry did not return the URIs of the required namespaces.');
@@ -94,7 +94,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getURIReturnsRequiredPrefix() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		foreach ($this->expectedBuiltInNameSpaces as $prefix => $URI) {
 			$this->assertSame($URI, $namespaceRegistry->getURI($prefix), 'The NamespaceRegistry did not return the URI (' . $URI . ' != ' . $namespaceRegistry->getURI($prefix) . ') for the requested prefix (' . $prefix . ').');
@@ -109,7 +109,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	public function registeringBuiltinPrefixFails() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->never())->method('addNamespace');
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		try {
 			$namespaceRegistry->registerNamespace('nt', 'http://some.domain.invalid/path');
@@ -127,7 +127,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	public function registeringXMLAsPrefixFails() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->never())->method('addNamespace');
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		try {
 			$namespaceRegistry->registerNamespace('XmLpf', 'http://some.domain.invalid/path');
@@ -146,7 +146,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	public function unregisteringUnknownPrefixFails() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->never())->method('deleteNamespace');
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		$namespaceRegistry->unregisterNamespace('probablyUnknownPrefix', 'http://some.domain.invalid/path');
 	}
@@ -162,8 +162,8 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->any())->method('getRawNamespaces')->will($this->returnValue(array(array('prefix' => $prefix, 'uri' => $uri))));
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
-		$namespaceRegistry->initializeComponent();
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
+		$namespaceRegistry->initializeObject();
 
 		$this->assertSame($prefix, $namespaceRegistry->getPrefix($uri), 'The NamespaceRegistry did not return the URI for a predefined namespace.');
 		$this->assertSame($uri, $namespaceRegistry->getURI($prefix), 'The NamespaceRegistry did not return the prefix for a predefined namespace.');
@@ -180,7 +180,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->once())->method('addNamespace')->with($this->equalTo($prefix), $this->equalTo($uri));
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		$namespaceRegistry->registerNamespace($prefix, $uri);
 		$this->assertSame($prefix, $namespaceRegistry->getPrefix($uri), 'The NamespaceRegistry did not return the URI for a just registered prefix.');
@@ -201,7 +201,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->once())->method('addNamespace')->with($this->equalTo($prefix1), $this->equalTo($uri));
 		$mockStorageBackend->expects($this->once())->method('updateNamespacePrefix')->with($this->equalTo($prefix2), $this->equalTo($uri));
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		$namespaceRegistry->registerNamespace($prefix1, $uri);
 		$this->assertSame($prefix1, $namespaceRegistry->getPrefix($uri), 'The NamespaceRegistry did not return the URI for a just registered prefix.');
@@ -228,7 +228,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->once())->method('addNamespace')->with($this->equalTo($prefix), $this->equalTo($uri1));
 		$mockStorageBackend->expects($this->once())->method('updateNamespaceURI')->with($this->equalTo($prefix), $this->equalTo($uri2));
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		$namespaceRegistry->registerNamespace($prefix, $uri1);
 		$this->assertSame($prefix, $namespaceRegistry->getPrefix($uri1), 'The NamespaceRegistry did not return the URI for a just registered prefix.');
@@ -254,7 +254,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->once())->method('addNamespace')->with($this->equalTo($prefix), $this->equalTo($uri));
 		$mockStorageBackend->expects($this->once())->method('deleteNamespace')->with($this->equalTo($prefix));
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		$namespaceRegistry->registerNamespace($prefix, $uri);
 		$this->assertSame($prefix, $namespaceRegistry->getPrefix($uri), 'The NamespaceRegistry did not return the URI for a just registered prefix.');
@@ -277,7 +277,7 @@ class NamespaceRegistryTest extends F3::Testing::BaseTestCase {
 	public function unregisteringBuiltinNamespacesFails() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockStorageBackend->expects($this->never())->method('deleteNamespace');
-		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->componentFactory);
+		$namespaceRegistry = new F3::TYPO3CR::NamespaceRegistry($mockStorageBackend, $this->objectFactory);
 
 		foreach ($this->expectedBuiltInNameSpaces as $prefix => $uri) {
 			try {

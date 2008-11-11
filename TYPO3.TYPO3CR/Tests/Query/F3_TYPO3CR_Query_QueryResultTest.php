@@ -38,7 +38,7 @@ class QueryResultTest extends F3::Testing::BaseTestCase {
 	public function getNodesReturnsANodeIterator() {
 		$mockSession = $this->getMock('F3::PHPCR::SessionInterface');
 		$queryResult = new F3::TYPO3CR::Query::QueryResult(array(), $mockSession);
-		$queryResult->injectComponentFactory($this->componentFactory);
+		$queryResult->injectObjectFactory($this->objectFactory);
 		$this->assertType('F3::PHPCR::NodeIteratorInterface', $queryResult->getNodes(), 'QueryResult did not return a NodeIterator in getNodes().');
 	}
 

@@ -47,7 +47,7 @@ class NodeTypeManagerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setUp() {
 		$this->mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
-		$this->nodeTypeManager = new F3::TYPO3CR::NodeType::NodeTypeManager($this->mockStorageBackend, $this->componentFactory);
+		$this->nodeTypeManager = new F3::TYPO3CR::NodeType::NodeTypeManager($this->mockStorageBackend, $this->objectFactory);
 	}
 
 	/**
@@ -173,7 +173,7 @@ class NodeTypeManagerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function nodeTypeManagerLoadsExistingNodeTypes() {
 		$this->mockStorageBackend->expects($this->atLeastOnce())->method('getRawNodeTypes')->will($this->returnValue(array(array('name' => 'nt:base'))));
-		$nodeTypeManager = new F3::TYPO3CR::NodeType::NodeTypeManager($this->mockStorageBackend, $this->componentFactory);
+		$nodeTypeManager = new F3::TYPO3CR::NodeType::NodeTypeManager($this->mockStorageBackend, $this->objectFactory);
 		$this->assertTrue($nodeTypeManager->hasNodeType('nt:base'), 'nt:base is missing');
 	}
 

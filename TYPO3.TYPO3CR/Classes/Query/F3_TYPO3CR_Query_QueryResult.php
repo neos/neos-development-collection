@@ -33,9 +33,9 @@ namespace F3::TYPO3CR::Query;
 class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 
 	/**
-	 * Injects the Component Factory
+	 * Injects the Object Factory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::PHPCR::SessionInterface
@@ -60,14 +60,14 @@ class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 	}
 
 	/**
-	 * Injects the Component Factory
+	 * Injects the Object Factory
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -100,7 +100,7 @@ class QueryResult implements F3::PHPCR::Query::QueryResultInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodes() {
-		$nodeIterator = $this->componentFactory->create('F3::PHPCR::NodeIteratorInterface');
+		$nodeIterator = $this->objectFactory->create('F3::PHPCR::NodeIteratorInterface');
 		foreach ($this->identifiers as $identifier) {
 			$nodeIterator->append($this->session->getNodeByIdentifier($identifier));
 		}

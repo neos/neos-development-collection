@@ -31,9 +31,9 @@ namespace F3::TYPO3CR;
 class Session implements F3::PHPCR::SessionInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::PHPCR::RepositoryInterface
@@ -111,18 +111,18 @@ class Session implements F3::PHPCR::SessionInterface {
 	 * @param string $workspaceName
 	 * @param F3::PHPCR::RepositoryInterface $repository
 	 * @param F3::TYPO3CR::Storage::BackendInterface $storageBackend
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @throws InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($workspaceName, F3::PHPCR::RepositoryInterface $repository, F3::TYPO3CR::Storage::BackendInterface $storageBackend, F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct($workspaceName, F3::PHPCR::RepositoryInterface $repository, F3::TYPO3CR::Storage::BackendInterface $storageBackend, F3::FLOW3::Object::FactoryInterface $objectFactory) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
 
-		$this->componentFactory = $componentFactory;
+		$this->objectFactory = $objectFactory;
 		$this->repository = $repository;
 		$this->storageBackend = $storageBackend;
 
-		$this->workspace = $this->componentFactory->create('F3::PHPCR::WorkspaceInterface', $workspaceName, $this);
+		$this->workspace = $this->objectFactory->create('F3::PHPCR::WorkspaceInterface', $workspaceName, $this);
 	}
 
 	/**
@@ -207,7 +207,7 @@ class Session implements F3::PHPCR::SessionInterface {
 	 */
 	public function getRootNode() {
 		if ($this->rootNode === NULL) {
-			$this->rootNode = $this->componentFactory->create(
+			$this->rootNode = $this->objectFactory->create(
 				'F3::PHPCR::NodeInterface',
 				$this->storageBackend->getRawRootNode(),
 				$this);
@@ -253,7 +253,7 @@ class Session implements F3::PHPCR::SessionInterface {
 		if ($rawNode === FALSE) {
 			throw new F3::PHPCR::ItemNotFoundException('Node with identifier ' . $id . ' not found in repository.', 1181070997);
 		}
-		$node = $this->componentFactory->create('F3::PHPCR::NodeInterface', $rawNode, $this);
+		$node = $this->objectFactory->create('F3::PHPCR::NodeInterface', $rawNode, $this);
 		$this->currentlyLoadedNodes[$node->getIdentifier()] = $node;
 
 		return $node;

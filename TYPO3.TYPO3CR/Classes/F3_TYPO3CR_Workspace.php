@@ -41,22 +41,22 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	protected $session;
 
 	/**
-	 * @var F3::FLOW3::Component::Manager
+	 * @var F3::FLOW3::Object::Manager
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * Constructs a Workspace object
 	 *
 	 * @param string $name
 	 * @param F3::PHPCR::SessionInterface $session
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, F3::PHPCR::SessionInterface $session, F3::FLOW3::Component::ManagerInterface $componentManager) {
+	public function __construct($name, F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::ManagerInterface $objectManager) {
 		$this->name = $name;
 		$this->session = $session;
-		$this->componentManager = $componentManager;
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -284,7 +284,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getQueryManager() {
-		return $this->componentManager->getComponent('F3::PHPCR::Query::QueryManagerInterface', $this->session);
+		return $this->objectManager->getObject('F3::PHPCR::Query::QueryManagerInterface', $this->session);
 	}
 
 	/*
@@ -308,7 +308,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNamespaceRegistry() {
-		return $this->componentManager->getComponent('F3::PHPCR::NamespaceRegistryInterface', $this->session->getStorageBackend());
+		return $this->objectManager->getObject('F3::PHPCR::NamespaceRegistryInterface', $this->session->getStorageBackend());
 	}
 
 	/**
@@ -323,7 +323,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodeTypeManager() {
-		return $this->componentManager->getComponent('F3::PHPCR::NodeType::NodeTypeManagerInterface', $this->session->getStorageBackend());
+		return $this->objectManager->getObject('F3::PHPCR::NodeType::NodeTypeManagerInterface', $this->session->getStorageBackend());
 	}
 
 	/**
