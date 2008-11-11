@@ -28,6 +28,7 @@ namespace F3::TYPO3CR::Storage;
  * @subpackage Storage
  * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 abstract class AbstractSQLBackend extends F3::TYPO3CR::Storage::AbstractBackend {
 

@@ -26,6 +26,7 @@ namespace F3::TYPO3CR;
  * @package TYPO3CR
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Repository implements F3::PHPCR::RepositoryInterface {
 

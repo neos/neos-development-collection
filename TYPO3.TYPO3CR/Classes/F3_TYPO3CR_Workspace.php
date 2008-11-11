@@ -41,9 +41,24 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	protected $session;
 
 	/**
-	 * @var F3::FLOW3::Object::Manager
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $objectManager;
+	protected $objectFactory;
+
+	/**
+	 * @var F3::PHPCR::Query::QueryManagerInterface
+	 */
+	protected $queryManager;
+
+	/**
+	 * @var F3::PHPCR::NamespaceRegistryInterface
+	 */
+	protected $namespaceRegistry;
+
+	/**
+	 * @var F3::PHPCR::NodeType::NodeTypeManagerInterface
+	 */
+	protected $nodeTypeManager;
 
 	/**
 	 * Constructs a Workspace object
@@ -53,10 +68,14 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct($name, F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
+
 		$this->name = $name;
 		$this->session = $session;
-		$this->objectManager = $objectManager;
+		$this->queryManager = $this->objectFactory->create('F3::PHPCR::Query::QueryManagerInterface', $session);
+		$this->namespaceRegistry = $this->objectFactory->create('F3::PHPCR::NamespaceRegistryInterface', $session->getStorageBackend());
+		$this->nodeTypeManager = $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeManagerInterface', $session->getStorageBackend());
 	}
 
 	/**
@@ -284,7 +303,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getQueryManager() {
-		return $this->objectManager->getObject('F3::PHPCR::Query::QueryManagerInterface', $this->session);
+		return $this->queryManager;
 	}
 
 	/*
@@ -308,7 +327,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNamespaceRegistry() {
-		return $this->objectManager->getObject('F3::PHPCR::NamespaceRegistryInterface', $this->session->getStorageBackend());
+		return $this->namespaceRegistry;
 	}
 
 	/**
@@ -323,7 +342,7 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodeTypeManager() {
-		return $this->objectManager->getObject('F3::PHPCR::NodeType::NodeTypeManagerInterface', $this->session->getStorageBackend());
+		return $this->nodeTypeManager;
 	}
 
 	/**

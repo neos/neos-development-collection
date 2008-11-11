@@ -28,6 +28,7 @@ namespace F3::TYPO3CR::Query;
  * @subpackage Query
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Row implements F3::PHPCR::Query::RowInterface {
 

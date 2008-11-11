@@ -29,6 +29,7 @@ namespace F3::TYPO3CR::Query;
  * @subpackage Query
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class RowIterator extends F3::TYPO3CR::RangeIterator implements F3::PHPCR::Query::RowIteratorInterface {
 

@@ -28,6 +28,7 @@ namespace F3::TYPO3CR::Query::QOM;
  * @subpackage Query
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface {
 

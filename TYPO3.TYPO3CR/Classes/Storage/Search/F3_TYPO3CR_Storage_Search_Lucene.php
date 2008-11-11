@@ -48,11 +48,12 @@ class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 	 * Constructs the Lucene backend
 	 *
 	 * @param array $options
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($options = array()) {
+	public function __construct($options = array(), F3::FLOW3::Object::FactoryInterface $objectFactory) {
 		parent::__construct($options);
-		::Zend_Search_Lucene_Analysis_Analyzer::setDefault(new F3::TYPO3CR::Storage::Search::LuceneKeywordAnalyser());
+		::Zend_Search_Lucene_Analysis_Analyzer::setDefault($objectFactory->create('F3::TYPO3CR::Storage::Search::LuceneKeywordAnalyser'));
 	}
 
 	/**

@@ -29,6 +29,7 @@ namespace F3::TYPO3CR::Query;
  * @subpackage Query
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
 
@@ -46,12 +47,12 @@ class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
 	 * Constructs the query manager
 	 *
 	 * @param F3::PHPCR::SessionInterface $session
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct(F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::FactoryInterface $objectFactory) {
 		$this->session = $session;
-		$this->queryObjectModelFactory = $objectManager->getObject('F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface', $this->session);
+		$this->queryObjectModelFactory = $objectFactory->create('F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface', $this->session);
 	}
 
 	/**

@@ -16,11 +16,18 @@ namespace F3::TYPO3CR::Admin::Controller;
  *                                                                        */
 
 /**
+ * @package TYPO3CR
+ * @subpackage Admin
+ * @version $Id$
+ */
+
+/**
  * Controller for the TYPO3CR setup
  *
- * @package		TYPO3CR
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TYPO3CR
+ * @subpackage Admin
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class SetupController extends F3::FLOW3::MVC::Controller::ActionController {
 

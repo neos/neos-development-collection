@@ -77,7 +77,7 @@ class PropertyTest extends F3::Testing::BaseTestCase {
 	public function getPathReturnsPathToProperty() {
 		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
 		$mockRepository = $this->getMock('F3::TYPO3CR::Repository', array(), array(), '', FALSE);
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array(), array('workspaceName', $mockRepository, $mockStorageBackend, $this->objectFactory));
+		$mockSession = $this->getMock('F3::TYPO3CR::Session', array(), array(), '', FALSE);
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($mockStorageBackend));
 
 		$rawData = array(
