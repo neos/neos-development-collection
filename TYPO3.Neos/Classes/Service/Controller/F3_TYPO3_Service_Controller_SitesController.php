@@ -91,7 +91,7 @@ class SitesController extends F3::FLOW3::MVC::Controller::RESTController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAction() {
-		$site = $this->componentFactory->create('F3::TYPO3::Domain::Model::Site');
+		$site = $this->objectFactory->create('F3::TYPO3::Domain::Model::Site');
 		$site->setName($this->arguments['name']->getValue());
 		$this->siteRepository->add($site);
 

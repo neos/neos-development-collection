@@ -35,7 +35,7 @@ Ext.ux.ProcessingTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 		var key, buf = [], bp = this.baseParams;
 		for (key in bp) {
 			if (typeof bp[key] !== "function") {
-				buf.push(encodeURIComponent(key), "=", encodeURIComponent(bp[key]), "&");
+				buf.push(encodeURIObject(key), "=", encodeURIObject(bp[key]), "&");
 			}
 		}
 		return buf.join("");

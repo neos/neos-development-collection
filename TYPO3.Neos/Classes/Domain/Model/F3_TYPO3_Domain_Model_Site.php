@@ -57,9 +57,9 @@ class Site {
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
 		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
-		$this->rootStructureNode = $componentFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+		$this->rootStructureNode = $objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
 	}
 
 	/**

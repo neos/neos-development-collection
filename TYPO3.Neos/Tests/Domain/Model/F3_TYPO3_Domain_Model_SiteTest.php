@@ -36,8 +36,8 @@ class SiteTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aNameCanBeSetAndRetrievedFromTheSite() {
-		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$site = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
+		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
+		$site = new F3::TYPO3::Domain::Model::Site($mockObjectFactory);
 		$site->setName('My cool website');
 		$this->assertEquals('My cool website', $site->getName());
 	}
@@ -47,9 +47,9 @@ class SiteTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aUniqueIDIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
-		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$site1 = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
-		$site2 = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
+		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
+		$site1 = new F3::TYPO3::Domain::Model::Site($mockObjectFactory);
+		$site2 = new F3::TYPO3::Domain::Model::Site($mockObjectFactory);
 
 		$this->assertEquals(36, strlen($site1->getId()));
 		$this->assertEquals(36, strlen($site2->getId()));
@@ -62,10 +62,10 @@ class SiteTest extends F3::Testing::BaseTestCase {
 	 */
 	public function aRootStructureNodeIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
 		$mockRootStructureNode = $this->getMock('F3::TYPO3::Domain::Model::StructureNode');
-		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$mockComponentFactory->expects($this->once())->method('create')->will($this->returnValue($mockRootStructureNode));
+		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($mockRootStructureNode));
 
-		$site = new F3::TYPO3::Domain::Model::Site($mockComponentFactory);
+		$site = new F3::TYPO3::Domain::Model::Site($mockObjectFactory);
 		$this->assertSame($mockRootStructureNode, $site->getRootStructureNode());
 	}
 }

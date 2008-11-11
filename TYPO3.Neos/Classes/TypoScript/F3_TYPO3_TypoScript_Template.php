@@ -33,9 +33,9 @@ class Template extends F3::TypoScript::AbstractContentArrayObject {
 	 */
 	protected $templateCode = '';
 
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->templateCode = $componentFactory->create('F3::TYPO3::TypoScript::ContentArray');
-		$this->templateCode[10] = $componentFactory->create('F3::TYPO3::TypoScript::Text');
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->templateCode = $objectFactory->create('F3::TYPO3::TypoScript::ContentArray');
+		$this->templateCode[10] = $objectFactory->create('F3::TYPO3::TypoScript::Text');
 		$this->templateCode[10]->setValue('test');
 	}
 	
