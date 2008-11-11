@@ -35,12 +35,12 @@ interface ParserInterface {
 	public function parse($sourceCode);
 		
 	/**
-	 * Sets the default namespace to the given component name prefix
+	 * Sets the default namespace to the given object name prefix
 	 * 
-	 * @param  string								$componentNamePrefix: The component name to prepend as the default namespace, without trailing "
+	 * @param  string								$objectNamePrefix: The object name to prepend as the default namespace, without trailing "
 	 * @return void
 	 */
-	public function setDefaultNamespace($componentNamePrefix);
+	public function setDefaultNamespace($objectNamePrefix);
 
 }
 ?>

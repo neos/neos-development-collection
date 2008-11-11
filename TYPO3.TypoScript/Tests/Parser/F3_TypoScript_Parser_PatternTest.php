@@ -19,7 +19,7 @@ namespace F3::TypoScript::Parser;
  * Testcase for the TypoScript Parser - tests the regex patterns
  * 
  * @package		TypoScript
- * @version 	$Id:F3::FLOW3::Component::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version 	$Id:F3::FLOW3::Object::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class PatternTest extends F3::Testing::BaseTestCase {
@@ -84,7 +84,7 @@ class PatternTest extends F3::Testing::BaseTestCase {
 	 * Checks the regular expression SPLIT_PATTERN_VALUENUMBER
 	 * 
 	 * @test
-	 * @author Sebastian KurfŸrst <sebastian@typo3.org>
+	 * @author Sebastian Kurfï¿½rst <sebastian@typo3.org>
 	 */
 	public function testSPLIT_PATTERN_VALUENUMBER() {
 		$pattern = F3::TypoScript::Parser::SPLIT_PATTERN_VALUENUMBER;

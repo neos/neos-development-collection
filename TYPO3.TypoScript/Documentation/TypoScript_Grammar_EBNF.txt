@@ -8,7 +8,7 @@ Comment = ( SingleLineComment | BlockComment );
 ObjectDefinition = ObjectPath ValueOperation;
 
 IncludeDeclaration = "include" ":" "source" "=" DoubleQuote Resource DoubleQuote;
-NamespaceDeclaration = "namespace" ":" NamespaceIdentifier "=" ComponentName;
+NamespaceDeclaration = "namespace" ":" NamespaceIdentifier "=" ObjectName;
 
 SingleLineComment = ( "#" | "//" ) { UnicodeCharacter };
 BlockComment = "/*" { UnicodeCharacter | LineBreak } "*/";
@@ -21,7 +21,7 @@ ValueAssignment = "=" ( Literal | ObjectType | Constant );
 ValueCopy = "<" ObjectPath;
 ValueReference = "=<" ObjectPath;                            
 ValueUnset = ">";
-ValueProcessing = "<<" ArrayOffset "." [ ComponentName "->" ] MethodName "(" { MethodArgument [ "," ] }")";
+ValueProcessing = "<<" ArrayOffset "." [ ObjectName "->" ] MethodName "(" { MethodArgument [ "," ] }")";
 
 MethodArgument = Literal | VariableName;
 
@@ -29,7 +29,7 @@ Literal = DoubleQuotedLiteral | SingleQuotedLiteral | Number;
 DoubleQuotedLiteral = DoubleQuote ( { EscapedUnicodeCharacter } | VariableName ) DoubleQuote;
 SingleQuotedLiteral = SingleQuote ( { EscapedUnicodeCharacter } | VariableName ) SingleQuote;
 
-ObjectType = ( NamespaceIdentifier "::" Identifier ) | ComponentName;
+ObjectType = ( NamespaceIdentifier "::" Identifier ) | ObjectName;
 
 Constant = (* ... to be defined *);
 
@@ -39,7 +39,7 @@ NamespaceIdentifier = Identifier;
 ObjectIdentifier = Identifier;
 MethodName = Identifier;
 Identifier = Character { CharacterOrDigit };
-ComponentName = Character { "::" CharacterOrDigit } { CharacterOrDigit };
+ObjectName = Character { "::" CharacterOrDigit } { CharacterOrDigit };
 ArrayOffset = Digit;
 
 Number = FloatNumber | IntegerNumber;

@@ -632,7 +632,7 @@ myObject.value &lt;&lt; 1.if(hasSubPages(), $yesMessage, "No, this page has no s
       processors. The only requirement is that your public processor method
       accepts the subject (ie. the value to be processed) as the first
       argument and returns a string as the result. Once you have programmed
-      your own processor, just call it by specifying the component and method
+      your own processor, just call it by specifying the object and method
       name as seen in the next example:</para>
 
       <example>
@@ -656,12 +656,12 @@ myObject.value &lt;&lt; 1.F3_MyPackage_MyProcessors-&gt;translate("spanish")</pr
       </tip>
 
       <note>
-        <para>If you don't specify a component name but only refer to the
-        processor method name, the component name
+        <para>If you don't specify an object name but only refer to the
+        processor method name, the object name
         <classname>Processors</classname> will be used, preceeded by the
         currently defined <emphasis>default namespace</emphasis> (you'll get
         an introduction to namespaces in just a few sections). Of course you
-        can use namespaces instead of specifying the whole component name
+        can use namespaces instead of specifying the whole object name
         (<code>1.myNamespace:translate("spanish")</code> instead of
         <code>1.F3_MyPackage_MyProcessors-&gt;translate("spanish")</code>).</para>
       </note>
@@ -799,7 +799,7 @@ myObject.value = "$hello&lt;br /&gt;Nice that you\'re here again.&lt;br /&gt;$go
       PHP objects which have the same properties like the TypoScript objects.
       The names of these object types, for example <classname>Text</classname>
       or <classname>HTML</classname> are mapped to class names (more
-      precisely: component names). The Typoscript Object called
+      precisely: object names). The Typoscript Object called
       <classname>Text</classname> is represented by a class with the full name
       <classname>F3::CMS::TypoScript::Text</classname>.</para>
 

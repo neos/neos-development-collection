@@ -47,19 +47,19 @@ class Parser implements F3::TypoScript::ParserInterface {
 	const SPLIT_PATTERN_VALUEVARIABLE = '/(\$[a-zA-Z][a-zA-Z0-9]*)/';
 	const SPLIT_PATTERN_VALUEVARIABLES = '/\$[a-zA-Z][a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)/';
 	const SPLIT_PATTERN_VALUEOBJECTTYPE = "/^\s*(?:(?:([a-zA-Z]+[a-zA-Z0-9*]*)::)?([a-zA-Z][a-zA-Z0-9]*)$)|(F3::(?:\w+|::)+)/";
-	const SPLIT_PATTERN_INDEXANDMETHODCALL = '/(?P<Index>\d+)\.(?P<ComponentAndMethodName>\w+)\s*\((?P<Arguments>.*?)\)\s*$/';
-	const SPLIT_PATTERN_COMPONENTANDMETHODNAME = '/(?:(<?P<ComponentName>(F3::(?:\w+|::)+))->)?(?P<MethodName>\w+)/';
+	const SPLIT_PATTERN_INDEXANDMETHODCALL = '/(?P<Index>\d+)\.(?P<ObjectAndMethodName>\w+)\s*\((?P<Arguments>.*?)\)\s*$/';
+	const SPLIT_PATTERN_COMPONENTANDMETHODNAME = '/(?:(<?P<ObjectName>(F3::(?:\w+|::)+))->)?(?P<MethodName>\w+)/';
 	const SPLIT_PATTERN_METHODARGUMENTS = '/("(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+|-?[0-9]+(\.\d+)?)/';
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var array The TypoScript object tree, created by this parser.
@@ -92,7 +92,7 @@ class Parser implements F3::TypoScript::ParserInterface {
 	protected $currentBlockCommentState = FALSE;
 
 	/**
-	 * @var array Namespace identifiers and their component name prefix
+	 * @var array Namespace identifiers and their object name prefix
 	 */
 	protected $namespaces = array(
 		'default' => ''
@@ -101,13 +101,13 @@ class Parser implements F3::TypoScript::ParserInterface {
 	/**
 	 * Constructs the parser
 	 *
-	 * @param F3::FLOW3::ComponentManagerInterface $componentManager A reference to the component manager
-	 * @param F3::FLOW3::ComponentFactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::ObjectManagerInterface $objectManager A reference to the object manager
+	 * @param F3::FLOW3::ObjectFactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentManager = $componentManager;
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectManager = $objectManager;
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -131,15 +131,15 @@ class Parser implements F3::TypoScript::ParserInterface {
 	}
 
 	/**
-	 * Sets the default namespace to the given component name prefix
+	 * Sets the default namespace to the given object name prefix
 	 *
-	 * @param string $componentNamePrefix The component name to prepend as the default namespace, without trailing "
+	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing "
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setDefaultNamespace($componentNamePrefix) {
-		if (!is_string($componentNamePrefix)) throw new LogicException('The component name prefix for the default namespace must be of type string!', 1180600696);
-		$this->namespaces['default'] = $componentNamePrefix;
+	public function setDefaultNamespace($objectNamePrefix) {
+		if (!is_string($objectNamePrefix)) throw new LogicException('The object name prefix for the default namespace must be of type string!', 1180600696);
+		$this->namespaces['default'] = $objectNamePrefix;
 	}
 
 	/**
@@ -392,8 +392,8 @@ class Parser implements F3::TypoScript::ParserInterface {
 				}
 			}
 
-			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->componentFactory->create('F3::TypoScript::ProcessorChain');
-			$processorInvocation = $this->getProcessorInvocation($matches['ComponentAndMethodName'], $processorArguments);
+			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->objectFactory->create('F3::TypoScript::ProcessorChain');
+			$processorInvocation = $this->getProcessorInvocation($matches['ObjectAndMethodName'], $processorArguments);
 			$processorChain->setProcessorInvocation((integer)$matches['Index'], $processorInvocation);
 			$typoScriptObject->setPropertyProcessorChain($propertyName, $processorChain);
 		} else {
@@ -413,29 +413,29 @@ class Parser implements F3::TypoScript::ParserInterface {
 		if ($result !== 1 || count($matches) != 3) throw new F3::TypoScript::Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
 
 		$namespaceIdentifier = $matches[1];
-		$componentNamePrefix = $matches[2];
-		$this->namespaces[$namespaceIdentifier] = $componentNamePrefix;
+		$objectNamePrefix = $matches[2];
+		$this->namespaces[$namespaceIdentifier] = $objectNamePrefix;
 	}
 
 	/**
-	 * Parses the given component-and-method-name string and then returns a new processor invocation
+	 * Parses the given object-and-method-name string and then returns a new processor invocation
 	 * object calling the specified processor with the given arguments.
 	 *
-	 * @param string $processorComponentAndMethodName Either just a method name (then the default namespace is used) or a full component/method name as in "F3::Package::Component->methodName"
+	 * @param string $processorObjectAndMethodName Either just a method name (then the default namespace is used) or a full object/method name as in "F3::Package::Object->methodName"
 	 * @param array $processorArguments An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
 	 * @return F3::TypoScript::ProcessorInvocation The prepared processor invocation object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getProcessorInvocation($processorComponentAndMethodName, array $processorArguments) {
-		preg_match(self::SPLIT_PATTERN_COMPONENTANDMETHODNAME, $processorComponentAndMethodName, $matchedComponentAndMethodName);
+	protected function getProcessorInvocation($processorObjectAndMethodName, array $processorArguments) {
+		preg_match(self::SPLIT_PATTERN_COMPONENTANDMETHODNAME, $processorObjectAndMethodName, $matchedObjectAndMethodName);
 
-		$processorComponentName = isset($matchedComponentAndMethodName['ComponentName']) ? $matchedComponentAndMethodName['ComponentName'] : $this->namespaces['default'] . '::Processors';
-		$processorMethodName = isset($matchedComponentAndMethodName['MethodName']) ? 'processor_' . $matchedComponentAndMethodName['MethodName'] : NULL;
-		if (!$this->componentManager->isComponentRegistered($processorComponentName)) throw new F3::TypoScript::Exception('Unknown processor component "' . $processorComponentName . '"', 1181903857);
-		$processor = $this->componentManager->getComponent($processorComponentName);
-		if (!method_exists($processor, $processorMethodName)) throw new F3::TypoScript::Exception('Unknown processor method "' . $processorComponentName . '->' . $processorMethodName . '"', 1181903857);
+		$processorObjectName = isset($matchedObjectAndMethodName['ObjectName']) ? $matchedObjectAndMethodName['ObjectName'] : $this->namespaces['default'] . '::Processors';
+		$processorMethodName = isset($matchedObjectAndMethodName['MethodName']) ? 'processor_' . $matchedObjectAndMethodName['MethodName'] : NULL;
+		if (!$this->objectManager->isObjectRegistered($processorObjectName)) throw new F3::TypoScript::Exception('Unknown processor object "' . $processorObjectName . '"', 1181903857);
+		$processor = $this->objectManager->getObject($processorObjectName);
+		if (!method_exists($processor, $processorMethodName)) throw new F3::TypoScript::Exception('Unknown processor method "' . $processorObjectName . '->' . $processorMethodName . '"', 1181903857);
 
-		return $this->componentFactory->create('F3::TypoScript::ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
+		return $this->objectFactory->create('F3::TypoScript::ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
 	}
 
 	/**
@@ -479,16 +479,16 @@ class Parser implements F3::TypoScript::ParserInterface {
 			$processedValue = isset($this->objectVariables[$fullVariableName]) ? $this->objectVariables[$fullVariableName] : NULL;
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
 			if (count($matches) == 4) {
-				$typoScriptObjectComponentName = $matches[3];
+				$typoScriptObjectName = $matches[3];
 			} else {
 				$namespace = ($matches[1] === '') ? 'default' : $matches[1];
 				if (!isset($this->namespaces[$namespace]) || F3::PHP6::Functions::strlen($this->namespaces[$namespace]) == 0) throw new F3::TypoScript::Exception('Referring to undefined namespace "' . $namespace . '" in object type assignment.', 1180605249);
-				$typoScriptObjectComponentName = $this->namespaces[$namespace] . '::' . $matches[2];
+				$typoScriptObjectName = $this->namespaces[$namespace] . '::' . $matches[2];
 			}
-			if (!$this->componentManager->isComponentRegistered($typoScriptObjectComponentName)) {
-				throw new F3::TypoScript::Exception('Referring to unknown TypoScript Object Type "' . $typoScriptObjectComponentName . '" in object type assignment.', 1180605250);
+			if (!$this->objectManager->isObjectRegistered($typoScriptObjectName)) {
+				throw new F3::TypoScript::Exception('Referring to unknown TypoScript Object Type "' . $typoScriptObjectName . '" in object type assignment.', 1180605250);
 			}
-			$processedValue = $this->componentFactory->create($typoScriptObjectComponentName);
+			$processedValue = $this->objectFactory->create($typoScriptObjectName);
 		} else {
 			throw new F3::TypoScript::Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
 		}
