@@ -32,14 +32,14 @@ namespace F3::TYPO3CR::Query::QOM;
 class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface {
 
 	/**
+	 * @var F3::PHPCR::SessionInterface
+	 */
+	protected $session;
+
+	/**
 	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
 	protected $objectFactory;
-
-	/**
-	 * @var F3::TYPO3CR::Storage::BackendInterface
-	 */
-	protected $storageBackend;
 
 	/**
 	 * Constructs the Component Factory
@@ -49,6 +49,7 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->session = $session;
 		$this->objectFactory = $objectFactory;
 	}
 
