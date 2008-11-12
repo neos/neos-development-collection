@@ -294,13 +294,13 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 						// delete empty array properties
 					$value = NULL;
 					$type = F3::PHPCR::PropertyType::UNDEFINED;
-				} elseif (is_object(current($value)) && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'reference')) {
+				} elseif (is_object(current($value))) {
 					$value = $this->processObjectArray($value);
 					$type = F3::PHPCR::PropertyType::REFERENCE;
 				} else {
 					$type = F3::PHPCR::PropertyType::valueFromType(gettype(current($value)));
 				}
-			} elseif (is_object($value) && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'reference')) {
+			} elseif (is_object($value)) {
 				$value = $this->processObject($value);
 				$type = F3::PHPCR::PropertyType::REFERENCE;
 			} else {

@@ -973,5 +973,14 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$newNode = $this->rootNode->addNode($name);
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @expectedException F3::PHPCR::ValueFormatException
+	 */
+	public function setPropertyToObjectThrowsValueFormatException() {
+		$this->rootNode->setProperty('someNewObjectProp', new StdClass());
+	}
+
 }
 ?>
