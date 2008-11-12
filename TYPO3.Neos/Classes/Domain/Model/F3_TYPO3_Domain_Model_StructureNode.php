@@ -45,7 +45,6 @@ class StructureNode {
 	 * Child nodes of this structure node
 	 *
 	 * @var array
-	 * @reference
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected $childNodes = array();
@@ -54,7 +53,6 @@ class StructureNode {
 	 * Content attached to this structure node
 	 *
 	 * @var F3::TYPO3::Domain::Model::ContentInterface
-	 * @reference
 	 */
 	protected $content;
 

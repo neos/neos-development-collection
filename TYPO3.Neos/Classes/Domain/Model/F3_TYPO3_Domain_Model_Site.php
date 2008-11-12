@@ -48,7 +48,6 @@ class Site {
 
 	/**
 	 * @var F3::TYPO3::Domain::Model::StructureNode
-	 * @reference
 	 */
 	protected $rootStructureNode;
 
