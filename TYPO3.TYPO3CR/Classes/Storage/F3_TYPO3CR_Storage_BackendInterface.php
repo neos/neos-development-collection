@@ -78,6 +78,14 @@ interface BackendInterface {
 	 */
 	public function hasIdentifier($identifier);
 
+	/**
+	 * Returns TRUE of the node with the given identifier is a REFERENCE target
+	 *
+	 * @param string $identifier The UUID of the node to check for
+	 * @return boolean
+	 */
+	public function isReferenceTarget($identifier);
+
 
 
 	/**

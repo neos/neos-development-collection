@@ -299,6 +299,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 *
 	 * @return string
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add support for same name siblings
 	 */
 	public function getPath() {
@@ -306,7 +307,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 			return '/';
 		} else {
 			$buffer = $this->getParent()->getPath();
-			if (F3::PHP6::Functions::strlen($buffer) > 1) {
+			if ($buffer !== '/') {
 				$buffer .= '/';
 			}
 
@@ -346,10 +347,35 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	}
 
 	/**
-	 * Delete the item
+	 * Removes this node (and its subtree).
+	 * To persist a removal, a save must be performed that includes the (former)
+	 * parent of the removed item within its scope.
+	 *
+	 * If a node with same-name siblings is removed, this decrements by one the
+	 * indices of all the siblings with indices greater than that of the removed
+	 * node. In other words, a removal compacts the array of same-name siblings
+	 * and causes the minimal re-numbering required to maintain the original
+	 * order but leave no gaps in the numbering.
+	 *
+	 * A ReferentialIntegrityException will be thrown on save if this item or
+	 * an item in its subtree is currently the target of a REFERENCE property
+	 * located in this workspace but outside this item's subtree and the
+	 * current Session has read access to that REFERENCE property.
+	 *
+	 * An AccessDeniedException will be thrown on save if this item or an item
+	 * in its subtree is currently the target of a REFERENCE property located
+	 * in this workspace but outside this item's subtree and the current Session
+	 * does not have read access to that REFERENCE property.
 	 *
 	 * @return void
+	 * @throws F3::PHPCR::Version::VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the removal of this item and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ReferentialIntegrityException on save if this item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside this item's subtree and the current Session has read access to that REFERENCE property.
+	 * @throws F3::PHPCR::AccessDeniedException on save if this item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside this item's subtree and the current Session does not have read access to that REFERENCE property.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @see Workspace::removeItem(String)
 	 */
 	public function remove() {
 		if ($this->parentNode === NULL) {
@@ -803,18 +829,10 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @param string $name name of referring REFERENCE properties to be returned; if null then all referring REFERENCEs are returned
 	 * @return F3::PHPCR::PropertyIteratorInterface A PropertyIterator.
 	 * @throws F3::PHPCR::RepositoryException  if an error occurs
-	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getReferences($name = NULL) {
-		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, F3::PHPCR::PropertyType::REFERENCE, $this->getIdentifier());
-		$references = array();
-		if (is_array($rawReferences)) {
-			foreach ($rawReferences as $rawReference) {
-				$reference = $this->objectFactory->create('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
-				$references[$reference->getName()] = $reference;
-			}
-		}
-		return $this->objectFactory->create('F3::PHPCR::PropertyIteratorInterface', $references);
+		return $this->_getReferences($name, F3::PHPCR::PropertyType::REFERENCE);
 	}
 
 	/**
@@ -839,19 +857,10 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @param string $name name of referring WEAKREFERENCE properties to be returned; if null then all referring WEAKREFERENCEs are returned
 	 * @return F3::PHPCR::PropertyIteratorInterface A PropertyIterator.
 	 * @throws F3::PHPCR::RepositoryException  if an error occurs
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getWeakReferences($name = NULL) {
-		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, F3::PHPCR::PropertyType::WEAKREFERENCE, $this->getIdentifier());
-		$references = array();
-		if (is_array($rawReferences)) {
-			foreach ($rawReferences as $rawReference) {
-				$reference = $this->objectFactory->create('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this, $this->session);
-				$references[$reference->getName()] = $reference;
-			}
-		}
-		return $this->objectFactory->create('F3::PHPCR::PropertyIteratorInterface', $references);
+		return $this->_getReferences($name, F3::PHPCR::PropertyType::WEAKREFERENCE);
 	}
 
 	/**
@@ -1670,10 +1679,9 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 					if (!preg_match($matchRegexps[$type], $element)) {
 						return array(false, $element, $type, 'Must be a valid UUID');
 					}
-					try {
-						$session->getNodeByIdentifier($element);
+					if ($session->hasIdentifier($element)) {
 						return array(true, $element, $type, 'Valid reference');
-					} catch (F3::PHPCR::ItemNotFoundException $e) {
+					} else {
 						return array(false, $element, $type, 'Must reference existing node');
 					}
 				}
@@ -1783,6 +1791,27 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 				if ($typesLeft === 0) throw $e;
 			}
 		}
+	}
+
+	/**
+	 * Fetches references, used by getReferences() and getWeakReferences()
+	 *
+	 * @param string $name
+	 * @param integer $type
+	 * @return F3::PHPCR::PropertyIteratorInterface
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function _getReferences($name, $type) {
+		$references = array();
+		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, $type, $this->getIdentifier());
+		if (is_array($rawReferences)) {
+			foreach ($rawReferences as $rawReference) {
+				$reference = $this->objectFactory->create('F3::PHPCR::PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this->session->getNodeByIdentifier($rawReference['parent']), $this->session);
+				$references[$rawReference['name']] = $reference;
+			}
+		}
+		return $this->objectFactory->create('F3::PHPCR::PropertyIteratorInterface', $references);
 	}
 
 }

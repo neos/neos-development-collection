@@ -148,25 +148,16 @@ abstract class AbstractItem implements F3::PHPCR::ItemInterface {
 	 * * A property or child node of a child node of the root returns 2.
 	 * * And so on to this Item.
 	 *
-	 * This default implementation determines the depth by counting the
-	 * slashes in the path returned by getPath().
-	 *
 	 * @return integer The depth of this Item in the workspace hierarchy.
 	 * @throws F3::PHPCR::RepositoryException if an error occurs.
-	 * @author Ronny Unger <ru@php-workx.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDepth() {
 		$path = $this->getPath();
-		if ($path == '/') {
+		if ($path === '/') {
 			return 0;
 		} else {
-			$depth = 1;
-			$slash = F3::PHP6::Functions::strpos($path, '/', 1);
-			while ($slash !== FALSE) {
-				$depth++;
-				$slash = F3::PHP6::Functions::strpos($path, '/', $slash+1);
-			}
-			return $depth;
+			return substr_count($path, '/');
 		}
 	}
 

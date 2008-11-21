@@ -82,18 +82,42 @@ class NodeTest extends F3::Testing::BaseTestCase {
 					'nodetype' => 'nt:base',
 					'name' => 'News'
 				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+				'96bca35d-1ef5-4a47-8c0c-6ddd68507d00' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
 					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
 					'nodetype' => 'nt:base',
-					'name' => 'Refparent'
+					'name' => 'ExternalRefParent'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+					'parent' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
+					'nodetype' => 'nt:base',
+					'name' => 'WrongRefSource'
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
+					'parent' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
+					'nodetype' => 'nt:base',
+					'name' => 'RefSource'
+				),
+				'96bca35d-1df5-4a47-8c0c-6dde68607d00' => array(
+					'identifier' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
 					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
 					'nodetype' => 'nt:base',
-					'name' => 'Refparent'
+					'name' => 'InternalRefParent'
 				),
+				'96b6a351-1e35-4a47-8b0c-0d0d68507d07' => array(
+					'identifier' => '96b6a351-1e35-4a47-8b0c-0d0d68507d07',
+					'parent' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
+					'nodetype' => 'nt:base',
+					'name' => 'RefTarget'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69567d15' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69567d15',
+					'parent' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
+					'nodetype' => 'nt:base',
+					'name' => 'RefSource'
+				)
 			)
 		);
 		$this->mockStorageBackend->rawPropertiesByIdentifierGroupedByWorkspace = array(
@@ -101,6 +125,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(
 						'name' => 'title',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 						'value' => 'News about the TYPO3CR',
 						'namespace' => '',
 						'multivalue' => FALSE,
@@ -110,32 +135,40 @@ class NodeTest extends F3::Testing::BaseTestCase {
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
 					array(
 						'name' => 'ref',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
 						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => F3::PHPCR::PropertyType::REFERENCE
-					),
-					array(
-						'name' => 'wrongref',
-						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
 						'namespace' => '',
 						'multivalue' => FALSE,
 						'type' => F3::PHPCR::PropertyType::REFERENCE
 					),
 					array(
 						'name' => 'weakref',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
 						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 						'namespace' => '',
 						'multivalue' => FALSE,
 						'type' => F3::PHPCR::PropertyType::WEAKREFERENCE
-					),
+					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
 					array(
 						'name' => 'wrongweakref',
-						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+						'value' => '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00',
 						'namespace' => '',
 						'multivalue' => FALSE,
 						'type' => F3::PHPCR::PropertyType::REFERENCE
-					),
+					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69567d15' => array(
+					array(
+						'name' => 'ref',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69567d15',
+						'value' => '96b6a351-1e35-4a47-8b0c-0d0d68507d07',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3::PHPCR::PropertyType::REFERENCE
+					)
 				)
 			)
 		);
@@ -203,35 +236,43 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * Checks if getReferences returns exactly the one reference referencing the given node when called without a $name parameter
+	 * Checks if getReferences returns exactly the one reference referencing the
+	 * given node when called without a $name parameter
 	 *
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getReferencesReturnsReferenceWithoutNameParameter() {
 		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$expectedRefSource = '96bca35d-1ef5-4a47-8b0c-0ddd69507d15';
 		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
 		$references = $node->getReferences();
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
 		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::REFERENCE);
+		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
 	}
 
 	/**
-	 * Checks if getReferences returns exactly the one reference referencing the given node when called with the correct $name parameter
+	 * Checks if getReferences returns exactly the one reference referencing the
+	 * given node when called with the correct $name parameter
 	 *
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getReferencesReturnsReferenceWithNameParameter() {
 		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$expectedRefSource = '96bca35d-1ef5-4a47-8b0c-0ddd69507d15';
 		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
 		$references = $node->getReferences('ref');
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
 		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::REFERENCE);
+		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
 	}
 
 	/**
@@ -260,35 +301,43 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * Checks if getWeakReferences returns exactly the one reference referencing the given node when called without a $name parameter
+	 * Checks if getWeakReferences returns exactly the one reference referencing
+	 * the given node when called without a $name parameter
 	 *
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getWeakReferencesReturnsReferenceWithoutNameParameter() {
 		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$expectedRefSource = '96bca35d-1ef5-4a47-8b0c-0ddd69507d15';
 		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
 		$references = $node->getWeakReferences();
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
 		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::WEAKREFERENCE);
+		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
 	}
 
 	/**
-	 * Checks if getWeakReferences returns exactly the one reference referencing the given node when called with the correct $name parameter
+	 * Checks if getWeakReferences returns exactly the one reference referencing
+	 * the given node when called with the correct $name parameter
 	 *
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getWeakReferencesReturnsReferenceWithNameParameter() {
 		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
+		$expectedRefSource = '96bca35d-1ef5-4a47-8b0c-0ddd69507d15';
 		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
 		$references = $node->getWeakReferences('weakref');
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
 		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::WEAKREFERENCE);
+		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
 	}
 
 	/**
@@ -980,6 +1029,15 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setPropertyToObjectThrowsValueFormatException() {
 		$this->rootNode->setProperty('someNewObjectProp', new StdClass());
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @expectedException F3::PHPCR::ValueFormatException
+	 */
+	public function setPropertyToReferenceWithInvalidTargetThrowsException() {
+		$this->rootNode->setProperty('invalidReference', '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00', F3::PHPCR::PropertyType::REFERENCE);
 	}
 
 }

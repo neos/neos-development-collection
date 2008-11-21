@@ -217,6 +217,7 @@ class TestBase extends F3::Testing::BaseTestCase {
 
 		$expectedRawProperties = array(array(
 			'name' => $propertyName,
+			'parent' => $node->getIdentifier(),
 			'value' => $propertyValue,
 			'multivalue' => FALSE,
 			'type' => $propertyType
@@ -246,6 +247,7 @@ class TestBase extends F3::Testing::BaseTestCase {
 
 		$expectedRawProperties = array(array(
 			'name' => $propertyName,
+			'parent' => $node->getIdentifier(),
 			'value' => $newPropertyValue,
 			'multivalue' => FALSE,
 			'type' => $propertyType
@@ -320,6 +322,7 @@ class TestBase extends F3::Testing::BaseTestCase {
 
 		$expectedRawProperties = array(array(
 			'name' => $propertyName,
+			'parent' => $node->getIdentifier(),
 			'value' => $propertyValues,
 			'multivalue' => TRUE,
 			'type' => $propertyType
@@ -357,6 +360,7 @@ class TestBase extends F3::Testing::BaseTestCase {
 
 		$expectedRawProperties = array(array(
 			'name' => $propertyName,
+			'parent' => $node->getIdentifier(),
 			'value' => $newPropertyValues,
 			'multivalue' => TRUE,
 			'type' => $propertyType
@@ -455,6 +459,7 @@ class TestBase extends F3::Testing::BaseTestCase {
 			array(
 				'type' => F3::PHPCR::PropertyType::REFERENCE,
 				'name' => 'ref',
+				'parent' => $rootNode->getIdentifier(),
 				'multivalue' => FALSE,
 				'value' => $refTargetUUID
 			));

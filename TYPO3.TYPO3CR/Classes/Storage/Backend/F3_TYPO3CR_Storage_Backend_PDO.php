@@ -86,7 +86,20 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 		return ($statementHandle->fetchColumn() > 0);
 	}
 
+	/**
+	 * Returns TRUE of the node with the given identifier is a REFERENCE target
+	 *
+	 * @param string $identifier The UUID of the node to check for
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isReferenceTarget($identifier) {
+		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT(parent) FROM (SELECT DISTINCT "parent" FROM "referencemultivalueproperties" WHERE "value" = ? UNION SELECT DISTINCT "parent" FROM "referenceproperties" WHERE "value" = ?)');
+		$statementHandle->execute(array($identifier, $identifier));
+		$row = $statementHandle->fetch(::PDO::FETCH_NUM);
 
+		return $row[0] > 0;
+	}
 
 	/**
 	 * Fetches raw node data of the root node of the current workspace.
@@ -192,7 +205,6 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 			$result[$level['level']] = $this->prefixName(array('namespaceURI' => $level['valuenamespace'], 'name' => $level['value']));
 		}
 		$property['value'] = implode('/', $result);
-		unset($property['parent']);
 	}
 
 	/**
@@ -223,7 +235,6 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 			}
 			$property['value'][$index] = implode('/', $result);
 		}
-		unset($property['parent']);
 	}
 
 	/**
@@ -232,6 +243,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 * @param array &$property The property as read from the "properties" table of the database with $property['type'] != F3::PHPCR::PropertyType::PATH and $property['multivalue'] == FALSE
 	 * @return void
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getRawSingleValuedProperty(&$property) {
 		$typeName = F3::PHP6::Functions::strtolower(F3::PHPCR::PropertyType::nameFromValue($property['type']));
@@ -246,7 +258,6 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 				$property['value'] = $this->convertFromString($property['type'], $value['value']);
 			}
 		}
-		unset($property['parent']);
 	}
 
 	/**
@@ -255,6 +266,7 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 * @param array &$property The property as read from the "properties" table of the database with $property['type'] != F3::PHPCR::PropertyType::PATH and $property['multivalue'] == TRUE
 	 * @return void
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getRawMultiValuedProperty(&$property) {
 		$typeName = F3::PHP6::Functions::strtolower(F3::PHPCR::PropertyType::nameFromValue($property['type']));
@@ -275,7 +287,6 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 			}
 			$property['value'] = $resultArray;
 		}
-		unset($property['parent']);
 	}
 
 	/**

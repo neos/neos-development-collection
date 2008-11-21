@@ -125,14 +125,14 @@ class PathParser {
 	 * @param F3::PHPCR::NodeInterface $currentNode current node
 	 * @return F3::PHPCR::NodeInterface the root node
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected static function getRootNode(F3::PHPCR::NodeInterface $currentNode) {
-		try {
+		if ($currentNode->getDepth() > 0) {
 			return $currentNode->getParent();
-		} catch (F3::PHPCR::ItemNotFoundException $e) {
+		} else {
 			return $currentNode;
 		}
-		throw new F3::PHPCR::RepositoryException('Root node could not be found!', 1213715217);
 	}
 
 	/**

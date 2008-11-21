@@ -491,10 +491,11 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	 *
 	 * @return string Path to the property
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPath() {
 		$buffer = $this->getParent()->getPath();
-		if (F3::PHP6::Functions::strlen($buffer) > 1) {
+		if ($buffer !== '/') {
 			$buffer .= '/';
 		}
 		$buffer .= $this->getName();
@@ -512,10 +513,17 @@ class Property extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::PropertyI
 	}
 
 	/**
-	 * Remove property
+	 * Removes this property.
+	 * To persist a removal, a save must be performed that includes the (former)
+	 * parent of the removed item within its scope.
 	 *
 	 * @return void
+	 * @throws F3::PHPCR::Version::VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the removal of this item and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws F3::PHPCR::RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @see Workspace::removeItem(String)
 	 */
 	public function remove() {
 			// removes the property, thus delegated to parent

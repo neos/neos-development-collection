@@ -41,30 +41,27 @@
 			}],
 			contextMenu: new Ext.menu.Menu({
 				items: [{
-					id: 'expand-subtree',
-					text: 'Expand'
-				},{
-					id: 'collapse-subtree',
-					text: 'Collapse'
+					id: 'delete-node',
+					text: 'Delete'
 				}],
 				listeners: {
 					itemclick: function(item) {
 						var node = item.parentMenu.contextNode;
 						switch (item.id) {
-							case 'expand-subtree':
-								node.expandChildNodes(true);
-								node.expand();
-								break;
-							case 'collapse-subtree':
-								node.collapseChildNodes(true);
-								node.collapse();
+							case 'delete-node':
+								deleteNode(node);
 								break;
 						}
 					}
 				}
 			}),
 			containerScroll: true,
-			dataUrl: 'typo3cr/json/getNodes',
+			rootVisible: false,
+			loader: new Ext.tree.TreeLoader({
+				dataUrl: 'typo3cr/service/v1/nodes.json',
+				preloadChildren: true,
+				requestMethod: 'GET'
+			}),
 			listeners: {
 				click : {
 					fn: showNodeDetails,
@@ -84,23 +81,49 @@
 			}
 		});
 
+		function deleteNode(node) {
+			statusbar.setStatus({
+				text: 'Deleting...',
+			});
+			statusbar.showBusy();
+			// Basic request
+			Ext.Ajax.request({
+				url: 'typo3cr/service/v1/nodes/' + node.id + '.json',
+				method: 'DELETE',
+				success: function() {
+					node.remove();
+					statusbar.clearStatus();
+				},
+				failure: function() {
+					Ext.Msg.alert('Error', 'Node could not be deleted.');
+					statusbar.clearStatus();
+				},
+				params: { id: node.id }
+			});
+		}
+
 		function showNodeDetails(node) {
 			statusbar.setStatus({
 				text: 'Loading...',
 			});
 			statusbar.showBusy();
-			propertygrid.store.baseParams.node = node.id;
+			propertygrid.store.proxy.conn.url = 'typo3cr/service/v1/nodes/' + node.id + '.json';
 			propertygrid.setTitle('Properties for "' + node.getPath('text') + '"');
 			propertygrid.getStore().reload();
 			propertygrid.getStore().addListener('load', function() {statusbar.clearStatus()});
 		}
 
 		var propertygrid = new Ext.grid.GridPanel({
-			store: new Ext.data.JsonStore({
-				url: 'typo3cr/json/getProperties',
-				root: 'properties',
-				baseParams: {node:'ROOT'},
-				fields: ['name', 'type', 'value']
+			store: new Ext.data.Store({
+				proxy: new Ext.data.HttpProxy({
+						// need to find a way to not load this at the beginning
+					url: 'typo3cr/service/v1/nodes/dummy.json',
+					method: 'GET'
+				}),
+				reader: new Ext.data.JsonReader({
+					fields: ['name', 'type', 'value'],
+					root: 'properties'
+				})
 			}),
 			columns: [
 				{header: "Name", width: 50, sortable: true, dataIndex: 'name'},
@@ -110,6 +133,7 @@
 			viewConfig: {
 				forceFit: true
 			},
+			loadMask:true,
 			title:'Properties'
 		});
 
@@ -165,6 +189,7 @@
 				]
 			});
 
+//			Ext.Ajax.on('beforerequest', this.showSpinner, this);
 			nodetree.getRootNode().expand();
 			propertygrid.getStore().load();
 		});

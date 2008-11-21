@@ -380,9 +380,31 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 *
 	 * @param string $identifier
 	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasIdentifier($identifier) {
+		if (isset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			if (isset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier])) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
+	/**
+	 * Returns TRUE of the node with the given identifier is a REFERENCE target
+	 *
+	 * @param string $identifier The UUID of the node to check for
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isReferenceTarget($identifier) {
+		$rawReferences = $this->getRawPropertiesOfTypedValue($name, F3::PHPCR::PropertyType::REFERENCE, $identifier);
+		if (count($rawReferences) > 0) {
+			return TRUE;
+		} else {
+			return FALSE;
+		}
+	}
 }
 ?>

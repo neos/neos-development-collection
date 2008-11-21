@@ -88,6 +88,42 @@ class SessionTest extends F3::Testing::BaseTestCase {
 					'nodetype' => 'nt:base',
 					'name' => 'News'
 				),
+				'96bca35d-1ef5-4a47-8c0c-6ddd68507d00' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 'nt:base',
+					'name' => 'ExternalRefParent'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+					'parent' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
+					'nodetype' => 'nt:base',
+					'name' => 'WrongRefSource'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
+					'parent' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
+					'nodetype' => 'nt:base',
+					'name' => 'RefSource'
+				),
+				'96bca35d-1df5-4a47-8c0c-6dde68607d00' => array(
+					'identifier' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 'nt:base',
+					'name' => 'InternalRefParent'
+				),
+				'96b6a351-1e35-4a47-8b0c-0d0d68507d07' => array(
+					'identifier' => '96b6a351-1e35-4a47-8b0c-0d0d68507d07',
+					'parent' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
+					'nodetype' => 'nt:base',
+					'name' => 'RefTarget'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69567d15' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69567d15',
+					'parent' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
+					'nodetype' => 'nt:base',
+					'name' => 'RefSource'
+				)
 			)
 		);
 		$this->mockStorageBackend->rawPropertiesByIdentifierGroupedByWorkspace = array(
@@ -95,10 +131,49 @@ class SessionTest extends F3::Testing::BaseTestCase {
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					array(
 						'name' => 'title',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 						'value' => 'News about the TYPO3CR',
 						'namespace' => '',
 						'multivalue' => FALSE,
 						'type' => F3::PHPCR::PropertyType::STRING
+					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
+					array(
+						'name' => 'ref',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
+						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3::PHPCR::PropertyType::REFERENCE
+					),
+					array(
+						'name' => 'weakref',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
+						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3::PHPCR::PropertyType::WEAKREFERENCE
+					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
+					array(
+						'name' => 'wrongweakref',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
+						'value' => '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3::PHPCR::PropertyType::REFERENCE
+					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69567d15' => array(
+					array(
+						'name' => 'ref',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69567d15',
+						'value' => '96b6a351-1e35-4a47-8b0c-0d0d68507d07',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => F3::PHPCR::PropertyType::REFERENCE
 					)
 				)
 			)
@@ -152,13 +227,11 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	 * Checks if getNodeByIdentifier fails properly on a non-existing node.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3::PHPCR::ItemNotFoundException
 	 */
 	public function getNodeByNotExistingIdentifierFails() {
-		try {
-			$identifier = 'hurzhurz-hurz-hurz-hurz-hurzhurzhurz';
-			$this->session->getNodeByIdentifier($identifier);
-			$this->fail('getNodeByIdentifier with a non-exsting Identifier must throw a F3::PHPCR::ItemNotFoundException');
-		} catch (F3::PHPCR::ItemNotFoundException $e) {}
+		$identifier = 'hurzhurz-hurz-hurz-hurz-hurzhurzhurz';
+		$this->session->getNodeByIdentifier($identifier);
 	}
 
 	/**
@@ -258,13 +331,10 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3::PHPCR::NamespaceException
 	 */
 	public function setNamespacePrefixRejectsXML() {
-		try {
-			$this->session->setNamespacePrefix('xMLtest', 'http://should.throw/exception');
-			$this->fail('Prefix starts with XML, but does not throw an exception!');
-		} catch (F3::PHPCR::NamespaceException $e) {
-		}
+		$this->session->setNamespacePrefix('xMLtest', 'http://should.throw/exception');
 	}
 
 	/**
@@ -272,13 +342,10 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3::PHPCR::NamespaceException
 	 */
 	public function setNamespacePrefixRejectsEmptyPrefix() {
-		try {
-			$this->session->setNamespacePrefix('', 'http://should.throw/exception');
-			$this->fail('Prefix is empty, but no exception is thrown!');
-		} catch (F3::PHPCR::NamespaceException $e) {
-		}
+		$this->session->setNamespacePrefix('', 'http://should.throw/exception');
 	}
 
 	/**
@@ -286,26 +353,20 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3::PHPCR::NamespaceException
 	 */
 	public function setNamespacePrefixRejectsEmptyURI() {
-		try {
-			$this->session->setNamespacePrefix('testprefix', '');
-			$this->fail('URI is empty, but no exception is thrown!');
-		} catch (F3::PHPCR::NamespaceException $e) {
-		}
+		$this->session->setNamespacePrefix('testprefix', '');
 	}
 
 	/**
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3::PHPCR::NamespaceException
 	 */
 	public function getNamespaceUriThrowsExceptionIfPrefixIsUnknown() {
-		try {
-			$this->session->getNamespaceUri('someNonExistingPrefix');
-			$this->fail('Unknown URI does not trigger exception.');
-		} catch (F3::PHPCR::NamespaceException $e) {
-		}
+		$this->session->getNamespaceUri('someNonExistingPrefix');
 	}
 
 	/**
@@ -417,7 +478,7 @@ class SessionTest extends F3::Testing::BaseTestCase {
 		$mockSession->save();
 	}
 
-		/**
+	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
@@ -433,6 +494,37 @@ class SessionTest extends F3::Testing::BaseTestCase {
 		$mockSession->registerNodeAsDirty($node);
 		$mockSession->registerPropertyAsRemoved($property);
 		$mockSession->save();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @expectedException F3::PHPCR::ReferentialIntegrityException
+	 */
+	public function removeOnAReferenceTargetThrowsExceptionOnSave() {
+			// /Content/News is target of the REFERENCE /Content/RefParent/RefSource/ref
+		$this->session->getRootNode()->getNode('Content/News')->remove();
+		$this->session->save();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function canRemoveASubtreeContainingExternalReference() {
+			// /Content/News is target of the REFERENCE /Content/ExternalRefParent/RefSource/ref
+		$this->session->getRootNode()->getNode('Content/ExternalRefParent')->remove();
+		$this->session->save();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function canRemoveASubtreeContainingInternalReference() {
+			// /Content/InternalRefParent/RefTarget is target of the REFERENCE /Content/InternalRefParent/RefSource/ref
+		$this->session->getRootNode()->getNode('Content/InternalRefParent')->remove();
+		$this->session->save();
 	}
 
 }

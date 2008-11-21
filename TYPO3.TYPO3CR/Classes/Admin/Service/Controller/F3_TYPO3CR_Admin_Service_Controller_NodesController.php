@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Admin::Controller;
+namespace F3::TYPO3CR::Admin::Service::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,35 +18,28 @@ namespace F3::TYPO3CR::Admin::Controller;
 /**
  * @package TYPO3CR
  * @subpackage Admin
- * @version $Id$
+ * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
- * The default Nodes controller
+ * The "Nodes" service
  *
  * @package TYPO3CR
  * @subpackage Admin
- * @version $Id$
+ * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class JSONController extends F3::FLOW3::MVC::Controller::ActionController {
+class NodesController extends F3::FLOW3::MVC::Controller::RESTController {
 
 	/**
-	 * The supported request types of this controller
-	 *
-	 * @var array
-	 */
-	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
-
-	/**
-	 * @var F3::PHPCR::SessionInterface
+	 * F3::PHPCR::SessionInterface
 	 */
 	protected $session;
 
 	/**
 	 * @var F3::PHPCR::NodeInterface
 	 */
-	protected $node;
+	protected $rootNode;
 
 	/**
 	 * Injects a Content Repository instance
@@ -61,61 +54,31 @@ class JSONController extends F3::FLOW3::MVC::Controller::ActionController {
 	}
 
 	/**
-	 * Initializes this controller
+	 * Lists available structure nodes from the repository
 	 *
-	 * @return void
+	 * @return string Output of the list view
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeArguments() {
-		$this->arguments->addNewArgument('node');
+	public function listAction() {
+		$this->view->nodes = array($this->convertNodeToArray($this->rootNode));
+		return $this->view->render();
 	}
 
 	/**
-	 * Do some preparations for handling the action.
+	 * Shows properties of a specific structure node
 	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @return string Output of the show view
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeAction() {
-		$requestedNode = (string)$this->arguments['node'];
-		if ($requestedNode == 'ROOT') {
-			$this->node = $this->rootNode;
-		} else {
-			$this->node = $this->session->getNodeByIdentifier($requestedNode);
-		}
-	}
-
-	/**
-	 * The getNodes action of this controller
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getNodesAction() {
-		$data = array();
-		$nodes = $this->node->getNodes();
-		foreach ($nodes as $node) {
-			$data[] = array(
-				'id' => $node->getIdentifier(),
-				'text' => $node->getName(),
-				'leaf' => !$node->hasNodes()
-			);
+	public function showAction() {
+		try {
+			$node = $this->session->getNodeByIdentifier($this->arguments['id']->getValue());
+			$properties = $node->getProperties();
+		} catch(F3::PHPCR::ItemNotFoundException $e) {
+			$this->throwStatus(404);
 		}
 
-		return json_encode($data);
-	}
-
-
-	/**
-	 * The getProperties action of this controller
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getPropertiesAction() {
 		$data = array();
-		$properties = $this->node->getProperties();
-
 		foreach ($properties as $property) {
 			try {
 				$data[] = array(
@@ -137,7 +100,67 @@ class JSONController extends F3::FLOW3::MVC::Controller::ActionController {
 			}
 		}
 
-		return json_encode(array('properties' => $data));
+		$this->view->node = array('properties' => $data);
+		return $this->view->render();
+	}
+
+	/**
+	 * Creates a new structure node
+	 *
+	 * @return string The status message
+	 */
+	public function createAction() {
+		$this->throwStatus(501);
+	}
+
+	/**
+	 * Updates an existing structure node
+	 *
+	 * @return string The status message
+	 */
+	public function updateAction() {
+		$this->throwStatus(501);
+	}
+
+	/**
+	 * Deletes a structure node
+	 *
+	 * @return string
+	 */
+	public function deleteAction() {
+		try {
+			$node = $this->session->getNodeByIdentifier($this->arguments['id']->getValue());
+		} catch(F3::PHPCR::ItemNotFoundException $e) {
+			$this->throwStatus(404);
+		}
+
+		$node->remove();
+		$this->session->save();
+	}
+
+
+
+	/**
+	 * Returns an array representing the given node.
+	 *
+	 * @param F3::PHPCR::NodeInterface $node
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function convertNodeToArray(F3::PHPCR::NodeInterface $node) {
+		$nodeArray = array(
+			'id' => $node->getIdentifier(),
+			'text' => $node->getName(),
+			'leaf' => !$node->hasNodes(),
+			'children' => array()
+		);
+
+		$childNodes = $node->getNodes();
+		foreach ($childNodes as $node) {
+			$nodeArray['children'][] = $this->convertNodeToArray($node);
+		}
+
+		return $nodeArray;
 	}
 
 }
