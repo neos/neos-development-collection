@@ -38,10 +38,10 @@ class BackendTest extends F3::Testing::BaseTestCase {
 	public function initializeCreatesStorageContainerNodeIfNotPresent() {
 		$mockBaseNode = $this->getMock('F3::PHPCR::NodeInterface');
 		$mockPersistenceNode = $this->getMock('F3::PHPCR::NodeInterface');
-		$mockPersistenceNode->expects($this->once())->method('addNode')->with('flow3:objects')->will($this->returnValue($mockBaseNode));
+		$mockPersistenceNode->expects($this->once())->method('addNode')->with('flow3:objects', 'nt:unstructured')->will($this->returnValue($mockBaseNode));
 		$mockRootNode = $this->getMock('F3::PHPCR::NodeInterface');
 		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(FALSE));
-		$mockRootNode->expects($this->once())->method('addNode')->with('flow3:persistence')->will($this->returnValue($mockPersistenceNode));
+		$mockRootNode->expects($this->once())->method('addNode')->with('flow3:persistence', 'nt:unstructured')->will($this->returnValue($mockPersistenceNode));
 		$mockWorkspace = $this->getMock('F3::PHPCR::WorkspaceInterface');
 		$mockSession = $this->getMock('F3::PHPCR::SessionInterface');
 		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
@@ -100,7 +100,7 @@ class BackendTest extends F3::Testing::BaseTestCase {
 		$mockInstanceContainerNode = $this->getMock('F3::PHPCR::NodeInterface');
 		$mockInstanceContainerNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_FLOW3_Persistence_' . $className . 'Instance', 'flow3:F3_TYPO3CR_FLOW3_Persistence_' . $className)->will($this->returnValue($mockInstanceNode));
 		$mockBaseNode = $this->getMock('F3::PHPCR::NodeInterface');
-		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_FLOW3_Persistence_' . $className)->will($this->returnValue($mockInstanceContainerNode));
+		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_FLOW3_Persistence_' . $className, 'nt:unstructured')->will($this->returnValue($mockInstanceContainerNode));
 		$mockRootNode = $this->getMock('F3::PHPCR::NodeInterface');
 		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
 		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
@@ -139,7 +139,7 @@ class BackendTest extends F3::Testing::BaseTestCase {
 		$mockInstanceContainerNode = $this->getMock('F3::PHPCR::NodeInterface');
 		$mockInstanceContainerNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_FLOW3_Persistence_' . $className . 'Instance', 'flow3:F3_TYPO3CR_FLOW3_Persistence_' . $className, $identifier)->will($this->returnValue($mockInstanceNode));
 		$mockBaseNode = $this->getMock('F3::PHPCR::NodeInterface');
-		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_FLOW3_Persistence_' . $className)->will($this->returnValue($mockInstanceContainerNode));
+		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_FLOW3_Persistence_' . $className, 'nt:unstructured')->will($this->returnValue($mockInstanceContainerNode));
 		$mockRootNode = $this->getMock('F3::PHPCR::NodeInterface');
 		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
 		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));

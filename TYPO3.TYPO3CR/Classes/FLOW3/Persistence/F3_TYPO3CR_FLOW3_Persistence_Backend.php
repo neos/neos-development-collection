@@ -115,8 +115,8 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 		if ($rootNode->hasNode('flow3:persistence/flow3:objects')) {
 			$this->baseNode = $rootNode->getNode('flow3:persistence/flow3:objects');
 		} else {
-			$persistenceNode = $rootNode->addNode('flow3:persistence');
-			$this->baseNode = $persistenceNode->addNode('flow3:objects');
+			$persistenceNode = $rootNode->addNode('flow3:persistence', 'nt:unstructured');
+			$this->baseNode = $persistenceNode->addNode('flow3:objects', 'nt:unstructured');
 		}
 
 		$this->classSchemata = $classSchemata;
@@ -242,7 +242,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 			$className = $object->AOPProxyGetProxyTargetClassName();
 			$nodeName = $this->convertClassNameToJCRName($className);
 			if (!$this->baseNode->hasNode('flow3:' . $nodeName)) {
-				$containerNode = $this->baseNode->addNode('flow3:' . $nodeName);
+				$containerNode = $this->baseNode->addNode('flow3:' . $nodeName, 'nt:unstructured');
 			} else {
 				$containerNode = $this->baseNode->getNode('flow3:' . $nodeName);
 			}
