@@ -111,16 +111,16 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(array $classSchemata) {
-		$this->classSchemata = $classSchemata;
-		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
-
-		if (!$this->session->getRootNode()->hasNode('flow3:persistence/flow3:objects')) {
-			$persistenceNode = $this->session->getRootNode()->addNode('flow3:persistence');
-			$this->baseNode = $persistenceNode->addNode('flow3:objects');
+		$rootNode = $this->session->getRootNode();
+		if ($rootNode->hasNode('flow3:persistence/flow3:objects')) {
+			$this->baseNode = $rootNode->getNode('flow3:persistence/flow3:objects');
 		} else {
-			$this->baseNode = $this->session->getRootNode()->getNode('flow3:persistence/flow3:objects');
+			$persistenceNode = $rootNode->addNode('flow3:persistence');
+			$this->baseNode = $persistenceNode->addNode('flow3:objects');
 		}
 
+		$this->classSchemata = $classSchemata;
+		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
 		foreach($this->classSchemata as $schema) {
 			$nodeTypeName = $this->convertClassNameToJCRName($schema->getClassName());
 			if (!$nodeTypeManager->hasNodeType($nodeTypeName)) {
@@ -201,6 +201,10 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 			$this->processUpdatedObject($object);
 		}
 
+		foreach ($this->deletedObjects as $object) {
+			$this->processDeletedObject($object);
+		}
+
 		$this->session->save();
 	}
 
@@ -238,13 +242,15 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 			$className = $object->AOPProxyGetProxyTargetClassName();
 			$nodeName = $this->convertClassNameToJCRName($className);
 			if (!$this->baseNode->hasNode('flow3:' . $nodeName)) {
-				$this->baseNode->addNode('flow3:' . $nodeName);
+				$containerNode = $this->baseNode->addNode('flow3:' . $nodeName);
+			} else {
+				$containerNode = $this->baseNode->getNode('flow3:' . $nodeName);
 			}
 			$identifierProperty = $this->classSchemata[$className]->getIdentifierProperty();
 			if ($identifierProperty !== NULL) {
-				$node = $this->baseNode->getNode('flow3:' . $nodeName)->addNode('flow3:' . $nodeName . 'Instance', 'flow3:' . $nodeName, $object->AOPProxyGetProperty($identifierProperty));
+				$node = $containerNode->addNode('flow3:' . $nodeName . 'Instance', 'flow3:' . $nodeName, $object->AOPProxyGetProperty($identifierProperty));
 			} else {
-				$node = $this->baseNode->getNode('flow3:' . $nodeName)->addNode('flow3:' . $nodeName . 'Instance', 'flow3:' . $nodeName);
+				$node = $containerNode->addNode('flow3:' . $nodeName . 'Instance', 'flow3:' . $nodeName);
 			}
 			$identifier = $node->getIdentifier();
 			$this->identityMap->registerObject($object, $identifier);
@@ -327,6 +333,19 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 		return $identifiers;
 	}
 
+	/**
+	 * @param object $object
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function processDeletedObject($object) {
+		if ($this->identityMap->hasObject($object)) {
+			$identifier = $this->identityMap->getIdentifier($object);
+			$node = $this->session->getNodeByIdentifier($identifier);
+			$node->remove();
+		}
+		unset($this->deletedObjects[spl_object_hash($object)]);
+	}
 }
 
 ?>
