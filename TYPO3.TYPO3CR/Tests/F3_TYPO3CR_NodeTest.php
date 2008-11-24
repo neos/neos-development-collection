@@ -182,7 +182,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function newNodeIsMarkedAsNew() {
-		$newNode = $this->rootNode->addNode('User');
+		$newNode = $this->rootNode->addNode('User', 'nt:base');
 		$this->assertTrue($newNode->isNew(), 'freshly created node is not marked new');
 	}
 
@@ -191,7 +191,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function newNodeIsNotMarkedAsModified() {
-		$newNode = $this->rootNode->addNode('User');
+		$newNode = $this->rootNode->addNode('User', 'nt:base');
 		$this->assertFalse($newNode->isModified(), 'freshly created node is marked modified');
 	}
 
@@ -341,39 +341,25 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * Checks if hasProperties() works as it should.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function hasPropertiesWorks() {
-		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$this->assertTrue($node->hasProperties(), 'hasProperties() did not return TRUE for a node with properties.');
-
-		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
-		$this->assertFalse($node->hasProperties(), 'hasProperties() did not return FALSE for a node without properties.');
-	}
-
-	/**
 	 * Checks if getProperties() returns the expected result.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getPropertiesWorks() {
-		$emptyNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$noProperties = $emptyNode->getProperties();
-		$this->assertType('F3::PHPCR::PropertyIteratorInterface', $noProperties, 'getProperties() did not return a PropertyIterator for a node without properties.');
-
 		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$properties = $node->getProperties();
-		$this->assertType('F3::PHPCR::PropertyIteratorInterface', $properties, 'getProperties() did not return a PropertyIterator for a node with properties.');
+		$this->assertTrue($properties->getSize() > 1, 'getProperties() did not return a PropertyIterator with the expected size.');
 
-		$propertyIterator = new F3::TYPO3CR::PropertyIterator;
-		$this->assertEquals(0, $propertyIterator->getSize(), 'getProperties() did not return an empty PropertyIterator for a node without properties.');
-		$this->assertNotEquals(1, $propertyIterator->getSize(), 'getProperties() returned an empty PropertyIterator for a node with properties.');
-
-			// we don't compare the iterators directly here, as this hits the memory limit hard. really hard.
-		$titleProperty = $this->objectFactory->create('F3::PHPCR::PropertyInterface', 'title', 'News about the TYPO3CR', F3::PHPCR::PropertyType::STRING, $node, $this->session);
-		$this->assertEquals($titleProperty->getString(), $properties->nextProperty()->getString(), 'getProperties() did not return the expected property.');
+		foreach ($properties as $property) {
+			switch ($property->getName()) {
+				case 'title':
+					$this->assertEquals($property->getString(), 'News about the TYPO3CR', 'getProperties() did not return the expected property.');
+				break;
+				case 'jcr:uuid':
+					$this->assertEquals($node->getIdentifier(), '96bca35d-1ef5-4a47-8b0c-0ddd68507d00', 'getProperties() did not return the expected property.');
+				break;
+			}
+		}
 	}
 
 	/**
@@ -648,7 +634,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addNodeReturnsANode() {
-		$newNode = $this->rootNode->addNode('User');
+		$newNode = $this->rootNode->addNode('User', 'nt:base');
 		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'addNode() does not return an object of type F3::PHPCR::NodeInterface.');
 		$this->assertTrue($this->rootNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
 	}
@@ -659,7 +645,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addNodeWithSimpleRelativePathReturnsANode() {
-		$newNode = $this->rootNode->addNode('SomeItem');
+		$newNode = $this->rootNode->addNode('SomeItem', 'nt:base');
 		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3::PHPCR::NodeInterface.');
 	}
 
@@ -669,7 +655,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addNodeWithComplexRelativePathReturnsANode() {
-		$newNode = $this->rootNode->addNode('Content/./News/SomeItem');
+		$newNode = $this->rootNode->addNode('Content/./News/SomeItem', 'nt:base');
 		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3::PHPCR::NodeInterface.');
 	}
 
@@ -679,7 +665,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addNodeWithComplexRelativePathReturnsNodeWithExpectedParent() {
-		$newNode = $this->rootNode->addNode('Content/./News/SomeItem');
+		$newNode = $this->rootNode->addNode('Content/./News/SomeItem', 'nt:base');
 		$expectedParentNode = $this->rootNode->getNode('Content/News');
 		$this->assertTrue($expectedParentNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
 	}
@@ -689,7 +675,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addedNodeIsVisibleInSession() {
-		$newNode = $this->rootNode->addNode('User');
+		$newNode = $this->rootNode->addNode('User', 'nt:base');
 
 		$retrievedNode = $this->session->getNodeByIdentifier($newNode->getIdentifier());
 		$this->assertSame('User', $retrievedNode->getName(), 'added node is invisible to session');
@@ -700,7 +686,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addNodeSetsModifiedStatusOfNode() {
-		$this->rootNode->addNode('User');
+		$this->rootNode->addNode('User', 'nt:base');
 		$this->assertTrue($this->rootNode->isModified(), 'addNode does not mark parent as modified');
 	}
 
@@ -713,7 +699,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
-		$rootNode->addNode('User');
+		$rootNode->addNode('User', 'nt:base');
 	}
 
 	/**
@@ -725,7 +711,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsDirty');
 		$rootNode = $mockSession->getRootNode();
-		$rootNode->addNode('User');
+		$rootNode->addNode('User', 'nt:base');
 	}
 
 	/**
@@ -737,34 +723,32 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsRemoved');
 		$rootNode = $mockSession->getRootNode();
-		$node = $rootNode->addNode('User');
+		$node = $rootNode->addNode('User', 'nt:base');
 		$node->remove();
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3::PHPCR::PathNotFoundException
 	 */
 	public function removeNodeRemovesNode() {
-		$node = $this->rootNode->addNode('SomeNode');
+		$node = $this->rootNode->addNode('SomeNode', 'nt:base');
 		$node->remove();
-		try {
-			$this->rootNode->getNode('SomeNode');
-			$this->fail('Removed node was still available');
-		} catch (F3::PHPCR::PathNotFoundException $e) {}
+
+		$this->rootNode->getNode('SomeNode');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3::PHPCR::ItemNotFoundException
 	 */
 	public function removeNodeRemovesNodeInSession() {
-		$node = $this->rootNode->addNode('SomeNode');
+		$node = $this->rootNode->addNode('SomeNode', 'nt:base');
 		$node->remove();
-		try {
-			$this->session->getNodeByIdentifier($node->getIdentifier());
-			$this->fail('Removed node was still available');
-		} catch (F3::PHPCR::ItemNotFoundException $e) {}
+
+		$this->session->getNodeByIdentifier($node->getIdentifier());
 	}
 
 	/**
@@ -909,12 +893,10 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException F3::PHPCR::NodeType::ConstraintViolationException
 	 */
 	public function removeOnRootNodeThrowsException() {
-		try {
-			$this->rootNode->remove();
-			$this->fail('Root node must not be removable');
-		} catch (F3::PHPCR::NodeType::ConstraintViolationException $e) {}
+		$this->rootNode->remove();
 	}
 
 	/**
@@ -923,7 +905,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function addNodeWithIdentifierAcceptsIdentifier() {
 		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';
-		$newNode = $this->rootNode->addNode('WithIdentifier', NULL, $identifier);
+		$newNode = $this->rootNode->addNode('WithIdentifier', 'nt:base', $identifier);
 		$this->assertEquals($identifier, $newNode->getIdentifier(), 'The new node did not have the expected identifier.');
 	}
 
@@ -936,7 +918,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
-		$rootNode->addNode('WithIdentifier', NULL, '16bca35d-1ef5-4a47-8b0c-0ddd69507d00');
+		$rootNode->addNode('WithIdentifier', 'nt:base', '16bca35d-1ef5-4a47-8b0c-0ddd69507d00');
 	}
 
 	/**
@@ -946,8 +928,8 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function addNodeWithUsedIdentifierRejectsIdentifier() {
 		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';
-		$this->rootNode->addNode('WithIdentifier', NULL, $identifier);
-		$this->rootNode->addNode('AgainWithIdentifier', NULL, $identifier);
+		$this->rootNode->addNode('WithIdentifier', 'nt:base', $identifier);
+		$this->rootNode->addNode('AgainWithIdentifier', 'nt:base', $identifier);
 	}
 
 	/**
@@ -995,7 +977,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @expectedException F3::PHPCR::RepositoryException
 	 */
 	public function addNodeRejectsInvalidNames($name) {
-		$newNode = $this->rootNode->addNode($name);
+		$newNode = $this->rootNode->addNode($name, 'nt:base');
 	}
 
 	/**
@@ -1019,7 +1001,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @dataProvider validLocalNames
 	 */
 	public function addNodeAcceptsValidNames($name) {
-		$newNode = $this->rootNode->addNode($name);
+		$newNode = $this->rootNode->addNode($name, 'nt:base');
 	}
 
 	/**

@@ -148,9 +148,9 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	protected $identifier;
 
 	/**
-	 * @var F3::PHPCR::NodeType::NodeTypeInterface
+	 * @var string
 	 */
-	protected $nodeType;
+	protected $nodeTypeName;
 
 	/**
 	 * @var string
@@ -203,7 +203,7 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 					$this->name = $value;
 					break;
 				case 'nodetype':
-					$this->nodeType = $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeInterface', $value);
+					$this->nodeTypeName = $value;
 					break;
 			}
 		}
@@ -219,6 +219,11 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeProperties() {
+			// jcr:uuid (string) mandatory autocreated protected initialize
+		$this->properties['jcr:uuid'] = $this->objectFactory->create('F3::PHPCR::PropertyInterface', 'jcr:uuid', $this->identifier, F3::PHPCR::PropertyType::STRING, $this, $this->session);
+			// jcr:primaryType (name) mandatory autocreated
+		$this->properties['jcr:primaryType'] = $this->objectFactory->create('F3::PHPCR::PropertyInterface', 'jcr:primaryType', $this->nodeTypeName, F3::PHPCR::PropertyType::NAME, $this, $this->session);
+
 		$rawProperties = $this->session->getStorageBackend()->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
@@ -476,11 +481,15 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 			throw new F3::PHPCR::RepositoryException('Invalid node name given: ' . $lastNodeName, 1225715640);
 		}
 
-		if ($numberOfElementsRemaining===0) {
+		if ($numberOfElementsRemaining === 0) {
+			if ($primaryNodeTypeName === NULL) {
+				throw new F3::PHPCR::UnsupportedRepositoryOperationException('Determining the nodetype for addNode not implemented yet, sorry! Specify the nodetype explicitly.', 1227536336);
+			}
+
 			$rawData = array(
 				'parent' => $this->getIdentifier(),
 				'name' => $lastNodeName,
-				'nodetype' => $primaryNodeTypeName === NULL ? 'nt:base' : $primaryNodeTypeName
+				'nodetype' => $primaryNodeTypeName
 			);
 
 			if ($identifier !== NULL) {
@@ -921,12 +930,15 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * Indicates whether this node has properties. Returns true if this node has
 	 * one or more properties accessible through the current Session; false otherwise.
 	 *
+	 * In our case we return TRUE directly, as TYPO3CR always exposes some
+	 * "system" properties, e.g. jcr:uuid.
+	 *
 	 * @return boolean true if this node has one or more properties; false otherwise.
 	 * @throws F3::PHPCR::RepositoryException  If an unspecified error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperties() {
-		return count($this->properties) > 0;
+		return TRUE;
 	}
 
 	/**
@@ -939,11 +951,11 @@ class Node extends F3::TYPO3CR::AbstractItem implements F3::PHPCR::NodeInterface
 	 * root node.
 	 *
 	 * @return F3::PHPCR::NodeType::NodeTypeInterface a NodeType object.
-	 * @throws F3::PHPCR::RepositoryException  if an error occurs
+	 * @throws F3::PHPCR::RepositoryException if an error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPrimaryNodeType() {
-		return $this->nodeType;
+		return $this->session->getWorkspace()->getNodeTypeManager()->getNodeType($this->nodeTypeName);
 	}
 
 	/**
