@@ -37,7 +37,9 @@
 			animate:false,
 			buttons: [{
 				text: 'Reload tree',
-				handler: function() {nodetree.getRootNode().reload()}
+				handler: function() {
+					nodetree.getRootNode().reload()
+				}
 			}],
 			contextMenu: new Ext.menu.Menu({
 				items: [{
@@ -73,6 +75,15 @@
 					var c = node.getOwnerTree().contextMenu;
 					c.contextNode = node;
 					c.showAt(e.getXY());
+				},
+				beforeload: function() {
+					statusbar.setStatus({
+						text: 'Loading tree...',
+					});
+					statusbar.showBusy();
+				},
+				load: function() {
+					statusbar.clearStatus();
 				}
 			},
 			root: {
@@ -83,7 +94,7 @@
 
 		function deleteNode(node) {
 			statusbar.setStatus({
-				text: 'Deleting...',
+				text: 'Deleting node...',
 			});
 			statusbar.showBusy();
 			// Basic request
@@ -104,7 +115,7 @@
 
 		function showNodeDetails(node) {
 			statusbar.setStatus({
-				text: 'Loading...',
+				text: 'Loading node detail...',
 			});
 			statusbar.showBusy();
 			propertygrid.store.proxy.conn.url = 'typo3cr/service/v1/nodes/' + node.id + '.json';
