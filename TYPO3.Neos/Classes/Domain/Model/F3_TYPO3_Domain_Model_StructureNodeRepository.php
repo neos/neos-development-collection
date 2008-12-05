@@ -38,7 +38,7 @@ class StructureNodeRepository extends F3::FLOW3::Persistence::Repository {
 	 */
 	public function findById($id) {
 		$query = $this->createQuery();
-		$nodes =  $query->matching($query->equals('identifier', $id))->execute();
+		$nodes =  $query->matching($query->equals('id', $id))->execute();
 		return (is_array($nodes)) ? array_shift($nodes) : NULL;
 	}
 }
