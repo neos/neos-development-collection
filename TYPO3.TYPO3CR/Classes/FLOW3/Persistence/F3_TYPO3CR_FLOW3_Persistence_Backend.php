@@ -59,12 +59,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	/**
 	 * @var array
 	 */
-	protected $newObjects;
-
-	/**
-	 * @var array
-	 */
-	protected $updatedObjects;
+	protected $aggregateRootObjects;
 
 	/**
 	 * @var array
@@ -112,17 +107,29 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	 */
 	public function initialize(array $classSchemata) {
 		$rootNode = $this->session->getRootNode();
+		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
+
 		if ($rootNode->hasNode('flow3:persistence/flow3:objects')) {
 			$this->baseNode = $rootNode->getNode('flow3:persistence/flow3:objects');
 		} else {
-			$persistenceNode = $rootNode->addNode('flow3:persistence', 'nt:unstructured');
-			$this->baseNode = $persistenceNode->addNode('flow3:objects', 'nt:unstructured');
+			if ($rootNode->hasNode('flow3:persistence')) {
+				$persistenceNode = $rootNode->getNode('flow3:persistence');
+				$this->baseNode = $persistenceNode->addNode('flow3:objects', 'nt:unstructured');
+			} else {
+				$persistenceNode = $rootNode->addNode('flow3:persistence', 'nt:unstructured');
+				$this->baseNode = $persistenceNode->addNode('flow3:objects', 'nt:unstructured');
+			}
+		}
+
+		if (!$nodeTypeManager->hasNodeType('flow3:arrayPropertyProxy')) {
+			$nodeTypeTemplate = $nodeTypeManager->createNodeTypeTemplate();
+			$nodeTypeTemplate->setName('flow3:arrayPropertyProxy');
+			$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		}
 
 		$this->classSchemata = $classSchemata;
-		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
 		foreach($this->classSchemata as $schema) {
-			$nodeTypeName = $this->convertClassNameToJCRName($schema->getClassName());
+			$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($schema->getClassName());
 			if (!$nodeTypeManager->hasNodeType($nodeTypeName)) {
 				$nodeTypeTemplate = $nodeTypeManager->createNodeTypeTemplate();
 				$nodeTypeTemplate->setName($nodeTypeName);
@@ -142,39 +149,15 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	}
 
 	/**
-	 * Converts a given class name to a legal JCR node name
-	 *
-	 * @param string $className
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function convertClassNameToJCRName($className) {
-		return str_replace('::', '_', $className);
-	}
-
-	/**
-	 * Sets the new objects
+	 * Sets the aggregate root objects
 	 *
 	 * @param array $objects
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setNewObjects(array $objects) {
-		$this->newObjects = $objects;
+	public function setAggregateRootObjects(array $objects) {
+		$this->aggregateRootObjects = $objects;
 	}
-
-
-	/**
-	 * Sets the updated objects
-	 *
-	 * @param array $objects
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setUpdatedObjects(array $objects) {
-		$this->updatedObjects = $objects;
-	}
-
 
 	/**
 	 * Sets the deleted objects
@@ -188,152 +171,144 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	}
 
 	/**
-	 * Commits the current persistence session
+	 * Commits the current persistence session.
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function commit() {
-		foreach ($this->newObjects as $object) {
-			$this->processNewObject($object);
-		}
-		foreach ($this->updatedObjects as $object) {
-			$this->processUpdatedObject($object);
-		}
+		$this->traverseAggregateRootObjects();
 
 		foreach ($this->deletedObjects as $object) {
 			$this->processDeletedObject($object);
 		}
 
 		$this->session->save();
+		$this->deletedObjects = array();
 	}
 
 	/**
-	 * Stores, updates or removes an object's corresponding node in the repository
+	 * Traverse all aggregate roots breadth first.
 	 *
-	 * @param object $object The object to store, update or delete
-	 * @return string Identifier for the corresponding node
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function processObject($object) {
-		if (array_search($object, $this->newObjects)) {
-			return $this->processNewObject($object);
-		} elseif (array_search($object, $this->updatedObjects)) {
-			return $this->processUpdatedObject($object);
-		} elseif ($this->identityMap->hasObject($object)) {
-			return $this->identityMap->getIdentifier($object);
-		} else {
-			throw new F3::FLOW3::Persistence::Exception('processObject(' . get_class($object) . ') called for object I cannot handle.', 1218478184);
-		}
-	}
-
-	/**
-	 * Stores an object as node in the repository
-	 *
-	 * @param object $object The object to store
-	 * @return string The identifier for the node representing the object
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo make sure setPropertiesForObject is called only once per commit and object
-	 */
-	protected function processNewObject($object) {
-		if ($this->identityMap->hasObject($object)) {
-			$identifier = $this->identityMap->getIdentifier($object);
-		} else {
-			$className = $object->AOPProxyGetProxyTargetClassName();
-			$nodeName = $this->convertClassNameToJCRName($className);
-			if (!$this->baseNode->hasNode('flow3:' . $nodeName)) {
-				$containerNode = $this->baseNode->addNode('flow3:' . $nodeName, 'nt:unstructured');
-			} else {
-				$containerNode = $this->baseNode->getNode('flow3:' . $nodeName);
-			}
-			$identifierProperty = $this->classSchemata[$className]->getIdentifierProperty();
-			if ($identifierProperty !== NULL) {
-				$node = $containerNode->addNode('flow3:' . $nodeName . 'Instance', 'flow3:' . $nodeName, $object->AOPProxyGetProperty($identifierProperty));
-			} else {
-				$node = $containerNode->addNode('flow3:' . $nodeName . 'Instance', 'flow3:' . $nodeName);
-			}
-			$identifier = $node->getIdentifier();
-			$this->identityMap->registerObject($object, $identifier);
-			$this->setPropertiesForObject($node, $object);
-		}
-		unset($this->newObjects[spl_object_hash($object)]);
-
-		return $identifier;
-	}
-
-	/**
-	 * Updates an object stored as node in the repository
-	 *
-	 * @param object $object The object to update
-	 * @return string The identifier for the node representing the object
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo make sure setPropertiesForObject is called only once per commit and object
-	 */
-	protected function processUpdatedObject($object) {
-		if ($this->identityMap->hasObject($object)) {
-			$identifier = $this->identityMap->getIdentifier($object);
-			$node = $this->session->getNodeByIdentifier($identifier);
-			$this->setPropertiesForObject($node, $object);
-		} else {
-			throw new F3::FLOW3::Persistence::Exception('How am I supposed to update an object I do not know about?', 1218478512);
-		}
-		unset($this->updatedObjects[spl_object_hash($object)]);
-
-		return $identifier;
-	}
-
-	/**
-	 * Iterates over the properties of an object and sets them on the given node
-	 *
-	 * @param F3::PHPCR::NodeInterface $node
-	 * @param object $object
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function setPropertiesForObject(F3::PHPCR::NodeInterface $node, $object) {
-		$className = $object->AOPProxyGetProxyTargetClassName();
-		foreach ($this->classSchemata[$className]->getProperties() as $propertyName => $propertyType) {
-			$value = $object->AOPProxyGetProperty($propertyName);
+	protected function traverseAggregateRootObjects() {
 
-			if ($propertyType === 'array') {
-				if (count($value) == 0) {
-						// delete empty array properties
-					$value = NULL;
-					$type = F3::PHPCR::PropertyType::UNDEFINED;
-				} elseif (is_object(current($value))) {
-					$value = $this->processObjectArray($value);
-					$type = F3::PHPCR::PropertyType::REFERENCE;
-				} else {
-					$type = F3::PHPCR::PropertyType::valueFromType(gettype(current($value)));
-				}
-			} elseif (is_object($value)) {
-				$value = $this->processObject($value);
-				$type = F3::PHPCR::PropertyType::REFERENCE;
-			} else {
-				$type = F3::PHPCR::PropertyType::valueFromType($propertyType);
+			// make sure we have a corresponding node for all new objects on
+			// first level
+		foreach ($this->aggregateRootObjects as $object) {
+			if (!$this->identityMap->hasObject($object)) {
+				$this->createNodeForObject($object, $this->baseNode, 'flow3:' . $this->convertClassNameToJCRName($object->AOPProxyGetProxyTargetClassName()));
 			}
+		}
 
-			$node->setProperty($propertyName, $value, $type);
+			// now traverse into the objects
+		foreach ($this->aggregateRootObjects as $object) {
+			$this->traverseObject($object);
 		}
 	}
 
 	/**
-	 * Returns an indentifier array for the given object array that can be used
-	 * in a multi-valued REFERENCE property
+	 * Stores, updates or removes an object's corresponding node in the
+	 * repository by doing a breadth first traversal over the properties.
+	 * In other words, objects are handled in a second step.
 	 *
-	 * @param array $objects
-	 * @return array
+	 * @param object $object The object to persist
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function processObjectArray(array $objects) {
-		$identifiers = array();
-		foreach ($objects as $object) {
-			$identifiers[] = $this->processObject($object);
+	protected function traverseObject($object) {
+		$queue = array();
+		$node = $this->session->getNodeByIdentifier($this->identityMap->getIdentifier($object));
+
+		foreach ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->getProperties() as $propertyName => $propertyType) {
+			$propertyValue = $object->AOPProxyGetProperty($propertyName);
+			if (is_array($propertyValue)) {
+				if ($object->isNew() || $object->isDirty($propertyName)) {
+					$this->storeArrayAsNode($propertyValue, $node, 'flow3:' . $propertyName);
+				}
+				if (is_object(current($propertyValue)) && !(current($propertyValue) instanceof DateTime)) {
+					$queue = array_merge($queue, array_values($propertyValue));
+				}
+			} elseif (is_object($propertyValue) && $propertyType !== 'DateTime') {
+				if ($object->isNew()) {
+					$this->createNodeForObject($propertyValue, $node, 'flow3:' . $propertyName);
+				}
+				$queue[] = $propertyValue;
+			} elseif ($object->isNew() || $object->isDirty($propertyName)) {
+				$node->setProperty('flow3:' . $propertyName, $propertyValue, F3::PHPCR::PropertyType::valueFromType($propertyType));
+			}
 		}
-		return $identifiers;
+
+		$object->memorizeCleanState();
+
+			// here we loop over the objects. their nodes are already at the
+			// right place and have the right name. fancy, eh?
+		foreach ($queue as $object) {
+			$this->traverseObject($object);
+			$object->memorizeCleanState();
+		}
 	}
 
 	/**
+	 * Creates a node for the given object and registers it with the identity map.
+	 *
+	 * @param object $object The object for which to create a node
+	 * @param F3::PHPCR::NodeInterface $parentNode
+	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function createNodeForObject($object, F3::PHPCR::NodeInterface $parentNode, $nodeName) {
+		$className = $object->AOPProxyGetProxyTargetClassName();
+		$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($className);
+		$identifierProperty = $this->classSchemata[$className]->getIdentifierProperty();
+
+		if ($identifierProperty !== NULL) {
+			$node = $parentNode->addNode($nodeName, $nodeTypeName, $object->AOPProxyGetProperty($identifierProperty));
+		} else {
+			$node = $parentNode->addNode($nodeName, $nodeTypeName);
+		}
+
+		$this->identityMap->registerObject($object, $node->getIdentifier());
+	}
+
+	/**
+	 * Store an array as a node of type flow3:arrayPropertyProxy, with each
+	 * array element becoming a property named like the key and the value.
+	 *
+	 * Every element not being an object or array will become a property on the
+	 * node, arrays will be handled recursively.
+	 *
+	 * Note: Objects contained in the array will have a node created, properties
+	 * On those nodes must be set elsewhere!
+	 *
+	 * @param array $array The array for which to create a node
+	 * @param F3::PHPCR::NodeInterface $parentNode The node to add the property proxy to
+	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function storeArrayAsNode(array $array, F3::PHPCR::NodeInterface $parentNode, $nodeName) {
+		if ($parentNode->hasNode($nodeName)) {
+			$node = $parentNode->getNode($nodeName);
+		} else {
+			$node = $parentNode->addNode($nodeName, 'flow3:arrayPropertyProxy');
+		}
+		foreach ($array as $key => $element) {
+			if (is_object($element) && !($element instanceof DateTime) && $element->isNew()) {
+				$this->createNodeForObject($element, $node, 'flow3:' . $key);
+			} elseif (is_array($element)) {
+				$this->storeArrayAsNode($element, $node, 'flow3:' . $key);
+			} elseif ($element->isDirty($key)) {
+				$node->setProperty('flow3:' . $key, $element, F3::PHPCR::PropertyType::valueFromType(gettype($element)));
+			}
+		}
+	}
+
+	/**
+	 * Removes an object from the content repository.
+	 *
 	 * @param object $object
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -343,9 +318,21 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 			$identifier = $this->identityMap->getIdentifier($object);
 			$node = $this->session->getNodeByIdentifier($identifier);
 			$node->remove();
+			$this->identityMap->unregisterObject($object);
 		}
-		unset($this->deletedObjects[spl_object_hash($object)]);
 	}
+
+	/**
+	 * Converts a given class name to a legal JCR node name
+	 *
+	 * @param string $className
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function convertClassNameToJCRName($className) {
+		return str_replace('::', '_', $className);
+	}
+
 }
 
 ?>

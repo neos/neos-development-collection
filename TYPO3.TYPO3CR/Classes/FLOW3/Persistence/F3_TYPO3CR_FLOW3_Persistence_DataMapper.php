@@ -96,7 +96,8 @@ class DataMapper {
 	}
 
 	/**
-	 * Maps the nodes
+	 * Maps the (aggregate root) nodes and registers them as reconstituted
+	 * with the session.
 	 *
 	 * @param F3::PHPCR::NodeIteratorInterface $nodes
 	 * @return array
@@ -105,7 +106,9 @@ class DataMapper {
 	public function map(F3::PHPCR::NodeIteratorInterface $nodes) {
 		$objects = array();
 		foreach ($nodes as $node) {
-			$objects[] = $this->mapSingleNode($node);
+			$object = $this->mapSingleNode($node);
+			$this->persistenceManager->getSession()->registerReconstitutedObject($object);
+			$objects[] = $object;
 		}
 
 		return $objects;
@@ -120,48 +123,97 @@ class DataMapper {
 	 */
 	protected function mapSingleNode(F3::PHPCR::NodeInterface $node) {
 		$explodedNodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
-		$className = str_replace('_', '::', array_pop($explodedNodeTypeName));
-		$objectConfiguration = $this->objectManager->getObjectConfiguration($className);
+		$className = str_replace('_', '::', $explodedNodeTypeName[1]);
+
+		$classSchema = $this->persistenceManager->getClassSchema($className);
 		$properties = array();
-		foreach ($node->getProperties() as $property) {
-			$properties[$property->getName()] = $this->getPropertyValue($property);
+		foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
+			switch ($propertyType) {
+				case 'integer':
+				case 'int':
+				case 'float':
+				case 'boolean':
+				case 'string':
+				case 'DateTime':
+					if ($node->hasProperty('flow3:' . $propertyName)) {
+						$property = $node->getProperty('flow3:' . $propertyName);
+						$propertyValue = $this->getNativeValue($property->getValue(), $property->getType());
+					} else {
+						$propertyValue = NULL;
+					}
+				break;
+				case 'array':
+					if ($node->hasNode('flow3:' . $propertyName)) {
+						$propertyValue = $this->mapArrayProxyNode($node->getNode('flow3:' . $propertyName));
+					} else {
+						$propertyValue = NULL;
+					}
+				break;
+					// we have an object to handle...
+				default:
+					if ($node->hasNode('flow3:' . $propertyName)) {
+						$propertyValue = $this->mapSingleNode($node->getNode('flow3:' . $propertyName));
+					} else {
+						$propertyValue = NULL;
+					}
+				break;
+			}
+
+			$properties[$propertyName] = $propertyValue;
 		}
+
+		$objectConfiguration = $this->objectManager->getObjectConfiguration($className);
 		$object = $this->objectBuilder->reconstituteObject($className, $objectConfiguration, $properties);
-		$this->persistenceManager->getSession()->registerReconstitutedObject($object);
 		$this->identityMap->registerObject($object, $node->getIdentifier());
+
 		return $object;
 	}
 
 	/**
-	 * Determines the type of a property and returns the value as corresponding native PHP type
+	 * Maps an array proxy node back to a native PHP array
 	 *
-	 * @param F3::PHPCR::PropertyInterface $property
-	 * @return mixed
+	 * @param NodeInterface $proxyNode
+	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo replace try/catch block with check against the PropertyDefinition when implemented
+	 * @todo remove the check on the node/property names and use name pattern
 	 */
-	protected function getPropertyValue(F3::PHPCR::PropertyInterface $property) {
-		try {
-			$propertyValue = $this->getValueValue($property->getValue(), $property->getType());
-		} catch (F3::PHPCR::ValueFormatException $e) {
-			$values = $property->getValues();
-			$propertyValue = array();
-			foreach ($values as $value) {
-				$propertyValue[] = $this->getValueValue($value, $property->getType());
+	protected function mapArrayProxyNode(F3::PHPCR::NodeInterface $proxyNode) {
+		if ($proxyNode->getPrimaryNodeType()->getName() !== 'flow3:arrayPropertyProxy') {
+			throw new F3::TYPO3CR::FLOW3::Persistence::Exception::UnsupportedTypeException('Arrays can only be mapped back from nodes of type flow3:arrayPropertyProxy.', 1227705954);
+		}
+		$array = array();
+
+		$objectNodes = $proxyNode->getNodes();
+		foreach ($objectNodes as $objectNode) {
+			$objectNodeName = explode(':', $objectNode->getName(), 2);
+			if ($objectNode->getPrimaryNodeType()->getName() === 'flow3:arrayPropertyProxy') {
+				$array[$objectNodeName[1]] = $this->mapArrayProxyNode($objectNode);
+			} elseif ($objectNodeName[0] === 'flow3') {
+				$array[$objectNodeName[1]] = $this->mapSingleNode($objectNode);
 			}
 		}
 
-		return $propertyValue;
+		$properties = $proxyNode->getProperties();
+		foreach ($properties as $property) {
+			$propertyName = explode(':', $property->getName(), 2);
+			if ($propertyName[0] === 'flow3') {
+				$array[$propertyName[1]] = $this->getNativeValue($property->getValue(), $property->getType());
+			}
+		}
+
+		return $array;
 	}
 
 	/**
-	 * Determines the type of a Value and returns the value as corresponding native PHP type
+	 * Determines the type of a Value and returns the value as corresponding
+	 * native PHP type.
 	 *
 	 * @param F3::PHPCR::ValueInterface $value
+	 * @param integer $type A constant from F3::PHPCR::PropertyType
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function getValueValue(F3::PHPCR::ValueInterface $value, $type) {
+	protected function getNativeValue(F3::PHPCR::ValueInterface $value, $type) {
 		switch ($type) {
 			case F3::PHPCR::PropertyType::BOOLEAN:
 				$value = $value->getBoolean();
@@ -179,11 +231,8 @@ class DataMapper {
 			case F3::PHPCR::PropertyType::STRING:
 				$value = $value->getString();
 				break;
-			case F3::PHPCR::PropertyType::REFERENCE:
-				$value = $this->mapSingleNode($this->persistenceManager->getBackend()->getSession()->getNodeByIdentifier($value->getString()));
-				break;
 			default:
-				throw new F3::TYPO3CR::FLOW3::Persistence::Exception::UnsupportedTypeException('The encountered value type (' . F3::PHPCR::PropertyType::nameFromValue($value->getType()) . ') cannot be mapped.', 1217843827);
+				throw new F3::TYPO3CR::FLOW3::Persistence::Exception::UnsupportedTypeException('The encountered value type (' . F3::PHPCR::PropertyType::nameFromValue($type) . ') cannot be mapped.', 1217843827);
 				break;
 		}
 

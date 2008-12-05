@@ -53,7 +53,7 @@ class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 	 */
 	public function __construct($options = array(), F3::FLOW3::Object::FactoryInterface $objectFactory) {
 		parent::__construct($options);
-		::Zend_Search_Lucene_Analysis_Analyzer::setDefault($objectFactory->create('F3::TYPO3CR::Storage::Search::LuceneKeywordAnalyser'));
+		::Zend_Search_Lucene_Analysis_Analyzer::setDefault($objectFactory->create('F3::Lucene::KeywordAnalyser'));
 	}
 
 	/**
@@ -88,19 +88,21 @@ class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 	 * @param F3::PHPCR::NodeInterface $node
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo get rid of try/catch to detect multivalued properties
 	 */
 	public function addNode(F3::PHPCR::NodeInterface $node) {
 		$nodeDocument = new ::Zend_Search_Lucene_Document();
-		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('identifier', $node->getIdentifier()));
-		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('nodetype', $node->getPrimaryNodeType()->getName()));
-		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('path', $node->getPath()));
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::keyword('typo3cr:identifier', $node->getIdentifier()));
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::keyword('typo3cr:nodetype', $node->getPrimaryNodeType()->getName()));
+		$nodeDocument->addField(::Zend_Search_Lucene_Field::keyword('typo3cr:path', $node->getPath()));
 
 		foreach ($node->getProperties() as $property) {
 			try {
-				$nodeDocument->addField(::Zend_Search_Lucene_Field::UnStored($property->getName(), $property->getString()));
+					// create a field that is unstored and not tokenised, no factory method available
+				$nodeDocument->addField(new ::Zend_Search_Lucene_Field($property->getName(), $property->getString(), '', FALSE, TRUE, FALSE));
 			} catch (F3::PHPCR::ValueFormatException $e) {
 				foreach ($property->getValues() as $value) {
-					$nodeDocument->addField(::Zend_Search_Lucene_Field::UnStored($property->getName(), $value->getString()));
+					$nodeDocument->addField(new ::Zend_Search_Lucene_Field($property->getName(), $value->getString(), '', FALSE, TRUE, FALSE));
 				}
 			}
 		}
@@ -128,7 +130,7 @@ class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function deleteNode(F3::PHPCR::NodeInterface $node) {
-		$hits = $this->index->find(new ::Zend_Search_Lucene_Search_Query_Term(new ::Zend_Search_Lucene_Index_Term($node->getIdentifier(), 'identifier'), TRUE));
+		$hits = $this->index->find(new ::Zend_Search_Lucene_Search_Query_Term(new ::Zend_Search_Lucene_Index_Term($node->getIdentifier(), 'typo3cr:identifier'), TRUE));
 		foreach ($hits as $hit) {
 			$this->index->delete($hit->id);
 		}
@@ -145,7 +147,7 @@ class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 		$luceneQuery = new ::Zend_Search_Lucene_Search_Query_MultiTerm();
 
 		if ($query->getSource() instanceof F3::PHPCR::Query::QOM::SourceInterface) {
-			$term  = new ::Zend_Search_Lucene_Index_Term($query->getSource()->getNodeTypeName(), 'nodetype');
+			$term  = new ::Zend_Search_Lucene_Index_Term($query->getSource()->getNodeTypeName(), 'typo3cr:nodetype');
 			$luceneQuery->addTerm($term, TRUE);
 		}
 
@@ -157,7 +159,7 @@ class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 		$hits = $this->index->find($luceneQuery);
 		$result = array();
 		foreach ($hits as $hit) {
-			$result[] = $hit->identifier;
+			$result[] = $hit->getDocument()->getFieldValue('typo3cr:identifier');
 		}
 
 		return $result;
@@ -173,7 +175,7 @@ class Lucene extends F3::TYPO3CR::Storage::AbstractSearch {
 	 */
 	protected function parseConstraint(F3::PHPCR::Query::QOM::ConstraintInterface $constraint, array $boundVariableValues, ::Zend_Search_Lucene_Search_Query_MultiTerm $luceneQuery) {
 		if ($constraint instanceof F3::PHPCR::Query::QOM::ComparisonInterface) {
-			$term  = new ::Zend_Search_Lucene_Index_Term($boundVariableValues[$constraint->getOperand1()->getPropertyName()], $constraint->getOperand1()->getPropertyName());
+			$term  = new ::Zend_Search_Lucene_Index_Term($boundVariableValues[$constraint->getOperand1()->getPropertyName()], 'flow3:' . $constraint->getOperand1()->getPropertyName());
 			$luceneQuery->addTerm($term, TRUE);
 		}
 	}

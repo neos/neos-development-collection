@@ -778,7 +778,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @return array of arrays with parameters for setPropertySetsValue()
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
-	public function convertableProperties() {
+	public function convertibleProperties() {
 		return array(
 			array(F3::PHPCR::PropertyType::UNDEFINED, 'someValue', new F3::TYPO3CR::Value('someValue', F3::PHPCR::PropertyType::STRING)),
 			array(F3::PHPCR::PropertyType::UNDEFINED, TRUE, new F3::TYPO3CR::Value(TRUE, F3::PHPCR::PropertyType::BOOLEAN)),
@@ -824,7 +824,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @test
-	 * @dataProvider convertableProperties
+	 * @dataProvider convertibleProperties
 	 */
 	public function setPropertySetsValue($propType, $propValue, $expectedResult) {
 		$this->rootNode->setProperty('someprop', $propValue, $propType);
@@ -832,12 +832,12 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * Provides test data for setPropertyThrowsExceptionOnUncovertableType
+	 * Provides test data for setPropertyThrowsExceptionOnUnconvertibleType
 	 *
-	 * @return array of arrays with parameters for setPropertyThrowsExceptionOnUncovertableType()
+	 * @return array of arrays with parameters for setPropertyThrowsExceptionOnUnconvertibleType()
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
-	public function unconvertableProperties() {
+	public function unconvertibleProperties() {
 		return array(
 			array(F3::PHPCR::PropertyType::DATE, 'foo'),
 			array(F3::PHPCR::PropertyType::DATE, 5),
@@ -851,12 +851,12 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @test
-	 * @dataProvider unconvertableProperties
+	 * @dataProvider unconvertibleProperties
 	 */
-	public function setPropertyThrowsExceptionOnUncovertableType($propType, $propValue) {
+	public function setPropertyThrowsExceptionOnUnconvertibleType($propType, $propValue) {
 		try {
 			$this->rootNode->setProperty('someprop', $propValue, $propType);
-			$this->fail('setProperty() must throw exception if the given value is not convertable to the given type');
+			$this->fail('setProperty() must throw exception if the given value is not convertible to the given type');
 		} catch (F3::PHPCR::ValueFormatException $e) {}
 	}
 

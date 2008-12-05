@@ -385,7 +385,9 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	}
 
 	/**
-	 * Fetches raw nodetype data from the database
+	 * Fetches raw nodetype data from the database.
+	 *
+	 * Currently looks ridiculous, as it fetches only what we know already.
 	 *
 	 * @param string $nodeTypeNme The name of the nodetype record to fetch
 	 * @return array|FALSE
@@ -393,8 +395,10 @@ class PDO extends F3::TYPO3CR::Storage::AbstractSQLBackend {
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getRawNodeType($nodeTypeName) {
-		$statementHandle = $this->databaseHandle->prepare('SELECT "name", "namespace" FROM "nodetypes" WHERE "name" = ?');
-		$statementHandle->execute(array($nodeTypeName));
+		$splitName = $this->splitName($nodeTypeName);
+
+		$statementHandle = $this->databaseHandle->prepare('SELECT "name", "namespace" FROM "nodetypes" WHERE "name" = ? AND "namespace" = ?');
+		$statementHandle->execute(array($splitName['name'], $splitName['namespaceURI']));
 		$nodetypes = $statementHandle->fetchAll(::PDO::FETCH_ASSOC);
 		foreach ($nodetypes as &$nodetype) {
 			$nodetype['name'] = $this->prefixName(array('namespaceURI' => $nodetype['namespace'], 'name' => $nodetype['name']));
