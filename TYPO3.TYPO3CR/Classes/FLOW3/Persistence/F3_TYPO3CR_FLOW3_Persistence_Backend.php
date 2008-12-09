@@ -59,12 +59,12 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	/**
 	 * @var array
 	 */
-	protected $aggregateRootObjects;
+	protected $aggregateRootObjects = array();
 
 	/**
 	 * @var array
 	 */
-	protected $deletedObjects;
+	protected $deletedObjects = array();
 
 	/**
 	 * Constructs the backend

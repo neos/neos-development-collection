@@ -399,7 +399,7 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isReferenceTarget($identifier) {
-		$rawReferences = $this->getRawPropertiesOfTypedValue($name, F3::PHPCR::PropertyType::REFERENCE, $identifier);
+		$rawReferences = $this->getRawPropertiesOfTypedValue(NULL, F3::PHPCR::PropertyType::REFERENCE, $identifier);
 		if (count($rawReferences) > 0) {
 			return TRUE;
 		} else {
