@@ -33,7 +33,7 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	/**
 	 * @var array
 	 */
-	protected $settings;
+	protected $settings = array();
 
 	/**
 	 * @var F3::FLOW3::Object::FactoryInterface
@@ -147,6 +147,7 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 		if ($workspaceName !== 'default') {
 			throw new F3::PHPCR::NoSuchWorkspaceException('Only default workspace supported', 1181063009);
 		}
+
 		$this->storageBackend = $this->objectFactory->create($this->settings['storage']['backend'], $this->settings['storage']['backendOptions']);
 		$this->storageBackend->setSearchEngine($this->objectFactory->create($this->settings['search']['backend'], $this->settings['search']['backendOptions']));
 		$this->storageBackend->setWorkspaceName($workspaceName);

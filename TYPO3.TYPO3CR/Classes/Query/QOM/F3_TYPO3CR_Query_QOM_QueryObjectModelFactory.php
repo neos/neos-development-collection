@@ -98,7 +98,7 @@ class QueryObjectModelFactory implements F3::PHPCR::Query::QOM::QueryObjectModel
 	 * @throws F3::PHPCR::Query::InvalidQueryException if the query is invalid
 	 * @throws F3::PHPCR::RepositoryException if the operation otherwise fails
 	 */
-	public function join(F3::PHPCR::Query::QOM::SourceInterface $left, F3::PHPCR::Query::QOM::SourceInterface $right, $joinType, F3::PHPCR::Query::QOM::JoinConditionInterface $joinCondition) {
+	public function join(F3::PHPCR::Query::QOM::SourceInterface $left, F3::PHPCR::Query::QOM::SourceInterface $right, $joinType, $joinCondition) {
 		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058188);
 	}
 
