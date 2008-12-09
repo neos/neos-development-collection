@@ -216,9 +216,9 @@ class BackendTest extends F3::Testing::BaseTestCase {
 		$backend->injectIdentityMap($identityMap);
 		$backend->setAggregateRootObjects(array(spl_object_hash($dirtyObject) => $dirtyObject));
 
-		$this->assertTrue($dirtyObject->isDirty());
+		$this->assertTrue($dirtyObject->isDirty('simpleString'));
 		$backend->commit();
-		$this->assertFalse($dirtyObject->isDirty());
+		$this->assertFalse($dirtyObject->isDirty('simpleString'));
 	}
 
 	/**

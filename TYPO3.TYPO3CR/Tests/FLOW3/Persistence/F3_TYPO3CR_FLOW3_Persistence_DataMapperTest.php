@@ -41,6 +41,8 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 	 */
 	public function mapReturnsCorrectObjectsFromNodes() {
 		$mockClassSchema = $this->getMock('F3::FLOW3::Persistence::ClassSchema', array(), array(), '', FALSE);
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+
 		$mockObjectConfiguration = $this->getMock('F3::FLOW3::Object::Configuration', array(), array(), '', FALSE);
 		$mockEntity = $this->getMock('stdClass', array(), array(), 'Tests::Virtual::Entity');
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
