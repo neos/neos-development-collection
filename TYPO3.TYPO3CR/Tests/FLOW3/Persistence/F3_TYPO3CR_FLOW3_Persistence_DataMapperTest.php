@@ -86,6 +86,7 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 	 */
 	public function mapRegistersObjectsInIdentityMap() {
 		$mockClassSchema = $this->getMock('F3::FLOW3::Persistence::ClassSchema', array(), array(), '', FALSE);
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 		$mockObjectConfiguration = $this->getMock('F3::FLOW3::Object::Configuration', array(), array(), '', FALSE);
 		$mockEntity = $this->getMock('stdClass');
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
@@ -126,6 +127,7 @@ class DataMapperTest extends F3::Testing::BaseTestCase {
 	 */
 	public function mapRegistersObjectsAsReconstitutedWithPersistentSession() {
 		$mockClassSchema = $this->getMock('F3::FLOW3::Persistence::ClassSchema', array(), array(), '', FALSE);
+		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 		$mockObjectConfiguration = $this->getMock('F3::FLOW3::Object::Configuration', array(), array(), '', FALSE);
 		$mockEntity = $this->getMock('stdClass');
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
