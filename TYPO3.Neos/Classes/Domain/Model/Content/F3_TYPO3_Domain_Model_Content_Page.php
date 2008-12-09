@@ -147,7 +147,7 @@ class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setStartTime(DateTime $startTime) {
+	public function setStartTime(::DateTime $startTime) {
 		$this->startTime = $startTime;
 	}
 
@@ -168,7 +168,7 @@ class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setEndTime(DateTime $endTime) {
+	public function setEndTime(::DateTime $endTime) {
 		$this->endTime = $endTime;
 	}
 

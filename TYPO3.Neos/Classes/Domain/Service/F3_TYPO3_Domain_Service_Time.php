@@ -50,7 +50,7 @@ class Time {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentDateTime() {
-		return ($this->simulatedDateTime === NULL) ? new DateTime() : $this->simulatedDateTime;
+		return ($this->simulatedDateTime === NULL) ? new ::DateTime() : $this->simulatedDateTime;
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Time {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSimulatedDateTime(DateTime $simulatedDateTime) {
+	public function setSimulatedDateTime(::DateTime $simulatedDateTime) {
 		$this->simulatedDateTime = $simulatedDateTime;
 	}
 }
