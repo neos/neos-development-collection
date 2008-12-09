@@ -240,8 +240,8 @@ class BackendTest extends F3::Testing::BaseTestCase {
 		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
 		$mockRootNode = $this->getMock('F3::PHPCR::NodeInterface');
 		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockInstanceNode));
 		$mockInstanceNode = $this->getMock('F3::PHPCR::NodeInterface');
+		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockInstanceNode));
 		$mockInstanceNode->expects($this->once())->method('remove');
 		$mockSession = $this->getMock('F3::PHPCR::SessionInterface');
 		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
