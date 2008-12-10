@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TypoScript;
+namespace F3\TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,10 +27,10 @@ namespace F3::TypoScript;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class AbstractObject implements F3::TypoScript::ObjectInterface {
+abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 
 	/**
-	 * @var array An array of F3::TypoScript::ProcessorChain objects
+	 * @var array An array of \F3\TypoScript\ProcessorChain objects
 	 */
 	protected $propertyProcessorChains = array();
 
@@ -38,11 +38,11 @@ abstract class AbstractObject implements F3::TypoScript::ObjectInterface {
 	 * Sets the property processor chain for a specific property
 	 *
 	 * @param string $propertyName Name of the property to set the chain for
-	 * @param F3::TypoScript::ProcessorChain $propertyProcessorChain The property processor chain for that property
+	 * @param \F3\TypoScript\ProcessorChain $propertyProcessorChain The property processor chain for that property
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPropertyProcessorChain($propertyName, F3::TypoScript::ProcessorChain $propertyProcessorChain) {
+	public function setPropertyProcessorChain($propertyName, \F3\TypoScript\ProcessorChain $propertyProcessorChain) {
 		$this->propertyProcessorChains[$propertyName] = $propertyProcessorChain;
 	}
 
@@ -51,11 +51,11 @@ abstract class AbstractObject implements F3::TypoScript::ObjectInterface {
 	 *
 	 * @param string $propertyName Name of the property to unset the chain for
 	 * @return void
+	 * @throws \LogicException
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws LogicException
 	 */
 	public function unsetPropertyProcessorChain($propertyName) {
-		if (!isset($this->propertyProcessorChains[$propertyName])) throw new LogicException('Tried to unset the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407939);
+		if (!isset($this->propertyProcessorChains[$propertyName])) throw new \LogicException('Tried to unset the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407939);
 		unset($this->propertyProcessorChains[$propertyName]);
 	}
 
@@ -63,12 +63,12 @@ abstract class AbstractObject implements F3::TypoScript::ObjectInterface {
 	 * Returns the property processor chain for a specific property
 	 *
 	 * @param string $propertyName: Name of the property to return the chain of
-	 * @return F3::TypoScript::ProcessorChain $propertyProcessorChain: The property processor chain of that property
+	 * @return \F3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
+	 * @throws \LogicException
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws LogicException
 	 */
 	public function getPropertyProcessorChain($propertyName) {
-		if (!isset($this->propertyProcessorChains[$propertyName])) throw new LogicException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
+		if (!isset($this->propertyProcessorChains[$propertyName])) throw new \LogicException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
 		return $this->propertyProcessorChains[$propertyName];
 	}
 
@@ -89,10 +89,10 @@ abstract class AbstractObject implements F3::TypoScript::ObjectInterface {
 	 * @param string $propertyName Name of the property to process
 	 * @result string The processed value of the property
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws LogicException
+	 * @throws \LogicException
 	 */
 	protected function getProcessedProperty($propertyName) {
-		if (!property_exists($this, $propertyName)) throw new LogicException('Tried to run the processors chain for non-existing property "' . $propertyName . '".', 1179406581);
+		if (!property_exists($this, $propertyName)) throw new \LogicException('Tried to run the processors chain for non-existing property "' . $propertyName . '".', 1179406581);
 		if (!isset($this->propertyProcessorChains[$propertyName])) return $this->$propertyName;
 		return $this->propertyProcessorChains[$propertyName]->process($this->$propertyName);
 	}

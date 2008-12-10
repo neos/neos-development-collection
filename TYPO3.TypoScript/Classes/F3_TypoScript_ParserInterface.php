@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TypoScript;
+namespace F3\TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ interface ParserInterface {
 	 * as the result.
 	 *
 	 * @param  string								$sourceCode: The TypoScript source code to parse
-	 * @return F3::TypoScript::ObjectTree			A TypoScript object tree, generated from the source code
+	 * @return \F3\TypoScript\ObjectTree			A TypoScript object tree, generated from the source code
 	 */
 	public function parse($sourceCode);
 		

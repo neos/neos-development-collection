@@ -5,7 +5,7 @@
  *  Do they really get float values?
  *
  */
-namespace: default = F3::TYPO3::TypoScript
+namespace: default = F3\TYPO3\TypoScript
 
 page = Page
 page.10 = Text

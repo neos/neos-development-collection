@@ -4,8 +4,8 @@
  *  This fixture serves for testing confinements
  *
  */
-namespace: default = F3::TYPO3::TypoScript
- 
+namespace: default = F3\TYPO3\TypoScript
+
 firstObject = Text
 firstObject {
 	value = "Go outside. The graphics are AMAZING!"

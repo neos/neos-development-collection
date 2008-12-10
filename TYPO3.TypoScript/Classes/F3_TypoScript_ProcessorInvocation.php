@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TypoScript;
+namespace F3\TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -49,7 +49,7 @@ class ProcessorInvocation {
 	 * @param  array						$processorArguments: Arguments to pass to the processor method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws RuntimeException
+	 * @throws \RuntimeException
 	 */
 	public function __construct($processorObject, $processorMethodName, array $processorArguments) {
 		if (is_object($processorObject) && is_string($processorMethodName) && method_exists($processorObject, $processorMethodName)) {
@@ -57,7 +57,7 @@ class ProcessorInvocation {
 			$this->processorMethodName = $processorMethodName;
 			$this->processorArguments = $processorArguments;
 		} else {
-			throw new RuntimeException('The processor object is not an object or the specified processor method does not exist!', 1179409471);
+			throw new \RuntimeException('The processor object is not an object or the specified processor method does not exist!', 1179409471);
 		}
 	}
 	

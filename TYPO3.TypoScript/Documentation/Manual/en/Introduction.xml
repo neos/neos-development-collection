@@ -801,33 +801,33 @@ myObject.value = "$hello&lt;br /&gt;Nice that you\'re here again.&lt;br /&gt;$go
       or <classname>HTML</classname> are mapped to class names (more
       precisely: object names). The Typoscript Object called
       <classname>Text</classname> is represented by a class with the full name
-      <classname>F3::CMS::TypoScript::Text</classname>.</para>
+      <classname>\F3\CMS\TypoScript\Text</classname>.</para>
 
       <para>The reason why this mapping works is that a <emphasis>default
       namespace</emphasis> has been defined for the TypoScript object types.
       In the TYPO3 CMS the default namespace is
-      <classname>F3::CMS::TypoScript</classname> but it is possible to define
+      <classname>\F3\CMS\TypoScript</classname> but it is possible to define
       additional namespaces in order to use TypoScript object types which are
       not available in the <package>CMS</package> package. It is even possible
       to define a different default namespace.</para>
 
       <para>Consider a package <package>CoolForms</package> which provides a
       new kind of TypoScript object implemented by a class called
-      <classname>F3::CoolForms::TypoScript::Form</classname>. The following
+      <classname>F3\CoolForms\TypoScript\Form</classname>. The following
       TypoScript code would use that new object type by declaring a new
       namespace:</para>
 
       <example>
         <title>Using namespaces</title>
 
-        <programlisting language="TypoScript">namespace: forms = F3::CoolForms::TypoScript
+        <programlisting language="TypoScript">namespace: forms = F3\CoolForms\TypoScript
 
 
 lib.someTextObject = Text
 lib.someTextObject.value = "Hello, this is a regular Text object."
 
-lib.someFormObject = forms::Form
-lib.someFormObject.fields.1 = forms::InputField
+lib.someFormObject = forms\Form
+lib.someFormObject.fields.1 = forms\InputField
 lib.someFormObject.fields.1.label = "Your name"</programlisting>
       </example>
     </section>

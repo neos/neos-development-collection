@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TypoScript;
+namespace F3\TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,7 +27,7 @@ namespace F3::TypoScript;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class AbstractContentArrayObject extends F3::TypoScript::AbstractContentObject implements ArrayAccess {
+abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContentObject implements \ArrayAccess {
 
 	/**
 	 * @var array An array which contains further content objects which can be set and retrieved through numeric indexes
@@ -70,10 +70,10 @@ abstract class AbstractContentArrayObject extends F3::TypoScript::AbstractConten
 	 * @param mixed $value The value
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 */
 	public function offsetSet($offset, $value) {
-		if (!is_integer($offset)) throw new InvalidArgumentException('Invalid offset while setting the value of an element of the content array. The offset (index) must be of type integer, ' . gettype($offset) . ' given.', 1181064753);
+		if (!is_integer($offset)) throw new \InvalidArgumentException('Invalid offset while setting the value of an element of the content array. The offset (index) must be of type integer, ' . gettype($offset) . ' given.', 1181064753);
 		$this->contentArray[$offset] = $value;
 	}
 
@@ -84,10 +84,10 @@ abstract class AbstractContentArrayObject extends F3::TypoScript::AbstractConten
 	 * @param mixed $value The value
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 */
 	public function offsetUnset($offset) {
-		if (!is_integer($offset)) throw new InvalidArgumentException('Invalid offset while unsetting the value of an element of the content array. The offset (index) must be of type integer, ' . gettype($offset) . ' given.', 1181064754);
+		if (!is_integer($offset)) throw new \InvalidArgumentException('Invalid offset while unsetting the value of an element of the content array. The offset (index) must be of type integer, ' . gettype($offset) . ' given.', 1181064754);
 		unset($this->contentArray[$offset]);
 	}
 
@@ -113,7 +113,7 @@ abstract class AbstractContentArrayObject extends F3::TypoScript::AbstractConten
 		ksort($this->contentArray);
 		$content = '';
 		foreach ($this->contentArray as $contentItem) {
-			if ($contentItem instanceof F3::TypoScript::AbstractContentObject) {
+			if ($contentItem instanceof \F3\TypoScript\AbstractContentObject) {
 				$content .= $contentItem->getRenderedContent();
 			}
 		}

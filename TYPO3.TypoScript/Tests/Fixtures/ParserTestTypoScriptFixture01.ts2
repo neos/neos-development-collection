@@ -5,12 +5,12 @@
 #  - namespace declarations
 #  - value assignments: object type and literal
 
-  namespace: cms = F3::TYPO3::TypoScript 
-test = cms::Text
+  namespace: cms = F3\TYPO3\TypoScript 
+test = cms\Text
  	test.value= "Hello world!" 
 
-secondTest = cms::Text
+secondTest = cms\Text
 secondTest.value = 23
 
-thirdTest = F3::TYPO3::TypoScript::Text
+thirdTest = F3\TYPO3\TypoScript\Text
 thirdTest.value = "Fully Qualified Object"

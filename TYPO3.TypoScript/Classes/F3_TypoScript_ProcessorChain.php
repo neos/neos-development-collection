@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TypoScript;
+namespace F3\TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +17,7 @@ namespace F3::TypoScript;
 
 /**
  * The implementation of a processor chain
- * 
+ *
  * @package		TypoScript
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
@@ -25,28 +25,28 @@ namespace F3::TypoScript;
  * @scope prototype
  */
 class ProcessorChain {
-	
+
 	/**
-	 * @var An array of 
+	 * @var An array of
 	 */
 	protected $processorInvocations = array();
-	
+
 	/**
 	 * Sets the processor invocation with a specified index representing the order
 	 * in the processor chain.
 	 *
 	 * @param  integer					$index: A numeric index expressing the order of the processor in the overall chain
-	 * @param  F3::TypoScript::ProcessorInvocation $processorInvocation: The processor invocation
+	 * @param  \F3\TypoScript\ProcessorInvocation $processorInvocation: The processor invocation
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 */
-	public function setProcessorInvocation($index, F3::TypoScript::ProcessorInvocation $processorInvocation) {
-		if (!is_integer($index)) throw new InvalidArgumentException('Index must be of type integer, ' . gettype($index) . ' given.', 1179416592);
+	public function setProcessorInvocation($index, \F3\TypoScript\ProcessorInvocation $processorInvocation) {
+		if (!is_integer($index)) throw new \InvalidArgumentException('Index must be of type integer, ' . gettype($index) . ' given.', 1179416592);
 		$this->processorInvocations[$index] = $processorInvocation;
 		ksort($this->processorInvocations);
 	}
-	
+
 	/**
 	 * Runs the through the processor chain to process the specified string.
 	 *

@@ -12,14 +12,14 @@ NamespaceDeclaration = "namespace" ":" NamespaceIdentifier "=" ObjectName;
 
 SingleLineComment = ( "#" | "//" ) { UnicodeCharacter };
 BlockComment = "/*" { UnicodeCharacter | LineBreak } "*/";
-                                       
+
 ObjectPath = [ "." ] ObjectIdentifier { "." ObjectIdentifier } ( [ "." VariableName ] | [ "." ArrayOffset ] );
-VariableName = "$" Identifier;                              
+VariableName = "$" Identifier;
 
 ValueOperation = ( ValueAssignment | ValueCopy | ValueReference | ValueUnset | ValueProcessing );
 ValueAssignment = "=" ( Literal | ObjectType | Constant );
 ValueCopy = "<" ObjectPath;
-ValueReference = "=<" ObjectPath;                            
+ValueReference = "=<" ObjectPath;
 ValueUnset = ">";
 ValueProcessing = "<<" ArrayOffset "." [ ObjectName "->" ] MethodName "(" { MethodArgument [ "," ] }")";
 
@@ -34,12 +34,12 @@ ObjectType = ( NamespaceIdentifier "::" Identifier ) | ObjectName;
 Constant = (* ... to be defined *);
 
 ParseCondition = (* ... to be defined *);
-                              
+
 NamespaceIdentifier = Identifier;
 ObjectIdentifier = Identifier;
 MethodName = Identifier;
 Identifier = Character { CharacterOrDigit };
-ObjectName = Character { "::" CharacterOrDigit } { CharacterOrDigit };
+ObjectName = Character { "\" CharacterOrDigit } { CharacterOrDigit };
 ArrayOffset = Digit;
 
 Number = FloatNumber | IntegerNumber;
