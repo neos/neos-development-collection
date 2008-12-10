@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,12 +28,12 @@ namespace F3::TYPO3CR;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class PropertyIterator extends F3::TYPO3CR::RangeIterator implements F3::PHPCR::PropertyIteratorInterface {
+class PropertyIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\PropertyIteratorInterface {
 
 	/**
 	 * Returns the next Property in the iteration.
 	 *
-	 * @return F3::PHPCR::PropertyInterface
+	 * @return \F3\PHPCR\PropertyInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function nextProperty() {

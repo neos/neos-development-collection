@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +28,7 @@ namespace F3::TYPO3CR;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Repository implements F3::PHPCR::RepositoryInterface {
+class Repository implements \F3\PHPCR\RepositoryInterface {
 
 	/**
 	 * @var array
@@ -36,12 +36,12 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	protected $settings = array();
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::TYPO3CR::Storage::BackendInterface
+	 * @var \F3\TYPO3CR\Storage\BackendInterface
 	 */
 	protected $storageBackend;
 
@@ -87,7 +87,7 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 		self::NODETYPE_MANAGEMENT_MULTIPLE_BINARY_PROPERTIES_SUPPORTED => TRUE,
 		self::NODETYPE_MANAGEMENT_VALUE_CONSTRAINTS_SUPPORTED => FALSE,
 		self::QUERY_LANGUAGES => array(
-			F3::PHPCR::Query::QueryInterface::JCR_JQOM
+			\F3\PHPCR\Query\QueryInterface::JCR_JQOM
 		),
 		self::QUERY_STORED_QUERIES_SUPPORTED => FALSE,
 		self::QUERY_FULL_TEXT_SEARCH_SUPPORTED => TRUE,
@@ -97,22 +97,22 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	/**
 	 * Constructs a Repository object.
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
 	/**
 	 * Injects the configuration manager
 	 *
-	 * @param F3::FLOW3::Configuration::Manager $configurationManager
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationManager(F3::FLOW3::Configuration::Manager $configurationManager) {
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
 		$this->settings = $configurationManager->getSettings('TYPO3CR');
 	}
 
@@ -133,19 +133,19 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	 * method Workspace.getAccessibleWorkspaceNames(), allowing the client to select from among
 	 * available "real" workspaces.
 	 *
-	 * @param F3::PHPCR::Credentials $credentials The credentials of the user
+	 * @param \F3\PHPCR\Credentials $credentials The credentials of the user
 	 * @param string $workspaceName the name of a workspace
-	 * @return F3::TYPO3CR::Session a valid session for the user to access the repository
-	 * @throws F3::PHPCR::LoginException If the login fails
-	 * @throws F3::PHPCR::NoSuchWorkspacexception If the specified workspaceName is not recognized
-	 * @throws F3::PHPCR::RepositoryException if another error occurs
+	 * @return \F3\TYPO3CR\Session a valid session for the user to access the repository
+	 * @throws \F3\PHPCR\LoginException If the login fails
+	 * @throws \F3\PHPCR\NoSuchWorkspacexception If the specified workspaceName is not recognized
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @todo Currently given credentials are not checked at all!
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function login($credentials = NULL, $workspaceName = 'default') {
-		if ($credentials !== NULL && !($credentials instanceof F3::PHPCR::CredentialsInterface)) throw new F3::PHPCR::RepositoryException('$credentials must be an instance of F3::PHPCR::CredentialsInterface', 1181042933);
+		if ($credentials !== NULL && !($credentials instanceof \F3\PHPCR\CredentialsInterface)) throw new \F3\PHPCR\RepositoryException('$credentials must be an instance of \F3\PHPCR\CredentialsInterface', 1181042933);
 		if ($workspaceName !== 'default') {
-			throw new F3::PHPCR::NoSuchWorkspaceException('Only default workspace supported', 1181063009);
+			throw new \F3\PHPCR\NoSuchWorkspaceException('Only default workspace supported', 1181063009);
 		}
 
 		$this->storageBackend = $this->objectFactory->create($this->settings['storage']['backend'], $this->settings['storage']['backendOptions']);
@@ -153,7 +153,7 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 		$this->storageBackend->setWorkspaceName($workspaceName);
 		$this->storageBackend->connect();
 
-		$session = $this->objectFactory->create('F3::PHPCR::SessionInterface', $workspaceName, $this, $this->storageBackend);
+		$session = $this->objectFactory->create('F3\PHPCR\SessionInterface', $workspaceName, $this, $this->storageBackend);
 		$this->storageBackend->setNamespaceRegistry($session->getWorkspace()->getNamespaceRegistry());
 		return $session;
 	}
@@ -181,7 +181,7 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	 * @return boolan whether $key is a standard descriptor.
 	 */
 	public function isStandardDescriptor($key) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598717);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598717);
 	}
 
 	/**
@@ -192,7 +192,7 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	 * @return boolean whether the specified descriptor is multi-valued.
 	 */
 	public function isSingleValueDescriptor($key) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598718);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598718);
 	}
 
 	/**
@@ -202,10 +202,10 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	 * or not a valid key this method returns NULL.
 	 *
 	 * @param string $key a descriptor key.
-	 * @return F3::PHPCR::ValueInterface The value of the indicated descriptor
+	 * @return \F3\PHPCR\ValueInterface The value of the indicated descriptor
 	 */
 	public function getDescriptorValue($key) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598719);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598719);
 	}
 
 	/**
@@ -216,10 +216,10 @@ class Repository implements F3::PHPCR::RepositoryInterface {
 	 * If $key is not a valid key this method returns NULL.
 	 *
 	 * @param string $key a descriptor key.
-	 * @return array of F3::PHPCR::ValueInterface the value array for the indicated descriptor
+	 * @return array of \F3\PHPCR\ValueInterface the value array for the indicated descriptor
 	 */
 	public function getDescriptorValues($key) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598720);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598720);
 	}
 
 	/**

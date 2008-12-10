@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3CR;
  * @version  $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class RangeIteratorTest extends F3::Testing::BaseTestCase {
+class RangeIteratorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Tests if getPosition() returns 0 initially.
@@ -37,11 +37,11 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getPositionInitiallyReturnsZero() {
-		$iterator = new F3::TYPO3CR::RangeIterator();
+		$iterator = new \F3\TYPO3CR\RangeIterator();
 		$this->assertEquals(0, $iterator->getPosition(), "getPosition() must initially return 0.");
 
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 		$this->assertEquals(0, $iterator->getPosition(), "getPosition() must initially return 0.");
 	}
 
@@ -52,7 +52,7 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getSizeReturnsCorrectResult() {
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 
 		$size = $iterator->getSize();
 		$this->assertEquals(4, $size, "getSize() does not return correct number.");
@@ -64,7 +64,7 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResultAfterAppend() {
-		$iterator = new F3::TYPO3CR::RangeIterator();
+		$iterator = new \F3\TYPO3CR\RangeIterator();
 		$iterator->append('one');
 		$iterator->append('two');
 		$iterator->append('three');
@@ -81,7 +81,7 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getSizeReturnsCorrectResultAfterRemove() {
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 
 		$iterator->remove();
 		$size = $iterator->getSize();
@@ -97,7 +97,7 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function hasNextAndNextNodeIterateThroughAllElements() {
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 
 		$count = 0;
 		while ($iterator->hasNext()) {
@@ -116,7 +116,7 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getPositionWorks() {
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 
 		$this->assertEquals(0, $iterator->getPosition(), "Initial call to getPosition() must return 0");
 		$index = 0;
@@ -132,15 +132,11 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException \OutOfBoundsException
 	 */
 	public function throwsOutOfBoundsExceptionIfNoNodesAvailable() {
-		$iterator = new F3::TYPO3CR::RangeIterator();
-		try {
-			$iterator->next();
-			$this->fail("nextNode() must throw a OutOfBoundsException when no nodes are available");
-		} catch (OutOfBoundsException $e) {
-			// success
-		}
+		$iterator = new \F3\TYPO3CR\RangeIterator();
+		$iterator->next();
 	}
 
 	/**
@@ -148,19 +144,15 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException \OutOfBoundsException
 	 */
 	public function skipToEndOfIteratorSetsPositionCorrectly() {
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 
 		$iterator->skip(4);
 		$this->assertEquals(4, $iterator->getPosition(), "Call to getPosition() must return 4");
-		try {
-			$iterator->next();
-			$this->fail("nextNode() after skip() to the end must throw a OutOfBoundsException");
-		} catch (OutOfBoundsException $e) {
-			// success
-		}
+		$iterator->next();
 	}
 
 	/**
@@ -168,17 +160,13 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException \OutOfBoundsException
 	 */
 	public function skipPastEndOfIteratorThrowsOutOfBoundsException() {
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 
-		try {
-			$iterator->skip(5);
-			$this->fail("skip() must throw a OutOfBoundsException if one tries to skip past the end of the iterator");
-		} catch (OutOfBoundsException $e) {
-			// success
-		}
+		$iterator->skip(5);
 	}
 
 	/**
@@ -189,7 +177,7 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function afterSkipTheExpectedItemIsReturned() {
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 
 		$iterator->next();
 		$iterator->skip(2);
@@ -204,14 +192,14 @@ class RangeIteratorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function afterRemoveTheExpectedItemIsReturned() {
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 		$iterator->next(); // returns "one"
 		$iterator->remove(); // should remove "one", thus next() should give "two"
 		$element = $iterator->next();
 		$this->assertEquals('two', $element, "next() does not return correct result after remove().");
 
 		$array = array('one', 'two', 'three', 'four');
-		$iterator = new F3::TYPO3CR::RangeIterator($array);
+		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 		$iterator->next(); // returns "one"
 		$iterator->next(); // returns "two"
 		$iterator->remove(); // should remove "two", thus next() should give "three"

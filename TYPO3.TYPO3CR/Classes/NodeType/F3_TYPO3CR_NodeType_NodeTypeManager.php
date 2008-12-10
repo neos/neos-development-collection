@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::NodeType;
+namespace F3\TYPO3CR\NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -31,15 +31,15 @@ namespace F3::TYPO3CR::NodeType;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
+class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 
 	/**
-	 * @var F3::TYPO3CR::Storage::BackendInterface
+	 * @var \F3\TYPO3CR\Storage\BackendInterface
 	 */
 	protected $storageBackend;
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -57,11 +57,11 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * Constructs a NodeTypeManager object
 	 *
 	 * @param string $name
-	 * @param F3::TYPO3CR::Storage::BackendInterface $storageBackend
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
+	 * @param \F3\TYPO3CR\Storage\BackendInterface $storageBackend
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::TYPO3CR::Storage::BackendInterface $storageBackend, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function __construct(\F3\TYPO3CR\Storage\BackendInterface $storageBackend, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->storageBackend = $storageBackend;
 		$this->objectFactory = $objectFactory;
 
@@ -79,7 +79,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 		if (is_array($rawNodeTypes)) {
 			foreach ($rawNodeTypes as $rawNodeType) {
 				$nodeTypeName = $rawNodeType['name'];
-				$nodeType = $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeInterface', $nodeTypeName);
+				$nodeType = $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeName);
 				if($nodeType->isMixin()) {
 					$this->registeredMixinTypes[$nodeTypeName] = $nodeType;
 				} else {
@@ -93,9 +93,9 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * Returns the named node type.
 	 *
 	 * @param string $nodeTypeName the name of an existing node type.
-	 * @return F3::PHPCR::NodeType::NodeTypeInterface A NodeType object.
-	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException if no node type by the given name exists.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\PHPCR\NodeType\NodeTypeInterface A NodeType object.
+	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if no node type by the given name exists.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function getNodeType($nodeTypeName) {
 		if (isset($this->registeredPrimaryTypes[$nodeTypeName])) {
@@ -105,9 +105,9 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 		} else {
 			$rawNodeType = $this->storageBackend->getRawNodeType($nodeTypeName);
 			if($rawNodeType === FALSE) {
-				throw new F3::PHPCR::NodeType::NoSuchNodeTypeException('Nodetype "' . $nodeTypeName .'" is not registered', 1213012218);
+				throw new \F3\PHPCR\NodeType\NoSuchNodeTypeException('Nodetype "' . $nodeTypeName .'" is not registered', 1213012218);
 			} else {
-				$nodeType = $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeInterface', $nodeTypeName);
+				$nodeType = $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeName);
 				if($nodeType->isMixin()) {
 					$this->registeredMixinTypes[$nodeTypeName] = $nodeType;
 				} else {
@@ -124,7 +124,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 *
 	 * @param string $name a String.
 	 * @return boolean a boolean
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 */
 	public function hasNodeType($name) {
 		if (isset($this->registeredPrimaryTypes[$name]) || isset($this->registeredMixinTypes[$name])) {
@@ -137,35 +137,35 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	/**
 	 * Returns an iterator over all available node types (primary and mixin).
 	 *
-	 * @return F3::PHPCR::NodeType::NodeTypeIteratorInterface An NodeTypeIterator.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface An NodeTypeIterator.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getAllNodeTypes() {
-		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', array_merge($this->registeredPrimaryTypes, $this->registeredMixinTypes));
+		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeIteratorInterface', array_merge($this->registeredPrimaryTypes, $this->registeredMixinTypes));
 	}
 
 	/**
 	 * Returns an iterator over all available primary node types.
 	 *
-	 * @return F3::PHPCR::NodeType::NodeTypeIteratorInterface An NodeTypeIterator.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface An NodeTypeIterator.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPrimaryNodeTypes() {
-		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $this->registeredPrimaryTypes);
+		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeIteratorInterface', $this->registeredPrimaryTypes);
 	}
 
 	/**
 	 * Returns an iterator over all available mixin node types. If none are available,
 	 * an empty iterator is returned.
 	 *
-	 * @return F3::PHPCR::NodeType::NodeTypeIteratorInterface An NodeTypeIterator.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface An NodeTypeIterator.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getMixinNodeTypes() {
-		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $this->registeredMixinTypes);
+		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeIteratorInterface', $this->registeredMixinTypes);
 	}
 
 	/**
@@ -176,44 +176,44 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * Returns a NodeTypeTemplate holding the specified node type definition. This
 	 * template can then be altered and passed to NodeTypeManager.registerNodeType.
 	 *
-	 * @param F3::PHPCR::NodeType::NodeTypeDefinitionInterface $ntd a NodeTypeDefinition.
-	 * @return F3::PHPCR::NodeType::NodeTypeTemplateInterface A NodeTypeTemplate.
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this implementation does not support node type registration.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @param \F3\PHPCR\NodeType\NodeTypeDefinitionInterface $ntd a NodeTypeDefinition.
+	 * @return \F3\PHPCR\NodeType\NodeTypeTemplateInterface A NodeTypeTemplate.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if this implementation does not support node type registration.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createNodeTypeTemplate($ntd = NULL) {
 		if ($ntd !== NULL) {
-			throw new F3::PHPCR::UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213013720);
+			throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213013720);
 		}
 
-		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeTemplateInterface');
+		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeTemplateInterface');
 	}
 
 	/**
 	 * Returns an empty NodeDefinitionTemplate which can then be used to create a
 	 * child node definition and attached to a NodeTypeTemplate.
 	 *
-	 * @return F3::PHPCR::NodeType::NodeDefinitionTemplateInterface A NodeDefinitionTemplate.
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this implementation does not support node type registration.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\PHPCR\NodeType\NodeDefinitionTemplateInterface A NodeDefinitionTemplate.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if this implementation does not support node type registration.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createNodeDefinitionTemplate() {
-		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeDefinitionTemplateInterface');
+		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeDefinitionTemplateInterface');
 	}
 
 	/**
 	 * Returns an empty PropertyDefinitionTemplate which can then be used to create
 	 * a property definition and attached to a NodeTypeTemplate.
 	 *
-	 * @return F3::PHPCR::NodeType::PropertyDefinitionTemplateInterface A PropertyDefinitionTemplate.
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if this implementation does not support node type registration.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\PHPCR\NodeType\PropertyDefinitionTemplateInterface A PropertyDefinitionTemplate.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if this implementation does not support node type registration.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createPropertyDefinitionTemplate() {
-		return $this->objectFactory->create('F3::PHPCR::NodeType::PropertyDefinitionTemplateInterface');
+		return $this->objectFactory->create('F3\PHPCR\NodeType\PropertyDefinitionTemplateInterface');
 	}
 
 	/**
@@ -223,22 +223,22 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 * subclass of NodeTypeDefinition) acquired from NodeTypeManager.createNodeTypeTemplate
 	 * and then filled-in with definition information.
 	 *
-	 * @param F3::PHPCR::NodeType::NodeTypeDefinitionInterface $ntd an NodeTypeDefinition.
+	 * @param \F3\PHPCR\NodeType\NodeTypeDefinitionInterface $ntd an NodeTypeDefinition.
 	 * @param boolean $allowUpdate a boolean
-	 * @return F3::PHPCR::NodeType::NodeTypeInterface the registered node type
-	 * @throws F3::PHPCR::InvalidNodeTypeDefinitionException if the NodeTypeDefinition is invalid.
-	 * @throws F3::PHPCR::NodeType::NodeTypeExistsException if allowUpdate is false and the NodeTypeDefinition specifies a node type name that is already registered.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\PHPCR\NodeType\NodeTypeInterface the registered node type
+	 * @throws \F3\PHPCR\InvalidNodeTypeDefinitionException if the NodeTypeDefinition is invalid.
+	 * @throws \F3\PHPCR\NodeType\NodeTypeExistsException if allowUpdate is false and the NodeTypeDefinition specifies a node type name that is already registered.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo check validity of definition
 	 */
-	public function registerNodeType(F3::PHPCR::NodeType::NodeTypeDefinitionInterface $ntd, $allowUpdate) {
+	public function registerNodeType(\F3\PHPCR\NodeType\NodeTypeDefinitionInterface $ntd, $allowUpdate) {
 		if ($allowUpdate === TRUE && $this->hasNodeType($ntd->getName())) {
-			throw new F3::PHPCR::UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213014462);
+			throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Updating node types is not yet implemented, sorry!', 1213014462);
 		}
 
 		if ($allowUpdate === FALSE && $this->hasNodeType($ntd->getName())) {
-			throw new F3::PHPCR::NodeType::NodeTypeExistsException('Node type ' . $ntd->getName() . ' is already registered.', 1225889033);
+			throw new \F3\PHPCR\NodeType\NodeTypeExistsException('Node type ' . $ntd->getName() . ' is already registered.', 1225889033);
 		}
 		$this->storageBackend->addNodeType($ntd);
 
@@ -254,19 +254,19 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 *
 	 * @param array $definitions an array of NodeTypeDefinitions
 	 * @param boolean $allowUpdate a boolean
-	 * @return F3::PHPCR::NodeType::NodeTypeIteratorInterface the registered node types.
-	 * @throws F3::PHPCR::InvalidNodeTypeDefinitionException if a NodeTypeDefinition within the Collection is invalid or if the Collection contains an object of a type other than NodeTypeDefinition.
-	 * @throws F3::PHPCR::NodeType::NodeTypeExistsException if allowUpdate is false and a NodeTypeDefinition within the Collection specifies a node type name that is already registered.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface the registered node types.
+	 * @throws \F3\PHPCR\InvalidNodeTypeDefinitionException if a NodeTypeDefinition within the Collection is invalid or if the Collection contains an object of a type other than NodeTypeDefinition.
+	 * @throws \F3\PHPCR\NodeType\NodeTypeExistsException if allowUpdate is false and a NodeTypeDefinition within the Collection specifies a node type name that is already registered.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo check validity of definitions before handing over to registerNodeType (all-or-nothing effect)
 	 */
 	public function registerNodeTypes(array $definitions, $allowUpdate) {
 		foreach ($definitions as $definition) {
-			if(!($definition instanceof F3::PHPCR::NodeType::NodeTypeDefinitionInterface)) {
-				throw new F3::PHPCR::NodeType::InvalidNodeTypeDefinitionException('Cannot register type as NodeType: ' . gettype($definition), 1213178848);
+			if(!($definition instanceof \F3\PHPCR\NodeType\NodeTypeDefinitionInterface)) {
+				throw new \F3\PHPCR\NodeType\InvalidNodeTypeDefinitionException('Cannot register type as NodeType: ' . gettype($definition), 1213178848);
 			} elseif ($allowUpdate === FALSE && $this->hasNodeType($definition->getName())) {
-				throw new F3::PHPCR::NodeType::NodeTypeExistsException('Node type ' . $definition->getName() . ' is already registered.', 1225889855);
+				throw new \F3\PHPCR\NodeType\NodeTypeExistsException('Node type ' . $definition->getName() . ' is already registered.', 1225889855);
 			}
 		}
 
@@ -275,7 +275,7 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 			$nodeTypes[] = $this->registerNodeType($definition, $allowUpdate);
 		}
 
-		return $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeIteratorInterface', $nodeTypes);
+		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeIteratorInterface', $nodeTypes);
 	}
 
 	/**
@@ -289,8 +289,8 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 *
 	 * @param string $name a String.
 	 * @return void
-	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException if no registered node type exists with the specified name.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if no registered node type exists with the specified name.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo check if the nodetype is a builtin or needed by other types and/or nodes
 	 */
@@ -313,8 +313,8 @@ class NodeTypeManager implements F3::PHPCR::NodeType::NodeTypeManagerInterface {
 	 *
 	 * @param array $names a String array
 	 * @return void
-	 * @throws F3::PHPCR::NodeType::NoSuchNodeTypeException if one of the names listed is not a registered node type.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if one of the names listed is not a registered node type.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo make sure interdependent types can be unregistered by this
 	 */

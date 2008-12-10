@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::NodeType;
+namespace F3\TYPO3CR\NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -39,10 +39,10 @@ namespace F3::TYPO3CR::NodeType;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class NodeTypeDefinition implements F3::PHPCR::NodeType::NodeTypeDefinitionInterface {
+class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::Manager
+	 * @var \F3\FLOW3\Object\Manager
 	 */
 	protected $objectFactory;
 
@@ -181,7 +181,7 @@ class NodeTypeDefinition implements F3::PHPCR::NodeType::NodeTypeDefinitionInter
 	 * @return boolean a boolean
 	 */
 	public function isQueryable() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224679680);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224679680);
 	}
 
 	/**

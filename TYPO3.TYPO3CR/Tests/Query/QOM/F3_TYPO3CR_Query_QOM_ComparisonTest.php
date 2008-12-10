@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Query::QOM;
+namespace F3\TYPO3CR\Query\QOM;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,15 +29,15 @@ namespace F3::TYPO3CR::Query::QOM;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ComparisonTest extends F3::Testing::BaseTestCase {
+class ComparisonTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function comparisonIsPrototype() {
-		$comparison1 = $this->objectFactory->create('F3::TYPO3CR::Query::QOM::Comparison', $this->getMock('F3::PHPCR::Query::QOM::DynamicOperandInterface'), 1, $this->getMock('F3::PHPCR::Query::QOM::StaticOperandInterface'));
-		$comparison2 = $this->objectFactory->create('F3::TYPO3CR::Query::QOM::Comparison', $this->getMock('F3::PHPCR::Query::QOM::DynamicOperandInterface'), 1, $this->getMock('F3::PHPCR::Query::QOM::StaticOperandInterface'));
+		$comparison1 = $this->objectFactory->create('F3\TYPO3CR\Query\QOM\Comparison', $this->getMock('F3\PHPCR\Query\QOM\DynamicOperandInterface'), 1, $this->getMock('F3\PHPCR\Query\QOM\StaticOperandInterface'));
+		$comparison2 = $this->objectFactory->create('F3\TYPO3CR\Query\QOM\Comparison', $this->getMock('F3\PHPCR\Query\QOM\DynamicOperandInterface'), 1, $this->getMock('F3\PHPCR\Query\QOM\StaticOperandInterface'));
 		$this->assertNotSame($comparison1, $comparison2, 'Query_QOM_Comparison is not prototype.');
 	}
 }

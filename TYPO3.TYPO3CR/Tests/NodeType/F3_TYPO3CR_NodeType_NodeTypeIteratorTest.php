@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::NodeType;
+namespace F3\TYPO3CR\NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,13 +29,13 @@ namespace F3::TYPO3CR::NodeType;
  * @version  $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class NodeTypeIteratorTest extends F3::Testing::BaseTestCase {
+class NodeTypeIteratorTest extends \F3\Testing\BaseTestCase {
 
 	public function setUp() {
-		$this->mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
+		$this->mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
 		$this->mockStorageBackend->expects($this->any())->method('getRawNodeType')->will($this->returnValue(array('name' => 'SuperDuperNodeType')));
 
-		$this->iterator = new F3::TYPO3CR::NodeType::NodeTypeIterator();
+		$this->iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator();
 	}
 
 	/**
@@ -44,8 +44,8 @@ class NodeTypeIteratorTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResult() {
-		$this->iterator->append(new F3::TYPO3CR::NodeType::NodeType('SuperDuperNodeType'));
-		$this->iterator->append(new F3::TYPO3CR::NodeType::NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'));
 		$size = $this->iterator->getSize();
 		$this->assertEquals(2, $size, "getSize() does not return correct number.");
 	}
@@ -57,8 +57,8 @@ class NodeTypeIteratorTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function hasNextAndNextNodeIterateThroughAllElements() {
-		$this->iterator->append(new F3::TYPO3CR::NodeType::NodeType('SuperDuperNodeType'));
-		$this->iterator->append(new F3::TYPO3CR::NodeType::NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'));
+		$this->iterator->append(new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'));
 		$count = 0;
 		while ($this->iterator->hasNext()) {
 			$this->iterator->nextNodeType();
@@ -73,14 +73,10 @@ class NodeTypeIteratorTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException \OutOfBoundsException
 	 */
 	public function throwsOutOfBoundsExceptionIfNoNodesAvailable() {
-		try {
-			$this->iterator->nextNodeType();
-			$this->fail("nextNodeType() must throw a OutOfBoundsException when no nodetypes are available");
-		} catch (OutOfBoundsException $e) {
-			// success
-		}
+		$this->iterator->nextNodeType();
 	}
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::FLOW3::Persistence;
+namespace F3\TYPO3CR\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,21 +29,21 @@ namespace F3::TYPO3CR::FLOW3::Persistence;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class QueryFactory implements F3::FLOW3::Persistence::QueryFactoryInterface {
+class QueryFactory implements \F3\FLOW3\Persistence\QueryFactoryInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
 	 * Injects the FLOW3 object factory
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
@@ -51,10 +51,10 @@ class QueryFactory implements F3::FLOW3::Persistence::QueryFactoryInterface {
 	 * Creates a query object working on the given class name
 	 *
 	 * @param string $className
-	 * @return F3::TYPO3CR::FLOW3::Persistence::Query
+	 * @return \F3\TYPO3CR\FLOW3\Persistence\Query
 	 */
 	public function create($className) {
-		return $this->objectFactory->create('F3::TYPO3CR::FLOW3::Persistence::Query', $className);
+		return $this->objectFactory->create('F3\TYPO3CR\FLOW3\Persistence\Query', $className);
 	}
 
 }

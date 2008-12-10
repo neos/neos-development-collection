@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::NodeType;
+namespace F3\TYPO3CR\NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,12 +30,12 @@ namespace F3::TYPO3CR::NodeType;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class NodeTypeIterator extends F3::TYPO3CR::RangeIterator implements F3::PHPCR::NodeType::NodeTypeIteratorInterface {
+class NodeTypeIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\NodeType\NodeTypeIteratorInterface {
 
 	/**
 	 * Returns the next NodeType in the iteration.
 	 *
-	 * @return F3::PHPCR::NodeType::NodeTypeInterface
+	 * @return \F3\PHPCR\NodeType\NodeTypeInterface
 	 * @throws OutOfBoundsException if the iterator contains no more elements.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

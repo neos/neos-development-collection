@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Storage::Backend::PDO;
+namespace F3\TYPO3CR\Storage\Backend\PDO;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -31,7 +31,7 @@ require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
  * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class MySQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
+class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 
 	/**
 	 * @var string
@@ -81,10 +81,10 @@ class MySQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 
 		if ($this->db != '' && $this->dbuser != '' && $this->dbpass != '') {
 			try {
-				$databaseHandle = new PDO('mysql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
-				$databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$databaseHandle = new \PDO('mysql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
+				$databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 				$databaseHandle = NULL;
-			} catch (PDOException $e) {
+			} catch (\PDOException $e) {
 				$this->markTestSkipped('Could not connect to MySQL database ' . $this->db . ', user ' . $this->dbuser . ', password ' . $this->dbpass . ', skipping MySQL tests');
 				return;
 			}
@@ -97,8 +97,8 @@ class MySQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 
 		exec($scriptpath . 'testdb.sh mysql reset');
 
-		$this->storageBackend = new F3::TYPO3CR::Storage::Backend::PDO(array('dataSourceName' => 'mysql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
-		$this->storageBackend->setSearchEngine($this->getMock('F3::TYPO3CR::Storage::SearchInterface'));
+		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'mysql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
+		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 
 		parent::setup();

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +28,7 @@ namespace F3::TYPO3CR;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Binary implements F3::PHPCR::BinaryInterface {
+class Binary implements \F3\PHPCR\BinaryInterface {
 
 	/**
 	 * Returns a stream representation of this value.
@@ -37,10 +37,10 @@ class Binary implements F3::PHPCR::BinaryInterface {
 	 * on the returned stream.
 	 *
 	 * @return resource A stream representation of this value.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function getStream() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021591);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021591);
 	}
 
 	/**
@@ -50,22 +50,22 @@ class Binary implements F3::PHPCR::BinaryInterface {
 	 * @param string $bytes the buffer into which the data is read.
 	 * @param integer $position the position in this Binary from which to start reading bytes.
 	 * @return integer the number of bytes read into the buffer
-	 * @throws ::RuntimeException if an I/O error occurs.
-	 * @throws ::InvalidArgumentException if offset is negative.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \RuntimeException if an I/O error occurs.
+	 * @throws \InvalidArgumentException if offset is negative.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function read(&$bytes, $position) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224505396);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224505396);
 	}
 
 	/**
 	 * Returns the size of this Binary value in bytes.
 	 *
 	 * @return integer the size of this value in bytes.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function getSize() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021593);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021593);
 	}
 
 }

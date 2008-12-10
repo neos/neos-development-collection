@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::FLOW3::Persistence;
+namespace F3\TYPO3CR\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,14 +22,14 @@ namespace F3::TYPO3CR::FLOW3::Persistence;
  */
 
 /**
- * Testcase for F3::TYPO3CR::FLOW3::Persistence::Query
+ * Testcase for \F3\TYPO3CR\FLOW3\Persistence\Query
  *
  * @package TYPO3CR
  * @subpackage Tests
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class QueryTest extends F3::Testing::BaseTestCase {
+class QueryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test

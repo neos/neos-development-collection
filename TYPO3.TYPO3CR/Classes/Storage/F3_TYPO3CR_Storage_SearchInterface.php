@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Storage;
+namespace F3\TYPO3CR\Storage;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3CR::Storage;
 /**
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:F3::TYPO3CR::Storage::BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:\F3\TYPO3CR\Storage\BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::TYPO3CR::Storage;
  *
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:F3::TYPO3CR::Storage::BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:\F3\TYPO3CR\Storage\BackendInterface.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface SearchInterface {
@@ -36,7 +36,7 @@ interface SearchInterface {
 	 *
 	 * @param string $workspaceName Name of the workspace which should be used for all search operations
 	 * @return void
-	 * @throws InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 */
 	public function setWorkspaceName($workspaceName);
 
@@ -50,34 +50,34 @@ interface SearchInterface {
 	/**
 	 * Adds the given node to the index
 	 *
-	 * @param F3::PHPCR::NodeInterface $node
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
 	 */
-	public function addNode(F3::PHPCR::NodeInterface $node);
+	public function addNode(\F3\PHPCR\NodeInterface $node);
 
 	/**
 	 * Updates the given node in the index
 	 *
-	 * @param F3::PHPCR::NodeInterface $node
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
 	 */
-	public function updateNode(F3::PHPCR::NodeInterface $node);
+	public function updateNode(\F3\PHPCR\NodeInterface $node);
 
 	/**
 	 * Deletes the given node from the index
 	 *
-	 * @param F3::PHPCR::NodeInterface $node
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
 	 */
-	public function deleteNode(F3::PHPCR::NodeInterface $node);
+	public function deleteNode(\F3\PHPCR\NodeInterface $node);
 
 	/**
 	 * Returns an array with node identifiers matching the query
 	 *
-	 * @param F3::PHPCR::Query::QOM::QueryObjectModelInterface $query
+	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
 	 * @return array
 	 */
-	public function findNodeIdentifiers(F3::PHPCR::Query::QOM::QueryObjectModelInterface $query);
+	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query);
 
 }
 ?>

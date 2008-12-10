@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3CR;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
+class MockStorageBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 
 	/**
 	 * @var array This array can be set from tests to mock raw node arrays
@@ -52,12 +52,12 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	public $rawPropertiesByIdentifierGroupedByWorkspace = array();
 
 	/**
-	 * @var F3::TYPO3CR::Workspace
+	 * @var \F3\TYPO3CR\Workspace
 	 */
 	protected $workspaceName = 'default';
 
 	/**
-	 * @var F3::TYPO3CR::NamespaceRegistryInterface
+	 * @var \F3\TYPO3CR\NamespaceRegistryInterface
 	 */
 	protected $namespaceRegistry;
 
@@ -208,7 +208,7 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 * Fetches raw properties with the given type and value from the database
 	 *
 	 * @param string $name name of the reference properties considered, if NULL properties of any name will be returned
-	 * @param integer $type one of the types defined in F3::PHPCR::PropertyType
+	 * @param integer $type one of the types defined in \F3\PHPCR\PropertyType
 	 * @param $value a value of the given type
 	 * @return array
 	 * @author Matthias Hoermann <hoermann@saltation.de>
@@ -249,10 +249,10 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	/**
 	 * Adds the given nodetype to the database
 	 *
-	 * @param F3::PHPCR::NodeType::NodeTypeDefinitionInterface $nodeTypeDefinition
+	 * @param \F3\PHPCR\NodeType\NodeTypeDefinitionInterface $nodeTypeDefinition
 	 * @return void
 	 */
-	public function addNodeType(F3::PHPCR::NodeType::NodeTypeDefinitionInterface $nodeTypeDefinition) {
+	public function addNodeType(\F3\PHPCR\NodeType\NodeTypeDefinitionInterface $nodeTypeDefinition) {
 
 	}
 
@@ -269,11 +269,11 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	/**
 	 * Adds a node to the storage
 	 *
-	 * @param F3::PHPCR::NodeInterface $node node to insert
+	 * @param \F3\PHPCR\NodeInterface $node node to insert
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function addNode(F3::PHPCR::NodeInterface $node) {
+	public function addNode(\F3\PHPCR\NodeInterface $node) {
 		$this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$node->getIdentifier()] = array(
 			'identifier' => $node->getIdentifier(),
 			'parent' => $node->getParent()->getIdentifier(),
@@ -285,35 +285,35 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	/**
 	 * Updates a node in the storage
 	 *
-	 * @param F3::PHPCR::NodeInterface $node node to update
+	 * @param \F3\PHPCR\NodeInterface $node node to update
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function updateNode(F3::PHPCR::NodeInterface $node) {
+	public function updateNode(\F3\PHPCR\NodeInterface $node) {
 		$this->addNode($node);
 	}
 
 	/**
 	 * Deletes a node in the repository
 	 *
-	 * @param F3::PHPCR::NodeInterface $node node to delete
+	 * @param \F3\PHPCR\NodeInterface $node node to delete
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function removeNode(F3::PHPCR::NodeInterface $node) {
+	public function removeNode(\F3\PHPCR\NodeInterface $node) {
 		unset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$node->getIdentifier()]);
 	}
 
 	/**
 	 * Adds a property in the storage
 	 *
-	 * @param F3::PHPCR::PropertyInterface $property property to insert
+	 * @param \F3\PHPCR\PropertyInterface $property property to insert
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo implement support for multi-value properties
 	 */
-	public function addProperty(F3::PHPCR::PropertyInterface $property) {
+	public function addProperty(\F3\PHPCR\PropertyInterface $property) {
 		$this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$property->getParent()->getIdentifier()][$property->getName()] = array(
 			'name' => $property->getName(),
 			'value' => $property->getString(),
@@ -326,52 +326,52 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	/**
 	 * Updates a property in the repository identified by identifier and name
 	 *
-	 * @param F3::PHPCR::PropertyInterface $property property to update
+	 * @param \F3\PHPCR\PropertyInterface $property property to update
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function updateProperty(F3::PHPCR::PropertyInterface $property) {
+	public function updateProperty(\F3\PHPCR\PropertyInterface $property) {
 		$this->addProperty($property);
 	}
 
 	/**
 	 * Removes a property in the storage
 	 *
-	 * @param F3::PHPCR::PropertyInterface $property property to remove
+	 * @param \F3\PHPCR\PropertyInterface $property property to remove
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function removeProperty(F3::PHPCR::PropertyInterface $property) {
+	public function removeProperty(\F3\PHPCR\PropertyInterface $property) {
 		unset($this->rawPropertiesByIdentifierGroupedByWorkspace[$this->workspaceName][$property->getParent()->getIdentifier()][$property->getName()]);
 	}
 
 	/**
 	 * Returns an array with identifiers matching the query
 	 *
-	 * @param F3::PHPCR::Query::QOM::QueryObjectModelInterface $query
+	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
 	 * @return array
 	 */
-	public function findNodeIdentifiers(F3::PHPCR::Query::QOM::QueryObjectModelInterface $query) {
+	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query) {
 		return array();
 	}
 
 	/**
 	 * Sets the search engine used by the storage backend.
 	 *
-	 * @param F3::TYPO3CR::Storage::SearchInterface $searchEngine
+	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchEngine
 	 * @return void
 	 */
-	public function setSearchEngine(F3::TYPO3CR::Storage::SearchInterface $searchEngine) {
+	public function setSearchEngine(\F3\TYPO3CR\Storage\SearchInterface $searchEngine) {
 	}
 
 	/**
 	 * Sets the namespace registry used by the storage backend
 	 *
-	 * @param F3::PHPCR::NamespaceRegistryInterface $namespaceRegistry
+	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry
 	 * @return void
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
-	public function setNamespaceRegistry(F3::PHPCR::NamespaceRegistryInterface $namespaceRegistry) {
+	public function setNamespaceRegistry(\F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry) {
 		$this->namespaceRegistry = $namespaceRegistry;
 	}
 
@@ -399,7 +399,7 @@ class MockStorageBackend implements F3::TYPO3CR::Storage::BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isReferenceTarget($identifier) {
-		$rawReferences = $this->getRawPropertiesOfTypedValue(NULL, F3::PHPCR::PropertyType::REFERENCE, $identifier);
+		$rawReferences = $this->getRawPropertiesOfTypedValue(NULL, \F3\PHPCR\PropertyType::REFERENCE, $identifier);
 		if (count($rawReferences) > 0) {
 			return TRUE;
 		} else {

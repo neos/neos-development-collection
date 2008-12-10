@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::FLOW3::Persistence;
+namespace F3\TYPO3CR\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -32,66 +32,66 @@ namespace F3::TYPO3CR::FLOW3::Persistence;
 class DataMapper {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Object::Builder
+	 * @var \F3\FLOW3\Object\Builder
 	 */
 	protected $objectBuilder;
 
 	/**
-	 * @var F3::TYPO3CR::FLOW3::Persistence::IdentityMap
+	 * @var \F3\TYPO3CR\FLOW3\Persistence\IdentityMap
 	 */
 	protected $identityMap;
 
 	/**
-	 * @var F3::FLOW3::Persistence::Manager
+	 * @var \F3\FLOW3\Persistence\Manager
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects a Object Manager
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects a Object Object Builder
 	 *
-	 * @param F3::FLOW3::Object::Builder $objectBuilder
+	 * @param \F3\FLOW3\Object\Builder $objectBuilder
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectBuilder(F3::FLOW3::Object::Builder $objectBuilder) {
+	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
 	}
 
 	/**
 	 * Injects the identity map
 	 *
-	 * @param F3::TYPO3CR::FLOW3::Persistence::IdentityMap $identityMap
+	 * @param \F3\TYPO3CR\FLOW3\Persistence\IdentityMap $identityMap
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectIdentityMap(F3::TYPO3CR::FLOW3::Persistence::IdentityMap $identityMap) {
+	public function injectIdentityMap(\F3\TYPO3CR\FLOW3\Persistence\IdentityMap $identityMap) {
 		$this->identityMap = $identityMap;
 	}
 
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param F3::FLOW3::Persistence::Manager $persistenceManager
+	 * @param \F3\FLOW3\Persistence\Manager $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(F3::FLOW3::Persistence::Manager $persistenceManager) {
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\Manager $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -99,11 +99,11 @@ class DataMapper {
 	 * Maps the (aggregate root) nodes and registers them as reconstituted
 	 * with the session.
 	 *
-	 * @param F3::PHPCR::NodeIteratorInterface $nodes
+	 * @param \F3\PHPCR\NodeIteratorInterface $nodes
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function map(F3::PHPCR::NodeIteratorInterface $nodes) {
+	public function map(\F3\PHPCR\NodeIteratorInterface $nodes) {
 		$objects = array();
 		foreach ($nodes as $node) {
 			$object = $this->mapSingleNode($node);
@@ -117,13 +117,13 @@ class DataMapper {
 	/**
 	 * Maps a single node into the object it represents
 	 *
-	 * @param F3::PHPCR::NodeInterface $node
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function mapSingleNode(F3::PHPCR::NodeInterface $node) {
+	protected function mapSingleNode(\F3\PHPCR\NodeInterface $node) {
 		$explodedNodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
-		$className = str_replace('_', '::', $explodedNodeTypeName[1]);
+		$className = str_replace('_', '\\', $explodedNodeTypeName[1]);
 
 		$classSchema = $this->persistenceManager->getClassSchema($className);
 		$properties = array();
@@ -177,9 +177,9 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo remove the check on the node/property names and use name pattern
 	 */
-	protected function mapArrayProxyNode(F3::PHPCR::NodeInterface $proxyNode) {
+	protected function mapArrayProxyNode(\F3\PHPCR\NodeInterface $proxyNode) {
 		if ($proxyNode->getPrimaryNodeType()->getName() !== 'flow3:arrayPropertyProxy') {
-			throw new F3::TYPO3CR::FLOW3::Persistence::Exception::UnsupportedTypeException('Arrays can only be mapped back from nodes of type flow3:arrayPropertyProxy.', 1227705954);
+			throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnsupportedTypeException('Arrays can only be mapped back from nodes of type flow3:arrayPropertyProxy.', 1227705954);
 		}
 		$array = array();
 
@@ -208,31 +208,31 @@ class DataMapper {
 	 * Determines the type of a Value and returns the value as corresponding
 	 * native PHP type.
 	 *
-	 * @param F3::PHPCR::ValueInterface $value
-	 * @param integer $type A constant from F3::PHPCR::PropertyType
+	 * @param \F3\PHPCR\ValueInterface $value
+	 * @param integer $type A constant from \F3\PHPCR\PropertyType
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function getNativeValue(F3::PHPCR::ValueInterface $value, $type) {
+	protected function getNativeValue(\F3\PHPCR\ValueInterface $value, $type) {
 		switch ($type) {
-			case F3::PHPCR::PropertyType::BOOLEAN:
+			case \F3\PHPCR\PropertyType::BOOLEAN:
 				$value = $value->getBoolean();
 				break;
-			case F3::PHPCR::PropertyType::DATE:
+			case \F3\PHPCR\PropertyType::DATE:
 				$value = $value->getDate();
 				break;
-			case F3::PHPCR::PropertyType::DECIMAL:
-			case F3::PHPCR::PropertyType::DOUBLE:
+			case \F3\PHPCR\PropertyType::DECIMAL:
+			case \F3\PHPCR\PropertyType::DOUBLE:
 				$value = $value->getDouble();
 				break;
-			case F3::PHPCR::PropertyType::LONG:
+			case \F3\PHPCR\PropertyType::LONG:
 				$value = $value->getLong();
 				break;
-			case F3::PHPCR::PropertyType::STRING:
+			case \F3\PHPCR\PropertyType::STRING:
 				$value = $value->getString();
 				break;
 			default:
-				throw new F3::TYPO3CR::FLOW3::Persistence::Exception::UnsupportedTypeException('The encountered value type (' . F3::PHPCR::PropertyType::nameFromValue($type) . ') cannot be mapped.', 1217843827);
+				throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnsupportedTypeException('The encountered value type (' . \F3\PHPCR\PropertyType::nameFromValue($type) . ') cannot be mapped.', 1217843827);
 				break;
 		}
 

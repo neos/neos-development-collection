@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -31,20 +31,20 @@ require_once('Fixtures/F3_TYPO3CR_MockStorageBackend.php');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class NodeTest extends F3::Testing::BaseTestCase {
+class NodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var F3::TYPO3CR::Node
+	 * @var \F3\TYPO3CR\Node
 	 */
 	protected $rootNode;
 
 	/**
-	 * @var F3::TYPO3CR::MockStorageBackend
+	 * @var \F3\TYPO3CR\MockStorageBackend
 	 */
 	protected $mockStorageBackend;
 
 	/**
-	 * @var F3::TYPO3CR::Session
+	 * @var \F3\TYPO3CR\Session
 	 */
 	protected $session;
 
@@ -52,8 +52,8 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$this->mockStorageBackend = new F3::TYPO3CR::MockStorageBackend();
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
+		$this->mockStorageBackend = new \F3\TYPO3CR\MockStorageBackend();
 		$this->mockStorageBackend->rawRootNodesByWorkspace = array(
 			'default' => array(
 				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
@@ -129,7 +129,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 						'value' => 'News about the TYPO3CR',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3::PHPCR::PropertyType::STRING
+						'type' => \F3\PHPCR\PropertyType::STRING
 					)
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
@@ -139,7 +139,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3::PHPCR::PropertyType::REFERENCE
+						'type' => \F3\PHPCR\PropertyType::REFERENCE
 					),
 					array(
 						'name' => 'weakref',
@@ -147,7 +147,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3::PHPCR::PropertyType::WEAKREFERENCE
+						'type' => \F3\PHPCR\PropertyType::WEAKREFERENCE
 					)
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
@@ -157,7 +157,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 						'value' => '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3::PHPCR::PropertyType::REFERENCE
+						'type' => \F3\PHPCR\PropertyType::REFERENCE
 					)
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69567d15' => array(
@@ -167,13 +167,13 @@ class NodeTest extends F3::Testing::BaseTestCase {
 						'value' => '96b6a351-1e35-4a47-8b0c-0d0d68507d07',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => F3::PHPCR::PropertyType::REFERENCE
+						'type' => \F3\PHPCR\PropertyType::REFERENCE
 					)
 				)
 			)
 		);
 
-		$this->session = new F3::TYPO3CR::Session('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory);
+		$this->session = new \F3\TYPO3CR\Session('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory);
 		$this->rootNode = $this->session->getRootNode();
 	}
 
@@ -251,7 +251,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::REFERENCE);
+		$this->assertEquals($reference->getType(), \F3\PHPCR\PropertyType::REFERENCE);
 		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
 	}
 
@@ -271,7 +271,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::REFERENCE);
+		$this->assertEquals($reference->getType(), \F3\PHPCR\PropertyType::REFERENCE);
 		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
 	}
 
@@ -316,7 +316,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::WEAKREFERENCE);
+		$this->assertEquals($reference->getType(), \F3\PHPCR\PropertyType::WEAKREFERENCE);
 		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
 	}
 
@@ -336,7 +336,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		$this->assertEquals(1, $references->getSize());
 		$reference = $references->nextProperty();
 		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), F3::PHPCR::PropertyType::WEAKREFERENCE);
+		$this->assertEquals($reference->getType(), \F3\PHPCR\PropertyType::WEAKREFERENCE);
 		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
 	}
 
@@ -405,7 +405,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getPrimaryNodeTypeReturnsANodeType() {
-		$this->assertType('F3::PHPCR::NodeType::NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
+		$this->assertType('F3\PHPCR\NodeType\NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
 	}
 
 	/**
@@ -437,11 +437,11 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	public function getNodesWorks() {
 		$leaf = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$noChildNodes = $leaf->getNodes();
-		$this->assertType('F3::PHPCR::NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
+		$this->assertType('F3\PHPCR\NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
 
 		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
 		$childNodes = $node->getNodes();
-		$this->assertType('F3::PHPCR::NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
+		$this->assertType('F3\PHPCR\NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
 
 		$this->assertEquals(0, $noChildNodes->getSize(), 'getNodes() did not return an empty NodeIterator for a node without child nodes.');
 		$this->assertNotEquals(0, $childNodes->getSize(), 'getNodes() returned an empty NodeIterator for a node with child nodes.');
@@ -509,7 +509,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::ItemNotFoundException
+	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
 	public function getAncestorOfGreaterDepthOnSubNodeThrowsException() {
 		$node = $this->rootNode->getNode('Content/News');
@@ -523,7 +523,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::ItemNotFoundException
+	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
 	public function getAncestorOfGreaterDepthOnRootNodeThrowsException() {
 		$node = $this->rootNode;
@@ -535,7 +535,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @test
-	 * @expectedException F3::PHPCR::ItemNotFoundException
+	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
 	public function getAncestorOfNegativeDepthThrowsException() {
 		$this->rootNode->getAncestor(-1);
@@ -571,7 +571,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @test
-	 * @expectedException F3::PHPCR::ItemNotFoundException
+	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
 	public function getParentOfRootFails() {
 		$this->rootNode->getParent();
@@ -635,7 +635,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function addNodeReturnsANode() {
 		$newNode = $this->rootNode->addNode('User', 'nt:base');
-		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'addNode() does not return an object of type F3::PHPCR::NodeInterface.');
+		$this->assertType('F3\PHPCR\NodeInterface', $newNode, 'addNode() does not return an object of type \F3\PHPCR\NodeInterface.');
 		$this->assertTrue($this->rootNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
 	}
 
@@ -646,7 +646,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function addNodeWithSimpleRelativePathReturnsANode() {
 		$newNode = $this->rootNode->addNode('SomeItem', 'nt:base');
-		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3::PHPCR::NodeInterface.');
+		$this->assertType('F3\PHPCR\NodeInterface', $newNode, 'Function: addNode() - returns not an object from type \F3\PHPCR\NodeInterface.');
 	}
 
 	/**
@@ -656,7 +656,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function addNodeWithComplexRelativePathReturnsANode() {
 		$newNode = $this->rootNode->addNode('Content/./News/SomeItem', 'nt:base');
-		$this->assertType('F3::PHPCR::NodeInterface', $newNode, 'Function: addNode() - returns not an object from type F3::PHPCR::NodeInterface.');
+		$this->assertType('F3\PHPCR\NodeInterface', $newNode, 'Function: addNode() - returns not an object from type \F3\PHPCR\NodeInterface.');
 	}
 
 	/**
@@ -695,8 +695,8 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addNodeRegistersNodeAsNewInSession() {
-		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('User', 'nt:base');
@@ -707,8 +707,8 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addNodeRegistersParentNodeAsDirtyInSession() {
-		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsDirty');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('User', 'nt:base');
@@ -719,8 +719,8 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function removeNodeRegistersNodeAsRemovedInSession() {
-		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsRemoved');
 		$rootNode = $mockSession->getRootNode();
 		$node = $rootNode->addNode('User', 'nt:base');
@@ -730,7 +730,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::PathNotFoundException
+	 * @expectedException \F3\PHPCR\PathNotFoundException
 	 */
 	public function removeNodeRemovesNode() {
 		$node = $this->rootNode->addNode('SomeNode', 'nt:base');
@@ -742,7 +742,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::ItemNotFoundException
+	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
 	public function removeNodeRemovesNodeInSession() {
 		$node = $this->rootNode->addNode('SomeNode', 'nt:base');
@@ -757,7 +757,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function setPropertySetsModifiedStatusOfNode() {
-		$this->rootNode->setProperty('someprop', 1, F3::PHPCR::PropertyType::LONG);
+		$this->rootNode->setProperty('someprop', 1, \F3\PHPCR\PropertyType::LONG);
 		$this->assertTrue($this->rootNode->isModified(), 'setProperty does not mark parent as modified');
 	}
 
@@ -767,7 +767,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function setPropertyIsVisibleToNode() {
-		$this->rootNode->setProperty('someprop', 'somePropValue', F3::PHPCR::PropertyType::STRING);
+		$this->rootNode->setProperty('someprop', 'somePropValue', \F3\PHPCR\PropertyType::STRING);
 		$this->assertTrue($this->rootNode->hasProperty('someprop'), 'hasProperty returns FALSE for freshly added property');
 	}
 
@@ -780,43 +780,43 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function convertibleProperties() {
 		return array(
-			array(F3::PHPCR::PropertyType::UNDEFINED, 'someValue', new F3::TYPO3CR::Value('someValue', F3::PHPCR::PropertyType::STRING)),
-			array(F3::PHPCR::PropertyType::UNDEFINED, TRUE, new F3::TYPO3CR::Value(TRUE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::UNDEFINED, FALSE, new F3::TYPO3CR::Value(FALSE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::UNDEFINED, 12345, new F3::TYPO3CR::Value(12345, F3::PHPCR::PropertyType::LONG)),
-			array(F3::PHPCR::PropertyType::STRING, 'someValue', new F3::TYPO3CR::Value('someValue', F3::PHPCR::PropertyType::STRING)),
-			array(F3::PHPCR::PropertyType::STRING, 12345, new F3::TYPO3CR::Value('12345', F3::PHPCR::PropertyType::STRING)),
-			array(F3::PHPCR::PropertyType::STRING, 12345.6, new F3::TYPO3CR::Value('12345.6', F3::PHPCR::PropertyType::STRING)),
-			array(F3::PHPCR::PropertyType::STRING, TRUE, new F3::TYPO3CR::Value('true', F3::PHPCR::PropertyType::STRING)),
-			array(F3::PHPCR::PropertyType::STRING, FALSE, new F3::TYPO3CR::Value('false', F3::PHPCR::PropertyType::STRING)),
-			array(F3::PHPCR::PropertyType::BOOLEAN, TRUE, new F3::TYPO3CR::Value(TRUE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::BOOLEAN, FALSE, new F3::TYPO3CR::Value(FALSE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::LONG, -12345, new F3::TYPO3CR::Value(-12345, F3::PHPCR::PropertyType::LONG)),
-			array(F3::PHPCR::PropertyType::LONG, 0, new F3::TYPO3CR::Value(0, F3::PHPCR::PropertyType::LONG)),
-			array(F3::PHPCR::PropertyType::LONG, 12345, new F3::TYPO3CR::Value(12345, F3::PHPCR::PropertyType::LONG)),
-			array(F3::PHPCR::PropertyType::DOUBLE, -12345, new F3::TYPO3CR::Value(-12345.0, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::DOUBLE, 0, new F3::TYPO3CR::Value(0.0, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::DOUBLE, 12345, new F3::TYPO3CR::Value(12345.0, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::DOUBLE, -12345.6789, new F3::TYPO3CR::Value(-12345.6789, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::DOUBLE, 0.12345, new F3::TYPO3CR::Value(0.12345, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::DOUBLE, 12345.6789, new F3::TYPO3CR::Value(12345.6789, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::URI, 'http://www.typo3.org', new F3::TYPO3CR::Value('http://www.typo3.org', F3::PHPCR::PropertyType::URI)),
-			array(F3::PHPCR::PropertyType::WEAKREFERENCE, '96bca35d-1ef5-4a47-8b0c-0ddd68507d00', new F3::TYPO3CR::Value('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', F3::PHPCR::PropertyType::WEAKREFERENCE)),
-			array(F3::PHPCR::PropertyType::DATE, new DateTime('2008-12-24T12:34Z'), new F3::TYPO3CR::Value(new DateTime('2008-12-24T12:34+0000'), F3::PHPCR::PropertyType::DATE)),
-			array(F3::PHPCR::PropertyType::DATE, '2008-12-24T12:34Z', new F3::TYPO3CR::Value(new DateTime('2008-12-24T12:34+0000'), F3::PHPCR::PropertyType::DATE)),
-			array(F3::PHPCR::PropertyType::DOUBLE, '3.4', new F3::TYPO3CR::Value(3.4, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::DOUBLE, '-3.4', new F3::TYPO3CR::Value(-3.4, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::DOUBLE, '3.4E-10', new F3::TYPO3CR::Value(3.4E-10, F3::PHPCR::PropertyType::DOUBLE)),
-			array(F3::PHPCR::PropertyType::LONG, '32345', new F3::TYPO3CR::Value(32345, F3::PHPCR::PropertyType::LONG)),
-			array(F3::PHPCR::PropertyType::BOOLEAN, 'true', new F3::TYPO3CR::Value(TRUE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::BOOLEAN, 'trUe', new F3::TYPO3CR::Value(TRUE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::BOOLEAN, 'TRUE', new F3::TYPO3CR::Value(TRUE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::BOOLEAN, 'yes', new F3::TYPO3CR::Value(FALSE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::BOOLEAN, '1', new F3::TYPO3CR::Value(FALSE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::BOOLEAN, '', new F3::TYPO3CR::Value(FALSE, F3::PHPCR::PropertyType::BOOLEAN)),
-			array(F3::PHPCR::PropertyType::NAME, 'nt:page', new F3::TYPO3CR::Value('nt:page', F3::PHPCR::PropertyType::NAME)),
-			array(F3::PHPCR::PropertyType::NAME, 'text', new F3::TYPO3CR::Value('text', F3::PHPCR::PropertyType::NAME)),
-			array(F3::PHPCR::PropertyType::REFERENCE, '96bca35d-1ef5-4a47-8b0c-0ddd69507d00', new F3::TYPO3CR::Value('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', F3::PHPCR::PropertyType::REFERENCE))
+			array(\F3\PHPCR\PropertyType::UNDEFINED, 'someValue', new \F3\TYPO3CR\Value('someValue', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::UNDEFINED, TRUE, new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::UNDEFINED, FALSE, new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::UNDEFINED, 12345, new \F3\TYPO3CR\Value(12345, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::STRING, 'someValue', new \F3\TYPO3CR\Value('someValue', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::STRING, 12345, new \F3\TYPO3CR\Value('12345', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::STRING, 12345.6, new \F3\TYPO3CR\Value('12345.6', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::STRING, TRUE, new \F3\TYPO3CR\Value('true', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::STRING, FALSE, new \F3\TYPO3CR\Value('false', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, TRUE, new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, FALSE, new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::LONG, -12345, new \F3\TYPO3CR\Value(-12345, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::LONG, 0, new \F3\TYPO3CR\Value(0, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::LONG, 12345, new \F3\TYPO3CR\Value(12345, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, -12345, new \F3\TYPO3CR\Value(-12345.0, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, 0, new \F3\TYPO3CR\Value(0.0, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, 12345, new \F3\TYPO3CR\Value(12345.0, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, -12345.6789, new \F3\TYPO3CR\Value(-12345.6789, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, 0.12345, new \F3\TYPO3CR\Value(0.12345, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, 12345.6789, new \F3\TYPO3CR\Value(12345.6789, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::URI, 'http://www.typo3.org', new \F3\TYPO3CR\Value('http://www.typo3.org', \F3\PHPCR\PropertyType::URI)),
+			array(\F3\PHPCR\PropertyType::WEAKREFERENCE, '96bca35d-1ef5-4a47-8b0c-0ddd68507d00', new \F3\TYPO3CR\Value('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', \F3\PHPCR\PropertyType::WEAKREFERENCE)),
+			array(\F3\PHPCR\PropertyType::DATE, new \DateTime('2008-12-24T12:34Z'), new \F3\TYPO3CR\Value(new \DateTime('2008-12-24T12:34+0000'), \F3\PHPCR\PropertyType::DATE)),
+			array(\F3\PHPCR\PropertyType::DATE, '2008-12-24T12:34Z', new \F3\TYPO3CR\Value(new \DateTime('2008-12-24T12:34+0000'), \F3\PHPCR\PropertyType::DATE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, '3.4', new \F3\TYPO3CR\Value(3.4, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, '-3.4', new \F3\TYPO3CR\Value(-3.4, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, '3.4E-10', new \F3\TYPO3CR\Value(3.4E-10, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::LONG, '32345', new \F3\TYPO3CR\Value(32345, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, 'true', new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, 'trUe', new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, 'TRUE', new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, 'yes', new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, '1', new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, '', new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::NAME, 'nt:page', new \F3\TYPO3CR\Value('nt:page', \F3\PHPCR\PropertyType::NAME)),
+			array(\F3\PHPCR\PropertyType::NAME, 'text', new \F3\TYPO3CR\Value('text', \F3\PHPCR\PropertyType::NAME)),
+			array(\F3\PHPCR\PropertyType::REFERENCE, '96bca35d-1ef5-4a47-8b0c-0ddd69507d00', new \F3\TYPO3CR\Value('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', \F3\PHPCR\PropertyType::REFERENCE))
 		);
 	}
 
@@ -839,12 +839,12 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 */
 	public function unconvertibleProperties() {
 		return array(
-			array(F3::PHPCR::PropertyType::DATE, 'foo'),
-			array(F3::PHPCR::PropertyType::DATE, 5),
-			array(F3::PHPCR::PropertyType::WEAKREFERENCE, 'abc'),
-			array(F3::PHPCR::PropertyType::URI, 'abc'),
-			array(F3::PHPCR::PropertyType::REFERENCE, 'abc'),
-			array(F3::PHPCR::PropertyType::REFERENCE, '12345678-abcd-1234-dcba-1234567890ef')
+			array(\F3\PHPCR\PropertyType::DATE, 'foo'),
+			array(\F3\PHPCR\PropertyType::DATE, 5),
+			array(\F3\PHPCR\PropertyType::WEAKREFERENCE, 'abc'),
+			array(\F3\PHPCR\PropertyType::URI, 'abc'),
+			array(\F3\PHPCR\PropertyType::REFERENCE, 'abc'),
+			array(\F3\PHPCR\PropertyType::REFERENCE, '12345678-abcd-1234-dcba-1234567890ef')
 		);
 	}
 
@@ -857,7 +857,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 		try {
 			$this->rootNode->setProperty('someprop', $propValue, $propType);
 			$this->fail('setProperty() must throw exception if the given value is not convertible to the given type');
-		} catch (F3::PHPCR::ValueFormatException $e) {}
+		} catch (\F3\PHPCR\ValueFormatException $e) {}
 	}
 
 	/**
@@ -875,7 +875,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function setPropertyCompactsArraysContainingNull() {
-		$this->rootNode->setProperty('newPropFromArray', array(NULL, 'hi there', NULL), F3::PHPCR::PropertyType::STRING);
+		$this->rootNode->setProperty('newPropFromArray', array(NULL, 'hi there', NULL), \F3\PHPCR\PropertyType::STRING);
 		$this->assertTrue(count($this->rootNode->getProperty('newPropFromArray')->getValues()) == 1, 'setProperty() did not remove NULL values from an array');
 	}
 
@@ -885,7 +885,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function setExistingPropertyToNullRemovesIt() {
-		$this->rootNode->setProperty('someprop', 'somePropValue', F3::PHPCR::PropertyType::STRING);
+		$this->rootNode->setProperty('someprop', 'somePropValue', \F3\PHPCR\PropertyType::STRING);
 		$this->rootNode->setProperty('someprop', NULL);
 		$this->assertFalse($this->rootNode->hasProperty('someprop'), 'hasProperty returns TRUE for removed property');
 	}
@@ -893,7 +893,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::NodeType::ConstraintViolationException
+	 * @expectedException \F3\PHPCR\NodeType\ConstraintViolationException
 	 */
 	public function removeOnRootNodeThrowsException() {
 		$this->rootNode->remove();
@@ -914,8 +914,8 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function addNodeWithIdentifierRegistersNodeAsNewInSession() {
-		$mockRepository = $this->getMock('F3::PHPCR::RepositoryInterface');
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
 		$mockSession->expects($this->once())->method('registerNodeAsNew');
 		$rootNode = $mockSession->getRootNode();
 		$rootNode->addNode('WithIdentifier', 'nt:base', '16bca35d-1ef5-4a47-8b0c-0ddd69507d00');
@@ -924,7 +924,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::ItemExistsException
+	 * @expectedException \F3\PHPCR\ItemExistsException
 	 */
 	public function addNodeWithUsedIdentifierRejectsIdentifier() {
 		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';
@@ -974,7 +974,7 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @dataProvider invalidLocalNames
-	 * @expectedException F3::PHPCR::RepositoryException
+	 * @expectedException \F3\PHPCR\RepositoryException
 	 */
 	public function addNodeRejectsInvalidNames($name) {
 		$newNode = $this->rootNode->addNode($name, 'nt:base');
@@ -1007,19 +1007,19 @@ class NodeTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::ValueFormatException
+	 * @expectedException \F3\PHPCR\ValueFormatException
 	 */
 	public function setPropertyToObjectThrowsValueFormatException() {
-		$this->rootNode->setProperty('someNewObjectProp', new StdClass());
+		$this->rootNode->setProperty('someNewObjectProp', new \stdClass());
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::ValueFormatException
+	 * @expectedException \F3\PHPCR\ValueFormatException
 	 */
 	public function setPropertyToReferenceWithInvalidTargetThrowsException() {
-		$this->rootNode->setProperty('invalidReference', '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00', F3::PHPCR::PropertyType::REFERENCE);
+		$this->rootNode->setProperty('invalidReference', '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00', \F3\PHPCR\PropertyType::REFERENCE);
 	}
 
 }

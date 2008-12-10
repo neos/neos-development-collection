@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::FLOW3::Persistence::Exception;
+namespace F3\TYPO3CR\FLOW3\Persistence\Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3CR::FLOW3::Persistence::Exception;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class UnsupportedTypeException extends F3::TYPO3CR::FLOW3::Persistence::Exception {
+class UnsupportedTypeException extends \F3\TYPO3CR\FLOW3\Persistence\Exception {
 }
 
 

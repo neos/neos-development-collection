@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Query;
+namespace F3\TYPO3CR\Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,18 +29,16 @@ namespace F3::TYPO3CR::Query;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PreparedQueryTest extends F3::Testing::BaseTestCase {
+class PreparedQueryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function bindValueThrowsExceptionOnUnknownVariableName() {
-		$query = new F3::TYPO3CR::Query::PreparedQuery();
-		try {
-			$query->bindValue('someVariable', $this->getMock('F3::PHPCR::ValueInterface'));
-			$this->fail('bindValue() did not throw an exception when given an unknown variable name.');
-		} catch (InvalidArgumentException $e) {}
+		$query = new \F3\TYPO3CR\Query\PreparedQuery();
+		$query->bindValue('someVariable', $this->getMock('F3\PHPCR\ValueInterface'));
 	}
 }
 

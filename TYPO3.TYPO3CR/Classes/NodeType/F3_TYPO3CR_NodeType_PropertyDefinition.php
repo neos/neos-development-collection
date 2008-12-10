@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::NodeType;
+namespace F3\TYPO3CR\NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,13 +30,13 @@ namespace F3::TYPO3CR::NodeType;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class PropertyDefinition extends F3::TYPO3CR::NodeType::ItemDefinition implements F3::PHPCR::NodeType::PropertyDefinitionInterface {
+class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements \F3\PHPCR\NodeType\PropertyDefinitionInterface {
 
 	/**
-	 * A constant value from F3::PHPCR::PropertyType
+	 * A constant value from \F3\PHPCR\PropertyType
 	 * @var integer
 	 */
-	protected $requiredType = F3::PHPCR::PropertyType::STRING;
+	protected $requiredType = \F3\PHPCR\PropertyType::STRING;
 
 	/**
 	 * @var array of string
@@ -275,7 +275,7 @@ class PropertyDefinition extends F3::TYPO3CR::NodeType::ItemDefinition implement
 	 * @return boolean a boolean
 	 */
 	public function isQueryable() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674119);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674119);
 	}
 
 	/**
@@ -290,7 +290,7 @@ class PropertyDefinition extends F3::TYPO3CR::NodeType::ItemDefinition implement
 	 * @return boolean a boolean
 	 */
 	public function isFullTextSearchable() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674125);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674125);
 	}
 
 	/**
@@ -305,7 +305,7 @@ class PropertyDefinition extends F3::TYPO3CR::NodeType::ItemDefinition implement
 	 * @return boolean a boolean
 	 */
 	public function isQueryOrderable() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674130);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674130);
 	}
 
 }

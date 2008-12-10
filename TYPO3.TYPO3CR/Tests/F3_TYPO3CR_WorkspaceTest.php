@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,20 +29,20 @@ namespace F3::TYPO3CR;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class WorkspaceTest extends F3::Testing::BaseTestCase {
+class WorkspaceTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var F3::TYPO3CR::Session
+	 * @var \F3\TYPO3CR\Session
 	 */
 	protected $mockSession;
 
 	/**
-	 * @var F3::TYPO3CR::Storage::BackendInterface
+	 * @var \F3\TYPO3CR\Storage\BackendInterface
 	 */
 	protected $mockStorageBackend;
 
 	/**
-	 * @var F3::TYPO3CR::Workspace
+	 * @var \F3\TYPO3CR\Workspace
 	 */
 	protected $workspace;
 
@@ -51,9 +51,9 @@ class WorkspaceTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockSession = $this->getMock('F3::TYPO3CR::Session', array(), array(), '', FALSE);
-		$this->mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->getMock('F3::TYPO3CR::Storage::BackendInterface')));
-		$this->workspace = new F3::TYPO3CR::Workspace('workspaceName', $this->mockSession, $this->objectFactory);
+		$this->mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$this->mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->getMock('F3\TYPO3CR\Storage\BackendInterface')));
+		$this->workspace = new \F3\TYPO3CR\Workspace('workspaceName', $this->mockSession, $this->objectFactory);
 	}
 
 	/**
@@ -71,7 +71,7 @@ class WorkspaceTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getNamespaceRegistryReturnsANameSpaceRegistry() {
-		$this->assertType('F3::PHPCR::NamespaceRegistryInterface', $this->workspace->getNamespaceRegistry(), 'The workspace did not return a NamespaceRegistry object on getNamespaceRegistry().');
+		$this->assertType('F3\PHPCR\NamespaceRegistryInterface', $this->workspace->getNamespaceRegistry(), 'The workspace did not return a NamespaceRegistry object on getNamespaceRegistry().');
 	}
 
 	/**
@@ -89,7 +89,7 @@ class WorkspaceTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getNodeTypeManagerReturnsANodeTypeManager() {
-		$this->assertType('F3::PHPCR::NodeType::NodeTypeManagerInterface', $this->workspace->getNodeTypeManager(),'The workspace did not return a NodeTypeManager object on getNodeTypeManager().');
+		$this->assertType('F3\PHPCR\NodeType\NodeTypeManagerInterface', $this->workspace->getNodeTypeManager(),'The workspace did not return a NodeTypeManager object on getNodeTypeManager().');
 	}
 
 	/**
@@ -97,7 +97,7 @@ class WorkspaceTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getQueryManagerReturnsAQueryManager() {
-		$this->assertType('F3::PHPCR::Query::QueryManagerInterface', $this->workspace->getQueryManager(),'The workspace did not return a QueryManager object on getQueryManager().');
+		$this->assertType('F3\PHPCR\Query\QueryManagerInterface', $this->workspace->getQueryManager(),'The workspace did not return a QueryManager object on getQueryManager().');
 	}
 
 }

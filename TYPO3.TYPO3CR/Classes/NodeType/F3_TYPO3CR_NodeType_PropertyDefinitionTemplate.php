@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::NodeType;
+namespace F3\TYPO3CR\NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -37,7 +37,7 @@ namespace F3::TYPO3CR::NodeType;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class PropertyDefinitionTemplate extends F3::TYPO3CR::NodeType::PropertyDefinition implements F3::PHPCR::NodeType::PropertyDefinitionTemplateInterface {
+class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition implements \F3\PHPCR\NodeType\PropertyDefinitionTemplateInterface {
 
 	/**
 	 * Sets the name of the property.
@@ -145,7 +145,7 @@ class PropertyDefinitionTemplate extends F3::TYPO3CR::NodeType::PropertyDefiniti
 	 * @return void
 	 */
 	public function setQueryable($queryable) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674192);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674192);
 	}
 
 	/**
@@ -155,7 +155,7 @@ class PropertyDefinitionTemplate extends F3::TYPO3CR::NodeType::PropertyDefiniti
 	 * @return void
 	 */
 	public function setFullTextSearchable($fullTextSearchable) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674197);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674197);
 	}
 
 	/**
@@ -165,7 +165,7 @@ class PropertyDefinitionTemplate extends F3::TYPO3CR::NodeType::PropertyDefiniti
 	 * @return void
 	 */
 	public function setQueryOrderable($queryOrderable) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674201);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674201);
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::FLOW3::Persistence;
+namespace F3\TYPO3CR\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,20 +29,20 @@ namespace F3::TYPO3CR::FLOW3::Persistence;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Backend implements F3::FLOW3::Persistence::BackendInterface {
+class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 
 	/**
-	 * @var F3::FLOW3::Reflection::Service
+	 * @var \F3\FLOW3\Reflection\Service
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var F3::PHPCR::SessionInterface
+	 * @var \F3\PHPCR\SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @var F3::PHPCR::NodeInterface
+	 * @var \F3\PHPCR\NodeInterface
 	 */
 	protected $baseNode;
 
@@ -52,7 +52,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	protected $classSchemata;
 
 	/**
-	 * @var F3::TYPO3CR::FLOW3::Persistence::IdentityMap
+	 * @var \F3\TYPO3CR\FLOW3\Persistence\IdentityMap
 	 */
 	protected $identityMap;
 
@@ -69,32 +69,32 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	/**
 	 * Constructs the backend
 	 *
-	 * @param F3::PHPCR::SessionInterface $session the Content Repository session used to persist data
+	 * @param \F3\PHPCR\SessionInterface $session the Content Repository session used to persist data
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::PHPCR::SessionInterface $session) {
+	public function __construct(\F3\PHPCR\SessionInterface $session) {
 		$this->session = $session;
 	}
 
 	/**
 	 * Injects A Reflection Service instance used for processing objects
 	 *
-	 * @param F3::FLOW3::Reflection::Service $reflectionService
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(F3::FLOW3::Reflection::Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the identity map
 	 *
-	 * @param F3::TYPO3CR::FLOW3::Persistence::IdentityMap $identityMap
+	 * @param \F3\TYPO3CR\FLOW3\Persistence\IdentityMap $identityMap
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectIdentityMap(F3::TYPO3CR::FLOW3::Persistence::IdentityMap $identityMap) {
+	public function injectIdentityMap(\F3\TYPO3CR\FLOW3\Persistence\IdentityMap $identityMap) {
 		$this->identityMap = $identityMap;
 	}
 
@@ -141,7 +141,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	/**
 	 * Returns the repository session
 	 *
-	 * @return F3::PHPCR::SessionInterface
+	 * @return \F3\PHPCR\SessionInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getSession() {
@@ -194,7 +194,6 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function traverseAggregateRootObjects() {
-
 			// make sure we have a corresponding node for all new objects on
 			// first level
 		foreach ($this->aggregateRootObjects as $object) {
@@ -207,6 +206,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 		foreach ($this->aggregateRootObjects as $object) {
 			$this->traverseObject($object);
 		}
+
 	}
 
 	/**
@@ -228,7 +228,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 				if ($object->isNew() || $object->isDirty($propertyName)) {
 					$this->storeArrayAsNode($propertyValue, $node, 'flow3:' . $propertyName);
 				}
-				if (is_object(current($propertyValue)) && !(current($propertyValue) instanceof DateTime)) {
+				if (is_object(current($propertyValue)) && !(current($propertyValue) instanceof \DateTime)) {
 					$queue = array_merge($queue, array_values($propertyValue));
 				}
 			} elseif (is_object($propertyValue) && $propertyType !== 'DateTime') {
@@ -237,7 +237,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 				}
 				$queue[] = $propertyValue;
 			} elseif ($object->isNew() || $object->isDirty($propertyName)) {
-				$node->setProperty('flow3:' . $propertyName, $propertyValue, F3::PHPCR::PropertyType::valueFromType($propertyType));
+				$node->setProperty('flow3:' . $propertyName, $propertyValue, \F3\PHPCR\PropertyType::valueFromType($propertyType));
 			}
 		}
 
@@ -255,12 +255,12 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	 * Creates a node for the given object and registers it with the identity map.
 	 *
 	 * @param object $object The object for which to create a node
-	 * @param F3::PHPCR::NodeInterface $parentNode
+	 * @param \F3\PHPCR\NodeInterface $parentNode
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function createNodeForObject($object, F3::PHPCR::NodeInterface $parentNode, $nodeName) {
+	protected function createNodeForObject($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
 		$className = $object->AOPProxyGetProxyTargetClassName();
 		$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($className);
 		$identifierProperty = $this->classSchemata[$className]->getIdentifierProperty();
@@ -285,23 +285,23 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	 * On those nodes must be set elsewhere!
 	 *
 	 * @param array $array The array for which to create a node
-	 * @param F3::PHPCR::NodeInterface $parentNode The node to add the property proxy to
+	 * @param \F3\PHPCR\NodeInterface $parentNode The node to add the property proxy to
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function storeArrayAsNode(array $array, F3::PHPCR::NodeInterface $parentNode, $nodeName) {
+	protected function storeArrayAsNode(array $array, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
 		if ($parentNode->hasNode($nodeName)) {
 			$node = $parentNode->getNode($nodeName);
 		} else {
 			$node = $parentNode->addNode($nodeName, 'flow3:arrayPropertyProxy');
 		}
 		foreach ($array as $key => $element) {
-			if (is_object($element) && !($element instanceof DateTime) && $element->isNew()) {
+			if (is_object($element) && !($element instanceof \DateTime) && $element->isNew()) {
 				$this->createNodeForObject($element, $node, 'flow3:' . $key);
 			} elseif (is_array($element)) {
 				$this->storeArrayAsNode($element, $node, 'flow3:' . $key);
 			} elseif ($element->isDirty($key)) {
-				$node->setProperty('flow3:' . $key, $element, F3::PHPCR::PropertyType::valueFromType(gettype($element)));
+				$node->setProperty('flow3:' . $key, $element, \F3\PHPCR\PropertyType::valueFromType(gettype($element)));
 			}
 		}
 	}
@@ -330,7 +330,7 @@ class Backend implements F3::FLOW3::Persistence::BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function convertClassNameToJCRName($className) {
-		return str_replace('::', '_', $className);
+		return str_replace('\\', '_', $className);
 	}
 
 }

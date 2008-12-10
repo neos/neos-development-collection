@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Tests;
+namespace F3\TYPO3CR\Tests;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,19 +18,19 @@ namespace F3::TYPO3CR::Tests;
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
- * Fixture class for Persistence::BackendTest->complexObjectsAreStoredCorrectly()
+ * Fixture class for Persistence\BackendTest->complexObjectsAreStoredCorrectly()
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @entity
  */
-class AnObject implements F3::FLOW3::AOP::ProxyInterface, F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface {
+class AnObject implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface {
 
 	/**
 	 * @var string
@@ -66,7 +66,7 @@ class AnObject implements F3::FLOW3::AOP::ProxyInterface, F3::FLOW3::Persistence
 		return FALSE;
 	}
 
-	public function memorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint = NULL) {
+	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL) {
 	}
 
 	/**
@@ -81,10 +81,10 @@ class AnObject implements F3::FLOW3::AOP::ProxyInterface, F3::FLOW3::Persistence
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param F3::FLOW3::AOP::JoinPointInterface: The join point
+	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function AOPProxyInvokeJoinPoint(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function AOPProxyInvokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 

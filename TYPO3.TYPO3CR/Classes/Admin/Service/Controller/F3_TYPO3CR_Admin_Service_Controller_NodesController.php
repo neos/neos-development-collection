@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Admin::Service::Controller;
+namespace F3\TYPO3CR\Admin\Service\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3CR::Admin::Service::Controller;
 /**
  * @package TYPO3CR
  * @subpackage Admin
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
@@ -26,29 +26,29 @@ namespace F3::TYPO3CR::Admin::Service::Controller;
  *
  * @package TYPO3CR
  * @subpackage Admin
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class NodesController extends F3::FLOW3::MVC::Controller::RESTController {
+class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 
 	/**
-	 * F3::PHPCR::SessionInterface
+	 * \F3\PHPCR\SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @var F3::PHPCR::NodeInterface
+	 * @var \F3\PHPCR\NodeInterface
 	 */
 	protected $rootNode;
 
 	/**
 	 * Injects a Content Repository instance
 	 *
-	 * @param F3::PHPCR::RepositoryInterface $contentRepository
+	 * @param \F3\PHPCR\RepositoryInterface $contentRepository
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectContentRepository(F3::PHPCR::RepositoryInterface $contentRepository) {
+	public function injectContentRepository(\F3\PHPCR\RepositoryInterface $contentRepository) {
 		$this->session = $contentRepository->login();
 		$this->rootNode = $this->session->getRootNode();
 	}
@@ -74,7 +74,7 @@ class NodesController extends F3::FLOW3::MVC::Controller::RESTController {
 		try {
 			$node = $this->session->getNodeByIdentifier($this->arguments['id']->getValue());
 			$properties = $node->getProperties();
-		} catch(F3::PHPCR::ItemNotFoundException $e) {
+		} catch(\F3\PHPCR\ItemNotFoundException $e) {
 			$this->throwStatus(404);
 		}
 
@@ -83,10 +83,10 @@ class NodesController extends F3::FLOW3::MVC::Controller::RESTController {
 			try {
 				$data[] = array(
 					'name' => $property->getName(),
-					'type' => F3::PHPCR::PropertyType::nameFromValue($property->getType()),
+					'type' => \F3\PHPCR\PropertyType::nameFromValue($property->getType()),
 					'value' => $property->getValue()->getString()
 				);
-			} catch (F3::PHPCR::ValueFormatException $e) {
+			} catch (\F3\PHPCR\ValueFormatException $e) {
 				$value = '';
 				$propertyValues = $property->getValues();
 				foreach ($propertyValues as $propertyValue) {
@@ -94,7 +94,7 @@ class NodesController extends F3::FLOW3::MVC::Controller::RESTController {
 				}
 				$data[] = array(
 					'name' => $property->getName(),
-					'type' => F3::PHPCR::PropertyType::nameFromValue($property->getType()) . '[]',
+					'type' => \F3\PHPCR\PropertyType::nameFromValue($property->getType()) . '[]',
 					'value' => $value
 				);
 			}
@@ -130,7 +130,7 @@ class NodesController extends F3::FLOW3::MVC::Controller::RESTController {
 	public function deleteAction() {
 		try {
 			$node = $this->session->getNodeByIdentifier($this->arguments['id']->getValue());
-		} catch(F3::PHPCR::ItemNotFoundException $e) {
+		} catch(\F3\PHPCR\ItemNotFoundException $e) {
 			$this->throwStatus(404);
 		}
 
@@ -143,11 +143,11 @@ class NodesController extends F3::FLOW3::MVC::Controller::RESTController {
 	/**
 	 * Returns an array representing the given node.
 	 *
-	 * @param F3::PHPCR::NodeInterface $node
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function convertNodeToArray(F3::PHPCR::NodeInterface $node) {
+	protected function convertNodeToArray(\F3\PHPCR\NodeInterface $node) {
 		$nodeArray = array(
 			'id' => $node->getIdentifier(),
 			'text' => $node->getName(),

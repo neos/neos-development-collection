@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Storage::Backend::PDO;
+namespace F3\TYPO3CR\Storage\Backend\PDO;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3CR::Storage::Backend::PDO;
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3::TYPO3CR::Storage::Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:\F3\TYPO3CR\Storage\Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
@@ -28,10 +28,10 @@ require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3::TYPO3CR::Storage::Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:\F3\TYPO3CR\Storage\Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SqliteTest extends F3::TYPO3CR::Storage::Backend::TestBase {
+class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 
 	/**
 	 * @var string
@@ -50,13 +50,13 @@ class SqliteTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->objectManager->getObject('F3::FLOW3::Utility::Environment');
+		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
 		$this->fixtureFolder = $environment->getPathToTemporaryDirectory() . 'TYPO3CR/Tests/';
-		F3::FLOW3::Utility::Files::createDirectoryRecursively($this->fixtureFolder);
+		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('sqlite') . '.db';
 		copy(FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
-		$this->storageBackend = new F3::TYPO3CR::Storage::Backend::PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
-		$this->storageBackend->setSearchEngine($this->getMock('F3::TYPO3CR::Storage::SearchInterface'));
+		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
+		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 
 		parent::setup();
@@ -71,7 +71,7 @@ class SqliteTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 	public function tearDown() {
 		$this->storageBackend->disconnect();
 		unlink($this->fixtureFolder . $this->fixtureDB);
-		F3::FLOW3::Utility::Files::removeDirectoryRecursively($this->fixtureFolder);
+		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->fixtureFolder);
 	}
 }
 ?>

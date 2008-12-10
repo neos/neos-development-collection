@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +28,7 @@ namespace F3::TYPO3CR;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class RangeIterator implements F3::PHPCR::RangeIteratorInterface {
+class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 
 	/**
 	 * @var array
@@ -99,7 +99,7 @@ class RangeIterator implements F3::PHPCR::RangeIteratorInterface {
 			next($this->elements);
 			return $element;
 		} else {
-			throw new OutOfBoundsException('Tried to go past the last element in the iterator.', 1187530869);
+			throw new \OutOfBoundsException('Tried to go past the last element in the iterator.', 1187530869);
 		}
 	}
 
@@ -115,7 +115,7 @@ class RangeIterator implements F3::PHPCR::RangeIteratorInterface {
 	public function skip($skipNum) {
 		$newPosition = $this->getPosition() + $skipNum;
 		if ($newPosition > $this->getSize()) {
-			throw new OutOfBoundsException('Skip operation past the last element in the iterator.', 1187530862);
+			throw new \OutOfBoundsException('Skip operation past the last element in the iterator.', 1187530862);
 		} else {
 			$this->position = $newPosition;
 			for ($skipped = 0; $skipped < $skipNum; $skipped++) next($this->elements);

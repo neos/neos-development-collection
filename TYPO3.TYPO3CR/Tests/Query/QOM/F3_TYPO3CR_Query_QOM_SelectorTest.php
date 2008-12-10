@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Query::QOM;
+namespace F3\TYPO3CR\Query\QOM;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,14 +29,14 @@ namespace F3::TYPO3CR::Query::QOM;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SelectorTest extends F3::Testing::BaseTestCase {
+class SelectorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function selectorIsPrototype() {
-		$this->assertNotSame($this->objectFactory->create('F3::TYPO3CR::Query::QOM::Selector', ''), $this->objectFactory->create('F3::TYPO3CR::Query::QOM::Selector', ''), 'Query_QOM_Selector is not prototype.');
+		$this->assertNotSame($this->objectFactory->create('F3\TYPO3CR\Query\QOM\Selector', ''), $this->objectFactory->create('F3\TYPO3CR\Query\QOM\Selector', ''), 'Query_QOM_Selector is not prototype.');
 	}
 }
 

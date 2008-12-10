@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Admin::Controller;
+namespace F3\TYPO3CR\Admin\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,14 +29,14 @@ namespace F3::TYPO3CR::Admin::Controller;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SetupController extends F3::FLOW3::MVC::Controller::ActionController {
+class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * The supported request types of this controller
 	 *
 	 * @var array
 	 */
-	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request', 'F3::FLOW3::MVC::CLI::Request');
+	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\CLI\Request');
 
 	/**
 	 * Initializes this controller
@@ -54,7 +54,7 @@ class SetupController extends F3::FLOW3::MVC::Controller::ActionController {
 	/**
 	 * Processes a request.
 	 *
-	 * @param  F3::FLOW3::MVC::Request $request The request to process
+	 * @param  \F3\FLOW3\MVC\Request $request The request to process
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -79,7 +79,7 @@ class SetupController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setupAction() {
-		$helper = $this->objectFactory->create('F3::TYPO3CR::Storage::Helper', $this->arguments);
+		$helper = $this->objectFactory->create('F3\TYPO3CR\Storage\Helper', $this->arguments);
 		$helper->initialize();
 		return 'Initialization of the TYPO3CR was successful.';
 	}

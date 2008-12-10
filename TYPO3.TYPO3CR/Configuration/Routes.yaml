@@ -6,8 +6,8 @@
 
 TYPO3CRCR_Default:
   uriPattern: 'typo3cr/[@controller]/[@action]'
-  controllerObjectNamePattern: 'F3::@package::Admin::Controller::@controllerController'
-  viewObjectNamePattern: 'F3::@package::Admin::View::@controller@action@format'
+  controllerObjectNamePattern: 'F3\@package\Admin\Controller\@controllerController'
+  viewObjectNamePattern: 'F3\@package\Admin\View\@controller@action@format'
   defaults:
     @package:    'TYPO3CR'
     @controller: 'Default'
@@ -19,30 +19,30 @@ TYPO3CRCR_Default:
 
 TYPO3CR_ServiceWithControllerOnly
   uriPattern: 'typo3cr/service/v1/[@controller]'
-  controllerObjectNamePattern: 'F3::@package::Admin::Service::Controller::@controllerController'
-  viewObjectNamePattern: 'F3::@package::Admin::Service::View::@controller::@action@format'
+  controllerObjectNamePattern: 'F3\@package\Admin\Service\Controller\@controllerController'
+  viewObjectNamePattern: 'F3\@package\Admin\Service\View\@controller\@action@format'
   defaults: 
     @package: 'TYPO3CR'
     @format: 'json'
 
 TYPO3CR_ServiceWithControllerAndFormat
   uriPattern: 'typo3cr/service/v1/[@controller].[@format]'
-  controllerObjectNamePattern: 'F3::@package::Admin::Service::Controller::@controllerController'
-  viewObjectNamePattern: 'F3::@package::Admin::Service::View::@controller::@action@format'
+  controllerObjectNamePattern: 'F3\@package\Admin\Service\Controller\@controllerController'
+  viewObjectNamePattern: 'F3\@package\Admin\Service\View\@controller\@action@format'
   defaults: 
     @package: 'TYPO3CR'
 
 TYPO3CR_ServiceWithControllerAndId
   uriPattern: 'typo3cr/service/v1/[@controller]/[id]'
-  controllerObjectNamePattern: 'F3::@package::Admin::Service::Controller::@controllerController'
-  viewObjectNamePattern: 'F3::@package::Admin::Service::View::@controller::@action@format'
+  controllerObjectNamePattern: 'F3\@package\Admin\Service\Controller\@controllerController'
+  viewObjectNamePattern: 'F3\@package\Admin\Service\View\@controller\@action@format'
   defaults: 
     @package: 'TYPO3CR'
     @format: 'json'
 
 TYPO3CR_ServiceWithControllerAndIdAndFormat:
   uriPattern: 'typo3cr/service/v1/[@controller]/[id].[@format]'
-  controllerObjectNamePattern: 'F3::@package::Admin::Service::Controller::@controllerController'
-  viewObjectNamePattern: 'F3::@package::Admin::Service::View::@controller::@action@format'
+  controllerObjectNamePattern: 'F3\@package\Admin\Service\Controller\@controllerController'
+  viewObjectNamePattern: 'F3\@package\Admin\Service\View\@controller\@action@format'
   defaults: 
     @package: 'TYPO3CR'

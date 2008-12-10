@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +28,7 @@ namespace F3::TYPO3CR;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Workspace implements F3::PHPCR::WorkspaceInterface {
+class Workspace implements \F3\PHPCR\WorkspaceInterface {
 
 	/**
 	 * @var string
@@ -36,27 +36,27 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	protected $name;
 
 	/**
-	 * @var F3::TYPO3CR::Session
+	 * @var \F3\TYPO3CR\Session
 	 */
 	protected $session;
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::PHPCR::Query::QueryManagerInterface
+	 * @var \F3\PHPCR\Query\QueryManagerInterface
 	 */
 	protected $queryManager;
 
 	/**
-	 * @var F3::PHPCR::NamespaceRegistryInterface
+	 * @var \F3\PHPCR\NamespaceRegistryInterface
 	 */
 	protected $namespaceRegistry;
 
 	/**
-	 * @var F3::PHPCR::NodeType::NodeTypeManagerInterface
+	 * @var \F3\PHPCR\NodeType\NodeTypeManagerInterface
 	 */
 	protected $nodeTypeManager;
 
@@ -64,24 +64,24 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * Constructs a Workspace object
 	 *
 	 * @param string $name
-	 * @param F3::PHPCR::SessionInterface $session
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
+	 * @param \F3\PHPCR\SessionInterface $session
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function __construct($name, \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 
 		$this->name = $name;
 		$this->session = $session;
-		$this->queryManager = $this->objectFactory->create('F3::PHPCR::Query::QueryManagerInterface', $session);
-		$this->namespaceRegistry = $this->objectFactory->create('F3::PHPCR::NamespaceRegistryInterface', $session->getStorageBackend());
-		$this->nodeTypeManager = $this->objectFactory->create('F3::PHPCR::NodeType::NodeTypeManagerInterface', $session->getStorageBackend());
+		$this->queryManager = $this->objectFactory->create('F3\PHPCR\Query\QueryManagerInterface', $session);
+		$this->namespaceRegistry = $this->objectFactory->create('F3\PHPCR\NamespaceRegistryInterface', $session->getStorageBackend());
+		$this->nodeTypeManager = $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeManagerInterface', $session->getStorageBackend());
 	}
 
 	/**
 	 * Returns the Session object through which this Workspace object was acquired.
 	 *
-	 * @return F3::TYPO3CR::Session a Session object
+	 * @return \F3\TYPO3CR\Session a Session object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getSession() {
@@ -139,17 +139,17 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @param string $destAbsPath the location to which the node at srcAbsPath is to be copied in this workspace.
 	 * @param string $srcWorkspace the name of the workspace from which the copy is to be made.
 	 * @return void
-	 * @throws F3::PHPCR::NoSuchWorkspaceException if srcWorkspace does not exist or if the current Session does not have permission to access it.
-	 * @throws F3::PHPCR::ConstraintViolationException if the operation would violate a node-type or other implementation-specific constraint
-	 * @throws F3::PHPCR::Version::VersionException if the parent node of destAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in.
-	 * @throws F3::PHPCR::AccessDeniedException if the current session does have permission to access srcWorkspace but otherwise does not have sufficient access rights to complete the operation.
-	 * @throws F3::PHPCR::PathNotFoundException if the node at srcAbsPath in srcWorkspace or the parent of destAbsPath in this workspace does not exist.
-	 * @throws F3::PHPCR::ItemExistsException if a node already exists at destAbsPath and same-name siblings are not allowed.
-	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the copy.
-	 * @throws F3::PHPCR::RepositoryException if the last element of destAbsPath has an index or if another error occurs.
+	 * @throws \F3\PHPCR\NoSuchWorkspaceException if srcWorkspace does not exist or if the current Session does not have permission to access it.
+	 * @throws \F3\PHPCR\ConstraintViolationException if the operation would violate a node-type or other implementation-specific constraint
+	 * @throws \F3\PHPCR\Version\VersionException if the parent node of destAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in.
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session does have permission to access srcWorkspace but otherwise does not have sufficient access rights to complete the operation.
+	 * @throws \F3\PHPCR\PathNotFoundException if the node at srcAbsPath in srcWorkspace or the parent of destAbsPath in this workspace does not exist.
+	 * @throws \F3\PHPCR\ItemExistsException if a node already exists at destAbsPath and same-name siblings are not allowed.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the copy.
+	 * @throws \F3\PHPCR\RepositoryException if the last element of destAbsPath has an index or if another error occurs.
 	 */
 	public function copy($srcAbsPath, $destAbsPath, $srcWorkspace = NULL) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406774);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406774);
 	}
 
 	/**
@@ -193,17 +193,17 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @param string $destAbsPath - the location to which the node at srcAbsPath is to be copied in this workspace.
 	 * @param boolean $removeExisting - if false then this method throws an ItemExistsException on identifier conflict with an incoming node. If true then a identifier conflict is resolved by removing the existing node from its location in this workspace and cloning (copying in) the one from srcWorkspace.
 	 * @return void
-	 * @throws F3::PHPCR::NoSuchWorkspaceException if destWorkspace does not exist.
-	 * @throws F3::PHPCR::ConstraintViolationException if the operation would violate a node-type or other implementation-specific constraint.
-	 * @throws F3::PHPCR::Version::VersionException if the parent node of destAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in. This exception will also be thrown if removeExisting is true, and an identifier conflict occurs that would require the moving and/or altering of a node that is checked-in.
-	 * @throws F3::PHPCR::AccessDeniedException if the current session does not have sufficient access rights to complete the operation.
-	 * @throws F3::PHPCR::PathNotFoundException if the node at srcAbsPath in srcWorkspace or the parent of destAbsPath in this workspace does not exist.
-	 * @throws F3::PHPCR::ItemExistsException if a node already exists at destAbsPath and same-name siblings are not allowed or if removeExisting is false and an identifier conflict occurs.
-	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the clone.
-	 * @throws F3::PHPCR::RepositoryException if the last element of destAbsPath has an index or if another error occurs.
+	 * @throws \F3\PHPCR\NoSuchWorkspaceException if destWorkspace does not exist.
+	 * @throws \F3\PHPCR\ConstraintViolationException if the operation would violate a node-type or other implementation-specific constraint.
+	 * @throws \F3\PHPCR\Version\VersionException if the parent node of destAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in. This exception will also be thrown if removeExisting is true, and an identifier conflict occurs that would require the moving and/or altering of a node that is checked-in.
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient access rights to complete the operation.
+	 * @throws \F3\PHPCR\PathNotFoundException if the node at srcAbsPath in srcWorkspace or the parent of destAbsPath in this workspace does not exist.
+	 * @throws \F3\PHPCR\ItemExistsException if a node already exists at destAbsPath and same-name siblings are not allowed or if removeExisting is false and an identifier conflict occurs.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the clone.
+	 * @throws \F3\PHPCR\RepositoryException if the last element of destAbsPath has an index or if another error occurs.
 	 */
 	public function klone($srcWorkspace, $srcAbsPath, $destAbsPath, $removeExisting) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406775);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406775);
 	}
 
 	/**
@@ -235,16 +235,16 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @param string $srcAbsPath the path of the node to be moved.
 	 * @param string $destAbsPath the location to which the node at srcAbsPath is to be moved.
 	 * @return void
-	 * @throws F3::PHPCR::ConstraintViolationException if the operation would violate a node-type or other implementation-specific constraint
-	 * @throws F3::PHPCR::Version::VersionException if the parent node of destAbsPath or the parent node of srcAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in.
-	 * @throws F3::PHPCR::AccessDeniedException if the current session (i.e. the session that was used to acquire this Workspace object) does not have sufficient access rights to complete the operation.
-	 * @throws F3::PHPCR::PathNotFoundException if the node at srcAbsPath or the parent of destAbsPath does not exist.
-	 * @throws F3::PHPCR::ItemExistsException if a node already exists at destAbsPath and same-name siblings are not allowed.
-	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the move.
-	 * @throws F3::PHPCR::RepositoryException if the last element of destAbsPath has an index or if another error occurs.
+	 * @throws \F3\PHPCR\ConstraintViolationException if the operation would violate a node-type or other implementation-specific constraint
+	 * @throws \F3\PHPCR\Version\VersionException if the parent node of destAbsPath or the parent node of srcAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in.
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session (i.e. the session that was used to acquire this Workspace object) does not have sufficient access rights to complete the operation.
+	 * @throws \F3\PHPCR\PathNotFoundException if the node at srcAbsPath or the parent of destAbsPath does not exist.
+	 * @throws \F3\PHPCR\ItemExistsException if a node already exists at destAbsPath and same-name siblings are not allowed.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the move.
+	 * @throws \F3\PHPCR\RepositoryException if the last element of destAbsPath has an index or if another error occurs.
 	 */
 	public function move($srcAbsPath, $destAbsPath) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406776);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406776);
 	}
 
 	/**
@@ -281,25 +281,25 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * restored node that have OnParentVersion settings of COPY or VERSION are also
 	 * governed by the removeExisting flag.
 	 *
-	 * @param array $versions The set of versions (array of F3::PHPCR::Version::VersionInterface) to be restored
+	 * @param array $versions The set of versions (array of \F3\PHPCR\Version\VersionInterface) to be restored
 	 * @param boolean $removeExisting governs what happens on identifier collision.
 	 * @return void
-	 * @throws F3::PHPCR::ItemExistsException if removeExisting is false and an identifier collision occurs with a node being restored.
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if one or more of the nodes to be restored is not versionable.
-	 * @throws F3::PHPCR::Version::VersionException if the set of versions to be restored is such that the original path location of one or more of the versions cannot be determined or if the restore would change the state of a existing versionable node that is currently checked-in or if a root version (jcr:rootVersion) is among those being restored.
-	 * @throws F3::PHPCR::Version::LockException if a lock prevents the restore.
-	 * @throws F3::PHPCR::InvalidItemStateException if this Session has pending unsaved changes.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\ItemExistsException if removeExisting is false and an identifier collision occurs with a node being restored.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if one or more of the nodes to be restored is not versionable.
+	 * @throws \F3\PHPCR\Version\VersionException if the set of versions to be restored is such that the original path location of one or more of the versions cannot be determined or if the restore would change the state of a existing versionable node that is currently checked-in or if a root version (jcr:rootVersion) is among those being restored.
+	 * @throws \F3\PHPCR\Version\LockException if a lock prevents the restore.
+	 * @throws \F3\PHPCR\InvalidItemStateException if this Session has pending unsaved changes.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function restore(array $versions, $removeExisting) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406777);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406777);
 	}
 
 	/**
 	 * Returns the QueryManager object, through search methods are accessed.
 	 *
-	 * @return F3::PHPCR::Query::QueryManagerInterface the QueryManager object.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @return \F3\PHPCR\Query\QueryManagerInterface the QueryManager object.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getQueryManager() {
@@ -309,12 +309,12 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	/*
 	 * Returns the LockManager object, through which locking methods are accessed.
 	 *
-	 * @return F3::PHPCR::Lock::LockManagerInterface
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the implementation does not support locking.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @return \F3\PHPCR\Lock\LockManagerInterface
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the implementation does not support locking.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 */
 	public function getLockManager() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213801840);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213801840);
 	}
 
 	/**
@@ -322,8 +322,8 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * between prefixes and namespaces. In level 2 repositories the NamespaceRegistry
 	 * can also be used to change the namespace mappings.
 	 *
-	 * @return F3::PHPCR::NamespaceRegistryInterface
-	 * @throws F3::PHPCR::RepositoryException
+	 * @return \F3\PHPCR\NamespaceRegistryInterface
+	 * @throws \F3\PHPCR\RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNamespaceRegistry() {
@@ -337,8 +337,8 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * repository-wide set of available node types. In repositories that support it,
 	 * the NodeTypeManager can also be used to register new node types.
 	 *
-	 * @return F3::PHPCR::NodeType::NodeTypeManagerInterface a NodeTypeManager object.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @return \F3\PHPCR\NodeType\NodeTypeManagerInterface a NodeTypeManager object.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodeTypeManager() {
@@ -348,12 +348,12 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	/**
 	 * Returns the ObservationManager object.
 	 *
-	 * @return F3::PHPCR::Observation::ObservationManagerInterface an ObservationManager object.
-	 * @throws F3::PHPCR::F3::PHPCR::UnsupportedRepositoryOperationException if the implementation does not support observation.
-	 * @throws F3::PHPCR::F3::PHPCR::RepositoryException if an error occurs.
+	 * @return \F3\PHPCR\Observation\ObservationManagerInterface an ObservationManager object.
+	 * @throws \F3\PHPCR::\F3\PHPCR\UnsupportedRepositoryOperationException if the implementation does not support observation.
+	 * @throws \F3\PHPCR::\F3\PHPCR\RepositoryException if an error occurs.
 	 */
 	public function getObservationManager() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406780);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406780);
 	}
 
 	/**
@@ -365,10 +365,10 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * and receives a new Session object.
 	 *
 	 * @return array string array of names of accessible workspaces.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs
 	 */
 	public function getAccessibleWorkspaceNames() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406781);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406781);
 	}
 
 	/**
@@ -429,16 +429,16 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @param string $parentAbsPath the absolute path of a node under which (as child) the imported subtree will be built.
 	 * @param integer $uuidBehavior a four-value flag that governs how incoming identifiers are handled.
 	 * @return an org.xml.sax.ContentHandler whose methods may be called to feed SAX events into the deserializer.
-	 * @throws F3::PHPCR::PathNotFoundException if no node exists at parentAbsPath.
-	 * @throws F3::PHPCR::ConstraintViolationException if the new subtree cannot be added to the node at parentAbsPath due to node-type or other implementation-specific constraints, and this can be determined before the first SAX event is sent.
-	 * @throws F3::PHPCR::Version::VersionException if the node at parentAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in.
-	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the addition of the subtree.
-	 * @throws F3::PHPCR::AccessDeniedException if the session associated with this Workspace object does not have sufficient permissions to perform the import.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\PathNotFoundException if no node exists at parentAbsPath.
+	 * @throws \F3\PHPCR\ConstraintViolationException if the new subtree cannot be added to the node at parentAbsPath due to node-type or other implementation-specific constraints, and this can be determined before the first SAX event is sent.
+	 * @throws \F3\PHPCR\Version\VersionException if the node at parentAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the addition of the subtree.
+	 * @throws \F3\PHPCR\AccessDeniedException if the session associated with this Workspace object does not have sufficient permissions to perform the import.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @todo Decide on a return type that fits the PHP world
 	 */
 	public function getImportContentHandler($parentAbsPath, $uuidBehavior) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406782);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406782);
 	}
 
 	/**
@@ -489,18 +489,18 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @param resource $in The resource handler from which the XML to be deserialized is read.
 	 * @param integer $uuidBehavior a four-value flag that governs how incoming identifiers are handled.
 	 * @return void
-	 * @throws RuntimeException if an error during an I/O operation occurs.
-	 * @throws F3::PHPCR::PathNotFoundException if no node exists at parentAbsPath.
-	 * @throws F3::PHPCR::ConstraintViolationException if node-type or other implementation-specific constraints prevent the addition of the subtree or if uuidBehavior is set to IMPORT_UUID_COLLISION_REMOVE_EXISTING and an incoming node has the same identifier as the node at parentAbsPath or one of its ancestors.
-	 * @throws F3::PHPCR::Version::VersionException if the node at parentAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in.
-	 * @throws F3::PHPCR::InvalidSerializedDataException if incoming stream is not a valid XML document.
-	 * @throws F3::PHPCR::ItemExistsException if the top-most element of the incoming XML would deserialize to a node with the same name as an existing child of parentAbsPath and that child does not allow same-name siblings, or if a uuidBehavior is set to IMPORT_UUID_COLLISION_THROW and an identifier collision occurs.
-	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the addition of the subtree.
-	 * @throws F3::PHPCR::AccessDeniedException if the session associated with this Workspace object does not have sufficient permissions to perform the import.
-	 * @throws F3::PHPCR::RepositoryException is another error occurs.
+	 * @throws \RuntimeException if an error during an I/O operation occurs.
+	 * @throws \F3\PHPCR\PathNotFoundException if no node exists at parentAbsPath.
+	 * @throws \F3\PHPCR\ConstraintViolationException if node-type or other implementation-specific constraints prevent the addition of the subtree or if uuidBehavior is set to IMPORT_UUID_COLLISION_REMOVE_EXISTING and an incoming node has the same identifier as the node at parentAbsPath or one of its ancestors.
+	 * @throws \F3\PHPCR\Version\VersionException if the node at parentAbsPath is versionable and checked-in, or is non-versionable but its nearest versionable ancestor is checked-in.
+	 * @throws \F3\PHPCR\InvalidSerializedDataException if incoming stream is not a valid XML document.
+	 * @throws \F3\PHPCR\ItemExistsException if the top-most element of the incoming XML would deserialize to a node with the same name as an existing child of parentAbsPath and that child does not allow same-name siblings, or if a uuidBehavior is set to IMPORT_UUID_COLLISION_THROW and an identifier collision occurs.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the addition of the subtree.
+	 * @throws \F3\PHPCR\AccessDeniedException if the session associated with this Workspace object does not have sufficient permissions to perform the import.
+	 * @throws \F3\PHPCR\RepositoryException is another error occurs.
 	 */
 	public function importXML($parentAbsPath, $in, $uuidBehavior) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406782);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406782);
 	}
 
 	/**
@@ -520,13 +520,13 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * @param string $name A String, the name of the new workspace.
 	 * @param string $srcWorkspace The name of the workspace from which the new workspace is to be cloned.
 	 * @return void
-	 * @throws F3::PHPCR::AccessDeniedException if the session through which this Workspace object was acquired does not have permission to create the new workspace.
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support the creation of workspaces.
-	 * @throws F3::PHPCR::NoSuchWorkspaceException if $srcWorkspace does not exist.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\AccessDeniedException if the session through which this Workspace object was acquired does not have permission to create the new workspace.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the repository does not support the creation of workspaces.
+	 * @throws \F3\PHPCR\NoSuchWorkspaceException if $srcWorkspace does not exist.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function createWorkspace($name, $srcWorkspace = NULL) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406783);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406783);
 	}
 
 	/**
@@ -535,13 +535,13 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 *
 	 * @param string $name A String, the name of the workspace to be deleted.
 	 * @return void
-	 * @throws F3::PHPCR::AccessDeniedException if the session through which this Workspace object was acquired does not have permission to remove the workspace.
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support the removal of workspaces.
-	 * @throws F3::PHPCR::NoSuchWorkspaceException if $name does not exist.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\AccessDeniedException if the session through which this Workspace object was acquired does not have permission to remove the workspace.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the repository does not support the removal of workspaces.
+	 * @throws \F3\PHPCR\NoSuchWorkspaceException if $name does not exist.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function deleteWorkspace($name) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406784);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406784);
 	}
 
 	/**
@@ -553,12 +553,12 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * The new node is persisted immediately and does not require a save.
 	 *
 	 * @param string $title a String
-	 * @return F3::PHPCR::NodeInterface the new activity Node.
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support activities.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\PHPCR\NodeInterface the new activity Node.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the repository does not support activities.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function createActivity($title) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406785);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406785);
 	}
 
 	/**
@@ -568,25 +568,25 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * is done by calling setActivity(NULL) which returns the current activity
 	 * node or NULL if there is no current activity.
 	 *
-	 * @param F3::PHPCR::NodeInterface $activity an activity node
-	 * @return F3::PHPCR::NodeInterface the activity node
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support activities or if activity is not a nt:activity node.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @param \F3\PHPCR\NodeInterface $activity an activity node
+	 * @return \F3\PHPCR\NodeInterface the activity node
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the repository does not support activities or if activity is not a nt:activity node.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
-	public function setActivity(F3::PHPCR::NodeInterface $activity) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224512135);
+	public function setActivity(\F3\PHPCR\NodeInterface $activity) {
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224512135);
 	}
 
 	/**
 	 * Returns the node representing the current activity or NULL if there is no
 	 * current activity.
 	 *
-	 * @return F3::PHPCR::NodeInterface An nt:activity node or NULL.
-	 * @throws F3::PHPCR::UnsupportedRepositoryOperationException if the repository does not support activities.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\PHPCR\NodeInterface An nt:activity node or NULL.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the repository does not support activities.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function getActivity() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224512136);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224512136);
 	}
 
 	/**
@@ -613,17 +613,17 @@ class Workspace implements F3::PHPCR::WorkspaceInterface {
 	 * This method returns a NodeIterator over all versionable nodes in the
 	 * subtree that received a merge result of fail.
 	 *
-	 * @param F3::PHPCR::NodeInterface $activityNode an nt:activity node
-	 * @return F3::PHPCR::NodeIterator a NodeIterator
-	 * @throws F3::PHPCR::AccessDeniedException if the current session does not have sufficient rights to perform the operation.
-	 * @throws F3::PHPCR::Version::VersionException if the specified node is not an nt:activity node.
-	 * @throws F3::PHPCR::MergeException in the same cases as in a regular shallow merge (see Node.merge(String, boolean, boolean)).
-	 * @throws F3::PHPCR::Lock::LockException if a lock prevents the merge.
-	 * @throws F3::PHPCR::InvalidItemStateException if this Session has pending unsaved changes.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @param \F3\PHPCR\NodeInterface $activityNode an nt:activity node
+	 * @return \F3\PHPCR\NodeIterator a NodeIterator
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient rights to perform the operation.
+	 * @throws \F3\PHPCR\Version\VersionException if the specified node is not an nt:activity node.
+	 * @throws \F3\PHPCR\MergeException in the same cases as in a regular shallow merge (see Node.merge(String, boolean, boolean)).
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the merge.
+	 * @throws \F3\PHPCR\InvalidItemStateException if this Session has pending unsaved changes.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
-	public function merge(F3::PHPCR::NodeInterface $activityNode) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406786);
+	public function merge(\F3\PHPCR\NodeInterface $activityNode) {
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406786);
 	}
 
 }

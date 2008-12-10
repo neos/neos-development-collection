@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3CR;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Value implements F3::PHPCR::ValueInterface {
+class Value implements \F3\PHPCR\ValueInterface {
 
 	/**
 	 * @var mixed
@@ -45,7 +45,7 @@ class Value implements F3::PHPCR::ValueInterface {
 	 * Constructs a Value object from the given $value and $type arguments
 	 *
 	 * @param mixed $value The value of the Value object
-	 * @param integer $type A type, see constants in F3::PHPCR::PropertyType
+	 * @param integer $type A type, see constants in \F3\PHPCR\PropertyType
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -59,12 +59,12 @@ class Value implements F3::PHPCR::ValueInterface {
 	 * methods to access the binary data itself. Uses the standard conversion to binary
 	 * (see JCR specification).
 	 *
-	 * @return F3::TYPO3CR::Binary A Binary representation of this value.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\TYPO3CR\Binary A Binary representation of this value.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBinary() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217843676);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217843676);
 	}
 
 	/**
@@ -72,20 +72,20 @@ class Value implements F3::PHPCR::ValueInterface {
 	 * of type DATE the string will conform to ISO8601 format.
 	 *
 	 * @return string A String representation of the value of this property.
-	 * @throws F3::PHPCR::ValueFormatException if conversion to a String is not possible.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\ValueFormatException if conversion to a String is not possible.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getString() {
 		switch ($this->type) {
-			case F3::PHPCR::PropertyType::DATE:
+			case \F3\PHPCR\PropertyType::DATE:
 				if (is_a($this->value, 'DateTime')) {
 					return date_format($this->value, DATE_ISO8601);
 				} else {
-					return date_format(new DateTime($this->value), DATE_ISO8601);
+					return date_format(new \DateTime($this->value), DATE_ISO8601);
 				}
-			case F3::PHPCR::PropertyType::BOOLEAN:
+			case \F3\PHPCR\PropertyType::BOOLEAN:
 				return (string)(int)$this->value;
 			default:
 				return (string)$this->value;
@@ -105,8 +105,8 @@ class Value implements F3::PHPCR::ValueInterface {
 	 * Returns a long (integer) representation of this value.
 	 *
 	 * @return string A long representation of the value of this property.
-	 * @throws F3::PHPCR::ValueFormatException if conversion to a long is not possible.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\ValueFormatException if conversion to a long is not possible.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getLong() {
@@ -117,8 +117,8 @@ class Value implements F3::PHPCR::ValueInterface {
 	 * Returns a BigDecimal representation of this value (aliased to getDouble()).
 	 *
 	 * @return float A double representation of the value of this property.
-	 * @throws F3::PHPCR::ValueFormatException if conversion is not possible.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\ValueFormatException if conversion is not possible.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function getDecimal() {
 		return $this->getDouble();
@@ -128,8 +128,8 @@ class Value implements F3::PHPCR::ValueInterface {
 	 * Returns a double (floating point) representation of this value.
 	 *
 	 * @return float A double representation of the value of this property.
-	 * @throws F3::PHPCR::ValueFormatException if conversion to a double is not possible.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\ValueFormatException if conversion to a double is not possible.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDouble() {
@@ -137,11 +137,11 @@ class Value implements F3::PHPCR::ValueInterface {
 	}
 
 	/**
-	 * Returns a DateTime representation of this value.
+	 * Returns a \DateTime representation of this value.
 	 *
-	 * @return DateTime A DateTime representation of the value of this property.
-	 * @throws F3::PHPCR::ValueFormatException if conversion to a DateTime is not possible.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \DateTime A \DateTime representation of the value of this property.
+	 * @throws \F3\PHPCR\ValueFormatException if conversion to a \DateTime is not possible.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDate() {
@@ -150,9 +150,9 @@ class Value implements F3::PHPCR::ValueInterface {
 		}
 
 		try {
-			return new DateTime($this->value);
-		} catch (::Exception $e) {
-			throw new F3::PHPCR::ValueFormatException('Conversion to a DateTime object is not possible. Cause: ' . $e->getMessage(), 1190034628);
+			return new \DateTime($this->value);
+		} catch (\Exception $e) {
+			throw new \F3\PHPCR\ValueFormatException('Conversion to a \DateTime object is not possible. Cause: ' . $e->getMessage(), 1190034628);
 		}
 	}
 
@@ -160,8 +160,8 @@ class Value implements F3::PHPCR::ValueInterface {
 	 * Returns a boolean representation of this value.
 	 *
 	 * @return string A boolean representation of the value of this property.
-	 * @throws F3::PHPCR::ValueFormatException if conversion to a boolean is not possible.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\ValueFormatException if conversion to a boolean is not possible.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBoolean() {
@@ -170,18 +170,18 @@ class Value implements F3::PHPCR::ValueInterface {
 
 	/**
 	 * Returns the type of this Value. One of:
-	 * * F3::PHPCR::PropertyType::STRING
-	 * * F3::PHPCR::PropertyType::DATE
-	 * * F3::PHPCR::PropertyType::BINARY
-	 * * F3::PHPCR::PropertyType::DOUBLE
-	 * * F3::PHPCR::PropertyType::DECIMAL
-	 * * F3::PHPCR::PropertyType::LONG
-	 * * F3::PHPCR::PropertyType::BOOLEAN
-	 * * F3::PHPCR::PropertyType::NAME
-	 * * F3::PHPCR::PropertyType::PATH
-	 * * F3::PHPCR::PropertyType::REFERENCE
-	 * * F3::PHPCR::PropertyType::WEAKREFERENCE
-	 * * F3::PHPCR::PropertyType::URI
+	 * * \F3\PHPCR\PropertyType::STRING
+	 * * \F3\PHPCR\PropertyType::DATE
+	 * * \F3\PHPCR\PropertyType::BINARY
+	 * * \F3\PHPCR\PropertyType::DOUBLE
+	 * * \F3\PHPCR\PropertyType::DECIMAL
+	 * * \F3\PHPCR\PropertyType::LONG
+	 * * \F3\PHPCR\PropertyType::BOOLEAN
+	 * * \F3\PHPCR\PropertyType::NAME
+	 * * \F3\PHPCR\PropertyType::PATH
+	 * * \F3\PHPCR\PropertyType::REFERENCE
+	 * * \F3\PHPCR\PropertyType::WEAKREFERENCE
+	 * * \F3\PHPCR\PropertyType::URI
 	 *
 	 * The type returned is that which was set at property creation.
 	 * @return integer The type of the value

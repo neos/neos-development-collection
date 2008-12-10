@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Storage;
+namespace F3\TYPO3CR\Storage;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +17,7 @@ namespace F3::TYPO3CR::Storage;
 
 /**
  * @package TYPO3CR
- * @version $Id:F3::TYPO3CR::Storage::Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:\F3\TYPO3CR\Storage\Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 require_once('Zend/Search/Lucene.php');
@@ -26,7 +26,7 @@ require_once('Zend/Search/Lucene.php');
  * A helper class for the storage layer
  *
  * @package TYPO3CR
- * @version $Id:F3::TYPO3CR::Storage::Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:\F3\TYPO3CR\Storage\Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
@@ -152,7 +152,7 @@ class Helper {
 		$this->databaseHandle->query('DELETE FROM "nodes"');
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "name", "namespace", "parent", "nodetype", "nodetypenamespace") VALUES (?, \'\', \'\', \'\', \'unstructured\',\'http://www.jcp.org/jcr/nt/1.0\')');
 		$statementHandle->execute(array(
-			F3::FLOW3::Utility::Algorithms::generateUUID()
+			\F3\FLOW3\Utility\Algorithms::generateUUID()
 		));
 	}
 
@@ -163,7 +163,7 @@ class Helper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeSearch() {
-		$index = ::Zend_Search_Lucene::create($this->options['indexlocation']. '/default');
+		$index = \Zend_Search_Lucene::create($this->options['indexlocation']. '/default');
 		$this->populateIndex();
 	}
 
@@ -176,12 +176,12 @@ class Helper {
 		$statementHandle = $this->databaseHandle->query('SELECT * FROM "nodes" WHERE "parent" = \'\'');
 		$node = $statementHandle->fetch(PDO::FETCH_ASSOC);
 
-		$nodeDocument = new ::Zend_Search_Lucene_Document();
-		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('identifier', $node['identifier']));
-		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('nodetype', $node['nodetype']));
-		$nodeDocument->addField(::Zend_Search_Lucene_Field::Keyword('path', '/'));
+		$nodeDocument = new \Zend_Search_Lucene_Document();
+		$nodeDocument->addField(\Zend_Search_Lucene_Field\Keyword('identifier', $node['identifier']));
+		$nodeDocument->addField(\Zend_Search_Lucene_Field\Keyword('nodetype', $node['nodetype']));
+		$nodeDocument->addField(\Zend_Search_Lucene_Field\Keyword('path', '/'));
 
-		$index = ::Zend_Search_Lucene::open($this->options['indexlocation']. '/default');
+		$index = \Zend_Search_Lucene::open($this->options['indexlocation']. '/default');
 		$index->addDocument($nodeDocument);
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Storage::Backend::PDO;
+namespace F3\TYPO3CR\Storage\Backend\PDO;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3CR::Storage::Backend::PDO;
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3::TYPO3CR::Storage::Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:\F3\TYPO3CR\Storage\Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
@@ -28,10 +28,10 @@ require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3::TYPO3CR::Storage::Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id:\F3\TYPO3CR\Storage\Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PostgreSQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
+class PostgreSQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 
 	/**
 	 * @var string
@@ -81,10 +81,10 @@ class PostgreSQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 
 		if ($this->db != '' && $this->dbuser != '' && $this->dbpass != '') {
 			try {
-				$databaseHandle = new PDO('pgsql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
-				$databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+				$databaseHandle = new \PDO('pgsql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
+				$databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 				$databaseHandle = NULL;
-			} catch (PDOException $e) {
+			} catch (\PDOException $e) {
 				$this->markTestSkipped('Could not connect to PostgreSQL database ' . $this->db . ', user ' . $this->dbuser . ', password ' . $this->dbpass . ', skipping PostgreSQL tests');
 				return;
 			}
@@ -96,8 +96,8 @@ class PostgreSQLTest extends F3::TYPO3CR::Storage::Backend::TestBase {
 
 		exec($scriptpath . 'testdb.sh postgres reset');
 
-		$this->storageBackend = new F3::TYPO3CR::Storage::Backend::PDO(array('dataSourceName' => 'pgsql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
-		$this->storageBackend->setSearchEngine($this->getMock('F3::TYPO3CR::Storage::SearchInterface'));
+		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'pgsql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
+		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 
 		parent::setup();

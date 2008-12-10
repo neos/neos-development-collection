@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Query;
+namespace F3\TYPO3CR\Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -31,28 +31,28 @@ namespace F3::TYPO3CR::Query;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
+class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 
 	/**
-	 * @var F3::PHPCR::SessionInterface
+	 * @var \F3\PHPCR\SessionInterface
 	 */
 	protected $session;
 
 	/**
-	 * @var F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface
+	 * @var \F3\PHPCR\Query\QOM\QueryObjectModelFactoryInterface
 	 */
 	protected $queryObjectModelFactory;
 
 	/**
 	 * Constructs the query manager
 	 *
-	 * @param F3::PHPCR::SessionInterface $session
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
+	 * @param \F3\PHPCR\SessionInterface $session
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::PHPCR::SessionInterface $session, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function __construct(\F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->session = $session;
-		$this->queryObjectModelFactory = $objectFactory->create('F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface', $this->session);
+		$this->queryObjectModelFactory = $objectFactory->create('F3\PHPCR\Query\QOM\QueryObjectModelFactoryInterface', $this->session);
 	}
 
 	/**
@@ -61,12 +61,12 @@ class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
 	 *
 	 * @param string $statement
 	 * @param string $language
-	 * @return F3::PHPCR::Query::QueryInterface a Query object
-	 * @throws F3::PHPCR::Query::InvalidQueryException if the query statement is syntactically invalid or the specified language is not supported
-	 * @throws F3::PHPCR::RepositoryException if another error occurs
+	 * @return \F3\PHPCR\Query\QueryInterface a Query object
+	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query statement is syntactically invalid or the specified language is not supported
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 */
 	public function createQuery($statement, $language) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897622);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897622);
 	}
 
 	/**
@@ -75,19 +75,19 @@ class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
 	 *
 	 * @param string $statement
 	 * @param string $language
-	 * @return F3::PHPCR::Query::PreparedQueryInterface a PreparedQuery object
-	 * @throws F3::PHPCR::Query::InvalidQueryException if the query statement is syntactically invalid or the specified language is not supported
-	 * @throws F3::PHPCR::RepositoryException if another error occurs
+	 * @return \F3\PHPCR\Query\PreparedQueryInterface a PreparedQuery object
+	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query statement is syntactically invalid or the specified language is not supported
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 */
 	public function createPreparedQuery($statement, $language) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897623);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897623);
 	}
 
 	/**
 	 * Returns a QueryObjectModelFactory with which a JCR-JQOM query can be built
 	 * programmatically.
 	 *
-	 * @return F3::PHPCR::Query::QOM::QueryObjectModelFactoryInterface a QueryObjectModelFactory object
+	 * @return \F3\PHPCR\Query\QOM\QueryObjectModelFactoryInterface a QueryObjectModelFactory object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getQOMFactory() {
@@ -101,13 +101,13 @@ class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
 	 * create a Query object and then calling Query.save to persist the query to
 	 * a location in the workspace.
 	 *
-	 * @param F3::PHPCR::NodeInterface $node a persisted query (that is, a node of type nt:query).
-	 * @return F3::PHPCR::Query::QueryInterface a Query object.
-	 * @throws F3::PHPCR::Query::InvalidQueryException If node is not a valid persisted query (that is, a node of type nt:query).
-	 * @throws F3::PHPCR::RepositoryException if another error occurs
+	 * @param \F3\PHPCR\NodeInterface $node a persisted query (that is, a node of type nt:query).
+	 * @return \F3\PHPCR\Query\QueryInterface a Query object.
+	 * @throws \F3\PHPCR\Query\InvalidQueryException If node is not a valid persisted query (that is, a node of type nt:query).
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 */
 	public function getQuery($node) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897625);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897625);
 	}
 
 	/**
@@ -117,11 +117,11 @@ class QueryManager implements F3::PHPCR::Query::QueryManagerInterface {
 	 * either level may also support other languages.
 	 *
 	 * @return array A string array.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getSupportedQueryLanguages() {
-		return array(F3::PHPCR::Query::QueryInterface::JCR_JQOM);
+		return array(\F3\PHPCR\Query\QueryInterface::JCR_JQOM);
 	}
 
 }

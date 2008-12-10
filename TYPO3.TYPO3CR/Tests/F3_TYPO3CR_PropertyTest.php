@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR;
+namespace F3\TYPO3CR;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3CR;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PropertyTest extends F3::Testing::BaseTestCase {
+class PropertyTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Checks if getValue returns a Value object
@@ -37,18 +37,18 @@ class PropertyTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getValueReturnsAValueObject() {
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array(), array(), '', FALSE);
-		$mockNode = $this->getMock('F3::TYPO3CR::Node', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('F3\TYPO3CR\Node', array(), array(), '', FALSE);
 
-		$valueObject = new F3::TYPO3CR::Value('somevalue', F3::PHPCR::PropertyType::STRING);
+		$valueObject = new \F3\TYPO3CR\Value('somevalue', \F3\PHPCR\PropertyType::STRING);
 
-		$mockValueFactory = $this->getMock('F3::PHPCR::ValueFactoryInterface');
+		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
 		$mockValueFactory->expects($this->once())->
 			method('createValue')->
-			with('testvalue', F3::PHPCR::PropertyType::STRING)->
+			with('testvalue', \F3\PHPCR\PropertyType::STRING)->
 			will($this->returnValue($valueObject));
 
-		$property = new F3::TYPO3CR::Property('testproperty', 'testvalue', F3::PHPCR::PropertyType::STRING, $mockNode, $mockSession, $mockValueFactory);
+		$property = new \F3\TYPO3CR\Property('testproperty', 'testvalue', \F3\PHPCR\PropertyType::STRING, $mockNode, $mockSession, $mockValueFactory);
 		$this->assertEquals($valueObject, $property->getValue());
 	}
 
@@ -56,15 +56,15 @@ class PropertyTest extends F3::Testing::BaseTestCase {
 	 * Checks if getValues returns an exception if called with on a single value
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException F3::PHPCR::ValueFormatException
+	 * @expectedException \F3\PHPCR\ValueFormatException
 	 */
 	public function getValuesReturnsAnExceptionIfCalledOnSingleValue() {
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array(), array(), '', FALSE);
-		$mockNode = $this->getMock('F3::TYPO3CR::Node', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('F3\TYPO3CR\Node', array(), array(), '', FALSE);
 
-		$mockValueFactory = $this->getMock('F3::PHPCR::ValueFactoryInterface');
+		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
 
-		$property = new F3::TYPO3CR::Property('testproperty', 'testvalue', F3::PHPCR::PropertyType::STRING, $mockNode, $mockSession, $mockValueFactory);
+		$property = new \F3\TYPO3CR\Property('testproperty', 'testvalue', \F3\PHPCR\PropertyType::STRING, $mockNode, $mockSession, $mockValueFactory);
 		$property->getValues();
 	}
 
@@ -75,9 +75,9 @@ class PropertyTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function getPathReturnsPathToProperty() {
-		$mockStorageBackend = $this->getMock('F3::TYPO3CR::Storage::BackendInterface');
-		$mockRepository = $this->getMock('F3::TYPO3CR::Repository', array(), array(), '', FALSE);
-		$mockSession = $this->getMock('F3::TYPO3CR::Session', array(), array(), '', FALSE);
+		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
+		$mockRepository = $this->getMock('F3\TYPO3CR\Repository', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
 		$mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($mockStorageBackend));
 
 		$rawData = array(
@@ -85,15 +85,15 @@ class PropertyTest extends F3::Testing::BaseTestCase {
 			'name' => '',
 			'nodetype' => 'nt:base'
 		);
-		$rootNode = new F3::TYPO3CR::Node($rawData, $mockSession, $this->objectFactory);
+		$rootNode = new \F3\TYPO3CR\Node($rawData, $mockSession, $this->objectFactory);
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($rootNode));
 		$rawData = array(
 			'parent' => $rootNode->getIdentifier(),
 			'name' => 'testnode',
 			'nodetype' => 'nt:base'
 		);
-		$node = new F3::TYPO3CR::Node($rawData, $mockSession, $this->objectFactory);
-		$node->setProperty('testproperty', 'some test value', F3::PHPCR::PropertyType::STRING);
+		$node = new \F3\TYPO3CR\Node($rawData, $mockSession, $this->objectFactory);
+		$node->setProperty('testproperty', 'some test value', \F3\PHPCR\PropertyType::STRING);
 
 		$testProperty = $node->getProperty('testproperty');
 		$propertyPath = $testProperty->getPath();

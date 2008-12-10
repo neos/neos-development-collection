@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::NodeType;
+namespace F3\TYPO3CR\NodeType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3CR::NodeType;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class NodeTypeTemplateTest extends F3::Testing::BaseTestCase {
+class NodeTypeTemplateTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Make sure the NodeTypeTemplate is protoype
@@ -38,9 +38,9 @@ class NodeTypeTemplateTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function nodeTypeTemplateIsPrototype() {
-		$firstInstance = $this->objectFactory->create('F3::TYPO3CR::NodeType::NodeTypeTemplate');
-		$secondInstance = $this->objectFactory->create('F3::TYPO3CR::NodeType::NodeTypeTemplate');
-		$this->assertNotSame($firstInstance, $secondInstance, 'F3::TYPO3CR::NodeType::NodeTypeTemplate is not prototype.');
+		$firstInstance = $this->objectFactory->create('F3\TYPO3CR\NodeType\NodeTypeTemplate');
+		$secondInstance = $this->objectFactory->create('F3\TYPO3CR\NodeType\NodeTypeTemplate');
+		$this->assertNotSame($firstInstance, $secondInstance, 'F3\TYPO3CR\NodeType\NodeTypeTemplate is not prototype.');
 	}
 
 	/**
@@ -50,7 +50,7 @@ class NodeTypeTemplateTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function newNodeTypeTemplateHasExpectedDefaults() {
-		$nodeTypeTemplate = new F3::TYPO3CR::NodeType::NodeTypeTemplate();
+		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
 		$this->assertNull($nodeTypeTemplate->getName(), 'The name of a new NodeTypeTemplate must be NULL');
 		$this->assertEquals(array('nt:base'), $nodeTypeTemplate->getDeclaredSupertypeNames(), 'The declared supertype names for a new NodeTypeTemplate must contain only nt:base');
 		$this->assertFalse($nodeTypeTemplate->isAbstract(), 'A new NodeTypeTemplate may not be abstract');

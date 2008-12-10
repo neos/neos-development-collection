@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Query;
+namespace F3\TYPO3CR\Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,17 +29,17 @@ namespace F3::TYPO3CR::Query;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class QueryResultTest extends F3::Testing::BaseTestCase {
+class QueryResultTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodesReturnsANodeIterator() {
-		$mockSession = $this->getMock('F3::PHPCR::SessionInterface');
-		$queryResult = new F3::TYPO3CR::Query::QueryResult(array(), $mockSession);
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(), $mockSession);
 		$queryResult->injectObjectFactory($this->objectFactory);
-		$this->assertType('F3::PHPCR::NodeIteratorInterface', $queryResult->getNodes(), 'QueryResult did not return a NodeIterator in getNodes().');
+		$this->assertType('F3\PHPCR\NodeIteratorInterface', $queryResult->getNodes(), 'QueryResult did not return a NodeIterator in getNodes().');
 	}
 
 }

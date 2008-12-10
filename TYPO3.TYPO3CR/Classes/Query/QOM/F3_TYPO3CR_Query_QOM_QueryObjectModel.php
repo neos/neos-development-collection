@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Query::QOM;
+namespace F3\TYPO3CR\Query\QOM;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -56,15 +56,15 @@ namespace F3::TYPO3CR::Query::QOM;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class QueryObjectModel extends F3::TYPO3CR::Query::PreparedQuery implements F3::PHPCR::Query::QOM::QueryObjectModelInterface {
+class QueryObjectModel extends \F3\TYPO3CR\Query\PreparedQuery implements \F3\PHPCR\Query\QOM\QueryObjectModelInterface {
 
 	/**
-	 * @var F3::PHPCR::Query::QOM::SourceInterface
+	 * @var \F3\PHPCR\Query\QOM\SourceInterface
 	 */
 	protected $source;
 
 	/**
-	 * @var F3::PHPCR::Query::QOM::ConstraintInterface
+	 * @var \F3\PHPCR\Query\QOM\ConstraintInterface
 	 */
 	protected $constraint;
 
@@ -81,14 +81,14 @@ class QueryObjectModel extends F3::TYPO3CR::Query::PreparedQuery implements F3::
 	/**
 	 * Constructs this QueryObjectModel instance
 	 *
-	 * @param F3::PHPCR::Query::QOM::SourceInterface $selectorOrSource
-	 * @param F3::PHPCR::Query::QOM::ConstraintInterface $constraint (null if none)
+	 * @param \F3\PHPCR\Query\QOM\SourceInterface $selectorOrSource
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint (null if none)
 	 * @param array $orderings
 	 * @param array $columns
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::PHPCR::Query::QOM::SourceInterface $selectorOrSource, $constraint, array $orderings, array $columns) {
-		$this->language = F3::PHPCR::Query::QueryInterface::JCR_JQOM;
+	public function __construct(\F3\PHPCR\Query\QOM\SourceInterface $selectorOrSource, $constraint, array $orderings, array $columns) {
+		$this->language = \F3\PHPCR\Query\QueryInterface::JCR_JQOM;
 		$this->source = $selectorOrSource;
 		$this->constraint = $constraint;
 		$this->orderings = $orderings;
@@ -103,7 +103,7 @@ class QueryObjectModel extends F3::TYPO3CR::Query::PreparedQuery implements F3::
 	/**
 	 * Gets the node-tuple source for this query.
 	 *
-	 * @return F3::PHPCR::Query::QOM::SourceInterface the node-tuple source; non-null
+	 * @return \F3\PHPCR\Query\QOM\SourceInterface the node-tuple source; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	*/
 	public function getSource() {
@@ -113,7 +113,7 @@ class QueryObjectModel extends F3::TYPO3CR::Query::PreparedQuery implements F3::
 	/**
 	 * Gets the constraint for this query.
 	 *
-	 * @return F3::PHPCR::Query::QOM::ConstraintInterface the constraint, or null if none
+	 * @return \F3\PHPCR\Query\QOM\ConstraintInterface the constraint, or null if none
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	*/
 	public function getConstraint() {
@@ -123,7 +123,7 @@ class QueryObjectModel extends F3::TYPO3CR::Query::PreparedQuery implements F3::
 	/**
 	 * Gets the orderings for this query.
 	 *
-	 * @return array an array of zero or more F3::PHPCR::Query::QOM::OrderingInterface; non-null
+	 * @return array an array of zero or more \F3\PHPCR\Query\QOM\OrderingInterface; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	*/
 	public function getOrderings() {
@@ -133,7 +133,7 @@ class QueryObjectModel extends F3::TYPO3CR::Query::PreparedQuery implements F3::
 	/**
 	 * Gets the columns for this query.
 	 *
-	 * @return array an array of zero or more F3::PHPCR::Query::QOM::ColumnInterface; non-null
+	 * @return array an array of zero or more \F3\PHPCR\Query\QOM\ColumnInterface; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	*/
 	public function getColumns() {

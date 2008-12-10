@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Storage;
+namespace F3\TYPO3CR\Storage;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,11 +26,11 @@ namespace F3::TYPO3CR::Storage;
  *
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-abstract class AbstractSearch implements F3::TYPO3CR::Storage::SearchInterface {
+abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 
 	/**
 	 * @var string Name of the current workspace
@@ -58,11 +58,11 @@ abstract class AbstractSearch implements F3::TYPO3CR::Storage::SearchInterface {
 	 *
 	 * @param  string $workspaceName Name of the workspace which should be used for all storage operations
 	 * @return void
-	 * @throws InvalidArgumentException
+	 * @throws \InvalidArgumentException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setWorkspaceName($workspaceName) {
-		if ($workspaceName == '' || !is_string($workspaceName)) throw new InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1218961735);
+		if ($workspaceName == '' || !is_string($workspaceName)) throw new \InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1218961735);
 		$this->workspaceName = $workspaceName;
 	}
 

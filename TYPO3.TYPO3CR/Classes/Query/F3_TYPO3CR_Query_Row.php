@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3CR::Query;
+namespace F3\TYPO3CR\Query;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,29 +30,29 @@ namespace F3::TYPO3CR::Query;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Row implements F3::PHPCR::Query::RowInterface {
+class Row implements \F3\PHPCR\Query\RowInterface {
 
 	/**
 	 * Returns an array of all the values in the same order as the column names
 	 * returned by QueryResult.getColumnNames().
 	 *
 	 * @return array a Value array.
-	 * @throws F3::PHPCR::RepositoryException if an error occurs
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs
 	 */
 	public function getValues() {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897508);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897508);
 	}
 
 	/**
 	 * Returns the value of the indicated column in this Row.
 	 *
 	 * @param string $columnName name of query result table column
-	 * @return F3::PHPCR::ValueInterface a Value
-	 * @throws F3::PHPCR::ItemNotFoundException if columnName s not among the column names of the query result table.
-	 * @throws F3::PHPCR::RepositoryException if another error occurs.
+	 * @return \F3\PHPCR\ValueInterface a Value
+	 * @throws \F3\PHPCR\ItemNotFoundException if columnName s not among the column names of the query result table.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function getValue($columnName) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897509);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897509);
 	}
 
 	/**
@@ -60,11 +60,11 @@ class Row implements F3::PHPCR::Query::RowInterface {
 	 * if given.
 	 *
 	 * @param string $selectorName
-	 * @return F3::PHPCR::NodeInterface a Node
-	 * @throws F3::PHPCR::RepositoryException if selectorName is not the alias of a selector in this query or if another error occurs.
+	 * @return \F3\PHPCR\NodeInterface a Node
+	 * @throws \F3\PHPCR\RepositoryException if selectorName is not the alias of a selector in this query or if another error occurs.
 	 */
 	public function getNode($selectorName = NULL) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897510);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897510);
 	}
 
 	/**
@@ -73,10 +73,10 @@ class Row implements F3::PHPCR::Query::RowInterface {
 	 *
 	 * @param string $selectorName
 	 * @return string
-	 * @throws F3::PHPCR::RepositoryException if selectorName is not the alias of a selector in this query or if another error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if selectorName is not the alias of a selector in this query or if another error occurs.
 	 */
 	public function getPath($selectorName = NULL) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897511);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897511);
 	}
 
 	/**
@@ -91,14 +91,14 @@ class Row implements F3::PHPCR::Query::RowInterface {
 	 *
 	 * Note, in JCR-SQL2 a FullTextSearchScore AQM object is represented by a
 	 * SCORE() function. In JCR-JQOM it is represented by a Java object of type
-	 * F3::PHPCR::Query::QOM::FullTextSearchScoreInterface.
+	 * \F3\PHPCR\Query\QOM\FullTextSearchScoreInterface.
 	 *
 	 * @param string $selectorName
 	 * @return float
-	 * @throws F3::PHPCR::RepositoryException if selectorName is not the alias of a selector in this query or (in case of no given selectorName) if this query has more than one selector (and therefore, this Row corresponds to more than one Node) or if another error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if selectorName is not the alias of a selector in this query or (in case of no given selectorName) if this query has more than one selector (and therefore, this Row corresponds to more than one Node) or if another error occurs.
 	 */
 	public function getScore($selectorName = NULL) {
-		throw new F3::PHPCR::UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897512);
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897512);
 	}
 
 }
