@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::TypoScript;
+namespace F3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -24,7 +24,7 @@ namespace F3::TYPO3::TypoScript;
  *
  * @scope prototype
  */
-class Text extends F3::TypoScript::AbstractContentObject {
+class Text extends \F3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @var string Content of this Text TypoScript object

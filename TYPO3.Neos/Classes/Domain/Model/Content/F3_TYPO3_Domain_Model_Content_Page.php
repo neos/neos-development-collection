@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model::Content;
+namespace F3\TYPO3\Domain\Model\Content;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,10 +29,10 @@ namespace F3::TYPO3::Domain::Model::Content;
  * @scope prototype
  * @entity
  */
-class Page extends F3::TYPO3::Domain::Model::AbstractContent {
+class Page extends \F3\TYPO3\Domain\Model\AbstractContent {
 
 	/**
-	 * @var F3::TYPO3::Domain::Service::Time
+	 * @var \F3\TYPO3\Domain\Service\Time
 	 * @transient
 	 */
 	protected $timeService;
@@ -58,13 +58,13 @@ class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 
 	/**
 	 * A point in time from when this page should be visible
-	 * @var DateTime
+	 * @var \DateTime
 	 */
 	protected $startTime;
 
 	/**
 	 * A point in time from when this page should be not visible anymore
-	 * @var DateTime
+	 * @var \DateTime
 	 */
 	protected $endTime;
 
@@ -77,17 +77,17 @@ class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 	 */
 	public function __construct($title = 'Untitled') {
 		$this->setTitle($title);
-		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
+		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
 	}
 
 	/**
 	 * Injects the time service
 	 *
-	 * @param F3::TYPO3::Domain::Service::Time $timeService A reference to the time service
+	 * @param \F3\TYPO3\Domain\Service\Time $timeService A reference to the time service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectTimeService(F3::TYPO3::Domain::Service::Time $timeService) {
+	public function injectTimeService(\F3\TYPO3\Domain\Service\Time $timeService) {
 		$this->timeService = $timeService;
 	}
 
@@ -143,18 +143,18 @@ class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 	/**
 	 * Sets the point in time from which on this page should be visible.
 	 *
-	 * @param DateTime $startTime The start time. Passing NULL unsets the start time.
+	 * @param \DateTime $startTime The start time. Passing NULL unsets the start time.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setStartTime(::DateTime $startTime) {
+	public function setStartTime(\DateTime $startTime) {
 		$this->startTime = $startTime;
 	}
 
 	/**
 	 * Returns the start time if one has been set
 	 *
-	 * @return DateTime The start time or NULL
+	 * @return \DateTime The start time or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getStartTime() {
@@ -164,18 +164,18 @@ class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 	/**
 	 * Sets the point in time from which on this page should be not visible anymore.
 	 *
-	 * @param DateTime $endTime The end time. Passing NULL unsets the end time.
+	 * @param \DateTime $endTime The end time. Passing NULL unsets the end time.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setEndTime(::DateTime $endTime) {
+	public function setEndTime(\DateTime $endTime) {
 		$this->endTime = $endTime;
 	}
 
 	/**
 	 * Returns the end time if one has been set
 	 *
-	 * @return DateTime The end time or NULL
+	 * @return \DateTime The end time or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getEndTime() {
@@ -187,12 +187,12 @@ class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 	 *
 	 * @param string $title The new page title
 	 * @return void
-	 * @throws InvalidArgumentException if the title is not valid
+	 * @throws \InvalidArgumentException if the title is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setTitle($title) {
-		if (!is_string($title)) throw new InvalidArgumentException('The page title must be of type string.', 1175791409);
-		if (F3::PHP6::Functions::strlen($title) > 250) throw new InvalidArgumentException('The page title must not exceed 250 characters in length.', 1218199246);
+		if (!is_string($title)) throw new \InvalidArgumentException('The page title must be of type string.', 1175791409);
+		if (\F3\PHP6\Functions::strlen($title) > 250) throw new \InvalidArgumentException('The page title must not exceed 250 characters in length.', 1218199246);
 
 		$this->title = $title;
 	}
@@ -224,7 +224,7 @@ class Page extends F3::TYPO3::Domain::Model::AbstractContent {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __clone() {
-		throw new LogicException('Cloning of a Page is not allowed.', 1175793217);
+		throw new \LogicException('Cloning of a Page is not allowed.', 1175793217);
 	}
 }
 

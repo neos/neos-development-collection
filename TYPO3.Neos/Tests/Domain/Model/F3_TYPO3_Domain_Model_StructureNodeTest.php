@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,15 +29,15 @@ namespace F3::TYPO3::Domain::Model;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class StructureNodeTest extends F3::Testing::BaseTestCase {
+class StructureNodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aUniqueIDIsCreatedAutomaticallyWhileConstructingTheStructureNode() {
-		$node1 = new F3::TYPO3::Domain::Model::StructureNode();
-		$node2 = new F3::TYPO3::Domain::Model::StructureNode();
+		$node1 = new \F3\TYPO3\Domain\Model\StructureNode();
+		$node2 = new \F3\TYPO3\Domain\Model\StructureNode();
 
 		$this->assertEquals(36, strlen($node1->getId()));
 		$this->assertEquals(36, strlen($node2->getId()));
@@ -49,10 +49,10 @@ class StructureNodeTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function childNodesCanBeAddedToAndRetrievedFromTheStructureNode() {
-		$rootNode = new F3::TYPO3::Domain::Model::StructureNode();
-		$node1 = new F3::TYPO3::Domain::Model::StructureNode();
-		$node2 = new F3::TYPO3::Domain::Model::StructureNode();
-		$node3 = new F3::TYPO3::Domain::Model::StructureNode();
+		$rootNode = new \F3\TYPO3\Domain\Model\StructureNode();
+		$node1 = new \F3\TYPO3\Domain\Model\StructureNode();
+		$node2 = new \F3\TYPO3\Domain\Model\StructureNode();
+		$node3 = new \F3\TYPO3\Domain\Model\StructureNode();
 
 		$rootNode->addChildNode($node1);
 		$rootNode->addChildNode($node3);
@@ -66,9 +66,9 @@ class StructureNodeTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasChildNodesTellsIfTheStructureNodeHasChildNodes() {
-		$rootNode = new F3::TYPO3::Domain::Model::StructureNode();
-		$node1 = new F3::TYPO3::Domain::Model::StructureNode();
-		$node2 = new F3::TYPO3::Domain::Model::StructureNode();
+		$rootNode = new \F3\TYPO3\Domain\Model\StructureNode();
+		$node1 = new \F3\TYPO3\Domain\Model\StructureNode();
+		$node2 = new \F3\TYPO3\Domain\Model\StructureNode();
 
 		$this->assertFalse($rootNode->hasChildNodes());
 
@@ -83,8 +83,8 @@ class StructureNodeTest extends F3::Testing::BaseTestCase {
 	 * @author
 	 */
 	public function oneContentObjectCanBeAttachedToAStructureNode() {
-		$structureNode = new F3::TYPO3::Domain::Model::StructureNode();
-		$content = new F3::TYPO3::Domain::Model::Content::Text();
+		$structureNode = new \F3\TYPO3\Domain\Model\StructureNode();
+		$content = new \F3\TYPO3\Domain\Model\Content\Text();
 
 		$structureNode->setContent($content);
 		$this->assertSame($content, $structureNode->getContent());

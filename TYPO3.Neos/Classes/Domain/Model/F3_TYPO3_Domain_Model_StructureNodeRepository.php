@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,7 +27,7 @@ namespace F3::TYPO3::Domain::Model;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class StructureNodeRepository extends F3::FLOW3::Persistence::Repository {
+class StructureNodeRepository extends \F3\FLOW3\Persistence\Repository {
 
 	/**
 	 * Returns the structure node matching the given id

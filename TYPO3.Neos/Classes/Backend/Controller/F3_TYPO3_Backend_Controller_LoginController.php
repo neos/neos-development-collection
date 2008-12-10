@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Backend::Controller;
+namespace F3\TYPO3\Backend\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3::Backend::Controller;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class LoginController extends F3::FLOW3::MVC::Controller::ActionController {
+class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * Default action for this controller

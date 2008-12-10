@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::TypoScript;
+namespace F3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3::TypoScript;
 /**
  * @package TYPO3
  * @subpackage TypoScript
- * @version $Id:F3::FLOW3::Object::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::TYPO3::TypoScript;
  *
  * @package TYPO3
  * @subpackage TypoScript
- * @version $Id:F3::FLOW3::Object::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PageTest extends F3::Testing::BaseTestCase {
+class PageTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Checks if a Page object renders a simple content without any processors involved.
@@ -38,7 +38,7 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pageObjectRendersSimpleContentCorrectly() {
-		$page = $this->objectFactory->create('F3::TYPO3::TypoScript::Page');
+		$page = $this->objectFactory->create('F3\TYPO3\TypoScript\Page');
 		$expectedContent = '<!DOCTYPE html
 	PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
 <html>
@@ -65,10 +65,10 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 */
 	public function settingInvalidBodyTagThrowsException() {
 		try {
-			$page = $this->objectFactory->create('F3::TYPO3::TypoScript::Page');
+			$page = $this->objectFactory->create('F3\TYPO3\TypoScript\Page');
 			$page->setBodyTag('<lotty style="">');
 			$this->fail('setBodyTag accepted an invalid body tag without throwing an exception.');
-		} catch (F3::TypoScript::Exception $exception) {
+		} catch (\F3\TypoScript\Exception $exception) {
 
 		}
 	}

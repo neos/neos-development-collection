@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,15 +29,15 @@ namespace F3::TYPO3::Domain::Model;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SiteTest extends F3::Testing::BaseTestCase {
+class SiteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aNameCanBeSetAndRetrievedFromTheSite() {
-		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
-		$site = new F3::TYPO3::Domain::Model::Site($mockObjectFactory);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$site = new \F3\TYPO3\Domain\Model\Site($mockObjectFactory);
 		$site->setName('My cool website');
 		$this->assertEquals('My cool website', $site->getName());
 	}
@@ -47,9 +47,9 @@ class SiteTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aUniqueIDIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
-		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
-		$site1 = new F3::TYPO3::Domain::Model::Site($mockObjectFactory);
-		$site2 = new F3::TYPO3::Domain::Model::Site($mockObjectFactory);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$site1 = new \F3\TYPO3\Domain\Model\Site($mockObjectFactory);
+		$site2 = new \F3\TYPO3\Domain\Model\Site($mockObjectFactory);
 
 		$this->assertEquals(36, strlen($site1->getId()));
 		$this->assertEquals(36, strlen($site2->getId()));
@@ -61,11 +61,11 @@ class SiteTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aRootStructureNodeIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
-		$mockRootStructureNode = $this->getMock('F3::TYPO3::Domain::Model::StructureNode');
-		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
+		$mockRootStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($mockRootStructureNode));
 
-		$site = new F3::TYPO3::Domain::Model::Site($mockObjectFactory);
+		$site = new \F3\TYPO3\Domain\Model\Site($mockObjectFactory);
 		$this->assertSame($mockRootStructureNode, $site->getRootStructureNode());
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -47,7 +47,7 @@ class Site {
 	protected $name = 'Untitled Site';
 
 	/**
-	 * @var F3::TYPO3::Domain::Model::StructureNode
+	 * @var \F3\TYPO3\Domain\Model\StructureNode
 	 */
 	protected $rootStructureNode;
 
@@ -56,9 +56,9 @@ class Site {
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
-		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
-		$this->rootStructureNode = $objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
+		$this->rootStructureNode = $objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
 	}
 
 	/**
@@ -94,18 +94,18 @@ class Site {
 	/**
 	 * Sets the root node of this site's structure tree
 	 *
-	 * @param F3::TYPO3::Domain::Model::StructureNode
+	 * @param \F3\TYPO3\Domain\Model\StructureNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRootStructureNode(F3::TYPO3::Domain::Model::StructureNode $rootStructureNode) {
+	public function setRootStructureNode(\F3\TYPO3\Domain\Model\StructureNode $rootStructureNode) {
 		$this->rootStructureNode = $rootStructureNode;
 	}
 
 	/**
 	 * Returns the root node of this site
 	 *
-	 * @return F3::TYPO3::Domain::Model::StructureNode
+	 * @return \F3\TYPO3\Domain\Model\StructureNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRootStructureNode() {

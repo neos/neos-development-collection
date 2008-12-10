@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Backend::View;
+namespace F3\TYPO3\Backend\View;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3::Backend::View;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class DefaultIndexHTML extends F3::Smarty::View {
+class DefaultIndexHTML extends \F3\Smarty\View {
 
 	/**
 	 * Initializes the view

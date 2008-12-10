@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Backend::Controller;
+namespace F3\TYPO3\Backend\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,22 +17,22 @@ namespace F3::TYPO3::Backend::Controller;
 
 /**
  * @package TYPO3
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
  * The TYPO3 Backend controller
  *
  * @package TYPO3
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
+class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @var array Only Web Requests are supported
 	 */
-	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
+	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
 
 	/**
 	 * Default action of the backend controller.
@@ -55,12 +55,12 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 	public function setupAction() {
 
 			// Create structure nodes
-		$structureNode1 = $this->objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1a = $this->objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1aa = $this->objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1b = $this->objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1c = $this->objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
-		$structureNode1d = $this->objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+		$structureNode1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
+		$structureNode1a = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
+		$structureNode1aa = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
+		$structureNode1b = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
+		$structureNode1c = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
+		$structureNode1d = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
 
 		$structureNode1->addChildNode($structureNode1a);
 		$structureNode1->addChildNode($structureNode1b);
@@ -69,35 +69,35 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 		$structureNode1a->addChildNode($structureNode1aa);
 
 			// Create pages
-		$page1 = $this->objectFactory->create('F3::TYPO3::Domain::Model::Content::Page', 'Page 1');
+		$page1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1');
 		$structureNode1->setContent($page1);
 
-		$page1a = $this->objectFactory->create('F3::TYPO3::Domain::Model::Content::Page', 'Page 1a');
+		$page1a = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1a');
 		$structureNode1a->setContent($page1a);
 
-		$page1aa = $this->objectFactory->create('F3::TYPO3::Domain::Model::Content::Page', 'Page 1aa');
+		$page1aa = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1aa');
 		$structureNode1aa->setContent($page1aa);
 
-		$page1b = $this->objectFactory->create('F3::TYPO3::Domain::Model::Content::Page', 'Page 1b');
+		$page1b = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1b');
 		$structureNode1b->setContent($page1b);
 
 			// Create text content
-		$text1c = $this->objectFactory->create('F3::TYPO3::Domain::Model::Content::Text', 'Text 1c');
+		$text1c = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Text', 'Text 1c');
 		$structureNode1c->setContent($text1c);
 
-		$text1d = $this->objectFactory->create('F3::TYPO3::Domain::Model::Content::Text', 'Text 1d');
+		$text1d = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Text', 'Text 1d');
 		$structureNode1d->setContent($text1d);
 
 			// Create a sample site
-		$site = $this->objectFactory->create('F3::TYPO3::Domain::Model::Site');
+		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Site');
 		$site->setName('typo3.org');
 		$site->setRootStructureNode($structureNode1);
 
-		$siteRepository = $this->objectManager->getObject('F3::TYPO3::Domain::Model::SiteRepository');
+		$siteRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Model\SiteRepository');
 		$siteRepository->add($site);
 
 			// Create a second sample site
-		$site = $this->objectFactory->create('F3::TYPO3::Domain::Model::Site');
+		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Site');
 		$site->setName('flow3.typo3.org');
 		$siteRepository->add($site);
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model::Content;
+namespace F3\TYPO3\Domain\Model\Content;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,14 +27,14 @@ namespace F3::TYPO3::Domain::Model::Content;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PageTest extends F3::Testing::BaseTestCase {
+class PageTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author robert
 	 */
 	public function aPageCanBeHidden() {
-		$page = new F3::TYPO3::Domain::Model::Content::Page('Untitled');
+		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
 		$page->hide();
 		$this->assertTrue($page->isHidden());
 	}
@@ -44,8 +44,8 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function byDefaultAPageIsVisible() {
-		$page = new F3::TYPO3::Domain::Model::Content::Page('Untitled');
-		$page->injectTimeService(new F3::TYPO3::Domain::Service::Time());
+		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
+		$page->injectTimeService(new \F3\TYPO3\Domain\Service\Time());
 		$this->assertTrue($page->isVisible());
 	}
 
@@ -54,13 +54,13 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPageIsInvisibleIfAStartTimeIsSetWhichLiesInTheFuture() {
-		$timeService = new F3::TYPO3::Domain::Service::Time();
-		$timeService->setSimulatedDateTime(new DateTime('2008-08-08T10:00+01:00'));
+		$timeService = new \F3\TYPO3\Domain\Service\Time();
+		$timeService->setSimulatedDateTime(new \DateTime('2008-08-08T10:00+01:00'));
 
-		$page = new F3::TYPO3::Domain::Model::Content::Page('Untitled');
+		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
 		$page->injectTimeService($timeService);
 
-		$page->setStartTime(new DateTime('2008-08-08T18:00+01:00'));
+		$page->setStartTime(new \DateTime('2008-08-08T18:00+01:00'));
 		$this->assertFalse($page->isVisible());
 	}
 
@@ -69,13 +69,13 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPageIsInvisibleIfAnEndTimeIsSetWhichLiesInThePast() {
-		$timeService = new F3::TYPO3::Domain::Service::Time();
-		$timeService->setSimulatedDateTime(new DateTime('2008-08-08T10:00+01:00'));
+		$timeService = new \F3\TYPO3\Domain\Service\Time();
+		$timeService->setSimulatedDateTime(new \DateTime('2008-08-08T10:00+01:00'));
 
-		$page = new F3::TYPO3::Domain::Model::Content::Page('Untitled');
+		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
 		$page->injectTimeService($timeService);
 
-		$page->setEndTime(new DateTime('2008-08-07T12:00+01:00'));
+		$page->setEndTime(new \DateTime('2008-08-07T12:00+01:00'));
 		$this->assertFalse($page->isVisible());
 	}
 
@@ -85,7 +85,7 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aTitleMustNotExceed250Characters() {
-		new F3::TYPO3::Domain::Model::Content::Page(str_repeat('x', 255));
+		new \F3\TYPO3\Domain\Model\Content\Page(str_repeat('x', 255));
 	}
 
 	/**
@@ -93,7 +93,7 @@ class PageTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theTitleIsUsedAsTheLabel() {
-		$page = new F3::TYPO3::Domain::Model::Content::Page('El título');
+		$page = new \F3\TYPO3\Domain\Model\Content\Page('El título');
 		$this->assertSame('El título', $page->getLabel());
 	}
 }

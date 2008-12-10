@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -52,7 +52,7 @@ class StructureNode {
 	/**
 	 * Content attached to this structure node
 	 *
-	 * @var F3::TYPO3::Domain::Model::ContentInterface
+	 * @var \F3\TYPO3\Domain\Model\ContentInterface
 	 */
 	protected $content;
 
@@ -64,7 +64,7 @@ class StructureNode {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
-		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
+		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
 	}
 
 	/**
@@ -80,10 +80,10 @@ class StructureNode {
 	/**
 	 * Adds a child node to this node
 	 *
-	 * @param F3::TYPO3::Domain::Model::StructureNode $node The node to add
+	 * @param \F3\TYPO3\Domain\Model\StructureNode $node The node to add
 	 * @return void
 	 */
-	public function addChildNode(F3::TYPO3::Domain::Model::StructureNode $node) {
+	public function addChildNode(\F3\TYPO3\Domain\Model\StructureNode $node) {
 		$this->childNodes[] = $node;
 	}
 
@@ -110,11 +110,11 @@ class StructureNode {
 	/**
 	 * Attaches a content object to this structure node
 	 *
-	 * @param F3::TYPO3::Domain::Model::ContentInterface $content The content object
+	 * @param \F3\TYPO3\Domain\Model\ContentInterface $content The content object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContent(F3::TYPO3::Domain::Model::ContentInterface $content) {
+	public function setContent(\F3\TYPO3\Domain\Model\ContentInterface $content) {
 		$this->content = $content;
 	}
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Backend::View::Login;
+namespace F3\TYPO3\Backend\View\Login;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3::Backend::View::Login;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class IndexHTML extends F3::FLOW3::MVC::View::AbstractView {
+class IndexHTML extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * Renders the view
@@ -94,8 +94,8 @@ class IndexHTML extends F3::FLOW3::MVC::View::AbstractView {
 				<body>
 					<div id="loginscreen">
 						<form action="typo3" method="post" name="loginform">
-							<input type="text" id="username" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::username" value="" tabindex="1" />
-							<input type="password" id="password" name="F3::FLOW3::Security::Authentication::Token::UsernamePassword::password" value="" tabindex="2" />
+							<input type="text" id="username" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" value="" tabindex="1" />
+							<input type="password" id="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" value="" tabindex="2" />
 							<input type="submit" id="loginbutton" name="submitlogin" value="" tabindex="3" />
 						</form>
 					</div>

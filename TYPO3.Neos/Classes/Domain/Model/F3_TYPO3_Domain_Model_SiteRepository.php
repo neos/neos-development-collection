@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,13 +29,13 @@ namespace F3::TYPO3::Domain::Model;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SiteRepository extends F3::FLOW3::Persistence::Repository {
+class SiteRepository extends \F3\FLOW3\Persistence\Repository {
 
 	/**
 	 * Finds a site by its identifier
 	 *
 	 * @param string The UUID of the site
-	 * @return F3::TYPO3::Domain::Model::Site The site or NULL if it doesn't exist
+	 * @return \F3\TYPO3\Domain\Model\Site The site or NULL if it doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo replace "identifier" with "id" if #1623 is resolved
 	 */

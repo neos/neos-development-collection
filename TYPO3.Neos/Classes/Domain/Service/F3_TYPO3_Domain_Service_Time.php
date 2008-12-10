@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Service;
+namespace F3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -34,23 +34,23 @@ namespace F3::TYPO3::Domain::Service;
 class Time {
 
 	/**
-	 * @var DateTime
+	 * @var \DateTime
 	 */
 	protected $simulatedDateTime;
 
 	/**
-	 * Returns the current date and time in form of a DateTime
+	 * Returns the current date and time in form of a \DateTime
 	 * object.
 	 *
 	 * If you use this method for getting the current date and time
 	 * everywhere in your code, it will be possible to simulate a certain
 	 * time in unit tests or in the actual application.
 	 *
-	 * @return DateTime The current date and time - or a simulated version of it
+	 * @return \DateTime The current date and time - or a simulated version of it
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentDateTime() {
-		return ($this->simulatedDateTime === NULL) ? new ::DateTime() : $this->simulatedDateTime;
+		return ($this->simulatedDateTime === NULL) ? new \DateTime() : $this->simulatedDateTime;
 	}
 
 	/**
@@ -58,11 +58,11 @@ class Time {
 	 * by getCurrentDateTime(). To undo this behaviour, just call this method
 	 * again passing NULL.
 	 *
-	 * @param DateTime $simulatedDateTime A date and time to simulate. Pass NULL to deactivate the simulation.
+	 * @param \DateTime $simulatedDateTime A date and time to simulate. Pass NULL to deactivate the simulation.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSimulatedDateTime(::DateTime $simulatedDateTime) {
+	public function setSimulatedDateTime(\DateTime $simulatedDateTime) {
 		$this->simulatedDateTime = $simulatedDateTime;
 	}
 }

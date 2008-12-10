@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Service::Controller;
+namespace F3\TYPO3\Service\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3::Service::Controller;
 /**
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
@@ -26,24 +26,24 @@ namespace F3::TYPO3::Service::Controller;
  *
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class StructureTreesController extends F3::FLOW3::MVC::Controller::RESTController {
+class StructureTreesController extends \F3\FLOW3\MVC\Controller\RESTController {
 
 	/**
-	 * @var F3::TYPO3::Domain::Model::StructureNodeRepository
+	 * @var \F3\TYPO3\Domain\Model\StructureNodeRepository
 	 */
 	protected $structureNodeRepository;
 
 	/**
 	 * Injects the structure node repository
 	 *
-	 * @param F3::TYPO3::Domain::Model::StructureNodeRepository $structureNodeRepository The structure node repository
+	 * @param \F3\TYPO3\Domain\Model\StructureNodeRepository $structureNodeRepository The structure node repository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectStructureNodeRepository(F3::TYPO3::Domain::Model::StructureNodeRepository $structureNodeRepository) {
+	public function injectStructureNodeRepository(\F3\TYPO3\Domain\Model\StructureNodeRepository $structureNodeRepository) {
 		$this->structureNodeRepository = $structureNodeRepository;
 	}
 
@@ -128,18 +128,18 @@ class StructureTreesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * specified node. This array can be well used in the view, as it contains all
 	 * relevant data.
 	 *
-	 * @param F3::TYPO3::Domain::Model::StructureNode $node The root node of the structure tree to build
+	 * @param \F3\TYPO3\Domain\Model\StructureNode $node The root node of the structure tree to build
 	 * @param integer $maximumLevels The number of levels to build
 	 * @param integer $currentLevel Used internally for keeping track of the current recursion level
 	 * @param array $structureTreeArray Used internally for building the tree array
 	 * @return array The structure tree as an array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildStructureTreeArray(F3::TYPO3::Domain::Model::StructureNode $structureNode, $maximumLevels = 30, $currentLevel = 1, $structureTreeArray = array()) {
+	protected function buildStructureTreeArray(\F3\TYPO3\Domain\Model\StructureNode $structureNode, $maximumLevels = 30, $currentLevel = 1, $structureTreeArray = array()) {
 
 		$content = $structureNode->getContent();
 		if ($content !== NULL) {
-			$contentClass = ($content instanceof F3::FLOW3::AOP::ProxyInterface) ? $content->AOPProxyGetProxyTargetClassName() : get_class($content);
+			$contentClass = ($content instanceof \F3\FLOW3\AOP\ProxyInterface) ? $content->AOPProxyGetProxyTargetClassName() : get_class($content);
 		} else {
 			$contentClass = '';
 		}

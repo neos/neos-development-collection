@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,28 +29,28 @@ namespace F3::TYPO3::Domain::Model;
  * @scope prototype
  * @entity
  */
-abstract class AbstractContent implements F3::TYPO3::Domain::Model::ContentInterface {
+abstract class AbstractContent implements \F3\TYPO3\Domain\Model\ContentInterface {
 
 	/**
-	 * @var F3::FLOW3::Locale::Locale
+	 * @var \F3\FLOW3\Locale\Locale
 	 */
 	protected $locale;
 
 	/**
 	 * Specifies the locale of the content object
 	 *
-	 * @param F3::FLOW3::Locale::Locale $locale The locale of the content
+	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setLocale(F3::FLOW3::Locale::Locale $locale) {
+	public function setLocale(\F3\FLOW3\Locale\Locale $locale) {
 		$this->locale = $locale;
 	}
 
 	/**
 	 * Returns the locale of the content object
 	 *
-	 * @return F3::FLOW3::Locale::Locale $locale The locale of the content
+	 * @return \F3\FLOW3\Locale\Locale $locale The locale of the content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLocale() {

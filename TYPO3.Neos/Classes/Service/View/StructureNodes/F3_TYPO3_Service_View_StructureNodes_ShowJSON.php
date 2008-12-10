@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Service::View::StructureNodes;
+namespace F3\TYPO3\Service\View\StructureNodes;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3::Service::View::StructureNodes;
 /**
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\View\Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
@@ -26,13 +26,13 @@ namespace F3::TYPO3::Service::View::StructureNodes;
  *
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\View\Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ShowJSON extends F3::FLOW3::MVC::View::AbstractView {
+class ShowJSON extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @var F3::TYPO3::Domain::Model::StructureNode
+	 * @var \F3\TYPO3\Domain\Model\StructureNode
 	 */
 	public $structureNode;
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Service::Controller;
+namespace F3\TYPO3\Service\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3::Service::Controller;
 /**
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
 /**
@@ -26,24 +26,24 @@ namespace F3::TYPO3::Service::Controller;
  *
  * @package TYPO3
  * @subpackage Service
- * @version $Id:F3::TYPO3::Controller::Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTController {
+class StructureNodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 
 	/**
-	 * @var F3::TYPO3::Domain::Model::StructureNodeRepository
+	 * @var \F3\TYPO3\Domain\Model\StructureNodeRepository
 	 */
 	protected $structureNodeRepository;
 
 	/**
 	 * Injects the structure node repository
 	 *
-	 * @param F3::TYPO3::Domain::Model::StructureNodeRepository $structureNodeRepository A reference to the structure node repository
+	 * @param \F3\TYPO3\Domain\Model\StructureNodeRepository $structureNodeRepository A reference to the structure node repository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectStructureNodeRepository(F3::TYPO3::Domain::Model::StructureNodeRepository $structureNodeRepository) {
+	public function injectStructureNodeRepository(\F3\TYPO3\Domain\Model\StructureNodeRepository $structureNodeRepository) {
 		$this->structureNodeRepository = $structureNodeRepository;
 	}
 
@@ -83,7 +83,7 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 */
 	public function createAction() {
 		$this->throwStatus(501);
-#		$node = $this->objectFactory->create('F3::TYPO3::Domain::Model::StructureNode');
+#		$node = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
 #		$node->structureNodeRepository->add($node);
 
 #		$this->response->setStatus(201);
@@ -124,7 +124,7 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 	 * @return array The converted structure nodes
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function convertStructureNodeToArray(F3::TYPO3::Domain::Model::StructureNode $structureNode) {
+	protected function convertStructureNodeToArray(\F3\TYPO3\Domain\Model\StructureNode $structureNode) {
 		$childNodes = array();
 		foreach ($structureNode->getChildNodes() as $childNode) {
 			$childNodes[] = $this->convertStructureNodeToArray($childNode);
@@ -133,7 +133,7 @@ class StructureNodesController extends F3::FLOW3::MVC::Controller::RESTControlle
 		$content = $structureNode->getContent();
 		if ($content !== NULL) {
 			$contentId = $content->getId();
-			$contentClass = ($content instanceof F3::FLOW3::AOP::ProxyInterface) ? $content->AOPProxyGetProxyTargetClassName() : get_class($content);
+			$contentClass = ($content instanceof \F3\FLOW3\AOP\ProxyInterface) ? $content->AOPProxyGetProxyTargetClassName() : get_class($content);
 		} else {
 			$contentId = '';
 			$contentClass = '';

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -35,7 +35,7 @@ class Workspace {
 
 	/**
 	 * The Root page
-	 * @var F3::TYPO3::Domain::Model::Page
+	 * @var \F3\TYPO3\Domain\Model\Page
 	 */
 	protected $rootPage;
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::Domain::Model::Content;
+namespace F3\TYPO3\Domain\Model\Content;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::TYPO3::Domain::Model::Content;
  * @scope prototype
  * @entity
  */
-class Text extends F3::TYPO3::Domain::Model::AbstractContent {
+class Text extends \F3\TYPO3\Domain\Model\AbstractContent {
 
 	/**
 	 * The text's unique identifier
@@ -59,7 +59,7 @@ class Text extends F3::TYPO3::Domain::Model::AbstractContent {
 	 */
 	public function __construct($headline = '') {
 		$this->headline = $headline;
-		$this->id = F3::FLOW3::Utility::Algorithms::generateUUID();
+		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
 	}
 
 	/**

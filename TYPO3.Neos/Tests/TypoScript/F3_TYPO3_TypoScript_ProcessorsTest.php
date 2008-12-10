@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::TYPO3::TypoScript;
+namespace F3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::TYPO3::TypoScript;
 /**
  * @package TYPO3
  * @subpackage TypoScript
- * @version $Id:F3::FLOW3::Object::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 require_once (__DIR__ . '/../Fixtures/F3_TYPO3_TypoScript_MockTypoScriptObject.php');
@@ -28,10 +28,10 @@ require_once (__DIR__ . '/../Fixtures/F3_TYPO3_TypoScript_MockTypoScriptObject.p
  *
  * @package TYPO3
  * @subpackage TypoScript
- * @version $Id:F3::FLOW3::Object::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ProcessorsTest extends F3::Testing::BaseTestCase {
+class ProcessorsTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Sets up this test case
@@ -39,7 +39,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->processors = new F3::TYPO3::TypoScript::Processors;
+		$this->processors = new \F3\TYPO3\TypoScript\Processors;
 	}
 
 	/**
@@ -63,7 +63,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function cropWorksWithCropAtWordOption() {
 		$subject = 'Kasper Skårhøj implemented the original version of the crop function.';
-		$result = $this->processors->processor_crop($subject, 18, '...', F3::TYPO3::TypoScript::Processors::CROP_AT_WORD);
+		$result = $this->processors->processor_crop($subject, 18, '...', \F3\TYPO3\TypoScript\Processors::CROP_AT_WORD);
 		$expectedResult = 'Kasper Skårhøj ...';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "crop at word" option.');
 	}
@@ -76,7 +76,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function cropWorksWithCropFromBeginningOption() {
 		$subject = 'Kasper Skårhøj implemented the original version of the crop function.';
-		$result = $this->processors->processor_crop($subject, 14, '...', F3::TYPO3::TypoScript::Processors::CROP_FROM_BEGINNING);
+		$result = $this->processors->processor_crop($subject, 14, '...', \F3\TYPO3\TypoScript\Processors::CROP_FROM_BEGINNING);
 		$expectedResult = '... implemented the original version of the crop function.';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "from beginning" option.');
 	}
@@ -89,7 +89,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function cropWorksWithCropFromBeginningAtWordOptions() {
 		$subject = 'Kasper Skårhøj implemented the original version of the crop function.';
-		$result = $this->processors->processor_crop($subject, 10, '...', F3::TYPO3::TypoScript::Processors::CROP_FROM_BEGINNING | F3::TYPO3::TypoScript::Processors::CROP_AT_WORD);
+		$result = $this->processors->processor_crop($subject, 10, '...', \F3\TYPO3\TypoScript\Processors::CROP_FROM_BEGINNING | \F3\TYPO3\TypoScript\Processors::CROP_AT_WORD);
 		$expectedResult = '... implemented the original version of the crop function.';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "from beginning" and the "at word" option.');
 	}
@@ -102,7 +102,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function cropWorksWithCropAtSentenceOption() {
 		$subject = 'Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.';
-		$result = $this->processors->processor_crop($subject, 80, '...', F3::TYPO3::TypoScript::Processors::CROP_AT_SENTENCE);
+		$result = $this->processors->processor_crop($subject, 80, '...', \F3\TYPO3\TypoScript\Processors::CROP_AT_SENTENCE);
 		$expectedResult = 'Kasper Skårhøj implemented the original version of the crop function. ...';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "crop at sentence" option.');
 	}
@@ -115,11 +115,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function cropCanHandleObjectsAsParameters() {
 		$testText = 'Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testText);
 
 		$expectedResult = 'Kasper Skårhøj implemented the original version of the crop function. ...';
-		$result = $this->processors->processor_crop($subject, 80, '...', F3::TYPO3::TypoScript::Processors::CROP_AT_SENTENCE);
+		$result = $this->processors->processor_crop($subject, 80, '...', \F3\TYPO3\TypoScript\Processors::CROP_AT_SENTENCE);
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "crop at sentence" option. (We called it with an text object)');
 	}
 
@@ -144,12 +144,12 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function wrapCanHandleObjectsAsParameters() {
 		$testText = 'Kasper Skårhøj';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testText);
 
-		$openStrongTag = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$openStrongTag = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$openStrongTag->setValue('<strong>');
-		$closeStrongTag = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$closeStrongTag = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$closeStrongTag->setValue('</strong>');
 
 		$result = $this->processors->processor_wrap($subject, $openStrongTag, $closeStrongTag);
@@ -165,12 +165,12 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function shiftCaseToUpperWorks() {
 		$subject = 'Kasper Skårhøj';
-		$result = $this->processors->processor_shiftCase($subject, F3::TYPO3::TypoScript::Processors::SHIFT_CASE_TO_UPPER);
+		$result = $this->processors->processor_shiftCase($subject, \F3\TYPO3\TypoScript\Processors::SHIFT_CASE_TO_UPPER);
 		$expectedResult = 'KASPER SKÅRHØJ';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case.');
 
 		$subject = 'Fußball ist nicht mein Lieblingssport';
-		$result = $this->processors->processor_shiftCase($subject, F3::TYPO3::TypoScript::Processors::SHIFT_CASE_TO_UPPER);
+		$result = $this->processors->processor_shiftCase($subject, \F3\TYPO3\TypoScript\Processors::SHIFT_CASE_TO_UPPER);
 		$expectedResult = 'FUSSBALL IST NICHT MEIN LIEBLINGSSPORT';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case - the Fußball test.');
 	}
@@ -183,7 +183,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function shiftCaseToLowerWorks() {
 		$subject = 'Kasper SKÅRHØJ';
-		$result = $this->processors->processor_shiftCase($subject, F3::TYPO3::TypoScript::Processors::SHIFT_CASE_TO_LOWER);
+		$result = $this->processors->processor_shiftCase($subject, \F3\TYPO3\TypoScript\Processors::SHIFT_CASE_TO_LOWER);
 		$expectedResult = 'kasper skårhøj';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to lower case.');
 	}
@@ -196,7 +196,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function shiftCaseToTitleWorks() {
 		$subject = 'kasper skårhøj';
-		$result = $this->processors->processor_shiftCase($subject, F3::TYPO3::TypoScript::Processors::SHIFT_CASE_TO_TITLE);
+		$result = $this->processors->processor_shiftCase($subject, \F3\TYPO3\TypoScript\Processors::SHIFT_CASE_TO_TITLE);
 		$expectedResult = 'Kasper Skårhøj';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to title case.');
 	}
@@ -212,7 +212,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 		try {
 			$result = $this->processors->processor_shiftCase($subject, -123456);
 			$this->fail('The TypoScript processor "shiftCase" did not throw an exception on specifying an invalid direction.');
-		} catch (::Exception $exception) {
+		} catch (\Exception $exception) {
 
 		}
 	}
@@ -225,10 +225,10 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function shiftCaseCanHandleObjectsAsParameters() {
 		$testText = 'Kasper Skårhøj';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testText);
 
-		$result = $this->processors->processor_shiftCase($subject, F3::TYPO3::TypoScript::Processors::SHIFT_CASE_TO_UPPER);
+		$result = $this->processors->processor_shiftCase($subject, \F3\TYPO3\TypoScript\Processors::SHIFT_CASE_TO_UPPER);
 		$expectedResult = 'KASPER SKÅRHØJ';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "shiftCase" did not return the expected result while converting to upper case. (We called it with an text object)');
 	}
@@ -248,7 +248,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	}
 
 	/**
-	 * Checks if the date() processor throws an F3::TypoScript::Exception on an invalid timestamp
+	 * Checks if the date() processor throws an \F3\TypoScript\Exception on an invalid timestamp
 	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -258,15 +258,15 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 		$format = 'F j, Y, g:i a';
 		try {
 			$this->processors->processor_date($subject, $format);
-			$this->fail('The TypoScript processor "date" did not throw an F3::TypoScript::Exception on transforming an invalid timestamp.');
+			$this->fail('The TypoScript processor "date" did not throw an \F3\TypoScript\Exception on transforming an invalid timestamp.');
 		}
-		catch (F3::TypoScript::Exception $exception) {
+		catch (\F3\TypoScript\Exception $exception) {
 
 		}
 	}
 
 	/**
-	 * Checks if the date() processor throws an F3::TypoScript::Exception on a negative timestamp value
+	 * Checks if the date() processor throws an \F3\TypoScript\Exception on a negative timestamp value
 	 *
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -276,9 +276,9 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 		$format = 'F j, Y, g:i a';
 		try {
 			$this->processors->processor_date($subject, $format);
-			$this->fail('The TypoScript processor "date" did not throw an F3::TypoScript::Exception on transforming a negative timestamp value.');
+			$this->fail('The TypoScript processor "date" did not throw an \F3\TypoScript\Exception on transforming a negative timestamp value.');
 		}
-		catch (F3::TypoScript::Exception $exception) {
+		catch (\F3\TypoScript\Exception $exception) {
 
 		}
 	}
@@ -305,11 +305,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function dateCanHandleObjectsAsParameters() {
 		$testTimestamp = '1185279917';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testTimestamp);
 
 		$testFormat = 'F j, Y, g:i a';
-		$format = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$format = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$format->setValue($testFormat);
 
 		$expectedResult = 'July 24, 2007, 2:25 pm';
@@ -318,11 +318,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testTimestamp = 1254324643;
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testTimestamp);
 
 		$testFormat = 246896744;
-		$format = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$format = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$format->setValue($testFormat);
 
 		$expectedResult = '246896744';
@@ -394,11 +394,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function overrideCanHandleObjectsAsParameters() {
 		$testString = 'To be killed!';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 'I shot the subject!';
-		$overrideValue = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 'I shot the subject!';
@@ -407,11 +407,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testString = 1132435454;
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 0;
-		$overrideValue = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 1132435454;
@@ -483,11 +483,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function ifEmptyCanHandleObjectsAsParameters() {
 		$testString = '';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 'I shot the subject!';
-		$overrideValue = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 'I shot the subject!';
@@ -496,11 +496,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testString = 0;
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 1132435454;
-		$overrideValue = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 1132435454;
@@ -586,11 +586,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function ifBlankCanHandleObjectsAsParameters() {
 		$testString = '';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 'I shot the subject!';
-		$overrideValue = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 'I shot the subject!';
@@ -599,11 +599,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testString = 0;
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$testOverrideString = 1132435454;
-		$overrideValue = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$overrideValue = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$overrideValue->setValue($testOverrideString);
 
 		$expectedResult = 0;
@@ -632,7 +632,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function trimCanHandleObjects() {
 		$testString = '  I am not trimmed     ';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$expectedResult = 'I am not trimmed';
@@ -670,11 +670,11 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function ifCanHandleObjects() {
 		$subject = 'not needed here';
-		$condition = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$condition = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$condition->setValue(TRUE);
-		$trueValue = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$trueValue = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$trueValue->setValue('I am really true!');
-		$falseValue = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$falseValue = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$falseValue->setValue('I am more than just false!');
 
 		$expectedResult = 'I am really true!';
@@ -706,9 +706,9 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 		try {
 			$this->processors->processor_if($subject, $condition, $trueValue, $falseValue);
-			$this->fail('The TypoScript processor "if" did not throw an F3::TypoScript::Exception on an invalid condition.');
+			$this->fail('The TypoScript processor "if" did not throw an \F3\TypoScript\Exception on an invalid condition.');
 		}
-		catch (F3::TypoScript::Exception $exception) {
+		catch (\F3\TypoScript\Exception $exception) {
 		}
 	}
 
@@ -753,7 +753,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isEmptyCanHandleObjects() {
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue('I am not empty');
 
 		$result = $this->processors->processor_isEmpty($subject);
@@ -832,7 +832,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 */
 	public function isBlankCanHandleObjectsAsParameters() {
 		$testString = '';
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$result = $this->processors->processor_isBlank($subject);
@@ -840,7 +840,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 
 		$testString = 0;
-		$subject = $this->objectFactory->create('F3::TYPO3::TypoScript::Text');
+		$subject = $this->objectFactory->create('F3\TYPO3\TypoScript\Text');
 		$subject->setValue($testString);
 
 		$result = $this->processors->processor_isBlank($subject);
@@ -913,7 +913,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @expectedException F3::TypoScript::Exception
+	 * @expectedException \F3\TypoScript\Exception
 	 */
 	public function roundThrowsExceptionOnInvalidParameters() {
 		$subject = 'Transition days rock.';
@@ -925,7 +925,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @expectedException F3::TypoScript::Exception
+	 * @expectedException \F3\TypoScript\Exception
 	 */
 	public function roundThrowsExceptionOnInvalidPrecisionParameters() {
 		$subject = 'Transition days rock.';
@@ -958,7 +958,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3::TypoScript::Exception
+	 * @expectedException \F3\TypoScript\Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function passingAStringInsteadOfTheStartPositionIntoSubstringThrowsAnException() {
@@ -967,7 +967,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3::TypoScript::Exception
+	 * @expectedException \F3\TypoScript\Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function passingAStringInsteadOfTheLengthIntoSubstringThrowsAnException() {
@@ -997,7 +997,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function toIntegerConvertsAnObjectToStringBeforeConvertingItToAnInteger() {
-		$mockObject = new F3::TYPO3::TypoScript::MockTypoScriptObject();
+		$mockObject = new \F3\TYPO3\TypoScript\MockTypoScriptObject();
 		$mockObject->setValue('25');
 
 		$result = $this->processors->processor_toInteger($mockObject);
@@ -1020,7 +1020,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3::TypoScript::Exception
+	 * @expectedException \F3\TypoScript\Exception
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function multiplyThrowsExceptionIfNonNumericStringPassedAsSubject() {
@@ -1029,7 +1029,7 @@ class ProcessorsTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3::TypoScript::Exception
+	 * @expectedException \F3\TypoScript\Exception
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function multiplyThrowsExceptionIfStringPassedAsFactor() {
