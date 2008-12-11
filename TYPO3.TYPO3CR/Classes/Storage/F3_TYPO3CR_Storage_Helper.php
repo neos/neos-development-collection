@@ -77,8 +77,8 @@ class Helper {
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function initializeStorage() {
-		$this->databaseHandle = new PDO($this->options['dsn'], $this->options['userid'], $this->options['password']);
-		$this->databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->databaseHandle = new \PDO($this->options['dsn'], $this->options['userid'], $this->options['password']);
+		$this->databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		if ($this->PDODriver == 'mysql') {
 			$this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI_QUOTES\';');
 		}
@@ -174,7 +174,7 @@ class Helper {
 	 */
 	public function populateIndex() {
 		$statementHandle = $this->databaseHandle->query('SELECT * FROM "nodes" WHERE "parent" = \'\'');
-		$node = $statementHandle->fetch(PDO::FETCH_ASSOC);
+		$node = $statementHandle->fetch(\PDO::FETCH_ASSOC);
 
 		$nodeDocument = new \Zend_Search_Lucene_Document();
 		$nodeDocument->addField(\Zend_Search_Lucene_Field\Keyword('identifier', $node['identifier']));
