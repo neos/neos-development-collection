@@ -17,7 +17,7 @@ namespace F3\TYPO3CR\Storage;
 
 /**
  * @package TYPO3CR
- * @version $Id:\F3\TYPO3CR\Storage\Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  */
 
 require_once('Zend/Search/Lucene.php');
@@ -26,7 +26,7 @@ require_once('Zend/Search/Lucene.php');
  * A helper class for the storage layer
  *
  * @package TYPO3CR
- * @version $Id:\F3\TYPO3CR\Storage\Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
@@ -38,7 +38,7 @@ class Helper {
 	protected $options;
 
 	/**
-	 * @var PDO
+	 * @var \PDO
 	 */
 	protected $databaseHandle;
 
@@ -177,9 +177,9 @@ class Helper {
 		$node = $statementHandle->fetch(\PDO::FETCH_ASSOC);
 
 		$nodeDocument = new \Zend_Search_Lucene_Document();
-		$nodeDocument->addField(\Zend_Search_Lucene_Field\Keyword('identifier', $node['identifier']));
-		$nodeDocument->addField(\Zend_Search_Lucene_Field\Keyword('nodetype', $node['nodetype']));
-		$nodeDocument->addField(\Zend_Search_Lucene_Field\Keyword('path', '/'));
+		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('identifier', $node['identifier']));
+		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('nodetype', $node['nodetype']));
+		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('path', '/'));
 
 		$index = \Zend_Search_Lucene::open($this->options['indexlocation']. '/default');
 		$index->addDocument($nodeDocument);
