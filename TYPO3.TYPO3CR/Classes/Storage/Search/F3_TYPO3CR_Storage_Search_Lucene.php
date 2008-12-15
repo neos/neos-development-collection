@@ -92,17 +92,17 @@ class Lucene extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 */
 	public function addNode(\F3\PHPCR\NodeInterface $node) {
 		$nodeDocument = new \Zend_Search_Lucene_Document();
-		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('typo3cr:identifier', $node->getIdentifier()));
-		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('typo3cr:nodetype', $node->getPrimaryNodeType()->getName()));
-		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('typo3cr:path', $node->getPath()));
+		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('typo3cr:identifier', $node->getIdentifier(), 'utf-8'));
+		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('typo3cr:nodetype', $node->getPrimaryNodeType()->getName(), 'utf-8'));
+		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('typo3cr:path', $node->getPath(), 'utf-8'));
 
 		foreach ($node->getProperties() as $property) {
 			try {
 					// create a field that is unstored and not tokenised, no factory method available
-				$nodeDocument->addField(new \Zend_Search_Lucene_Field($property->getName(), $property->getString(), '', FALSE, TRUE, FALSE));
+				$nodeDocument->addField(new \Zend_Search_Lucene_Field($property->getName(), $property->getString(), 'utf-8', FALSE, TRUE, FALSE));
 			} catch (\F3\PHPCR\ValueFormatException $e) {
 				foreach ($property->getValues() as $value) {
-					$nodeDocument->addField(new \Zend_Search_Lucene_Field($property->getName(), $value->getString(), '', FALSE, TRUE, FALSE));
+					$nodeDocument->addField(new \Zend_Search_Lucene_Field($property->getName(), $value->getString(), 'utf-8', FALSE, TRUE, FALSE));
 				}
 			}
 		}
