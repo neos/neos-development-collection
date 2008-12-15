@@ -813,7 +813,7 @@ myObject.value = "$hello&lt;br /&gt;Nice that you\'re here again.&lt;br /&gt;$go
 
       <para>Consider a package <package>CoolForms</package> which provides a
       new kind of TypoScript object implemented by a class called
-      <classname>F3\CoolForms\TypoScript\Form</classname>. The following
+      <classname>\F3\CoolForms\TypoScript\Form</classname>. The following
       TypoScript code would use that new object type by declaring a new
       namespace:</para>
 
