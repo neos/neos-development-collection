@@ -50,12 +50,19 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 */
 	public function connect() {
 		try {
-			$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
-			$this->databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 			$splitdsn = explode(':', $this->dataSourceName, 2);
 			$this->PDODriver = $splitdsn[0];
 
-			if ($this->PDODriver == 'mysql') {
+			if ($this->PDODriver === 'sqlite') {
+				if (!file_exists($splitdsn[1])) {
+					throw new \F3\TYPO3CR\StorageException('The configured SQLite database file (' . $splitdsn[1] . ') does not exist.', 1231177003);
+				}
+			}
+
+			$this->databaseHandle = new \PDO($this->dataSourceName, $this->username, $this->password);
+			$this->databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+			if ($this->PDODriver === 'mysql') {
 				$this->databaseHandle->exec('SET SESSION sql_mode=\'ANSI\';');
 			}
 		} catch (\PDOException $e) {
