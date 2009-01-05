@@ -560,7 +560,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 				if ($propertyName === NULL && $value === NULL) {
 					unset($objectTree[$currentKey]);
 				} else {
-					$this->setObjectProperty($objectTree[$currentKey], $propertyName, $value);
+					\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree[$currentKey], $propertyName, $value);
 				}
 			}
 		}
@@ -582,7 +582,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 			$currentKey = array_shift($objectPathArray);
 			if ((integer)$currentKey > 0) $currentKey = intval($currentKey);
 			if (is_object($objectTree) && !is_integer($currentKey)) {
-				$value = $this->getObjectProperty($objectTree, $currentKey);
+				$value = \F3\FLOW3\Reflection\ObjectAccess::getProperty($objectTree, $currentKey);
 			} else {
 				if (isset($objectTree[$currentKey])) {
 					$value = $this->getValueFromObjectTree($objectPathArray, $objectTree[$currentKey]);
@@ -595,42 +595,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		}
 		return $value;
 	}
-
-	/**
-	 * Sets the property of a TypoScript object by calling the setter method
-	 * with the name specified by $propertyName.
-	 *
-	 * @param \F3\TypoScript\Object $object The TypoScript object which has the property
-	 * @param string $propertyName Name of the property to set
-	 * @param mixed $value The value to assign to the property
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see setValueInObjectTree()
-	 */
-	protected function setObjectProperty(&$object, $propertyName, $value) {
-		$setterMethodName = 'set' . ucfirst($propertyName);
-		if (!is_object($object)) throw new \F3\TypoScript\Exception('Tried to assign a value to property "' . $propertyName . '" of a non existing TypoScript object.', 1180609654);
-		if (!method_exists($object, $setterMethodName)) throw new \F3\TypoScript\Exception('Tried to assign a value to the non-existing property "' . $propertyName . '" to an object of type "' . get_class($object) . '"', 1180609654);
-		$object->$setterMethodName($value);
-	}
-
-	/**
-	 * Retrieves the property of a TypoScript object by calling the getter method
-	 * with the name specified by $propertyName.
-	 *
-	 * @param \F3\TypoScript\Object $object The TypoScript object which has the property
-	 * @param string $propertyName Name of the property to fetch
-	 * @return mixed $value The value of the property
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see getValueFromObjectTree()
-	 */
-	protected function getObjectProperty(&$object, $propertyName) {
-		$getterMethodName = 'get' . ucfirst($propertyName);
-		if (!is_object($object)) throw new \F3\TypoScript\Exception('Tried to retrieve a property "' . $propertyName . '" from a non existing TypoScript object.', 1181745677);
-		if (!method_exists($object, $getterMethodName)) throw new \F3\TypoScript\Exception('Tried to retrieve a non-existing property "' . $propertyName . '" from an object of type "' . get_class($object) . '"', 1181745678);
-		return $object->$getterMethodName();
-	}
-
+	
 	/**
 	 * Sets the child node of $objectTree specified by $childNodeKey to an empty array
 	 * if the childNodeKey is not the offset of a Content Array and the child node is
