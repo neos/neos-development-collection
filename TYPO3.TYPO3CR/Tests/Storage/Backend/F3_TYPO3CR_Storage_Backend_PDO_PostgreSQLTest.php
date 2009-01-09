@@ -25,7 +25,7 @@ namespace F3\TYPO3CR\Storage\Backend\PDO;
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:\F3\TYPO3CR\Storage\Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  */
 
 require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
@@ -35,7 +35,7 @@ require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:\F3\TYPO3CR\Storage\Backend::PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class PostgreSQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {

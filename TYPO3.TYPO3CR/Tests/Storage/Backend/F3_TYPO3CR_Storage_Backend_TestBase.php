@@ -25,7 +25,7 @@ namespace F3\TYPO3CR\Storage\Backend;
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:\F3\TYPO3CR\Storage\Backend\TestBase.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  */
 
 /**
@@ -34,7 +34,7 @@ namespace F3\TYPO3CR\Storage\Backend;
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:\F3\TYPO3CR\Storage\Backend\TestBase.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class TestBase extends \F3\Testing\BaseTestCase {

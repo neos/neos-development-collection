@@ -25,7 +25,7 @@ namespace F3\TYPO3CR\Storage\Search;
 /**
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:\F3\TYPO3CR\Storage\Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  */
 
 require_once('Zend/Search/Lucene.php');
@@ -35,7 +35,7 @@ require_once('Zend/Search/Lucene.php');
  *
  * @package TYPO3CR
  * @subpackage Storage
- * @version $Id:\F3\TYPO3CR\Storage\Backend::PDO.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype
  */
