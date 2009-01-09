@@ -64,14 +64,14 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	protected $identityMap;
 
 	/**
-	 * @var array
+	 * @var \SplObjectStorage
 	 */
-	protected $aggregateRootObjects = array();
+	protected $aggregateRootObjects;
 
 	/**
-	 * @var array
+	 * @var \SplObjectStorage
 	 */
-	protected $deletedObjects = array();
+	protected $deletedObjects;
 
 	/**
 	 * Constructs the backend
@@ -81,6 +81,8 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	public function __construct(\F3\PHPCR\SessionInterface $session) {
 		$this->session = $session;
+		$this->aggregateRootObjects = new \SplObjectStorage();
+		$this->deletedObjects = new \SplObjectStorage();
 	}
 
 	/**
@@ -158,22 +160,22 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	/**
 	 * Sets the aggregate root objects
 	 *
-	 * @param array $objects
+	 * @param \SplObjectStorage $objects
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setAggregateRootObjects(array $objects) {
+	public function setAggregateRootObjects(\SplObjectStorage $objects) {
 		$this->aggregateRootObjects = $objects;
 	}
 
 	/**
 	 * Sets the deleted objects
 	 *
-	 * @param array $objects
+	 * @param \SplObjectStorage $objects
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setDeletedObjects(array $objects) {
+	public function setDeletedObjects(\SplObjectStorage $objects) {
 		$this->deletedObjects = $objects;
 	}
 
@@ -191,7 +193,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		}
 
 		$this->session->save();
-		$this->deletedObjects = array();
+		$this->deletedObjects = new \SplObjectStorage();
 	}
 
 	/**

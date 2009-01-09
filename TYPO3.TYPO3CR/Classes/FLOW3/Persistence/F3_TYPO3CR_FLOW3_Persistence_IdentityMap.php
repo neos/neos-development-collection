@@ -40,9 +40,18 @@ namespace F3\TYPO3CR\FLOW3\Persistence;
 class IdentityMap {
 
 	/**
-	 * @var array
+	 * @var \SplObjectStorage
 	 */
-	protected $identityMap = array();
+	protected $identityMap;
+
+	/**
+	 * Constructs a new Identity Map
+	 *
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function __construct() {
+		$this->identityMap = new \SplObjectStorage();
+	}
 
 	/**
 	 * Checks whether the given object is known to the identity map
@@ -52,7 +61,7 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasObject($object) {
-		return array_key_exists(spl_object_hash($object), $this->identityMap);
+		return $this->identityMap->contains($object);
 	}
 
 	/**
@@ -63,7 +72,7 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentifier($object) {
-		return $this->identityMap[spl_object_hash($object)];
+		return $this->identityMap[$object];
 	}
 
 	/**
@@ -74,7 +83,7 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerObject($object, $identifier) {
-		$this->identityMap[spl_object_hash($object)] = $identifier;
+		$this->identityMap[$object] = $identifier;
 	}
 
 	/**
@@ -85,7 +94,7 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterObject($object) {
-		unset($this->identityMap[spl_object_hash($object)]);
+		$this->identityMap->detach($object);
 	}
 
 }

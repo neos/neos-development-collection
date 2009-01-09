@@ -112,6 +112,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\';}
 		}');
 		$newObject = new $fullClassName();
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($newObject);
 
 		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
 		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
@@ -131,7 +133,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->initialize(array($fullClassName => new \F3\FLOW3\Persistence\ClassSchema($fullClassName)));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
-		$backend->setAggregateRootObjects(array(spl_object_hash($newObject) => $newObject));
+		$backend->setAggregateRootObjects($aggregateRootObjects);
 		$backend->commit();
 	}
 
@@ -151,6 +153,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function AOPProxyGetProperty($name) { return \'' . $identifier . '\'; }
 		}');
 		$newObject = new $fullClassName();
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($newObject);
 
 		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
 		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
@@ -172,7 +176,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->initialize(array($classSchema->getClassName() => $classSchema));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
-		$backend->setAggregateRootObjects(array(spl_object_hash($newObject) => $newObject));
+		$backend->setAggregateRootObjects($aggregateRootObjects);
 		$backend->commit();
 	}
 
@@ -195,6 +199,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		}');
 		$dirtyObject = new $fullClassName();
 		$dirtyObject->simpleString = 'simpleValue';
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($dirtyObject);
 
 		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
 		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
@@ -221,7 +227,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->initialize(array($classSchema->getClassName() => $classSchema));
 		$backend->injectIdentityMap($identityMap);
-		$backend->setAggregateRootObjects(array(spl_object_hash($dirtyObject) => $dirtyObject));
+		$backend->setAggregateRootObjects($aggregateRootObjects);
 
 		$this->assertTrue($dirtyObject->isDirty('simpleString'));
 		$backend->commit();
@@ -240,6 +246,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 		}');
 		$deletedObject = new $fullClassName();
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($deletedObject);
 
 		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
 		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
@@ -262,7 +270,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->initialize(array($classSchema->getClassName() => $classSchema));
 		$backend->injectIdentityMap($identityMap);
-		$backend->setDeletedObjects(array(spl_object_hash($deletedObject) => $deletedObject));
+		$backend->setDeletedObjects($aggregateRootObjects);
 		$backend->commit();
 	}
 
@@ -279,6 +287,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$A->add($B);
 		$C = new \F3\TYPO3CR\Tests\AnObject('C');
 		$A->add($C);
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($A);
 
 			// set up assertions on created nodes
 		$mockNodeBA = $this->getMock('F3\PHPCR\NodeInterface');
@@ -324,7 +334,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->initialize(array('F3\TYPO3CR\Tests\AnObject' => $classSchema));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
-		$backend->setAggregateRootObjects(array(spl_object_hash($A) => $A));
+		$backend->setAggregateRootObjects($aggregateRootObjects);
 		$backend->commit();
 	}
 
@@ -346,6 +356,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$newObject = new $fullClassName();
 		$date = new \DateTime();
 		$newObject->date = $date;
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($newObject);
 
 		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
 		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
@@ -372,7 +384,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->initialize(array($fullClassName => $classSchema));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
-		$backend->setAggregateRootObjects(array(spl_object_hash($newObject) => $newObject));
+		$backend->setAggregateRootObjects($aggregateRootObjects);
 		$backend->commit();
 	}
 
