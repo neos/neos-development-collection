@@ -18,7 +18,7 @@ namespace F3\TYPO3\TypoScript;
 /**
  * @package TYPO3
  * @subpackage TypoScript
- * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  */
 
 require_once (__DIR__ . '/../Fixtures/F3_TYPO3_TypoScript_MockTypoScriptObject.php');
@@ -28,7 +28,7 @@ require_once (__DIR__ . '/../Fixtures/F3_TYPO3_TypoScript_MockTypoScriptObject.p
  *
  * @package TYPO3
  * @subpackage TypoScript
- * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ProcessorsTest extends \F3\Testing\BaseTestCase {

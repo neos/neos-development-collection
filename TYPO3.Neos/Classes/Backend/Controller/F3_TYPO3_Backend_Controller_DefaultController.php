@@ -17,14 +17,14 @@ namespace F3\TYPO3\Backend\Controller;
 
 /**
  * @package TYPO3
- * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id$
  */
 
 /**
  * The TYPO3 Backend controller
  *
  * @package TYPO3
- * @version $Id:\F3\TYPO3\Controller\Page.php 262 2007-07-13 10:51:44Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
