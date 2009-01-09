@@ -17,14 +17,14 @@ namespace F3\TypoScript;
 
 /**
  * @package TypoScript
- * @version $Id:\F3\FLOW3\Reflection\PropertyReflection.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id$
  */
 
 /**
  * Testcase for the TypoScript Parser
  *
  * @package TypoScript
- * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ParserTest extends \F3\Testing\BaseTestCase {
