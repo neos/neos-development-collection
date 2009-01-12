@@ -839,6 +839,48 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setPropertyCreatesReferenceFromNodeIfRequested() {
+		$uuid = '96bca35d-1ef5-4a47-8b0c-0ddd69507d00';
+		$expectedResult = new \F3\TYPO3CR\Value($uuid, \F3\PHPCR\PropertyType::REFERENCE);
+
+			// used for REFERENCE from Node
+		$rawData = array(
+			'identifier' => $uuid,
+			'parent' => 0,
+			'name' => '',
+			'nodetype' => 'nt:base'
+		);
+		$node = new \F3\TYPO3CR\Node($rawData, $this->session, $this->objectFactory);
+		$this->rootNode->setProperty('someprop', $node, \F3\PHPCR\PropertyType::REFERENCE);
+
+		$this->assertEquals($expectedResult, $this->rootNode->getProperty('someprop')->getValue(), 'unexpected value returned for freshly added property');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setPropertyCreatesReferenceFromNode() {
+		$uuid = '96bca35d-1ef5-4a47-8b0c-0ddd69507d00';
+		$expectedResult = new \F3\TYPO3CR\Value($uuid, \F3\PHPCR\PropertyType::REFERENCE);
+
+			// used for REFERENCE from Node
+		$rawData = array(
+			'identifier' => $uuid,
+			'parent' => 0,
+			'name' => '',
+			'nodetype' => 'nt:base'
+		);
+		$node = new \F3\TYPO3CR\Node($rawData, $this->session, $this->objectFactory);
+		$this->rootNode->setProperty('someprop', $node);
+
+		$this->assertEquals($expectedResult, $this->rootNode->getProperty('someprop')->getValue(), 'unexpected value returned for freshly added property');
+	}
+
+	/**
 	 * Provides test data for setPropertyThrowsExceptionOnUnconvertibleType
 	 *
 	 * @return array of arrays with parameters for setPropertyThrowsExceptionOnUnconvertibleType()

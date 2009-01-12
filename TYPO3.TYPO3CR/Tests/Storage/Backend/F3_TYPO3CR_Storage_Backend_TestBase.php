@@ -225,7 +225,8 @@ class TestBase extends \F3\Testing\BaseTestCase {
 		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $this->mockSession, $this->objectFactory);
 		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
 		$mockValueFactory->expects($this->any())->method('createValue')->will($this->returnValue(new \F3\TYPO3CR\Value($propertyValue, $propertyType)));
-		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValue, $propertyType, $node, $this->mockSession, $mockValueFactory);
+		$this->mockSession->expects($this->any())->method('getValueFactory')->will($this->returnValue($mockValueFactory));
+		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValue, $propertyType, $node, $this->mockSession);
 		$this->storageBackend->addProperty($property);
 
 		$expectedRawProperties = array(array(
@@ -249,7 +250,8 @@ class TestBase extends \F3\Testing\BaseTestCase {
 		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $this->mockSession, $this->objectFactory);
 		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
 		$mockValueFactory->expects($this->any())->method('createValue')->will($this->returnValue(new \F3\TYPO3CR\Value($newPropertyValue, $propertyType)));
-		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValue, $propertyType, $node, $this->mockSession, $mockValueFactory);
+		$this->mockSession->expects($this->any())->method('getValueFactory')->will($this->returnValue($mockValueFactory));
+		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValue, $propertyType, $node, $this->mockSession);
 		$this->storageBackend->addProperty($property);
 		$property->setValue($newPropertyValue);
 		$this->storageBackend->updateProperty($property);
@@ -275,7 +277,8 @@ class TestBase extends \F3\Testing\BaseTestCase {
 		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $this->mockSession, $this->objectFactory);
 		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
 		$mockValueFactory->expects($this->any())->method('createValue')->will($this->returnValue(new \F3\TYPO3CR\Value($propertyValue, $propertyType)));
-		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValue, $propertyType, $node, $this->mockSession, $mockValueFactory);
+		$this->mockSession->expects($this->any())->method('getValueFactory')->will($this->returnValue($mockValueFactory));
+		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValue, $propertyType, $node, $this->mockSession);
 		$this->storageBackend->addProperty($property);
 		$this->storageBackend->removeProperty($property);
 
@@ -312,13 +315,14 @@ class TestBase extends \F3\Testing\BaseTestCase {
 	 */
 	public function addMultiValuedPropertyWorks($propertyType, $propertyName, $propertyValues) {
 		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
+		$this->mockSession->expects($this->any())->method('getValueFactory')->will($this->returnValue($mockValueFactory));
 		foreach($propertyValues as $index => $propertyValue) {
 			$propertyValueObjects[$index] = new \F3\TYPO3CR\Value($propertyValue, $propertyType);
 		}
 		$mockValueFactory->expects($this->exactly(2))->method('createValue')->will(call_user_func_array(array($this, 'onConsecutiveCalls'), $propertyValueObjects));
 
 		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $this->mockSession, $this->objectFactory);
-		$property = new \F3\TYPO3CR\Property($propertyName, array('someValue0','someValue1'), $propertyType, $node, $this->mockSession, $mockValueFactory);
+		$property = new \F3\TYPO3CR\Property($propertyName, array('someValue0','someValue1'), $propertyType, $node, $this->mockSession);
 		$this->storageBackend->addProperty($property);
 
 		$expectedRawProperties = array(array(
@@ -340,6 +344,7 @@ class TestBase extends \F3\Testing\BaseTestCase {
 	 */
 	public function updateMultiValuedPropertyWorks($propertyType, $propertyName, $propertyValues, $newPropertyValues) {
 		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
+		$this->mockSession->expects($this->any())->method('getValueFactory')->will($this->returnValue($mockValueFactory));
 		foreach ($propertyValues as $index => $propertyValue) {
 			$propertyValueObjects[$index] = new \F3\TYPO3CR\Value($propertyValue, $propertyType);
 		}
@@ -350,7 +355,7 @@ class TestBase extends \F3\Testing\BaseTestCase {
 		$mockValueFactory->expects($this->exactly(count($allPropertyValueObjects)))->method('createValue')->will(call_user_func_array(array($this, 'onConsecutiveCalls'), $allPropertyValueObjects));
 
 		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $this->mockSession, $this->objectFactory);
-		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValues, $propertyType, $node, $this->mockSession, $mockValueFactory);
+		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValues, $propertyType, $node, $this->mockSession);
 		$this->storageBackend->addProperty($property);
 		$property->setValue($newPropertyValues);
 		$this->storageBackend->updateProperty($property);
@@ -375,13 +380,14 @@ class TestBase extends \F3\Testing\BaseTestCase {
 	 */
 	public function removeMultiValuedPropertyWorks($propertyType, $propertyName, $propertyValues) {
 		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
+		$this->mockSession->expects($this->any())->method('getValueFactory')->will($this->returnValue($mockValueFactory));
 		foreach ($propertyValues as $index => $propertyValue) {
 			$propertyValueObjects[$index] = new \F3\TYPO3CR\Value($propertyValue, $propertyType);
 		}
 		$mockValueFactory->expects($this->exactly(2))->method('createValue')->will(call_user_func_array(array($this, 'onConsecutiveCalls'), $propertyValueObjects));
 
 		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $this->mockSession, $this->objectFactory);
-		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValues, $propertyType, $node, $this->mockSession, $mockValueFactory);
+		$property = new \F3\TYPO3CR\Property($propertyName, $propertyValues, $propertyType, $node, $this->mockSession);
 		$this->storageBackend->addProperty($property);
 		$this->storageBackend->removeProperty($property);
 
@@ -455,7 +461,8 @@ class TestBase extends \F3\Testing\BaseTestCase {
 
 		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
 		$mockValueFactory->expects($this->any())->method('createValue')->will($this->returnValue(new \F3\TYPO3CR\Value($refTargetUUID, \F3\PHPCR\PropertyType::REFERENCE)));
-		$property = new \F3\TYPO3CR\Property('ref', $refTargetUUID, \F3\PHPCR\PropertyType::REFERENCE, $rootNode, $this->mockSession, $mockValueFactory);
+		$this->mockSession->expects($this->any())->method('getValueFactory')->will($this->returnValue($mockValueFactory));
+		$property = new \F3\TYPO3CR\Property('ref', $refTargetUUID, \F3\PHPCR\PropertyType::REFERENCE, $rootNode, $this->mockSession);
 		$this->storageBackend->addProperty($property);
 
 		$resultReferences = $this->storageBackend->getRawPropertiesOfTypedValue(NULL, \F3\PHPCR\PropertyType::REFERENCE, $refTargetUUID);

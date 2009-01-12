@@ -130,17 +130,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 		$this->storageBackend = $storageBackend;
 
 		$this->workspace = $this->objectFactory->create('F3\PHPCR\WorkspaceInterface', $workspaceName, $this);
-	}
-
-	/**
-	 * Injects the value factory
-	 *
-	 * @param \F3\PHPCR\ValueFactoryInterface $valueFactory The value factory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectValueFactory(\F3\PHPCR\ValueFactoryInterface $valueFactory) {
-		$this->valueFactory = $valueFactory;
+		$this->valueFactory = $this->objectFactory->create('F3\PHPCR\ValueFactoryInterface', $objectFactory, $this);
 	}
 
 

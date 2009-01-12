@@ -258,14 +258,14 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 
 
 	/**
-	 * Returns true if this is a new item, meaning that it exists only in
+	 * Returns TRUE if this is a new item, meaning that it exists only in
 	 * transient storage on the Session and has not yet been saved. Within a
-	 * transaction, isNew on an Item may return false (because the item has
+	 * transaction, isNew on an Item may return FALSE (because the item has
 	 * been saved) even if that Item is not in persistent storage (because the
 	 * transaction has not yet been committed).
 	 *
-	 * Note that if an item returns true on isNew, then by definition is parent
-	 * will return true on isModified.
+	 * Note that if an item returns TRUE on isNew, then by definition is parent
+	 * will return TRUE on isModified.
 	 *
 	 * @return boolean TRUE if this item is new; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -275,10 +275,10 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Returns true if this Item has been saved but has subsequently been
+	 * Returns TRUE if this Item has been saved but has subsequently been
 	 * modified through the current session and therefore the state of this
 	 * item as recorded in the session differs from the state of this item as
-	 * saved. Within a transaction, isModified on an Item may return false
+	 * saved. Within a transaction, isModified on an Item may return FALSE
 	 * (because the Item has been saved since the modification) even if the
 	 * modification in question is not in persistent storage (because the
 	 * transaction has not yet been committed).
@@ -418,7 +418,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * If keepChanges is false, this method discards all pending changes
+	 * If keepChanges is FALSE, this method discards all pending changes
 	 * currently recorded in this Session that apply to this Item or any
 	 * of its descendants (that is, the subtree rooted at this Item) and
 	 * returns all items to reflect the current saved state. Outside a
@@ -426,7 +426,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * storage. Within a transaction, this state will reflect persistent
 	 * storage as modified by changes that have been saved but not yet
 	 * committed.
-	 * If keepChanges is true then pending change are not discarded but
+	 * If keepChanges is TRUE then pending change are not discarded but
 	 * items that do not have changes pending have their state refreshed
 	 * to reflect the current saved state, thus revealing changes made by
 	 * other sessions.
@@ -880,11 +880,11 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Indicates whether a node exists at relPath Returns true if a node accessible
-	 * through the current Session exists at relPath and false otherwise.
+	 * Indicates whether a node exists at relPath Returns TRUE if a node accessible
+	 * through the current Session exists at relPath and FALSE otherwise.
 	 *
 	 * @param string $relPath The path of a (possible) node.
-	 * @return boolean true if a node exists at relPath; false otherwise.
+	 * @return boolean TRUE if a node exists at relPath; FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException If an unspecified error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implement without actually getting the node(s)
@@ -899,11 +899,11 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Indicates whether a property exists at relPath Returns true if a property
-	 * accessible through the current Session exists at relPath and false otherwise.
+	 * Indicates whether a property exists at relPath Returns TRUE if a property
+	 * accessible through the current Session exists at relPath and FALSE otherwise.
 	 *
 	 * @param string $relPath The path of a (possible) property.
-	 * @return boolean true if a property exists at relPath; false otherwise.
+	 * @return boolean TRUE if a property exists at relPath; FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException If an unspecified error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -922,10 +922,10 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Indicates whether this node has child nodes. Returns true if this node has
-	 * one or more child nodes accessible through the current Session; false otherwise.
+	 * Indicates whether this node has child nodes. Returns TRUE if this node has
+	 * one or more child nodes accessible through the current Session; FALSE otherwise.
 	 *
-	 * @return boolean true if this node has one or more child nodes; false otherwise.
+	 * @return boolean TRUE if this node has one or more child nodes; FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException  If an unspecified error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -934,13 +934,13 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Indicates whether this node has properties. Returns true if this node has
-	 * one or more properties accessible through the current Session; false otherwise.
+	 * Indicates whether this node has properties. Returns TRUE if this node has
+	 * one or more properties accessible through the current Session; FALSE otherwise.
 	 *
 	 * In our case we return TRUE directly, as TYPO3CR always exposes some
 	 * "system" properties, e.g. jcr:uuid.
 	 *
-	 * @return boolean true if this node has one or more properties; false otherwise.
+	 * @return boolean TRUE if this node has one or more properties; FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException  If an unspecified error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -983,15 +983,15 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Returns true if this node is of the specified primary node type or mixin
-	 * type, or a subtype thereof. Returns false otherwise.
+	 * Returns TRUE if this node is of the specified primary node type or mixin
+	 * type, or a subtype thereof. Returns FALSE otherwise.
 	 * This method respects the effective node type of the node. Note that this
 	 * may differ from the node type implied by the node's jcr:primaryType property
 	 * or jcr:mixinTypes property if that property has recently been created or
 	 * changed and has not yet been saved.
 	 *
 	 * @param string $nodeTypeName the name of a node type.
-	 * @return boolean true if this node is of the specified primary node type or mixin type, or a subtype thereof. Returns false otherwise.
+	 * @return boolean TRUE if this node is of the specified primary node type or mixin type, or a subtype thereof. Returns FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException  If an error occurs.
 	 */
 	public function isNodeType($nodeTypeName) {
@@ -1068,8 +1068,8 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Returns true if the specified mixin node type, mixinName, can be added to
-	 * this node. Returns false otherwise. A result of false must be returned in
+	 * Returns TRUE if the specified mixin node type, mixinName, can be added to
+	 * this node. Returns FALSE otherwise. A result of FALSE must be returned in
 	 * each of the following cases:
 	 * * The mixin's definition conflicts with an existing primary or mixin node
 	 *   type of this node.
@@ -1082,7 +1082,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * * An implementation-specific restriction would prevent the addition of the mixin.
 	 *
 	 * @param string $mixinName The name of the mixin to be tested.
-	 * @return boolean true if the specified mixin node type, mixinName, can be added to this node; false otherwise.
+	 * @return boolean TRUE if the specified mixin node type, mixinName, can be added to this node; FALSE otherwise.
 	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if the specified mixin node type name is not recognized.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
@@ -1263,70 +1263,83 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 		$converters = array(
 			\F3\PHPCR\PropertyType::UNDEFINED => array(),
 			\F3\PHPCR\PropertyType::STRING => array(
-				gettype('') => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
-				gettype(1) => function($element, $type) { return array(true, (string)$element, $type, 'Converted integer to string'); },
-				gettype(1.1) => function($element, $type) { return array(true, (string)$element, $type, 'Converted float to string'); },
-				gettype(TRUE) => function($element, $type) { return array(true, $element ? 'true' : 'false', $type, 'Converted boolean to string'); },
-				gettype(new \DateTime('now')) => function($element, $type) { return array(true, $element->format('c'), $type, 'Converted date to string'); }
+				'string' => function($element, $type) { return array(TRUE, $element, $type, 'No conversion necessary'); },
+				'integer' => function($element, $type) { return array(TRUE, (string)$element, $type, 'Converted integer to string'); },
+				'double' => function($element, $type) { return array(TRUE, (string)$element, $type, 'Converted float to string'); },
+				'boolean' => function($element, $type) { return array(TRUE, $element ? 'true' : 'false', $type, 'Converted boolean to string'); },
+				'object' => function($element, $type) {
+					if ($element instanceof \DateTime) {
+						return array(TRUE, $element->format('c'), $type, 'Converted date to string');
+					} else {
+						return array(FALSE, $element, $type, 'Must be DateTime instance');
+					}
+				}
 			),
 			\F3\PHPCR\PropertyType::BINARY => array(
-				gettype('') => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
-				gettype(1) => function($element, $type) { return array(true, (string)$element, $type, 'Converted integer to binary'); },
-				gettype(1.1) => function($element, $type) { return array(true, (string)$element, $type, 'Converted float to binary'); },
-				gettype(TRUE) => function($element, $type) { return array(true, $element ? 'true' : 'false', $type, 'Converted boolean to binary'); }
+				'string' => function($element, $type) { return array(TRUE, $element, $type, 'No conversion necessary'); },
+				'integer' => function($element, $type) { return array(TRUE, (string)$element, $type, 'Converted integer to binary'); },
+				'double' => function($element, $type) { return array(TRUE, (string)$element, $type, 'Converted float to binary'); },
+				'boolean' => function($element, $type) { return array(TRUE, $element ? 'TRUE' : 'FALSE', $type, 'Converted boolean to binary'); }
 			),
 			\F3\PHPCR\PropertyType::LONG => array(
-				gettype(1) => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
-				gettype(1.1) => function($element, $type) { return array(true, (integer)$element, $type, 'Converted float to integer'); },
-				gettype('') => function($element, $type) use ($matchRegexps) { $correntFormat = preg_match($matchRegexps[$type], $element); return array($correntFormat, $correntFormat ? (integer)$element : $element, $type, 'Must be a valid integer string representation'); }
+				'integer' => function($element, $type) { return array(TRUE, $element, $type, 'No conversion necessary'); },
+				'double' => function($element, $type) { return array(TRUE, (integer)$element, $type, 'Converted float to integer'); },
+				'string' => function($element, $type) use ($matchRegexps) { $correntFormat = preg_match($matchRegexps[$type], $element); return array($correntFormat, $correntFormat ? (integer)$element : $element, $type, 'Must be a valid integer string representation'); }
 			),
 			\F3\PHPCR\PropertyType::DOUBLE => array(
-				gettype(1.1) => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
-				gettype(1) => function($element, $type) { return array(true, (float)$element, $type, 'Converted integer to float'); },
-				gettype('') => function($element, $type) use ($matchRegexps) { $correntFormat = preg_match($matchRegexps[$type], $element); return array($correntFormat, $correntFormat ? (float)$element : $element, $type, 'Must be a valid floating point string representation'); }
+				'double' => function($element, $type) { return array(TRUE, $element, $type, 'No conversion necessary'); },
+				'integer' => function($element, $type) { return array(TRUE, (float)$element, $type, 'Converted integer to float'); },
+				'string' => function($element, $type) use ($matchRegexps) { $correntFormat = preg_match($matchRegexps[$type], $element); return array($correntFormat, $correntFormat ? (float)$element : $element, $type, 'Must be a valid floating point string representation'); }
 			),
 			\F3\PHPCR\PropertyType::DECIMAL => array(),
 			\F3\PHPCR\PropertyType::DATE => array(
-				gettype(new \DateTime('now')) => function($element, $type) { return array($element instanceof \DateTime, $element, $type, 'No conversion necessary'); },
-				gettype('') => function($element, $type) use ($matchRegexps) { $correctFormat = preg_match($matchRegexps[$type], $element); return array($correctFormat, $correctFormat ? new \DateTime($element) : $element, $type, 'Must be valid ISO 8601 date'); }
+				'object' => function($element, $type) { return array($element instanceof \DateTime, $element, $type, 'No conversion necessary'); },
+				'string' => function($element, $type) use ($matchRegexps) { $correctFormat = preg_match($matchRegexps[$type], $element); return array($correctFormat, $correctFormat ? new \DateTime($element) : $element, $type, 'Must be valid ISO 8601 date'); }
 			),
 			\F3\PHPCR\PropertyType::BOOLEAN => array(
-				gettype(TRUE) => function($element, $type) { return array(true, $element, $type, 'No conversion necessary'); },
-				gettype('') => function($element, $type) { return array(true, preg_match('/^true$/i', $element), $type, 'Converted string to boolean'); }
+				'boolean' => function($element, $type) { return array(TRUE, $element, $type, 'No conversion necessary'); },
+				'string' => function($element, $type) { return array(TRUE, preg_match('/^TRUE$/i', $element), $type, 'Converted string to boolean'); }
 			),
 			\F3\PHPCR\PropertyType::NAME => array(
-				gettype('') => function($element, $type) use ($session) {
+				'string' => function($element, $type) use ($session) {
 					$parts = explode(':', $element);
 					if (count($parts) > 2) {
-						return array(false, $element, $type, 'More than one : in JCR name is not allowed');
+						return array(FALSE, $element, $type, 'More than one : in JCR name is not allowed');
 					}
 					if (!$this->isValidName($parts[count($parts)-1])) {
-						return array(false, $element, $type, 'Local name does not conform to JCR spec rules');
+						return array(FALSE, $element, $type, 'Local name does not conform to JCR spec rules');
 					}
 					if (count($parts) === 2 && array_search($parts[0],  $session->getNamespacePrefixes()) === FALSE) {
-						return array(false, $element, $type, 'Namespace prefix (' . $parts[0] . ') is invalid');
+						return array(FALSE, $element, $type, 'Namespace prefix (' . $parts[0] . ') is invalid');
 					}
-					return array(true, $element, $type, 'Valid JCR name');
+					return array(TRUE, $element, $type, 'Valid JCR name');
 				}
 			),
 			\F3\PHPCR\PropertyType::PATH => array(),
 			\F3\PHPCR\PropertyType::REFERENCE => array(
-				gettype('') => function($element, $type) use ($matchRegexps, $session) {
+				'string' => function($element, $type) use ($matchRegexps, $session) {
 					if (!preg_match($matchRegexps[$type], $element)) {
-						return array(false, $element, $type, 'Must be a valid UUID');
+						return array(FALSE, $element, $type, 'Must be a valid UUID');
 					}
 					if ($session->hasIdentifier($element)) {
-						return array(true, $element, $type, 'Valid reference');
+						return array(TRUE, $element, $type, 'Valid reference');
 					} else {
-						return array(false, $element, $type, 'Must reference existing node');
+						return array(FALSE, $element, $type, 'Must reference existing node');
+					}
+				},
+				'object' => function($element, $type) {
+					if ($element instanceof \F3\PHPCR\NodeInterface) {
+						return array(TRUE, $element->getIdentifier(), $type, 'Valid reference');
+					} else {
+						return array(FALSE, $element, $type, 'Non-Node object given.');
 					}
 				}
 			),
 			\F3\PHPCR\PropertyType::WEAKREFERENCE => array(
-				gettype('') => function($element, $type) use ($matchRegexps) { return array(preg_match($matchRegexps[$type], $element), $element, $type, 'Must be a valid UUID'); }
+				'string' => function($element, $type) use ($matchRegexps) { return array(preg_match($matchRegexps[$type], $element), $element, $type, 'Must be a valid UUID'); }
 			),
 			\F3\PHPCR\PropertyType::URI => array(
-				gettype('') => function($element, $type) use ($matchRegexps) { return array(preg_match($matchRegexps[$type], $element), $element, $type, 'Must be a valid RFC 3986 URI'); }
+				'string' => function($element, $type) use ($matchRegexps) { return array(preg_match($matchRegexps[$type], $element), $element, $type, 'Must be a valid RFC 3986 URI'); }
 			)
 		);
 
@@ -1337,10 +1350,11 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * Converts given value into given type (one of those defined in \F3\PHPCR\PropertyType) if possible and necessary or throws exception if conversion is not possible
 	 *
 	 * @param mixed $value
-	 * @param $type
-	 * @param bool $isMultivalue
+	 * @param integer $type the requested type to convert to
+	 * @param bool $isMultivalue TRUE if the target property is multi-valued
 	 * @return array(mixed $value, $type)
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function convertValue($value, $type, $isMultivalue) {
 		$converters = $this->getValueConverters();
@@ -1354,9 +1368,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 				\F3\PHPCR\PropertyType::WEAKREFERENCE,
 				\F3\PHPCR\PropertyType::DATE);
 			if (is_string($value)) {
-				$typesToTry = array_merge($typesToTry, array(\F3\PHPCR\PropertyType::STRING));
+				$typesToTry[] = \F3\PHPCR\PropertyType::STRING;
 			} else {
-				$typesToTry = array_merge($typesToTry, array(\F3\PHPCR\PropertyType::BOOLEAN));
+				$typesToTry[] = \F3\PHPCR\PropertyType::BOOLEAN;
 			}
 		} else {
 			$typesToTry = array($type);

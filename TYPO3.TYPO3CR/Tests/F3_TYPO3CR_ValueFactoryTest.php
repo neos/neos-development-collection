@@ -47,7 +47,7 @@ class ValueFactoryTest extends \F3\Testing\BaseTestCase {
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$this->valueFactory = new \F3\TYPO3CR\ValueFactory($this->objectFactory);
+		$this->valueFactory = new \F3\TYPO3CR\ValueFactory($this->objectFactory, $this->getMock('F3\PHPCR\SessionInterface'));
 	}
 
 	/**

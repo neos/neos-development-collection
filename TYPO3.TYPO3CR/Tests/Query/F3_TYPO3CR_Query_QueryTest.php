@@ -78,14 +78,6 @@ class QueryTest extends \F3\Testing\BaseTestCase {
 		$query->setOffset(-1);
 	}
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function executeReturnsQueryResult() {
-		$this->markTestIncomplete('Not yet implemented');
-	}
-
 }
 
 

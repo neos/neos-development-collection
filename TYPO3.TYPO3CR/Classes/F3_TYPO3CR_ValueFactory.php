@@ -33,13 +33,19 @@ namespace F3\TYPO3CR;
  * @package TYPO3CR
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
 class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\Manager
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
+
+	/**
+	 * @var \F3\PHPCR\SessionInterface
+	 */
+	protected $session;
 
 	/**
 	 * Constructs a ValueFactory
@@ -48,8 +54,9 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\PHPCR\SessionInterface $session) {
 		$this->objectFactory = $objectFactory;
+		$this->session = $session;
 	}
 
 	/**
@@ -102,13 +109,18 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	 * @return \F3\PHPCR\ValueInterface
 	 * @throws \F3\PHPCR\ValueFormatException is thrown if the specified value cannot be converted to the specified type.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Make sure the given value is a valid Identifier for reference types
 	 */
 	protected function createValueWithGivenType($value, $type) {
 		switch ($type) {
 			case \F3\PHPCR\PropertyType::REFERENCE:
+				if (!preg_match(\F3\TYPO3CR\Node::PATTERN_MATCH_WEAKREFERENCE, $value) || !$this->session->hasIdentifier($value)) {
+					throw new \F3\PHPCR\ValueFormatException('REFERENCE properties must point to a valid, existing identifier.', 1231765408);
+				}
+				break;
 			case \F3\PHPCR\PropertyType::WEAKREFERENCE:
-					// for REFERENCE make sure we really have a node with that Identifier
+				if (!preg_match(\F3\TYPO3CR\Node::PATTERN_MATCH_WEAKREFERENCE, $value)) {
+					throw new \F3\PHPCR\ValueFormatException('The given value was no valid UUID, could not be converted to WEAKREFERENCE.', 1231765585);
+				}
 				break;
 			case \F3\PHPCR\PropertyType::DATE:
 				try {

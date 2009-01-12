@@ -68,7 +68,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @param \F3\PHPCR\ValueFactoryInterface $valueFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, $value, $type, \F3\PHPCR\NodeInterface $parentNode, \F3\PHPCR\SessionInterface $session, \F3\PHPCR\ValueFactoryInterface $valueFactory) {
+	public function __construct($name, $value, $type, \F3\PHPCR\NodeInterface $parentNode, \F3\PHPCR\SessionInterface $session) {
 		if ($value === NULL) throw new \F3\PHPCR\RepositoryException('Constructing a Property with a NULL value is not allowed', 1203336959);
 		if (is_array($value)) {
 			if (\F3\FLOW3\Utility\Arrays::containsMultipleTypes($value)) {
@@ -77,7 +77,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 		}
 
 		$this->session = $session;
-		$this->valueFactory = $valueFactory;
+		$this->valueFactory = $session->getValueFactory();
 		$this->parentNode = $parentNode;
 		$this->name = $name;
 
