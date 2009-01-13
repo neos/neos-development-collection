@@ -36,7 +36,7 @@ require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
  * @package TYPO3CR
  * @subpackage Tests
  * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 

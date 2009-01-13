@@ -36,7 +36,7 @@ require_once('Fixtures/F3_TYPO3CR_MockStorageBackend.php');
  * @package TYPO3CR
  * @subpackage Tests
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class NodeTest extends \F3\Testing\BaseTestCase {
 

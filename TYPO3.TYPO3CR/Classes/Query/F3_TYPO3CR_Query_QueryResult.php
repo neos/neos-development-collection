@@ -34,7 +34,7 @@ namespace F3\TYPO3CR\Query;
  * @package TYPO3CR
  * @subpackage Query
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {

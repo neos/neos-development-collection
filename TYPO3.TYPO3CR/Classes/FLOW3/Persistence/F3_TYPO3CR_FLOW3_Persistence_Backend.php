@@ -34,7 +34,7 @@ namespace F3\TYPO3CR\FLOW3\Persistence;
  * @package TYPO3CR
  * @subpackage FLOW3
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 

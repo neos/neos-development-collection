@@ -37,7 +37,7 @@ require_once(__DIR__ . '/../../Fixtures/F3_TYPO3CR_Tests_Fixtures_AValue.php');
  * @package TYPO3CR
  * @subpackage Tests
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class BackendTest extends \F3\Testing\BaseTestCase {
 
