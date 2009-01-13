@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3CR\Tests;
+namespace F3\TYPO3CR\Tests\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -35,9 +35,9 @@ namespace F3\TYPO3CR\Tests;
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
- * @entity
+ * @value
  */
-class AnObject implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface {
+class AValue implements \F3\FLOW3\AOP\ProxyInterface {
 
 	/**
 	 * @var string
@@ -45,35 +45,10 @@ class AnObject implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	protected $name;
 
 	/**
-	 * @var array
-	 */
-	protected $members;
-
-	/**
 	 * @param string $name
 	 */
 	public function __construct($name) {
 		$this->name = $name;
-	}
-
-	/**
-	 * @param object $object
-	 * @return void
-	 */
-	public function add($object) {
-		$this->members[] = $object;
-	}
-
-
-	public function isNew() {
-		return TRUE;
-	}
-
-	public function isDirty($propertyName) {
-		return FALSE;
-	}
-
-	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL) {
 	}
 
 	/**
