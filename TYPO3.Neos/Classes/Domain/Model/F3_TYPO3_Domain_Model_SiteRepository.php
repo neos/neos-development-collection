@@ -37,11 +37,10 @@ class SiteRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @param string The UUID of the site
 	 * @return \F3\TYPO3\Domain\Model\Site The site or NULL if it doesn't exist
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo replace "identifier" with "id" if #1623 is resolved
 	 */
 	public function findById($id) {
 		$query = $this->queryFactory->create();
-		$sites = $query->matching($query->equals('identifier', (string)$id))->execute();
+		$sites = $query->matching($query->equals('id', (string)$id))->execute();
 		return (is_array($sites)) ? array_shift($sites) : NULL;
 	}
 }
