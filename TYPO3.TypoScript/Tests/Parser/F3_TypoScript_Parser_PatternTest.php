@@ -3,24 +3,36 @@ declare(ENCODING = 'utf-8');
 namespace F3\TypoScript\Parser;
 
 /*                                                                        *
- * This script is part of the TYPO3 project - inspiring people to share!  *
+ * This script belongs to the FLOW3 package "TypoScript".                 *
  *                                                                        *
- * TYPO3 is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU General Public License version 2 as published by  *
- * the Free Software Foundation.                                          *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
+/**
+ * @package TypoScript
+ * @version $Id$
+ */
 
 /**
  * Testcase for the TypoScript Parser - tests the regex patterns
  *
- * @package		TypoScript
- * @version 	$Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package TypoScript
+ * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class PatternTest extends \F3\Testing\BaseTestCase {
 
