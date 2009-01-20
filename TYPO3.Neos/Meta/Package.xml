@@ -21,7 +21,6 @@
     <constraints>
         <depends>
             <package>TypoScript</package>
-            <package>Widget</package>
             <package>FLOW3</package>
         </depends>
         <conflicts/>
