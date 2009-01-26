@@ -44,6 +44,19 @@ $c->TYPO3_Backend
 		)
 	);
 
+$c->TYPO3_BackendLogin
+	->setUriPattern('login')
+	->setControllerObjectNamePattern('F3\@package\Backend\Controller\@controllerController')
+	->setViewObjectNamePattern('F3\@package\Backend\View\@controller@action@format')
+	->setDefaults(
+	array(
+		'@package' => 'TYPO3',
+		'@controller' => 'Login',
+		'@action' => 'index',
+		'@format' => 'html'
+	)
+);
+
 /*************************************************************************
  * Routes definitions for the services
  */

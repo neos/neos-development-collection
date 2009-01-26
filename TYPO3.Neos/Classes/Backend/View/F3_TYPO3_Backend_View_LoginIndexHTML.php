@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Backend\View\Login;
+namespace F3\TYPO3\Backend\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -36,7 +36,7 @@ namespace F3\TYPO3\Backend\View\Login;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class IndexHTML extends \F3\FLOW3\MVC\View\AbstractView {
+class LoginIndexHTML extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * Renders the view
