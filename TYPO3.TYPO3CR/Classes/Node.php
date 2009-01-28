@@ -37,8 +37,8 @@ namespace F3\TYPO3CR;
  */
 class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 
-	const PATTERN_MATCH_WEAKREFERENCE = '/(?:[a-f0-9]){8}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){12}/';
-	const PATTERN_MATCH_REFERENCE = '/(?:[a-f0-9]){8}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){12}/';
+	const PATTERN_MATCH_WEAKREFERENCE = '/^(?:[a-f0-9]){8}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){12}$/';
+	const PATTERN_MATCH_REFERENCE = '/^(?:[a-f0-9]){8}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){4}-(?:[a-f0-9]){12}$/';
 	const PATTERN_MATCH_URI = '!^
 		# scheme
 		([a-zA-Z][a-zA-Z0-9+.-]*):
@@ -359,7 +359,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Removes this node (and its subtree).
+	 * Removes this item (and its subtree).
 	 * To persist a removal, a save must be performed that includes the (former)
 	 * parent of the removed item within its scope.
 	 *
@@ -374,20 +374,14 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * located in this workspace but outside this item's subtree and the
 	 * current Session has read access to that REFERENCE property.
 	 *
-	 * An AccessDeniedException will be thrown on save if this item or an item
-	 * in its subtree is currently the target of a REFERENCE property located
-	 * in this workspace but outside this item's subtree and the current Session
-	 * does not have read access to that REFERENCE property.
-	 *
 	 * @return void
 	 * @throws \F3\PHPCR\Version\VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of this item and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\ReferentialIntegrityException on save if this item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside this item's subtree and the current Session has read access to that REFERENCE property.
-	 * @throws \F3\PHPCR\AccessDeniedException on save if this item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside this item's subtree and the current Session does not have read access to that REFERENCE property.
+	 * @throws \F3\PHPCR\AccessDeniedException if this item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside this item's subtree and the current Session does not have read access to that REFERENCE property or if the current Session does not have sufficent privileges to remove the item.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @see Workspace::removeItem(String)
+	 * @see SessionInterface::removeItem(String)
 	 */
 	public function remove() {
 		if ($this->parentNode === NULL) {
@@ -799,14 +793,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return string the identifier of this node
 	 * @throws \F3\PHPCR\RepositoryException If an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Check for mix:referenceable on node to determine if an UnsupportedRepositoryOperationException should be thrown. Then throw RepositoryException if still no Identifier is available.
 	 */
 	public function getIdentifier() {
-		if (isset($this->identifier)) {
-			return $this->identifier;
-		} else {
-			throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Node has no Identifier', 1181070099);
-		}
+		return $this->identifier;
 	}
 
 	/**
@@ -949,13 +938,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Returns the primary node type in effect for this node. Note that this may
-	 * differ from the node type implied by the node's jcr:primaryType property
-	 * if that property has recently been created or changed and has not yet been
-	 * saved. Which NodeType is returned when this method is called on the root
-	 * node of a workspace is up to the implementation, though the returned type
-	 * must, of course, be consistent with the child nodes and properties of the
-	 * root node.
+	 * Returns the primary node type in effect for this node. Which NodeType is
+	 * returned when this method is called on the root node of a workspace is up
+	 * to the implementation.
 	 *
 	 * @return \F3\PHPCR\NodeType\NodeTypeInterface a NodeType object.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
@@ -971,9 +956,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * assigned to this node. It does not include mixin types inherited through
 	 * the addition of supertypes to the primary type hierarchy or through the
 	 * addition of supertypes to the type hierarchy of any of the declared mixin
-	 * types. Note that this may differ from the node types implied by the node's
-	 * jcr:mixinTypes property if that property has recently been created or
-	 * changed and has not yet been saved.
+	 * types.
 	 *
 	 * @return array of \F3\PHPCR\NodeType\NodeTypeInterface objects.
 	 * @throws \F3\PHPCR\RepositoryException  if an error occurs
@@ -983,12 +966,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Returns TRUE if this node is of the specified primary node type or mixin
-	 * type, or a subtype thereof. Returns FALSE otherwise.
-	 * This method respects the effective node type of the node. Note that this
-	 * may differ from the node type implied by the node's jcr:primaryType property
-	 * or jcr:mixinTypes property if that property has recently been created or
-	 * changed and has not yet been saved.
+	 * Returns true if this node is of the specified primary node type or mixin
+	 * type, or a subtype thereof. Returns false otherwise.
+	 * This method respects the effective node type of the node.
 	 *
 	 * @param string $nodeTypeName the name of a node type.
 	 * @return boolean TRUE if this node is of the specified primary node type or mixin type, or a subtype thereof. Returns FALSE otherwise.

@@ -101,19 +101,6 @@ class ValueFactoryTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Checks if createValue can guess the REFERENCE type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function createValueFromNodeGuessesCorrectType() {
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('getRawPropertiesOfNode'), array('default', $this->getMock('F3\PHPCR\RepositoryInterface'), $this->getMock('F3\TYPO3CR\Storage\BackendInterface'), $this->objectFactory));
-		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $mockSession, $this->objectFactory);
-		$value = $this->valueFactory->createValue($node);
-		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
-		$this->assertEquals($value->getString(), $node->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');
-	}
-
-	/**
 	 * Checks if createValue can guess the BINARY type
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
@@ -130,6 +117,53 @@ class ValueFactoryTest extends \F3\Testing\BaseTestCase {
 	public function createValueConvertsTypeToBooleanIfRequested() {
 		$value = $this->valueFactory->createValue('Some test string', \F3\PHPCR\PropertyType::BOOLEAN);
 		$this->assertSame($value->getType(), \F3\PHPCR\PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
+	}
+
+	/**
+	 * Checks if createValue can guess the REFERENCE type
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function createValueFromNodeGuessesCorrectType() {
+		$mockNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue(\F3\FLOW3\Utility\Algorithms::generateUUID()));
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockSession->expects($this->any())->method('hasIdentifier')->will($this->returnValue(TRUE));
+		$valueFactory = new \F3\TYPO3CR\ValueFactory($this->objectFactory, $mockSession);
+
+		$value = $valueFactory->createValue($mockNode);
+		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
+		$this->assertEquals($value->getString(), $mockNode->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');
+	}
+
+	/**
+	 * Checks if createValue returns REFERENCE type for Node value if requested
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function createValueFromNodeWithRequestedReferenceTypeWorks() {
+		$mockNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue(\F3\FLOW3\Utility\Algorithms::generateUUID()));
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockSession->expects($this->any())->method('hasIdentifier')->will($this->returnValue(TRUE));
+		$valueFactory = new \F3\TYPO3CR\ValueFactory($this->objectFactory, $mockSession);
+
+		$value = $valueFactory->createValue($mockNode, \F3\PHPCR\PropertyType::REFERENCE);
+		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
+		$this->assertEquals($value->getString(), $mockNode->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');
+	}
+
+	/**
+	 * Checks if createValue create a WEAKREFERENCE if $weak is TRUE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function createValueFromNodeObservesWeakParameter() {
+		$mockNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue(\F3\FLOW3\Utility\Algorithms::generateUUID()));
+		$value = $this->valueFactory->createValue($mockNode, NULL, TRUE);
+		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::WEAKREFERENCE, 'New Value object was not of type WEAKREFERENCE.');
+		$this->assertEquals($value->getString(), $mockNode->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');
 	}
 }
 ?>

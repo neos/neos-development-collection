@@ -63,14 +63,19 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 
 	/**
 	 * Creates a query with one or more selectors.
-	 * If source is a selector, that selector is the default selector of the query. Otherwise the query does not have a default selector.
+	 * If source is a selector, that selector is the default selector of the
+	 * query. Otherwise the query does not have a default selector.
+	 *
+	 * If the query is invalid, this method throws an InvalidQueryException.
+	 * See the individual QOM factory methods for the validity criteria of each
+	 * query element.
 	 *
 	 * @param mixed $source the Selector or the node-tuple Source; non-null
 	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint the constraint, or null if none
 	 * @param array $orderings zero or more orderings; null is equivalent to a zero-length array
 	 * @param array $columns the columns; null is equivalent to a zero-length array
 	 * @return \F3\PHPCR\Query\QOM\QueryObjectModelInterface the query; non-null
-	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
+	 * @throws \F3\PHPCR\Query\InvalidQueryException if a particular validity test is possible on this method, the implemention chooses to perform that test and the parameters given fail that test.
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

@@ -75,28 +75,35 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 
 	/**
 	 * Returns a Value object with the specified value. If $type is given,
-	 * conversion from string is attempted before creating the Value object.
+	 * conversion is attempted before creating the Value object.
 	 *
-	 * If no type is given, the type is guessed intelligently.
+	 * If no type is given, the value is stored as is, i.e. it's type is
+	 * preserved. Exceptions are:
 	 * * if the given $value is a Node object, it's Identifier is fetched for the
 	 *   Value object and the type of that object will be REFERENCE
-	 * * if the given $value is a \DateTime object, the Value type will be DATE.
-	 * * if the given $value is a Binary object, the Value type will be BINARY
-	 * If guessing fails the type will be UNDEFINED.
+	 * * if the given $value is a Node object, it's Identifier is fetched for the
+	 *   Value object and the type of that object will be WEAKREFERENCE if $weak
+	 *   is set to TRUE
+	 * * if the given $Value is a \DateTime object, the Value type will be DATE.
 	 *
-	 * @param mixed $value
-	 * @param integer $type
+	 * @param mixed $value The value to use when creating the Value object
+	 * @param integer $type Type request for the Value object
+	 * @param boolean $weak When a Node is given as $value this can be given as TRUE to create a WEAKREFERENCE, $type is ignored in that case!
 	 * @return \F3\PHPCR\ValueInterface
 	 * @throws \F3\PHPCR\ValueFormatException is thrown if the specified value cannot be converted to the specified type.
 	 * @throws \F3\PHPCR\RepositoryException if the specified Node is not referenceable, the current Session is no longer active, or another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createValue($value, $type = \F3\PHPCR\PropertyType::UNDEFINED) {
-			// try to do requested conversion, else guess the type
-		if ($type !== \F3\PHPCR\PropertyType::UNDEFINED) {
-			return $this->createValueWithGivenType($value, $type);
+	public function createValue($value, $type = \F3\PHPCR\PropertyType::UNDEFINED, $weak = FALSE) {
+		if ($value instanceof \F3\PHPCR\NodeInterface) {
+			$value = $value->getIdentifier();
+			$type = ($weak === TRUE ? \F3\PHPCR\PropertyType::WEAKREFERENCE : \F3\PHPCR\PropertyType::REFERENCE);
+		}
+
+		if ($type === \F3\PHPCR\PropertyType::UNDEFINED) {
+			return $this->objectFactory->create('F3\PHPCR\ValueInterface', $value, self::guessType($value));
 		} else {
-			return $this->createValueAndGuessType($value);
+			return $this->createValueWithGivenType($value, $type);
 		}
 	}
 
@@ -113,13 +120,13 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	protected function createValueWithGivenType($value, $type) {
 		switch ($type) {
 			case \F3\PHPCR\PropertyType::REFERENCE:
-				if (!preg_match(\F3\TYPO3CR\Node::PATTERN_MATCH_WEAKREFERENCE, $value) || !$this->session->hasIdentifier($value)) {
+				if (preg_match(\F3\TYPO3CR\Node::PATTERN_MATCH_REFERENCE, $value) === 0 || !$this->session->hasIdentifier($value)) {
 					throw new \F3\PHPCR\ValueFormatException('REFERENCE properties must point to a valid, existing identifier.', 1231765408);
 				}
 				break;
 			case \F3\PHPCR\PropertyType::WEAKREFERENCE:
-				if (!preg_match(\F3\TYPO3CR\Node::PATTERN_MATCH_WEAKREFERENCE, $value)) {
-					throw new \F3\PHPCR\ValueFormatException('The given value was no valid UUID, could not be converted to WEAKREFERENCE.', 1231765585);
+				if (preg_match(\F3\TYPO3CR\Node::PATTERN_MATCH_WEAKREFERENCE, $value) === 0) {
+					throw new \F3\PHPCR\ValueFormatException('WEAKREFERENCE properties must point to a syntactically valid identifier.', 1231765585);
 				}
 				break;
 			case \F3\PHPCR\PropertyType::DATE:
@@ -152,41 +159,17 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	}
 
 	/**
-	 * Returns a Value object with the specified value.
-	 *
-	 * * if the given $value is a Node object, it's Identifier is fetched for the
-	 *   Value object and the type of that object will be REFERENCE
-	 * * if the given $value is a \DateTime object, the Value type will be DATE.
-	 * * if the given $value is a Binary object, the Value type will be BINARY
-	 * If guessing fails the type will be UNDEFINED.
-	 *
-	 * @param mixed $value
-	 * @return \F3\PHPCR\ValueInterface
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Check type guessing/conversion when we go for PHP6
-	 */
-	protected function createValueAndGuessType($value) {
-		$type = self::guessType($value);
-		if ($type === \F3\PHPCR\PropertyType::REFERENCE) {
-			$value = $value->getIdentifier();
-		}
-
-		return $this->objectFactory->create('F3\PHPCR\ValueInterface', $value, $type);
-	}
-
-	/**
 	 * Guesses the type for the given value
 	 *
 	 * @param mixed $value
 	 * @return integer
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo Check type guessing/conversion when we go for PHP6
 	 */
 	public static function guessType($value) {
 		$type = \F3\PHPCR\PropertyType::UNDEFINED;
 
-		if ($value instanceof \F3\PHPCR\NodeInterface) {
-			$type = \F3\PHPCR\PropertyType::REFERENCE;
-		} elseif ($value instanceof \DateTime) {
+		if ($value instanceof \DateTime) {
 			$type = \F3\PHPCR\PropertyType::DATE;
 		} elseif ($value instanceof \F3\PHPCR\BinaryInterface) {
 			$type = \F3\PHPCR\PropertyType::BINARY;

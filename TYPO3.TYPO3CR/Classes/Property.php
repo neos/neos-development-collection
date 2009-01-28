@@ -520,17 +520,23 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	}
 
 	/**
-	 * Removes this property.
+	 * Removes this item (and its subtree).
 	 * To persist a removal, a save must be performed that includes the (former)
 	 * parent of the removed item within its scope.
+	 *
+	 * A ReferentialIntegrityException will be thrown on save if this item or
+	 * an item in its subtree is currently the target of a REFERENCE property
+	 * located in this workspace but outside this item's subtree and the
+	 * current Session has read access to that REFERENCE property.
 	 *
 	 * @return void
 	 * @throws \F3\PHPCR\Version\VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of this item and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws \F3\PHPCR\AccessDeniedException if this item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside this item's subtree and the current Session does not have read access to that REFERENCE property or if the current Session does not have sufficent privileges to remove the item.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @see Workspace::removeItem(String)
+	 * @see SessionInterface::removeItem(String)
 	 */
 	public function remove() {
 			// removes the property, thus delegated to parent
