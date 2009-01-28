@@ -28,7 +28,7 @@ namespace F3\TYPO3\TypoScript;
  * @version $Id$
  */
 
-require_once (__DIR__ . '/../Fixtures/F3_TYPO3_TypoScript_MockTypoScriptObject.php');
+require_once (__DIR__ . '/../Fixtures/MockTypoScriptObject.php');
 
 /**
  * Testcase for the TypoScript standard processors
