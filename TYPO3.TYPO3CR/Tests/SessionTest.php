@@ -28,7 +28,7 @@ namespace F3\TYPO3CR;
  * @version $Id$
  */
 
-require_once('Fixtures/F3_TYPO3CR_MockStorageBackend.php');
+require_once('Fixtures/MockStorageBackend.php');
 
 /**
  * Tests for the Session implementation of TYPO3CR

@@ -25,20 +25,20 @@ namespace F3\TYPO3CR\Storage\Backend\PDO;
 /**
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  */
 
-require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
+require_once('TestBase.php');
 
 /**
- * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the PDO MySQL driver
+ * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the PDO PostgreSQL driver
  *
  * @package TYPO3CR
  * @subpackage Tests
- * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
+class PostgreSQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 
 	/**
 	 * @var string
@@ -72,39 +72,38 @@ class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 		$lines = file($this->config, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
 		foreach ($lines as $line) {
 			$line = trim($line);
-			$prefix = 'MYSQL_DB="';
+			$prefix = 'PGSQL_DB="';
 			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
 				$this->db = substr($line, strlen($prefix), -1);
 			}
-			$prefix = 'MYSQL_USER="';
+			$prefix = 'PGSQL_USER="';
 			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
 				$this->dbuser = substr($line, strlen($prefix), -1);
 			}
-			$prefix = 'MYSQL_PASS="';
+			$prefix = 'PGSQL_PASS="';
 			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
-				$this->dbpass = substr($line, strlen($prefix) , -1);
+				$this->dbpass = substr($line, strlen($prefix), -1);
 			}
 		}
 
 		if ($this->db != '' && $this->dbuser != '' && $this->dbpass != '') {
 			try {
-				$databaseHandle = new \PDO('mysql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
+				$databaseHandle = new \PDO('pgsql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
 				$databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 				$databaseHandle = NULL;
 			} catch (\PDOException $e) {
-				$this->markTestSkipped('Could not connect to MySQL database ' . $this->db . ', user ' . $this->dbuser . ', password ' . $this->dbpass . ', skipping MySQL tests');
+				$this->markTestSkipped('Could not connect to PostgreSQL database ' . $this->db . ', user ' . $this->dbuser . ', password ' . $this->dbpass . ', skipping PostgreSQL tests');
 				return;
 			}
 		} else {
-			$this->markTestSkipped('MySQL tests not configured');
+			$this->markTestSkipped('PostgreSQL tests not configured');
 		}
-
 
 		$scriptpath = FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/';
 
-		exec($scriptpath . 'testdb.sh mysql reset');
+		exec($scriptpath . 'testdb.sh postgres reset');
 
-		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'mysql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
+		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'pgsql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
 		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 

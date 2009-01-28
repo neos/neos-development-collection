@@ -28,7 +28,7 @@ namespace F3\TYPO3CR\Storage\Backend\PDO;
  * @version $Id$
  */
 
-require_once('F3_TYPO3CR_Storage_Backend_TestBase.php');
+require_once('TestBase.php');
 
 /**
  * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the Sqlite PDO driver

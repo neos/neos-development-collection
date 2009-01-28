@@ -28,8 +28,8 @@ namespace F3\TYPO3CR\FLOW3\Persistence;
  * @version $Id$
  */
 
-require_once(__DIR__ . '/../../Fixtures/F3_TYPO3CR_Tests_Fixtures_AnEntity.php');
-require_once(__DIR__ . '/../../Fixtures/F3_TYPO3CR_Tests_Fixtures_AValue.php');
+require_once(__DIR__ . '/../../Fixtures/AnEntity.php');
+require_once(__DIR__ . '/../../Fixtures/AValue.php');
 
 /**
  * Testcase for \F3\TYPO3CR\FLOW3\Persistence\Backend
