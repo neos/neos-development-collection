@@ -38,6 +38,12 @@ namespace F3\TYPO3CR;
 class Session implements \F3\PHPCR\SessionInterface {
 
 	/**
+	 * XML export types
+	 */
+	const EXPORT_SYSTEM = 0;
+	const EXPORT_DOCUMENT = 1;
+
+	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
@@ -746,14 +752,8 @@ class Session implements \F3\PHPCR\SessionInterface {
 	}
 
 	/**
-	 * Serializes the node (and if noRecurse is false, the whole subtree) at absPath
-	 * as an XML stream and outputs it to the supplied OutputStream. It is the
-	 * responsibility of the caller to close the passed OutputStream.
-	 *
-	 * If $out is a org.xml.sax.ContentHandler:
-	 * Serializes the node (and if noRecurse is false, the whole subtree) at absPath
-	 * into a series of SAX events by calling the methods of the supplied
-	 * org.xml.sax.ContentHandler.
+	 * Serializes the node (and if noRecurse is false, the whole subtree) at $absPath
+	 * as an XML stream and outputs it to the supplied XMLWriter.
 	 *
 	 * The resulting XML is in the system view form. Note that absPath must be the path
 	 * of a node, not a property.
@@ -782,29 +782,23 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * The output XML will be encoded in UTF-8.
 	 *
 	 * @param string $absPath The path of the root of the subtree to be serialized. This must be the path to a node, not a property
-	 * @param resource $out The OutputStream or org.xml.sax.ContentHandler to which the XML serialization of the subtree will be output.
+	 * @param \XMLWriter $out The XMLWriter to which the XML serialization of the subtree will be output.
 	 * @param boolean $skipBinary A boolean governing whether binary properties are to be serialized.
 	 * @param boolean $noRecurse A boolean governing whether the subtree at absPath is to be recursed.
 	 * @return void
 	 * @throws \F3\PHPCR\PathNotFoundException if no node exists at absPath.
-	 * @throws java.io.IOException if an error during an I/O operation occurs.
-	 * @throws org.xml.sax.SAXException if an error occurs while feeding events to the org.xml.sax.ContentHandler.
+	 * @throws \RuntimeException if an error during an I/O operation occurs.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
-	 * @todo Decide in what to use for org.xml.sax.ContentHandler
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function exportSystemView($absPath, $out, $skipBinary, $noRecurse) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485261);
+	public function exportSystemView($absPath, \XMLWriter $out, $skipBinary, $noRecurse) {
+		$this->exportToXML($absPath, $out, $skipBinary, $noRecurse, self::EXPORT_SYSTEM);
 	}
 
 	/**
-	 * Serializes the node (and if noRecurse is false, the whole subtree) at absPath as an XML
-	 * stream and outputs it to the supplied OutputStream. The resulting XML is in the document
-	 * view form. Note that absPath must be the path of a node, not a property. It is the
-	 * responsibility of the caller to close the passed OutputStream.
-	 *
-	 * If $out is a org.xml.sax.ContentHandler:
-	 * Serializes the node (and if noRecurse is false, the whole subtree) at absPath into a
-	 * series of SAX events by calling the methods of the supplied org.xml.sax.ContentHandler.
+	 * Serializes the node (and if noRecurse is false, the whole subtree) at $absPath as an XML
+	 * stream and outputs it to the supplied XMLWriter. The resulting XML is in the document
+	 * view form. Note that absPath must be the path of a node, not a property.
 	 *
 	 * If skipBinary is true then any properties of PropertyType.BINARY will be serialized as if
 	 * they are empty. That is, the existence of the property will be serialized, but its content
@@ -828,18 +822,17 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * The output XML will be encoded in UTF-8.
 	 *
 	 * @param string $absPath The path of the root of the subtree to be serialized. This must be the path to a node, not a property
-	 * @param resource $out The OutputStream or org.xml.sax.ContentHandler to which the XML serialization of the subtree will be output.
+	 * @param \XMLWriter $out The XMLWriter to which the XML serialization of the subtree will be output.
 	 * @param boolean $skipBinary A boolean governing whether binary properties are to be serialized.
 	 * @param boolean $noRecurse A boolean governing whether the subtree at absPath is to be recursed.
 	 * @return void
 	 * @throws \F3\PHPCR\PathNotFoundException if no node exists at absPath.
 	 * @throws \RuntimeException if an error during an I/O operation occurs.
-	 * @throws org.xml.sax.SAXException if an error occurs while feeding events to the org.xml.sax.ContentHandler.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
-	 * @todo Decide in what to use for org.xml.sax.ContentHandler
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function exportDocumentView($absPath, $out, $skipBinary, $noRecurse) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485262);
+	public function exportDocumentView($absPath, \XMLWriter $out, $skipBinary, $noRecurse) {
+		$this->exportToXML($absPath, $out, $skipBinary, $noRecurse, self::EXPORT_DOCUMENT);
 	}
 
 	/**
@@ -1097,6 +1090,167 @@ class Session implements \F3\PHPCR\SessionInterface {
 					}
 				}
 			}
+		}
+	}
+
+
+	// Export methods
+
+
+	/**
+	 * Serializes the node (and if noRecurse is false, the whole subtree) at $absPath
+	 * as an XML stream and outputs it to the supplied URI.
+	 *
+	 * If skipBinary is true then any properties of PropertyType.BINARY will be serialized
+	 * as if they are empty. That is, the existence of the property will be serialized,
+	 * but its content will not appear in the serialized output (the <sv:value> element
+	 * will have no content). Note that in the case of multi-value BINARY properties,
+	 * the number of values in the property will be reflected in the serialized output,
+	 * though they will all be empty. If skipBinary is false then the actual value(s)
+	 * of each BINARY property is recorded using Base64 encoding.
+	 *
+	 * If noRecurse is true then only the node at absPath and its properties, but not
+	 * its child nodes, are serialized. If noRecurse is false then the entire subtree
+	 * rooted at absPath is serialized.
+	 *
+	 * The resulting XML will represent system or document view depending on $exportType
+	 *
+	 * @param string $absPath The path of the root of the subtree to be serialized. This must be the path to a node, not a property
+	 * @param \XMLWriter $out The XMLWriter to which the XML serialization of the subtree will be output.
+	 * @param boolean $skipBinary A boolean governing whether binary properties are to be serialized.
+	 * @param boolean $noRecurse A boolean governing whether the subtree at absPath is to be recursed.
+	 * @param integer $exportType One of self::EXPORT_SYSTEM or self::EXPORT_DOCUMENT
+	 * @return void
+	 * @throws \F3\PHPCR\PathNotFoundException if no node exists at absPath.
+	 * @throws \RuntimeException if an error during an I/O operation occurs.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function exportToXML($absPath, \XMLWriter $xmlWriter, $skipBinary, $noRecurse, $exportType) {
+		if ($exportType === self::EXPORT_DOCUMENT) throw new \F3\PHPCR\UnsupportedRepositoryOperationException('exportDocumentView() is not yet implemented, sorry!', 1233242923);
+
+		$xmlWriter->startDocument('1.0', 'UTF-8');
+
+		$xmlWriter->startElement('sv:node');
+
+		$this->writeNamespaceAttributes($xmlWriter);
+		$this->exportNodeToXML($this->getNode($absPath), $xmlWriter, !$skipBinary, !$noRecurse);
+
+		$xmlWriter->endDocument();
+	}
+
+	/**
+	 * Writes out namespace attributes for all namespaces in the namespace registry.
+	 *
+	 * @param \XMLWriter $xmlWriter
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function writeNamespaceAttributes(\XMLWriter $xmlWriter) {
+		$xmlWriter->writeAttribute('xmlns:sv', 'http://www.jcp.org/jcr/sv/1.0');
+		foreach ($this->getNamespacePrefixes() as $prefix) {
+			if ($prefix !== '') {
+				$xmlWriter->writeAttribute('xmlns:' . $prefix, $this->getNamespaceURI($prefix));
+			}
+		}
+	}
+
+	/**
+	 * Writes out the given node as XML to the given $xmlWriter. Calls itself
+	 * recursively for child nodes.
+	 *
+	 * @param \F3\PHPCR\NodeInterface $node
+	 * @param \XMLWriter$xmlWriter
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function exportNodeToXML(\F3\PHPCR\NodeInterface $node, \XMLWriter $xmlWriter, $includeBinary, $recurse) {
+		if ($node->getDepth() === 0) {
+			$xmlWriter->writeAttribute('sv:name', 'jcr:root');
+		} else {
+			$xmlWriter->writeAttribute('sv:name', $node->getName());
+		}
+
+		$this->exportPropertiesToXML($node, $includeBinary, $xmlWriter);
+
+		if ($recurse === TRUE) {
+			foreach ($node->getNodes() as $node) {
+				$xmlWriter->startElement('sv:node');
+				$this->exportNodeToXML($node, $xmlWriter, $includeBinary, TRUE);
+				$xmlWriter->endElement();
+			}
+		}
+	}
+
+	/**
+	 * Writes out the properties of the $node as XML to the given $xmlWriter.
+	 *
+	 * @param \F3\PHPCR\PropertyInterface $property
+	 * @param \XMLWriter $xmlWriter
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo add mixinTypes as soon as getMixinNodeTypes() is implemented
+	 * @todo remove try/catch on getValues(), replace with nodetype inspection
+	 */
+	protected function exportPropertiesToXML(\F3\PHPCR\NodeInterface $node, $includeBinary, \XMLWriter $xmlWriter) {
+		$xmlWriter->startElement('sv:property');
+		$xmlWriter->writeAttribute('sv:name', 'jcr:primaryType');
+		$xmlWriter->writeAttribute('sv:type', \F3\PHPCR\PropertyType::TYPENAME_STRING);
+		$xmlWriter->writeElement('sv:value', $node->getPrimaryNodeType()->getName());
+		$xmlWriter->endElement();
+
+		$xmlWriter->startElement('sv:property');
+		$xmlWriter->writeAttribute('sv:name', 'jcr:mixinTypes');
+		$xmlWriter->writeAttribute('sv:type', \F3\PHPCR\PropertyType::TYPENAME_STRING);
+		$mixinNodeTypes = array(); // $node->getMixinNodeTypes();
+		foreach ($mixinNodeTypes as $mixinNodeType) {
+			$xmlWriter->writeElement('sv:value', $mixinNodeType->getName());
+		}
+		$xmlWriter->endElement();
+
+		$xmlWriter->startElement('sv:property');
+		$xmlWriter->writeAttribute('sv:name', 'jcr:uuid');
+		$xmlWriter->writeAttribute('sv:type', \F3\PHPCR\PropertyType::TYPENAME_STRING);
+		$xmlWriter->writeElement('sv:value', $node->getIdentifier());
+		$xmlWriter->endElement();
+
+		$skip = array('jcr:uuid', 'jcr:primaryType', 'jcr:mixinTypes');
+		foreach ($node->getProperties() as $property) {
+			if (in_array($property->getName(), $skip)) continue;
+
+			$xmlWriter->startElement('sv:property');
+			$xmlWriter->writeAttribute('sv:name', $property->getName());
+			$xmlWriter->writeAttribute('sv:type', \F3\PHPCR\PropertyType::nameFromValue($property->getType()));
+			try {
+				$properties = $property->getValues();
+				$xmlWriter->writeAttribute('sv:multiple', 'true');
+				foreach ($property->getValues() as $value) {
+					$xmlWriter->startElement('sv:value');
+					if ($property->getType() === \F3\PHPCR\PropertyType::BINARY) {
+						if ($includeBinary === TRUE) {
+							$xmlWriter->text(base64_encode($value->getString()));
+						}
+					} else {
+						$xmlWriter->text($value->getString());
+					}
+					$xmlWriter->endElement();
+				}
+			} catch (\F3\PHPCR\ValueFormatException $exception) {
+				if ($exception->getCode() !== 1189512545 /* 1189512545 means not a multi-valued property */ ) {
+					throw new \F3\PHPCR\RepositoryException($exception->getMessage(), 1233313166);
+				} else {
+					$xmlWriter->startElement('sv:value');
+					if ($property->getType() === \F3\PHPCR\PropertyType::BINARY) {
+						if ($includeBinary === TRUE) {
+							$xmlWriter->text(base64_encode($property->getValue()->getString()));
+						}
+					} else {
+						$xmlWriter->text($property->getValue()->getString());
+					}
+					$xmlWriter->endElement();
+				}
+			}
+			$xmlWriter->endElement();
 		}
 	}
 

@@ -138,7 +138,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 					array(
 						'name' => 'title',
 						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-						'value' => 'News about the TYPO3CR',
+						'value' => 'News about FLOW3 & the TYPO3CR',
 						'namespace' => '',
 						'multivalue' => FALSE,
 						'type' => \F3\PHPCR\PropertyType::STRING
@@ -169,7 +169,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 						'value' => '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00',
 						'namespace' => '',
 						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::REFERENCE
+						'type' => \F3\PHPCR\PropertyType::WEAKREFERENCE
 					)
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69567d15' => array(
@@ -180,6 +180,16 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 						'namespace' => '',
 						'multivalue' => FALSE,
 						'type' => \F3\PHPCR\PropertyType::REFERENCE
+					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
+					array(
+						'name' => 'binaryProperty',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+						'value' => 'a345öčřßa',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => \F3\PHPCR\PropertyType::BINARY
 					)
 				)
 			)
@@ -265,7 +275,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getItemReturnsTheExpectedItems() {
-		$expectedTitle = 'News about the TYPO3CR';
+		$expectedTitle = 'News about FLOW3 & the TYPO3CR';
 		$newsItem = $this->session->getItem('Content/News/title');
 		$this->assertEquals($expectedTitle, $newsItem->getString(), 'getItem() did not return the property as expected.');
 
@@ -298,7 +308,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getPropertyReturnsTheExpectedProperty() {
 		$property = $this->session->getProperty('Content/News/title');
-		$this->assertEquals('News about the TYPO3CR', $property->getString(), 'getProperty() did not return the property.');
+		$this->assertEquals('News about FLOW3 & the TYPO3CR', $property->getString(), 'getProperty() did not return the property.');
 	}
 
 	/**
@@ -531,6 +541,164 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 			// /Content/InternalRefParent/RefTarget is target of the REFERENCE /Content/InternalRefParent/RefSource/ref
 		$this->session->getRootNode()->getNode('Content/InternalRefParent')->remove();
 		$this->session->save();
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewDeclaresNamespaces() {
+		$expectedNamespaces = array(
+			'sv' => 'http://www.jcp.org/jcr/sv/1.0',
+			'jcr' => 'http://www.jcp.org/jcr/1.0',
+			'nt' => 'http://www.jcp.org/jcr/nt/1.0',
+			'mix' => 'http://www.jcp.org/jcr/mix/1.0'
+		);
+
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertSame($expectedNamespaces, $xml->getDocNamespaces());
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsRootNodeNamedAsJcrRoot() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('jcr:root', (string)$xml->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsRequestedPath() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/Content/News', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('News', (string)$xml->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsRecursivelyIfRequested() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/', $xmlWriter, TRUE, FALSE);
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+
+		$this->assertEquals(1, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node));
+		$this->assertEquals(3, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node->node));
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsNonRecursivelyIfRequested() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals(0, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node));
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsPrimaryNodeTypeAsFirstPropertyNamedJcrPrimaryType() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('jcr:primaryType', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[0]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsIdentifierAsThirdPropertyNamedJcrUuid() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('jcr:uuid', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[2]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[2]->value[0]);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsProperties() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/', $xmlWriter, TRUE, FALSE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
+		$this->assertEquals('title', (string)$children->node[0]->node[0]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+		$this->assertEquals('String', (string)$children->node[0]->node[0]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
+		$this->assertEquals('News about FLOW3 & the TYPO3CR', (string)$children->node[0]->node[0]->property[3]->value[0]);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsBinaryPropertyAsBase64() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/Content', $xmlWriter, FALSE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
+		$this->assertEquals('binaryProperty', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+		$this->assertEquals('Binary', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
+		$this->assertEquals('YTM0NcO2xI3FmcOfYQ==', (string)$children->property[3]->value[0]);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewSkipsBinaryPropertyIfRequested() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportSystemView('/Content', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
+		$this->assertEquals('binaryProperty', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+		$this->assertEquals('Binary', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
+		$this->assertEquals('', (string)$children->property[3]->value[0]);
 	}
 
 }

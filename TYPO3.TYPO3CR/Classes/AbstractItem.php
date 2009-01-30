@@ -257,7 +257,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * @todo add support for extended names
 	 * @todo check namespace if given!?
 	 */
-	protected function isValidName($name) {
+	public function isValidName($name) {
 		$prefix = '';
 
 		if ($name == '') return FALSE;

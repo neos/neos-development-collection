@@ -1239,6 +1239,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 		);
 
 		$session = $this->session;
+		$self = $this;
 
 		$converters = array(
 			\F3\PHPCR\PropertyType::UNDEFINED => array(),
@@ -1281,12 +1282,12 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 				'string' => function($element, $type) { return array(TRUE, preg_match('/^TRUE$/i', $element), $type, 'Converted string to boolean'); }
 			),
 			\F3\PHPCR\PropertyType::NAME => array(
-				'string' => function($element, $type) use ($session) {
+				'string' => function($element, $type) use ($self, $session) {
 					$parts = explode(':', $element);
 					if (count($parts) > 2) {
 						return array(FALSE, $element, $type, 'More than one : in JCR name is not allowed');
 					}
-					if (!$this->isValidName($parts[count($parts)-1])) {
+					if (!$self->isValidName($parts[count($parts)-1])) {
 						return array(FALSE, $element, $type, 'Local name does not conform to JCR spec rules');
 					}
 					if (count($parts) === 2 && array_search($parts[0],  $session->getNamespacePrefixes()) === FALSE) {
