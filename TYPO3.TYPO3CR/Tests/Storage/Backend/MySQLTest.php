@@ -68,7 +68,7 @@ class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 	 * @author Matthias Hörmann <hoermann@saltation.de>
 	 */
 	public function setUp() {
-		$this->config = FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/testdb.conf';
+		$this->config = __DIR__ . '/../../Fixtures/testdb.conf';
 		$lines = file($this->config, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
 		foreach ($lines as $line) {
 			$line = trim($line);

@@ -61,7 +61,7 @@ class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 		$this->fixtureFolder = $environment->getPathToTemporaryDirectory() . 'TYPO3CR/Tests/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('sqlite') . '.db';
-		copy(FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
+		copy(__DIR__ . '/../../Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
 		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
 		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
