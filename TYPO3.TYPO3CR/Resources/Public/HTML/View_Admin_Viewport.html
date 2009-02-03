@@ -45,6 +45,12 @@
 				items: [{
 					id: 'delete-node',
 					text: 'Delete'
+				},{
+					id: 'export-node-document',
+					text: 'Export Document View'
+				},{
+					id: 'export-node-system',
+					text: 'Export System View'
 				}],
 				listeners: {
 					itemclick: function(item) {
@@ -52,6 +58,12 @@
 						switch (item.id) {
 							case 'delete-node':
 								deleteNode(node);
+								break;
+							case 'export-node-document':
+								exportNode(node, 'document');
+								break;
+							case 'export-node-system':
+								exportNode(node, 'system');
 								break;
 						}
 					}
@@ -113,6 +125,10 @@
 			});
 		}
 
+		function exportNode(node, type) {
+			window.open('typo3cr/export/' + type + 'View/?noRecurse=0&skipBinary=0&rootNodeIdentifier=' + node.id)
+		}
+
 		function showNodeDetails(node) {
 			statusbar.setStatus({
 				text: 'Loading node detail...',
@@ -127,8 +143,7 @@
 		var propertygrid = new Ext.grid.GridPanel({
 			store: new Ext.data.Store({
 				proxy: new Ext.data.HttpProxy({
-						// need to find a way to not load this at the beginning
-					url: 'typo3cr/service/v1/nodes/dummy.json',
+					url: 'typo3cr/service/v1/nodes.json',
 					method: 'GET'
 				}),
 				reader: new Ext.data.JsonReader({

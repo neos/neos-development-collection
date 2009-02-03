@@ -701,5 +701,111 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('', (string)$children->property[3]->value[0]);
 	}
 
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportDocumentViewDeclaresNamespaces() {
+		$expectedNamespaces = array(
+			'jcr' => 'http://www.jcp.org/jcr/1.0',
+			'nt' => 'http://www.jcp.org/jcr/nt/1.0',
+			'mix' => 'http://www.jcp.org/jcr/mix/1.0'
+		);
+
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportDocumentView('/', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertSame($expectedNamespaces, $xml->getDocNamespaces());
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportDocumentViewExportsRootNodeAsJcrRootElement() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportDocumentView('/', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('root', $xml->getName());
+		$this->assertTrue(array_key_exists('jcr', $xml->getNamespaces(FALSE)));
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportDocumentViewExportsRequestedPath() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportDocumentView('/Content/News', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory(FALSE));
+		$this->assertEquals('News', $xml->getName());
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportDocumentViewExportsRecursivelyIfRequested() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportDocumentView('/', $xmlWriter, TRUE, FALSE);
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+
+		$this->assertEquals(1, count($xml->children()));
+		$this->assertEquals(3, count($xml->Content->children()));
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportDocumentViewExportsNonRecursivelyIfRequested() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportDocumentView('/', $xmlWriter, TRUE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals(0, count($xml->children()));
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportDocumentViewExportsProperties() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportDocumentView('/', $xmlWriter, TRUE, FALSE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('News about FLOW3 & the TYPO3CR', (string)$xml->Content[0]->News[0]->attributes()->title);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportDocumentViewExportsBinaryPropertyAsBase64() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportDocumentView('/Content', $xmlWriter, FALSE, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('YTM0NcO2xI3FmcOfYQ==', (string)$xml->attributes()->binaryProperty);
+	}
+
 }
 ?>
