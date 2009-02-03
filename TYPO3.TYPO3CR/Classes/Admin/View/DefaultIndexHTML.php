@@ -45,7 +45,7 @@ class DefaultIndexHTML extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function render() {
-		$template = $this->resourceManager->getResource('file://TYPO3CR/HTML/View_Admin_Viewport.html')->getContent();
+		$template = $this->resourceManager->getResource('file://TYPO3CR/Public/HTML/View_Admin_Viewport.html')->getContent();
 		return str_replace('###BASEURI###', $this->request->getBaseURI(), $template);
 	}
 
