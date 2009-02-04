@@ -37,9 +37,15 @@ namespace F3\TYPO3\Backend\Controller;
 class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var array Only Web Requests are supported
+	 * Only Web Requests are supported
+	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
+
+	/**
+	 * @var string
+	 */
+	protected $viewObjectName = 'F3\Fluid\View\TemplateView';
 
 	/**
 	 * Default action of the backend controller.

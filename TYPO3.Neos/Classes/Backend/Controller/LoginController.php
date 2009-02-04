@@ -39,6 +39,11 @@ namespace F3\TYPO3\Backend\Controller;
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
+	 * @var string
+	 */
+	protected $viewObjectName = 'F3\Fluid\View\TemplateView';
+
+	/**
 	 * Default action for this controller
 	 *
 	 * @return string Some login form

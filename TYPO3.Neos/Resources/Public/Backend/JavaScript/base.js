@@ -17,7 +17,7 @@
  * @version $Id:F3::TYPO3::View::Page.php 262 2007-07-13 10:51:44Z robert $
  */
 
-Ext.BLANK_IMAGE_URL = 'Resources/Web/ExtJS/Public/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = 'Resources/Packages/ExtJS/images/default/s.gif';
 
 var F3_TYPO3_Backend_ApplicationToolBar = new Ext.Toolbar({
 	items: [{
