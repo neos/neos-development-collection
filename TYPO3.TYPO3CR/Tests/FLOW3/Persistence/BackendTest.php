@@ -142,7 +142,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function identifierPropertyFromNewObjectIsUsedForNode() {
+	public function uuidPropertyNameFromNewObjectIsUsedForNode() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
@@ -172,7 +172,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 		$mockSession->expects($this->once())->method('save');
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
-		$classSchema->setIdentifierProperty('idProp');
+		$classSchema->setUUIDPropertyName('idProp');
 
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->initialize(array($classSchema->getClassName() => $classSchema));

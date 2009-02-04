@@ -289,10 +289,10 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	protected function createNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
 		$className = $object->AOPProxyGetProxyTargetClassName();
 		$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($className);
-		$identifierProperty = $this->classSchemata[$className]->getIdentifierProperty();
+		$uuidPropertyName = $this->classSchemata[$className]->getUUIDPropertyName();
 
-		if ($identifierProperty !== NULL) {
-			$node = $parentNode->addNode($nodeName, $nodeTypeName, $object->AOPProxyGetProperty($identifierProperty));
+		if ($uuidPropertyName !== NULL) {
+			$node = $parentNode->addNode($nodeName, $nodeTypeName, $object->AOPProxyGetProperty($uuidPropertyName));
 		} else {
 			$node = $parentNode->addNode($nodeName, $nodeTypeName);
 		}
