@@ -41,7 +41,7 @@ class Text extends \F3\TYPO3\Domain\Model\AbstractContent {
 	/**
 	 * The text's unique identifier
 	 * @var string
-	 * @identifier
+	 * @uuid
 	 */
 	protected $id;
 

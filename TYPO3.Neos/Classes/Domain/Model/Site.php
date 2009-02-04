@@ -43,7 +43,7 @@ class Site {
 	/**
 	 * The site's unique identifier
 	 * @var string
-	 * @identifier
+	 * @uuid
 	 */
 	protected $id;
 

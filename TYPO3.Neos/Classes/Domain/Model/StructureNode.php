@@ -44,7 +44,7 @@ class StructureNode {
 	 * The identifier of this node (a UUID)
 	 *
 	 * @var string
-	 * @identifier
+	 * @uuid
 	 */
 	protected $id;
 

@@ -47,7 +47,7 @@ class Page extends \F3\TYPO3\Domain\Model\AbstractContent {
 	/**
 	 * The page's unique identifier
 	 * @var string
-	 * @identifier
+	 * @uuid
 	 */
 	protected $id;
 
