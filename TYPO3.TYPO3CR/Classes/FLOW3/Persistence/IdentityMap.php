@@ -65,25 +65,25 @@ class IdentityMap {
 	}
 
 	/**
-	 * Returns the (node) identifier for the given object
+	 * Returns the node identifier for the given object
 	 *
 	 * @param object $object
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getIdentifier($object) {
+	public function getUUID($object) {
 		return $this->identityMap[$object];
 	}
 
 	/**
-	 * Register a (node) identifier for an object
+	 * Register a node identifier for an object
 	 *
 	 * @param object $object
-	 * @param string $identifier
+	 * @param string $uuid
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerObject($object, $identifier) {
-		$this->identityMap[$object] = $identifier;
+	public function registerObject($object, $uuid) {
+		$this->identityMap[$object] = $uuid;
 	}
 
 	/**

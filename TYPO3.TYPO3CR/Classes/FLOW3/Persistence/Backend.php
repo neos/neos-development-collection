@@ -197,6 +197,22 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
+	 * Returns the (internal) identifier for the object, if it is known to the
+	 * backend. Otherwise NULL is returned.
+	 *
+	 * @param object $object
+	 * @return string The identifier for the object if it is known, or NULL
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUID($object) {
+		if ($this->identityMap->hasObject($object)) {
+			return $this->identityMap->getUUID($object);
+		} else {
+			return NULL;
+		}
+	}
+
+	/**
 	 * Traverse all aggregate roots breadth first.
 	 *
 	 * @return void
@@ -229,7 +245,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	protected function persistObject($object) {
 		$queue = array();
-		$node = $this->session->getNodeByIdentifier($this->identityMap->getIdentifier($object));
+		$node = $this->session->getNodeByIdentifier($this->identityMap->getUUID($object));
 
 		$classSchema = $this->classSchemata[$object->AOPProxyGetProxyTargetClassName()];
 		foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
@@ -360,7 +376,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	protected function processDeletedObject($object) {
 		if ($this->identityMap->hasObject($object)) {
-			$node = $this->session->getNodeByIdentifier($this->identityMap->getIdentifier($object));
+			$node = $this->session->getNodeByIdentifier($this->identityMap->getUUID($object));
 			$node->remove();
 			$this->identityMap->unregisterObject($object);
 		}

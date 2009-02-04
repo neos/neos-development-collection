@@ -154,6 +154,21 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
+	 * Matches against the internal identifier.
+	 *
+	 * @param string $uuid A UUID
+	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
+	 */
+	public function withUUID($uuid) {
+		$this->operands['typo3cr:identifier'] = $uuid;
+		return $this->QOMFactory->comparison(
+			$this->QOMFactory->propertyValue('typo3cr:identifier'),
+			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+			$this->QOMFactory->bindVariable('typo3cr:identifier')
+		);
+	}
+
+	/**
 	 * Adds an equality criterion used for matching objects against the query
 	 *
 	 * @param string $property The name of the property to compare against
@@ -162,11 +177,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function equals($property, $operand) {
-		$this->operands[$property] = $operand;
+		$this->operands['flow3:' . $property] = $operand;
 		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue($property),
+			$this->QOMFactory->propertyValue('flow3:' . $property),
 			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
-			$this->QOMFactory->bindVariable($property)
+			$this->QOMFactory->bindVariable('flow3:' . $property)
 		);
 	}
 

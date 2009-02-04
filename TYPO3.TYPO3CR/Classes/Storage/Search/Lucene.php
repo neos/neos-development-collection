@@ -182,7 +182,7 @@ class Lucene extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 */
 	protected function parseConstraint(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint, array $boundVariableValues, \Zend_Search_Lucene_Search_Query_MultiTerm $luceneQuery) {
 		if ($constraint instanceof \F3\PHPCR\Query\QOM\ComparisonInterface) {
-			$term  = new \Zend_Search_Lucene_Index_Term($boundVariableValues[$constraint->getOperand1()->getPropertyName()], 'flow3:' . $constraint->getOperand1()->getPropertyName());
+			$term  = new \Zend_Search_Lucene_Index_Term($boundVariableValues[$constraint->getOperand1()->getPropertyName()], $constraint->getOperand1()->getPropertyName());
 			$luceneQuery->addTerm($term, TRUE);
 		}
 	}

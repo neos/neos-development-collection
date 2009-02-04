@@ -61,7 +61,7 @@ class IdentityMapTest extends \F3\Testing\BaseTestCase {
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($object, 12345);
 
-		$this->assertEquals($identityMap->getIdentifier($object), 12345, 'Did not get identifier registered for object.');
+		$this->assertEquals($identityMap->getUUID($object), 12345, 'Did not get identifier registered for object.');
 	}
 
 	/**

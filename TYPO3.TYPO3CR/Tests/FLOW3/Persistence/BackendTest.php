@@ -452,7 +452,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo implement
 	 */
 	public function aValueObjectIsStoredAsOftenAsUsedInEntities() {
 			// set up object
@@ -509,6 +508,41 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->setAggregateRootObjects($aggregateRootObjects);
 		$backend->commit();
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUIDReturnsUUIDForKnownObject() {
+		$knownObject = new \stdClass();
+		$fakeUUID = '123-456';
+
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(TRUE));
+		$mockIdentityMap->expects($this->once())->method('getUUID')->with($knownObject)->will($this->returnValue($fakeUUID));
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
+		$backend->injectIdentityMap($mockIdentityMap);
+
+		$this->assertEquals($fakeUUID, $backend->getUUID($knownObject));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUIDReturnsNullForUnknownObject() {
+		$unknownObject = new \stdClass();
+
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
+		$backend->injectIdentityMap($mockIdentityMap);
+
+		$this->assertNull($backend->getUUID($unknownObject));
+	}
+
 }
 
 ?>
