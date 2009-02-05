@@ -43,12 +43,7 @@ class PreparedQuery extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Query\P
 	/**
 	 * @var array
 	 */
-	protected $boundVariableNames = array();
-
-	/**
-	 * @var array
-	 */
-	protected $variableValues = array();
+	protected $boundVariables = array();
 
 	/**
 	 * Binds the given value to the variable named $varName.
@@ -60,8 +55,8 @@ class PreparedQuery extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Query\P
 	 * @throws RepositoryException if an error occurs.
 	 */
 	public function bindValue($varName, \F3\PHPCR\ValueInterface $value) {
-		if (!array_search($varName, $this->boundVariableNames)) {
-			throw new \InvalidArgumentException('Invalid variable name given to bindValue.', 1217241834);
+		if (array_key_exists($varName, $this->boundVariables) === FALSE) {
+			throw new \InvalidArgumentException('Invalid variable name "' . $varName . '" given to bindValue.', 1217241834);
 		}
 
 		switch ($value->getType()) {
@@ -69,9 +64,9 @@ class PreparedQuery extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Query\P
 				$value = $value->getString();
 				break;
 			default:
-				throw new \F3\PHPCR\RepositoryException('Unsupported value type in bindValue encountered.', 1218020658);
+				throw new \F3\PHPCR\RepositoryException('Unsupported value type in bindValue encountered for variable "' . $varName . '".', 1218020658);
 		}
-		$this->variableValues[$varName] = $value;
+		$this->boundVariables[$varName] = $value;
 	}
 
 	/**
@@ -81,7 +76,7 @@ class PreparedQuery extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Query\P
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBoundVariableValues() {
-		return $this->variableValues;
+		return $this->boundVariables;
 	}
 }
 

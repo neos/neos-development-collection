@@ -177,9 +177,10 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\AndInterface the And constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function _and(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint1, \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058193);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\AndInterface', $constraint1, $constraint2);
 	}
 
 	/**
@@ -190,9 +191,10 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\OrInterface the Or constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function _or(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint1, \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058194);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrInterface', $constraint1, $constraint2);
 	}
 
 	/**
@@ -202,9 +204,10 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\NotInterface the Not constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function not(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058212);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\NotInterface', $constraint);
 	}
 
 	/**

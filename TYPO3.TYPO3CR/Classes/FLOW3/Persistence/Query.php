@@ -134,8 +134,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	public function execute() {
 		$query = $this->QOMFactory->createQuery($this->QOMFactory->selector('flow3:' . str_replace('\\', '_', $this->className)), $this->constraint, array(), array());
 		foreach ($this->operands as $name => $value) {
-			$valueObject = $this->valueFactory->createValue($value);
-			$query->bindValue($name, $valueObject);
+			$query->bindValue($name, $this->valueFactory->createValue($value));
 		}
 		$result = $query->execute();
 
@@ -151,6 +150,47 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	public function matching($constraint) {
 		$this->constraint = $constraint;
 		return $this;
+	}
+
+	/**
+	 * Performs a logical conjunction of the two given constraints
+	 *
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint1
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2
+	 * @return \F3\PHPCR\Query\QOM\AndInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function logicalAnd($constraint1, $constraint2) {
+		return $this->QOMFactory->_and(
+			$constraint1,
+			$constraint2
+		);
+	}
+
+	/**
+	 * Performs a logical disjunction of the two given constraints
+	 *
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint1
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2
+	 * @return \F3\PHPCR\Query\QOM\AndInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function logicalOr($constraint1, $constraint2) {
+		return $this->QOMFactory->_or(
+			$constraint1,
+			$constraint2
+		);
+	}
+
+	/**
+	 * Performs a logical negation of the given constraint
+	 *
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint
+	 * @return \F3\PHPCR\Query\QOM\AndInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function logicalNot($constraint) {
+		return $this->QOMFactory->not($constraint);
 	}
 
 	/**

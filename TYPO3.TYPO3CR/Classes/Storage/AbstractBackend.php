@@ -77,7 +77,7 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setWorkspaceName($workspaceName) {
-		if ($workspaceName == '' || !is_string($workspaceName)) throw new \InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1200614989);
+		if ($workspaceName === '' || !is_string($workspaceName)) throw new \InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1200614989);
 		$this->workspaceName = $workspaceName;
 		$this->searchEngine->setWorkspaceName($workspaceName);
 	}

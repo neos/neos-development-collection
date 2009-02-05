@@ -71,12 +71,12 @@ class Comparison implements \F3\PHPCR\Query\QOM\ComparisonInterface {
 	/**
 	 * Fills an array with the names of all bound variables in the operand
 	 *
-	 * @param array &$boundVariableNames
+	 * @param array &$boundVariables
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function collectBoundVariableNames(&$boundVariableNames) {
-		$this->operand2->collectBoundVariablenames($boundVariableNames);
+	public function collectBoundVariableNames(&$boundVariables) {
+		$this->operand2->collectBoundVariablenames($boundVariables);
 	}
 
 	/**

@@ -102,8 +102,7 @@ class QueryObjectModel extends \F3\TYPO3CR\Query\PreparedQuery implements \F3\PH
 		$this->columns = $columns;
 
 		if ($this->constraint !== NULL) {
-			$this->constraint->collectBoundVariableNames($this->boundVariableNames);
-			$this->boundVariableNames = array_flip($this->boundVariableNames);
+			$this->constraint->collectBoundVariableNames($this->boundVariables);
 		}
 	}
 

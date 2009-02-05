@@ -25,11 +25,14 @@ namespace F3\TYPO3CR\Query\QOM;
 /**
  * @package TYPO3CR
  * @subpackage Query
- * @version $Id$
+ * @version $Id:$
  */
 
 /**
- * Evaluates to the value of a bind variable.
+/**
+ * Performs a logical negation of another constraint.
+ *
+ * To satisfy the Not constraint, the node-tuple must not satisfy constraint.
  *
  * @package TYPO3CR
  * @subpackage Query
@@ -37,45 +40,42 @@ namespace F3\TYPO3CR\Query\QOM;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class BindVariableValue extends \F3\TYPO3CR\Query\QOM\StaticOperand implements \F3\PHPCR\Query\QOM\BindVariableValueInterface {
+class LogicalNot implements \F3\PHPCR\Query\QOM\NotInterface {
 
 	/**
-	 * @var string
+	 * @var \F3\PHPCR\Query\QOM\ConstraintInterface
 	 */
-	protected $variableName;
+	protected $constraint;
 
 	/**
-	 * Constructs this BindVariableValue instance
 	 *
-	 * @param string $variableName
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($variableName) {
-		$this->variableName = $variableName;
+	public function __construct(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint) {
+		$this->constraint = $constraint;
 	}
 
 	/**
-	 * Fills an array with the names of all bound variables in the operand
+	 * Fills an array with the names of all bound variables in the constraint
 	 *
 	 * @param array &$boundVariables
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function collectBoundVariableNames(&$boundVariables) {
-		$boundVariables[$this->variableName] = NULL;
+		$this->constraint->collectBoundVariableNames($boundVariables);
 	}
 
-
 	/**
-	 * Gets the name of the bind variable.
+	 * Gets the constraint negated by this Not constraint.
 	 *
-	 * @return string the bind variable name; non-null
+	 * @return \F3\PHPCR\Query\QOM\ConstraintInterface the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getBindVariableName() {
-		return $this->variableName;
+	public function getConstraint() {
+		return $this->constraint;
 	}
 
 }
-
 ?>

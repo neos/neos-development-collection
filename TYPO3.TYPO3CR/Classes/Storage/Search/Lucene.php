@@ -151,16 +151,17 @@ class Lucene extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query) {
-		$luceneQuery = new \Zend_Search_Lucene_Search_Query_MultiTerm();
+		$luceneQuery = new \Zend_Search_Lucene_Search_Query_Boolean();
 
 		if ($query->getSource() instanceof \F3\PHPCR\Query\QOM\SourceInterface) {
-			$term  = new \Zend_Search_Lucene_Index_Term($query->getSource()->getNodeTypeName(), 'typo3cr:nodetype');
-			$luceneQuery->addTerm($term, TRUE);
+			$luceneQuery->addSubquery(
+				new \Zend_Search_Lucene_Search_Query_Term(new \Zend_Search_Lucene_Index_Term($query->getSource()->getNodeTypeName(), 'typo3cr:nodetype')),
+				TRUE
+			);
 		}
 
-		$constraint = $query->getConstraint();
-		if ($constraint !== NULL) {
-			$this->parseConstraint($constraint, $query->getBoundVariableValues(), $luceneQuery);
+		if ($query->getConstraint() !== NULL) {
+			$this->parseConstraint($query->getConstraint(), $query->getBoundVariableValues(), $luceneQuery);
 		}
 
 		$hits = $this->index->find($luceneQuery);
@@ -176,14 +177,32 @@ class Lucene extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * Transforms a constraint into Lucene search terms added to the query
 	 *
 	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint
-	 * @param \Zend_Search_Lucene_Search_Query_MultiTerm $luceneQuery
+	 * @param \Zend_Search_Lucene_Search_Query_Boolean $luceneQuery
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseConstraint(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint, array $boundVariableValues, \Zend_Search_Lucene_Search_Query_MultiTerm $luceneQuery) {
-		if ($constraint instanceof \F3\PHPCR\Query\QOM\ComparisonInterface) {
-			$term  = new \Zend_Search_Lucene_Index_Term($boundVariableValues[$constraint->getOperand1()->getPropertyName()], $constraint->getOperand1()->getPropertyName());
-			$luceneQuery->addTerm($term, TRUE);
+	protected function parseConstraint(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint, array $boundVariableValues, \Zend_Search_Lucene_Search_Query_Boolean $query) {
+		if ($constraint instanceof \F3\PHPCR\Query\QOM\AndInterface) {
+				$subQuery = new \Zend_Search_Lucene_Search_Query_Boolean();
+				$this->parseConstraint($constraint->getConstraint1(), $boundVariableValues, $subQuery);
+				$this->parseConstraint($constraint->getConstraint2(), $boundVariableValues, $subQuery);
+				$query->addSubquery($subQuery, TRUE);
+		} elseif ($constraint instanceof \F3\PHPCR\Query\QOM\OrInterface) {
+				$subQuery = new \Zend_Search_Lucene_Search_Query_Boolean();
+				$this->parseConstraint($constraint->getConstraint1(), $boundVariableValues, $subQuery);
+				$this->parseConstraint($constraint->getConstraint2(), $boundVariableValues, $subQuery);
+				$query->addSubquery($subQuery, NULL);
+		} elseif ($constraint instanceof \F3\PHPCR\Query\QOM\NotInterface) {
+				$subQuery = new \Zend_Search_Lucene_Search_Query_Boolean();
+				$this->parseConstraint($constraint->getConstraint(), $boundVariableValues, $subQuery);
+				$query->addSubquery($subQuery, FALSE);
+		} elseif ($constraint instanceof \F3\PHPCR\Query\QOM\ComparisonInterface) {
+			$query->addSubquery(
+				new \Zend_Search_Lucene_Search_Query_Term(
+					new \Zend_Search_Lucene_Index_Term($boundVariableValues[$constraint->getOperand1()->getPropertyName()], $constraint->getOperand1()->getPropertyName())
+				),
+				TRUE
+			);
 		}
 	}
 

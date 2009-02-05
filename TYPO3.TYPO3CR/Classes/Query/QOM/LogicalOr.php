@@ -25,11 +25,16 @@ namespace F3\TYPO3CR\Query\QOM;
 /**
  * @package TYPO3CR
  * @subpackage Query
- * @version $Id$
+ * @version $Id:$
  */
 
 /**
- * Evaluates to the value of a bind variable.
+ * Performs a logical disjunction of two other constraints.
+ *
+ * To satisfy the Or constraint, the node-tuple must either:
+ *  satisfy constraint1 but not constraint2, or
+ *  satisfy constraint2 but not constraint1, or
+ *  satisfy both constraint1 and constraint2.
  *
  * @package TYPO3CR
  * @subpackage Query
@@ -37,45 +42,60 @@ namespace F3\TYPO3CR\Query\QOM;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class BindVariableValue extends \F3\TYPO3CR\Query\QOM\StaticOperand implements \F3\PHPCR\Query\QOM\BindVariableValueInterface {
+class LogicalOr implements \F3\PHPCR\Query\QOM\OrInterface {
 
 	/**
-	 * @var string
+	 * @var \F3\PHPCR\Query\QOM\ConstraintInterface
 	 */
-	protected $variableName;
+	protected $constraint1;
 
 	/**
-	 * Constructs this BindVariableValue instance
+	 * @var \F3\PHPCR\Query\QOM\ConstraintInterface
+	 */
+	protected $constraint2;
+
+	/**
 	 *
-	 * @param string $variableName
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint1
+	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($variableName) {
-		$this->variableName = $variableName;
+	public function __construct(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint1, \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2) {
+		$this->constraint1 = $constraint1;
+		$this->constraint2 = $constraint2;
 	}
 
 	/**
-	 * Fills an array with the names of all bound variables in the operand
+	 * Fills an array with the names of all bound variables in the constraints
 	 *
 	 * @param array &$boundVariables
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function collectBoundVariableNames(&$boundVariables) {
-		$boundVariables[$this->variableName] = NULL;
+		$this->constraint1->collectBoundVariablenames($boundVariables);
+		$this->constraint2->collectBoundVariablenames($boundVariables);
 	}
 
-
 	/**
-	 * Gets the name of the bind variable.
+	 * Gets the first constraint.
 	 *
-	 * @return string the bind variable name; non-null
+	 * @return \F3\PHPCR\Query\QOM\ConstraintInterface the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getBindVariableName() {
-		return $this->variableName;
+	public function getConstraint1() {
+		return $this->constraint1;
+	}
+
+	/**
+	 * Gets the second constraint.
+	 *
+	 * @return \F3\PHPCR\Query\QOM\ConstraintInterface the constraint; non-null
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getConstraint2() {
+		return $this->constraint2;
 	}
 
 }
-
 ?>
