@@ -39,17 +39,6 @@ namespace F3\TYPO3\Frontend\Controller;
 class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * Initializes this controller
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeController() {
-		$this->arguments->addNewArgument('page', 'UUID');
-	}
-
-
-	/**
 	 * Alias for the "show" action
 	 *
 	 * @return void
@@ -62,27 +51,12 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Shows the page specified in the "page" argument
 	 *
+	 * @param \F3\TYPO3\Domain\Model\Page $page The page to display
 	 * @return string View output for the specified page
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction() {
-		$this->prepareFake();
-
-		$pageUUID = $this->arguments['page']->getValue();
-		if ($pageUUID === NULL) return 'Invalid page uuid';
-
-#		$pages = $this->pageRepository->findByUUID($pageUUID);
-		return 'TYPO3 Frontend: show()';
-	}
-
-	/**
-	 * Prepares a fake set of pages etc. for testing
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function prepareFake() {
-		$this->arguments['page']->setValue('e0675c97-ffbe-4559-88cb-2da57a6f3064');
+	public function showAction($page) {
+		return "<br />\nTYPO3 Frontend: show()";
 	}
 }
 ?>

@@ -55,18 +55,6 @@ class SitesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	}
 
 	/**
-	 * Initializes the arguments of this controller
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-
-		$this->arguments->addNewArgument('name', 'Text');
-	}
-
-	/**
 	 * Lists available sites from the repository
 	 *
 	 * @return string Output of the list view
@@ -94,12 +82,13 @@ class SitesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * Creates a new site
 	 *
+	 * @param string $name Name of the website
 	 * @return string The status message
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createAction() {
+	public function createAction($name) {
 		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Site');
-		$site->setName($this->arguments['name']->getValue());
+		$site->setName($name);
 		$this->siteRepository->add($site);
 
 		$this->response->setStatus(201);
@@ -109,13 +98,14 @@ class SitesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * Updates an existing site
 	 *
+	 * @param string $name Name of the website
 	 * @return string The status message
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function updateAction() {
+	public function updateAction($name = NULL) {
 		$site = $this->siteRepository->findById($this->arguments['id']);
 		if ($site === NULL) $this->throwStatus(404, NULL, 'Unknown Site');
-		if ($this->arguments['name']->getValue() !== NULL) $site->setName($this->arguments['name']->getValue());
+		if ($name !== NULL) $site->setName($name);
 
 		$this->response->setStatus(200);
 		$this->response->setHeader('Location', 'http://t3v5/index_dev.php/typo3/service/v1/sites/' . $site->getId() . '.json');
