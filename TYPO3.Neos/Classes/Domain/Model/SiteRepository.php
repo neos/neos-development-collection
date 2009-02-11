@@ -37,19 +37,6 @@ namespace F3\TYPO3\Domain\Model;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class SiteRepository extends \F3\FLOW3\Persistence\Repository {
-
-	/**
-	 * Finds a site by its identifier
-	 *
-	 * @param string The UUID of the site
-	 * @return \F3\TYPO3\Domain\Model\Site The site or NULL if it doesn't exist
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function findById($id) {
-		$query = $this->queryFactory->create();
-		$sites = $query->matching($query->equals('id', (string)$id))->execute();
-		return (is_array($sites)) ? array_shift($sites) : NULL;
-	}
 }
 
 ?>

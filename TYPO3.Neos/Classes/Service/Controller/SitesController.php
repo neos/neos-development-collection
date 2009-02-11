@@ -69,11 +69,12 @@ class SitesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * Shows properties of a specific site
 	 *
+	 * @param string $id
 	 * @return string Output of the show view
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction() {
-		$site = $this->siteRepository->findById($this->arguments['id']);
+	public function showAction($id) {
+		$site = $this->siteRepository->findByUUID($id);
 		if ($site === NULL) $this->throwStatus(404);
 		$this->view->site = $site;
 		return $this->view->render();
