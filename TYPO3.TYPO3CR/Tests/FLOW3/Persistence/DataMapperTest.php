@@ -39,11 +39,7 @@ namespace F3\TYPO3CR\FLOW3\Persistence;
 class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * The assertions at the end of the test are nice, but the expectations of the
-	 * mock objects are also very important. If this ever breaks, one will have to
-	 * look at the inner workings of map() and it's called methods, though. Sorry.
-	 *
-	 * @ test
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapReturnsCorrectObjectsFromNodes() {
@@ -51,11 +47,10 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 
 		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration', array(), array(), '', FALSE);
-		$mockEntity = $this->getMock('stdClass', array(), array(), 'Tests\Virtual\Entity');
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
-		$mockObjectBuilder->expects($this->exactly(2))->method('reconstituteObject')->with('Tests\Virtual\Entity', $mockObjectConfiguration, array())->will($this->returnValue($mockEntity));
+		$mockObjectBuilder->expects($this->exactly(2))->method('reconstituteObject')->with('Tests\Virtual\Entity', $mockObjectConfiguration, array())->will($this->returnValue(new \stdClass()));
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\Manager', array(), array(), '', FALSE);
@@ -66,10 +61,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockPrimaryNodeType->expects($this->any())->method('getName')->will($this->returnValue('flow3:Tests\Virtual\Entity'));
 		$node1 = $this->getMock('F3\PHPCR\NodeInterface');
 		$node1->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($mockPrimaryNodeType));
-		$node1->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 		$node2 = $this->getMock('F3\PHPCR\NodeInterface');
 		$node2->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($mockPrimaryNodeType));
-		$node2->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 		$nodeIterator = new \F3\TYPO3CR\NodeIterator(array($node1, $node2));
 
 		$dataMapper = new \F3\TYPO3CR\FLOW3\Persistence\DataMapper();
@@ -78,9 +71,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$dataMapper->injectIdentityMap($identityMap);
 		$dataMapper->injectPersistenceManager($mockPersistenceManager);
 
-		$objects = $dataMapper->map($nodeIterator);
-		$this->assertEquals(2, count($objects), 'Did not get back the expected 2 objects.');
-		$this->assertType('Tests\Virtual\Entity', $objects[0], 'Did not get back the expected object type.');
+		$dataMapper->map($nodeIterator);
 	}
 
 	/**
@@ -165,6 +156,68 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$dataMapper->map($nodeIterator);
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function mapDetectsAndResolvesObjectProxyNodes() {
+			// set up classes
+		$authorClassName = uniqid('Author');
+		$qualifiedAuthorClassName = 'F3\\' . $authorClassName;
+		eval('namespace F3; class ' . $authorClassName . ' { public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+
+			// set up (mock) objects
+		$mockAuthor = new $qualifiedAuthorClassName();
+
+		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
+		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$postClassSchema->setRepositoryManaged(TRUE);
+		$postClassSchema->setProperty('author', $qualifiedAuthorClassName);
+
+		$mockPostRepository = $this->getMock('F3\FLOW3\Persistence\Repository');
+		$mockPostRepository->expects($this->once())->method('findByUUID')->with('fakeUUID')->will($this->returnValue($mockAuthor));
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
+		$mockObjectManager->expects($this->any())->method('getObject')->with('PostRepository')->will($this->returnValue($mockPostRepository));
+		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
+		$mockObjectBuilder->expects($this->at(0))->method('reconstituteObject')->with('F3\Post', $mockObjectConfiguration, array('author' => $mockAuthor))->will($this->returnValue(new \stdClass()));
+
+		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
+		$persistenceSession = new \F3\FLOW3\Persistence\Session();
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\Manager', array(), array(), '', FALSE);
+		$mockPersistenceManager->expects($this->atLeastOnce())->method('getSession')->will($this->returnValue($persistenceSession));
+		$mockPersistenceManager->expects($this->once())->method('getClassSchema')->with('F3\Post')->will($this->returnValue($postClassSchema));
+
+		$mockProxyPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$mockProxyPrimaryNodeType->expects($this->any())->method('getName')->will($this->returnValue(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY));
+		$uuidValue = $this->getMock('F3\PHPCR\ValueInterface');
+		$uuidValue->expects($this->any())->method('getString')->will($this->returnValue('fakeUUID'));
+		$repositoryClassNameValue = $this->getMock('F3\PHPCR\ValueInterface');
+		$repositoryClassNameValue->expects($this->any())->method('getString')->will($this->returnValue('PostRepository'));
+		$proxyNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$proxyNode->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($mockProxyPrimaryNodeType));
+		$proxyNode->expects($this->at(1))->method('getProperty')->with('flow3:target')->will($this->returnValue($uuidValue));
+		$proxyNode->expects($this->at(2))->method('getProperty')->with('flow3:repositoryClassName')->will($this->returnValue($repositoryClassNameValue));
+
+		$mockPostPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$mockPostPrimaryNodeType->expects($this->any())->method('getName')->will($this->returnValue('flow3:F3\Post'));
+		$postNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$postNode->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($mockPostPrimaryNodeType));
+		$postNode->expects($this->any())->method('hasNode')->will($this->returnValue(TRUE));
+		$postNode->expects($this->once())->method('getNode')->with('flow3:author')->will($this->returnValue($proxyNode));
+
+		$nodeIterator = new \F3\TYPO3CR\NodeIterator(array($postNode));
+
+		$dataMapper = new \F3\TYPO3CR\FLOW3\Persistence\DataMapper();
+		$dataMapper->injectObjectManager($mockObjectManager);
+		$dataMapper->injectObjectBuilder($mockObjectBuilder);
+		$dataMapper->injectIdentityMap($identityMap);
+		$dataMapper->injectPersistenceManager($mockPersistenceManager);
+
+		$dataMapper->map($nodeIterator);
+	}
 }
 
 ?>

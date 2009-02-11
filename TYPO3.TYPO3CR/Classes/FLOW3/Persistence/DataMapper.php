@@ -159,7 +159,12 @@ class DataMapper {
 					// we have an object to handle...
 				default:
 					if ($node->hasNode('flow3:' . $propertyName)) {
-						$propertyValue = $this->mapSingleNode($node->getNode('flow3:' . $propertyName));
+						$propertyNode = $node->getNode('flow3:' . $propertyName);
+						if ($propertyNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
+							$propertyValue = $this->resolveObjectProxyNode($propertyNode);
+						} else {
+							$propertyValue = $this->mapSingleNode($propertyNode->getNode('flow3:' . $propertyName));
+						}
 					} else {
 						$propertyValue = NULL;
 					}
@@ -185,7 +190,7 @@ class DataMapper {
 	 * @todo remove the check on the node/property names and use name pattern
 	 */
 	protected function mapArrayProxyNode(\F3\PHPCR\NodeInterface $proxyNode) {
-		if ($proxyNode->getPrimaryNodeType()->getName() !== 'flow3:arrayPropertyProxy') {
+		if ($proxyNode->getPrimaryNodeType()->getName() !== \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY) {
 			throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnsupportedTypeException('Arrays can only be mapped back from nodes of type flow3:arrayPropertyProxy.', 1227705954);
 		}
 		$array = array();
@@ -193,8 +198,10 @@ class DataMapper {
 		$objectNodes = $proxyNode->getNodes();
 		foreach ($objectNodes as $objectNode) {
 			$objectNodeName = explode(':', $objectNode->getName(), 2);
-			if ($objectNode->getPrimaryNodeType()->getName() === 'flow3:arrayPropertyProxy') {
+			if ($objectNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY) {
 				$array[$objectNodeName[1]] = $this->mapArrayProxyNode($objectNode);
+			} elseif ($objectNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
+				$array[$objectNodeName[1]] = $this->resolveObjectProxyNode($objectNode);
 			} elseif ($objectNodeName[0] === 'flow3') {
 				$array[$objectNodeName[1]] = $this->mapSingleNode($objectNode);
 			}
@@ -209,6 +216,19 @@ class DataMapper {
 		}
 
 		return $array;
+	}
+
+	/**
+	 * Fetches the object pointed to by the object proxy node.
+	 *
+	 * @param \F3\PHPCR\NodeInterface $proxyNode
+	 * @return object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function resolveObjectProxyNode(\F3\PHPCR\NodeInterface $proxyNode) {
+		$targetUUID = $proxyNode->getProperty('flow3:target')->getString();
+		$targetRepositoryClassName = $proxyNode->getProperty('flow3:repositoryClassName')->getString();
+		return $this->objectManager->getObject($targetRepositoryClassName)->findByUUID($targetUUID);
 	}
 
 	/**

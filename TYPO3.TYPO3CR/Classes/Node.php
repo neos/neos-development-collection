@@ -495,7 +495,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 
 			if ($identifier !== NULL) {
 				if ($this->session->hasIdentifier($identifier)) {
-					throw new \F3\PHPCR\ItemExistsException('The identifier requested is already in use.', 1219424096);
+					throw new \F3\PHPCR\ItemExistsException('The identifier requested (' . $identifier . ') for "' . $relPath . '"is already in use.', 1219424096);
 				}
 				$rawData['newidentifier'] = $identifier;
 			}
