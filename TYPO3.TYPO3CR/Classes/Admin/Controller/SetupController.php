@@ -51,7 +51,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeController() {
+	public function initializeArguments() {
 		$this->arguments->addNewArgument('dsn');
 		$this->arguments->addNewArgument('userid');
 		$this->arguments->addNewArgument('password');

@@ -103,7 +103,7 @@ class Helper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeTables() {
-		$lines = file(FLOW3_PATH_PACKAGES . 'TYPO3CR/Resources/SQL/TYPO3CR_schema.sql', FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
+		$lines = file(__DIR__ . '/../../Resources/SQL/TYPO3CR_schema.sql', FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
 		$statement = '';
 		foreach ($lines as $line) {
 			$line = trim($line);
