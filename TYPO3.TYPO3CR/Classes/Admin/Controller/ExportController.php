@@ -62,21 +62,15 @@ class ExportController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Initializes this controller
+	 * Returns the XML export strating at the node with the given UUID in system
+	 * view form.
 	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param string $rootNodeIdentifier
+	 * @param boolean $skipBinary
+	 * @param boolean $noRecurse
+	 * @return string
 	 */
-	public function initializeController() {
-		$this->arguments->addNewArgument('rootNodeIdentifier', 'UUID');
-		$this->arguments->addNewArgument('skipBinary');
-		$this->arguments->addNewArgument('noRecurse');
-	}
-
-	/**
-	 * @return void
-	 */
-	public function systemViewAction() {
+	public function systemViewAction($rootNodeIdentifier, $skipBinary, $noRecurse) {
 		try {
 			$rootNode = $this->session->getNodeByIdentifier($this->arguments['rootNodeIdentifier']->getValue());
 		} catch(\F3\PHPCR\ItemNotFoundException $e) {
@@ -94,9 +88,15 @@ class ExportController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * @return void
+	 * Returns the XML export strating at the node with the given UUID in
+	 * document view form.
+	 *
+	 * @param string $rootNodeIdentifier
+	 * @param boolean $skipBinary
+	 * @param boolean $noRecurse
+	 * @return string
 	 */
-	public function documentViewAction() {
+	public function documentViewAction($rootNodeIdentifier, $skipBinary, $noRecurse) {
 		try {
 			$rootNode = $this->session->getNodeByIdentifier($this->arguments['rootNodeIdentifier']->getValue());
 		} catch(\F3\PHPCR\ItemNotFoundException $e) {
