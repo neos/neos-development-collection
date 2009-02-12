@@ -45,8 +45,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	public function mapReturnsCorrectObjectsFromNodes() {
 		$mockEntityClassName = uniqid('Entity');
 		$qualifiedMockEntityClassName = 'Tests\Virtual\\' . $mockEntityClassName;
-		eval('namespace Tests\Virtual; class ' . $mockEntityClassName . ' { public function memorizeCleanState() { $this->memorizeCleanStateCalled = TRUE; } }');
-		$mockEntity = new $qualifiedMockEntityClassName();
+		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('memorizeCleanState', 'AOPProxyInvokeJoinPoint', 'AOPProxyGetProperty', 'AOPProxySetProperty', 'AOPProxyGetProxyTargetClassName'), array(), $qualifiedMockEntityClassName, FALSE);
+		$mockEntity->expects($this->once())->method('memorizeCleanState');
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array(), '', FALSE);
 		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
@@ -55,9 +55,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
-		$mockObjectBuilder->expects($this->once())->method('createSkeleton')->with($qualifiedMockEntityClassName, $mockObjectConfiguration)->will($this->returnValue($mockEntity));
-		$mockObjectBuilder->expects($this->once())->method('thawSetterDependencies');
-		$mockObjectBuilder->expects($this->once())->method('thawProperties');
+		$mockObjectBuilder->expects($this->once())->method('createEmptyObject')->with($qualifiedMockEntityClassName, $mockObjectConfiguration)->will($this->returnValue($mockEntity));
+		$mockObjectBuilder->expects($this->once())->method('reinjectDependencies');
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\Manager', array(), array(), '', FALSE);
@@ -77,8 +76,6 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$dataMapper->injectPersistenceManager($mockPersistenceManager);
 
 		$objects = $dataMapper->map($nodeIterator);
-
-		$this->assertTrue($objects[0]->memorizeCleanStateCalled);
 	}
 
 	/**
@@ -92,8 +89,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	public function mapRegistersObjectsInIdentityMap() {
 		$mockEntityClassName = uniqid('Entity');
 		$qualifiedMockEntityClassName = 'Tests\Virtual\\' . $mockEntityClassName;
-		eval('namespace Tests\Virtual; class ' . $mockEntityClassName . ' { public function memorizeCleanState() {} }');
-		$mockEntity = new $qualifiedMockEntityClassName();
+		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('memorizeCleanState', 'AOPProxyInvokeJoinPoint', 'AOPProxyGetProperty', 'AOPProxySetProperty', 'AOPProxyGetProxyTargetClassName'), array(), $qualifiedMockEntityClassName, FALSE);
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array(), '', FALSE);
 		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
@@ -101,9 +97,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
-		$mockObjectBuilder->expects($this->any())->method('createSkeleton')->will($this->returnValue($mockEntity));
-		$mockObjectBuilder->expects($this->once())->method('thawSetterDependencies');
-		$mockObjectBuilder->expects($this->once())->method('thawProperties');
+		$mockObjectBuilder->expects($this->any())->method('createEmptyObject')->will($this->returnValue($mockEntity));
+		$mockObjectBuilder->expects($this->once())->method('reinjectDependencies');
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\Manager', array(), array(), '', FALSE);
 		$mockPersistenceManager->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
@@ -139,8 +134,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	public function mapRegistersObjectsAsReconstitutedWithPersistentSession() {
 		$mockEntityClassName = uniqid('Entity');
 		$qualifiedMockEntityClassName = 'Tests\Virtual\\' . $mockEntityClassName;
-		eval('namespace Tests\Virtual; class ' . $mockEntityClassName . ' { public function memorizeCleanState() {} }');
-		$mockEntity = new $qualifiedMockEntityClassName();
+		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('memorizeCleanState', 'AOPProxyInvokeJoinPoint', 'AOPProxyGetProperty', 'AOPProxySetProperty', 'AOPProxyGetProxyTargetClassName'), array(), $qualifiedMockEntityClassName, FALSE);
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array(), '', FALSE);
 		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
@@ -148,9 +142,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
-		$mockObjectBuilder->expects($this->once())->method('createSkeleton')->will($this->returnValue($mockEntity));
-		$mockObjectBuilder->expects($this->once())->method('thawSetterDependencies');
-		$mockObjectBuilder->expects($this->once())->method('thawProperties');
+		$mockObjectBuilder->expects($this->once())->method('createEmptyObject')->will($this->returnValue($mockEntity));
+		$mockObjectBuilder->expects($this->once())->method('reinjectDependencies');
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\Manager', array(), array(), '', FALSE);
@@ -183,14 +176,14 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 			// set up classes
 		$authorClassName = uniqid('Author');
 		$qualifiedAuthorClassName = 'F3\\' . $authorClassName;
-		eval('namespace F3; class ' . $authorClassName . ' { public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+		eval('namespace F3; abstract class ' . $authorClassName . ' implements \F3\FLOW3\AOP\ProxyInterface { public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
-		eval('namespace F3; class ' . $postClassName . ' { public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+		eval('namespace F3; abstract class ' . $postClassName . ' implements \F3\FLOW3\AOP\ProxyInterface { public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
 
 			// set up (mock) objects
-		$mockAuthor = new $qualifiedAuthorClassName();
-		$mockPost = new $qualifiedPostClassName();
+		$mockAuthor = $this->getMock($qualifiedAuthorClassName);
+		$mockPost = $this->getMock($qualifiedPostClassName);
 
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($mockAuthor, 'fakeAuthorUUID');
@@ -199,9 +192,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
-		$mockObjectBuilder->expects($this->once())->method('createSkeleton')->with($qualifiedPostClassName, $mockObjectConfiguration)->will($this->returnValue($mockPost));
-		$mockObjectBuilder->expects($this->once())->method('thawSetterDependencies');
-		$mockObjectBuilder->expects($this->once())->method('thawProperties')->with($mockPost, array('author' => $mockAuthor));
+		$mockObjectBuilder->expects($this->once())->method('createEmptyObject')->with($qualifiedPostClassName, $mockObjectConfiguration)->will($this->returnValue($mockPost));
+		$mockObjectBuilder->expects($this->once())->method('reinjectDependencies');
 
 		$persistenceSession = new \F3\FLOW3\Persistence\Session();
 		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
@@ -230,13 +222,31 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$postNode->expects($this->any())->method('hasNode')->will($this->returnValue(TRUE));
 		$postNode->expects($this->once())->method('getNode')->with('flow3:author')->will($this->returnValue($authorProxyNode));
 
-		$dataMapper = new \F3\TYPO3CR\FLOW3\Persistence\DataMapper();
+		$dataMapper = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\DataMapper', array('thawProperties'), array());
 		$dataMapper->injectObjectManager($mockObjectManager);
 		$dataMapper->injectObjectBuilder($mockObjectBuilder);
 		$dataMapper->injectIdentityMap($identityMap);
 		$dataMapper->injectPersistenceManager($mockPersistenceManager);
 
 		$dataMapper->map(new \F3\TYPO3CR\NodeIterator(array($postNode)));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function thawPropertiesSetsPropertyValues() {
+		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object->expects($this->at(0))->method('AOPProxySetProperty')->with('firstProperty', 'firstValue');
+		$object->expects($this->at(1))->method('AOPProxySetProperty')->with('secondProperty', 'secondValue');
+
+		$properties = array(
+			'firstProperty' => 'firstValue',
+			'secondProperty' => 'secondValue'
+		);
+
+		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'), array(), '');
+		$dataMapper->_call('thawProperties', $object, $properties);
 	}
 
 }

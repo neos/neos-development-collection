@@ -137,7 +137,7 @@ class DataMapper {
 			$classSchema = $this->persistenceManager->getClassSchema($className);
 			$objectConfiguration = $this->objectManager->getObjectConfiguration($className);
 
-			$object = $this->objectBuilder->createSkeleton($className, $objectConfiguration);
+			$object = $this->objectBuilder->createEmptyObject($className, $objectConfiguration);
 			$this->identityMap->registerObject($object, $node->getIdentifier());
 
 			$properties = array();
@@ -181,12 +181,26 @@ class DataMapper {
 				$properties[$propertyName] = $propertyValue;
 			}
 
-			$this->objectBuilder->thawSetterDependencies($object, $objectConfiguration);
-			$this->objectBuilder->thawProperties($object, $properties);
+			$this->objectBuilder->reinjectDependencies($object, $objectConfiguration);
+			$this->thawProperties($object, $properties);
 			$object->memorizeCleanState();
 		}
 
 		return $object;
+	}
+
+	/**
+	 * Sets the given properties on the object.
+	 *
+	 * @param \F3\FLOW3\AOP\ProxyInterface $object The object to set properties on
+	 * @param array $properties The property name/value pairs to set
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, array $properties) {
+		foreach ($properties as $propertyName => $value) {
+			$object->AOPProxySetProperty($propertyName, $value);
+		}
 	}
 
 	/**
