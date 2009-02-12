@@ -527,7 +527,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(TRUE));
-		$mockIdentityMap->expects($this->once())->method('getUUID')->with($knownObject)->will($this->returnValue($fakeUUID));
+		$mockIdentityMap->expects($this->once())->method('getUUIDByObject')->with($knownObject)->will($this->returnValue($fakeUUID));
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->injectIdentityMap($mockIdentityMap);
 
@@ -608,6 +608,77 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// ... and here we go
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
 		$backend->initialize(array($qualifiedPostClassName => $postClassSchema, $qualifiedAuthorClassName => $authorClassSchema));
+		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
+		$backend->setAggregateRootObjects($aggregateRootObjects);
+		$backend->commit();
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function bidirectionalInterAggregateReferencesAreStoredAsObjectProxyNodes() {
+			// set up objects
+		$postClassName = uniqid('Post');
+		$qualifiedPostClassName = 'F3\\' . $postClassName;
+		eval('namespace F3; class ' . $postClassName . ' { public $blog; public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function AOPProxyGetProperty($propertyName) { return $this->$propertyName; } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+		$blogClassName = uniqid('Blog');
+		$qualifiedBlogClassName = 'F3\\' . $blogClassName;
+		eval('namespace F3; class ' . $blogClassName . ' { public $post; public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function AOPProxyGetProperty($propertyName) { return $this->$propertyName; } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+		$post = new $qualifiedPostClassName;
+		$blog = new $qualifiedBlogClassName();
+		$blog->post = $post;
+		$post->blog = $blog;
+
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($blog);
+		$aggregateRootObjects->attach($post);
+
+			// set up assertions on created nodes
+		$mockBlogNodeUUID = \F3\FLOW3\Utility\Algorithms::generateUUID();
+		$mockPostNodeUUID = \F3\FLOW3\Utility\Algorithms::generateUUID();
+		$mockBlogProxyNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockBlogProxyNode->expects($this->at(0))->method('setProperty')->with('flow3:target', $mockBlogNodeUUID, \F3\PHPCR\PropertyType::REFERENCE);
+		$mockPostProxyNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockPostProxyNode->expects($this->at(0))->method('setProperty')->with('flow3:target', $mockPostNodeUUID, \F3\PHPCR\PropertyType::REFERENCE);
+		$mockPostNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockPostNode->expects($this->at(1))->method('addNode')->with('flow3:blog', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockBlogProxyNode));
+		$mockPostNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($mockPostNodeUUID));
+		$mockBlogNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockBlogNode->expects($this->at(1))->method('addNode')->with('flow3:post', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockPostProxyNode));
+		$mockBlogNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($mockBlogNodeUUID));
+
+		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockBaseNode->expects($this->at(0))->method('addNode')->with('flow3:F3_' . $blogClassName, 'flow3:F3_' . $blogClassName)->will($this->returnValue($mockBlogNode));
+		$mockBaseNode->expects($this->at(1))->method('addNode')->with('flow3:F3_' . $postClassName, 'flow3:F3_' . $postClassName)->will($this->returnValue($mockPostNode));
+
+			// set up needed infrastructure
+		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
+		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
+		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
+		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
+		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
+		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
+		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
+		$mockSession->expects($this->once())->method('save');
+
+		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockBlogNode, $mockPostNode));
+
+		$blogClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedBlogClassName);
+		$blogClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$blogClassSchema->setRepositoryManaged(TRUE);
+		$blogClassSchema->setProperty('post', $qualifiedPostClassName);
+		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedPostClassName);
+		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$postClassSchema->setRepositoryManaged(TRUE);
+		$postClassSchema->setProperty('blog', $qualifiedBlogClassName);
+
+			// ... and here we go
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
+		$backend->initialize(array($qualifiedBlogClassName => $blogClassSchema, $qualifiedPostClassName => $postClassSchema));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
 		$backend->setAggregateRootObjects($aggregateRootObjects);
 		$backend->commit();

@@ -149,9 +149,19 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize(array $classSchemata) {
-		$rootNode = $this->session->getRootNode();
-		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
+		$this->classSchemata = $classSchemata;
+		$this->initializeBaseNode();
+		$this->initializeNodeTypes();
+	}
 
+	/**
+	 * Initializes the base node for object persistence
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function initializeBaseNode() {
+		$rootNode = $this->session->getRootNode();
 		if ($rootNode->hasNode('flow3:persistence/flow3:objects')) {
 			$this->baseNode = $rootNode->getNode('flow3:persistence/flow3:objects');
 		} else {
@@ -163,19 +173,29 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 				$this->baseNode = $persistenceNode->addNode('flow3:objects', 'nt:unstructured');
 			}
 		}
+	}
+
+	/**
+	 * Initializes the nodetypes used
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function initializeNodeTypes() {
+		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
 
 		if (!$nodeTypeManager->hasNodeType(self::NODETYPE_ARRAYPROXY)) {
 			$nodeTypeTemplate = $nodeTypeManager->createNodeTypeTemplate();
 			$nodeTypeTemplate->setName(self::NODETYPE_ARRAYPROXY);
 			$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		}
+
 		if (!$nodeTypeManager->hasNodeType(self::NODETYPE_OBJECTPROXY)) {
 			$nodeTypeTemplate = $nodeTypeManager->createNodeTypeTemplate();
 			$nodeTypeTemplate->setName(self::NODETYPE_OBJECTPROXY);
 			$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		}
 
-		$this->classSchemata = $classSchemata;
 		foreach($this->classSchemata as $schema) {
 			$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($schema->getClassName());
 			if (!$nodeTypeManager->hasNodeType($nodeTypeName)) {
@@ -245,7 +265,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	public function getUUID($object) {
 		if ($this->identityMap->hasObject($object)) {
-			return $this->identityMap->getUUID($object);
+			return $this->identityMap->getUUIDByObject($object);
 		} else {
 			return NULL;
 		}
@@ -293,7 +313,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	protected function persistObject($object) {
 		$queue = array();
-		$node = $this->session->getNodeByIdentifier($this->identityMap->getUUID($object));
+		$node = $this->session->getNodeByIdentifier($this->identityMap->getUUIDByObject($object));
 
 		$classSchema = $this->classSchemata[$object->AOPProxyGetProxyTargetClassName()];
 		foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
@@ -306,7 +326,11 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 				}
 			} elseif (is_object($propertyValue) && $propertyType !== 'DateTime') {
 				if ($this->classSchemata[$propertyValue->AOPProxyGetProxyTargetClassName()]->isRepositoryManaged() === TRUE) {
+					if ($object->isNew()) {
 						$this->createProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
+					} elseif ($object->isDirty($propertyName)) {
+						$this->updateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
+					}
 				} else {
 					if ($object->isNew()) {
 						$this->createNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
@@ -369,8 +393,28 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		$proxyNode = $parentNode->addNode($nodeName, self::NODETYPE_OBJECTPROXY);
 		if ($objectUUID !== NULL) {
 			$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
-			$proxyNode->setProperty('flow3:repositoryClassName', $object->AOPProxyGetProxyTargetClassName() . 'Repository', \F3\PHPCR\PropertyType::STRING);
 		} else {
+			$this->incompleteObjectProxyNodes[$proxyNode] = $object;
+		}
+	}
+
+	/**
+	 * Updates a proxy node pointing to another object's node.
+	 *
+	 * @param object $object The object to update a proxy for
+	 * @param \F3\PHPCR\NodeInterface $parentNode
+	 * @param string $nodeName The name used for the object, must be a legal name as per JSR-283
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function updateProxyNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
+		$objectUUID = $this->getUUID($object);
+
+		$proxyNode = $parentNode->getNode($nodeName);
+		if ($objectUUID !== NULL) {
+			$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
+		} else {
+			$proxyNode->getProperty('flow3:target')->remove();
 			$this->incompleteObjectProxyNodes[$proxyNode] = $object;
 		}
 	}
@@ -455,7 +499,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	protected function processDeletedObject($object) {
 		if ($this->identityMap->hasObject($object)) {
-			$node = $this->session->getNodeByIdentifier($this->identityMap->getUUID($object));
+			$node = $this->session->getNodeByIdentifier($this->identityMap->getUUIDByObject($object));
 			$node->remove();
 			$this->identityMap->unregisterObject($object);
 		}

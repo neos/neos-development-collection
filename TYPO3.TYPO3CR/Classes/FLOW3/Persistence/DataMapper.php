@@ -129,54 +129,62 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function mapSingleNode(\F3\PHPCR\NodeInterface $node) {
-		$explodedNodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
-		$className = str_replace('_', '\\', $explodedNodeTypeName[1]);
+		if ($this->identityMap->hasUUID($node->getIdentifier())) {
+			$object = $this->identityMap->getObjectByUUID($node->getIdentifier());
+		} else {
+			$explodedNodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
+			$className = str_replace('_', '\\', $explodedNodeTypeName[1]);
+			$classSchema = $this->persistenceManager->getClassSchema($className);
+			$objectConfiguration = $this->objectManager->getObjectConfiguration($className);
 
-		$classSchema = $this->persistenceManager->getClassSchema($className);
-		$properties = array();
-		foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
-			switch ($propertyType) {
-				case 'integer':
-				case 'int':
-				case 'float':
-				case 'boolean':
-				case 'string':
-				case 'DateTime':
-					if ($node->hasProperty('flow3:' . $propertyName)) {
-						$property = $node->getProperty('flow3:' . $propertyName);
-						$propertyValue = $this->getNativeValue($property->getValue(), $property->getType());
-					} else {
-						$propertyValue = NULL;
-					}
-				break;
-				case 'array':
-					if ($node->hasNode('flow3:' . $propertyName)) {
-						$propertyValue = $this->mapArrayProxyNode($node->getNode('flow3:' . $propertyName));
-					} else {
-						$propertyValue = NULL;
-					}
-				break;
-					// we have an object to handle...
-				default:
-					if ($node->hasNode('flow3:' . $propertyName)) {
-						$propertyNode = $node->getNode('flow3:' . $propertyName);
-						if ($propertyNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
-							$propertyValue = $this->resolveObjectProxyNode($propertyNode);
+			$object = $this->objectBuilder->createSkeleton($className, $objectConfiguration);
+			$this->identityMap->registerObject($object, $node->getIdentifier());
+
+			$properties = array();
+			foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
+				switch ($propertyType) {
+					case 'integer':
+					case 'int':
+					case 'float':
+					case 'boolean':
+					case 'string':
+					case 'DateTime':
+						if ($node->hasProperty('flow3:' . $propertyName)) {
+							$property = $node->getProperty('flow3:' . $propertyName);
+							$propertyValue = $this->getNativeValue($property->getValue(), $property->getType());
 						} else {
-							$propertyValue = $this->mapSingleNode($propertyNode->getNode('flow3:' . $propertyName));
+							$propertyValue = NULL;
 						}
-					} else {
-						$propertyValue = NULL;
-					}
-				break;
+					break;
+					case 'array':
+						if ($node->hasNode('flow3:' . $propertyName)) {
+							$propertyValue = $this->mapArrayProxyNode($node->getNode('flow3:' . $propertyName));
+						} else {
+							$propertyValue = NULL;
+						}
+					break;
+						// we have an object to handle...
+					default:
+						if ($node->hasNode('flow3:' . $propertyName)) {
+							$propertyNode = $node->getNode('flow3:' . $propertyName);
+							if ($propertyNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
+								$propertyValue = $this->resolveObjectProxyNode($propertyNode);
+							} else {
+								$propertyValue = $this->mapSingleNode($propertyNode->getNode('flow3:' . $propertyName));
+							}
+						} else {
+							$propertyValue = NULL;
+						}
+					break;
+				}
+
+				$properties[$propertyName] = $propertyValue;
 			}
 
-			$properties[$propertyName] = $propertyValue;
+			$this->objectBuilder->thawSetterDependencies($object, $objectConfiguration);
+			$this->objectBuilder->thawProperties($object, $properties);
+			$object->memorizeCleanState();
 		}
-
-		$objectConfiguration = $this->objectManager->getObjectConfiguration($className);
-		$object = $this->objectBuilder->reconstituteObject($className, $objectConfiguration, $properties);
-		$this->identityMap->registerObject($object, $node->getIdentifier());
 
 		return $object;
 	}
@@ -191,7 +199,7 @@ class DataMapper {
 	 */
 	protected function mapArrayProxyNode(\F3\PHPCR\NodeInterface $proxyNode) {
 		if ($proxyNode->getPrimaryNodeType()->getName() !== \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY) {
-			throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnsupportedTypeException('Arrays can only be mapped back from nodes of type flow3:arrayPropertyProxy.', 1227705954);
+			throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnsupportedTypeException('Arrays can only be mapped back from nodes of type ' . \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY, 1227705954);
 		}
 		$array = array();
 
@@ -226,9 +234,7 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function resolveObjectProxyNode(\F3\PHPCR\NodeInterface $proxyNode) {
-		$targetUUID = $proxyNode->getProperty('flow3:target')->getString();
-		$targetRepositoryClassName = $proxyNode->getProperty('flow3:repositoryClassName')->getString();
-		return $this->objectManager->getObject($targetRepositoryClassName)->findByUUID($targetUUID);
+		return $this->mapSingleNode($proxyNode->getProperty('flow3:target')->getNode());
 	}
 
 	/**

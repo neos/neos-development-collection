@@ -42,7 +42,12 @@ class IdentityMap {
 	/**
 	 * @var \SplObjectStorage
 	 */
-	protected $identityMap;
+	protected $objectMap;
+
+	/**
+	 * @var array
+	 */
+	protected $uuidMap = array();
 
 	/**
 	 * Constructs a new Identity Map
@@ -50,7 +55,7 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct() {
-		$this->identityMap = new \SplObjectStorage();
+		$this->objectMap = new \SplObjectStorage();
 	}
 
 	/**
@@ -61,7 +66,29 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasObject($object) {
-		return $this->identityMap->contains($object);
+		return $this->objectMap->contains($object);
+	}
+
+	/**
+	 * Checks whether the given UUID is known to the identity map
+	 *
+	 * @param string $uuid
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasUUID($uuid) {
+		return array_key_exists($uuid, $this->uuidMap);
+	}
+
+	/**
+	 * Returns the object for the given UUID
+	 *
+	 * @param string $uuid
+	 * @return object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByUUID($uuid) {
+		return $this->uuidMap[$uuid];
 	}
 
 	/**
@@ -71,8 +98,8 @@ class IdentityMap {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUID($object) {
-		return $this->identityMap[$object];
+	public function getUUIDByObject($object) {
+		return $this->objectMap[$object];
 	}
 
 	/**
@@ -83,7 +110,8 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerObject($object, $uuid) {
-		$this->identityMap[$object] = $uuid;
+		$this->objectMap[$object] = $uuid;
+		$this->uuidMap[$uuid] = $object;
 	}
 
 	/**
@@ -94,7 +122,8 @@ class IdentityMap {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterObject($object) {
-		$this->identityMap->detach($object);
+		unset($this->uuidMap[$this->objectMap[$object]]);
+		$this->objectMap->detach($object);
 	}
 
 }
