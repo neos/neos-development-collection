@@ -150,7 +150,7 @@ class PathParser {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public static function isPathAbsolute($path) {
-		return ($path{0} === '/');
+		return ($path[0] === '/');
 	}
 
 	/**

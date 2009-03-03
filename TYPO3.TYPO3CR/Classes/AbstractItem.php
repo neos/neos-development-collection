@@ -262,7 +262,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 
 		if ($name == '') return FALSE;
 
-		if ($name{0} === '{') {
+		if ($name[0] === '{') {
 			throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Extended names are not yet supported, sorry', 1225814871);
 		} elseif (strpos($name, ':') !== FALSE) {
 			list($prefix, $name) = explode(':', $name, 2);

@@ -1395,7 +1395,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 					if (!$conversionSuccess) {
 						$errors = '';
 						foreach ($conversionErrors as $error) {
-							$errors .= $error . chr(10);
+							$errors .= $error . PHP_EOL;
 						}
 
 						throw new \F3\PHPCR\ValueFormatException('Unable to convert values in multi-valued property:' . $errors, 1222853061);
