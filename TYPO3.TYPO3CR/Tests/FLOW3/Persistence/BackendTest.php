@@ -45,7 +45,39 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeCreatesStorageContainerNodeIfNotPresent() {
+	public function initializeCallsInternalInitializationMethods() {
+		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('initializeBaseNode', 'initializeNodeTypes'), array(), '', FALSE);
+		$backend->expects($this->once())->method('initializeBaseNode');
+		$backend->expects($this->once())->method('initializeNodeTypes');
+		$backend->initialize(array());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeBaseNodeCreatesNeededNodesIfNotPresent() {
+		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockPersistenceNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockPersistenceNode->expects($this->once())->method('addNode')->with('flow3:objects', 'nt:unstructured')->will($this->returnValue($mockBaseNode));
+		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockRootNode->expects($this->exactly(2))->method('hasNode')->will($this->returnValue(FALSE));
+		$mockRootNode->expects($this->once())->method('addNode')->with('flow3:persistence', 'nt:unstructured')->will($this->returnValue($mockPersistenceNode));
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
+
+		$backendClassName = $this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend');
+		$backend = new $backendClassName($mockSession);
+		$backend->_call('initializeBaseNode', array());
+
+		$this->assertAttributeSame($mockBaseNode, 'baseNode', $backend);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeNodeTypesCreatesNodeTypes() {
 		$arrayNodeTypeTemplate = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeTemplate');
 		$arrayNodeTypeTemplate->expects($this->once())->method('setName')->with(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY);
 		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
@@ -57,90 +89,98 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockNodeTypeManager->expects($this->at(3))->method('hasNodeType')->with(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue(FALSE));
 		$mockNodeTypeManager->expects($this->at(4))->method('createNodeTypeTemplate')->will($this->returnValue($objectNodeTypeTemplate));
 		$mockNodeTypeManager->expects($this->at(5))->method('registerNodeType')->with($objectNodeTypeTemplate, FALSE);
+		$splObjectStorageNodeTypeTemplate = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeTemplate');
+		$splObjectStorageNodeTypeTemplate->expects($this->once())->method('setName')->with(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY);
+		$mockNodeTypeManager->expects($this->at(6))->method('hasNodeType')->with(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY)->will($this->returnValue(FALSE));
+		$mockNodeTypeManager->expects($this->at(7))->method('createNodeTypeTemplate')->will($this->returnValue($splObjectStorageNodeTypeTemplate));
+		$mockNodeTypeManager->expects($this->at(8))->method('registerNodeType')->with($splObjectStorageNodeTypeTemplate, FALSE);
 
-		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockPersistenceNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockPersistenceNode->expects($this->once())->method('addNode')->with('flow3:objects', 'nt:unstructured')->will($this->returnValue($mockBaseNode));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->exactly(2))->method('hasNode')->will($this->returnValue(FALSE));
-		$mockRootNode->expects($this->once())->method('addNode')->with('flow3:persistence', 'nt:unstructured')->will($this->returnValue($mockPersistenceNode));
 		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
 		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
 		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array());
+		$backendClassName = $this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend');
+		$backend = new $backendClassName($mockSession);
+		$backend->_call('initializeNodeTypes');
 
-		$this->assertAttributeSame($mockBaseNode, 'baseNode', $backend);
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeCreatesNodeTypeFromClassSchema() {
+	public function initializeNodeTypesCreatesNodeTypeFromClassSchema() {
 		$classSchemata = array(
 			new \F3\FLOW3\Persistence\ClassSchema('Some\Package\SomeClass')
 		);
 		$nodeTypeTemplate = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeTemplate');
 		$nodeTypeTemplate->expects($this->once())->method('setName')->with('flow3:Some_Package_SomeClass');
 		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->exactly(3))->method('hasNodeType')->will($this->onConsecutiveCalls(TRUE, TRUE, FALSE));
+		$mockNodeTypeManager->expects($this->exactly(4))->method('hasNodeType')->will($this->onConsecutiveCalls(TRUE, TRUE, TRUE, FALSE));
 		$mockNodeTypeManager->expects($this->once())->method('createNodeTypeTemplate')->will($this->returnValue($nodeTypeTemplate));
 		$mockNodeTypeManager->expects($this->once())->method('registerNodeType')->with($nodeTypeTemplate, FALSE);
 
 		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
 		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->any())->method('hasNode')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects');
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
 		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize($classSchemata);
+		$backendClassName = $this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend');
+		$backend = new $backendClassName($mockSession);
+		$backend->_set('classSchemata', $classSchemata);
+		$backend->_call('initializeNodeTypes');
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function commitProcessesNewObjects() {
+	public function commitDelegatesToPersistObjectsAndProcessDeletedObjectsAndSavesTheSession() {
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->once())->method('save');
+
+		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('persistObjects', 'processDeletedObjects'), array($mockSession));
+		$backend->expects($this->once())->method('persistObjects');
+		$backend->expects($this->once())->method('processDeletedObjects');
+		$backend->commit();
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function persistObjectsCreatesNodeOnlyForNewObject() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
-			public function isNew() { return TRUE; }
+			public function __construct($isNew) { $this->isNew = $isNew; }
+			public function isNew() { return $this->isNew; }
 			public function isDirty($propertyName) { return FALSE; }
 			public function memorizeCleanState($joinPoint = NULL) {}
 			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\';}
 		}');
-		$newObject = new $fullClassName();
+		$newObject = new $fullClassName(TRUE);
+		$oldObject = new $fullClassName(FALSE);
 		$aggregateRootObjects = new \SplObjectStorage();
 		$aggregateRootObjects->attach($newObject);
+		$aggregateRootObjects->attach($oldObject);
 
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
 		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_Tests_' . $className, 'flow3:F3_TYPO3CR_Tests_' . $className)->will($this->returnValue($mockInstanceNode));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSession->expects($this->once())->method('save');
+		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
+		$identityMap->registerObject($oldObject, '');
 
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array($fullClassName => new \F3\FLOW3\Persistence\ClassSchema($fullClassName)));
-		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('finalizeObjectProxyNodes', 'persistObject'), array($mockSession));
+		$backend->expects($this->once())->method('finalizeObjectProxyNodes');
+		$backend->expects($this->exactly(2))->method('persistObject');
+		$backend->injectIdentityMap($identityMap);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->commit();
+		$backend->_set('classSchemata', array($fullClassName => new \F3\FLOW3\Persistence\ClassSchema($fullClassName)));
+		$backend->_set('baseNode', $mockBaseNode);
+		$backend->_call('persistObjects');
 	}
 
 	/**
@@ -162,42 +202,34 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$aggregateRootObjects = new \SplObjectStorage();
 		$aggregateRootObjects->attach($newObject);
 
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
 		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_Tests_' . $className, 'flow3:F3_TYPO3CR_Tests_' . $className, $identifier)->will($this->returnValue($mockInstanceNode));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSession->expects($this->once())->method('save');
-		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($mockInstanceNode));
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
 		$classSchema->setProperty('idProp', 'string');
 		$classSchema->setUUIDPropertyName('idProp');
 
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array($fullClassName => $classSchema));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('finalizeObjectProxyNodes', 'persistObject'), array($mockSession));
+		$backend->expects($this->once())->method('finalizeObjectProxyNodes');
+		$backend->expects($this->once())->method('persistObject');
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
 		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->commit();
+		$backend->_set('classSchemata', array($fullClassName => $classSchema));
+		$backend->_set('baseNode', $mockBaseNode);
+		$backend->_call('persistObjects');
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function commitProcessesDirtyObjects() {
+	public function persistObjectProcessesDirtyObject() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
-			public $simpleString;
+			public $simpleString = \'simpleValue\';
 			protected $dirty = TRUE;
 			public function isNew() { return FALSE; }
 			public function isDirty($propertyName) { return $this->dirty; }
@@ -206,39 +238,26 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function AOPProxyGetProperty($propertyName) { return $this->$propertyName; }
 		}');
 		$dirtyObject = new $fullClassName();
-		$dirtyObject->simpleString = 'simpleValue';
-		$aggregateRootObjects = new \SplObjectStorage();
-		$aggregateRootObjects->attach($dirtyObject);
 
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
 		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockInstanceNode->expects($this->once())->method('setProperty');
+		$mockInstanceNode->expects($this->once())->method('setProperty')->with('flow3:simpleString', 'simpleValue', \F3\PHPCR\PropertyType::STRING);
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($identifier)->will($this->returnValue($mockInstanceNode));
 
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
 		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->setProperty('simpleString', 'string');
-
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($dirtyObject, $identifier);
 
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array($classSchema->getClassName() => $classSchema));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
 		$backend->injectIdentityMap($identityMap);
-		$backend->setAggregateRootObjects($aggregateRootObjects);
+		$backend->_set('classSchemata', array($fullClassName => $classSchema));
+		$backend->_set('baseNode', $mockBaseNode);
 
 		$this->assertTrue($dirtyObject->isDirty('simpleString'));
-		$backend->commit();
+		$backend->_call('persistObject', $dirtyObject);
 		$this->assertFalse($dirtyObject->isDirty('simpleString'));
 	}
 
@@ -246,7 +265,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function commitProcessesDeletedObjects() {
+	public function processDeletedObjectsRemovesNodeAndUnregistersObjectWithIdentityMap() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
@@ -254,32 +273,23 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 		}');
 		$deletedObject = new $fullClassName();
-		$aggregateRootObjects = new \SplObjectStorage();
-		$aggregateRootObjects->attach($deletedObject);
+		$deletedObjects = new \SplObjectStorage();
+		$deletedObjects->attach($deletedObject);
 
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
 		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockInstanceNode->expects($this->once())->method('remove');
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockInstanceNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($identifier)->will($this->returnValue($mockInstanceNode));
-		$mockSession->expects($this->once())->method('save');
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
-		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
+		$identityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap', array('unregisterObject'));
+		$identityMap->expects($this->once())->method('unregisterObject')->with($deletedObject);
 		$identityMap->registerObject($deletedObject, $identifier);
 
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array($classSchema->getClassName() => $classSchema));
+		$backendClassName = $this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend');
+		$backend = new $backendClassName($mockSession);
 		$backend->injectIdentityMap($identityMap);
-		$backend->setDeletedObjects($aggregateRootObjects);
-		$backend->commit();
+		$backend->setDeletedObjects($deletedObjects);
+		$backend->_call('processDeletedObjects');
 	}
 
 	/**
@@ -291,7 +301,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
 		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
 		$B->add(new \F3\TYPO3CR\Tests\Fixtures\AnEntity('BA'));
-		$B->add(new \F3\TYPO3CR\Tests\Fixtures\AnEntity('BB'));
 		$A->add($B);
 		$C = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('C');
 		$A->add($C);
@@ -301,10 +310,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up assertions on created nodes
 		$mockNodeBA = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockNodeBA->expects($this->exactly(2))->method('setProperty');
-		$mockNodeBB = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockNodeBB->expects($this->exactly(2))->method('setProperty');
 		$arrayPropertyProxyB = $this->getMock('F3\PHPCR\NodeInterface');
-		$arrayPropertyProxyB->expects($this->exactly(2))->method('addNode')->will($this->onConsecutiveCalls($mockNodeBA, $mockNodeBB));
+		$arrayPropertyProxyB->expects($this->once())->method('addNode')->will($this->returnValue($mockNodeBA));
 		$mockNodeB = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockNodeB->expects($this->exactly(1))->method('addNode')->will($this->returnValue($arrayPropertyProxyB));
 		$mockNodeB->expects($this->exactly(1))->method('setProperty')->with('flow3:name', 'B', \F3\PHPCR\PropertyType::STRING);
@@ -319,38 +326,27 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_Tests_Fixtures_AnEntity', 'flow3:F3_TYPO3CR_Tests_Fixtures_AnEntity')->will($this->returnValue($mockNodeA));
 
 			// set up needed infrastructure
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSession->expects($this->once())->method('save');
-
-		$mockSession->expects($this->exactly(5))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeB, $mockNodeBA, $mockNodeBB, $mockNodeC));
-
+		$mockSession->expects($this->exactly(4))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeB, $mockNodeBA, $mockNodeC));
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\AnObject');
 		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->setProperty('name', 'string');
 		$classSchema->setProperty('members', 'array');
 
 			// ... and here we go
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $classSchema));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('finalizeObjectProxyNodes'), array($mockSession));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
+		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $classSchema));
+		$backend->_set('baseNode', $mockBaseNode);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->commit();
+		$backend->_call('persistObjects');
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function commitProcessesNewObjectsWithDateTimeMembers() {
+	public function persistObjectProcessesNewObjectsWithDateTimeMember() {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
@@ -364,36 +360,23 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$newObject = new $fullClassName();
 		$date = new \DateTime();
 		$newObject->date = $date;
-		$aggregateRootObjects = new \SplObjectStorage();
-		$aggregateRootObjects->attach($newObject);
 
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
 		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockInstanceNode->expects($this->never())->method('addNode');
 		$mockInstanceNode->expects($this->once())->method('setProperty')->with('flow3:date', $date, \F3\PHPCR\PropertyType::DATE);
-		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_Tests_' . $className, 'flow3:F3_TYPO3CR_Tests_' . $className)->will($this->returnValue($mockInstanceNode));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSession->expects($this->once())->method('save');
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($mockInstanceNode));
-
+		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
+		$identityMap->registerObject($newObject, '');
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
 		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->setProperty('date', 'DateTime');
 
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array($fullClassName => $classSchema));
-		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
-		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->commit();
+			// ... and here we go
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
+		$backend->injectIdentityMap($identityMap);
+		$backend->_set('classSchemata', array($fullClassName => $classSchema));
+		$backend->_call('persistObject', $newObject);
 	}
 
 
@@ -422,24 +405,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockNodeA = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockNodeA->expects($this->once())->method('addNode')->will($this->returnValue($arrayPropertyProxy));
 		$mockNodeA->expects($this->once())->method('setProperty')->with('flow3:name', 'A', \F3\PHPCR\PropertyType::STRING);
-		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_Tests_Fixtures_AnEntity', 'flow3:F3_TYPO3CR_Tests_Fixtures_AnEntity')->will($this->returnValue($mockNodeA));
 
 			// set up needed infrastructure
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSession->expects($this->once())->method('save');
-
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($mockNodeA));
-
+		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
+		$identityMap->registerObject($A, '');
 		$entityClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixture\AnEntity');
 		$entityClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$entityClassSchema->setProperty('name', 'string');
@@ -449,11 +420,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$valueClassSchema->setProperty('name', 'string');
 
 			// ... and here we go
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema, 'F3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema));
-		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
-		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->commit();
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
+		$backend->injectIdentityMap($identityMap);
+		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema, 'F3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema));
+		$backend->_call('persistObject', $A);
 	}
 
 	/**
@@ -486,20 +456,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockBaseNode->expects($this->exactly(2))->method('addNode')->with('flow3:F3_TYPO3CR_Tests_Fixtures_AnEntity', 'flow3:F3_TYPO3CR_Tests_Fixtures_AnEntity')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeB));
 
 			// set up needed infrastructure
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSession->expects($this->once())->method('save');
-
 		$mockSession->expects($this->exactly(4))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeValue1, $mockNodeB, $mockNodeValue2));
-
 		$entityClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixture\AnEntity');
 		$entityClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$entityClassSchema->setProperty('name', 'string');
@@ -509,11 +467,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$valueClassSchema->setProperty('name', 'string');
 
 			// ... and here we go
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema, 'F3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('finalizeObjectProxyNodes'), array($mockSession));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
+		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $entityClassSchema, 'F3\TYPO3CR\Tests\Fixtures\AValue' => $valueClassSchema));
+		$backend->_set('baseNode', $mockBaseNode);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->commit();
+		$backend->_call('persistObjects');
 	}
 
 	/**
@@ -524,11 +483,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$knownObject = new \stdClass();
 		$fakeUUID = '123-456';
 
-		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(TRUE));
 		$mockIdentityMap->expects($this->once())->method('getUUIDByObject')->with($knownObject)->will($this->returnValue($fakeUUID));
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
 		$this->assertEquals($fakeUUID, $backend->getUUID($knownObject));
@@ -541,10 +499,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function getUUIDReturnsNullForUnknownObject() {
 		$unknownObject = new \stdClass();
 
-		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
 		$this->assertNull($backend->getUUID($unknownObject));
@@ -573,30 +530,17 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up assertions on created nodes
 		$mockAuthorProxyNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockPostNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockPostNode->expects($this->at(1))->method('addNode')->with('flow3:author', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockAuthorProxyNode));
+		$mockPostNode->expects($this->at(2))->method('addNode')->with('flow3:author', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockAuthorProxyNode));
 		$mockPostNode->expects($this->any())->method('getIdentifier')->will($this->returnValue(\F3\FLOW3\Utility\Algorithms::generateUUID()));
 		$mockAuthorNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockAuthorNode->expects($this->any())->method('getIdentifier')->will($this->returnValue(\F3\FLOW3\Utility\Algorithms::generateUUID()));
-
 		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockBaseNode->expects($this->at(0))->method('addNode')->with('flow3:F3_' . $postClassName, 'flow3:F3_' . $postClassName)->will($this->returnValue($mockPostNode));
 		$mockBaseNode->expects($this->at(1))->method('addNode')->with('flow3:F3_' . $authorClassName, 'flow3:F3_' . $authorClassName)->will($this->returnValue($mockAuthorNode));
 
 			// set up needed infrastructure
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSession->expects($this->once())->method('save');
-
 		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockPostNode, $mockAuthorNode));
-
 		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedPostClassName);
 		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$postClassSchema->setRepositoryManaged(TRUE);
@@ -606,11 +550,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$authorClassSchema->setRepositoryManaged(TRUE);
 
 			// ... and here we go
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array($qualifiedPostClassName => $postClassSchema, $qualifiedAuthorClassName => $authorClassSchema));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('finalizeObjectProxyNodes'), array($mockSession));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
+		$backend->_set('classSchemata', array($qualifiedPostClassName => $postClassSchema, $qualifiedAuthorClassName => $authorClassSchema));
+		$backend->_set('baseNode', $mockBaseNode);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->commit();
+		$backend->_call('persistObjects');
 	}
 
 	/**
@@ -642,31 +587,18 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockPostProxyNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockPostProxyNode->expects($this->at(0))->method('setProperty')->with('flow3:target', $mockPostNodeUUID, \F3\PHPCR\PropertyType::REFERENCE);
 		$mockPostNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockPostNode->expects($this->at(1))->method('addNode')->with('flow3:blog', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockBlogProxyNode));
+		$mockPostNode->expects($this->at(2))->method('addNode')->with('flow3:blog', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockBlogProxyNode));
 		$mockPostNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($mockPostNodeUUID));
 		$mockBlogNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockBlogNode->expects($this->at(1))->method('addNode')->with('flow3:post', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockPostProxyNode));
+		$mockBlogNode->expects($this->at(2))->method('addNode')->with('flow3:post', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockPostProxyNode));
 		$mockBlogNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($mockBlogNodeUUID));
-
 		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockBaseNode->expects($this->at(0))->method('addNode')->with('flow3:F3_' . $blogClassName, 'flow3:F3_' . $blogClassName)->will($this->returnValue($mockBlogNode));
 		$mockBaseNode->expects($this->at(1))->method('addNode')->with('flow3:F3_' . $postClassName, 'flow3:F3_' . $postClassName)->will($this->returnValue($mockPostNode));
 
 			// set up needed infrastructure
-		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
-		$mockNodeTypeManager->expects($this->any())->method('hasNodeType')->will($this->returnValue(TRUE));
-		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
-		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
-		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockRootNode->expects($this->once())->method('hasNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue(TRUE));
-		$mockRootNode->expects($this->once())->method('getNode')->with('flow3:persistence/flow3:objects')->will($this->returnValue($mockBaseNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getRootNode')->will($this->returnValue($mockRootNode));
-		$mockSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSession->expects($this->once())->method('save');
-
 		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockBlogNode, $mockPostNode));
-
 		$blogClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedBlogClassName);
 		$blogClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$blogClassSchema->setRepositoryManaged(TRUE);
@@ -677,11 +609,51 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$postClassSchema->setProperty('blog', $qualifiedBlogClassName);
 
 			// ... and here we go
-		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
-		$backend->initialize(array($qualifiedBlogClassName => $blogClassSchema, $qualifiedPostClassName => $postClassSchema));
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
 		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
+		$backend->_set('classSchemata', array($qualifiedBlogClassName => $blogClassSchema, $qualifiedPostClassName => $postClassSchema));
+		$backend->_set('baseNode', $mockBaseNode);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->commit();
+		$backend->_call('persistObjects');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function SplObjectStoragePropertyIsStoredAsProxyNode() {
+			// set up object
+		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
+		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
+		$A->addObject($B);
+
+			// set up assertions on created nodes
+		$itemNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$proxyNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$proxyNode->expects($this->once())->method('addNode')->with('flow3:item', 'nt:unstructured')->will($this->returnValue($itemNode));
+		$mockNodeA = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockNodeA->expects($this->once())->method('addNode')->with('flow3:objects', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY)->will($this->returnValue($proxyNode));
+		$mockNodeA->expects($this->once())->method('setProperty')->with('flow3:name', 'A', \F3\PHPCR\PropertyType::STRING);
+		$mockNodeB = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockNodeB->expects($this->once())->method('setProperty')->with('flow3:name', 'B', \F3\PHPCR\PropertyType::STRING);
+
+			// set up needed infrastructure
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeB));
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\AnEntity');
+		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema->setProperty('name', 'string');
+		$classSchema->setProperty('objects', 'SplObjectStorage');
+		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
+		$identityMap->registerObject($A, '');
+		$identityMap->registerObject($B, '');
+
+			// ... and here we go
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('createNodeForEntity'), array($mockSession));
+		$backend->expects($this->once())->method('createNodeForEntity')->with($B, $itemNode, 'flow3:object');
+		$backend->injectIdentityMap($identityMap);
+		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $classSchema));
+		$backend->_call('persistObject', $A);
 	}
 
 }

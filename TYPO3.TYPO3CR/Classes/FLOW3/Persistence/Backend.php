@@ -42,13 +42,19 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * The nodetype used for array property proxy nodes
 	 * @var string
 	 */
-	const NODETYPE_ARRAYPROXY = 'flow3:arrayPropertyProxy';
+	const NODETYPE_ARRAYPROXY = 'flow3:arrayProxy';
 
 	/**
 	 * The nodetype used for object proxy nodes
 	 * @var string
 	 */
 	const NODETYPE_OBJECTPROXY = 'flow3:objectProxy';
+
+	/**
+	 * The nodetype used for SplObjectStorage proxy nodes
+	 * @var string
+	 */
+	const NODETYPE_SPLOBJECTSTORAGEPROXY = 'flow3:splObjectStorageProxy';
 
 	/**
 	 * @var \F3\FLOW3\Reflection\Service
@@ -93,7 +99,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	/**
 	 * @var array
 	 */
-	protected $classSchemata;
+	protected $classSchemata = array();
 
 	/**
 	 * Constructs the backend
@@ -155,6 +161,66 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
+	 * Returns the repository session
+	 *
+	 * @return \F3\PHPCR\SessionInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getSession() {
+		return $this->session;
+	}
+
+	/**
+	 * Returns the (internal) identifier for the object, if it is known to the
+	 * backend. Otherwise NULL is returned.
+	 *
+	 * @param object $object
+	 * @return string The identifier for the object if it is known, or NULL
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUID($object) {
+		if ($this->identityMap->hasObject($object)) {
+			return $this->identityMap->getUUIDByObject($object);
+		} else {
+			return NULL;
+		}
+	}
+
+	/**
+	 * Sets the aggregate root objects
+	 *
+	 * @param \SplObjectStorage $objects
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setAggregateRootObjects(\SplObjectStorage $objects) {
+		$this->aggregateRootObjects = $objects;
+	}
+
+	/**
+	 * Sets the deleted objects
+	 *
+	 * @param \SplObjectStorage $objects
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setDeletedObjects(\SplObjectStorage $objects) {
+		$this->deletedObjects = $objects;
+	}
+
+	/**
+	 * Commits the current persistence session.
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function commit() {
+		$this->persistObjects();
+		$this->processDeletedObjects();
+		$this->session->save();
+	}
+
+	/**
 	 * Initializes the base node for object persistence
 	 *
 	 * @return void
@@ -196,6 +262,12 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 		}
 
+		if (!$nodeTypeManager->hasNodeType(self::NODETYPE_SPLOBJECTSTORAGEPROXY)) {
+			$nodeTypeTemplate = $nodeTypeManager->createNodeTypeTemplate();
+			$nodeTypeTemplate->setName(self::NODETYPE_SPLOBJECTSTORAGEPROXY);
+			$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
+		}
+
 		foreach($this->classSchemata as $schema) {
 			$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($schema->getClassName());
 			if (!$nodeTypeManager->hasNodeType($nodeTypeName)) {
@@ -207,99 +279,23 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
-	 * Returns the repository session
-	 *
-	 * @return \F3\PHPCR\SessionInterface
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getSession() {
-		return $this->session;
-	}
-
-	/**
-	 * Sets the aggregate root objects
-	 *
-	 * @param \SplObjectStorage $objects
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setAggregateRootObjects(\SplObjectStorage $objects) {
-		$this->aggregateRootObjects = $objects;
-	}
-
-	/**
-	 * Sets the deleted objects
-	 *
-	 * @param \SplObjectStorage $objects
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setDeletedObjects(\SplObjectStorage $objects) {
-		$this->deletedObjects = $objects;
-	}
-
-	/**
-	 * Commits the current persistence session.
+	 * Create a node for all aggregate roots first, then traverse object graph.
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function commit() {
-		$this->persistAggregateRootObjects();
-
-		foreach ($this->deletedObjects as $object) {
-			$this->processDeletedObject($object);
-		}
-
-		$this->session->save();
-		$this->deletedObjects = new \SplObjectStorage();
-	}
-
-	/**
-	 * Returns the (internal) identifier for the object, if it is known to the
-	 * backend. Otherwise NULL is returned.
-	 *
-	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getUUID($object) {
-		if ($this->identityMap->hasObject($object)) {
-			return $this->identityMap->getUUIDByObject($object);
-		} else {
-			return NULL;
-		}
-	}
-
-	/**
-	 * Traverse all aggregate roots breadth first.
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function persistAggregateRootObjects() {
-			// make sure we have a corresponding node for all new objects on first level
+	protected function persistObjects() {
 		foreach ($this->aggregateRootObjects as $object) {
 			if (!$this->identityMap->hasObject($object)) {
 				$this->createNodeForEntity($object, $this->baseNode, 'flow3:' . $this->convertClassNameToJCRName($object->AOPProxyGetProxyTargetClassName()));
 			}
 		}
 
-			// now traverse into the objects
 		foreach ($this->aggregateRootObjects as $object) {
 			$this->persistObject($object);
 		}
 
-			// fill incomplete proxy objects
-		foreach ($this->incompleteObjectProxyNodes as $proxyNode => $object) {
-			$objectUUID = $this->getUUID($object);
-			if ($objectUUID !== NULL) {
-				$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
-			} else {
-				$proxyNode->remove();
-				$this->systemLogger->log('Could not resolve UUID for object reference in object proxy node "' . $proxyNode->getPath() . '".', LOG_NOTICE);
-			}
-		}
+		$this->finalizeObjectProxyNodes();
 	}
 
 	/**
@@ -324,12 +320,18 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 				} else {
 					$queue = array_merge($queue, array_values($propertyValue));
 				}
+			} elseif ($propertyValue instanceof \SplObjectStorage) {
+				if ($object->isNew() || $object->isDirty($propertyName)) {
+					$this->persistSplObjectStorage($propertyValue, $node, 'flow3:' . $propertyName, $queue);
+				} else {
+					foreach ($propertyValue as $containedObject) {
+						$queue[] = $containedObject;
+					}
+				}
 			} elseif (is_object($propertyValue) && $propertyType !== 'DateTime') {
 				if ($this->classSchemata[$propertyValue->AOPProxyGetProxyTargetClassName()]->isRepositoryManaged() === TRUE) {
-					if ($object->isNew()) {
-						$this->createProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
-					} elseif ($object->isDirty($propertyName)) {
-						$this->updateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
+					if ($object->isNew() || $object->isDirty($propertyName)) {
+						$this->createOrUpdateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
 					}
 				} else {
 					if ($object->isNew()) {
@@ -380,37 +382,24 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * Creates a proxy node pointing to another object's node. Is used for inter-
 	 * aggregate references, i.e. when a reference points to another aggregate
 	 * root.
+	 * If the node alreadyx exists, it will be updated to point to the current
+	 * object.
 	 *
-	 * @param object $object The object to create a proxy for
+	 * @param object $object The object to create/update a proxy for
 	 * @param \F3\PHPCR\NodeInterface $parentNode
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function createProxyNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
+	protected function createOrUpdateProxyNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
 		$objectUUID = $this->getUUID($object);
 
-		$proxyNode = $parentNode->addNode($nodeName, self::NODETYPE_OBJECTPROXY);
-		if ($objectUUID !== NULL) {
-			$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
+		if ($parentNode->hasNode($nodeName)) {
+			$proxyNode = $parentNode->getNode($nodeName);
 		} else {
-			$this->incompleteObjectProxyNodes[$proxyNode] = $object;
+			$proxyNode = $parentNode->addNode($nodeName, self::NODETYPE_OBJECTPROXY);
 		}
-	}
 
-	/**
-	 * Updates a proxy node pointing to another object's node.
-	 *
-	 * @param object $object The object to update a proxy for
-	 * @param \F3\PHPCR\NodeInterface $parentNode
-	 * @param string $nodeName The name used for the object, must be a legal name as per JSR-283
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function updateProxyNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
-		$objectUUID = $this->getUUID($object);
-
-		$proxyNode = $parentNode->getNode($nodeName);
 		if ($objectUUID !== NULL) {
 			$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
 		} else {
@@ -453,9 +442,9 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * node, arrays will be handled recursively.
 	 *
 	 * Note: Objects contained in the array will have a node created, properties
-	 * On those nodes must be set elsewhere!
+	 * on those nodes must be set elsewhere!
 	 *
-	 * @param array $array The array for which to create a node
+	 * @param array $array The array for which to create a proxy node
 	 * @param \F3\PHPCR\NodeInterface $parentNode The node to add the property proxy to
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @param array &$queue Found entities are accumulated here.
@@ -472,7 +461,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			if (is_object($element) && !($element instanceof \DateTime)) {
 				if ($this->classSchemata[$element->AOPProxyGetProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
 					if ($this->classSchemata[$element->AOPProxyGetProxyTargetClassName()]->isRepositoryManaged() === TRUE) {
-							$this->createProxyNodeForEntity($element, $node, 'flow3:' . $key);
+						$this->createOrUpdateProxyNodeForEntity($element, $node, 'flow3:' . $key);
 					} else {
 						if ($element->isNew()) {
 							$this->createNodeForEntity($element, $node, 'flow3:' . $key);
@@ -484,25 +473,94 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 				}
 			} elseif (is_array($element)) {
 				$this->persistArray($element, $node, 'flow3:' . $key, $queue);
-			} elseif ($element->isDirty($key)) {
+			} else {
 				$node->setProperty('flow3:' . $key, $element, \F3\PHPCR\PropertyType::valueFromType(gettype($element)));
 			}
 		}
 	}
 
 	/**
-	 * Removes an object from the content repository.
+	 * Store an array as a node of type flow3:arrayPropertyProxy, with each
+	 * array element becoming a property named like the key and the value.
 	 *
-	 * @param object $object
+	 * Every element not being an object or array will become a property on the
+	 * node, arrays will be handled recursively.
+	 *
+	 * Note: Objects contained in the SplObjectStorage will have a node created,
+	 * properties on those nodes must be set elsewhere!
+	 *
+	 * @param \SplObjectStorage $objectStorage The SplObjectStorage to persist
+	 * @param \F3\PHPCR\NodeInterface $parentNode The node to add the proxy to
+	 * @param string $nodeName The name to use for the proxy, must be a legal name as per JSR-283
+	 * @param array &$queue Found entities are accumulated here.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo add persisting information attached to contained objects
+	 */
+	protected function persistSplObjectStorage(\SplObjectStorage $objectStorage, \F3\PHPCR\NodeInterface $parentNode, $nodeName, array &$queue) {
+		if ($parentNode->hasNode($nodeName)) {
+			$node = $parentNode->getNode($nodeName);
+		} else {
+			$node = $parentNode->addNode($nodeName, self::NODETYPE_SPLOBJECTSTORAGEPROXY);
+		}
+
+		foreach ($objectStorage as $object) {
+			$itemNode = $node->addNode('flow3:item', 'nt:unstructured');
+
+			if ($object instanceof \DateTime) {
+				$itemNode->setProperty('flow3:object', $element, \F3\PHPCR\PropertyType::DATE);
+			} else {
+				if ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
+					if ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->isRepositoryManaged() === TRUE) {
+						$this->createOrUpdateProxyNodeForEntity($object, $itemNode, 'flow3:object');
+					} else {
+						if ($object->isNew()) {
+							$this->createNodeForEntity($object, $itemNode, 'flow3:object');
+						}
+						$queue[] = $object;
+					}
+				} else {
+					$this->persistValueObject($object, $itemNode, 'flow3:object');
+				}
+			}
+		}
+	}
+
+	/**
+	 * Iterate over object proxy nodes that are not complete and tries to
+	 * finalize them (i.e. set their target object node).
+	 *
+	 * If a proxy cannot be finalized it will be removed and this is logged.
+	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function processDeletedObject($object) {
-		if ($this->identityMap->hasObject($object)) {
-			$node = $this->session->getNodeByIdentifier($this->identityMap->getUUIDByObject($object));
-			$node->remove();
-			$this->identityMap->unregisterObject($object);
+	protected function finalizeObjectProxyNodes() {
+		foreach ($this->incompleteObjectProxyNodes as $proxyNode => $object) {
+			$objectUUID = $this->getUUID($object);
+			if ($objectUUID !== NULL) {
+				$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
+			} else {
+				$proxyNode->remove();
+				$this->systemLogger->log('Could not resolve UUID for object reference in object proxy node "' . $proxyNode->getPath() . '".', LOG_NOTICE);
+			}
 		}
+	}
+
+	/**
+	 * Iterate over deleted objects and process them
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function processDeletedObjects() {
+		foreach ($this->deletedObjects as $object) {
+			if ($this->identityMap->hasObject($object)) {
+				$node = $this->session->getNodeByIdentifier($this->identityMap->getUUIDByObject($object));
+				$node->remove();
+				$this->identityMap->unregisterObject($object);
+			}
+		}
+		$this->deletedObjects = new \SplObjectStorage();
 	}
 
 	/**

@@ -394,7 +394,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 			}
 			return $nodetypes;
 		} catch (\PDOException $e) {
-			throw new \F3\TYPO3CR\StorageException('Could not read raw nodetypes. Make sure the database is initialized correctly (php index_dev.php TYPO3CR Setup database). PDO error: ' . $e->getMessage(), 1216051821);
+			throw new \F3\TYPO3CR\StorageException('Could not read raw nodetypes. Make sure the database is initialized correctly (php index.php typo3cr setup database). PDO error: ' . $e->getMessage(), 1216051821);
 		}
 	}
 

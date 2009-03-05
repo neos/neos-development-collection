@@ -50,6 +50,11 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	protected $members;
 
 	/**
+	 * @var \SplObjectStorage
+	 */
+	public $objects;
+
+	/**
 	 * @var \F3\TYPO3CR\Tests\Fixtures\AValue
 	 */
 	protected $value;
@@ -59,6 +64,7 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	 */
 	public function __construct($name) {
 		$this->name = $name;
+		$this->objects = new \SplObjectStorage();
 	}
 
 	/**
@@ -67,6 +73,18 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	 */
 	public function add($object) {
 		$this->members[] = $object;
+	}
+
+	/**
+	 * @param object $object
+	 * @return void
+	 */
+	public function addObject($object, $data = NULL) {
+		if ($data === NULL) {
+			$this->objects->attach($object);
+		} else {
+			$this->objects[$object] = $data;
+		}
 	}
 
 	/**
