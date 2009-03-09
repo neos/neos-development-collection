@@ -117,6 +117,17 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	}
 
 	/**
+	 * Sets the queryable status of the node type.
+	 *
+	 * @param booolean $queryable a boolean.
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setQueryable($queryable) {
+		$this->isQueryable = $queryable;
+	}
+
+	/**
 	 * Returns a mutable List of PropertyDefinitionTemplate objects. To define a
 	 * new NodeTypeTemplate or change an existing one, PropertyDefinitionTemplate
 	 * objects can be added to or removed from this List.
