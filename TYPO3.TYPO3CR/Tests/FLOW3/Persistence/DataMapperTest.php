@@ -135,7 +135,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
 		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
-		$postClassSchema->setRepositoryManaged(TRUE);
+		$postClassSchema->setAggregateRoot(TRUE);
 		$postClassSchema->setProperty('author', $qualifiedAuthorClassName);
 
 		$mockProxyPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');

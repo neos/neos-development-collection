@@ -329,7 +329,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 					}
 				}
 			} elseif (is_object($propertyValue) && $propertyType !== 'DateTime') {
-				if ($this->classSchemata[$propertyValue->AOPProxyGetProxyTargetClassName()]->isRepositoryManaged() === TRUE) {
+				if ($this->classSchemata[$propertyValue->AOPProxyGetProxyTargetClassName()]->isAggregateRoot() === TRUE) {
 					if ($object->isNew() || $object->isDirty($propertyName)) {
 						$this->createOrUpdateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
 					}
@@ -460,7 +460,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		foreach ($array as $key => $element) {
 			if (is_object($element) && !($element instanceof \DateTime)) {
 				if ($this->classSchemata[$element->AOPProxyGetProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
-					if ($this->classSchemata[$element->AOPProxyGetProxyTargetClassName()]->isRepositoryManaged() === TRUE) {
+					if ($this->classSchemata[$element->AOPProxyGetProxyTargetClassName()]->isAggregateRoot() === TRUE) {
 						$this->createOrUpdateProxyNodeForEntity($element, $node, 'flow3:' . $key);
 					} else {
 						if ($element->isNew()) {
@@ -510,7 +510,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 				$itemNode->setProperty('flow3:object', $element, \F3\PHPCR\PropertyType::DATE);
 			} else {
 				if ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
-					if ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->isRepositoryManaged() === TRUE) {
+					if ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->isAggregateRoot() === TRUE) {
 						$this->createOrUpdateProxyNodeForEntity($object, $itemNode, 'flow3:object');
 					} else {
 						if ($object->isNew()) {

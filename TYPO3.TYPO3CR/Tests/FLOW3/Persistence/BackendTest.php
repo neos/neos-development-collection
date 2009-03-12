@@ -543,11 +543,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockPostNode, $mockAuthorNode));
 		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedPostClassName);
 		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
-		$postClassSchema->setRepositoryManaged(TRUE);
+		$postClassSchema->setAggregateRoot(TRUE);
 		$postClassSchema->setProperty('author', $qualifiedAuthorClassName);
 		$authorClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedAuthorClassName);
 		$authorClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
-		$authorClassSchema->setRepositoryManaged(TRUE);
+		$authorClassSchema->setAggregateRoot(TRUE);
 
 			// ... and here we go
 		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('finalizeObjectProxyNodes'), array($mockSession));
@@ -601,11 +601,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockBlogNode, $mockPostNode));
 		$blogClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedBlogClassName);
 		$blogClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
-		$blogClassSchema->setRepositoryManaged(TRUE);
+		$blogClassSchema->setAggregateRoot(TRUE);
 		$blogClassSchema->setProperty('post', $qualifiedPostClassName);
 		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedPostClassName);
 		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
-		$postClassSchema->setRepositoryManaged(TRUE);
+		$postClassSchema->setAggregateRoot(TRUE);
 		$postClassSchema->setProperty('blog', $qualifiedBlogClassName);
 
 			// ... and here we go
