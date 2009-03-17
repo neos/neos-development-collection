@@ -41,7 +41,7 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * @var string
 	 */
-	protected $viewObjectName = 'F3\Fluid\View\TemplateView';
+	protected $defaultViewObjectName = 'F3\Fluid\View\TemplateView';
 
 	/**
 	 * Default action for this controller
