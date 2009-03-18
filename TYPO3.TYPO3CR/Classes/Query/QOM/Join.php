@@ -29,15 +29,7 @@ namespace F3\TYPO3CR\Query\QOM;
  */
 
 /**
- * Selects a subset of the nodes in the repository based on node type.
- *
- * A selector selects every node in the repository, subject to access control
- * constraints, that satisfies at least one of the following conditions:
- *
- * the node's primary node type is nodeType, or
- * the node's primary node type is a subtype of nodeType, or
- * the node has a mixin node type that is nodeType, or
- * the node has a mixin node type that is a subtype of nodeType.
+ * Performs a join between two node-tuple sources.
  *
  * @package TYPO3CR
  * @subpackage Query
@@ -45,49 +37,78 @@ namespace F3\TYPO3CR\Query\QOM;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Selector implements \F3\PHPCR\Query\QOM\SelectorInterface {
+class Join implements \F3\PHPCR\Query\QOM\JoinInterface {
 
 	/**
-	 * @var string
+	 * @var \F3\PHPCR\Query\QOM\SourceInterface
 	 */
-	protected $nodeTypeName;
+	protected $left;
 
 	/**
-	 * @var string
+	 * @var \F3\PHPCR\Query\QOM\SourceInterface
 	 */
-	protected $selectorName;
+	protected $right;
 
 	/**
-	 * Constructs the Selector instance
+	 * @var integer
+	 */
+	protected $joinType;
+
+	/**
+	 * @var \F3\PHPCR\Query\QOM\JoinConditionInterface
+	 */
+	protected $joinCondition;
+
+	/**
+	 * Constructs the Join instance
 	 *
-	 * @param string $selectorName
-	 * @param string $nodeTypeName
+	 * @param \F3\PHPCR\Query\QOM\SourceInterface $left the left node-tuple source; non-null
+	 * @param \F3\PHPCR\Query\QOM\SourceInterface $right the right node-tuple source; non-null
+	 * @param integer $joinType either QueryObjectModelConstants.JOIN_TYPE_INNER, QueryObjectModelConstants.JOIN_TYPE_LEFT_OUTER, QueryObjectModelConstants.JOIN_TYPE_RIGHT_OUTER
+	 * @param \F3\PHPCR\Query\QOM\JoinConditionInterface $join Condition the join condition; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($selectorName, $nodeTypeName) {
-		$this->selectorName = $selectorName;
-		$this->nodeTypeName = $nodeTypeName;
+	public function __construct(\F3\PHPCR\Query\QOM\SourceInterface $left, \F3\PHPCR\Query\QOM\SourceInterface $right, $joinType, \F3\PHPCR\Query\QOM\JoinConditionInterface $joinCondition) {
+		$this->left = $left;
+		$this->right = $right;
+		$this->joinType = $joinType;
+		$this->joinCondition = $joinCondition;
 	}
 
 	/**
-	 * Gets the name of the required node type.
+	 * Gets the left node-tuple source.
 	 *
-	 * @return string the node type name; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @return \F3\PHPCR\Query\QOM\SourceInterface the left source; non-null
 	 */
-	public function getNodeTypeName() {
-		return $this->nodeTypeName;
+	public function getLeft() {
+		return $this->left;
 	}
 
 	/**
-	 * Gets the selector name.
-	 * A selector's name can be used elsewhere in the query to identify the selector.
+	 * Gets the right node-tuple source.
 	 *
-	 * @return the selector name; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @return \F3\PHPCR\Query\QOM\SourceInterface the right source; non-null
 	 */
-	public function getSelectorName() {
-		return $this->selectorName;
+	public function getRight() {
+		return $this->right;
+	}
+
+	/**
+	 * Gets the join type.
+	 *
+	 * @return integer one of QueryObjectModelConstants.JOIN_TYPE_*
+	 */
+	public function getJoinType() {
+		return $this->joinType;
+	}
+
+	/**
+	 * Gets the join condition.
+	 *
+	 * @return JoinCondition the join condition; non-null
+	 */
+	public function getJoinCondition() {
+		return $this->joinCondition;
 	}
 
 }

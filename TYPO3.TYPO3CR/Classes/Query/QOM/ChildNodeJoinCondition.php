@@ -29,15 +29,11 @@ namespace F3\TYPO3CR\Query\QOM;
  */
 
 /**
- * Selects a subset of the nodes in the repository based on node type.
- *
- * A selector selects every node in the repository, subject to access control
- * constraints, that satisfies at least one of the following conditions:
- *
- * the node's primary node type is nodeType, or
- * the node's primary node type is a subtype of nodeType, or
- * the node has a mixin node type that is nodeType, or
- * the node has a mixin node type that is a subtype of nodeType.
+ * Tests whether the childSelector node is a child of the parentSelector node. A
+ * node-tuple satisfies the constraint only if:
+ *  childSelectorNode.getParent().isSame(parentSelectorNode)
+ * would return true, where childSelectorNode is the node for childSelector and
+ * parentSelectorNode is the node for parentSelector.
  *
  * @package TYPO3CR
  * @subpackage Query
@@ -45,50 +41,48 @@ namespace F3\TYPO3CR\Query\QOM;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Selector implements \F3\PHPCR\Query\QOM\SelectorInterface {
+class ChildNodeJoinCondition implements \F3\PHPCR\Query\QOM\ChildNodeJoinConditionInterface {
 
 	/**
 	 * @var string
 	 */
-	protected $nodeTypeName;
+	protected $childSelectorName;
 
 	/**
 	 * @var string
 	 */
-	protected $selectorName;
+	protected $parentSelectorName;
 
 	/**
-	 * Constructs the Selector instance
+	 * Constructs this ChildNodeJoinCondition instance
 	 *
-	 * @param string $selectorName
-	 * @param string $nodeTypeName
+	 * @param \F3\PHPCR\Query\QOM\DynamicOperandInterface $operand1
+	 * @param \F3\PHPCR\Query\QOM\StaticOperandInterface $operand2
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($selectorName, $nodeTypeName) {
-		$this->selectorName = $selectorName;
-		$this->nodeTypeName = $nodeTypeName;
+	public function __construct($childSelectorName, $parentSelectorName) {
+		$this->childSelectorName = $childSelectorName;
+		$this->parentSelectorName = $parentSelectorName;
 	}
 
 	/**
-	 * Gets the name of the required node type.
+	 * Gets the name of the child selector.
 	 *
-	 * @return string the node type name; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @return string the selector name; non-null
 	 */
-	public function getNodeTypeName() {
-		return $this->nodeTypeName;
+	public function getChildSelectorName() {
+		return $this->childSelectorName;
 	}
 
 	/**
-	 * Gets the selector name.
-	 * A selector's name can be used elsewhere in the query to identify the selector.
+	 * Gets the name of the parent selector.
 	 *
-	 * @return the selector name; non-null
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @return string the selector name; non-null
 	 */
-	public function getSelectorName() {
-		return $this->selectorName;
+	public function getParentSelectorName() {
+		return $this->parentSelectorName;
 	}
+
 
 }
 

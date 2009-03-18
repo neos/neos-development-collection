@@ -39,6 +39,16 @@ namespace F3\TYPO3CR\Query\QOM;
  */
 class Operand implements \F3\PHPCR\Query\QOM\OperandInterface {
 
+	/**
+	 * Does nothing
+	 *
+	 * @param array &$boundVariables
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function collectBoundVariableNames(&$boundVariables) {
+	}
+
 }
 
 ?>

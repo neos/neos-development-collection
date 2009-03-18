@@ -16,18 +16,6 @@ DELETE FROM "pathproperties";
 DELETE FROM "referenceproperties";
 DELETE FROM "weakreferenceproperties";
 DELETE FROM "uriproperties";
-DELETE FROM "stringmultivalueproperties";
-DELETE FROM "binarymultivalueproperties";
-DELETE FROM "longmultivalueproperties";
-DELETE FROM "doublemultivalueproperties";
-DELETE FROM "decimalmultivalueproperties";
-DELETE FROM "datemultivalueproperties";
-DELETE FROM "booleanmultivalueproperties";
-DELETE FROM "namemultivalueproperties";
-DELETE FROM "pathmultivalueproperties";
-DELETE FROM "referencemultivalueproperties";
-DELETE FROM "weakreferencemultivalueproperties";
-DELETE FROM "urimultivalueproperties";
 
 INSERT INTO "namespaces" ("prefix", "uri") VALUES ('jcr', 'http://www.jcp.org/jcr/1.0');
 INSERT INTO "namespaces" ("prefix", "uri") VALUES ('nt', 'http://www.jcp.org/jcr/nt/1.0');

@@ -28,7 +28,7 @@ namespace F3\TYPO3CR\Storage\Backend\PDO;
  * @version $Id:F3_TYPO3CR_Storage_Backend_PDOTest.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
-require_once('TestBase.php');
+require_once(__DIR__ . '/../TestBase.php');
 
 /**
  * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the PDO MySQL driver
@@ -68,7 +68,7 @@ class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 	 * @author Matthias Hörmann <hoermann@saltation.de>
 	 */
 	public function setUp() {
-		$this->config = __DIR__ . '/../../Fixtures/testdb.conf';
+		$this->config = __DIR__ . '/../../../Fixtures/testdb.conf';
 		$lines = file($this->config, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
 		foreach ($lines as $line) {
 			$line = trim($line);
@@ -100,7 +100,7 @@ class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 		}
 
 
-		$scriptpath = FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/';
+		$scriptpath = __DIR__ . '/../../../Fixtures/';
 
 		exec($scriptpath . 'testdb.sh mysql reset');
 

@@ -28,82 +28,41 @@ namespace F3\TYPO3CR\Storage\Backend\PDO;
  * @version $Id$
  */
 
-require_once('TestBase.php');
+require_once(__DIR__ . '/../TestBase.php');
 
 /**
- * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the PDO PostgreSQL driver
+ * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the Sqlite PDO driver
  *
  * @package TYPO3CR
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PostgreSQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
+class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 
 	/**
 	 * @var string
 	 */
-	protected $config;
+	protected $fixtureFolder;
 
 	/**
 	 * @var string
 	 */
-	protected $db;
-
-	/**
-	 * @var string
-	 */
-	protected $dbuser;
-
-	/**
-	 * @var string
-	 */
-	protected $dbpass;
+	protected $fixtureDB;
 
 	/**
 	 * Set up the test environment
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias Hörmann <hoermann@saltation.de>
 	 */
 	public function setUp() {
-		$this->config = __DIR__ . '/../../Fixtures/testdb.conf';
-		$lines = file($this->config, FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
-		foreach ($lines as $line) {
-			$line = trim($line);
-			$prefix = 'PGSQL_DB="';
-			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
-				$this->db = substr($line, strlen($prefix), -1);
-			}
-			$prefix = 'PGSQL_USER="';
-			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
-				$this->dbuser = substr($line, strlen($prefix), -1);
-			}
-			$prefix = 'PGSQL_PASS="';
-			if (strncmp($line, $prefix, strlen($prefix)) == 0) {
-				$this->dbpass = substr($line, strlen($prefix), -1);
-			}
-		}
-
-		if ($this->db != '' && $this->dbuser != '' && $this->dbpass != '') {
-			try {
-				$databaseHandle = new \PDO('pgsql:dbname=' . $this->db, $this->dbuser, $this->dbpass);
-				$databaseHandle->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-				$databaseHandle = NULL;
-			} catch (\PDOException $e) {
-				$this->markTestSkipped('Could not connect to PostgreSQL database ' . $this->db . ', user ' . $this->dbuser . ', password ' . $this->dbpass . ', skipping PostgreSQL tests');
-				return;
-			}
-		} else {
-			$this->markTestSkipped('PostgreSQL tests not configured');
-		}
-
-		$scriptpath = FLOW3_PATH_PACKAGES . 'TYPO3CR/Tests/Fixtures/';
-
-		exec($scriptpath . 'testdb.sh postgres reset');
-
-		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'pgsql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
+		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
+		$this->fixtureFolder = $environment->getPathToTemporaryDirectory() . 'TYPO3CR/Tests/';
+		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
+		$this->fixtureDB = uniqid('sqlite') . '.db';
+		copy(__DIR__ . '/../../../Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
+		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
 		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 
@@ -115,10 +74,11 @@ class PostgreSQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias Hörmann <hoermann@saltation.de>
 	 */
 	public function tearDown() {
 		$this->storageBackend->disconnect();
+		unlink($this->fixtureFolder . $this->fixtureDB);
+		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->fixtureFolder);
 	}
 }
 ?>

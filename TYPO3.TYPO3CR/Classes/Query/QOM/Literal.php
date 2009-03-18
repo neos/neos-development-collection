@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3CR\Storage\Backend\PDO;
+namespace F3\TYPO3CR\Query\QOM;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -24,61 +24,41 @@ namespace F3\TYPO3CR\Storage\Backend\PDO;
 
 /**
  * @package TYPO3CR
- * @subpackage Tests
+ * @subpackage Query
  * @version $Id$
  */
-
-require_once('TestBase.php');
 
 /**
- * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the Sqlite PDO driver
+ * Evaluates to a literal value.
  *
  * @package TYPO3CR
- * @subpackage Tests
+ * @subpackage Query
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
+class Literal extends \F3\TYPO3CR\Query\QOM\StaticOperand implements \F3\PHPCR\Query\QOM\LiteralInterface {
 
 	/**
-	 * @var string
-	 */
-	protected $fixtureFolder;
-
-	/**
-	 * @var string
-	 */
-	protected $fixtureDB;
-
-	/**
-	 * Set up the test environment
+	 * Constructs this Literal instance
 	 *
-	 * @return void
+	 * @param string $value
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setUp() {
-		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
-		$this->fixtureFolder = $environment->getPathToTemporaryDirectory() . 'TYPO3CR/Tests/';
-		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
-		$this->fixtureDB = uniqid('sqlite') . '.db';
-		copy(__DIR__ . '/../../Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
-		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
-		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
-		$this->storageBackend->connect();
-
-		parent::setup();
+	public function __construct($value) {
+		$this->value = $value;
 	}
 
 	/**
-	 * Clean up after the tests
+	 * Gets the value of the literal.
 	 *
-	 * @return void
+	 * @return string the literal value; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function tearDown() {
-		$this->storageBackend->disconnect();
-		unlink($this->fixtureFolder . $this->fixtureDB);
-		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->fixtureFolder);
+	public function getLiteralValue() {
+		return $this->value;
 	}
+
 }
+
 ?>

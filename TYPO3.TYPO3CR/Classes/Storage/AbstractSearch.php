@@ -45,6 +45,11 @@ abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 	protected $workspaceName = 'default';
 
 	/**
+	 * @var \F3\TYPO3CR\NamespaceRegistryInterface
+	 */
+	protected $namespaceRegistry;
+
+	/**
 	 * Constructs this backend
 	 *
 	 * @param mixed $options Configuration options - depends on the actual backend
@@ -72,6 +77,31 @@ abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 		if ($workspaceName == '' || !is_string($workspaceName)) throw new \InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1218961735);
 		$this->workspaceName = $workspaceName;
 	}
+
+	/**
+	 * Sets the namespace registry used by the storage backend
+	 *
+	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry
+	 * @return void
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	public function setNamespaceRegistry(\F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry) {
+		$this->namespaceRegistry = $namespaceRegistry;
+	}
+
+	/**
+	 * Performs any needed initialization before the search backend can be used
+	 *
+	 * @return void
+	 */
+	public function connect() {}
+
+	/**
+	 * Performs any needed cleanup before the search backend can be discarded
+	 *
+	 * @return void
+	 */
+	public function disconnect() {}
 
 }
 ?>

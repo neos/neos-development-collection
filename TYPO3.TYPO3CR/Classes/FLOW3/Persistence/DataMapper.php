@@ -54,7 +54,7 @@ class DataMapper {
 	protected $identityMap;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\Manager
+	 * @var \F3\FLOW3\Persistence\ManagerInterface
 	 */
 	protected $persistenceManager;
 

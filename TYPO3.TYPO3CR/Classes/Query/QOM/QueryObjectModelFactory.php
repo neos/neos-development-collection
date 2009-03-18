@@ -89,14 +89,17 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * Selects a subset of the nodes in the repository based on node type.
 	 *
 	 * @param string $nodeTypeName the name of the required node type; non-null
-	 * @param string $selectorName the selector name; non-null
-	 * @return \F3\PHPCR\Query\QOM\SelectorInterface the selector; non-null
+	 * @param string $selectorName the selector name; optional
+	 * @return \F3\PHPCR\Query\QOM\SelectorInterface the selector
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function selector($nodeTypeName, $selectorName = '') {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\SelectorInterface', $nodeTypeName, $selectorName);
+		if ($selectorName === '') {
+			$selectorName = $nodeTypeName;
+		}
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\SelectorInterface', $selectorName, $nodeTypeName);
 	}
 
 	/**
@@ -111,7 +114,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 */
 	public function join(\F3\PHPCR\Query\QOM\SourceInterface $left, \F3\PHPCR\Query\QOM\SourceInterface $right, $joinType, \F3\PHPCR\Query\QOM\JoinConditionInterface $joinCondition) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058188);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\JoinInterface', $left, $right, $joinType, $joinCondition);
 	}
 
 	/**
@@ -151,9 +154,10 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\ChildNodeJoinConditionInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function childNodeJoinCondition($childSelectorName, $parentSelectorName) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058191);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\ChildNodeJoinConditionInterface', $childSelectorName, $parentSelectorName);
 	}
 
 	/**
@@ -360,9 +364,10 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\LowerCaseInterface the operand; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function lowerCase(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058206);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\LowerCaseInterface', $operand);
 	}
 
 	/**
@@ -372,9 +377,10 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\UpperCaseInterface the operand; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function upperCase(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058207);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\UpperCaseInterface', $operand);
 	}
 
 	/**
@@ -399,9 +405,10 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\ValueInterface the operand; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if a particular validity test is possible on this method, the implemention chooses to perform that test (and not leave it until later) on createQuery, and the parameters given fail that test
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function literal(\F3\PHPCR\ValueInterface $literalValue) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224520629);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\LiteralInterface', $literalValue->getString());
 	}
 
 	/**

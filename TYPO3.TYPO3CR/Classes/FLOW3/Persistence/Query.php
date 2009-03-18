@@ -70,6 +70,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $valueFactory;
 
 	/**
+	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * @var \F3\PHPCR\Query\QOM\ConstraintInterface
 	 */
 	protected $constraint;
@@ -115,12 +120,13 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Injects the persistence manager, used to fetch the CR session
 	 *
-	 * @param \F3\FLOW3\Persistence\Manager $persistenceManager
+	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\Manager $persistenceManager) {
-		$session = $persistenceManager->getBackend()->getSession();
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
+		$session = $this->persistenceManager->getBackend()->getSession();
 		$this->QOMFactory = $session->getWorkspace()->getQueryManager()->getQOMFactory();
 		$this->valueFactory = $session->getValueFactory();
 	}
@@ -211,18 +217,36 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Adds an equality criterion used for matching objects against the query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
+	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function equals($property, $operand) {
-		$this->operands['flow3:' . $property] = $operand;
-		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue('flow3:' . $property),
-			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
-			$this->QOMFactory->bindVariable('flow3:' . $property)
-		);
+	public function equals($propertyName, $operand, $caseSensitive = TRUE) {
+		if ($caseSensitive) {
+			$comparison = $this->QOMFactory->comparison(
+				$this->QOMFactory->propertyValue('flow3:' . $propertyName),
+				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+				$this->QOMFactory->bindVariable('flow3:' . $propertyName)
+			);
+		} else {
+			$comparison = $this->QOMFactory->comparison(
+				$this->QOMFactory->lowerCase(
+					$this->QOMFactory->propertyValue('flow3:' . $propertyName)
+				),
+				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+				$this->QOMFactory->bindVariable('flow3:' . $propertyName)
+			);
+		}
+
+		if ($caseSensitive) {
+			$this->operands['flow3:' . $propertyName] = $operand;
+		} else {
+			$this->operands['flow3:' . $propertyName] = \F3\PHP6\Functions::strtolower($operand);
+		}
+
+		return $comparison;
 	}
 
 	/**

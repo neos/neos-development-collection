@@ -91,6 +91,7 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	 */
 	public function setSearchEngine(\F3\TYPO3CR\Storage\SearchInterface $searchEngine) {
 		$this->searchEngine = $searchEngine;
+		$this->searchEngine->connect();
 	}
 
 	/**

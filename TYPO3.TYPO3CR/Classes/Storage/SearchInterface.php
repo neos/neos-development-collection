@@ -55,6 +55,13 @@ interface SearchInterface {
 	public function connect();
 
 	/**
+	 * Performs any needed cleanup before the search backend can be discarded
+	 *
+	 * @return void
+	 */
+	public function disconnect();
+
+	/**
 	 * Adds the given node to the index
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node
