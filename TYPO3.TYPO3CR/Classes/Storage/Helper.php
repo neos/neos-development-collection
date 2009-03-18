@@ -27,8 +27,6 @@ namespace F3\TYPO3CR\Storage;
  * @version $Id$
  */
 
-require_once('Zend/Search/Lucene.php');
-
 /**
  * A helper class for the storage layer
  *
@@ -73,7 +71,6 @@ class Helper {
 	 */
 	public function initialize() {
 		$this->initializeStorage();
-		$this->initializeSearch();
 	}
 
 	/**
@@ -163,34 +160,6 @@ class Helper {
 		));
 	}
 
-	/**
-	 * Sets up the search backend
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function initializeSearch() {
-		$index = \Zend_Search_Lucene::create($this->options['indexlocation']. '/default');
-		$this->populateIndex();
-	}
-
-	/**
-	 * Adds the root node to the index
-	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function populateIndex() {
-		$statementHandle = $this->databaseHandle->query('SELECT * FROM "nodes" WHERE "parent" = \'\'');
-		$node = $statementHandle->fetch(\PDO::FETCH_ASSOC);
-
-		$nodeDocument = new \Zend_Search_Lucene_Document();
-		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('identifier', $node['identifier']));
-		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('nodetype', $node['nodetype']));
-		$nodeDocument->addField(\Zend_Search_Lucene_Field::keyword('path', '/'));
-
-		$index = \Zend_Search_Lucene::open($this->options['indexlocation']. '/default');
-		$index->addDocument($nodeDocument);
-	}
 }
 
 ?>
