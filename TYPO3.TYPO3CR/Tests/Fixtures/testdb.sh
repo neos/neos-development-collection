@@ -11,7 +11,7 @@ realpath() {
 }
 
 usage() {
-  echo 'Usage $0 [ sqlite | postgres | mysql ] [ setup | reset | dump | cleanup ]'
+  echo "Usage $0 [ sqlite | postgres | mysql ] [ setup | reset | dump | cleanup ]"
   echo
   echo 'setup   Setup database and user (for mysql+postgresql) from .sql files'
   echo 'reset   Reset database to a clean state after a test (does not drop it, just deletes table content and reinserts testdata, not useful for testing code that creates new tables)'
