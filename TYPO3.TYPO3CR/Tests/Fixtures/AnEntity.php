@@ -95,15 +95,15 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 		$this->value = $value;
 	}
 
-	public function isNew() {
+	public function FLOW3_Persistence_isNew() {
 		return TRUE;
 	}
 
-	public function isDirty($propertyName) {
+	public function FLOW3_Persistence_isDirty($propertyName) {
 		return FALSE;
 	}
 
-	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL) {
+	public function FLOW3_Persistence_memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL) {
 	}
 
 	/**
@@ -111,7 +111,7 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	 *
 	 * @return string Name of the target class
 	 */
-	public function AOPProxyGetProxyTargetClassName() {
+	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
 		return get_class($this);
 	}
 
@@ -121,7 +121,7 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function AOPProxyInvokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 
@@ -132,7 +132,7 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	 * @param string $propertyName Name of the property
 	 * @return mixed Value of the property
 	 */
-	public function AOPProxyGetProperty($propertyName) {
+	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
 		return $this->$propertyName;
 	}
 
@@ -143,7 +143,7 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	 * @param mixed $propertyValue Value to set
 	 * @return void
 	 */
-	public function AOPProxySetProperty($propertyName, $propertyValue) {
+	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {
 
 	}
 

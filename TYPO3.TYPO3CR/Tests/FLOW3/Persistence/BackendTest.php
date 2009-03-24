@@ -154,11 +154,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$className = 'SomeClass' . uniqid();
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
-			public function __construct($isNew) { $this->isNew = $isNew; }
-			public function isNew() { return $this->isNew; }
-			public function isDirty($propertyName) { return FALSE; }
-			public function memorizeCleanState($joinPoint = NULL) {}
-			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\';}
+			public function __construct($FLOW3_Persistence_isNew) { $this->FLOW3_Persistence_isNew = $FLOW3_Persistence_isNew; }
+			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
+			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
 		}');
 		$newObject = new $fullClassName(TRUE);
 		$oldObject = new $fullClassName(FALSE);
@@ -192,11 +192,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
-			public function isNew() { return TRUE; }
-			public function isDirty($propertyName) { return FALSE; }
-			public function memorizeCleanState($joinPoint = NULL) {}
-			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function AOPProxyGetProperty($name) { return \'' . $identifier . '\'; }
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
+			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
+			public function FLOW3_AOP_Proxy_getProperty($name) { return \'' . $identifier . '\'; }
 		}');
 		$newObject = new $fullClassName();
 		$aggregateRootObjects = new \SplObjectStorage();
@@ -231,11 +231,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
 			public $simpleString = \'simpleValue\';
 			protected $dirty = TRUE;
-			public function isNew() { return FALSE; }
-			public function isDirty($propertyName) { return $this->dirty; }
-			public function memorizeCleanState($joinPoint = NULL) { $this->dirty = FALSE; }
-			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\'; }
-			public function AOPProxyGetProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_Persistence_isNew() { return FALSE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return $this->dirty; }
+			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) { $this->dirty = FALSE; }
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 		}');
 		$dirtyObject = new $fullClassName();
 
@@ -256,9 +256,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_set('baseNode', $mockBaseNode);
 
-		$this->assertTrue($dirtyObject->isDirty('simpleString'));
+		$this->assertTrue($dirtyObject->FLOW3_Persistence_isDirty('simpleString'));
 		$backend->_call('persistObject', $dirtyObject);
-		$this->assertFalse($dirtyObject->isDirty('simpleString'));
+		$this->assertFalse($dirtyObject->FLOW3_Persistence_isDirty('simpleString'));
 	}
 
 	/**
@@ -270,7 +270,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
-			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\'; }
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 		}');
 		$deletedObject = new $fullClassName();
 		$deletedObjects = new \SplObjectStorage();
@@ -351,11 +351,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
 			public $date;
-			public function isNew() { return TRUE; }
-			public function isDirty($propertyName) { return TRUE; }
-			public function memorizeCleanState($joinPoint = NULL) {}
-			public function AOPProxyGetProxyTargetClassName() { return \'' . $fullClassName . '\';}
-			public function AOPProxyGetProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
+			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 		}');
 		$newObject = new $fullClassName();
 		$date = new \DateTime();
@@ -515,11 +515,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up objects
 		$authorClassName = uniqid('Author');
 		$qualifiedAuthorClassName = 'F3\\' . $authorClassName;
-		eval('namespace F3; class ' . $authorClassName . ' { public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+		eval('namespace F3; class ' . $authorClassName . ' { public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$author = new $qualifiedAuthorClassName;
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
-		eval('namespace F3; class ' . $postClassName . ' { public $author; public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function AOPProxyGetProperty($propertyName) { return $this->$propertyName; } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+		eval('namespace F3; class ' . $postClassName . ' { public $author; public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$post = new $qualifiedPostClassName();
 		$post->author = $author;
 
@@ -566,10 +566,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up objects
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
-		eval('namespace F3; class ' . $postClassName . ' { public $blog; public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function AOPProxyGetProperty($propertyName) { return $this->$propertyName; } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+		eval('namespace F3; class ' . $postClassName . ' { public $blog; public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$blogClassName = uniqid('Blog');
 		$qualifiedBlogClassName = 'F3\\' . $blogClassName;
-		eval('namespace F3; class ' . $blogClassName . ' { public $post; public function AOPProxyGetProxyTargetClassName() { return get_class($this); } public function AOPProxyGetProperty($propertyName) { return $this->$propertyName; } public function isNew() { return TRUE; } public function memorizeCleanState() {} }');
+		eval('namespace F3; class ' . $blogClassName . ' { public $post; public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$post = new $qualifiedPostClassName;
 		$blog = new $qualifiedBlogClassName();
 		$blog->post = $post;
