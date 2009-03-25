@@ -287,7 +287,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	protected function persistObjects() {
 		foreach ($this->aggregateRootObjects as $object) {
 			if (!$this->identityMap->hasObject($object)) {
-				$this->createNodeForEntity($object, $this->baseNode, 'flow3:' . $this->convertClassNameToJCRName($object->AOPProxyGetProxyTargetClassName()));
+				$this->createNodeForEntity($object, $this->baseNode, 'flow3:' . $this->convertClassNameToJCRName($object->FLOW3_AOP_Proxy_getProxyTargetClassName()));
 			}
 		}
 
@@ -311,17 +311,17 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		$queue = array();
 		$node = $this->session->getNodeByIdentifier($this->identityMap->getUUIDByObject($object));
 
-		$classSchema = $this->classSchemata[$object->AOPProxyGetProxyTargetClassName()];
+		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
 		foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
-			$propertyValue = $object->AOPProxyGetProperty($propertyName);
+			$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
 			if (is_array($propertyValue)) {
-				if ($object->isNew() || $object->isDirty($propertyName)) {
+				if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
 					$this->persistArray($propertyValue, $node, 'flow3:' . $propertyName, $queue);
 				} else {
 					$queue = array_merge($queue, array_values($propertyValue));
 				}
 			} elseif ($propertyValue instanceof \SplObjectStorage) {
-				if ($object->isNew() || $object->isDirty($propertyName)) {
+				if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
 					$this->persistSplObjectStorage($propertyValue, $node, 'flow3:' . $propertyName, $queue);
 				} else {
 					foreach ($propertyValue as $containedObject) {
@@ -329,23 +329,23 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 					}
 				}
 			} elseif (is_object($propertyValue) && $propertyType !== 'DateTime') {
-				if ($this->classSchemata[$propertyValue->AOPProxyGetProxyTargetClassName()]->isAggregateRoot() === TRUE) {
-					if ($object->isNew() || $object->isDirty($propertyName)) {
+				if ($this->classSchemata[$propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
+					if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
 						$this->createOrUpdateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
 					}
 				} else {
-					if ($object->isNew()) {
+					if ($object->FLOW3_Persistence_isNew()) {
 						$this->createNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
 					}
 					$queue[] = $propertyValue;
 				}
-			} elseif ($classSchema->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT || ($object->isNew() || $object->isDirty($propertyName))) {
+			} elseif ($classSchema->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT || ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName))) {
 				$node->setProperty('flow3:' . $propertyName, $propertyValue, \F3\PHPCR\PropertyType::valueFromType($propertyType));
 			}
 		}
 
 		if ($classSchema->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
-			$object->memorizeCleanState();
+			$object->FLOW3_Persistence_memorizeCleanState();
 		}
 
 			// here we loop over the objects. their nodes are already at the
@@ -365,12 +365,12 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
-		$className = $object->AOPProxyGetProxyTargetClassName();
+		$className = $object->FLOW3_AOP_Proxy_getProxyTargetClassName();
 		$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($className);
 		$uuidPropertyName = $this->classSchemata[$className]->getUUIDPropertyName();
 
 		if ($uuidPropertyName !== NULL) {
-			$node = $parentNode->addNode($nodeName, $nodeTypeName, $object->AOPProxyGetProperty($uuidPropertyName));
+			$node = $parentNode->addNode($nodeName, $nodeTypeName, $object->FLOW3_AOP_Proxy_getProperty($uuidPropertyName));
 		} else {
 			$node = $parentNode->addNode($nodeName, $nodeTypeName);
 		}
@@ -418,12 +418,12 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function persistValueObject($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
-		$className = $object->AOPProxyGetProxyTargetClassName();
+		$className = $object->FLOW3_AOP_Proxy_getProxyTargetClassName();
 		$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($className);
 		$node = $parentNode->addNode($nodeName, $nodeTypeName);
 
-		foreach ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->getProperties() as $propertyName => $propertyType) {
-			$propertyValue = $object->AOPProxyGetProperty($propertyName);
+		foreach ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getProperties() as $propertyName => $propertyType) {
+			$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
 			if (is_array($propertyValue)) {
 				$this->persistArray($propertyValue, $node, 'flow3:' . $propertyName, $queue);
 			} elseif (is_object($propertyValue) && $propertyType !== 'DateTime') {
@@ -459,11 +459,11 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 
 		foreach ($array as $key => $element) {
 			if (is_object($element) && !($element instanceof \DateTime)) {
-				if ($this->classSchemata[$element->AOPProxyGetProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
-					if ($this->classSchemata[$element->AOPProxyGetProxyTargetClassName()]->isAggregateRoot() === TRUE) {
+				if ($this->classSchemata[$element->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
+					if ($this->classSchemata[$element->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
 						$this->createOrUpdateProxyNodeForEntity($element, $node, 'flow3:' . $key);
 					} else {
-						if ($element->isNew()) {
+						if ($element->FLOW3_Persistence_isNew()) {
 							$this->createNodeForEntity($element, $node, 'flow3:' . $key);
 						}
 						$queue[] = $element;
@@ -509,11 +509,11 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			if ($object instanceof \DateTime) {
 				$itemNode->setProperty('flow3:object', $element, \F3\PHPCR\PropertyType::DATE);
 			} else {
-				if ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
-					if ($this->classSchemata[$object->AOPProxyGetProxyTargetClassName()]->isAggregateRoot() === TRUE) {
+				if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
+					if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
 						$this->createOrUpdateProxyNodeForEntity($object, $itemNode, 'flow3:object');
 					} else {
-						if ($object->isNew()) {
+						if ($object->FLOW3_Persistence_isNew()) {
 							$this->createNodeForEntity($object, $itemNode, 'flow3:object');
 						}
 						$queue[] = $object;

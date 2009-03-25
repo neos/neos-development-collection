@@ -142,7 +142,7 @@ class DataMapper {
 
 			$this->objectBuilder->reinjectDependencies($object, $objectConfiguration);
 			$this->thawProperties($object, $node, $classSchema);
-			$object->memorizeCleanState();
+			$object->FLOW3_Persistence_memorizeCleanState();
 		}
 
 		return $object;
@@ -196,7 +196,7 @@ class DataMapper {
 				break;
 			}
 
-			$object->AOPProxySetProperty($propertyName, $propertyValue);
+			$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
 		}
 	}
 
