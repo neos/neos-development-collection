@@ -187,6 +187,17 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
+	 * Checks if the given object has ever been persisted.
+	 *
+	 * @param object $object The object to check
+	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isNewObject($object) {
+		return ($this->getUUIDByObject($object) === NULL);
+	}
+
+	/**
 	 * Replaces the given object by the second object.
 	 *
 	 * This method will unregister the existing object at the identity map and

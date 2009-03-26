@@ -511,6 +511,32 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function isNewObjectReturnsTrueIfTheObjectHasNoUUIDYet() {
+		$object = new \stdClass();
+
+		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('getUUIDByObject'), array(), '', FALSE);
+		$backend->expects($this->once())->method('getUUIDByObject')->with($object)->will($this->returnValue(NULL));
+		$result = $backend->isNewObject($object);
+		$this->assertTrue($result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isNewObjectReturnsFalseIfTheObjectDoesHaveAUUID() {
+		$object = new \stdClass();
+
+		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('getUUIDByObject'), array(), '', FALSE);
+		$backend->expects($this->once())->method('getUUIDByObject')->with($object)->will($this->returnValue('1234:45667'));
+		$result = $backend->isNewObject($object);
+		$this->assertFalse($result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function replaceObjectUnregistersTheExistingObjectAndRegistersTheNewObjectAtTheIdentityMap() {
 		$existingObject = new \stdClass();
 		$newObject = new \stdClass();
