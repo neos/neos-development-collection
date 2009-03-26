@@ -178,12 +178,36 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @return string The identifier for the object if it is known, or NULL
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUID($object) {
+	public function getUUIDByObject($object) {
 		if ($this->identityMap->hasObject($object)) {
 			return $this->identityMap->getUUIDByObject($object);
 		} else {
 			return NULL;
 		}
+	}
+
+	/**
+	 * Replaces the given object by the second object.
+	 *
+	 * This method will unregister the existing object at the identity map and
+	 * register the new object instead. The existing object must therefore
+	 * already be registered at the identity map which is the case for all
+	 * reconstituted objects.
+	 *
+	 * The new object will be identified by the uuid which formerly belonged
+	 * to the existing object. The existing object looses its uuid.
+	 *
+	 * @param object $existingObject The existing object
+	 * @param object $newObject The new object
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function replaceObject($existingObject, $newObject) {
+		$existingUUID = $this->getUUIDByObject($existingObject);
+		if ($existingUUID === NULL) throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to this persistence backend.', 1238070163);
+
+		$this->identityMap->unregisterObject($existingObject);
+		$this->identityMap->registerObject($newObject, $existingUUID);
 	}
 
 	/**
@@ -392,7 +416,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createOrUpdateProxyNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
-		$objectUUID = $this->getUUID($object);
+		$objectUUID = $this->getUUIDByObject($object);
 
 		if ($parentNode->hasNode($nodeName)) {
 			$proxyNode = $parentNode->getNode($nodeName);
@@ -536,7 +560,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	protected function finalizeObjectProxyNodes() {
 		foreach ($this->incompleteObjectProxyNodes as $proxyNode => $object) {
-			$objectUUID = $this->getUUID($object);
+			$objectUUID = $this->getUUIDByObject($object);
 			if ($objectUUID !== NULL) {
 				$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
 			} else {

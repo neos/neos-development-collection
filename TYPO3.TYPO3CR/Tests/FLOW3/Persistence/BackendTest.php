@@ -489,7 +489,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
-		$this->assertEquals($fakeUUID, $backend->getUUID($knownObject));
+		$this->assertEquals($fakeUUID, $backend->getUUIDByObject($knownObject));
 	}
 
 	/**
@@ -504,7 +504,25 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
-		$this->assertNull($backend->getUUID($unknownObject));
+		$this->assertNull($backend->getUUIDByObject($unknownObject));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function replaceObjectUnregistersTheExistingObjectAndRegistersTheNewObjectAtTheIdentityMap() {
+		$existingObject = new \stdClass();
+		$newObject = new \stdClass();
+
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('unregisterObject')->with($existingObject);
+		$mockIdentityMap->expects($this->once())->method('registerObject')->with($newObject, 'the uuid');
+
+		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('getUUIDByObject'), array(), '', FALSE);
+		$backend->expects($this->once())->method('getUUIDByObject')->with($existingObject)->will($this->returnValue('the uuid'));
+		$backend->injectIdentityMap($mockIdentityMap);
+		$backend->replaceObject($existingObject, $newObject);
 	}
 
 	/**
