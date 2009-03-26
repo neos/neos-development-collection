@@ -286,20 +286,6 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	}
 
 
-	// query methods
-
-
-	/**
-	 * Returns an array with identifiers matching the query
-	 *
-	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query) {
-		return $this->searchEngine->findNodeIdentifiers($query);
-	}
-
 	// property related methods
 
 

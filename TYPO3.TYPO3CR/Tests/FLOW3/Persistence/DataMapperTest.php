@@ -299,17 +299,6 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-
-		$itemNodes = $proxyNode->getNodes();
-		foreach ($itemNodes as $itemNode) {
-			$objectNode = $itemNode->getNode('flow3:object');
-			if ($objectNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
-				$object = $this->mapObjectProxyNode($objectNode);
-			} else {
-				$object = $this->mapSingleNode($objectNode);
-			}
-
-		}
 	 */
 	public function mapSplObjectStorageProxyNode() {
 		$mockProxyPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');

@@ -86,7 +86,12 @@ interface SearchInterface {
 	public function deleteNode(\F3\PHPCR\NodeInterface $node);
 
 	/**
-	 * Returns an array with node identifiers matching the query
+	 * Returns an array with node identifiers matching the query. The array
+	 * is expected to be like this:
+	 * array(
+	 *  array('selectorA' => '12345', 'selectorB' => '67890')
+	 *  array('selectorA' => '54321', 'selectorB' => '09876')
+	 * )
 	 *
 	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
 	 * @return array

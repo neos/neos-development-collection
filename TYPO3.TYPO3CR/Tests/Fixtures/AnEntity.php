@@ -106,6 +106,9 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	public function FLOW3_Persistence_memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL) {
 	}
 
+	public function __clone() {
+	}
+
 	/**
 	 * Returns the name of the class this proxy extends.
 	 *

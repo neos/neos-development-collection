@@ -95,6 +95,16 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	}
 
 	/**
+	 * Returns the search engine used by the storage backend.
+	 *
+	 * @return \F3\TYPO3CR\Storage\SearchInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getSearchEngine() {
+		return $this->searchEngine;
+	}
+
+	/**
 	 * Sets the namespace registry used by the storage backend
 	 *
 	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry

@@ -70,6 +70,13 @@ interface BackendInterface {
 	public function setSearchEngine(\F3\TYPO3CR\Storage\SearchInterface $searchEngine);
 
 	/**
+	 * Returns the search engine used by the storage backend.
+	 *
+	 * @return \F3\TYPO3CR\Storage\SearchInterface
+	 */
+	public function getSearchEngine();
+
+	/**
 	 * Sets the namespace registry used by the backend to translate prefixed names into (URI, name) tuples
 	 *
 	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry
@@ -141,14 +148,6 @@ interface BackendInterface {
 	 * @return void
 	 */
 	public function removeNode(\F3\PHPCR\NodeInterface $node);
-
-	/**
-	 * Returns an array with identifiers matching the query
-	 *
-	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
-	 * @return array
-	 */
-	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query);
 
 
 

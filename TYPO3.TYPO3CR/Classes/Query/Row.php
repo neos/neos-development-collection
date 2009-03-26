@@ -40,6 +40,26 @@ namespace F3\TYPO3CR\Query;
 class Row implements \F3\PHPCR\Query\RowInterface {
 
 	/**
+	 * @var array
+	 */
+	protected $identifierTuple;
+
+	/**
+	 * Constructs this Row instance
+	 *
+	 * $identifierTuple is expected to be like this:
+	 *  array('selectorA' => '12345', 'selectorB' => '67890')
+	 *
+	 * @param array $identifierTuple
+	 * @param \F3\PHPCR\SessionInterface $session
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function __construct(array $identifierTuple, \F3\PHPCR\SessionInterface $session) {
+		$this->identifierTuple = $identifierTuple;
+		$this->session = $session;
+	}
+
+	/**
 	 * Returns an array of all the values in the same order as the column names
 	 * returned by QueryResult.getColumnNames().
 	 *
@@ -69,9 +89,16 @@ class Row implements \F3\PHPCR\Query\RowInterface {
 	 * @param string $selectorName
 	 * @return \F3\PHPCR\NodeInterface a Node
 	 * @throws \F3\PHPCR\RepositoryException if selectorName is not the alias of a selector in this query or if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNode($selectorName = NULL) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897510);
+		if ($selectorName === NULL) {
+			if (count($this->identifierTuple) !== 1) throw new \F3\PHPCR\RepositoryException('getNode() can not be called without $selectorName with multiple selectors being present.', 1238061913);
+			return $this->session->getNodeByIdentifier(current($this->identifierTuple));
+		} else {
+			if (!array_key_exists($selectorName, $this->identifierTuple)) throw new \F3\PHPCR\RepositoryException('getNode() has been called with an unknown $selectorName.', 1238062095);
+			return $this->session->getNodeByIdentifier($this->identifierTuple[$selectorName]);
+		}
 	}
 
 	/**
@@ -81,9 +108,11 @@ class Row implements \F3\PHPCR\Query\RowInterface {
 	 * @param string $selectorName
 	 * @return string
 	 * @throws \F3\PHPCR\RepositoryException if selectorName is not the alias of a selector in this query or if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPath($selectorName = NULL) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897511);
+		$node = $this->getNode($selectorName);
+		return $node === NULL ? NULL : $node->getPath();
 	}
 
 	/**

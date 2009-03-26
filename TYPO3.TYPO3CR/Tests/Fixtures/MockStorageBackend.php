@@ -353,22 +353,20 @@ class MockStorageBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	}
 
 	/**
-	 * Returns an array with identifiers matching the query
-	 *
-	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
-	 * @return array
-	 */
-	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query) {
-		return array();
-	}
-
-	/**
 	 * Sets the search engine used by the storage backend.
 	 *
 	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchEngine
 	 * @return void
 	 */
 	public function setSearchEngine(\F3\TYPO3CR\Storage\SearchInterface $searchEngine) {
+	}
+
+	/**
+	 * Returns the search engine used by the storage backend.
+	 *
+	 * @return \F3\TYPO3CR\Storage\SearchInterface
+	 */
+	public function getSearchEngine() {
 	}
 
 	/**

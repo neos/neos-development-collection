@@ -52,17 +52,23 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	/**
 	 * @var array
 	 */
-	protected $identifiers;
+	protected $identifierTuples;
 
 	/**
 	 * Constructs this QueryResult
+	 *
+	 * $identifierTuples is expected to be like this:
+	 * array(
+	 *  array('selectorA' => '12345', 'selectorB' => '67890')
+	 *  array('selectorA' => '54321', 'selectorB' => '09876')
+	 * )
 	 *
 	 * @param array $identifiers
 	 * @param \F3\PHPCR\SessionInterface $session
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(array $identifiers, \F3\PHPCR\SessionInterface $session) {
-		$this->identifiers = $identifiers;
+	public function __construct(array $identifierTuples, \F3\PHPCR\SessionInterface $session) {
+		$this->identifierTuples = $identifierTuples;
 		$this->session = $session;
 	}
 
@@ -95,7 +101,17 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	 * @throws \F3\PHPCR\RepositoryException if this call is the second time either getRows() or getNodes() has been called on the same QueryResult object or if another error occurs.
 	*/
 	public function getRows() {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897580);
+		if ($this->identifierTuples === NULL) throw new \F3\PHPCR\RepositoryException('Illegal getRows() call - can be called only once and not after getNodes().', 1237991809);
+
+		$rowIterator = $this->objectFactory->create('F3\PHPCR\Query\RowIteratorInterface');
+		foreach ($this->identifierTuples as $identifierTuple) {
+			$rowIterator->append(
+				$this->objectFactory->create('F3\PHPCR\Query\RowInterface', $identifierTuple)
+			);
+		}
+		$this->identifierTuples = NULL;
+
+		return $rowIterator;
 	}
 
 	/**
@@ -107,10 +123,14 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNodes() {
+		if ($this->identifierTuples === NULL) throw new \F3\PHPCR\RepositoryException('Illegal getNodes() call - can be called only once and not after getRows().', 1237991684);
+		if (count(current($this->identifierTuples)) > 1) throw new \F3\PHPCR\RepositoryException('getNodes() can be called only on results having a single selector.', 1237992322);
+
 		$nodeIterator = $this->objectFactory->create('F3\PHPCR\NodeIteratorInterface');
-		foreach ($this->identifiers as $identifier) {
-			$nodeIterator->append($this->session->getNodeByIdentifier($identifier));
+		foreach ($this->identifierTuples as $identifierTuple) {
+			$nodeIterator->append($this->session->getNodeByIdentifier(current($identifierTuple)));
 		}
+		$this->identifierTuples = NULL;
 
 		return $nodeIterator;
 	}
