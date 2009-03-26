@@ -183,7 +183,12 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	}
 
 	/**
-	 * Returns an array with identifiers matching the query
+	 * Returns an array with node identifiers matching the query. The array
+	 * is expected to be like this:
+	 * array(
+	 *  array('selectorA' => '12345', 'selectorB' => '67890')
+	 *  array('selectorA' => '54321', 'selectorB' => '09876')
+	 * )
 	 *
 	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
 	 * @return array
@@ -199,20 +204,20 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 			$splitNodeTypeName = $this->splitName($query->getSource()->getNodeTypeName());
 			$parameters[] = $splitNodeTypeName['name'];
 			$parameters[] = $splitNodeTypeName['namespaceURI'];
-			$sql = 'SELECT DISTINCT "' . $selectorAlias . '"."identifier" FROM "nodes" AS "' . $selectorAlias . '" WHERE ("' . $selectorAlias . '"."nodetype"=? AND "' . $selectorAlias . '"."nodetypenamespace"=?)';
+			$sql = 'SELECT DISTINCT "' . $selectorAlias . '"."identifier" AS "' . $selectorAlias . '" FROM "nodes" AS "' . $selectorAlias . '" WHERE ("' . $selectorAlias . '"."nodetype"=? AND "' . $selectorAlias . '"."nodetypenamespace"=?)';
 		} elseif ($query->getSource() instanceof \F3\PHPCR\Query\QOM\SelectorInterface) {
 			$selectorName = $query->getSource()->getSelectorName();
 			$selectorAlias = $this->getAliasFromSelectorName($selectorName);
 			$splitNodeTypeName = $this->splitName($query->getSource()->getNodeTypeName());
 			$parameters[] = $splitNodeTypeName['name'];
 			$parameters[] = $splitNodeTypeName['namespaceURI'];
-			$sql = 'SELECT DISTINCT "' . $selectorAlias . '"."identifier" FROM "nodes" AS "' . $selectorAlias . '" INNER JOIN "index_properties" ON "' . $selectorAlias . '"."identifier" = "index_properties"."parent" WHERE ("' . $selectorAlias . '"."nodetype"=? AND "' . $selectorAlias . '"."nodetypenamespace"=?) AND';
+			$sql = 'SELECT DISTINCT "' . $selectorAlias . '"."identifier" AS "' . $selectorAlias . '" FROM "nodes" AS "' . $selectorAlias . '" INNER JOIN "index_properties" ON "' . $selectorAlias . '"."identifier" = "index_properties"."parent" WHERE ("' . $selectorAlias . '"."nodetype"=? AND "' . $selectorAlias . '"."nodetypenamespace"=?) AND';
 			$sql .= $this->parseConstraint($query->getConstraint(), $query->getBoundVariableValues(), $parameters);
 		}
 
 		$statementHandle = $this->databaseHandle->prepare($sql);
 		$statementHandle->execute($parameters);
-		$result = $statementHandle->fetchAll(\PDO::FETCH_COLUMN);
+		$result = $statementHandle->fetchAll(\PDO::FETCH_ASSOC);
 
 		return $result;
 	}
