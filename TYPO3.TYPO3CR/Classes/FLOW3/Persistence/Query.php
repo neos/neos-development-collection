@@ -206,11 +206,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 */
 	public function withUUID($uuid) {
-		$this->operands['typo3cr:identifier'] = $uuid;
+		$this->operands['jcr:uuid'] = $uuid;
 		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue('typo3cr:identifier'),
+			$this->QOMFactory->propertyValue('jcr:uuid'),
 			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
-			$this->QOMFactory->bindVariable('typo3cr:identifier')
+			$this->QOMFactory->bindVariable('jcr:uuid')
 		);
 	}
 
