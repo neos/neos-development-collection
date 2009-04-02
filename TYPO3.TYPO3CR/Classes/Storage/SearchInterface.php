@@ -48,6 +48,14 @@ interface SearchInterface {
 	public function setWorkspaceName($workspaceName);
 
 	/**
+	 * Sets the namespace registry used by the backend to translate prefixed names into (URI, name) tuples
+	 *
+	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry
+	 * @return void
+	 */
+	public function setNamespaceRegistry(\F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry);
+
+	/**
 	 * Performs any needed initialization before the search backend can be used
 	 *
 	 * @return void

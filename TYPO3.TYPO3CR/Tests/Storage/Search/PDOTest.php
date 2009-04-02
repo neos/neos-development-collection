@@ -132,47 +132,17 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function parseStaticOperandAddsValueForBindVariableValueToParametersArray() {
-		$mockBindVariable = $this->getMock('F3\PHPCR\Query\QOM\BindVariableValueInterface');
-		$mockBindVariable->expects($this->once())->method('getBindVariableName')->will($this->returnValue('varname'));
-		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
-
-		$boundVariableValues = array('varname' => 'variableValue');
-		$parameters = array();
-		$searchBackend->_callRef('parseStaticOperand', $mockBindVariable, $boundVariableValues, $parameters);
-
-		$this->assertSame($parameters, array('variableValue'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function parseStaticOperandAddsValueForLiteralToParametersArray() {
-		$mockLiteral = $this->getMock('F3\PHPCR\Query\QOM\LiteralInterface');
-		$mockLiteral->expects($this->once())->method('getLiteralValue')->will($this->returnValue('literalValue'));
-		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
-
-		$boundVariableValues = array();
-		$parameters = array();
-		$searchBackend->_callRef('parseStaticOperand', $mockLiteral, $boundVariableValues, $parameters);
-
-		$this->assertSame($parameters, array('literalValue'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
 	public function parseDynamicOperandTreatsPropertyValueCorrectly() {
 		$mockPropertyValue = $this->getMock('F3\PHPCR\Query\QOM\PropertyValueInterface');
 		$mockPropertyValue->expects($this->once())->method('getPropertyName')->will($this->returnValue('flow3:propname'));
+		$mockPropertyValue->expects($this->once())->method('getSelectorName')->will($this->returnValue('_nodes'));
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
 		$searchBackend->expects($this->once())->method('splitName')->with('flow3:propname')->will($this->returnValue(array('name' => 'propname', 'namespaceURI' => 'flow3.org/ns')));
 
 		$parameters = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockPropertyValue, $parameters);
-		$this->assertEquals($constraintSQL, '("index_properties"."name" = ? AND "index_properties"."namespace" = ? AND "index_properties"."value" = ?) ');
+		$sql = array();
+		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockPropertyValue, $sql, $parameters);
+		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND "_nodesproperties0"."value" = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
 	}
 
@@ -183,14 +153,16 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 	public function parseDynamicOperandTreatsLowerCaseOnPropertyValueCorrectly() {
 		$mockPropertyValue = $this->getMock('F3\PHPCR\Query\QOM\PropertyValueInterface');
 		$mockPropertyValue->expects($this->once())->method('getPropertyName')->will($this->returnValue('flow3:propname'));
+		$mockPropertyValue->expects($this->once())->method('getSelectorName')->will($this->returnValue('_nodes'));
 		$mockLowerCase = $this->getMock('F3\PHPCR\Query\QOM\LowerCaseInterface');
 		$mockLowerCase->expects($this->once())->method('getOperand')->will($this->returnValue($mockPropertyValue));
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
 		$searchBackend->expects($this->once())->method('splitName')->with('flow3:propname')->will($this->returnValue(array('name' => 'propname', 'namespaceURI' => 'flow3.org/ns')));
 
 		$parameters = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockLowerCase, $parameters);
-		$this->assertEquals($constraintSQL, '("index_properties"."name" = ? AND "index_properties"."namespace" = ? AND LOWER("index_properties"."value") = ?) ');
+		$sql = array();
+		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockLowerCase, $sql, $parameters);
+		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND LOWER("_nodesproperties0"."value") = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
 	}
 
@@ -201,14 +173,16 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 	public function parseDynamicOperandTreatsUpperCaseOnPropertyValueCorrectly() {
 		$mockPropertyValue = $this->getMock('F3\PHPCR\Query\QOM\PropertyValueInterface');
 		$mockPropertyValue->expects($this->once())->method('getPropertyName')->will($this->returnValue('flow3:propname'));
+		$mockPropertyValue->expects($this->once())->method('getSelectorName')->will($this->returnValue('_nodes'));
 		$mockUpperCase = $this->getMock('F3\PHPCR\Query\QOM\UpperCaseInterface');
 		$mockUpperCase->expects($this->once())->method('getOperand')->will($this->returnValue($mockPropertyValue));
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
 		$searchBackend->expects($this->once())->method('splitName')->with('flow3:propname')->will($this->returnValue(array('name' => 'propname', 'namespaceURI' => 'flow3.org/ns')));
 
 		$parameters = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockUpperCase, $parameters);
-		$this->assertEquals($constraintSQL, '("index_properties"."name" = ? AND "index_properties"."namespace" = ? AND UPPER("index_properties"."value") = ?) ');
+		$sql = array();
+		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockUpperCase, $sql, $parameters);
+		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND UPPER("_nodesproperties0"."value") = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
 	}
 }

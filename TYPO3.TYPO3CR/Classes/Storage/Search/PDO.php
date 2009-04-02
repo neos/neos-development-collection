@@ -132,8 +132,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @return void
 	 */
 	public function addNode(\F3\PHPCR\NodeInterface $node) {
-		$sql = 'INSERT INTO "index_properties" ("parent", "name", "namespace", "type", "value") VALUES (?, ?, ?, ?, ?)';
-		$statementHandle = $this->databaseHandle->prepare($sql);
+		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "index_properties" ("parent", "name", "namespace", "type", "value") VALUES (?, ?, ?, ?, ?)');
 
 		foreach ($node->getProperties() as $property) {
 			$splitPropertyName = $this->splitName($property->getName());
@@ -177,8 +176,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @return void
 	 */
 	public function deleteNode(\F3\PHPCR\NodeInterface $node) {
-		$sql = 'DELETE FROM "index_properties" WHERE "parent" = ?';
-		$statementHandle = $this->databaseHandle->prepare($sql);
+		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "index_properties" WHERE "parent" = ?');
 		$statementHandle->execute(array($node->getIdentifier()));
 	}
 
@@ -195,35 +193,86 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query) {
-		$sql = '';
+		$sql = array();
 		$parameters = array();
 
-		if ($query->getSource() instanceof \F3\PHPCR\Query\QOM\SelectorInterface && $query->getConstraint() === NULL) {
-			$selectorName = $query->getSource()->getSelectorName();
-			$selectorAlias = $this->getAliasFromSelectorName($selectorName);
-			$splitNodeTypeName = $this->splitName($query->getSource()->getNodeTypeName());
-			$parameters[] = $splitNodeTypeName['name'];
-			$parameters[] = $splitNodeTypeName['namespaceURI'];
-			$sql = 'SELECT DISTINCT "' . $selectorAlias . '"."identifier" AS "' . $selectorAlias . '" FROM "nodes" AS "' . $selectorAlias . '" WHERE ("' . $selectorAlias . '"."nodetype"=? AND "' . $selectorAlias . '"."nodetypenamespace"=?)';
-		} elseif ($query->getSource() instanceof \F3\PHPCR\Query\QOM\SelectorInterface) {
-			$selectorName = $query->getSource()->getSelectorName();
-			$selectorAlias = $this->getAliasFromSelectorName($selectorName);
-			$splitNodeTypeName = $this->splitName($query->getSource()->getNodeTypeName());
-			$parameters[] = $splitNodeTypeName['name'];
-			$parameters[] = $splitNodeTypeName['namespaceURI'];
-			$sql = 'SELECT DISTINCT "' . $selectorAlias . '"."identifier" AS "' . $selectorAlias . '" FROM "nodes" AS "' . $selectorAlias . '" INNER JOIN "index_properties" ON "' . $selectorAlias . '"."identifier" = "index_properties"."parent" WHERE ("' . $selectorAlias . '"."nodetype"=? AND "' . $selectorAlias . '"."nodetypenamespace"=?) AND';
-			$sql .= $this->parseConstraint($query->getConstraint(), $query->getBoundVariableValues(), $parameters);
-		}
+		$this->parseSource($query, $sql, $parameters);
 
-		$statementHandle = $this->databaseHandle->prepare($sql);
+		$sqlString = 'SELECT DISTINCT ' . implode(',', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']);
+		$sqlString .= ' WHERE ' . implode(' ', $sql['where']);
+
+		$statementHandle = $this->databaseHandle->prepare($sqlString);
 		$statementHandle->execute($parameters);
 		$result = $statementHandle->fetchAll(\PDO::FETCH_ASSOC);
 
 		return $result;
 	}
 
+	/**
+	 * Given a selector name this returns a string usable as an alias in SQL.
+	 *
+	 * @param string $name The selector name
+	 * @return string The alias for use in SQL
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
 	protected function getAliasFromSelectorName($name) {
-		return '___' . $name;
+		return $name;
+	}
+
+	protected function parseSource(\F3\PHPCR\Query\QueryInterface $query, array &$sql, array &$parameters) {
+		$source = $query->getSource();
+		if ($source instanceof \F3\PHPCR\Query\QOM\SelectorInterface && $query->getConstraint() === NULL) {
+			$selectorName = $source->getSelectorName();
+			$selectorAlias = $this->getAliasFromSelectorName($selectorName);
+			$splitNodeTypeName = $this->splitName($source->getNodeTypeName());
+			$parameters[] = $splitNodeTypeName['name'];
+			$parameters[] = $splitNodeTypeName['namespaceURI'];
+			$sql['fields'][] = '"' . $selectorAlias . '"."identifier" AS "' . $selectorAlias . '"';
+			$sql['tables'][] = '"nodes" AS "' . $selectorAlias . '"';
+			$sql['where'][] = '("' . $selectorAlias . '"."nodetype"=? AND "' . $selectorAlias . '"."nodetypenamespace"=?)';
+		} elseif ($source instanceof \F3\PHPCR\Query\QOM\SelectorInterface) {
+			$selectorName = $source->getSelectorName();
+			$selectorAlias = $this->getAliasFromSelectorName($selectorName);
+			$splitNodeTypeName = $this->splitName($source->getNodeTypeName());
+			$parameters[] = $splitNodeTypeName['name'];
+			$parameters[] = $splitNodeTypeName['namespaceURI'];
+			$sql['fields'][] = '"' . $selectorAlias . '"."identifier" AS "' . $selectorAlias . '"';
+			$sql['tables'][] = '"nodes" AS "' . $selectorAlias . '" INNER JOIN "index_properties" AS "' . $selectorAlias . 'properties" ON "' . $selectorAlias . '"."identifier" = "' . $selectorAlias . 'properties"."parent"';
+			$sql['where'][] = '("' . $selectorAlias . '"."nodetype"=? AND "' . $selectorAlias . '"."nodetypenamespace"=?) AND ';
+			$this->parseConstraint($query->getConstraint(), $query->getBoundVariableValues(), $parameters, $sql);
+		} elseif ($source instanceof \F3\PHPCR\Query\QOM\JoinInterface) {
+			$this->parseJoin($source, $sql, $parameters);
+			if ($query->getConstraint() !== NULL) {
+				$sql['where'][] = 'AND';
+				$this->parseConstraint($query->getConstraint(), $query->getBoundVariableValues(), $parameters, $sql);
+			}
+		}
+	}
+
+	/**
+	 * @return string SQL representing the join.
+	 */
+	protected function parseJoin(\F3\PHPCR\Query\QOM\JoinInterface $join, array &$sql, array &$parameters) {
+		$leftSelectorName = $join->getLeft()->getSelectorName();
+		$leftSelectorAlias = $this->getAliasFromSelectorName($leftSelectorName);
+		$splitLeftNodeTypeName = $this->splitName($join->getLeft()->getNodeTypeName());
+		$rightSelectorName = $join->getRight()->getSelectorName();
+		$rightSelectorAlias = $this->getAliasFromSelectorName($rightSelectorName);
+		$splitRightNodeTypeName = $this->splitName($join->getRight()->getNodeTypeName());
+
+		$sql['fields'][] = '"' . $leftSelectorAlias . '"."identifier"';
+		$sql['tables'][] = '"nodes" AS "' . $leftSelectorAlias . '" INNER JOIN "nodes" AS "' . $rightSelectorAlias . '" ON';
+		if ($join->getJoinCondition() instanceof \F3\PHPCR\Query\QOM\ChildNodeJoinConditionInterface) {
+			$sql['tables'][] = '"' . $leftSelectorAlias . '"."identifier" = "' . $rightSelectorAlias . '"."parent"';
+		}
+		$sql['tables'][] = 'INNER JOIN "index_properties" AS "' . $leftSelectorAlias . 'properties" ON "' . $leftSelectorAlias . '"."identifier" = "' . $leftSelectorAlias . 'properties"."parent"';
+		$sql['tables'][] = 'INNER JOIN "index_properties" AS "' . $rightSelectorAlias . 'properties" ON "' . $rightSelectorAlias . '"."identifier" = "' . $rightSelectorAlias . 'properties"."parent"';
+
+		$sql['where'][] = '("' . $leftSelectorAlias . '"."nodetype"=? AND "' . $leftSelectorAlias . '"."nodetypenamespace"=? AND "' . $rightSelectorAlias . '"."nodetype"=? AND "' . $rightSelectorAlias . '"."nodetypenamespace"=?)';
+		$parameters[] = $splitLeftNodeTypeName['name'];
+		$parameters[] = $splitLeftNodeTypeName['namespaceURI'];
+		$parameters[] = $splitRightNodeTypeName['name'];
+		$parameters[] = $splitRightNodeTypeName['namespaceURI'];
 	}
 
 	/**
@@ -234,31 +283,39 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseConstraint(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint = NULL, array $boundVariableValues, array &$parameters) {
-		$constraintSQL = ' ';
-
+	protected function parseConstraint(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint = NULL, array $boundVariableValues, array &$parameters, array &$sql) {
 		if ($constraint instanceof \F3\PHPCR\Query\QOM\AndInterface) {
-			$constraintSQL .= '(';
-			$constraintSQL .= $this->parseConstraint($constraint->getConstraint1(), $boundVariableValues, $parameters);
-			$constraintSQL .= ' AND ';
-			$constraintSQL .= $this->parseConstraint($constraint->getConstraint2(), $boundVariableValues, $parameters);
-			$constraintSQL .= ') ';
+			$sql['where'][] = '(';
+			$this->parseConstraint($constraint->getConstraint1(), $boundVariableValues, $parameters, $sql);
+			$sql['where'][] = ' AND ';
+			$this->parseConstraint($constraint->getConstraint2(), $boundVariableValues, $parameters, $sql);
+			$sql['where'][] = ') ';
 		} elseif ($constraint instanceof \F3\PHPCR\Query\QOM\OrInterface) {
-			$constraintSQL .= '(';
-			$constraintSQL .= $this->parseConstraint($constraint->getConstraint1(), $boundVariableValues, $parameters);
-			$constraintSQL .= ' OR ';
-			$constraintSQL .= $this->parseConstraint($constraint->getConstraint2(), $boundVariableValues, $parameters);
-			$constraintSQL .= ') ';
+			$sql['where'][] = '(';
+			$this->parseConstraint($constraint->getConstraint1(), $boundVariableValues, $parameters, $sql);
+			$sql['where'][] = ' OR ';
+			$this->parseConstraint($constraint->getConstraint2(), $boundVariableValues, $parameters, $sql);
+			$sql['where'][] = ') ';
 		} elseif ($constraint instanceof \F3\PHPCR\Query\QOM\NotInterface) {
-			$constraintSQL .= '(NOT ';
-			$constraintSQL .= $this->parseConstraint($constraint->getConstraint(), $boundVariableValues, $parameters);
-			$constraintSQL .= ') ';
+			$sql['where'][] = '(NOT ';
+			$this->parseConstraint($constraint->getConstraint(), $boundVariableValues, $parameters, $sql);
+			$sql['where'][] = ') ';
 		} elseif ($constraint instanceof \F3\PHPCR\Query\QOM\ComparisonInterface) {
-			$constraintSQL .= $this->parseDynamicOperand($constraint->getOperand1(), $parameters);
-			$constraintSQL .= $this->parseStaticOperand($constraint->getOperand2(), $boundVariableValues, $parameters);
+			$this->parseComparison($constraint, $sql, $parameters, $boundVariableValues);
 		}
+	}
 
-		return $constraintSQL;
+	/**
+	 *
+	 */
+	protected function parseComparison(\F3\PHPCR\Query\QOM\ComparisonInterface $comparison, array &$sql, array &$parameters, array $boundVariableValues) {
+		$this->parseDynamicOperand($comparison->getOperand1(), $sql, $parameters);
+
+		if ($comparison->getOperand2() instanceof \F3\PHPCR\Query\QOM\BindVariableValueInterface) {
+			$parameters[] = $boundVariableValues[$comparison->getOperand2()->getBindVariableName()];
+		} elseif ($comparison->getOperand2() instanceof \F3\PHPCR\Query\QOM\LiteralInterface) {
+			$parameters[] = $comparison->getOperand2()->getLiteralValue();
+		}
 	}
 
 	/**
@@ -270,43 +327,28 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseDynamicOperand(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand, &$parameters, $valueFunction = NULL) {
-		$constraintSQL = '';
+	protected function parseDynamicOperand(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand, array &$sql, array &$parameters, $valueFunction = NULL) {
 		if ($operand instanceof \F3\PHPCR\Query\QOM\LowerCaseInterface) {
-			$constraintSQL .= $this->parseDynamicOperand($operand->getOperand(), $parameters, 'LOWER');
+			$this->parseDynamicOperand($operand->getOperand(), $sql, $parameters, 'LOWER');
 		} elseif ($operand instanceof \F3\PHPCR\Query\QOM\UpperCaseInterface) {
-			$constraintSQL .= $this->parseDynamicOperand($operand->getOperand(), $parameters, 'UPPER');
+			$this->parseDynamicOperand($operand->getOperand(), $sql, $parameters, 'UPPER');
 		} elseif ($operand instanceof \F3\PHPCR\Query\QOM\PropertyValueInterface) {
-			$constraintSQL .= '(';
+			$selectorName = $operand->getSelectorName();
+			$selectorAlias = $this->getAliasFromSelectorName($selectorName);
+			$constraintSQL = '(';
+			$operator = '=';
 			if ($valueFunction === NULL) {
-				$constraintSQL .= '"index_properties"."name" = ? AND "index_properties"."namespace" = ? AND "index_properties"."value" = ?';
+				$constraintSQL .= '"' . $selectorAlias . 'properties' . count($parameters) . '"."name" = ? AND "' . $selectorAlias . 'properties' . count($parameters) . '"."namespace" = ? AND "' . $selectorAlias . 'properties' . count($parameters) . '"."value" ' . $operator . ' ?';
 			} else {
-				$constraintSQL .= '"index_properties"."name" = ? AND "index_properties"."namespace" = ? AND ' . $valueFunction . '("index_properties"."value") = ?';
+				$constraintSQL .= '"' . $selectorAlias . 'properties' . count($parameters) . '"."name" = ? AND "' . $selectorAlias . 'properties' . count($parameters) . '"."namespace" = ? AND ' . $valueFunction . '("' . $selectorAlias . 'properties' . count($parameters) . '"."value") ' . $operator . ' ?';
 			}
 			$constraintSQL .= ') ';
+			$sql['where'][] = $constraintSQL;
+			$sql['tables'][] = 'INNER JOIN "index_properties" AS "' . $selectorAlias . 'properties' . count($parameters) . '" ON "' . $selectorAlias . '"."identifier" = "' . $selectorAlias . 'properties' . count($parameters) . '"."parent"';
 			$splitPropertyName = $this->splitName($operand->getPropertyName());
 			$parameters[] = $splitPropertyName['name'];
 			$parameters[] = $splitPropertyName['namespaceURI'];
 		}
-		return $constraintSQL;
-	}
-
-	/**
-	 *
-	 * @param \F3\PHPCR\Query\QOM\StaticOperandInterface $operand
-	 * @param array $boundVariableValues
-	 * @param array &$parameters
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function parseStaticOperand(\F3\PHPCR\Query\QOM\StaticOperandInterface $operand, array $boundVariableValues, &$parameters) {
-		$constraintSQL = '';
-		if ($operand instanceof \F3\PHPCR\Query\QOM\BindVariableValueInterface) {
-			$parameters[] = $boundVariableValues[$operand->getBindVariableName()];
-		} elseif ($operand instanceof \F3\PHPCR\Query\QOM\LiteralInterface) {
-			$parameters[] = $operand->getLiteralValue();
-		}
-		return $constraintSQL;
 	}
 
 	/**
@@ -326,23 +368,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 		$namespacePrefix = $split[0];
 		$name = $split[1];
 
-		if ($this->namespaceRegistry) {
-			return array('namespaceURI' => $this->namespaceRegistry->getURI($namespacePrefix), 'name' => $name);
-		} else {
-				// Fall back to namespaces table when no namespace registry is available
-
-			$statementHandle = $this->databaseHandle->prepare('SELECT "uri" FROM "namespaces" WHERE "prefix"=?');
-			$statementHandle->execute(array($namespacePrefix));
-			$namespaces = $statementHandle->fetchAll(\PDO::FETCH_ASSOC);
-
-			if (count($namespaces) != 1) {
-					// TODO: throw exception instead of returning once namespace table is properly filled
-				return array('namespaceURI' => '', 'name' => $name);
-			}
-			foreach ($namespaces as $namespace) {
-				return array('namespaceURI' => $namespace['uri'], 'name' => $name);
-			}
-		}
+		return array('namespaceURI' => $this->namespaceRegistry->getURI($namespacePrefix), 'name' => $name);
 	}
 
 

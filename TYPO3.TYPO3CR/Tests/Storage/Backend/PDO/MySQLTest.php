@@ -99,13 +99,10 @@ class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 			$this->markTestSkipped('MySQL tests not configured');
 		}
 
-
-		$scriptpath = __DIR__ . '/../../../Fixtures/';
-
-		exec($scriptpath . 'testdb.sh mysql reset');
+		exec(__DIR__ . '/../../../Fixtures/' . 'testdb.sh mysql reset');
 
 		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'mysql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
-		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
+		$this->storageBackend->setSearchBackend($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 
 		parent::setup();

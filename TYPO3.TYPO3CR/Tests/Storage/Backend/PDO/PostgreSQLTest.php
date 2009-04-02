@@ -99,12 +99,10 @@ class PostgreSQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 			$this->markTestSkipped('PostgreSQL tests not configured');
 		}
 
-		$scriptpath = __DIR__ . '/../../../Fixtures/';
-
-		exec($scriptpath . 'testdb.sh postgres reset');
+		exec(__DIR__ . '/../../../Fixtures/' . 'testdb.sh postgres reset');
 
 		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'pgsql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
-		$this->storageBackend->setSearchEngine($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
+		$this->storageBackend->setSearchBackend($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 
 		parent::setup();

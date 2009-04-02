@@ -58,15 +58,7 @@ class PreparedQuery extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Query\P
 		if (array_key_exists($varName, $this->boundVariables) === FALSE) {
 			throw new \InvalidArgumentException('Invalid variable name "' . $varName . '" given to bindValue.', 1217241834);
 		}
-
-		switch ($value->getType()) {
-			case \F3\PHPCR\PropertyType::STRING:
-				$value = $value->getString();
-				break;
-			default:
-				throw new \F3\PHPCR\RepositoryException('Unsupported value type in bindValue encountered for variable "' . $varName . '".', 1218020658);
-		}
-		$this->boundVariables[$varName] = $value;
+		$this->boundVariables[$varName] = $value->getString();
 	}
 
 	/**

@@ -716,7 +716,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getProperty($relPath) {
-		if (\F3\PHP6\Functions::strpos($relPath, '/') === FALSE && isset($this->properties[$relPath])) {
+		if (strpos($relPath, '/') === FALSE && isset($this->properties[$relPath])) {
 			return $this->properties[$relPath];
 		} else {
 			return \F3\TYPO3CR\PathParser::parsePath($relPath, $this, \F3\TYPO3CR\PathParser::SEARCH_MODE_PROPERTIES);
@@ -879,6 +879,10 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @todo Implement without actually getting the node(s)
 	 */
 	public function hasNode($relPath) {
+		if (strpos($relPath, '/') === FALSE) {
+			return $this->session->getStorageBackend()->hasChildNodeWithName($this->getIdentifier(), $relPath);
+		}
+
 		try {
 			$this->getNode($relPath);
 		} catch (\F3\PHPCR\PathNotFoundException $e) {
@@ -898,7 +902,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperty($relPath) {
-		if (\F3\PHP6\Functions::strpos($relPath, '/') === FALSE) {
+		if (strpos($relPath, '/') === FALSE) {
 			return isset($this->properties[$relPath]);
 		} else {
 			try {

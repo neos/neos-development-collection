@@ -46,22 +46,22 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	public function repositoryLoginAsksForASessionToReturn() {
 		$mockNamespaceRegistry = $this->getMock('F3\TYPO3CR\NamespaceRegistry', array(), array(), '', FALSE);
 		$mockWorkspace = $this->getMock('F3\TYPO3CR\Workspace', array(), array(), '', FALSE);
-		$mockWorkspace->expects($this->once())->method('getNamespaceRegistry')->will($this->returnValue($mockNamespaceRegistry));
+		$mockWorkspace->expects($this->exactly(2))->method('getNamespaceRegistry')->will($this->returnValue($mockNamespaceRegistry));
 		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
 		$mockTYPO3CRSession = $this->getMock('F3\PHPCR\SessionInterface', array(), array(), '', FALSE);
-		$mockTYPO3CRSession->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
-		$mockSearchEngine = $this->getMock('F3\TYPO3CR\Storage\SearchInterface');
+		$mockTYPO3CRSession->expects($this->exactly(2))->method('getWorkspace')->will($this->returnValue($mockWorkspace));
+		$mockSearchBackend = $this->getMock('F3\TYPO3CR\Storage\SearchInterface');
 
 		$settings = array();
 		$settings['storage']['backend'] = 'mockStorageBackend';
 		$settings['storage']['backendOptions'] = array();
-		$settings['search']['backend'] = 'mockSearchEngine';
+		$settings['search']['backend'] = 'mockSearchBackend';
 		$settings['search']['backendOptions'] = array();
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$objectFactory = $this->getMock('F3\FLOW3\Object\Factory', array(), array(), '', FALSE);
-		$objectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($mockStorageBackend, $mockSearchEngine, $mockTYPO3CRSession));
+		$objectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($mockSearchBackend, $mockStorageBackend, $mockTYPO3CRSession));
 
 		$repository = new \F3\TYPO3CR\Repository($objectFactory);
 		$repository->injectConfigurationManager($mockConfigurationManager);

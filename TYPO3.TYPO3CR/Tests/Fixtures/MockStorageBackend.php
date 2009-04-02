@@ -313,6 +313,28 @@ class MockStorageBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	}
 
 	/**
+	 * Checks whether the node with the given $identifier has a child node with
+	 * the given $nodeName.
+	 *
+	 * @param string $identifier the identifier of the parent
+	 * @param string $nodeName the name of the childnode
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasChildNodeWithName($identifier, $nodeName) {
+		if (isset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			if (isset($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName][$identifier])) {
+				foreach ($this->rawNodesByIdentifierGroupedByWorkspace[$this->workspaceName] as $rawNode) {
+					if ($rawNode['parent'] == $identifier && $rawNode['name'] == $nodeName) {
+						return TRUE;
+					}
+				}
+			}
+		}
+		return FALSE;
+	}
+
+	/**
 	 * Adds a property in the storage
 	 *
 	 * @param \F3\PHPCR\PropertyInterface $property property to insert
@@ -353,20 +375,20 @@ class MockStorageBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	}
 
 	/**
-	 * Sets the search engine used by the storage backend.
+	 * Sets the search backend used by the storage backend.
 	 *
-	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchEngine
+	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchBackend
 	 * @return void
 	 */
-	public function setSearchEngine(\F3\TYPO3CR\Storage\SearchInterface $searchEngine) {
+	public function setSearchBackend(\F3\TYPO3CR\Storage\SearchInterface $searchBackend) {
 	}
 
 	/**
-	 * Returns the search engine used by the storage backend.
+	 * Returns the search backend used by the storage backend.
 	 *
 	 * @return \F3\TYPO3CR\Storage\SearchInterface
 	 */
-	public function getSearchEngine() {
+	public function getSearchBackend() {
 	}
 
 	/**

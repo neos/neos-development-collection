@@ -51,9 +51,9 @@ class PathParser {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public static function parsePath($path, \F3\PHPCR\NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
-		if (self::isPathAbsolute($path)) {
+		if ($path[0] === '/') {
 			$currentNode = self::getRootNode($currentNode);
-			$path = \F3\PHP6\Functions::substr($path, 1);
+			$path = ltrim($path, '/');
 		}
 
 		return self::parseRelativePath($path, $currentNode, $searchMode);
@@ -136,21 +136,10 @@ class PathParser {
 	 */
 	protected static function getRootNode(\F3\PHPCR\NodeInterface $currentNode) {
 		if ($currentNode->getDepth() > 0) {
-			return $currentNode->getParent();
+			return self::getRootNode($currentNode->getParent());
 		} else {
 			return $currentNode;
 		}
-	}
-
-	/**
-	 * Checks if a given path is absolute or relative
-	 *
-	 * @param string $path Absolute or relative path to check
-	 * @return boolean TRUE if path is absolute (e.g. starts with a /), FALSE otherwise
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public static function isPathAbsolute($path) {
-		return ($path[0] === '/');
 	}
 
 	/**
@@ -163,9 +152,7 @@ class PathParser {
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
 	public static function getFirstPathPart($path) {
-		if (self::isPathAbsolute($path)) {
-			$path = \F3\PHP6\Functions::substr($path, 1);
-		}
+		$path = ltrim($path, '/');
 		$pathArray = explode('/', $path);
 		$firstElement = array_shift($pathArray);
 		$remainingPath = implode('/', $pathArray);

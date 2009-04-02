@@ -75,6 +75,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $persistenceManager;
 
 	/**
+	 * @var \F3\PHPCR\Query\QOM\SourceInterface
+	 */
+	protected $source;
+
+	/**
 	 * @var \F3\PHPCR\Query\QOM\ConstraintInterface
 	 */
 	protected $constraint;
@@ -138,7 +143,16 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function execute() {
-		$query = $this->QOMFactory->createQuery($this->QOMFactory->selector('flow3:' . str_replace('\\', '_', $this->className)), $this->constraint, array(), array());
+		if ($this->source === NULL) {
+			$this->source = $this->QOMFactory->selector('flow3:' . str_replace('\\', '_', $this->className), '_node');
+		}
+
+		$query = $this->QOMFactory->createQuery(
+			$this->source,
+			$this->constraint,
+			array(),
+			array()
+		);
 		foreach ($this->operands as $name => $value) {
 			$query->bindValue($name, $this->valueFactory->createValue($value));
 		}
@@ -208,9 +222,9 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	public function withUUID($uuid) {
 		$this->operands['jcr:uuid'] = $uuid;
 		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue('jcr:uuid'),
+			$this->QOMFactory->propertyValue('jcr:uuid', '_node'),
 			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
-			$this->QOMFactory->bindVariable('jcr:uuid')
+			$this->QOMFactory->bindVariable('jcr:uuid', '_node')
 		);
 	}
 
@@ -224,26 +238,56 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE) {
-		if ($caseSensitive) {
-			$comparison = $this->QOMFactory->comparison(
-				$this->QOMFactory->propertyValue('flow3:' . $propertyName),
-				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
-				$this->QOMFactory->bindVariable('flow3:' . $propertyName)
-			);
-		} else {
-			$comparison = $this->QOMFactory->comparison(
-				$this->QOMFactory->lowerCase(
-					$this->QOMFactory->propertyValue('flow3:' . $propertyName)
-				),
-				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
-				$this->QOMFactory->bindVariable('flow3:' . $propertyName)
-			);
-		}
+		if (is_object($operand) && !($operand instanceof \DateTime)) {
+			$operand = $this->persistenceManager->getBackend()->getUUIDByObject($operand);
+				// we look for nodes with (done)
+				// - a subnode named flow3:$propertyName being NODETYPE_OBJECTPROXY
+				// - that subnode having a property flow3:target
+				// - that has a value of $operand
+				// OR (open, needed?)
+				// - a subnode named flow3:$propertyName
+				// - that subnode having a property jcr:uuid
+				// - that has a value of $operand
+			$left = $this->QOMFactory->selector('flow3:' . str_replace('\\', '_', $this->className), '_node');
+			$right = $this->QOMFactory->selector('flow3:objectProxy', '_proxy');
+			$joinCondition = $this->QOMFactory->childNodeJoinCondition('_proxy', '_node');
 
-		if ($caseSensitive) {
-			$this->operands['flow3:' . $propertyName] = $operand;
+			$this->source = $this->QOMFactory->join(
+				$left,
+				$right,
+				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JOIN_TYPE_INNER,
+				$joinCondition
+			);
+
+			$comparison = $this->QOMFactory->comparison(
+				$this->QOMFactory->propertyValue('flow3:target', '_proxy'),
+				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+				$this->QOMFactory->bindVariable('flow3:target')
+			);
+
+			$this->operands['flow3:target'] = $operand;
 		} else {
-			$this->operands['flow3:' . $propertyName] = \F3\PHP6\Functions::strtolower($operand);
+			if ($caseSensitive) {
+				$comparison = $this->QOMFactory->comparison(
+					$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
+					\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+					$this->QOMFactory->bindVariable('flow3:' . $propertyName)
+				);
+			} else {
+				$comparison = $this->QOMFactory->comparison(
+					$this->QOMFactory->lowerCase(
+						$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node')
+					),
+					\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+					$this->QOMFactory->bindVariable('flow3:' . $propertyName)
+				);
+			}
+
+			if ($caseSensitive) {
+				$this->operands['flow3:' . $propertyName] = $operand;
+			} else {
+				$this->operands['flow3:' . $propertyName] = strtolower($operand);
+			}
 		}
 
 		return $comparison;
@@ -252,85 +296,85 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Adds a like criterion used for matching objects against the query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function like($property, $operand) {
-		$this->operands[$property] = $operand;
+	public function like($propertyName, $operand) {
+		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue($property),
+			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
 			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_LIKE,
-			$this->QOMFactory->bindVariable($property)
+			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
 
 	/**
 	 * Adds a "less than" criterion used for matching objects against the query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function lessThan($property, $operand) {
-		$this->operands[$property] = $operand;
+	public function lessThan($propertyName, $operand) {
+		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue($property),
+			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
 			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_LESS_THAN,
-			$this->QOMFactory->bindVariable($property)
+			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
 
 	/**
 	 * Adds a "less than or equal" criterion used for matching objects against the query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function lessThanOrEqual($property, $operand) {
-		$this->operands[$property] = $operand;
+	public function lessThanOrEqual($propertyName, $operand) {
+		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue($property),
+			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
 			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
-			$this->QOMFactory->bindVariable($property)
+			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
 
 	/**
 	 * Adds a "greater than" criterion used for matching objects against the query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function greaterThan($property, $operand) {
-		$this->operands[$property] = $operand;
+	public function greaterThan($propertyName, $operand) {
+		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue($property),
+			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
 			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_GREATER_THAN,
-			$this->QOMFactory->bindVariable($property)
+			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
 
 	/**
 	 * Adds a "greater than or equal" criterion used for matching objects against the query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function greaterThanOrEqual($property, $operand) {
-		$this->operands[$property] = $operand;
+	public function greaterThanOrEqual($propertyName, $operand) {
+		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
-			$this->QOMFactory->propertyValue($property),
+			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
 			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
-			$this->QOMFactory->bindVariable($property)
+			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
 

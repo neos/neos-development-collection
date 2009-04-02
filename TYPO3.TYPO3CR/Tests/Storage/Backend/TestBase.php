@@ -44,10 +44,26 @@ class TestBase extends \F3\Testing\BaseTestCase {
 	 */
 	protected $storageBackend;
 
+	/**
+	 * @var array
+	 */
+	protected $namespaces = array(
+		\F3\PHPCR\NamespaceRegistryInterface::PREFIX_JCR => \F3\PHPCR\NamespaceRegistryInterface::NAMESPACE_JCR,
+		\F3\PHPCR\NamespaceRegistryInterface::PREFIX_NT => \F3\PHPCR\NamespaceRegistryInterface::NAMESPACE_NT,
+		\F3\PHPCR\NamespaceRegistryInterface::PREFIX_MIX => \F3\PHPCR\NamespaceRegistryInterface::NAMESPACE_MIX,
+		\F3\PHPCR\NamespaceRegistryInterface::PREFIX_XML => \F3\PHPCR\NamespaceRegistryInterface::NAMESPACE_XML,
+		\F3\PHPCR\NamespaceRegistryInterface::PREFIX_EMPTY => \F3\PHPCR\NamespaceRegistryInterface::NAMESPACE_EMPTY,
+		'flow3' => 'http://forge.typo3.org/namespaces/flow3'
+	);
+
 	public function setUp() {
 		$this->mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
 
 		$this->mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
+		$this->mockNamespaceRegistry = $this->getMock('F3\PHPCR\NamespaceRegistryInterface');
+		$this->mockNamespaceRegistry->expects($this->any())->method('getURI')->will($this->returnCallback(array($this, 'namespaceRegistryGetURICallback')));
+		$this->mockNamespaceRegistry->expects($this->any())->method('getPrefix')->will($this->returnCallback(array($this, 'namespaceRegistryGetPrefixCallback')));
+		$this->storageBackend->setNamespaceRegistry($this->mockNamespaceRegistry);
 
 		$this->mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
 		$this->mockWorkspace->expects($this->any())->method('getNodeTypeManager')->will($this->returnValue($this->mockNodeTypeManager));
@@ -55,6 +71,14 @@ class TestBase extends \F3\Testing\BaseTestCase {
 		$this->mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
 		$this->mockSession->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 		$this->mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->storageBackend));
+	}
+
+	public function namespaceRegistryGetURICallback($prefix) {
+		return $this->namespaces[$prefix];
+	}
+
+	public function namespaceRegistryGetPrefixCallback($uri) {
+		return array_search($uri, $this->namespaces);
 	}
 
 	/**

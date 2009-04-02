@@ -237,7 +237,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 			return FALSE;
 		}
 
-		if (\F3\PHP6\Functions::strtolower(\F3\PHP6\Functions::substr($prefix, 0,3)) == 'xml') {
+		if (strtolower(substr($prefix, 0,3)) == 'xml') {
 			return FALSE;
 		}
 

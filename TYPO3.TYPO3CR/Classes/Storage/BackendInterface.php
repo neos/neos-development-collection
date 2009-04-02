@@ -62,19 +62,19 @@ interface BackendInterface {
 	public function setWorkspaceName($workspaceName);
 
 	/**
-	 * Sets the search engine used by the storage backend.
+	 * Sets the search backend used by the storage backend.
 	 *
-	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchEngine
+	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchBackend
 	 * @return void
 	 */
-	public function setSearchEngine(\F3\TYPO3CR\Storage\SearchInterface $searchEngine);
+	public function setSearchBackend(\F3\TYPO3CR\Storage\SearchInterface $searchBackend);
 
 	/**
-	 * Returns the search engine used by the storage backend.
+	 * Returns the search backend used by the storage backend.
 	 *
 	 * @return \F3\TYPO3CR\Storage\SearchInterface
 	 */
-	public function getSearchEngine();
+	public function getSearchBackend();
 
 	/**
 	 * Sets the namespace registry used by the backend to translate prefixed names into (URI, name) tuples
@@ -148,6 +148,16 @@ interface BackendInterface {
 	 * @return void
 	 */
 	public function removeNode(\F3\PHPCR\NodeInterface $node);
+
+	/**
+	 * Checks whether the node with the given $identifier has a child node with
+	 * the given $nodeName.
+	 *
+	 * @param string $identifier the identifier of the parent
+	 * @param string $nodeName the name of the childnode
+	 * @return boolean
+	 */
+	public function hasChildNodeWithName($identifier, $nodeName);
 
 
 

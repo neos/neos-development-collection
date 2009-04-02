@@ -155,13 +155,15 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 			throw new \F3\PHPCR\NoSuchWorkspaceException('Only default workspace supported', 1181063009);
 		}
 
+		$searchBackend = $this->objectFactory->create($this->settings['search']['backend'], $this->settings['search']['backendOptions']);
 		$this->storageBackend = $this->objectFactory->create($this->settings['storage']['backend'], $this->settings['storage']['backendOptions']);
-		$this->storageBackend->setSearchEngine($this->objectFactory->create($this->settings['search']['backend'], $this->settings['search']['backendOptions']));
+		$this->storageBackend->setSearchBackend($searchBackend);
 		$this->storageBackend->setWorkspaceName($workspaceName);
 		$this->storageBackend->connect();
 
 		$session = $this->objectFactory->create('F3\PHPCR\SessionInterface', $workspaceName, $this, $this->storageBackend);
 		$this->storageBackend->setNamespaceRegistry($session->getWorkspace()->getNamespaceRegistry());
+		$searchBackend->setNamespaceRegistry($session->getWorkspace()->getNamespaceRegistry());
 		return $session;
 	}
 

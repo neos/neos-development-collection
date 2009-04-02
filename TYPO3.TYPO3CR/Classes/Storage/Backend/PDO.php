@@ -248,7 +248,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nodes" ("identifier", "parent", "nodetype", "nodetypenamespace", "name", "namespace") VALUES (?, ?, ?, ?, ?, ?)');
 		$statementHandle->execute(array($node->getIdentifier(), $node->getParent()->getIdentifier(), $splitNodeTypeName['name'], $splitNodeTypeName['namespaceURI'], $splitNodeName['name'], $splitNodeName['namespaceURI']));
-		$this->searchEngine->addNode($node);
+		$this->searchBackend->addNode($node);
 	}
 
 	/**
@@ -267,7 +267,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 
 			$statementHandle = $this->databaseHandle->prepare('UPDATE "nodes" SET "parent"=?, "nodetype"=?, "nodetypenamespace"=?,"name"=?, "namespace"=? WHERE "identifier"=?');
 			$statementHandle->execute(array($node->getParent()->getIdentifier(), $splitNodeTypeName['name'], $splitNodeTypeName['namespaceURI'], $splitNodeName['name'], $splitNodeName['namespaceURI'], $node->getIdentifier()));
-			$this->searchEngine->updateNode($node);
+			$this->searchBackend->updateNode($node);
 		}
 	}
 
@@ -282,7 +282,23 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	public function removeNode(\F3\PHPCR\NodeInterface $node) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodes" WHERE "identifier"=?');
 		$statementHandle->execute(array($node->getIdentifier()));
-		$this->searchEngine->deleteNode($node);
+		$this->searchBackend->deleteNode($node);
+	}
+
+	/**
+	 * Checks whether the node with the given $identifier has a child node with
+	 * the given $nodeName.
+	 *
+	 * @param string $identifier the identifier of the parent
+	 * @param string $nodeName the name of the childnode
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasChildNodeWithName($identifier, $nodeName) {
+		$splitNodeName = $this->splitName($nodeName);
+		$statementHandle = $this->databaseHandle->prepare('SELECT "identifier" FROM "nodes" WHERE "parent" = ? AND "namespace" = ? AND "name" = ?');
+		$statementHandle->execute(array($identifier, $splitNodeName['namespaceURI'], $splitNodeName['name']));
+		return (count($statementHandle->fetchAll(\PDO::FETCH_ASSOC)) > 0);
 	}
 
 
@@ -340,7 +356,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 		$rawProperties = $statementHandle->fetchAll(\PDO::FETCH_ASSOC);
 			// We are using foreach here but it should only ever return 0 or 1 results (strictly speaking always 1 in "update"Property())
 		foreach ($rawProperties as $rawProperty) {
-			$typeName = \F3\PHP6\Functions::strtolower(\F3\PHPCR\PropertyType::nameFromValue($rawProperty['type']));
+			$typeName = strtolower(\F3\PHPCR\PropertyType::nameFromValue($rawProperty['type']));
 			$statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $typeName . 'properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
 			$statementHandle->execute(array(
 				$property->getParent()->getIdentifier(),
@@ -386,7 +402,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 		$rawProperties = $statementHandle->fetchAll(\PDO::FETCH_ASSOC);
 			// I am using foreach here but it should only ever return 0 or 1 results (strictly speaking always 1 in "update"Property())
 		foreach ($rawProperties as $rawProperty) {
-			$typeName = \F3\PHP6\Functions::strtolower(\F3\PHPCR\PropertyType::nameFromValue($rawProperty['type']));
+			$typeName = strtolower(\F3\PHPCR\PropertyType::nameFromValue($rawProperty['type']));
 			$statementHandle = $this->databaseHandle->prepare('DELETE FROM "' . $typeName . 'properties" WHERE "parent"=? AND "name"=? AND "namespace"=?');
 			$statementHandle->execute(array(
 				$property->getParent()->getIdentifier(),
@@ -426,7 +442,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 */
 	public function getRawPropertiesOfTypedValue($name, $type, $value) {
-		$typeName = \F3\PHP6\Functions::strtolower(\F3\PHPCR\PropertyType::nameFromValue($type));
+		$typeName = strtolower(\F3\PHPCR\PropertyType::nameFromValue($type));
 
 		if ($name == NULL) {
 			$statementHandle = $this->databaseHandle->prepare('SELECT "properties"."parent", "properties"."name", "properties"."namespace", "properties"."multivalue", "properties"."type" FROM (SELECT DISTINCT "parent", "name", "namespace", "value" FROM "' . $typeName . 'properties") AS "pv" JOIN "properties" ON "pv"."parent" = "properties"."parent" AND "pv"."name" = "properties"."name" AND "pv"."namespace" = "properties"."namespace" WHERE "value" = ? ORDER BY "properties"."parent", "properties"."name", "properties"."namespace"');
@@ -578,23 +594,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 		$namespacePrefix = $split[0];
 		$name = $split[1];
 
-		if ($this->namespaceRegistry) {
-			return array('namespaceURI' => $this->namespaceRegistry->getURI($namespacePrefix), 'name' => $name);
-		} else {
-				// Fall back to namespaces table when no namespace registry is available
-
-			$statementHandle = $this->databaseHandle->prepare('SELECT "uri" FROM "namespaces" WHERE "prefix"=?');
-			$statementHandle->execute(array($namespacePrefix));
-			$namespaces = $statementHandle->fetchAll(\PDO::FETCH_ASSOC);
-
-			if (count($namespaces) != 1) {
-					// TODO: throw exception instead of returning once namespace table is properly filled
-				return array('namespaceURI' => '', 'name' => $name);
-			}
-			foreach ($namespaces as $namespace) {
-				return array('namespaceURI' => $namespace['uri'], 'name' => $name);
-			}
-		}
+		return array('namespaceURI' => $this->namespaceRegistry->getURI($namespacePrefix), 'name' => $name);
 	}
 
 
@@ -653,11 +653,11 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 		}
 
 		$splitName = $this->splitName($property->getName());
-		$typeName = \F3\PHP6\Functions::strtolower(\F3\PHPCR\PropertyType::nameFromValue($property->getType()));
+		$typeName = strtolower(\F3\PHPCR\PropertyType::nameFromValue($property->getType()));
 
 		if ($property->isMultiple()) {
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $typeName . 'properties" ("parent", "name", "namespace", "index", "value") VALUES (?, ?, ?, ?, ?)');
 			foreach ($property->getValues() as $index => $value) {
-				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "' . $typeName . 'properties" ("parent", "name", "namespace", "index", "value") VALUES (?, ?, ?, ?, ?)');
 				$statementHandle->execute(array(
 					$property->getParent()->getIdentifier(),
 					$splitName['name'],
@@ -689,13 +689,13 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 		$splitName = $this->splitName($property->getName());
 
 		if ($property->isMultiple()) {
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "pathproperties" ("parent", "name", "namespace", "index", "level", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?, ?)');
 			foreach ($property->getValues() as $index => $value) {
 				$pathLevels = explode('/',$value->getString());
 				$level = 0;
 				foreach ($pathLevels as $pathLevel) {
 					$splitPathLevel = $this->splitName($pathLevel);
 
-					$statementHandle = $this->databaseHandle->prepare('INSERT INTO "pathproperties" ("parent", "name", "namespace", "index", "level", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?, ?)');
 					$statementHandle->execute(array(
 						$property->getParent()->getIdentifier(),
 						$splitName['name'],
@@ -711,9 +711,9 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 		} else {
 			$pathLevels = explode('/',$property->getValue()->getString());
 			$level = 0;
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "pathproperties" ("parent", "name", "namespace", "level", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?)');
 			foreach ($pathLevels as $pathLevel) {
 				$splitPathLevel = $this->splitName($pathLevel);
-				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "pathproperties" ("parent", "name", "namespace", "level", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?)');
 				$statementHandle->execute(array(
 					$property->getParent()->getIdentifier(),
 					$splitName['name'],
@@ -738,10 +738,10 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 		$splitName = $this->splitName($property->getName());
 
 		if ($property->isMultiple()) {
+			$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nameproperties" ("parent", "name", "namespace", "index", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?)');
 			foreach ($property->getValues() as $index => $value) {
 				$splitValue = $this->splitName($value->getString());
 
-				$statementHandle = $this->databaseHandle->prepare('INSERT INTO "nameproperties" ("parent", "name", "namespace", "index", "value", "valuenamespace") VALUES (?, ?, ?, ?, ?, ?)');
 				$statementHandle->execute(array(
 					$property->getParent()->getIdentifier(),
 					$splitName['name'],
@@ -854,7 +854,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getRawSingleValuedProperty(&$property) {
-		$typeName = \F3\PHP6\Functions::strtolower(\F3\PHPCR\PropertyType::nameFromValue($property['type']));
+		$typeName = strtolower(\F3\PHPCR\PropertyType::nameFromValue($property['type']));
 
 		$statementHandle = $this->databaseHandle->prepare('SELECT "value"' . ($property['type'] == \F3\PHPCR\PropertyType::NAME ? ',"valuenamespace"' : '') . ' FROM "' . $typeName . 'properties" WHERE "parent" = ? AND "name" = ? AND "namespace" = ?');
 		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));
@@ -877,7 +877,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getRawMultiValuedProperty(&$property) {
-		$typeName = \F3\PHP6\Functions::strtolower(\F3\PHPCR\PropertyType::nameFromValue($property['type']));
+		$typeName = strtolower(\F3\PHPCR\PropertyType::nameFromValue($property['type']));
 
 		$statementHandle = $this->databaseHandle->prepare('SELECT "index", "value"' . ($property['type'] == \F3\PHPCR\PropertyType::NAME ? ',"valuenamespace"' : '') . ' FROM "' . $typeName . 'properties" WHERE "parent" = ? AND "name" = ? AND "namespace" = ?');
 		$statementHandle->execute(array($property['parent'], $property['name'], $property['namespace']));

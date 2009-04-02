@@ -851,7 +851,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setNamespacePrefix($prefix, $uri) {
-		if (\F3\PHP6\Functions::strtolower(\F3\PHP6\Functions::substr($prefix, 0, 3)) == 'xml') {
+		if (strtolower(substr($prefix, 0, 3)) == 'xml') {
 			throw new \F3\PHPCR\NamespaceException('Attempt to register a prefix which starts with "XML" (in any combination of case)', 1190282877);
 		}
 
@@ -1330,7 +1330,9 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerNodeAsDirty(\F3\PHPCR\NodeInterface $node) {
-		$this->currentlyDirtyNodes[$node->getIdentifier()] = $node;
+		if (!$this->isRegisteredAsNewNode($node)) {
+			$this->currentlyDirtyNodes[$node->getIdentifier()] = $node;
+		}
 	}
 
 	/**
@@ -1392,7 +1394,9 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerPropertyAsDirty(\F3\PHPCR\PropertyInterface $property) {
-		$this->currentlyDirtyProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
+		if (!$this->isRegisteredAsNewProperty($property)) {
+			$this->currentlyDirtyProperties[$property->getParent()->getIdentifier()][$property->getName()] = $property;
+		}
 	}
 
 	/**

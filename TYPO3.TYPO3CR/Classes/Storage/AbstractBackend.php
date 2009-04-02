@@ -47,7 +47,7 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	/**
 	 * @var \F3\TYPO3CR\Storage\SearchInterface
 	 */
-	protected $searchEngine;
+	protected $searchBackend;
 
 	/**
 	 * @var \F3\TYPO3CR\NamespaceRegistryInterface
@@ -79,29 +79,29 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	public function setWorkspaceName($workspaceName) {
 		if ($workspaceName === '' || !is_string($workspaceName)) throw new \InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1200614989);
 		$this->workspaceName = $workspaceName;
-		$this->searchEngine->setWorkspaceName($workspaceName);
+		$this->searchBackend->setWorkspaceName($workspaceName);
 	}
 
 	/**
-	 * Sets the search engine used by the storage backend.
+	 * Sets the search backend used by the storage backend.
 	 *
-	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchEngine
+	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchBackend
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setSearchEngine(\F3\TYPO3CR\Storage\SearchInterface $searchEngine) {
-		$this->searchEngine = $searchEngine;
-		$this->searchEngine->connect();
+	public function setSearchBackend(\F3\TYPO3CR\Storage\SearchInterface $searchBackend) {
+		$this->searchBackend = $searchBackend;
+		$this->searchBackend->connect();
 	}
 
 	/**
-	 * Returns the search engine used by the storage backend.
+	 * Returns the search backend used by the storage backend.
 	 *
 	 * @return \F3\TYPO3CR\Storage\SearchInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getSearchEngine() {
-		return $this->searchEngine;
+	public function getSearchBackend() {
+		return $this->searchBackend;
 	}
 
 	/**
