@@ -347,8 +347,16 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		$node = $this->session->getNodeByIdentifier($this->identityMap->getUUIDByObject($object));
 
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
-		foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
+		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
 			$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
+			$propertyType = $propertyData['type'];
+
+				// if a LazyLoadingProxy has not been activated, it can neither
+				// be new nor dirty...
+			if ($propertyValue instanceof \F3\FLOW3\Persistence\LazyLoadingProxy) {
+				continue;
+			}
+
 			if ($propertyType === 'array' && is_array($propertyValue)) {
 				if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
 					$this->persistArray($propertyValue, $node, 'flow3:' . $propertyName, $queue);
@@ -457,14 +465,14 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($className);
 		$node = $parentNode->addNode($nodeName, $nodeTypeName);
 
-		foreach ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getProperties() as $propertyName => $propertyType) {
+		foreach ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getProperties() as $propertyName => $propertyData) {
 			$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
 			if (is_array($propertyValue)) {
 				$this->persistArray($propertyValue, $node, 'flow3:' . $propertyName, $queue);
-			} elseif (is_object($propertyValue) && $propertyType !== 'DateTime') {
+			} elseif (is_object($propertyValue) && $propertyData['type'] !== 'DateTime') {
 				$this->persistValueObject($propertyValue, $node, 'flow3:' . $propertyName);
 			} else {
-				$node->setProperty('flow3:' . $propertyName, $propertyValue, \F3\PHPCR\PropertyType::valueFromType($propertyType));
+				$node->setProperty('flow3:' . $propertyName, $propertyValue, \F3\PHPCR\PropertyType::valueFromType($propertyData['type']));
 			}
 		}
 	}

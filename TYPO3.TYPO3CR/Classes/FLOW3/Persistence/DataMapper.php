@@ -128,7 +128,7 @@ class DataMapper {
 	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function mapSingleNode(\F3\PHPCR\NodeInterface $node) {
+	public function mapSingleNode(\F3\PHPCR\NodeInterface $node) {
 		if ($this->identityMap->hasUUID($node->getIdentifier())) {
 			$object = $this->identityMap->getObjectByUUID($node->getIdentifier());
 		} else {
@@ -158,10 +158,10 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, \F3\PHPCR\NodeInterface $node, \F3\FLOW3\Persistence\ClassSchema $classSchema) {
-		foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
+		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
 			$propertyValue = NULL;
 
-			switch ($propertyType) {
+			switch ($propertyData['type']) {
 				case 'integer':
 				case 'int':
 				case 'float':
@@ -180,7 +180,7 @@ class DataMapper {
 				break;
 				case 'SplObjectStorage':
 					if ($node->hasNode('flow3:' . $propertyName)) {
-						$propertyValue = $this->mapSplObjectStorageProxyNode($node->getNode('flow3:' . $propertyName));
+						$propertyValue = $this->mapSplObjectStorageProxyNode($object, $propertyName, $node->getNode('flow3:' . $propertyName), $propertyData['lazy']);
 					}
 				break;
 					// we have an object to handle...
@@ -241,28 +241,55 @@ class DataMapper {
 	/**
 	 * Maps an SplObjectStorage proxy node back to an SplObjectStorage
 	 *
-	 * @param NodeInterface $proxyNode
-	 * @return \SplObjectStorage
+	 * @param object $parent The parent object for the mapping result
+	 * @param string $propertyName The target property name for the mapping result
+	 * @param \F3\PHPCR\NodeInterface $proxyNode
+	 * @param boolean $lazy Whether to create a LazyLoadingProxy for the property
+	 * @return \SplObjectStorage|\F3\FLOW3\Persistence\LazyLoadingProxy
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo remove the check on the node/property names and use name pattern
 	 * @todo restore information attached to objects
+	 * @todo allow to switch between eager and lazy loading
 	 */
-	protected function mapSplObjectStorageProxyNode(\F3\PHPCR\NodeInterface $proxyNode) {
+	protected function mapSplObjectStorageProxyNode($parent, $propertyName, \F3\PHPCR\NodeInterface $proxyNode, $lazy = FALSE) {
 		if ($proxyNode->getPrimaryNodeType()->getName() !== \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY) {
 			throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnsupportedTypeException('SplObjectStorage can only be mapped back from nodes of type ' . \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY, 1236166559);
 		}
-		$objectStorage = new \SplObjectStorage();
 
-		$itemNodes = $proxyNode->getNodes();
-		foreach ($itemNodes as $itemNode) {
-			$objectNode = $itemNode->getNode('flow3:object');
-			if ($objectNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
-				$object = $this->mapObjectProxyNode($objectNode);
-			} else {
-				$object = $this->mapSingleNode($objectNode);
+		if ($lazy === FALSE) {
+			$objectStorage = new \SplObjectStorage();
+
+			$itemNodes = $proxyNode->getNodes();
+			foreach ($itemNodes as $itemNode) {
+				$objectNode = $itemNode->getNode('flow3:object');
+				if ($objectNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
+					$object = $this->mapObjectProxyNode($objectNode);
+				} else {
+					$object = $this->mapSingleNode($objectNode);
+				}
+
+				$objectStorage->attach($object);
 			}
+		} else {
+			$dataMapper = $this; // make available to closure...
+			$objectStorage = new \F3\FLOW3\Persistence\LazyLoadingProxy(
+				$parent,
+				$propertyName,
+				function() use ($proxyNode, $dataMapper) {
+					$objectStorage = new \SplObjectStorage();
+					$itemNodes = $proxyNode->getNodes();
+					foreach ($itemNodes as $itemNode) {
+						$objectNode = $itemNode->getNode('flow3:object');
+						if ($objectNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
+							$object = $dataMapper->mapObjectProxyNode($objectNode);
+						} else {
+							$object = $dataMapper->mapSingleNode($objectNode);
+						}
 
-			$objectStorage->attach($object);
+						$objectStorage->attach($object);
+					}
+					return $objectStorage;
+				}
+			);
 		}
 
 		return $objectStorage;
@@ -275,7 +302,7 @@ class DataMapper {
 	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function mapObjectProxyNode(\F3\PHPCR\NodeInterface $proxyNode) {
+	public function mapObjectProxyNode(\F3\PHPCR\NodeInterface $proxyNode) {
 		return $this->mapSingleNode($proxyNode->getProperty('flow3:target')->getNode());
 	}
 

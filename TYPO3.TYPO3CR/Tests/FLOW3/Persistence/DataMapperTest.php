@@ -136,7 +136,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
 		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$postClassSchema->setAggregateRoot(TRUE);
-		$postClassSchema->setProperty('author', $qualifiedAuthorClassName);
+		$postClassSchema->addProperty('author', $qualifiedAuthorClassName);
 
 		$mockProxyPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
 		$mockProxyPrimaryNodeType->expects($this->any())->method('getName')->will($this->returnValue(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY));
@@ -167,8 +167,22 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$proxyNode->expects($this->once())->method('getProperty')->with('flow3:target')->will($this->returnValue($targetProperty));
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('mapSingleNode'));
-		$dataMapper->expects($this->once())->method('mapSingleNode')->with($targetNode);
 		$dataMapper->_call('mapObjectProxyNode', $proxyNode);
+	}
+
+	/**
+	 * @test
+	 */
+	public function mapObjectProxyNodeCreatesLazyLoadingProxyWhenLazyLoading() {
+		$mockProxyPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$mockProxyPrimaryNodeType->expects($this->once())->method('getName')->will($this->returnValue(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY));
+		$parent = new \stdClass();
+		$proxyNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$proxyNode->expects($this->once())->method('getPrimaryNodeType')->will($this->returnValue($mockProxyPrimaryNodeType));
+
+		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'));
+		$result = $dataMapper->_call('mapSplObjectStorageProxyNode', $parent, 'objectsProperty', $proxyNode, TRUE);
+		$this->assertType('F3\FLOW3\Persistence\LazyLoadingProxy', $result);
 	}
 
 	/**
@@ -196,8 +210,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node->expects($this->at(3))->method('getProperty')->with('flow3:secondProperty')->will($this->returnValue($secondProperty));
 
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
-		$classSchema->setProperty('firstProperty', 'string');
-		$classSchema->setProperty('secondProperty', 'integer');
+		$classSchema->addProperty('firstProperty', 'string');
+		$classSchema->addProperty('secondProperty', 'integer');
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'));
 		$dataMapper->_call('thawProperties', $object, $node, $classSchema);
@@ -215,14 +229,17 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node->expects($this->any())->method('hasNode')->will($this->returnValue(TRUE));
 		$node->expects($this->at(1))->method('getNode')->with('flow3:firstProperty')->will($this->returnValue($proxyNode));
 		$node->expects($this->at(3))->method('getNode')->with('flow3:secondProperty')->will($this->returnValue($proxyNode));
+		$node->expects($this->at(5))->method('getNode')->with('flow3:thirdProperty')->will($this->returnValue($proxyNode));
 
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
-		$classSchema->setProperty('firstProperty', 'array');
-		$classSchema->setProperty('secondProperty', 'SplObjectStorage');
+		$classSchema->addProperty('firstProperty', 'array');
+		$classSchema->addProperty('secondProperty', 'SplObjectStorage');
+		$classSchema->addProperty('thirdProperty', 'SplObjectStorage', TRUE);
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('mapArrayProxyNode', 'mapSplObjectStorageProxyNode'));
-		$dataMapper->expects($this->once())->method('mapArrayProxyNode')->with($proxyNode);
-		$dataMapper->expects($this->once())->method('mapSplObjectStorageProxyNode')->with($proxyNode);
+		$dataMapper->expects($this->at(0))->method('mapArrayProxyNode')->with($proxyNode);
+		$dataMapper->expects($this->at(1))->method('mapSplObjectStorageProxyNode')->with($object, 'secondProperty', $proxyNode, FALSE);
+		$dataMapper->expects($this->at(2))->method('mapSplObjectStorageProxyNode')->with($object, 'thirdProperty', $proxyNode, TRUE);
 		$dataMapper->_call('thawProperties', $object, $node, $classSchema);
 	}
 
@@ -244,7 +261,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node->expects($this->once())->method('getNode')->with('flow3:firstProperty')->will($this->returnValue($proxyNode));
 
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
-		$classSchema->setProperty('firstProperty', 'F3\SomeObject');
+		$classSchema->addProperty('firstProperty', 'F3\SomeObject');
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('mapSingleNode'));
 		$dataMapper->expects($this->once())->method('mapSingleNode')->with($objectNode);
@@ -300,7 +317,22 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 */
-	public function mapSplObjectStorageProxyNode() {
+	public function mapSplObjectStorageProxyNodeCreatesLazyLoadingProxyWhenLazyLoading() {
+		$mockProxyPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$mockProxyPrimaryNodeType->expects($this->once())->method('getName')->will($this->returnValue(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY));
+		$parent = new \stdClass();
+		$proxyNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$proxyNode->expects($this->once())->method('getPrimaryNodeType')->will($this->returnValue($mockProxyPrimaryNodeType));
+
+		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'));
+		$result = $dataMapper->_call('mapSplObjectStorageProxyNode', $parent, 'objectsProperty', $proxyNode, TRUE);
+		$this->assertType('F3\FLOW3\Persistence\LazyLoadingProxy', $result);
+	}
+
+	/**
+	 * @test
+	 */
+	public function mapSplObjectStorageProxyNodeCreatesSplObjectStorageWhenEagerLoading() {
 		$mockProxyPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
 		$mockProxyPrimaryNodeType->expects($this->once())->method('getName')->will($this->returnValue(\F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY));
 		$proxyNode = $this->getMock('F3\PHPCR\NodeInterface');
@@ -328,7 +360,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('mapObjectProxyNode', 'mapSingleNode'));
 		$dataMapper->expects($this->once())->method('mapObjectProxyNode')->with($objectProxyNode)->will($this->returnValue(new \stdClass()));
 		$dataMapper->expects($this->once())->method('mapSingleNode')->with($objectNode)->will($this->returnValue(new \stdClass()));
-		$dataMapper->_call('mapSplObjectStorageProxyNode', $proxyNode);
+		$dataMapper->_call('mapSplObjectStorageProxyNode', new \stdClass(), 'objectsProperty', $proxyNode);
 	}
 
 }
