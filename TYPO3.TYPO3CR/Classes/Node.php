@@ -472,7 +472,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @todo Many :)
 	 */
 	public function addNode($relPath, $primaryNodeTypeName = NULL, $identifier = NULL) {
-		if ($relPath === NULL) {
+		if (empty($relPath)) {
 			throw new \F3\PHPCR\PathNotFoundException('Path not found or not provided', 1187531979);
 		}
 
