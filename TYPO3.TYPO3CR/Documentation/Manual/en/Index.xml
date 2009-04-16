@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book version="5.0" xmlns="http://docbook.org/ns/docbook"
+      xmlns:xl="http://www.w3.org/1999/xlink"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:xhtml="http://www.w3.org/1999/xhtml"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:ns="http://docbook.org/ns/docbook"
+      xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>TYPO3 Content Repository</title>
+
+  <!-- Meta information -->
+
+  <info>
+    <abstract>
+      <para>The TYPO3 Content Repository is a pure PHP implementation of the
+      JSR-283 specification.</para>
+    </abstract>
+
+    <author>
+      <personname>
+        <firstname>Karsten</firstname>
+
+        <surname>Dambekalns</surname>
+      </personname>
+
+      <email>karsten@typo3.org</email>
+    </author>
+
+    <copyright>
+      <year>2009</year>
+
+      <holder>Karsten Dambekalns</holder>
+    </copyright>
+  </info>
+
+  <!-- Chapters -->
+
+  <xi:include href="Introduction.xml"/>
+  <xi:include href="Configuration.xml"/>
+  <xi:include href="Usage.xml"/>
+
+  <!-- Appendixes -->
+
+  <xi:include href="AppendixTesting.xml"/>
+</book>

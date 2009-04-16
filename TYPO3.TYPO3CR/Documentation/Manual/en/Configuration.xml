@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:ns6="http://www.w3.org/1999/xlink"
+         xmlns:ns5="http://www.w3.org/2000/svg"
+         xmlns:ns4="http://www.w3.org/1999/xhtml"
+         xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <title>Configuration</title>
+
+  <section>
+    <title>Configuration options</title>
+
+    <para>The following table lists the available configuration options of the
+    TYPO3 CR:<table>
+        <title>TYPO3CR configuration options</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Option path </entry>
+
+              <entry align="center">Description </entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>TYPO3CR: storage: backend</entry>
+
+              <entry>The storage backend used by the CR. Currently only a
+              PDO-based backend is available.</entry>
+            </row>
+
+            <row>
+              <entry>TYPO3CR: storage: backendOptions</entry>
+
+              <entry>An array with backend options. The options depend on the
+              backend used.</entry>
+            </row>
+
+            <row>
+              <entry>TYPO3CR: search: backend</entry>
+
+              <entry>The search backend used by the CR. Currently only a
+              PDO-based backend is available.</entry>
+            </row>
+
+            <row>
+              <entry>TYPO3CR: search: backendOptions</entry>
+
+              <entry>An array with backend options. The options depend on the
+              backend used</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table></para>
+  </section>
+</chapter>

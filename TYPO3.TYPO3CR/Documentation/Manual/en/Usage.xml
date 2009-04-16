@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:ns6="http://www.w3.org/1999/xlink"
+         xmlns:ns5="http://www.w3.org/2000/svg"
+         xmlns:ns4="http://www.w3.org/1999/xhtml"
+         xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <title>Usage</title>
+
+  <section>
+    <title>Using the API</title>
+
+    <para>For a documentation of the API defined in JSR-283 please have a look
+    at the specification at <link
+    linkend="???">http://jcp.org/en/jsr/detail?id=283</link></para>
+  </section>
+
+  <section>
+    <title>Using the web-based CR admin</title>
+
+    <para>The TYPO3 CR comes with a web-based administration interface.
+    Currently it allows you to<itemizedlist>
+        <listitem>
+          <para>look at the node hierarchy</para>
+        </listitem>
+
+        <listitem>
+          <para>properties of nodes</para>
+        </listitem>
+
+        <listitem>
+          <para>delete nodes</para>
+        </listitem>
+      </itemizedlist>More features will follow.</para>
+
+    <para>To access the admin interface you need to call
+    <uri>http://<replaceable>host</replaceable>/typo3cr/</uri> in the standard
+    FLOW3 distribution. For customized setups the routing may be configured
+    differently.</para>
+  </section>
+
+  <section>
+    <title>Using the FLOW3 persistence backend</title>
+
+    <para>The backend has no user serviceable parts inside, just have a look
+    at the FLOW3 documentation to learn more about the persistence
+    subpackage.</para>
+  </section>
+</chapter>
