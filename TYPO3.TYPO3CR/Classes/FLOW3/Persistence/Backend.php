@@ -349,13 +349,13 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
 		foreach ($classSchema->getProperties() as $propertyName => $propertyType) {
 			$propertyValue = $object->FLOW3_AOP_Proxy_getProperty($propertyName);
-			if ($propertyType === 'array') {
+			if ($propertyType === 'array' && is_array($propertyValue)) {
 				if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
 					$this->persistArray($propertyValue, $node, 'flow3:' . $propertyName, $queue);
 				} else {
 					$queue = array_merge($queue, array_values($propertyValue));
 				}
-			} elseif ($propertyType === 'SplObjectStorage') {
+			} elseif ($propertyType === 'SplObjectStorage' && $propertyValue instanceof \SplObjectStorage) {
 				if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
 					$this->persistSplObjectStorage($propertyValue, $node, 'flow3:' . $propertyName, $queue);
 				} else {
