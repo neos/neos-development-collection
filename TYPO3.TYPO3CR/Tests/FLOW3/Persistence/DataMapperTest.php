@@ -253,12 +253,10 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$primaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
 		$primaryNodeType->expects($this->any())->method('getName')->will($this->returnValue('F3_SomeObject'));
 		$objectNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$proxyNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$proxyNode->expects($this->once())->method('getPrimaryNodeType')->will($this->returnValue($primaryNodeType));
-		$proxyNode->expects($this->once())->method('getNode')->with('flow3:firstProperty')->will($this->returnValue($objectNode));
+		$objectNode->expects($this->once())->method('getPrimaryNodeType')->will($this->returnValue($primaryNodeType));
 		$node = $this->getMock('F3\PHPCR\NodeInterface');
 		$node->expects($this->any())->method('hasNode')->will($this->returnValue(TRUE));
-		$node->expects($this->once())->method('getNode')->with('flow3:firstProperty')->will($this->returnValue($proxyNode));
+		$node->expects($this->once())->method('getNode')->with('flow3:firstProperty')->will($this->returnValue($objectNode));
 
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'F3\SomeObject');

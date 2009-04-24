@@ -700,6 +700,63 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->_call('persistObject', $A);
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \F3\TYPO3CR\FLOW3\Persistence\Exception\DanglingAggregateRootObjectException
+	 */
+	public function aggregateRootObjectsFoundWhenPersistingThatAreNotAmongAggregateRootObjectsCollectedFromRepositoriesCauseAnException() {
+		$otherClassName = 'OtherClass' . uniqid();
+		$fullOtherClassName = 'F3\\TYPO3CR\\Tests\\' . $otherClassName;
+		eval('namespace F3\\TYPO3CR\\Tests; class ' . $otherClassName . ' {
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
+			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullOtherClassName . '\';}
+		}');
+		$someClassName = 'SomeClass' . uniqid();
+		$fullSomeClassName = 'F3\\TYPO3CR\\Tests\\' . $someClassName;
+		eval('namespace F3\\TYPO3CR\\Tests; class ' . $someClassName . ' {
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
+			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->property; }
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullSomeClassName . '\';}
+		}');
+		$otherAggregateRootObject = new $fullOtherClassName();
+		$someAggregateRootObject = new $fullSomeClassName();
+		$someAggregateRootObject->property = $otherAggregateRootObject;
+
+		$otherClassSchema = new \F3\FLOW3\Persistence\ClassSchema($otherClassName);
+		$otherClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$otherClassSchema->setAggregateRoot(TRUE);
+		$someClassSchema = new \F3\FLOW3\Persistence\ClassSchema($someClassName);
+		$someClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$someClassSchema->setAggregateRoot(TRUE);
+		$someClassSchema->addProperty('property', $fullOtherClassName);
+
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($someAggregateRootObject);
+
+		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockInstanceNode->expects($this->once())->method('addNode')->will($this->returnValue($this->getMock('F3\PHPCR\NodeInterface')));
+		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($mockInstanceNode));
+
+		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
+		$identityMap->registerObject($someAggregateRootObject, '');
+
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
+		$backend->injectIdentityMap($identityMap);
+		$backend->setAggregateRootObjects($aggregateRootObjects);
+		$backend->_set('classSchemata', array(
+			$fullOtherClassName => $otherClassSchema,
+			$fullSomeClassName => $someClassSchema
+		));
+		$backend->_set('baseNode', $mockBaseNode);
+		$backend->_call('persistObjects');
+	}
 }
 
 ?>

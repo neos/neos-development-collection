@@ -446,8 +446,10 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		if ($objectUUID !== NULL) {
 			$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
 		} else {
-			$proxyNode->getProperty('flow3:target')->remove();
-			$this->incompleteObjectProxyNodes[$proxyNode] = $object;
+			if ($proxyNode->isNew() === FALSE) {
+				$proxyNode->getProperty('flow3:target')->remove();
+			}
+			$this->incompleteObjectProxyNodes->attach($proxyNode, $object);
 		}
 	}
 
@@ -578,13 +580,17 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function finalizeObjectProxyNodes() {
-		foreach ($this->incompleteObjectProxyNodes as $proxyNode => $object) {
+		foreach ($this->incompleteObjectProxyNodes as $proxyNode) {
+			$object = $this->incompleteObjectProxyNodes->getInfo($proxyNode);
 			$objectUUID = $this->getUUIDByObject($object);
 			if ($objectUUID !== NULL) {
 				$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
 			} else {
-				$proxyNode->remove();
-				$this->systemLogger->log('Could not resolve UUID for object reference in object proxy node "' . $proxyNode->getPath() . '".', LOG_NOTICE);
+				if (!$this->aggregateRootObjects->contains($object)) {
+					throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\DanglingAggregateRootObjectException('Found an instance of "' . get_class($object) . '" for "' . $proxyNode->getPath() . '" being aggregate root but not in the handed-in aggregate roots.', 1240200821);
+				} else {
+					throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnknownObjectException('Could not resolve UUID for object reference in object proxy node "' . $proxyNode->getPath() . '".', 1240200392);
+				}
 			}
 		}
 	}

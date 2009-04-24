@@ -190,7 +190,7 @@ class DataMapper {
 						if ($propertyNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
 							$propertyValue = $this->mapObjectProxyNode($propertyNode);
 						} else {
-							$propertyValue = $this->mapSingleNode($propertyNode->getNode('flow3:' . $propertyName));
+							$propertyValue = $this->mapSingleNode($propertyNode);
 						}
 					}
 				break;
