@@ -63,18 +63,6 @@ class SiteTest extends \F3\Testing\BaseTestCase {
 		$this->assertNotEquals($site1->getId(), $site2->getId());
 	}
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function aRootStructureNodeIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
-		$mockRootStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode');
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($mockRootStructureNode));
-
-		$site = new \F3\TYPO3\Domain\Model\Site($mockObjectFactory);
-		$this->assertSame($mockRootStructureNode, $site->getRootStructureNode());
-	}
 }
 
 ?>
