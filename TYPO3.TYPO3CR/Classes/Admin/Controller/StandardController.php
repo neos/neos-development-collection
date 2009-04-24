@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3CR\Admin\View;
+namespace F3\TYPO3CR\Admin\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -29,24 +29,23 @@ namespace F3\TYPO3CR\Admin\View;
  */
 
 /**
- * Renders the full viewport for the standalone CR admin
+ * The default Admin controller
  *
  * @package TYPO3CR
  * @subpackage Admin
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DefaultIndexHTML extends \F3\FLOW3\MVC\View\AbstractView {
+class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * Renders the Admin viewport
+	 * The default action of this controller
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function render() {
-		$template = $this->resourceManager->getResource('file://TYPO3CR/Public/HTML/View_Admin_Viewport.html')->getContent();
-		return str_replace('###BASEURI###', $this->request->getBaseURI(), $template);
+	public function indexAction() {
+		return $this->view->render();
 	}
 
 }

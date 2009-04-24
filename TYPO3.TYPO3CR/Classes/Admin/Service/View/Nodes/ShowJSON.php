@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3CR\Admin\Service\View;
+namespace F3\TYPO3CR\Admin\Service\View\Nodes;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -29,28 +29,28 @@ namespace F3\TYPO3CR\Admin\Service\View;
  */
 
 /**
- * JSON view for the Nodes List action
+ * JSON view for the Nodes Show action
  *
  * @package TYPO3CR
  * @subpackage Admin
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NodesListJSON extends \F3\FLOW3\MVC\View\AbstractView {
+class ShowJSON extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * @var array
 	 */
-	public $nodes = array();
+	public $node;
 
 	/**
-	 * Renders this list view
+	 * Renders this show view
 	 *
 	 * @return string The rendered JSON output
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function render() {
-		return json_encode($this->nodes);
+		return json_encode($this->node);
 	}
 }
 ?>

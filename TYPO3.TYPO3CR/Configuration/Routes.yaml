@@ -12,7 +12,7 @@
 #  defaults:
 #    @package:    'TYPO3CR'
 #    @subpackage: 'Admin'
-#    @controller: 'Default'
+#    @controller: 'Standard'
 #    @action:     'index'
 #    @format:     'html'
 
