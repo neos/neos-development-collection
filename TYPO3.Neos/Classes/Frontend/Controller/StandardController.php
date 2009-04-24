@@ -36,7 +36,7 @@ namespace F3\TYPO3\Frontend\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * Alias for the "show" action

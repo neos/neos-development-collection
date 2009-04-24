@@ -34,7 +34,7 @@ namespace F3\TYPO3\Backend\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * Only Web Requests are supported
@@ -66,6 +66,7 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setupAction() {
+		$structureNodeRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Model\StructureNodeRepository');
 
 			// Create structure nodes
 		$structureNode1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
@@ -74,6 +75,12 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$structureNode1b = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
 		$structureNode1c = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
 		$structureNode1d = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
+		$structureNodeRepository->add($structureNode1);
+		$structureNodeRepository->add($structureNode1a);
+		$structureNodeRepository->add($structureNode1aa);
+		$structureNodeRepository->add($structureNode1b);
+		$structureNodeRepository->add($structureNode1c);
+		$structureNodeRepository->add($structureNode1d);
 
 		$structureNode1->addChildNode($structureNode1a);
 		$structureNode1->addChildNode($structureNode1b);

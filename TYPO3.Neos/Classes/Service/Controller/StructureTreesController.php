@@ -146,7 +146,7 @@ class StructureTreesController extends \F3\FLOW3\MVC\Controller\RESTController {
 
 		$content = $structureNode->getContent();
 		if ($content !== NULL) {
-			$contentClass = ($content instanceof \F3\FLOW3\AOP\ProxyInterface) ? $content->AOPProxyGetProxyTargetClassName() : get_class($content);
+			$contentClass = ($content instanceof \F3\FLOW3\AOP\ProxyInterface) ? $content->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($content);
 		} else {
 			$contentClass = '';
 		}
