@@ -64,7 +64,7 @@ class Join implements \F3\PHPCR\Query\QOM\JoinInterface {
 	 *
 	 * @param \F3\PHPCR\Query\QOM\SourceInterface $left the left node-tuple source; non-null
 	 * @param \F3\PHPCR\Query\QOM\SourceInterface $right the right node-tuple source; non-null
-	 * @param integer $joinType either QueryObjectModelConstants.JOIN_TYPE_INNER, QueryObjectModelConstants.JOIN_TYPE_LEFT_OUTER, QueryObjectModelConstants.JOIN_TYPE_RIGHT_OUTER
+	 * @param string $joinType one of QueryObjectModelConstants.JCR_JOIN_TYPE_*
 	 * @param \F3\PHPCR\Query\QOM\JoinConditionInterface $join Condition the join condition; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -96,7 +96,7 @@ class Join implements \F3\PHPCR\Query\QOM\JoinInterface {
 	/**
 	 * Gets the join type.
 	 *
-	 * @return integer one of QueryObjectModelConstants.JOIN_TYPE_*
+	 * @return string one of QueryObjectModelConstants.JCR_JOIN_TYPE_*
 	 */
 	public function getJoinType() {
 		return $this->joinType;

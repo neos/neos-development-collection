@@ -62,19 +62,6 @@ class Value implements \F3\PHPCR\ValueInterface {
 	}
 
 	/**
-	 * Returns a Binary representation of this value. The Binary object in turn provides
-	 * methods to access the binary data itself. Uses the standard conversion to binary
-	 * (see JCR specification).
-	 *
-	 * @return \F3\TYPO3CR\Binary A Binary representation of this value.
-	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getBinary() {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217843676);
-	}
-
-	/**
 	 * Returns a string representation of this value. For Value objects being
 	 * of type DATE the string will conform to ISO8601 format.
 	 *
@@ -106,6 +93,19 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 */
 	public function __toString() {
 		return $this->getString();
+	}
+
+	/**
+	 * Returns a Binary representation of this value. The Binary object in turn provides
+	 * methods to access the binary data itself. Uses the standard conversion to binary
+	 * (see JCR specification).
+	 *
+	 * @return \F3\TYPO3CR\Binary A Binary representation of this value.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getBinary() {
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217843676);
 	}
 
 	/**

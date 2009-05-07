@@ -28,7 +28,7 @@ namespace F3\TYPO3CR;
  */
 
 /**
- * The Binary object allows to handle BINARY values.
+ * A Binary object holds a JCR property value of type BINARY.
  *
  * @package TYPO3CR
  * @version $Id$
@@ -39,12 +39,12 @@ class Binary implements \F3\PHPCR\BinaryInterface {
 
 	/**
 	 * Returns a stream representation of this value.
-	 * Each call to <code>getStream()</code> returns a new stream.
-	 * The API consumer is responsible for calling <code>close()</code>
-	 * on the returned stream.
+	 * Each call to getStream() returns a new stream.
+	 * The API consumer is responsible for calling close() on the returned
+	 * stream.
 	 *
 	 * @return resource A stream representation of this value.
-	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 */
 	public function getStream() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021591);
@@ -69,7 +69,7 @@ class Binary implements \F3\PHPCR\BinaryInterface {
 	 * Returns the size of this Binary value in bytes.
 	 *
 	 * @return integer the size of this value in bytes.
-	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 */
 	public function getSize() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021593);

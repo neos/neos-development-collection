@@ -64,7 +64,8 @@ class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 
 	/**
 	 * Creates a new query by specifying the query statement itself and the language
-	 * in which the query is stated.
+	 * in which the query is stated. The $language must be a string from among
+	 * those returned by QueryManager.getSupportedQueryLanguages().
 	 *
 	 * @param string $statement
 	 * @param string $language
@@ -102,11 +103,7 @@ class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 	}
 
 	/*
-	 * Retrieves an existing persistent query. If node is not a valid persisted
-	 * query (that is, a node of type nt:query), an InvalidQueryException is thrown.
-	 * Persistent queries are created by first using QueryManager.createQuery to
-	 * create a Query object and then calling Query.save to persist the query to
-	 * a location in the workspace.
+	 * Retrieves an existing persistent query.
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node a persisted query (that is, a node of type nt:query).
 	 * @return \F3\PHPCR\Query\QueryInterface a Query object.
@@ -119,9 +116,9 @@ class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 
 	/**
 	 * Returns an array of strings representing all query languages supported by
-	 * this repository. In level 1 this set must include the strings represented
-	 * by the constants Query.JCR_SQL2 and Query.JCR_JQOM. An implementation of
-	 * either level may also support other languages.
+	 * this repository. This set must include at least the strings represented
+	 * by the constants Query.JCR_SQL2 and Query.JCR_JQOM. An implementation may
+	 * also support other languages.
 	 *
 	 * @return array A string array.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.

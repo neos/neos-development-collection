@@ -267,6 +267,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * Note that if an item returns TRUE on isNew, then by definition is parent
 	 * will return TRUE on isModified.
 	 *
+	 * Note that in read-only implementations, this method will always return
+	 * false.
+	 *
 	 * @return boolean TRUE if this item is new; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -282,6 +285,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * (because the Item has been saved since the modification) even if the
 	 * modification in question is not in persistent storage (because the
 	 * transaction has not yet been committed).
+	 *
+	 * Note that in read-only implementations, this method will always return
+	 * false.
 	 *
 	 * @return boolean TRUE if this item is modified; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -302,14 +308,10 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Returns the path of this node.
+	 * Returns the normalized absolute path to this item.
 	 *
-	 * The default implementation recursively calls this method on the
-	 * parent node and appends the name and optionally the index of this
-	 * node to construct the full path. Returns "/" if the parent node is
-	 * not available (i.e. this is the root node).
-	 *
-	 * @return string
+	 * @returns string the normalized absolute path of this Item.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add support for same name siblings
@@ -329,20 +331,12 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Returns the parent of this Node.
+	 * Returns the parent of this Item.
 	 *
-	 * An \F3\PHPCR\ItemNotFoundException is thrown if there is no parent node. This
-	 * only happens if this item is the root node of a workspace.
-	 *
-	 * An \F3\PHPCR\AccessDeniedException is thrown if the current session does not
-	 * have sufficient access permissions to retrieve the parent of this item.
-	 *
-	 * A \F3\PHPCR\RepositoryException is thrown if another error occurs.
-	 *
-	 * @return \F3\PHPCR\NodeInterface
-	 * @throws \F3\PHPCR\ItemNotFoundException
-	 * @throws \F3\PHPCR\AccessDeniedException
-	 * @throws \F3\PHPCR\RepositoryException
+	 * @return \F3\HPPCR\NodeInterface The parent of this Item.
+	 * @throws \F3\PHPCR\ItemNotFoundException if this Item< is the root node of a workspace.
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficent access to retrieve the parent of this item.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
@@ -359,7 +353,8 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Removes this item (and its subtree).
+	 * Removes this item (and its subgraph).
+	 *
 	 * To persist a removal, a save must be performed that includes the (former)
 	 * parent of the removed item within its scope.
 	 *
@@ -369,19 +364,14 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * and causes the minimal re-numbering required to maintain the original
 	 * order but leave no gaps in the numbering.
 	 *
-	 * A ReferentialIntegrityException will be thrown on save if this item or
-	 * an item in its subtree is currently the target of a REFERENCE property
-	 * located in this workspace but outside this item's subtree and the
-	 * current Session has read access to that REFERENCE property.
-	 *
 	 * @return void
 	 * @throws \F3\PHPCR\Version\VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of this item and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\AccessDeniedException if this item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside this item's subtree and the current Session does not have read access to that REFERENCE property or if the current Session does not have sufficent privileges to remove the item.
+	 * @throws \F3\PHPCR\AccessDeniedException if this item or an item in its subgraph is currently the target of a REFERENCE property located in this workspace but outside this item's subgraph and the current Session does not have read access to that REFERENCE property or if the current Session does not have sufficent privileges to remove the item.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see SessionInterface::removeItem(String)
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove() {
 		if ($this->parentNode === NULL) {
@@ -412,58 +402,35 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * If keepChanges is FALSE, this method discards all pending changes
-	 * currently recorded in this Session that apply to this Item or any
-	 * of its descendants (that is, the subtree rooted at this Item) and
-	 * returns all items to reflect the current saved state. Outside a
-	 * transaction this state is simple the current state of persistent
-	 * storage. Within a transaction, this state will reflect persistent
-	 * storage as modified by changes that have been saved but not yet
-	 * committed.
-	 * If keepChanges is TRUE then pending change are not discarded but
-	 * items that do not have changes pending have their state refreshed
-	 * to reflect the current saved state, thus revealing changes made by
-	 * other sessions.
+	 * Creates a new node at $relPath.
 	 *
-	 * @param boolean $keepChanges a boolean
-	 * @return void
-	 * @throws InvalidItemStateException if this Item object represents a workspace item that has been removed (either by this session or another).
-	 * @throws RepositoryException if another error occurs.
-	 */
-	public function refresh($keepChanges) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
-	}
-
-	/**
-	 * Creates a new node at relPath. The new node will only be persisted on
-	 * save() if it meets the constraint criteria of the parent node's node
-	 * type.
-	 * In order to save a newly added node, save must be called either on the
-	 * Session, or on the new node's parent or higher-order ancestor (grandparent,
-	 * etc.). An attempt to call save only on the newly added node will throw a
-	 * RepositoryException.
+	 * This is session-write method, meaning that the addition of the new node
+	 * is dispatched upon Session#save.
 	 *
-	 * In the context of this method the relPath provided must not have an index
-	 * on its final element. If it does then a RepositoryException is thrown.
+	 * The $relPath provided must not have an index on its final element,
+	 * otherwise a Repository
 	 *
-	 * Strictly speaking, the parameter is actually a relative path to the parent
-	 * node of the node to be added, appended with the name desired for the new
-	 * node (if the a node is being added directly below this node then only the
-	 * name need be specified). It does not specify a position within the child
-	 * node ordering. If ordering is supported by the node type of the parent node
-	 * then the new node is appended to the end of the child node list.
+	 * If ordering is supported by the node type of the parent node of the new
+	 * node then the new node is appended to the end of the child node list.
 	 *
-	 * The new node's primary node type will be determined (either immediately
-	 * or on save, depending on the implementation) by the child node definitions
-	 * in the node types of its parent, unless primaryNodeTypeName is given.
+	 * The new node's primary node type will be determined by the child node
+	 * definitions in the node types of its parent. This may occur either
+	 * immediately, on dispatch (save, whether within or without transactions)
+	 * or on persist (save without transactions, commit within a transaction),
+	 * depending on the implementation.
+	 *
+	 * If $primaryNodeTypeName is given:
+	 * The behavior of this method is identical to addNode($relPath) except that
+	 * the primary node type of the new node is explicitly specified.
 	 *
 	 * @param string $relPath The path of the new node to be created.
 	 * @param string $primaryNodeTypeName The name of the primary node type of the new node.
+	 * @param string $identifier The identifier to use for the new node, if not given an UUID will be created. Non-JCR-spec parameter!
 	 * @return \F3\PHPCR\NodeInterface The node that was added.
-	 * @throws \F3\PHPCR\ItemExistsException if an item at the specified path already exists, same-name siblings are not allowed and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\PathNotFoundException if the specified path implies intermediary Nodes that do not exist or the last element of relPath has an index, and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\ConstraintViolationException if a node type or implementation-specific constraint is violated or if an attempt is made to add a node as the child of a property and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\Version\VersionException if the node to which the new child is being added is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws \F3\PHPCR\ItemExistsException if the identifier is already used, if an item at the specified path already exists, same-name siblings are not allowed and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\PathNotFoundException if the specified path implies intermediary Nodes that do not exist or the last element of relPath has an index, and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\ConstraintViolationException if a node type or implementation-specific constraint is violated or if an attempt is made to add a node as the child of a property and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\Version\VersionException if the node to which the new child is being added is read-only due to a checked-in node and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the addition of the node and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\RepositoryException If the last element of relPath has an index or if another error occurs.
 	 * @author Thomas Peterson <info@thomas-peterson.de>
@@ -514,8 +481,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 
 	/**
 	 * If this node supports child node ordering, this method inserts the child
-	 * node at srcChildRelPath before its sibling, the child node at
-	 * destChildRelPath, in the child node list.
+	 * node at srcChildRelPath into the child node list at the position
+	 * immediately before destChildRelPath.
+	 *
 	 * To place the node srcChildRelPath at the end of the list, a destChildRelPath
 	 * of null is used.
 	 *
@@ -526,17 +494,17 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * If srcChildRelPath and destChildRelPath are the same, then no change is
 	 * made.
 	 *
-	 * Changes to ordering of child nodes are persisted on save of the parent
-	 * node.
+	 * This is session-write method, meaning that a change made by this method
+	 * is dispatched on save.
 	 *
 	 * @param string $srcChildRelPath the relative path to the child node (that is, name plus possible index) to be moved in the ordering
 	 * @param string $destChildRelPath the the relative path to the child node (that is, name plus possible index) before which the node srcChildRelPath will be placed.
 	 * @return void
-	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException  if ordering is not supported.
+	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if ordering is not supported on this node.
 	 * @throws \F3\PHPCR\ConstraintViolationException if an implementation-specific ordering restriction is violated and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\ItemNotFoundException if either parameter is not the relative path of a child node of this node.
-	 * @throws \F3\PHPCR\Version\VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the re-ordering and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws \F3\PHPCR\Version\VersionException if this node is read-only due to a checked-in node and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the re-ordering and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function orderBefore($srcChildRelPath, $destChildRelPath) {
@@ -544,20 +512,22 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Sets the specified (single-value) property of this node to the specified
-	 * value. If the property does not yet exist, it is created. The property type
-	 * of the property will be that specified by the node type of this node.
-	 * If, based on the name and value passed, there is more than one property
-	 * definition that applies, the repository chooses one definition according
-	 * to some implementation-specific criteria. Once property with name P has
-	 * been created, the behavior of a subsequent setProperty(P,V) may differ
-	 * across implementations. Some repositories may allow P to be dynamically
-	 * re-bound to a different property definition (based for example, on the
-	 * new value being of a different type than the original value) while other
-	 * repositories may not allow such dynamic re-binding.
+	 * Sets the single-value property of this node called $name to the specified
+	 * value.
 	 *
-	 * If the property type of the supplied Value object is different from that
-	 * required, then a best-effort conversion is attempted.
+	 * If the property does not yet exist, it is created and its property type
+	 * determined by the node type of this node. If, based on the name and value
+	 * passed, there is more than one property definition that applies, the
+	 * repository chooses one definition according to some implementation-
+	 * specific criteria. Once property with name P has been created, the
+	 * behavior of a subsequent setProperty(P,V) may differ across implementations.
+	 * Some repositories may allow P to be dynamically re-bound to a different
+	 * property definition (based for example, on the new value being of a
+	 * different type than the original value) while other repositories may not
+	 * allow such dynamic re-binding.
+	 *
+	 * If the property type one or more supplied Value objects is different from
+	 * that required, then a best-effort conversion is attempted.
 	 *
 	 * If the node type of this node does not indicate a specific property type,
 	 * then the property type of the supplied Value object is used and if the
@@ -568,27 +538,27 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * N.setProperty("P", (Value)null) would remove property called "P" of the
 	 * node in N.
 	 *
-	 * To save the addition or removal of a property, a save call must be
-	 * performed that includes the parent of the property in its scope, that is,
-	 * a save on either the session, this node, or an ancestor of this node. To
-	 * save a change to an existing property, a save call that includes that
-	 * property in its scope is required. This means that in addition to the
-	 * above-mentioned save options, a save on the changed property itself will
-	 * also work.
+	 * This is a session-write method, meaning that changes made through this
+	 * method are dispatched on Session#save.
 	 *
+	 * If $type is given:
+	 * The behavior of this method is identical to that of setProperty($name,
+	 * $value) except that the intended property type is explicitly specified.
+	 *
+	 * Note:
 	 * Have a look at the JSR-283 spec and/or API documentation for more details
-	 * on what is supposed to happen for different type of values being passed
+	 * on what is supposed to happen for different types of values being passed
 	 * to this method.
 	 *
 	 * @param string $name The name of a property of this node
 	 * @param mixed $value The value to be assigned
 	 * @param integer $type The type to set for the property
 	 * @return \F3\PHPCR\PropertyInterface The updated Property object
-	 * @throws \F3\PHPCR\ValueFormatException if the specified property is a DATE but the value cannot be expressed in the ISO 8601-based format defined in the JCR 2.0 specification (section 3.6.4.3) and the implementation does not support dates incompatible with that format or if value cannot be converted to the type of the specified property or if the property already exists and is multi-valued.
+	 * @throws \F3\PHPCR\ValueFormatException if the specified property is a DATE but the value cannot be expressed in the ISO 8601-based format defined in the JCR 2.0 specification and the implementation does not support dates incompatible with that format or if value cannot be converted to the type of the specified property or if the property already exists and is multi-valued.
 	 * @throws \F3\PHPCR\Version\VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\Lock\LockException  if a lock prevents the setting of the property and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\RepositoryException  if another error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
@@ -656,29 +626,39 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
+	 * If $filter is a string:
 	 * Gets all child nodes of this node accessible through the current Session
 	 * that match namePattern (if no pattern is given, all accessible child nodes
 	 * are returned). Does not include properties of this Node. The pattern may
 	 * be a full name or a partial name with one or more wildcard characters ("*"),
 	 * or a disjunction (using the "|" character to represent logical OR) of these.
 	 * For example,
-	 * N.getNodes("jcr:* | myapp:report | my doc")
+	 *  N->getNodes("jcr:* | myapp:report | my doc")
 	 * would return a NodeIterator holding all accessible child nodes of N that
 	 * are either called 'myapp:report', begin with the prefix 'jcr:' or are
 	 * called 'my doc'.
 	 *
-	 * Note that leading and trailing whitespace around a disjunct is ignored,
-	 * but whitespace within a disjunct forms part of the pattern to be matched.
+	 * The substrings within the pattern that are delimited by "|" characters
+	 * and which may contain wildcard characters ("*") are called "globs".
 	 *
-	 * The EBNF for namePattern is:
+	 * Note that leading and trailing whitespace around a glob is ignored, but
+	 * whitespace within a disjunct forms part of the pattern to be matched.
 	 *
-	 * namePattern ::= disjunct {'|' disjunct}
-	 * disjunct ::= name [':' name]
-	 * name ::= '*' | ['*'] fragment {'*' fragment} ['*']
-	 * fragment ::= char {char}
-	 * char ::= nonspace | ' '
-	 * nonspace ::= Any XML Char (See http://www.w3.org/TR/REC-xml/) except:
-	 *    '/', ':', '[', ']', '*', '|' or any whitespace character
+	 *If $filter is an array:
+	 * Gets all child nodes of this node accessible through the current
+	 * Session that match one or more of the $filter strings in the passed
+	 * array.
+	 *
+	 * A glob may be a full name or a partial name with one or more wildcard
+	 * characters ("*"). For example,
+	 *  N->getNodes(array("jcr:*", "myapp:report", "my doc"))
+	 * would return a NodeIterator holding all accessible child nodes of N that
+	 * are either called 'myapp:report', begin with the prefix 'jcr:' or are
+	 * called 'my doc'.
+	 *
+	 * Note that unlike in the case of the getNodes(<string>) leading and
+	 * trailing whitespace around a glob is not ignored.
+	 *
 	 *
 	 * The pattern is matched against the names (not the paths) of the immediate
 	 * child nodes of this node.
@@ -686,15 +666,15 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * If this node has no accessible matching child nodes, then an empty
 	 * iterator is returned.
 	 *
-	 * The same reacquisition semantics apply as with getNode(String).
+	 * The same reacquisition semantics apply as with getNode($relPath).
 	 *
-	 * @param string $namePattern a name pattern
+	 * @param string|array $filter a name pattern or an array of globbing strings.
 	 * @return \F3\PHPCR\NodeIteratorInterface a NodeIterator over all (matching) child Nodes
-	 * @throws \F3\PHPCR\RepositoryException  If an unexpected error occurs.
+	 * @throws \F3\PHPCR\RepositoryException If an unexpected error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getNodes($namePattern = NULL) {
-		if ($namePattern !== NULL) throw new \F3\PHPCR\RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
+	public function getNodes($filter = NULL) {
+		if ($filter !== NULL) throw new \F3\PHPCR\RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
 
 		$nodes = array();
 		foreach ($this->nodes as $identifier) {
@@ -710,8 +690,8 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @param string $relPath The relative path of the property to retrieve.
 	 * @return \F3\PHPCR\PropertyInterface The property at relPath.
-	 * @throws \F3\PHPCR\PathNotFoundException If no property exists at the specified path.
-	 * @throws \F3\PHPCR\RepositoryException  If another error occurs.
+	 * @throws \F3\PHPCR\PathNotFoundException if no property exists at the specified path or if the current Session does not have read access to the specified property.
+	 * @throws \F3\PHPCR\RepositoryException If another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -724,6 +704,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
+	 * If $filter is a string:
 	 * Gets all properties of this node accessible through the current Session
 	 * that match namePattern (if no pattern is given, all accessible properties
 	 * are returned). Does not include child nodes of this node. The pattern may
@@ -735,18 +716,26 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * that are either called 'myapp:name', begin with the prefix 'jcr:' or are
 	 * called 'my doc'.
 	 *
-	 * Note that leading and trailing whitespace around a disjunct is ignored,
-	 * but whitespace within a disjunct forms part of the pattern to be matched.
+	 * The substrings within the pattern that are delimited by "|" characters
+	 * and which may contain wildcard characters ("*") are called globs.
 	 *
-	 * The EBNF for namePattern is:
+	 * Note that leading and trailing whitespace around a glob is ignored, but
+	 * whitespace within a disjunct forms part of the pattern to be matched.
 	 *
-	 * namePattern ::= disjunct {'|' disjunct}
-	 * disjunct ::= name [':' name]
-	 * name ::= '*' | ['*'] fragment {'*' fragment} ['*']
-	 * fragment ::= char {char}
-	 * char ::= nonspace | ' '
-	 * nonspace ::= Any XML Char (See http://www.w3.org/TR/REC-xml/)
-	 *    except: '/', ':', '[', ']', '*', '|' or any whitespace character
+	 * If $filter is an array:
+	 * Gets all properties of this node accessible through the current
+	 * Session that match one or more of the $filter strings in the passed array.
+	 *
+	 * A glob may be a full name or a partial name with one or more wildcard
+	 * characters ("*"). For example,
+	 *  N->getProperties(array("jcr:*", "myapp:report", "my doc"))
+	 * would return a PropertyIterator holding all accessible properties of N
+	 * that are either called 'myapp:report', begin with the prefix 'jcr:' or
+	 * are called 'my doc'.
+	 *
+	 * Note that unlike in the case of getProperties(<string>) leading and
+	 * trailing whitespace around a glob is not ignored.
+	 *
 	 *
 	 * The pattern is matched against the names (not the paths) of the immediate
 	 * child properties of this node.
@@ -756,14 +745,14 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * The same reacquisition semantics apply as with getNode(String).
 	 *
-	 * @param string $namePattern a name pattern
+	 * @param string|array $filter a name pattern
 	 * @return \F3\PHPCR\PropertyIteratorInterface a PropertyIterator
-	 * @throws \F3\PHPCR\RepositoryException  If an unexpected error occurs.
+	 * @throws \F3\PHPCR\RepositoryException If an unexpected error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implement support for $namePattern
 	 */
-	public function getProperties($namePattern = NULL) {
-		if ($namePattern !== NULL) throw new \F3\PHPCR\RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
+	public function getProperties($filter = NULL) {
+		if ($filter !== NULL) throw new \F3\PHPCR\RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
 		return $this->objectFactory->create('F3\PHPCR\PropertyIteratorInterface', $this->properties);
 	}
@@ -772,6 +761,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * Returns the primary child item of this node. The primary node type of this
 	 * node may specify one child item (child node or property) of this node as
 	 * the primary child item. This method returns that item.
+	 *
 	 * In cases where the primary child item specifies the name of a set same-name
 	 * sibling child nodes, the node returned will be the one among the same-name
 	 * siblings with index [1].
@@ -779,8 +769,8 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * The same reacquisition semantics apply as with getNode(String).
 	 *
 	 * @return \F3\PHPCR\ItemInterface the primary child item.
-	 * @throws \F3\PHPCR\ItemNotFoundException if this node does not have a primary child item, either because none is declared in the node type or because a declared primary item is not present on this node instance, or not accessible through the current Session
-	 * @throws \F3\PHPCR\RepositoryException  if another error occurs.
+	 * @throws \F3\PHPCR\ItemNotFoundException if this node does not have a primary child item, either because none is declared in the node type or because a declared primary item is not present on this node instance, or because none accessible through the current Session
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function getPrimaryItem() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667766);
@@ -819,11 +809,12 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * If the name parameter is null then all referring REFERENCES are returned
 	 * regardless of name.
 	 *
-	 * Some level 2 implementations may only return properties that have been
-	 * saved (in a transactional setting this includes both those properties that
-	 * have been saved but not yet committed, as well as properties that have been
-	 * committed). Other level 2 implementations may additionally return properties
-	 * that have been added within the current Session but are not yet saved.
+	 * Some implementations may only return properties that have been persisted.
+	 * Some may return both properties that have been persisted and those that
+	 * have been dispatched but not persisted (for example, those saved within a
+	 * transaction but not yet committed) while others implementations may
+	 * return these two categories of property as well as properties that are
+	 * still pending and not yet dispatched.
 	 *
 	 * In implementations that support versioning, this method does not return
 	 * properties that are part of the frozen state of a version in version storage.
@@ -833,7 +824,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @param string $name name of referring REFERENCE properties to be returned; if null then all referring REFERENCEs are returned
 	 * @return \F3\PHPCR\PropertyIteratorInterface A PropertyIterator.
-	 * @throws \F3\PHPCR\RepositoryException  if an error occurs
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getReferences($name = NULL) {
@@ -874,7 +865,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @param string $relPath The path of a (possible) node.
 	 * @return boolean TRUE if a node exists at relPath; FALSE otherwise.
-	 * @throws \F3\PHPCR\RepositoryException If an unspecified error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implement without actually getting the node(s)
 	 */
@@ -897,7 +888,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @param string $relPath The path of a (possible) property.
 	 * @return boolean TRUE if a property exists at relPath; FALSE otherwise.
-	 * @throws \F3\PHPCR\RepositoryException If an unspecified error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -919,7 +910,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * one or more child nodes accessible through the current Session; FALSE otherwise.
 	 *
 	 * @return boolean TRUE if this node has one or more child nodes; FALSE otherwise.
-	 * @throws \F3\PHPCR\RepositoryException  If an unspecified error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasNodes() {
@@ -934,7 +925,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * "system" properties, e.g. jcr:uuid.
 	 *
 	 * @return boolean TRUE if this node has one or more properties; FALSE otherwise.
-	 * @throws \F3\PHPCR\RepositoryException  If an unspecified error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasProperties() {
@@ -985,20 +976,18 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	/**
 	 * Changes the primary node type of this node to nodeTypeName. Also immediately
 	 * changes this node's jcr:primaryType property appropriately. Semantically,
-	 * the new node type may take effect immediately and must take effect on save.
+	 * the new node type may take effect immediately or on dispatch but must take
+	 * effect on persist.
 	 * Whichever behavior is adopted it must be the same as the behavior adopted
 	 * for addMixin() (see below) and the behavior that occurs when a node is
 	 * first created.
-	 * If the presence of an existing property or child node would cause an
-	 * incompatibility with the new node type a ConstraintViolationException is
-	 * thrown either immediately or on save.
 	 *
 	 * @param string $nodeTypeName the name of the new node type.
 	 * @return void
-	 * @throws \F3\PHPCR\ConstraintViolationException If the specified primary node type is prevented from being assigned.
-	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException If the specified nodeTypeName is not recognized and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\Version\VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the change of the primary node type and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws \F3\PHPCR\ConstraintViolationException If the specified primary node type creates a type conflict and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException If the specified nodeTypeName is not recognized and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\Version\VersionException if this node is read-only due to a checked-in node and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the change of the primary node type and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function setPrimaryType($nodeTypeName) {
@@ -1006,20 +995,25 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Adds the mixin node type $mixinName to this node. If this node is already
+	 * Adds the mixin node type named $mixinName to this node. If this node is already
 	 * of type $mixinName (either due to a previously added mixin or due to its
 	 * primary type, through inheritance) then this method has no effect.
 	 * Otherwise $mixinName is added to this node's jcr:mixinTypes property.
 	 *
-	 * Semantically, the new node type may take effect immediately and must take
-	 * effect on save. Whichever behavior is adopted it must be the same as the
-	 * behavior adopted for setPrimaryType(java.lang.String) and the behavior
-	 * that occurs when a node is first created.
+	 * Semantically, the new node type may take effect immediately, on disptahc
+	 * or on persist. The behavior is adopted must be the same as the behavior
+	 * adopted for setPrimaryType(java.lang.String) and the behavior that occurs
+	 * when a node is first created.
 	 *
 	 * A ConstraintViolationException is thrown either immediately or on save if
 	 * a conflict with another assigned mixin or the primary node type or for an
 	 * implementation-specific reason. Implementations may differ on when this
 	 * validation is done.
+	 *
+	 * In some implementations it may only be possible to add mixin types before
+	 * a a node is persisted for the first time. I such cases any later calls to
+	 * $addMixin will throw a ConstraintViolationException either immediately,
+	 * on dispatch or on persist.
 	 *
 	 * @param string $mixinName the name of the mixin node type to be added
 	 * @return void
@@ -1037,14 +1031,14 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * Removes the specified mixin node type from this node and removes mixinName
 	 * from this node's jcr:mixinTypes property. Both the semantic change in
 	 * effective node type and the persistence of the change to the jcr:mixinTypes
-	 * property occur on save.
+	 * property occur on persist.
 	 *
 	 * @param string $mixinName the name of the mixin node type to be removed.
 	 * @return void
-	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if the specified mixinName is not currently assigned to this node and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\ConstraintViolationException if the specified mixin node type is prevented from being removed and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\Version\VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of the mixin and this implementation performs this validation immediately instead of waiting until save..
+	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if the specified mixinName is not currently assigned to this node and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\ConstraintViolationException if the specified mixin node type is prevented from being removed and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\Version\VersionException if this node is read-only due to a checked-in node and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of the mixin and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function removeMixin($mixinName) {
@@ -1052,9 +1046,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * Returns TRUE if the specified mixin node type, mixinName, can be added to
-	 * this node. Returns FALSE otherwise. A result of FALSE must be returned in
-	 * each of the following cases:
+	 * Returns true if the specified mixin node type called $mixinName can be
+	 * added to this node. Returns false otherwise. A result of false must be
+	 * returned in each of the following cases:
 	 * * The mixin's definition conflicts with an existing primary or mixin node
 	 *   type of this node.
 	 * * This node is versionable and checked-in or is non-versionable and its
@@ -1066,7 +1060,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * * An implementation-specific restriction would prevent the addition of the mixin.
 	 *
 	 * @param string $mixinName The name of the mixin to be tested.
-	 * @return boolean TRUE if the specified mixin node type, mixinName, can be added to this node; FALSE otherwise.
+	 * @return boolean true if the specified mixin node type, mixinName, can be added to this node; false otherwise.
 	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if the specified mixin node type name is not recognized.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
@@ -1094,8 +1088,8 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 
 	/**
 	 * If this node does have a corresponding node in the workspace srcWorkspace,
-	 * then this replaces this node and its subtree with a clone of the
-	 * corresponding node and its subtree.
+	 * then this replaces this node and its subgraph with a clone of the
+	 * corresponding node and its subgraph.
 	 * If this node does not have a corresponding node in the workspace srcWorkspace,
 	 * then the update method has no effect.
 	 *
@@ -1110,7 +1104,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return void
 	 * @throws \F3\PHPCR\NoSuchWorkspaceException if srcWorkspace does not exist.
 	 * @throws \F3\PHPCR\InvalidItemStateException if this Session (not necessarily this Node) has pending unsaved changes.
-	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient rights to perform the operation.
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient access to perform the operation.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the update.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
@@ -1121,13 +1115,12 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	/**
 	 * Returns the absolute path of the node in the specified workspace that
 	 * corresponds to this node.
-	 * If no corresponding node exists then an ItemNotFoundException is thrown.
 	 *
 	 * @param string $workspaceName the name of the workspace.
 	 * @return string the absolute path to the corresponding node.
 	 * @throws \F3\PHPCR\ItemNotFoundException if no corresponding node is found.
 	 * @throws \F3\PHPCR\NoSuchWorkspaceException if the workspace is unknown.
-	 * @throws \F3\PHPCR\AccessDeniedException if the current session has insufficient rights to perform this operation.
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session has insufficient access capabilities to perform this operation.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function getCorrespondingNodePath($workspaceName) {
@@ -1146,44 +1139,39 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	}
 
 	/**
-	 * A special kind of remove() that removes this node, but does not remove any
-	 * other node in the shared set of this node.
-	 * All of the exceptions defined for remove() apply to this function. In
-	 * addition, a RepositoryException is thrown if this node cannot be removed
-	 * without removing another node in the shared set of this node.
+	 * Removes this node and every other node in the shared set of this node.
+	 *
+	 * This removal must be done atomically, i.e., if one of the nodes cannot be
+	 * removed, the method throws the exception Node#remove() would have thrown
+	 * in that case, and none of the nodes are removed.
 	 *
 	 * If this node is not shared this method removes only this node.
 	 *
 	 * @return void
-	 * @throws \F3\PHPCR\Version\VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of this item and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\NodeType\ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws \F3\PHPCR\Version\VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of this item and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\NodeType\ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @see removeShare()
 	 * @see Item::remove()
-	 * @see Workspace::removeItem
+	 * @see SessionInterface::removeItem
 	 */
 	public function removeSharedSet() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667728);
 	}
 
 	/**
-	 * A special kind of remove() that removes this node, but does not remove any
-	 * other node in the shared set of this node.
-	 * All of the exceptions defined for remove() apply to this function. In
-	 * addition, a RepositoryException is thrown if this node cannot be removed
-	 * without removing another node in the shared set of this node.
-	 *
-	 * If this node is not shared this method removes only this node.
+	 * Removes this node, but does not remove any other node in the shared set
+	 * of this node.
 	 *
 	 * @return void
 	 * @throws \F3\PHPCR\Version\VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of this item and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\NodeType\ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if this node cannot be removed without removing another node in the shared set of this node or another error occurs.
 	 * @see removeSharedSet()
 	 * @see Item::remove()
-	 * @see Workspace::removeItem
+	 * @see SessionInterface::removeItem
 	 */
 	public function removeShare() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667729);

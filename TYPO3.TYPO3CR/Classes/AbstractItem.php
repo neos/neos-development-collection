@@ -74,13 +74,11 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	protected $parentNode;
 
 	/**
-	 * Returns the name of this item. The name is the last item in the path,
-	 * minus any square-bracket index that may exist. If this item is the root
-	 * node of the workspace (i.e., if this.getDepth() == 0), an empty string
-	 * will be returned.
+	 * Returns the name of this Item in qualified form. If this Item is the root
+	 * node of the workspace, an empty string is returned.
 	 *
-	 * @return string The name of the item
-	 * @throws \F3\PHPCR\RepositoryException
+	 * @return string the name of this Item> in qualified form or an empty string if this Item is the root node of a workspace.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
 	public function getName() {
@@ -92,28 +90,23 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	}
 
 	/**
-	 * Returns the ancestor of the specified depth.
+	 * Returns the ancestor of this Item at the specified depth. An ancestor of
+	 * depth x is the Item that is x levels down along the path from the root
+	 * node to this Item.
 	 *
-	 * An ancestor of depth x is the Item that is x levels down along the path from
-	 * the root node to this Item.
-	 *
-	 * * depth = 0 returns the root node.
+	 * * depth = 0 returns the root node of a workspace.
 	 * * depth = 1 returns the child of the root node along the path to this Item.
 	 * * depth = 2 returns the grandchild of the root node along the path to this Item.
 	 * * And so on to depth = n, where n is the depth of this Item, which returns this Item itself.
 	 *
-	 * If depth > n is specified then a ItemNotFoundException is thrown.
-	 *
-	 * This default implementation handles the root node at depth zero and
-	 * this item at depth equal to the depth of this item as special cases,
-	 * and uses Session->getItem(String) to retrieve other
-	 * ancestors based on the ancestor path calculated from the path of this
-	 * node as returned by Item->getPath().
+	 * If this node has more than one path (i.e., if it is a descendant of a
+	 * shared node) then the path used to define the ancestor is implementaion-
+	 * dependent.
 	 *
 	 * @param integer $depth An integer, 0 <= depth <= n where n is the depth of this Item.
 	 * @return \F3\PHPCR\ItemInterface The ancestor of this Item at the specified depth.
 	 * @throws \F3\PHPCR\ItemNotFoundException if depth &lt; 0 or depth &gt; n where n is the depth of this item.
-	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient access rights to retrieve the specified node.
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient access to retrieve the specified node.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
@@ -147,15 +140,14 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	}
 
 	/**
-	 * Returns the depth of this Item in the workspace tree. Returns the depth
-	 * below the root node of this Item (counting this Item itself).
+	 * Returns the depth of this Item in the workspace item graph.
 	 *
 	 * * The root node returns 0.
 	 * * A property or child node of the root node returns 1.
 	 * * A property or child node of a child node of the root returns 2.
 	 * * And so on to this Item.
 	 *
-	 * @return integer The depth of this Item in the workspace hierarchy.
+	 * @return integer The depth of this Item in the workspace item graph.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -169,10 +161,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	}
 
 	/**
-	 * Returns the Session through which this Item was acquired. Every Item
-	 * can ultimately be traced back through a series of method calls to the
-	 * call Session->getRootNode(), Session->getItem() or
-	 * Session->getNodeByIdentifier(). This method returns that Session object.
+	 * Returns the Session through which this Item was acquired.
 	 *
 	 * @return \F3\PHPCR\SessionInterface the Session through which this Item was acquired.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
@@ -195,17 +184,17 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 *   repository workspace.
 	 * * The objects are either both Node objects or both Property
 	 *   objects.
+	 * * If they are Node objects, they have the same identifier.
 	 * * If they are Property objects they have identical names and
-	 *   isSame is true of their parent nodes.
+	 *   isSame() is TRUE of their parent nodes.
 	 *
-	 * This method does not compare the states of the two items. For example, if two
-	 * Item objects representing the same actual workspace item have been
-	 * retrieved through two different sessions and one has been modified, then this method
-	 * will still return true when comparing these two objects. Note that if two
-	 * Item objects representing the same workspace item
-	 * are retrieved through the same session they will always reflect the
-	 * same state (see section 5.1.3 Reflecting Item State in the JSR 283 specification
-	 * document) so comparing state is not an issue.
+	 * This method does not compare the states of the two items. For example, if
+	 * two Item objects representing the same actual workspace item have been
+	 * retrieved through two different sessions and one has been modified, then
+	 * this method will still return true when comparing these two objects.
+	 * Note that if two Item objects representing the same workspace item are
+	 * retrieved through the same session they will always reflect the same
+	 * state.
 	 *
 	 * @param \F3\PHPCR\ItemInterface $otherItem the Item object to be tested for identity with this Item.
 	 * @return boolean TRUE if this Item object and otherItem represent the same actual repository item; FALSE otherwise.
@@ -234,14 +223,37 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	}
 
 	/**
-	 * Accepts an ItemVistor. Calls the appropriate ItemVistor visit method of
+	 * Accepts an ItemVisitor. Calls the appropriate ItemVisitor visit method of
 	 * the visitor according to whether this Item is a Node or a Property.
 	 *
 	 * @param \F3\PHPCR\ItemVisitorInterface $visitor The ItemVisitor to be accepted.
-	 * @throws RepositoryException if an error occurs.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 */
 	public function accept(\F3\PHPCR\ItemVisitorInterface $visitor) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577699);
+	}
+
+	/**
+	 * If keepChanges is false, this method discards all pending changes
+	 * currently recorded in this Session that apply to this Item or any
+	 * of its descendants (that is, the subgraph rooted at this Item) and
+	 * returns all items to reflect the current saved state. Outside a
+	 * transaction this state is simple the current state of persistent
+	 * storage. Within a transaction, this state will reflect persistent
+	 * storage as modified by changes that have been saved but not yet
+	 * committed.
+	 * If keepChanges is true then pending change are not discarded but
+	 * items that do not have changes pending have their state refreshed
+	 * to reflect the current saved state, thus revealing changes made by
+	 * other sessions.
+	 *
+	 * @param boolean $keepChanges a boolean
+	 * @return void
+	 * @throws \F3\PHPCR\InvalidItemStateException if this Item object represents a workspace item that has been removed (either by this session or another).
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	*/
+	public function refresh($keepChanges) {
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
 	}
 
 

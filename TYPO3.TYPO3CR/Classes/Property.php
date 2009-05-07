@@ -95,28 +95,18 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	}
 
 	/**
-	 * Returns TRUE if this property is multi-valued
-	 *
-	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function isMultiple() {
-		return is_array($this->value);
-	}
-
-	/**
 	 * Sets the value of this property to value. If this property's property
 	 * type is not constrained by the node type of its parent node, then the
-	 * property type is changed to that of the supplied value. If the property
-	 * type is constrained, then a best-effort conversion is attempted. If
-	 * conversion fails, a ValueFormatException is thrown immediately (not on
-	 * save). The change will be persisted (if valid) on save
+	 * property type may be changed. If the property type is constrained, then a
+	 * best-effort conversion is attempted.
+	 *
+	 * This method is a session-write and therefore requires a <code>save</code>
+	 * to dispatch the change.
 	 *
 	 * For Node objects as value:
-	 * Sets this REFERENCE property to refer to the specified node. If this
-	 * property is not of type REFERENCE or the specified node is not
-	 * referenceable (i.e., is not of mixin node type mix:referenceable and
-	 * therefore does not have a UUID) then a ValueFormatException is thrown.
+	 * Sets this REFERENCE OR WEAKREFERENCE property to refer to the specified
+	 * node. If this property is not of type REFERENCE or WEAKREFERENCE or the
+	 * specified node is not referenceable then a ValueFormatException is thrown.
 	 *
 	 * If value is an array:
 	 * If this property is not multi-valued then a ValueFormatException is
@@ -125,9 +115,9 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @param mixed $value The value to set
 	 * @return void
 	 * @throws \F3\PHPCR\ValueFormatException if the type or format of the specified value is incompatible with the type of this property.
-	 * @throws \F3\PHPCR\Version\VersionException if this property belongs to a node that is versionable and checked-in or is non-versionable but whose nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the setting of the value and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately instead of waiting until save.
+	 * @throws \F3\PHPCR\Version\VersionException if this property belongs to a node that is read-only due to a checked-in node and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the setting of the value and this implementation performs this validation immediately.
+	 * @throws \F3\PHPCR\ConstraintViolationException if the change would violate a node-type or other constraint and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -297,8 +287,6 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	/**
 	 * Returns a \DateTime representation of the value of this property. A
 	 * shortcut for Property.getValue().getDate(). See Value.
-	 * The object returned is a copy of the stored value, so changes to it
-	 * are not reflected in internal storage.
 	 *
 	 * @return \DateTime A date representation of the value of this property.
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a string is not possible or if the property is multi-valued.
@@ -338,8 +326,9 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 *
 	 * @return \F3\PHPCR\NodeInterface the referenced Node
 	 * @throws \F3\PHPCR\ValueFormatException if this property cannot be converted to a referring type (REFERENCE, WEAKREFERENCE or PATH), if the property is multi-valued or if this property is a referring type but is currently part of the frozen state of a version in version storage.
-	 * @throws \F3\PHPCR\ItemNotFoundException If this property is of type PATH and no node accessible by the current Session exists in this workspace at the specified path.
-	 * @throws \F3\PHPCR\RepositoryException if another error occurs
+	 * @throws \F3\PHPCR\ItemNotFoundException If this property is of type PATH or WEAKREFERENCE and no target node accessible by the current Session exists in this workspace. Note that this applies even if the property is a PATH and a property exists at the specified location. To dereference to a target property (as opposed to a target node), the method Property.getProperty is used.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getNode() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getNode() cannot be called on multi-valued properties.', 1217845644);
@@ -361,13 +350,17 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * If this property is of type PATH (or convertible to this type) this
 	 * method returns the Property to which this property refers.
 	 * If this property contains a relative path, it is interpreted relative
-	 * to the parent node of this property. For example "." refers to the
-	 * parent node itself, ".." to the parent of the parent node and "foo" to a
-	 * sibling property of this property or this property itself.
+	 * to the parent node of this property. Therefore, when resolving such a
+	 * relative path, the segment "." refers to the parent node itself, ".." to
+	 * the parent of the parent node and "foo" to a sibling property of this
+	 * property or this property itself.
+	 *
+	 * For example, if this property is located at /a/b/c and it has a value of
+	 * "../d" then this method will return the property at /a/d if such exists.
 	 *
 	 * @return \F3\PHPCR\PropertyInterface the referenced property
 	 * @throws \F3\PHPCR\ValueFormatException if this property cannot be converted to a PATH, if the property is multi-valued or if this property is a referring type but is currently part of the frozen state of a version in version storage.
-	 * @throws \F3\PHPCR\ItemNotFoundException If this property is of type PATH and no property accessible by the current Session exists in this workspace at the specified path.
+	 * @throws \F3\PHPCR\ItemNotFoundException If no property accessible by the current Session exists in this workspace at the specified path. Note that this applies even if a node exists at the specified location. To dereference to a target node, the method Property.getNode is used.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 */
 	public function getProperty() {
@@ -450,6 +443,19 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	}
 
 	/**
+	 * Returns TRUE if this property is multi-valued and FALSE if this property
+	 * is single-valued.
+	 *
+	 * @return boolean TRUE if this property is multi-valued; FALSE otherwise.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isMultiple() {
+		return is_array($this->value);
+	}
+
+
+	/**
 	 * Returns true if this is a new item, meaning that it exists only in
 	 * transient storage on the Session and has not yet been saved. Within a
 	 * transaction, isNew on an Item may return false (because the item has
@@ -458,6 +464,9 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 *
 	 * Note that if an item returns true on isNew, then by definition is parent
 	 * will return true on isModified.
+	 *
+	 * Note that in read-only implementations, this method will always return
+	 * false.
 	 *
 	 * @return boolean TRUE if this item is new; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -474,6 +483,9 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * (because the Item has been saved since the modification) even if the
 	 * modification in question is not in persistent storage (because the
 	 * transaction has not yet been committed).
+	 *
+	 * Note that in read-only implementations, this method will always return
+	 * false.
 	 *
 	 * @return boolean TRUE if this item is modified; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -494,9 +506,10 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	}
 
 	/**
-	 * Get path of property
+	 * Returns the normalized absolute path to this item.
 	 *
-	 * @return string Path to the property
+	 * @returns string the normalized absolute path of this Item.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -510,9 +523,12 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	}
 
 	/**
-	 * Return parent node
+	 * Returns the parent of this Item.
 	 *
-	 * @return \F3\PHPCR\NodeInterface The Parent Node
+	 * @return \F3\HPPCR\NodeInterface The parent of this Item.
+	 * @throws \F3\PHPCR\ItemNotFoundException if this Item< is the root node of a workspace.
+	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficent access to retrieve the parent of this item.
+	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getParent() {
@@ -520,50 +536,29 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	}
 
 	/**
-	 * Removes this item (and its subtree).
+	 * Removes this item (and its subgraph).
+	 *
 	 * To persist a removal, a save must be performed that includes the (former)
 	 * parent of the removed item within its scope.
 	 *
-	 * A ReferentialIntegrityException will be thrown on save if this item or
-	 * an item in its subtree is currently the target of a REFERENCE property
-	 * located in this workspace but outside this item's subtree and the
-	 * current Session has read access to that REFERENCE property.
+	 * If a node with same-name siblings is removed, this decrements by one the
+	 * indices of all the siblings with indices greater than that of the removed
+	 * node. In other words, a removal compacts the array of same-name siblings
+	 * and causes the minimal re-numbering required to maintain the original
+	 * order but leave no gaps in the numbering.
 	 *
 	 * @return void
 	 * @throws \F3\PHPCR\Version\VersionException if the parent node of this item is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of this item and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\ConstraintViolationException if removing the specified item would violate a node type or implementation-specific constraint and this implementation performs this validation immediately instead of waiting until save.
-	 * @throws \F3\PHPCR\AccessDeniedException if this item or an item in its subtree is currently the target of a REFERENCE property located in this workspace but outside this item's subtree and the current Session does not have read access to that REFERENCE property or if the current Session does not have sufficent privileges to remove the item.
+	 * @throws \F3\PHPCR\AccessDeniedException if this item or an item in its subgraph is currently the target of a REFERENCE property located in this workspace but outside this item's subgraph and the current Session does not have read access to that REFERENCE property or if the current Session does not have sufficent privileges to remove the item.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see SessionInterface::removeItem(String)
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove() {
 			// removes the property, thus delegated to parent
 		$this->getParent()->setProperty($this->getName(), NULL);
-	}
-
-	/**
-	 * If keepChanges is false, this method discards all pending changes
-	 * currently recorded in this Session that apply to this Item or any
-	 * of its descendants (that is, the subtree rooted at this Item) and
-	 * returns all items to reflect the current saved state. Outside a
-	 * transaction this state is simple the current state of persistent
-	 * storage. Within a transaction, this state will reflect persistent
-	 * storage as modified by changes that have been saved but not yet
-	 * committed.
-	 * If keepChanges is true then pending change are not discarded but
-	 * items that do not have changes pending have their state refreshed
-	 * to reflect the current saved state, thus revealing changes made by
-	 * other sessions.
-	 *
-	 * @param boolean $keepChanges a boolean
-	 * @return void
-	 * @throws InvalidItemStateException if this Item object represents a workspace item that has been removed (either by this session or another).
-	 * @throws RepositoryException if another error occurs.
-	*/
-	public function refresh($keepChanges) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);
 	}
 
 }

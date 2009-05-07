@@ -63,7 +63,7 @@ class QueryObjectModelFactoryTest extends \F3\Testing\BaseTestCase {
 	public function comparisonReturnsComparison() {
 		$operand1 = $this->getMock('F3\PHPCR\Query\QOM\DynamicOperandInterface');
 		$operand2 = $this->getMock('F3\PHPCR\Query\QOM\StaticOperandInterface');
-		$this->assertType('F3\PHPCR\Query\QOM\ComparisonInterface', $this->QOMFactory->comparison($operand1, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO, $operand2), 'The QOM factory did not return a Comparison as expected.');
+		$this->assertType('F3\PHPCR\Query\QOM\ComparisonInterface', $this->QOMFactory->comparison($operand1, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_EQUAL_TO, $operand2), 'The QOM factory did not return a Comparison as expected.');
 	}
 
 	/**

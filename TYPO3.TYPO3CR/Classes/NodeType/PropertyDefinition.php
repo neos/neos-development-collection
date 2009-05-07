@@ -134,7 +134,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 *  path constraints only match absolute path values.
 	 *  A trailing "/" has no effect (hence, 1 and 2, above, are equivalent).
 	 *  The trailing "*" character means that the value of the PATH property is
-	 *  restricted to the indicated subtree (in other words any additional
+	 *  restricted to the indicated subgraph (in other words any additional
 	 *  relative path can replace the "*"). For example, 3, above would allow
 	 *  /myapp:products/myapp:radios, /myapp:products/myapp:microwaves/X900,
 	 *  and so forth.
@@ -272,16 +272,31 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	}
 
 	/**
-	 * Returns TRUE if this property is queryable,
-	 * meaning that its value is accessible through query
+	 * Returns the set of query comparison operators supported by this
+	 * property.
 	 *
-	 * This attribute only takes effect if the node type holding the
-	 * property definition has a queryable setting of TRUE,
-	 * otherwise this attribute is automatically set to FALSE.
+	 * This attribute only takes effect if the node type holding the property
+	 * definition has a queryable setting of TRUE.
 	 *
-	 * @return boolean a boolean
+	 * JCR defines the comparison operators QueryObjectModelConstants::JCR_OPERATOR_*
+	 *
+	 *  An implementation may define additional comparison operators.
+	 *
+	 * Note that the set of operators that can appear in this attribute may be
+	 * limited by implementation-specific constraints that differ across
+	 * property types. For example, some implementations may permit property
+	 * definitions to provide JCR_OPERATOR_EQUAL_TO and
+	 * JCR_OPERATOR_NOT_EQUAL_TO as available operators for BINARY properties
+	 * while others may not.
+	 *
+	 * However, in all cases where a JCR-defined operator is potentially
+	 * available for a given property type, its behavior must conform to the
+	 * comparison semantics defined in the specification document (see 3.6.5
+	 * Comparison of Values).
+	 *
+	 * @return array a string array
 	 */
-	public function isQueryable() {
+	public function getAvailableQueryOperators() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674119);
 	}
 
@@ -291,8 +306,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 * function within a query.
 	 *
 	 * This attribute only takes effect if the node type holding the
-	 * property definition has a queryable setting of TRUE,
-	 * otherwise this attribute is automatically set to FALSE.
+	 * property definition has a queryable setting of TRUE.
 	 *
 	 * @return boolean a boolean
 	 */
@@ -306,8 +320,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 * using the order by clause of a query.
 	 *
 	 * This attribute only takes effect if the node type holding the
-	 * property definition has a queryable setting of TRUE,
-	 * otherwise this attribute is automatically set to FALSE.
+	 * property definition has a queryable setting of TRUE.
 	 *
 	 * @return boolean a boolean
 	 */
