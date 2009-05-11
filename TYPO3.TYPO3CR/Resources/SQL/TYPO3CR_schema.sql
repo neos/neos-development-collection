@@ -49,6 +49,7 @@ CREATE TABLE "index_properties" (
   "namespace" TEXT NOT NULL,
   "type" INTEGER NOT NULL,
   "value" TEXT NOT NULL
+  KEY "name" ("name"(255), "namespace"(255), "value"(255))
 );
 
 COMMIT;
