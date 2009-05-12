@@ -223,7 +223,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		$this->operands['jcr:uuid'] = $uuid;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue('jcr:uuid', '_node'),
-			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_EQUAL_TO,
 			$this->QOMFactory->bindVariable('jcr:uuid', '_node')
 		);
 	}
@@ -255,13 +255,13 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 			$this->source = $this->QOMFactory->join(
 				$left,
 				$right,
-				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JOIN_TYPE_INNER,
+				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_JOIN_TYPE_INNER,
 				$joinCondition
 			);
 
 			$comparison = $this->QOMFactory->comparison(
 				$this->QOMFactory->propertyValue('flow3:target', '_proxy'),
-				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+				\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_EQUAL_TO,
 				$this->QOMFactory->bindVariable('flow3:target')
 			);
 
@@ -270,7 +270,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 			if ($caseSensitive) {
 				$comparison = $this->QOMFactory->comparison(
 					$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
-					\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+					\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_EQUAL_TO,
 					$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 				);
 			} else {
@@ -278,7 +278,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 					$this->QOMFactory->lowerCase(
 						$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node')
 					),
-					\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_EQUAL_TO,
+					\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_EQUAL_TO,
 					$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 				);
 			}
@@ -305,7 +305,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
-			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_LIKE,
+			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_LIKE,
 			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
@@ -322,7 +322,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
-			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_LESS_THAN,
+			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_LESS_THAN,
 			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
@@ -339,7 +339,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
-			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_LESS_THAN_OR_EQUAL_TO,
+			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_LESS_THAN_OR_EQUAL_TO,
 			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
@@ -356,7 +356,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
-			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_GREATER_THAN,
+			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_GREATER_THAN,
 			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
@@ -373,7 +373,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		$this->operands['flow3:' . $propertyName] = $operand;
 		return $this->QOMFactory->comparison(
 			$this->QOMFactory->propertyValue('flow3:' . $propertyName, '_node'),
-			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::OPERATOR_GREATER_THAN_OR_EQUAL_TO,
+			\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_GREATER_THAN_OR_EQUAL_TO,
 			$this->QOMFactory->bindVariable('flow3:' . $propertyName)
 		);
 	}
