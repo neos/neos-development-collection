@@ -61,7 +61,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Processes a request.
 	 *
-	 * @param  \F3\FLOW3\MVC\Request $request The request to process
+	 * @param  \F3\FLOW3\MVC\RequestInterface $request The request to process
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
