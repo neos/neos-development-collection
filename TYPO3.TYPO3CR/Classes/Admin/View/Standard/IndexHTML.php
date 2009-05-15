@@ -46,7 +46,7 @@ class IndexHTML extends \F3\FLOW3\MVC\View\AbstractView {
 	 */
 	public function render() {
 		$template = $this->resourceManager->getResource('file://TYPO3CR/Public/HTML/View_Admin_Viewport.html')->getContent();
-		return str_replace('###BASEURI###', $this->request->getBaseURI(), $template);
+		return str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseURI(), $template);
 	}
 
 }
