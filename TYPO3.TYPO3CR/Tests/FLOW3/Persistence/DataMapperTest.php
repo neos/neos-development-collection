@@ -100,7 +100,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array(), '', FALSE);
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
 		$mockPersistenceManager->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
-		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->with($mockEntityClassName)->will($this->returnValue($mockObjectConfiguration));
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
