@@ -204,7 +204,9 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$searchBackend->expects($this->once())->method('parseJoin')->with($source, array(), array());
 		$searchBackend->expects($this->never())->method('parseConstraint');
 
-		$searchBackend->_call('parseSource', $query, array(), array());
+		$sql = array();
+		$parameters = array();
+		$searchBackend->_callRef('parseSource', $query, $sql, $parameters);
 	}
 
 	/**
@@ -223,7 +225,9 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$searchBackend->expects($this->once())->method('parseJoin')->with($source, array(), array());
 		$searchBackend->expects($this->once())->method('parseConstraint')->with($constraint, array('where' => array('AND')), array(), array());
 
-		$searchBackend->_call('parseSource', $query, array(), array());
+		$sql = array();
+		$parameters = array();
+		$searchBackend->_callRef('parseSource', $query, $sql, $parameters);
 	}
 
 	/**
