@@ -113,9 +113,7 @@ class DataMapper {
 	public function map(\F3\PHPCR\NodeIteratorInterface $nodes) {
 		$objects = array();
 		foreach ($nodes as $node) {
-			$object = $this->mapSingleNode($node);
-			$this->persistenceManager->getSession()->registerReconstitutedObject($object);
-			$objects[] = $object;
+			$objects[] = $this->mapSingleNode($node);
 		}
 
 		return $objects;
@@ -143,6 +141,7 @@ class DataMapper {
 			$this->objectBuilder->reinjectDependencies($object, $objectConfiguration);
 			$this->thawProperties($object, $node, $classSchema);
 			$object->FLOW3_Persistence_memorizeCleanState();
+			$this->persistenceManager->getSession()->registerReconstitutedObject($object);
 		}
 
 		return $object;

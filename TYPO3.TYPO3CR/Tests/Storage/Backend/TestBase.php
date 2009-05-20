@@ -238,7 +238,6 @@ class TestBase extends \F3\Testing\BaseTestCase {
 		);
 	}
 
-
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
@@ -467,7 +466,7 @@ class TestBase extends \F3\Testing\BaseTestCase {
 
 		$rawNode = array(
 			'parent' => $rootNode,
-			'name' => '',
+			'name' => 'refTargetNode',
 			'identifier' => $refTargetUUID,
 			'nodetype' => 'nt:base'
 		);

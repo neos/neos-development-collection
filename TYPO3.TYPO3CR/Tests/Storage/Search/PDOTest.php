@@ -132,16 +132,116 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
+	public function parseSourceWorksAsExpectedForSelectorWithoutConstraint() {
+		$source = $this->getMock('F3\PHPCR\Query\QOM\SelectorInterface');
+		$source->expects($this->once())->method('getSelectorName')->will($this->returnValue('sel'));
+		$source->expects($this->once())->method('getNodeTypeName')->will($this->returnValue('nt:base'));
+		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', FALSE);
+		$query->expects($this->once())->method('getSource')->will($this->returnValue($source));
+		$query->expects($this->once())->method('getConstraint')->will($this->returnValue(NULL));
+
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
+		$searchBackend->expects($this->once())->method('splitName')->with('nt:base')->will($this->returnValue(array('name' => 'base', 'namespaceURI' => 'jcr.invalid')));
+		$searchBackend->expects($this->never())->method('parseConstraint');
+
+		$sql = array();
+		$parameters = array();
+		$searchBackend->_callRef('parseSource', $query, $sql, $parameters);
+
+		$expectedSql = array(
+			'fields' => array('"sel"."identifier" AS "sel"'),
+			'tables' => array('"nodes" AS "sel"'),
+			'where' => array('("sel"."nodetype"=? AND "sel"."nodetypenamespace"=?)')
+		);
+		$expectedParameters = array('base', 'jcr.invalid');
+		$this->assertEquals($expectedSql, $sql);
+		$this->assertEquals($expectedParameters, $parameters);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function parseSourceWorksAsExpectedForSelectorWithConstraint() {
+		$source = $this->getMock('F3\PHPCR\Query\QOM\SelectorInterface');
+		$source->expects($this->once())->method('getSelectorName')->will($this->returnValue('sel'));
+		$source->expects($this->once())->method('getNodeTypeName')->will($this->returnValue('nt:base'));
+		$constraint = $this->getMock('F3\PHPCR\Query\QOM\ConstraintInterface');
+		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', FALSE);
+		$query->expects($this->once())->method('getSource')->will($this->returnValue($source));
+		$query->expects($this->exactly(2))->method('getConstraint')->will($this->returnValue($constraint));
+		$query->expects($this->once())->method('getBoundVariableValues')->will($this->returnValue(array()));
+
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName', 'parseConstraint'));
+		$searchBackend->expects($this->once())->method('splitName')->with('nt:base')->will($this->returnValue(array('name' => 'base', 'namespaceURI' => 'jcr.invalid')));
+		$searchBackend->expects($this->once())->method('parseConstraint'); // ->with();
+
+		$sql = array();
+		$parameters = array();
+		$searchBackend->_callRef('parseSource', $query, $sql, $parameters);
+
+		$expectedSql = array(
+			'fields' => array('"sel"."identifier" AS "sel"'),
+			'tables' => array('"nodes" AS "sel" INNER JOIN "index_properties" AS "selproperties" ON "sel"."identifier" = "selproperties"."parent"'),
+			'where' => array('("sel"."nodetype"=? AND "sel"."nodetypenamespace"=?) AND ')
+		);
+		$expectedParameters = array('base', 'jcr.invalid');
+		$this->assertEquals($expectedSql, $sql);
+		$this->assertEquals($expectedParameters, $parameters);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function parseSourceCallsParseJoinForJoinWithoutConstraint() {
+		$source = $this->getMock('F3\PHPCR\Query\QOM\JoinInterface');
+		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', FALSE);
+		$query->expects($this->once())->method('getSource')->will($this->returnValue($source));
+		$query->expects($this->once())->method('getConstraint')->will($this->returnValue(NULL));
+
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('parseJoin', 'parseConstraint'));
+		$searchBackend->expects($this->once())->method('parseJoin')->with($source, array(), array());
+		$searchBackend->expects($this->never())->method('parseConstraint');
+
+		$searchBackend->_call('parseSource', $query, array(), array());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function parseSourceCallsParseJoinAndParseConstraintForJoinWithConstraint() {
+		$source = $this->getMock('F3\PHPCR\Query\QOM\JoinInterface');
+		$constraint = $this->getMock('F3\PHPCR\Query\QOM\ConstraintInterface');
+		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', FALSE);
+		$query->expects($this->once())->method('getSource')->will($this->returnValue($source));
+		$query->expects($this->exactly(2))->method('getConstraint')->will($this->returnValue($constraint));
+		$query->expects($this->once())->method('getBoundVariableValues')->will($this->returnValue(array()));
+
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('parseJoin', 'parseConstraint'));
+		$searchBackend->expects($this->once())->method('parseJoin')->with($source, array(), array());
+		$searchBackend->expects($this->once())->method('parseConstraint')->with($constraint, array('where' => array('AND')), array(), array());
+
+		$searchBackend->_call('parseSource', $query, array(), array());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
 	public function parseDynamicOperandTreatsPropertyValueCorrectly() {
 		$mockPropertyValue = $this->getMock('F3\PHPCR\Query\QOM\PropertyValueInterface');
 		$mockPropertyValue->expects($this->once())->method('getPropertyName')->will($this->returnValue('flow3:propname'));
 		$mockPropertyValue->expects($this->once())->method('getSelectorName')->will($this->returnValue('_nodes'));
-		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName', 'resolveOperator'));
 		$searchBackend->expects($this->once())->method('splitName')->with('flow3:propname')->will($this->returnValue(array('name' => 'propname', 'namespaceURI' => 'flow3.org/ns')));
+		$searchBackend->expects($this->once())->method('resolveOperator')->with('equals')->will($this->returnValue('='));
 
-		$parameters = array();
+		$operator = 'equals';
 		$sql = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockPropertyValue, $sql, $parameters);
+		$parameters = array();
+		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockPropertyValue, $operator, $sql, $parameters);
 		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND "_nodesproperties0"."value" = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
 	}
@@ -156,12 +256,14 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyValue->expects($this->once())->method('getSelectorName')->will($this->returnValue('_nodes'));
 		$mockLowerCase = $this->getMock('F3\PHPCR\Query\QOM\LowerCaseInterface');
 		$mockLowerCase->expects($this->once())->method('getOperand')->will($this->returnValue($mockPropertyValue));
-		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName', 'resolveOperator'));
 		$searchBackend->expects($this->once())->method('splitName')->with('flow3:propname')->will($this->returnValue(array('name' => 'propname', 'namespaceURI' => 'flow3.org/ns')));
+		$searchBackend->expects($this->once())->method('resolveOperator')->with('equals')->will($this->returnValue('='));
 
-		$parameters = array();
+		$operator = 'equals';
 		$sql = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockLowerCase, $sql, $parameters);
+		$parameters = array();
+		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockLowerCase, $operator, $sql, $parameters);
 		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND LOWER("_nodesproperties0"."value") = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
 	}
@@ -176,14 +278,43 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$mockPropertyValue->expects($this->once())->method('getSelectorName')->will($this->returnValue('_nodes'));
 		$mockUpperCase = $this->getMock('F3\PHPCR\Query\QOM\UpperCaseInterface');
 		$mockUpperCase->expects($this->once())->method('getOperand')->will($this->returnValue($mockPropertyValue));
-		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName', 'resolveOperator'));
 		$searchBackend->expects($this->once())->method('splitName')->with('flow3:propname')->will($this->returnValue(array('name' => 'propname', 'namespaceURI' => 'flow3.org/ns')));
+		$searchBackend->expects($this->once())->method('resolveOperator')->with('equals')->will($this->returnValue('='));
 
-		$parameters = array();
+		$operator = 'equals';
 		$sql = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockUpperCase, $sql, $parameters);
+		$parameters = array();
+		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockUpperCase, $operator, $sql, $parameters);
 		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND UPPER("_nodesproperties0"."value") = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
+	}
+
+	/**
+	 * Provides test data for resolveOperatorResolvesCorrectly()
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function jcrOperators() {
+		return array(
+			array(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_EQUAL_TO, '='),
+			array(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_LESS_THAN, '<'),
+			array(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_LESS_THAN_OR_EQUAL_TO, '<='),
+			array(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_GREATER_THAN, '>'),
+			array(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_GREATER_THAN_OR_EQUAL_TO, '>='),
+			array(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_OPERATOR_LIKE, 'LIKE'),
+		);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @dataProvider jcrOperators
+	 */
+	public function resolveOperatorResolvesCorrectly($jcrConstant, $sqlEquivalent) {
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
+		$this->assertEquals($searchBackend->_call('resolveOperator', $jcrConstant), $sqlEquivalent);
 	}
 }
 ?>

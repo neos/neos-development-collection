@@ -51,14 +51,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$nodeIterator = new \F3\TYPO3CR\NodeIterator(array($node));
 		$object = new \stdClass();
 
-		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
-		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($object);
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->atLeastOnce())->method('getSession')->will($this->returnValue($mockPersistenceSession));
-
 		$dataMapper = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\DataMapper', array('mapSingleNode'));
 		$dataMapper->expects($this->once())->method('mapSingleNode')->with($node)->will($this->returnValue($object));
-		$dataMapper->injectPersistenceManager($mockPersistenceManager);
 
 		$dataMapper->map($nodeIterator);
 	}
@@ -97,9 +91,12 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node = $this->getMock('F3\PHPCR\NodeInterface');
 		$node->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($mockPrimaryNodeType));
 		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('1234'));
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
+		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($mockEntity);
 		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array(), '', FALSE);
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
 		$mockPersistenceManager->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
+		$mockPersistenceManager->expects($this->atLeastOnce())->method('getSession')->will($this->returnValue($mockPersistenceSession));
 		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->with($mockEntityClassName)->will($this->returnValue($mockObjectConfiguration));

@@ -115,6 +115,56 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 		$this->namespaceRegistry = $namespaceRegistry;
 	}
 
+	/**
+	 * Takes the given array of a namespace URI (key 'namespaceURI' in the array) and name (key 'name') and converts it to a prefixed name
+	 *
+	 * @param array $namespacedName key 'namespaceURI' for the namespace, 'name' for the local name
+	 * @return string
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function prefixName($namespacedName) {
+		if (! $namespacedName['namespaceURI']) {
+			return $namespacedName['name'];
+		}
+
+		if ($this->namespaceRegistry) {
+			return $this->namespaceRegistry->getPrefix($namespacedName['namespaceURI']) . ':' . $namespacedName['name'];
+		} else {
+				// Fall back to namespaces table when no namespace registry is available
+			$statementHandle = $this->databaseHandle->prepare('SELECT "prefix" FROM "namespaces" WHERE "uri"=?');
+			$statementHandle->execute(array($namespacedName['namespaceURI']));
+			$namespaces = $statementHandle->fetchAll(\PDO::FETCH_ASSOC);
+
+			if (count($namespaces) != 1) {
+					// TODO: throw exception instead of returning once namespace table is properly filled
+				return $namespacedName['name'];
+			}
+
+			foreach ($namespaces as $namespace) {
+				return $namespace['prefix'] . ':' . $namespacedName['name'];
+			}
+		}
+	}
+
+	/**
+	 * Splits the given name string into a namespace URI (using the namespaces table) and a name
+	 *
+	 * @param string $prefixedName the name in prefixed notation (':' between prefix if one exists and name, no ':' in string if there is no prefix)
+	 * @return array (key "namespaceURI" for the namespace, "name" for the name)
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 */
+	protected function splitName($prefixedName) {
+		$split = explode(':', $prefixedName, 2);
+
+		if (count($split) != 2) {
+			return array('namespaceURI' => '', 'name' => $prefixedName);
+		}
+
+		$namespacePrefix = $split[0];
+		$name = $split[1];
+
+		return array('namespaceURI' => $this->namespaceRegistry->getURI($namespacePrefix), 'name' => $name);
+	}
 
 }
 ?>

@@ -16,6 +16,7 @@ DELETE FROM "pathproperties";
 DELETE FROM "referenceproperties";
 DELETE FROM "weakreferenceproperties";
 DELETE FROM "uriproperties";
+DELETE FROM "index_properties";
 
 INSERT INTO "namespaces" ("prefix", "uri") VALUES ('jcr', 'http://www.jcp.org/jcr/1.0');
 INSERT INTO "namespaces" ("prefix", "uri") VALUES ('nt', 'http://www.jcp.org/jcr/nt/1.0');

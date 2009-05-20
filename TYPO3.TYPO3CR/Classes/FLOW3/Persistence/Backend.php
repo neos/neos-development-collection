@@ -87,11 +87,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	protected $identityMap;
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
 	 * @var \F3\PHPCR\NodeInterface
 	 */
 	protected $baseNode;
@@ -115,7 +110,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
-	 * Injects A Reflection Service instance used for processing objects
+	 * Injects a Reflection Service instance used for processing objects
 	 *
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
@@ -134,17 +129,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	public function injectIdentityMap(\F3\TYPO3CR\FLOW3\Persistence\IdentityMap $identityMap) {
 		$this->identityMap = $identityMap;
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
 	}
 
 	/**

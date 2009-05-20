@@ -479,7 +479,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDReturnsUUIDForKnownObject() {
+	public function getUUIDByObjectReturnsUUIDForKnownObject() {
 		$knownObject = new \stdClass();
 		$fakeUUID = '123-456';
 
@@ -496,7 +496,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDReturnsNullForUnknownObject() {
+	public function getUUIDByObjectReturnsNullForUnknownObject() {
 		$unknownObject = new \stdClass();
 
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
