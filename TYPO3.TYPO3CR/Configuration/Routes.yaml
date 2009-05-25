@@ -1,51 +1,51 @@
 #                                                                        #
-# Default routes configuration for the TYPO3CR package                   #
+# Default subroutes configuration for the TYPO3CR package                #
 #                                                                        #
 
 # $Id$
 
 ##
-# TYPO3CR route with optional controller
-
-#TYPO3CR:
-#  uriPattern: 'typo3cr(/{@controller})'
-#  defaults:
-#    @package:    'TYPO3CR'
-#    @subpackage: 'Admin'
-#    @controller: 'Standard'
-#    @action:     'index'
-#    @format:     'html'
-
-##
-# TYPO3CR route with controller and optional action
-
-#TYPO3CR_WithControllerAndOptionalAction:
-#  uriPattern: 'typo3cr/{@controller}(/{@action})'
-#  defaults:
-#    @package:    'TYPO3CR'
-#    @subpackage: 'Admin'
-#    @action:     'index'
-#    @format:     'html'
-
-##
 # Routes definitions for the services
 
-#TYPO3CR_ServiceWithController:
-#  uriPattern: 'typo3cr/service/v1/{@controller}'
-#  defaults: 
-#    @package:    'TYPO3CR'
-#    @subpackage: 'Admin'
-#    @format:     'json'
+--
+  name: 'service with controller and id'
+  uriPattern: '/service/v1/{@controller}/{id}'
+  defaults: 
+    @package:    'TYPO3CR'
+    @subpackage: 'Admin\Service'
+    @format:     'json'
 
-#TYPO3CR_ServiceWithControllerAndFormat:
-#  uriPattern: 'typo3cr/service/v1/{@controller}.{@format}'
-#  defaults: 
-#    @package:    'TYPO3CR'
-#    @subpackage: 'Admin'
+--
+  name: 'service with controller'
+  uriPattern: '/service/v1/{@controller}'
+  defaults:
+    @package:    'TYPO3CR'
+    @subpackage: 'Admin\Service'
+    @format:     'json'
 
-#TYPO3CR_ServiceWithControllerAndIdAndOptionalFormat:
-#  uriPattern: 'typo3cr/service/v1/{@controller}/{id}(.{@format})'
-#  defaults: 
-#    @package:    'TYPO3CR'
-#    @subpackage: 'Admin'
-#    @format:     'json'
+##
+# TYPO3CR default routes
+
+--
+  name: 'default with controller and action'
+  uriPattern: '/{@controller}/{@action}'
+  defaults:
+    @package:    'TYPO3CR'
+    @subpackage: 'Admin'
+
+--
+  name: 'default with controller'
+  uriPattern: '/{@controller}'
+  defaults:
+    @package:    'TYPO3CR'
+    @subpackage: 'Admin'
+    @action:     'index'
+
+--
+  name: 'fallback'
+  uriPattern: ''
+  defaults:
+    @package:    'TYPO3CR'
+    @subpackage: 'Admin'
+    @controller: 'Standard'
+    @action:     'index'
