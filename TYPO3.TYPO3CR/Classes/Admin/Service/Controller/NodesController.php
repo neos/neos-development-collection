@@ -41,7 +41,7 @@ class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * \F3\PHPCR\SessionInterface
 	 */
-	protected $session;
+	protected $contentRepositorySession;
 
 	/**
 	 * @var \F3\PHPCR\NodeInterface
@@ -56,8 +56,8 @@ class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectContentRepository(\F3\PHPCR\RepositoryInterface $contentRepository) {
-		$this->session = $contentRepository->login();
-		$this->rootNode = $this->session->getRootNode();
+		$this->contentRepositorySession = $contentRepository->login();
+		$this->rootNode = $this->contentRepositorySession->getRootNode();
 	}
 
 	/**
@@ -79,7 +79,7 @@ class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 */
 	public function showAction() {
 		try {
-			$node = $this->session->getNodeByIdentifier($this->arguments['id']->getValue());
+			$node = $this->contentRepositorySession->getNodeByIdentifier($this->arguments['id']->getValue());
 			$properties = $node->getProperties();
 		} catch(\F3\PHPCR\ItemNotFoundException $e) {
 			$this->throwStatus(404);
@@ -136,13 +136,13 @@ class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 */
 	public function deleteAction() {
 		try {
-			$node = $this->session->getNodeByIdentifier($this->arguments['id']->getValue());
+			$node = $this->contentRepositorySession->getNodeByIdentifier($this->arguments['id']->getValue());
 		} catch(\F3\PHPCR\ItemNotFoundException $e) {
 			$this->throwStatus(404);
 		}
 
 		$node->remove();
-		$this->session->save();
+		$this->contentRepositorySession->save();
 	}
 
 

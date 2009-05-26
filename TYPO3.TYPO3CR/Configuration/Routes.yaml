@@ -8,16 +8,16 @@
 # Routes definitions for the services
 
 --
-  name: 'service with controller and id'
-  uriPattern: '/service/v1/{@controller}/{id}'
+  name: 'REST service with controller and id'
+  uriPattern: '/service/v1/{@controller}/{id}(.{@format})'
   defaults: 
     @package:    'TYPO3CR'
     @subpackage: 'Admin\Service'
     @format:     'json'
 
 --
-  name: 'service with controller'
-  uriPattern: '/service/v1/{@controller}'
+  name: 'REST service with controller'
+  uriPattern: '/service/v1/{@controller}(.{@format})'
   defaults:
     @package:    'TYPO3CR'
     @subpackage: 'Admin\Service'
@@ -27,14 +27,14 @@
 # TYPO3CR default routes
 
 --
-  name: 'default with controller and action'
+  name: 'Default with controller and action'
   uriPattern: '/{@controller}/{@action}'
   defaults:
     @package:    'TYPO3CR'
     @subpackage: 'Admin'
 
 --
-  name: 'default with controller'
+  name: 'Default with controller'
   uriPattern: '/{@controller}'
   defaults:
     @package:    'TYPO3CR'
@@ -42,7 +42,7 @@
     @action:     'index'
 
 --
-  name: 'fallback'
+  name: 'TYPO3 Fallback'
   uriPattern: ''
   defaults:
     @package:    'TYPO3CR'
