@@ -42,7 +42,7 @@
     @action:     'index'
 
 --
-  name: 'TYPO3 Fallback'
+  name: 'TYPO3CR Fallback'
   uriPattern: ''
   defaults:
     @package:    'TYPO3CR'
