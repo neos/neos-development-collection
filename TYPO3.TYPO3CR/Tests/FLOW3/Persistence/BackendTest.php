@@ -158,6 +158,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
 			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_AOP_Proxy_getProperty($name) { return NULL; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
 		}');
 		$newObject = new $fullClassName(TRUE);
@@ -270,6 +271,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
 		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 		}');
 		$deletedObject = new $fullClassName();
@@ -299,10 +301,15 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function nestedObjectsAreStoredAsNestedNodes() {
 			// set up object
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
+		$A->FLOW3_Persistence_Entity_UUID = NULL;
 		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
-		$B->add(new \F3\TYPO3CR\Tests\Fixtures\AnEntity('BA'));
+		$B->FLOW3_Persistence_Entity_UUID = NULL;
+		$BA = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('BA');
+		$BA->FLOW3_Persistence_Entity_UUID = NULL;
+		$B->add($BA);
 		$A->add($B);
 		$C = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('C');
+		$C->FLOW3_Persistence_Entity_UUID = NULL;
 		$A->add($C);
 		$aggregateRootObjects = new \SplObjectStorage();
 		$aggregateRootObjects->attach($A);
@@ -360,6 +367,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$newObject = new $fullClassName();
 		$date = new \DateTime();
 		$newObject->date = $date;
+		$newObject->FLOW3_Persistence_Entity_UUID = NULL;
 
 		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockInstanceNode->expects($this->never())->method('addNode');
@@ -387,7 +395,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function valueObjectsAreStoredAsOftenAsUsedInAnEntity() {
 			// set up object
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
+		$A->FLOW3_Persistence_Entity_UUID = NULL;
 		$B = new \F3\TYPO3CR\Tests\Fixtures\AValue('B');
+		$B->FLOW3_Persistence_Entity_UUID = NULL;
 		$A->add($B);
 		$A->add($B);
 		$aggregateRootObjects = new \SplObjectStorage();
@@ -433,7 +443,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function aValueObjectIsStoredAsOftenAsUsedInEntities() {
 			// set up object
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
+		$A->FLOW3_Persistence_Entity_UUID = NULL;
 		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
+		$B->FLOW3_Persistence_Entity_UUID = NULL;
 		$value = new \F3\TYPO3CR\Tests\Fixtures\AValue('value');
 		$A->setValue($value);
 		$B->setValue($value);
@@ -476,6 +488,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * Does it return the UUID for an object know to the identity map?
+	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -493,14 +507,60 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * Does it return the UUID for an AOP proxy not being in the identity map
+	 * but having FLOW3_Persistence_Entity_UUID?
+	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDByObjectReturnsNullForUnknownObject() {
-		$unknownObject = new \stdClass();
+	public function getUUIDByObjectReturnsUUIDForObjectBeingAOPProxy() {
+		$className = uniqid('SomeClass');
+		$qualifiedClassName = '\\' . $className;
+		eval('class ' . $className . ' { public function FLOW3_AOP_Proxy_getProperty($propertyName) { return \'fakeUUID\'; } }');
+		$knownObject = new $qualifiedClassName();
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(FALSE));
 
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
+		$backend->injectIdentityMap($mockIdentityMap);
+
+		$this->assertEquals('fakeUUID', $backend->getUUIDByObject($knownObject));
+	}
+
+	/**
+	 * Does it work for objects not being an AOP proxy, i.e. not having the
+	 * method FLOW3_AOP_Proxy_getProperty() and not known to the identity map?
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUIDByObjectReturnsNullForUnknownObjectBeingPOPO() {
+		$unknownObject = new \stdClass();
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
+
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
+		$backend->injectIdentityMap($mockIdentityMap);
+
+		$this->assertNull($backend->getUUIDByObject($unknownObject));
+	}
+
+	/**
+	 * Does it return NULL for an AOP proxy not being in the identity map and
+	 * not having FLOW3_Persistence_Entity_UUID?
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUIDByObjectReturnsNullForUnknownObjectBeingAOPProxy() {
+		$this->markTestSkipped('currently broken, see #3486');
+		$className = uniqid('SomeClass');
+		$qualifiedClassName = '\\' . $className;
+		eval('class ' . $className . ' { public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; } }');
+		$unknownObject = new $qualifiedClassName();
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
+
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
@@ -514,10 +574,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function isNewObjectReturnsTrueIfTheObjectHasNoUUIDYet() {
 		$object = new \stdClass();
 
-		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('getUUIDByObject'), array(), '', FALSE);
-		$backend->expects($this->once())->method('getUUIDByObject')->with($object)->will($this->returnValue(NULL));
-		$result = $backend->isNewObject($object);
-		$this->assertTrue($result);
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasObject')->with($object)->will($this->returnValue(FALSE));
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
+		$backend->injectIdentityMap($mockIdentityMap);
+
+		$this->assertTrue($backend->isNewObject($object));
 	}
 
 	/**
@@ -527,10 +589,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function isNewObjectReturnsFalseIfTheObjectDoesHaveAUUID() {
 		$object = new \stdClass();
 
-		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('getUUIDByObject'), array(), '', FALSE);
-		$backend->expects($this->once())->method('getUUIDByObject')->with($object)->will($this->returnValue('1234:45667'));
-		$result = $backend->isNewObject($object);
-		$this->assertFalse($result);
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasObject')->with($object)->will($this->returnValue(TRUE));
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
+		$backend->injectIdentityMap($mockIdentityMap);
+
+		$this->assertFalse($backend->isNewObject($object));
 	}
 
 	/**
@@ -559,11 +623,21 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up objects
 		$authorClassName = uniqid('Author');
 		$qualifiedAuthorClassName = 'F3\\' . $authorClassName;
-		eval('namespace F3; class ' . $authorClassName . ' { public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
+		eval('namespace F3; class ' . $authorClassName . ' {
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
+			public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$author = new $qualifiedAuthorClassName;
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
-		eval('namespace F3; class ' . $postClassName . ' { public $author; public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
+		eval('namespace F3; class ' . $postClassName . ' {
+			public $author;
+			public $FLOW3_Persistence_Entity_UUID;
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$post = new $qualifiedPostClassName();
 		$post->author = $author;
 
@@ -610,10 +684,22 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up objects
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
-		eval('namespace F3; class ' . $postClassName . ' { public $blog; public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
+		eval('namespace F3; class ' . $postClassName . ' {
+			public $blog;
+			public $FLOW3_Persistence_Entity_UUID = NULL;
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$blogClassName = uniqid('Blog');
 		$qualifiedBlogClassName = 'F3\\' . $blogClassName;
-		eval('namespace F3; class ' . $blogClassName . ' { public $post; public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
+		eval('namespace F3; class ' . $blogClassName . ' {
+			public $post;
+			public $FLOW3_Persistence_Entity_UUID = NULL;
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$post = new $qualifiedPostClassName;
 		$blog = new $qualifiedBlogClassName();
 		$blog->post = $post;
@@ -668,7 +754,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function SplObjectStoragePropertyIsStoredAsProxyNode() {
 			// set up object
 		$A = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('A');
+		$A->FLOW3_Persistence_Entity_UUID = NULL;
 		$B = new \F3\TYPO3CR\Tests\Fixtures\AnEntity('B');
+		$B->FLOW3_Persistence_Entity_UUID = NULL;
 		$A->addObject($B);
 
 			// set up assertions on created nodes
@@ -712,15 +800,18 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
 			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullOtherClassName . '\';}
 		}');
 		$someClassName = 'SomeClass' . uniqid();
 		$fullSomeClassName = 'F3\\TYPO3CR\\Tests\\' . $someClassName;
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $someClassName . ' {
+			public $FLOW3_Persistence_Entity_UUID = NULL;
+			public $property;
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
 			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->property; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullSomeClassName . '\';}
 		}');
 		$otherAggregateRootObject = new $fullOtherClassName();

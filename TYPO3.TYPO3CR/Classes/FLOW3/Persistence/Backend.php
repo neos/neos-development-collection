@@ -155,16 +155,18 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
-	 * Returns the (internal) identifier for the object, if it is known to the
-	 * backend. Otherwise NULL is returned.
+	 * Returns the (internal) identifier for the object.
 	 *
 	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
+	 * @return string The identifier for the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getUUIDByObject($object) {
 		if ($this->identityMap->hasObject($object)) {
 			return $this->identityMap->getUUIDByObject($object);
+		} elseif (method_exists($object, 'FLOW3_AOP_Proxy_getProperty')) {
+				// entities created get an UUID set through AOP
+			return $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
 		} else {
 			return NULL;
 		}
@@ -175,10 +177,11 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @param object $object The object to check
 	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isNewObject($object) {
-		return ($this->getUUIDByObject($object) === NULL);
+		return ($this->identityMap->hasObject($object) === FALSE);
 	}
 
 	/**
@@ -362,7 +365,11 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 					}
 				} else {
 					if ($object->FLOW3_Persistence_isNew()) {
-						$this->createNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
+						if ($this->classSchemata[$propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
+							$this->createNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
+						} else {
+							$this->createNodeForValueObject($propertyValue, $node, 'flow3:' . $propertyName);
+						}
 					}
 					$queue[] = $propertyValue;
 				}
@@ -383,6 +390,22 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
+	 * Creates a node for the given value object and registers it with the identity map.
+	 *
+	 * @param object $object The value object for which to create a node
+	 * @param \F3\PHPCR\NodeInterface $parentNode
+	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function createNodeForValueObject($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
+		$className = $object->FLOW3_AOP_Proxy_getProxyTargetClassName();
+		$nodeTypeName = 'flow3:' . $this->convertClassNameToJCRName($className);
+		$node = $parentNode->addNode($nodeName, $nodeTypeName);
+		$this->identityMap->registerObject($object, $node->getIdentifier());
+	}
+
+	/**
 	 * Creates a node for the given object and registers it with the identity map.
 	 *
 	 * @param object $object The object for which to create a node
@@ -398,6 +421,8 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 
 		if ($uuidPropertyName !== NULL) {
 			$node = $parentNode->addNode($nodeName, $nodeTypeName, $object->FLOW3_AOP_Proxy_getProperty($uuidPropertyName));
+		} elseif ($object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID') !== NULL) {
+			$node = $parentNode->addNode($nodeName, $nodeTypeName, $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID'));
 		} else {
 			$node = $parentNode->addNode($nodeName, $nodeTypeName);
 		}
