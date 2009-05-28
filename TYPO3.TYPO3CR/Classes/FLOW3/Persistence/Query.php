@@ -29,7 +29,8 @@ namespace F3\TYPO3CR\FLOW3\Persistence;
  */
 
 /**
- * The Query classs used to run queries against the storage backend
+ * The Query classs used to run queries like
+ * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
  * @package TYPO3CR
  * @subpackage FLOW3
@@ -85,7 +86,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $constraint;
 
 	/**
-	 * an array of named variables and their values from the operators
+	 * An array of named variables and their values from the operators
 	 * @var array
 	 */
 	protected $operands = array();
@@ -162,7 +163,44 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * The constraint used to limit the result set
+	 * Sets the property names to order the result by. Expected like this:
+	 * array(
+	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 * )
+	 *
+	 * @param array $orderings The property names to order by
+	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 */
+	public function setOrderings(array $orderings) {
+		throw new \F3\FLOW3\Persistence\Exception('setLimit is not yet implemented, sorry!', ﻿1243526300);
+	}
+
+	/**
+	 * Sets the maximum size of the result set to limit. Returns $this to allow
+	 * for chaining (fluid interface)
+	 *
+	 * @param integer $limit
+	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 */
+	public function setLimit($limit) {
+		throw new \F3\FLOW3\Persistence\Exception('setLimit is not yet implemented, sorry!', ﻿1243526060);
+	}
+
+	/**
+	 * Sets the start offset of the result set to offset. Returns $this to
+	 * allow for chaining (fluid interface)
+	 *
+	 * @param integer $offset
+	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 */
+	public function setOffset($offset) {
+		throw new \F3\FLOW3\Persistence\Exception('setOffset is not yet implemented, sorry!', ﻿1243526019);
+	}
+
+	/**
+	 * The constraint used to limit the result set. Returns $this to allow
+	 * for chaining (fluid interface)
 	 *
 	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint
 	 * @return \F3\FLOW3\Persistence\QueryInterface
@@ -173,10 +211,10 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Performs a logical conjunction of the two given constraints
+	 * Performs a logical conjunction of the two given constraints.
 	 *
-	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint1
-	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2
+	 * @param object $constraint1 First constraint
+	 * @param object $constraint2 Second constraint
 	 * @return \F3\PHPCR\Query\QOM\AndInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -190,9 +228,9 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Performs a logical disjunction of the two given constraints
 	 *
-	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint1
-	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2
-	 * @return \F3\PHPCR\Query\QOM\AndInterface
+	 * @param object $constraint1 First constraint
+	 * @param object $constraint2 Second constraint
+	 * @return \F3\PHPCR\Query\QOM\OrInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function logicalOr($constraint1, $constraint2) {
@@ -205,8 +243,8 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	/**
 	 * Performs a logical negation of the given constraint
 	 *
-	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint
-	 * @return \F3\PHPCR\Query\QOM\AndInterface
+	 * @param object $constraint Constraint to negate
+	 * @return \F3\PHPCR\Query\QOM\NotInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function logicalNot($constraint) {
@@ -214,9 +252,9 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Matches against the internal identifier.
+	 * Matches against the (internal) identifier.
 	 *
-	 * @param string $uuid A UUID
+	 * @param string $uuid An identifier to match against
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 */
 	public function withUUID($uuid) {
@@ -229,7 +267,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Adds an equality criterion used for matching objects against the query
+	 * Returns an equals criterion used for matching objects against a query
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
@@ -294,7 +332,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Adds a like criterion used for matching objects against the query
+	 * Returns a like criterion used for matching objects against a query
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
@@ -311,7 +349,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Adds a "less than" criterion used for matching objects against the query
+	 * Returns a less than criterion used for matching objects against a query
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
@@ -328,7 +366,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Adds a "less than or equal" criterion used for matching objects against the query
+	 * Returns a less or equal than criterion used for matching objects against a query
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
@@ -345,7 +383,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Adds a "greater than" criterion used for matching objects against the query
+	 * Returns a greater than criterion used for matching objects against a query
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
@@ -362,7 +400,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	}
 
 	/**
-	 * Adds a "greater than or equal" criterion used for matching objects against the query
+	 * Returns a greater than or equal criterion used for matching objects against a query
 	 *
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
