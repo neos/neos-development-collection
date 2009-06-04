@@ -129,6 +129,16 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	}
 
 	/**
+	 * Returns TRUE if the property exists..
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return boolean TRUE if the property exists
+	 */
+	public function FLOW3_AOP_Proxy_hasProperty($propertyName) {
+		return property_exists($this, $propertyName);
+	}
+
+	/**
 	 * Returns the value of an arbitrary property.
 	 * The method does not have to check if the property exists.
 	 *

@@ -514,10 +514,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getUUIDByObjectReturnsUUIDForObjectBeingAOPProxy() {
-		$className = uniqid('SomeClass');
-		$qualifiedClassName = '\\' . $className;
-		eval('class ' . $className . ' { public function FLOW3_AOP_Proxy_getProperty($propertyName) { return \'fakeUUID\'; } }');
-		$knownObject = new $qualifiedClassName();
+		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$knownObject->expects($this->once())->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue(TRUE));
+		$knownObject->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue('fakeUUID'));
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(FALSE));
 
@@ -553,11 +552,9 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getUUIDByObjectReturnsNullForUnknownObjectBeingAOPProxy() {
-		$this->markTestSkipped('currently broken, see #3486');
-		$className = uniqid('SomeClass');
-		$qualifiedClassName = '\\' . $className;
-		eval('class ' . $className . ' { public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; } }');
-		$unknownObject = new $qualifiedClassName();
+		$unknownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$unknownObject->expects($this->once())->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue(FALSE));
+		$unknownObject->expects($this->never())->method('FLOW3_AOP_Proxy_getProperty');
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
 

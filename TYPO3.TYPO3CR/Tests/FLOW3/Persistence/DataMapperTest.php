@@ -84,7 +84,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function mapSingleNodeReconstitutesExpectedObjectForNodeAndRegistersItWithIdentityMap() {
 		$mockEntityClassName = uniqid('Entity');
-		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_Persistence_memorizeCleanState', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'));
+		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_Persistence_memorizeCleanState', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'));
 		$mockEntity->expects($this->once())->method('FLOW3_Persistence_memorizeCleanState');
 		$mockPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
 		$mockPrimaryNodeType->expects($this->any())->method('getName')->will($this->returnValue('flow3:' . $mockEntityClassName));
@@ -125,7 +125,12 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$qualifiedAuthorClassName = 'F3\\' . $authorClassName;
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
-		eval('namespace F3; abstract class ' . $postClassName . ' implements \F3\FLOW3\AOP\ProxyInterface { public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); } public function FLOW3_Persistence_isNew() { return TRUE; } public function FLOW3_Persistence_memorizeCleanState() {} }');
+		eval('namespace F3; abstract class ' . $postClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return property_exists($this, $propertyName); }
+			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_memorizeCleanState() {}
+		}');
 
 			// set up (mock) objects
 		$mockPost = $this->getMock($qualifiedPostClassName);

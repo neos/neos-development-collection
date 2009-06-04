@@ -164,7 +164,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	public function getUUIDByObject($object) {
 		if ($this->identityMap->hasObject($object)) {
 			return $this->identityMap->getUUIDByObject($object);
-		} elseif (method_exists($object, 'FLOW3_AOP_Proxy_getProperty')) {
+		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_Entity_UUID')) {
 				// entities created get an UUID set through AOP
 			return $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
 		} else {
