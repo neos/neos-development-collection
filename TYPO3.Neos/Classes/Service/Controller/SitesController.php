@@ -39,18 +39,18 @@ namespace F3\TYPO3\Service\Controller;
 class SitesController extends \F3\FLOW3\MVC\Controller\RESTController {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\SiteRepository
+	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * Injects the site repository
 	 *
-	 * @param \F3\TYPO3\Domain\Model\SiteRepository $siteRepository A reference to the site repository
+	 * @param \F3\TYPO3\Domain\Repository\SiteRepository $siteRepository A reference to the site repository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSiteRepository(\F3\TYPO3\Domain\Model\SiteRepository $siteRepository) {
+	public function injectSiteRepository(\F3\TYPO3\Domain\Repository\SiteRepository $siteRepository) {
 		$this->siteRepository = $siteRepository;
 	}
 

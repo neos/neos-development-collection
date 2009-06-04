@@ -66,7 +66,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setupAction() {
-		$structureNodeRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Model\StructureNodeRepository');
+		$structureNodeRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Repository\StructureNodeRepository');
 
 			// Create structure nodes
 		$structureNode1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
@@ -113,7 +113,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$site->setName('typo3.org');
 		$site->setRootStructureNode($structureNode1);
 
-		$siteRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Model\SiteRepository');
+		$siteRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Repository\SiteRepository');
 		$siteRepository->add($site);
 
 			// Create a second sample site

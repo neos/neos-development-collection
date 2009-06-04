@@ -39,18 +39,18 @@ namespace F3\TYPO3\Service\Controller;
 class StructureTreesController extends \F3\FLOW3\MVC\Controller\RESTController {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\StructureNodeRepository
+	 * @var \F3\TYPO3\Domain\Repository\StructureNodeRepository
 	 */
 	protected $structureNodeRepository;
 
 	/**
 	 * Injects the structure node repository
 	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNodeRepository $structureNodeRepository The structure node repository
+	 * @param \F3\TYPO3\Domain\Repository\StructureNodeRepository $structureNodeRepository The structure node repository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectStructureNodeRepository(\F3\TYPO3\Domain\Model\StructureNodeRepository $structureNodeRepository) {
+	public function injectStructureNodeRepository(\F3\TYPO3\Domain\Repository\StructureNodeRepository $structureNodeRepository) {
 		$this->structureNodeRepository = $structureNodeRepository;
 	}
 
