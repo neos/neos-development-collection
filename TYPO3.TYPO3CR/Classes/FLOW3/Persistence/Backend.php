@@ -358,7 +358,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 						$queue[] = $containedObject;
 					}
 				}
-			} elseif ($propertyType !== 'DateTime' && is_object($propertyValue)) {
+			} elseif ($propertyType !== 'DateTime' && is_object($propertyValue) && $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface) {
 				if ($this->classSchemata[$propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
 					if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
 						$this->createOrUpdateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
@@ -374,7 +374,9 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 					$queue[] = $propertyValue;
 				}
 			} elseif ($classSchema->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT || ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName))) {
-				$node->setProperty('flow3:' . $propertyName, $propertyValue, \F3\PHPCR\PropertyType::valueFromType($propertyType));
+				if (!is_object($propertyValue) || $propertyValue instanceof \DateTime) {
+					$node->setProperty('flow3:' . $propertyName, $propertyValue, \F3\PHPCR\PropertyType::valueFromType($propertyType));
+				}
 			}
 		}
 

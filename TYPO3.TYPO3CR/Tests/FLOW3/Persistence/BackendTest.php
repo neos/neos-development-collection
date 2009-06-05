@@ -620,19 +620,25 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up objects
 		$authorClassName = uniqid('Author');
 		$qualifiedAuthorClassName = 'F3\\' . $authorClassName;
-		eval('namespace F3; class ' . $authorClassName . ' {
+		eval('namespace F3; class ' . $authorClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
-			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
+			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$author = new $qualifiedAuthorClassName;
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
-		eval('namespace F3; class ' . $postClassName . ' {
+		eval('namespace F3; class ' . $postClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public $author;
 			public $FLOW3_Persistence_Entity_UUID;
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$post = new $qualifiedPostClassName();
@@ -681,20 +687,26 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up objects
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
-		eval('namespace F3; class ' . $postClassName . ' {
+		eval('namespace F3; class ' . $postClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public $blog;
 			public $FLOW3_Persistence_Entity_UUID = NULL;
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$blogClassName = uniqid('Blog');
 		$qualifiedBlogClassName = 'F3\\' . $blogClassName;
-		eval('namespace F3; class ' . $blogClassName . ' {
+		eval('namespace F3; class ' . $blogClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public $post;
 			public $FLOW3_Persistence_Entity_UUID = NULL;
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState() {} }');
 		$post = new $qualifiedPostClassName;
@@ -793,23 +805,29 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	public function aggregateRootObjectsFoundWhenPersistingThatAreNotAmongAggregateRootObjectsCollectedFromRepositoriesCauseAnException() {
 		$otherClassName = 'OtherClass' . uniqid();
 		$fullOtherClassName = 'F3\\TYPO3CR\\Tests\\' . $otherClassName;
-		eval('namespace F3\\TYPO3CR\\Tests; class ' . $otherClassName . ' {
+		eval('namespace F3\\TYPO3CR\\Tests; class ' . $otherClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullOtherClassName . '\';}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
 			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullOtherClassName . '\';}
 		}');
 		$someClassName = 'SomeClass' . uniqid();
 		$fullSomeClassName = 'F3\\TYPO3CR\\Tests\\' . $someClassName;
-		eval('namespace F3\\TYPO3CR\\Tests; class ' . $someClassName . ' {
+		eval('namespace F3\\TYPO3CR\\Tests; class ' . $someClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public $FLOW3_Persistence_Entity_UUID = NULL;
 			public $property;
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullSomeClassName . '\';}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
 			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
-			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
-			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullSomeClassName . '\';}
 		}');
 		$otherAggregateRootObject = new $fullOtherClassName();
 		$someAggregateRootObject = new $fullSomeClassName();
