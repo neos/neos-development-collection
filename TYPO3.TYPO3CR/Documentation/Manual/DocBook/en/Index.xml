@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<book version="5.0" xmlns="http://docbook.org/ns/docbook"
+<book version="5.0" xml:id="typo3cr.book"
+      xmlns="http://docbook.org/ns/docbook"
       xmlns:xl="http://www.w3.org/1999/xlink"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       xmlns:xhtml="http://www.w3.org/1999/xhtml"
