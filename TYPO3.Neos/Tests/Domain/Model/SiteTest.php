@@ -43,26 +43,75 @@ class SiteTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aNameCanBeSetAndRetrievedFromTheSite() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$site = new \F3\TYPO3\Domain\Model\Site($mockObjectFactory);
+		$site = new \F3\TYPO3\Domain\Model\Site();
 		$site->setName('My cool website');
-		$this->assertEquals('My cool website', $site->getName());
+		$this->assertSame('My cool website', $site->getName());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aUniqueIDIsCreatedAutomaticallyWhileConstructingTheSiteObject() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$site1 = new \F3\TYPO3\Domain\Model\Site($mockObjectFactory);
-		$site2 = new \F3\TYPO3\Domain\Model\Site($mockObjectFactory);
+	public function aSiteCanHaveAnyNumberOfDomains() {
+		$domain1 = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '' ,FALSE);
+		$domain2 = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '' ,FALSE);
 
-		$this->assertEquals(36, strlen($site1->getId()));
-		$this->assertEquals(36, strlen($site2->getId()));
-		$this->assertNotEquals($site1->getId(), $site2->getId());
+		$site = new \F3\TYPO3\Domain\Model\Site();
+		$site->addDomain($domain1);
+		$site->addDomain($domain2);
+
+		$domains = $site->getDomains();
+		$this->assertTrue($domains->contains($domain1));
+		$this->assertTrue($domains->contains($domain2));
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function removeDomainRemovesADomainDefinitionFromTheSite() {
+		$domain = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '' ,FALSE);
+
+		$site = new \F3\TYPO3\Domain\Model\Site();
+		$site->addDomain($domain);
+
+		$domains = $site->getDomains();
+		$this->assertTrue($domains->contains($domain));
+
+		$site->removeDomain($domain);
+
+		$domains = $site->getDomains();
+		$this->assertFalse($domains->contains($domain));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getDomainsClonesTheObjectHashBeforeReturningIt() {
+		$domain = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '' ,FALSE);
+
+		$site = new \F3\TYPO3\Domain\Model\Site();
+		$site->addDomain($domain);
+
+		$domains = $site->getDomains();
+		$domains->detach($domain);
+
+		$domains = $site->getDomains();
+		$this->assertTrue($domains->contains($domain));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setSiteRootDefinesTheStructureNodeWhichActsAsTheRootOfTheSite() {
+		$mockStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
+
+		$site = new \F3\TYPO3\Domain\Model\Site();
+		$site->setSiteRoot($mockStructureNode);
+		$this->assertSame($mockStructureNode, $site->getSiteRoot());
+	}
 }
 
 ?>

@@ -1,0 +1,81 @@
+#                                                                        #
+# Default subroutes configuration for the TYPO3 package                  #
+#                                                                        #
+
+# $Id$
+
+##
+# Backend
+
+-
+  name:          'Backend login'
+  uriPattern:    'login'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Backend'
+    @controller: 'Login'
+    @action:     'index'
+
+-
+  name:          'Backend default route'
+  uriPattern:    'typo3'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Backend'
+    @controller: 'Standard'
+    @action:     'index'
+
+##
+# REST Services
+
+-
+  name:          'Service with controller and optional format' 
+  uriPattern:    'typo3/service/v1/{@controller}(.{@format})'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Service'
+    @format:     'json'
+
+-
+  name:          'Service with controller, id and optional format'
+  uriPattern:    'typo3/service/v1/{@controller}/{id}(.{@format})'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Service'
+    @format:     'json'
+
+##
+# Frontend
+
+-
+  name:          'Frontend with page and optional format'
+  uriPattern:    '{path}.{@format}'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Frontend'
+    @controller: 'Page'
+    @format:     'html'
+  routePartHandlers:
+    path: F3\TYPO3\Routing\PageRoutePartHandler
+
+-
+  name:          'Frontend with optional path'
+  uriPattern:    '({path})'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Frontend'
+    @controller: 'Page'
+    @format:     'html'
+  routePartHandlers:
+    path: F3\TYPO3\Routing\PageRoutePartHandler
+
+-
+  name: 'Frontend root URI'
+  uriPattern: ''
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Frontend'
+    @controller: 'Page'
+    @format:     'html'
+  routePartHandlers:
+    path: F3\TYPO3\Routing\PageRoutePartHandler

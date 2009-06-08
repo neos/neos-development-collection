@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Service;
+namespace F3\TYPO3\Domain\Model\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,47 +24,71 @@ namespace F3\TYPO3\Domain\Service;
 
 /**
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Testcase for the Time service
+ * Domain Model of a Domain
  *
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @entity
+ * @scope prototype
  */
-class TimeTest extends \F3\Testing\BaseTestCase {
+class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration {
 
 	/**
-	 * @test
+	 * @var string
+	 * @validate StringLength(minimum = 1, maximum = 255)
+	 */
+	protected $hostPattern = '*';
+
+	/**
+	 * @var \F3\TYPO3\Domain\Model\StructureNode
+	 * @validate NotEmpty
+	 */
+	protected $siteEntryPoint;
+
+	/**
+	 * Sets the pattern for the host of the domain
+	 *
+	 * @param string $hostPattern Pattern for the host
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getCurrentDateTimeReturnsACurrentDateAndTime() {
-		$almostCurrentTime = new \DateTime();
-		date_sub($almostCurrentTime, new \DateInterval('P0DT1S'));
-
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$currentTime = $timeService->getCurrentDateTime();
-		$this->assertTrue($almostCurrentTime < $currentTime);
+	public function setHostPattern($hostPattern) {
+		$this->hostPattern = $hostPattern;
 	}
 
 	/**
-	 * @test
+	 * Returns the host pattern for this domain
+	 *
+	 * @return string The host pattern
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSimulatedDateTimeAllowsForMockingTheCurrentTime() {
-		$simulatedCurrentTime = new \DateTime();
-		date_add($simulatedCurrentTime, new \DateInterval('P1D'));
+	public function getHostPattern() {
+		return $this->hostPattern;
+	}
 
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime($simulatedCurrentTime);
+	/**
+	 * Sets the entry point to the site for when this domain is used
+	 * in the request.
+	 *
+	 * @param \F3\TYPO3\Domain\Model\StructureNode $siteEntryPoint The point in the site structure tree acting as the entry point
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setSiteEntryPoint(\F3\TYPO3\Domain\Model\StructureNode $siteEntryPoint) {
+		$this->siteEntryPoint = $siteEntryPoint;
+	}
 
-		$this->assertEquals($simulatedCurrentTime, $timeService->getCurrentDateTime());
+	/**
+	 * @return \F3\TYPO3\Domain\Model\StructureNode
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSiteEntryPoint() {
+		return $this->siteEntryPoint;
 	}
 }
-
-
 ?>

@@ -55,7 +55,7 @@ class ListJSON extends \F3\FLOW3\MVC\View\AbstractView {
 			$sitesArray[] = array(
 				'id' => $site->getId(),
 				'name' => $site->getName(),
-				'rootStructureNode' => ($site->getRootStructureNode() !== NULL) ? $site->getRootStructureNode()->getId() : NULL
+				'siteRoot' => ($site->getSiteRoot() !== NULL) ? $site->getSiteRoot()->getId() : NULL
 			);
 		}
 		return json_encode($sitesArray);

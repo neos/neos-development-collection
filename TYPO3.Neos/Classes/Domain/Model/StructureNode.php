@@ -41,14 +41,6 @@ namespace F3\TYPO3\Domain\Model;
 class StructureNode {
 
 	/**
-	 * The identifier of this node (a UUID)
-	 *
-	 * @var string
-	 * @uuid
-	 */
-	protected $id;
-
-	/**
 	 * Child nodes of this structure node
 	 *
 	 * @var array
@@ -57,32 +49,11 @@ class StructureNode {
 	protected $childNodes = array();
 
 	/**
-	 * Content attached to this structure node
+	 * Content attached to this structure node, indexed by language and region
 	 *
-	 * @var \F3\TYPO3\Domain\Model\ContentInterface
+	 * @var array
 	 */
-	protected $content;
-
-	/**
-	 * Constructs the structure node
-	 *
-	 * @param string $title The page title
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct() {
-		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
-	}
-
-	/**
-	 * Returns the identifier of this node
-	 *
-	 * @return string The UUID of this structure node
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getId() {
-		return $this->id;
-	}
+	protected $contents;
 
 	/**
 	 * Adds a child node to this node
@@ -117,22 +88,24 @@ class StructureNode {
 	/**
 	 * Attaches a content object to this structure node
 	 *
-	 * @param \F3\TYPO3\Domain\Model\ContentInterface $content The content object
+	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content The content object
+	 * @param string $language Language of the content as a BCP47, ISO 639-3 or 639-5 code (see Locale sub package)
+	 * @param string $region Region for the content - an ISO 3166-1-alpha-2 code or a UN M.49 three digit code
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContent(\F3\TYPO3\Domain\Model\ContentInterface $content) {
-		$this->content = $content;
+	public function addContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content, $language = 'mul', $region = 'ZZ') {
+		$this->contents[$language][$region][] = $content;
 	}
 
 	/**
-	 * Returns the content object attached to this structure node (if any)
+	 * Returns the content objects attached to this structure node (if any)
 	 *
-	 * @return mixed The content object or NULL if none exists
+	 * @return array An array of content objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getContent() {
-		return $this->content;
+	public function getContents() {
+		return $this->contents;
 	}
 
 	/**

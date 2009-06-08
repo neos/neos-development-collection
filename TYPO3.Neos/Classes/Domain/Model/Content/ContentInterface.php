@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model;
+namespace F3\TYPO3\Domain\Model\Content;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,24 +24,42 @@ namespace F3\TYPO3\Domain\Model;
 
 /**
  * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Domain Model of a TypoScript Template
+ * Contract for a Content object
  *
  * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @entity
+ * @author Robert Lemke <robert@typo3.org>
  */
-class TypoScriptTemplate {
+interface ContentInterface {
 
 	/**
-	 * A label for the TypoScript template
-	 * @var string
+	 * Specifies the locale of the content object
+	 *
+	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
+	 * @return void
 	 */
-	protected $label;
+	public function setLocale(\F3\FLOW3\Locale\Locale $locale);
+
+	/**
+	 * Returns the locale of the content object
+	 *
+	 * @return \F3\FLOW3\Locale\Locale $locale The locale of the content
+	 */
+	public function getLocale();
+
+	/**
+	 * Returns a short string which can be used to label the content object
+	 *
+	 * @return string A label for the content object
+	 */
+	public function getLabel();
 
 }
 ?>

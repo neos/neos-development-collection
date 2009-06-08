@@ -3,7 +3,7 @@
     <key>TYPO3</key>
     <title>TYPO3</title>
     <description></description>
-    <version>5.0.0</version>
+    <version>5.0.0-alpha1</version>
     <state>Development</state>
     <categories>
         <category>Frontend</category>

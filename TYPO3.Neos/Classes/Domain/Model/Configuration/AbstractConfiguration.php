@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model;
+namespace F3\TYPO3\Domain\Model\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,27 +24,29 @@ namespace F3\TYPO3\Domain\Model;
 
 /**
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Testcase for the Workspace domain model
+ * An abstract domain model of configuration which can be attached to a structure node.
  *
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope prototype
+ * @entity
  */
-class WorkspaceTest extends \F3\Testing\BaseTestCase {
+abstract class AbstractConfiguration implements \F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface {
 
 	/**
-	 * @test
-	 * @author robert
+	 * Returns a short string which can be used to label the configuration object
+	 *
+	 * @return string A label for the configuration object
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function xy() {
+	public function getLabel() {
+		return '[' . get_class($this) . ']';
 	}
+
 }
-
-
 ?>

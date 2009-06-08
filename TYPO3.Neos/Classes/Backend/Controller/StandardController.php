@@ -37,7 +37,6 @@ namespace F3\TYPO3\Backend\Controller;
 class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * Only Web Requests are supported
 	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
@@ -90,28 +89,35 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 			// Create pages
 		$page1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1');
-		$structureNode1->setContent($page1);
+		$structureNode1->addContent($page1);
 
 		$page1a = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1a');
-		$structureNode1a->setContent($page1a);
+		$structureNode1a->addContent($page1a);
 
 		$page1aa = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1aa');
-		$structureNode1aa->setContent($page1aa);
+		$structureNode1aa->addContent($page1aa);
 
 		$page1b = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1b');
-		$structureNode1b->setContent($page1b);
+		$structureNode1b->addContent($page1b);
 
 			// Create text content
 		$text1c = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Text', 'Text 1c');
-		$structureNode1c->setContent($text1c);
+		$structureNode1c->addContent($text1c);
 
 		$text1d = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Text', 'Text 1d');
-		$structureNode1d->setContent($text1d);
+		$structureNode1d->addContent($text1d);
 
 			// Create a sample site
 		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Site');
 		$site->setName('typo3.org');
-		$site->setRootStructureNode($structureNode1);
+		$site->setSiteRoot($structureNode1);
+
+			// Create a sample domain
+		$domain1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\Domain');
+		$domain1->setHostPattern('*.t3v5.rob');
+		$domain1->setSiteEntryPoint($structureNode1);
+
+		$site->addDomain($domain1);
 
 		$siteRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Repository\SiteRepository');
 		$siteRepository->add($site);

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Service;
+namespace F3\TYPO3\Domain;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,47 +24,18 @@ namespace F3\TYPO3\Domain\Service;
 
 /**
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Testcase for the Time service
+ * A generic TYPO3 Domain exception
  *
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class TimeTest extends \F3\Testing\BaseTestCase {
+class Exception extends \F3\TYPO3\Exception {
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getCurrentDateTimeReturnsACurrentDateAndTime() {
-		$almostCurrentTime = new \DateTime();
-		date_sub($almostCurrentTime, new \DateInterval('P0DT1S'));
-
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$currentTime = $timeService->getCurrentDateTime();
-		$this->assertTrue($almostCurrentTime < $currentTime);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setSimulatedDateTimeAllowsForMockingTheCurrentTime() {
-		$simulatedCurrentTime = new \DateTime();
-		date_add($simulatedCurrentTime, new \DateInterval('P1D'));
-
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime($simulatedCurrentTime);
-
-		$this->assertEquals($simulatedCurrentTime, $timeService->getCurrentDateTime());
-	}
 }
-
 
 ?>

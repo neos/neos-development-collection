@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model;
+namespace F3\TYPO3\Domain\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,42 +24,18 @@ namespace F3\TYPO3\Domain\Model;
 
 /**
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Contract for a Content object
+ * A "No such domain" exception
  *
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @author Robert Lemke <robert@typo3.org>
  */
-interface ContentInterface {
-
-	/**
-	 * Specifies the locale of the content object
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 * @return void
-	 */
-	public function setLocale(\F3\FLOW3\Locale\Locale $locale);
-
-	/**
-	 * Returns the locale of the content object
-	 *
-	 * @return \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 */
-	public function getLocale();
-
-	/**
-	 * Returns a short string which can be used to label the content object
-	 *
-	 * @return string A label for the content object
-	 */
-	public function getLabel();
+class NoSuchDomain extends \F3\TYPO3\Domain\Exception {
 
 }
+
 ?>

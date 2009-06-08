@@ -41,39 +41,30 @@ namespace F3\TYPO3\Domain\Model;
 class Site {
 
 	/**
-	 * The site's unique identifier
-	 * @var string
-	 * @uuid
-	 */
-	protected $id;
-
-	/**
 	 * Name of the site
 	 * @var string
+	 * @validate AlphaNumeric, StringLength(minimum = 1, maximum = 255)
 	 */
 	protected $name = 'Untitled Site';
 
 	/**
 	 * @var \F3\TYPO3\Domain\Model\StructureNode
+	 * @validate NotEmpty
 	 */
-	protected $rootStructureNode;
+	protected $siteRoot;
 
 	/**
-	 * Constructs the new site
+	 * @var \SplObjectStorage
+	 */
+	protected $domains;
+
+	/**
+	 * Constructs this site model
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
-		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
-	}
-
-	/**
-	 * Returns the identifier of this site
-	 * @return string The site's UUID
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getId() {
-		return $this->id;
+	public function __construct() {
+		$this->domains = new \SplObjectStorage;
 	}
 
 	/**
@@ -104,8 +95,8 @@ class Site {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRootStructureNode(\F3\TYPO3\Domain\Model\StructureNode $rootStructureNode) {
-		$this->rootStructureNode = $rootStructureNode;
+	public function setSiteRoot(\F3\TYPO3\Domain\Model\StructureNode $siteRoot) {
+		$this->siteRoot = $siteRoot;
 	}
 
 	/**
@@ -114,8 +105,40 @@ class Site {
 	 * @return \F3\TYPO3\Domain\Model\StructureNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRootStructureNode() {
-		return $this->rootStructureNode;
+	public function getSiteRoot() {
+		return $this->siteRoot;
+	}
+
+	/**
+	 * Adds a domain to this site
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Configuration\Domain $domain The domain
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function addDomain(\F3\TYPO3\Domain\Model\Configuration\Domain $domain) {
+		$this->domains->attach($domain);
+	}
+
+	/**
+	 * Removes a domain from this site
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Configuration\Domain $domain The domain to remove
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function removeDomain(\F3\TYPO3\Domain\Model\Configuration\Domain $domain) {
+		if (!$this->domains->contains($domain)) throw new \F3\TYPO3\Domain\Exception\NoSuchDomain('Cannot remove unknown domain', 1241789218);
+		$this->domains->detach($domain);
+	}
+
+	/**
+	 * Returns the domains attached to this site
+	 *
+	 * @return \SplObjectStorage The domains which are attached to this site
+	 */
+	public function getDomains() {
+		return clone $this->domains;
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Service;
+namespace F3\TYPO3\Frontend\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,47 +24,50 @@ namespace F3\TYPO3\Domain\Service;
 
 /**
  * @package TYPO3
- * @subpackage Domain
+ * @subpackage Frontend
  * @version $Id$
  */
 
 /**
- * Testcase for the Time service
+ * TYPO3's frontend page controller
  *
  * @package TYPO3
- * @subpackage Domain
+ * @subpackage Frontend
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class TimeTest extends \F3\Testing\BaseTestCase {
+class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @test
+	 * @inject
+	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
+	 */
+	protected $siteRepository;
+
+	/**
+	 * Show the root page, because no page was specified
+	 *
+	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getCurrentDateTimeReturnsACurrentDateAndTime() {
-		$almostCurrentTime = new \DateTime();
-		date_sub($almostCurrentTime, new \DateInterval('P0DT1S'));
-
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$currentTime = $timeService->getCurrentDateTime();
-		$this->assertTrue($almostCurrentTime < $currentTime);
+	public function indexAction() {
+		$sites = $this->siteRepository->findAll();
+		$output = '';
+		foreach ($sites as $site) {
+			$output .= $site->getName();
+		}
+		return $output;
 	}
 
 	/**
-	 * @test
+	 * Shows the page specified in the "page" argument
+	 *
+	 * @param ...
+	 * @return string View output for the specified page
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSimulatedDateTimeAllowsForMockingTheCurrentTime() {
-		$simulatedCurrentTime = new \DateTime();
-		date_add($simulatedCurrentTime, new \DateInterval('P1D'));
-
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime($simulatedCurrentTime);
-
-		$this->assertEquals($simulatedCurrentTime, $timeService->getCurrentDateTime());
+	public function showAction($page) {
+		return "<br />\nTYPO3 Frontend: show()";
 	}
 }
-
-
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Service;
+namespace F3\TYPO3\Domain\Model\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -28,49 +28,20 @@ namespace F3\TYPO3\Domain\Service;
  */
 
 /**
- * A time service which allows for simulating dates, times and timezones.
- *
- * This service is used everywhere where the current time plays a role.
- * Because this time service is the central authority for telling the current
- * time, it is possible to simulate another point in time.
+ * Domain Model of a TypoScript Template
  *
  * @package TYPO3
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @entity
  */
-class Time {
+class TypoScriptTemplate extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration {
 
 	/**
-	 * @var \DateTime
+	 * A label for the TypoScript template
+	 * @var string
 	 */
-	protected $simulatedDateTime;
+	protected $label;
 
-	/**
-	 * Returns the current date and time in form of a \DateTime
-	 * object.
-	 *
-	 * If you use this method for getting the current date and time
-	 * everywhere in your code, it will be possible to simulate a certain
-	 * time in unit tests or in the actual application.
-	 *
-	 * @return \DateTime The current date and time - or a simulated version of it
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getCurrentDateTime() {
-		return ($this->simulatedDateTime === NULL) ? new \DateTime() : $this->simulatedDateTime;
-	}
-
-	/**
-	 * Sets the simulated date and time. This time will then always be returned
-	 * by getCurrentDateTime(). To undo this behaviour, just call this method
-	 * again passing NULL.
-	 *
-	 * @param \DateTime $simulatedDateTime A date and time to simulate. Pass NULL to deactivate the simulation.
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setSimulatedDateTime(\DateTime $simulatedDateTime) {
-		$this->simulatedDateTime = $simulatedDateTime;
-	}
 }
 ?>

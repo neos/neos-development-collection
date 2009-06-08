@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model;
+namespace F3\TYPO3\Domain\Model\Content;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,28 +24,56 @@ namespace F3\TYPO3\Domain\Model;
 
 /**
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Domain model of a workspace
+ * Domain model of a generic content element
  *
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity
  */
-class Workspace {
+abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\ContentInterface {
 
 	/**
-	 * The Root page
-	 * @var \F3\TYPO3\Domain\Model\Page
+	 * @var \F3\FLOW3\Locale\Locale
 	 */
-	protected $rootPage;
+	protected $locale;
+
+	/**
+	 * Specifies the locale of the content object
+	 *
+	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setLocale(\F3\FLOW3\Locale\Locale $locale) {
+		$this->locale = $locale;
+	}
+
+	/**
+	 * Returns the locale of the content object
+	 *
+	 * @return \F3\FLOW3\Locale\Locale $locale The locale of the content
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLocale() {
+		return $this->locale;
+	}
+
+
+	/**
+	 * Returns a short string which can be used to label the content object
+	 *
+	 * @return string A label for the content object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLabel() {
+		return '[' . get_class($this) . ']';
+	}
 
 }
-
 ?>

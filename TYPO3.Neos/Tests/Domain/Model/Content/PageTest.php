@@ -52,7 +52,7 @@ class PageTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function byDefaultAPageIsVisible() {
 		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
-		$page->injectTimeService(new \F3\TYPO3\Domain\Service\Time());
+		$page->injectTimeService(new \F3\TYPO3\Domain\Service\TimeService());
 		$this->assertTrue($page->isVisible());
 	}
 
@@ -61,7 +61,7 @@ class PageTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPageIsInvisibleIfAStartTimeIsSetWhichLiesInTheFuture() {
-		$timeService = new \F3\TYPO3\Domain\Service\Time();
+		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
 		$timeService->setSimulatedDateTime(new \DateTime('2008-08-08T10:00+01:00'));
 
 		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
@@ -76,7 +76,7 @@ class PageTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPageIsInvisibleIfAnEndTimeIsSetWhichLiesInThePast() {
-		$timeService = new \F3\TYPO3\Domain\Service\Time();
+		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
 		$timeService->setSimulatedDateTime(new \DateTime('2008-08-08T10:00+01:00'));
 
 		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
@@ -84,15 +84,6 @@ class PageTest extends \F3\Testing\BaseTestCase {
 
 		$page->setEndTime(new \DateTime('2008-08-07T12:00+01:00'));
 		$this->assertFalse($page->isVisible());
-	}
-
-	/**
-	 * @test
-	 * @expectedException InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function aTitleMustNotExceed250Characters() {
-		new \F3\TYPO3\Domain\Model\Content\Page(str_repeat('x', 255));
 	}
 
 	/**

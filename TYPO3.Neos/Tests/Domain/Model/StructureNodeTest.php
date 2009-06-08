@@ -42,19 +42,6 @@ class StructureNodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aUniqueIDIsCreatedAutomaticallyWhileConstructingTheStructureNode() {
-		$node1 = new \F3\TYPO3\Domain\Model\StructureNode();
-		$node2 = new \F3\TYPO3\Domain\Model\StructureNode();
-
-		$this->assertEquals(36, strlen($node1->getId()));
-		$this->assertEquals(36, strlen($node2->getId()));
-		$this->assertNotEquals($node1->getId(), $node2->getId());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function childNodesCanBeAddedToAndRetrievedFromTheStructureNode() {
 		$rootNode = new \F3\TYPO3\Domain\Model\StructureNode();
 		$node1 = new \F3\TYPO3\Domain\Model\StructureNode();
@@ -87,14 +74,28 @@ class StructureNodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function oneContentObjectCanBeAttachedToAStructureNode() {
+	public function addContentAddsTheContentAndSetsTheContentTypeAccordingly() {
 		$structureNode = new \F3\TYPO3\Domain\Model\StructureNode();
-		$content = new \F3\TYPO3\Domain\Model\Content\Text();
+		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 
-		$structureNode->setContent($content);
-		$this->assertSame($content, $structureNode->getContent());
+		$structureNode->addContent($mockContent, 'en', 'EN');
+		$actualContents = $structureNode->getContents();
+		$this->assertSame($mockContent, current($actualContents['en']['EN']));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function addContentMarksAddedContentWithMultilingualUnspecifiedCountryLocaleIfNothingElseWasSpecified() {
+		$structureNode = new \F3\TYPO3\Domain\Model\StructureNode();
+		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
+
+		$structureNode->addContent($mockContent);
+		$actualContents = $structureNode->getContents();
+		$this->assertSame($mockContent, current($actualContents['mul']['ZZ']));
 	}
 }
 

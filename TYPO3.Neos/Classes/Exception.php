@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model;
+namespace F3\TYPO3;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -28,52 +28,14 @@ namespace F3\TYPO3\Domain\Model;
  */
 
 /**
- * Domain model of a generic content element
+ * A generic TYPO3 exception
  *
  * @package TYPO3
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
- * @entity
  */
-abstract class AbstractContent implements \F3\TYPO3\Domain\Model\ContentInterface {
-
-	/**
-	 * @var \F3\FLOW3\Locale\Locale
-	 */
-	protected $locale;
-
-	/**
-	 * Specifies the locale of the content object
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setLocale(\F3\FLOW3\Locale\Locale $locale) {
-		$this->locale = $locale;
-	}
-
-	/**
-	 * Returns the locale of the content object
-	 *
-	 * @return \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getLocale() {
-		return $this->locale;
-	}
-
-
-	/**
-	 * Returns a short string which can be used to label the content object
-	 *
-	 * @return string A label for the content object
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getLabel() {
-		return '[' . get_class($this) . ']';
-	}
+class Exception extends \Exception {
 
 }
+
 ?>

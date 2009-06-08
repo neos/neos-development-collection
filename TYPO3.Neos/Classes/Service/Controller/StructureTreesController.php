@@ -82,10 +82,10 @@ class StructureTreesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function showAction() {
-		$rootStructureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
-		if ($rootStructureNode === NULL) $this->throwStatus(404);
+		$siteRoot = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
+		if ($siteRoot === NULL) $this->throwStatus(404);
 
-		$this->view->structureTree = array($this->buildStructureTreeArray($rootStructureNode));
+		$this->view->structureTree = array($this->buildStructureTreeArray($siteRoot));
 		return $this->view->render();
 	}
 

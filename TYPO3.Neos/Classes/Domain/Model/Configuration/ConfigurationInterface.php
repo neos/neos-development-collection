@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Frontend\Controller;
+namespace F3\TYPO3\Domain\Model\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,39 +24,27 @@ namespace F3\TYPO3\Frontend\Controller;
 
 /**
  * @package TYPO3
- * @subpackage Frontend
+ * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * TYPO3's frontend page controller
+ * Contract for a Configuration object
  *
  * @package TYPO3
- * @subpackage Frontend
+ * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @author Robert Lemke <robert@typo3.org>
  */
-class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
+interface ConfigurationInterface {
 
 	/**
-	 * Alias for the "show" action
+	 * Returns a short string which can be used to label the configuration object
 	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return string A label for the configuration object
 	 */
-	public function indexAction() {
-		$this->forward('show');
-	}
+	public function getLabel();
 
-	/**
-	 * Shows the page specified in the "page" argument
-	 *
-	 * @param \F3\TYPO3\Domain\Model\Page $page The page to display
-	 * @return string View output for the specified page
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function showAction($page) {
-		return "<br />\nTYPO3 Frontend: show()";
-	}
 }
 ?>

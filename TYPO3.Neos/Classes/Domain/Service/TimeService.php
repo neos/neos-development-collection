@@ -24,47 +24,53 @@ namespace F3\TYPO3\Domain\Service;
 
 /**
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Testcase for the Time service
+ * A time service which allows for simulating dates, times and timezones.
+ *
+ * This service is used everywhere where the current time plays a role.
+ * Because this time service is the central authority for telling the current
+ * time, it is possible to simulate another point in time.
  *
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class TimeTest extends \F3\Testing\BaseTestCase {
+class TimeService {
 
 	/**
-	 * @test
+	 * @var \DateTime
+	 */
+	protected $simulatedDateTime;
+
+	/**
+	 * Returns the current date and time in form of a \DateTime
+	 * object.
+	 *
+	 * If you use this method for getting the current date and time
+	 * everywhere in your code, it will be possible to simulate a certain
+	 * time in unit tests or in the actual application.
+	 *
+	 * @return \DateTime The current date and time - or a simulated version of it
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getCurrentDateTimeReturnsACurrentDateAndTime() {
-		$almostCurrentTime = new \DateTime();
-		date_sub($almostCurrentTime, new \DateInterval('P0DT1S'));
-
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$currentTime = $timeService->getCurrentDateTime();
-		$this->assertTrue($almostCurrentTime < $currentTime);
+	public function getCurrentDateTime() {
+		return ($this->simulatedDateTime === NULL) ? new \DateTime() : $this->simulatedDateTime;
 	}
 
 	/**
-	 * @test
+	 * Sets the simulated date and time. This time will then always be returned
+	 * by getCurrentDateTime(). To undo this behaviour, just call this method
+	 * again passing NULL.
+	 *
+	 * @param \DateTime $simulatedDateTime A date and time to simulate. Pass NULL to deactivate the simulation.
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSimulatedDateTimeAllowsForMockingTheCurrentTime() {
-		$simulatedCurrentTime = new \DateTime();
-		date_add($simulatedCurrentTime, new \DateInterval('P1D'));
-
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime($simulatedCurrentTime);
-
-		$this->assertEquals($simulatedCurrentTime, $timeService->getCurrentDateTime());
+	public function setSimulatedDateTime(\DateTime $simulatedDateTime) {
+		$this->simulatedDateTime = $simulatedDateTime;
 	}
 }
-
-
 ?>

@@ -36,7 +36,7 @@ namespace F3\TYPO3\Domain\Model\Content;
  * @scope prototype
  * @entity
  */
-class Text extends \F3\TYPO3\Domain\Model\AbstractContent {
+class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 
 	/**
 	 * The text's unique identifier

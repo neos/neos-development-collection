@@ -36,10 +36,10 @@ namespace F3\TYPO3\Domain\Model\Content;
  * @scope prototype
  * @entity
  */
-class Page extends \F3\TYPO3\Domain\Model\AbstractContent {
+class Page extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\Time
+	 * @var \F3\TYPO3\Domain\Service\TimeService
 	 * @transient
 	 */
 	protected $timeService;
@@ -54,6 +54,7 @@ class Page extends \F3\TYPO3\Domain\Model\AbstractContent {
 	/**
 	 * The page title
 	 * @var string
+	 * @validate StringLength(minimum = 1, maximum = 250)
 	 */
 	protected $title = '';
 
@@ -94,7 +95,7 @@ class Page extends \F3\TYPO3\Domain\Model\AbstractContent {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectTimeService(\F3\TYPO3\Domain\Service\Time $timeService) {
+	public function injectTimeService(\F3\TYPO3\Domain\Service\TimeService $timeService) {
 		$this->timeService = $timeService;
 	}
 
@@ -199,8 +200,6 @@ class Page extends \F3\TYPO3\Domain\Model\AbstractContent {
 	 */
 	public function setTitle($title) {
 		if (!is_string($title)) throw new \InvalidArgumentException('The page title must be of type string.', 1175791409);
-		if (\F3\PHP6\Functions::strlen($title) > 250) throw new \InvalidArgumentException('The page title must not exceed 250 characters in length.', 1218199246);
-
 		$this->title = $title;
 	}
 
