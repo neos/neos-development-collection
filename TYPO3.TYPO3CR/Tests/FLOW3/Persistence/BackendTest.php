@@ -157,7 +157,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function __construct($FLOW3_Persistence_isNew) { $this->FLOW3_Persistence_isNew = $FLOW3_Persistence_isNew; }
 			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
-			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 			public function FLOW3_AOP_Proxy_getProperty($name) { return NULL; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
 		}');
@@ -195,7 +195,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
-			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 			public function FLOW3_AOP_Proxy_getProperty($name) { return \'' . $identifier . '\'; }
 		}');
@@ -234,7 +234,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			protected $dirty = TRUE;
 			public function FLOW3_Persistence_isNew() { return FALSE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return $this->dirty; }
-			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) { $this->dirty = FALSE; }
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->dirty = FALSE; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 		}');
@@ -360,7 +360,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public $date;
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
-			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\';}
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 		}');
@@ -626,7 +626,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_memorizeCleanState() {} }');
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {} }');
 		$author = new $qualifiedAuthorClassName;
 		$postClassName = uniqid('Post');
 		$qualifiedPostClassName = 'F3\\' . $postClassName;
@@ -639,7 +639,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_memorizeCleanState() {} }');
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {} }');
 		$post = new $qualifiedPostClassName();
 		$post->author = $author;
 
@@ -695,7 +695,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_memorizeCleanState() {} }');
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {} }');
 		$blogClassName = uniqid('Blog');
 		$qualifiedBlogClassName = 'F3\\' . $blogClassName;
 		eval('namespace F3; class ' . $blogClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
@@ -707,7 +707,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_memorizeCleanState() {} }');
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {} }');
 		$post = new $qualifiedPostClassName;
 		$blog = new $qualifiedBlogClassName();
 		$blog->post = $post;
@@ -812,7 +812,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
-			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 		}');
 		$someClassName = 'SomeClass' . uniqid();
 		$fullSomeClassName = 'F3\\TYPO3CR\\Tests\\' . $someClassName;
@@ -826,7 +826,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
-			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 		}');
 		$otherAggregateRootObject = new $fullOtherClassName();
 		$someAggregateRootObject = new $fullSomeClassName();
@@ -876,7 +876,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			protected $dirty = TRUE;
 			public function FLOW3_Persistence_isNew() { return FALSE; }
 			public function FLOW3_Persistence_isDirty($propertyName) { return $this->dirty; }
-			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) { $this->dirty = FALSE; }
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->dirty = FALSE; }
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 		}');

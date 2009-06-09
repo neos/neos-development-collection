@@ -129,7 +129,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return property_exists($this, $propertyName); }
 			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_memorizeCleanState() {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 		}');
 
 			// set up (mock) objects
