@@ -316,14 +316,14 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 			// set up assertions on created nodes
 		$mockNodeBA = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockNodeBA->expects($this->exactly(2))->method('setProperty');
+		$mockNodeBA->expects($this->exactly(1))->method('setProperty');
 		$arrayPropertyProxyB = $this->getMock('F3\PHPCR\NodeInterface');
 		$arrayPropertyProxyB->expects($this->once())->method('addNode')->will($this->returnValue($mockNodeBA));
 		$mockNodeB = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockNodeB->expects($this->exactly(1))->method('addNode')->will($this->returnValue($arrayPropertyProxyB));
 		$mockNodeB->expects($this->exactly(1))->method('setProperty')->with('flow3:name', 'B', \F3\PHPCR\PropertyType::STRING);
 		$mockNodeC = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockNodeC->expects($this->exactly(2))->method('setProperty');
+		$mockNodeC->expects($this->exactly(1))->method('setProperty');
 		$arrayPropertyProxyA = $this->getMock('F3\PHPCR\NodeInterface');
 		$arrayPropertyProxyA->expects($this->exactly(2))->method('addNode')->will($this->onConsecutiveCalls($mockNodeB, $mockNodeC));
 		$mockNodeA = $this->getMock('F3\PHPCR\NodeInterface');
@@ -386,7 +386,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->_set('classSchemata', array($fullClassName => $classSchema));
 		$backend->_call('persistObject', $newObject);
 	}
-
 
 	/**
 	 * @test
@@ -470,10 +469,10 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up needed infrastructure
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->exactly(4))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeValue1, $mockNodeB, $mockNodeValue2));
-		$entityClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixture\AnEntity');
+		$entityClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
 		$entityClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$entityClassSchema->addProperty('name', 'string');
-		$entityClassSchema->addProperty('value', 'F3\TYPO3CR\Tests\Fixture\AValue');
+		$entityClassSchema->addProperty('value', 'F3\TYPO3CR\Tests\Fixtures\AValue');
 		$valueClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixture\AValue');
 		$valueClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT);
 		$valueClassSchema->addProperty('name', 'string');
@@ -862,6 +861,112 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		));
 		$backend->_set('baseNode', $mockBaseNode);
 		$backend->_call('persistObjects');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function persistObjectCallsCheckPropertyType() {
+		$className = 'SomeClass' . uniqid();
+		$fullClassName = 'F3\\TYPO3CR\\Tests\\' . $className;
+		$identifier = \F3\FLOW3\Utility\Algorithms::generateUUID();
+		eval('namespace F3\\TYPO3CR\\Tests; class ' . $className . ' {
+			public $simpleString = \'simpleValue\';
+			protected $dirty = TRUE;
+			public function FLOW3_Persistence_isNew() { return FALSE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return $this->dirty; }
+			public function FLOW3_Persistence_memorizeCleanState($joinPoint = NULL) { $this->dirty = FALSE; }
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullClassName . '\'; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+		}');
+		$object = new $fullClassName();
+
+		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($identifier)->will($this->returnValue($mockInstanceNode));
+
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
+		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema->addProperty('simpleString', 'string');
+		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
+		$identityMap->registerObject($object, $identifier);
+
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('checkPropertyType'), array($mockSession));
+		$backend->injectIdentityMap($identityMap);
+		$backend->_set('classSchemata', array($fullClassName => $classSchema));
+		$backend->_set('baseNode', $mockBaseNode);
+
+			// ... and here we go
+		$backend->expects($this->once())->method('checkPropertyType')->with('string', 'simpleValue');
+		$backend->_call('persistObject', $object);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function checkPropertyTypeReturnsForNullValue() {
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
+		$backend->_call('checkPropertyType', 'dummy', NULL);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function typesAndInvalidValuesForCheckPropertyType() {
+		return array(
+			array('string', 1),
+			array('string', array()),
+			array('string', new \stdClass()),
+			array('string', FALSE),
+			array('array', 'foo'),
+			array('array', 1),
+			array('array', TRUE),
+			array('DateTime', 1),
+			array('DateTime', ''),
+			array('DateTime', FALSE),
+			array('DateTime', new \stdClass()),
+		);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\TYPO3CR\FLOW3\Persistence\Exception\UnexpectedTypeException
+	 * @dataProvider typesAndInvalidValuesForCheckPropertyType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function checkPropertyTypeThrowsExceptionOnMismatch($type, $value) {
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
+		$backend->_call('checkPropertyType', $type, $value);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function typesAndValidValuesForCheckPropertyType() {
+		return array(
+			array('string', ''),
+			array('string', 'foo'),
+			array('boolean', FALSE),
+			array('array', array()),
+			array('DateTime', new \DateTime),
+			array('stdClass', new \stdClass()),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider typesAndValidValuesForCheckPropertyType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function checkPropertyTypeReturnsOnMatch($type, $value) {
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
+		$backend->_call('checkPropertyType', $type, $value);
 	}
 }
 
