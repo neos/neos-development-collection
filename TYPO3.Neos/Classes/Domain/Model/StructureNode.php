@@ -92,6 +92,8 @@ class StructureNode {
 	 * @param \F3\TYPO3\Domain\Model\StructureNode $childNode The child node
 	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
 	 * @return void
+	 * @throws \F3\TYPO3\Domain\Exception\WrongNodeOrderMethod if the child node norder is already set and is not "NAMED"
+	 * @throws \F3\TYPO3\Domain\Exception\NodeAlreadyExists if a child node with the specified name and locale already exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setNamedChildNode($name, \F3\TYPO3\Domain\Model\StructureNode $childNode, \F3\FLOW3\Locale\Locale $locale = NULL) {
@@ -100,11 +102,13 @@ class StructureNode {
 		} elseif ($this->childNodesOrder !== self::CHILDNODESORDER_NAMED) {
 			throw new \F3\TYPO3\Domain\Exception\WrongNodeOrderMethod('This structure node already has child nodes which require a different order method (' . $this->childNodesOrder . ')', 1244641632);
 		}
-		if ($locale !== NULL) {
-			$this->childNodes[$locale->getLanguage()][$locale->getRegion()][$name] = $childNode;
-		} else {
-			$this->childNodes['mul']['ZZ'][$name] = $childNode;
+		$language = ($locale !== NULL) ? $locale->getLanguage() : 'mul';
+		$region = ($locale !== NULL) ? $locale->getRegion() : 'ZZ';
+
+		if (isset($this->childNodes[$language][$region][$name])) {
+			throw new \F3\TYPO3\Domain\Exception\NodeAlreadyExists('A child node "' . $name . '" already exists for locale ' . $language . '-' . $region . '. You must remove existing nodes before setting a new one.', 1244807272);
 		}
+		$this->childNodes[$language][$region][$name] = $childNode;
 	}
 
 	/**

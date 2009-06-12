@@ -36,7 +36,7 @@ namespace F3\TYPO3\Domain\Model\Content;
  * @scope prototype
  * @entity
  */
-class Page extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
+class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent implements \F3\TYPO3\Domain\Model\Content\HideableContentInterface {
 
 	/**
 	 * @inject
@@ -90,16 +90,6 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	}
 
 	/**
-	 * Returns this page's identifier
-	 *
-	 * @return string The UUID of this page
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getId() {
-		return $this->id;
-	}
-
-	/**
 	 * Hides this page
 	 *
 	 * @return void
@@ -107,6 +97,16 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	 */
 	public function hide() {
 		$this->hidden = TRUE;
+	}
+
+	/**
+	 * Unhides this page
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function unhide() {
+		$this->hidden = FALSE;
 	}
 
 	/**
@@ -211,16 +211,6 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	 */
 	public function getLabel() {
 		return $this->title;
-	}
-
-	/**
-	 * Cloning of a page is not allowed
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __clone() {
-		throw new \LogicException('Cloning of a Page is not allowed.', 1175793217);
 	}
 }
 

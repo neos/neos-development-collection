@@ -188,6 +188,20 @@ class StructureNodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3\TYPO3\Domain\Exception\NodeAlreadyExists
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setNamedChildNodeThrowsAnExceptionIfTheANodeWithThatNameAlreadyExists() {
+		$rootNode = new \F3\TYPO3\Domain\Model\StructureNode();
+		$node1 = new \F3\TYPO3\Domain\Model\StructureNode();
+		$node2 = new \F3\TYPO3\Domain\Model\StructureNode();
+
+		$rootNode->setNamedChildNode('node', $node1);
+		$rootNode->setNamedChildNode('node', $node2);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodesOnlyReturnsNodesMatchingTheSpecifiedLocale() {
