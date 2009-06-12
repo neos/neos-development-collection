@@ -40,17 +40,23 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 
 	/**
 	 * @var \F3\FLOW3\Locale\Locale
+	 * @validate NotEmpty
 	 */
 	protected $locale;
 
 	/**
-	 * Specifies the locale of the content object
+	 * @var \F3\TYPO3\Domain\Model\StructureNode
+	 * @validate NotEmpty
+	 */
+	protected $structureNode;
+
+	/**
+	 * Constructs the content object
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setLocale(\F3\FLOW3\Locale\Locale $locale) {
+	public function __construct(\F3\FLOW3\Locale\Locale $locale) {
 		$this->locale = $locale;
 	}
 
@@ -64,7 +70,6 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 		return $this->locale;
 	}
 
-
 	/**
 	 * Returns a short string which can be used to label the content object
 	 *
@@ -75,5 +80,31 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 		return '[' . get_class($this) . ']';
 	}
 
+	/**
+	 * Sets the structure node for this content object
+	 *
+	 * @param \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	final public function setStructureNode(\F3\TYPO3\Domain\Model\StructureNode $structureNode) {
+		if ($this->structureNode !== NULL) {
+			$this->structureNode->removeContent($this);
+		}
+		$structureNode->setContent($this);
+		$this->structureNode = $structureNode;
+	}
+
+	/**
+	 * Returns the structure node for this content object
+	 *
+	 * @return \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	final public function getStructureNode() {
+		return $this->structureNode;
+	}
 }
 ?>

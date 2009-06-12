@@ -40,85 +40,199 @@ namespace F3\TYPO3\Domain\Model;
  */
 class StructureNode {
 
+	const CHILDNODESORDER_UNDEFINED = 0;
+	const CHILDNODESORDER_ORDERED = 1;
+	const CHILDNODESORDER_NAMED = 2;
+
 	/**
-	 * Child nodes of this structure node
-	 *
+	 * @var integer
+	 */
+	protected $childNodesOrder = self::CHILDNODESORDER_UNDEFINED;
+
+	/**
 	 * @var array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected $childNodes = array();
 
 	/**
-	 * Content attached to this structure node, indexed by language and region
-	 *
+	 * @var string
+	 */
+	protected $contentType;
+
+	/**
 	 * @var array
 	 */
-	protected $contents;
+	protected $contents = array();
 
 	/**
-	 * Adds a child node to this node
+	 * Adds a child node to the list of existing child nodes
 	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNode $node The node to add
+	 * @param \F3\TYPO3\Domain\Model\StructureNode $childNode The child node to add
+	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
 	 * @return void
-	 */
-	public function addChildNode(\F3\TYPO3\Domain\Model\StructureNode $node) {
-		$this->childNodes[] = $node;
-	}
-
-	/**
-	 * Returns the child nodes of this node, if any.
-	 *
-	 * @return array An array of child nodes or an empty array if no children exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getChildNodes() {
-		return $this->childNodes;
+	public function addChildNode(\F3\TYPO3\Domain\Model\StructureNode $childNode, \F3\FLOW3\Locale\Locale $locale = NULL) {
+		if ($this->childNodesOrder === self::CHILDNODESORDER_UNDEFINED) {
+			$this->childNodesOrder = self::CHILDNODESORDER_ORDERED;
+		} elseif ($this->childNodesOrder !== self::CHILDNODESORDER_ORDERED) {
+			throw new \F3\TYPO3\Domain\Exception\WrongNodeOrderMethod('This structure node already has child nodes which require a different order method (' . $this->childNodesOrder . ')', 1244641631);
+		}
+		if ($locale !== NULL) {
+			$this->childNodes[$locale->getLanguage()][$locale->getRegion()][] = $childNode;
+		} else {
+			$this->childNodes['mul']['ZZ'][] = $childNode;
+		}
 	}
 
 	/**
-	 * If this structure node has child nodes
+	 * Sets a child node to which can be refered by the specified name.
 	 *
-	 * @return boolean TRUE if child nodes exist, otherwise FALSE
+	 * @param string $name The child node's name
+	 * @param \F3\TYPO3\Domain\Model\StructureNode $childNode The child node
+	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setNamedChildNode($name, \F3\TYPO3\Domain\Model\StructureNode $childNode, \F3\FLOW3\Locale\Locale $locale = NULL) {
+		if ($this->childNodesOrder === self::CHILDNODESORDER_UNDEFINED) {
+			$this->childNodesOrder = self::CHILDNODESORDER_NAMED;
+		} elseif ($this->childNodesOrder !== self::CHILDNODESORDER_NAMED) {
+			throw new \F3\TYPO3\Domain\Exception\WrongNodeOrderMethod('This structure node already has child nodes which require a different order method (' . $this->childNodesOrder . ')', 1244641632);
+		}
+		if ($locale !== NULL) {
+			$this->childNodes[$locale->getLanguage()][$locale->getRegion()][$name] = $childNode;
+		} else {
+			$this->childNodes['mul']['ZZ'][$name] = $childNode;
+		}
+	}
+
+	/**
+	 * Returns the child notes of this structure node.
+	 * Note that the child nodes are indexed by language and region!
+	 *
+	 * @param \F3\FLOW3\Locale\Locale $locale If specified (recommended), only child nodes matching the given locale are returned
+	 * @param boolean $useFallBackStrategy If TRUE (default), this function uses a fallback strategy to find alternative nodes if the locale didn't match strictly
+	 * @return array Child nodes in the form of array('{language}' => array ('{region}' => {child nodes}))
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getChildNodes(\F3\FLOW3\Locale\Locale $locale = NULL, $useFallbackStrategy = TRUE) {
+		if ($locale === NULL) {
+			return $this->childNodes;
+		} else {
+			$language = $locale->getLanguage();
+			$region = $locale->getRegion();
+
+			if (isset($this->childNodes[$language]) && isset($this->childNodes[$language][$region])) {
+				return array($language => array($region => $this->childNodes[$language][$region]));
+			}
+		}
+		return array();
+	}
+
+	/**
+	 * Tells if this structure node has any child nodes
+	 *
+	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasChildNodes() {
-		return (count($this->childNodes) > 0);
+		return $this->childNodes !== array();
 	}
 
 	/**
-	 * Attaches a content object to this structure node
+	 * Returns the order of the attached child nodes.
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content The content object
-	 * @param string $language Language of the content as a BCP47, ISO 639-3 or 639-5 code (see Locale sub package)
-	 * @param string $region Region for the content - an ISO 3166-1-alpha-2 code or a UN M.49 three digit code
+	 * If no child node has been added yet, the order is undefined. Otherwise the
+	 * order is determined by the method how the first child node has been added.
+	 *
+	 * @return integer One of the CHILDNODEORDER_* constants
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getChildNodesOrder() {
+		return $this->childNodesOrder;
+	}
+
+	/**
+	 * Attaches the given content object to this structure node.
+	 *
+	 * A structure node can refer to multiple content objects, but it can only relate to one content object
+	 * per locale. The locale information is retrieved directly from the content object on calling this method.
+	 * Any existing content with the same locale will be silently overwritten on calling this function.
+	 * Note that the criteria for "same locale" is the language and region. Script and variant are not taken
+	 * into account.
+	 *
+	 * Content added to a structure node must always match the type (ie. class name) of previously set content
+	 * objects. The first content object added with this method sets the content type for the structure node.
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content The content to attach to this structure node
 	 * @return void
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidContentType if the content does not matche the type of previously added content.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content, $language = 'mul', $region = 'ZZ') {
-		$this->contents[$language][$region][] = $content;
+	public function setContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
+		if ($this->contentType !== NULL && get_class($content) !== $this->contentType) {
+			throw new \F3\TYPO3\Domain\Exception\InvalidContentType('The given content was of type "' . get_class($content) . '" but the structure node already contains content of type "' . $this->contentType . '". Content types must not be mixed.', 1244713160);
+		}
+		$locale = $content->getLocale();
+		$this->contents[$locale->getLanguage()][$locale->getRegion()] = $content;
+		$this->contentType = get_class($content);
 	}
 
 	/**
-	 * Returns the content objects attached to this structure node (if any)
+	 * Returns the content specified by $locale.
 	 *
-	 * @return array An array of content objects
-	 * @author Robert Lemke <robert@typo3.org>
+	 * This function tries to return a content object which strictly matches the specified locale.
+	 * If no such content exists and $useFallBackStrategy is not disabled, it will try to find
+	 * a content object which is suggested by a fallback strategy. Such a content object would then
+	 * have a locale differing from the specified locale.
+	 *
+	 * @param \F3\FLOW3\Locale\Locale $locale Locale the content should match
+	 * @param boolean $useFallBackStrategy If TRUE (default), this function uses a fallback strategy to find content if the locale didn't match strictly
+	 * @return \F3\TYPO3\Domain\Model\Content\ContentInterface The content object or NULL if none matched the given locale
+	 * @author Robert Lemke <rober@typo3.org>
 	 */
-	public function getContents() {
-		return $this->contents;
+	public function getContent(\F3\FLOW3\Locale\Locale $locale, $useFallbackStrategy = TRUE) {
+		$language = $locale->getLanguage();
+		$region = $locale->getRegion();
+
+		if (isset($this->contents[$language]) && isset($this->contents[$language][$region])) {
+			return $this->contents[$language][$region];
+		}
+		return NULL;
 	}
 
 	/**
-	 * Returns a label which can be used to describe this structure node.
-	 *
-	 * The label is no real property of a structure node but is rendered dynamically
-	 * from the content which is attached to the node.
-	 *
-	 * @return string A label describing the node
+	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content The content to attach to this structure node
+	 * @return void
+	 * @throws \F3\TYPO3\Domain\Exception\NoSuchContent if the specified content is not currently attached to this structure node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getLabel() {
-		return ($this->content !== NULL) ? $this->content->getLabel() : '[No Content]';
+	public function removeContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
+		$locale = $content->getLocale();
+		$language = $locale->getLanguage();
+		$region = $locale->getRegion();
+
+		if (!isset($this->contents[$language]) || !isset($this->contents[$language][$region])) {
+			throw new \F3\TYPO3\Domain\Exception\NoSuchContent('The specified content with locale ' . $language . '-' . $region . ' is not attached to this structure node.', 1244802597);
+		}
+		unset($this->contents[$language][$region]);
+		if ($this->contents[$language] === array()) {
+			unset($this->contents[$language]);
+		}
+		if ($this->contents === array()) {
+			$this->contentType = NULL;
+		}
+	}
+
+	/**
+	 * Returns the type (class name) of the content attached to this structure node.
+	 *
+	 * @return string The content type (class name) or NULL if no content is attached to this node yet
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContentType() {
+		return $this->contentType;
 	}
 }
 

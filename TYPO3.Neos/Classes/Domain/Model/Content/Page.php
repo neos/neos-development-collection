@@ -39,6 +39,7 @@ namespace F3\TYPO3\Domain\Model\Content;
 class Page extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 
 	/**
+	 * @inject
 	 * @var \F3\TYPO3\Domain\Service\TimeService
 	 * @transient
 	 */
@@ -86,17 +87,6 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	public function __construct($title = 'Untitled') {
 		$this->setTitle($title);
 		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
-	}
-
-	/**
-	 * Injects the time service
-	 *
-	 * @param \F3\TYPO3\Domain\Service\Time $timeService A reference to the time service
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectTimeService(\F3\TYPO3\Domain\Service\TimeService $timeService) {
-		$this->timeService = $timeService;
 	}
 
 	/**

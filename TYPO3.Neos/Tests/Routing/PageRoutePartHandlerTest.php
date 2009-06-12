@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Content;
+namespace F3\TYPO3\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,57 +24,27 @@ namespace F3\TYPO3\Domain\Model\Content;
 
 /**
  * @package TYPO3
- * @subpackage Domain
+ * @subpackage Routing
  * @version $Id$
  */
 
 /**
- * Contract for a Content object
+ * Testcase for the Page Routepart Handler
  *
  * @package TYPO3
- * @subpackage Domain
+ * @subpackage Routing
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @author Robert Lemke <robert@typo3.org>
  */
-interface ContentInterface {
+class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Constructs the content object
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Enable this method once #3650 is resolved
 	 */
-//	public function __construct(\F3\FLOW3\Locale\Locale $locale);
-
-	/**
-	 * Returns the locale of the content object
-	 *
-	 * @return \F3\FLOW3\Locale\Locale The locale of the content
-	 */
-	public function getLocale();
-
-	/**
-	 * Returns a short string which can be used to label the content object
-	 *
-	 * @return string A label for the content object
-	 */
-	public function getLabel();
-
-	/**
-	 * Sets the structure node for this content object
-	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
-	 * @return void
-	 */
-	public function setStructureNode(\F3\TYPO3\Domain\Model\StructureNode $structureNode);
-
-	/**
-	 * Returns the structure node for this content object
-	 *
-	 * @return \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
-	 */
-	public function getStructureNode();
+	public function xy() {
+		$this->markTestIncomplete();
+	}
 }
+
 ?>

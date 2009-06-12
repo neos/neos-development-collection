@@ -25,6 +25,17 @@
     @controller: 'Standard'
     @action:     'index'
 
+#                                                                        #
+# Other routes (for experimentation)                                     #
+#                                                                        #
+
+Setup:
+  uriPattern: 'typo3/setup'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Backend'
+    @action:     'setup'
+
 ##
 # REST Services
 
@@ -49,25 +60,16 @@
 
 -
   name:          'Frontend with page and optional format'
-  uriPattern:    '{path}.{@format}'
+  uriPattern:    '{page}.{@format}'
   defaults:
     @package:    'TYPO3'
     @subpackage: 'Frontend'
     @controller: 'Page'
+    @action:     'show'
     @format:     'html'
-  routePartHandlers:
-    path: F3\TYPO3\Routing\PageRoutePartHandler
-
--
-  name:          'Frontend with optional path'
-  uriPattern:    '({path})'
-  defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Frontend'
-    @controller: 'Page'
-    @format:     'html'
-  routePartHandlers:
-    path: F3\TYPO3\Routing\PageRoutePartHandler
+  routeParts:
+    page:
+      handler:    F3\TYPO3\Routing\PageRoutePartHandler
 
 -
   name: 'Frontend root URI'
@@ -76,6 +78,3 @@
     @package:    'TYPO3'
     @subpackage: 'Frontend'
     @controller: 'Page'
-    @format:     'html'
-  routePartHandlers:
-    path: F3\TYPO3\Routing\PageRoutePartHandler

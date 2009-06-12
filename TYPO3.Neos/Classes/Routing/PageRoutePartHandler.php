@@ -33,6 +33,12 @@ namespace F3\TYPO3\Routing;
 class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	/**
+	 * @inject
+	 * @var \F3\TYPO3\Domain\Service\PageService
+	 */
+	protected $pageService;
+
+	/**
 	 * While matching, resolves the requested page
 	 *
 	 * @param string $value the complete path

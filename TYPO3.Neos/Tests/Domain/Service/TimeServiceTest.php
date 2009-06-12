@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Content;
+namespace F3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,78 +24,45 @@ namespace F3\TYPO3\Domain\Model\Content;
 
 /**
  * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Testcase for the domain model of a Page
+ * Testcase for the Time service
  *
  * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageTest extends \F3\Testing\BaseTestCase {
-
-	/**
-	 * @test
-	 * @author robert
-	 */
-	public function aPageCanBeHidden() {
-		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
-		$page->hide();
-		$this->assertTrue($page->isHidden());
-	}
+class TimeServiceTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function byDefaultAPageIsVisible() {
-		$pageClassName = $this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\Page');
-		$page = new $pageClassName('Untitled');
-		$page->_set('timeService', new \F3\TYPO3\Domain\Service\TimeService());
-		$this->assertTrue($page->isVisible());
-	}
+	public function getCurrentDateTimeReturnsACurrentDateAndTime() {
+		$almostCurrentTime = new \DateTime();
+		date_sub($almostCurrentTime, new \DateInterval('P0DT1S'));
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function aPageIsInvisibleIfAStartTimeIsSetWhichLiesInTheFuture() {
 		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime(new \DateTime('2008-08-08T10:00+01:00'));
-
-		$pageClassName = $this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\Page');
-		$page = new $pageClassName('Untitled');
-		$page->_set('timeService', $timeService);
-
-		$page->setStartTime(new \DateTime('2008-08-08T18:00+01:00'));
-		$this->assertFalse($page->isVisible());
+		$currentTime = $timeService->getCurrentDateTime();
+		$this->assertTrue($almostCurrentTime < $currentTime);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aPageIsInvisibleIfAnEndTimeIsSetWhichLiesInThePast() {
+	public function setSimulatedDateTimeAllowsForMockingTheCurrentTime() {
+		$simulatedCurrentTime = new \DateTime();
+		date_add($simulatedCurrentTime, new \DateInterval('P1D'));
+
 		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime(new \DateTime('2008-08-08T10:00+01:00'));
+		$timeService->setSimulatedDateTime($simulatedCurrentTime);
 
-		$pageClassName = $this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\Page');
-		$page = new $pageClassName('Untitled');
-		$page->_set('timeService', $timeService);
-
-		$page->setEndTime(new \DateTime('2008-08-07T12:00+01:00'));
-		$this->assertFalse($page->isVisible());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function theTitleIsUsedAsTheLabel() {
-		$page = new \F3\TYPO3\Domain\Model\Content\Page('El título');
-		$this->assertSame('El título', $page->getLabel());
+		$this->assertEquals($simulatedCurrentTime, $timeService->getCurrentDateTime());
 	}
 }
 

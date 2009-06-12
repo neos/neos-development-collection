@@ -28,74 +28,60 @@ namespace F3\TYPO3\Domain\Model\Content;
  */
 
 /**
- * Testcase for the domain model of a Page
+ * Testcase for the Abstract Content domain model
  *
  * @package TYPO3
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageTest extends \F3\Testing\BaseTestCase {
+class AbstractContentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author robert
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aPageCanBeHidden() {
-		$page = new \F3\TYPO3\Domain\Model\Content\Page('Untitled');
-		$page->hide();
-		$this->assertTrue($page->isHidden());
+	public function theLocaleOfAContentElementMustBePassedToTheConstructor() {
+		$mockLocale = $this->getMock('F3\FLOW3\Locale\Locale', array(), array(), '', FALSE);
+		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array($mockLocale));
+		$this->assertSame($mockLocale, $content->getLocale());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function byDefaultAPageIsVisible() {
-		$pageClassName = $this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\Page');
-		$page = new $pageClassName('Untitled');
-		$page->_set('timeService', new \F3\TYPO3\Domain\Service\TimeService());
-		$this->assertTrue($page->isVisible());
+	public function getLabelReturnsTheClassNameEnclosedInSquareBrackets() {
+		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array(), '', FALSE);
+		$this->assertSame('[' . get_class($content) . ']', $content->getLabel());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aPageIsInvisibleIfAStartTimeIsSetWhichLiesInTheFuture() {
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime(new \DateTime('2008-08-08T10:00+01:00'));
+	public function setStructureNodeAlsoAddsTheContentObjectToTheStructureNodeByCallingAddContent() {
+		$mockStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
 
-		$pageClassName = $this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\Page');
-		$page = new $pageClassName('Untitled');
-		$page->_set('timeService', $timeService);
+		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array(), '', FALSE);
+		$mockStructureNode->expects($this->once())->method('setContent');
 
-		$page->setStartTime(new \DateTime('2008-08-08T18:00+01:00'));
-		$this->assertFalse($page->isVisible());
+		$content->setStructureNode($mockStructureNode);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aPageIsInvisibleIfAnEndTimeIsSetWhichLiesInThePast() {
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime(new \DateTime('2008-08-08T10:00+01:00'));
+	public function setStructureNodeRemovesTheContentFromAnyPreviousStructureNode() {
+		$mockNewStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
+		$mockOldStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
 
-		$pageClassName = $this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\Page');
-		$page = new $pageClassName('Untitled');
-		$page->_set('timeService', $timeService);
+		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array(), '', FALSE);
+		$mockOldStructureNode->expects($this->once())->method('removeContent');
+		$mockNewStructureNode->expects($this->once())->method('setContent');
 
-		$page->setEndTime(new \DateTime('2008-08-07T12:00+01:00'));
-		$this->assertFalse($page->isVisible());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function theTitleIsUsedAsTheLabel() {
-		$page = new \F3\TYPO3\Domain\Model\Content\Page('El título');
-		$this->assertSame('El título', $page->getLabel());
+		$content->_set('structureNode', $mockOldStructureNode);
+		$content->setStructureNode($mockNewStructureNode);
 	}
 }
 

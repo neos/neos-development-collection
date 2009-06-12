@@ -24,57 +24,19 @@ namespace F3\TYPO3\Domain\Model\Content;
 
 /**
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * Contract for a Content object
+ * Domain model of a generic composite content
  *
  * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @author Robert Lemke <robert@typo3.org>
+ * @scope prototype
+ * @entity
  */
-interface ContentInterface {
+abstract class AbstractCompositeContent extends \F3\TYPO3\Domain\Model\Content\AbstractContent implements \F3\TYPO3\Domain\Model\Content\CompositeContentInterface {
 
-	/**
-	 * Constructs the content object
-	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Enable this method once #3650 is resolved
-	 */
-//	public function __construct(\F3\FLOW3\Locale\Locale $locale);
-
-	/**
-	 * Returns the locale of the content object
-	 *
-	 * @return \F3\FLOW3\Locale\Locale The locale of the content
-	 */
-	public function getLocale();
-
-	/**
-	 * Returns a short string which can be used to label the content object
-	 *
-	 * @return string A label for the content object
-	 */
-	public function getLabel();
-
-	/**
-	 * Sets the structure node for this content object
-	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
-	 * @return void
-	 */
-	public function setStructureNode(\F3\TYPO3\Domain\Model\StructureNode $structureNode);
-
-	/**
-	 * Returns the structure node for this content object
-	 *
-	 * @return \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
-	 */
-	public function getStructureNode();
 }
 ?>
