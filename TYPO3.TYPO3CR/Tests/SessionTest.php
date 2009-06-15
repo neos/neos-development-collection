@@ -82,11 +82,23 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 					'nodetype' => 'nt:base',
 					'name' => ''
 				),
+				'96bca35d-1ef5-4a47-8b0c-0dbd68507d00' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0dbd68507d00',
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
+					'nodetype' => 'nt:base',
+					'name' => 'jcr:xmltext'
+				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
 					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
 					'nodetype' => 0,
 					'name' => 'Content'
+				),
+				'96bca35d-1ef5-4a47-8b0c-0dbd65507d00' => array(
+					'identifier' => '96bca35d-1ef5-4a47-8b0c-0dbd65507d00',
+					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
+					'nodetype' => 'nt:base',
+					'name' => 'jcr:xmltext'
 				),
 				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
 					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
@@ -190,6 +202,26 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 						'namespace' => '',
 						'multivalue' => FALSE,
 						'type' => \F3\PHPCR\PropertyType::BINARY
+					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0dbd68507d00' => array(
+					array(
+						'name' => 'jcr:xmlcharacters',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0dbd68507d00',
+						'value' => 'This is some XML text containing <weird> "stuff"',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => \F3\PHPCR\PropertyType::STRING
+					)
+				),
+				'96bca35d-1ef5-4a47-8b0c-0dbd65507d00' => array(
+					array(
+						'name' => 'jcr:xmlcharacters',
+						'parent' => '96bca35d-1ef5-4a47-8b0c-0dbd65507d00',
+						'value' => 'Another XML text node property',
+						'namespace' => '',
+						'multivalue' => FALSE,
+						'type' => \F3\PHPCR\PropertyType::STRING
 					)
 				)
 			)
@@ -603,8 +635,8 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 		$this->session->exportSystemView('/', $xmlWriter, TRUE, FALSE);
 		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
 
-		$this->assertEquals(1, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node));
-		$this->assertEquals(3, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node->node));
+		$this->assertEquals(2, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node));
+		$this->assertEquals(4, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node[1]->node));
 	}
 
 	/**
@@ -662,9 +694,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 
 		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
 		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
-		$this->assertEquals('title', (string)$children->node[0]->node[0]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
-		$this->assertEquals('String', (string)$children->node[0]->node[0]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
-		$this->assertEquals('News about FLOW3 & the TYPO3CR', (string)$children->node[0]->node[0]->property[3]->value[0]);
+		$this->assertEquals('title', (string)$children->node[1]->node[1]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+		$this->assertEquals('String', (string)$children->node[1]->node[1]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
+		$this->assertEquals('News about FLOW3 & the TYPO3CR', (string)$children->node[1]->node[1]->property[3]->value[0]);
 	}
 
 	/**
@@ -805,6 +837,21 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 
 		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
 		$this->assertEquals('YTM0NcO2xI3FmcOfYQ==', (string)$xml->attributes()->binaryProperty);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportDocumentViewExportsXMLTextNodesAsXMLText() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$this->session->exportDocumentView('/', $xmlWriter, TRUE, FALSE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('This is some XML text containing <weird> "stuff"', (string)$xml);
+		$this->assertEquals('Another XML text node property', (string)$xml->Content);
 	}
 
 }

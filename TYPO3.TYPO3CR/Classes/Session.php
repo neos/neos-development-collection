@@ -1159,22 +1159,24 @@ class Session implements \F3\PHPCR\SessionInterface {
 			} else {
 				$xmlWriter->writeAttribute('sv:name', $node->getName());
 			}
-		} else {
-			if ($node->getDepth() === 0) {
-				$xmlWriter->startElement('jcr:root');
-			} else {
-				$xmlWriter->startElement($node->getName());
+			if ($createFullDocument === TRUE) {
+				$this->writeNamespaceAttributes($xmlWriter);
 			}
-		}
-
-		if ($createFullDocument === TRUE) {
-			$this->writeNamespaceAttributes($xmlWriter);
-		}
-
-		if ($exportType === self::EXPORT_SYSTEM) {
 			$this->exportPropertiesForSystemView($node, $xmlWriter, $includeBinary);
 		} else {
-			$this->exportPropertiesForDocumentView($node, $xmlWriter, $includeBinary);
+			if ($node->getName() === 'jcr:xmltext' && $node->hasNodes() === FALSE && count($node->getProperties()) === 1 && $node->hasProperty('jcr:xmlcharacters')) {
+				$xmlWriter->text($node->getProperty('jcr:xmlcharacters')->getString());
+			} else {
+				if ($node->getDepth() === 0) {
+					$xmlWriter->startElement('jcr:root');
+				} else {
+					$xmlWriter->startElement($node->getName());
+				}
+				if ($createFullDocument === TRUE) {
+					$this->writeNamespaceAttributes($xmlWriter);
+				}
+				$this->exportPropertiesForDocumentView($node, $xmlWriter, $includeBinary);
+			}
 		}
 
 		if ($recurse === TRUE) {
@@ -1183,7 +1185,9 @@ class Session implements \F3\PHPCR\SessionInterface {
 			}
 		}
 
-		$xmlWriter->endElement();
+		if ($exportType === self::EXPORT_SYSTEM || $node->getName() !== 'jcr:xmltext') {
+			$xmlWriter->endElement();
+		}
 
 		if ($createFullDocument === TRUE) {
 			$xmlWriter->endDocument();
@@ -1214,7 +1218,6 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add mixinTypes as soon as getMixinNodeTypes() is implemented
-	 * @todo remove try/catch on getValues(), replace with nodetype inspection
 	 */
 	protected function exportPropertiesForSystemView(\F3\PHPCR\NodeInterface $node, \XMLWriter $xmlWriter, $includeBinary) {
 		$xmlWriter->startElement('sv:property');
@@ -1245,7 +1248,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 			$xmlWriter->startElement('sv:property');
 			$xmlWriter->writeAttribute('sv:name', $property->getName());
 			$xmlWriter->writeAttribute('sv:type', \F3\PHPCR\PropertyType::nameFromValue($property->getType()));
-			try {
+			if ($property->isMultiple()) {
 				$properties = $property->getValues();
 				$xmlWriter->writeAttribute('sv:multiple', 'true');
 				foreach ($properties as $value) {
@@ -1259,20 +1262,16 @@ class Session implements \F3\PHPCR\SessionInterface {
 					}
 					$xmlWriter->endElement();
 				}
-			} catch (\F3\PHPCR\ValueFormatException $exception) {
-				if ($exception->getCode() !== 1189512545 /* 1189512545 means not a multi-valued property */ ) {
-					throw new \F3\PHPCR\RepositoryException($exception->getMessage(), 1233313166);
-				} else {
-					$xmlWriter->startElement('sv:value');
-					if ($property->getType() === \F3\PHPCR\PropertyType::BINARY) {
-						if ($includeBinary === TRUE) {
-							$xmlWriter->text(base64_encode($property->getValue()->getString()));
-						}
-					} else {
-						$xmlWriter->text($property->getValue()->getString());
+			} else {
+				$xmlWriter->startElement('sv:value');
+				if ($property->getType() === \F3\PHPCR\PropertyType::BINARY) {
+					if ($includeBinary === TRUE) {
+						$xmlWriter->text(base64_encode($property->getValue()->getString()));
 					}
-					$xmlWriter->endElement();
+				} else {
+					$xmlWriter->text($property->getValue()->getString());
 				}
+				$xmlWriter->endElement();
 			}
 			$xmlWriter->endElement();
 		}
@@ -1287,28 +1286,24 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add mixinTypes as soon as getMixinNodeTypes() is implemented
-	 * @todo remove try/catch on getValues(), replace with nodetype inspection
-	 * @todo export of multivalued properties
+	 * @todo export of multivalued properties, see http://forge.typo3.org/issues/show/3671
 	 */
 	protected function exportPropertiesForDocumentView(\F3\PHPCR\NodeInterface $node, \XMLWriter $xmlWriter, $includeBinary) {
 		foreach ($node->getProperties() as $property) {
-			$xmlWriter->startAttribute($property->getName());
-			try {
-				$properties = $property->getValues();
-			} catch (\F3\PHPCR\ValueFormatException $exception) {
-				if ($exception->getCode() !== 1189512545 /* 1189512545 means not a multi-valued property */ ) {
-					throw new \F3\PHPCR\RepositoryException($exception->getMessage(), 1233313166);
-				} else {
-					if ($property->getType() === \F3\PHPCR\PropertyType::BINARY) {
-						if ($includeBinary === TRUE) {
-							$xmlWriter->text(base64_encode($property->getValue()->getString()));
-						}
-					} else {
-						$xmlWriter->text($property->getValue()->getString());
+			if ($property->isMultiple()) {
+				// handle multi-valued properties
+			} else {
+				$xmlWriter->startAttribute($property->getName());
+				$value = $property->getValue();
+				if ($property->getType() === \F3\PHPCR\PropertyType::BINARY) {
+					if ($includeBinary === TRUE) {
+						$xmlWriter->text(base64_encode($value->getString()));
 					}
+				} else {
+					$xmlWriter->text($value->getString());
 				}
+				$xmlWriter->endAttribute();
 			}
-			$xmlWriter->endAttribute();
 		}
 	}
 
