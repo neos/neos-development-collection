@@ -46,13 +46,6 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	protected $timeService;
 
 	/**
-	 * The page's unique identifier
-	 * @var string
-	 * @uuid
-	 */
-	protected $id;
-
-	/**
 	 * The page title
 	 * @var string
 	 * @validate StringLength(minimum = 1, maximum = 250)
@@ -86,7 +79,6 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 */
 	public function __construct($title = 'Untitled') {
 		$this->setTitle($title);
-		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
 	}
 
 	/**

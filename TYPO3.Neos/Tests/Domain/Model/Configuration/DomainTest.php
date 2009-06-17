@@ -53,11 +53,11 @@ class DomainTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setSiteEntryPointSetsTheEntryPointForTheDomain() {
-		$mockStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\NodeInterface', array(), array(), '', FALSE);
 
 		$domain = new \F3\TYPO3\Domain\Model\Configuration\Domain;
-		$domain->setSiteEntryPoint($mockStructureNode);
-		$this->assertSame($mockStructureNode, $domain->getSiteEntryPoint());
+		$domain->setSiteEntryPoint($mockNode);
+		$this->assertSame($mockNode, $domain->getSiteEntryPoint());
 	}
 
 }

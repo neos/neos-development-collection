@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Repository;
+namespace F3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -29,15 +29,40 @@ namespace F3\TYPO3\Domain\Repository;
  */
 
 /**
- * Domain model of a workspace repository
+ * The Content Service
  *
  * @package TYPO3
  * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope prototype
  */
-class WorkspaceRepository extends \F3\FLOW3\Persistence\Repository {
+class ContentService {
+
+	/**
+	 * @var \F3\TYPO3\Domain\Service\ContentContext
+	 */
+	protected $contentContext;
+
+	/**
+	 * Constructs this service
+	 *
+	 * @var \F3\TYPO3\Domain\Service\ContentContext $contentContext The context for this service
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$this->contentContext = $contentContext;
+	}
+
+	/**
+	 * Returns the Content Context this service runs in
+	 *
+	 * @return \F3\TYPO3\Domain\Service\ContentContext
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContentContext() {
+		return $this->contentContext;
+	}
 
 }
-
 ?>

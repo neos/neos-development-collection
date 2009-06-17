@@ -90,7 +90,7 @@ class StructureNodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 */
 	public function createAction() {
 		$this->throwStatus(501);
-#		$node = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
+#		$node = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
 #		$node->structureNodeRepository->add($node);
 
 #		$this->response->setStatus(201);
@@ -131,7 +131,7 @@ class StructureNodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 * @return array The converted structure nodes
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function convertStructureNodeToArray(\F3\TYPO3\Domain\Model\StructureNode $structureNode) {
+	protected function convertStructureNodeToArray(\F3\TYPO3\Domain\Model\Structure\StructureNode $structureNode) {
 		$childNodes = array();
 		foreach ($structureNode->getChildNodes() as $childNode) {
 			$childNodes[] = $this->convertStructureNodeToArray($childNode);

@@ -39,7 +39,7 @@ namespace F3\TYPO3\Service\View\StructureNodes;
 class ShowJSON extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\StructureNode
+	 * @var \F3\TYPO3\Domain\Model\Structure\StructureNode
 	 */
 	public $structureNode;
 

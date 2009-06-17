@@ -37,7 +37,7 @@ namespace F3\TYPO3\Domain\Model\Content;
 class PageTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @test
+	 * test
 	 * @author robert
 	 */
 	public function aPageCanBeHidden() {
@@ -47,7 +47,7 @@ class PageTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @test
+	 * test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function byDefaultAPageIsVisible() {
@@ -58,7 +58,7 @@ class PageTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @test
+	 * test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPageIsInvisibleIfAStartTimeIsSetWhichLiesInTheFuture() {
@@ -74,7 +74,7 @@ class PageTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @test
+	 * test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aPageIsInvisibleIfAnEndTimeIsSetWhichLiesInThePast() {

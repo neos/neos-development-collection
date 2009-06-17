@@ -44,10 +44,10 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	protected $locale;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\StructureNode
+	 * @var \F3\TYPO3\Domain\Model\Structure\ContentNode
 	 * @validate NotEmpty
 	 */
-	protected $structureNode;
+	protected $contentNode;
 
 	/**
 	 * Constructs the content object
@@ -82,28 +82,28 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	/**
 	 * Sets the structure node for this content object
 	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
+	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
-	final public function setStructureNode(\F3\TYPO3\Domain\Model\StructureNode $structureNode) {
-		if ($this->structureNode !== NULL) {
-			$this->structureNode->removeContent($this);
+	final public function setContentNode(\F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode) {
+		if ($this->contentNode !== NULL) {
+			$this->contentNode->removeContent($this);
 		}
-		$structureNode->setContent($this);
-		$this->structureNode = $structureNode;
+		$contentNode->setContent($this);
+		$this->contentNode = $contentNode;
 	}
 
 	/**
 	 * Returns the structure node for this content object
 	 *
-	 * @return \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
+	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
-	final public function getStructureNode() {
-		return $this->structureNode;
+	final public function getContentNode() {
+		return $this->contentNode;
 	}
 
 	/**

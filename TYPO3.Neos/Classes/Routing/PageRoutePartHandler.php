@@ -33,7 +33,6 @@ namespace F3\TYPO3\Routing;
 class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	/**
-	 * @inject
 	 * @var \F3\TYPO3\Domain\Service\PageService
 	 */
 	protected $pageService;
@@ -47,7 +46,7 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 */
 	protected function matchValue($value) {
 		if ($value === NULL || $value === '') return FALSE;
-		$this->value = $this->pageService->findByRootline($value);
+#		$this->value = $this->pageService->findByRootline($value);
 		return $this->value !== NULL;
 	}
 

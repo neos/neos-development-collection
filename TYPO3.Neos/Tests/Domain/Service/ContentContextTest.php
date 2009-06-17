@@ -29,14 +29,26 @@ namespace F3\TYPO3\Domain\Service;
  */
 
 /**
- * Testcase for the Time service
+ * Testcase for the Content Context
  *
  * @package TYPO3
  * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class TimeServiceTest extends \F3\Testing\BaseTestCase {
+class ContentContextTest extends \F3\Testing\BaseTestCase {
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContentServiceReturnsTheContentServiceBoundToTheContext() {
+		$mockContentService = $this->getMock('F3\TYPO3\Domain\Service\ContentService', array(), array(), '', FALSE);
+
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
+		$contentContext->_set('contentService', $mockContentService);
+		$this->assertSame($mockContentService, $contentContext->getContentService());
+	}
 
 	/**
 	 * @test
@@ -46,8 +58,8 @@ class TimeServiceTest extends \F3\Testing\BaseTestCase {
 		$almostCurrentTime = new \DateTime();
 		date_sub($almostCurrentTime, new \DateInterval('P0DT1S'));
 
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$currentTime = $timeService->getCurrentDateTime();
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext();
+		$currentTime = $contentContext->getCurrentDateTime();
 		$this->assertTrue($almostCurrentTime < $currentTime);
 	}
 
@@ -55,14 +67,31 @@ class TimeServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSimulatedDateTimeAllowsForMockingTheCurrentTime() {
+	public function setDateTimeAllowsForMockingTheCurrentTime() {
 		$simulatedCurrentTime = new \DateTime();
 		date_add($simulatedCurrentTime, new \DateInterval('P1D'));
 
-		$timeService = new \F3\TYPO3\Domain\Service\TimeService();
-		$timeService->setSimulatedDateTime($simulatedCurrentTime);
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext();
+		$contentContext->setCurrentDateTime($simulatedCurrentTime);
 
-		$this->assertEquals($simulatedCurrentTime, $timeService->getCurrentDateTime());
+		$this->assertEquals($simulatedCurrentTime, $contentContext->getCurrentDateTime());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLocaleReturnsByDefaultAnInternationalMultilingualLocale() {
+		$locale = new \F3\FLOW3\Locale\Locale('mul-ZZ');
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array('create'), array(), '', FALSE);
+		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Locale\Locale', 'mul-ZZ')->will($this->returnValue($locale));
+
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
+		$contentContext->_set('objectFactory', $mockObjectFactory);
+		$contentContext->initializeObject();
+
+		$this->assertSame($locale, $contentContext->getLocale());
 	}
 }
 

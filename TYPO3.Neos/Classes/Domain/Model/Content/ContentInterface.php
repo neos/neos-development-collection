@@ -65,16 +65,16 @@ interface ContentInterface {
 	/**
 	 * Sets the structure node for this content object
 	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
+	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
 	 * @return void
 	 */
-	public function setStructureNode(\F3\TYPO3\Domain\Model\StructureNode $structureNode);
+	public function setContentNode(\F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode);
 
 	/**
 	 * Returns the structure node for this content object
 	 *
-	 * @return \F3\TYPO3\Domain\Model\StructureNode $structureNode The structure node this content is bound to
+	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
 	 */
-	public function getStructureNode();
+	public function getContentNode();
 }
 ?>

@@ -135,14 +135,14 @@ class StructureTreesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 * specified node. This array can be well used in the view, as it contains all
 	 * relevant data.
 	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNode $node The root node of the structure tree to build
+	 * @param \F3\TYPO3\Domain\Model\Structure\StructureNode $node The root node of the structure tree to build
 	 * @param integer $maximumLevels The number of levels to build
 	 * @param integer $currentLevel Used internally for keeping track of the current recursion level
 	 * @param array $structureTreeArray Used internally for building the tree array
 	 * @return array The structure tree as an array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildStructureTreeArray(\F3\TYPO3\Domain\Model\StructureNode $structureNode, $maximumLevels = 30, $currentLevel = 1, $structureTreeArray = array()) {
+	protected function buildStructureTreeArray(\F3\TYPO3\Domain\Model\Structure\StructureNode $structureNode, $maximumLevels = 30, $currentLevel = 1, $structureTreeArray = array()) {
 
 		$content = $structureNode->getContent();
 		if ($content !== NULL) {

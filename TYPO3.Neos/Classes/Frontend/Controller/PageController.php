@@ -45,6 +45,19 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $siteRepository;
 
 	/**
+	 * @var \F3\TYPO3\Domain\Service\FrontendContentContext
+	 */
+	protected $contentContext;
+
+	/**
+	 *
+	 */
+	public function initializeAction() {
+		$this->contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\FrontendContentContext');
+		var_dump($this->contentContext->getContentService());
+	}
+
+	/**
 	 * Show the root page, because no page was specified
 	 *
 	 * @return string

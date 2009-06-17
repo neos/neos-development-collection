@@ -48,10 +48,10 @@ class Site {
 	protected $name = 'Untitled Site';
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\StructureNode
-	 * @validate NotEmpty
+	 * Roots of the site grouped by language and region (locale)
+	 * @var array
 	 */
-	protected $siteRoot;
+	protected $siteRoots;
 
 	/**
 	 * @var \SplObjectStorage
@@ -91,22 +91,34 @@ class Site {
 	/**
 	 * Sets the root node of this site's structure tree
 	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNode
+	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $siteRoot The content node acting as the root of the site
+	 * @param \F3\FLOW3\Locale\Locale $locale Locale of the site's root node. If not specified, the given node is assumed to be mul-ZZ
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSiteRoot(\F3\TYPO3\Domain\Model\StructureNode $siteRoot) {
-		$this->siteRoot = $siteRoot;
+	public function setSiteRootNode(\F3\TYPO3\Domain\Model\Structure\ContentNode $siteRoot, \F3\FLOW3\Locale\Locale $locale = NULL) {
+		if ($locale !== NULL) {
+			$this->siteRoots[$locale->getLanguage()][$locale->getRegion()] = $siteRoot;
+		} else {
+			$this->siteRoots['mul']['ZZ'] = $siteRoot;
+		}
 	}
 
 	/**
 	 * Returns the root node of this site
 	 *
-	 * @return \F3\TYPO3\Domain\Model\StructureNode
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context
+	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getSiteRoot() {
-		return $this->siteRoot;
+	public function getSiteRootNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$locale = $contentContext->getLocale();
+		$language = ($locale !== NULL) ? $locale->getLanguage() : 'mul';
+		$region = ($locale !== NULL) ? $locale->getRegion() : 'ZZ';
+
+		if (isset($this->siteRoots[$language][$region])) {
+			return $this->siteRoots[$language][$region];
+		}
 	}
 
 	/**

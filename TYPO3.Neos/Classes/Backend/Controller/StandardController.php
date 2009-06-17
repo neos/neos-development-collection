@@ -68,12 +68,12 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$structureNodeRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Repository\StructureNodeRepository');
 
 			// Create structure nodes
-		$structureNode1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
-		$structureNode1a = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
-		$structureNode1aa = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
-		$structureNode1b = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
-		$structureNode1c = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
-		$structureNode1d = $this->objectFactory->create('F3\TYPO3\Domain\Model\StructureNode');
+		$structureNode1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
+		$structureNode1a = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
+		$structureNode1aa = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
+		$structureNode1b = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
+		$structureNode1c = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
+		$structureNode1d = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
 		$structureNodeRepository->add($structureNode1);
 		$structureNodeRepository->add($structureNode1a);
 		$structureNodeRepository->add($structureNode1aa);

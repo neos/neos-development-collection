@@ -59,29 +59,29 @@ class AbstractContentTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setStructureNodeAlsoAddsTheContentObjectToTheStructureNodeByCallingAddContent() {
-		$mockStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
+	public function setContentNodeAlsoAddsTheContentObjectToTheContentNodeByCallingAddContent() {
+		$mockContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
 		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array(), '', FALSE);
-		$mockStructureNode->expects($this->once())->method('setContent');
+		$mockContentNode->expects($this->once())->method('setContent');
 
-		$content->setStructureNode($mockStructureNode);
+		$content->setContentNode($mockContentNode);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setStructureNodeRemovesTheContentFromAnyPreviousStructureNode() {
-		$mockNewStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
-		$mockOldStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
+	public function setContentNodeRemovesTheContentFromAnyPreviousContentNode() {
+		$mockNewContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
+		$mockOldContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
 		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array(), '', FALSE);
-		$mockOldStructureNode->expects($this->once())->method('removeContent');
-		$mockNewStructureNode->expects($this->once())->method('setContent');
+		$mockOldContentNode->expects($this->once())->method('removeContent');
+		$mockNewContentNode->expects($this->once())->method('setContent');
 
-		$content->_set('structureNode', $mockOldStructureNode);
-		$content->setStructureNode($mockNewStructureNode);
+		$content->_set('contentNode', $mockOldContentNode);
+		$content->setContentNode($mockNewContentNode);
 	}
 }
 

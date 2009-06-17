@@ -105,12 +105,37 @@ class SiteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSiteRootDefinesTheStructureNodeWhichActsAsTheRootOfTheSite() {
-		$mockStructureNode = $this->getMock('F3\TYPO3\Domain\Model\StructureNode', array(), array(), '', FALSE);
+	public function setSiteRootNodeDefinesTheContentNodeWhichActsAsTheRootOfTheSite() {
+		$locale1 = new \F3\FLOW3\Locale\Locale('mul-ZZ');
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
+
+		$mockContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
 		$site = new \F3\TYPO3\Domain\Model\Site();
-		$site->setSiteRoot($mockStructureNode);
-		$this->assertSame($mockStructureNode, $site->getSiteRoot());
+		$site->setSiteRootNode($mockContentNode);
+		$this->assertSame($mockContentNode, $site->getSiteRootNode($mockContentContext));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSiteRootNodeReturnsTheContentNodeMatchingTheContextsLocale() {
+		$locale1 = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale2 = new \F3\FLOW3\Locale\Locale('en-EN');
+
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
+
+		$mockContentNode1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), uniqid('ContentNode'), FALSE);
+		$mockContentNode2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), uniqid('ContentNode'), FALSE);
+
+		$site = new \F3\TYPO3\Domain\Model\Site();
+		$site->setSiteRootNode($mockContentNode1, $locale1);
+		$site->setSiteRootNode($mockContentNode2, $locale2);
+
+		$this->assertSame($mockContentNode1, $site->getSiteRootNode($mockContentContext));
 	}
 }
 

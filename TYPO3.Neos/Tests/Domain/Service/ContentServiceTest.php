@@ -29,14 +29,26 @@ namespace F3\TYPO3\Domain\Service;
  */
 
 /**
- *
+ * Testcase for the Content Service
  *
  * @package TYPO3
  * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageService {
+class ContentServiceTest extends \F3\Testing\BaseTestCase {
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function contentServiceIsBoundToASpecificContentContext() {
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+
+		$contentService = new \F3\TYPO3\Domain\Service\ContentService($mockContentContext);
+		$this->assertSame($mockContentContext, $contentService->getContentContext());
+	}
 }
+
+
 ?>

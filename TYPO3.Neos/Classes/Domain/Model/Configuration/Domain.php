@@ -45,7 +45,7 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	protected $hostPattern = '*';
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\StructureNode
+	 * @var \F3\TYPO3\Domain\Model\Structure\NodeInterface
 	 * @validate NotEmpty
 	 */
 	protected $siteEntryPoint;
@@ -75,16 +75,16 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	 * Sets the entry point to the site for when this domain is used
 	 * in the request.
 	 *
-	 * @param \F3\TYPO3\Domain\Model\StructureNode $siteEntryPoint The point in the site structure tree acting as the entry point
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $siteEntryPoint The point in the site structure tree acting as the entry point
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSiteEntryPoint(\F3\TYPO3\Domain\Model\StructureNode $siteEntryPoint) {
+	public function setSiteEntryPoint(\F3\TYPO3\Domain\Model\Structure\NodeInterface $siteEntryPoint) {
 		$this->siteEntryPoint = $siteEntryPoint;
 	}
 
 	/**
-	 * @return \F3\TYPO3\Domain\Model\StructureNode
+	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSiteEntryPoint() {

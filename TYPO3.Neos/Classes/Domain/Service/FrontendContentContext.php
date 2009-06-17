@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Repository;
+namespace F3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,30 +24,20 @@ namespace F3\TYPO3\Domain\Repository;
 
 /**
  * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * The Structure Node Repository contains all Structure Nodes and provides methods to manage them.
+ * The Frontend Content Context
  *
  * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope prototype
  */
-class StructureNodeRepository extends \F3\FLOW3\Persistence\Repository {
+class FrontendContentContext extends \F3\TYPO3\Domain\Service\ContentContext {
 
-	/**
-	 * Returns the structure node matching the given id
-	 *
-	 * @param string $id The UUID of the node in question
-	 * @return mixed The node or NULL
-	 * @todo replace "identifier" with "id" if #1623 is resolved
-	 */
-	public function findById($id) {
-		$query = $this->createQuery();
-		$nodes =  $query->matching($query->equals('id', $id))->execute();
-		return (is_array($nodes)) ? array_shift($nodes) : NULL;
-	}
 }
-
 ?>
