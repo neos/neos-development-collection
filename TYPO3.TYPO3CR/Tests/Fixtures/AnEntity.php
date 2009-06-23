@@ -119,6 +119,14 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	}
 
 	/**
+	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
+	 * @return void
+	 */
+	public function FLOW3_AOP_Proxy_initializeProxy() {
+
+	}
+
+	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point

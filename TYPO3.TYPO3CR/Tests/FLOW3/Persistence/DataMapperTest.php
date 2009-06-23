@@ -84,7 +84,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function mapSingleNodeReconstitutesExpectedObjectForNodeAndRegistersItWithIdentityMap() {
 		$mockEntityClassName = uniqid('Entity');
-		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_Persistence_memorizeCleanState', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'));
+		$mockEntity = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array('FLOW3_Persistence_memorizeCleanState', 'FLOW3_AOP_Proxy_initializeProxy', 'FLOW3_AOP_Proxy_invokeJoinPoint', 'FLOW3_AOP_Proxy_hasProperty', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_AOP_Proxy_getProxyTargetClassName'));
 		$mockEntity->expects($this->once())->method('FLOW3_Persistence_memorizeCleanState');
 		$mockPrimaryNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
 		$mockPrimaryNodeType->expects($this->any())->method('getName')->will($this->returnValue('flow3:' . $mockEntityClassName));
