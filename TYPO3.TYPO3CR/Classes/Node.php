@@ -333,7 +333,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	/**
 	 * Returns the parent of this Item.
 	 *
-	 * @return \F3\HPPCR\NodeInterface The parent of this Item.
+	 * @return \F3\PHPCR\NodeInterface The parent of this Item.
 	 * @throws \F3\PHPCR\ItemNotFoundException if this Item< is the root node of a workspace.
 	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficent access to retrieve the parent of this item.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
