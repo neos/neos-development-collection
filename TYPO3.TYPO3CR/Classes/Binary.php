@@ -44,6 +44,7 @@ class Binary implements \F3\PHPCR\BinaryInterface {
 	 * stream.
 	 *
 	 * @return resource A stream representation of this value.
+	 * @throws \BadMethodCallException if dispose() has already been called on this Binary
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 */
 	public function getStream() {
@@ -59,6 +60,7 @@ class Binary implements \F3\PHPCR\BinaryInterface {
 	 * @return integer the number of bytes read into the buffer
 	 * @throws \RuntimeException if an I/O error occurs.
 	 * @throws \InvalidArgumentException if offset is negative.
+	 * @throws \BadMethodCallException if dispose() has already been called on this Binary
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 */
 	public function read(&$bytes, $position) {
@@ -69,10 +71,23 @@ class Binary implements \F3\PHPCR\BinaryInterface {
 	 * Returns the size of this Binary value in bytes.
 	 *
 	 * @return integer the size of this value in bytes.
+	 * @throws \BadMethodCallException if dispose() has already been called on this Binary
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 */
 	public function getSize() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213021593);
+	}
+
+	/**
+	 * Releases all resources associated with this Binary object and informs the
+	 * repository that these resources may now be reclaimed.
+	 * An application should call this method when it is finished with the
+	 * Binary object.
+	 *
+	 * @return void
+	 */
+	public function dispose() {
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1245700808);
 	}
 
 }
