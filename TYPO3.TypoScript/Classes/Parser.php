@@ -602,7 +602,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		}
 		return $value;
 	}
-	
+
 	/**
 	 * Sets the child node of $objectTree specified by $childNodeKey to an empty array
 	 * if the childNodeKey is not the offset of a Content Array and the child node is
