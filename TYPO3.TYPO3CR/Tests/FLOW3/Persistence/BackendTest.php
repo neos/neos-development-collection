@@ -622,7 +622,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		eval('namespace F3; class ' . $authorClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
-			public function FLOW3_AOP_Proxy_initializeProxy() {}
+			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
@@ -635,7 +635,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public $author;
 			public $FLOW3_Persistence_Entity_UUID;
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
-			public function FLOW3_AOP_Proxy_initializeProxy() {}
+			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
@@ -692,7 +692,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public $blog;
 			public $FLOW3_Persistence_Entity_UUID = NULL;
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
-			public function FLOW3_AOP_Proxy_initializeProxy() {}
+			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
@@ -705,7 +705,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public $post;
 			public $FLOW3_Persistence_Entity_UUID = NULL;
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
-			public function FLOW3_AOP_Proxy_initializeProxy() {}
+			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
@@ -810,7 +810,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$fullOtherClassName = 'F3\\TYPO3CR\\Tests\\' . $otherClassName;
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $otherClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullOtherClassName . '\';}
-			public function FLOW3_AOP_Proxy_initializeProxy() {}
+			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
@@ -825,7 +825,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public $FLOW3_Persistence_Entity_UUID = NULL;
 			public $property;
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullSomeClassName . '\';}
-			public function FLOW3_AOP_Proxy_initializeProxy() {}
+			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
