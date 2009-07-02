@@ -148,7 +148,7 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRowsCreatesTheExpectedRows() {
-		$mockRow = $this->getMock('F3\PHPCR\QueryRowInterface');
+		$mockRow = $this->getMock('F3\PHPCR\Query\RowInterface');
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(array('a' => '12345'), array('a' => '67890')), $mockSession);
 		$queryResult->injectObjectFactory($this->mockObjectFactory);
