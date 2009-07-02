@@ -40,14 +40,11 @@ class PropertyValueTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function propertyValueIsPrototype() {
-		$propertyValue1 = $this->objectFactory->create('F3\TYPO3CR\Query\QOM\PropertyValue', 'someProp');
-		$propertyValue2 = $this->objectFactory->create('F3\TYPO3CR\Query\QOM\PropertyValue', 'someProp');
-		$this->assertNotSame($propertyValue1, $propertyValue2, 'Query_QOM_PropertyValue is not prototype.');
+	public function weNeedTests() {
+		$this->markTestIncomplete('No tests at all for PropertyValue yet!');
 	}
-}
 
+}
 
 ?>

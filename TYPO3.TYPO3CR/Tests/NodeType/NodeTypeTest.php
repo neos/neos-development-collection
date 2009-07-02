@@ -39,13 +39,10 @@ namespace F3\TYPO3CR\NodeType;
 class NodeTypeTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function nodeTypeIsPrototype() {
-		$firstInstance = $this->objectFactory->create('F3\TYPO3CR\NodeType\NodeType', 'name');
-		$secondInstance = $this->objectFactory->create('F3\TYPO3CR\NodeType\NodeType', 'name');
-		$this->assertNotSame($firstInstance, $secondInstance, 'F3\TYPO3CR\NodeType\NodeType is not prototype.');
+	public function weNeedTests() {
+		$this->markTestIncomplete('No tests at all for NodeType yet!');
 	}
 
 }

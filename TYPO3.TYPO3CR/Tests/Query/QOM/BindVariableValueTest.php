@@ -40,12 +40,11 @@ class BindVariableValueTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function bindVariableValueIsPrototype() {
-		$this->assertNotSame($this->objectFactory->create('F3\TYPO3CR\Query\QOM\BindVariableValue', ''), $this->objectFactory->create('F3\TYPO3CR\Query\QOM\BindVariableValue', ''), 'Query_QOM_BindVariableValue is not prototype.');
+	public function weNeedTests() {
+		$this->markTestIncomplete('No tests at all for NodeType yet!');
 	}
-}
 
+}
 
 ?>

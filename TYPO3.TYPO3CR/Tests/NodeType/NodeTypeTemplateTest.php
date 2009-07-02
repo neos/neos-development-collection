@@ -39,18 +39,6 @@ namespace F3\TYPO3CR\NodeType;
 class NodeTypeTemplateTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Make sure the NodeTypeTemplate is protoype
-	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function nodeTypeTemplateIsPrototype() {
-		$firstInstance = $this->objectFactory->create('F3\TYPO3CR\NodeType\NodeTypeTemplate');
-		$secondInstance = $this->objectFactory->create('F3\TYPO3CR\NodeType\NodeTypeTemplate');
-		$this->assertNotSame($firstInstance, $secondInstance, 'F3\TYPO3CR\NodeType\NodeTypeTemplate is not prototype.');
-	}
-
-	/**
 	 * Checks if a new NodeTypeTemplate has the default values required by JSR-283
 	 *
 	 * @test
