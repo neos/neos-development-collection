@@ -371,13 +371,11 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			$this->checkPropertyType($propertyType, $propertyValue);
 
 			if ($propertyType === 'array') {
-				if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
+				if ($object->FLOW3_Persistence_isDirty($propertyName)) {
 					$this->persistArray($propertyValue, $node, 'flow3:' . $propertyName, $queue);
-				} else {
-					$queue = array_merge($queue, array_values($propertyValue));
 				}
 			} elseif ($propertyType === 'SplObjectStorage') {
-				if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
+				if ($object->FLOW3_Persistence_isDirty($propertyName)) {
 					$this->persistSplObjectStorage($propertyValue, $node, 'flow3:' . $propertyName, $queue);
 				} else {
 					foreach ($propertyValue as $containedObject) {
@@ -388,7 +386,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 				$node->setProperty('flow3:' . $propertyName, $propertyValue, \F3\PHPCR\PropertyType::DATE);
 			} elseif (is_object($propertyValue) && $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface) {
 				if ($this->classSchemata[$propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
-					if ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName)) {
+					if ($object->FLOW3_Persistence_isDirty($propertyName)) {
 						$this->createOrUpdateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
 					}
 				} else {

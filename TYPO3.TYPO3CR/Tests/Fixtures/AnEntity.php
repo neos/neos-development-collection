@@ -100,7 +100,7 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	}
 
 	public function FLOW3_Persistence_isDirty($propertyName) {
-		return FALSE;
+		return TRUE;
 	}
 
 	public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {

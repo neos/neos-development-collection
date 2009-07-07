@@ -627,6 +627,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {} }');
 		$author = new $qualifiedAuthorClassName;
 		$postClassName = uniqid('Post');
@@ -641,6 +642,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {} }');
 		$post = new $qualifiedPostClassName();
 		$post->author = $author;
@@ -698,6 +700,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {} }');
 		$blogClassName = uniqid('Blog');
 		$qualifiedBlogClassName = 'F3\\' . $blogClassName;
@@ -711,6 +714,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {} }');
 		$post = new $qualifiedPostClassName;
 		$blog = new $qualifiedBlogClassName();
@@ -803,6 +807,62 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function persistArrayWorksRecursively() {
+
+		$arrayProxyNodeB = $this->getMock('F3\PHPCR\NodeInterface');
+		$arrayProxyNodeB->expects($this->once())->method('setProperty')->with('flow3:bar', 'value', \F3\PHPCR\PropertyType::STRING);
+		$arrayProxyNodeA = $this->getMock('F3\PHPCR\NodeInterface');
+		$arrayProxyNodeA->expects($this->once())->method('hasNode')->with('flow3:foo')->will($this->returnValue(FALSE));
+		$arrayProxyNodeA->expects($this->once())->method('addNode')->with('flow3:foo', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY)->will($this->returnValue($arrayProxyNodeB));
+		$parentNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$parentNode->expects($this->once())->method('hasNode')->with('flow3:arrayProperty')->will($this->returnValue(FALSE));
+		$parentNode->expects($this->once())->method('addNode')->with('flow3:arrayProperty', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY)->will($this->returnValue($arrayProxyNodeA));
+		$array = array('foo' => array('bar' => 'value'));
+		$queue = array();
+
+			// ... and here we go
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($this->getMock('F3\PHPCR\SessionInterface')));
+		$backend->_call('persistArray', $array, $parentNode, 'flow3:arrayProperty', $queue);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function persistArrayStoresRecursiveArraysWithLeafsBeingObjects() {
+		$objectClassName = uniqid('Object');
+		eval('namespace {
+				class ' . $objectClassName . ' {
+					public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+					public function FLOW3_Persistence_isNew() { return TRUE; }
+				}
+			}');
+		$object = new $objectClassName();
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($objectClassName);
+		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+
+		$arrayProxyNodeB = $this->getMock('F3\PHPCR\NodeInterface');
+		$arrayProxyNodeA = $this->getMock('F3\PHPCR\NodeInterface');
+		$arrayProxyNodeA->expects($this->once())->method('hasNode')->with('flow3:foo')->will($this->returnValue(FALSE));
+		$arrayProxyNodeA->expects($this->once())->method('addNode')->with('flow3:foo', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY)->will($this->returnValue($arrayProxyNodeB));
+		$parentNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$parentNode->expects($this->once())->method('hasNode')->with('flow3:arrayProperty')->will($this->returnValue(FALSE));
+		$parentNode->expects($this->once())->method('addNode')->with('flow3:arrayProperty', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_ARRAYPROXY)->will($this->returnValue($arrayProxyNodeA));
+		$array = array('foo' => array('bar' => $object));
+		$queue = array();
+
+			// ... and here we go
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('createNodeForEntity'), array($mockSession));
+		$backend->expects($this->once())->method('createNodeForEntity')->with($object, $arrayProxyNodeB, 'flow3:bar');
+		$backend->_set('classSchemata', array($objectClassName => $classSchema));
+		$backend->_call('persistArray', $array, $parentNode, 'flow3:arrayProperty', $queue);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \F3\TYPO3CR\FLOW3\Persistence\Exception\DanglingAggregateRootObjectException
 	 */
 	public function aggregateRootObjectsFoundWhenPersistingThatAreNotAmongAggregateRootObjectsCollectedFromRepositoriesCauseAnException() {
@@ -816,7 +876,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return NULL; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 		}');
 		$someClassName = 'SomeClass' . uniqid();
@@ -831,7 +891,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
 			public function FLOW3_Persistence_isNew() { return TRUE; }
-			public function FLOW3_Persistence_isDirty($propertyName) { return FALSE; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return TRUE; }
 			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 		}');
 		$otherAggregateRootObject = new $fullOtherClassName();
