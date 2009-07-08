@@ -49,27 +49,15 @@ class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	 * Headline for this text element
 	 * @var string
 	 */
- 	protected $headline = '';
+	protected $headline = '';
 
- 	/**
+	/**
 	 * The text of this text element
 	 * @var string
 	 */
- 	protected $text = '';
+	protected $text = '';
 
-	/**
-	 * Constructs the Page
-	 *
-	 * @param string $title The page title
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct($headline = '') {
-		$this->headline = $headline;
-		$this->id = \F3\FLOW3\Utility\Algorithms::generateUUID();
-	}
-
-	/**
+ 	/**
 	 * Returns this text's identifier
 	 *
 	 * @return string The UUID of this text

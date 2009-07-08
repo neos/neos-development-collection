@@ -39,18 +39,11 @@ namespace F3\TYPO3\Domain\Model\Content;
 class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent implements \F3\TYPO3\Domain\Model\Content\HideableContentInterface {
 
 	/**
-	 * @inject
-	 * @var \F3\TYPO3\Domain\Service\TimeService
-	 * @transient
-	 */
-	protected $timeService;
-
-	/**
 	 * The page title
 	 * @var string
 	 * @validate StringLength(minimum = 1, maximum = 250)
 	 */
-	protected $title = '';
+	protected $title = 'Untitled';
 
 	/**
 	 * If this page is hidden
@@ -69,17 +62,6 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @var \DateTime
 	 */
 	protected $endTime;
-
-	/**
-	 * Constructs the Page
-	 *
-	 * @param string $title The page title
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct($title = 'Untitled') {
-		$this->setTitle($title);
-	}
 
 	/**
 	 * Hides this page
@@ -181,7 +163,6 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setTitle($title) {
-		if (!is_string($title)) throw new \InvalidArgumentException('The page title must be of type string.', 1175791409);
 		$this->title = $title;
 	}
 

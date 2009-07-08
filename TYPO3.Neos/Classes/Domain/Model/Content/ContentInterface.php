@@ -43,10 +43,10 @@ interface ContentInterface {
 	 * Constructs the content object
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Enable this method once #3650 is resolved
+	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
+	 * @todo re-enable this method as soon as resolution in http://www.phpunit.de/ticket/545 is released
 	 */
-//	public function __construct(\F3\FLOW3\Locale\Locale $locale);
+#	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode);
 
 	/**
 	 * Returns the locale of the content object
@@ -61,14 +61,6 @@ interface ContentInterface {
 	 * @return string A label for the content object
 	 */
 	public function getLabel();
-
-	/**
-	 * Sets the structure node for this content object
-	 *
-	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
-	 * @return void
-	 */
-	public function setContentNode(\F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode);
 
 	/**
 	 * Returns the structure node for this content object

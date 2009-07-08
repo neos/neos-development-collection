@@ -29,81 +29,55 @@ namespace F3\TYPO3\Domain\Service;
  */
 
 /**
- * The Frontend Content Context
+ * Testcase for the Content Service
  *
  * @package TYPO3
  * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
  */
-class FrontendContentContext extends \F3\TYPO3\Domain\Service\ContentContext {
+class DomainMatchingStrategyTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
-	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\Structure\SiteRepository
-	 */
-	protected $siteRepository;
-
-	/**
-	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
-	 */
-	protected $domainRepository;
-
-	/**
-	 * @var \F3\TYPO3\Domain\Model\Structure\Site
-	 */
-	protected $currentSite;
-
-	/**
-	 * @var \F3\TYPO3\Domain\Model\Configuration\Domain
-	 */
-	protected $currentDomain;
-
-	/**
-	 * Does further initialization for the frontend context
-	 *
-	 * @return void
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeObject() {
-		parent::initializeObject();
+	public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly() {
+		$mockDomains = array($this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE));
+		$mockDomains[0]->expects($this->any())->method('getHostPattern')->will($this->returnValue('www.typo3.org'));
+		$expectedDomains = array($mockDomains[0]);
 
-		$matchingDomains = $this->domainRepository->findByHost($this->environment->getHTTPHost());
-		if (count ($matchingDomains) > 0) {
-			$this->currentDomain = $matchingDomains[0];
-			$this->currentSite = $matchingDomains[0]->getSite();
-		} else {
-			$sites = $this->siteRepository->findAll();
-			if (count ($sites) > 0) {
-				$this->currentSite = $sites[0];
-			}
-		}
+		$strategy = new \F3\TYPO3\Domain\Service\DomainMatchingStrategy();
+		$actualDomains = $strategy->getSortedMatches('www.typo3.org', $mockDomains);
+		$this->assertSame($expectedDomains, $actualDomains);
 	}
 
 	/**
-	 * Returns the current site from this frontend context
-	 *
-	 * @return \F3\TYPO3\Domain\Model\Structure\Site The current site
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getCurrentSite() {
-		return $this->currentSite;
-	}
+	public function getSortedMatchesFiltersTheGivenDomainsByTheSpecifiedHostAndReturnsThemSortedWithBestMatchesFirst() {
+		$mockDomains = array(
+			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array('dummy'), array(), '', FALSE),
+		);
 
-	/**
-	 * Returns the current site from this frontend context
-	 *
-	 * @return \F3\TYPO3\Domain\Model\Structure\Domain The current site
-	 */
-	public function getCurrentDomain() {
-		return $this->currentDomain;
+		$mockDomains[0]->setHostPattern('*.typo3.org');
+		$mockDomains[1]->setHostPattern('flow3.typo3.org');
+		$mockDomains[2]->setHostPattern('*');
+		$mockDomains[3]->setHostPattern('yacumboolu.typo3.org');
+
+		$expectedDomains = array(
+			$mockDomains[1],
+			$mockDomains[0],
+			$mockDomains[2]
+		);
+
+		$strategy = new \F3\TYPO3\Domain\Service\DomainMatchingStrategy();
+		$actualDomains = $strategy->getSortedMatches('flow3.typo3.org', $mockDomains);
+		$this->assertSame($expectedDomains, $actualDomains);
 	}
 }
 ?>

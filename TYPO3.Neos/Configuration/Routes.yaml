@@ -9,7 +9,7 @@
 
 -
   name:          'Backend login'
-  uriPattern:    'login'
+  uriPattern:    'typo3/login'
   defaults:
     @package:    'TYPO3'
     @subpackage: 'Backend'

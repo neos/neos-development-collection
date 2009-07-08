@@ -94,7 +94,8 @@ class PageTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theTitleIsUsedAsTheLabel() {
-		$page = new \F3\TYPO3\Domain\Model\Content\Page('El título');
+		$page = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array('dummy'), array(), '', FALSE);
+		$page->setTitle('El título');
 		$this->assertSame('El título', $page->getLabel());
 	}
 }

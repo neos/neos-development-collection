@@ -42,20 +42,24 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
 
 	/**
-	 * @var string
+	 * @inject
+	 * @var F3\TYPO3\Domain\Repository\Structure\SiteRepository
 	 */
-	protected $defaultViewObjectName = 'F3\Fluid\View\TemplateView';
+	protected $siteRepository;
+
+	/**
+	 * @inject
+	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
+	 */
+	protected $domainRepository;
 
 	/**
 	 * Default action of the backend controller.
-	 * Forwards the request to the default module.
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
-		$this->view->assign('baseURI', $this->request->getBaseURI());
-		return $this->view->render();
 	}
 
 	/**
@@ -65,67 +69,34 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setupAction() {
-		$structureNodeRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Repository\StructureNodeRepository');
+		$contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\ContentContext');
+		$contentService = $contentContext->getContentService();
 
-			// Create structure nodes
-		$structureNode1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
-		$structureNode1a = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
-		$structureNode1aa = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
-		$structureNode1b = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
-		$structureNode1c = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
-		$structureNode1d = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\StructureNode');
-		$structureNodeRepository->add($structureNode1);
-		$structureNodeRepository->add($structureNode1a);
-		$structureNodeRepository->add($structureNode1aa);
-		$structureNodeRepository->add($structureNode1b);
-		$structureNodeRepository->add($structureNode1c);
-		$structureNodeRepository->add($structureNode1d);
+		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\Site');
+		$site->setName('FLOW3');
+		$this->siteRepository->add($site);
 
-		$structureNode1->addChildNode($structureNode1a);
-		$structureNode1->addChildNode($structureNode1b);
-		$structureNode1->addChildNode($structureNode1c);
-		$structureNode1->addChildNode($structureNode1d);
-		$structureNode1a->addChildNode($structureNode1aa);
+		$homePage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $site);
+		$homePage->setTitle('Homepage');
 
-			// Create pages
-		$page1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1');
-		$structureNode1->addContent($page1);
+#		$domain = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\Domain');
+#		$domain->setHostPattern('localhost');
+#		$domain->setSite($site);
+#		$this->domainRepository->add($domain);
 
-		$page1a = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1a');
-		$structureNode1a->addContent($page1a);
+		$homePage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $site);
+		$subPage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $homePage);
 
-		$page1aa = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1aa');
-		$structureNode1aa->addContent($page1aa);
+		$homePage->setTitle('Homepage');
 
-		$page1b = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Page', 'Page 1b');
-		$structureNode1b->addContent($page1b);
+		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\Site');
+		$site->setName('TYPO3');
+		$this->siteRepository->add($site);
 
-			// Create text content
-		$text1c = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Text', 'Text 1c');
-		$structureNode1c->addContent($text1c);
-
-		$text1d = $this->objectFactory->create('F3\TYPO3\Domain\Model\Content\Text', 'Text 1d');
-		$structureNode1d->addContent($text1d);
-
-			// Create a sample site
-		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Site');
-		$site->setName('typo3.org');
-		$site->setSiteRoot($structureNode1);
-
-			// Create a sample domain
-		$domain1 = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\Domain');
-		$domain1->setHostPattern('*.t3v5.rob');
-		$domain1->setSiteEntryPoint($structureNode1);
-
-		$site->addDomain($domain1);
-
-		$siteRepository = $this->objectManager->getObject('F3\TYPO3\Domain\Repository\SiteRepository');
-		$siteRepository->add($site);
-
-			// Create a second sample site
-		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Site');
-		$site->setName('flow3.typo3.org');
-		$siteRepository->add($site);
+		$domain = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\Domain');
+		$domain->setHostPattern('localhost');
+		$domain->setSite($site);
+		$this->domainRepository->add($domain);
 
 		return 'Created some data for playing around.';
 	}

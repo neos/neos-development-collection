@@ -40,10 +40,12 @@ class AbstractContentTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function theLocaleOfAContentElementMustBePassedToTheConstructor() {
+	public function theLocaleAndNodeOfAContentElementMustBePassedToTheConstructor() {
 		$mockLocale = $this->getMock('F3\FLOW3\Locale\Locale', array(), array(), '', FALSE);
-		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array($mockLocale));
+		$mockContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
+		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array($mockLocale, $mockContentNode));
 		$this->assertSame($mockLocale, $content->getLocale());
+		$this->assertSame($mockContentNode, $content->getContentNode());
 	}
 
 	/**
@@ -59,29 +61,12 @@ class AbstractContentTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContentNodeAlsoAddsTheContentObjectToTheContentNodeByCallingAddContent() {
+	public function constructorAddsTheContentObjectToTheContentNodeByCallingAddContent() {
+		$mockLocale = $this->getMock('F3\FLOW3\Locale\Locale', array(), array(), '', FALSE);
 		$mockContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
-
-		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array(), '', FALSE);
 		$mockContentNode->expects($this->once())->method('setContent');
 
-		$content->setContentNode($mockContentNode);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setContentNodeRemovesTheContentFromAnyPreviousContentNode() {
-		$mockNewContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
-		$mockOldContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
-
-		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array(), '', FALSE);
-		$mockOldContentNode->expects($this->once())->method('removeContent');
-		$mockNewContentNode->expects($this->once())->method('setContent');
-
-		$content->_set('contentNode', $mockOldContentNode);
-		$content->setContentNode($mockNewContentNode);
+		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array($mockLocale, $mockContentNode));
 	}
 }
 

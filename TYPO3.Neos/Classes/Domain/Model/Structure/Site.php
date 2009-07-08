@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model;
+namespace F3\TYPO3\Domain\Model\Structure;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -38,7 +38,13 @@ namespace F3\TYPO3\Domain\Model;
  * @scope prototype
  * @entity
  */
-class Site {
+class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
+
+	/**
+	 * Site statusses
+	 */
+	const STATE_ONLINE = 1;
+	const STATE_OFFLINE = 2;
 
 	/**
 	 * Name of the site
@@ -48,15 +54,11 @@ class Site {
 	protected $name = 'Untitled Site';
 
 	/**
-	 * Roots of the site grouped by language and region (locale)
-	 * @var array
+	 * The site's state
+	 * @var integer
+	 * @validate NumberRange(minimum = 1, maximum = 2)
 	 */
-	protected $siteRoots;
-
-	/**
-	 * @var \SplObjectStorage
-	 */
-	protected $domains;
+	protected $state = self::STATE_ONLINE;
 
 	/**
 	 * Constructs this site model
@@ -89,19 +91,24 @@ class Site {
 	}
 
 	/**
-	 * Sets the root node of this site's structure tree
+	 * Sets the state for this site
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $siteRoot The content node acting as the root of the site
-	 * @param \F3\FLOW3\Locale\Locale $locale Locale of the site's root node. If not specified, the given node is assumed to be mul-ZZ
+	 * @param integer $state The site's state, must be one of the STATUS_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSiteRootNode(\F3\TYPO3\Domain\Model\Structure\ContentNode $siteRoot, \F3\FLOW3\Locale\Locale $locale = NULL) {
-		if ($locale !== NULL) {
-			$this->siteRoots[$locale->getLanguage()][$locale->getRegion()] = $siteRoot;
-		} else {
-			$this->siteRoots['mul']['ZZ'] = $siteRoot;
-		}
+	public function setState($state) {
+		$this->state = $state;
+	}
+
+	/**
+	 * Returns the state of this site
+	 *
+	 * @return integer The state - one of the STATUS_* constant's values
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getState() {
+		return $this->state;
 	}
 
 	/**
@@ -111,47 +118,11 @@ class Site {
 	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getSiteRootNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
-		$locale = $contentContext->getLocale();
-		$language = ($locale !== NULL) ? $locale->getLanguage() : 'mul';
-		$region = ($locale !== NULL) ? $locale->getRegion() : 'ZZ';
-
-		if (isset($this->siteRoots[$language][$region])) {
-			return $this->siteRoots[$language][$region];
-		}
+	public function getRootNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$childNodesMatchingContext = $this->getChildNodes($contentContext);
+		return current($childNodesMatchingContext);
 	}
 
-	/**
-	 * Adds a domain to this site
-	 *
-	 * @param \F3\TYPO3\Domain\Model\Configuration\Domain $domain The domain
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function addDomain(\F3\TYPO3\Domain\Model\Configuration\Domain $domain) {
-		$this->domains->attach($domain);
-	}
-
-	/**
-	 * Removes a domain from this site
-	 *
-	 * @param \F3\TYPO3\Domain\Model\Configuration\Domain $domain The domain to remove
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function removeDomain(\F3\TYPO3\Domain\Model\Configuration\Domain $domain) {
-		if (!$this->domains->contains($domain)) throw new \F3\TYPO3\Domain\Exception\NoSuchDomain('Cannot remove unknown domain', 1241789218);
-		$this->domains->detach($domain);
-	}
-
-	/**
-	 * Returns the domains attached to this site
-	 *
-	 * @return \SplObjectStorage The domains which are attached to this site
-	 */
-	public function getDomains() {
-		return clone $this->domains;
-	}
 }
 
 ?>

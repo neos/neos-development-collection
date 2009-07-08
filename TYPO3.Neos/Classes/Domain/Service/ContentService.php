@@ -45,13 +45,29 @@ class ContentService {
 	protected $contentContext;
 
 	/**
+	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 */
+	protected $objectFactory;
+
+	/**
 	 * Constructs this service
 	 *
-	 * @var \F3\TYPO3\Domain\Service\ContentContext $contentContext The context for this service
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context for this service
+	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$this->contentContext = $contentContext;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
+	 * @return void
+	 * @internal
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -64,5 +80,53 @@ class ContentService {
 		return $this->contentContext;
 	}
 
+	/**
+	 * Creates new content of the specified type  the given reference.
+	 *
+	 * The reference may either be an existing content object (a page, text etc.) or
+	 * an object implementing the NodeInterface (eg. a Site).
+	 *
+	 * @param string $contentType Object name of the content to create
+	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created inside the given reference.
+	 * @return object The newly created content object
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidReference if the given reference is of an invalid type
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createInside($contentType, $reference) {
+		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
+			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411515);
+		}
+
+		$locale = $this->contentContext->getLocale();
+		$content = $this->objectFactory->create($contentType, $locale);
+
+		$contentNode = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\ContentNode');
+		$contentNode->setContent($content);
+
+		if ($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface) {
+			$reference->getContentNode()->addChildNode($contentNode, $locale);
+		} elseif ($reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface) {
+			$reference->addChildNode($contentNode, $locale);
+		}
+		return $content;
+	}
+
+	/**
+	 * Creates new content of the specified type inside the given reference.
+	 *
+	 * The reference may either be an existing content object (a page, text etc.) or
+	 * an object implementing the NodeInterface (eg. a Site).
+	 *
+	 * @param string $contentType Object name of the content to create
+	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created after the given reference.
+	 * @return object The newly created content object
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidReference if the given reference is of an invalid type
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createAfter($contentType, $reference) {
+		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
+			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411516);
+		}
+	}
 }
 ?>

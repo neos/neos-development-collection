@@ -39,22 +39,27 @@ namespace F3\TYPO3\Frontend\Controller;
 class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
-	 */
-	protected $siteRepository;
-
-	/**
 	 * @var \F3\TYPO3\Domain\Service\FrontendContentContext
 	 */
 	protected $contentContext;
 
 	/**
+	 * @var \F3\TYPO3\Domain\Model\Structure\Site
+	 */
+	protected $currentSite;
+
+	/**
+	 * Tasks to deal with before an action is called
 	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeAction() {
 		$this->contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\FrontendContentContext');
-		var_dump($this->contentContext->getContentService());
+		$this->currentSite = $this->contentContext->getCurrentSite();
+		if ($this->currentSite === NULL) {
+			throw new \F3\TYPO3\Frontend\Exception\NoSite('No site has been defined or matched the current frontend context.', 1247043365);
+		}
 	}
 
 	/**
@@ -64,12 +69,13 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
-		$sites = $this->siteRepository->findAll();
-		$output = '';
-		foreach ($sites as $site) {
-			$output .= $site->getName();
+		$site = $this->contentContext->getCurrentSite();
+		if ($site === NULL) {
+			return 'No sites found.';
 		}
-		return $output;
+		$rootNode = $site->getRootNode($this->contentContext);
+		var_dump($rootNode->getContent($this->contentContext)->getTitle());
+		return ' ';
 	}
 
 	/**

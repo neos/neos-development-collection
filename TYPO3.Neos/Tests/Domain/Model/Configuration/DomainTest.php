@@ -60,6 +60,17 @@ class DomainTest extends \F3\Testing\BaseTestCase {
 		$this->assertSame($mockNode, $domain->getSiteEntryPoint());
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setSiteSetsTheSiteTheDomainIsPointingTo() {
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
+
+		$domain = new \F3\TYPO3\Domain\Model\Configuration\Domain;
+		$domain->setSite($mockSite);
+		$this->assertSame($mockSite, $domain->getSite());
+	}
 }
 
 ?>

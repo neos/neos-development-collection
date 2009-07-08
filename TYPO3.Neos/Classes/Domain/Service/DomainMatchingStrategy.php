@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Repository;
+namespace F3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -29,14 +29,60 @@ namespace F3\TYPO3\Domain\Repository;
  */
 
 /**
- * The Site Repository
+ * Strategy for matching domains
  *
  * @package TYPO3
  * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class SiteRepository extends \F3\FLOW3\Persistence\Repository {
-}
+class DomainMatchingStrategy {
 
+	const EXACTMATCH = 300;
+	const NOMATCH = -300;
+
+	/**
+	 * Returns those of the given domains which match the specified host.
+	 * The domains are sorted by their match exactness.
+	 * If none really matches an empty array is returned.
+	 *
+	 * @param string $host The host to match against (eg. "localhost" or "www.typo3.org")
+	 * @param array $domains The domains to check
+	 * @return array The matching domains
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	public function getSortedMatches($host, array $domains) {
+		$matchingDomains = array();
+		$matchQualities = array();
+		$hostPartsReverse = array_reverse(explode('.', $host));
+
+		foreach($domains as $domain) {
+			$hostPattern = $domain->getHostPattern();
+
+			if ($host === $hostPattern) {
+				$matchQuality = self::EXACTMATCH;
+			} else {
+				$matchQuality = 0;
+				$hostPatternPartsReverse = array_reverse(explode('.', $hostPattern));
+				foreach ($hostPatternPartsReverse as $index => $hostPatternPart) {
+					if ($hostPatternPart === '*' || $hostPatternPart === $hostPartsReverse[$index]) {
+						$matchQuality ++;
+					} else {
+						$matchQuality = self::NOMATCH;
+						break;
+					}
+				}
+			}
+
+			if ($matchQuality > 0) {
+				$matchingDomains[] = $domain;
+				$matchQualities[] = $matchQuality;
+			}
+		}
+
+		array_multisort($matchQualities, SORT_DESC, $matchingDomains);
+		return $matchingDomains;
+	}
+}
 ?>

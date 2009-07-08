@@ -204,8 +204,10 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getChildNodesOnlyReturnsNodesMatchingTheSpecifiedLocale() {
+	public function getChildNodesOnlyReturnsNodesMatchingTheSpecifiedContext() {
 		$locale = new \F3\FLOW3\Locale\Locale('en-EN');
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale));
 
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
@@ -214,9 +216,8 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 		$rootNode->addChildNode($node1);
 		$rootNode->addChildNode($node2, $locale);
 
-		$actualChildNodes = $rootNode->getChildNodes($locale, FALSE);
-		$this->assertSame($node2, current($actualChildNodes['en']['EN']));
-		$this->assertFALSE(isset($actualChildNodes['mul']['ZZ']));
+		$actualChildNodes = $rootNode->getChildNodes($mockContentContext);
+		$this->assertSame($node2, current($actualChildNodes));
 	}
 
 	/**
@@ -234,14 +235,17 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 		$rootNode->addChildNode($node2, $locale1);
 
 		$locale2 = new \F3\FLOW3\Locale\Locale('dk-DK');
-		$this->assertSame(array(), $rootNode->getChildNodes($locale2, FALSE));
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
+
+		$this->assertSame(array(), $rootNode->getChildNodes($mockContentContext));
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function hasChildNodesTellsIfTheAbstractNodeHasChildNodes() {
+	public function hasChildNodesTellsIfTheNodeHasChildNodes() {
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
@@ -254,6 +258,21 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 		$rootNode->addChildNode($node2);
 
 		$this->assertTrue($rootNode->hasChildNodes());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function addConfigurationAttachesConfigurationToTheNode() {
+		$mockConfiguration = $this->getMock('F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface');
+
+		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
+		$rootNode->addConfiguration($mockConfiguration);
+
+		$actualConfigurations = $rootNode->getConfigurations();
+		$this->assertSame(1, count($actualConfigurations));
+		$this->assertTrue($actualConfigurations->contains($mockConfiguration));
 	}
 }
 

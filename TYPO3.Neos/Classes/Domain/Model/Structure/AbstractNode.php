@@ -51,6 +51,20 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	protected $childNodes = array();
 
 	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $configurations;
+
+	/**
+	 * Constructs this node
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct() {
+		$this->configurations = new \SplObjectStorage;
+	}
+
+	/**
 	 * Adds a child node to the list of existing child nodes
 	 *
 	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The child node to add
@@ -101,12 +115,12 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * Returns the child notes of this structure node.
 	 * Note that the child nodes are indexed by language and region!
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale If specified (recommended), only child nodes matching the given locale are returned
-	 * @param boolean $useFallBackStrategy If TRUE (default), this function uses a fallback strategy to find alternative nodes if the locale didn't match strictly
-	 * @return array Child nodes in the form of array('{language}' => array ('{region}' => {child nodes}))
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context for determining the locale of the nodes to return
+	 * @return array An array of child nodes. If no context was specified in the form of array('{language}' => array ('{region}' => {child nodes})).
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getChildNodes(\F3\FLOW3\Locale\Locale $locale = NULL, $useFallbackStrategy = TRUE) {
+	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL) {
+		$locale = ($contentContext !== NULL) ? $contentContext->getLocale() : NULL;
 		if ($locale === NULL) {
 			return $this->childNodes;
 		} else {
@@ -114,7 +128,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 			$region = $locale->getRegion();
 
 			if (isset($this->childNodes[$language]) && isset($this->childNodes[$language][$region])) {
-				return array($language => array($region => $this->childNodes[$language][$region]));
+				return $this->childNodes[$language][$region];
 			}
 		}
 		return array();
@@ -141,6 +155,27 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 */
 	public function getChildNodesOrder() {
 		return $this->childNodesOrder;
+	}
+
+	/**
+	 * Attaches the given configuration to this node.
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface $configuration The configuration to attach
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function addConfiguration(\F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface $configuration) {
+		$this->configurations->attach($configuration);
+	}
+
+	/**
+	 * Returns the configuration objects attached to this node.
+	 *
+	 * @return \SplObjectStorage The configuration objects
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getConfigurations() {
+		return clone $this->configurations;
 	}
 }
 

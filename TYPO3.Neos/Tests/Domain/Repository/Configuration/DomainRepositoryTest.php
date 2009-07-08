@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Service\View\Sites;
+namespace F3\TYPO3\Domain\Repository\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,45 +24,45 @@ namespace F3\TYPO3\Service\View\Sites;
 
 /**
  * @package TYPO3
- * @subpackage Service
+ * @subpackage Domain
  * @version $Id$
  */
 
 /**
- * HTML view for the Sites List action
+ * Testcase for the Domain Repository
  *
  * @package TYPO3
- * @subpackage Service
+ * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ListHTML extends \F3\FLOW3\MVC\View\AbstractView {
+class DomainRepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var array An array of sites
-	 */
-	public $sites;
-
-	/**
-	 * Renders this list view
-	 *
-	 * @return string The rendered JSON output
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function render() {
-		$output = '<h1>Sites</h1><ul>';
-		foreach ($this->sites as $site) {
-			$output .= '
-				<li>
-					<dl class="\F3\TYPO3\Domain\Model\Structure\Site">
-						<dt>id</dt> <dd>' . $site->getId() . '</dd>
-						<dt>name</dt> <dd>' . $site->getName() . '</dd>
-					</dl>
-				</li>
-			';
-		}
-		$output .= '</ul>';
-		return $output;
+	public function findByHostInvokesTheDomainMatchingStrategyToFindDomainsMatchingTheGivenHost() {
+		$mockDomains = array();
+
+		$mockDomains = array();
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Structure\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Structure\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Structure\Domain', array(), array(), '', FALSE);
+
+		$expectedDomains = array($mockDomains[0], $mockDomains[2]);
+
+		$mockDomainMatchingStrategy = $this->getMock('F3\TYPO3\Domain\Service\DomainMatchingStrategy', array(), array(), '', FALSE);
+		$mockDomainMatchingStrategy->expects($this->any())->method('getSortedMatches')->with('myhost', $mockDomains)->will($this->returnValue($expectedDomains));
+
+		$domainRepository = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Repository\Configuration\DomainRepository'), array('findAll'), array(), '', FALSE);
+		$domainRepository->expects($this->once())->method('findAll')->will($this->returnValue($mockDomains));
+		$domainRepository->_set('domainMatchingStrategy', $mockDomainMatchingStrategy);
+
+		$actualDomains = $domainRepository->findByHost('myhost');
+		$this->assertSame($expectedDomains, $actualDomains);
 	}
+
 }
+
 ?>

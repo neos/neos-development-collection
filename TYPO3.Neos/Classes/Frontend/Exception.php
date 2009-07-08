@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Service\View\Sites;
+namespace F3\TYPO3\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -24,45 +24,18 @@ namespace F3\TYPO3\Service\View\Sites;
 
 /**
  * @package TYPO3
- * @subpackage Service
  * @version $Id$
  */
 
 /**
- * HTML view for the Sites List action
+ * A generic TYPO3 Frontend exception
  *
  * @package TYPO3
- * @subpackage Service
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ListHTML extends \F3\FLOW3\MVC\View\AbstractView {
+class Exception extends \F3\TYPO3\Exception {
 
-	/**
-	 * @var array An array of sites
-	 */
-	public $sites;
-
-	/**
-	 * Renders this list view
-	 *
-	 * @return string The rendered JSON output
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function render() {
-		$output = '<h1>Sites</h1><ul>';
-		foreach ($this->sites as $site) {
-			$output .= '
-				<li>
-					<dl class="\F3\TYPO3\Domain\Model\Structure\Site">
-						<dt>id</dt> <dd>' . $site->getId() . '</dd>
-						<dt>name</dt> <dd>' . $site->getName() . '</dd>
-					</dl>
-				</li>
-			';
-		}
-		$output .= '</ul>';
-		return $output;
-	}
 }
+
 ?>

@@ -68,11 +68,10 @@ interface NodeInterface {
 	 * Returns the child notes of this node.
 	 * Note that the child nodes are indexed by language and region!
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale If specified (recommended), only child nodes matching the given locale are returned
-	 * @param boolean $useFallBackStrategy If TRUE (default), this function uses a fallback strategy to find alternative nodes if the locale didn't match strictly
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context for determining the locale of the nodes to return
 	 * @return array Child nodes in the form of array('{language}' => array ('{region}' => {child nodes}))
 	 */
-	public function getChildNodes(\F3\FLOW3\Locale\Locale $locale = NULL, $useFallbackStrategy = TRUE);
+	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext);
 
 	/**
 	 * Tells if this node has any child nodes

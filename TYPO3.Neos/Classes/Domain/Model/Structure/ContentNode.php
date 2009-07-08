@@ -79,17 +79,16 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	/**
 	 * Returns the content specified by $locale.
 	 *
-	 * This function tries to return a content object which strictly matches the specified locale.
-	 * If no such content exists and $useFallBackStrategy is not disabled, it will try to find
-	 * a content object which is suggested by a fallback strategy. Such a content object would then
-	 * have a locale differing from the specified locale.
+	 * This function tries to return a content object which strictly matches the locale of the given
+	 * context. If no such content exists it will try to find a content object which is suggested by
+	 * the context's fallback strategy.
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale Locale the content should match
-	 * @param boolean $useFallBackStrategy If TRUE (default), this function uses a fallback strategy to find content if the locale didn't match strictly
-	 * @return \F3\TYPO3\Domain\Model\Content\ContentInterface The content object or NULL if none matched the given locale
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext Context the content should match
+	 * @return \F3\TYPO3\Domain\Model\Content\ContentInterface The content object or NULL if none matched the given context
 	 * @author Robert Lemke <rober@typo3.org>
 	 */
-	public function getContent(\F3\FLOW3\Locale\Locale $locale, $useFallbackStrategy = TRUE) {
+	public function getContent(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$locale = $contentContext->getLocale();
 		$language = $locale->getLanguage();
 		$region = $locale->getRegion();
 

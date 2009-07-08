@@ -44,13 +44,17 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setContentAttachesContentToTheContentNode() {
 		$locale = new \F3\FLOW3\Locale\Locale('en-EN');
+
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale));
+
 		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockContent->expects($this->once())->method('getLocale')->will($this->returnValue($locale));
 
-		$structureNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
-		$structureNode->setContent($mockContent);
+		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$contentNode->setContent($mockContent);
 
-		$this->assertSame($mockContent, $structureNode->getContent($locale, FALSE));
+		$this->assertSame($mockContent, $contentNode->getContent($mockContentContext));
 	}
 
 	/**
@@ -66,12 +70,15 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockContent2->expects($this->once())->method('getLocale')->will($this->returnValue($locale2));
 
-		$structureNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
-		$structureNode->setContent($mockContent1);
-		$structureNode->setContent($mockContent2);
+		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$contentNode->setContent($mockContent1);
+		$contentNode->setContent($mockContent2);
 
 		$locale3 = clone $locale1;
-		$this->assertSame($mockContent2, $structureNode->getContent($locale3, FALSE));
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale3));
+
+		$this->assertSame($mockContent2, $contentNode->getContent($mockContentContext));
 	}
 
 	/**
@@ -83,10 +90,10 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockContent->expects($this->once())->method('getLocale')->will($this->returnValue($locale));
 
-		$structureNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
-		$structureNode->setContent($mockContent);
+		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$contentNode->setContent($mockContent);
 
-		$this->assertSame(get_class($mockContent), $structureNode->getContentType());
+		$this->assertSame(get_class($mockContent), $contentNode->getContentType());
 	}
 
 	/**
@@ -102,9 +109,9 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array(), uniqid('SomeContentClassName'));
 
-		$structureNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
-		$structureNode->setContent($mockContent1);
-		$structureNode->setContent($mockContent2);
+		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$contentNode->setContent($mockContent1);
+		$contentNode->setContent($mockContent2);
 	}
 
 	/**
@@ -120,12 +127,15 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockContent2->expects($this->once())->method('getLocale')->will($this->returnValue($locale2));
 
-		$structureNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
-		$structureNode->setContent($mockContent1);
-		$structureNode->setContent($mockContent2);
+		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$contentNode->setContent($mockContent1);
+		$contentNode->setContent($mockContent2);
 
 		$locale3 = new \F3\FLOW3\Locale\Locale('dk-DK');
-		$this->assertNULL($structureNode->getContent($locale3, FALSE));
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale3));
+
+		$this->assertNULL($contentNode->getContent($mockContentContext));
 	}
 
 	/**
@@ -141,14 +151,20 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array());
 		$mockContent2->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
 
-		$structureNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
-		$structureNode->setContent($mockContent1);
-		$structureNode->setContent($mockContent2);
+		$mockContentContext1 = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext1->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
 
-		$structureNode->removeContent($mockContent2);
+		$mockContentContext2 = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext2->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
 
-		$this->assertSame($mockContent1, $structureNode->getContent($locale1, FALSE));
-		$this->assertNull($structureNode->getContent($locale2, FALSE));
+		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$contentNode->setContent($mockContent1);
+		$contentNode->setContent($mockContent2);
+
+		$contentNode->removeContent($mockContent2);
+
+		$this->assertSame($mockContent1, $contentNode->getContent($mockContentContext1));
+		$this->assertNull($contentNode->getContent($mockContentContext2));
 	}
 
 	/**
@@ -165,10 +181,10 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array());
 		$mockContent2->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
 
-		$structureNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
-		$structureNode->setContent($mockContent1);
+		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$contentNode->setContent($mockContent1);
 
-		$structureNode->removeContent($mockContent2);
+		$contentNode->removeContent($mockContent2);
 	}
 
 	/**
@@ -179,12 +195,12 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent1 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array());
 		$mockContent1->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
 
-		$structureNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
-		$structureNode->setContent($mockContent1);
+		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$contentNode->setContent($mockContent1);
 
-		$structureNode->removeContent($mockContent1);
+		$contentNode->removeContent($mockContent1);
 
-		$this->assertNull($structureNode->getContentType());
+		$this->assertNull($contentNode->getContentType());
 
 	}
 }

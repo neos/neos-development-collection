@@ -45,6 +45,12 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	protected $hostPattern = '*';
 
 	/**
+	 * @var \F3\TYPO3\Domain\Model\Structure\Site
+	 * @validate NotEmpty
+	 */
+	protected $site;
+
+	/**
 	 * @var \F3\TYPO3\Domain\Model\Structure\NodeInterface
 	 * @validate NotEmpty
 	 */
@@ -69,6 +75,27 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	 */
 	public function getHostPattern() {
 		return $this->hostPattern;
+	}
+
+	/**
+	 * Sets the site this domain is pointing to
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Structure\Site $site The site
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setSite(\F3\TYPO3\Domain\Model\Structure\Site $site) {
+		$this->site = $site;
+	}
+
+	/**
+	 * Returns the site this domain is pointing to
+	 *
+	 * @return \F3\TYPO3\Domain\Model\Structure\Site
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSite() {
+		return $this->site;
 	}
 
 	/**

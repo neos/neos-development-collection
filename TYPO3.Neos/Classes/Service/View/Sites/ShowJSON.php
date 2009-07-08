@@ -39,7 +39,7 @@ namespace F3\TYPO3\Service\View\Sites;
 class ShowJSON extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Site
+	 * @var \F3\TYPO3\Domain\Model\Structure\Site
 	 */
 	public $site;
 
