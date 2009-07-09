@@ -46,9 +46,9 @@ class DomainRepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockDomains = array();
 
 		$mockDomains = array();
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Structure\Domain', array(), array(), '', FALSE);
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Structure\Domain', array(), array(), '', FALSE);
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Structure\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE);
 
 		$expectedDomains = array($mockDomains[0], $mockDomains[2]);
 
