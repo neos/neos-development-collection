@@ -28,6 +28,8 @@ namespace F3\TYPO3CR\Storage\Search;
  * @version $Id$
  */
 
+require_once(__DIR__ . '/../../Fixtures/PDOInterface.php');
+
 /**
  * Tests for the PDO search backend implementation of TYPO3CR.
  *
@@ -60,7 +62,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->once())->method('getProperties')->will($this->returnValue(array($mockProperty)));
 		$mockPDOStatement = $this->getMock('PDOStatement');
 		$mockPDOStatement->expects($this->once())->method('execute')->with(array('12345', 'propname', 'flow3.org/ns', 1, 'propvaluestring'));
-		$mockPDO = $this->getMock('PDO', array(), array(), '', FALSE);
+		$mockPDO = $this->getMock('PDOInterface');
 		$mockPDO->expects($this->once())->method('prepare')->with('INSERT INTO "index_properties" ("parent", "name", "namespace", "type", "value") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockPDOStatement));
 
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
@@ -88,7 +90,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$mockPDOStatement = $this->getMock('PDOStatement');
 		$mockPDOStatement->expects($this->at(0))->method('execute')->with(array('12345', 'propname', 'flow3.org/ns', 1, 'propvaluestring'));
 		$mockPDOStatement->expects($this->at(1))->method('execute')->with(array('12345', 'propname', 'flow3.org/ns', 1, 'secondvaluestring'));
-		$mockPDO = $this->getMock('PDO', array(), array(), '', FALSE);
+		$mockPDO = $this->getMock('PDOInterface');
 		$mockPDO->expects($this->once())->method('prepare')->with('INSERT INTO "index_properties" ("parent", "name", "namespace", "type", "value") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockPDOStatement));
 
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
@@ -107,7 +109,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->once())->method('getIdentifier')->will($this->returnValue('12345'));
 		$mockPDOStatement = $this->getMock('PDOStatement');
 		$mockPDOStatement->expects($this->once())->method('execute')->with(array('12345'));
-		$mockPDO = $this->getMock('PDO', array(), array(), '', FALSE);
+		$mockPDO = $this->getMock('PDOInterface');
 		$mockPDO->expects($this->once())->method('prepare')->with('DELETE FROM "index_properties" WHERE "parent" = ?')->will($this->returnValue($mockPDOStatement));
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
 		$searchBackend->_set('databaseHandle', $mockPDO);
