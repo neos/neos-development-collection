@@ -116,7 +116,9 @@ class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 	 * @author Matthias Hörmann <hoermann@saltation.de>
 	 */
 	public function tearDown() {
-		$this->storageBackend->disconnect();
+		if ($this->storageBackend instanceof \F3\TYPO3CR\Storage\Backend\PDO) {
+			$this->storageBackend->disconnect();
+		}
 	}
 }
 ?>

@@ -76,7 +76,9 @@ class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function tearDown() {
-		$this->storageBackend->disconnect();
+		if ($this->storageBackend instanceof \F3\TYPO3CR\Storage\Backend\PDO) {
+			$this->storageBackend->disconnect();
+		}
 		unlink($this->fixtureFolder . $this->fixtureDB);
 		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->fixtureFolder);
 	}
