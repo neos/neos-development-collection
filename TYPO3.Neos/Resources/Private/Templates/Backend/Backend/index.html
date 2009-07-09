@@ -1,0 +1,20 @@
+<f:layout name="backendContainer" />
+
+<f:section name="backendHeader">
+	<div id="F3_TYPO3_Backend_Header">
+		<div id="F3_TYPO3_Backend_Header_TYPO3Info">
+			<img src="Resources/Packages/TYPO3/Backend/Media/Images/TYPO3ApplicationLogo-50px.png" width="125" height="50" /><div>{TYPO3Version}<br />{InstallationHost} (Live)</div>
+		</div>
+		<div id="F3_TYPO3_Backend_Header_UserInfo">
+			Welcome, Robert Lemke <input type="submit" value="Logout" disabled="disabled" />
+		</div>
+		<div id="F3_TYPO3_Backend_Header_GlobalContextMenu">
+			<img src="Resources/Packages/TYPO3/Backend/Media/Icons/GlobalContextIconsDummy.png" />
+		</div>
+	</div>
+	<ul id="F3_TYPO3_Backend_GlobalMenu">
+		<f:for each="{sections}" key="sectionKey" as="section">
+			<li><f:link.action arguments="{section: sectionKey}">{section}</f:link.action></li>
+		</f:for>
+	</ul>
+</f:section>

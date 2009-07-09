@@ -34,12 +34,24 @@ namespace F3\TYPO3\Backend\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
+class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
+
+	/**
+	 * @inject
+	 * @var F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
+	 * @inject
+	 * @var F3\FLOW3\Package\ManagerInterface
+	 */
+	protected $packageManager;
 
 	/**
 	 * @inject
@@ -60,6 +72,9 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
+		$this->view->assign('TYPO3Version', $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion());
+		$this->view->assign('installationHost', gethostname());
+		$this->view->assign('sections', array('frontend' => 'Frontend', 'content' => 'Content', 'layout' => 'Layout', 'report' => 'Report', 'administration' => 'Administration'));
 	}
 
 	/**

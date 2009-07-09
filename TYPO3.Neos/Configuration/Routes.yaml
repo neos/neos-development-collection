@@ -17,13 +17,14 @@
     @action:     'index'
 
 -
-  name:          'Backend default route'
-  uriPattern:    'typo3'
+  name:          'Backend route'
+  uriPattern:    'typo3(/{section})'
   defaults:
     @package:    'TYPO3'
     @subpackage: 'Backend'
-    @controller: 'Standard'
+    @controller: 'Backend'
     @action:     'index'
+    section:     'frontend'
 
 #                                                                        #
 # Other routes (for experimentation)                                     #

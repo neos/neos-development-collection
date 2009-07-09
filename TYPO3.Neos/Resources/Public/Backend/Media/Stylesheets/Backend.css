@@ -1,9 +1,74 @@
 @CHARSET "UTF-8";
 
-.F3_TYPO3_Backend_Icon_Page {
-	background-image: url(../Icons/Page.png) !important;
+body {
+	font-family:verdana,Arial,Helvetica,sans-serif;
+	font-size: 10px;
+	margin:0;
+	padding:0;
+	background:#ccc;
 }
 
-.F3_TYPO3_Backend_Icon_Site {
-	background-image: url(../Icons/Site.png) !important;
+#F3_TYPO3_Backend_Header {
+	width: 100%;
+	height: 80px;
+	padding: 3px 10px 3px 10px;
+	background-image: url(../Images/Backgrounds/HeaderBackground.png);
+	color: white;
+	font-size: 10px;
 }
+
+#F3_TYPO3_Backend_Header_TYPO3Info {
+	vertical-align: top;
+	float: left;
+	width: 300px;
+}
+#F3_TYPO3_Backend_Header_TYPO3Info img {
+	float: left;
+}
+#F3_TYPO3_Backend_Header_TYPO3Info div {
+	padding-top: 18px;
+	color: #bbb;
+	line-height: 11px;
+}
+
+#F3_TYPO3_Backend_Header_UserInfo {
+	position: absolute;
+	top: 29px;
+	left: 40%;
+	line-height: 11px;
+}
+
+#F3_TYPO3_Backend_Header_GlobalContextMenu {
+	position: absolute;
+	right: 0;
+	top: 16px;
+}
+
+#F3_TYPO3_Backend_GlobalMenu {
+	position: absolute;
+	left: 20px;
+	top: 48px;
+	padding: 0;
+	font-size: 13px;
+	font-weight: bold;
+	font-family: Arial, Helvetica;
+}
+
+#F3_TYPO3_Backend_GlobalMenu li {
+	list-style: none;
+	float: left;
+	background-color: white;
+	border: 1px solid black;
+	padding: 4px 10px 4px 10px;
+	margin-right: 20px;
+}
+
+#F3_TYPO3_Backend_GlobalMenu li a {
+	text-decoration: none;
+	color: #333;
+}
+
+#F3_TYPO3_Backend_GlobalMenu li:hover {
+	background-color: #bbb;
+}
+
