@@ -362,7 +362,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			if ($propertyValue === NULL) {
 				if ($node->hasNode('flow3:' . $propertyName)) {
 					$node->getNode('flow3:' . $propertyName)->remove();
-				} elseif ($node->hasNode('flow3:' . $propertyName)) {
+				} elseif ($node->hasProperty('flow3:' . $propertyName)) {
 					$node->setProperty('flow3:' . $propertyName, NULL);
 				}
 				continue;
@@ -392,12 +392,17 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 				} else {
 					if ($object->FLOW3_Persistence_isNew()) {
 						if ($this->classSchemata[$propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
-							$this->createNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
+							if ($this->identityMap->hasObject($propertyValue)) {
+								$this->createOrUpdateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
+							} else {
+								$this->createNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
+								$queue[] = $propertyValue;
+							}
 						} else {
 							$this->createNodeForValueObject($propertyValue, $node, 'flow3:' . $propertyName);
+							$queue[] = $propertyValue;
 						}
 					}
-					$queue[] = $propertyValue;
 				}
 			} elseif ($classSchema->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT || ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName))) {
 				if (!is_object($propertyValue)) {

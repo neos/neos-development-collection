@@ -187,6 +187,111 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @see http://forge.typo3.org/issues/show/3859
+	 */
+	public function persistObjectsHandlesCyclicReferences() {
+		$namespace = 'F3\TYPO3CR\Tests';
+		$className1 = 'SomeClass' . uniqid();
+		$fullClassName1 = $namespace . '\\' . $className1;
+		$JCRName1 = str_replace('\\', '_', $fullClassName1);
+		eval('namespace ' . $namespace . '; class ' . $className1 . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			protected $FLOW3_Persistence_isNew = TRUE;
+			protected $FLOW3_Persistence_Entity_UUID = \'A\';
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
+			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return $this->FLOW3_Persistence_isNew; }
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->FLOW3_Persistence_isNew = FALSE; }
+		}');
+		$className2 = 'SomeClass' . uniqid();
+		$fullClassName2 = $namespace . '\\' . $className2;
+		$JCRName2 = str_replace('\\', '_', $fullClassName2);
+		eval('namespace ' . $namespace . '; class ' . $className2 . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			protected $FLOW3_Persistence_isNew = TRUE;
+			protected $FLOW3_Persistence_Entity_UUID = \'B\';
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
+			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return $this->FLOW3_Persistence_isNew; }
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->FLOW3_Persistence_isNew = FALSE; }
+		}');
+		$className3 = 'SomeClass' . uniqid();
+		$fullClassName3 = $namespace . '\\' . $className3;
+		$JCRName3 = str_replace('\\', '_', $fullClassName3);
+		eval('namespace ' . $namespace . '; class ' . $className3 . ' implements \F3\FLOW3\AOP\ProxyInterface {
+			protected $FLOW3_Persistence_isNew = TRUE;
+			protected $FLOW3_Persistence_Entity_UUID = \'C\';
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) { return TRUE; }
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) { return $this->$propertyName; }
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $value) {}
+			public function FLOW3_Persistence_isNew() { return $this->FLOW3_Persistence_isNew; }
+			public function FLOW3_Persistence_isDirty($propertyName) { return $this->FLOW3_Persistence_isNew; }
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) { $this->FLOW3_Persistence_isNew = FALSE; }
+		}');
+		$objectA = new $fullClassName1();
+		$objectB = new $fullClassName2();
+		$objectC = new $fullClassName3();
+		$objectA->sub = $objectB;
+		$objectB->sub = $objectC;
+		$objectC->sub = $objectB;
+		$aggregateRootObjects = new \SplObjectStorage();
+		$aggregateRootObjects->attach($objectA);
+
+		$classSchema1 = new \F3\FLOW3\Persistence\ClassSchema($fullClassName1);
+		$classSchema1->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema1->addProperty('sub', $fullClassName2);
+		$classSchema1->setAggregateRoot(TRUE);
+		$classSchema2 = new \F3\FLOW3\Persistence\ClassSchema($fullClassName2);
+		$classSchema2->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema2->addProperty('sub', $fullClassName3);
+		$classSchema3 = new \F3\FLOW3\Persistence\ClassSchema($fullClassName3);
+		$classSchema3->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema3->addProperty('sub', $fullClassName2);
+
+		$mockProxyNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockProxyNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('PROXY'));
+		$mockProxyNode->expects($this->once())->method('setProperty')->with('flow3:target', 'B', \F3\PHPCR\PropertyType::REFERENCE);
+		$mockCNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockCNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('C'));
+		$mockCNode->expects($this->once())->method('addNode')->with('flow3:sub', \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY)->will($this->returnValue($mockProxyNode));
+		$mockBNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockBNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('B'));
+		$mockBNode->expects($this->once())->method('addNode')->with('flow3:sub', 'flow3:' . $JCRName3, 'C')->will($this->returnValue($mockCNode));
+		$mockANode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockANode->expects($this->any())->method('getIdentifier')->will($this->returnValue('A'));
+		$mockANode->expects($this->once())->method('addNode')->with('flow3:sub', 'flow3:' . $JCRName2, 'B')->will($this->returnValue($mockBNode));
+		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockBaseNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('BASE'));
+		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:' . $JCRName1, 'flow3:' . $JCRName1, 'A')->will($this->returnValue($mockANode));
+
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->at(0))->method('getNodeByIdentifier')->with('A')->will($this->returnValue($mockANode));
+		$mockSession->expects($this->at(1))->method('getNodeByIdentifier')->with('B')->will($this->returnValue($mockBNode));
+		$mockSession->expects($this->at(2))->method('getNodeByIdentifier')->with('C')->will($this->returnValue($mockCNode));
+
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array($mockSession));
+		$backend->injectIdentityMap(new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap());
+		$backend->setAggregateRootObjects($aggregateRootObjects);
+		$backend->_set('classSchemata', array($fullClassName1 => $classSchema1, $fullClassName2 => $classSchema2, $fullClassName3 => $classSchema3));
+		$backend->_set('baseNode', $mockBaseNode);
+
+		$backend->_call('persistObjects');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function uuidPropertyNameFromNewObjectIsUsedForNode() {
 		$className = 'SomeClass' . uniqid();
