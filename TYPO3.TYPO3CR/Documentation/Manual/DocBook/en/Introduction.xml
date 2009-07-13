@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter version="5.0" xml:id="typo3cr.chapter.introduction"
          xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
          xmlns:ns6="http://www.w3.org/1999/xlink"
          xmlns:ns5="http://www.w3.org/2000/svg"
          xmlns:ns4="http://www.w3.org/1999/xhtml"
@@ -8,9 +9,9 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>Introduction</title>
 
-  <para>The <link linkend="???">JSR-283 specification</link> defines an API
-  for a Content Repository (CR). The TYPO3 Content Repository aims to
-  implement that in pure PHP.</para>
+  <para>The <link ns6:href="http://jcp.org/en/jsr/summary?id=283">JSR-283
+  specification</link> defines an API for a Content Repository (CR). The TYPO3
+  Content Repository aims to implement that in pure PHP.</para>
 
   <section>
     <title>Current Status</title>

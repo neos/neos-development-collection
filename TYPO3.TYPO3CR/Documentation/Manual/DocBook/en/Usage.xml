@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter version="5.0" xml:id="typo3cr.chapter.usage"
          xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
          xmlns:ns6="http://www.w3.org/1999/xlink"
          xmlns:ns5="http://www.w3.org/2000/svg"
          xmlns:ns4="http://www.w3.org/1999/xhtml"
@@ -12,25 +13,40 @@
     <title>Using the API</title>
 
     <para>For a documentation of the API defined in JSR-283 please have a look
-    at the specification at <link
-    linkend="???">http://jcp.org/en/jsr/detail?id=283</link></para>
+    at the <link ns6:href="http://jcp.org/en/jsr/summary?id=283">JSR-283
+    specification</link>.</para>
   </section>
 
   <section>
     <title>Using the web-based CR admin</title>
 
     <para>The TYPO3 CR comes with a web-based administration interface.
-    Currently it allows you to<itemizedlist>
+    <figure>
+        <title>The TYPO3CR admin interface</title>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata contentdepth="100%" fileref="AdminInterface.png"
+                         scalefit="1" width="100%"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure>Currently it allows you to<itemizedlist>
         <listitem>
-          <para>look at the node hierarchy</para>
+          <para>explore the node hierarchy</para>
         </listitem>
 
         <listitem>
-          <para>properties of nodes</para>
+          <para>examine properties of nodes</para>
         </listitem>
 
         <listitem>
           <para>delete nodes</para>
+        </listitem>
+
+        <listitem>
+          <para>export trees in system and document view</para>
         </listitem>
       </itemizedlist>More features will follow.</para>
 

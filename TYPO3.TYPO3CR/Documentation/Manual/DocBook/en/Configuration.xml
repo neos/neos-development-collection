@@ -12,7 +12,7 @@
     <title>Configuration options</title>
 
     <para>The following table lists the available configuration options of the
-    TYPO3 CR:<table>
+    TYPO3CR:<table>
         <title>TYPO3CR configuration options</title>
 
         <tgroup cols="2">
@@ -51,6 +51,43 @@
 
               <entry>An array with backend options. The options depend on the
               backend used</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table></para>
+
+    <para>The following table lists the available configuration options of the
+    TYPO3CR PDO storage and search backends:<table>
+        <title>TYPO3CR PDO storage and search backend configuration
+        options</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Option name </entry>
+
+              <entry align="center">Description </entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>dataSourceName</entry>
+
+              <entry>A regular PDO DSN to use for connecting to the
+              database.</entry>
+            </row>
+
+            <row>
+              <entry>username</entry>
+
+              <entry>The username to use for the connection, optional.</entry>
+            </row>
+
+            <row>
+              <entry>password</entry>
+
+              <entry>The password to use for the connection, optional.</entry>
             </row>
           </tbody>
         </tgroup>
