@@ -220,6 +220,38 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * Background: NULL values can't be stored in the content repository anyway. Therefore if
+	 * the property value is NULL this means that a) either the property did not exist at the
+	 * time the object was persisted or b) the property in question is a transient dependency
+	 * (but hasn't been tagged as one). In both case we don't want to modify the classes' default
+	 * value of the property.
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function thawPropertiesDoesNotSetAPropertyIfTheValueIsNULL() {
+		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object->expects($this->never())->method('FLOW3_AOP_Proxy_setProperty');
+
+		$firstValue = $this->getMock('F3\PHPCR\ValueInterface');
+		$firstValue->expects($this->any())->method('getString')->will($this->returnValue(NULL));
+
+		$firstProperty = $this->getMock('F3\PHPCR\PropertyInterface');
+		$firstProperty->expects($this->any())->method('getType')->will($this->returnValue(\F3\PHPCR\PropertyType::STRING));
+		$firstProperty->expects($this->any())->method('getValue')->will($this->returnValue($firstValue));
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('hasProperty')->will($this->returnValue(TRUE));
+		$node->expects($this->at(1))->method('getProperty')->with('flow3:firstProperty')->will($this->returnValue($firstProperty));
+
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
+		$classSchema->addProperty('firstProperty', 'string');
+
+		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'));
+		$dataMapper->_call('thawProperties', $object, $node, $classSchema);
+	}
+
+	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

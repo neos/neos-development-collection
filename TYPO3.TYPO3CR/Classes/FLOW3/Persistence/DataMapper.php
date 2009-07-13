@@ -158,8 +158,6 @@ class DataMapper {
 	 */
 	protected function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, \F3\PHPCR\NodeInterface $node, \F3\FLOW3\Persistence\ClassSchema $classSchema) {
 		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
-			$propertyValue = NULL;
-
 			switch ($propertyData['type']) {
 				case 'integer':
 				case 'int':
@@ -195,7 +193,9 @@ class DataMapper {
 				break;
 			}
 
-			$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
+			if ($propertyValue !== NULL) {
+				$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
+			}
 		}
 	}
 
