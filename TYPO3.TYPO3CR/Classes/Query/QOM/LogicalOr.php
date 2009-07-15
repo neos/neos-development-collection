@@ -25,7 +25,7 @@ namespace F3\TYPO3CR\Query\QOM;
 /**
  * @package TYPO3CR
  * @subpackage Query
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
