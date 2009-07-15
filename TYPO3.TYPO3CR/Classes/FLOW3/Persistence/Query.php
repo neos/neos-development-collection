@@ -142,6 +142,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @return \F3\PHPCR\Query\QueryResultInterface The query result
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function execute() {
 		if ($this->source === NULL) {
@@ -171,6 +172,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param array $orderings The property names to order by
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
 	 */
 	public function setOrderings(array $orderings) {
 		throw new \F3\FLOW3\Persistence\Exception('setLimit is not yet implemented, sorry!', ﻿1243526300);
@@ -182,6 +184,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param integer $limit
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
 	 */
 	public function setLimit($limit) {
 		throw new \F3\FLOW3\Persistence\Exception('setLimit is not yet implemented, sorry!', ﻿1243526060);
@@ -193,6 +196,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param integer $offset
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
 	 */
 	public function setOffset($offset) {
 		throw new \F3\FLOW3\Persistence\Exception('setOffset is not yet implemented, sorry!', ﻿1243526019);
@@ -204,6 +208,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param \F3\PHPCR\Query\QOM\ConstraintInterface $constraint
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
 	 */
 	public function matching($constraint) {
 		$this->constraint = $constraint;
@@ -217,6 +222,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param object $constraint2 Second constraint
 	 * @return \F3\PHPCR\Query\QOM\AndInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function logicalAnd($constraint1, $constraint2) {
 		return $this->QOMFactory->_and(
@@ -232,6 +238,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param object $constraint2 Second constraint
 	 * @return \F3\PHPCR\Query\QOM\OrInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function logicalOr($constraint1, $constraint2) {
 		return $this->QOMFactory->_or(
@@ -246,6 +253,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param object $constraint Constraint to negate
 	 * @return \F3\PHPCR\Query\QOM\NotInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function logicalNot($constraint) {
 		return $this->QOMFactory->not($constraint);
@@ -256,6 +264,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param string $uuid An identifier to match against
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
+	 * @api
 	 */
 	public function withUUID($uuid) {
 		$this->operands['jcr:uuid'] = $uuid;
@@ -274,6 +283,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE) {
 		if (is_object($operand) && !($operand instanceof \DateTime)) {
@@ -338,6 +348,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function like($propertyName, $operand) {
 		$this->operands['flow3:' . $propertyName] = $operand;
@@ -355,6 +366,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function lessThan($propertyName, $operand) {
 		$this->operands['flow3:' . $propertyName] = $operand;
@@ -372,6 +384,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand) {
 		$this->operands['flow3:' . $propertyName] = $operand;
@@ -389,6 +402,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function greaterThan($propertyName, $operand) {
 		$this->operands['flow3:' . $propertyName] = $operand;
@@ -406,6 +420,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @return \F3\PHPCR\Query\QOM\ComparisonInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand) {
 		$this->operands['flow3:' . $propertyName] = $operand;

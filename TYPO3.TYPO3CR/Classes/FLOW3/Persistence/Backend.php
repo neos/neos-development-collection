@@ -101,7 +101,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @param \F3\PHPCR\SessionInterface $session the Content Repository session used to persist data
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\PHPCR\SessionInterface $session) {
 		$this->session = $session;
@@ -116,7 +115,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -128,7 +126,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param \F3\TYPO3CR\FLOW3\Persistence\IdentityMap $identityMap
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function injectIdentityMap(\F3\TYPO3CR\FLOW3\Persistence\IdentityMap $identityMap) {
 		$this->identityMap = $identityMap;
@@ -140,7 +137,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param array $classSchemata the class schemata the backend will be handling
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function initialize(array $classSchemata) {
 		$this->classSchemata = $classSchemata;
@@ -153,7 +149,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @return \F3\PHPCR\SessionInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getSession() {
 		return $this->session;
@@ -165,7 +160,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param object $object
 	 * @return string The identifier for the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getUUIDByObject($object) {
 		if ($this->identityMap->hasObject($object)) {
@@ -185,7 +179,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function isNewObject($object) {
 		return ($this->identityMap->hasObject($object) === FALSE);
@@ -206,7 +199,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param object $newObject The new object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function replaceObject($existingObject, $newObject) {
 		$existingUUID = $this->getUUIDByObject($existingObject);
@@ -222,7 +214,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param \SplObjectStorage $objects
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function setAggregateRootObjects(\SplObjectStorage $objects) {
 		$this->aggregateRootObjects = $objects;
@@ -234,7 +225,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param \SplObjectStorage $objects
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function setDeletedObjects(\SplObjectStorage $objects) {
 		$this->deletedObjects = $objects;
@@ -245,7 +235,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function commit() {
 		$this->persistObjects();
@@ -258,7 +247,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function initializeBaseNode() {
 		$rootNode = $this->session->getRootNode();
@@ -280,7 +268,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function initializeNodeTypes() {
 		$nodeTypeManager = $this->session->getWorkspace()->getNodeTypeManager();
@@ -318,7 +305,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function persistObjects() {
 		foreach ($this->aggregateRootObjects as $object) {
@@ -342,7 +328,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param object $object The object to persist
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function persistObject($object) {
 		$queue = array();
@@ -431,7 +416,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @return void
 	 * @throws \F3\TYPO3CR\FLOW3\Persistence\Exception\UnexpectedTypeException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function checkPropertyType($expectedType, $value) {
 		if ($value === NULL) {
@@ -455,7 +439,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function createNodeForValueObject($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
 		$className = $object->FLOW3_AOP_Proxy_getProxyTargetClassName();
@@ -472,7 +455,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function createNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
 		$className = $object->FLOW3_AOP_Proxy_getProxyTargetClassName();
@@ -502,7 +484,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function createOrUpdateProxyNodeForEntity($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
 		if ($parentNode->hasNode($nodeName)) {
@@ -530,7 +511,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function persistValueObject($object, \F3\PHPCR\NodeInterface $parentNode, $nodeName) {
 		$className = $object->FLOW3_AOP_Proxy_getProxyTargetClassName();
@@ -564,7 +544,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @param array &$queue Found entities are accumulated here.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function persistArray(array $array, \F3\PHPCR\NodeInterface $parentNode, $nodeName, array &$queue) {
 		if ($parentNode->hasNode($nodeName)) {
@@ -611,7 +590,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param array &$queue Found entities are accumulated here.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add persisting information attached to contained objects
-	 * @internal
 	 */
 	protected function persistSplObjectStorage(\SplObjectStorage $objectStorage, \F3\PHPCR\NodeInterface $parentNode, $nodeName, array &$queue) {
 		if ($parentNode->hasNode($nodeName)) {
@@ -650,7 +628,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function finalizeObjectProxyNodes() {
 		foreach ($this->incompleteObjectProxyNodes as $proxyNode) {
@@ -673,7 +650,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function processDeletedObjects() {
 		foreach ($this->deletedObjects as $object) {
@@ -692,7 +668,6 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param string $className
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function convertClassNameToJCRName($className) {
 		return str_replace('\\', '_', $className);

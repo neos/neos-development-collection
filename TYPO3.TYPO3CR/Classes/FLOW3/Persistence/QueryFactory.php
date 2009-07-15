@@ -59,6 +59,7 @@ class QueryFactory implements \F3\FLOW3\Persistence\QueryFactoryInterface {
 	 *
 	 * @param string $className
 	 * @return \F3\TYPO3CR\FLOW3\Persistence\Query
+	 * @api
 	 */
 	public function create($className) {
 		return $this->objectFactory->create('F3\TYPO3CR\FLOW3\Persistence\Query', $className);
