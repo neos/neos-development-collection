@@ -23,17 +23,9 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage TypoScript
- * @version $Id$
- */
-
-/**
  * A library of standard processors for TypoScript objects. Most of these functions
  * were known as "standard wrap" properties / functions in TYPO3 4.x.
  *
- * @package TYPO3
- * @subpackage TypoScript
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

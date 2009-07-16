@@ -23,16 +23,8 @@ namespace F3\TYPO3\Domain\Model\Structure;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Domain
- * @version $Id$
- */
-
-/**
  * A Content Node
  *
- * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype

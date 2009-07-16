@@ -23,14 +23,8 @@ namespace F3\TYPO3\Domain\Model\Content;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @version $Id$
- */
-
-/**
  * Domain model of a generic content element
  *
- * @package TYPO3
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype

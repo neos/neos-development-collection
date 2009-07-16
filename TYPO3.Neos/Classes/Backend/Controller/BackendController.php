@@ -23,14 +23,8 @@ namespace F3\TYPO3\Backend\Controller;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @version $Id$
- */
-
-/**
  * The TYPO3 Backend controller
  *
- * @package TYPO3
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

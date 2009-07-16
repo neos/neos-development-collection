@@ -23,16 +23,8 @@ namespace F3\TYPO3\Service\Controller;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Service
- * @version $Id$
- */
-
-/**
  * The "Structure Trees" service
  *
- * @package TYPO3
- * @subpackage Service
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

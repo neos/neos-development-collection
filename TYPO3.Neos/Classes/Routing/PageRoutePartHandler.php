@@ -16,16 +16,8 @@ namespace F3\TYPO3\Routing;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Routing
- * @version $Id$
- */
-
-/**
  * A route part handler for Pages
  *
- * @package TYPO3
- * @subpackage Routing
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype

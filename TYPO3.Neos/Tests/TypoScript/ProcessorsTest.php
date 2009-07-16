@@ -22,19 +22,11 @@ namespace F3\TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package TYPO3
- * @subpackage TypoScript
- * @version $Id$
- */
-
 require_once (__DIR__ . '/../Fixtures/MockTypoScriptObject.php');
 
 /**
  * Testcase for the TypoScript standard processors
  *
- * @package TYPO3
- * @subpackage TypoScript
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

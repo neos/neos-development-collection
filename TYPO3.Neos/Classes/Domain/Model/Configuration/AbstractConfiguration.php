@@ -23,14 +23,8 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @version $Id$
- */
-
-/**
  * An abstract domain model of configuration which can be attached to a structure node.
  *
- * @package TYPO3
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype

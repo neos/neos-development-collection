@@ -23,16 +23,8 @@ namespace F3\TYPO3\Domain\Model\Content;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Domain
- * @version $Id$
- */
-
-/**
  * Contract for a Content object
  *
- * @package TYPO3
- * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>

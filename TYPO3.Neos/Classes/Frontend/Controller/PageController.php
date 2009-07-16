@@ -23,16 +23,8 @@ namespace F3\TYPO3\Frontend\Controller;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Frontend
- * @version $Id$
- */
-
-/**
  * TYPO3's frontend page controller
  *
- * @package TYPO3
- * @subpackage Frontend
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

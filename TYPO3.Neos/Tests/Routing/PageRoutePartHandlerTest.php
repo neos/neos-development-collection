@@ -23,16 +23,8 @@ namespace F3\TYPO3\Routing;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Routing
- * @version $Id$
- */
-
-/**
  * Testcase for the Page Routepart Handler
  *
- * @package TYPO3
- * @subpackage Routing
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

@@ -23,16 +23,8 @@ namespace F3\TYPO3\Service\View\Sites;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Service
- * @version $Id$
- */
-
-/**
  * XML view for the Sites List action
  *
- * @package TYPO3
- * @subpackage Service
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

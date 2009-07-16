@@ -23,16 +23,8 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage TypoScript
- * @version $Id$
- */
-
-/**
  * A TypoScript Content Array object
  * 
- * @package TYPO3
- * @subpackage TypoScript
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype

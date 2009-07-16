@@ -23,16 +23,8 @@ namespace F3\TYPO3\Backend\Controller;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Backend
- * @version $Id$
- */
-
-/**
  * A controller which allows for logging into the backend
  *
- * @package TYPO3
- * @subpackage Backend
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

@@ -23,14 +23,8 @@ namespace F3\TYPO3\Domain;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @version $Id$
- */
-
-/**
  * A generic TYPO3 Domain exception
  *
- * @package TYPO3
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

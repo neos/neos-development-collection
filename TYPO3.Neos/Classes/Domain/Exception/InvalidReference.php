@@ -23,14 +23,8 @@ namespace F3\TYPO3\Domain\Exception;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @version $Id$
- */
-
-/**
  * An "Invalid Reference" exception
  *
- * @package TYPO3
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

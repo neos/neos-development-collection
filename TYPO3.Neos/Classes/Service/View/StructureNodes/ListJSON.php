@@ -23,16 +23,8 @@ namespace F3\TYPO3\Service\View\StructureNodes;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Service
- * @version $Id$
- */
-
-/**
  * JSON view for the Structure Nodes List action
  *
- * @package TYPO3
- * @subpackage Service
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

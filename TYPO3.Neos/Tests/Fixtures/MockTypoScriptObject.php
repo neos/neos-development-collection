@@ -23,16 +23,8 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * @package
- * @subpackage
- * @version $Id$
- */
-
-/**
  * A mock for a TypoScript object
  *
- * @package
- * @subpackage
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
