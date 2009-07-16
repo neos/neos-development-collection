@@ -23,14 +23,8 @@ namespace F3\TypoScript;
  *                                                                        */
 
 /**
- * @package TypoScript
- * @version $Id$
- */
-
-/**
  * Interface of a TypoScript object
  *
- * @package TypoScript
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later

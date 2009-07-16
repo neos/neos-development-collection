@@ -23,14 +23,8 @@ namespace F3\TypoScript;
  *                                                                        */
 
 /**
- * @package TypoScript
- * @version $Id$
- */
-
-/**
  * The implementation of a processor chain
  *
- * @package TypoScript
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype

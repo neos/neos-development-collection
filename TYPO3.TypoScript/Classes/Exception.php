@@ -23,14 +23,8 @@ namespace F3\TypoScript;
  *                                                                        */
 
 /**
- * @package TypoScript
- * @version $Id$
- */
-
-/**
  * An exception thrown by TypoScript processors or generally in the TypoScript context.
  * 
- * @package TypoScript
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
