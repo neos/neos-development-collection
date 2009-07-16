@@ -23,16 +23,8 @@ namespace F3\TYPO3CR\Admin\Controller;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Admin
- * @version $Id$
- */
-
-/**
  * The default Admin controller
  *
- * @package TYPO3CR
- * @subpackage Admin
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

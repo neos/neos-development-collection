@@ -23,16 +23,8 @@ namespace F3\TYPO3CR\Storage\Search;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Storage
- * @version $Id$
- */
-
-/**
  * A storage indexing/search backend using PDO and SQL
  *
- * @package TYPO3CR
- * @subpackage Storage
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

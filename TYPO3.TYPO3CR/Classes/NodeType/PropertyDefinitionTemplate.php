@@ -23,12 +23,6 @@ namespace F3\TYPO3CR\NodeType;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage NodeType
- * @version $Id$
- */
-
-/**
  * The PropertyDefinitionTemplate interface extends PropertyDefinition with the
  * addition of write methods, enabling the characteristics of a child property
  * definition to be set, after which the PropertyDefinitionTemplate is added to
@@ -38,8 +32,6 @@ namespace F3\TYPO3CR\NodeType;
  * the default values assumed when a new empty PropertyDefinitionTemplate is created
  * (as opposed to one extracted from an existing NodeType).
  *
- * @package TYPO3CR
- * @subpackage NodeType
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

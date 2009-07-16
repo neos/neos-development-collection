@@ -23,12 +23,6 @@ namespace F3\TYPO3CR\Query\QOM;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Query
- * @version $Id$
- */
-
-/**
  * Filters node-tuples based on the outcome of a binary operation.
  *
  * For any comparison, operand2 always evaluates to a scalar value. In contrast,
@@ -71,8 +65,6 @@ namespace F3\TYPO3CR\Query\QOM;
  * * the string "\x" matches the character "x", and
  *   all other characters match themselves.
  *
- * @package TYPO3CR
- * @subpackage Query
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

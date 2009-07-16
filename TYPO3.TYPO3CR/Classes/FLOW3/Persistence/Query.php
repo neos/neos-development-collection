@@ -23,17 +23,9 @@ namespace F3\TYPO3CR\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage FLOW3
- * @version $Id$
- */
-
-/**
  * The Query classs used to run queries like
  * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
- * @package TYPO3CR
- * @subpackage FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

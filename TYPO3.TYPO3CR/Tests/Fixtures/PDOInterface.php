@@ -22,18 +22,10 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Tests
- * @version $Id$
- */
-
-/**
  * PDOInterface so we can mock PDO using PHPUnit 3.4 - without the interface a
  * mock cannot be created because "You cannot serialize or unserialize PDO
  * instances"...
  *
- * @package TYPO3CR
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

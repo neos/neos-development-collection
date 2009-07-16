@@ -23,16 +23,8 @@ namespace F3\TYPO3CR\Query;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Tests
- * @version $Id$
- */
-
-/**
  * Testcase for the PreparedQuery
  *
- * @package TYPO3CR
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

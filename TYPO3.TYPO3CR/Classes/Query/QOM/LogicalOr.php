@@ -23,12 +23,6 @@ namespace F3\TYPO3CR\Query\QOM;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Query
- * @version $Id$
- */
-
-/**
  * Performs a logical disjunction of two other constraints.
  *
  * To satisfy the Or constraint, the node-tuple must either:
@@ -36,8 +30,6 @@ namespace F3\TYPO3CR\Query\QOM;
  *  satisfy constraint2 but not constraint1, or
  *  satisfy both constraint1 and constraint2.
  *
- * @package TYPO3CR
- * @subpackage Query
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

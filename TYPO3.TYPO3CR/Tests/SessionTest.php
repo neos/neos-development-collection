@@ -22,19 +22,11 @@ namespace F3\TYPO3CR;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package TYPO3CR
- * @subpackage Tests
- * @version $Id$
- */
-
 require_once('Fixtures/MockStorageBackend.php');
 
 /**
  * Tests for the Session implementation of TYPO3CR
  *
- * @package TYPO3CR
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

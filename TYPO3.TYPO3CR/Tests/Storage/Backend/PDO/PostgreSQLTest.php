@@ -22,19 +22,11 @@ namespace F3\TYPO3CR\Storage\Backend\PDO;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package TYPO3CR
- * @subpackage Tests
- * @version $Id$
- */
-
 require_once(__DIR__ . '/../TestBase.php');
 
 /**
  * Tests for the Storage_Backend_PDO implementation of TYPO3CR using the PDO PostgreSQL driver
  *
- * @package TYPO3CR
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

@@ -23,11 +23,6 @@ namespace F3\TYPO3CR;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @version $Id$
- */
-
-/**
  * Each repository has a single, persistent namespace registry represented by
  * the NamespaceRegistry object, accessed via Workspace.getNamespaceRegistry().
  * The namespace registry contains the default prefixes of the registered
@@ -35,7 +30,6 @@ namespace F3\TYPO3CR;
  * in repository content, and there may be repository content with namespaces
  * that are not included n the registry.
  *
- * @package TYPO3CR
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

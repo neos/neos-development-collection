@@ -23,12 +23,6 @@ namespace F3\TYPO3CR\Query\QOM;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Query
- * @version $Id$
- */
-
-/**
  * Selects a subset of the nodes in the repository based on node type.
  *
  * A selector selects every node in the repository, subject to access control
@@ -39,8 +33,6 @@ namespace F3\TYPO3CR\Query\QOM;
  * the node has a mixin node type that is nodeType, or
  * the node has a mixin node type that is a subtype of nodeType.
  *
- * @package TYPO3CR
- * @subpackage Query
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

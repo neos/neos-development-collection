@@ -23,18 +23,10 @@ namespace F3\TYPO3CR\Query\QOM;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Query
- * @version $Id$
- */
-
-/**
  * Performs a logical negation of another constraint.
  *
  * To satisfy the Not constraint, the node-tuple must not satisfy constraint.
  *
- * @package TYPO3CR
- * @subpackage Query
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

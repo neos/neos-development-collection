@@ -23,14 +23,8 @@ namespace F3\TYPO3CR;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @version $Id$
- */
-
-/**
  * The Node represents a node in the hierarchy that makes up the repository.
  *
- * @package TYPO3CR
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
@@ -272,6 +266,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return boolean TRUE if this item is new; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isNew() {
 		return $this->session->isRegisteredAsNewNode($this);

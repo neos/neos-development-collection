@@ -22,19 +22,11 @@ namespace F3\TYPO3CR\Storage\Search;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package TYPO3CR
- * @subpackage Tests
- * @version $Id$
- */
-
 require_once(__DIR__ . '/../../Fixtures/PDOInterface.php');
 
 /**
  * Tests for the PDO search backend implementation of TYPO3CR.
  *
- * @package TYPO3CR
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

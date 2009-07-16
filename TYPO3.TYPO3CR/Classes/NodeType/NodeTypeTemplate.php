@@ -23,12 +23,6 @@ namespace F3\TYPO3CR\NodeType;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage NodeType
- * @version $Id$
- */
-
-/**
  * The NodeTypeTemplate interface represents a simple container structure used
  * to define node types which are then registered through the
  * NodeTypeManager.registerNodeType method.
@@ -42,8 +36,6 @@ namespace F3\TYPO3CR\NodeType;
  * for the default values assumed when a new empty NodeTypeTemplate is created
  * (as opposed to one extracted from an existing NodeType).
  *
- * @package TYPO3CR
- * @subpackage NodeType
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

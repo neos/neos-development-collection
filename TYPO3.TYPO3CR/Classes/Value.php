@@ -23,15 +23,9 @@ namespace F3\TYPO3CR;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @version $Id$
- */
-
-/**
  * A generic holder for the value of a property. A Value object can be used
  * without knowing the actual property type (STRING, DOUBLE, BINARY etc.).
  *
- * @package TYPO3CR
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

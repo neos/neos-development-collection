@@ -23,17 +23,9 @@ namespace F3\TYPO3CR\Query;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Query
- * @version $Id$
- */
-
-/**
  * This class encapsulates methods for the management of search queries.
  * Provides methods for the creation and retrieval of search queries.
  *
- * @package TYPO3CR
- * @subpackage Query
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

@@ -23,17 +23,9 @@ namespace F3\TYPO3CR\NodeType;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage NodeType
- * @version $Id$
- */
-
-/**
  * Allows for the retrieval and (in implementations that support it) the
  * registration of node types. Accessed via Workspace.getNodeTypeManager().
  *
- * @package TYPO3CR
- * @subpackage NodeType
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

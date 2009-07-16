@@ -23,15 +23,9 @@ namespace F3\TYPO3CR;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @version $Id$
- */
-
-/**
  * Path parser for relative and absolute paths defined in chapter 3.6 ("Path Syntax")
  * of the JSR-283 specification. This parser should never be called outside the CR!
  *
- * @package TYPO3CR
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

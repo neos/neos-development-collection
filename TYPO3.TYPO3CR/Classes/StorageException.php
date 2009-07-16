@@ -23,14 +23,8 @@ namespace F3\TYPO3CR;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @version $Id$
- */
-
-/**
  * An exception thrown when an operation on the storage backend fails.
  *
- * @package TYPO3CR
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

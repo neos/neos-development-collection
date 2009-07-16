@@ -23,20 +23,12 @@ namespace F3\TYPO3CR\Query\QOM;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Query
- * @version $Id$
- */
-
-/**
  * Tests whether the childSelector node is a child of the parentSelector node. A
  * node-tuple satisfies the constraint only if:
  *  childSelectorNode.getParent().isSame(parentSelectorNode)
  * would return true, where childSelectorNode is the node for childSelector and
  * parentSelectorNode is the node for parentSelector.
  *
- * @package TYPO3CR
- * @subpackage Query
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

@@ -23,12 +23,6 @@ namespace F3\TYPO3CR\Query\QOM;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Query
- * @version $Id$
- */
-
-/**
  * Evaluates to the upper-case string value (or values, if multi-valued) of
  * operand.
  *
@@ -37,8 +31,6 @@ namespace F3\TYPO3CR\Query\QOM;
  *
  * If operand evaluates to null, the UpperCase operand also evaluates to null.
  *
- * @package TYPO3CR
- * @subpackage Query
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

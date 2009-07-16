@@ -23,18 +23,12 @@ namespace F3\TYPO3CR;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @version $Id$
- */
-
-/**
  * A Workspace object represents a view onto a persistent workspace within a
  * repository. This view is defined by the authorization settings of the Session
  * object associated with the Workspace object. Each Workspace object is
  * associated one-to-one with a Session object. The Workspace object can be
  * acquired by calling Session.getWorkspace() on the associated Session object.
  *
- * @package TYPO3CR
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

@@ -23,16 +23,8 @@ namespace F3\TYPO3CR\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage FLOW3
- * @version $Id$
- */
-
-/**
  * An identity mapper to map nodes to objects
  *
- * @package TYPO3CR
- * @subpackage FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see \F3\TYPO3CR\FLOW3\Persistence\DataMapper, \F3\TYPO3CR\FLOW3\Persistence\Backend
