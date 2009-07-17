@@ -60,7 +60,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasUUID')->with('1234')->will($this->returnValue(TRUE));
-		$mockIdentityMap->expects($this->once())->method('getObjectByUUID')->with('1234')->will($this->returnValue($object));
+		$mockIdentityMap->expects($this->once())->method('getObjectByIdentifier')->with('1234')->will($this->returnValue($object));
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'));
 		$dataMapper->injectIdentityMap($mockIdentityMap);
@@ -225,16 +225,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$object->expects($this->never())->method('FLOW3_AOP_Proxy_setProperty');
 
-		$firstValue = $this->getMock('F3\PHPCR\ValueInterface');
-		$firstValue->expects($this->any())->method('getString')->will($this->returnValue(NULL));
-
-		$firstProperty = $this->getMock('F3\PHPCR\PropertyInterface');
-		$firstProperty->expects($this->any())->method('getType')->will($this->returnValue(\F3\PHPCR\PropertyType::STRING));
-		$firstProperty->expects($this->any())->method('getValue')->will($this->returnValue($firstValue));
-
 		$node = $this->getMock('F3\PHPCR\NodeInterface');
-		$node->expects($this->any())->method('hasProperty')->will($this->returnValue(TRUE));
-		$node->expects($this->at(1))->method('getProperty')->with('flow3:firstProperty')->will($this->returnValue($firstProperty));
+		$node->expects($this->any())->method('hasProperty')->will($this->onConsecutiveCalls(FALSE));
 
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'string');

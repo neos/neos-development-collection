@@ -62,24 +62,24 @@ class IdentityMapTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDByObjectReturnsRegisteredUUIDForObject() {
+	public function getIdentifierByObjectReturnsRegisteredUUIDForObject() {
 		$object = new \stdClass();
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($object, 12345);
 
-		$this->assertEquals($identityMap->getUUIDByObject($object), 12345, 'Did not get UUID registered for object.');
+		$this->assertEquals($identityMap->getIdentifierByObject($object), 12345, 'Did not get UUID registered for object.');
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getObjectByUUIDReturnsRegisteredObjectForUUID() {
+	public function getObjectByIdentifierReturnsRegisteredObjectForUUID() {
 		$object = new \stdClass();
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($object, 12345);
 
-		$this->assertSame($identityMap->getObjectByUUID('12345'), $object, 'Did not get object registered for UUID.');
+		$this->assertSame($identityMap->getObjectByIdentifier('12345'), $object, 'Did not get object registered for UUID.');
 	}
 
 	/**

@@ -279,7 +279,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE) {
 		if (is_object($operand) && !($operand instanceof \DateTime)) {
-			$operand = $this->persistenceManager->getBackend()->getUUIDByObject($operand);
+			$operand = $this->persistenceManager->getBackend()->getIdentifierByObject($operand);
 				// we look for nodes with (done)
 				// - a subnode named flow3:$propertyName being NODETYPE_OBJECTPROXY
 				// - that subnode having a property flow3:target

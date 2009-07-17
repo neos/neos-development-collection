@@ -147,15 +147,20 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
-	 * Returns the (internal) identifier for the object.
+	 * Returns the (internal) identifier for the object, if it is known to the
+	 * backend. Otherwise NULL is returned.
+	 *
+	 * Note: this returns an identifier even if the object has not been
+	 * persisted, in case of AOP-managed entities. Use isNewObject() if you need
+	 * to distinguish those cases.
 	 *
 	 * @param object $object
 	 * @return string The identifier for the object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDByObject($object) {
+	public function getIdentifierByObject($object) {
 		if ($this->identityMap->hasObject($object)) {
-			return $this->identityMap->getUUIDByObject($object);
+			return $this->identityMap->getIdentifierByObject($object);
 		} elseif ($object instanceof \F3\FLOW3\AOP\ProxyInterface && $object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_Entity_UUID')) {
 				// entities created get an UUID set through AOP
 			return $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
@@ -193,7 +198,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function replaceObject($existingObject, $newObject) {
-		$existingUUID = $this->getUUIDByObject($existingObject);
+		$existingUUID = $this->getIdentifierByObject($existingObject);
 		if ($existingUUID === NULL) throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnknownObjectException('The given object is unknown to this persistence backend.', 1238070163);
 
 		$this->identityMap->unregisterObject($existingObject);
@@ -323,7 +328,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 */
 	protected function persistObject($object) {
 		$queue = array();
-		$node = $this->session->getNodeByIdentifier($this->identityMap->getUUIDByObject($object));
+		$node = $this->session->getNodeByIdentifier($this->identityMap->getIdentifierByObject($object));
 
 		$classSchema = $this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()];
 		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
@@ -484,7 +489,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			$proxyNode = $parentNode->addNode($nodeName, self::NODETYPE_OBJECTPROXY);
 		}
 
-		$objectUUID = $this->getUUIDByObject($object);
+		$objectUUID = $this->getIdentifierByObject($object);
 		if ($objectUUID !== NULL && !$this->isNewObject($object)) {
 			$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
 		} else {
@@ -627,7 +632,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			if ($this->isNewObject($object)) {
 				throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\DanglingAggregateRootObjectException('Found an instance of "' . get_class($object) . '" for "' . $proxyNode->getPath() . '" being aggregate root but not being persisted.', 1240200821);
 			} else {
-				$objectUUID = $this->getUUIDByObject($object);
+				$objectUUID = $this->getIdentifierByObject($object);
 				if ($objectUUID !== NULL) {
 					$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
 				} else {
@@ -646,7 +651,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	protected function processDeletedObjects() {
 		foreach ($this->deletedObjects as $object) {
 			if ($this->identityMap->hasObject($object)) {
-				$node = $this->session->getNodeByIdentifier($this->identityMap->getUUIDByObject($object));
+				$node = $this->session->getNodeByIdentifier($this->identityMap->getIdentifierByObject($object));
 				$node->remove();
 				$this->identityMap->unregisterObject($object);
 			}

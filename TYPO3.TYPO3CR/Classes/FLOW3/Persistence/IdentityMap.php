@@ -79,7 +79,7 @@ class IdentityMap {
 	 * @return object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getObjectByUUID($uuid) {
+	public function getObjectByIdentifier($uuid) {
 		return $this->uuidMap[$uuid];
 	}
 
@@ -90,7 +90,7 @@ class IdentityMap {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDByObject($object) {
+	public function getIdentifierByObject($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('Object expected, ' . gettype($object) . ' given.', 1246892972);
 		if (!isset($this->objectMap[$object])) {
 			throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnknownObjectException('The given object (class: ' . get_class($object) . ') is not registered in this Identity Map.', 1246892970);

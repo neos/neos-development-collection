@@ -120,7 +120,7 @@ class DataMapper {
 	 */
 	public function mapSingleNode(\F3\PHPCR\NodeInterface $node) {
 		if ($this->identityMap->hasUUID($node->getIdentifier())) {
-			$object = $this->identityMap->getObjectByUUID($node->getIdentifier());
+			$object = $this->identityMap->getObjectByIdentifier($node->getIdentifier());
 		} else {
 			$explodedNodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
 			$className = str_replace('_', '\\', $explodedNodeTypeName[1]);
@@ -150,6 +150,7 @@ class DataMapper {
 	 */
 	protected function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, \F3\PHPCR\NodeInterface $node, \F3\FLOW3\Persistence\ClassSchema $classSchema) {
 		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
+			$propertyValue = NULL;
 			switch ($propertyData['type']) {
 				case 'integer':
 				case 'int':

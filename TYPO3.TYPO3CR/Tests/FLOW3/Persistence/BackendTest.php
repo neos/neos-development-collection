@@ -589,17 +589,17 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDByObjectReturnsUUIDForKnownObject() {
+	public function getIdentifierByObjectReturnsUUIDForKnownObject() {
 		$knownObject = new \stdClass();
 		$fakeUUID = '123-456';
 
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasObject')->with($knownObject)->will($this->returnValue(TRUE));
-		$mockIdentityMap->expects($this->once())->method('getUUIDByObject')->with($knownObject)->will($this->returnValue($fakeUUID));
+		$mockIdentityMap->expects($this->once())->method('getIdentifierByObject')->with($knownObject)->will($this->returnValue($fakeUUID));
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
-		$this->assertEquals($fakeUUID, $backend->getUUIDByObject($knownObject));
+		$this->assertEquals($fakeUUID, $backend->getIdentifierByObject($knownObject));
 	}
 
 	/**
@@ -609,7 +609,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDByObjectReturnsUUIDForObjectBeingAOPProxy() {
+	public function getIdentifierByObjectReturnsUUIDForObjectBeingAOPProxy() {
 		$knownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$knownObject->expects($this->once())->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue(TRUE));
 		$knownObject->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue('fakeUUID'));
@@ -619,7 +619,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
-		$this->assertEquals('fakeUUID', $backend->getUUIDByObject($knownObject));
+		$this->assertEquals('fakeUUID', $backend->getIdentifierByObject($knownObject));
 	}
 
 	/**
@@ -629,7 +629,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDByObjectReturnsNullForUnknownObjectBeingPOPO() {
+	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingPOPO() {
 		$unknownObject = new \stdClass();
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
 		$mockIdentityMap->expects($this->once())->method('hasObject')->with($unknownObject)->will($this->returnValue(FALSE));
@@ -637,7 +637,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
-		$this->assertNull($backend->getUUIDByObject($unknownObject));
+		$this->assertNull($backend->getIdentifierByObject($unknownObject));
 	}
 
 	/**
@@ -647,7 +647,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getUUIDByObjectReturnsNullForUnknownObjectBeingAOPProxy() {
+	public function getIdentifierByObjectReturnsNullForUnknownObjectBeingAOPProxy() {
 		$unknownObject = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$unknownObject->expects($this->once())->method('FLOW3_AOP_Proxy_hasProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue(FALSE));
 		$unknownObject->expects($this->never())->method('FLOW3_AOP_Proxy_getProperty');
@@ -657,7 +657,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
 		$backend->injectIdentityMap($mockIdentityMap);
 
-		$this->assertNull($backend->getUUIDByObject($unknownObject));
+		$this->assertNull($backend->getIdentifierByObject($unknownObject));
 	}
 
 	/**
@@ -702,8 +702,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockIdentityMap->expects($this->once())->method('unregisterObject')->with($existingObject);
 		$mockIdentityMap->expects($this->once())->method('registerObject')->with($newObject, 'the uuid');
 
-		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('getUUIDByObject'), array(), '', FALSE);
-		$backend->expects($this->once())->method('getUUIDByObject')->with($existingObject)->will($this->returnValue('the uuid'));
+		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('getIdentifierByObject'), array(), '', FALSE);
+		$backend->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('the uuid'));
 		$backend->injectIdentityMap($mockIdentityMap);
 		$backend->replaceObject($existingObject, $newObject);
 	}
