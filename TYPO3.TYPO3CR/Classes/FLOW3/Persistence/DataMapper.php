@@ -51,6 +51,11 @@ class DataMapper {
 	protected $persistenceManager;
 
 	/**
+	 * @var \F3\FLOW3\Reflection\Service
+	 */
+	protected $reflectionService;
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
@@ -95,6 +100,17 @@ class DataMapper {
 	}
 
 	/**
+	 * Injects a Reflection Service instance used for processing objects
+	 *
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
 	 * Maps the (aggregate root) nodes and registers them as reconstituted
 	 * with the session.
 	 *
@@ -124,7 +140,7 @@ class DataMapper {
 		} else {
 			$explodedNodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
 			$className = str_replace('_', '\\', $explodedNodeTypeName[1]);
-			$classSchema = $this->persistenceManager->getClassSchema($className);
+			$classSchema = $this->reflectionService->getClassSchema($className);
 			$objectConfiguration = $this->objectManager->getObjectConfiguration($className);
 
 			$object = $this->objectBuilder->createEmptyObject($className, $objectConfiguration);
@@ -144,11 +160,11 @@ class DataMapper {
 	 *
 	 * @param \F3\FLOW3\AOP\ProxyInterface $object The object to set properties on
 	 * @param \F3\PHPCR\NodeInterface $node
-	 * @param \F3\FLOW3\Persistence\ClassSchema $classSchema
+	 * @param \F3\FLOW3\Reflection\ClassSchema $classSchema
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, \F3\PHPCR\NodeInterface $node, \F3\FLOW3\Persistence\ClassSchema $classSchema) {
+	protected function thawProperties(\F3\FLOW3\AOP\ProxyInterface $object, \F3\PHPCR\NodeInterface $node, \F3\FLOW3\Reflection\ClassSchema $classSchema) {
 		foreach ($classSchema->getProperties() as $propertyName => $propertyData) {
 			$propertyValue = NULL;
 			switch ($propertyData['type']) {

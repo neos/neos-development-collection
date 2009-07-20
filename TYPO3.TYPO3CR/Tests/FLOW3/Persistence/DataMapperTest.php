@@ -85,9 +85,10 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('1234'));
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session');
 		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($mockEntity);
-		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array(), '', FALSE);
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
-		$mockPersistenceManager->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
 		$mockPersistenceManager->expects($this->atLeastOnce())->method('getSession')->will($this->returnValue($mockPersistenceSession));
 		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
@@ -101,6 +102,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('thawProperties'));
 		$dataMapper->expects($this->once())->method('thawProperties')->with($mockEntity, $node, $mockClassSchema);
 		$dataMapper->injectPersistenceManager($mockPersistenceManager);
+		$dataMapper->injectReflectionService($mockReflectionService);
 		$dataMapper->injectObjectManager($mockObjectManager);
 		$dataMapper->injectObjectBuilder($mockObjectBuilder);
 		$dataMapper->injectIdentityMap($mockIdentityMap);
@@ -127,8 +129,8 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 			// set up (mock) objects
 		$mockPost = $this->getMock($qualifiedPostClassName);
 
-		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
-		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$postClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$postClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$postClassSchema->setAggregateRoot(TRUE);
 		$postClassSchema->addProperty('author', $qualifiedAuthorClassName);
 
@@ -203,7 +205,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node->expects($this->at(1))->method('getProperty')->with('flow3:firstProperty')->will($this->returnValue($firstProperty));
 		$node->expects($this->at(3))->method('getProperty')->with('flow3:secondProperty')->will($this->returnValue($secondProperty));
 
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'string');
 		$classSchema->addProperty('secondProperty', 'integer');
 
@@ -228,7 +230,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node = $this->getMock('F3\PHPCR\NodeInterface');
 		$node->expects($this->any())->method('hasProperty')->will($this->onConsecutiveCalls(FALSE));
 
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'string');
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'));
@@ -249,7 +251,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node->expects($this->at(3))->method('getNode')->with('flow3:secondProperty')->will($this->returnValue($proxyNode));
 		$node->expects($this->at(5))->method('getNode')->with('flow3:thirdProperty')->will($this->returnValue($proxyNode));
 
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'array');
 		$classSchema->addProperty('secondProperty', 'SplObjectStorage');
 		$classSchema->addProperty('thirdProperty', 'SplObjectStorage', TRUE);
@@ -276,7 +278,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$node->expects($this->any())->method('hasNode')->will($this->returnValue(TRUE));
 		$node->expects($this->once())->method('getNode')->with('flow3:firstProperty')->will($this->returnValue($objectNode));
 
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\Post');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'F3\SomeObject');
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('mapSingleNode'));

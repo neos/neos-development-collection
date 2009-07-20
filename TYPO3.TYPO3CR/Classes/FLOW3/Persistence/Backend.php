@@ -126,12 +126,11 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	/**
 	 * Initializes the backend
 	 *
-	 * @param array $classSchemata the class schemata the backend will be handling
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initialize(array $classSchemata) {
-		$this->classSchemata = $classSchemata;
+	public function initialize() {
+		$this->classSchemata = $this->reflectionService->getClassSchemata();
 		$this->initializeBaseNode();
 		$this->initializeNodeTypes();
 	}
@@ -373,7 +372,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 					}
 				} else {
 					if ($object->FLOW3_Persistence_isNew()) {
-						if ($this->classSchemata[$propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
+						if ($this->classSchemata[$propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 							if ($this->identityMap->hasObject($propertyValue)) {
 								$this->createOrUpdateProxyNodeForEntity($propertyValue, $node, 'flow3:' . $propertyName);
 							} else {
@@ -386,14 +385,14 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 						}
 					}
 				}
-			} elseif ($classSchema->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT || ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName))) {
+			} elseif ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT || ($object->FLOW3_Persistence_isNew() || $object->FLOW3_Persistence_isDirty($propertyName))) {
 				if (!is_object($propertyValue)) {
 					$node->setProperty('flow3:' . $propertyName, $propertyValue, \F3\PHPCR\PropertyType::valueFromType($propertyType));
 				}
 			}
 		}
 
-		if ($classSchema->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
+		if ($classSchema->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 			$object->FLOW3_Persistence_memorizeCleanState();
 		}
 
@@ -551,7 +550,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 
 		foreach ($array as $key => $element) {
 			if (is_object($element) && !($element instanceof \DateTime)) {
-				if ($this->classSchemata[$element->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
+				if ($this->classSchemata[$element->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 					if ($this->classSchemata[$element->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
 						$this->createOrUpdateProxyNodeForEntity($element, $node, 'flow3:' . $key);
 					} else {
@@ -601,7 +600,7 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			if ($object instanceof \DateTime) {
 				$itemNode->setProperty('flow3:object', $element, \F3\PHPCR\PropertyType::DATE);
 			} else {
-				if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY) {
+				if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 					if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
 						$this->createOrUpdateProxyNodeForEntity($object, $itemNode, 'flow3:object');
 					} else {

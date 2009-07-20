@@ -37,11 +37,14 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeCallsInternalInitializationMethods() {
+	public function initializeAsksReflectionServiceForClassSchemataAndCallsInternalInitializationMethods() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->once())->method('getClassSchemata');
 		$backend = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Backend', array('initializeBaseNode', 'initializeNodeTypes'), array(), '', FALSE);
+		$backend->injectReflectionService($mockReflectionService);
 		$backend->expects($this->once())->method('initializeBaseNode');
 		$backend->expects($this->once())->method('initializeNodeTypes');
-		$backend->initialize(array());
+		$backend->initialize();
 	}
 
 	/**
@@ -104,7 +107,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function initializeNodeTypesCreatesNodeTypeFromClassSchema() {
 		$classSchemata = array(
-			new \F3\FLOW3\Persistence\ClassSchema('Some\Package\SomeClass')
+			new \F3\FLOW3\Reflection\ClassSchema('Some\Package\SomeClass')
 		);
 		$nodeTypeTemplate = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeTemplate');
 		$nodeTypeTemplate->expects($this->once())->method('setName')->with('flow3:Some_Package_SomeClass');
@@ -171,7 +174,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->expects($this->exactly(2))->method('persistObject');
 		$backend->injectIdentityMap($identityMap);
 		$backend->setAggregateRootObjects($aggregateRootObjects);
-		$backend->_set('classSchemata', array($fullClassName => new \F3\FLOW3\Persistence\ClassSchema($fullClassName)));
+		$backend->_set('classSchemata', array($fullClassName => new \F3\FLOW3\Reflection\ClassSchema($fullClassName)));
 		$backend->_set('baseNode', $mockBaseNode);
 		$backend->_call('persistObjects');
 	}
@@ -240,15 +243,15 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$aggregateRootObjects = new \SplObjectStorage();
 		$aggregateRootObjects->attach($objectA);
 
-		$classSchema1 = new \F3\FLOW3\Persistence\ClassSchema($fullClassName1);
-		$classSchema1->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema1 = new \F3\FLOW3\Reflection\ClassSchema($fullClassName1);
+		$classSchema1->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema1->addProperty('sub', $fullClassName2);
 		$classSchema1->setAggregateRoot(TRUE);
-		$classSchema2 = new \F3\FLOW3\Persistence\ClassSchema($fullClassName2);
-		$classSchema2->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema2 = new \F3\FLOW3\Reflection\ClassSchema($fullClassName2);
+		$classSchema2->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema2->addProperty('sub', $fullClassName3);
-		$classSchema3 = new \F3\FLOW3\Persistence\ClassSchema($fullClassName3);
-		$classSchema3->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema3 = new \F3\FLOW3\Reflection\ClassSchema($fullClassName3);
+		$classSchema3->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema3->addProperty('sub', $fullClassName2);
 
 		$mockProxyNode = $this->getMock('F3\PHPCR\NodeInterface');
@@ -304,7 +307,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockBaseNode->expects($this->once())->method('addNode')->with('flow3:F3_TYPO3CR_Tests_' . $className, 'flow3:F3_TYPO3CR_Tests_' . $className, $identifier)->will($this->returnValue($mockInstanceNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
 		$classSchema->addProperty('idProp', 'string');
 		$classSchema->setUUIDPropertyName('idProp');
 
@@ -343,8 +346,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($identifier)->will($this->returnValue($mockInstanceNode));
 
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
-		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('simpleString', 'string');
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($dirtyObject, $identifier);
@@ -379,7 +382,7 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockInstanceNode->expects($this->once())->method('remove');
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($identifier)->will($this->returnValue($mockInstanceNode));
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
 		$identityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap', array('unregisterObject'));
 		$identityMap->expects($this->once())->method('unregisterObject')->with($deletedObject);
 		$identityMap->registerObject($deletedObject, $identifier);
@@ -432,8 +435,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up needed infrastructure
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->exactly(4))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeB, $mockNodeBA, $mockNodeC));
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\AnObject');
-		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\AnObject');
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('name', 'string');
 		$classSchema->addProperty('members', 'array');
 
@@ -473,8 +476,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($mockInstanceNode));
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($newObject, '');
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
-		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('date', 'DateTime');
 
 			// ... and here we go
@@ -517,12 +520,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($mockNodeA));
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($A, '');
-		$entityClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixture\AnEntity');
-		$entityClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$entityClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixture\AnEntity');
+		$entityClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$entityClassSchema->addProperty('name', 'string');
 		$entityClassSchema->addProperty('members', 'array');
-		$valueClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixture\AValue');
-		$valueClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT);
+		$valueClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixture\AValue');
+		$valueClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 		$valueClassSchema->addProperty('name', 'string');
 
 			// ... and here we go
@@ -566,12 +569,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up needed infrastructure
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->exactly(4))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeValue1, $mockNodeB, $mockNodeValue2));
-		$entityClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
-		$entityClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$entityClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixtures\AnEntity');
+		$entityClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$entityClassSchema->addProperty('name', 'string');
 		$entityClassSchema->addProperty('value', 'F3\TYPO3CR\Tests\Fixtures\AValue');
-		$valueClassSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\Fixture\AValue');
-		$valueClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT);
+		$valueClassSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\Fixture\AValue');
+		$valueClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
 		$valueClassSchema->addProperty('name', 'string');
 
 			// ... and here we go
@@ -762,12 +765,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up needed infrastructure
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockPostNode, $mockAuthorNode));
-		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedPostClassName);
-		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$postClassSchema = new \F3\FLOW3\Reflection\ClassSchema($qualifiedPostClassName);
+		$postClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$postClassSchema->setAggregateRoot(TRUE);
 		$postClassSchema->addProperty('author', $qualifiedAuthorClassName);
-		$authorClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedAuthorClassName);
-		$authorClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$authorClassSchema = new \F3\FLOW3\Reflection\ClassSchema($qualifiedAuthorClassName);
+		$authorClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$authorClassSchema->setAggregateRoot(TRUE);
 
 			// ... and here we go
@@ -842,12 +845,12 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up needed infrastructure
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockBlogNode, $mockPostNode));
-		$blogClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedBlogClassName);
-		$blogClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$blogClassSchema = new \F3\FLOW3\Reflection\ClassSchema($qualifiedBlogClassName);
+		$blogClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$blogClassSchema->setAggregateRoot(TRUE);
 		$blogClassSchema->addProperty('post', $qualifiedPostClassName);
-		$postClassSchema = new \F3\FLOW3\Persistence\ClassSchema($qualifiedPostClassName);
-		$postClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$postClassSchema = new \F3\FLOW3\Reflection\ClassSchema($qualifiedPostClassName);
+		$postClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$postClassSchema->setAggregateRoot(TRUE);
 		$postClassSchema->addProperty('blog', $qualifiedBlogClassName);
 
@@ -885,8 +888,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 			// set up needed infrastructure
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->exactly(2))->method('getNodeByIdentifier')->will($this->onConsecutiveCalls($mockNodeA, $mockNodeB));
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('F3\TYPO3CR\Tests\AnEntity');
-		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\TYPO3CR\Tests\AnEntity');
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('name', 'string');
 		$classSchema->addProperty('objects', 'SplObjectStorage');
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
@@ -936,8 +939,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 				}
 			}');
 		$object = new $objectClassName();
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($objectClassName);
-		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($objectClassName);
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 
 		$arrayProxyNodeB = $this->getMock('F3\PHPCR\NodeInterface');
@@ -995,11 +998,11 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$someAggregateRootObject = new $fullSomeClassName();
 		$someAggregateRootObject->property = $otherAggregateRootObject;
 
-		$otherClassSchema = new \F3\FLOW3\Persistence\ClassSchema($otherClassName);
-		$otherClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$otherClassSchema = new \F3\FLOW3\Reflection\ClassSchema($otherClassName);
+		$otherClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$otherClassSchema->setAggregateRoot(TRUE);
-		$someClassSchema = new \F3\FLOW3\Persistence\ClassSchema($someClassName);
-		$someClassSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$someClassSchema = new \F3\FLOW3\Reflection\ClassSchema($someClassName);
+		$someClassSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$someClassSchema->setAggregateRoot(TRUE);
 		$someClassSchema->addProperty('property', $fullOtherClassName);
 
@@ -1050,8 +1053,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($identifier)->will($this->returnValue($mockInstanceNode));
 
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema($fullClassName);
-		$classSchema->setModelType(\F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
+		$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$classSchema->addProperty('simpleString', 'string');
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($object, $identifier);
