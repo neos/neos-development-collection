@@ -365,7 +365,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName', 'parseOrderings'));
 		$searchBackend->expects($this->once())->method('splitName')->with('nt:base')->will($this->returnValue(array('name' => 'base', 'namespaceURI' => 'jcr.invalid')));
-		$searchBackend->expects($this->once())->method('parseOrderings')->will($this->returnValue('foo'));
+		$searchBackend->expects($this->once())->method('parseOrderings')->will($this->returnValue(array('orderings' => 'foo')));
 
 		$sql = array();
 		$parameters = array();
@@ -379,7 +379,16 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function parseOrderingsReturnsExpectedResult() {
-		$expectedOrderings = array('foo ASC', 'bar DESC');
+		$sql = array('orderings' => array());
+		$expectedSQL = array(
+			'orderings' => array(
+				'"_orderingtable0"."foo" ASC', '"_orderingtable1"."bar" DESC'
+			),
+			'tables' => array(
+				'LEFT JOIN (SELECT "identifier", "value" AS "foo" FROM "index_properties") AS "_orderingtable0" ON "identifier"',
+				'LEFT JOIN (SELECT "identifier", "value" AS "bar" FROM "index_properties") AS "_orderingtable1" ON "identifier"'
+			)
+		);
 
 		$fooOperand = $this->getMock('F3\PHPCR\Query\QOM\PropertyValueInterface');
 		$fooOperand->expects($this->any())->method('getPropertyName')->will($this->returnValue('foo'));
@@ -396,9 +405,10 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$orderings = array($fooOrdering, $barOrdering);
 
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
-		$sqlifiedOrderings = $searchBackend->_call('parseOrderings', $orderings);
+		$sql = $searchBackend->_call('parseOrderings', $orderings, $sql);
 
-		$this->assertEquals($expectedOrderings, $sqlifiedOrderings);
+		$this->assertEquals($expectedSQL['tables'], $sql['tables']);
+		$this->assertEquals($expectedSQL['orderings'], $sql['orderings']);
 	}
 }
 

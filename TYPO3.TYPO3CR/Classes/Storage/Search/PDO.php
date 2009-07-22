@@ -232,7 +232,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 				$this->parseConstraint($query->getConstraint(), $sql, $parameters, $query->getBoundVariableValues());
 			}
 			if ($query->getOrderings() !== NULL) {
-				$sql['orderings'] = $this->parseOrderings($query->getOrderings());
+				$sql = $this->parseOrderings($query->getOrderings(), $sql);
 			}
 		} elseif ($source instanceof \F3\PHPCR\Query\QOM\JoinInterface) {
 			$this->parseJoin($source, $sql, $parameters);
@@ -250,8 +250,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function parseOrderings(array $orderings) {
-		$sqlifiedOrderings = array();
+	protected function parseOrderings(array $orderings, array $sql) {
 		foreach ($orderings as $ordering) {
 			if ($ordering->getOperand() instanceof \F3\PHPCR\Query\QOM\PropertyValueInterface) {
 				switch ($ordering->getOrder()) {
@@ -265,10 +264,11 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 						throw new \F3\PHPCR\RepositoryException('Illegal order requested.', 1248264221);
 				}
 
-				$sqlifiedOrderings[] = $ordering->getOperand()->getPropertyName() . ' ' . $order;
+				$sql['tables'][] = 'LEFT JOIN (SELECT "identifier", "value" AS "' . $ordering->getOperand()->getPropertyName() . '" FROM "index_properties") AS "_orderingtable' . count($sql['orderings']) . '" ON "identifier"';
+				$sql['orderings'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $ordering->getOperand()->getPropertyName() . '" ' . $order;
 			}
 		}
-		return $sqlifiedOrderings;
+		return $sql;
 	}
 
 	/**
