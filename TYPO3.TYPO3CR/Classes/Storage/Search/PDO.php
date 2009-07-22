@@ -185,13 +185,16 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query) {
-		$sql = array('fields' => array(), 'tables' => array(), 'where' => array());
+		$sql = array('fields' => array(), 'tables' => array(), 'where' => array(), 'orderings' => array());
 		$parameters = array();
 
 		$this->parseSource($query, $sql, $parameters);
 
-		$sqlString = 'SELECT DISTINCT ' . implode(',', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']);
+		$sqlString = 'SELECT DISTINCT ' . implode(', ', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']);
 		$sqlString .= ' WHERE ' . implode(' ', $sql['where']);
+		if (count($sql['orderings'])) {
+			$sqlString .= 'ORDER BY ' . implode(', ', $sql['orderings']);
+		}
 		if ($query->getLimit() !== NULL) {
 			$sqlString .= ' LIMIT ' . $query->getLimit() . ' OFFSET '. $query->getOffset();
 		}
@@ -228,6 +231,9 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 				$sql['where'][] = '("' . $selectorName . '"."nodetype"=? AND "' . $selectorName . '"."nodetypenamespace"=?) AND ';
 				$this->parseConstraint($query->getConstraint(), $sql, $parameters, $query->getBoundVariableValues());
 			}
+			if ($query->getOrderings() !== NULL) {
+				$sql['orderings'] = $this->parseOrderings($query->getOrderings());
+			}
 		} elseif ($source instanceof \F3\PHPCR\Query\QOM\JoinInterface) {
 			$this->parseJoin($source, $sql, $parameters);
 			if ($query->getConstraint() !== NULL) {
@@ -235,6 +241,34 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 				$this->parseConstraint($query->getConstraint(), $sql, $parameters, $query->getBoundVariableValues());
 			}
 		}
+	}
+
+	/**
+	 * Transforms an array with Orderings into SQL-like order parts
+	 *
+	 * @param array $orderings
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function parseOrderings(array $orderings) {
+		$sqlifiedOrderings = array();
+		foreach ($orderings as $ordering) {
+			if ($ordering->getOperand() instanceof \F3\PHPCR\Query\QOM\PropertyValueInterface) {
+				switch ($ordering->getOrder()) {
+					case \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_ASCENDING:
+						$order = 'ASC';
+						break;
+					case \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING:
+						$order = 'DESC';
+						break;
+					default:
+						throw new \F3\PHPCR\RepositoryException('Illegal order requested.', 1248264221);
+				}
+
+				$sqlifiedOrderings[] = $ordering->getOperand()->getPropertyName() . ' ' . $order;
+			}
+		}
+		return $sqlifiedOrderings;
 	}
 
 	/**

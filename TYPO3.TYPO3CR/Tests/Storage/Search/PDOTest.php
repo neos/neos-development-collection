@@ -350,6 +350,56 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$searchBackend->findNodeIdentifiers($query);
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function parseSourceCallsParseOrderingsIfNeeded() {
+		$source = $this->getMock('F3\PHPCR\Query\QOM\SelectorInterface');
+		$source->expects($this->once())->method('getSelectorName')->will($this->returnValue('sel'));
+		$source->expects($this->once())->method('getNodeTypeName')->will($this->returnValue('nt:base'));
+		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', FALSE);
+		$query->expects($this->any())->method('getOrderings')->will($this->returnValue(array($this->getMock('\F3\PHPCR\Query\QOM\OrderingInterface'))));
+		$query->expects($this->once())->method('getSource')->will($this->returnValue($source));
+		$query->expects($this->once())->method('getConstraint')->will($this->returnValue(NULL));
+
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName', 'parseOrderings'));
+		$searchBackend->expects($this->once())->method('splitName')->with('nt:base')->will($this->returnValue(array('name' => 'base', 'namespaceURI' => 'jcr.invalid')));
+		$searchBackend->expects($this->once())->method('parseOrderings')->will($this->returnValue('foo'));
+
+		$sql = array();
+		$parameters = array();
+		$searchBackend->_callRef('parseSource', $query, $sql, $parameters);
+
+		$this->assertEquals('foo', $sql['orderings']);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function parseOrderingsReturnsExpectedResult() {
+		$expectedOrderings = array('foo ASC', 'bar DESC');
+
+		$fooOperand = $this->getMock('F3\PHPCR\Query\QOM\PropertyValueInterface');
+		$fooOperand->expects($this->any())->method('getPropertyName')->will($this->returnValue('foo'));
+		$fooOperand->expects($this->any())->method('getSelectorName')->will($this->returnValue(''));
+		$fooOrdering = $this->getMock('F3\PHPCR\Query\QOM\OrderingInterface');
+		$fooOrdering->expects($this->any())->method('getOperand')->will($this->returnValue($fooOperand));
+		$fooOrdering->expects($this->any())->method('getOrder')->will($this->returnValue(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_ASCENDING));
+		$barOperand = $this->getMock('F3\PHPCR\Query\QOM\PropertyValueInterface');
+		$barOperand->expects($this->any())->method('getPropertyName')->will($this->returnValue('bar'));
+		$barOperand->expects($this->any())->method('getSelectorName')->will($this->returnValue(''));
+		$barOrdering = $this->getMock('F3\PHPCR\Query\QOM\OrderingInterface');
+		$barOrdering->expects($this->any())->method('getOperand')->will($this->returnValue($barOperand));
+		$barOrdering->expects($this->any())->method('getOrder')->will($this->returnValue(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING));
+		$orderings = array($fooOrdering, $barOrdering);
+
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
+		$sqlifiedOrderings = $searchBackend->_call('parseOrderings', $orderings);
+
+		$this->assertEquals($expectedOrderings, $sqlifiedOrderings);
+	}
 }
 
 ?>

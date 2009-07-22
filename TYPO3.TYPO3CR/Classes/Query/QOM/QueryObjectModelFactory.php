@@ -414,7 +414,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 */
 	public function ascending(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058209);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrderingInterface', $operand, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_ASCENDING);
 	}
 
 	/**
@@ -428,7 +428,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 */
 	public function descending(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058210);
+		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrderingInterface', $operand, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING);
 	}
 
 	/**

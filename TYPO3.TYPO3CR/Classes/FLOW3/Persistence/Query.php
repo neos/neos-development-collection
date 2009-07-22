@@ -84,6 +84,17 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $operands = array();
 
 	/**
+	 * The property names to order the result by. Expected like this:
+	 * array(
+	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 * )
+	 *
+	 * @var array
+	 */
+	protected $orderings = array();
+
+	/**
 	 * @var integer
 	 */
 	protected $limit;
@@ -151,10 +162,25 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 			$this->source = $this->QOMFactory->selector('flow3:' . str_replace('\\', '_', $this->className), '_node');
 		}
 
+		$orderings = array();
+		foreach ($this->orderings as $propertyName => $order) {
+			$operand = $this->QOMFactory->propertyValue($propertyName);
+			switch ($order) {
+				case \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING:
+					$orderings[] = $this->QOMFactory->ascending($operand);
+					break;
+				case \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING:
+					$orderings[] = $this->QOMFactory->descending($operand);
+					break;
+				default:
+					throw new \F3\FLOW3\Persistence\Exception('Unsupported order requested.', 1248260854);
+			}
+		}
+
 		$query = $this->QOMFactory->createQuery(
 			$this->source,
 			$this->constraint,
-			array(),
+			$orderings,
 			array()
 		);
 		foreach ($this->operands as $name => $value) {
@@ -178,10 +204,11 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param array $orderings The property names to order by
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setOrderings(array $orderings) {
-		throw new \F3\FLOW3\Persistence\Exception('setLimit is not yet implemented, sorry!', ﻿1243526300);
+		$this->orderings = $orderings;
 	}
 
 	/**
@@ -195,7 +222,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 */
 	public function setLimit($limit) {
 		if ($limit < 1 || !is_int($limit)) {
-			throw new \InvalidArgumentException('setLimit() accepts only integers greater than 0.', 1217244746);
+			throw new \InvalidArgumentException('setLimit() accepts only integers greater than 0.', 1248260209);
 		}
 		$this->limit = $limit;
 
@@ -213,7 +240,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 */
 	public function setOffset($offset) {
 		if ($offset < 0 || !is_int($offset)) {
-			throw new \InvalidArgumentException('setOffset() accepts only integers greater than or equal to 0.', 1217245454);
+			throw new \InvalidArgumentException('setOffset() accepts only integers greater than or equal to 0.', 1248260189);
 		}
 		$this->offset = $offset;
 

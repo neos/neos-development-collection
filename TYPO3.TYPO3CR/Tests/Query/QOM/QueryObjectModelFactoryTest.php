@@ -74,6 +74,26 @@ class QueryObjectModelFactoryTest extends \F3\Testing\BaseTestCase {
 		$this->assertType('F3\PHPCR\Query\QOM\BindVariableValueInterface', $this->QOMFactory->bindVariable('someName'), 'The QOM factory did not return a BindVariableValue as expected.');
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function ascendingReturnsExpectedOrdering() {
+		$ascending = $this->QOMFactory->ascending($this->getMock('F3\PHPCR\Query\QOM\DynamicOperandInterface'));
+		$this->assertType('F3\PHPCR\Query\QOM\OrderingInterface', $ascending);
+		$this->assertEquals(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_ASCENDING, $ascending->getOrder());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function descendingReturnsExpectedOrdering() {
+		$descending = $this->QOMFactory->descending($this->getMock('F3\PHPCR\Query\QOM\DynamicOperandInterface'));
+		$this->assertType('F3\PHPCR\Query\QOM\OrderingInterface', $descending);
+		$this->assertEquals(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING, $descending->getOrder());
+	}
+
 }
 
 
