@@ -264,7 +264,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 						throw new \F3\PHPCR\RepositoryException('Illegal order requested.', 1248264221);
 				}
 
-				$sql['tables'][] = 'LEFT JOIN (SELECT "identifier", "value" AS "' . $ordering->getOperand()->getPropertyName() . '" FROM "index_properties") AS "_orderingtable' . count($sql['orderings']) . '" ON "identifier"';
+				$sql['tables'][] = 'LEFT JOIN (SELECT "identifier", "value" AS "' . $ordering->getOperand()->getPropertyName() . '" FROM "index_properties") AS "_orderingtable' . count($sql['orderings']) . '" ON "index_properties"."identifier"';
 				$sql['orderings'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $ordering->getOperand()->getPropertyName() . '" ' . $order;
 			}
 		}

@@ -385,8 +385,8 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 				'"_orderingtable0"."foo" ASC', '"_orderingtable1"."bar" DESC'
 			),
 			'tables' => array(
-				'LEFT JOIN (SELECT "identifier", "value" AS "foo" FROM "index_properties") AS "_orderingtable0" ON "identifier"',
-				'LEFT JOIN (SELECT "identifier", "value" AS "bar" FROM "index_properties") AS "_orderingtable1" ON "identifier"'
+				'LEFT JOIN (SELECT "identifier", "value" AS "foo" FROM "index_properties") AS "_orderingtable0" ON "index_properties"."identifier"',
+				'LEFT JOIN (SELECT "identifier", "value" AS "bar" FROM "index_properties") AS "_orderingtable1" ON "index_properties"."identifier"'
 			)
 		);
 
