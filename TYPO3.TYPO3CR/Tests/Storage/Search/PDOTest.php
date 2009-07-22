@@ -385,8 +385,8 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 				'"_orderingtable0"."foo" ASC', '"_orderingtable1"."bar" DESC'
 			),
 			'tables' => array(
-				'LEFT JOIN (SELECT "identifier", "value" AS "foo" FROM "index_properties") AS "_orderingtable0" ON "index_properties"."identifier"',
-				'LEFT JOIN (SELECT "identifier", "value" AS "bar" FROM "index_properties") AS "_orderingtable1" ON "index_properties"."identifier"'
+				'LEFT JOIN (SELECT "parent", "value" AS "foo" FROM "index_properties" WHERE "name" = \'foo\') AS "_orderingtable0" ON "_orderingtable0"."parent" = "_nodeproperties"."parent"',
+				'LEFT JOIN (SELECT "parent", "value" AS "bar" FROM "index_properties" WHERE "name" = \'bar\') AS "_orderingtable1" ON "_orderingtable1"."parent" = "_nodeproperties"."parent"'
 			)
 		);
 
@@ -404,7 +404,11 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$barOrdering->expects($this->any())->method('getOrder')->will($this->returnValue(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING));
 		$orderings = array($fooOrdering, $barOrdering);
 
+		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO->expects($this->at(0))->method('quote')->with('foo')->will($this->returnValue('\'foo\''));
+		$mockPDO->expects($this->at(1))->method('quote')->with('bar')->will($this->returnValue('\'bar\''));
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
+		$searchBackend->_set('databaseHandle', $mockPDO);
 		$sql = $searchBackend->_call('parseOrderings', $orderings, $sql);
 
 		$this->assertEquals($expectedSQL['tables'], $sql['tables']);

@@ -192,6 +192,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 
 		$sqlString = 'SELECT DISTINCT ' . implode(', ', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']);
 		$sqlString .= ' WHERE ' . implode(' ', $sql['where']);
+
 		if (count($sql['orderings'])) {
 			$sqlString .= 'ORDER BY ' . implode(', ', $sql['orderings']);
 		}
@@ -231,15 +232,15 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 				$sql['where'][] = '("' . $selectorName . '"."nodetype"=? AND "' . $selectorName . '"."nodetypenamespace"=?) AND ';
 				$this->parseConstraint($query->getConstraint(), $sql, $parameters, $query->getBoundVariableValues());
 			}
-			if ($query->getOrderings() !== NULL) {
-				$sql = $this->parseOrderings($query->getOrderings(), $sql);
-			}
 		} elseif ($source instanceof \F3\PHPCR\Query\QOM\JoinInterface) {
 			$this->parseJoin($source, $sql, $parameters);
 			if ($query->getConstraint() !== NULL) {
 				$sql['where'][] = 'AND';
 				$this->parseConstraint($query->getConstraint(), $sql, $parameters, $query->getBoundVariableValues());
 			}
+		}
+		if ($query->getOrderings() !== NULL) {
+			$sql = $this->parseOrderings($query->getOrderings(), $sql);
 		}
 	}
 
@@ -264,7 +265,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 						throw new \F3\PHPCR\RepositoryException('Illegal order requested.', 1248264221);
 				}
 
-				$sql['tables'][] = 'LEFT JOIN (SELECT "identifier", "value" AS "' . $ordering->getOperand()->getPropertyName() . '" FROM "index_properties") AS "_orderingtable' . count($sql['orderings']) . '" ON "index_properties"."identifier"';
+				$sql['tables'][] = 'LEFT JOIN (SELECT "parent", "value" AS "' . $ordering->getOperand()->getPropertyName() . '" FROM "index_properties" WHERE "name" = ' . $this->databaseHandle->quote($ordering->getOperand()->getPropertyName()) . ') AS "_orderingtable' . count($sql['orderings']) . '" ON "_orderingtable' . count($sql['orderings']) . '"."parent" = "_nodeproperties"."parent"';
 				$sql['orderings'][] = '"_orderingtable' . count($sql['orderings']) . '"."' . $ordering->getOperand()->getPropertyName() . '" ' . $order;
 			}
 		}

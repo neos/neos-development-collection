@@ -209,6 +209,7 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 */
 	public function setOrderings(array $orderings) {
 		$this->orderings = $orderings;
+		return $this;
 	}
 
 	/**
