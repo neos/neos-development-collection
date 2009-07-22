@@ -84,6 +84,16 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	protected $operands = array();
 
 	/**
+	 * @var integer
+	 */
+	protected $limit;
+
+	/**
+	 * @var integer
+	 */
+	protected $offset = 0;
+
+	/**
 	 * Constructs a query object working on the given class name
 	 *
 	 * @param string $className
@@ -150,8 +160,12 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		foreach ($this->operands as $name => $value) {
 			$query->bindValue($name, $this->valueFactory->createValue($value));
 		}
-		$result = $query->execute();
+		if ($this->limit !== NULL) {
+			$query->setLimit($this->limit);
+		}
+		$query->setOffset($this->offset);
 
+		$result = $query->execute();
 		return $this->dataMapper->map($result->getNodes());
 	}
 
@@ -176,10 +190,16 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param integer $limit
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setLimit($limit) {
-		throw new \F3\FLOW3\Persistence\Exception('setLimit is not yet implemented, sorry!', ﻿1243526060);
+		if ($limit < 1 || !is_int($limit)) {
+			throw new \InvalidArgumentException('setLimit() accepts only integers greater than 0.', 1217244746);
+		}
+		$this->limit = $limit;
+
+		return $this;
 	}
 
 	/**
@@ -188,10 +208,16 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 *
 	 * @param integer $offset
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function setOffset($offset) {
-		throw new \F3\FLOW3\Persistence\Exception('setOffset is not yet implemented, sorry!', ﻿1243526019);
+		if ($offset < 0 || !is_int($offset)) {
+			throw new \InvalidArgumentException('setOffset() accepts only integers greater than or equal to 0.', 1217245454);
+		}
+		$this->offset = $offset;
+
+		return $this;
 	}
 
 	/**

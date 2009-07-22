@@ -185,13 +185,16 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query) {
-		$sql = array();
+		$sql = array('fields' => array(), 'tables' => array(), 'where' => array());
 		$parameters = array();
 
 		$this->parseSource($query, $sql, $parameters);
 
 		$sqlString = 'SELECT DISTINCT ' . implode(',', $sql['fields']) . ' FROM ' . implode(' ', $sql['tables']);
 		$sqlString .= ' WHERE ' . implode(' ', $sql['where']);
+		if ($query->getLimit() !== NULL) {
+			$sqlString .= ' LIMIT ' . $query->getLimit() . ' OFFSET '. $query->getOffset();
+		}
 
 		$statementHandle = $this->databaseHandle->prepare($sqlString);
 		$statementHandle->execute($parameters);

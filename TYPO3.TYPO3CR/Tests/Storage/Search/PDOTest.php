@@ -314,5 +314,42 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
 		$this->assertEquals($searchBackend->_call('resolveOperator', $jcrConstant), $sqlEquivalent);
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function limitIsIgnoredIfNotSet() {
+		$mockPDOStatement = $this->getMock('PDOStatement');
+		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO->expects($this->once())->method('prepare')->with('SELECT DISTINCT  FROM  WHERE ')->will($this->returnValue($mockPDOStatement));
+		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', NULL);
+		$query->expects($this->any())->method('getLimit')->will($this->returnValue(NULL));
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('parseSource'));
+		$searchBackend->_set('databaseHandle', $mockPDO);
+		$searchBackend->expects($this->once())->method('parseSource');
+
+		$searchBackend->findNodeIdentifiers($query);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function limitAndOffsetAreUsedIfSet() {
+		$mockPDOStatement = $this->getMock('PDOStatement');
+		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO->expects($this->once())->method('prepare')->with('SELECT DISTINCT  FROM  WHERE  LIMIT 12 OFFSET 2')->will($this->returnValue($mockPDOStatement));
+		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', NULL);
+		$query->expects($this->any())->method('getOffset')->will($this->returnValue(2));
+		$query->expects($this->any())->method('getLimit')->will($this->returnValue(12));
+		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('parseSource'));
+		$searchBackend->_set('databaseHandle', $mockPDO);
+		$searchBackend->expects($this->once())->method('parseSource');
+
+		$searchBackend->findNodeIdentifiers($query);
+	}
+
 }
+
 ?>

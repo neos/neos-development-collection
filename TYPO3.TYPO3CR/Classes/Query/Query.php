@@ -47,14 +47,14 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	protected $session;
 
 	/**
-	 * integer
+	 * @var integer
 	 */
 	protected $limit;
 
 	/**
-	 * integer
+	 * @var integer
 	 */
-	protected $offset;
+	protected $offset = 0;
 
 	/**
 	 * @var string
@@ -110,7 +110,17 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	}
 
 	/**
-	 * Sets the start offset of the result set to offset.
+	 * Returns the maximum size of the result set or NULL.
+	 *
+	 * @return integer
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getLimit() {
+		return $this->limit;
+	}
+
+	/**
+	 * Sets the start offset of the result set to $offset.
 	 *
 	 * @param integer $offset
 	 * @return void
@@ -121,6 +131,16 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 			throw new \InvalidArgumentException('setOffset() accepts only integers greater than or equal to 0.', 1217245454);
 		}
 		$this->offset = $offset;
+	}
+
+	/**
+	 * Returns the start offset of the result set.
+	 *
+	 * @return integer
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getOffset() {
+		return $this->offset;
 	}
 
 	/**
