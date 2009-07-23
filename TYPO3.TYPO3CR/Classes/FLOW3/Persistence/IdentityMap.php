@@ -68,7 +68,7 @@ class IdentityMap {
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function hasUUID($uuid) {
+	public function hasIdentifier($uuid) {
 		return array_key_exists($uuid, $this->uuidMap);
 	}
 

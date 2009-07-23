@@ -59,7 +59,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$object = new \stdClass();
 
 		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
-		$mockIdentityMap->expects($this->once())->method('hasUUID')->with('1234')->will($this->returnValue(TRUE));
+		$mockIdentityMap->expects($this->once())->method('hasIdentifier')->with('1234')->will($this->returnValue(TRUE));
 		$mockIdentityMap->expects($this->once())->method('getObjectByIdentifier')->with('1234')->will($this->returnValue($object));
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'));
@@ -88,8 +88,6 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array(), '', FALSE);
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassSchema')->with($mockEntityClassName)->will($this->returnValue($mockClassSchema));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
-		$mockPersistenceManager->expects($this->atLeastOnce())->method('getSession')->will($this->returnValue($mockPersistenceSession));
 		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->with($mockEntityClassName)->will($this->returnValue($mockObjectConfiguration));
@@ -101,7 +99,7 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 
 		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('thawProperties'));
 		$dataMapper->expects($this->once())->method('thawProperties')->with($mockEntity, $node, $mockClassSchema);
-		$dataMapper->injectPersistenceManager($mockPersistenceManager);
+		$dataMapper->injectPersistenceSession($mockPersistenceSession);
 		$dataMapper->injectReflectionService($mockReflectionService);
 		$dataMapper->injectObjectManager($mockObjectManager);
 		$dataMapper->injectObjectBuilder($mockObjectBuilder);

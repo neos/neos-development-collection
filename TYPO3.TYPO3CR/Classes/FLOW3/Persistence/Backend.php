@@ -79,6 +79,11 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	protected $identityMap;
 
 	/**
+	 * @var \F3\TYPO3CR\FLOW3\Persistence\DataMapper
+	 */
+	protected $dataMapper;
+
+	/**
 	 * @var \F3\PHPCR\NodeInterface
 	 */
 	protected $baseNode;
@@ -124,6 +129,17 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	}
 
 	/**
+	 * Injects the DataMapper to map nodes to objects
+	 *
+	 * @param \F3\TYPO3CR\FLOW3\Persistence\DataMapper $dataMapper
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectDataMapper(\F3\TYPO3CR\FLOW3\Persistence\DataMapper $dataMapper) {
+		$this->dataMapper = $dataMapper;
+	}
+
+	/**
 	 * Initializes the backend
 	 *
 	 * @return void
@@ -165,6 +181,27 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 			return $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
 		} else {
 			return NULL;
+		}
+	}
+
+	/**
+	 * Returns the object with the (internal) identifier, if it is known to the
+	 * backend. Otherwise NULL is returned.
+	 *
+	 * @param string $identifier
+	 * @return object The object for the identifier if it is known, or NULL
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifier($identifier) {
+		if ($this->identityMap->hasIdentifier($identifier)) {
+			return $this->identityMap->getObjectByIdentifier($identifier);
+		} else {
+			try {
+				$node = $this->session->getNodeByIdentifier($identifier);
+			} catch (\F3\PHPCR\ItemNotFoundException $e) {
+				return NULL;
+			}
+			return $this->dataMapper->mapSingleNode($node);
 		}
 	}
 

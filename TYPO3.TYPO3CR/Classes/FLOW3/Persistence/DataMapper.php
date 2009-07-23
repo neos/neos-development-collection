@@ -46,9 +46,9 @@ class DataMapper {
 	protected $identityMap;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 * @var \F3\FLOW3\Persistence\Session
 	 */
-	protected $persistenceManager;
+	protected $persistenceSession;
 
 	/**
 	 * @var \F3\FLOW3\Reflection\Service
@@ -89,14 +89,14 @@ class DataMapper {
 	}
 
 	/**
-	 * Injects the persistence manager
+	 * Injects the persistence session
 	 *
-	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
+	 * @param \F3\FLOW3\Persistence\Session $persistenceSession The persistence session
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
+	public function injectPersistenceSession(\F3\FLOW3\Persistence\Session $persistenceSession) {
+		$this->persistenceSession = $persistenceSession;
 	}
 
 	/**
@@ -135,7 +135,7 @@ class DataMapper {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mapSingleNode(\F3\PHPCR\NodeInterface $node) {
-		if ($this->identityMap->hasUUID($node->getIdentifier())) {
+		if ($this->identityMap->hasIdentifier($node->getIdentifier())) {
 			$object = $this->identityMap->getObjectByIdentifier($node->getIdentifier());
 		} else {
 			$explodedNodeTypeName = explode(':', $node->getPrimaryNodeType()->getName(), 2);
@@ -149,7 +149,7 @@ class DataMapper {
 			$this->objectBuilder->reinjectDependencies($object, $objectConfiguration);
 			$this->thawProperties($object, $node, $classSchema);
 			$object->FLOW3_Persistence_memorizeCleanState();
-			$this->persistenceManager->getSession()->registerReconstitutedObject($object);
+			$this->persistenceSession->registerReconstitutedObject($object);
 		}
 
 		return $object;

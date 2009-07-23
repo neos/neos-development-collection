@@ -665,6 +665,62 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifierReturnsObjectFromIdentityMapForKnownIdentifier() {
+		$knownObject = new \stdClass();
+		$fakeUUID = '123-456';
+
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasIdentifier')->with($fakeUUID)->will($this->returnValue(TRUE));
+		$mockIdentityMap->expects($this->once())->method('getObjectByIdentifier')->with($fakeUUID)->will($this->returnValue($knownObject));
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($this->getMock('F3\PHPCR\SessionInterface'));
+		$backend->injectIdentityMap($mockIdentityMap);
+
+		$this->assertEquals($knownObject, $backend->getObjectByIdentifier($fakeUUID));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifierReturnsObjectFromRepositoryForKnownIdentifier() {
+		$knownObject = new \stdClass();
+		$fakeUUID = '123-456';
+
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasIdentifier')->with($fakeUUID)->will($this->returnValue(FALSE));
+		$mockNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($fakeUUID)->will($this->returnValue($mockNode));
+		$mockDataMapper = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\DataMapper');
+		$mockDataMapper->expects($this->once())->method('mapSingleNode')->with($mockNode)->will($this->returnValue($knownObject));
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
+		$backend->injectIdentityMap($mockIdentityMap);
+		$backend->injectDataMapper($mockDataMapper);
+
+		$this->assertSame($knownObject, $backend->getObjectByIdentifier($fakeUUID));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectByIdentifierReturnsNullForUnknownIdentifier() {
+		$fakeUUID = '123-456';
+
+		$mockIdentityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap');
+		$mockIdentityMap->expects($this->once())->method('hasIdentifier')->with($fakeUUID)->will($this->returnValue(FALSE));
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($fakeUUID)->will($this->throwException(new \F3\PHPCR\ItemNotFoundException()));
+		$backend = new \F3\TYPO3CR\FLOW3\Persistence\Backend($mockSession);
+		$backend->injectIdentityMap($mockIdentityMap);
+
+		$this->assertNull($backend->getObjectByIdentifier($fakeUUID));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isNewObjectReturnsTrueIfTheObjectHasNoUUIDYet() {

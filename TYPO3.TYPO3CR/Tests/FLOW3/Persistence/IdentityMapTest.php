@@ -48,14 +48,14 @@ class IdentityMapTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function hasUUIDReturnsTrueForRegisteredObject() {
+	public function hasIdentifierReturnsTrueForRegisteredObject() {
 		$object1 = new \stdClass();
 		$object2 = new \stdClass();
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($object1, 12345);
 
-		$this->assertTrue($identityMap->hasUUID('12345'), 'IdentityMap claims it does not have registered object.');
-		$this->assertFalse($identityMap->hasUUID('67890'), 'IdentityMap claims it does have unregistered object.');
+		$this->assertTrue($identityMap->hasIdentifier('12345'), 'IdentityMap claims it does not have registered object.');
+		$this->assertFalse($identityMap->hasIdentifier('67890'), 'IdentityMap claims it does have unregistered object.');
 	}
 
 	/**
@@ -94,16 +94,16 @@ class IdentityMapTest extends \F3\Testing\BaseTestCase {
 		$identityMap->registerObject($object2, 67890);
 
 		$this->assertTrue($identityMap->hasObject($object1), 'IdentityMap claims it does not have registered object.');
-		$this->assertTrue($identityMap->hasUUID('12345'), 'IdentityMap claims it does not have registered object.');
+		$this->assertTrue($identityMap->hasIdentifier('12345'), 'IdentityMap claims it does not have registered object.');
 		$this->assertTrue($identityMap->hasObject($object1), 'IdentityMap claims it does not have registered object.');
-		$this->assertTrue($identityMap->hasUUID('67890'), 'IdentityMap claims it does not have registered object.');
+		$this->assertTrue($identityMap->hasIdentifier('67890'), 'IdentityMap claims it does not have registered object.');
 
 		$identityMap->unregisterObject($object1);
 
 		$this->assertFalse($identityMap->hasObject($object1), 'IdentityMap claims it does have unregistered object.');
-		$this->assertFalse($identityMap->hasUUID('12345'), 'IdentityMap claims it does not have registered object.');
+		$this->assertFalse($identityMap->hasIdentifier('12345'), 'IdentityMap claims it does not have registered object.');
 		$this->assertTrue($identityMap->hasObject($object2), 'IdentityMap claims it does not have registered object.');
-		$this->assertTrue($identityMap->hasUUID('67890'), 'IdentityMap claims it does not have registered object.');
+		$this->assertTrue($identityMap->hasIdentifier('67890'), 'IdentityMap claims it does not have registered object.');
 	}
 
 }
