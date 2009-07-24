@@ -665,15 +665,17 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	protected function finalizeObjectProxyNodes() {
 		foreach ($this->incompleteObjectProxyNodes as $proxyNode) {
 			$object = $this->incompleteObjectProxyNodes->getInfo();
+				// if this has not been added to it's repository already, persist now (see #3858)
 			if ($this->isNewObject($object)) {
-				throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\DanglingAggregateRootObjectException('Found an instance of "' . get_class($object) . '" for "' . $proxyNode->getPath() . '" being aggregate root but not being persisted.', 1240200821);
+				$this->createNodeForEntity($object, $this->baseNode, 'flow3:' . $this->convertClassNameToJCRName($object->FLOW3_AOP_Proxy_getProxyTargetClassName()));
+				$this->persistObject($object);
+			}
+
+			$objectUUID = $this->getIdentifierByObject($object);
+			if ($objectUUID !== NULL) {
+				$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
 			} else {
-				$objectUUID = $this->getIdentifierByObject($object);
-				if ($objectUUID !== NULL) {
-					$proxyNode->setProperty('flow3:target', $objectUUID, \F3\PHPCR\PropertyType::REFERENCE);
-				} else {
-					throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnknownObjectException('Could not resolve UUID for object reference in object proxy node "' . $proxyNode->getPath() . '".', 1240200392);
-				}
+				throw new \F3\TYPO3CR\FLOW3\Persistence\Exception\UnknownObjectException('Could not resolve UUID for object reference in object proxy node "' . $proxyNode->getPath() . '".', 1240200392);
 			}
 		}
 	}

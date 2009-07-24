@@ -1019,9 +1019,8 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException \F3\TYPO3CR\FLOW3\Persistence\Exception\DanglingAggregateRootObjectException
 	 */
-	public function aggregateRootObjectsFoundWhenPersistingThatAreNotAmongAggregateRootObjectsCollectedFromRepositoriesCauseAnException() {
+	public function aggregateRootObjectsFoundWhenPersistingThatAreNotAmongAggregateRootObjectsCollectedFromRepositoriesArePersisted() {
 		$otherClassName = 'OtherClass' . uniqid();
 		$fullOtherClassName = 'F3\\TYPO3CR\\Tests\\' . $otherClassName;
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $otherClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
@@ -1038,8 +1037,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$someClassName = 'SomeClass' . uniqid();
 		$fullSomeClassName = 'F3\\TYPO3CR\\Tests\\' . $someClassName;
 		eval('namespace F3\\TYPO3CR\\Tests; class ' . $someClassName . ' implements \F3\FLOW3\AOP\ProxyInterface {
-			public $FLOW3_Persistence_Entity_UUID = NULL;
-			public $property;
 			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return \'' . $fullSomeClassName . '\';}
 			public function FLOW3_AOP_Proxy_construct() {}
 			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
@@ -1065,11 +1062,15 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$aggregateRootObjects = new \SplObjectStorage();
 		$aggregateRootObjects->attach($someAggregateRootObject);
 
-		$mockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
-		$mockInstanceNode->expects($this->once())->method('addNode')->will($this->returnValue($this->getMock('F3\PHPCR\NodeInterface')));
+		$otherMockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$otherMockInstanceNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('otherUUID'));
+		$someMockInstanceNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$someMockInstanceNode->expects($this->once())->method('addNode')->will($this->returnValue($this->getMock('F3\PHPCR\NodeInterface')));
 		$mockBaseNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockBaseNode->expects($this->once())->method('addNode')->will($this->returnValue($otherMockInstanceNode));
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
-		$mockSession->expects($this->once())->method('getNodeByIdentifier')->will($this->returnValue($mockInstanceNode));
+		$mockSession->expects($this->at(0))->method('getNodeByIdentifier')->will($this->returnValue($someMockInstanceNode));
+		$mockSession->expects($this->at(1))->method('getNodeByIdentifier')->with('otherUUID')->will($this->returnValue($otherMockInstanceNode));
 
 		$identityMap = new \F3\TYPO3CR\FLOW3\Persistence\IdentityMap();
 		$identityMap->registerObject($someAggregateRootObject, '');
