@@ -206,6 +206,9 @@ class DataMapper {
 				$object->FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);
 			}
 		}
+
+		$uuidPropertyName = $classSchema->getUUIDPropertyName();
+		$object->FLOW3_AOP_Proxy_setProperty(($uuidPropertyName !== NULL ? $uuidPropertyName : 'FLOW3_Persistence_Entity_UUID'), $node->getIdentifier());
 	}
 
 	/**

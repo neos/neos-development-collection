@@ -223,10 +223,33 @@ class DataMapperTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function thawPropertiesDoesNotSetAPropertyIfTheValueIsNULL() {
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
-		$object->expects($this->never())->method('FLOW3_AOP_Proxy_setProperty');
+		$object->expects($this->once())->method('FLOW3_AOP_Proxy_setProperty')->with('FLOW3_Persistence_Entity_UUID', 'c254d2e0-825a-11de-8a39-0800200c9a66');
 
 		$node = $this->getMock('F3\PHPCR\NodeInterface');
 		$node->expects($this->any())->method('hasProperty')->will($this->onConsecutiveCalls(FALSE));
+		$node->expects($this->once())->method('getIdentifier')->will($this->returnValue('c254d2e0-825a-11de-8a39-0800200c9a66'));
+
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
+		$classSchema->addProperty('firstProperty', 'string');
+
+		$dataMapper = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\DataMapper'), array('dummy'));
+		$dataMapper->_call('thawProperties', $object, $node, $classSchema);
+	}
+
+	/**
+	 * After thawing the properties, the nodes' uuid will be available in the identifier
+	 * property of the proxy class.
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function thawPropertiesAssignsTheNodesUUIDToTheProxy() {
+		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object->expects($this->once())->method('FLOW3_AOP_Proxy_setProperty')->with('FLOW3_Persistence_Entity_UUID', 'c254d2e0-825a-11de-8a39-0800200c9a66');
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->once())->method('hasProperty')->will($this->returnValue(FALSE));
+		$node->expects($this->once())->method('getIdentifier')->will($this->returnValue('c254d2e0-825a-11de-8a39-0800200c9a66'));
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\Post');
 		$classSchema->addProperty('firstProperty', 'string');
