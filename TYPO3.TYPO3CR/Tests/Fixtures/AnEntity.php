@@ -47,6 +47,11 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	public $objects;
 
 	/**
+	 * @var boolean
+	 */
+	public $clone = FALSE;
+
+	/**
 	 * @var \F3\TYPO3CR\Tests\Fixtures\AValue
 	 */
 	protected $value;
@@ -91,6 +96,10 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 		return TRUE;
 	}
 
+	public function FLOW3_Persistence_isClone() {
+		return TRUE;
+	}
+
 	public function FLOW3_Persistence_isDirty($propertyName) {
 		return TRUE;
 	}
@@ -99,6 +108,7 @@ class AnEntity implements \F3\FLOW3\AOP\ProxyInterface, \F3\FLOW3\Persistence\As
 	}
 
 	public function __clone() {
+		return $this->clone;
 	}
 
 	/**
