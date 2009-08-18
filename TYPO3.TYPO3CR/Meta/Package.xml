@@ -3,7 +3,7 @@
     <key>TYPO3CR</key>
     <title>TYPO3 Content Repository</title>
     <description>The TYPO3 Content Repository (more or less) implements the JSR-283 specification. It comes with a persistence backend for FLOW3 and a friendly interface for direct interaction with the repository contents.</description>
-    <version>0.5.0-alpha3</version>
+    <version>0.5.0-alpha4</version>
     <categories/>
     <parties>
         <person role="LeadDeveloper">
