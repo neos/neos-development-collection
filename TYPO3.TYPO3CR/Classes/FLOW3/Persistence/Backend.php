@@ -632,25 +632,35 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		}
 
 		foreach ($objectStorage as $object) {
-			$itemNode = $node->addNode('flow3:item', 'nt:unstructured');
-
 			if ($object instanceof \DateTime) {
-				$itemNode->setProperty('flow3:object', $element, \F3\PHPCR\PropertyType::DATE);
+				$this->addItemNode($node)->setProperty('flow3:object', $element, \F3\PHPCR\PropertyType::DATE);
 			} else {
 				if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 					if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
-						$this->createOrUpdateProxyNodeForEntity($object, $itemNode, 'flow3:object');
+						$this->createOrUpdateProxyNodeForEntity($object, $this->addItemNode($node), 'flow3:object');
 					} else {
 						if ($object->FLOW3_Persistence_isNew()) {
-							$this->createNodeForEntity($object, $itemNode, 'flow3:object');
+							$this->createNodeForEntity($object, $this->addItemNode($node), 'flow3:object');
 						}
 						$queue[] = $object;
 					}
 				} else {
-					$this->persistValueObject($object, $itemNode, 'flow3:object');
+					$this->persistValueObject($object, $this->addItemNode($node), 'flow3:object');
 				}
 			}
 		}
+	}
+
+	/**
+	 * Add a new node named flow3:item of type nt:unstructured to the given
+	 * $parentNode.
+	 *
+	 * @param \F3\PHPCR\NodeInterface $parentNode The node to add the item node to.
+	 * @return \F3\PHPCR\NodeInterface The new item node.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function addItemNode(\F3\PHPCR\NodeInterface $parentNode) {
+		return $parentNode->addNode('flow3:item', 'nt:unstructured');
 	}
 
 	/**
