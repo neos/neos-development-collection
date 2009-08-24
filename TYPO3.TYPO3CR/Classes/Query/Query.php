@@ -62,6 +62,11 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	protected $language;
 
 	/**
+	 * @var array
+	 */
+	protected $boundVariables = array();
+
+	/**
 	 * Injects the Object Factory
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
@@ -84,6 +89,22 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	}
 
 	/**
+	 * Binds the given value to the variable named $varName.
+	 *
+	 * @param string $varName name of variable in query
+	 * @param \F3\PHPCR\ValueInterface $value value to bind
+	 * @return void
+	 * @throws \InvalidArgumentException if $varName is not a valid variable in this query.
+	 * @throws RepositoryException if an error occurs.
+	 */
+	public function bindValue($varName, \F3\PHPCR\ValueInterface $value) {
+		if (array_key_exists($varName, $this->boundVariables) === FALSE) {
+			throw new \InvalidArgumentException('Invalid variable name "' . $varName . '" given to bindValue.', 1217241834);
+		}
+		$this->boundVariables[$varName] = $value->getString();
+	}
+
+	/**
 	 * Executes this query and returns a QueryResult object.
 	 *
 	 * @return \F3\PHPCR\Query\QueryInterface a QueryResult object
@@ -93,6 +114,19 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 */
 	public function execute() {
 		return $this->objectFactory->create('F3\PHPCR\Query\QueryResultInterface', $this->session->getStorageBackend()->getSearchBackend()->findNodeIdentifiers($this), $this->session);
+	}
+
+	/**
+	 * Returns the names of the bind variables in this query. If this query
+	 * does not contains any bind variables then an empty array is returned.
+	 *
+	 * @return array the names of the bind variables in this query.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function getBindVariableNames() {
+		return array_keys($this->boundVariables);
 	}
 
 	/**
@@ -208,6 +242,16 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 */
 	public function storeAsNode($absPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897755);
+	}
+
+	/**
+	 * Returns the values of all bound variables.
+	 *
+	 * @return array()
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getBoundVariableValues() {
+		return $this->boundVariables;
 	}
 
 }

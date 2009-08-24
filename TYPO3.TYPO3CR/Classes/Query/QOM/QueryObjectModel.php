@@ -55,7 +55,7 @@ namespace F3\TYPO3CR\Query\QOM;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class QueryObjectModel extends \F3\TYPO3CR\Query\PreparedQuery implements \F3\PHPCR\Query\QOM\QueryObjectModelInterface {
+class QueryObjectModel extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Query\QOM\QueryObjectModelInterface {
 
 	/**
 	 * @var \F3\PHPCR\Query\QOM\SourceInterface

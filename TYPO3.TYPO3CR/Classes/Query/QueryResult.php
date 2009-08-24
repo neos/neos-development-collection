@@ -127,5 +127,18 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 		return $nodeIterator;
 	}
 
+	/**
+	 * Returns an array of all the selector names that were used in the query
+	 * that created this result. If the query did not have a selector name then
+	 * an empty array is returned.
+	 *
+	 * @return array a String array holding the selector names.
+	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
+	 */
+	public function getSelectorNames() {
+		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1251041596);
+	}
+
 }
 ?>

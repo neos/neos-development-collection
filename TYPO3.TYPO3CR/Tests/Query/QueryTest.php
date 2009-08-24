@@ -70,6 +70,16 @@ class QueryTest extends \F3\Testing\BaseTestCase {
 		$query->setOffset(-1);
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function bindValueThrowsExceptionOnUnknownVariableName() {
+		$query = new \F3\TYPO3CR\Query\Query();
+		$query->bindValue('someVariable', $this->getMock('F3\PHPCR\ValueInterface'));
+	}
+
 }
 
 
