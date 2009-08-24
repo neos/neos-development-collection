@@ -161,7 +161,7 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Check type guessing/conversion when we go for PHP6
 	 */
-	public static function guessType($value) {
+	static public function guessType($value) {
 		$type = \F3\PHPCR\PropertyType::UNDEFINED;
 
 		if ($value instanceof \DateTime) {

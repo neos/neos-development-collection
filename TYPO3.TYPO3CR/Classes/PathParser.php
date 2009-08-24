@@ -44,7 +44,7 @@ class PathParser {
 	 * @return \F3\PHPCR\NodeInterface the root node
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public static function parsePath($path, \F3\PHPCR\NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
+	static public function parsePath($path, \F3\PHPCR\NodeInterface $currentNode, $searchMode = self::SEARCH_MODE_NODES) {
 		if ($path[0] === '/') {
 			$currentNode = self::getRootNode($currentNode);
 			$path = ltrim($path, '/');
@@ -145,7 +145,7 @@ class PathParser {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
-	public static function getFirstPathPart($path) {
+	static public function getFirstPathPart($path) {
 		$path = ltrim($path, '/');
 		$pathArray = explode('/', $path);
 		$firstElement = array_shift($pathArray);
@@ -162,7 +162,7 @@ class PathParser {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo optimize avoiding explode/implode: substr_count($stack, $needle) and strpos()?
 	 */
-	public static function getLastPathPart($path) {
+	static public function getLastPathPart($path) {
 		$pathArray = explode('/', $path);
 		$lastElement = array_pop($pathArray);
 		$remainingPath = implode('/', $pathArray);
