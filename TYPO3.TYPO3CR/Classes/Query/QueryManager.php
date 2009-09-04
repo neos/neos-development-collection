@@ -64,6 +64,7 @@ class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 	 * @return \F3\PHPCR\Query\QueryInterface a Query object
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query statement is syntactically invalid or the specified language is not supported
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
+	 * @api
 	 */
 	public function createQuery($statement, $language) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897622);
@@ -75,6 +76,7 @@ class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 	 *
 	 * @return \F3\PHPCR\Query\QOM\QueryObjectModelFactoryInterface a QueryObjectModelFactory object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getQOMFactory() {
 		return $this->queryObjectModelFactory;
@@ -87,6 +89,7 @@ class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 	 * @return \F3\PHPCR\Query\QueryInterface a Query object.
 	 * @throws \F3\PHPCR\Query\InvalidQueryException If node is not a valid persisted query (that is, a node of type nt:query).
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
+	 * @api
 	 */
 	public function getQuery($node) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897625);
@@ -101,6 +104,7 @@ class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 	 * @return array A string array.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getSupportedQueryLanguages() {
 		return array(\F3\PHPCR\Query\QueryInterface::JCR_JQOM);
