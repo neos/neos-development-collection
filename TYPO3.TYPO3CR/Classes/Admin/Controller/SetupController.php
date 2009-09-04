@@ -38,16 +38,15 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\CLI\Request');
 
 	/**
-	 * Initializes this controller
+	 * Initializes the setup action
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeArguments() {
+	public function initializeSetupAction() {
 		$this->arguments->addNewArgument('dsn');
 		$this->arguments->addNewArgument('userid');
 		$this->arguments->addNewArgument('password');
-		$this->arguments->addNewArgument('indexlocation');
 	}
 
 	/**
@@ -61,10 +60,9 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		return '<html><head><title>TYPO3CR setup</title></head><body>
 	<form action="setup">
 		<table>
-		<tr><th>DSN:</th><td><input type="text" name="dsn" size="30" /> (e.g. sqlite:/path/to/typo3cr.db)</td></tr>
+		<tr><th>DSN:</th><td><input type="text" name="dsn" size="30" /> (e.g. <code>sqlite:/path/to/typo3cr.db</code> or <code>mysql:host=localhost;dbname=TYPO3CR</code>)</td></tr>
 		<tr><th>Username (optional):</th><td><input type="text" name="userid" size="30" /></td></tr>
 		<tr><th>Password (optional):</th><td><input type="passsword" name="password" size="30" /></td></tr>
-		<tr><th>Index location:</th><td><input type="text" name="indexlocation" size="30" /> (e.g. /path/to/index)</td></tr>
 		</table>
 		<input type="submit" value="OK" />
 	</form>
