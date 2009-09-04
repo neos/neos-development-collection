@@ -62,6 +62,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @param string $DSN The DSN to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setDataSourceName($DSN) {
 		$this->dataSourceName = $DSN;
@@ -73,6 +74,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @param string $username The username to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setUsername($username) {
 		$this->username = $username;
@@ -84,6 +86,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @param $password The password to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setPassword($password) {
 		$this->password = $password;
@@ -94,6 +97,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function connect() {
 		try {
@@ -122,6 +126,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
+	 * @api
 	 */
 	public function addNode(\F3\PHPCR\NodeInterface $node) {
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "index_properties" ("parent", "name", "namespace", "type", "value") VALUES (?, ?, ?, ?, ?)');
@@ -155,6 +160,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
+	 * @api
 	 */
 	public function updateNode(\F3\PHPCR\NodeInterface $node) {
 		$this->deleteNode($node);
@@ -166,6 +172,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
+	 * @api
 	 */
 	public function deleteNode(\F3\PHPCR\NodeInterface $node) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "index_properties" WHERE "parent" = ?');
@@ -183,6 +190,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query) {
 		$sql = array('fields' => array(), 'tables' => array(), 'where' => array(), 'orderings' => array());

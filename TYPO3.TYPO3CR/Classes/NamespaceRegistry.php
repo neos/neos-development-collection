@@ -111,6 +111,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function registerNamespace($prefix, $uri) {
 		if (!$this->isAllowedToModifyNamespace($prefix)) {
@@ -150,6 +151,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient access to unregister the namespace.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function unregisterNamespace($prefix) {
 		if (!$this->isAllowedToModifyNamespace($prefix)) {
@@ -173,6 +175,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 	 * @return array a string array
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getPrefixes() {
 		return array_merge(
@@ -187,6 +190,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 	 * @return array a string array
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getURIs() {
 		return array_merge(
@@ -208,6 +212,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getURI($prefix) {
 		if (isset($this->builtInNamespaces[$prefix])) {
@@ -233,6 +238,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getPrefix($uri) {
 		$prefix = array_search($uri, $this->builtInNamespaces);

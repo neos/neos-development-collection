@@ -74,6 +74,7 @@ class LogicalOr implements \F3\PHPCR\Query\QOM\OrInterface {
 	 *
 	 * @return \F3\PHPCR\Query\QOM\ConstraintInterface the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getConstraint1() {
 		return $this->constraint1;
@@ -84,6 +85,7 @@ class LogicalOr implements \F3\PHPCR\Query\QOM\OrInterface {
 	 *
 	 * @return \F3\PHPCR\Query\QOM\ConstraintInterface the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getConstraint2() {
 		return $this->constraint2;

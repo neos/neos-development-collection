@@ -98,6 +98,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 *
 	 * @return string a String
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getName() {
 		return $this->name;
@@ -112,6 +113,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 *
 	 * @return array an array of Strings
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDeclaredSupertypeNames() {
 		return $this->declaredSuperTypeNames;
@@ -129,6 +131,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 *
 	 * @return boolean a boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isAbstract() {
 		return $this->abstract;
@@ -142,6 +145,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 *
 	 * @return boolean a boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isMixin() {
 		return $this->mixin;
@@ -161,6 +165,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 *
 	 * @return boolean a boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function hasOrderableChildNodes() {
 		return $this->orderableChildNodes;
@@ -178,6 +183,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 * property definitions have no effect.
 	 *
 	 * @return boolean a boolean
+	 * @api
 	 */
 	public function isQueryable() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224679680);
@@ -193,6 +199,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 *
 	 * @return string a String
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getPrimaryItemName() {
 		return $this->primaryItemName;
@@ -207,6 +214,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 *
 	 * @return array an array of PropertyDefinitions
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDeclaredPropertyDefinitions() {
 		return $this->declaredPropertyDefinitions;
@@ -221,6 +229,7 @@ class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterfa
 	 *
 	 * @return array an array of NodeDefinitions
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDeclaredChildNodeDefinitions() {
 		return $this->declaredChildNodeDefinitions;

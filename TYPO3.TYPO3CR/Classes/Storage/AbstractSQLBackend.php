@@ -52,6 +52,7 @@ abstract class AbstractSQLBackend extends \F3\TYPO3CR\Storage\AbstractBackend {
 	 * @param string $DSN The DSN to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setDataSourceName($DSN) {
 		$this->dataSourceName = $DSN;
@@ -63,6 +64,7 @@ abstract class AbstractSQLBackend extends \F3\TYPO3CR\Storage\AbstractBackend {
 	 * @param string $username The username to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setUsername($username) {
 		$this->username = $username;
@@ -74,6 +76,7 @@ abstract class AbstractSQLBackend extends \F3\TYPO3CR\Storage\AbstractBackend {
 	 * @param $password The password to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setPassword($password) {
 		$this->password = $password;

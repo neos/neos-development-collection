@@ -38,6 +38,7 @@ class RowIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\Query\R
 	 * @return \F3\PHPCR\Query\RowInterface
 	 * @throws OutOfBoundsException if the iterator contains no more elements.
 	 * @author Karsten Dambekalns <karsten@dambekalns.de>
+	 * @api
 	 */
 	public function nextRow() {
 		return $this->next();

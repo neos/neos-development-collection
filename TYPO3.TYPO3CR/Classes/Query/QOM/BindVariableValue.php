@@ -63,6 +63,7 @@ class BindVariableValue extends \F3\TYPO3CR\Query\QOM\StaticOperand implements \
 	 *
 	 * @return string the bind variable name; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getBindVariableName() {
 		return $this->variableName;

@@ -286,6 +286,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return boolean TRUE if this item is modified; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isModified() {
 		return $this->session->isRegisteredAsDirtyNode($this);
@@ -297,6 +298,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return boolean
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @api
 	 */
 	public function isNode() {
 		return TRUE;
@@ -310,6 +312,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add support for same name siblings
+	 * @api
 	 */
 	public function getPath() {
 		if ($this->parentNode === NULL) {
@@ -334,6 +337,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getParent() {
 		if ($this->parentNode === NULL) throw new \F3\PHPCR\ItemNotFoundException("root node does not have a parent", 1187530879);
@@ -367,6 +371,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @see SessionInterface::removeItem(String)
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function remove() {
 		if ($this->parentNode === NULL) {
@@ -391,6 +396,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @param string $nodeIdentifier
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function removeNode($nodeIdentifier) {
 		unset($this->nodes[array_search($nodeIdentifier, $this->nodes)]);
@@ -432,6 +438,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Many :)
+	 * @api
 	 */
 	public function addNode($relPath, $primaryNodeTypeName = NULL, $identifier = NULL) {
 		if (empty($relPath)) {
@@ -501,6 +508,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\Version\VersionException if this node is read-only due to a checked-in node and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the re-ordering and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function orderBefore($srcChildRelPath, $destChildRelPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667765);
@@ -557,6 +565,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function setProperty($name, $value, $type = \F3\PHPCR\PropertyType::UNDEFINED) {
 		if (!$this->isValidName($name)) {
@@ -615,6 +624,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\PathNotFoundException If no node exists at the specified path or the current Session does not read access to the node at the specified path.
 	 * @throws \F3\PHPCR\RepositoryException  If another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getNode($relPath) {
 		return \F3\TYPO3CR\PathParser::parsePath($relPath, $this);
@@ -667,6 +677,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return \F3\PHPCR\NodeIteratorInterface a NodeIterator over all (matching) child Nodes
 	 * @throws \F3\PHPCR\RepositoryException If an unexpected error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getNodes($filter = NULL) {
 		if ($filter !== NULL) throw new \F3\PHPCR\RepositoryException('Support for name patterns in getNodes() is not yet implemented.', 1184868411);
@@ -689,6 +700,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\RepositoryException If another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getProperty($relPath) {
 		if (strpos($relPath, '/') === FALSE && isset($this->properties[$relPath])) {
@@ -745,6 +757,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\RepositoryException If an unexpected error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implement support for $namePattern
+	 * @api
 	 */
 	public function getProperties($filter = NULL) {
 		if ($filter !== NULL) throw new \F3\PHPCR\RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
@@ -766,6 +779,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return \F3\PHPCR\ItemInterface the primary child item.
 	 * @throws \F3\PHPCR\ItemNotFoundException if this node does not have a primary child item, either because none is declared in the node type or because a declared primary item is not present on this node instance, or because none accessible through the current Session
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getPrimaryItem() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667766);
@@ -778,6 +792,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return string the identifier of this node
 	 * @throws \F3\PHPCR\RepositoryException If an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getIdentifier() {
 		return $this->identifier;
@@ -793,6 +808,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return integer The index of this node within the ordered set of its same-name sibling nodes.
 	 * @throws \F3\PHPCR\RepositoryException  if an error occurs.
+	 * @api
 	 */
 	public function getIndex() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667767);
@@ -821,6 +837,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return \F3\PHPCR\PropertyIteratorInterface A PropertyIterator.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getReferences($name = NULL) {
 		return $this->_getReferences($name, \F3\PHPCR\PropertyType::REFERENCE);
@@ -849,6 +866,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return \F3\PHPCR\PropertyIteratorInterface A PropertyIterator.
 	 * @throws \F3\PHPCR\RepositoryException  if an error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getWeakReferences($name = NULL) {
 		return $this->_getReferences($name, \F3\PHPCR\PropertyType::WEAKREFERENCE);
@@ -863,6 +881,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Implement without actually getting the node(s)
+	 * @api
 	 */
 	public function hasNode($relPath) {
 		if (strpos($relPath, '/') === FALSE) {
@@ -886,6 +905,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function hasProperty($relPath) {
 		if (strpos($relPath, '/') === FALSE) {
@@ -907,6 +927,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return boolean TRUE if this node has one or more child nodes; FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function hasNodes() {
 		return count($this->nodes) > 0;
@@ -922,6 +943,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return boolean TRUE if this node has one or more properties; FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function hasProperties() {
 		return TRUE;
@@ -935,6 +957,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return \F3\PHPCR\NodeType\NodeTypeInterface a NodeType object.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getPrimaryNodeType() {
 		return $this->session->getWorkspace()->getNodeTypeManager()->getNodeType($this->nodeTypeName);
@@ -950,6 +973,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return array of \F3\PHPCR\NodeType\NodeTypeInterface objects.
 	 * @throws \F3\PHPCR\RepositoryException  if an error occurs
+	 * @api
 	 */
 	public function getMixinNodeTypes() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667711);
@@ -963,6 +987,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @param string $nodeTypeName the name of a node type.
 	 * @return boolean TRUE if this node is of the specified primary node type or mixin type, or a subtype thereof. Returns FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException  If an error occurs.
+	 * @api
 	 */
 	public function isNodeType($nodeTypeName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667712);
@@ -984,6 +1009,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\Version\VersionException if this node is read-only due to a checked-in node and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the change of the primary node type and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function setPrimaryType($nodeTypeName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667713);
@@ -1017,6 +1043,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\Version\VersionException if this node is versionable and checked-in or is non-versionable but its nearest versionable ancestor is checked-in and this implementation performs this validation immediately instead of waiting until save..
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the addition of the mixin and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function addMixin($mixinName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667714);
@@ -1035,6 +1062,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\Version\VersionException if this node is read-only due to a checked-in node and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the removal of the mixin and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function removeMixin($mixinName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667715);
@@ -1058,6 +1086,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return boolean true if the specified mixin node type, mixinName, can be added to this node; false otherwise.
 	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if the specified mixin node type name is not recognized.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function canAddMixin($mixinName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667716);
@@ -1076,6 +1105,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return \F3\PHPCR\NodeType\NodeDefinitionInterface a NodeDefinition object.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function getDefinition() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667717);
@@ -1102,6 +1132,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient access to perform the operation.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the update.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function update($srcWorkspace) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667723);
@@ -1117,6 +1148,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\NoSuchWorkspaceException if the workspace is unknown.
 	 * @throws \F3\PHPCR\AccessDeniedException if the current session has insufficient access capabilities to perform this operation.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getCorrespondingNodePath($workspaceName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667726);
@@ -1128,6 +1160,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return \F3\PHPCR\NodeIteratorInterface a NodeIterator
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function getSharedSet() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667727);
@@ -1150,6 +1183,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @see removeShare()
 	 * @see Item::remove()
 	 * @see SessionInterface::removeItem
+	 * @api
 	 */
 	public function removeSharedSet() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667728);
@@ -1167,6 +1201,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @see removeSharedSet()
 	 * @see Item::remove()
 	 * @see SessionInterface::removeItem
+	 * @api
 	 */
 	public function removeShare() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667729);
@@ -1182,6 +1217,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return a boolean
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function isCheckedOut() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1245700686);
@@ -1195,6 +1231,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return a boolean.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function isLocked() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1245700672);
@@ -1214,6 +1251,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException  if this implementation does not support lifecycle actions or if this node does not have the mix:lifecycle mixin.
 	 * @throws \F3\PHPCR\InvalidLifecycleTransitionException if the lifecycle transition is not successful.
 	 * @throws \F3\PHPCR\RepositoryException  if another error occurs.
+	 * @api
 	 */
 	public function followLifecycleTransition($transition) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667740);
@@ -1225,6 +1263,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return array a string array.
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException  if this implementation does not support lifecycle actions or if this node does not have the mix:lifecycle mixin.
 	 * @throws \F3\PHPCR\RepositoryException  if another error occurs.
+	 * @api
 	 */
 	public function getAllowedLifecycleTransitions() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667741);

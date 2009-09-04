@@ -66,6 +66,7 @@ class PropertyValue extends \F3\TYPO3CR\Query\QOM\DynamicOperand implements \F3\
 	 *
 	 * @return string the selector name; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getSelectorName() {
 		return $this->selectorName;
@@ -76,6 +77,7 @@ class PropertyValue extends \F3\TYPO3CR\Query\QOM\DynamicOperand implements \F3\
 	 *
 	 * @return string the property name; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getPropertyName() {
 		return $this->propertyName;

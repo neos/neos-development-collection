@@ -76,6 +76,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 *
 	 * @return integer an int constant member of PropertyType.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getRequiredType() {
 		return $this->requiredType;
@@ -206,6 +207,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 *
 	 * @return array a String array.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getValueConstraints() {
 		return $this->valueConstraints;
@@ -239,6 +241,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 *
 	 * @return array an array of Value objects.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDefaultValues() {
 		return $this->defaultValues;
@@ -258,6 +261,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 *
 	 * @return boolean a boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isMultiple() {
 		return $this->multiple;
@@ -287,6 +291,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 * Comparison of Values).
 	 *
 	 * @return array a string array
+	 * @api
 	 */
 	public function getAvailableQueryOperators() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674119);
@@ -301,6 +306,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 * property definition has a queryable setting of TRUE.
 	 *
 	 * @return boolean a boolean
+	 * @api
 	 */
 	public function isFullTextSearchable() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674125);
@@ -315,6 +321,7 @@ class PropertyDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements 
 	 * property definition has a queryable setting of TRUE.
 	 *
 	 * @return boolean a boolean
+	 * @api
 	 */
 	public function isQueryOrderable() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674130);

@@ -46,6 +46,7 @@ class Literal extends \F3\TYPO3CR\Query\QOM\StaticOperand implements \F3\PHPCR\Q
 	 *
 	 * @return string the literal value; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getLiteralValue() {
 		return $this->value;

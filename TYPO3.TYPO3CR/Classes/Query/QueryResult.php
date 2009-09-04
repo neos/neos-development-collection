@@ -80,6 +80,7 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	 *
 	 * @return array array holding the column names.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function getColumnNames() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897579);
@@ -91,7 +92,8 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	 *
 	 * @return \F3\PHPCR\Query\RowIteratorInterface a RowIterator
 	 * @throws \F3\PHPCR\RepositoryException if this call is the second time either getRows() or getNodes() has been called on the same QueryResult object or if another error occurs.
-	*/
+	 * @api
+	 */
 	public function getRows() {
 		if ($this->identifierTuples === NULL) throw new \F3\PHPCR\RepositoryException('Illegal getRows() call - can be called only once and not after getNodes().', 1237991809);
 
@@ -113,6 +115,7 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	 * @return \F3\PHPCR\NodeIteratorInterface a NodeIterator
 	 * @throws \F3\PHPCR\RepositoryException if the query contains more than one selector, if this call is the second time either getRows() or getNodes() has been called on the same QueryResult object or if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getNodes() {
 		if ($this->identifierTuples === NULL) throw new \F3\PHPCR\RepositoryException('Illegal getNodes() call - can be called only once and not after getRows().', 1237991684);

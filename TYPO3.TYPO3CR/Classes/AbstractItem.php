@@ -74,6 +74,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * @return string the name of this Item> in qualified form or an empty string if this Item is the root node of a workspace.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @api
 	 */
 	public function getName() {
 		if ($this->isNode() && $this->parentNode == NULL) {
@@ -103,6 +104,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficient access to retrieve the specified node.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @api
 	 */
 	public function getAncestor($depth) {
 		if ($depth < 0 || $depth > $this->getDepth()) {
@@ -144,6 +146,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * @return integer The depth of this Item in the workspace item graph.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDepth() {
 		$path = $this->getPath();
@@ -160,6 +163,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * @return \F3\PHPCR\SessionInterface the Session through which this Item was acquired.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @api
 	 */
 	public function getSession() {
 		return $this->session;
@@ -196,6 +200,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Add (proper) checks for the repository and workspace conditions
+	 * @api
 	 */
 	public function isSame(\F3\PHPCR\ItemInterface $otherItem) {
 		if ($this->getSession()->getWorkspace()->getName() != $otherItem->getSession()->getWorkspace()->getName()) return FALSE;
@@ -222,6 +227,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 *
 	 * @param \F3\PHPCR\ItemVisitorInterface $visitor The ItemVisitor to be accepted.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function accept(\F3\PHPCR\ItemVisitorInterface $visitor) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577699);
@@ -245,6 +251,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * @return void
 	 * @throws \F3\PHPCR\InvalidItemStateException if this Item object represents a workspace item that has been removed (either by this session or another).
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	*/
 	public function refresh($keepChanges) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212577830);

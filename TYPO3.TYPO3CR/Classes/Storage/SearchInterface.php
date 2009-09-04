@@ -36,6 +36,7 @@ interface SearchInterface {
 	 * @param string $workspaceName Name of the workspace which should be used for all search operations
 	 * @return void
 	 * @throws \InvalidArgumentException
+	 * @api
 	 */
 	public function setWorkspaceName($workspaceName);
 
@@ -44,6 +45,7 @@ interface SearchInterface {
 	 *
 	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry
 	 * @return void
+	 * @api
 	 */
 	public function setNamespaceRegistry(\F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry);
 
@@ -51,6 +53,7 @@ interface SearchInterface {
 	 * Performs any needed initialization before the search backend can be used
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function connect();
 
@@ -58,6 +61,7 @@ interface SearchInterface {
 	 * Performs any needed cleanup before the search backend can be discarded
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function disconnect();
 
@@ -66,6 +70,7 @@ interface SearchInterface {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
+	 * @api
 	 */
 	public function addNode(\F3\PHPCR\NodeInterface $node);
 
@@ -74,6 +79,7 @@ interface SearchInterface {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
+	 * @api
 	 */
 	public function updateNode(\F3\PHPCR\NodeInterface $node);
 
@@ -82,6 +88,7 @@ interface SearchInterface {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
+	 * @api
 	 */
 	public function deleteNode(\F3\PHPCR\NodeInterface $node);
 
@@ -95,6 +102,7 @@ interface SearchInterface {
 	 *
 	 * @param \F3\PHPCR\Query\QOM\QueryObjectModelInterface $query
 	 * @return array
+	 * @api
 	 */
 	public function findNodeIdentifiers(\F3\PHPCR\Query\QOM\QueryObjectModelInterface $query);
 

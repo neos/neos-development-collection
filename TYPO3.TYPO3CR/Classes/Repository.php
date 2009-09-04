@@ -104,6 +104,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -145,6 +146,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @todo Currently given credentials are not checked at all!
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function login($credentials = NULL, $workspaceName = 'default') {
 		if ($credentials !== NULL && !($credentials instanceof \F3\PHPCR\CredentialsInterface)) throw new \F3\PHPCR\RepositoryException('$credentials must be an instance of \F3\PHPCR\CredentialsInterface', 1181042933);
@@ -173,6 +175,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 *
 	 * @return array a string array holding all descriptor keys
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDescriptorKeys() {
 		return array_keys($this->standardDescriptors);
@@ -185,6 +188,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 *
 	 * @param string $key a descriptor key.
 	 * @return boolan whether $key is a standard descriptor.
+	 * @api
 	 */
 	public function isStandardDescriptor($key) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598717);
@@ -196,6 +200,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 *
 	 * @param string $key a descriptor key.
 	 * @return boolean whether the specified descriptor is multi-valued.
+	 * @api
 	 */
 	public function isSingleValueDescriptor($key) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598718);
@@ -209,6 +214,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 *
 	 * @param string $key a descriptor key.
 	 * @return \F3\PHPCR\ValueInterface The value of the indicated descriptor
+	 * @api
 	 */
 	public function getDescriptorValue($key) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598719);
@@ -223,6 +229,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 *
 	 * @param string $key a descriptor key.
 	 * @return array of \F3\PHPCR\ValueInterface the value array for the indicated descriptor
+	 * @api
 	 */
 	public function getDescriptorValues($key) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224598720);
@@ -238,6 +245,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 * @param key a descriptor key.
 	 * @return a descriptor value in string form.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDescriptor($key) {
 		return (isset($this->standardDescriptors[$key]) ? $this->standardDescriptors[$key] : NULL);

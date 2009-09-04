@@ -44,6 +44,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 * @param string $name a String.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setName($name) {
 		$this->name = $name;
@@ -55,6 +56,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 * @param boolean $autoCreated a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setAutoCreated($autoCreated) {
 		$this->autoCreated = $autoCreated;
@@ -66,6 +68,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 * @param boolean $mandatory a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setMandatory($mandatory) {
 		$this->mandatory = $mandatory;
@@ -77,6 +80,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 * @param integer $opv an int constant member of OnParentVersionAction.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setOnParentVersion($opv) {
 		$this->onParentVersion = $opv;
@@ -88,6 +92,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 * @param boolean $protected a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setProtected($protected) {
 		$this->protected = $protected;
@@ -98,6 +103,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 *
 	 * @param integer $type an int constant member of PropertyType.
 	 * @return void
+	 * @api
 	 */
 	public function setRequiredType($type) {
 		$this->requiredType = $type;
@@ -109,6 +115,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 * @param array $constraints a String array.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setValueConstraints(array $constraints) {
 		$this->valueConstraints = $constraints;
@@ -121,6 +128,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 * @param array $defaultValues a Value array.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setDefaultValues(array $defaultValues) {
 		$this->defaultValues = $defaultValues;
@@ -132,6 +140,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 * @param boolean $multiple a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setMultiple($multiple) {
 		$this->multiple = $multiple;
@@ -142,6 +151,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 *
 	 * @param array operators an array of String constants. See PropertyDefinition#getAvailableQueryOperators().
 	 * @return void
+	 * @api
 	 */
 	public function setAvailableQueryOperators(array $operators) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674192);
@@ -152,6 +162,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 *
 	 * @param boolean $fullTextSearchable a boolean.
 	 * @return void
+	 * @api
 	 */
 	public function setFullTextSearchable($fullTextSearchable) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674197);
@@ -162,6 +173,7 @@ class PropertyDefinitionTemplate extends \F3\TYPO3CR\NodeType\PropertyDefinition
 	 *
 	 * @param boolean $queryOrderable a boolean.
 	 * @return void
+	 * @api
 	 */
 	public function setQueryOrderable($queryOrderable) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224674201);

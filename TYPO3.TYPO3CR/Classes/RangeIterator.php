@@ -57,6 +57,7 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	 * @param mixed $element The element to append to the iteration
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function append($element) {
 		$this->elements[] = $element;
@@ -67,6 +68,7 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function remove() {
 		$positionToRemove = $this->getPosition()-1;
@@ -81,6 +83,7 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	 * @return boolean
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function hasNext() {
 		return $this->getPosition() < $this->getSize();
@@ -92,6 +95,7 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	 * @return mixed The next element in the iteration
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function next() {
 		if ($this->hasNext()) {
@@ -112,6 +116,7 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	 * @throws OutOfBoundsException if skipped past the last element in the iterator.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function skip($skipNum) {
 		$newPosition = $this->getPosition() + $skipNum;
@@ -136,6 +141,7 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	 *
 	 * @return integer
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @api
 	 */
 	public function getSize() {
 		return count($this->elements);
@@ -151,6 +157,7 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	 *
 	 * @return integer The current position, 0-based
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @api
 	 */
 	public function getPosition() {
 		return $this->position;

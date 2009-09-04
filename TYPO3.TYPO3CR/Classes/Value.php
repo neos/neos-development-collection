@@ -64,6 +64,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function getString() {
 		switch ($this->type) {
@@ -97,6 +98,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 * @return \F3\TYPO3CR\Binary A Binary representation of this value.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getBinary() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217843676);
@@ -109,6 +111,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a long is not possible.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getLong() {
 		return (int)$this->value;
@@ -120,6 +123,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 * @return float A double representation of the value of this property.
 	 * @throws \F3\PHPCR\ValueFormatException if conversion is not possible.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getDecimal() {
 		return $this->getDouble();
@@ -132,6 +136,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a double is not possible.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDouble() {
 		return (double)$this->value;
@@ -144,6 +149,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a \DateTime is not possible.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDate() {
 		if (is_a($this->value, 'DateTime')) {
@@ -164,6 +170,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a boolean is not possible.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getBoolean() {
 		return (boolean)$this->value;
@@ -187,6 +194,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	 * The type returned is that which was set at property creation.
 	 * @return integer The type of the value
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getType() {
 		return $this->type;

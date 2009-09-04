@@ -34,6 +34,7 @@ interface BackendInterface {
 	 * Connect to the storage backend
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function connect();
 
@@ -41,6 +42,7 @@ interface BackendInterface {
 	 * Disconnect from the storage backend
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function disconnect();
 
@@ -50,6 +52,7 @@ interface BackendInterface {
 	 * @param string $workspaceName Name of the workspace which should be used for all storage operations
 	 * @return void
 	 * @throws \InvalidArgumentException
+	 * @api
 	 */
 	public function setWorkspaceName($workspaceName);
 
@@ -58,6 +61,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchBackend
 	 * @return void
+	 * @api
 	 */
 	public function setSearchBackend(\F3\TYPO3CR\Storage\SearchInterface $searchBackend);
 
@@ -65,6 +69,7 @@ interface BackendInterface {
 	 * Returns the search backend used by the storage backend.
 	 *
 	 * @return \F3\TYPO3CR\Storage\SearchInterface
+	 * @api
 	 */
 	public function getSearchBackend();
 
@@ -73,6 +78,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry
 	 * @return void
+	 * @api
 	 */
 	public function setNamespaceRegistry(\F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry);
 
@@ -81,6 +87,7 @@ interface BackendInterface {
 	 *
 	 * @param string $identifier
 	 * @return boolean
+	 * @api
 	 */
 	public function hasIdentifier($identifier);
 
@@ -89,6 +96,7 @@ interface BackendInterface {
 	 *
 	 * @param string $identifier The UUID of the node to check for
 	 * @return boolean
+	 * @api
 	 */
 	public function isReferenceTarget($identifier);
 
@@ -98,6 +106,7 @@ interface BackendInterface {
 	 * Fetches raw node data of the root node of the current workspace.
 	 *
 	 * @return array|FALSE
+	 * @api
 	 */
 	public function getRawRootNode();
 
@@ -106,6 +115,7 @@ interface BackendInterface {
 	 *
 	 * @param string $identifier The Identifier of the node to fetch
 	 * @return array|FALSE
+	 * @api
 	 */
 	public function getRawNodeByIdentifier($identifier);
 
@@ -114,6 +124,7 @@ interface BackendInterface {
 	 *
 	 * @param string $identifier The node Identifier to fetch (sub-)nodes for
 	 * @return array
+	 * @api
 	 */
 	public function getIdentifiersOfSubNodesOfNode($identifier);
 
@@ -122,6 +133,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node node to insert
 	 * @return void
+	 * @api
 	 */
 	public function addNode(\F3\PHPCR\NodeInterface $node);
 
@@ -130,6 +142,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node node to update
 	 * @return void
+	 * @api
 	 */
 	public function updateNode(\F3\PHPCR\NodeInterface $node);
 
@@ -138,6 +151,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node node to delete
 	 * @return void
+	 * @api
 	 */
 	public function removeNode(\F3\PHPCR\NodeInterface $node);
 
@@ -148,6 +162,7 @@ interface BackendInterface {
 	 * @param string $identifier the identifier of the parent
 	 * @param string $nodeName the name of the childnode
 	 * @return boolean
+	 * @api
 	 */
 	public function hasChildNodeWithName($identifier, $nodeName);
 
@@ -158,6 +173,7 @@ interface BackendInterface {
 	 *
 	 * @param string $identifier The node Identifier to fetch properties for
 	 * @return array
+	 * @api
 	 */
 	public function getRawPropertiesOfNode($identifier);
 
@@ -168,6 +184,7 @@ interface BackendInterface {
 	 * @param integer $type one of the types defined in \F3\PHPCR\PropertyType
 	 * @param $value a value of the given type
 	 * @return array
+	 * @api
 	 */
 	public function getRawPropertiesOfTypedValue($name, $type, $value);
 
@@ -176,6 +193,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\PHPCR\PropertyInterface $property property to insert
 	 * @return void
+	 * @api
 	 */
 	public function addProperty(\F3\PHPCR\PropertyInterface $property);
 
@@ -184,6 +202,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\PHPCR\PropertyInterface $property property to update
 	 * @return void
+	 * @api
 	 */
 	public function updateProperty(\F3\PHPCR\PropertyInterface $property);
 
@@ -192,6 +211,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\PHPCR\PropertyInterface $property property to remove
 	 * @return void
+	 * @api
 	 */
 	public function removeProperty(\F3\PHPCR\PropertyInterface $property);
 
@@ -201,6 +221,7 @@ interface BackendInterface {
 	 * Fetches raw namespace data from the database
 	 *
 	 * @return array
+	 * @api
 	 */
 	public function getRawNamespaces();
 
@@ -209,6 +230,7 @@ interface BackendInterface {
 	 *
 	 * @param string $prefix The namespace prefix to register
 	 * @param string $uri The namespace URI to register
+	 * @api
 	 */
 	public function addNamespace($prefix, $uri);
 
@@ -217,6 +239,7 @@ interface BackendInterface {
 	 *
 	 * @param string $prefix The prefix of the namespace to update
 	 * @param string $uri The URI of the namespace to update
+	 * @api
 	 */
 	public function updateNamespacePrefix($prefix, $uri);
 
@@ -225,6 +248,7 @@ interface BackendInterface {
 	 *
 	 * @param string $prefix The prefix of the namespace to update
 	 * @param string $uri The URI of the namespace to update
+	 * @api
 	 */
 	public function updateNamespaceURI($prefix, $uri);
 
@@ -232,6 +256,7 @@ interface BackendInterface {
 	 * Deletes the namespace identified by $prefix.
 	 *
 	 * @param string $prefix The prefix of the namespace to delete
+	 * @api
 	 */
 	public function deleteNamespace($prefix);
 
@@ -241,6 +266,7 @@ interface BackendInterface {
 	 * Fetches raw data for all nodetypes from the database
 	 *
 	 * @return array
+	 * @api
 	 */
 	public function getRawNodeTypes();
 
@@ -249,6 +275,7 @@ interface BackendInterface {
 	 *
 	 * @param string $nodeTypeName The name of the nodetype record to fetch
 	 * @return array|FALSE
+	 * @api
 	 */
 	public function getRawNodeType($nodeTypeName);
 
@@ -257,6 +284,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\PHPCR\NodeType\NodeTypeDefinitionInterface $nodeTypeDefinition
 	 * @return void
+	 * @api
 	 */
 	public function addNodeType(\F3\PHPCR\NodeType\NodeTypeDefinitionInterface $nodeTypeDefinition);
 
@@ -265,6 +293,7 @@ interface BackendInterface {
 	 *
 	 * @param string $name
 	 * @return void
+	 * @api
 	 */
 	public function deleteNodeType($name);
 

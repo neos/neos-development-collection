@@ -71,6 +71,7 @@ class Join implements \F3\PHPCR\Query\QOM\JoinInterface {
 	 * Gets the left node-tuple source.
 	 *
 	 * @return \F3\PHPCR\Query\QOM\SourceInterface the left source; non-null
+	 * @api
 	 */
 	public function getLeft() {
 		return $this->left;
@@ -80,6 +81,7 @@ class Join implements \F3\PHPCR\Query\QOM\JoinInterface {
 	 * Gets the right node-tuple source.
 	 *
 	 * @return \F3\PHPCR\Query\QOM\SourceInterface the right source; non-null
+	 * @api
 	 */
 	public function getRight() {
 		return $this->right;
@@ -89,6 +91,7 @@ class Join implements \F3\PHPCR\Query\QOM\JoinInterface {
 	 * Gets the join type.
 	 *
 	 * @return string one of QueryObjectModelConstants.JCR_JOIN_TYPE_*
+	 * @api
 	 */
 	public function getJoinType() {
 		return $this->joinType;
@@ -98,6 +101,7 @@ class Join implements \F3\PHPCR\Query\QOM\JoinInterface {
 	 * Gets the join condition.
 	 *
 	 * @return JoinCondition the join condition; non-null
+	 * @api
 	 */
 	public function getJoinCondition() {
 		return $this->joinCondition;

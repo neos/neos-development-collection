@@ -142,6 +142,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 *
 	 * @return \F3\PHPCR\RepositoryInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getRepository() {
 		return $this->repository;
@@ -152,6 +153,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * 'anonymous user ID' or NULL.
 	 *
 	 * @return mixed
+	 * @api
 	 */
 	public function getUserID() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408404);
@@ -163,6 +165,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * empty array if the Credentials instance did not provide attributes.
 	 *
 	 * @return array
+	 * @api
 	 */
 	public function getAttributeNames() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408403);
@@ -174,6 +177,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 *
 	 * @param string $name
 	 * @return object The value of the attribute or null if no attribute of the given name exists.
+	 * @api
 	 */
 	public function getAttribute($name) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408402);
@@ -184,6 +188,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 *
 	 * @return \F3\PHPCR\WorkspaceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getWorkspace() {
 		return $this->workspace;
@@ -196,6 +201,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @return \F3\PHPCR\NodeInterface The root node of the workspace: a Node object.
 	 * @throws RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getRootNode() {
 		if ($this->rootNode === NULL) {
@@ -223,6 +229,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @return \F3\PHPCR\SessionInterface a Session object
 	 * @throws \F3\PHPCR\LoginException if the current session does not have sufficient access to perform the operation.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function impersonate(\F3\PHPCR\CredentialsInterface $credentials) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408401);
@@ -238,6 +245,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getNodeByIdentifier($id) {
 		if (array_key_exists($id, $this->currentlyLoadedNodes)) {
@@ -270,6 +278,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\PathNotFoundException if no accessible item is found at the specified path.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getItem($absPath) {
 		return \F3\TYPO3CR\PathParser::parsePath($absPath, $this->getRootNode(), \F3\TYPO3CR\PathParser::SEARCH_MODE_ITEMS);
@@ -283,6 +292,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\PathNotFoundException if no accessible node is found at the specified path.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getNode($absPath) {
 		return $this->getRootNode()->getNode($absPath);
@@ -296,6 +306,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\PathNotFoundException if no accessible property is found at the specified path.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getProperty($absPath) {
 		return $this->getRootNode()->getProperty($absPath);
@@ -308,6 +319,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param string $absPath An absolute path.
 	 * @return boolean a boolean
 	 * @throws \F3\PHPCR\RepositoryException if absPath is not a well-formed absolute path.
+	 * @api
 	 */
 	public function itemExists($absPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485251);
@@ -320,6 +332,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param string $absPath An absolute path.
 	 * @return boolean a boolean
 	 * @throws \F3\PHPCR\RepositoryException if absPath is not a well-formed absolute path.
+	 * @api
 	 */
 	public function nodeExists($absPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485252);
@@ -332,6 +345,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param string $absPath An absolute path.
 	 * @return boolean a boolean
 	 * @throws \F3\PHPCR\RepositoryException if absPath is not a well-formed absolute path.
+	 * @api
 	 */
 	public function propertyExists($absPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485253);
@@ -375,6 +389,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\ConstraintViolationException if a node-type or other constraint violation is detected immediately and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\Lock\LockException if the move operation would violate a lock and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if the last element of destAbsPath has an index or if another error occurs.
+	 * @api
 	 */
 	public function move($srcAbsPath, $destAbsPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485254);
@@ -400,6 +415,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\PathNotFoundException if no accessible item is found at $absPath property or if the specified item or an item in its subgraph is currently the target of a REFERENCE property located in this workspace but outside the specified item's subgraph and the current Session does not have read access to that REFERENCE property.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @see Item::remove()
+	 * @api
 	 */
 	public function removeItem($absPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224512858);
@@ -431,6 +447,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if the save would result in the addition of a node with an unrecognized node type.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function save() {
 		$this->validatePendingChanges();
@@ -469,6 +486,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param boolean $keepChanges a boolean
 	 * @return void
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function refresh($keepChanges) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485255);
@@ -480,6 +498,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 *
 	 * @return boolean a boolean
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
+	 * @api
 	 */
 	public function hasPendingChanges() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485256);
@@ -491,6 +510,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 *
 	 * @return \F3\PHPCR\ValueFactoryInterface
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getValueFactory() {
 		return $this->valueFactory;
@@ -527,6 +547,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param string $actions a comma separated list of action strings.
 	 * @return boolean true if this Session has permission to perform the specified actions at the specified absPath.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function hasPermission($absPath, $actions) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485257);
@@ -566,6 +587,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @return void
 	 * @throws java.security.AccessControlException If permission is denied.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function checkPermission($absPath, $actions) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485258);
@@ -613,6 +635,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param array $arguments the arguments of the operation.
 	 * @return boolean FALSE if the operation cannot be performed, TRUE if the operation can be performed or if the repository cannot determine whether the operation can be performed.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
+	 * @api
 	 */
 	public function hasCapability($methodName, $target, array $arguments) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224508902);
@@ -686,6 +709,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\Version\VersionException if the node at $parentAbsPath is read-only due to a checked-in node and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the addition of the subgraph and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getImportContentHandler($parentAbsPath, $uuidBehavior) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485259);
@@ -757,6 +781,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\InvalidSerializedDataException if incoming stream is not a valid XML document.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the addition of the subgraph and this implementation performs this validation immediately.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function importXML($parentAbsPath, $in, $uuidBehavior) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485260);
@@ -801,6 +826,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \RuntimeException if an error during an I/O operation occurs.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function exportSystemView($absPath, \XMLWriter $out, $skipBinary, $noRecurse) {
 		$this->exportToXML($this->getNode($absPath), $out, !$skipBinary, !$noRecurse, self::EXPORT_SYSTEM, TRUE);
@@ -841,6 +867,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \RuntimeException if an error during an I/O operation occurs.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function exportDocumentView($absPath, \XMLWriter $out, $skipBinary, $noRecurse) {
 		$this->exportToXML($this->getNode($absPath), $out, !$skipBinary, !$noRecurse, self::EXPORT_DOCUMENT, TRUE);
@@ -860,6 +887,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\NamespaceException if an attempt is made to map a namespace URI to a prefix beginning with the characters "xml" (in any combination of case) or if an attempt is made to map either the empty prefix or the empty namespace (i.e., if either $prefix or $uri are the empty string).
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function setNamespacePrefix($prefix, $uri) {
 		if (strtolower(substr($prefix, 0, 3)) == 'xml') {
@@ -884,6 +912,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @return array a string array
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getNamespacePrefixes() {
 		$globalPrefixes = $this->workspace->getNamespaceRegistry()->getPrefixes();
@@ -903,6 +932,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\NamespaceException if the specified prefix is unknown.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getNamespaceURI($prefix) {
 		$this->loadNamespaceFromPrefix($prefix);
@@ -918,6 +948,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @throws \F3\PHPCR\NamespaceException if the specified uri is unknown.
 	 * @throws \F3\PHPCR\RepositoryException - if another error occurs
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getNamespacePrefix($uri) {
 		$this->loadNamespaceFromURI($uri);
@@ -930,6 +961,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function logout() {
 		$this->storageBackend->disconnect();
@@ -944,6 +976,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 *
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isLive() {
 		return $this->isLive;
@@ -955,6 +988,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @return \F3\PHPCR\Security\AccessControlManager the access control manager for this Session
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if access control is not supported.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getAccessControlManager() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212485267);
@@ -966,6 +1000,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @return \F3\PHPCR\Retention\RetentionManagerInterface the retention manager for this Session.
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if retention and hold are not supported.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getRetentionManager() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213801951);

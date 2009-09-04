@@ -66,6 +66,7 @@ class Selector implements \F3\PHPCR\Query\QOM\SelectorInterface {
 	 *
 	 * @return string the node type name; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getNodeTypeName() {
 		return $this->nodeTypeName;
@@ -77,6 +78,7 @@ class Selector implements \F3\PHPCR\Query\QOM\SelectorInterface {
 	 *
 	 * @return the selector name; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getSelectorName() {
 		return $this->selectorName;

@@ -38,6 +38,7 @@ class NodeIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\NodeIt
 	 * @throws \OutOfBoundsException if the iterator contains no more elements.
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function nextNode() {
 		return $this->next();

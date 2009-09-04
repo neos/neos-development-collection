@@ -37,6 +37,7 @@ class NodeTypeIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\No
 	 * @return \F3\PHPCR\NodeType\NodeTypeInterface
 	 * @throws OutOfBoundsException if the iterator contains no more elements.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function nextNodeType() {
 		return $this->next();

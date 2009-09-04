@@ -70,6 +70,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if a particular validity test is possible on this method, the implemention chooses to perform that test and the parameters given fail that test. See the individual QOM factory methods for the validity criteria of each query element.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function createQuery(\F3\PHPCR\Query\QOM\SourceInterface $selectorOrSource, $constraint, array $orderings, array $columns) {
 		$query =  $this->objectFactory->create('F3\PHPCR\Query\QOM\QueryObjectModelInterface', $selectorOrSource, $constraint, $orderings, $columns);
@@ -86,6 +87,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function selector($nodeTypeName, $selectorName = '') {
 		if ($selectorName === '') {
@@ -104,6 +106,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\JoinInterface the join; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function join(\F3\PHPCR\Query\QOM\SourceInterface $left, \F3\PHPCR\Query\QOM\SourceInterface $right, $joinType, \F3\PHPCR\Query\QOM\JoinConditionInterface $joinCondition) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\JoinInterface', $left, $right, $joinType, $joinCondition);
@@ -119,6 +122,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\EquiJoinConditionInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function equiJoinCondition($selector1Name, $property1Name, $selector2Name, $property2Name) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058189);
@@ -133,6 +137,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\SameNodeJoinConditionInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function sameNodeJoinCondition($selector1Name, $selector2Name, $selector2Path = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058190);
@@ -147,6 +152,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function childNodeJoinCondition($childSelectorName, $parentSelectorName) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\ChildNodeJoinConditionInterface', $childSelectorName, $parentSelectorName);
@@ -160,6 +166,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\DescendantNodeJoinConditionInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function descendantNodeJoinCondition($descendantSelectorName, $ancestorSelectorName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058192);
@@ -174,6 +181,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function _and(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint1, \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\AndInterface', $constraint1, $constraint2);
@@ -188,6 +196,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function _or(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint1, \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrInterface', $constraint1, $constraint2);
@@ -201,6 +210,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function not(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\NotInterface', $constraint);
@@ -216,6 +226,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function comparison(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand1, $operator, \F3\PHPCR\Query\QOM\StaticOperandInterface $operand2) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\ComparisonInterface', $operand1, $operator, $operand2);
@@ -229,6 +240,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\PropertyExistenceInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function propertyExistence($propertyName, $selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058196);
@@ -243,6 +255,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\FullTextSearchInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function fullTextSearch($propertyName, $fullTextSearchExpression, $selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058197);
@@ -256,6 +269,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\SameNodeInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function sameNode($path, $selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058198);
@@ -269,6 +283,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\ChildNodeInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function childNode($path, $selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058199);
@@ -282,6 +297,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\DescendantNodeInterface the constraint; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function descendantNode($path, $selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058200);
@@ -296,6 +312,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function propertyValue($propertyName, $selectorName = '') {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\PropertyValueInterface', $propertyName, $selectorName);
@@ -308,6 +325,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\LengthInterface the operand; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function length(\F3\PHPCR\Query\QOM\PropertyValueInterface $propertyValue) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058202);
@@ -320,6 +338,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\NodeNameInterface the operand; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function nodeName($selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058203);
@@ -332,6 +351,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\NodeLocalNameInterface the operand; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function nodeLocalName($selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058204);
@@ -344,6 +364,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\FullTextSearchScoreInterface the operand; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function fullTextSearchScore($selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058205);
@@ -357,6 +378,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function lowerCase(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\LowerCaseInterface', $operand);
@@ -370,6 +392,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function upperCase(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\UpperCaseInterface', $operand);
@@ -383,6 +406,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function bindVariable($bindVariableName) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\BindVariableValueInterface', $bindVariableName);
@@ -398,6 +422,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if a particular validity test is possible on this method, the implemention chooses to perform that test (and not leave it until later) on createQuery, and the parameters given fail that test
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function literal(\F3\PHPCR\ValueInterface $literalValue) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\LiteralInterface', $literalValue->getString());
@@ -412,6 +437,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\OrderingInterface the ordering
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function ascending(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrderingInterface', $operand, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_ASCENDING);
@@ -426,6 +452,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\OrderingInterface the ordering
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query is invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function descending(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
 		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrderingInterface', $operand, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING);
@@ -456,6 +483,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @return \F3\PHPCR\Query\QOM\ColumnInterface the column; non-null
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query has no default selector or is otherwise invalid
 	 * @throws \F3\PHPCR\RepositoryException if the operation otherwise fails
+	 * @api
 	 */
 	public function column($propertyName, $columnName = NULL, $selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1217058211);

@@ -53,6 +53,7 @@ class NodeDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements \F3\
 	 * not attached to a live NodeType. In such cases this method returns NULL.
 	 *
 	 * @return array an array of \F3\PHPCR\NodeType\NodeTypeInterface instances.
+	 * @api
 	 */
 	public function getRequiredPrimaryTypes() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097206);
@@ -69,6 +70,7 @@ class NodeDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements \F3\
 	 * empty one, then this method will return NULL.
 	 *
 	 * @return array a String array
+	 * @api
 	 */
 	public function getRequiredPrimaryTypeNames() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097207);
@@ -87,6 +89,7 @@ class NodeDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements \F3\
 	 * not attached to a live NodeType. In such cases this method returns null.
 	 *
 	 * @return \F3\PHPCR\NodeType\NodeTypeInterface a NodeType.
+	 * @api
 	 */
 	public function getDefaultPrimaryType() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097208);
@@ -103,6 +106,7 @@ class NodeDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements \F3\
 	 * empty one, then this method will return null.
 	 *
 	 * @return string a String
+	 * @api
 	 */
 	public function getDefaultPrimaryTypeName() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097209);
@@ -118,6 +122,7 @@ class NodeDefinition extends \F3\TYPO3CR\NodeType\ItemDefinition implements \F3\
 	 *
 	 * @return boolean a boolean.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function allowsSameNameSiblings() {
 		return $this->sameNameSiblings;

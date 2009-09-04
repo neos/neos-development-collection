@@ -95,6 +95,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @return \F3\PHPCR\NodeType\NodeTypeInterface A NodeType object.
 	 * @throws \F3\PHPCR\NodeType\NoSuchNodeTypeException if no node type by the given name exists.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getNodeType($nodeTypeName) {
 		if (isset($this->registeredPrimaryTypes[$nodeTypeName])) {
@@ -124,6 +125,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @param string $name a String.
 	 * @return boolean a boolean
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function hasNodeType($name) {
 		if (isset($this->registeredPrimaryTypes[$name]) || isset($this->registeredMixinTypes[$name])) {
@@ -139,6 +141,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getAllNodeTypes() {
 		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeIteratorInterface', array_merge($this->registeredPrimaryTypes, $this->registeredMixinTypes));
@@ -150,6 +153,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getPrimaryNodeTypes() {
 		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeIteratorInterface', $this->registeredPrimaryTypes);
@@ -162,6 +166,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface An NodeTypeIterator.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getMixinNodeTypes() {
 		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeIteratorInterface', $this->registeredMixinTypes);
@@ -180,6 +185,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function createNodeTypeTemplate($ntd = NULL) {
 		if ($ntd !== NULL) {
@@ -197,6 +203,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function createNodeDefinitionTemplate() {
 		return $this->objectFactory->create('F3\PHPCR\NodeType\NodeDefinitionTemplateInterface');
@@ -210,6 +217,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if this implementation does not support node type registration.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function createPropertyDefinitionTemplate() {
 		return $this->objectFactory->create('F3\PHPCR\NodeType\PropertyDefinitionTemplateInterface');
@@ -230,6 +238,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo check validity of definition
+	 * @api
 	 */
 	public function registerNodeType(\F3\PHPCR\NodeType\NodeTypeDefinitionInterface $ntd, $allowUpdate) {
 		if ($allowUpdate === TRUE && $this->hasNodeType($ntd->getName())) {
@@ -259,6 +268,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo check validity of definitions before handing over to registerNodeType (all-or-nothing effect)
+	 * @api
 	 */
 	public function registerNodeTypes(array $definitions, $allowUpdate) {
 		foreach ($definitions as $definition) {
@@ -292,6 +302,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo check if the nodetype is a builtin or needed by other types and/or nodes
+	 * @api
 	 */
 	public function unregisterNodeType($name) {
 			// make sure we have this nodetype
@@ -316,6 +327,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo make sure interdependent types can be unregistered by this
+	 * @api
 	 */
 	public function unregisterNodeTypes(array $names) {
 		foreach ($names as $name) {

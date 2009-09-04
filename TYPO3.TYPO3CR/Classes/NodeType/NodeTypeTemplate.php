@@ -48,6 +48,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * @param string $name a String.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setName($name) {
 		$this->name = $name;
@@ -59,6 +60,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * @param array $names a String array.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setDeclaredSuperTypeNames(array $names) {
 		$this->declaredSuperTypeNames = $names;
@@ -70,6 +72,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * @param boolean $abstract a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setAbstract($abstract) {
 		$this->abstract = $abstract;
@@ -81,6 +84,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * @param boolean $mixin a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setMixin($mixin) {
 		$this->mixin = $mixin;
@@ -92,6 +96,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * @param boolean $orderable a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setOrderableChildNodes($orderable) {
 		$this->orderableChildNodes = $orderable;
@@ -103,6 +108,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * @param string $name a String.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setPrimaryItemName($name) {
 		$this->primaryItemName = $name;
@@ -114,6 +120,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * @param booolean $queryable a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setQueryable($queryable) {
 		$this->isQueryable = $queryable;
@@ -125,6 +132,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * objects can be added to or removed from this List.
 	 *
 	 * @return array a mutable List of PropertyDefinitionTemplate objects.
+	 * @api
 	 */
 	public function getPropertyDefinitionTemplates() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213014854);
@@ -136,6 +144,7 @@ class NodeTypeTemplate extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implement
 	 * can be added to or removed from this List.
 	 *
 	 * @return array a mutable List of NodeDefinitionTemplate objects.
+	 * @api
 	 */
 	public function getNodeDefinitionTemplates() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213014853);

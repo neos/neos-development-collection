@@ -36,6 +36,7 @@ class PropertyIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\Pr
 	 *
 	 * @return \F3\PHPCR\PropertyInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function nextProperty() {
 		return $this->next();

@@ -57,6 +57,7 @@ class Row implements \F3\PHPCR\Query\RowInterface {
 	 *
 	 * @return array a Value array.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
+	 * @api
 	 */
 	public function getValues() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897508);
@@ -69,6 +70,7 @@ class Row implements \F3\PHPCR\Query\RowInterface {
 	 * @return \F3\PHPCR\ValueInterface a Value
 	 * @throws \F3\PHPCR\ItemNotFoundException if columnName s not among the column names of the query result table.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getValue($columnName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897509);
@@ -82,6 +84,7 @@ class Row implements \F3\PHPCR\Query\RowInterface {
 	 * @return \F3\PHPCR\NodeInterface a Node
 	 * @throws \F3\PHPCR\RepositoryException if selectorName is not the alias of a selector in this query or if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getNode($selectorName = NULL) {
 		if ($selectorName === NULL) {
@@ -101,6 +104,7 @@ class Row implements \F3\PHPCR\Query\RowInterface {
 	 * @return string
 	 * @throws \F3\PHPCR\RepositoryException if selectorName is not the alias of a selector in this query or if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getPath($selectorName = NULL) {
 		$node = $this->getNode($selectorName);
@@ -124,6 +128,7 @@ class Row implements \F3\PHPCR\Query\RowInterface {
 	 * @param string $selectorName
 	 * @return float
 	 * @throws \F3\PHPCR\RepositoryException if selectorName is not the alias of a selector in this query or (in case of no given selectorName) if this query has more than one selector (and therefore, this Row corresponds to more than one Node) or if another error occurs.
+	 * @api
 	 */
 	public function getScore($selectorName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897512);

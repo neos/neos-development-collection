@@ -63,6 +63,7 @@ class LogicalNot implements \F3\PHPCR\Query\QOM\NotInterface {
 	 *
 	 * @return \F3\PHPCR\Query\QOM\ConstraintInterface the constraint; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getConstraint() {
 		return $this->constraint;

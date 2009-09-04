@@ -61,6 +61,7 @@ class ChildNodeJoinCondition implements \F3\PHPCR\Query\QOM\ChildNodeJoinConditi
 	 * Gets the name of the child selector.
 	 *
 	 * @return string the selector name; non-null
+	 * @api
 	 */
 	public function getChildSelectorName() {
 		return $this->childSelectorName;
@@ -70,6 +71,7 @@ class ChildNodeJoinCondition implements \F3\PHPCR\Query\QOM\ChildNodeJoinConditi
 	 * Gets the name of the parent selector.
 	 *
 	 * @return string the selector name; non-null
+	 * @api
 	 */
 	public function getParentSelectorName() {
 		return $this->parentSelectorName;

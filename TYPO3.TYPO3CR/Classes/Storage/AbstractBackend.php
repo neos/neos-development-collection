@@ -50,6 +50,7 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	 * Constructs this backend
 	 *
 	 * @param mixed $options Configuration options - depends on the actual backend
+	 * @api
 	 */
 	public function __construct($options = array()) {
 		foreach ($options as $optionKey => $optionValue) {
@@ -67,6 +68,7 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setWorkspaceName($workspaceName) {
 		if ($workspaceName === '' || !is_string($workspaceName)) throw new \InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1200614989);
@@ -80,6 +82,7 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	 * @param \F3\TYPO3CR\Storage\SearchInterface $searchBackend
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setSearchBackend(\F3\TYPO3CR\Storage\SearchInterface $searchBackend) {
 		$this->searchBackend = $searchBackend;
@@ -91,6 +94,7 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	 *
 	 * @return \F3\TYPO3CR\Storage\SearchInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getSearchBackend() {
 		return $this->searchBackend;
@@ -102,6 +106,7 @@ abstract class AbstractBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry
 	 * @return void
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function setNamespaceRegistry(\F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry) {
 		$this->namespaceRegistry = $namespaceRegistry;

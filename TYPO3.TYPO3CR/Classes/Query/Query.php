@@ -83,6 +83,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * @param \F3\PHPCR\SessionInterface $session
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setSession(\F3\PHPCR\SessionInterface $session) {
 		$this->session = $session;
@@ -96,6 +97,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * @return void
 	 * @throws \InvalidArgumentException if $varName is not a valid variable in this query.
 	 * @throws RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function bindValue($varName, \F3\PHPCR\ValueInterface $value) {
 		if (array_key_exists($varName, $this->boundVariables) === FALSE) {
@@ -111,6 +113,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * @throws \F3\PHPCR\Query\InvalidQueryException if the query contains an unbound variable.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function execute() {
 		return $this->objectFactory->create('F3\PHPCR\Query\QueryResultInterface', $this->session->getStorageBackend()->getSearchBackend()->findNodeIdentifiers($this), $this->session);
@@ -135,6 +138,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * @param integer $limit
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setLimit($limit) {
 		if ($limit < 1 || !is_int($limit)) {
@@ -159,6 +163,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * @param integer $offset
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setOffset($offset) {
 		if ($offset < 0 || !is_int($offset)) {
@@ -189,6 +194,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * in the jcr:statement property if the query is persisted. See storeAsNode($absPath).
 	 *
 	 * @return string the query statement.
+	 * @api
 	 */
 	public function getStatement() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897752);
@@ -200,6 +206,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 *
 	 * @return string the query language.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getLanguage() {
 		return $this->language;
@@ -214,6 +221,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * @return string path of the node representing this query.
 	 * @throws \F3\PHPCR\ItemNotFoundException if this query is not a stored query.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getStoredQueryPath() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897754);
@@ -239,6 +247,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the addition of the node and this implementation performs this validation immediately instead of waiting until save.
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException in a level 1 implementation.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs or if the absPath provided has an index on its final element.
+	 * @api
 	 */
 	public function storeAsNode($absPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1216897755);

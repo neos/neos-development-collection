@@ -72,6 +72,7 @@ class ItemDefinition implements \F3\PHPCR\NodeType\ItemDefinitionInterface {
 	 *
 	 * @return \F3\PHPCR\NodeType\NodeTypeInterface a NodeType object.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDeclaringNodeType() {
 		return $this->declaringNodeType;
@@ -90,6 +91,7 @@ class ItemDefinition implements \F3\PHPCR\NodeType\ItemDefinitionInterface {
 	 *
 	 * @return string a String denoting the name or "*".
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getName() {
 		return $this->name;
@@ -117,6 +119,7 @@ class ItemDefinition implements \F3\PHPCR\NodeType\ItemDefinitionInterface {
 	 *
 	 * @return boolean a boolean.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isAutoCreated() {
 		return $this->autoCreated;
@@ -142,6 +145,7 @@ class ItemDefinition implements \F3\PHPCR\NodeType\ItemDefinitionInterface {
 	 *
 	 * @return boolean a boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isMandatory() {
 		return $this->mandatory;
@@ -165,6 +169,7 @@ class ItemDefinition implements \F3\PHPCR\NodeType\ItemDefinitionInterface {
 	 *
 	 * @return integer a int constant member of OnParentVersionAction.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getOnParentVersion() {
 		return $this->onParentVersion;
@@ -187,6 +192,7 @@ class ItemDefinition implements \F3\PHPCR\NodeType\ItemDefinitionInterface {
 	 *
 	 * @return boolean a boolean.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isProtected() {
 		return $this->protected;

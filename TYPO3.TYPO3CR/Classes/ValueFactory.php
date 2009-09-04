@@ -62,6 +62,7 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	 * @param resource $handle
 	 * @return \F3\TYPO3CR\Binary
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function createBinary($handle) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213025145);
@@ -88,6 +89,7 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	 * @throws \F3\PHPCR\RepositoryException if the specified Node is not referenceable, the current Session is no longer active, or another error occurs.
 	 * @throws \IllegalArgumentException if the specified DateTime value cannot be expressed in the ISO 8601-based format defined in the JCR 2.0 specification and the implementation does not support dates incompatible with that format.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function createValue($value, $type = \F3\PHPCR\PropertyType::UNDEFINED, $weak = FALSE) {
 		if ($value instanceof \F3\PHPCR\NodeInterface) {

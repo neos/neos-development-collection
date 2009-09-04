@@ -48,6 +48,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 * include at least nt:base. For mixin types, there is no required supertype.
 	 *
 	 * @return array of \F3\PHPCR\NodeType\NodeType objects.
+	 * @api
 	 */
 	public function getSupertypes() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400223);
@@ -61,6 +62,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 * types this array may be of size greater than 1.
 	 *
 	 * @return array of \F3\PHPCR\NodeType\NodeType objects.
+	 * @api
 	 */
 	public function getDeclaredSupertypes() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400224);
@@ -73,6 +75,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 * @see getDeclaredSubtypes()
 	 *
 	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface a NodeTypeIterator.
+	 * @api
 	 */
 	public function getSubtypes() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224589838);
@@ -86,6 +89,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 * @see getSubtypes()
 	 *
 	 * @return \F3\PHPCR\NodeType\NodeTypeIteratorInterface a NodeTypeIterator.
+	 * @api
 	 */
 	public function getDeclaredSubtypes() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224589890);
@@ -97,6 +101,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 *
 	 * @param string $nodeTypeName the name of a node type.
 	 * @return boolean
+	 * @api
 	 */
 	public function isNodeType($nodeTypeName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400225);
@@ -108,6 +113,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 * in this node type and those inherited from the supertypes of this type.
 	 *
 	 * @return array an array of \F3\PHPCR\NodeType\PropertyDefinition containing the property definitions.
+	 * @api
 	 */
 	public function getPropertyDefinitions() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400226);
@@ -119,6 +125,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 * node type and those inherited from the supertypes of this node type.
 	 *
 	 * @return array an array of \F3\PHPCR\NodeType\NodeDefinition containing the child node definitions.
+	 * @api
 	 */
 	public function getChildNodeDefinitions() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400227);
@@ -131,6 +138,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 * @param string $propertyName The name of the property
 	 * @param \F3\PHPCR\ValueInterface|array $value A \F3\PHPCR\ValueInterface object or an array of \F3\PHPCR\ValueInterface objects.
 	 * @return boolean
+	 * @api
 	 */
 	public function canSetProperty($propertyName, $value) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400228);
@@ -148,6 +156,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 * @param string $childNodeName The name of the child node.
 	 * @param string $nodeTypeName The name of the node type of the child node.
 	 * @return boolean
+	 * @api
 	 */
 	public function canAddChildNode($childNodeName, $nodeTypeName = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400229);
@@ -159,6 +168,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 *
 	 * @param string $nodeName The name of the child node
 	 * @return boolean
+	 * @api
 	 */
 	public function canRemoveNode($nodeName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400230);
@@ -170,6 +180,7 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 *
 	 * @param string $propertyName The name of the property
 	 * @return boolean
+	 * @api
 	 */
 	public function canRemoveProperty($propertyName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400231);

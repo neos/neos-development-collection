@@ -57,6 +57,7 @@ class UpperCase implements \F3\PHPCR\Query\QOM\UpperCaseInterface {
 	 *
 	 * @return \F3\PHPCR\Query\QOM\DynamicOperandInterface the operand; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getOperand() {
 		return $this->operand;

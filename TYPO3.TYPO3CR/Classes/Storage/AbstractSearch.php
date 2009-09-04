@@ -45,6 +45,7 @@ abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 	 * Constructs this backend
 	 *
 	 * @param mixed $options Configuration options - depends on the actual backend
+	 * @api
 	 */
 	public function __construct($options = array()) {
 		if (is_array($options) || $options instanceof ArrayAccess) {
@@ -64,6 +65,7 @@ abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setWorkspaceName($workspaceName) {
 		if ($workspaceName == '' || !is_string($workspaceName)) throw new \InvalidArgumentException('"' . $workspaceName . '" is not a valid workspace name.', 1218961735);
@@ -76,6 +78,7 @@ abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 	 * @param \F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry
 	 * @return void
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function setNamespaceRegistry(\F3\PHPCR\NamespaceRegistryInterface $namespaceRegistry) {
 		$this->namespaceRegistry = $namespaceRegistry;
@@ -85,6 +88,7 @@ abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 	 * Performs any needed initialization before the search backend can be used
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function connect() {}
 
@@ -92,6 +96,7 @@ abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 	 * Performs any needed cleanup before the search backend can be discarded
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function disconnect() {}
 

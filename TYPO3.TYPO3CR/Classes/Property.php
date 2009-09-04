@@ -116,6 +116,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo implement handling of Value objects as input
+	 * @api
 	 */
 	public function setValue($value) {
 		if ($value === NULL) {
@@ -155,6 +156,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\ValueFormatException if the property is multi-valued.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getValue() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getValue() cannot be called on multi-valued properties.', 1181084521);
@@ -176,6 +178,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getValues() {
 		if (!$this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getValues() cannot be used to access single-valued properties.', 1189512545);
@@ -204,6 +207,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getString() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getString() cannot be called on multi-valued properties.', 1203338111);
@@ -227,6 +231,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @return \F3\PHPCR\BinaryInterface A Binary representation of the value of this property.
 	 * @throws \F3\PHPCR\ValueFormatException if the property is multi-valued.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
+	 * @api
 	 */
 	public function getBinary() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594477);
@@ -241,6 +246,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getLong() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getLong() cannot be called on multi-valued properties.', 1203338188);
@@ -257,6 +263,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDouble() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getDouble() cannot be called on multi-valued properties.', 1203338189);
@@ -271,6 +278,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @return float A float representation of the value of this property.
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a BigDecimal is not possible or if the property is multi-valued.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
+	 * @api
 	 */
 	public function getDecimal() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getDecimal() cannot be called on multi-valued properties.', 1212594888);
@@ -286,6 +294,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a string is not possible or if the property is multi-valued.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getDate() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getDate() cannot be called on multi-valued properties.', 1203338327);
@@ -302,6 +311,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getBoolean() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getBoolean() cannot be called on multi-valued properties.', 1203338188);
@@ -323,6 +333,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\ItemNotFoundException If this property is of type PATH or WEAKREFERENCE and no target node accessible by the current Session exists in this workspace. Note that this applies even if the property is a PATH and a property exists at the specified location. To dereference to a target property (as opposed to a target node), the method Property.getProperty is used.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getNode() {
 		if ($this->isMultiple()) throw new \F3\PHPCR\ValueFormatException('getNode() cannot be called on multi-valued properties.', 1217845644);
@@ -356,6 +367,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\ValueFormatException if this property cannot be converted to a PATH, if the property is multi-valued or if this property is a referring type but is currently part of the frozen state of a version in version storage.
 	 * @throws \F3\PHPCR\ItemNotFoundException If no property accessible by the current Session exists in this workspace at the specified path. Note that this applies even if a node exists at the specified location. To dereference to a target node, the method Property.getNode is used.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs
+	 * @api
 	 */
 	public function getProperty() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594797);
@@ -374,6 +386,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @return integer an integer.
 	 * @throws \F3\PHPCR\ValueFormatException if this property is multi-valued.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getLength() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594796);
@@ -387,6 +400,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @return array an array of lengths
 	 * @throws \F3\PHPCR\ValueFormatException if this property is single-valued.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function getLengths() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594795);
@@ -404,6 +418,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 *
 	 * @return \F3\PHPCR\NodeType\PropertyDefinitionInterface a PropertyDefinition object.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function getDefinition() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212594794);
@@ -431,6 +446,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 *
 	 * @return integer an int
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
+	 * @api
 	 */
 	public function getType() {
 		return $this->type;
@@ -443,11 +459,11 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @return boolean TRUE if this property is multi-valued; FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isMultiple() {
 		return is_array($this->value);
 	}
-
 
 	/**
 	 * Returns true if this is a new item, meaning that it exists only in
@@ -464,6 +480,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 *
 	 * @return boolean TRUE if this item is new; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isNew() {
 		return $this->session->isRegisteredAsNewProperty($this);
@@ -483,6 +500,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 *
 	 * @return boolean TRUE if this item is modified; FALSE otherwise.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isModified() {
 		return $this->session->isRegisteredAsDirtyProperty($this);
@@ -494,6 +512,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 *
 	 * @return boolean
 	 * @author Ronny Unger <ru@php-workx.de>
+	 * @api
 	 */
 	public function isNode() {
 		return FALSE;
@@ -506,6 +525,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getPath() {
 		$buffer = $this->getParent()->getPath();
@@ -524,6 +544,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\AccessDeniedException if the current session does not have sufficent access to retrieve the parent of this item.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getParent() {
 		return $this->parentNode;
@@ -549,6 +570,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @see SessionInterface::removeItem(String)
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function remove() {
 			// removes the property, thus delegated to parent

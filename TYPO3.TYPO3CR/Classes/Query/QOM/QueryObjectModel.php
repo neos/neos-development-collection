@@ -103,6 +103,7 @@ class QueryObjectModel extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Quer
 	 *
 	 * @return \F3\PHPCR\Query\QOM\SourceInterface the node-tuple source; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	*/
 	public function getSource() {
 		return $this->source;
@@ -113,6 +114,7 @@ class QueryObjectModel extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Quer
 	 *
 	 * @return \F3\PHPCR\Query\QOM\ConstraintInterface the constraint, or null if none
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	*/
 	public function getConstraint() {
 		return $this->constraint;
@@ -123,6 +125,7 @@ class QueryObjectModel extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Quer
 	 *
 	 * @return array an array of zero or more \F3\PHPCR\Query\QOM\OrderingInterface; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	*/
 	public function getOrderings() {
 		return $this->orderings;
@@ -133,6 +136,7 @@ class QueryObjectModel extends \F3\TYPO3CR\Query\Query implements \F3\PHPCR\Quer
 	 *
 	 * @return array an array of zero or more \F3\PHPCR\Query\QOM\ColumnInterface; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	*/
 	public function getColumns() {
 		return $this->columns;

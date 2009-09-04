@@ -88,6 +88,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 *
 	 * @return \F3\TYPO3CR\Session a Session object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getSession() {
 		return $this->session;
@@ -98,11 +99,11 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * this Workspace object. This is the name used in Repository->login().
 	 *
 	 * @return string the name of this workspace.
+	 * @api
 	 */
 	public function getName() {
 		return $this->name;
 	}
-
 
 	/**
 	 * This method copies the subgraph rooted at, and including, the node at
@@ -179,6 +180,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @throws \F3\PHPCR\ItemExistsException if a node already exists at destAbsPath and either same-name siblings are not allowed or update on copy is not supported for the nodes involved.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the copy.
 	 * @throws \F3\PHPCR\RepositoryException if the last element of destAbsPath has an index or if another error occurs.
+	 * @api
 	 */
 	public function copy($srcAbsPath, $destAbsPath, $srcWorkspace = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406774);
@@ -233,6 +235,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @throws \F3\PHPCR\ItemExistsException if a node already exists at destAbsPath and same-name siblings are not allowed or if removeExisting is false and an identifier conflict occurs.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the clone.
 	 * @throws \F3\PHPCR\RepositoryException if the last element of destAbsPath has an index or if another error occurs.
+	 * @api
 	 */
 	public function klone($srcWorkspace, $srcAbsPath, $destAbsPath, $removeExisting) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406775);
@@ -274,6 +277,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @throws \F3\PHPCR\ItemExistsException if a node already exists at destAbsPath and same-name siblings are not allowed.
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the move.
 	 * @throws \F3\PHPCR\RepositoryException if the last element of destAbsPath has an index or if another error occurs.
+	 * @api
 	 */
 	public function move($srcAbsPath, $destAbsPath) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406776);
@@ -285,6 +289,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @return \F3\PHPCR\Lock\LockManagerInterface
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the implementation does not support locking.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function getLockManager() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213801840);
@@ -296,6 +301,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @return \F3\PHPCR\Query\QueryManagerInterface the QueryManager object.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getQueryManager() {
 		return $this->queryManager;
@@ -309,6 +315,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @return \F3\PHPCR\NamespaceRegistryInterface
 	 * @throws \F3\PHPCR\RepositoryException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getNamespaceRegistry() {
 		return $this->namespaceRegistry;
@@ -324,6 +331,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @return \F3\PHPCR\NodeType\NodeTypeManagerInterface a NodeTypeManager object.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getNodeTypeManager() {
 		return $this->nodeTypeManager;
@@ -335,6 +343,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @return \F3\PHPCR\Observation\ObservationManagerInterface an ObservationManager object.
 	 * @throws \F3\PHPCR::\F3\PHPCR\UnsupportedRepositoryOperationException if the implementation does not support observation.
 	 * @throws \F3\PHPCR::\F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function getObservationManager() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406780);
@@ -346,6 +355,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @return \F3\PHPCR\Version\VersionManagerInterface a VersionManager object.
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the implementation does not support versioning.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
+	 * @api
 	 */
 	public function getVersionManager() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1231429631);
@@ -361,6 +371,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 *
 	 * @return array string array of names of accessible workspaces.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs
+	 * @api
 	 */
 	public function getAccessibleWorkspaceNames() {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406781);
@@ -431,6 +442,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @throws \F3\PHPCR\AccessDeniedException if the session associated with this Workspace object does not have sufficient access to perform the import.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @todo Decide on a return type that fits the PHP world
+	 * @api
 	 */
 	public function getImportContentHandler($parentAbsPath, $uuidBehavior) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406782);
@@ -493,6 +505,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @throws \F3\PHPCR\Lock\LockException if a lock prevents the addition of the subgraph.
 	 * @throws \F3\PHPCR\AccessDeniedException if the session associated with this Workspace object does not have sufficient access to perform the import.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function importXML($parentAbsPath, $in, $uuidBehavior) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406782);
@@ -519,6 +532,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the repository does not support the creation of workspaces.
 	 * @throws \F3\PHPCR\NoSuchWorkspaceException if $srcWorkspace does not exist.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function createWorkspace($name, $srcWorkspace = NULL) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406783);
@@ -534,6 +548,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 * @throws \F3\PHPCR\UnsupportedRepositoryOperationException if the repository does not support the removal of workspaces.
 	 * @throws \F3\PHPCR\NoSuchWorkspaceException if $name does not exist.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
+	 * @api
 	 */
 	public function deleteWorkspace($name) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212406784);

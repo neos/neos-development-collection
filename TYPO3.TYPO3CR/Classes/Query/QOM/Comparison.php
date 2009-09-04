@@ -117,6 +117,7 @@ class Comparison implements \F3\PHPCR\Query\QOM\ComparisonInterface {
 	 *
 	 * @return \F3\PHPCR\Query\QOM\DynamicOperandInterface the operand; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getOperand1() {
 		return $this->operand1;
@@ -127,6 +128,7 @@ class Comparison implements \F3\PHPCR\Query\QOM\ComparisonInterface {
 	 *
 	 * @return string one of \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface.JCR_OPERATOR_*
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getOperator() {
 		return $this->operator;
@@ -137,6 +139,7 @@ class Comparison implements \F3\PHPCR\Query\QOM\ComparisonInterface {
 	 *
 	 * @return \F3\PHPCR\Query\QOM\StaticOperandInterface the operand; non-null
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getOperand2() {
 		return $this->operand2;

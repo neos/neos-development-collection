@@ -46,6 +46,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function connect() {
 		try {
@@ -74,6 +75,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function disconnect() {
 		$this->databaseHandle = NULL;
@@ -85,6 +87,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @return array|FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function getRawRootNode() {
 		try {
@@ -109,6 +112,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function getRawNodeByIdentifier($identifier) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "namespace", "identifier", "nodetype", "nodetypenamespace" FROM "nodes" WHERE "identifier" = ?');
@@ -130,6 +134,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @param string $identifier The node Identifier to fetch (sub-)nodes for
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getIdentifiersOfSubNodesOfNode($identifier) {
 		$nodeIdentifiers = array();
@@ -152,6 +157,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function getRawNodeTypes() {
 		try {
@@ -176,6 +182,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function getRawNodeType($nodeTypeName) {
 		$splitName = $this->splitName($nodeTypeName);
@@ -198,6 +205,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function addNodeType(\F3\PHPCR\NodeType\NodeTypeDefinitionInterface $nodeTypeDefinition) {
 		$splitName = $this->splitName($nodeTypeDefinition->getName());
@@ -213,6 +221,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function deleteNodeType($name) {
 		$splitName = $this->splitName($name);
@@ -233,6 +242,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function addNode(\F3\PHPCR\NodeInterface $node) {
 		$splitNodeName = $this->splitName($node->getName());
@@ -251,6 +261,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function updateNode(\F3\PHPCR\NodeInterface $node) {
 		if ($node->getDepth() > 0) {
@@ -270,6 +281,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function removeNode(\F3\PHPCR\NodeInterface $node) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "nodes" WHERE "identifier"=?');
@@ -285,6 +297,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @param string $nodeName the name of the childnode
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function hasChildNodeWithName($identifier, $nodeName) {
 		$splitNodeName = $this->splitName($nodeName);
@@ -305,6 +318,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function addProperty(\F3\PHPCR\PropertyInterface $property) {
 		$this->databaseHandle->beginTransaction();
@@ -333,6 +347,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function updateProperty(\F3\PHPCR\PropertyInterface $property) {
 		$this->databaseHandle->beginTransaction();
@@ -379,6 +394,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function removeProperty(\F3\PHPCR\PropertyInterface $property) {
 		$this->databaseHandle->beginTransaction();
@@ -416,6 +432,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function getRawPropertiesOfNode($identifier) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT "parent", "name", "namespace", "multivalue", "type" FROM "properties" WHERE "parent" = ?');
@@ -432,6 +449,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @param $value a value of the given type
 	 * @return array
 	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @api
 	 */
 	public function getRawPropertiesOfTypedValue($name, $type, $value) {
 		$typeName = strtolower(\F3\PHPCR\PropertyType::nameFromValue($type));
@@ -457,6 +475,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 *
 	 * @return array
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function getRawNamespaces() {
 		$statementHandle = $this->databaseHandle->query('SELECT "prefix", "uri" FROM "namespaces"');
@@ -471,6 +490,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @param string $uri The URI of the namespace to update
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function updateNamespacePrefix($prefix, $uri) {
 		$statementHandle = $this->databaseHandle->prepare('UPDATE "namespaces" SET "prefix"=? WHERE "uri"=?');
@@ -483,6 +503,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @param string $prefix The prefix of the namespace to update
 	 * @param string $uri The URI of the namespace to update
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function updateNamespaceURI($prefix, $uri) {
 		$statementHandle = $this->databaseHandle->prepare('UPDATE "namespaces" SET "uri"=? WHERE "prefix"=?');
@@ -495,6 +516,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @param string $prefix The namespace prefix to register
 	 * @param string $uri The namespace URI to register
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function addNamespace($prefix, $uri) {
 		$statementHandle = $this->databaseHandle->prepare('INSERT INTO "namespaces" ("prefix","uri") VALUES (?, ?)');
@@ -506,6 +528,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 *
 	 * @param string $prefix The prefix of the namespace to delete
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function deleteNamespace($prefix) {
 		$statementHandle = $this->databaseHandle->prepare('DELETE FROM "namespaces" WHERE "prefix"=?');
@@ -547,6 +570,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @param string $identifier
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function hasIdentifier($identifier) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT("identifier") FROM "nodes" WHERE "identifier" = ?');
@@ -560,6 +584,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 * @param string $identifier The UUID of the node to check for
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isReferenceTarget($identifier) {
 		$statementHandle = $this->databaseHandle->prepare('SELECT COUNT(parent) FROM "referenceproperties" WHERE "value" = ?');

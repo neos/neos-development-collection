@@ -43,6 +43,7 @@ class NodeDefinitionTemplate extends \F3\TYPO3CR\NodeType\NodeDefinition impleme
 	 * @param string $name a String.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setName($name) {
 		$this->name = $name;
@@ -54,6 +55,7 @@ class NodeDefinitionTemplate extends \F3\TYPO3CR\NodeType\NodeDefinition impleme
 	 * @param boolean $autoCreated a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setAutoCreated($autoCreated) {
 		$this->autoCreated = $autoCreated;
@@ -65,6 +67,7 @@ class NodeDefinitionTemplate extends \F3\TYPO3CR\NodeType\NodeDefinition impleme
 	 * @param boolean $mandatory a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setMandatory($mandatory) {
 		$this->mandatory = $mandatory;
@@ -76,6 +79,7 @@ class NodeDefinitionTemplate extends \F3\TYPO3CR\NodeType\NodeDefinition impleme
 	 * @param integer $opv an int constant member of OnParentVersionAction.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setOnParentVersion($opv) {
 		$this->onParentVersion = $opv;
@@ -87,6 +91,7 @@ class NodeDefinitionTemplate extends \F3\TYPO3CR\NodeType\NodeDefinition impleme
 	 * @param boolean $protected a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setProtected($protected) {
 		$this->protected = $protected;
@@ -97,6 +102,7 @@ class NodeDefinitionTemplate extends \F3\TYPO3CR\NodeType\NodeDefinition impleme
 	 *
 	 * @param array $requiredPrimaryTypeNames a String array.
 	 * @return void
+	 * @api
 	 */
 	public function setRequiredPrimaryTypeNames(array $requiredPrimaryTypeNames) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097328);
@@ -107,6 +113,7 @@ class NodeDefinitionTemplate extends \F3\TYPO3CR\NodeType\NodeDefinition impleme
 	 *
 	 * @param string $defaultPrimaryTypeName a String.
 	 * @return void
+	 * @api
 	 */
 	public function setDefaultPrimaryTypeName($defaultPrimaryTypeName) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1213097329);
@@ -118,6 +125,7 @@ class NodeDefinitionTemplate extends \F3\TYPO3CR\NodeType\NodeDefinition impleme
 	 * @param boolean $allowSameNameSiblings a boolean.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function setSameNameSiblings($allowSameNameSiblings) {
 		$this->sameNameSiblings = $allowSameNameSiblings;
