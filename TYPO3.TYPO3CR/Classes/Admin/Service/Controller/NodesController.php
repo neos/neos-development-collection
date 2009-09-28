@@ -66,12 +66,13 @@ class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * Shows properties of a specific structure node
 	 *
+	 * @param string $id
 	 * @return string Output of the show view
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction() {
+	public function showAction($id) {
 		try {
-			$node = $this->contentRepositorySession->getNodeByIdentifier($this->arguments['id']->getValue());
+			$node = $this->contentRepositorySession->getNodeByIdentifier($id);
 			$properties = $node->getProperties();
 		} catch(\F3\PHPCR\ItemNotFoundException $e) {
 			$this->throwStatus(404);
@@ -124,11 +125,12 @@ class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * Deletes a structure node
 	 *
+	 * @param string $id
 	 * @return string
 	 */
-	public function deleteAction() {
+	public function deleteAction($id) {
 		try {
-			$node = $this->contentRepositorySession->getNodeByIdentifier($this->arguments['id']->getValue());
+			$node = $this->contentRepositorySession->getNodeByIdentifier($id);
 		} catch(\F3\PHPCR\ItemNotFoundException $e) {
 			$this->throwStatus(404);
 		}
