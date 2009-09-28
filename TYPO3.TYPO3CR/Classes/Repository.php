@@ -242,7 +242,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	 *  Value v = repository.getDescriptor(key);
 	 *  String s = (v == null) ? null : v.getString();
 	 *
-	 * @param key a descriptor key.
+	 * @param string key a descriptor key.
 	 * @return a descriptor value in string form.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api

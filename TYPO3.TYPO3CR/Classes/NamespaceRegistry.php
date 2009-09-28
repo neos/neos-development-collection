@@ -206,7 +206,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 	 * Session::getNamespaceURI instead to ensure that "Session namespace
 	 * mappings" work.
 	 *
-	 * @param $prefix a string
+	 * @param string $prefix a string
 	 * @return string a string
 	 * @throws \F3\PHPCR\NamespaceException if a mapping with the specified prefix does not exist.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs

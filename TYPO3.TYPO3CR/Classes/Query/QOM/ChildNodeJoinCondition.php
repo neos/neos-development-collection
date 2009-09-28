@@ -48,8 +48,8 @@ class ChildNodeJoinCondition implements \F3\PHPCR\Query\QOM\ChildNodeJoinConditi
 	/**
 	 * Constructs this ChildNodeJoinCondition instance
 	 *
-	 * @param \F3\PHPCR\Query\QOM\DynamicOperandInterface $operand1
-	 * @param \F3\PHPCR\Query\QOM\StaticOperandInterface $operand2
+	 * @param string $childSelectorName
+	 * @param string $parentSelectorName
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($childSelectorName, $parentSelectorName) {

@@ -1164,7 +1164,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * and namespace declarations will be included in the top-level node tag.
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node
-	 * @param \XMLWriter $out The XMLWriter to which the XML serialization of the subtree will be output.
+	 * @param \XMLWriter $xmlWriter The XMLWriter to which the XML serialization of the subtree will be output.
 	 * @param boolean $includeBinary A boolean governing whether binary properties are to be serialized.
 	 * @param boolean $recurse A boolean governing whether the subtree at $absPath is to be recursed.
 	 * @param integer $exportType One of self::EXPORT_SYSTEM or self::EXPORT_DOCUMENT
@@ -1241,7 +1241,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Writes out the properties of the $node as XML to the given $xmlWriter.
 	 *
-	 * @param \F3\PHPCR\PropertyInterface $property
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @param \XMLWriter $xmlWriter
 	 * @param boolean $includeBinary
 	 * @return void
@@ -1309,7 +1309,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Writes out the properties of the $node as XML to the given $xmlWriter.
 	 *
-	 * @param \F3\PHPCR\PropertyInterface $property
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @param \XMLWriter $xmlWriter
 	 * @param boolean $includeBinary
 	 * @return void
@@ -1343,7 +1343,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Registers a node as new within this session
 	 *
-	 * @param \F3\PHPCR\NodeInterface $item
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -1366,7 +1366,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Registers a node as dirty within this session
 	 *
-	 * @param \F3\PHPCR\NodeInterface $item
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -1390,7 +1390,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Registers a node as removed within this session
 	 *
-	 * @param \F3\PHPCR\NodeInterface $item
+	 * @param \F3\PHPCR\NodeInterface $node
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -1408,7 +1408,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Registers a property as new within this session
 	 *
-	 * @param \F3\PHPCR\PropertyInterface $item
+	 * @param \F3\PHPCR\PropertyInterface $property
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -1430,7 +1430,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Registers a property item as dirty within this session
 	 *
-	 * @param \F3\PHPCR\PropertyInterface $item
+	 * @param \F3\PHPCR\PropertyInterface $property
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -1454,7 +1454,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Registers a property as removed within this session
 	 *
-	 * @param \F3\PHPCR\PropertyInterface $item
+	 * @param \F3\PHPCR\PropertyInterface $property
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

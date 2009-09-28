@@ -83,7 +83,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	/**
 	 * Sets the password to use
 	 *
-	 * @param $password The password to use for connecting to the DB
+	 * @param string $password The password to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
@@ -367,7 +367,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	 *
 	 * @param \F3\PHPCR\Query\QOM\DynamicOperandInterface $operand
 	 * @param string $operator One of the JCR_OPERATOR_* constants
-	 * @param array $boundVariableValues
+	 * @param array &$sql
 	 * @param array &$parameters
 	 * @param string $valueFunction an aoptional SQL function to apply to the operand value
 	 * @return void

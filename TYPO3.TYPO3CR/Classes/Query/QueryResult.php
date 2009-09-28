@@ -55,7 +55,7 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	 *  array('selectorA' => '54321', 'selectorB' => '09876')
 	 * )
 	 *
-	 * @param array $identifiers
+	 * @param array $identifierTuples
 	 * @param \F3\PHPCR\SessionInterface $session
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

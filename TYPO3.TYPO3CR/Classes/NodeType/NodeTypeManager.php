@@ -55,7 +55,6 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	/**
 	 * Constructs a NodeTypeManager object
 	 *
-	 * @param string $name
 	 * @param \F3\TYPO3CR\Storage\BackendInterface $storageBackend
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>

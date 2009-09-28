@@ -73,7 +73,7 @@ abstract class AbstractSQLBackend extends \F3\TYPO3CR\Storage\AbstractBackend {
 	/**
 	 * Sets the password to use
 	 *
-	 * @param $password The password to use for connecting to the DB
+	 * @param string $password The password to use for connecting to the DB
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api

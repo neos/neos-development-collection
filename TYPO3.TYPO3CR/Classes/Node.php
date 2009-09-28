@@ -171,7 +171,8 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	/**
 	 * Constructs a Node
 	 *
-	 * @param \F3\TYPO3CR\SessionInterface $session
+	 * @param array $rawData
+	 * @param \F3\PHPCR\SessionInterface $session
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>

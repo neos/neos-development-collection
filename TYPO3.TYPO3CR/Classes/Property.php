@@ -58,8 +58,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * @param mixed $value The raw value of the property
 	 * @param integer $type The type to set for the property (see \F3\PHPCR\PropertyTypes)
 	 * @param \F3\PHPCR\NodeInterface $parentNode
-	 * @param \F3\PHPCR\NodeInterface $session
-	 * @param \F3\PHPCR\ValueFactoryInterface $valueFactory
+	 * @param \F3\PHPCR\SessionInterface $session
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($name, $value, $type, \F3\PHPCR\NodeInterface $parentNode, \F3\PHPCR\SessionInterface $session) {

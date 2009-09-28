@@ -70,7 +70,7 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 *
 	 * @param string $name
 	 * @param \F3\PHPCR\SessionInterface $session
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct($name, \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\FactoryInterface $objectFactory) {

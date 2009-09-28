@@ -178,7 +178,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 *
 	 * Currently looks ridiculous, as it fetches only what we know already.
 	 *
-	 * @param string $nodeTypeNme The name of the nodetype record to fetch
+	 * @param string $nodeTypeName The name of the nodetype record to fetch
 	 * @return array|FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Matthias Hoermann <hoermann@saltation.de>
@@ -446,7 +446,7 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 	 *
 	 * @param string $name name of the reference properties considered, if NULL properties of any name will be returned
 	 * @param integer $type one of the types defined in \F3\PHPCR\PropertyType (does not work for path or name right now as those are represented by more than the value column in their respective tables)
-	 * @param $value a value of the given type
+	 * @param mixed $value a value of the given type
 	 * @return array
 	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @api

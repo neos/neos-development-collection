@@ -214,7 +214,7 @@ class DataMapper {
 	/**
 	 * Maps an array proxy node back to a native PHP array
 	 *
-	 * @param NodeInterface $proxyNode
+	 * @param \F3\PHPCR\NodeInterface $proxyNode
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo remove the check on the node/property names and use name pattern
@@ -321,7 +321,7 @@ class DataMapper {
 	 * Determines the type of a Value and returns the value as corresponding
 	 * native PHP type.
 	 *
-	 * @param \F3\PHPCR\ValueInterface $value
+	 * @param \F3\PHPCR\PropertyInterface $property
 	 * @param integer $type A constant from \F3\PHPCR\PropertyType
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>

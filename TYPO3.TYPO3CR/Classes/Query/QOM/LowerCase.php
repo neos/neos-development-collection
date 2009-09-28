@@ -45,7 +45,7 @@ class LowerCase implements \F3\PHPCR\Query\QOM\LowerCaseInterface {
 	/**
 	 * Constructs this LowerCase instance
 	 *
-	 * @param \F3\PHPCR\Query\QOM\DynamicOperandInterface $constraint
+	 * @param \F3\PHPCR\Query\QOM\DynamicOperandInterface $operand
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
