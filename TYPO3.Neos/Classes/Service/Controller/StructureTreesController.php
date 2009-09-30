@@ -47,16 +47,6 @@ class StructureTreesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	}
 
 	/**
-	 * Initializes the arguments of this controller
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeArguments() {
-		parent::initializeArguments();
-	}
-
-	/**
 	 * The list action does not make sense for the Structure Tree service
 	 *
 	 * @return string An error message
@@ -70,11 +60,12 @@ class StructureTreesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 * Shows the structure tree starting with the structure node specified
 	 * by the identifier argument
 	 *
+	 * @param string $id
 	 * @return string Rendered structure tree
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction() {
-		$siteRoot = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
+	public function showAction($id) {
+		$siteRoot = $this->structureNodeRepository->findById($id);
 		if ($siteRoot === NULL) $this->throwStatus(404);
 
 		$this->view->structureTree = array($this->buildStructureTreeArray($siteRoot));

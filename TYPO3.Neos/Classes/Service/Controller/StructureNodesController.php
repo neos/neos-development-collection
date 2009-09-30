@@ -64,11 +64,12 @@ class StructureNodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * Shows properties of a specific structure node
 	 *
+	 * @param string $id
 	 * @return string Output of the show view
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction() {
-		$structureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
+	public function showAction($id) {
+		$structureNode = $this->structureNodeRepository->findById($id);
 		if ($structureNode === NULL) $this->throwStatus(404);
 		$this->view->structureNode = $this->convertStructureNodeToArray($structureNode);
 		return $this->view->render();
@@ -92,13 +93,14 @@ class StructureNodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * Updates an existing structure node
 	 *
+	 * @param string $id
 	 * @return string The status message
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function updateAction() {
+	public function updateAction($id) {
 		$this->throwStatus(501);
 
-		$structureNode = $this->structureNodeRepository->findById($this->arguments['id']->getValue());
+		$structureNode = $this->structureNodeRepository->findById($id);
 		if ($structureNode === NULL) $this->throwStatus(404);
 
 		$this->response->setStatus(200);

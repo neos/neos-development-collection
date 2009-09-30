@@ -91,12 +91,13 @@ class SitesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	/**
 	 * Updates an existing site
 	 *
+	 * @param string $id
 	 * @param string $name Name of the website
 	 * @return string The status message
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function updateAction($name = NULL) {
-		$site = $this->siteRepository->findById($this->arguments['id']);
+	public function updateAction($id, $name = NULL) {
+		$site = $this->siteRepository->findById($id);
 		if ($site === NULL) $this->throwStatus(404, NULL, 'Unknown Site');
 		if ($name !== NULL) $site->setName($name);
 
