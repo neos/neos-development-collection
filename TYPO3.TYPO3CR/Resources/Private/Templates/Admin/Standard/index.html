@@ -1,3 +1,4 @@
+{namespace ext=F3\ExtJS\ViewHelpers}
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -6,14 +7,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>TYPO3CR Admin</title>
 
-		<base href="###BASEURI###" />
-		<link rel="stylesheet" href="###BASEURI###Resources/Packages/ExtJS/CSS/ext-all.css" />
-		<link rel="stylesheet" href="###BASEURI###Resources/Packages/ExtJS/CSS/xtheme-gray.css" />
-		<script type="text/javascript" src="###BASEURI###Resources/Packages/ExtJS/JavaScript/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="###BASEURI###Resources/Packages/ExtJS/JavaScript/ext-all.js"></script>
+		<f:base />
+		<ext:include theme="xtheme-gray-extend"/>
+		<ext:ux name="StatusBar"/>
 		<script type="text/javascript">
-		Ext.BLANK_IMAGE_URL = '###BASEURI###Resources/Packages/ExtJS/images/default/s.gif';
-
 		var toolbar = new Ext.Toolbar({
 			items:[{
 				text:'TYPO3CR',
@@ -26,7 +23,7 @@
 			}]
 		});
 
-		var statusbar = new Ext.StatusBar({
+		var statusbar = new Ext.ux.StatusBar({
 			defaultText: 'Welcome!',
 			items: ['User: anonymous', '-', 'Workspace: default', '-', 'TYPO3CR 0.0.1']
 		});
@@ -90,7 +87,7 @@
 				},
 				beforeload: function() {
 					statusbar.setStatus({
-						text: 'Loading tree...',
+						text: 'Loading tree...'
 					});
 					statusbar.showBusy();
 				},
@@ -106,7 +103,7 @@
 
 		function deleteNode(node) {
 			statusbar.setStatus({
-				text: 'Deleting node...',
+				text: 'Deleting node...'
 			});
 			statusbar.showBusy();
 			// Basic request
@@ -131,7 +128,7 @@
 
 		function showNodeDetails(node) {
 			statusbar.setStatus({
-				text: 'Loading node detail...',
+				text: 'Loading node detail...'
 			});
 			statusbar.showBusy();
 			propertygrid.store.proxy.conn.url = 'typo3cr/service/v1/nodes/' + node.id + '.json';
@@ -166,7 +163,7 @@
 		var accordion = new Ext.Panel({
 			layout:'accordion',
 			layoutConfig: {
-				animate: true,
+				animate: true
 			},
 			items: [{
 				title: 'Nodes',
