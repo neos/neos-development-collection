@@ -7,14 +7,23 @@
 ##
 # Backend
 
--
-  name:          'Backend login'
-  uriPattern:    'typo3/login'
+--
+  name: 'Authenticate'
+  uriPattern: 'typo3/login'
   defaults:
     @package:    'TYPO3'
     @subpackage: 'Backend'
     @controller: 'Login'
     @action:     'index'
+
+-
+  name:          'Experimentation setup'
+  uriPattern:    'typo3/setup'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Backend'
+    @controller: 'Setup'
+    @action:     'setup'
 
 -
   name:          'Backend route'
@@ -25,17 +34,6 @@
     @controller: 'Backend'
     @action:     'index'
     section:     'frontend'
-
-#                                                                        #
-# Other routes (for experimentation)                                     #
-#                                                                        #
-
-Setup:
-  uriPattern: 'typo3/setup'
-  defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Backend'
-    @action:     'setup'
 
 ##
 # REST Services

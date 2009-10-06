@@ -89,16 +89,15 @@ class ContentService {
 			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411515);
 		}
 
-		$locale = $this->contentContext->getLocale();
-		$content = $this->objectFactory->create($contentType, $locale);
+		$newContentNode = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\ContentNode');
 
-		$contentNode = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\ContentNode');
-		$contentNode->setContent($content);
+		$locale = $this->contentContext->getLocale();
+		$content = $this->objectFactory->create($contentType, $locale, $newContentNode);
 
 		if ($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface) {
-			$reference->getContentNode()->addChildNode($contentNode, $locale);
+			$reference->getContentNode()->addChildNode($newContentNode, $locale);
 		} elseif ($reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface) {
-			$reference->addChildNode($contentNode, $locale);
+			$reference->addChildNode($newContentNode, $locale);
 		}
 		return $content;
 	}

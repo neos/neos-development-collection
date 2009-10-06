@@ -31,45 +31,13 @@ namespace F3\TYPO3\TypoScript;
 class PageTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Checks if a Page object renders a simple content without any processors involved.
+	 *
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function pageObjectRendersSimpleContentCorrectly() {
-		$page = $this->objectFactory->create('F3\TYPO3\TypoScript\Page');
-		$expectedContent = '<!DOCTYPE html
-	PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN">
-<html>
-<head>
-
-</head>
-<!--
-	This website is brought to you by TYPO3 - inspiring people to share.
-	TYPO3 is a free open source Content Management Framework licensed under GNU/GPL.
-	Information and contribution at http://www.typo3.com and http://www.typo3.org
--->
-<body style="background-color: white;">
-
-</body>
-';
-		$this->assertEquals($expectedContent, $page->getRenderedContent(), 'The Page object did not return the expected content during the basic check.');
-	}
-
-	/**
-	 * Checks if setBody throws an exception on an invalid body tag.
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function settingInvalidBodyTagThrowsException() {
-		try {
-			$page = $this->objectFactory->create('F3\TYPO3\TypoScript\Page');
-			$page->setBodyTag('<lotty style="">');
-			$this->fail('setBodyTag accepted an invalid body tag without throwing an exception.');
-		} catch (\F3\TypoScript\Exception $exception) {
-
-		}
+	public function xy() {
+		$this->markTestIncomplete();
 	}
 }
 ?>

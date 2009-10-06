@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Content;
+namespace F3\TYPO3\Domain\Model\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,37 +23,36 @@ namespace F3\TYPO3\Domain\Model\Content;
  *                                                                        */
 
 /**
- * Domain model of a Text content element
+ * @package TYPO3
+ * @subpackage Domain
+ * @version $Id$
+ */
+
+/**
+ * Testcase for the "Domain" domain model
  *
+ * @package TYPO3
+ * @subpackage Domain
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
- * @entity
  */
-class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
+class TypoScriptTemplateTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Headline for this text element
-	 * @var string
-	 * @validate StringLength(maximum = 250)
-	 */
-	protected $headline = '';
-
-	/**
-	 * The text of this text element
-	 * @var string
-	 */
-	protected $text = '';
-
-	/**
-	 * Returns a label for this Text element
-	 *
-	 * @return string The label
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getLabel() {
-		return ($this->headline != '') ? $this->headline : '[Untitled]';
+	public function setSourceCodeAllowsForSettingTheTypoScriptSourcecode() {
+		$typoScriptSourceCode = '
+			10 = Text
+			10.value = "Hello World"
+		';
+
+		$typoScriptTemplate = $this->getMock('F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate', array('dummy'), array(), '', FALSE);
+		$typoScriptTemplate->setSourceCode($typoScriptSourceCode);
+		$this->assertSame($typoScriptSourceCode, $typoScriptTemplate->getSourceCode());
 	}
+
 
 }
 

@@ -61,13 +61,23 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
-		$site = $this->contentContext->getCurrentSite();
-		if ($site === NULL) {
-			return 'No sites found.';
-		}
-		$rootNode = $site->getRootNode($this->contentContext);
-		var_dump($rootNode->getContent($this->contentContext)->getTitle());
-		return ' ';
+		$structureNode = $this->currentSite->getRootNode($this->contentContext);
+
+		$configurations = $structureNode->getConfigurations();
+		$configurations->rewind();
+		$typoScriptTemplate = $configurations->current();
+
+		$pageModel = $structureNode->getContent($this->contentContext);
+
+		$typoScriptObjectTree = $typoScriptTemplate->getObjectTree();
+
+		$pageTypoScriptObject = $typoScriptObjectTree['page'];
+		$pageTypoScriptObject->setModel($pageModel);
+
+		$this->view->setControllerContext($this->buildControllerContext());
+		$pageTypoScriptObject->injectView($this->view);
+
+		return $pageTypoScriptObject->getRenderedContent();
 	}
 
 	/**
@@ -79,6 +89,18 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function showAction($page) {
 		return "<br />\nTYPO3 Frontend: show()";
+	}
+
+	/**
+	 * Prepares the Fluid template view
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function resolveView() {
+		$view = $this->objectManager->getObject('F3\Fluid\View\TemplateView');
+		$view->setControllerContext($this->buildControllerContext());
+		return $view;
 	}
 }
 ?>

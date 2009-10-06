@@ -38,12 +38,12 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	protected $childNodesOrder = self::CHILDNODESORDER_UNDEFINED;
 
 	/**
-	 * @var array
+	 * @var array<\F3\TYPO3\Domain\Model\Structure\NodeInterface>
 	 */
 	protected $childNodes = array();
 
 	/**
-	 * @var \SplObjectStorage
+	 * @var \SplObjectStorage<\F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface>
 	 */
 	protected $configurations;
 

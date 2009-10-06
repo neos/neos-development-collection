@@ -53,15 +53,6 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	protected $state = self::STATE_ONLINE;
 
 	/**
-	 * Constructs this site model
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct() {
-		$this->domains = new \SplObjectStorage;
-	}
-
-	/**
 	 * Sets the name for this site
 	 *
 	 * @param string $name The site name

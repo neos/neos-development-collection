@@ -60,6 +60,12 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $domainRepository;
 
 	/**
+	 * @inject
+	 * @var \F3\Party\Domain\Repository\AccountRepository
+	 */
+	protected $accountRepository;
+
+	/**
 	 * Default action of the backend controller.
 	 *
 	 * @return string
@@ -69,45 +75,6 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->view->assign('TYPO3Version', $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion());
 		$this->view->assign('installationHost', gethostname());
 		$this->view->assign('sections', array('frontend' => 'Frontend', 'content' => 'Content', 'layout' => 'Layout', 'report' => 'Report', 'administration' => 'Administration'));
-	}
-
-	/**
-	 * Sets up some data for playing around ...
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setupAction() {
-		$contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\ContentContext');
-		$contentService = $contentContext->getContentService();
-
-		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\Site');
-		$site->setName('FLOW3');
-		$this->siteRepository->add($site);
-
-		$homePage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $site);
-		$homePage->setTitle('Homepage');
-
-#		$domain = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\Domain');
-#		$domain->setHostPattern('localhost');
-#		$domain->setSite($site);
-#		$this->domainRepository->add($domain);
-
-		$homePage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $site);
-		$subPage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $homePage);
-
-		$homePage->setTitle('Homepage');
-
-		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\Site');
-		$site->setName('TYPO3');
-		$this->siteRepository->add($site);
-
-		$domain = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\Domain');
-		$domain->setHostPattern('localhost');
-		$domain->setSite($site);
-		$this->domainRepository->add($domain);
-
-		return 'Created some data for playing around.';
 	}
 }
 ?>

@@ -57,10 +57,9 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 		$mockNewContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
-		$mockObjectFactory->expects($this->at(0))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
-		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewContentNode));
+		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewContentNode));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
 
-		$mockNewContentNode->expects($this->once())->method('setContent')->with($mockNewContent);
 		$mockExistingContentNode->expects($this->once())->method('addChildNode')->with($mockNewContentNode, $locale);
 
 		$mockNewContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
@@ -84,10 +83,8 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 		$mockNewContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
-		$mockObjectFactory->expects($this->at(0))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
-		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewContentNode));
-
-		$mockNewContentNode->expects($this->once())->method('setContent')->with($mockNewContent);
+		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewContentNode));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
 
 		$mockNewContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockNewContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale));
@@ -167,6 +164,5 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 	}
 
 }
-
 
 ?>

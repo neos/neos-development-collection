@@ -14,7 +14,7 @@
 	</div>
 	<ul id="F3_TYPO3_Backend_GlobalMenu">
 		<f:for each="{sections}" key="sectionKey" as="section">
-			<li><f:link.action arguments="{section: sectionKey}">{section}</f:link.action></li>
+			<li><f:link.action arguments="{section: sectionKey}" action="show">{section}</f:link.action></li>
 		</f:for>
 	</ul>
 </f:section>

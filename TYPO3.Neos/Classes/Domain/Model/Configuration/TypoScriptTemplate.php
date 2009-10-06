@@ -28,8 +28,15 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @entity
+ * @scope prototype
  */
 class TypoScriptTemplate extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration {
+
+	/**
+	 * @inject
+	 * @var \F3\TypoScript\Parser
+	 */
+	public $typoScriptParser;
 
 	/**
 	 * A label for the TypoScript template
@@ -37,5 +44,39 @@ class TypoScriptTemplate extends \F3\TYPO3\Domain\Model\Configuration\AbstractCo
 	 */
 	protected $label;
 
+	/**
+	 * The TypoScript source code
+	 * @var string
+	 */
+	protected $sourceCode = '';
+
+	/**
+	 * Sets the TypoScript Source Code of this template
+	 *
+	 * @param $sourceCode
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setSourceCode($sourceCode) {
+		$this->sourceCode = $sourceCode;
+	}
+
+	/**
+	 * Returns the TypoScript source code of this template
+	 *
+	 * @return string The source code
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSourceCode() {
+		return $this->sourceCode;
+	}
+
+	/**
+	 *
+	 * @return unknown_type
+	 */
+	public function getObjectTree() {
+		return $this->typoScriptParser->parse($this->sourceCode);
+	}
 }
 ?>
