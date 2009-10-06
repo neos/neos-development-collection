@@ -31,9 +31,71 @@ namespace F3\TypoScript;
 abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 
 	/**
+	 * @var \F3\Fluid\View\TemplateViewInterface
+	 */
+	protected $view;
+
+	/**
+	 * @var \F3\FLOW3\Property\Mapper $propertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
+	 * @var object
+	 */
+	protected $model;
+
+	/**
+	 * Fully qualified class name of the model this TS Object is based on. Must be defined by the concrete implementation.
+	 * @var string
+	 */
+	protected $modelType = 'stdclass';
+
+	/**
 	 * @var array An array of \F3\TypoScript\ProcessorChain objects
 	 */
 	protected $propertyProcessorChains = array();
+
+	/**
+	 * @param \F3\Fluid\View\TemplateViewInterface
+	 * @return void
+	 */
+	public function injectView(\F3\Fluid\View\TemplateViewInterface $view) {
+		$this->view = $view;
+	}
+
+	/**
+	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
+	 * @return void
+	 */
+	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
+		$this->propertyMapper = $propertyMapper;
+	}
+
+	/**
+	 * Sets the Domain Model the TypoScript object is based on
+	 *
+	 * @param object $model The domain model the TypoScript object is based on
+	 * @return void
+	 * @throws \F3\TypoScript\Exception\InvalidModel if the given model is not an instance of $this->modelType
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setModel($model) {
+		if (!is_object($model) || !$model instanceof $this->modelType) {
+			throw new \F3\TypoScript\Exception\InvalidModel('setModel expects an object of type "' . $this->modelType . '", ' . (is_object($model) ? get_class($model) : gettype($model)) . '" given.', 1251970434);
+		}
+		$this->model = $model;
+	}
+
+	/**
+	 * Returns the Domain Model the TypoScript object is based on
+	 *
+	 * @return object The domain model the TypoScript object is based on
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getModel() {
+		return $this->model;
+	}
 
 	/**
 	 * Sets the property processor chain for a specific property
