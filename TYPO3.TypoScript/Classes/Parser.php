@@ -205,7 +205,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 				case '*/' :
 					if ($this->currentBlockCommentState !== TRUE) throw new \F3\TypoScript\Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
 					$this->currentBlockCommentState = FALSE;
-					$this->parseTypoScriptLine(\F3\PHP6\Functions::substr($typoScriptLine, ($matches[1][1] + 2)));
+					$this->parseTypoScriptLine(substr($typoScriptLine, ($matches[1][1] + 2)));
 					break;
 				case '#' :
 				case '//' :
@@ -396,6 +396,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->objectFactory->create('F3\TypoScript\ProcessorChain');
 			$processorInvocation = $this->getProcessorInvocation($matches['ObjectAndMethodName'], $processorArguments);
 			$processorChain->setProcessorInvocation((integer)$matches['Index'], $processorInvocation);
+
 			$typoScriptObject->setPropertyProcessorChain($propertyName, $processorChain);
 		} else {
 			throw new \F3\TypoScript\Exception('Invalid processing instruction "' . $indexAndMethodCall . '"', 1182705997);
@@ -449,7 +450,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	protected function getParsedObjectPath($objectPath) {
 		if (preg_match(self::SCAN_PATTERN_OBJECTPATH, $objectPath) === 1) {
 			if ($objectPath{0} == '.') {
-				$objectPath = $this->getCurrentObjectPathPrefix() . \F3\PHP6\Functions::substr($objectPath, 1);
+				$objectPath = $this->getCurrentObjectPathPrefix() . substr($objectPath, 1);
 			}
 			$objectPathArray = explode('.', $objectPath);
 		} else {
@@ -483,7 +484,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 				$typoScriptObjectName = $matches[3];
 			} else {
 				$namespace = ($matches[1] === '') ? 'default' : $matches[1];
-				if (!isset($this->namespaces[$namespace]) || \F3\PHP6\Functions::strlen($this->namespaces[$namespace]) == 0) throw new \F3\TypoScript\Exception('Referring to undefined namespace "' . $namespace . '" in object type assignment.', 1180605249);
+				if (!isset($this->namespaces[$namespace]) || strlen($this->namespaces[$namespace]) == 0) throw new \F3\TypoScript\Exception('Referring to undefined namespace "' . $namespace . '" in object type assignment.', 1180605249);
 				$typoScriptObjectName = $this->namespaces[$namespace] . '\\' . $matches[2];
 			}
 			if (!$this->objectManager->isObjectRegistered($typoScriptObjectName)) {
@@ -539,7 +540,9 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setValueInObjectTree(array $objectPathArray, $value, $objectTree = NULL) {
-		if (is_null($objectTree)) $objectTree = &$this->objectTree;
+		if ($objectTree === NULL) {
+			$objectTree = &$this->objectTree;
+		}
 
 		if (is_object($value)) {
 			if (count($objectPathArray)) {

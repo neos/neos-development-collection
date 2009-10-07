@@ -7,7 +7,7 @@
 //  - block comments
 //  - quote escaping in literals
 
-namespace: default = F3\TYPO3\TypoScript
+namespace: default = F3\TypoScript\Fixtures
 
 myObject = Text
 myObject.value = 'Sorry, we\'re closed.'

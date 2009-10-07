@@ -4,7 +4,7 @@
  *  This fixture serves for testing confinements
  *
  */
-namespace: default = F3\TYPO3\TypoScript
+namespace: default = F3\TypoScript\Fixtures
 
 firstObject = Text
 firstObject {
