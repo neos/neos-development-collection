@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Routing;
+namespace F3\TYPO3\Domain\Model\Content;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,20 +23,20 @@ namespace F3\TYPO3\Routing;
  *                                                                        */
 
 /**
- * Testcase for the Page Routepart Handler
+ * Testcase for the Abstract Composite Content domain model
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
+class AbstractCompositeContentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function xy() {
-		$this->markTestIncomplete();
 	}
 }
+
 
 ?>
