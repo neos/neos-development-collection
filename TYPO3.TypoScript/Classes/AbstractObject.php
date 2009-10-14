@@ -60,7 +60,7 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 * @param \F3\Fluid\View\TemplateViewInterface
 	 * @return void
 	 */
-	public function injectView(\F3\Fluid\View\TemplateViewInterface $view) {
+	public function setView(\F3\Fluid\View\TemplateViewInterface $view) {
 		$this->view = $view;
 	}
 
