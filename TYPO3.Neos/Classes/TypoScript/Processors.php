@@ -48,34 +48,34 @@ class Processors {
 	 *    CROP_FROM_BEGINNING: If set, the beginning of the string will be cropped instead of the end.
 	 *    CROP_AT_WORD: The string will be of the maximum length specified by $maximumNumberOfCharacters, but it will be cropped after the last (or before the first) space instead of the probably the middle of a word.
 	 *
-	 * @param  string				$subject: The string to crop
-	 * @param  integer				$maximumNumberOfCharacters: The maximum number of characters to which the subject shall be shortened
-	 * @param  string				$preOrSuffixString: A string which is to be prepended or appended to the cropped subject if the subject has been cropped at all.
-	 * @param  long					$options: Any combination of the CROP_ constants as a bitmask
-	 * @return string				The processed string
+	 * @param string $subject The string to crop
+	 * @param integer $maximumNumberOfCharacters The maximum number of characters to which the subject shall be shortened
+	 * @param string $preOrSuffixString A string which is to be prepended or appended to the cropped subject if the subject has been cropped at all.
+	 * @param long $options Any combination of the CROP_ constants as a bitmask
+	 * @return string The processed string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processor_crop($subject, $maximumNumberOfCharacters, $preOrSuffixString = '', $options = 0) {
 		if (\F3\PHP6\Functions::strlen($subject) > $maximumNumberOfCharacters) {
 			if ($options & self::CROP_FROM_BEGINNING) {
-				if ($options & self::CROP_AT_WORD) {
-					$iterator = new \F3\PHP6\TextIterator($subject, \F3\PHP6\TextIterator::WORD);
-					$processedSubject = \F3\PHP6\Functions::substr($subject, $iterator->following($maximumNumberOfCharacters));
-				} else {
-					$processedSubject = \F3\PHP6\Functions::substr($subject, $maximumNumberOfCharacters);
-				}
-				$processedSubject = $preOrSuffixString . $processedSubject;
+				 if ($options & self::CROP_AT_WORD) {
+				 	$iterator = new \F3\PHP6\TextIterator($subject, \F3\PHP6\TextIterator::WORD);
+				 	$processedSubject = \F3\PHP6\Functions::substr($subject, $iterator->following($maximumNumberOfCharacters));
+				 } else {
+				 	$processedSubject = \F3\PHP6\Functions::substr($subject, $maximumNumberOfCharacters);
+				 }
+				 $processedSubject = $preOrSuffixString . $processedSubject;
 			} else {
-				if ($options & self::CROP_AT_WORD) {
-					$iterator = new \F3\PHP6\TextIterator($subject, \F3\PHP6\TextIterator::WORD);
-					$processedSubject = \F3\PHP6\Functions::substr($subject, 0, $iterator->preceding($maximumNumberOfCharacters));
-				} elseif ($options & self::CROP_AT_SENTENCE) {
-					$iterator = new \F3\PHP6\TextIterator($subject, \F3\PHP6\TextIterator::SENTENCE);
-					$processedSubject = \F3\PHP6\Functions::substr($subject, 0, $iterator->preceding($maximumNumberOfCharacters));
-				} else {
-					$processedSubject = \F3\PHP6\Functions::substr($subject, 0, $maximumNumberOfCharacters);
-				}
-				$processedSubject .= $preOrSuffixString;
+				 if ($options & self::CROP_AT_WORD) {
+				 	$iterator = new \F3\PHP6\TextIterator($subject, \F3\PHP6\TextIterator::WORD);
+				 	$processedSubject = \F3\PHP6\Functions::substr($subject, 0, $iterator->preceding($maximumNumberOfCharacters));
+				 } elseif ($options & self::CROP_AT_SENTENCE) {
+				 	$iterator = new \F3\PHP6\TextIterator($subject, \F3\PHP6\TextIterator::SENTENCE);
+				 	$processedSubject = \F3\PHP6\Functions::substr($subject, 0, $iterator->preceding($maximumNumberOfCharacters));
+				 } else {
+				 	$processedSubject = \F3\PHP6\Functions::substr($subject, 0, $maximumNumberOfCharacters);
+				 }
+				 $processedSubject .= $preOrSuffixString;
 			}
 		}
 		return $processedSubject;
@@ -84,10 +84,10 @@ class Processors {
 	/**
 	 * Wraps the specified string into a prefix- and a suffix string.
 	 *
-	 * @param  string				$subject: The string to wrap
-	 * @param  string				$prefixString: The string to prepend
-	 * @param  string				$suffixString: The string to append
-	 * @return string				The processed string
+	 * @param string $subject The string to wrap
+	 * @param string $prefixString The string to prepend
+	 * @param string $suffixString The string to append
+	 * @return string The processed string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processor_wrap($subject, $prefixString, $suffixString) {
@@ -97,9 +97,9 @@ class Processors {
 	/**
 	 * Shifts the case of a string into the specified direction.
 	 *
-	 * @param  string				$subject: The string to change the case for
-	 * @param  long					$direction: One of the SHIFT_CASE_* constants
-	 * @return string				The processed string
+	 * @param string $subject The string to change the case for
+	 * @param long 	$direction One of the SHIFT_CASE_* constants
+	 * @return string The processed string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processor_shiftCase($subject, $direction) {
@@ -122,9 +122,9 @@ class Processors {
 	/**
 	 * Transforms an UNIX timestamp according to the given format. For the possible format values, look at the php date() function.
 	 *
-	 * @param  string				$subject: The UNIX timestamp to transform
-	 * @param  long					$format: A format string, according to the rules of the php date() function
-	 * @return string				The transformed date string
+	 * @param string $subject The UNIX timestamp to transform
+	 * @param long $format A format string, according to the rules of the php date() function
+	 * @return string The transformed date string
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_date($subject, $format) {
@@ -140,9 +140,9 @@ class Processors {
 	/**
 	 * Overrides the current subject with the given value, if the value is not empty.
 	 *
-	 * @param  string				$subject: The current subject in the processor chain
-	 * @param  string				$replacement: The value that overrides the subject
-	 * @return string				The new subject
+	 * @param string $subject The current subject in the processor chain
+	 * @param string $replacement The value that overrides the subject
+	 * @return string The new subject
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_override($subject, $replacement) {
@@ -153,9 +153,9 @@ class Processors {
 	/**
 	 * Overrides the current subject with the given value, if the subject (trimmed) is empty.
 	 *
-	 * @param  string				$subject: The current subject in the processor chain
-	 * @param  string				$replacement: The value that overrides the subject
-	 * @return string				The new subject
+	 * @param string $subject The current subject in the processor chain
+	 * @param string $replacement The value that overrides the subject
+	 * @return string The new subject
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_ifEmpty($subject, $replacement) {
@@ -166,9 +166,9 @@ class Processors {
 	/**
 	 * Overrides the current subject with the given value, if the subject (not trimmed) is empty.
 	 *
-	 * @param  string				$subject: The current subject in the processor chain
-	 * @param  string				$replacement: The value that overrides the subject
-	 * @return string				The new subject
+	 * @param string $subject The current subject in the processor chain
+	 * @param string $replacement The value that overrides the subject
+	 * @return string The new subject
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_ifBlank($subject, $replacement) {
@@ -178,8 +178,8 @@ class Processors {
 	/**
 	 * Trims the current subject (Removes whitespaces arround the value).
 	 *
-	 * @param  string				$subject: The current subject in the processor chain
-	 * @return string				The new trimmed subject
+	 * @param string $subject The current subject in the processor chain
+	 * @return string The new trimmed subject
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_trim($subject) {
@@ -204,11 +204,11 @@ class Processors {
 	 *   - number <= 0
 	 *   - empty string
 	 *
-	 * @param  string				$subject: The current subject in the processor chain
-	 * @param  boolean				$condition: The condition for the if clause, or simply TRUE/FALSE
-	 * @param  string				$trueValue: This is returned if $condition is TRUE
-	 * @param  string				$falseValue: This is returned if $condition is FALSE
-	 * @return mixed				The calculated return value. Either $trueValue or $falseValue
+	 * @param string $subject The current subject in the processor chain
+	 * @param boolean $condition The condition for the if clause, or simply TRUE/FALSE
+	 * @param string $trueValue This is returned if $condition is TRUE
+	 * @param string $falseValue This is returned if $condition is FALSE
+	 * @return mixed The calculated return value. Either $trueValue or $falseValue
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_if($subject, $condition, $trueValue, $falseValue) {
@@ -225,8 +225,8 @@ class Processors {
 	/**
 	 * Returns TRUE, if the subject (trimmed) is empty.
 	 *
-	 * @param  string				$subject: The current subject in the processor chain
-	 * @return boolean				The calculated return value. Either TRUE or FALSE
+	 * @param string $subject The current subject in the processor chain
+	 * @return boolean The calculated return value. Either TRUE or FALSE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_isEmpty($subject) {
@@ -236,8 +236,8 @@ class Processors {
 	/**
 	 * Returns TRUE, if the subject (not trimmed) is blank.
 	 *
-	 * @param  string				$subject: The current subject in the processor chain
-	 * @return boolean				TRUE if the subject is blank, otherwise FALSE
+	 * @param string $subject The current subject in the processor chain
+	 * @return boolean TRUE if the subject is blank, otherwise FALSE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function processor_isBlank($subject) {
@@ -270,7 +270,7 @@ class Processors {
 	public function processor_toInteger($subject) {
 		return intval((string)$subject);
 	}
-	
+
 	/**
 	 * Rounds a given float value. If integer given, nothing happens.
 	 *
@@ -285,10 +285,10 @@ class Processors {
 		if ($precision != NULL && !is_int($precision)) throw new \F3\TypoScript\Exception('Precision must be an integer.');
 		return round($subject, $precision);
 	}
-	
+
 	/**
 	 * Multiplies a given number or numeric string $subject with $factor.
-	 * 
+	 *
 	 * @param float/string $subject The first factor
 	 * @param float $factor The second factor
 	 * @return float $subject*$factor

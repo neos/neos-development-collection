@@ -31,14 +31,15 @@ namespace F3\TYPO3\Frontend\Controller;
 class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\FrontendContentContext
+	 * @inject
+	 * @var \F3\TYPO3\Routing\PageRoutePartHandler
 	 */
-	protected $contentContext;
+	protected $pageRoutePartHandler;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Structure\Site
+	 * @var \F3\TYPO3\Domain\Service\ContentContext
 	 */
-	protected $currentSite;
+	protected $contentContext;
 
 	/**
 	 * Tasks to deal with before an action is called
@@ -47,48 +48,38 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeAction() {
-		$this->contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\FrontendContentContext');
-		$this->currentSite = $this->contentContext->getCurrentSite();
-		if ($this->currentSite === NULL) {
+		$this->contentContext = $this->pageRoutePartHandler->getContentContext();
+		if ($this->contentContext->getCurrentSite() === NULL) {
 			throw new \F3\TYPO3\Frontend\Exception\NoSite('No site has been defined or matched the current frontend context.', 1247043365);
 		}
 	}
 
 	/**
-	 * Show the root page, because no page was specified
+	 * Shows the page specified in the "page" argument.
 	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function indexAction() {
-		$structureNode = $this->currentSite->getRootNode($this->contentContext);
-
-		$configurations = $structureNode->getConfigurations();
-		$configurations->rewind();
-		$typoScriptTemplate = $configurations->current();
-
-		$pageModel = $structureNode->getContent($this->contentContext);
-
-		$typoScriptObjectTree = $typoScriptTemplate->getObjectTree();
-
-		$pageTypoScriptObject = $typoScriptObjectTree['page'];
-		$pageTypoScriptObject->setModel($pageModel);
-
-		$this->view->setControllerContext($this->buildControllerContext());
-		$pageTypoScriptObject->injectView($this->view);
-
-		return $pageTypoScriptObject->getRenderedContent();
-	}
-
-	/**
-	 * Shows the page specified in the "page" argument
-	 *
-	 * @param ...
+	 * @param \F3\TYPO3\Domain\Model\Content\Page $page The page to show
+	 * @param string $type The type for identifying the TypoScript page object
 	 * @return string View output for the specified page
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction($page) {
-		return "<br />\nTYPO3 Frontend: show()";
+	public function showAction(\F3\TYPO3\Domain\Model\Content\Page $page, $type = 'default') {
+		$typoScriptService = $this->contentContext->getTypoScriptService();
+		$typoScriptObjectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->contentContext->getNodePath());
+		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
+			throw new \F3\TYPO3\Frontend\Exception\NoSite('No TypoScript template was found for the current page context.', 1255513200);
+		}
+
+		foreach ($typoScriptObjectTree as $firstLevelTypoScriptObject) {
+			if ($firstLevelTypoScriptObject instanceof \F3\TYPO3\TypoScript\Page && $firstLevelTypoScriptObject->getType() === $type) {
+				$pageTypoScriptObject = $firstLevelTypoScriptObject;
+			}
+		}
+		if (!isset($pageTypoScriptObject)) {
+			throw new \F3\TYPO3\Frontend\Exception\NoTypoScriptPageObject('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
+		}
+		$pageTypoScriptObject->setModel($page);
+		$pageTypoScriptObject->setView($this->view);
+		return $pageTypoScriptObject->getRenderedContent();
 	}
 
 	/**
@@ -98,7 +89,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveView() {
-		$view = $this->objectManager->getObject('F3\Fluid\View\TemplateView');
+		$view = $this->objectFactory->create('F3\Fluid\View\TemplateView');
 		$view->setControllerContext($this->buildControllerContext());
 		return $view;
 	}

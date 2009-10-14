@@ -41,19 +41,19 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	 * @var \F3\TYPO3\Domain\Model\Structure\ContentNode
 	 * @validate NotEmpty
 	 */
-	protected $contentNode;
+	protected $node;
 
 	/**
 	 * Constructs the content object
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
+	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $node The content node this content is bound to
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode) {
+	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node) {
 		$this->locale = $locale;
-		$contentNode->setContent($this);
-		$this->contentNode = $contentNode;
+		$node->setContent($this);
+		$this->node = $node;
 	}
 
 	/**
@@ -77,14 +77,13 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	}
 
 	/**
-	 * Returns the structure node for this content object
+	 * Returns the content node for this content object
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
+	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $node The node this content is bound to
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
-	public function getContentNode() {
-		return $this->contentNode;
+	public function getNode() {
+		return $this->node;
 	}
 
 	/**

@@ -23,13 +23,13 @@ namespace F3\TYPO3\Domain\Service;
  *                                                                        */
 
 /**
- * The Content Service
+ * The Node Service
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class ContentService {
+class NodeService {
 
 	/**
 	 * @var \F3\TYPO3\Domain\Service\ContentContext
@@ -71,56 +71,52 @@ class ContentService {
 	}
 
 	/**
-	 * Creates new content of the specified type  the given reference.
+	 * Finds a node by its path.
 	 *
-	 * The reference may either be an existing content object (a page, text etc.) or
-	 * an object implementing the NodeInterface (eg. a Site).
-	 *
-	 * @param string $contentType Object name of the content to create
-	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created inside the given reference.
-	 * @return object The newly created content object
-	 * @throws \F3\TYPO3\Domain\Exception\InvalidReference if the given reference is of an invalid type
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode The node marking the reference for the path
+	 * @param string $path Path to the searched content node where the path segements are node names, separated by forward slashes. Example: /home/products/foo
+	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode The node found at the given path or NULL of none was found
+	 * @throws \F3\TYPO3\Domain\InvalidPath if the path is not well formed
 	 */
-	public function createInside($nodeName, $contentType, $reference) {
-		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
-			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411515);
-		}
+	public function getNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode, $path) {
+		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPath('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1254924207);
 
-		$newNode = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\ContentNode');
-		$newNode->setNodeName($nodeName);
-
-		$locale = $this->contentContext->getLocale();
-		$content = $this->objectFactory->create($contentType, $locale, $newNode);
-
-		if ($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface) {
-			$reference->getNode()->addChildNode($newNode, $locale);
-		} elseif ($reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface) {
-			$reference->addChildNode($newNode, $locale);
-		}
-		return $content;
+		$nodesOnPath = $this->getNodesOnPath($referenceNode, $path);
+		return (is_array($nodesOnPath) && count($nodesOnPath) > 0) ? end($nodesOnPath) : NULL;
 	}
 
 	/**
-	 * Creates new content of the specified type inside the given reference.
+	 * Finds all nodes lying on a certain path.
 	 *
-	 * The reference may either be an existing content object (a page, text etc.) or
-	 * an object implementing the NodeInterface (eg. a Site).
-	 *
-	 * @param string $contentType Object name of the content to create
-	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created after the given reference.
-	 * @return object The newly created content object
-	 * @throws \F3\TYPO3\Domain\Exception\InvalidReference if the given reference is of an invalid type
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode The node marking the reference for the path
+	 * @param string $path Valid content node path. Path segements are node names, separated by forward slashes. Example: /home/products/foo
+	 * @return array<\F3\TYPO3\Domain\Model\Structure\ContentNode> The nodes found on the given path or NULL if the path did not point to a node
+	 * @throws \F3\TYPO3\Domain\InvalidPath if the path is not well formed
 	 */
-	public function createAfter($nodeName, $contentType, $reference) {
-		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
-			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411516);
+	public function getNodesOnPath(\F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode, $path) {
+		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPath('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1255430851);
+
+		if ($path === '/') {
+			return ($referenceNode instanceof \F3\TYPO3\Domain\Model\Structure\IndexNodeAwareInterface) ? array($referenceNode->getIndexNode($this->contentContext)) : NULL;
 		}
 
-		// TODO
-
-		return $content;
+		$pathSegments = explode('/', substr($path, 1));
+		$nodesOnPath = array();
+		$nextReferenceNode = $referenceNode;
+		foreach ($pathSegments as $pathSegment) {
+			if ($nextReferenceNode === NULL || $nextReferenceNode->hasChildNodes() === FALSE) {
+				return NULL;
+			}
+			$childNodes = $nextReferenceNode->getChildNodes($this->contentContext);
+			$nextReferenceNode = NULL;
+			foreach ($childNodes as $childNode) {
+				if ($childNode->getNodeName() === $pathSegment) {
+					$nextReferenceNode = $childNode;
+					$nodesOnPath[] = $childNode;
+				}
+			}
+		}
+		return $nodesOnPath;
 	}
 }
 ?>

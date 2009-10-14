@@ -46,17 +46,50 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 */
 	protected $title = 'Untitled';
 
+	/**
+	 * @var string
+	 */
+	protected $type = 'default';
+	/**
+	 *
+	 * @param $model
+	 * @return unknown_type
+	 */
+	public function setModel($model) {
+		parent::setModel($model);
+		$this->title = $this->model->getTitle();
+	}
+
+	/**
+	 *
+	 */
 	public function setTitle($title) {
 		$this->title = $title;
 	}
 
+	/**
+	 *
+	 * @return string
+	 */
 	public function getTitle() {
 		return $this->title;
 	}
 
-	public function setModel($model) {
-		parent::setModel($model);
-		$this->title = $this->model->getTitle();
+	/**
+	 *
+	 * @param string $type
+	 * @return void
+	 */
+	public function setType($type) {
+		$this->type = $type;
+	}
+
+	/**
+	 *
+	 * @return string
+	 */
+	public function getType() {
+		return $this->type;
 	}
 
 	/**
@@ -67,26 +100,11 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 */
 	public function getRenderedContent() {
 		$this->view->setTemplatePathAndFilename(FLOW3_PATH_PACKAGES . 'Application/TYPO3/Resources/Private/Templates/TypoScript/Page.html');
-
-
 		$presentationModel = array(
 			'title' => $this->getProcessedProperty('title')
 		);
-
 		$this->view->assignMultiple($presentationModel);
-
 		return $this->view->render();
 	}
-
-	/**
-	 * Returns the rendered content of this content object
-	 *
-	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __toString() {
-		return $this->getRenderedContent();
-	}
-
 }
 ?>

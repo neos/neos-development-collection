@@ -58,7 +58,20 @@
 # Frontend
 
 -
-  name:          'Frontend with page and optional format'
+  name:          'Frontend with path pointing to a page and optional format'
+  uriPattern:    '{page}.{type}.{@format}'
+  defaults:
+    @package:    'TYPO3'
+    @subpackage: 'Frontend'
+    @controller: 'Page'
+    @action:     'show'
+    @format:     'html'
+  routeParts:
+    page:
+      handler:    F3\TYPO3\Routing\PageRoutePartHandler
+
+-
+  name:          'Frontend with path pointing to a page and optional format'
   uriPattern:    '{page}.{@format}'
   defaults:
     @package:    'TYPO3'
@@ -71,9 +84,15 @@
       handler:    F3\TYPO3\Routing\PageRoutePartHandler
 
 -
-  name: 'Frontend root URI'
-  uriPattern: ''
+  name: 'Frontend with optional path pointing to a page'
+  uriPattern: '({page})'
   defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Frontend'
-    @controller: 'Page'
+    @package:     'TYPO3'
+    @subpackage:  'Frontend'
+    @controller:  'Page'
+    @action:      'show'
+    @format:      'html'
+    pageViewName: 'default'
+  routeParts:
+    page:
+      handler:    F3\TYPO3\Routing\PageRoutePartHandler

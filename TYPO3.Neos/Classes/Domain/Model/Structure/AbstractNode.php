@@ -33,6 +33,11 @@ namespace F3\TYPO3\Domain\Model\Structure;
 abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInterface {
 
 	/**
+	 * @var string
+	 */
+	protected $nodeName;
+
+	/**
 	 * @var integer
 	 */
 	protected $childNodesOrder = self::CHILDNODESORDER_UNDEFINED;
@@ -54,6 +59,26 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 */
 	public function __construct() {
 		$this->configurations = new \SplObjectStorage;
+	}
+
+	/**
+	 * SSets the name of the node.
+	 *
+	 * @param string $nodeName The node name
+	 * @return void
+	 */
+	public function setNodeName($nodeName) {
+		$this->nodeName = $nodeName;
+	}
+
+	/**
+	 * Returns the name of the node.
+	 * This name is amongst others used for locating the node through a path
+	 *
+	 * @return string The node name
+	 */
+	public function getNodeName() {
+		return $this->nodeName;
 	}
 
 	/**

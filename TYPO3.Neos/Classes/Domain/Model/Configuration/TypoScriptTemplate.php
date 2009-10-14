@@ -33,12 +33,6 @@ namespace F3\TYPO3\Domain\Model\Configuration;
 class TypoScriptTemplate extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration {
 
 	/**
-	 * @inject
-	 * @var \F3\TypoScript\Parser
-	 */
-	public $typoScriptParser;
-
-	/**
 	 * A label for the TypoScript template
 	 * @var string
 	 */
@@ -69,14 +63,6 @@ class TypoScriptTemplate extends \F3\TYPO3\Domain\Model\Configuration\AbstractCo
 	 */
 	public function getSourceCode() {
 		return $this->sourceCode;
-	}
-
-	/**
-	 *
-	 * @return unknown_type
-	 */
-	public function getObjectTree() {
-		return $this->typoScriptParser->parse($this->sourceCode);
 	}
 }
 ?>

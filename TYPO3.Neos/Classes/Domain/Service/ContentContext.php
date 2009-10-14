@@ -38,6 +38,24 @@ class ContentContext {
 	protected $objectFactory;
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
+	 * @inject
+	 * @var \F3\TYPO3\Domain\Repository\Structure\SiteRepository
+	 */
+	protected $siteRepository;
+
+	/**
+	 * @inject
+	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
+	 */
+	protected $domainRepository;
+
+	/**
 	 * @var \DateTime
 	 */
 	protected $currentDateTime;
@@ -48,9 +66,34 @@ class ContentContext {
 	protected $contentService;
 
 	/**
+	 * @var \F3\TYPO3\Domain\Service\NodeService
+	 */
+	protected $nodeService;
+
+	/**
+	 * @var \F3\TYPO3\Domain\Service\TypoScriptService
+	 */
+	protected $typoScriptService;
+
+	/**
 	 * @var \F3\FLOW3\Locale\Locale
 	 */
 	protected $locale;
+
+	/**
+	 * @var \F3\TYPO3\Domain\Model\Structure\Site
+	 */
+	protected $currentSite;
+
+	/**
+	 * @var \F3\TYPO3\Domain\Model\Configuration\Domain
+	 */
+	protected $currentDomain;
+
+	/**
+	 * @var string
+	 */
+	protected $nodePath;
 
 	/**
 	 * Constructs this content context
@@ -69,7 +112,17 @@ class ContentContext {
 	 */
 	public function initializeObject() {
 		$this->contentService = $this->objectFactory->create('F3\TYPO3\Domain\Service\ContentService', $this);
+		$this->nodeService = $this->objectFactory->create('F3\TYPO3\Domain\Service\NodeService', $this);
+		$this->typoScriptService = $this->objectFactory->create('F3\TYPO3\Domain\Service\TypoScriptService', $this);
 		$this->locale = $this->objectFactory->create('F3\FLOW3\Locale\Locale', 'mul-ZZ');
+
+		$matchingDomains = $this->domainRepository->findByHost($this->environment->getHTTPHost());
+		if (count ($matchingDomains) > 0) {
+			$this->currentDomain = $matchingDomains[0];
+			$this->currentSite = $matchingDomains[0]->getSite();
+		} else {
+			$this->currentSite = $this->siteRepository->findFirst();
+		}
 	}
 
 	/**
@@ -101,13 +154,35 @@ class ContentContext {
 
 	/**
 	 * Returns the content service which is bound to this context.
-	 * Only use this method for retrieving an instance of the Content Service!
+	 * Only use THIS method for retrieving an instance of the Content Service!
 	 *
 	 * @return \F3\TYPO3\Domain\Service\ContentService
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentService() {
 		return $this->contentService;
+	}
+
+	/**
+	 * Returns the node service which is bound to this context.
+	 * Only use THIS method for retrieving an instance of the Node Service!
+	 *
+	 * @return \F3\TYPO3\Domain\Service\ContentService
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getNodeService() {
+		return $this->nodeService;
+	}
+
+	/**
+	 * Returns the TypoScript service which is bound to this context.
+	 * Only use THIS method for retrieving an instance of the TypoScript service!
+	 *
+	 * @return \F3\TYPO3\Domain\Service\TypoScriptService
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTypoScriptService() {
+		return $this->typoScriptService;
 	}
 
 	/**
@@ -118,6 +193,46 @@ class ContentContext {
 	 */
 	public function getLocale() {
 		return $this->locale;
+	}
+
+	/**
+	 * Returns the current site from this frontend context
+	 *
+	 * @return \F3\TYPO3\Domain\Model\Structure\Site The current site
+	 */
+	public function getCurrentSite() {
+		return $this->currentSite;
+	}
+
+	/**
+	 * Returns the current site from this frontend context
+	 *
+	 * @return \F3\TYPO3\Domain\Model\Structure\Domain The current site
+	 */
+	public function getCurrentDomain() {
+		return $this->currentDomain;
+	}
+
+	/**
+	 * Sets the current node path.
+	 * This method is typcially called by a specialized route part handler.
+	 *
+	 * @param string $nodePath The current node path, e.g. "homepage/products/typo3"
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setNodePath($nodePath) {
+		$this->nodePath = $nodePath;
+	}
+
+	/**
+	 * Returns the current node path.
+	 *
+	 * @return string The current node path, e.g. "homepage/products/typo3"
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getNodePath() {
+		return $this->nodePath;
 	}
 }
 ?>

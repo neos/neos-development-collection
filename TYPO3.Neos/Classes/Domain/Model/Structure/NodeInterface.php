@@ -36,6 +36,14 @@ interface NodeInterface {
 	const CHILDNODESORDER_NAMED = 2;
 
 	/**
+	 * Returns the name of the node.
+	 * This name is amongst others used for locating the node through a path
+	 *
+	 * @return string The node name
+	 */
+	public function getNodeName();
+
+	/**
 	 * Adds a child node to the list of existing child nodes
 	 *
 	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The child node to add

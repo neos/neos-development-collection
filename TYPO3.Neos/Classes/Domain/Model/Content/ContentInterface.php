@@ -35,10 +35,10 @@ interface ContentInterface {
 	 * Constructs the content object
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
-	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
+	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $node The structure node this content is bound to
 	 * @todo re-enable this method as soon as resolution in http://www.phpunit.de/ticket/545 is released
 	 */
-#	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode);
+#	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node);
 
 	/**
 	 * Returns the locale of the content object
@@ -57,8 +57,8 @@ interface ContentInterface {
 	/**
 	 * Returns the structure node for this content object
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $contentNode The structure node this content is bound to
+	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $node The structure node this content is bound to
 	 */
-	public function getContentNode();
+	public function getNode();
 }
 ?>

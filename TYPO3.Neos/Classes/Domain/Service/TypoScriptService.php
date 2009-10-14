@@ -23,79 +23,69 @@ namespace F3\TYPO3\Domain\Service;
  *                                                                        */
 
 /**
- * The Frontend Content Context
+ * The TypoScript Service
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class FrontendContentContext extends \F3\TYPO3\Domain\Service\ContentContext {
+class TypoScriptService {
+
+
+	/**
+	 * @var \F3\TYPO3\Domain\Service\ContentContext
+	 */
+	protected $contentContext;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \F3\TypoScript\Parser
 	 */
-	protected $environment;
+	public $typoScriptParser;
 
 	/**
-	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\Structure\SiteRepository
-	 */
-	protected $siteRepository;
-
-	/**
-	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
-	 */
-	protected $domainRepository;
-
-	/**
-	 * @var \F3\TYPO3\Domain\Model\Structure\Site
-	 */
-	protected $currentSite;
-
-	/**
-	 * @var \F3\TYPO3\Domain\Model\Configuration\Domain
-	 */
-	protected $currentDomain;
-
-	/**
-	 * Does further initialization for the frontend context
+	 * Constructs this service
 	 *
-	 * @return void
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context for this service
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeObject() {
-		parent::initializeObject();
+	public function __construct(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$this->contentContext = $contentContext;
+	}
 
-		$matchingDomains = $this->domainRepository->findByHost($this->environment->getHTTPHost());
-		if (count ($matchingDomains) > 0) {
-			$this->currentDomain = $matchingDomains[0];
-			$this->currentSite = $matchingDomains[0]->getSite();
-		} else {
-			$sites = $this->siteRepository->findAll();
-			if (count ($sites) > 0) {
-				$this->currentSite = $sites[0];
+	/**
+	 * Returns the Content Context this service runs in
+	 *
+	 * @return \F3\TYPO3\Domain\Service\ContentContext
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContentContext() {
+		return $this->contentContext;
+	}
+
+	/**
+	 * Returns a merged TypoScript object tree in the context of a node specified by the given
+	 * node path.
+	 *
+	 * @param string $nodePath Path to the node to build the TypoScript Object Tree for
+	 * @return array The merged object tree as of the given node or NULL if the given path does not point to a node
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMergedTypoScriptObjectTree($nodePath) {
+		$nodeService = $this->contentContext->getNodeService();
+		$nodes = $nodeService->getNodesOnPath($this->contentContext->getCurrentSite(), $nodePath);
+		if (!is_array($nodes)) return NULL;
+
+		$mergedTypoScriptCode = '';
+		foreach ($nodes as $node) {
+			$configurations = $node->getConfigurations();
+			foreach ($configurations as $configuration) {
+				if ($configuration instanceof \F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate) {
+					$mergedTypoScriptCode .= $configuration->getSourceCode() . chr(10);
+				}
 			}
 		}
-	}
-
-	/**
-	 * Returns the current site from this frontend context
-	 *
-	 * @return \F3\TYPO3\Domain\Model\Structure\Site The current site
-	 */
-	public function getCurrentSite() {
-		return $this->currentSite;
-	}
-
-	/**
-	 * Returns the current site from this frontend context
-	 *
-	 * @return \F3\TYPO3\Domain\Model\Structure\Domain The current site
-	 */
-	public function getCurrentDomain() {
-		return $this->currentDomain;
+		return  $this->typoScriptParser->parse($mergedTypoScriptCode);
 	}
 }
 ?>

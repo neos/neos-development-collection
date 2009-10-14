@@ -43,6 +43,12 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
+	 * @var F3\TYPO3\Domain\Repository\Structure\ContentNodeRepository
+	 */
+	protected $contentNodeRepository;
+
+	/**
+	 * @inject
 	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
 	 */
 	protected $domainRepository;
@@ -60,16 +66,10 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setupAction() {
-		foreach ($this->siteRepository->findAll() as $site) {
-			$this->siteRepository->remove($site);
-		}
-		foreach ($this->domainRepository->findAll() as $domain) {
-			$this->domainRepository->remove($domain);
-		}
-
-		foreach ($this->accountRepository->findAll() as $account) {
-			$this->accountRepository->remove($account);
-		}
+		$this->siteRepository->removeAll();
+		$this->contentNodeRepository->removeAll();
+		$this->domainRepository->removeAll();
+		$this->accountRepository->removeAll();
 
 		#-------------------------------------------------------------------------------------------
 
@@ -78,21 +78,38 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\Site');
 		$site->setName('TYPO3 5.0 Example Site');
+		$site->setNodeName('phoenix.typo3.org');
 		$this->siteRepository->add($site);
 
-		$homePage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $site);
+		$homePage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
 		$homePage->setTitle('Homepage');
 
-		$typoScriptTemplate = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate');
-		$typoScriptTemplate->setSourceCode('
+		$typoScriptTemplateHome = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate');
+		$typoScriptTemplateHome->setSourceCode('
 			namespace: default = F3\TYPO3\TypoScript
 
 			page = Page
-
 			page.title << 1.wrap("My ", "!")
 
+			alternativePage = Page
+			alternativePage {
+				type = "alternative"
+				title << 1.wrap("Alternative Page configuration: ", "")
+			}
+
 		');
-		$homePage->getContentNode()->addConfiguration($typoScriptTemplate);
+		$homePage->getNode()->addConfiguration($typoScriptTemplateHome);
+
+		$subPage = $contentService->createInside('subpage', 'F3\TYPO3\Domain\Model\Content\Page', $homePage);
+
+		$typoScriptTemplateSubPage = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate');
+		$typoScriptTemplateSubPage->setSourceCode('
+			namespace: default = F3\TYPO3\TypoScript
+
+			page.title << 2.wrap("Subpage: ", "")
+
+		');
+		$subPage->getNode()->addConfiguration($typoScriptTemplateSubPage);
 
 		#-------------------------------------------------------------------------------------------
 

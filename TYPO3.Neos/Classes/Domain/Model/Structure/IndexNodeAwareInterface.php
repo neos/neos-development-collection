@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\TypoScript;
+namespace F3\TYPO3\Domain\Model\Structure;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,12 +23,21 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * A TypoScript Content Array object
- * 
+ * Marker interface for nodes which support the concept of index nodes
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
+ * @author Robert Lemke <robert@typo3.org>
  */
-class ContentArray extends \F3\TypoScript\AbstractContentArrayObject {
+interface IndexNodeAwareInterface {
+
+	/**
+	 * Returns the node which acts as a index node for the children of the current node.
+	 *
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context
+	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface
+	 */
+	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext);
 }
+
 ?>

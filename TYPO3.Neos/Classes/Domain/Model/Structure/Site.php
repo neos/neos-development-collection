@@ -30,7 +30,7 @@ namespace F3\TYPO3\Domain\Model\Structure;
  * @scope prototype
  * @entity
  */
-class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
+class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\TYPO3\Domain\Model\Structure\IndexNodeAwareInterface {
 
 	/**
 	 * Site statusses
@@ -95,15 +95,15 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	}
 
 	/**
-	 * Returns the root node of this site
+	 * Returns the index node of this site
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context
 	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRootNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$childNodesMatchingContext = $this->getChildNodes($contentContext);
-		return current($childNodesMatchingContext);
+		return reset($childNodesMatchingContext);
 	}
 
 }
