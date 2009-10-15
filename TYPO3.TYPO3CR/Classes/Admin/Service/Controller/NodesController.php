@@ -59,8 +59,7 @@ class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function listAction() {
-		$this->view->nodes = array($this->convertNodeToArray($this->rootNode));
-		return $this->view->render();
+		return json_encode(array($this->convertNodeToArray($this->rootNode)));
 	}
 
 	/**
@@ -100,8 +99,7 @@ class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {
 			}
 		}
 
-		$this->view->node = array('properties' => $data);
-		return $this->view->render();
+		return json_encode(array('properties' => $data));
 	}
 
 	/**
