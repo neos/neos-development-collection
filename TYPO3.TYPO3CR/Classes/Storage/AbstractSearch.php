@@ -85,22 +85,6 @@ abstract class AbstractSearch implements \F3\TYPO3CR\Storage\SearchInterface {
 	}
 
 	/**
-	 * Performs any needed initialization before the search backend can be used
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function connect() {}
-
-	/**
-	 * Performs any needed cleanup before the search backend can be discarded
-	 *
-	 * @return void
-	 * @api
-	 */
-	public function disconnect() {}
-
-	/**
 	 * Takes the given array of a namespace URI (key 'namespaceURI' in the array) and name (key 'name') and converts it to a prefixed name
 	 *
 	 * @param array $namespacedName key 'namespaceURI' for the namespace, 'name' for the local name

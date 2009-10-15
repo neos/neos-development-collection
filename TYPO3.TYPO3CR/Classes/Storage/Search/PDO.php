@@ -122,6 +122,17 @@ class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
 	}
 
 	/**
+	 * Performs any needed cleanup before the search backend can be discarded
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function disconnect() {
+		$this->databaseHandle = NULL;
+	}
+
+	/**
 	 * Adds the given node to the index
 	 *
 	 * @param \F3\PHPCR\NodeInterface $node

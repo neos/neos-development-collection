@@ -382,7 +382,6 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$mockInstanceNode->expects($this->once())->method('remove');
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with($identifier)->will($this->returnValue($mockInstanceNode));
-		$classSchema = new \F3\FLOW3\Reflection\ClassSchema($fullClassName);
 		$identityMap = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\IdentityMap', array('unregisterObject'));
 		$identityMap->expects($this->once())->method('unregisterObject')->with($deletedObject);
 		$identityMap->registerObject($deletedObject, $identifier);
@@ -958,6 +957,42 @@ class BackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectIdentityMap($identityMap);
 		$backend->_set('classSchemata', array('F3\TYPO3CR\Tests\Fixtures\AnEntity' => $classSchema));
 		$backend->_call('persistObject', $A);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function objectsDetachedFromSplObjectStorageAreRemovedFromRepository() {
+		$object = $this->getMock('stdClass', array('FLOW3_AOP_Proxy_getProperty'));
+		$object->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue('fakeUUID'));
+
+		$objectStorage = new \SplObjectStorage();
+		$objectStorage->attach($object);
+		$previousObjectStorage = clone $objectStorage;
+		$objectStorage->detach($object);
+
+		$targetProperty = $this->getMock('F3\PHPCR\PropertyInterface');
+		$targetProperty->expects($this->once())->method('getString')->will($this->returnValue('fakeUUID'));
+		$objectNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$objectNode->expects($this->once())->method('getProperty')->with('flow3:target')->will($this->returnValue($targetProperty));
+		$proxyNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$proxyNode->expects($this->once())->method('getNode')->with('flow3:object')->will($this->returnValue($objectNode));
+		$proxyNode->expects($this->once())->method('remove');
+
+		$nodeIterator = array($proxyNode);
+
+		$fooNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$fooNode->expects($this->once())->method('getNodes')->will($this->returnValue($nodeIterator));
+
+		$parentNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$parentNode->expects($this->once())->method('hasNode')->with('foo')->will($this->returnValue(TRUE));
+		$parentNode->expects($this->once())->method('getNode')->with('foo')->will($this->returnValue($fooNode));
+
+			// ... and here we go
+		$queue = array();
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\FLOW3\Persistence\Backend'), array('dummy'), array(), '', FALSE);
+		$backend->_call('persistSplObjectStorage', $objectStorage, $parentNode, 'foo', $queue, $previousObjectStorage);
 	}
 
 	/**

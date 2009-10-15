@@ -198,10 +198,10 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 		} else {
 			try {
 				$node = $this->session->getNodeByIdentifier($identifier);
+				return $this->dataMapper->mapSingleNode($node);
 			} catch (\F3\PHPCR\ItemNotFoundException $e) {
 				return NULL;
 			}
-			return $this->dataMapper->mapSingleNode($node);
 		}
 	}
 
@@ -390,11 +390,23 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 
 			if ($propertyType === 'array') {
 				if ($object->FLOW3_Persistence_isDirty($propertyName)) {
-					$this->persistArray($propertyValue, $node, 'flow3:' . $propertyName, $queue);
+					if ($object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_cleanProperties')) {
+						$cleanState = $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_cleanProperties');
+						$previousArray = isset($cleanState[$propertyName]) ? $cleanState[$propertyName] : NULL;
+					} else {
+						$previousArray = NULL;
+					}
+					$this->persistArray($propertyValue, $node, 'flow3:' . $propertyName, $queue, $previousArray);
 				}
 			} elseif ($propertyType === 'SplObjectStorage') {
 				if ($object->FLOW3_Persistence_isDirty($propertyName)) {
-					$this->persistSplObjectStorage($propertyValue, $node, 'flow3:' . $propertyName, $queue);
+					if ($object->FLOW3_AOP_Proxy_hasProperty('FLOW3_Persistence_cleanProperties')) {
+						$cleanState = $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_cleanProperties');
+						$previousObjectStorage = isset($cleanState[$propertyName]) ? $cleanState[$propertyName] : NULL;
+					} else {
+						$previousObjectStorage = NULL;
+					}
+					$this->persistSplObjectStorage($propertyValue, $node, 'flow3:' . $propertyName, $queue, $previousObjectStorage);
 				} else {
 					foreach ($propertyValue as $containedObject) {
 						$queue[] = $containedObject;
@@ -576,15 +588,39 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param \F3\PHPCR\NodeInterface $parentNode The node to add the property proxy to
 	 * @param string $nodeName The name to use for the object, must be a legal name as per JSR-283
 	 * @param array &$queue Found entities are accumulated here.
+	 * @param array $previousArray the last persisted state of the $array, if any
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function persistArray(array $array, \F3\PHPCR\NodeInterface $parentNode, $nodeName, array &$queue) {
+	protected function persistArray(array $array, \F3\PHPCR\NodeInterface $parentNode, $nodeName, array &$queue, array $previousArray = NULL) {
 		if ($parentNode->hasNode($nodeName)) {
 			$node = $parentNode->getNode($nodeName);
+
+				// remove proxy nodes for objects removed from array since reconstitution
+			if ($previousArray !== NULL) {
+
+				$removedObjectUUIDs = array();
+				foreach ($previousArray as $key => $value) {
+					if (is_object($value)) {
+						if (!in_array($value, $array, TRUE)) {
+							$removedObjectUUIDs[] = $value->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
+						}
+					} else {
+						if (!isset($array[$key])) {
+							$node->getProperty('flow3:' . $key)->remove();
+						}
+					}
+				}
+				foreach ($node->getNodes() as $proxyNode) {
+					if (in_array($proxyNode->getProperty('flow3:target')->getString(), $removedObjectUUIDs)) {
+						$proxyNode->remove();
+					}
+				}
+			}
 		} else {
 			$node = $parentNode->addNode($nodeName, self::NODETYPE_ARRAYPROXY);
 		}
 
+			// persist objects in array
 		foreach ($array as $key => $element) {
 			if (is_object($element) && !($element instanceof \DateTime)) {
 				if ($this->classSchemata[$element->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
@@ -621,23 +657,40 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * @param \F3\PHPCR\NodeInterface $parentNode The node to add the proxy to
 	 * @param string $nodeName The name to use for the proxy, must be a legal name as per JSR-283
 	 * @param array &$queue Found entities are accumulated here.
+	 * @param \SplObjectStorage $previousObjectStorage the last persisted state of the $objectStorage, if any
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add persisting information attached to contained objects
 	 */
-	protected function persistSplObjectStorage(\SplObjectStorage $objectStorage, \F3\PHPCR\NodeInterface $parentNode, $nodeName, array &$queue) {
+	protected function persistSplObjectStorage(\SplObjectStorage $objectStorage, \F3\PHPCR\NodeInterface $parentNode, $nodeName, array &$queue, \SplObjectStorage $previousObjectStorage = NULL) {
 		if ($parentNode->hasNode($nodeName)) {
 			$node = $parentNode->getNode($nodeName);
+
+				// remove proxy nodes for objects detached from SplObjectStorage since reconstitution
+			if ($previousObjectStorage !== NULL) {
+				$removedObjectUUIDs = array();
+				foreach ($previousObjectStorage as $object) {
+					if (!$objectStorage->contains($object)) {
+						$removedObjectUUIDs[] = $object->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
+					}
+				}
+				foreach ($node->getNodes() as $proxyNode) {
+					if (in_array($proxyNode->getNode('flow3:object')->getProperty('flow3:target')->getString(), $removedObjectUUIDs)) {
+						$proxyNode->remove();
+					}
+				}
+			}
 		} else {
 			$node = $parentNode->addNode($nodeName, self::NODETYPE_SPLOBJECTSTORAGEPROXY);
 		}
 
+			// persist objects in SplObjectStorage
 		foreach ($objectStorage as $object) {
 			if ($object instanceof \DateTime) {
 				$this->addItemNode($node)->setProperty('flow3:object', $element, \F3\PHPCR\PropertyType::DATE);
 			} else {
 				if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->getModelType() === \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY) {
 					if ($this->classSchemata[$object->FLOW3_AOP_Proxy_getProxyTargetClassName()]->isAggregateRoot() === TRUE) {
-						$this->createOrUpdateProxyNodeForEntity($object, $this->addItemNode($node), 'flow3:object');
+						$this->createOrUpdateProxyNodeForEntity($object, $this->addItemNode($node, $object), 'flow3:object');
 					} else {
 						if ($object->FLOW3_Persistence_isNew()) {
 							$this->createNodeForEntity($object, $this->addItemNode($node), 'flow3:object');
@@ -656,10 +709,21 @@ class Backend implements \F3\FLOW3\Persistence\BackendInterface {
 	 * $parentNode.
 	 *
 	 * @param \F3\PHPCR\NodeInterface $parentNode The node to add the item node to.
-	 * @return \F3\PHPCR\NodeInterface The new item node.
+	 * @param object $object The object to add the item node for.
+	 * @return \F3\PHPCR\NodeInterface The new or existing item node.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function addItemNode(\F3\PHPCR\NodeInterface $parentNode) {
+	protected function addItemNode(\F3\PHPCR\NodeInterface $parentNode, $object = NULL) {
+		if ($object !== NULL) {
+			$targetIdentifier = $this->getIdentifierByObject($object);
+
+			foreach ($parentNode->getNodes() as $itemNode) {
+				if ($itemNode->getNode('flow3:object')->hasProperty('flow3:target') && $itemNode->getNode('flow3:object')->getProperty('flow3:target')->getString() === $targetIdentifier) {
+					return $itemNode;
+				}
+			}
+		}
+
 		return $parentNode->addNode('flow3:item', 'nt:unstructured');
 	}
 

@@ -259,7 +259,6 @@ class DataMapper {
 	 * @return \SplObjectStorage|\F3\FLOW3\Persistence\LazyLoadingProxy
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo restore information attached to objects
-	 * @todo allow to switch between eager and lazy loading
 	 */
 	protected function mapSplObjectStorageProxyNode($parent, $propertyName, \F3\PHPCR\NodeInterface $proxyNode, $lazy = FALSE) {
 		if ($proxyNode->getPrimaryNodeType()->getName() !== \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_SPLOBJECTSTORAGEPROXY) {
@@ -273,12 +272,10 @@ class DataMapper {
 			foreach ($itemNodes as $itemNode) {
 				$objectNode = $itemNode->getNode('flow3:object');
 				if ($objectNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
-					$object = $this->mapObjectProxyNode($objectNode);
+					$objectStorage->attach($this->mapObjectProxyNode($objectNode));
 				} else {
-					$object = $this->mapSingleNode($objectNode);
+					$objectStorage->attach($this->mapSingleNode($objectNode));
 				}
-
-				$objectStorage->attach($object);
 			}
 		} else {
 			$dataMapper = $this; // make available to closure...
@@ -291,12 +288,10 @@ class DataMapper {
 					foreach ($itemNodes as $itemNode) {
 						$objectNode = $itemNode->getNode('flow3:object');
 						if ($objectNode->getPrimaryNodeType()->getName() === \F3\TYPO3CR\FLOW3\Persistence\Backend::NODETYPE_OBJECTPROXY) {
-							$object = $dataMapper->mapObjectProxyNode($objectNode);
+							$objectStorage->attach($dataMapper->mapObjectProxyNode($objectNode));
 						} else {
-							$object = $dataMapper->mapSingleNode($objectNode);
+							$objectStorage->attach($dataMapper->mapSingleNode($objectNode));
 						}
-
-						$objectStorage->attach($object);
 					}
 					return $objectStorage;
 				}
