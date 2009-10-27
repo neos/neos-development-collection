@@ -7,45 +7,45 @@
 ##
 # Routes definitions for the services
 
---
+-
   name: 'REST service with controller and id'
   uriPattern: '/service/v1/{@controller}/{id}(.{@format})'
   defaults: 
-    @package:    'TYPO3CR'
-    @subpackage: 'Admin\Service'
-    @format:     'json'
+    '@package':    'TYPO3CR'
+    '@subpackage': 'Admin\Service'
+    '@format':     'json'
 
---
+-
   name: 'REST service with controller'
   uriPattern: '/service/v1/{@controller}(.{@format})'
   defaults:
-    @package:    'TYPO3CR'
-    @subpackage: 'Admin\Service'
-    @format:     'json'
+    '@package':    'TYPO3CR'
+    '@subpackage': 'Admin\Service'
+    '@format':     'json'
 
 ##
 # TYPO3CR default routes
 
---
+-
   name: 'Default with controller and action'
   uriPattern: '/{@controller}/{@action}'
   defaults:
-    @package:    'TYPO3CR'
-    @subpackage: 'Admin'
+    '@package':    'TYPO3CR'
+    '@subpackage': 'Admin'
 
---
+-
   name: 'Default with controller'
   uriPattern: '/{@controller}'
   defaults:
-    @package:    'TYPO3CR'
-    @subpackage: 'Admin'
-    @action:     'index'
+    '@package':    'TYPO3CR'
+    '@subpackage': 'Admin'
+    '@action':     'index'
 
---
+-
   name: 'TYPO3CR Fallback'
   uriPattern: ''
   defaults:
-    @package:    'TYPO3CR'
-    @subpackage: 'Admin'
-    @controller: 'Standard'
-    @action:     'index'
+    '@package':    'TYPO3CR'
+    '@subpackage': 'Admin'
+    '@controller': 'Standard'
+    '@action':     'index'

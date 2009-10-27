@@ -27,6 +27,7 @@ namespace F3\TYPO3CR\Query;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  * @scope prototype
  */
 class Query implements \F3\PHPCR\Query\QueryInterface {

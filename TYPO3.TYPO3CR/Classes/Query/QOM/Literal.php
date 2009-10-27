@@ -27,6 +27,7 @@ namespace F3\TYPO3CR\Query\QOM;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  * @scope prototype
  */
 class Literal extends \F3\TYPO3CR\Query\QOM\StaticOperand implements \F3\PHPCR\Query\QOM\LiteralInterface {
