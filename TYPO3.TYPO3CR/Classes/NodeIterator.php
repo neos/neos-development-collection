@@ -42,7 +42,8 @@ class NodeIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\NodeIt
 	 * @api
 	 */
 	public function nextNode() {
-		return $this->next();
+		$this->next();
+		return $this->current();
 	}
 }
 ?>

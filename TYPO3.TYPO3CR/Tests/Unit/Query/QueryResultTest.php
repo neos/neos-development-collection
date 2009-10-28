@@ -144,9 +144,9 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(array('a' => '12345'), array('a' => '67890')), $mockSession);
 		$queryResult->injectObjectFactory($this->mockObjectFactory);
-		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\PHPCR\Query\RowIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\Query\RowIterator));
-		$this->mockObjectFactory->expects($this->at(1))->method('create')->with('F3\PHPCR\Query\RowInterface', array('a' => '12345'))->will($this->returnValue(new \F3\TYPO3CR\Query\Row(array(), $mockSession)));
-		$this->mockObjectFactory->expects($this->at(2))->method('create')->with('F3\PHPCR\Query\RowInterface', array('a' => '67890'))->will($this->returnValue(new \F3\TYPO3CR\Query\Row(array(), $mockSession)));
+		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\PHPCR\Query\RowInterface', array('a' => '12345'))->will($this->returnValue(new \F3\TYPO3CR\Query\Row(array(), $mockSession)));
+		$this->mockObjectFactory->expects($this->at(1))->method('create')->with('F3\PHPCR\Query\RowInterface', array('a' => '67890'))->will($this->returnValue(new \F3\TYPO3CR\Query\Row(array(), $mockSession)));
+		$this->mockObjectFactory->expects($this->at(2))->method('create')->with('F3\PHPCR\Query\RowIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\Query\RowIterator));
 
 		$queryResult->getRows();
 	}

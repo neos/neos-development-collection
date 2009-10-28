@@ -36,36 +36,28 @@ class NodeIteratorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResult() {
-		$iterator = new \F3\TYPO3CR\NodeIterator();
-		$iterator->append('one');
-		$iterator->append('two');
-		$iterator->append('three');
-		$iterator->append('four');
+		$iterator = new \F3\TYPO3CR\NodeIterator(array('one', 'two', 'three', 'four'));
 
 		$size = $iterator->getSize();
 		$this->assertEquals(4, $size, "getSize() does not return correct number.");
 	}
 
 	/**
-	 * Tests if hasNext() and nextNode() see all elements
+	 * Tests if valid() and nextNode() see all elements
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function hasNextAndNextNodeIterateThroughAllElements() {
-		$iterator = new \F3\TYPO3CR\NodeIterator();
-		$iterator->append('one');
-		$iterator->append('two');
-		$iterator->append('three');
-		$iterator->append('four');
+		$iterator = new \F3\TYPO3CR\NodeIterator(array('one', 'two', 'three', 'four'));
 
 		$count = 0;
-		while ($iterator->hasNext()) {
+		while ($iterator->valid()) {
 			$iterator->nextNode();
 			$count++;
 		}
-		$this->assertEquals(4, $count, "hasNext() and nextNode() do not iterate over all elements.");
+		$this->assertEquals(4, $count, "valid() and nextNode() do not iterate over all elements.");
 	}
 
 	/**
@@ -76,15 +68,11 @@ class NodeIteratorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getPositionWorks() {
-		$iterator = new \F3\TYPO3CR\NodeIterator();
-		$iterator->append('one');
-		$iterator->append('two');
-		$iterator->append('three');
-		$iterator->append('four');
+		$iterator = new \F3\TYPO3CR\NodeIterator(array('one', 'two', 'three', 'four'));
 
 		$this->assertEquals(0, $iterator->getPosition(), "Initial call to getPosition() must return 0");
 		$index = 0;
-		while ($iterator->hasNext()) {
+		while ($iterator->valid()) {
 			$iterator->nextNode();
 			$this->assertEquals(++$index, $iterator->getPosition(), "Wrong position returned by getPosition()");
 		}
@@ -111,11 +99,7 @@ class NodeIteratorTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \OutOfBoundsException
 	 */
 	public function skipToEndOfIteratorSetsPositionCorrectly() {
-		$iterator = new \F3\TYPO3CR\NodeIterator();
-		$iterator->append('one');
-		$iterator->append('two');
-		$iterator->append('three');
-		$iterator->append('four');
+		$iterator = new \F3\TYPO3CR\NodeIterator(array('one', 'two', 'three', 'four'));
 
 		$iterator->skip(4);
 		$this->assertEquals(4, $iterator->getPosition(), "Call to getPosition() must return 4");
@@ -130,11 +114,7 @@ class NodeIteratorTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \OutOfBoundsException
 	 */
 	public function skipPastEndOfIteratorThrowsOutOfBoundsException() {
-		$iterator = new \F3\TYPO3CR\NodeIterator();
-		$iterator->append('one');
-		$iterator->append('two');
-		$iterator->append('three');
-		$iterator->append('four');
+		$iterator = new \F3\TYPO3CR\NodeIterator(array('one', 'two', 'three', 'four'));
 
 		$iterator->skip(5);
 	}

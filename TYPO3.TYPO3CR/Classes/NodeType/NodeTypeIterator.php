@@ -41,7 +41,8 @@ class NodeTypeIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\No
 	 * @api
 	 */
 	public function nextNodeType() {
-		return $this->next();
+		$this->next();
+		return $this->current();
 	}
 }
 ?>

@@ -30,40 +30,37 @@ namespace F3\TYPO3CR\NodeType;
  */
 class NodeTypeIteratorTest extends \F3\Testing\BaseTestCase {
 
-	public function setUp() {
-		$this->mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
-		$this->mockStorageBackend->expects($this->any())->method('getRawNodeType')->will($this->returnValue(array('name' => 'SuperDuperNodeType')));
-
-		$this->iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator();
-	}
-
 	/**
 	 * Tests if getSize() returns the correct size.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResult() {
-		$this->iterator->append(new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'));
-		$this->iterator->append(new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'));
-		$size = $this->iterator->getSize();
+		$iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator(array(
+			new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'),
+			new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType')
+		));
+		$size = $iterator->getSize();
 		$this->assertEquals(2, $size, "getSize() does not return correct number.");
 	}
 
 	/**
-	 * Tests if hasNext() and nextNode() see all elements
+	 * Tests if valid() and nextNode() see all elements
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function hasNextAndNextNodeIterateThroughAllElements() {
-		$this->iterator->append(new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'));
-		$this->iterator->append(new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'));
+		$iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator(array(
+			new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'),
+			new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType')
+		));
 		$count = 0;
-		while ($this->iterator->hasNext()) {
-			$this->iterator->nextNodeType();
+		while ($iterator->valid()) {
+			$iterator->nextNodeType();
 			$count++;
 		}
-		$this->assertEquals(2, $count, "hasNext() and nextNode() do not iterate over all elements.");
+		$this->assertEquals(2, $count, "valid() and nextNode() do not iterate over all elements.");
 	}
 
 	/**
@@ -75,7 +72,8 @@ class NodeTypeIteratorTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \OutOfBoundsException
 	 */
 	public function throwsOutOfBoundsExceptionIfNoNodesAvailable() {
-		$this->iterator->nextNodeType();
+		$iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator();
+		$iterator->nextNodeType();
 	}
 }
 ?>

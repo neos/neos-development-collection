@@ -40,7 +40,8 @@ class PropertyIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\Pr
 	 * @api
 	 */
 	public function nextProperty() {
-		return $this->next();
+		$this->next();
+		return $this->current();
 	}
 }
 ?>

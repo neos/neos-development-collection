@@ -58,37 +58,7 @@ class RangeIteratorTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Tests if getSize() returns the correct size.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getSizeReturnsCorrectResultAfterAppend() {
-		$iterator = new \F3\TYPO3CR\RangeIterator();
-		$iterator->append('one');
-		$iterator->append('two');
-		$iterator->append('three');
-		$iterator->append('four');
-
-		$size = $iterator->getSize();
-		$this->assertEquals(4, $size, "getSize() does not return correct number.");
-	}
-
-	/**
-	 * Tests if getSize() returns the correct size after remove().
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getSizeReturnsCorrectResultAfterRemove() {
-		$array = array('one', 'two', 'three', 'four');
-		$iterator = new \F3\TYPO3CR\RangeIterator($array);
-
-		$iterator->remove();
-		$size = $iterator->getSize();
-		$this->assertEquals(3, $size, "getSize() does not return correct number.");
-	}
-
-	/**
-	 * Tests if hasNext() and nextNode() see all elements
+	 * Tests if valid() and nextNode() see all elements
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -99,11 +69,11 @@ class RangeIteratorTest extends \F3\Testing\BaseTestCase {
 		$iterator = new \F3\TYPO3CR\RangeIterator($array);
 
 		$count = 0;
-		while ($iterator->hasNext()) {
+		while ($iterator->valid()) {
 			$iterator->next();
 			$count++;
 		}
-		$this->assertEquals(4, $count, 'hasNext() and nextNode() do not iterate over all elements, saw ' . $count . ' elements, expected 4.');
+		$this->assertEquals(4, $count, 'valid() and nextNode() do not iterate over all elements, saw ' . $count . ' elements, expected 4.');
 	}
 
 	/**
@@ -119,7 +89,7 @@ class RangeIteratorTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals(0, $iterator->getPosition(), "Initial call to getPosition() must return 0");
 		$index = 0;
-		while ($iterator->hasNext()) {
+		while ($iterator->valid()) {
 			$iterator->next();
 			$this->assertEquals(++$index, $iterator->getPosition(), "Wrong position returned by getPosition()");
 		}
@@ -180,30 +150,8 @@ class RangeIteratorTest extends \F3\Testing\BaseTestCase {
 
 		$iterator->next();
 		$iterator->skip(2);
-		$element = $iterator->next();
+		$element = $iterator->current();
 		$this->assertEquals('four', $element, 'Call to skip(2) must result in next element being "four", but we got "' . var_export($element, TRUE) . '"');
-	}
-
-	/**
-	 * Tests if next() returns the correct element after remove().
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function afterRemoveTheExpectedItemIsReturned() {
-		$array = array('one', 'two', 'three', 'four');
-		$iterator = new \F3\TYPO3CR\RangeIterator($array);
-		$iterator->next(); // returns "one"
-		$iterator->remove(); // should remove "one", thus next() should give "two"
-		$element = $iterator->next();
-		$this->assertEquals('two', $element, "next() does not return correct result after remove().");
-
-		$array = array('one', 'two', 'three', 'four');
-		$iterator = new \F3\TYPO3CR\RangeIterator($array);
-		$iterator->next(); // returns "one"
-		$iterator->next(); // returns "two"
-		$iterator->remove(); // should remove "two", thus next() should give "three"
-		$element = $iterator->next();
-		$this->assertEquals('three', $element, "next() does not return correct result after remove().");
 	}
 
 }

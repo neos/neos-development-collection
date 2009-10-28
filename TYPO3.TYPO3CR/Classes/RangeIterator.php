@@ -53,57 +53,16 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	}
 
 	/**
-	 * Append a new element to the end of the iteration
-	 *
-	 * @param mixed $element The element to append to the iteration
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function append($element) {
-		$this->elements[] = $element;
-	}
-
-	/**
-	 * Removes the last element returned by next()
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function remove() {
-		$positionToRemove = $this->getPosition()-1;
-		array_splice($this->elements, $positionToRemove, 1);
-			// array_splice resets the array pointer, so we fix it together with the internal position
-		for ($skipped = 0; $skipped < --$this->position; $skipped++) next($this->elements);
-	}
-
-	/**
-	 * Returns FALSE if there are more elements available.
-	 *
-	 * @return boolean
-	 * @author Ronny Unger <ru@php-workx.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function hasNext() {
-		return $this->getPosition() < $this->getSize();
-	}
-
-	/**
 	 * Return the next (i.e. current) element in the iterator
 	 *
-	 * @return mixed The next element in the iteration
-	 * @author Ronny Unger <ru@php-workx.de>
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function next() {
-		if ($this->hasNext()) {
+		if ($this->valid()) {
 			$this->position++;
-			$element = current($this->elements);
 			next($this->elements);
-			return $element;
 		} else {
 			throw new \OutOfBoundsException('Tried to go past the last element in the iterator.', 1187530869);
 		}
@@ -167,13 +126,13 @@ class RangeIterator implements \F3\PHPCR\RangeIteratorInterface {
 	// non-JSR-283 methods below
 
 	/**
-	 * Alias for hasNext(), valid() is required by SPL Iterator
+	 * valid() is required by SPL Iterator
 	 *
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function valid() {
-		return $this->hasNext();
+		return $this->getPosition() < $this->getSize();
 	}
 
 	/**

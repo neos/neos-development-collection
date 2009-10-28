@@ -42,7 +42,8 @@ class RowIterator extends \F3\TYPO3CR\RangeIterator implements \F3\PHPCR\Query\R
 	 * @api
 	 */
 	public function nextRow() {
-		return $this->next();
+		$this->next();
+		return $this->current();
 	}
 
 }
