@@ -38,9 +38,14 @@ class ExportController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\CLI\Request');
 
 	/**
-	 * \F3\PHPCR\SessionInterface
+	 * @var \F3\PHPCR\SessionInterface
 	 */
 	protected $session;
+
+	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
 
 	/**
 	 * Injects a Content Repository instance
@@ -51,6 +56,17 @@ class ExportController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function injectContentRepository(\F3\PHPCR\RepositoryInterface $contentRepository) {
 		$this->session = $contentRepository->login();
+	}
+
+	/**
+	 * Injects an Environment instance
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
 	}
 
 	/**
@@ -69,14 +85,13 @@ class ExportController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$this->throwStatus(404);
 		}
 
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
-		$xmlWriter->setIndent(2);
-
-		$this->session->exportSystemView($rootNode->getPath(), $xmlWriter, $this->arguments['skipBinary']->getValue(), $this->arguments['noRecurse']->getValue());
-
+		$temporaryPathAndFilename = tempnam($this->environment->getPathToTemporaryDirectory(), 'TYPO3CR-XML-export');
 		$this->response->setHeader('Content-Type', 'text/xml');
-		return $xmlWriter->outputMemory();
+		$this->session->exportSystemView($rootNode->getPath(), $temporaryPathAndFilename, $this->arguments['skipBinary']->getValue(), $this->arguments['noRecurse']->getValue());
+
+		$xml = file_get_contents($temporaryPathAndFilename);
+		unlink($temporaryPathAndFilename);
+		return $xml;
 	}
 
 	/**
@@ -95,14 +110,13 @@ class ExportController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$this->throwStatus(404);
 		}
 
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
-		$xmlWriter->setIndent(2);
-
-		$this->session->exportDocumentView($rootNode->getPath(), $xmlWriter, $this->arguments['skipBinary']->getValue(), $this->arguments['noRecurse']->getValue());
-
+		$temporaryPathAndFilename = tempnam($this->environment->getPathToTemporaryDirectory(), 'TYPO3CR-XML-export');
 		$this->response->setHeader('Content-Type', 'text/xml');
-		return $xmlWriter->outputMemory();
+		$this->session->exportDocumentView($rootNode->getPath(), $temporaryPathAndFilename, $this->arguments['skipBinary']->getValue(), $this->arguments['noRecurse']->getValue());
+
+		$xml = file_get_contents($temporaryPathAndFilename);
+		unlink($temporaryPathAndFilename);
+		return $xml;
 	}
 
 }

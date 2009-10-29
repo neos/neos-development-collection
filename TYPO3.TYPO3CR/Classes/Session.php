@@ -787,10 +787,9 @@ class Session implements \F3\PHPCR\SessionInterface {
 
 	/**
 	 * Serializes the node (and if noRecurse is false, the whole subgraph) at $absPath
-	 * as an XML stream and outputs it to the supplied XMLWriter.
+	 * as an XML stream and outputs it to the supplied URI. The resulting XML is in
+	 * the system view form. Note that $absPath must be the path of a node, not a property.
 	 *
-	 * The resulting XML is in the system view form. Note that $absPath must be the path
-	 * of a node, not a property.
 	 * If skipBinary is true then any properties of PropertyType.BINARY will be serialized
 	 * as if they are empty. That is, the existence of the property will be serialized,
 	 * but its content will not appear in the serialized output (the <sv:value> element
@@ -799,9 +798,9 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * though they will all be empty. If skipBinary is false then the actual value(s)
 	 * of each BINARY property is recorded using Base64 encoding.
 	 *
-	 * If noRecurse is true then only the node at absPath and its properties, but not
-	 * its child nodes, are serialized. If noRecurse is false then the entire subgraph
-	 * rooted at absPath is serialized.
+	 * If $noRecurse is true then only the node at $absPath and its properties, but not
+	 * its child nodes, are serialized. If $noRecurse is false then the entire subgraph
+	 * rooted at $absPath is serialized.
 	 *
 	 * If the user lacks read access to some subsection of the specified tree, that
 	 * section simply does not get serialized, since, from the user's point of view,
@@ -816,7 +815,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * The output XML will be encoded in UTF-8.
 	 *
 	 * @param string $absPath The path of the root of the subgraph to be serialized. This must be the path to a node, not a property
-	 * @param \XMLWriter $out The XMLWriter to which the XML serialization of the subgraph will be output.
+	 * @param string $out The URI to which the XML serialization of the subgraph will be output.
 	 * @param boolean $skipBinary A boolean governing whether binary properties are to be serialized.
 	 * @param boolean $noRecurse A boolean governing whether the subgraph at absPath is to be recursed.
 	 * @return void
@@ -826,8 +825,14 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function exportSystemView($absPath, \XMLWriter $out, $skipBinary, $noRecurse) {
-		$this->exportToXML($this->getNode($absPath), $out, !$skipBinary, !$noRecurse, self::EXPORT_SYSTEM, TRUE);
+	public function exportSystemView($absPath, $out, $skipBinary, $noRecurse) {
+		$xmlWriter = new \XMLWriter();
+		if ($xmlWriter->openUri($out)) {
+			$this->exportToXML($this->getNode($absPath), $xmlWriter, !$skipBinary, !$noRecurse, self::EXPORT_SYSTEM, TRUE);
+			$xmlWriter->flush();
+		} else {
+			throw new \RuntimeException('Error when opening the given URI for writing.', 1256749290);
+		}
 	}
 
 	/**
@@ -841,9 +846,9 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * skipBinary is false then the actual value(s) of each BINARY property is recorded using
 	 * Base64 encoding.
 	 *
-	 * If noRecurse is true then only the node at absPath and its properties, but not its
-	 * child nodes, are serialized. If noRecurse is false then the entire subgraph rooted at
-	 * absPath is serialized.
+	 * If $noRecurse is true then only the node at $absPath and its properties, but not its
+	 * child nodes, are serialized. If $noRecurse is false then the entire subgraph rooted at
+	 * $absPath is serialized.
 	 *
 	 * If the user lacks read access to some subsection of the specified tree, that section
 	 * simply does not get serialized, since, from the user's point of view, it is not there.
@@ -857,7 +862,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * The output XML will be encoded in UTF-8.
 	 *
 	 * @param string $absPath The path of the root of the subgraph to be serialized. This must be the path to a node, not a property
-	 * @param \XMLWriter $out The XMLWriter to which the XML serialization of the subgraph will be output.
+	 * @param string $out The URI to which the XML serialization of the subgraph will be output.
 	 * @param boolean $skipBinary A boolean governing whether binary properties are to be serialized.
 	 * @param boolean $noRecurse A boolean governing whether the subgraph at absPath is to be recursed.
 	 * @return void
@@ -867,8 +872,14 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function exportDocumentView($absPath, \XMLWriter $out, $skipBinary, $noRecurse) {
-		$this->exportToXML($this->getNode($absPath), $out, !$skipBinary, !$noRecurse, self::EXPORT_DOCUMENT, TRUE);
+	public function exportDocumentView($absPath, $out, $skipBinary, $noRecurse) {
+		$xmlWriter = new \XMLWriter();
+		if ($xmlWriter->openUri($out)) {
+			$this->exportToXML($this->getNode($absPath), $xmlWriter, !$skipBinary, !$noRecurse, self::EXPORT_DOCUMENT, TRUE);
+			$xmlWriter->flush();
+		} else {
+			throw new \RuntimeException('Error when opening the given URI for writing.', 1256749353);
+		}
 	}
 
 	/**

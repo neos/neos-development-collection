@@ -579,12 +579,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 			'mix' => 'http://www.jcp.org/jcr/mix/1.0'
 		);
 
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertSame($expectedNamespaces, $xml->getDocNamespaces());
 	}
 
@@ -593,12 +590,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewExportsRootNodeNamedAsJcrRoot() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('jcr:root', (string)$xml->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 	}
 
@@ -607,12 +601,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewExportsRequestedPath() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/Content/News', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportSystemView('/Content/News', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('News', (string)$xml->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 	}
 
@@ -621,12 +612,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewExportsRecursivelyIfRequested() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
 
-		$this->session->exportSystemView('/', $xmlWriter, TRUE, FALSE);
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
-
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals(2, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node));
 		$this->assertEquals(4, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node[1]->node));
 	}
@@ -636,12 +624,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewExportsNonRecursivelyIfRequested() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals(0, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node));
 	}
 
@@ -650,12 +635,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewExportsPrimaryNodeTypeAsFirstPropertyNamedJcrPrimaryType() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('jcr:primaryType', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[0]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 	}
 
@@ -664,12 +646,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewExportsIdentifierAsThirdPropertyNamedJcrUuid() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportSystemView('/', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('jcr:uuid', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[2]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[2]->value[0]);
 	}
@@ -679,12 +658,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewExportsProperties() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
 
-		$this->session->exportSystemView('/', $xmlWriter, TRUE, FALSE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
 		$this->assertEquals('title', (string)$children->node[1]->node[1]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 		$this->assertEquals('String', (string)$children->node[1]->node[1]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
@@ -696,12 +672,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewExportsBinaryPropertyAsBase64() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/Content', 'memory://typo3crexporttestdata', FALSE, TRUE);
 
-		$this->session->exportSystemView('/Content', $xmlWriter, FALSE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
 		$this->assertEquals('binaryProperty', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 		$this->assertEquals('Binary', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
@@ -713,12 +686,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportSystemViewSkipsBinaryPropertyIfRequested() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportSystemView('/Content', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportSystemView('/Content', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
 		$this->assertEquals('binaryProperty', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 		$this->assertEquals('Binary', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
@@ -736,12 +706,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 			'mix' => 'http://www.jcp.org/jcr/mix/1.0'
 		);
 
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportDocumentView('/', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertSame($expectedNamespaces, $xml->getDocNamespaces());
 	}
 
@@ -750,12 +717,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsRootNodeAsJcrRootElement() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportDocumentView('/', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('root', $xml->getName());
 		$this->assertTrue(array_key_exists('jcr', $xml->getNamespaces(FALSE)));
 	}
@@ -765,12 +729,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsRequestedPath() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportDocumentView('/Content/News', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportDocumentView('/Content/News', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory(FALSE));
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('News', $xml->getName());
 	}
 
@@ -779,12 +740,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsRecursivelyIfRequested() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
 
-		$this->session->exportDocumentView('/', $xmlWriter, TRUE, FALSE);
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
-
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals(1, count($xml->children()));
 		$this->assertEquals(3, count($xml->Content->children()));
 	}
@@ -794,12 +752,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsNonRecursivelyIfRequested() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
 
-		$this->session->exportDocumentView('/', $xmlWriter, TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals(0, count($xml->children()));
 	}
 
@@ -808,12 +763,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsProperties() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
 
-		$this->session->exportDocumentView('/', $xmlWriter, TRUE, FALSE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('News about FLOW3 & the TYPO3CR', (string)$xml->Content[0]->News[0]->attributes()->title);
 	}
 
@@ -822,12 +774,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsBinaryPropertyAsBase64() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportDocumentView('/Content', 'memory://typo3crexporttestdata', FALSE, TRUE);
 
-		$this->session->exportDocumentView('/Content', $xmlWriter, FALSE, TRUE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('YTM0NcO2xI3FmcOfYQ==', (string)$xml->attributes()->binaryProperty);
 	}
 
@@ -836,12 +785,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsXMLTextNodesAsXMLText() {
-		$xmlWriter = new \XMLWriter();
-		$xmlWriter->openMemory();
+		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
 
-		$this->session->exportDocumentView('/', $xmlWriter, TRUE, FALSE);
-
-		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
 		$this->assertEquals('This is some XML text containing <weird> "stuff"', (string)$xml);
 		$this->assertEquals('Another XML text node property', (string)$xml->Content);
 	}
