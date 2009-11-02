@@ -72,7 +72,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * Returns the name of this Item in qualified form. If this Item is the root
 	 * node of the workspace, an empty string is returned.
 	 *
-	 * @return string the name of this Item> in qualified form or an empty string if this Item is the root node of a workspace.
+	 * @return string the name of this Item in qualified form or an empty string if this Item is the root node of a workspace.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @author Ronny Unger <ru@php-workx.de>
 	 * @api

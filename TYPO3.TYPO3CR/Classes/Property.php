@@ -397,7 +397,7 @@ class Property extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\PropertyInt
 	 * property in bytes where each is individually calculated as described in
 	 * getLength().
 	 *
-	 * @return array an array of lengths
+	 * @return array an array of lengths (integers)
 	 * @throws \F3\PHPCR\ValueFormatException if this property is single-valued.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @api

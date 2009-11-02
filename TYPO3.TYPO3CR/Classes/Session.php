@@ -557,7 +557,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	/**
 	 * Determines whether this Session has permission to perform the specified actions
 	 * at the specified absPath. This method quietly returns if the access request is
-	 * permitted, or throws a suitable java.security.AccessControlException otherwise.
+	 * permitted, or throws a \F3\PHPCR\Security\AccessControlException otherwise.
 	 * The actions parameter is a comma separated list of action strings. The following
 	 * action strings are defined:
 	 *
@@ -586,7 +586,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param string $absPath an absolute path.
 	 * @param string $actions a comma separated list of action strings.
 	 * @return void
-	 * @throws java.security.AccessControlException If permission is denied.
+	 * @throws \F3\PHPCR\Security\AccessControlException If permission is denied.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @api
 	 */

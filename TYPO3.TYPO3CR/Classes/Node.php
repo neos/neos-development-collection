@@ -1217,7 +1217,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * support versioning (and therefore all nodes are always "checked-out",
 	 * by default).
 	 *
-	 * @return a boolean
+	 * @return boolean
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @api
 	 */
@@ -1231,7 +1231,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * otherwise returns FALSE. This includes the case where a repository does
 	 * not support locking (in which case all nodes are "unlocked" by default).
 	 *
-	 * @return a boolean.
+	 * @return boolean.
 	 * @throws \F3\PHPCR\RepositoryException if an error occurs.
 	 * @api
 	 */

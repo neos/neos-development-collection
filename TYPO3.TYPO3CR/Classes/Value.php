@@ -108,7 +108,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	/**
 	 * Returns a long (integer) representation of this value.
 	 *
-	 * @return string A long representation of the value of this property.
+	 * @return integer A long representation of the value of this property.
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a long is not possible.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -167,7 +167,7 @@ class Value implements \F3\PHPCR\ValueInterface {
 	/**
 	 * Returns a boolean representation of this value.
 	 *
-	 * @return string A boolean representation of the value of this property.
+	 * @return boolean A boolean representation of the value of this property.
 	 * @throws \F3\PHPCR\ValueFormatException if conversion to a boolean is not possible.
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
