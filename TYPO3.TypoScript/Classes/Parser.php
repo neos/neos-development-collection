@@ -49,7 +49,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	const SPLIT_PATTERN_VALUEVARIABLES = '/\$[a-zA-Z][a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)/';
 	const SPLIT_PATTERN_VALUEOBJECTTYPE = '/^\s*(?:(?:([a-zA-Z]+[a-zA-Z0-9*]*)\\\\)?([a-zA-Z][a-zA-Z0-9]*)$)|(F3\\\\(?:\w+|\\\\)+)/';
 	const SPLIT_PATTERN_INDEXANDMETHODCALL = '/(?P<Index>\d+)\.(?P<ObjectAndMethodName>\w+)\s*\((?P<Arguments>.*?)\)\s*$/';
-	const SPLIT_PATTERN_COMPONENTANDMETHODNAME = '/(?:(<?P<ObjectName>(\\\\F3\\\\(?:\w+|\\\\)+))->)?(?P<MethodName>\w+)/';
+	const SPLIT_PATTERN_OBJECTANDMETHODNAME = '/(?:(<?P<ObjectName>(\\\\F3\\\\(?:\w+|\\\\)+))->)?(?P<MethodName>\w+)/';
 	const SPLIT_PATTERN_METHODARGUMENTS = '/("(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+|-?[0-9]+(\.\d+)?)/';
 
 	/**
@@ -63,37 +63,44 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	protected $objectFactory;
 
 	/**
-	 * @var array The TypoScript object tree, created by this parser.
+	 * The TypoScript object tree, created by this parser.
+	 * @var array
 	 */
 	protected $objectTree = array();
 
 	/**
-	 * @var array Contains the TS object variables used during parse time, indexed by the object path
+	 * Contains the TS object variables used during parse time, indexed by the object path
+	 * @var array
 	 */
 	protected $objectVariables = array();
 
 	/**
-	 * @var integer The line number which is currently processed
+	 * The line number which is currently processed
+	 * @var integer
 	 */
 	protected $currentLineNumber = 1;
 
 	/**
-	 * @var array An array of strings of the source code which has
+	 * An array of strings of the source code which has
+	 * @var array
 	 */
 	protected $currentSourceCodeLines = array();
 
 	/**
-	 * @var array The current object path context as defined by confinements.
+	 * The current object path context as defined by confinements.
+	 * @var array
 	 */
 	protected $currentObjectPathStack = array();
 
 	/**
-	 * @var boolean Determines if a block comment is currently active or not.
+	 * Determines if a block comment is currently active or not.
+	 * @var boolean
 	 */
 	protected $currentBlockCommentState = FALSE;
 
 	/**
-	 * @var array Namespace identifiers and their object name prefix
+	 * Namespace identifiers and their object name prefix
+	 * @var array
 	 */
 	protected $namespaces = array(
 		'default' => ''
@@ -120,7 +127,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parse($sourceCode) {
-		if (!is_string($sourceCode)) throw new LogicException('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
+		if (!is_string($sourceCode)) throw new \F3\TypoScript\Exception('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
 		$this->initialize();
 
 		$typoScriptLines = explode(chr(10), $sourceCode);
@@ -134,12 +141,12 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	/**
 	 * Sets the default namespace to the given object name prefix
 	 *
-	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing "
+	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing \
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDefaultNamespace($objectNamePrefix) {
-		if (!is_string($objectNamePrefix)) throw new LogicException('The object name prefix for the default namespace must be of type string!', 1180600696);
+		if (!is_string($objectNamePrefix)) throw new \F3\TypoScript\Exception('The object name prefix for the default namespace must be of type string!', 1180600696);
 		$this->namespaces['default'] = $objectNamePrefix;
 	}
 
@@ -171,7 +178,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		if ($this->currentBlockCommentState === TRUE) {
 			$this->parseComment($typoScriptLine);
 		} else {
-			if ($typoScriptLine == '') {
+			if ($typoScriptLine === '') {
 				return;
 			} elseif (preg_match(self::SCAN_PATTERN_COMMENT, $typoScriptLine)) {
 				$this->parseComment($typoScriptLine);
@@ -213,7 +220,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 					break;
 			}
 		} elseif ($this->currentBlockCommentState === FALSE) {
-			throw new LogicException('No comment type matched although the comment scan regex matched the TypoScript line (' . $typoScriptLine . ').', 1180614895);
+			throw new \F3\TypoScript\Exception('No comment type matched although the comment scan regex matched the TypoScript line (' . $typoScriptLine . ').', 1180614895);
 		}
 	}
 
@@ -429,7 +436,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getProcessorInvocation($processorObjectAndMethodName, array $processorArguments) {
-		preg_match(self::SPLIT_PATTERN_COMPONENTANDMETHODNAME, $processorObjectAndMethodName, $matchedObjectAndMethodName);
+		preg_match(self::SPLIT_PATTERN_OBJECTANDMETHODNAME, $processorObjectAndMethodName, $matchedObjectAndMethodName);
 
 		$processorObjectName = isset($matchedObjectAndMethodName['ObjectName']) ? $matchedObjectAndMethodName['ObjectName'] : $this->namespaces['default'] . '\Processors';
 		$processorMethodName = isset($matchedObjectAndMethodName['MethodName']) ? 'processor_' . $matchedObjectAndMethodName['MethodName'] : NULL;
@@ -546,10 +553,16 @@ class Parser implements \F3\TypoScript\ParserInterface {
 
 		if (is_object($value)) {
 			if (count($objectPathArray)) {
-				$currentKey = array_shift($objectPathArray);
-				if ((integer)$currentKey > 0) $currentKey = intval($currentKey);
-				$this->setChildNodeToEmptyArrayIfNeccessary($objectTree, $currentKey);
-				$objectTree[$currentKey] = $this->setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
+				if (is_array($objectTree) || $objectTree instanceof \ArrayAccess) {
+					$currentKey = array_shift($objectPathArray);
+					if ((integer)$currentKey > 0) $currentKey = intval($currentKey);
+					$this->setChildNodeToEmptyArrayIfNeccessary($objectTree, $currentKey);
+					$objectTree[$currentKey] = $this->setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
+				} elseif (is_object($objectTree)) {
+					$propertyName = array_shift($objectPathArray);
+					\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree, $propertyName, $value);
+				}
+
 			} else {
 				$objectTree = $value;
 			}
@@ -605,13 +618,16 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * if the childNodeKey is not the offset of a Content Array and the child node is
 	 * not already an array or Content Array.
 	 *
-	 * @param array &$objectTree An object tree or sub part of the object tree which contains the child node
+	 * @param \ArrayAccess &$objectTree An object tree or sub part of the object tree which contains the child node
 	 * @param string $childNodeKey Key in the objectTree which identifies the child node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see setValueInObjectTree()
 	 */
 	protected function setChildNodeToEmptyArrayIfNeccessary(&$objectTree, $childNodeKey) {
+		if (!is_array($objectTree) && !$objectTree instanceof \ArrayAccess) {
+			throw new \F3\TypoScript\Exception('Given object tree is not an array.', 1181743514);
+		}
 		if (!is_integer($childNodeKey) && !isset($objectTree[$childNodeKey])) {
 			$objectTree[$childNodeKey] = array();
 		}

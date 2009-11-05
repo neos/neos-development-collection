@@ -31,6 +31,7 @@ namespace F3\TypoScript;
 abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 
 	/**
+	 * @inject
 	 * @var \F3\Fluid\View\TemplateViewInterface
 	 */
 	protected $view;
@@ -57,19 +58,19 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	protected $propertyProcessorChains = array();
 
 	/**
-	 * @param \F3\Fluid\View\TemplateViewInterface
-	 * @return void
-	 */
-	public function setView(\F3\Fluid\View\TemplateViewInterface $view) {
-		$this->view = $view;
-	}
-
-	/**
 	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
 	 * @return void
 	 */
 	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
+	}
+
+	/**
+	 * @param \F3\TYPO3\TypoScript\Template
+	 * @return void
+	 */
+	public function setView(\F3\TYPO3\TypoScript\Template $view) {
+		$this->view = $view;
 	}
 
 	/**
@@ -156,8 +157,13 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 */
 	protected function getProcessedProperty($propertyName) {
 		if (!property_exists($this, $propertyName)) throw new \LogicException('Tried to run the processors chain for non-existing property "' . $propertyName . '".', 1179406581);
-		if (!isset($this->propertyProcessorChains[$propertyName])) return $this->$propertyName;
-		return $this->propertyProcessorChains[$propertyName]->process($this->$propertyName);
+		if ($this->$propertyName === NULL) {
+			$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->model, $propertyName);
+		} else {
+			$propertyValue = $this->$propertyName;
+		}
+		if (!isset($this->propertyProcessorChains[$propertyName])) return $propertyValue;
+		return $this->propertyProcessorChains[$propertyName]->process($propertyValue);
 	}
 }
 ?>
