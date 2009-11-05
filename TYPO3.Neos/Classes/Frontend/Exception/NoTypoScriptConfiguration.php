@@ -23,12 +23,12 @@ namespace F3\TYPO3\Frontend\Exception;
  *                                                                        */
 
 /**
- * A "No TypoScript Template" exception
+ * A "No TypoScript" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class NoTypoScriptTemplate extends \F3\TYPO3\Frontend\Exception {
+class NoTypoScriptConfiguration extends \F3\TYPO3\Frontend\Exception {
 
 }
 

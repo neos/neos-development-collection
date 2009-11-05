@@ -121,7 +121,8 @@ class ContentContext {
 			$this->currentDomain = $matchingDomains[0];
 			$this->currentSite = $matchingDomains[0]->getSite();
 		} else {
-			$this->currentSite = $this->siteRepository->findFirst();
+			$site = $this->siteRepository->findFirst();
+			$this->currentSite = ($site === FALSE) ? NULL : $site;
 		}
 	}
 

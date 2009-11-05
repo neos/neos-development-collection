@@ -37,28 +37,19 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Page';
 
 	/**
-	 * @var array<string>
-	 */
-	protected $renderedSections = array();
-
-	/**
 	 * @var string
 	 */
-	protected $title = 'Untitled';
+	protected $title;
 
 	/**
 	 * @var string
 	 */
 	protected $type = 'default';
+
 	/**
-	 *
-	 * @param $model
-	 * @return unknown_type
+	 * @var object
 	 */
-	public function setModel($model) {
-		parent::setModel($model);
-		$this->title = $this->model->getTitle();
-	}
+	protected $view;
 
 	/**
 	 *
@@ -99,7 +90,6 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRenderedContent() {
-		$this->view->setTemplatePathAndFilename(FLOW3_PATH_PACKAGES . 'Application/TYPO3/Resources/Private/Templates/TypoScript/Page.html');
 		$presentationModel = array(
 			'title' => $this->getProcessedProperty('title')
 		);

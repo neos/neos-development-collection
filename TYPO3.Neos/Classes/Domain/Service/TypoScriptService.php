@@ -41,7 +41,13 @@ class TypoScriptService {
 	 * @inject
 	 * @var \F3\TypoScript\Parser
 	 */
-	public $typoScriptParser;
+	protected $typoScriptParser;
+
+	/**
+	 * @inject
+	 * @var \F3\FLOW3\Package\ManagerInterface
+	 */
+	protected $packageManager;
 
 	/**
 	 * Constructs this service
@@ -76,16 +82,50 @@ class TypoScriptService {
 		$nodes = $nodeService->getNodesOnPath($this->contentContext->getCurrentSite(), $nodePath);
 		if (!is_array($nodes)) return NULL;
 
+			// TODO: Use the resource manager instead of the package manager once it is available:
+		$siteResourcesPackageKey = $this->contentContext->getCurrentSite()->getSiteResourcesPackageKey();
+		if (!empty($siteResourcesPackageKey) && $this->packageManager->isPackageActive($siteResourcesPackageKey)) {
+			$typoScriptsPath = $this->packageManager->getPackage($siteResourcesPackageKey)->getResourcesPath() . 'Private/TypoScripts/';
+		}
+
 		$mergedTypoScriptCode = '';
 		foreach ($nodes as $node) {
+			if (isset($typoScriptsPath)) {
+				$typoScriptsPath .= $node->getNodeName() . '/';
+				$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($typoScriptsPath);
+			}
+
 			$configurations = $node->getConfigurations();
 			foreach ($configurations as $configuration) {
-				if ($configuration instanceof \F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate) {
+				if ($configuration instanceof \F3\TYPO3\Domain\Model\Configuration\TypoScript) {
 					$mergedTypoScriptCode .= $configuration->getSourceCode() . chr(10);
 				}
 			}
 		}
+		$this->typoScriptParser->setDefaultNamespace('F3\TYPO3\TypoScript');
 		return  $this->typoScriptParser->parse($mergedTypoScriptCode);
+	}
+
+	/**
+	 * Scans the directory of the given path for .ts2 files, reads them and returns their
+	 * content merged as a string.
+	 *
+	 * @param string $path Path to the directory to read the files from
+	 * @return string The merged content of the .ts2 files found
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function readExternalTypoScriptFiles($path) {
+		$mergedTypoScriptCode = '';
+		if (is_dir($path)) {
+			$directoryIterator = new \DirectoryIterator($path);
+			foreach ($directoryIterator as $file) {
+				$filename = $file->getFilename();
+				if ($file->isFile() && substr($filename, -4) === '.ts2') {
+					$mergedTypoScriptCode .= \F3\FLOW3\Utility\Files::getFileContents($file->getPathname()) . chr(10);
+				}
+			}
+		}
+		return $mergedTypoScriptCode;
 	}
 }
 ?>

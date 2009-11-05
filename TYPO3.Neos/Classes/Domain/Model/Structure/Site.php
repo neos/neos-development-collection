@@ -53,6 +53,11 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	protected $state = self::STATE_ONLINE;
 
 	/**
+	 * @var string
+	 */
+	protected $siteResourcesPackageKey;
+
+	/**
 	 * Sets the name for this site
 	 *
 	 * @param string $name The site name
@@ -92,6 +97,27 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 */
 	public function getState() {
 		return $this->state;
+	}
+
+	/**
+	 * Sets the key of a package containing the static resources for this site.
+	 *
+	 * @param string $packageKey The package key
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setSiteResourcesPackageKey($packageKey) {
+		$this->siteResourcesPackageKey = $packageKey;
+	}
+
+	/**
+	 * Returns the key of a package containing the static resources for this site.
+	 *
+	 * @return string The package key
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSiteResourcesPackageKey() {
+		return $this->siteResourcesPackageKey;
 	}
 
 	/**

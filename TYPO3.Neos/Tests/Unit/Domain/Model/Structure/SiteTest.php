@@ -63,6 +63,16 @@ class SiteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function theSiteResourcesPackageKeyCanBeSetAndRetrieved() {
+		$site = new \F3\TYPO3\Domain\Model\Structure\Site();
+		$site->setSiteResourcesPackageKey('Foo');
+		$this->assertSame('Foo', $site->getSiteResourcesPackageKey());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getIndexNodeReturnsTheFirstNodeOnTheFirstLevelMatchingTheContextsLocale() {
 		$locale1 = new \F3\FLOW3\Locale\Locale('de-DE');
 		$locale2 = new \F3\FLOW3\Locale\Locale('en-EN');

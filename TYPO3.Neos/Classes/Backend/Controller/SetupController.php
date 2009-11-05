@@ -79,18 +79,14 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\Site');
 		$site->setName('TYPO3 5.0 Example Site');
 		$site->setNodeName('phoenix.typo3.org');
+		$site->setSiteResourcesPackageKey('Flow3Typo3Org');
 		$this->siteRepository->add($site);
 
 		$homePage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
 		$homePage->setTitle('Homepage');
 
-		$typoScriptTemplateHome = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate');
+		$typoScriptTemplateHome = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScript');
 		$typoScriptTemplateHome->setSourceCode('
-			namespace: default = F3\TYPO3\TypoScript
-
-			page = Page
-			page.title << 1.wrap("My ", "!")
-
 			alternativePage = Page
 			alternativePage {
 				type = "alternative"
@@ -102,10 +98,8 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 		$subPage = $contentService->createInside('subpage', 'F3\TYPO3\Domain\Model\Content\Page', $homePage);
 
-		$typoScriptTemplateSubPage = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate');
+		$typoScriptTemplateSubPage = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScript');
 		$typoScriptTemplateSubPage->setSourceCode('
-			namespace: default = F3\TYPO3\TypoScript
-
 			page.title << 2.wrap("Subpage: ", "")
 
 		');

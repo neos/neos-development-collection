@@ -36,7 +36,7 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class TypoScriptTemplateTest extends \F3\Testing\BaseTestCase {
+class TypoScriptTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -48,7 +48,7 @@ class TypoScriptTemplateTest extends \F3\Testing\BaseTestCase {
 			10.value = "Hello World"
 		';
 
-		$typoScriptTemplate = $this->getMock('F3\TYPO3\Domain\Model\Configuration\TypoScriptTemplate', array('dummy'), array(), '', FALSE);
+		$typoScriptTemplate = $this->getMock('F3\TYPO3\Domain\Model\Configuration\TypoScript', array('dummy'), array(), '', FALSE);
 		$typoScriptTemplate->setSourceCode($typoScriptSourceCode);
 		$this->assertSame($typoScriptSourceCode, $typoScriptTemplate->getSourceCode());
 	}

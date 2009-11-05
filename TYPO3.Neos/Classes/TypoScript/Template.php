@@ -24,55 +24,11 @@ namespace F3\TYPO3\TypoScript;
 
 /**
  * A TypoScript Template object
- * 
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Template extends \F3\TypoScript\AbstractContentArrayObject {
-
-	/**
-	 * This property must be loaded with the template source code, otherwise this content object will return an empty string.
-	 *
-	 * @var string
-	 */
-	protected $templateCode = '';
-
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
-		$this->templateCode = $objectFactory->create('F3\TYPO3\TypoScript\ContentArray');
-		$this->templateCode[10] = $objectFactory->create('F3\TYPO3\TypoScript\Text');
-		$this->templateCode[10]->setValue('test');
-	}
-	
-	/**
-	 * Sets the template code
-	 *
-	 * @param  mixed				$templateCode: The template source code. May be an object with __toString support as it will be casted to a string.
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setTemplateCode($templateCode) {
-		#$this->templateCode = (string)$templatecode;		
-	}
-	
-	/**
-	 * Returns the template code
-	 *
-	 * @return string				The template source code, markers stay untouched.
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getTemplateCode() {
-		return $this->templateCode;
-	}
-	
-	/**
-	 * Returns the rendered content of this content object
-	 * 
-	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getRenderedContent() {
-		return $this->templateCode;
-	}	
+class Template extends \F3\Fluid\View\TemplateView {
 }
 ?>

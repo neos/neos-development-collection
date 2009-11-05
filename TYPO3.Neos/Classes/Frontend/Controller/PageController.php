@@ -77,8 +77,10 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if (!isset($pageTypoScriptObject)) {
 			throw new \F3\TYPO3\Frontend\Exception\NoTypoScriptPageObject('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
 		}
+
 		$pageTypoScriptObject->setModel($page);
-		$pageTypoScriptObject->setView($this->view);
+#		$pageTypoScriptObject->setView($this->view);
+
 		return $pageTypoScriptObject->getRenderedContent();
 	}
 
@@ -90,7 +92,8 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	protected function resolveView() {
 		$view = $this->objectFactory->create('F3\Fluid\View\TemplateView');
-		$view->setControllerContext($this->buildControllerContext());
+		$view->setLayoutRootPath('package://TYPO3/Private/TypoScript/Layouts/');
+		$view->setTemplatePathAndFilename('package://Flow3Typo3Org/Private/Templates/Page/Homepage.html');
 		return $view;
 	}
 }

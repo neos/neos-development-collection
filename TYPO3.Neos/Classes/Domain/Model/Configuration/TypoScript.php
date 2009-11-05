@@ -30,7 +30,7 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  * @entity
  * @scope prototype
  */
-class TypoScriptTemplate extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration {
+class TypoScript extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration {
 
 	/**
 	 * A label for the TypoScript template

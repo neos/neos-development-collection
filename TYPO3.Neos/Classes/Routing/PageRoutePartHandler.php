@@ -64,7 +64,12 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 */
 	protected function matchValue($value) {
 		$this->contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\ContentContext');
-		$node = $this->contentContext->getNodeService()->getNode($this->contentContext->getCurrentSite(), '/' . $value);
+		$site = $this->contentContext->getCurrentSite();
+		if ($site === NULL) {
+			return FALSE;
+		}
+
+		$node = $this->contentContext->getNodeService()->getNode($site, '/' . $value);
 		if ($node === NULL) {
 			return FALSE;
 		}

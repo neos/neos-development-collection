@@ -2,13 +2,10 @@
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<f:base />
 		<title>{title}</title>
-		<f:for each="{headParts}" as="headPart">
-		{headPart}
-		</f:for>
+		<f:render section="head"/>
 	</head>
 	<body {bodyAttributes}>
-		{body}
+		<f:render section="body"/>
 	</body>
 </html>
