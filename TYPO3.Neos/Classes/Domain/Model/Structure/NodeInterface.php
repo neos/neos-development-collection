@@ -46,49 +46,30 @@ interface NodeInterface {
 	/**
 	 * Adds a child node to the list of existing child nodes
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The child node to add
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The node to add
 	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
+	 * @param string $section Name of the section to which the child node should be added
 	 * @return void
 	 */
-	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL);
-
-	/**
-	 * Sets a child node to which can be refered by the specified name.
-	 *
-	 * @param string $name The child node's name
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The child node
-	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
-	 * @return void
-	 * @throws \F3\TYPO3\Domain\Exception\WrongNodeOrderMethod if the child node norder is already set and is not "NAMED"
-	 * @throws \F3\TYPO3\Domain\Exception\NodeAlreadyExists if a child node with the specified name and locale already exists
-	 */
-	public function setNamedChildNode($name, \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL);
+	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL, $section = 'default');
 
 	/**
 	 * Returns the child notes of this node.
 	 * Note that the child nodes are indexed by language and region!
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context for determining the locale of the nodes to return
-	 * @return array Child nodes in the form of array('{language}' => array ('{region}' => {child nodes}))
+	 * @param string $section Name of the section where the child nodes should be located
+	 * @return array An array of child nodes. If no context was specified in the form of array('{language}' => array ('{region}' => {child nodes})).
 	 */
-	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext);
+	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL, $section = 'default');
 
 	/**
 	 * Tells if this node has any child nodes
 	 *
+	 * @param string $section If specified, only nodes of the given section are taken into account
 	 * @return boolean TRUE if the node has child nodes, otherwise FALSE
 	 */
-	public function hasChildNodes();
-
-	/**
-	 * Returns the order of the attached child nodes.
-	 *
-	 * If no child node has been added yet, the order is undefined. Otherwise the
-	 * order is determined by the method how the first child node has been added.
-	 *
-	 * @return integer One of the CHILDNODEORDER_* constants
-	 */
-	public function getChildNodesOrder();
+	public function hasChildNodes($section = NULL);
 }
 
 ?>

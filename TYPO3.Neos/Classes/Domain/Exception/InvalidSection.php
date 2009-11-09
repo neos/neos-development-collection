@@ -23,12 +23,12 @@ namespace F3\TYPO3\Domain\Exception;
  *                                                                        */
 
 /**
- * A "Wrong node order method" exception
+ * An "Invalid section" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class WrongNodeOrderMethod extends \F3\TYPO3\Domain\Exception {
+class InvalidSection extends \F3\TYPO3\Domain\Exception {
 
 }
 

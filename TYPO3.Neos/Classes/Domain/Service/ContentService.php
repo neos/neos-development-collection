@@ -71,18 +71,19 @@ class ContentService {
 	}
 
 	/**
-	 * Creates new content of the specified type  the given reference.
+	 * Creates new content of the specified type the given reference.
 	 *
 	 * The reference may either be an existing content object (a page, text etc.) or
 	 * an object implementing the NodeInterface (eg. a Site).
 	 *
 	 * @param string $contentType Object name of the content to create
 	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created inside the given reference.
+	 * @param string $section If specified, the new content is inserted into the given section of the existing node. Note that some node types (for example "Site") don't support sections.
 	 * @return object The newly created content object
 	 * @throws \F3\TYPO3\Domain\Exception\InvalidReference if the given reference is of an invalid type
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createInside($nodeName, $contentType, $reference) {
+	public function createInside($nodeName, $contentType, $reference, $section = 'default') {
 		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
 			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411515);
 		}
@@ -94,9 +95,9 @@ class ContentService {
 		$content = $this->objectFactory->create($contentType, $locale, $newNode);
 
 		if ($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface) {
-			$reference->getNode()->addChildNode($newNode, $locale);
+			$reference->getNode()->addChildNode($newNode, $locale, $section);
 		} elseif ($reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface) {
-			$reference->addChildNode($newNode, $locale);
+			$reference->addChildNode($newNode, $locale, $section);
 		}
 		return $content;
 	}

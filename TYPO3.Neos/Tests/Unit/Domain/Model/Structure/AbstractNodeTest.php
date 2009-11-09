@@ -44,15 +44,6 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function childNodesOrderIsUndefinedBeforeAddingTheFirstChildnode() {
-		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'));
-		$this->assertSame(\F3\TYPO3\Domain\Model\Structure\AbstractNode::CHILDNODESORDER_UNDEFINED, $rootNode->getChildNodesOrder());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function addChildNodeAddsAChildNodeAfterExistingChildNodes() {
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
@@ -71,26 +62,26 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addChildNodeSetsTheChildNodesOrderToOrdered() {
+	public function addChildNodeByDefaultAddsChildNodesToTheDefaultSection() {
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 
 		$rootNode->addChildNode($node1);
-		$this->assertSame(\F3\TYPO3\Domain\Model\Structure\AbstractNode::CHILDNODESORDER_ORDERED, $rootNode->getChildNodesOrder());
+
+		$actualChildNodes = $rootNode->getChildNodes(NULL, 'default');
+		$this->assertSame($node1, reset($actualChildNodes['mul']['ZZ']));
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3\TYPO3\Domain\Exception\WrongNodeOrderMethod
+	 * @expectedException F3\TYPO3\Domain\Exception\InvalidSection
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addChildNodeThrowsAnExceptionIfTheChildNodeOrderIsNotUndefinedOrOrdered() {
+	public function addChildNodeOnlySupportsTheDefaultSection() {
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 
-		$rootNode->setNamedChildNode('node1', $node1);
-		$rootNode->addChildNode($node2);
+		$rootNode->addChildNode($node1, NULL, 'foo');
 	}
 
 	/**
@@ -119,87 +110,12 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3\TYPO3\Domain\Exception\InvalidSection
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNamedChildNodeSetsAChildNodeByItsName() {
+	public function getChildNodesOnlySupportsTheDefaultSection() {
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node3 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-
-		$rootNode->setNamedChildNode('node1', $node1);
-		$rootNode->setNamedChildNode('node3', $node3);
-		$rootNode->setNamedChildNode('node2', $node2);
-
-		$actualChildNodes = $rootNode->getChildNodes();
-
-		$this->assertSame($node1, $actualChildNodes['mul']['ZZ']['node1']);
-		$this->assertSame($node2, $actualChildNodes['mul']['ZZ']['node2']);
-		$this->assertSame($node3, $actualChildNodes['mul']['ZZ']['node3']);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setNamedChildNodeSetsTheChildNodesOrderToNamed() {
-		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-
-		$rootNode->setNamedChildNode('node1', $node1);
-		$this->assertSame(\F3\TYPO3\Domain\Model\Structure\AbstractNode::CHILDNODESORDER_NAMED, $rootNode->getChildNodesOrder());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setNamedChildNodeAllowsForSpecifyingALocaleForTheChildNode() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('de-DE');
-		$locale2 = new \F3\FLOW3\Locale\Locale('en-EN');
-
-		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node3 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-
-		$rootNode->setNamedChildNode('node1', $node1);
-		$rootNode->setNamedChildNode('node2', $node2, $locale1);
-		$rootNode->setNamedChildNode('node3', $node3, $locale2);
-
-		$actualChildNodes = $rootNode->getChildNodes();
-
-		$this->assertSame($node1, $actualChildNodes['mul']['ZZ']['node1']);
-		$this->assertSame($node2, $actualChildNodes['de']['DE']['node2']);
-		$this->assertSame($node3, $actualChildNodes['en']['EN']['node3']);
-	}
-
-	/**
-	 * @test
-	 * @expectedException F3\TYPO3\Domain\Exception\WrongNodeOrderMethod
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setNamedChildNodeThrowsAnExceptionIfTheChildNodeOrderIsNotUndefinedOrNamed() {
-		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-
-		$rootNode->addChildNode($node1);
-		$rootNode->setNamedChildNode('node2', $node2);
-	}
-
-	/**
-	 * @test
-	 * @expectedException F3\TYPO3\Domain\Exception\NodeAlreadyExists
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setNamedChildNodeThrowsAnExceptionIfTheANodeWithThatNameAlreadyExists() {
-		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-
-		$rootNode->setNamedChildNode('node', $node1);
-		$rootNode->setNamedChildNode('node', $node2);
+		$rootNode->getChildNodes(NULL, 'foo');
 	}
 
 	/**

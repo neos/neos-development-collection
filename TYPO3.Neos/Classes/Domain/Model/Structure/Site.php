@@ -124,11 +124,12 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * Returns the index node of this site
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context
+	 * @param string $section Must always be "default"
 	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
-		$childNodesMatchingContext = $this->getChildNodes($contentContext);
+	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext, $section = 'default') {
+		$childNodesMatchingContext = $this->getChildNodes($contentContext, $section);
 		return reset($childNodesMatchingContext);
 	}
 

@@ -23,7 +23,7 @@ namespace F3\TYPO3\Domain\Model\Structure;
  *                                                                        */
 
 /**
- * An Abstract Node
+ * An abstract Node
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -38,14 +38,9 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	protected $nodeName;
 
 	/**
-	 * @var integer
-	 */
-	protected $childNodesOrder = self::CHILDNODESORDER_UNDEFINED;
-
-	/**
 	 * @var array<\F3\TYPO3\Domain\Model\Structure\NodeInterface>
 	 */
-	protected $childNodes = array();
+	protected $childNodes = array('default' => array());
 
 	/**
 	 * @var \SplObjectStorage<\F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface>
@@ -84,48 +79,18 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	/**
 	 * Adds a child node to the list of existing child nodes
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The child node to add
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The node to add
 	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
+	 * @param string $section Name of the section to which the child node should be added
 	 * @return void
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidSection
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL) {
-		if ($this->childNodesOrder === self::CHILDNODESORDER_UNDEFINED) {
-			$this->childNodesOrder = self::CHILDNODESORDER_ORDERED;
-		} elseif ($this->childNodesOrder !== self::CHILDNODESORDER_ORDERED) {
-			throw new \F3\TYPO3\Domain\Exception\WrongNodeOrderMethod('This structure node already has child nodes which require a different order method (' . $this->childNodesOrder . ')', 1244641631);
-		}
-		if ($locale !== NULL) {
-			$this->childNodes[$locale->getLanguage()][$locale->getRegion()][] = $childNode;
-		} else {
-			$this->childNodes['mul']['ZZ'][] = $childNode;
-		}
-	}
-
-	/**
-	 * Sets a child node to which can be refered by the specified name.
-	 *
-	 * @param string $name The child node's name
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The child node
-	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
-	 * @return void
-	 * @throws \F3\TYPO3\Domain\Exception\WrongNodeOrderMethod if the child node norder is already set and is not "NAMED"
-	 * @throws \F3\TYPO3\Domain\Exception\NodeAlreadyExists if a child node with the specified name and locale already exists
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setNamedChildNode($name, \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL) {
-		if ($this->childNodesOrder === self::CHILDNODESORDER_UNDEFINED) {
-			$this->childNodesOrder = self::CHILDNODESORDER_NAMED;
-		} elseif ($this->childNodesOrder !== self::CHILDNODESORDER_NAMED) {
-			throw new \F3\TYPO3\Domain\Exception\WrongNodeOrderMethod('This structure node already has child nodes which require a different order method (' . $this->childNodesOrder . ')', 1244641632);
-		}
+	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL, $section = 'default') {
+		$this->throwExceptionOnInvalidSection($section);
 		$language = ($locale !== NULL) ? $locale->getLanguage() : 'mul';
 		$region = ($locale !== NULL) ? $locale->getRegion() : 'ZZ';
-
-		if (isset($this->childNodes[$language][$region][$name])) {
-			throw new \F3\TYPO3\Domain\Exception\NodeAlreadyExists('A child node "' . $name . '" already exists for locale ' . $language . '-' . $region . '. You must remove existing nodes before setting a new one.', 1244807272);
-		}
-		$this->childNodes[$language][$region][$name] = $childNode;
+		$this->childNodes[$section][$language][$region][] = $childNode;
 	}
 
 	/**
@@ -133,45 +98,37 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * Note that the child nodes are indexed by language and region!
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context for determining the locale of the nodes to return
+	 * @param string $section Name of the section where the child nodes should be located
 	 * @return array An array of child nodes. If no context was specified in the form of array('{language}' => array ('{region}' => {child nodes})).
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL) {
+	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL, $section = 'default') {
+		$this->throwExceptionOnInvalidSection($section);
 		$locale = ($contentContext !== NULL) ? $contentContext->getLocale() : NULL;
 		if ($locale === NULL) {
-			return $this->childNodes;
+			return $this->childNodes[$section];
 		} else {
 			$language = $locale->getLanguage();
 			$region = $locale->getRegion();
 
-			if (isset($this->childNodes[$language]) && isset($this->childNodes[$language][$region])) {
-				return $this->childNodes[$language][$region];
+			if (isset($this->childNodes[$section][$language]) && isset($this->childNodes[$section][$language][$region])) {
+				return $this->childNodes[$section][$language][$region];
 			}
 		}
 		return array();
 	}
 
 	/**
-	 * Tells if this structure node has any child nodes
+	 * Tells if this node has any child nodes
 	 *
-	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param string $section Should not be specified for this kind of node.
+	 * @return boolean TRUE if the node has child nodes, otherwise FALSE
 	 */
-	public function hasChildNodes() {
-		return $this->childNodes !== array();
-	}
-
-	/**
-	 * Returns the order of the attached child nodes.
-	 *
-	 * If no child node has been added yet, the order is undefined. Otherwise the
-	 * order is determined by the method how the first child node has been added.
-	 *
-	 * @return integer One of the CHILDNODEORDER_* constants
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getChildNodesOrder() {
-		return $this->childNodesOrder;
+	public function hasChildNodes($section = NULL) {
+		if ($section !== NULL) {
+			$this->throwExceptionOnInvalidSection($section);
+		}
+		return $this->childNodes !== array('default' => array());
 	}
 
 	/**
@@ -193,6 +150,19 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 */
 	public function getConfigurations() {
 		return clone $this->configurations;
+	}
+
+	/**
+	 * Throws an exception if the given section is not supported by this node.
+	 *
+	 * @return void
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidSection
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function throwExceptionOnInvalidSection($section) {
+		if ($section !== 'default') {
+			throw new \F3\TYPO3\Domain\Exception\InvalidSection('Nodes of type "' . get_class($this) . '" only support the "default" section.', 1257780024);
+		}
 	}
 }
 

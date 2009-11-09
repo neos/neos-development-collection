@@ -77,6 +77,38 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function createInsideCanCreateContentInTheSpecifiedSection() {
+		$locale = new \F3\FLOW3\Locale\Locale('de-DE');
+
+		$mockExistingNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
+
+		$mockExistingContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array('getNode'), array(), '', FALSE);
+		$mockExistingContent->expects($this->once())->method('getNode')->will($this->returnValue($mockExistingNode));
+
+		$mockNewContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array(), array(), '', FALSE);
+		$mockNewNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
+		$mockNewNode->expects($this->once())->method('setNodeName')->with('NewNodeName');
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewNode));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
+
+		$mockExistingNode->expects($this->once())->method('addChildNode')->with($mockNewNode, $locale, 'MySection');
+
+		$mockNewContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockNewContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale));
+
+		$contentService = new \F3\TYPO3\Domain\Service\ContentService($mockNewContentContext);
+		$contentService->injectObjectFactory($mockObjectFactory);
+
+		$actualContent = $contentService->createInside('NewNodeName', get_class($mockNewContent), $mockExistingContent, 'MySection');
+		$this->assertSame($mockNewContent, $actualContent);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function createInsideCanCreateContentInsideTheSpecifiedSite() {
 		$locale = new \F3\FLOW3\Locale\Locale('de-DE');
 

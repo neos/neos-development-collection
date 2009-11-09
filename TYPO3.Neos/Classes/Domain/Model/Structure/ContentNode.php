@@ -122,6 +122,16 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	public function getContentType() {
 		return $this->contentType;
 	}
+
+	/**
+	 * Throws an exception if the given section is not supported by this node.
+	 *
+	 * @return void
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidSection
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function throwExceptionOnInvalidSection($section) {
+	}
 }
 
 ?>

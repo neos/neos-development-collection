@@ -35,9 +35,10 @@ interface IndexNodeAwareInterface {
 	 * Returns the node which acts as a index node for the children of the current node.
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context
+	 * @param string $section Name of the section where the child nodes should be located
 	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface
 	 */
-	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext);
+	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext, $section = 'default');
 }
 
 ?>
