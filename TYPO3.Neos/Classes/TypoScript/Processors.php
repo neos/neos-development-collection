@@ -35,9 +35,9 @@ class Processors {
 	const CROP_AT_WORD = 2;
 	const CROP_AT_SENTENCE = 4;
 
-	const SHIFT_CASE_TO_UPPER = 1;
-	const SHIFT_CASE_TO_LOWER = 2;
-	const SHIFT_CASE_TO_TITLE = 4;
+	const SHIFT_CASE_TO_UPPER = 'upper';
+	const SHIFT_CASE_TO_LOWER = 'lower';
+	const SHIFT_CASE_TO_TITLE = 'title';
 
 	/**
 	 * Crops a part of a string and optionally replaces the cropped part by a string, typically
@@ -56,6 +56,7 @@ class Processors {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processor_crop($subject, $maximumNumberOfCharacters, $preOrSuffixString = '', $options = 0) {
+		$processedSubject = $subject;
 		if (\F3\PHP6\Functions::strlen($subject) > $maximumNumberOfCharacters) {
 			if ($options & self::CROP_FROM_BEGINNING) {
 				 if ($options & self::CROP_AT_WORD) {
@@ -98,7 +99,7 @@ class Processors {
 	 * Shifts the case of a string into the specified direction.
 	 *
 	 * @param string $subject The string to change the case for
-	 * @param long 	$direction One of the SHIFT_CASE_* constants
+	 * @param long $direction One of the SHIFT_CASE_* constants
 	 * @return string The processed string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -218,7 +219,6 @@ class Processors {
 			if ($condition === 1 || (is_string($condition) && \F3\PHP6\Functions::strlen($condition) > 0)) $condition = TRUE;
 		}
 		if (!is_bool($condition)) throw new \F3\TypoScript\Exception('The condition in the if processor could not be converted to boolean. Got: (' . gettype($condition) . ')' . (string)$condition, 1185355020);
-
 		return ($condition ? $trueValue : $falseValue);
 	}
 

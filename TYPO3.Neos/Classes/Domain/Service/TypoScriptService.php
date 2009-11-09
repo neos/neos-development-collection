@@ -44,12 +44,6 @@ class TypoScriptService {
 	protected $typoScriptParser;
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\Package\ManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
 	 * Constructs this service
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context for this service
@@ -82,11 +76,8 @@ class TypoScriptService {
 		$nodes = $nodeService->getNodesOnPath($this->contentContext->getCurrentSite(), $nodePath);
 		if (!is_array($nodes)) return NULL;
 
-			// TODO: Use the resource manager instead of the package manager once it is available:
 		$siteResourcesPackageKey = $this->contentContext->getCurrentSite()->getSiteResourcesPackageKey();
-		if (!empty($siteResourcesPackageKey) && $this->packageManager->isPackageActive($siteResourcesPackageKey)) {
-			$typoScriptsPath = $this->packageManager->getPackage($siteResourcesPackageKey)->getResourcesPath() . 'Private/TypoScripts/';
-		}
+		$typoScriptsPath = 'package://' . $siteResourcesPackageKey . '/Private/TypoScripts/';
 
 		$mergedTypoScriptCode = '';
 		foreach ($nodes as $node) {

@@ -24,7 +24,7 @@ namespace F3\TYPO3\TypoScript;
 
 /**
  * A TypoScript Text object
- * 
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
@@ -32,10 +32,15 @@ namespace F3\TYPO3\TypoScript;
 class Text extends \F3\TypoScript\AbstractContentObject {
 
 	/**
+	 * @var string
+	 */
+	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Text';
+
+	/**
 	 * @var string Content of this Text TypoScript object
 	 */
 	protected $value = '';
-	
+
 	/**
 	 * Sets the Content
 	 *
@@ -46,7 +51,7 @@ class Text extends \F3\TypoScript\AbstractContentObject {
 	public function setValue($value) {
 		$this->value = (string)$value;
 	}
-	
+
 	/**
 	 * Returns the Content of this Text object
 	 *
@@ -59,12 +64,16 @@ class Text extends \F3\TypoScript\AbstractContentObject {
 
 	/**
 	 * Returns the rendered content of this content object
-	 * 
-	 * @return string				The rendered content as a string - usually (X)HTML, XML or just plaing text
+	 *
+	 * @return string The rendered content as a string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRenderedContent() {
-		return $this->getProcessedProperty('value');
-	}	
-}
+		$presentationModel = array(
+			'value' => $this->getProcessedProperty('value')
+		);
+		$this->view->assignMultiple($presentationModel);
+		return $this->view->render();
+	}
+	}
 ?>

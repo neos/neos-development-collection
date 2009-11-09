@@ -3,6 +3,11 @@ F3\TYPO3\TypoScript\Page:
     view:
       object: F3\TYPO3\TypoScript\Template
 
+F3\TYPO3\TypoScript\Text:
+  properties:
+    view:
+      object: F3\TYPO3\TypoScript\Template
+
 F3\TYPO3\TypoScript\Template:
   properties:
     controllerContext:

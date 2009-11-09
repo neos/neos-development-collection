@@ -42,14 +42,14 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	protected $title;
 
 	/**
+	 * @var mixed
+	 */
+	protected $body;
+
+	/**
 	 * @var string
 	 */
 	protected $type = 'default';
-
-	/**
-	 * @var object
-	 */
-	protected $view;
 
 	/**
 	 *
@@ -84,6 +84,23 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
+	 *
+	 * @param string $body
+	 * @return void
+	 */
+	public function setBody($body) {
+		$this->body = $body;
+	}
+
+	/**
+	 *
+	 * @return string
+	 */
+	public function getBody() {
+		return $this->body;
+	}
+
+	/**
 	 * Returns the rendered content of this content object
 	 *
 	 * @return string The rendered content as a string
@@ -91,7 +108,8 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 */
 	public function getRenderedContent() {
 		$presentationModel = array(
-			'title' => $this->getProcessedProperty('title')
+			'title' => $this->getProcessedProperty('title'),
+			'body' => $this->getProcessedProperty('body')
 		);
 		$this->view->assignMultiple($presentationModel);
 		return $this->view->render();

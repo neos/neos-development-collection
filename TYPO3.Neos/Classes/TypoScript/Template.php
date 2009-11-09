@@ -30,5 +30,13 @@ namespace F3\TYPO3\TypoScript;
  * @scope prototype
  */
 class Template extends \F3\Fluid\View\TemplateView {
+
+	/**
+	 *
+	 * @return unknown_type
+	 */
+	public function getTemplatePathAndFilename() {
+		return $this->templatePathAndFilename;
+	}
 }
 ?>
