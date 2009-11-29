@@ -49,10 +49,12 @@ class Binary implements \F3\PHPCR\BinaryInterface {
 
 	/**
 	 * Reads successive bytes from the specified position in this Binary into
-	 * the passed string until the end of the Binary is encountered.
+	 * the passed string until $limit or the end of the Binary is encountered
+	 * (whichever comes first).
 	 *
 	 * @param string $bytes the buffer into which the data is read.
 	 * @param integer $position the position in this Binary from which to start reading bytes.
+	 * @param integer $limit how many bytes to read, unlimited by default
 	 * @return integer the number of bytes read into the buffer
 	 * @throws \RuntimeException if an I/O error occurs.
 	 * @throws \InvalidArgumentException if offset is negative.
@@ -60,7 +62,7 @@ class Binary implements \F3\PHPCR\BinaryInterface {
 	 * @throws \F3\PHPCR\RepositoryException if another error occurs.
 	 * @api
 	 */
-	public function read(&$bytes, $position) {
+	public function read(&$bytes, $position, $limit = 0) {
 		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1224505396);
 	}
 
