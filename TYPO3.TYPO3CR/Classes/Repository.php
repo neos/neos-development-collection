@@ -112,14 +112,14 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	}
 
 	/**
-	 * Injects the configuration manager
+	 * Injects this package's settings
 	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
+	 * @param array $settings
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
-		$this->settings = $configurationManager->getSettings('TYPO3CR');
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
 	}
 
 	/**

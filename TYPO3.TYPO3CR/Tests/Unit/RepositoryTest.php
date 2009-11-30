@@ -49,14 +49,12 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$settings['storage']['backendOptions'] = array();
 		$settings['search']['backend'] = 'mockSearchBackend';
 		$settings['search']['backendOptions'] = array();
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$objectFactory = $this->getMock('F3\FLOW3\Object\Factory', array(), array(), '', FALSE);
 		$objectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($mockSearchBackend, $mockStorageBackend, $mockTYPO3CRSession));
 
 		$repository = new \F3\TYPO3CR\Repository($objectFactory);
-		$repository->injectConfigurationManager($mockConfigurationManager);
+		$repository->injectSettings($settings);
 		$session = $repository->login();
 		$this->assertSame($mockTYPO3CRSession, $session, 'The repository login did not return the requested session object.');
 	}
