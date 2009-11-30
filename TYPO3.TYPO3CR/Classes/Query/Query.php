@@ -264,6 +264,15 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 		return $this->boundVariables;
 	}
 
+	/**
+	 * Returns the number of hits for the query.
+	 *
+	 * @return integer
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function count() {
+		return count($this->session->getStorageBackend()->getSearchBackend()->findNodeIdentifiers($this));
+	}
 }
 
 ?>

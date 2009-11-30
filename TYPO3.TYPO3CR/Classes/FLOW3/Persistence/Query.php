@@ -159,41 +159,18 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 	 * @api
 	 */
 	public function execute() {
-		if ($this->source === NULL) {
-			$this->source = $this->QOMFactory->selector('flow3:' . str_replace('\\', '_', $this->className), '_node');
-		}
+		return $this->dataMapper->map($this->prepareQuery()->execute()->getNodes());
+	}
 
-		$orderings = array();
-		foreach ($this->orderings as $propertyName => $order) {
-			$operand = $this->QOMFactory->propertyValue($propertyName);
-			switch ($order) {
-				case \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING:
-					$orderings[] = $this->QOMFactory->ascending($operand);
-					break;
-				case \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING:
-					$orderings[] = $this->QOMFactory->descending($operand);
-					break;
-				default:
-					throw new \F3\FLOW3\Persistence\Exception('Unsupported order requested.', 1248260854);
-			}
-		}
-
-		$query = $this->QOMFactory->createQuery(
-			$this->source,
-			$this->constraint,
-			$orderings,
-			array()
-		);
-		foreach ($this->operands as $name => $value) {
-			$query->bindValue($name, $this->valueFactory->createValue($value));
-		}
-		if ($this->limit !== NULL) {
-			$query->setLimit($this->limit);
-		}
-		$query->setOffset($this->offset);
-
-		$result = $query->execute();
-		return $this->dataMapper->map($result->getNodes());
+	/**
+	 * Executes the number of matching objects for the query
+	 *
+	 * @return integer The number of matching objects
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function count() {
+		return $this->prepareQuery()->count();
 	}
 
 	/**
@@ -478,5 +455,47 @@ class Query implements \F3\FLOW3\Persistence\QueryInterface {
 		);
 	}
 
+	/**
+	 * Creates a query object ready to execute.
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@dambekalns.de>
+	 */
+	protected function prepareQuery() {
+		if ($this->source === NULL) {
+			$this->source = $this->QOMFactory->selector('flow3:' . str_replace('\\', '_', $this->className), '_node');
+		}
+
+		$orderings = array();
+		foreach ($this->orderings as $propertyName => $order) {
+			$operand = $this->QOMFactory->propertyValue($propertyName);
+			switch ($order) {
+				case \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING:
+					$orderings[] = $this->QOMFactory->ascending($operand);
+					break;
+				case \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING:
+					$orderings[] = $this->QOMFactory->descending($operand);
+					break;
+				default:
+					throw new \F3\FLOW3\Persistence\Exception('Unsupported order requested.', 1248260854);
+			}
+		}
+
+		$query = $this->QOMFactory->createQuery(
+			$this->source,
+			$this->constraint,
+			$orderings,
+			array()
+		);
+		foreach ($this->operands as $name => $value) {
+			$query->bindValue($name, $this->valueFactory->createValue($value));
+		}
+		if ($this->limit !== NULL) {
+			$query->setLimit($this->limit);
+		}
+		$query->setOffset($this->offset);
+
+		return $query;
+	}
 }
 ?>
