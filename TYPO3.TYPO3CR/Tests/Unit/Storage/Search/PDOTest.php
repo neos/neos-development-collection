@@ -22,8 +22,6 @@ namespace F3\TYPO3CR\Storage\Search;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once(__DIR__ . '/../../Fixtures/PDOInterface.php');
-
 /**
  * Tests for the PDO search backend implementation of TYPO3CR.
  *
@@ -36,6 +34,13 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 	 * @var \F3\TYPO3CR\Storage\SearchInterface
 	 */
 	protected $searchBackend;
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setUp() {
+		$this->loadPdoInterface();
+	}
 
 	/**
 	 * @test
@@ -54,7 +59,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->once())->method('getProperties')->will($this->returnValue(array($mockProperty)));
 		$mockPDOStatement = $this->getMock('PDOStatement');
 		$mockPDOStatement->expects($this->once())->method('execute')->with(array('12345', 'propname', 'flow3.org/ns', 1, 'propvaluestring'));
-		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO = $this->getMock('PdoInterface');
 		$mockPDO->expects($this->once())->method('prepare')->with('INSERT INTO "index_properties" ("parent", "name", "namespace", "type", "value") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockPDOStatement));
 
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
@@ -82,7 +87,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$mockPDOStatement = $this->getMock('PDOStatement');
 		$mockPDOStatement->expects($this->at(0))->method('execute')->with(array('12345', 'propname', 'flow3.org/ns', 1, 'propvaluestring'));
 		$mockPDOStatement->expects($this->at(1))->method('execute')->with(array('12345', 'propname', 'flow3.org/ns', 1, 'secondvaluestring'));
-		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO = $this->getMock('PdoInterface');
 		$mockPDO->expects($this->once())->method('prepare')->with('INSERT INTO "index_properties" ("parent", "name", "namespace", "type", "value") VALUES (?, ?, ?, ?, ?)')->will($this->returnValue($mockPDOStatement));
 
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('splitName'));
@@ -101,7 +106,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->once())->method('getIdentifier')->will($this->returnValue('12345'));
 		$mockPDOStatement = $this->getMock('PDOStatement');
 		$mockPDOStatement->expects($this->once())->method('execute')->with(array('12345'));
-		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO = $this->getMock('PdoInterface');
 		$mockPDO->expects($this->once())->method('prepare')->with('DELETE FROM "index_properties" WHERE "parent" = ?')->will($this->returnValue($mockPDOStatement));
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
 		$searchBackend->_set('databaseHandle', $mockPDO);
@@ -239,7 +244,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$operator = 'equals';
 		$sql = array();
 		$parameters = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockPropertyValue, $operator, $sql, $parameters);
+		$searchBackend->_callRef('parseDynamicOperand', $mockPropertyValue, $operator, $sql, $parameters);
 		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND "_nodesproperties0"."value" = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
 	}
@@ -261,7 +266,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$operator = 'equals';
 		$sql = array();
 		$parameters = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockLowerCase, $operator, $sql, $parameters);
+		$searchBackend->_callRef('parseDynamicOperand', $mockLowerCase, $operator, $sql, $parameters);
 		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND LOWER("_nodesproperties0"."value") = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
 	}
@@ -283,7 +288,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$operator = 'equals';
 		$sql = array();
 		$parameters = array();
-		$constraintSQL = $searchBackend->_callRef('parseDynamicOperand', $mockUpperCase, $operator, $sql, $parameters);
+		$searchBackend->_callRef('parseDynamicOperand', $mockUpperCase, $operator, $sql, $parameters);
 		$this->assertEquals(current($sql['where']), '("_nodesproperties0"."name" = ? AND "_nodesproperties0"."namespace" = ? AND UPPER("_nodesproperties0"."value") = ?) ');
 		$this->assertEquals($parameters, array('propname', 'flow3.org/ns'));
 	}
@@ -321,7 +326,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function limitIsIgnoredIfNotSet() {
 		$mockPDOStatement = $this->getMock('PDOStatement');
-		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO = $this->getMock('PdoInterface');
 		$mockPDO->expects($this->once())->method('prepare')->with('SELECT DISTINCT  FROM  WHERE ')->will($this->returnValue($mockPDOStatement));
 		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', NULL);
 		$query->expects($this->any())->method('getLimit')->will($this->returnValue(NULL));
@@ -338,7 +343,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function limitAndOffsetAreUsedIfSet() {
 		$mockPDOStatement = $this->getMock('PDOStatement');
-		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO = $this->getMock('PdoInterface');
 		$mockPDO->expects($this->once())->method('prepare')->with('SELECT DISTINCT  FROM  WHERE  LIMIT 12 OFFSET 2')->will($this->returnValue($mockPDOStatement));
 		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', NULL);
 		$query->expects($this->any())->method('getOffset')->will($this->returnValue(2));
@@ -404,7 +409,7 @@ class PDOTest extends \F3\Testing\BaseTestCase {
 		$barOrdering->expects($this->any())->method('getOrder')->will($this->returnValue(\F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING));
 		$orderings = array($fooOrdering, $barOrdering);
 
-		$mockPDO = $this->getMock('PDOInterface');
+		$mockPDO = $this->getMock('PdoInterface');
 		$mockPDO->expects($this->at(0))->method('quote')->with('foo')->will($this->returnValue('\'foo\''));
 		$mockPDO->expects($this->at(1))->method('quote')->with('bar')->will($this->returnValue('\'bar\''));
 		$searchBackend = $this->getMock($this->buildAccessibleProxy('F3\TYPO3CR\Storage\Search\PDO'), array('dummy'));
