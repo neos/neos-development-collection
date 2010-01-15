@@ -25,7 +25,7 @@ namespace F3\TYPO3CR\Storage\Search;
 /**
  * Tests for the PDO search backend implementation of TYPO3CR.
  *
- * @version $Id$
+ * @version $Id: PdoTest.php -1   $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PdoTest extends \F3\Testing\BaseTestCase {
