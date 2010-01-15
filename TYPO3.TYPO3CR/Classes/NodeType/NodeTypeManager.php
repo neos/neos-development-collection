@@ -39,7 +39,7 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	protected $storageBackend;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -57,10 +57,10 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 	 * Constructs a NodeTypeManager object
 	 *
 	 * @param \F3\TYPO3CR\Storage\BackendInterface $storageBackend
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\TYPO3CR\Storage\BackendInterface $storageBackend, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\TYPO3CR\Storage\BackendInterface $storageBackend, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->storageBackend = $storageBackend;
 		$this->objectFactory = $objectFactory;
 

@@ -30,7 +30,7 @@ namespace F3\TYPO3CR\Storage\Search;
  * @api
  * @scope prototype
  */
-class PDO extends \F3\TYPO3CR\Storage\AbstractSearch {
+class Pdo extends \F3\TYPO3CR\Storage\AbstractSearch {
 
 	/**
 	 * @var \PDO

@@ -42,7 +42,7 @@ namespace F3\TYPO3CR\NodeType;
 class NodeTypeDefinition implements \F3\PHPCR\NodeType\NodeTypeDefinitionInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\Manager
+	 * @var \F3\FLOW3\Object\ObjectManager
 	 */
 	protected $objectFactory;
 

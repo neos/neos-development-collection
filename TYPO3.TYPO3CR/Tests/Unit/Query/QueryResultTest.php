@@ -31,7 +31,7 @@ namespace F3\TYPO3CR\Query;
 class QueryResultTest extends \F3\Testing\BaseTestCase {
 
 	public function setUp() {
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 	}
 
 	/**

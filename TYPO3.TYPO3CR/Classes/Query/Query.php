@@ -33,7 +33,7 @@ namespace F3\TYPO3CR\Query;
 class Query implements \F3\PHPCR\Query\QueryInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -70,11 +70,11 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

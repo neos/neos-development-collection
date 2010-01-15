@@ -39,7 +39,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	const EXPORT_DOCUMENT = 1;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -119,11 +119,11 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param string $workspaceName
 	 * @param \F3\PHPCR\RepositoryInterface $repository
 	 * @param \F3\TYPO3CR\Storage\BackendInterface $storageBackend
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @throws \InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($workspaceName, \F3\PHPCR\RepositoryInterface $repository, \F3\TYPO3CR\Storage\BackendInterface $storageBackend, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct($workspaceName, \F3\PHPCR\RepositoryInterface $repository, \F3\TYPO3CR\Storage\BackendInterface $storageBackend, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		if (!is_string($workspaceName) || $workspaceName == '') throw new \InvalidArgumentException('"' . $workspaceName . '" is no valid workspace name.', 1200616245);
 
 		$this->objectFactory = $objectFactory;

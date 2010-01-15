@@ -57,7 +57,7 @@ class NamespaceRegistry implements \F3\PHPCR\NamespaceRegistryInterface {
 	 * Constructs a NamespaceRegistry object
 	 *
 	 * @param \F3\TYPO3CR\Storage\BackendInterface $storageBackend
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct(\F3\TYPO3CR\Storage\BackendInterface $storageBackend) {

@@ -33,7 +33,7 @@ namespace F3\TYPO3CR;
 class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -45,11 +45,11 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	/**
 	 * Constructs a ValueFactory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\PHPCR\SessionInterface $session) {
+	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory, \F3\PHPCR\SessionInterface $session) {
 		$this->objectFactory = $objectFactory;
 		$this->session = $session;
 	}

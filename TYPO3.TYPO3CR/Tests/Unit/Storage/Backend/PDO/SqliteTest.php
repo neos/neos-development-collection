@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3CR\Storage\Backend\PDO;
+namespace F3\TYPO3CR\Storage\Backend\Pdo;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -54,7 +54,7 @@ class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('sqlite') . '.db';
 		copy(__DIR__ . '/../../../Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
-		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
+		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\Pdo(array('dataSourceName' => 'sqlite:' . $this->fixtureFolder . $this->fixtureDB));
 		$this->storageBackend->setSearchBackend($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 
@@ -68,7 +68,7 @@ class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function tearDown() {
-		if ($this->storageBackend instanceof \F3\TYPO3CR\Storage\Backend\PDO) {
+		if ($this->storageBackend instanceof \F3\TYPO3CR\Storage\Backend\Pdo) {
 			$this->storageBackend->disconnect();
 		}
 		unlink($this->fixtureFolder . $this->fixtureDB);

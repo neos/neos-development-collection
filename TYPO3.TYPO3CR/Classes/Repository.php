@@ -38,7 +38,7 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	protected $settings = array();
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -102,12 +102,12 @@ class Repository implements \F3\PHPCR\RepositoryInterface {
 	/**
 	 * Constructs a Repository object.
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

@@ -68,11 +68,11 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

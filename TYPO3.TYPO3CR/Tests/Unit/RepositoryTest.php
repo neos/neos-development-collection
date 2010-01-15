@@ -50,7 +50,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$settings['search']['backend'] = 'mockSearchBackend';
 		$settings['search']['backendOptions'] = array();
 
-		$objectFactory = $this->getMock('F3\FLOW3\Object\Factory', array(), array(), '', FALSE);
+		$objectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactory', array(), array(), '', FALSE);
 		$objectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($mockSearchBackend, $mockStorageBackend, $mockTYPO3CRSession));
 
 		$repository = new \F3\TYPO3CR\Repository($objectFactory);

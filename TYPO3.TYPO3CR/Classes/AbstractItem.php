@@ -54,7 +54,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	protected $session;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 

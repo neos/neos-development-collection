@@ -174,11 +174,11 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @param array $rawData
 	 * @param \F3\PHPCR\SessionInterface $session
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(array $rawData = array(), \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(array $rawData = array(), \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->session = $session;
 		$this->objectFactory = $objectFactory;
 

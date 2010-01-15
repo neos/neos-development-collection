@@ -38,7 +38,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	protected $session;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -46,10 +46,10 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * Constructs the Component Factory
 	 *
 	 * @param \F3\PHPCR\SessionInterface $session
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->session = $session;
 		$this->objectFactory = $objectFactory;
 	}

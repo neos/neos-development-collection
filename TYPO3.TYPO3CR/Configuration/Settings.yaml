@@ -7,7 +7,7 @@
 TYPO3CR:
   # The storage backend configuration
   storage:
-    backend: 'F3\TYPO3CR\Storage\Backend\PDO'
+    backend: 'F3\TYPO3CR\Storage\Backend\Pdo'
     backendOptions:
       dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
       username: 
@@ -15,7 +15,7 @@ TYPO3CR:
 
   # The indexing/search backend configuration
   search:
-    backend: 'F3\TYPO3CR\Storage\Search\PDO'
+    backend: 'F3\TYPO3CR\Storage\Search\Pdo'
     backendOptions:
       dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
       username: 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3CR\Storage\Backend\PDO;
+namespace F3\TYPO3CR\Storage\Backend\Pdo;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -93,7 +93,7 @@ class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 
 		exec(__DIR__ . '/../../../Fixtures/' . 'testdb.sh mysql reset');
 
-		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\PDO(array('dataSourceName' => 'mysql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
+		$this->storageBackend = new \F3\TYPO3CR\Storage\Backend\Pdo(array('dataSourceName' => 'mysql:dbname=' . $this->db, 'username' => $this->dbuser, 'password' => $this->dbpass));
 		$this->storageBackend->setSearchBackend($this->getMock('F3\TYPO3CR\Storage\SearchInterface'));
 		$this->storageBackend->connect();
 
@@ -108,7 +108,7 @@ class MySQLTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 	 * @author Matthias Hörmann <hoermann@saltation.de>
 	 */
 	public function tearDown() {
-		if ($this->storageBackend instanceof \F3\TYPO3CR\Storage\Backend\PDO) {
+		if ($this->storageBackend instanceof \F3\TYPO3CR\Storage\Backend\Pdo) {
 			$this->storageBackend->disconnect();
 		}
 	}

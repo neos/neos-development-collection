@@ -30,7 +30,7 @@ namespace F3\TYPO3CR\Storage\Backend;
  * @api
  * @scope prototype
  */
-class PDO extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
+class Pdo extends \F3\TYPO3CR\Storage\AbstractSQLBackend {
 
 	/**
 	 * @var \PDO
