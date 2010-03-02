@@ -53,12 +53,12 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	const SPLIT_PATTERN_METHODARGUMENTS = '/("(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+|-?[0-9]+(\.\d+)?)/';
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -113,7 +113,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * @param \F3\FLOW3\ObjectFactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $objectFactory;
 	}

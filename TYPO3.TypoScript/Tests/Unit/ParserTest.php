@@ -41,12 +41,12 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	protected $parser;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $mockObjectFactory;
 
@@ -56,10 +56,10 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$this->mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 
 		$this->parser = new \F3\TypoScript\Parser($this->mockObjectManager, $this->mockObjectFactory);
 	}
