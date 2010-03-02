@@ -76,7 +76,7 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 	public function getLocaleReturnsByDefaultAnInternationalMultilingualLocale() {
 		$locale = new \F3\FLOW3\Locale\Locale('mul-ZZ');
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array('create'), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array('create'), array(), '', FALSE);
 		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Locale\Locale', 'mul-ZZ')->will($this->returnValue($locale));
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));

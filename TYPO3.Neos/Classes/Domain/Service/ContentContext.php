@@ -33,7 +33,7 @@ class ContentContext {
 
 	/**
 	 * @inject
-	 * @var F3\FLOW3\Object\FactoryInterface
+	 * @var F3\FLOW3\Object\ObjectFactoryInterface
 	 */
 	protected $objectFactory;
 

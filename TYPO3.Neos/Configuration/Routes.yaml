@@ -7,32 +7,32 @@
 ##
 # Backend
 
---
+-
   name: 'Authenticate'
   uriPattern: 'typo3/login'
   defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Backend'
-    @controller: 'Login'
-    @action:     'index'
+    '@package':    'TYPO3'
+    '@subpackage': 'Backend'
+    '@controller': 'Login'
+    '@action':     'index'
 
 -
   name:          'Experimentation setup'
   uriPattern:    'typo3/setup'
   defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Backend'
-    @controller: 'Setup'
-    @action:     'setup'
+    '@package':    'TYPO3'
+    '@subpackage': 'Backend'
+    '@controller': 'Setup'
+    '@action':     'setup'
 
 -
   name:          'Backend route'
   uriPattern:    'typo3(/{section})'
   defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Backend'
-    @controller: 'Backend'
-    @action:     'index'
+    '@package':    'TYPO3'
+    '@subpackage': 'Backend'
+    '@controller': 'Backend'
+    '@action':     'index'
     section:     'frontend'
 
 ##
@@ -42,17 +42,17 @@
   name:          'Service with controller and optional format' 
   uriPattern:    'typo3/service/v1/{@controller}(.{@format})'
   defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Service'
-    @format:     'json'
+    '@package':    'TYPO3'
+    '@subpackage': 'Service'
+    '@format':     'json'
 
 -
   name:          'Service with controller, id and optional format'
   uriPattern:    'typo3/service/v1/{@controller}/{id}(.{@format})'
   defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Service'
-    @format:     'json'
+    '@package':    'TYPO3'
+    '@subpackage': 'Service'
+    '@format':     'json'
 
 ##
 # Frontend
@@ -61,11 +61,11 @@
   name:          'Frontend with path pointing to a page and optional format'
   uriPattern:    '{page}.{type}.{@format}'
   defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Frontend'
-    @controller: 'Page'
-    @action:     'show'
-    @format:     'html'
+    '@package':    'TYPO3'
+    '@subpackage': 'Frontend'
+    '@controller': 'Page'
+    '@action':     'show'
+    '@format':     'html'
   routeParts:
     page:
       handler:    F3\TYPO3\Routing\PageRoutePartHandler
@@ -74,11 +74,11 @@
   name:          'Frontend with path pointing to a page and optional format'
   uriPattern:    '{page}.{@format}'
   defaults:
-    @package:    'TYPO3'
-    @subpackage: 'Frontend'
-    @controller: 'Page'
-    @action:     'show'
-    @format:     'html'
+    '@package':    'TYPO3'
+    '@subpackage': 'Frontend'
+    '@controller': 'Page'
+    '@action':     'show'
+    '@format':     'html'
   routeParts:
     page:
       handler:    F3\TYPO3\Routing\PageRoutePartHandler
@@ -87,11 +87,11 @@
   name: 'Frontend with optional path pointing to a page'
   uriPattern: '({page})'
   defaults:
-    @package:     'TYPO3'
-    @subpackage:  'Frontend'
-    @controller:  'Page'
-    @action:      'show'
-    @format:      'html'
+    '@package':     'TYPO3'
+    '@subpackage':  'Frontend'
+    '@controller':  'Page'
+    '@action':      'show'
+    '@format':      'html'
     pageViewName: 'default'
   routeParts:
     page:

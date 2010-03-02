@@ -51,7 +51,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
 		$mockContentContext->expects($this->once())->method('setNodePath')->with('/foo/bar/baz');
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
 
 		$routePartHandler = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Routing\PageRoutePartHandler'), array('dummy'), array(), '', FALSE);
@@ -77,7 +77,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockContentContext->expects($this->any())->method('getNodeService')->will($this->returnValue($mockNodeService));
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
 
 		$routePartHandler = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Routing\PageRoutePartHandler'), array('dummy'), array(), '', FALSE);

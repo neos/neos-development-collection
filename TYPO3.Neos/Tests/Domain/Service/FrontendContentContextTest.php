@@ -50,7 +50,7 @@ class FrontendContentContextTest extends \F3\Testing\BaseTestCase {
 		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\Configuration\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue($mockMatchingDomains));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
 		$frontendContentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\FrontendContentContext'), array('dummy'));
 		$frontendContentContext->_set('objectFactory', $mockObjectFactory);
@@ -82,7 +82,7 @@ class FrontendContentContextTest extends \F3\Testing\BaseTestCase {
 		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\Configuration\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
 
 		$frontendContentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\FrontendContentContext'), array('dummy'));
 		$frontendContentContext->_set('objectFactory', $mockObjectFactory);

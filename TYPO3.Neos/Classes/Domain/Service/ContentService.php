@@ -37,7 +37,7 @@ class ContentService {
 	protected $contentContext;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @var \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
 	 */
 	protected $objectFactory;
 
@@ -52,11 +52,11 @@ class ContentService {
 	}
 
 	/**
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

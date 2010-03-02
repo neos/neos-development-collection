@@ -43,7 +43,7 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var F3\FLOW3\Package\ManagerInterface
+	 * @var F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 

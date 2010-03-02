@@ -57,7 +57,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 		$mockNewNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 		$mockNewNode->expects($this->once())->method('setNodeName')->with('NewNodeName');
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewNode));
 		$mockObjectFactory->expects($this->at(1))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
 
@@ -89,7 +89,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 		$mockNewNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 		$mockNewNode->expects($this->once())->method('setNodeName')->with('NewNodeName');
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewNode));
 		$mockObjectFactory->expects($this->at(1))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
 
@@ -115,7 +115,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 		$mockNewContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array(), array(), '', FALSE);
 		$mockNewNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewNode));
 		$mockObjectFactory->expects($this->at(1))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
 
@@ -139,7 +139,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function createInsideThrowsAnExceptionOnInvalidReference() {
 		$mockNewContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 
 		$contentService = new \F3\TYPO3\Domain\Service\ContentService($mockNewContentContext);
 		$contentService->injectObjectFactory($mockObjectFactory);
@@ -166,7 +166,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 		$mockNewNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 		$mockNewNode->expects($this->once())->method('setNodeName')->with('NewNodeName');
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 		$mockObjectFactory->expects($this->at(0))->method('create')->with(get_class($mockNewContent), $locale)->will($this->returnValue($mockNewContent));
 		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\TYPO3\Domain\Model\Structure\ContentNode')->will($this->returnValue($mockNewNode));
 
@@ -190,7 +190,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function createAfterThrowsAnExceptionOnInvalidReference() {
 		$mockNewContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
 
 		$contentService = new \F3\TYPO3\Domain\Service\ContentService($mockNewContentContext);
 		$contentService->injectObjectFactory($mockObjectFactory);
