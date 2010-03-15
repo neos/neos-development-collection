@@ -1,3 +1,9 @@
+# $Id$
+
+F3\Fluid\View\TemplateViewInterface:
+  className: F3\TYPO3\TypoScript\Template
+
+
 F3\TYPO3\TypoScript\Page:
   properties:
     view:

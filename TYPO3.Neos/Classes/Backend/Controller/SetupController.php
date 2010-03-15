@@ -55,7 +55,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\Party\Domain\Repository\AccountRepository
+	 * @var \F3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
@@ -122,7 +122,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$domain->setSite($site);
 		$this->domainRepository->add($domain);
 */
-		$account = $this->objectFactory->create('F3\Party\Domain\Model\Account');
+		$account = $this->objectFactory->create('F3\FLOW3\Security\Account');
 		$credentials = md5(md5('password') . 'someSalt') . ',someSalt';
 
 		$roles = array(

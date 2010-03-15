@@ -61,7 +61,7 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\Party\Domain\Repository\AccountRepository
+	 * @var \F3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
