@@ -126,7 +126,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$credentials = md5(md5('password') . 'someSalt') . ',someSalt';
 
 		$roles = array(
-			$this->objectFactory->create('F3\FLOW3\Security\ACL\Role', 'Administrator'),
+			$this->objectFactory->create('F3\FLOW3\Security\Policy\Role', 'Administrator'),
 		);
 
 		$account->setAccountIdentifier('admin');
