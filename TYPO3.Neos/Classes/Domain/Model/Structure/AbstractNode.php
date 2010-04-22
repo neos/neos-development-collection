@@ -38,7 +38,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	protected $nodeName;
 
 	/**
-	 * @var array<\F3\TYPO3\Domain\Model\Structure\NodeInterface>
+	 * @var array
 	 */
 	protected $childNodes = array('default' => array());
 

@@ -73,10 +73,10 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 		#-------------------------------------------------------------------------------------------
 
-		$contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\ContentContext');
+		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext');
 		$contentService = $contentContext->getContentService();
 
-		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\Site');
+		$site = $this->objectManager->create('F3\TYPO3\Domain\Model\Structure\Site');
 		$site->setName('TYPO3 5.0 Example Site');
 		$site->setNodeName('phoenix.typo3.org');
 		$site->setSiteResourcesPackageKey('Flow3Typo3Org');
@@ -85,7 +85,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$homePage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
 		$homePage->setTitle('Homepage');
 
-		$typoScriptTemplateHome = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScript');
+		$typoScriptTemplateHome = $this->objectManager->create('F3\TYPO3\Domain\Model\Configuration\TypoScript');
 		$typoScriptTemplateHome->setSourceCode('
 			alternativePage = Page
 			alternativePage {
@@ -98,7 +98,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 		$subPage = $contentService->createInside('subpage', 'F3\TYPO3\Domain\Model\Content\Page', $homePage);
 
-		$typoScriptTemplateSubPage = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\TypoScript');
+		$typoScriptTemplateSubPage = $this->objectManager->create('F3\TYPO3\Domain\Model\Configuration\TypoScript');
 		$typoScriptTemplateSubPage->setSourceCode('
 			page.title << 2.wrap("Subpage: ", "")
 
@@ -122,11 +122,11 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$domain->setSite($site);
 		$this->domainRepository->add($domain);
 */
-		$account = $this->objectFactory->create('F3\FLOW3\Security\Account');
+		$account = $this->objectManager->create('F3\FLOW3\Security\Account');
 		$credentials = md5(md5('password') . 'someSalt') . ',someSalt';
 
 		$roles = array(
-			$this->objectFactory->create('F3\FLOW3\Security\Policy\Role', 'Administrator'),
+			$this->objectManager->create('F3\FLOW3\Security\Policy\Role', 'Administrator'),
 		);
 
 		$account->setAccountIdentifier('admin');
