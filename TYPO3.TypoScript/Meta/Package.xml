@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<packageInfo>
-	<packageKey>TypoScript</packageKey>
+<package>
+	<key>TypoScript</key>
 	<version>0.0.1</version>
 	<title>TypoScript</title>
-	<description></description>
-	<category>system</category>
-	<authorName>Robert Lemke</authorName>
-	<authorEmail>robert@typo3.org</authorEmail>
-	<authorCompany/>
-	<constraints>
-		<depends>
-			<package atLeastVersion="5.1.0">php</package>
-			<package atLeastVersion="5.0.0">typo3</package>
-			<package>phpcr</package>
-		</depends>
-		<conflicts/>
-		<suggests/>
-	</constraints>
-</packageInfo>
+	<description/>
+	<categories/>
+	<parties>
+		<person role="LeadDeveloper">
+				<name>Robert Lemke</name>
+				<email>robert@typo3.org</email>
+				<website>typo3.org</website>
+				<organisation>TYPO3 Association</organisation>
+				<repositoryUserName>robert</repositoryUserName>
+		</person>
+	</parties>
+	<constraints/>
+</package>
