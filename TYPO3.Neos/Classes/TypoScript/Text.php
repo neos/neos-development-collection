@@ -44,7 +44,7 @@ class Text extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Sets the Content
 	 *
-	 * @param  string			$value: Text value of this Text object
+	 * @param string $value Text value of this Text object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -55,7 +55,7 @@ class Text extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Returns the Content of this Text object
 	 *
-	 * @return string			The text value of this Text object
+	 * @return string The text value of this Text object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValue() {

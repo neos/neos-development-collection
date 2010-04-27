@@ -33,7 +33,7 @@ class Template extends \F3\Fluid\View\TemplateView {
 
 	/**
 	 *
-	 * @return unknown_type
+	 * @return string
 	 */
 	public function getTemplatePathAndFilename() {
 		return $this->templatePathAndFilename;
