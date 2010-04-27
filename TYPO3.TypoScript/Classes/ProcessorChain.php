@@ -40,8 +40,8 @@ class ProcessorChain {
 	 * Sets the processor invocation with a specified index representing the order
 	 * in the processor chain.
 	 *
-	 * @param  integer					$index: A numeric index expressing the order of the processor in the overall chain
-	 * @param  \F3\TypoScript\ProcessorInvocation $processorInvocation: The processor invocation
+	 * @param integer $index A numeric index expressing the order of the processor in the overall chain
+	 * @param \F3\TypoScript\ProcessorInvocation $processorInvocation The processor invocation
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException
@@ -55,8 +55,8 @@ class ProcessorChain {
 	/**
 	 * Runs the through the processor chain to process the specified string.
 	 *
-	 * @param  string					$subject: The string to process by the processor chain
-	 * @return string					The result of the processing
+	 * @param string $subject The string to process by the processor chain
+	 * @return string The result of the processing
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function process($subject) {

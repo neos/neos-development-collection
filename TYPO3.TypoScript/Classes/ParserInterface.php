@@ -24,26 +24,26 @@ namespace F3\TypoScript;
 
 /**
  * Contract for a TypoScript parser
- * 
+ *
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 interface ParserInterface {
-		
+
 	/**
 	 * Parses the given TypoScript source code and returns an object tree
 	 * as the result.
 	 *
-	 * @param  string								$sourceCode: The TypoScript source code to parse
-	 * @return \F3\TypoScript\ObjectTree			A TypoScript object tree, generated from the source code
+	 * @param string $sourceCode The TypoScript source code to parse
+	 * @return \F3\TypoScript\ObjectTree A TypoScript object tree, generated from the source code
 	 */
 	public function parse($sourceCode);
-		
+
 	/**
 	 * Sets the default namespace to the given object name prefix
-	 * 
-	 * @param  string								$objectNamePrefix: The object name to prepend as the default namespace, without trailing "
+	 *
+	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing "
 	 * @return void
 	 */
 	public function setDefaultNamespace($objectNamePrefix);

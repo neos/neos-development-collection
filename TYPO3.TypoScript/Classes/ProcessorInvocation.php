@@ -24,18 +24,18 @@ namespace F3\TypoScript;
 
 /**
  * Represents the invocation of a TypoScript processor
- * 
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class ProcessorInvocation {
-	
+
 	/**
 	 * @var object An instance of the class providing the processor
 	 */
 	protected $processorObject;
-	
+
 	/**
 	 * @var string Name of the processor method
 	 */
@@ -45,13 +45,13 @@ class ProcessorInvocation {
 	 * @var array Arguments to pass to the processor method
 	 */
 	protected $processorArguments;
-	
+
 	/**
 	 * Constructor of the processor invocation.
 	 *
-	 * @param  object						$processorObject: An instance of the class containing the processor
-	 * @param  string						$processorMethodName: Name of the processor method
-	 * @param  array						$processorArguments: Arguments to pass to the processor method
+	 * @param object $processorObject An instance of the class containing the processor
+	 * @param string $processorMethodName Name of the processor method
+	 * @param array $processorArguments Arguments to pass to the processor method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \RuntimeException
@@ -65,12 +65,12 @@ class ProcessorInvocation {
 			throw new \RuntimeException('The processor object is not an object or the specified processor method does not exist!', 1179409471);
 		}
 	}
-	
+
 	/**
 	 * Invokes the processor to process the given subject
-	 * 
-	 * @param  string						$subject: The string to process
-	 * @return string						The processed string
+	 *
+	 * @param string $subject The string to process
+	 * @return string The processed string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function process($subject) {
