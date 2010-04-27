@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Backend\Controller;
+namespace F3\TYPO3\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,58 +23,13 @@ namespace F3\TYPO3\Backend\Controller;
  *                                                                        */
 
 /**
- * The TYPO3 Backend controller
+ * A generic TYPO3 Controller exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
+class Exception extends \F3\TYPO3\Exception {
 
-	/**
-	 * @var array
-	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
-
-	/**
-	 * @inject
-	 * @var F3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
-	 * @inject
-	 * @var F3\FLOW3\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
-	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\Structure\SiteRepository
-	 */
-	protected $siteRepository;
-
-	/**
-	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
-	 */
-	protected $domainRepository;
-
-	/**
-	 * @inject
-	 * @var \F3\FLOW3\Security\AccountRepository
-	 */
-	protected $accountRepository;
-
-	/**
-	 * Default action of the backend controller.
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function indexAction() {
-		$this->view->assign('TYPO3Version', $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion());
-		$this->view->assign('installationHost', gethostname());
-		$this->view->assign('sections', array('frontend' => 'Frontend', 'content' => 'Content', 'layout' => 'Layout', 'report' => 'Report', 'administration' => 'Administration'));
-	}
 }
+
 ?>

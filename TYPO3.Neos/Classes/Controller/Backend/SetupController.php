@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Backend\Controller;
+namespace F3\TYPO3\Controller\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -31,11 +31,6 @@ namespace F3\TYPO3\Backend\Controller;
 class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var array
-	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
-
-	/**
 	 * @inject
 	 * @var F3\TYPO3\Domain\Repository\Structure\SiteRepository
 	 */
@@ -60,6 +55,12 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $accountRepository;
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Security\AccountFactory
+	 */
+	protected $accountFactory;
+
+	/**
 	 * Sets up some data for playing around ...
 	 *
 	 * @return string
@@ -77,7 +78,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$contentService = $contentContext->getContentService();
 
 		$site = $this->objectManager->create('F3\TYPO3\Domain\Model\Structure\Site');
-		$site->setName('TYPO3 5.0 Example Site');
+		$site->setName('TYPO3 Phoenix Example Site');
 		$site->setNodeName('phoenix.typo3.org');
 		$site->setSiteResourcesPackageKey('Flow3Typo3Org');
 		$this->siteRepository->add($site);
@@ -105,35 +106,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		');
 		$subPage->getNode()->addConfiguration($typoScriptTemplateSubPage);
 
-		#-------------------------------------------------------------------------------------------
-
-/*
-		$site = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\Site');
-		$site->setName('Alternative Site');
-		$this->siteRepository->add($site);
-
-		$homePage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $site);
-		$homePage->setTitle('Alternative Homepage');
-
-		$subPage = $contentService->createInside('F3\TYPO3\Domain\Model\Content\Page', $homePage);
-
-		$domain = $this->objectFactory->create('F3\TYPO3\Domain\Model\Configuration\Domain');
-		$domain->setHostPattern('localhost');
-		$domain->setSite($site);
-		$this->domainRepository->add($domain);
-*/
-		$account = $this->objectManager->create('F3\FLOW3\Security\Account');
-		$credentials = md5(md5('password') . 'someSalt') . ',someSalt';
-
-		$roles = array(
-			$this->objectManager->create('F3\FLOW3\Security\Policy\Role', 'Administrator'),
-		);
-
-		$account->setAccountIdentifier('admin');
-		$account->setCredentialsSource($credentials);
-		$account->setAuthenticationProviderName('TYPO3BEProvider');
-		$account->setRoles($roles);
-
+		$account = $this->accountFactory->createAccountWithPassword('admin', 'password', array('Administrator'));
 		$this->accountRepository->add($account);
 
 		return 'Created some data for playing around.';

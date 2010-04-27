@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Frontend\Controller;
+namespace F3\TYPO3\Controller\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -50,7 +50,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function initializeAction() {
 		$this->contentContext = $this->pageRoutePartHandler->getContentContext();
 		if ($this->contentContext->getCurrentSite() === NULL) {
-			throw new \F3\TYPO3\Frontend\Exception\NoSite('No site has been defined or matched the current frontend context.', 1247043365);
+			throw new \F3\TYPO3\Controller\Exception\NoSite('No site has been defined or matched the current frontend context.', 1247043365);
 		}
 	}
 
@@ -66,7 +66,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$typoScriptService = $this->contentContext->getTypoScriptService();
 		$typoScriptObjectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->contentContext->getNodePath());
 		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
-			throw new \F3\TYPO3\Frontend\Exception\NoSite('No TypoScript template was found for the current page context.', 1255513200);
+			throw new \F3\TYPO3\Controller\Exception\NoSite('No TypoScript template was found for the current page context.', 1255513200);
 		}
 
 		foreach ($typoScriptObjectTree as $firstLevelTypoScriptObject) {
@@ -76,7 +76,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		}
 
 		if (!isset($pageTypoScriptObject)) {
-			throw new \F3\TYPO3\Frontend\Exception\NoTypoScriptPageObject('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
+			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptPageObject('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
 		}
 
 		$pageTypoScriptObject->setModel($page);

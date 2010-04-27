@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Backend\Controller;
+namespace F3\TYPO3\Controller\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,21 +23,13 @@ namespace F3\TYPO3\Backend\Controller;
  *                                                                        */
 
 /**
- * A controller which allows for logging into the backend
+ * A "No TypoScript" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
-	/**
-	 * Default action for this controller
-	 *
-	 * @return string Some login form
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function indexAction() {
-		return $this->view->render();
-	}
+class NoTypoScriptConfiguration extends \F3\TYPO3\Controller\Exception {
+
 }
 
 ?>

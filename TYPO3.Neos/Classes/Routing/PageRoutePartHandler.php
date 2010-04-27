@@ -28,6 +28,10 @@ namespace F3\TYPO3\Routing;
  */
 class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
+	const MATCHRESULT_NOSITE = -1;
+	const MATCHRESULT_NOROOTNODE = -2;
+	const MATCHRESULT_NOPAGE = -3;
+
 	/**
 	 * @inject
 	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
@@ -66,16 +70,16 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 		$this->contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\ContentContext');
 		$site = $this->contentContext->getCurrentSite();
 		if ($site === NULL) {
-			return FALSE;
+			return self::MATCHRESULT_NOSITE;
 		}
 
 		$node = $this->contentContext->getNodeService()->getNode($site, '/' . $value);
 		if ($node === NULL) {
-			return FALSE;
+			return self::MATCHRESULT_NOROOTNODE;
 		}
 		$page = $node->getContent($this->contentContext);
 		if (!$page instanceof \F3\TYPO3\Domain\Model\Content\Page) {
-			return FALSE;
+			return self::MATCHRESULT_NOPAGE;
 		}
 		$this->contentContext->setNodePath('/' . $value);
 		$this->value = array('__identity' => $page->FLOW3_Persistence_Entity_UUID);

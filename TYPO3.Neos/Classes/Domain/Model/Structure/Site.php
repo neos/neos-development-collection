@@ -41,7 +41,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	/**
 	 * Name of the site
 	 * @var string
-	 * @validate Alphanumeric, StringLength(minimum = 1, maximum = 255)
+	 * @validate Label, StringLength(minimum = 1, maximum = 255)
 	 */
 	protected $name = 'Untitled Site';
 

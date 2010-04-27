@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Frontend\Exception;
+namespace F3\TYPO3\Controller\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -28,7 +28,7 @@ namespace F3\TYPO3\Frontend\Exception;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class NoSite extends \F3\TYPO3\Frontend\Exception {
+class NoSite extends \F3\TYPO3\Controller\Exception {
 
 }
 

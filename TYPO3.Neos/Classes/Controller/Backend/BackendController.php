@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Backend\ViewHelpers;
+namespace F3\TYPO3\Controller\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,40 +23,58 @@ namespace F3\TYPO3\Backend\ViewHelpers;
  *                                                                        */
 
 /**
- * A View Helper to include javascript files inside Resources/Public/JavaScript of the package.
+ * The TYPO3 Backend controller
  *
- * @version $Id: BackendController.php 3943 2010-03-15 14:56:54Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
  */
-class IncludeJavascriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
+
+	/**
+	 * @var array
+	 */
+	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
+
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Resource\Publishing\ResourcePublisher
+	 * @var F3\FLOW3\Utility\Environment
 	 */
-	protected $resourcePublisher;
+	protected $environment;
 
 	/**
-	 *
-	 * @param string $include Regular expression of files to include
-	 * @param string $exclude Regular expression of files to exclude
+	 * @inject
+	 * @var F3\FLOW3\Package\PackageManagerInterface
 	 */
-	public function render($include, $exclude = NULL) {
-		$baseDirectory = 'package://TYPO3/Public/Backend/JavaScript/';
-		$iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($baseDirectory));
+	protected $packageManager;
 
-		$output = '';
-		foreach ($iterator as $file) {
-			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
+	/**
+	 * @inject
+	 * @var F3\TYPO3\Domain\Repository\Structure\SiteRepository
+	 */
+	protected $siteRepository;
 
-			if ($exclude !== NULL && preg_match('/^' . str_replace('/', '\/', $exclude) . '$/', $relativePath)) continue;
+	/**
+	 * @inject
+	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
+	 */
+	protected $domainRepository;
 
-			if (preg_match('/^' . str_replace('/', '\/', $include) . '$/', $relativePath)) {
-				$uri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/TYPO3/Backend/JavaScript/' . $relativePath;
-				$output .= '<script type="text/javascript" src="' . $uri . '"></script>' . chr(10);
-			}
-		}
-		return $output;
+	/**
+	 * @inject
+	 * @var \F3\FLOW3\Security\AccountRepository
+	 */
+	protected $accountRepository;
+
+	/**
+	 * Default action of the backend controller.
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function indexAction() {
+		$this->view->assign('TYPO3Version', $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion());
+		$this->view->assign('installationHost', gethostname());
+		$this->view->assign('sections', array('frontend' => 'Frontend', 'content' => 'Content', 'layout' => 'Layout', 'report' => 'Report', 'administration' => 'Administration'));
 	}
 }
 ?>
