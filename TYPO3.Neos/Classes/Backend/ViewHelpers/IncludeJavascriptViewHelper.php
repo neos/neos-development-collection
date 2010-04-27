@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Backend\Controller;
+namespace F3\TYPO3\Backend\ViewHelpers;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,21 +23,40 @@ namespace F3\TYPO3\Backend\Controller;
  *                                                                        */
 
 /**
- * A controller which allows for logging into the backend
+ * A View Helper to include javascript files inside Resources/Public/JavaScript of the package.
  *
- * @version $Id$
+ * @version $Id: BackendController.php 3943 2010-03-15 14:56:54Z k-fish $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope prototype
  */
-class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
+class IncludeJavascriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractViewHelper {
 	/**
-	 * Default action for this controller
-	 *
-	 * @return string Some login form
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @inject
+	 * @var \F3\FLOW3\Resource\Publishing\ResourcePublisher
 	 */
-	public function indexAction() {
-		return $this->view->render();
+	protected $resourcePublisher;
+
+	/**
+	 *
+	 * @param string $include Regular expression of files to include
+	 * @param string $exclude Regular expression of files to exclude
+	 */
+	public function render($include, $exclude = NULL) {
+		$baseDirectory = 'package://TYPO3/Public/Backend/JavaScript/';
+		$iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($baseDirectory));
+
+		$output = '';
+		foreach ($iterator as $file) {
+			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
+
+			if ($exclude !== NULL && preg_match('/^' . str_replace('/', '\/', $exclude) . '$/', $relativePath)) continue;
+
+			if (preg_match('/^' . str_replace('/', '\/', $include) . '$/', $relativePath)) {
+				$uri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/TYPO3/Backend/JavaScript/' . $relativePath;
+				$output .= '<script type="text/javascript" src="' . $uri . '"></script>' . chr(10);
+			}
+		}
+		return $output;
 	}
 }
-
 ?>
