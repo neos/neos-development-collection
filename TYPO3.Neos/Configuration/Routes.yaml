@@ -12,8 +12,7 @@
   uriPattern: 'typo3/login'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Backend'
-    '@controller': 'Login'
+    '@controller': 'Backend\Login'
     '@action':     'index'
 
 -
@@ -21,8 +20,7 @@
   uriPattern:    'typo3/setup'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Backend'
-    '@controller': 'Setup'
+    '@controller': 'Backend\Setup'
     '@action':     'setup'
 
 -
@@ -30,29 +28,9 @@
   uriPattern:    'typo3(/{section})'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Backend'
-    '@controller': 'Backend'
+    '@controller': 'Backend\Backend'
     '@action':     'index'
     section:     'frontend'
-
-##
-# REST Services
-
--
-  name:          'Service with controller and optional format' 
-  uriPattern:    'typo3/service/v1/{@controller}(.{@format})'
-  defaults:
-    '@package':    'TYPO3'
-    '@subpackage': 'Service'
-    '@format':     'json'
-
--
-  name:          'Service with controller, id and optional format'
-  uriPattern:    'typo3/service/v1/{@controller}/{id}(.{@format})'
-  defaults:
-    '@package':    'TYPO3'
-    '@subpackage': 'Service'
-    '@format':     'json'
 
 ##
 # Frontend
@@ -62,8 +40,7 @@
   uriPattern:    '{page}.{type}.{@format}'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Frontend'
-    '@controller': 'Page'
+    '@controller': 'Frontend\Page'
     '@action':     'show'
     '@format':     'html'
   routeParts:
@@ -75,8 +52,7 @@
   uriPattern:    '{page}.{@format}'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Frontend'
-    '@controller': 'Page'
+    '@controller': 'Frontend\Page'
     '@action':     'show'
     '@format':     'html'
   routeParts:
@@ -88,8 +64,7 @@
   uriPattern: '({page})'
   defaults:
     '@package':     'TYPO3'
-    '@subpackage':  'Frontend'
-    '@controller':  'Page'
+    '@controller':  'Frontend\Page'
     '@action':      'show'
     '@format':      'html'
     pageViewName: 'default'

@@ -18,7 +18,7 @@ F3\TYPO3\TypoScript\Template:
   properties:
     controllerContext:
       object:
-        factoryObjectName: F3\TYPO3\Frontend\Controller\PageController
+        factoryObjectName: F3\TYPO3\Controller\Frontend\PageController
         factoryMethodName: getControllerContext
     layoutRootPath:
       value: "package://TYPO3/Private/TypoScript/Layouts/"
