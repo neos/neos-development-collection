@@ -45,8 +45,10 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+
 		$this->mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
-		$this->nodeTypeManager = new \F3\TYPO3CR\NodeType\NodeTypeManager($this->mockStorageBackend, $this->objectFactory);
+		$this->nodeTypeManager = new \F3\TYPO3CR\NodeType\NodeTypeManager($this->mockStorageBackend, $this->mockObjectManager);
 	}
 
 	/**
@@ -54,9 +56,9 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function createNodeTypeTemplateReturnsEmptyTemplate() {
-		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
-		$this->assertEquals($nodeTypeTemplate, $this->nodeTypeManager->createNodeTypeTemplate(), 'The nodetype manager did not return the expected empty nodetype template.');
+	public function createNodeTypeTemplateAsksObjectManagerForNodeTypeTemplateInterface() {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeType\NodeTypeTemplateInterface');
+		$this->nodeTypeManager->createNodeTypeTemplate();
 	}
 
 	/**
@@ -65,8 +67,8 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function createNodeDefinitionTemplateReturnsEmptyTemplate() {
-		$nodeDefinitionTemplate = new \F3\TYPO3CR\NodeType\NodeDefinitionTemplate();
-		$this->assertEquals($nodeDefinitionTemplate, $this->nodeTypeManager->createNodeDefinitionTemplate(), 'The nodetype manager did not return the expected empty node definition template.');
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeType\NodeDefinitionTemplateInterface');
+		$this->nodeTypeManager->createNodeDefinitionTemplate();
 	}
 
 	/**
@@ -75,8 +77,8 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function createPropertyDefinitionTemplateReturnsEmptyTemplate() {
-		$propertyDefinitionTemplate = new \F3\TYPO3CR\NodeType\PropertyDefinitionTemplate();
-		$this->assertEquals($propertyDefinitionTemplate, $this->nodeTypeManager->createPropertyDefinitionTemplate(), 'The nodetype manager did not return the expected empty property definition template.');
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeType\PropertyDefinitionTemplateInterface');
+		$this->nodeTypeManager->createPropertyDefinitionTemplate();
 	}
 
 	/**
@@ -95,6 +97,10 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\PHPCR\NodeType\InvalidNodeTypeDefinitionException
 	 */
 	public function registerNodeTypesAcceptsOnlyNodeTypeDefinitions() {
+		$mockNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$this->mockObjectManager->expects($this->any())->method('create')->with('F3\PHPCR\NodeType\NodeTypeInterface')->will($this->returnValue($mockNodeType));
+
+#		->create('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeName);
 		$input = array(
 			new \F3\TYPO3CR\NodeType\NodeTypeDefinition(),
 			'some string',
@@ -106,7 +112,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 */
 	public function registerNodeTypeReturnsNodeTypeOnSuccess() {
 		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
@@ -118,7 +124,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 */
 	public function registerNodeTypeReturnsCallsStorageBackend() {
 		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
@@ -130,7 +136,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 * @expectedException \F3\PHPCR\NodeType\NoSuchNodeTypeException
 	 */
 	public function unregisterNodeTypeThrowsExceptionOnUnknownNodeType() {
@@ -140,7 +146,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 * @expectedException \F3\PHPCR\NodeType\NoSuchNodeTypeException
 	 */
 	public function unregisterNodeTypeRemovesNodeType() {
@@ -155,7 +161,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 */
 	public function unregisterNodeTypeReturnsCallsStorageBackend() {
 		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
@@ -168,7 +174,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 */
 	public function nodeTypeManagerLoadsExistingNodeTypes() {
 		$this->mockStorageBackend->expects($this->atLeastOnce())->method('getRawNodeTypes')->will($this->returnValue(array(array('name' => 'nt:base'))));
@@ -178,7 +184,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 * @expectedException \F3\PHPCR\NodeType\NodeTypeExistsException
 	 */
 	public function registerNodeTypeThrowsExceptionIfNodeTypeExistsAndUpdateIsDisallowed() {
@@ -190,7 +196,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 * @expectedException \F3\PHPCR\NodeType\NodeTypeExistsException
 	 */
 	public function registerNodeTypesThrowsExceptionIfNodeTypeExistsAndUpdateIsDisallowed() {
@@ -201,7 +207,7 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * @ test
 	 */
 	public function registerNodeTypesRegistersNothingIfNodeTypeExistsAndUpdateIsDisallowed() {
 		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();

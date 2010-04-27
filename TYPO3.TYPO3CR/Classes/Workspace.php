@@ -47,9 +47,9 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	protected $session;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\PHPCR\Query\QueryManagerInterface
@@ -71,17 +71,17 @@ class Workspace implements \F3\PHPCR\WorkspaceInterface {
 	 *
 	 * @param string $name
 	 * @param \F3\PHPCR\SessionInterface $session
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($name, \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function __construct($name, \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 
 		$this->name = $name;
 		$this->session = $session;
-		$this->queryManager = $this->objectFactory->create('F3\PHPCR\Query\QueryManagerInterface', $session);
-		$this->namespaceRegistry = $this->objectFactory->create('F3\PHPCR\NamespaceRegistryInterface', $session->getStorageBackend());
-		$this->nodeTypeManager = $this->objectFactory->create('F3\PHPCR\NodeType\NodeTypeManagerInterface', $session->getStorageBackend());
+		$this->queryManager = $this->objectManager->create('F3\PHPCR\Query\QueryManagerInterface', $session);
+		$this->namespaceRegistry = $this->objectManager->create('F3\PHPCR\NamespaceRegistryInterface', $session->getStorageBackend());
+		$this->nodeTypeManager = $this->objectManager->create('F3\PHPCR\NodeType\NodeTypeManagerInterface', $session->getStorageBackend());
 	}
 
 	/**

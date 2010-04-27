@@ -50,9 +50,20 @@ class WorkspaceTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('create')->will($this->returnValue(
+				$this->getMock('F3\PHPCR\Query\QueryManagerInterface')
+			));
+		$mockObjectManager->expects($this->at(1))->method('create')->will($this->returnValue(
+				$this->getMock('F3\PHPCR\NamespaceRegistryInterface')
+			));
+		$mockObjectManager->expects($this->at(2))->method('create')->will($this->returnValue(
+				$this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface')
+			));
+
 		$this->mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
 		$this->mockSession->expects($this->any())->method('getStorageBackend')->will($this->returnValue($this->getMock('F3\TYPO3CR\Storage\BackendInterface')));
-		$this->workspace = new \F3\TYPO3CR\Workspace('workspaceName', $this->mockSession, $this->objectFactory);
+		$this->workspace = new \F3\TYPO3CR\Workspace('workspaceName', $this->mockSession, $mockObjectManager);
 	}
 
 	/**

@@ -178,9 +178,9 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(array $rawData = array(), \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
+	public function __construct(array $rawData = array(), \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->session = $session;
-		$this->objectFactory = $objectFactory;
+		$this->objectManager = $objectManager;
 
 		if (isset($rawData['newidentifier'])) {
 			$this->identifier = $rawData['newidentifier'];
@@ -223,14 +223,14 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 */
 	protected function initializeProperties() {
 			// jcr:uuid (string) mandatory autocreated protected initialize
-		$this->properties['jcr:uuid'] = $this->objectFactory->create('F3\PHPCR\PropertyInterface', 'jcr:uuid', $this->identifier, \F3\PHPCR\PropertyType::STRING, $this, $this->session);
+		$this->properties['jcr:uuid'] = $this->objectManager->create('F3\PHPCR\PropertyInterface', 'jcr:uuid', $this->identifier, \F3\PHPCR\PropertyType::STRING, $this, $this->session);
 			// jcr:primaryType (name) mandatory autocreated
-		$this->properties['jcr:primaryType'] = $this->objectFactory->create('F3\PHPCR\PropertyInterface', 'jcr:primaryType', $this->nodeTypeName, \F3\PHPCR\PropertyType::NAME, $this, $this->session);
+		$this->properties['jcr:primaryType'] = $this->objectManager->create('F3\PHPCR\PropertyInterface', 'jcr:primaryType', $this->nodeTypeName, \F3\PHPCR\PropertyType::NAME, $this, $this->session);
 
 		$rawProperties = $this->session->getStorageBackend()->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
 			foreach ($rawProperties as $rawProperty) {
-				$property = $this->objectFactory->create('F3\PHPCR\PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
+				$property = $this->objectManager->create('F3\PHPCR\PropertyInterface', $rawProperty['name'], $rawProperty['value'], $rawProperty['type'], $this, $this->session);
 				$this->properties[$property->getName()] = $property;
 			}
 		}
@@ -471,7 +471,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 				$rawData['newidentifier'] = $identifier;
 			}
 
-			$newNode = $this->objectFactory->create('F3\PHPCR\NodeInterface', $rawData, $this->session);
+			$newNode = $this->objectManager->create('F3\PHPCR\NodeInterface', $rawData, $this->session);
 
 			$this->nodes[] = $newNode->getIdentifier();
 			$this->session->registerNodeAsDirty($this);
@@ -601,7 +601,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 				$this->properties[$name]->setValue($value);
 				$this->session->registerPropertyAsDirty($this->properties[$name]);
 			} else {
-				$this->properties[$name] = $this->objectFactory->create('F3\PHPCR\PropertyInterface', $name, $value, $type, $this, $this->session);
+				$this->properties[$name] = $this->objectManager->create('F3\PHPCR\PropertyInterface', $name, $value, $type, $this, $this->session);
 				$this->session->registerPropertyAsNew($this->properties[$name]);
 			}
 		}
@@ -689,7 +689,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 			$nodes[] = $this->session->getNodeByIdentifier($identifier);
 		}
 
-		return $this->objectFactory->create('F3\PHPCR\NodeIteratorInterface', $nodes);
+		return $this->objectManager->create('F3\PHPCR\NodeIteratorInterface', $nodes);
 	}
 
 	/**
@@ -764,7 +764,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	public function getProperties($filter = NULL) {
 		if ($filter !== NULL) throw new \F3\PHPCR\RepositoryException('Support for name patterns in getProperties() is not yet implemented.', 1183463152);
 
-		return $this->objectFactory->create('F3\PHPCR\PropertyIteratorInterface', $this->properties);
+		return $this->objectManager->create('F3\PHPCR\PropertyIteratorInterface', $this->properties);
 	}
 
 	/**
@@ -1494,11 +1494,11 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 		$rawReferences = $this->session->getStorageBackend()->getRawPropertiesOfTypedValue($name, $type, $this->getIdentifier());
 		if (is_array($rawReferences)) {
 			foreach ($rawReferences as $rawReference) {
-				$reference = $this->objectFactory->create('F3\PHPCR\PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this->session->getNodeByIdentifier($rawReference['parent']), $this->session);
+				$reference = $this->objectManager->create('F3\PHPCR\PropertyInterface', $rawReference['name'], $rawReference['value'], $rawReference['type'], $this->session->getNodeByIdentifier($rawReference['parent']), $this->session);
 				$references[$rawReference['name']] = $reference;
 			}
 		}
-		return $this->objectFactory->create('F3\PHPCR\PropertyIteratorInterface', $references);
+		return $this->objectManager->create('F3\PHPCR\PropertyIteratorInterface', $references);
 	}
 
 }

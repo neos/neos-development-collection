@@ -33,9 +33,9 @@ namespace F3\TYPO3CR;
 class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\PHPCR\SessionInterface
@@ -45,12 +45,12 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 	/**
 	 * Constructs a ValueFactory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory, \F3\PHPCR\SessionInterface $session) {
-		$this->objectFactory = $objectFactory;
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\PHPCR\SessionInterface $session) {
+		$this->objectManager = $objectManager;
 		$this->session = $session;
 	}
 
@@ -99,7 +99,7 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 		}
 
 		if ($type === \F3\PHPCR\PropertyType::UNDEFINED) {
-			return $this->objectFactory->create('F3\PHPCR\ValueInterface', $value, self::guessType($value));
+			return $this->objectManager->create('F3\PHPCR\ValueInterface', $value, self::guessType($value));
 		} else {
 			return $this->createValueWithGivenType($value, $type);
 		}
@@ -153,7 +153,7 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 					// so we just leave the value as it is
 				break;
 		}
-		return $this->objectFactory->create('F3\PHPCR\ValueInterface', $value, $type);
+		return $this->objectManager->create('F3\PHPCR\ValueInterface', $value, $type);
 	}
 
 	/**
@@ -170,8 +170,6 @@ class ValueFactory implements \F3\PHPCR\ValueFactoryInterface {
 		if ($value instanceof \DateTime) {
 			$type = \F3\PHPCR\PropertyType::DATE;
 		} elseif ($value instanceof \F3\PHPCR\BinaryInterface) {
-			$type = \F3\PHPCR\PropertyType::BINARY;
-		} elseif (\F3\PHP6\Functions::is_binary($value)) {
 			$type = \F3\PHPCR\PropertyType::BINARY;
 		} elseif (is_double($value)) {
 			$type = \F3\PHPCR\PropertyType::DOUBLE;

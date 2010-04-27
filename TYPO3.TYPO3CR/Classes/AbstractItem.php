@@ -54,9 +54,9 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	protected $session;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var string
@@ -119,18 +119,18 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 		$path = $this->getPath();
 		$slash = 0;
 		for ($i = 0; $i < $depth-1; $i++) {
-			$slash = \F3\PHP6\Functions::strpos($path, '/', $slash+1);
+			$slash = \F3\FLOW3\Utility\Unicode\Functions::strpos($path, '/', $slash+1);
 			if ($slash === FALSE) {
 				throw new \F3\PHPCR\ItemNotFoundException('Invalid ancestor depth (' . $depth . ')', 1187530839);
 			}
 		}
-		$slash = \F3\PHP6\Functions::strpos($path, '/', $slash+1);
+		$slash = \F3\FLOW3\Utility\Unicode\Functions::strpos($path, '/', $slash+1);
 		if ($slash == -1) {
 			return $this;
 		}
 
 		try {
-			return $this->getSession()->getItem(\F3\PHP6\Functions::substr($path, 0, $slash));
+			return $this->getSession()->getItem(\F3\FLOW3\Utility\Unicode\Functions::substr($path, 0, $slash));
 		} catch (\F3\PHPCR\ItemNotFoundException $e) {
 			throw new \F3\PHPCR\AccessDeniedException('Ancestor access denied (' . $depth . ')', 1187530845);
 		}
