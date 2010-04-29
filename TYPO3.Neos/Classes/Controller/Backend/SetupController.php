@@ -71,7 +71,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->contentNodeRepository->removeAll();
 		$this->domainRepository->removeAll();
 		$this->accountRepository->removeAll();
-
+/*
 		#-------------------------------------------------------------------------------------------
 
 		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext');
@@ -105,7 +105,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 		');
 		$subPage->getNode()->addConfiguration($typoScriptTemplateSubPage);
-
+*/
 		$account = $this->accountFactory->createAccountWithPassword('admin', 'password', array('Administrator'));
 		$this->accountRepository->add($account);
 

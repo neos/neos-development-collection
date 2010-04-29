@@ -51,18 +51,49 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * On successful authentication redirects to the backend, otherwise returns
 	 * to the login screen.
 	 *
+	 * Note: You need to send the username and password these two POST parameters:
+	 *       F3\FLOW3\Security\Authentication\Token\UsernamePassword::username
+	 *   and F3\FLOW3\Security\Authentication\Token\UsernamePassword::password
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function authenticateAction() {
+		$authenticated = FALSE;
 		try {
 			$this->authenticationManager->authenticate();
-			$this->redirect('index', 'Backend\Backend');
+			$authenticated = TRUE;
 		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
-			$this->flashMessageContainer->add('Wrong username or password.');
-			throw $exception;
 		}
-		$this->redirect('index');
+
+		switch ($this->request->getFormat()) {
+			case 'json' :
+				if ($authenticated) {
+					$response = array(
+						'success' => TRUE,
+						'redirectUri' => $this->uriBuilder
+							->reset()
+							->setCreateAbsoluteUri(TRUE)
+							->uriFor('index', array(), 'Backend\Backend', 'TYPO3')
+					);
+				} else {
+					$response = array(
+						'success' => FALSE,
+						'redirectUri' => $this->uriBuilder
+							->reset()
+							->setCreateAbsoluteUri(TRUE)
+							->uriFor('index')
+					);
+				}
+				return json_encode($response);
+			default :
+				if ($authenticated) {
+					$this->redirect('index', 'Backend\Backend');
+				} else {
+					$this->flashMessageContainer->add('Wrong username or password.');
+					$this->redirect('index');
+				}
+		}
 	}
 
 	/**
@@ -73,8 +104,17 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function logoutAction() {
 		$this->authenticationManager->logout();
-		$this->flashMessageContainer->add('Successfully logged out.');
-		$this->redirect('index');
+
+		switch ($this->request->getFormat()) {
+			case 'json' :
+				$response = array(
+					'success' => TRUE
+				);
+				return json_encode($response);
+			default :
+				$this->flashMessageContainer->add('Successfully logged out.');
+				$this->redirect('index');
+		}
 	}
 
 }
