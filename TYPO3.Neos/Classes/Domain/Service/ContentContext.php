@@ -168,7 +168,7 @@ class ContentContext {
 	 * Returns the node service which is bound to this context.
 	 * Only use THIS method for retrieving an instance of the Node Service!
 	 *
-	 * @return \F3\TYPO3\Domain\Service\ContentService
+	 * @return \F3\TYPO3\Domain\Service\NodeService
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeService() {
