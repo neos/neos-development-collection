@@ -40,6 +40,7 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 				},
 				{
 					xtype: 'button',
+					type: 'submit',
 					text: this.ll.buttonSubmit,
 					handler: this.onSubmitButtonClick,
 					scope: this
