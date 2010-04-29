@@ -1,0 +1,18 @@
+#                                                                        #
+# Security policy for the TYPO3 package                                  #
+#                                                                        #
+
+# @package TYPO3
+# @version $Id$
+
+resources:
+  methods:
+    F3_TYPO3_BackendController: "method(F3\TYPO3\Controller\Backend\BackendController->.*())"
+
+roles:
+  Administrator: []
+
+acls:
+  Administrator:
+    F3_TYPO3_BackendController: GRANT
+

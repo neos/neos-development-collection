@@ -3,7 +3,6 @@
 	html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {namespace ext=F3\ExtJS\ViewHelpers}
-{namespace t3be=F3\TYPO3\Backend\ViewHelpers}
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -12,20 +11,30 @@
 		<f:base />
 		<ext:include theme="xtheme-gray" debug="TRUE" />
 		<!-- TODO: Include language file ext/src/locale/... -->
-		<script type="text/javascript" src="../../../../Public/Backend/JavaScript/Utils.js"></script>
-		<script type="text/javascript" src="../../../../Public/Backend/JavaScript/Application.js"></script>
-		<t3be:includeJavascript include="Application/(.*)\.js" />
-		<t3be:includeJavascript include=".*js" exclude="Application(.*)" />
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Utils.js')}"></script>
+
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application/AbstractBootstrap.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application/AbstractMenuRegistry.js')}"></script>
 		
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/Bootstrap.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/ContentArea.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/ContentDialog.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/DummyImage.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/Layout.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/ModuleDialog.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/RootlineMenu.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/SectionMenu.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/TopBar.js')}"></script>
 		
 	</head>
 	<body onload="document.getElementById('username').focus();">
 		<div id="loginscreen">
-			<form action="typo3" method="post" name="loginform">
+			<f:form action="authenticate" controller="Backend\Login" method="post" name="loginform">
 				<input type="text" id="username" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" value="" tabindex="1" />
 				<input type="password" id="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" value="" tabindex="2" />
 				<input type="submit" id="loginbutton" name="submitlogin" value="" tabindex="3" />
-			</form>
+			</f:form>
 		</div>
 	</body>
 </html>

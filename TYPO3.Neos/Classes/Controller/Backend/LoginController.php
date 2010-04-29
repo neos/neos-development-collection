@@ -31,14 +31,52 @@ namespace F3\TYPO3\Controller\Backend;
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * Default action for this controller
+	 * @inject
+	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 */
+	protected $authenticationManager;
+
+	/**
+	 * Default action, displays the login screen
 	 *
-	 * @return string Some login form
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
-		return $this->view->render();
 	}
+
+	/**
+	 * Authenticates an account by invoking the Provider based Authentication Manager.
+	 *
+	 * On successful authentication redirects to the backend, otherwise returns
+	 * to the login screen.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function authenticateAction() {
+		try {
+			$this->authenticationManager->authenticate();
+			$this->redirect('index', 'Backend\Backend');
+		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
+			$this->flashMessageContainer->add('Wrong username or password.');
+			throw $exception;
+		}
+		$this->redirect('index');
+	}
+
+	/**
+	 * Logs out a - possibly - currently logged in account.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function logoutAction() {
+		$this->authenticationManager->logout();
+		$this->flashMessageContainer->add('Successfully logged out.');
+		$this->redirect('index');
+	}
+
 }
 
 ?>

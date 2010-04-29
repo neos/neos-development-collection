@@ -1,0 +1,21 @@
+#                                                                        #
+# Settings                                                               #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Just add your own modifications as necessary.                          #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+FLOW3:
+  security:
+    enable: yes
+
+    authentication:
+      providers:
+        DefaultProvider:
+          providerClass: PersistedUsernamePasswordProvider
+          entryPoint:
+            webRedirect:
+              uri: typo3/login

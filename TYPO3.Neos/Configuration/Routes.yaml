@@ -8,8 +8,8 @@
 # Backend
 
 -
-  name: 'Authenticate'
-  uriPattern: 'typo3/login'
+  name: 'Authentication'
+  uriPattern: 'typo3/login(/{@action})'
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Backend\Login'
@@ -22,15 +22,6 @@
     '@package':    'TYPO3'
     '@controller': 'Backend\Setup'
     '@action':     'setup'
-
--
-  name:          'Backend route'
-  uriPattern:    'typo3(/{section})'
-  defaults:
-    '@package':    'TYPO3'
-    '@controller': 'Backend\Backend'
-    '@action':     'index'
-    section:     'frontend'
 
 ##
 # Frontend
