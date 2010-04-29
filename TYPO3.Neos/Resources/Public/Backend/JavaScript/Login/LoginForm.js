@@ -29,12 +29,12 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 			items: [
 				{
 					xtype: 'textfield',
-					name: 'F3/\FLOW3/\Security/\Authentication/\Token/\UsernamePassword::username',
+					name: 'F3\\FLOW3\\Security\\Authentication\\Token\\UsernamePassword\:\:username',
 					fieldLabel: this.ll.fieldUsername
 				},
 				{
 					xtype: 'textfield',
-					name: 'F3/\FLOW3/\Security/\Authentication/\Token/\UsernamePassword::password',
+					name: 'F3\\FLOW3\\Security\\Authentication\\Token\\UsernamePassword\:\:password',
 					inputType: 'password',
 					fieldLabel: this.ll.fieldPassword
 				},
