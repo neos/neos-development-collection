@@ -41,7 +41,7 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 				{
 					xtype: 'button',
 					text: this.ll.buttonSubmit,
-					handler: this.onSubmitButtonCLick,
+					handler: this.onSubmitButtonClick,
 					scope: this
 
 				}
@@ -52,15 +52,27 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 	},
 
 	/**
-	 * @method onSubmitButtonCLick
+	 * @method onSubmitButtonClick
 	 * @return void
 	 */
-	onSubmitButtonCLick: function() {
+	onSubmitButtonClick: function() {
 		this.getForm().submit({
 			// TODO get the url from a F3.TYPO3.Config object
 			url: '/typo3/login/authenticate.json',
-			method: 'post'
+			success: this.onLoginSuccess,
+			scope: this
 		});
+	},
+
+	/**
+	 * On login success redirect to the backend
+	 * @method onLoginSuccess
+	 * @param object form
+	 * @param object action
+	 * @return void
+	 */
+	onLoginSuccess: function(form, action) {
+		location.href = action.result.redirectUri;
 	}
 });
 
