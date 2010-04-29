@@ -79,6 +79,10 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 				} else {
 					$response = array(
 						'success' => FALSE,
+						'errors' => array(
+							'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'Wrong username or password',
+							'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'Wrong username or password'
+						),
 						'redirectUri' => $this->uriBuilder
 							->reset()
 							->setCreateAbsoluteUri(TRUE)
