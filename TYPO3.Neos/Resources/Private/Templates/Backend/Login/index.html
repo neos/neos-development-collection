@@ -3,6 +3,7 @@
 	html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {namespace ext=F3\ExtJS\ViewHelpers}
+{namespace typo3=F3\TYPO3\ViewHelpers}
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -16,11 +17,7 @@
 		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application.js')}"></script>
 		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application/AbstractBootstrap.js')}"></script>
 
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Login/Bootstrap.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Login/LoginForm.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Login/Layout.js')}"></script>
-
-
+		<typo3:includeJavaScript include="Login/.*\.js" subpackage="Backend" />
 
 	</head>
 	<body>
