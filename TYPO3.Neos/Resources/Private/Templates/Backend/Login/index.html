@@ -15,26 +15,15 @@
 
 		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application.js')}"></script>
 		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application/AbstractBootstrap.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application/AbstractMenuRegistry.js')}"></script>
-		
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/Bootstrap.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/ContentArea.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/ContentDialog.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/DummyImage.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/Layout.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/ModuleDialog.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/RootlineMenu.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/SectionMenu.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/UserInterface/TopBar.js')}"></script>
-		
+
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Login/Bootstrap.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Login/LoginForm.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Login/Layout.js')}"></script>
+
+
+
 	</head>
-	<body onload="document.getElementById('username').focus();">
-		<div id="loginscreen">
-			<f:form action="authenticate" controller="Backend\Login" method="post" name="loginform">
-				<input type="text" id="username" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" value="" tabindex="1" />
-				<input type="password" id="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" value="" tabindex="2" />
-				<input type="submit" id="loginbutton" name="submitlogin" value="" tabindex="3" />
-			</f:form>
-		</div>
+	<body>
+
 	</body>
 </html>
