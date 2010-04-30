@@ -471,8 +471,12 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 		$expectedObjectTree['object1']->setValue("Curly braces like this {} or {that} are ignored.");
 		$expectedObjectTree['object2'] = new \F3\TypoScript\Fixtures\Text;
 		$expectedObjectTree['object2']->setValue("Curly braces like this {} or {that} are ignored.");
+		$expectedObjectTree['object3'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object3']->setValue("Slashes // or hashes # or /* signs are not interpreted as comments.");
+		$expectedObjectTree['object4'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object4']->setValue("Slashes // or hashes # or /* signs are not interpreted as comments.");
 
-		$this->mockObjectManager->expects($this->exactly(2))->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
+		$this->mockObjectManager->expects($this->exactly(4))->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$actualObjectTree = $this->parser->parse($sourceCode);
 
