@@ -12,7 +12,7 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 	/**
 	 * Language Labels
 	 */
-	ll: {
+	ll: { // TODO: Localization
 		fieldUsername: 'Username',
 		fieldPassword: 'Password',
 		buttonSubmit: 'Submit'
@@ -58,8 +58,7 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 	 */
 	onSubmitButtonClick: function() {
 		this.getForm().submit({
-			// TODO get the url from a F3.TYPO3.Config object
-			url: '/typo3/login/authenticate.json',
+			url: F3.TYPO3.Utils.buildBackendUri('login/authenticate.json'),
 			success: this.onLoginSuccess,
 			scope: this
 		});

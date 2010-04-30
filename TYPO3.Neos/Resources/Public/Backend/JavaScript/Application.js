@@ -34,13 +34,25 @@ F3.TYPO3.Application = Ext.apply(new Ext.util.Observable, {
 	 * This method is called automatically.
 	 */
 	bootstrap: function() {
+		this._initializeConfiguration();
 		this._invokeBootstrappers();
-
 		Ext.QuickTips.init();
 
 		this.fireEvent('F3.TYPO3.Application.afterBootstrap');
 	},
 
+	/**
+	 * Initialize the configuration object in F3.TYPO3.Configuration
+	 */
+	_initializeConfiguration: function() {
+		var baseTag = Ext.query('base')[0];
+		if (typeof baseTag.href == 'string') {
+			F3.TYPO3.Configuration.Application.backendBaseUri = baseTag.href + 'typo3/';
+		} else {
+			F3.TYPO3.Configuration.Application.backendBaseUri = '/typo3/';
+			console.warn("Base URI could not be extracted");
+		}
+	},
 	/**
 	 * Registers a new bootstrap class.
 	 *

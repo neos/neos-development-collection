@@ -57,9 +57,6 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 		foreach ($iterator as $file) {
 			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
 
-			var_dump($file->getPathname());
-			var_dump($relativePath);
-
 			if ($exclude !== NULL && preg_match('/^' . str_replace('/', '\/', $exclude) . '$/', $relativePath)) continue;
 
 			if (preg_match('/^' . str_replace('/', '\/', $include) . '$/', $relativePath)) {

@@ -30,3 +30,15 @@ F3.TYPO3.Utils.clone = function(o) {
 	}
 	return c;
 };
+
+/**
+ * Build an uri for the backend, considering the base URL.
+ * In case you want to build an URL to "typo3/login/index", just pass
+ * "login/index" to the method (everything after "typo3/")
+ * 
+ * @param {String} The path to build the URI for. 
+ * @author Sebastian Kurfuerst
+ */
+F3.TYPO3.Utils.buildBackendUri = function(path) {
+	return F3.TYPO3.Configuration.Application.backendBaseUri + path;
+}
