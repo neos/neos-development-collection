@@ -58,11 +58,6 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
 	 * The TypoScript object tree, created by this parser.
 	 * @var array
 	 */
@@ -99,6 +94,13 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	protected $currentBlockCommentState = FALSE;
 
 	/**
+	 * Determines if we are currently parsing a multiline literal and if so,
+	 * which quote character was used to start it.
+	 * @var mixed
+	 */
+	protected $currentMultilineLiteralState = FALSE;
+
+	/**
 	 * Namespace identifiers and their object name prefix
 	 * @var array
 	 */
@@ -110,12 +112,10 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * Constructs the parser
 	 *
 	 * @param \F3\FLOW3\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @param \F3\FLOW3\ObjectFactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -400,7 +400,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 				}
 			}
 
-			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->objectFactory->create('F3\TypoScript\ProcessorChain');
+			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->objectManager->create('F3\TypoScript\ProcessorChain');
 			$processorInvocation = $this->getProcessorInvocation($matches['ObjectAndMethodName'], $processorArguments);
 			$processorChain->setProcessorInvocation((integer)$matches['Index'], $processorInvocation);
 
@@ -441,10 +441,10 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		$processorObjectName = isset($matchedObjectAndMethodName['ObjectName']) ? $matchedObjectAndMethodName['ObjectName'] : $this->namespaces['default'] . '\Processors';
 		$processorMethodName = isset($matchedObjectAndMethodName['MethodName']) ? 'processor_' . $matchedObjectAndMethodName['MethodName'] : NULL;
 		if (!$this->objectManager->isObjectRegistered($processorObjectName)) throw new \F3\TypoScript\Exception('Unknown processor object "' . $processorObjectName . '"', 1181903857);
-		$processor = $this->objectManager->getObject($processorObjectName);
+		$processor = $this->objectManager->get($processorObjectName);
 		if (!method_exists($processor, $processorMethodName)) throw new \F3\TypoScript\Exception('Unknown processor method "' . $processorObjectName . '->' . $processorMethodName . '"', 1181903857);
 
-		return $this->objectFactory->create('F3\TypoScript\ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
+		return $this->objectManager->create('F3\TypoScript\ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
 	}
 
 	/**
@@ -497,7 +497,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 			if (!$this->objectManager->isObjectRegistered($typoScriptObjectName)) {
 				throw new \F3\TypoScript\Exception('Referring to unknown TypoScript Object Type "' . $typoScriptObjectName . '" in object type assignment.', 1180605250);
 			}
-			$processedValue = $this->objectFactory->create($typoScriptObjectName);
+			$processedValue = $this->objectManager->create($typoScriptObjectName);
 		} else {
 			throw new \F3\TypoScript\Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
 		}

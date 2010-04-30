@@ -46,11 +46,6 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	protected $mockObjectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $mockObjectFactory;
-
-	/**
 	 * Sets up this test case
 	 *
 	 * @author  Robert Lemke <robert@typo3.org>
@@ -59,9 +54,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
 		$this->mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array(), array(), '', FALSE);
-
-		$this->parser = new \F3\TypoScript\Parser($this->mockObjectManager, $this->mockObjectFactory);
+		$this->parser = new \F3\TypoScript\Parser($this->mockObjectManager);
 	}
 
 	/**
@@ -69,7 +62,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @return fixture objects ...
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function objectFactoryCallback() {
+	public function objectManagerCallback() {
 		$arguments = array_merge(func_get_args(), array($this->mockObjectManager));
 		$objectName = array_shift($arguments);
 
@@ -103,7 +96,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserReturnsObjectTreeArray() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture01.ts2', FILE_TEXT);
 		$objectTree = $this->parser->parse($sourceCode);
 		$this->assertType('array', $objectTree, 'The TypoScript parser did not return an array.');
@@ -125,7 +118,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 		$expectedObjectTree['thirdTest'] = new \F3\TypoScript\Fixtures\Text;
 		$expectedObjectTree['thirdTest']->setValue('Fully Qualified Object');
 
-		$this->mockObjectFactory->expects($this->exactly(3))->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->exactly(3))->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$actualObjectTree = $this->parser->parse($sourceCode);
 
@@ -156,7 +149,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture02() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture02.ts2', FILE_TEXT);
 
@@ -178,7 +171,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture03() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture03.ts2', FILE_TEXT);
 
 		$expectedObjectTree['myObject']['mySubObject']['mySubSubObject'] = new \F3\TypoScript\Fixtures\Text;
@@ -195,7 +188,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture04() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture04.ts2', FILE_TEXT);
 
 		$expectedObjectTree['myArrayObject'] = new \F3\TypoScript\Fixtures\ContentArray;
@@ -222,7 +215,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture05() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture05.ts2', FILE_TEXT);
 
 		$expectedObjectTree['firstObject'] = new \F3\TypoScript\Fixtures\Text;
@@ -243,7 +236,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture06() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture06.ts2', FILE_TEXT);
 
 		$expectedObjectTree['object1'] = new \F3\TypoScript\Fixtures\Text;
@@ -266,7 +259,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture07() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture07.ts2', FILE_TEXT);
 
 		$expectedObjectTree['object2'] = new \F3\TypoScript\Fixtures\Text;
@@ -285,7 +278,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture08() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture08.ts2', FILE_TEXT);
 
 		$expectedObjectTree['object1'] = new \F3\TypoScript\Fixtures\Text;
@@ -312,7 +305,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture09() {
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture09.ts2', FILE_TEXT);
 
 		$expectedObjectTree['object1'] = new \F3\TypoScript\Fixtures\Text;
@@ -334,8 +327,8 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function parserCorrectlyParsesFixture10() {
 		$processors = new \F3\TypoScript\Fixtures\Processors;
-		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture10.ts2', FILE_TEXT);
 		$processorObject = new \F3\TypoScript\Fixtures\Processors;
@@ -387,8 +380,8 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function parserCorrectlyParsesFixture11() {
 		$processors = new \F3\TypoScript\Fixtures\Processors;
-		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture11.ts2', FILE_TEXT);
 
@@ -418,8 +411,8 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function parserCorrectlyParsesFixture12() {
 		$processors = new \F3\TypoScript\Fixtures\Processors;
-		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectFactoryCallback')));
+		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture12.ts2', FILE_TEXT);
 
@@ -436,6 +429,33 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree);
+	}
+
+	/**
+	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 13
+	 *
+	 * TODO Not implemented yet, see #7552
+	 *
+	 * test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parserCorrectlyParsesFixture13() {
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture13.ts2', FILE_TEXT);
+
+		$expectedObjectTree['object1'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object1']->setValue("\n\tSome text.\n");
+		$expectedObjectTree['object2'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object2']->setValue("\n\tSome text.\n");
+		$expectedObjectTree['object3'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object3']->setValue("The text might start\n\tat some line and\n\tend at some other line");
+		$expectedObjectTree['object4'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object4']->setValue("The text might start\n\tat some line and\n\tend at some other line");
+
+		$this->mockObjectManager->expects($this->exactly(4))->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
+
+		$actualObjectTree = $this->parser->parse($sourceCode);
+
+		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 13.');
 	}
 
 }

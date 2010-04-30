@@ -31,7 +31,6 @@ namespace F3\TypoScript;
 abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 
 	/**
-	 * @inject
 	 * @var \F3\Fluid\View\TemplateViewInterface
 	 */
 	protected $view;
@@ -50,7 +49,7 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 * Fully qualified class name of the model this TS Object is based on. Must be defined by the concrete implementation.
 	 * @var string
 	 */
-	protected $modelType = 'stdclass';
+	protected $modelType = '\stdclass';
 
 	/**
 	 * @var array An array of \F3\TypoScript\ProcessorChain objects
