@@ -23,81 +23,37 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * A TypoScript Page object
+ * A TypoScript File object
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Page extends \F3\TypoScript\AbstractContentObject {
+class File extends \F3\TypoScript\AbstractContentObject {
 
 	/**
+	 * Path and filename of the file this TS object is representing.
 	 * @var string
 	 */
-	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Page';
+	protected $pathAndFilename;
 
 	/**
-	 * @var string
-	 */
-	protected $title;
-
-	/**
-	 * @var mixed
-	 */
-	protected $body;
-
-	/**
-	 * @var string
-	 */
-	protected $type = 'default';
-
-	/**
+	 * Sets the ath and filename of the file this TS object is representing.
 	 *
-	 */
-	public function setTitle($title) {
-		$this->title = $title;
-	}
-
-	/**
-	 *
-	 * @return string
-	 */
-	public function getTitle() {
-		return $this->title;
-	}
-
-	/**
-	 *
-	 * @param string $type
+	 * @param string $pathAndFilename
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setType($type) {
-		$this->type = $type;
+	public function setPathAndFilename($pathAndFilename) {
+		$this->pathAndFilename = $pathAndFilename;
 	}
 
 	/**
-	 *
 	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getType() {
-		return $this->type;
-	}
-
-	/**
-	 *
-	 * @param string $body
-	 * @return void
-	 */
-	public function setBody($body) {
-		$this->body = $body;
-	}
-
-	/**
-	 *
-	 * @return string
-	 */
-	public function getBody() {
-		return $this->body;
+	public function getPathAndFilename() {
+		return $this->pathAndFilename;
 	}
 
 	/**
@@ -107,8 +63,12 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRenderedContent() {
-		$this->body->getRenderedContent();
-		return (string) $this->body;
+		if (file_exists($this->pathAndFilename)) {
+			return file_get_contents($this->pathAndFilename);
+		} else {
+			return 'WARNING: File "' . $this->pathAndFilename . '" not found.';
+		}
 	}
+
 }
 ?>

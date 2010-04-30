@@ -29,14 +29,89 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Template extends \F3\Fluid\View\TemplateView {
+class Template extends \F3\TypoScript\AbstractContentObject {
+
+	/**
+	 * @inject
+	 * @var \F3\Fluid\Core\Parser\TemplateParser
+	 */
+	protected $templateParser;
+
+	/**
+	 * @inject
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
 
 	/**
 	 *
-	 * @return string
+	 * @var mixed
 	 */
-	public function getTemplatePathAndFilename() {
-		return $this->templatePathAndFilename;
+	protected $source;
+
+	protected $variables = array();
+
+	/**
+	 *
+	 * @param <type> $source
+	 */
+	public function setSource($source) {
+		$this->source = $source;
+	}
+
+	/**
+	 *
+	 * @return <type>
+	 */
+	public function getSource() {
+		return $this->source;
+	}
+
+	/**
+	 * Returns the rendered content of this content object
+	 *
+	 * @return string The rendered content as a string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRenderedContent() {
+		$this->templateParser->setConfiguration($this->buildParserConfiguration());
+		$parsedTemplate = $this->templateParser->parse((string)$this->source);
+		$variableContainer = $parsedTemplate->getVariableContainer();
+		return $parsedTemplate->render($this->buildRenderingContext());
+	}
+
+	/**
+	 * Build parser configuration
+	 *
+	 * @return \F3\Fluid\Core\Parser\Configuration
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function buildParserConfiguration() {
+		$parserConfiguration = $this->objectManager->create('F3\Fluid\Core\Parser\Configuration');
+		$parserConfiguration->addInterceptor($this->objectManager->get('F3\Fluid\Core\Parser\Interceptor\Escape'));
+		$parserConfiguration->addInterceptor($this->objectManager->get('F3\Fluid\Core\Parser\Interceptor\Resource'));
+		return $parserConfiguration;
+	}
+
+	/**
+	 * Build the rendering context
+	 *
+	 * @param \F3\Fluid\Core\ViewHelper\TemplateVariableContainer $variableContainer
+	 * @return \F3\Fluid\Core\Rendering\RenderingContext
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function buildRenderingContext(\F3\Fluid\Core\ViewHelper\TemplateVariableContainer $variableContainer = NULL) {
+		if ($variableContainer === NULL) {
+			$variableContainer = $this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $this->variables);
+		}
+
+		$renderingContext = $this->objectManager->create('F3\Fluid\Core\Rendering\RenderingContext');
+		$renderingContext->setTemplateVariableContainer($variableContainer);
+
+		$viewHelperVariableContainer = $this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer');
+		$viewHelperVariableContainer->setView($this);
+		$renderingContext->setViewHelperVariableContainer($viewHelperVariableContainer);
+		return $renderingContext;
 	}
 }
 ?>

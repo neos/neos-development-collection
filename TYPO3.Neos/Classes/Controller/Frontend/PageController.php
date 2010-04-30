@@ -66,7 +66,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$typoScriptService = $this->contentContext->getTypoScriptService();
 		$typoScriptObjectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->contentContext->getNodePath());
 		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
-			throw new \F3\TYPO3\Controller\Exception\NoSite('No TypoScript template was found for the current page context.', 1255513200);
+			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptConfiguration('No TypoScript template was found for the current page context.', 1255513200);
 		}
 
 		foreach ($typoScriptObjectTree as $firstLevelTypoScriptObject) {
@@ -78,7 +78,6 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if (!isset($pageTypoScriptObject)) {
 			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptPageObject('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
 		}
-
 		$pageTypoScriptObject->setModel($page);
 		return $pageTypoScriptObject->getRenderedContent();
 	}
