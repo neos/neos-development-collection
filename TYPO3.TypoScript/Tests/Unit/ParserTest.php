@@ -458,6 +458,27 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 13.');
 	}
 
+	/**
+	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 14
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parserCorrectlyParsesFixture14() {
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture14.ts2', FILE_TEXT);
+
+		$expectedObjectTree['object1'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object1']->setValue("Curly braces like this {} or {that} are ignored.");
+		$expectedObjectTree['object2'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object2']->setValue("Curly braces like this {} or {that} are ignored.");
+
+		$this->mockObjectManager->expects($this->exactly(2))->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
+
+		$actualObjectTree = $this->parser->parse($sourceCode);
+
+		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 14.');
+	}
+
 }
 
 ?>

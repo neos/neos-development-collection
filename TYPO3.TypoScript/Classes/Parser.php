@@ -31,8 +31,8 @@ namespace F3\TypoScript;
 class Parser implements \F3\TypoScript\ParserInterface {
 
 	const SCAN_PATTERN_COMMENT = '/(?:#.*)|(?:\/\/.*)|(?:\/\*.*)/';
-	const SCAN_PATTERN_OPENINGCONFINEMENT = '/[a-zA-Z][a-zA-Z0-9]*(?:\.(?:[a-zA-Z][a-zA-Z0-9]*))*\s*\{/';
-	const SCAN_PATTERN_CLOSINGCONFINEMENT = '/\s*\}/';
+	const SCAN_PATTERN_OPENINGCONFINEMENT = '/^\s*[a-zA-Z][a-zA-Z0-9]*(?:\.(?:[a-zA-Z][a-zA-Z0-9]*))*\s*\{/';
+	const SCAN_PATTERN_CLOSINGCONFINEMENT = '/^\s*\}/';
 	const SCAN_PATTERN_DECLARATION = '/(include|namespace)\s*:/';
 	const SCAN_PATTERN_OBJECTDEFINITION = '/[a-zA-Z0-9.\\\\$]+\s*[=|<|>|\.processors\.]/';
 	const SCAN_PATTERN_OBJECTPATH = '/\.?[a-zA-Z][a-zA-Z0-9]*(?:\.(?:[a-zA-Z][a-zA-Z0-9]*))*(?:\.(?:(?:\$[a-zA-Z][a-zA-Z0-9])|(?:[0-9]+)))?/';
