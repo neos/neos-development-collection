@@ -71,41 +71,19 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->contentNodeRepository->removeAll();
 		$this->domainRepository->removeAll();
 		$this->accountRepository->removeAll();
-/*
-		#-------------------------------------------------------------------------------------------
 
 		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext');
 		$contentService = $contentContext->getContentService();
 
 		$site = $this->objectManager->create('F3\TYPO3\Domain\Model\Structure\Site');
-		$site->setName('TYPO3 Phoenix Example Site');
-		$site->setNodeName('phoenix.typo3.org');
-		$site->setSiteResourcesPackageKey('Flow3Typo3Org');
+		$site->setName('TYPO3 Phoenix Demo Site');
+		$site->setNodeName('phoenix.demo.typo3.org');
+		$site->setSiteResourcesPackageKey('PhoenixDemoTypo3Org');
 		$this->siteRepository->add($site);
 
 		$homePage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
 		$homePage->setTitle('Homepage');
 
-		$typoScriptTemplateHome = $this->objectManager->create('F3\TYPO3\Domain\Model\Configuration\TypoScript');
-		$typoScriptTemplateHome->setSourceCode('
-			alternativePage = Page
-			alternativePage {
-				type = "alternative"
-				title << 1.wrap("Alternative Page configuration: ", "")
-			}
-
-		');
-		$homePage->getNode()->addConfiguration($typoScriptTemplateHome);
-
-		$subPage = $contentService->createInside('subpage', 'F3\TYPO3\Domain\Model\Content\Page', $homePage);
-
-		$typoScriptTemplateSubPage = $this->objectManager->create('F3\TYPO3\Domain\Model\Configuration\TypoScript');
-		$typoScriptTemplateSubPage->setSourceCode('
-			page.title << 2.wrap("Subpage: ", "")
-
-		');
-		$subPage->getNode()->addConfiguration($typoScriptTemplateSubPage);
-*/
 		$account = $this->accountFactory->createAccountWithPassword('admin', 'password', array('Administrator'));
 		$this->accountRepository->add($account);
 

@@ -1,9 +1,5 @@
 # $Id$
 
-F3\Fluid\View\TemplateViewInterface:
-  className: F3\TYPO3\TypoScript\Template
-
-
 F3\TYPO3\TypoScript\Page:
   properties:
     view:
@@ -23,4 +19,4 @@ F3\TYPO3\TypoScript\Template:
     layoutRootPath:
       value: "package://TYPO3/Private/TypoScript/Layouts/"
     templatePathAndFilename:
-      value: "package://Flow3Typo3Org/Private/Templates/Page/Homepage.html"
+      value: "package://PhoenixDemoTypo3Org/Private/Templates/Page/Default.html"

@@ -65,10 +65,11 @@ class Text extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Returns the rendered content of this content object
 	 *
+	 * @param \F3\TypoScript\RenderingContext $renderingContext
 	 * @return string The rendered content as a string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRenderedContent() {
+	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
 		$presentationModel = array(
 			'value' => $this->getProcessedProperty('value')
 		);

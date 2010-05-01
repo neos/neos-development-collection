@@ -78,8 +78,12 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if (!isset($pageTypoScriptObject)) {
 			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptPageObject('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
 		}
+
 		$pageTypoScriptObject->setModel($page);
-		return $pageTypoScriptObject->getRenderedContent();
+		$renderingContext = $this->objectManager->create(
+			'F3\TypoScript\RenderingContext', $this->controllerContext, $this->contentContext
+		);
+		return $pageTypoScriptObject->render($renderingContext);
 	}
 
 	/**
