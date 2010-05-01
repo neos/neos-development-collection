@@ -51,7 +51,7 @@ class Text extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * @return mixed
 	 */
-	public function getRenderedContent() {
+	public function render() {
 		return $this->value;
 	}
 }

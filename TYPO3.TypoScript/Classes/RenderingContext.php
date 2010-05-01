@@ -23,24 +23,60 @@ namespace F3\TypoScript;
  *                                                                        */
 
 /**
- * Interface of a TypoScript object
+ * The TypoScript Rendering Context
+ *
+ * Instances of this class act as a container for runtime information which
+ * is potentially needed by TypoScript object during rendering time.
+ * Most importantly that's the Controller Context (which contains the current
+ * Request object and further MVC related information).
  *
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope prototype
  */
-interface ObjectInterface {
+class RenderingContext {
 
 	/**
-	 * Sets the template of the TypoScript object.
-	 *
-	 * Note that this is the template for rendering the TS object itself. Don't
-	 * mix it up with page.template etc.
-	 *
-	 * @param \F3\TYPO3\TypoScript\Template
-	 * @return void
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 */
-	public function setTypoScriptObjectTemplate(\F3\TYPO3\TypoScript\Template $template);
-	
+	protected $controllerContext;
+
+	/**
+	 * @var \F3\TYPO3\Domain\Service\ContentContext $contentContext
+	 */
+	protected $contentContext;
+
+	/**
+	 * Constructs this context container
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext,
+			  \F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$this->controllerContext = $controllerContext;
+		$this->contentContext = $contentContext;
+	}
+
+	/**
+	 * Returns the controller context
+	 *
+	 * @return \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getControllerContext() {
+		return $this->controllerContext;
+	}
+
+	/**
+	 * Returns the content context
+	 *
+	 * @return \F3\TYPO3\Domain\Service\ContentContext
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContentContext() {
+		return $this->contentContext;
+	}
 }
 ?>

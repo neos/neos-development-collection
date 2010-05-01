@@ -28,35 +28,87 @@ namespace F3\TypoScript;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject {
+abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\ContentObjectInterface {
 
 	/**
-	 * Returns the rendered content of this content object
+	 * A valid source for a TypoScript Template object which should be the default
+	 * this TypoScript object. Should be overriden by the actual TS object implementation.
 	 *
-	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var string
 	 */
-	abstract public function getRenderedContent();
+	protected $typoScriptObjectTemplateSource = '';
 
 	/**
-	 * Returns the rendered content of this content object
+	 * @var \F3\TYPO3\TypoScript\Template
+	 */
+	protected $typoScriptObjectTemplate;
+
+	/**
+	 * Names of the properties of this TypoScript which should be available in
+	 * this TS object's template while rendering it.
 	 *
-	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
+	 * Note: Make sure that a getter method for the respective property exists.
+	 *
+	 * @var array
+	 */
+	protected $presentationModelPropertyNames = array();
+
+	/**
+	 * The rendering context as passed to render()
+	 * 
+	 * @transient
+	 * @var \F3\TypoScript\RenderingContext
+	 */
+	protected $renderingContext;
+
+	/**
+	 * Injects a fresh template
+	 *
+	 * @param \F3\TYPO3\TypoScript\Template $template
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __toString() {
-		return $this->getRenderedContent();
+	public function injectTypoScriptObjectTemplate(\F3\TYPO3\TypoScript\Template $template) {
+		$this->typoScriptObjectTemplate = $template;
 	}
 
 	/**
-	 * Runs the processors chain for the given content by using the root processor chain of the
-	 * content object and returns the result value.
+	 * Overrides the TypoScript Object Template Source
 	 *
-	 * @param string $content The content to process
-	 * @result string The processed content
+	 * @param mixed $source May be a plain string, resource URI or TypoScript Template Object
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function processContent($content) {
+	public function setTypoScriptObjectTemplateSource($source) {
+		$this->typoScriptObjectTemplateSource = $source;
+	}
+
+	/**
+	 * Returns the TypoScript template source
+	 *
+	 * @return mixed
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTypoScriptObjectTemplateSource() {
+		return $this->typoScriptObjectTemplateSource;
+	}
+
+	/**
+	 * Returns the rendered content of this content object
+	 *
+	 * @param \F3\TypoScript\RenderingContext $renderingContext
+	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
+		$this->renderingContext = $renderingContext;
+
+		foreach ($this->presentationModelPropertyNames as $propertyName) {
+			$this->typoScriptObjectTemplate->assign($propertyName, $this->getProcessedProperty($propertyName, $renderingContext));
+		}
+		$this->typoScriptObjectTemplate->setSource($this->typoScriptObjectTemplateSource);
+		$content = $this->typoScriptObjectTemplate->render($renderingContext);
+
 		if (!isset($this->propertyProcessorChains['_root'])) return $content;
 		return $this->propertyProcessorChains['_root']->process($content);
 	}

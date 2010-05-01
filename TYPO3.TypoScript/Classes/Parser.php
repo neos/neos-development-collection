@@ -577,7 +577,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 				if ($propertyName === NULL && $value === NULL) {
 					unset($objectTree[$currentKey]);
 				} else {
-					\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree[$currentKey], $propertyName, $value);
+					\F3\FLOW3\Reflection\ObjectAccess::setProperty(\F3\FLOW3\Reflection\ObjectAccess::getProperty($objectTree, $currentKey), $propertyName, $value);
 				}
 			}
 		}

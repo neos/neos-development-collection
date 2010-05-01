@@ -93,29 +93,20 @@ abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContent
 	}
 
 	/**
-	 * Renders this content array object
-	 *
-	 * @return string The assembled content of all Content Objects in the internal content array.
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getRenderedContent() {
-		return $this->getRenderedContentArray();
-	}
-
-	/**
 	 * Traverses the content array and renders the content of all TypoScript content
 	 * object it finds. The result is returned as a whole, merged in the order of the
 	 * array offsets.
 	 *
+	 * @param \F3\TypoScript\RenderingContext $renderingContext
 	 * @return string The assembled content of all Content Objects in the internal content array.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getRenderedContentArray() {
+	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
 		ksort($this->contentArray);
 		$content = '';
 		foreach ($this->contentArray as $contentItem) {
-			if ($contentItem instanceof \F3\TypoScript\AbstractContentObject) {
-				$content .= $contentItem->getRenderedContent();
+			if ($contentItem instanceof \F3\TypoScript\ContentObjectInterface) {
+				$content .= $contentItem->render($renderingContext);
 			}
 		}
 		return $content;
