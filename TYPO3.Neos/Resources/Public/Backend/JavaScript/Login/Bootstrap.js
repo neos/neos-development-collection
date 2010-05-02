@@ -12,6 +12,8 @@ F3.TYPO3.Login.Bootstrap =
 	Ext.apply(new F3.TYPO3.Application.AbstractBootstrap, {
 
 		/**
+		 * Main initializer.
+		 *
 		 * @method initialize
 		 * @return void
 		 */
@@ -24,8 +26,11 @@ F3.TYPO3.Login.Bootstrap =
 		},
 
 		/**
+		 * Initialize the Viewport
+		 * 
 		 * @method initViewport
 		 * @return void
+		 * @private
 		 */
 		initViewport: function() {
 			F3.TYPO3.Login.viewport = new F3.TYPO3.Login.Layout();

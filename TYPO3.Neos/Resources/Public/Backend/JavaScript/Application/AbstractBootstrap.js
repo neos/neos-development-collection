@@ -11,7 +11,7 @@ F3.TYPO3.Application.AbstractBootstrap = Ext.extend(Ext.util.Observable, {
 
 	/**
 	 * This method is called by the main application, and inside, you should
-	 * register event listeners as needed.
+	 * register event listeners as needed.<br />
 	 *
 	 * Example:
 	 * <pre>F3.TYPO3.Application.on([name of event], [callback], [scope]);</pre>

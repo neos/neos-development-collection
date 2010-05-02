@@ -4,7 +4,7 @@ Ext.ns("F3.TYPO3");
  * @class F3.TYPO3.Application
  * @namespace F3.TYPO3
  * @extends Ext.util.Observable
- *
+ * 
  * The main entry point which controls the lifecycle of the application.
  *
  * This is the main event handler of the application.
@@ -25,6 +25,10 @@ F3.TYPO3.Application = Ext.apply(new Ext.util.Observable, {
 	 * be used for main initialization.
 	 */
 
+	/**
+	 * List of all bootstrap objects which have been registered
+	 * @private
+	 */
 	bootstrappers: [],
 
 	/**
@@ -42,18 +46,6 @@ F3.TYPO3.Application = Ext.apply(new Ext.util.Observable, {
 	},
 
 	/**
-	 * Initialize the configuration object in F3.TYPO3.Configuration
-	 */
-	_initializeConfiguration: function() {
-		var baseTag = Ext.query('base')[0];
-		if (typeof baseTag.href == 'string') {
-			F3.TYPO3.Configuration.Application.backendBaseUri = baseTag.href + 'typo3/';
-		} else {
-			F3.TYPO3.Configuration.Application.backendBaseUri = '/typo3/';
-			console.warn("Base URI could not be extracted");
-		}
-	},
-	/**
 	 * Registers a new bootstrap class.
 	 *
 	 * Every bootstrap class needs to extend
@@ -66,9 +58,24 @@ F3.TYPO3.Application = Ext.apply(new Ext.util.Observable, {
 	registerBootstrap: function(bootstrap) {
 		this.bootstrappers.push(bootstrap);
 	},
+	
+	/**
+	 * Initialize the configuration object in F3.TYPO3.Configuration
+	 * @private
+	 */
+	_initializeConfiguration: function() {
+		var baseTag = Ext.query('base')[0];
+		if (typeof baseTag.href == 'string') {
+			F3.TYPO3.Configuration.Application.backendBaseUri = baseTag.href + 'typo3/';
+		} else {
+			F3.TYPO3.Configuration.Application.backendBaseUri = '/typo3/';
+			console.warn("Base URI could not be extracted");
+		}
+	},
 
 	/**
 	 * Invoke the registered bootstrappers.
+	 * @private
 	 */
 	_invokeBootstrappers: function() {
 		Ext.each(

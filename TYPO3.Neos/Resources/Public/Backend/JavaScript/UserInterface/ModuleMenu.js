@@ -1,5 +1,10 @@
 Ext.ns("F3.TYPO3.UserInterface");
 
+/**
+ * @class F3.TYPO3.UserInterface.ModuleMenu
+ * @namespace F3.TYPO3.UserInterface
+ * @extends Ext.Panel
+ */
 F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 	menuId: null,
 	menuConfig: {},

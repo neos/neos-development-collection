@@ -11,6 +11,7 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 
 	/**
 	 * Language Labels
+	 * @private
 	 */
 	ll: { // TODO: Localization
 		fieldUsername: 'Username',
@@ -55,6 +56,7 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 	/**
 	 * @method onSubmitButtonClick
 	 * @return void
+	 * @private
 	 */
 	onSubmitButtonClick: function() {
 		this.getForm().submit({
@@ -70,6 +72,7 @@ F3.TYPO3.Login.LoginForm = Ext.extend(Ext.form.FormPanel, {
 	 * @param object form
 	 * @param object action
 	 * @return void
+	 * @private
 	 */
 	onLoginSuccess: function(form, action) {
 		location.href = action.result.redirectUri;

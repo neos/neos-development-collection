@@ -1,8 +1,10 @@
 Ext.ns("F3.TYPO3.UserInterface.RootlineMenu");
 /**
- * Button of the rootline menu
  * @class F3.TYPO3.UserInterface.RootlineMenu.Button
+ * @namespace F3.TYPO3.UserInterface.RootlineMenu
  * @extends Ext.Button
+ *
+ * Button of the rootline menu
  */
 F3.TYPO3.UserInterface.RootlineMenu.Button = Ext.extend(Ext.Button, {
 	enableToggle: true,

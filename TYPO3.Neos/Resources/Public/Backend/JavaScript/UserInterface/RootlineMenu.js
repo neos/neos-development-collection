@@ -4,8 +4,8 @@
  */
 Ext.ns("F3.TYPO3.UserInterface");
 /**
- *
  * @class F3.TYPO3.UserInterface.RootlineMenu
+ * @namespace F3.TYPO3.UserInterface
  * @extends Ext.Toolbar
  */
 F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
