@@ -22,6 +22,8 @@ namespace F3\TYPO3CR;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once(__DIR__ . '/Fixtures/MockStorageBackend.php');
+
 /**
  * Tests for the PathParser implementation of TYPO3CR
  *
