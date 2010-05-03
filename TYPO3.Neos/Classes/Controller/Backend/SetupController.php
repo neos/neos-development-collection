@@ -82,7 +82,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->siteRepository->add($site);
 
 		$homePage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
-		$homePage->setTitle('Homepage');
+		$homePage->setTitle('Welcome to TYPO3 Phoenix!');
 
 		$account = $this->accountFactory->createAccountWithPassword('admin', 'password', array('Administrator'));
 		$this->accountRepository->add($account);

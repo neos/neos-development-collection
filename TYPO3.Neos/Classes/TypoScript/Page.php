@@ -143,11 +143,12 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
-	 * Sets the body content of this page.
+	 * Explicitly sets the body content of this page.
+	 * If set, this Page TypoScript Object won't use a possibly specified
+	 * template to render the body, but returns the explicitly specified
+	 * body instead.
 	 *
-	 * This may either be a plain string or a TypoScript Content Object
-	 *
-	 * @param mixed $body
+	 * @param mixed $body Either a plain string or a TypoScript Content Object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -156,13 +157,16 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
+	 * Renders the body content of this page.
 	 *
-	 * @return \F3\TYPO3\TypoScript\Body
+	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBody() {
 		if ($this->body === NULL) {
-			$this->template->setModel($this->model);
+			foreach ($this->presentationModelPropertyNames as $propertyName) {
+				$this->template->assign($propertyName, $this->getProcessedProperty($propertyName, $this->renderingContext));
+			}
 			return $this->template->renderSection('body', $this->renderingContext);
 		} else {
 			return $this->body;

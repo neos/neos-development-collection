@@ -44,12 +44,12 @@ class Template extends \F3\TypoScript\AbstractObject {
 	protected $objectManager;
 
 	/**
-	 *
 	 * @var mixed
 	 */
 	protected $source;
 
 	/**
+	 * Variables which are exposed to the Fluid template
 	 *
 	 * @var array
 	 */
@@ -65,15 +65,19 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 *  - a package:// reference
 	 *
 	 *
-	 * @param mixed $source
+	 * @param mixed $source The Fluid template source
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setSource($source) {
 		$this->source = $source;
 	}
 
 	/**
+	 * Returns the Fluid template source.
 	 *
-	 * @return <type>
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSource() {
 		return $this->source;
@@ -100,8 +104,8 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 */
 	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
 		$this->templateParser->setConfiguration($this->buildParserConfiguration());
-
 		$parsedTemplate = $this->parseTemplate();
+
 		$variableContainer = $parsedTemplate->getVariableContainer();
 		return $parsedTemplate->render($this->buildFluidRenderingContext($renderingContext));
 	}
@@ -115,16 +119,16 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderSection($sectionName, \F3\TypoScript\RenderingContext $renderingContext) {
+		$this->templateParser->setConfiguration($this->buildParserConfiguration());
 		$parsedTemplate = $this->parseTemplate();
 
 		$sections = $parsedTemplate->getVariableContainer()->get('sections');
-		if(!array_key_exists($sectionName, $sections)) {
+		if(!isset($sections[$sectionName])) {
 			return FALSE;
 		}
-		$section = $sections[$sectionName];
 
-		$section->setRenderingContext($this->buildFluidRenderingContext($renderingContext));
-		return $section->evaluate();
+		$sections[$sectionName]->setRenderingContext($this->buildFluidRenderingContext($renderingContext));
+		return $sections[$sectionName]->evaluate();
 	}
 
 	/**
@@ -169,17 +173,13 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 * Build the rendering context
 	 *
 	 * @param \F3\TypoScript\RenderingContext $typoScriptRenderingContext
-	 * @param \F3\Fluid\Core\ViewHelper\TemplateVariableContainer $variableContainer
 	 * @return \F3\Fluid\Core\Rendering\RenderingContext
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	protected function buildFluidRenderingContext(\F3\TypoScript\RenderingContext $typoScriptRenderingContext, \F3\Fluid\Core\ViewHelper\TemplateVariableContainer $variableContainer = NULL) {
-		if ($variableContainer === NULL) {
-			$variableContainer = $this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $this->variables);
-		}
-
+	protected function buildFluidRenderingContext(\F3\TypoScript\RenderingContext $typoScriptRenderingContext) {
 		$renderingContext = $this->objectManager->create('F3\Fluid\Core\Rendering\RenderingContext');
-		$renderingContext->setTemplateVariableContainer($variableContainer);
+		$renderingContext->setTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $this->variables));
 		$renderingContext->setControllerContext($typoScriptRenderingContext->getControllerContext());
 
 		$viewHelperVariableContainer = $this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer');
