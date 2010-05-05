@@ -31,6 +31,8 @@ namespace F3\TypoScript;
 abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 
 	/**
+	 * The (usually domain) model the TypoScript Object is based on (if any)
+	 *
 	 * @var object
 	 */
 	protected $model;
@@ -43,12 +45,12 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	protected $modelType;
 
 	/**
-	 * @var array An array of \F3\TypoScript\ProcessorChain objects
+	 * @var array <\F3\TypoScript\ProcessorChain>
 	 */
 	protected $propertyProcessorChains = array();
 
 	/**
-	 * @var \F3\FLOW3\Property\Mapper $propertyMapper
+	 * @var \F3\FLOW3\Property\Mapper
 	 */
 	protected $propertyMapper;
 
@@ -64,24 +66,11 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	}
 
 	/**
-	 * Sets the template of the TypoScript object.
-	 *
-	 * Note that this is the template for rendering the TS object itself. Don't
-	 * mix it up with page.template etc.
-	 * 
-	 * @param \F3\TYPO3\TypoScript\Template
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setTypoScriptObjectTemplate(\F3\TYPO3\TypoScript\Template $template) {
-		$this->typoScriptObjectTemplate = $template;
-	}
-
-	/**
 	 * Sets the Domain Model the TypoScript object is based on.
-	 * All accesible properties of that model will become properties of the TypoScript
+	 *
+	 * All accesible properties of that model can become properties of the TypoScript
 	 * object as well. If they can be set via TypoScript depends on if a setter
-	 * method exists in the respective TypoScribt Object class.
+	 * method exists in the respective TypoScript Object class.
 	 *
 	 * @param object $model The domain model the TypoScript object is based on
 	 * @return void
@@ -96,7 +85,7 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	}
 
 	/**
-	 * Returns the Domain Model the TypoScript object is based on
+	 * Returns the model the TypoScript object is based on
 	 *
 	 * @return object The domain model the TypoScript object is based on
 	 * @author Robert Lemke <robert@typo3.org>
@@ -131,7 +120,7 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	/**
 	 * Returns the property processor chain for a specific property
 	 *
-	 * @param string $propertyName: Name of the property to return the chain of
+	 * @param string $propertyName Name of the property to return the chain of
 	 * @return \F3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
 	 * @throws \LogicException
 	 * @author Robert Lemke <robert@typo3.org>
@@ -153,33 +142,38 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	}
 
 	/**
-	 * Runs the processors chain for the specified property and returns the result value.
+	 * Returns a closure which on invoke runs the processor chain for the specified
+	 * property and returns the result value.
 	 *
 	 * @param string $propertyName Name of the property to process
 	 * @param \F3\TypoScript\RenderingContext $renderingContext
-	 * @result string The processed value of the property
+	 * @result \Closure A closure which can process the specified property
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \LogicException
 	 */
-	protected function getProcessedProperty($propertyName, \F3\TypoScript\RenderingContext $renderingContext) {
+	protected function getPropertyProcessingClosure($propertyName, \F3\TypoScript\RenderingContext $renderingContext) {
 		$getterMethodName = 'get' . ucfirst($propertyName);
 		if (!method_exists($this, $getterMethodName)) {
-			throw new \LogicException('Tried to run the processors chain for non-existing property "' . $propertyName . '".', 1179406581);
+			throw new \InvalidArgumentException('Tried to create a processing closure for non-existing getter ' . get_class($this) . '->' . $getterMethodName . '().', 1179406581);
 		}
 
 		$propertyValue = $this->$getterMethodName();
 		if ($propertyValue === NULL) {
 			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->model, $propertyName)) {
 				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->model, $propertyName);
-			} else {
-				$propertyValue = 'WARNING: Cannot access property "' . $propertyName . '" in model.';
 			}
-		} else {
+		}
+
+		$model = $this->model;
+		$processorChains = isset($this->propertyProcessorChains[$propertyName]) ? $this->propertyProcessorChains[$propertyName] : NULL;
+
+		$closure = function () use ($propertyValue, $processorChains, $renderingContext) {
 			if ($propertyValue instanceof \F3\TypoScript\ContentObjectInterface) {
 				$propertyValue = $propertyValue->render($renderingContext);
 			}
-		}
-		return (!isset($this->propertyProcessorChains[$propertyName])) ? $propertyValue : $this->propertyProcessorChains[$propertyName]->process($propertyValue);
+			return ($processorChains === NULL) ? $propertyValue : $processorChains->process($propertyValue);
+		};
+
+		return $closure;
 	}
 }
 ?>

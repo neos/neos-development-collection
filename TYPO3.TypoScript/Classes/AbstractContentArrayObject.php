@@ -53,7 +53,7 @@ abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContent
 	 *
 	 * Note: Always use isset() to check if a value is set or not.
 	 *
-	 * @param mixed $offset: The offset (index) of the value to return
+	 * @param mixed $offset The offset (index) of the value to return
 	 * @return mixed The value of the content object array with the specified offset
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

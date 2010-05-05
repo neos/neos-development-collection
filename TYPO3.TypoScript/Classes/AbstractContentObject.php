@@ -36,12 +36,12 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 *
 	 * @var string
 	 */
-	protected $typoScriptObjectTemplateSource = '';
+	protected $templateSource = '';
 
 	/**
 	 * @var \F3\TYPO3\TypoScript\Template
 	 */
-	protected $typoScriptObjectTemplate;
+	protected $template;
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in
@@ -68,29 +68,35 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectTypoScriptObjectTemplate(\F3\TYPO3\TypoScript\Template $template) {
-		$this->typoScriptObjectTemplate = $template;
+	public function injectTemplate(\F3\TYPO3\TypoScript\Template $template) {
+		$this->template = $template;
+		$this->template->setSource($this->templateSource);
 	}
 
 	/**
-	 * Overrides the TypoScript Object Template Source
+	 * Overrides the template
 	 *
-	 * @param mixed $source May be a plain string, resource URI or TypoScript Template Object
+	 * Note: You rarely want to override the actual template object - that's only
+	 *       the case if you want to use an alternative templating engine.
+	 *       If all you want is a Fluid template, then just set the templateSource
+	 *       instead of setting the template object.
+	 *
+	 * @param \F3\TYPO3\TypoScript\Template $template
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setTypoScriptObjectTemplateSource($source) {
-		$this->typoScriptObjectTemplateSource = $source;
+	public function setTemplate(\F3\TYPO3\TypoScript\Template $template) {
+		$this->template = $template;
 	}
 
 	/**
-	 * Returns the TypoScript template source
+	 * Returns the page template object
 	 *
-	 * @return mixed
+	 * @return \F3\TYPO3\TypoScript\Template
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getTypoScriptObjectTemplateSource() {
-		return $this->typoScriptObjectTemplateSource;
+	public function getTemplate() {
+		return $this->template;
 	}
 
 	/**
@@ -104,13 +110,10 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 		$this->renderingContext = $renderingContext;
 
 		foreach ($this->presentationModelPropertyNames as $propertyName) {
-			$this->typoScriptObjectTemplate->assign($propertyName, $this->getProcessedProperty($propertyName, $renderingContext));
+			$this->template->assign($propertyName, $this->getPropertyProcessingClosure($propertyName, $renderingContext));
 		}
-		$this->typoScriptObjectTemplate->setSource($this->typoScriptObjectTemplateSource);
-		$content = $this->typoScriptObjectTemplate->render($renderingContext);
-
-		if (!isset($this->propertyProcessorChains['_root'])) return $content;
-		return $this->propertyProcessorChains['_root']->process($content);
+		$content = $this->template->render($renderingContext);
+		return (isset($this->propertyProcessorChains['_root'])) ? $this->propertyProcessorChains['_root']->process($content) : $content;
 	}
 }
 ?>

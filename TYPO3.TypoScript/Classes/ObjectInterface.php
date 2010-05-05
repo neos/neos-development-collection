@@ -32,15 +32,58 @@ namespace F3\TypoScript;
 interface ObjectInterface {
 
 	/**
-	 * Sets the template of the TypoScript object.
+	 * Sets the Domain Model the TypoScript object is based on.
 	 *
-	 * Note that this is the template for rendering the TS object itself. Don't
-	 * mix it up with page.template etc.
+	 * All accesible properties of that model can become properties of the TypoScript
+	 * object as well. If they can be set via TypoScript depends on if a setter
+	 * method exists in the respective TypoScript Object class.
 	 *
-	 * @param \F3\TYPO3\TypoScript\Template
+	 * @param object $model The domain model the TypoScript object is based on
+	 * @return void
+	 * @throws \F3\TypoScript\Exception\InvalidModel if the given model is not an instance of $this->modelType
+	 */
+	public function setModel($model);
+
+	/**
+	 * Returns the model the TypoScript object is based on
+	 *
+	 * @return object The domain model the TypoScript object is based on
+	 */
+	public function getModel();
+
+	/**
+	 * Sets the property processor chain for a specific property
+	 *
+	 * @param string $propertyName Name of the property to set the chain for
+	 * @param \F3\TypoScript\ProcessorChain $propertyProcessorChain The property processor chain for that property
 	 * @return void
 	 */
-	public function setTypoScriptObjectTemplate(\F3\TYPO3\TypoScript\Template $template);
-	
+	public function setPropertyProcessorChain($propertyName, \F3\TypoScript\ProcessorChain $propertyProcessorChain);
+
+	/**
+	 * Unsets the property processor chain for a specific property
+	 *
+	 * @param string $propertyName Name of the property to unset the chain for
+	 * @return void
+	 */
+	public function unsetPropertyProcessorChain($propertyName);
+
+	/**
+	 * Returns the property processor chain for a specific property
+	 *
+	 * @param string $propertyName Name of the property to return the chain of
+	 * @return \F3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
+	 * @throws \LogicException
+	 */
+	public function getPropertyProcessorChain($propertyName);
+
+	/**
+	 * Tells if a processor chain for the given property exists
+	 *
+	 * @param string $propertyName Name of the property to check for
+	 * @return boolean TRUE if a property chain exists, otherwise FALSE
+	 */
+	public function propertyHasProcessorChain($propertyName);
+
 }
 ?>
