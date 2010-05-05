@@ -70,6 +70,30 @@ interface NodeInterface {
 	 * @return boolean TRUE if the node has child nodes, otherwise FALSE
 	 */
 	public function hasChildNodes($section = NULL);
+
+	/**
+	 * Returns the names of sections for which child nodes have been assigned.
+	 * Depending on the node type, further section names might be possible.
+	 *
+	 * @return array An array of section names which can be used for calling getChildNodes() etc.
+	 */
+	public function getUsedSectionNames();
+
+	/**
+	 * Attaches the given configuration to this node.
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface $configuration The configuration to attach
+	 * @return void
+	 */
+	public function addConfiguration(\F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface $configuration);
+
+	/**
+	 * Returns the configuration objects attached to this node.
+	 *
+	 * @return \SplObjectStorage The configuration objects
+	 */
+	public function getConfigurations();
+
 }
 
 ?>

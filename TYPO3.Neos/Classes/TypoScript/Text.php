@@ -71,7 +71,7 @@ class Text extends \F3\TypoScript\AbstractContentObject {
 	 */
 	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
 		$presentationModel = array(
-			'value' => $this->getProcessedProperty('value')
+			'value' => $this->getPropertyProcessingClosure('value')
 		);
 		$this->view->assignMultiple($presentationModel);
 		return $this->view->render();

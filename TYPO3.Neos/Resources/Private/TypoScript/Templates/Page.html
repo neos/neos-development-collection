@@ -11,11 +11,13 @@
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		{f:raw(value: head.meta)}
 		<f:base />
 		<title>{title}</title>
-		{f:raw(value: additionalHead)}
+		{f:raw(value: head.script)}
+		{f:raw(value: head.style)}
 	</head>
-	<body {bodyAttributes}>
+	<body{bodyAttributes}>
 		{f:raw(value: body)}
 	</body>
 </html>

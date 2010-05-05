@@ -84,6 +84,13 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$homePage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
 		$homePage->setTitle('Welcome to TYPO3 Phoenix!');
 
+		$text = $contentService->createInside('samplecontent', 'F3\TYPO3\Domain\Model\Content\Text', $homePage);
+		$text->setHeadline('Hello World!');
+		$text->setText('
+			<p>Probably the best you can do is write a few <strong>lines</strong>.</p>
+			<p>This content has been created on ' . \gethostname() . ' by the setup controller.</p>
+     	');
+
 		$account = $this->accountFactory->createAccountWithPassword('admin', 'password', array('Administrator'));
 		$this->accountRepository->add($account);
 

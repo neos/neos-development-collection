@@ -32,6 +32,11 @@ namespace F3\TYPO3\TypoScript;
 class Page extends \F3\TypoScript\AbstractContentObject {
 
 	/**
+	 * @var \F3\TYPO3\Domain\Model\Content\Page
+	 */
+	protected $model;
+
+	/**
 	 * @var string
 	 */
 	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Page';
@@ -39,7 +44,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * @var string
 	 */
-	protected $typoScriptObjectTemplateSource = 'package://TYPO3/Private/TypoScript/Templates/Page.html';
+	protected $templateSource = 'package://TYPO3/Private/TypoScript/Templates/Page.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in
@@ -47,7 +52,15 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('title', 'additionalHead', 'body');
+	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'sections');
+
+	/**
+	 * The type is used to distinguish between different TypoScript Page objects.
+	 * This property won't be rendered nor does it exist in the Page Domain Model.
+	 *
+	 * @var string
+	 */
+	protected $type = 'default';
 
 	/**
 	 * @var string
@@ -60,66 +73,9 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	protected $body;
 
 	/**
-	 * @var mixed
+	 * @var array
 	 */
-	protected $additionalHead;
-
-	/**
-	 * The page template
-	 * 
-	 * @var \F3\TYPO3\TypoScript\Template
-	 */
-	protected $template;
-
-	/**
-	 * The type is used to distinguish between different TypoScript Page objects.
-	 * This property won't be rendered nor does it exist in the Page Domain Model.
-	 *
-	 * @var string
-	 */
-	protected $type = 'default';
-
-	/**
-	 * Overrides the title of this page.
-	 *
-	 * @param string $title
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setTitle($title) {
-		$this->title = $title;
-	}
-
-	/**
-	 * Returns the overriden title of this page.
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getTitle() {
-		return $this->title;
-	}
-
-	/**
-	 * Sets the page template.
-	 *
-	 * @param \F3\TYPO3\TypoScript\Template $template
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setTemplate(\F3\TYPO3\TypoScript\Template $template) {
-		$this->template = $template;
-	}
-
-	/**
-	 * Returns the page template.
-	 *
-	 * @return \F3\TYPO3\TypoScript\Template
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getTemplate() {
-		return $this->template;
-	}
+	protected $head = array();
 
 	/**
 	 * Sets the type of this page.
@@ -143,10 +99,50 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
+	 * Overrides the title of this page.
+	 *
+	 * @param string $title
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setTitle($title) {
+		$this->title = $title;
+	}
+
+	/**
+	 * Returns the overriden title of this page.
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTitle() {
+		return $this->title;
+	}
+
+	/**
+	 * Sets head content of this page.
+	 *
+	 * This may either be a plain string or a TypoScript Content Object
+	 *
+	 * @param array $head
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setHead($head) {
+		$this->head = $head;
+	}
+
+	/**
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getHead() {
+		return $this->head;
+	}
+
+	/**
 	 * Explicitly sets the body content of this page.
-	 * If set, this Page TypoScript Object won't use a possibly specified
-	 * template to render the body, but returns the explicitly specified
-	 * body instead.
 	 *
 	 * @param mixed $body Either a plain string or a TypoScript Content Object
 	 * @return void
@@ -157,44 +153,32 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
-	 * Renders the body content of this page.
+	 * Returns the explicitly set body content of this page (if any).
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBody() {
-		if ($this->body === NULL) {
-			foreach ($this->presentationModelPropertyNames as $propertyName) {
-				$this->template->assign($propertyName, $this->getProcessedProperty($propertyName, $this->renderingContext));
+		return $this->body;
+	}
+
+	/**
+	 * Returns the sections used on this page.
+	 *
+	 * @return \F3\TYPO3\TypoScript\ContentArray An array of TypoScript Objectes, indexed by section names
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSections() {
+		$sections = array();
+		$pageNode = $this->model->getNode();
+		foreach ($pageNode->getUsedSectionNames() as $sectionName) {
+			foreach ($pageNode->getChildNodes($this->renderingContext->getContentContext(), $sectionName) as $childNode) {
+
+					// Preliminary:
+				$sections[$sectionName] = $childNode->getContent($this->renderingContext->getContentContext())->getText();
 			}
-			return $this->template->renderSection('body', $this->renderingContext);
-		} else {
-			return $this->body;
 		}
-	}
-
-	/**
-	 * Sets additional head content of this page.
-	 *
-	 * This may either be a plain string or a TypoScript Content Object
-	 *
-	 * @param mixed $additionalHead
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setAdditionalHead($additionalHead) {
-		$this->additionalHead = $additionalHead;
-	}
-
-	/**
-	 *
-	 * @return \F3\TYPO3\TypoScript\AdditionalHead
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getAdditionalHead() {
-		$this->template->setModel($this->model);
-		return $this->additionalHead . $this->template->renderSection('additionalHead', $this->renderingContext);
-	}
-
+		return $sections;
+  	}
 }
 ?>

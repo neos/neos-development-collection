@@ -132,6 +132,17 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	}
 
 	/**
+	 * Returns the names of sections for which child nodes have been assigned.
+	 * Depending on the node type, further section names might be possible.
+	 *
+	 * @return array An array of section names which can be used for calling getChildNodes() etc.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getUsedSectionNames() {
+		return array_keys($this->childNodes);
+	}
+
+	/**
 	 * Attaches the given configuration to this node.
 	 *
 	 * @param \F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface $configuration The configuration to attach

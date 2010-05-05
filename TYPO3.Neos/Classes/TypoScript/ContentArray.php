@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Content;
+namespace F3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,80 +23,13 @@ namespace F3\TYPO3\Domain\Model\Content;
  *                                                                        */
 
 /**
- * Domain model of a Text content element
+ * A TypoScript Content Array object
  *
- * @version $Id$
+ * @version $Id: Page.php 4264 2010-05-03 09:49:03Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
- * @entity
  */
-class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
-
-	/**
-	 * Headline for this text element
-	 * @var string
-	 * @validate Label, StringLength(maximum = 250)
-	 */
-	protected $headline = '';
-
-	/**
-	 * The text of this text element
-	 * @var string
-	 * @validate String
-	 */
-	protected $text = '';
-
-	/**
-	 * Sets the headline of this text element
-	 * 
-	 * @param string $headline
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setHeadline($headline) {
-		$this->headline = $headline;
-	}
-
-	/**
-	 * Returns the headline of this text element
-	 * 
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getHeadline() {
-		return $this->headline;
-	}
-
-	/**
-	 * Sets the body text of this text element
-	 *
-	 * @param string $text
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setText($text) {
-		$this->text = $text;
-	}
-
-	/**
-	 * Returns the body text of this text element
-	 * 
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getText() {
-		return $this->text;
-	}
-
-	/**
-	 * Returns a label for this Text element
-	 *
-	 * @return string The label
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getLabel() {
-		return ($this->headline != '') ? $this->headline : '[Untitled]';
-	}
+class ContentArray extends \F3\TypoScript\AbstractContentArrayObject {
 
 }
-
 ?>

@@ -76,6 +76,7 @@ class ContentService {
 	 * The reference may either be an existing content object (a page, text etc.) or
 	 * an object implementing the NodeInterface (eg. a Site).
 	 *
+	 * @param string $nodeName Name of the new content node
 	 * @param string $contentType Object name of the content to create
 	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created inside the given reference.
 	 * @param string $section If specified, the new content is inserted into the given section of the existing node. Note that some node types (for example "Site") don't support sections.
@@ -108,6 +109,7 @@ class ContentService {
 	 * The reference may either be an existing content object (a page, text etc.) or
 	 * an object implementing the NodeInterface (eg. a Site).
 	 *
+	 * @param string $nodeName Name of the new content node
 	 * @param string $contentType Object name of the content to create
 	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created after the given reference.
 	 * @return object The newly created content object
