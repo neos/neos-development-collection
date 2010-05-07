@@ -18,7 +18,7 @@ F3.TYPO3.Login.Layout = Ext.extend(Ext.Viewport, {
 				xtype: 'F3.TYPO3.Login.LoginForm'
 			}, {
 				region: 'center',
-				html: '<iframe src="http://flow3.typo3.org" width="100%" height="100%" name="Website"></iframe>'
+				html: '<iframe src="http://latest.phoenix.demo.typo3.org/" width="100%" height="100%" name="Website"></iframe>'
 			}]
 		};
 		Ext.apply(this, config);
