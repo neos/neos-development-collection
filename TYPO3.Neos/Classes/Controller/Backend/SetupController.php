@@ -82,13 +82,42 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->siteRepository->add($site);
 
 		$homePage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
-		$homePage->setTitle('Welcome to TYPO3 Phoenix!');
+		$homePage->setTitle('TYPO3 Phoenix');
 
-		$text = $contentService->createInside('samplecontent', 'F3\TYPO3\Domain\Model\Content\Text', $homePage);
-		$text->setHeadline('Hello World!');
-		$text->setText('
-			<p>Probably the best you can do is write a few <strong>lines</strong>.</p>
-			<p>This content has been created on ' . \gethostname() . ' by the setup controller.</p>
+		$xml = simplexml_load_file('http://search.twitter.com/search.atom?q=TYPO3+Phoenix');
+		$tweet = (string)$xml->entry->title[0];
+		
+		$method = new \ReflectionMethod($this, 'setupAction');
+		$phpCode = implode(chr(10), array_slice(explode(chr(10), str_replace("\n\t", "\n", file_get_contents(__FILE__))), $method->getStartLine() - 8, -2));
+		$phpCode = \highlight_string("<?php $phpCode", TRUE);
+
+    	$mainText1 = $contentService->createInside('text1', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'main');
+		$mainText1->setHeadline('TYPO3 Phoenix Hatched');
+		$mainText1->setText('
+			<p>The fact that you can read these lines means that TYPO3 Phoenix is able to render content.
+				This page was automatically created on ' . date('F jS \'y H:i (T)') . ' at ' . \gethostname() . ' by our demo setup controller.</p>
+     	');
+
+    	$mainText2 = $contentService->createInside('text2', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'main');
+		$mainText2->setHeadline('TypoScript');
+		$mainText2->setText('
+			<p>Here\'s the TypoScript template which renders this page:</p>
+			<pre><code>' . file_get_contents('package://PhoenixDemoTypo3Org/Private/TypoScripts/homepage/Root.ts2') . '</code></pre>
+		');
+
+    	$mainText3 = $contentService->createInside('text3', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'main');
+		$mainText3->setHeadline('PHP');
+		$mainText3->setText('
+			<p>The content for this page was created by this PHP code:</p>
+			<pre><code>' . $phpCode . '</code></pre>
+		');
+
+		$sideText = $contentService->createInside('samplecontent', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'secondary');
+		$sideText->setHeadline('Hello World!');
+		$sideText->setText('
+			<h2>Latest Tweet</h2>
+			<p>Here\'s the latest tweet about TYPO3 Phoenix at the time this page was created:</p>
+			<p>' . $tweet . '</p>
      	');
 
 		$account = $this->accountFactory->createAccountWithPassword('admin', 'password', array('Administrator'));

@@ -172,10 +172,11 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 		$sections = array();
 		$pageNode = $this->model->getNode();
 		foreach ($pageNode->getUsedSectionNames() as $sectionName) {
+			$sections[$sectionName] = '';
 			foreach ($pageNode->getChildNodes($this->renderingContext->getContentContext(), $sectionName) as $childNode) {
 
-					// Preliminary:
-				$sections[$sectionName] = $childNode->getContent($this->renderingContext->getContentContext())->getText();
+				// Preliminary:
+				$sections[$sectionName] .= $childNode->getContent($this->renderingContext->getContentContext())->getText();
 			}
 		}
 		return $sections;
