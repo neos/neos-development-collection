@@ -519,6 +519,11 @@ class Parser implements \F3\TypoScript\ParserInterface {
 				$pattern = '/\\' . $variableName . '(?=[^a-zA-Z0-9]|$)/';
 				$fullVariableName = implode('.', array_slice($objectPathArray, 0, -1)) . '.' . $variableName;
 				$replacement = isset($this->objectVariables[$fullVariableName]) ? $this->objectVariables[$fullVariableName] : '';
+
+				if ($replacement instanceof \F3\TypoScript\ContentObjectInterface) {
+					$replacement = '!!! TypoScript Objects as variable values are not yet supported !!!';
+				}
+
 				$subject = preg_replace($pattern, $replacement, $subject);
 			}
 		}
@@ -577,7 +582,11 @@ class Parser implements \F3\TypoScript\ParserInterface {
 				if ($propertyName === NULL && $value === NULL) {
 					unset($objectTree[$currentKey]);
 				} else {
-					\F3\FLOW3\Reflection\ObjectAccess::setProperty(\F3\FLOW3\Reflection\ObjectAccess::getProperty($objectTree, $currentKey), $propertyName, $value);
+					if (is_array($objectTree) || $objectTree instanceof \ArrayAccess) {
+						\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree[$currentKey], $propertyName, $value);
+					} else {
+						\F3\FLOW3\Reflection\ObjectAccess::setProperty(\F3\FLOW3\Reflection\ObjectAccess::getProperty($objectTree, $currentKey), $propertyName, $value);
+					}
 				}
 			}
 		}

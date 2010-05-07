@@ -274,7 +274,8 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 08
 	 *
-	 * @test
+	 * @todo Implement lazy rendering support for variable substitutions
+	 * test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture08() {
@@ -301,7 +302,8 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 09
 	 *
-	 * @test
+	 * @todo Implement lazy rendering support for variable substitutions
+	 * test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture09() {
