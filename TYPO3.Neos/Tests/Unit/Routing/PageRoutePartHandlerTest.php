@@ -67,7 +67,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matchValueReturnsFALSEIfNoNodeWithTheGivenPathExists() {
+	public function matchValueReturnsErrorValueIfNoNodeWithTheGivenPathExists() {
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
 
@@ -85,7 +85,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 
 		$result = $routePartHandler->_call('matchValue', 'foo/bar/baz');
 
-		$this->assertFalse($result);
+		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOROOTNODE, $result);
 	}
 }
 
