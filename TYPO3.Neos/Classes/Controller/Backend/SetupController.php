@@ -95,7 +95,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$mainText1->setHeadline('TYPO3 Phoenix Hatched');
 		$mainText1->setText('
 			<p>The fact that you can read these lines means that TYPO3 Phoenix is able to render content.
-				This page was automatically created on ' . date('F jS \'y H:i (T)') . ' at ' . \gethostname() . ' by our demo setup controller.</p>
+				This page was automatically created on ' . date('F jS Y H:i (T)') . ' at ' . \gethostname() . ' by our demo setup controller.</p>
      	');
 
     	$mainText2 = $contentService->createInside('text2', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'main');
@@ -113,9 +113,8 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		');
 
 		$sideText = $contentService->createInside('samplecontent', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'secondary');
-		$sideText->setHeadline('Hello World!');
+		$sideText->setHeadline('Latest Tweet');
 		$sideText->setText('
-			<h2>Latest Tweet</h2>
 			<p>Here\'s the latest tweet about TYPO3 Phoenix at the time this page was created:</p>
 			<p>' . $tweet . '</p>
      	');
