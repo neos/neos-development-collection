@@ -1,0 +1,119 @@
+html {
+	min-height: 100%;
+	overflow: auto;
+	background: none;
+	font-size: 13px;
+}
+body, table, form {
+	font-family: Verdana,Helvetica,Arial,sans-serif;
+	font-size: 13px;
+	color: #ffffff;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	text-align: center;
+	line-height: 1.5em;
+}
+body {
+	background: #636363 -webkit-gradient(linear, left bottom, left top, color-stop(0.23, rgb(118,118,118)), color-stop(0.83, rgb(81,81,81)));
+	background: #636363 -moz-linear-gradient(center bottom, rgb(118,118,118) 23%, rgb(81,81,81) 83%);
+}
+
+/*** LOGIN SCREEN ***/
+#loginBox {
+	margin: 10% auto 0;
+	width: 400px;
+}
+#loginBox h2 {
+	text-indent: -9999px;
+	background: url(../Images/Login/typo3-logo.png) left top no-repeat;
+	width: 183px;
+	height: 60px;
+	margin: 0 0 20px 0;
+}
+#loginBox .loginContainer {
+	margin: 0px auto 0;
+	border: 1px solid #ffffff;
+	background: url(../Images/Login/bg_transparent-black.png) left top repeat;
+	padding: 20px;
+	text-align: left;
+	-webkit-box-shadow: #000000 2px 2px 15px;
+	-moz-box-shadow: #000000 2px 2px 15px;
+}
+#loginBox .loginData {
+	display: block;
+	clear: both;
+	margin: 0 0 10px 0;
+	position: relative;
+}
+#loginBox label.username,
+#loginBox label.password {
+	text-indent: -9999px;
+	width: 25px;
+	margin: 0 15px 0 0;
+	display: block;
+	float: left;
+	height: 30px;
+}
+#loginBox label.username {
+	background: url(../Images/Login/login_user.png) left 50% no-repeat;
+}
+#loginBox label.password {
+	background: url(../Images/Login/login_password.png) left 50% no-repeat;
+}
+#loginBox input[type=text],
+#loginBox input[type=password] {
+	background: #ffffff -webkit-gradient(linear, left bottom, left top, color-stop(0.62, rgb(255,252,255)), color-stop(0.95, rgb(146,146,146)));
+	background: -moz-linear-gradient(center bottom, rgb(255,252,255) 62%, rgb(146,146,146) 95%);
+	font-size: 146.5%;
+	font-weight: bold;
+	padding: 8px;
+	/*border: 2px solid #313942;*/
+	border: 0;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	width: 300px;
+}
+#loginBox input[type=submit] {
+	background: -webkit-gradient(linear, left bottom, left top, color-stop(0.62, rgb(228,228,228)), color-stop(0.95, rgb(253,253,253)));
+	background: -moz-linear-gradient(center bottom, rgb(228,228,228) 62%, rgb(253,253,253) 95%);
+	height: 30px;
+	width: 100px;
+	font-size: 146.5%;
+	font-weight: bold;
+	border: 0;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	margin: 0 0 0 40px;
+	cursor: pointer;
+}
+#loginBox a {
+	color: #ffffff;
+	text-align: right;
+	display: block;
+	margin: 4px 0 0 0;
+}
+#loginBox .loginActions a {
+	float: right;
+	margin: 10px 0 0 0;
+}
+#loginBox a:hover,
+#loginBox a:active,
+#loginBox a:focus {
+	text-decoration: none;
+}
+#loginBox .userClear,
+#loginBox .passwordClear {
+	text-indent: -9999px;
+	position: absolute;
+	right: 5px;
+	top: 3px;
+	background: url(../Images/Login/icon_delete.gif) left top no-repeat;
+	width: 15px;
+	height: 13px;
+	margin: 0;
+}
+ul.errorMessages {
+	color: #aa0000;
+	text-shadow: 1px 1px 0px #000000;
+	margin-bottom: 15px;
+}

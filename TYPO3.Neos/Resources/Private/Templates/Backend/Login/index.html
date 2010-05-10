@@ -10,18 +10,37 @@
 		<meta name="generator" content="TYPO3, http://typo3.org, &#169; The TYPO3 Development Team" />
 		<title>TYPO3 Login</title>
 		<f:base />
-		<ext:include theme="xtheme-gray" debug="TRUE" />
-		<!-- TODO: Include language file ext/src/locale/... -->
-		<typo3:includeJavaScript include="Configuration/.*\.js" subpackage="Backend" />
-		
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Utils.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application.js')}"></script>
-		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application/AbstractBootstrap.js')}"></script>
 
-		<typo3:includeJavaScript include="Login/.*\.js" subpackage="Backend" />
-
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/reset-fonts.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/Login.css')}" />
 	</head>
 	<body>
+		<div id="site">
+			<div id="loginBox">
+				<h2>TYPO3</h2>
+				<f:form action="authenticate">
+					<div class="loginContainer">
+						<f:flashMessages class="errorMessages" />
+						<div class="loginData">
+							<label class="username">User</label>
+							<input type="text" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" id="username" />
+							<a href="#" class="userClear"></a>
+						</div>
+						<div class="loginData">
+							<label class="password">Password</label>
+							<input type="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" id="password" />
+							<a href="#" class="passwordClear"></a>
+							<a href="#">Forgot Password?</a>
+						</div>
+						<div class="loginActions">
+							<input value="Login" type="submit" />
+							<a href="#">Switch to OpenID</a>
+						</div>
+					</div>
+				</f:form>
+			</div>
+		</div>
 
+		<ext:include theme="xtheme-gray" includeStylesheets="false" />
 	</body>
 </html>
