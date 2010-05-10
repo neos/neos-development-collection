@@ -101,8 +101,7 @@ body {
 #loginBox a:focus {
 	text-decoration: none;
 }
-#loginBox .userClear,
-#loginBox .passwordClear {
+#loginBox .inputClear {
 	text-indent: -9999px;
 	position: absolute;
 	right: 5px;
