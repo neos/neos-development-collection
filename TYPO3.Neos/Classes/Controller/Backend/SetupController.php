@@ -81,8 +81,8 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$site->setSiteResourcesPackageKey('PhoenixDemoTypo3Org');
 		$this->siteRepository->add($site);
 
-		$homePage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
-		$homePage->setTitle('TYPO3 Phoenix');
+		$homepage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
+		$homepage->setTitle('TYPO3 Phoenix');
 
 		$xml = simplexml_load_file('http://search.twitter.com/search.atom?q=TYPO3+Phoenix');
 		$tweet = (string)$xml->entry->title[0];
@@ -91,33 +91,44 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$phpCode = implode(chr(10), array_slice(explode(chr(10), str_replace("\n\t", "\n", file_get_contents(__FILE__))), $method->getStartLine() - 8, -2));
 		$phpCode = \highlight_string("<?php $phpCode", TRUE);
 
-    	$mainText1 = $contentService->createInside('text1', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'main');
+    	$mainText1 = $contentService->createInside('text1', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'main');
 		$mainText1->setHeadline('TYPO3 Phoenix Hatched');
 		$mainText1->setText('
 			<p>The fact that you can read these lines means that TYPO3 Phoenix is able to render content.
 				This page was automatically created on ' . date('F jS Y H:i (T)') . ' at ' . \gethostname() . ' by our demo setup controller.</p>
+			<p>There is even <a href="homepage/anotherpage.html">another page</a> which demonstrates that support for sub pages is also implemented already.</p>
      	');
 
-    	$mainText2 = $contentService->createInside('text2', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'main');
+    	$mainText2 = $contentService->createInside('text2', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'main');
 		$mainText2->setHeadline('TypoScript');
 		$mainText2->setText('
 			<p>Here\'s the TypoScript template which renders this page:</p>
 			<pre><code>' . file_get_contents('package://PhoenixDemoTypo3Org/Private/TypoScripts/homepage/Root.ts2') . '</code></pre>
 		');
 
-    	$mainText3 = $contentService->createInside('text3', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'main');
+    	$mainText3 = $contentService->createInside('text3', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'main');
 		$mainText3->setHeadline('PHP');
 		$mainText3->setText('
 			<p>The content for this page was created by this PHP code:</p>
 			<pre><code>' . $phpCode . '</code></pre>
 		');
 
-		$sideText = $contentService->createInside('samplecontent', 'F3\TYPO3\Domain\Model\Content\Text', $homePage, 'secondary');
+		$sideText = $contentService->createInside('samplecontent', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'secondary');
 		$sideText->setHeadline('Latest Tweet');
 		$sideText->setText('
 			<p>Here\'s the latest tweet about TYPO3 Phoenix at the time this page was created:</p>
 			<p>' . $tweet . '</p>
      	');
+
+		$anotherPage = $contentService->createInside('anotherpage', 'F3\TYPO3\Domain\Model\Content\Page', $homepage);
+		$anotherPage->setTitle('Another Page');
+
+    	$mainText1 = $contentService->createInside('text1', 'F3\TYPO3\Domain\Model\Content\Text', $anotherPage, 'main');
+		$mainText1->setHeadline('Want More?');
+		$mainText1->setText('
+			<p>This is another page which exists for the solely purpose to demonstrate sub pages in TYPO3 Phoenix.</p>
+     	');
+
 
 		$account = $this->accountFactory->createAccountWithPassword('admin', 'password', array('Administrator'));
 		$this->accountRepository->add($account);
