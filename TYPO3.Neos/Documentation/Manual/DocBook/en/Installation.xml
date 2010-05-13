@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>Installation</title>
+
+  <tip>
+    <para>TYPO3 Phoenix is built on top of the FLOW3 framework. If you run
+    into technical problems, feel free to check the FLOW3 documentation for
+    possible hints as well.</para>
+  </tip>
+
+  <section>
+    <title>Requirements</title>
+
+    <para>The following minimum requirements are operating system independent.
+    Developers report working setups on Debian Linux, MacOS, Windows XP and
+    Windows Vista and Windows 7.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>PHP 5.3.0 or newer (but not PHP 6)<itemizedlist>
+            <listitem>
+              <para>Modules: mbstring, pdo_sqlite</para>
+            </listitem>
+
+            <listitem>
+              <para>Configuration: magic_quotes_gpc = off</para>
+            </listitem>
+          </itemizedlist></para>
+      </listitem>
+
+      <listitem>
+        <para>A web server, one of:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Apache<itemizedlist>
+                <listitem>
+                  <para>Apache modules: mod_rewrite</para>
+                </listitem>
+
+                <listitem>
+                  <para>Apache configuration: AllowOverride FileInfo</para>
+                </listitem>
+              </itemizedlist></para>
+          </listitem>
+
+          <listitem>
+            <para>IIS7 on Windows 7 with URL Rewrite has succesfully been
+            tested as well.</para>
+          </listitem>
+
+          <listitem>
+            <para>Cherokee under Mac OS 10.6 (Snow Leopard) is working
+            fine.</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+
+    <para>Other webservers could work, but have not been tested until
+    now.<warning>
+        <para>XAMPP 1.7.2a on MacOS does <emphasis>not</emphasis> work, it
+        complains about syntax errors in the source files, probably caused by
+        a bug in the implementation of the zend string optimizer.</para>
+      </warning></para>
+  </section>
+
+  <section>
+    <title>Installation of TYPo3 Phoenix</title>
+
+    <procedure>
+      <step>
+        <para>Download the TYPO3 Phoenix Sprint Release distribution from
+        <link
+        xl:href="http://flow3.typo3.org/typo3-phoenix/download/">http://flow3.typo3.org/typo3-phoenix/download/</link></para>
+      </step>
+
+      <step>
+        <para>Unpack it to the document root of the webserver (often
+        "htdocs")<note>
+            <para>It is highly recommended to change the document root of the
+            webserver to the <filename>Web</filename> subfolder of the
+            distribution!</para>
+          </note></para>
+      </step>
+
+      <step>
+        <para>The webserver needs write permissions for some subfolders. The
+        distribution provides a helper script for Unix like operating systems,
+        which sets the permissions. Change to the top level folder of the
+        distribution, from there call the script
+        <filename>Packages/Framework/FLOW3/Scripts/setfilepermissions.sh</filename>.
+        Execute this script providing the CLI user, webserver user and
+        webserver group as parameters. On Debian Linux (Lenny) the commando
+        would look like this:</para>
+
+        <para><command>./setfilepermissions.sh
+        <replaceable>johndoe</replaceable> <replaceable>www-data</replaceable>
+        <replaceable>www-data</replaceable></command></para>
+      </step>
+
+      <step>
+        <para>To have the demo site loaded into the TYPO3 system at that
+        point, run
+        <uri>http://<replaceable>&lt;hostname&gt;/typo3/setup</replaceable></uri>
+        and wait (this may take some time on the first call, because FLOW3
+        needs to initialize itself and to create caching data) for that to
+        complete.</para>
+      </step>
+    </procedure>
+
+    <para>Now you can check if everything works by pointing your browser to
+    <uri>http://<replaceable>&lt;hostname&gt;/</replaceable></uri> . If all is
+    well you should see the start page of the TYPO3 Phoenix demo site :<figure>
+        <title>The TYPO3 Phoenix start page</title>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata contentdepth="100%" fileref="StartPage.png"
+                         scalefit="1" width="100%"/>
+            </imageobject>
+          </mediaobject>
+        </screenshot>
+      </figure></para>
+  </section>
+</chapter>

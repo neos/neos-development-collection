@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>Features</title>
+
+  <section>
+    <title>TYPO3 Phoenix Sprint Release 1</title>
+
+    <para><itemizedlist>
+        <listitem>
+          <para>Website Rendering<itemizedlist>
+              <listitem>
+                <para>Uses TypoScript templates for output processing</para>
+              </listitem>
+
+              <listitem>
+                <para>TypoScript objects use Fluid templates for actual HTML
+                output</para>
+              </listitem>
+
+              <listitem>
+                <para>Both kinds of templates (TypoScript and Fluid) are
+                file-based and contained in a package</para>
+              </listitem>
+            </itemizedlist></para>
+        </listitem>
+
+        <listitem>
+          <para>Content Editing<itemizedlist>
+              <listitem>
+                <para>The login page can be called as in earlier TYPO3
+                versions</para>
+              </listitem>
+
+              <listitem>
+                <para>On sucessful login the backend is loaded</para>
+              </listitem>
+            </itemizedlist></para>
+        </listitem>
+      </itemizedlist></para>
+  </section>
+</chapter>
