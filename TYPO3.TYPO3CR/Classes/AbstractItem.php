@@ -78,7 +78,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 	 * @api
 	 */
 	public function getName() {
-		if ($this->isNode() && $this->parentNode == NULL) {
+		if ($this->isNode() && $this->parentNode === NULL) {
 			return '';
 		}
 
@@ -211,7 +211,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 				($otherItem instanceof \F3\PHPCR\NodeInterface) &&
 				($this->getIdentifier() == $otherItem->getIdentifier())
 			);
-		} elseif ($otherItem instanceof \F3\PHPCR\PropertyInterface) {
+		} elseif ($this instanceof \F3\PHPCR\PropertyInterface) {
 			return (
 				($otherItem instanceof \F3\PHPCR\PropertyInterface) &&
 				($this->getName() == $otherItem->getName()) &&
@@ -281,7 +281,7 @@ abstract class AbstractItem implements \F3\PHPCR\ItemInterface {
 		} elseif (strpos($name, ':') !== FALSE) {
 			list($prefix, $name) = explode(':', $name, 2);
 		}
-		return preg_match(self::PATTERN_NAME, $name);
+		return (boolean)preg_match(self::PATTERN_NAME, $name);
 	}
 
 }

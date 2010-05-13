@@ -1329,7 +1329,8 @@ class Session implements \F3\PHPCR\SessionInterface {
 	protected function exportPropertiesForDocumentView(\F3\PHPCR\NodeInterface $node, \XMLWriter $xmlWriter, $includeBinary) {
 		foreach ($node->getProperties() as $property) {
 			if ($property->isMultiple()) {
-				// handle multi-valued properties
+					// handle multi-valued properties
+				throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Exporting multivalued properties in document view not yet implemented, sorry!', 1273673009);
 			} else {
 				$xmlWriter->startAttribute($property->getName());
 				$value = $property->getValue();

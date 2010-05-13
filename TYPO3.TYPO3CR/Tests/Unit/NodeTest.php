@@ -33,25 +33,21 @@ require_once('Fixtures/MockStorageBackend.php');
 class NodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\TYPO3CR\Node
-	 */
-	protected $rootNode;
-
-	/**
 	 * @var \F3\TYPO3CR\MockStorageBackend
 	 */
 	protected $mockStorageBackend;
 
 	/**
-	 * @var \F3\TYPO3CR\Session
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $session;
+	protected $mockObjectManager;
 
 	/**
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+
 		$this->mockStorageBackend = new \F3\TYPO3CR\MockStorageBackend();
 		$this->mockStorageBackend->rawRootNodesByWorkspace = array(
 			'default' => array(
@@ -171,42 +167,38 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 				)
 			)
 		);
-
-		$this->session = new \F3\TYPO3CR\Session('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory);
-		$this->rootNode = $this->session->getRootNode();
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function newNodeIsMarkedAsNew() {
-		$newNode = $this->rootNode->addNode('User', 'nt:base');
-		$this->assertTrue($newNode->isNew(), 'freshly created node is not marked new');
+	public function newNodeIsRegisteredAsNew() {
+		$session = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$session->expects($this->once())->method('registerNodeAsNew');
+
+		$rawData = array(
+			'parent' => 'fakeUuid',
+			'name' => 'User',
+			'nodetype' => 'nt:base'
+		);
+		$this->getMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes'), array($rawData, $session, $this->mockObjectManager));
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function newNodeIsNotMarkedAsModified() {
-		$newNode = $this->rootNode->addNode('User', 'nt:base');
-		$this->assertFalse($newNode->isModified(), 'freshly created node is marked modified');
-	}
+	public function newNodeIsNotRegisteredAsDirty() {
+		$session = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$session->expects($this->never())->method('registerNodeAsDirty');
 
-	/**
-	 * Checks if a Node fetched by getNodeByIdentifier() returns the expected Identifier on getIdentifier().
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getIdentifierReturnsExpectedIdentifier() {
-		$firstExpectedIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
-		$firstNode = $this->session->getNodeByIdentifier($firstExpectedIdentifier);
-		$this->assertEquals($firstExpectedIdentifier, $firstNode->getIdentifier(), 'getIdentifier() did not return the expected Identifier.');
-
-		$secondExpectedIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$secondNode = $this->session->getNodeByIdentifier($secondExpectedIdentifier);
-		$this->assertEquals($secondExpectedIdentifier, $secondNode->getIdentifier(), 'getIdentifier() did not return the expected Identifier.');
+		$rawData = array(
+			'parent' => 'fakeUuid',
+			'name' => 'User',
+			'nodetype' => 'nt:base'
+		);
+		$this->getMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes'), array($rawData, $session, $this->mockObjectManager));
 	}
 
 	/**
@@ -216,64 +208,17 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getReferencesReturnsNothingOnUnReferencedNode() {
-		$node = $this->session->getRootNode();
-		$references = $node->getReferences();
-		$this->assertEquals(0, $references->getSize());
-	}
+		$session = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$session->expects($this->once())->method('getStorageBackend')->will($this->returnValue($this->mockStorageBackend));
 
-	/**
-	 * Checks if getReferences returns nothing when called with a non-existant property name
-	 *
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @test
-	 */
-	public function getReferencesReturnsNothingOnNonExistantReferenceName() {
-		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
-		$references = $node->getReferences('notref');
-		$this->assertEquals(0, $references->getSize());
-	}
-
-	/**
-	 * Checks if getReferences returns exactly the one reference referencing the
-	 * given node when called without a $name parameter
-	 *
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getReferencesReturnsReferenceWithoutNameParameter() {
-		$this->markTestSkipped('reenable me!');
-		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$expectedRefSource = '96bca35d-1ef5-4a47-8b0c-0ddd69507d15';
-		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
-		$references = $node->getReferences();
-		$this->assertEquals(1, $references->getSize());
-		$reference = $references->nextProperty();
-		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), \F3\PHPCR\PropertyType::REFERENCE);
-		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
-	}
-
-	/**
-	 * Checks if getReferences returns exactly the one reference referencing the
-	 * given node when called with the correct $name parameter
-	 *
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getReferencesReturnsReferenceWithNameParameter() {
-		$this->markTestSkipped('reenable me!');
-		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$expectedRefSource = '96bca35d-1ef5-4a47-8b0c-0ddd69507d15';
-		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
-		$references = $node->getReferences('ref');
-		$this->assertEquals(1, $references->getSize());
-		$reference = $references->nextProperty();
-		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), \F3\PHPCR\PropertyType::REFERENCE);
-		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\PropertyIteratorInterface', array());
+		$rawData = array(
+			'parent' => 'fakeUuid',
+			'name' => 'User',
+			'nodetype' => 'nt:base'
+		);
+		$node = $this->getMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes'), array($rawData, $session, $this->mockObjectManager));
+		$node->getReferences();
 	}
 
 	/**
@@ -283,86 +228,17 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getWeakReferencesReturnsNothingOnUnReferencedNode() {
-		$node = $this->session->getRootNode();
-		$references = $node->getWeakReferences();
-		$this->assertEquals(0, $references->getSize());
-	}
+		$session = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$session->expects($this->once())->method('getStorageBackend')->will($this->returnValue($this->mockStorageBackend));
 
-	/**
-	 * Checks if getWeakReferences returns nothing when called with a non-existant property name
-	 *
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @test
-	 */
-	public function getWeakReferencesReturnsNothingOnNonExistantReferenceName() {
-		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
-		$references = $node->getWeakReferences('notweakref');
-		$this->assertEquals(0, $references->getSize());
-	}
-
-	/**
-	 * Checks if getWeakReferences returns exactly the one reference referencing
-	 * the given node when called without a $name parameter
-	 *
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getWeakReferencesReturnsReferenceWithoutNameParameter() {
-		$this->markTestSkipped('reenable me!');
-		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$expectedRefSource = '96bca35d-1ef5-4a47-8b0c-0ddd69507d15';
-		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
-		$references = $node->getWeakReferences();
-		$this->assertEquals(1, $references->getSize());
-		$reference = $references->nextProperty();
-		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), \F3\PHPCR\PropertyType::WEAKREFERENCE);
-		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
-	}
-
-	/**
-	 * Checks if getWeakReferences returns exactly the one reference referencing
-	 * the given node when called with the correct $name parameter
-	 *
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getWeakReferencesReturnsReferenceWithNameParameter() {
-		$this->markTestSkipped('reenable me!');
-		$expectedRefTarget = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$expectedRefSource = '96bca35d-1ef5-4a47-8b0c-0ddd69507d15';
-		$node = $this->session->getNodeByIdentifier($expectedRefTarget);
-		$references = $node->getWeakReferences('weakref');
-		$this->assertEquals(1, $references->getSize());
-		$reference = $references->nextProperty();
-		$this->assertEquals($reference->getValue()->getString(), $expectedRefTarget);
-		$this->assertEquals($reference->getType(), \F3\PHPCR\PropertyType::WEAKREFERENCE);
-		$this->assertEquals($reference->getParent()->getIdentifier(), $expectedRefSource);
-	}
-
-	/**
-	 * Checks if getProperties() returns the expected result.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getPropertiesWorks() {
-		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$properties = $node->getProperties();
-		$this->assertTrue($properties->getSize() > 1, 'getProperties() did not return a PropertyIterator with the expected size.');
-
-		foreach ($properties as $property) {
-			switch ($property->getName()) {
-				case 'title':
-					$this->assertEquals($property->getString(), 'News about the TYPO3CR', 'getProperties() did not return the expected property.');
-				break;
-				case 'jcr:uuid':
-					$this->assertEquals($node->getIdentifier(), '96bca35d-1ef5-4a47-8b0c-0ddd68507d00', 'getProperties() did not return the expected property.');
-				break;
-			}
-		}
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\PropertyIteratorInterface', array());
+		$rawData = array(
+			'parent' => 'fakeUuid',
+			'name' => 'User',
+			'nodetype' => 'nt:base'
+		);
+		$node = $this->getMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes'), array($rawData, $session, $this->mockObjectManager));
+		$node->getWeakReferences();
 	}
 
 	/**
@@ -371,8 +247,18 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function hasPropertyWorks() {
-		$newsNodeIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$newsNode = $this->session->getNodeByIdentifier($newsNodeIdentifier);
+		$this->mockObjectManager->expects($this->any())->method('create')->with('F3\PHPCR\NodeIteratorInterface', array())->will($this->returnValue(array()));
+
+		$rootNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$rawData = array(
+			'parent' => 'fakeUuid',
+			'name' => 'News',
+			'nodetype' => 'nt:base'
+		);
+		$newsNode = $this->getAccessibleMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes', 'getParent'), array($rawData, $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE), $this->mockObjectManager));
+		$newsNode->_set('properties', array('title' => 'fake-title-property'));
+		$newsNode->expects($this->any())->method('getParent')->will($this->returnValue($rootNode));
+		$rootNode->expects($this->any())->method('getNodes')->will($this->returnValue(array($newsNode)));
 
 		$this->assertTrue($newsNode->hasProperty('title'), 'Expected property was not found (1).');
 		$this->assertTrue($newsNode->hasProperty('./title'), 'Expected property was not found (2).');
@@ -383,40 +269,57 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function getPropertiesReturnsPropertyIteratorWithProperties() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\PropertyIteratorInterface', array('properties'))->will($this->returnValue('would-be-iterator'));
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('properties', array('properties'));
+		$node->_set('objectManager', $mockObjectManager);
+		$this->assertEquals('would-be-iterator', $node->getProperties());
+	}
+
+	/**
 	 * Checks if getProperty() works with various paths
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getPropertyWorks() {
-		$newsNodeIdentifier = '96bca35d-1ef5-4a47-8b0c-0ddd68507d00';
-		$newsTitleText = 'News about the TYPO3CR';
-		$newsNode = $this->session->getNodeByIdentifier($newsNodeIdentifier);
+		$rootNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$rawData = array(
+			'parent' => 'fakeUuid',
+			'name' => 'News',
+			'nodetype' => 'nt:base'
+		);
+		$newsNode = $this->getAccessibleMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes', 'getParent'), array($rawData, $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE), $this->mockObjectManager));
+		$newsNode->_set('properties', array('title' => 'fake-title-property'));
+		$newsNode->expects($this->any())->method('getParent')->will($this->returnValue($rootNode));
+		$rootNode->expects($this->any())->method('getNodes')->will($this->returnValue(array($newsNode)));
 
-		$title = $newsNode->getProperty('title');
-		$this->assertEquals($title->getString(), $newsTitleText, 'Expected property was not found (1).');
-
-		$title = $newsNode->getProperty('./title');
-		$this->assertEquals($title->getString(), $newsTitleText, 'Expected property was not found (2).');
-
-		$title = $newsNode->getProperty('../News/title');
-		$this->assertEquals($title->getString(), $newsTitleText, 'Expected property was not found (3).');
-	}
-
-	/**
-	 * Checks if getPrimaryNodeType() returns a NodeType object.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getPrimaryNodeTypeReturnsANodeType() {
-		$this->assertType('F3\PHPCR\NodeType\NodeTypeInterface', $this->rootNode->getPrimaryNodeType(), 'getPrimaryNodeType() in the node did not return a NodeType object.');
+		$this->assertEquals($newsNode->getProperty('title'), 'fake-title-property');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getPrimaryNodeTypeReturnsExpectedNodeType() {
-		$this->assertEquals('nt:base', $this->rootNode->getPrimaryNodeType()->getName(), 'getPrimaryNodeType() in the node did not return the expected NodeType.');
+	public function getPrimaryNodeTypeAsksForNodeType() {
+		$mockNodeTypeManager = $this->getMock('F3\PHPCR\NodeType\NodeTypeManagerInterface');
+		$mockNodeTypeManager->expects($this->once())->method('getNodeType')->with('nt:base');
+		$mockWorkspace = $this->getMock('F3\PHPCR\WorkspaceInterface');
+		$mockWorkspace->expects($this->once())->method('getNodeTypeManager')->will($this->returnValue($mockNodeTypeManager));
+		$session = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$session->expects($this->once())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
+		$rawData = array(
+			'parent' => 'fakeUuid',
+			'name' => 'News',
+			'nodetype' => 'nt:base'
+		);
+		$node = $this->getMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes'), array($rawData, $session, $this->mockObjectManager));
+
+		$node->getPrimaryNodeType();
 	}
 
 	/**
@@ -425,11 +328,17 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function hasNodesWorks() {
-		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
-		$this->assertTrue($node->hasNodes(), 'hasNodes() did not return TRUE for a node with child nodes.');
+		$rawData = array(
+			'parent' => 'myUuid',
+			'name' => 'News',
+			'nodetype' => 'nt:base'
+		);
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes'), array($rawData, $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE), $this->mockObjectManager));
 
-		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
 		$this->assertFalse($node->hasNodes(), 'hasNodes() did not return FALSE for a node without child nodes.');
+
+		$node->_set('nodes', array('fakeUuid'));
+		$this->assertTrue($node->hasNodes(), 'hasNodes() did not return TRUE for a node with child nodes.');
 	}
 
 	/**
@@ -438,250 +347,122 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getNodesWorks() {
-		$leaf = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$noChildNodes = $leaf->getNodes();
-		$this->assertType('F3\PHPCR\NodeIteratorInterface', $noChildNodes, 'getNodes() did not return a NodeIterator for a node without child nodes.');
+		$session = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$session->expects($this->once())->method('getNodeByIdentifier')->with('fakeUuid')->will($this->returnValue('fakeNode'));
+		$rawData = array(
+			'parent' => 'myUuid',
+			'name' => 'News',
+			'nodetype' => 'nt:base'
+		);
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes'), array($rawData, $session, $this->mockObjectManager));
+		$node->_set('nodes', array('fakeUuid'));
 
-		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
-		$childNodes = $node->getNodes();
-		$this->assertType('F3\PHPCR\NodeIteratorInterface', $childNodes, 'getNodes() did not return a NodeIterator for a node with child nodes.');
-
-		$this->assertEquals(0, $noChildNodes->getSize(), 'getNodes() did not return an empty NodeIterator for a node without child nodes.');
-		$this->assertNotEquals(0, $childNodes->getSize(), 'getNodes() returned an empty NodeIterator for a node with child nodes.');
-
-		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', $childNodes->current()->getIdentifier(), 'getNodes() did not return the expected result for a node with child nodes.');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function hasNodeReturnsTrueIfNodeExists() {
-		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
-		$this->assertTrue($node->hasNode('News'), 'hasNode() did not return TRUE for a node with the given child node.');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function hasNodeReturnsFalseIfNodeDoesNotExist() {
-		$node = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
-		$this->assertFalse($node->hasNode('nonExistingNode'), 'hasNode() did not return FALSE for a node without the given child node.');
-	}
-
-	/**
-	 * Checks if getNode() returns the expected result.
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getNodeWorks() {
-		$newsNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$this->assertEquals($newsNode->getNode('../News')->getIdentifier(), $newsNode->getIdentifier(), 'getNode() did not return the expected result.');
+		$node->getNodes();
 	}
 
 	/**
 	 * Tests if getName() returns same as last name returned by getPath()
 	 *
-	 * @author Ronny Unger <ru@php-workx.de>
-	 * @test
-	 */
-	public function getNameWorks() {
-		$leaf = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$this->assertEquals('News', $leaf->getName(), "getName() must be the same as the last item in the path");
-	}
-
-	/**
-	 * Test if the ancestor at depth = n, where n is the depth of this
-	 * item, returns this node itself.
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getAncestorOfNodeDepthWorks() {
-		$node = $this->rootNode->getNode('Content');
-		$nodeAtDepth = $node->getAncestor($node->getDepth());
-		$this->assertTrue($node->isSame($nodeAtDepth), "The ancestor of depth = n, where n is the depth of this Node must be the item itself.");
+	public function getNameReturnsNameFromDataGivenToConstructor() {
+		$session = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$rawData = array(
+			'parent' => 'myUuid',
+			'name' => 'News',
+			'nodetype' => 'nt:base'
+		);
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('initializeProperties', 'initializeNodes'), array($rawData, $session, $this->mockObjectManager));
+		$this->assertEquals('News', $node->getName());
 	}
 
 	/**
-	 * Test if getting the ancestor of depth = n, where n is greater than depth
-	 * of this node, throws an PHPCR_ItemNotFoundException for a sub node.
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
-	public function getAncestorOfGreaterDepthOnSubNodeThrowsException() {
-		$node = $this->rootNode->getNode('Content/News');
-		$node->getAncestor($node->getDepth() + 1);
+	public function getParentReturnsExistingNode() {
+		$parentNode = $this->getMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('parentNode', $parentNode);
+		$this->assertSame($parentNode, $node->getParent());
 	}
 
 	/**
-	 * Test if getting the ancestor of depth = n, where n is greater than depth
-	 * of this node, throws an PHPCR_ItemNotFoundException for a root node.
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
-	public function getAncestorOfGreaterDepthOnRootNodeThrowsException() {
-		$node = $this->rootNode;
-		$node->getAncestor($node->getDepth() + 1);
+	public function getParentReturnsInitializesNodeIfNeeded() {
+		$parentNode = $this->getMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
+		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with('parentUuid')->will($this->returnValue($parentNode));
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
+		$node->_set('parentNode', 'parentUuid');
+		$this->assertSame($parentNode, $node->getParent());
 	}
 
 	/**
-	 * Test if getting the ancestor of negative depth throws an ItemNotFoundException.
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
 	 * @test
-	 * @expectedException \F3\PHPCR\ItemNotFoundException
-	 */
-	public function getAncestorOfNegativeDepthThrowsException() {
-		$this->rootNode->getAncestor(-1);
-	}
-
-	/**
-	 * Tests if isSame() returns FALSE when retrieving an item through different
-	 * sessions
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
-	 * @todo try to fetch root node through other session
-	 * @test
-	 */
-	public function isSameReturnsTrueForSameNodes() {
-			// fetch root node "by hand"
-		$testNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d00');
-		$this->assertTrue($this->rootNode->isSame($testNode), "isSame() must return FALSE for the same item.");
-	}
-
-	/**
-	 * Tests if getParent() returns parent node
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
-	 * @test
-	 */
-	public function getParentReturnsExpectedNode() {
-		$testNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd69507d10');
-		$this->assertTrue($this->rootNode->isSame($testNode->getParent()), "getParent() of a child node does not return the parent node.");
-	}
-
-	/**
-	 * Tests if getParent() of root throws an PHPCR_ItemNotFoundException
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
-	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
 	public function getParentOfRootFails() {
-		$this->rootNode->getParent();
+		$node = $this->getMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->getParent();
 	}
 
 	/**
-	 * Tests if depth of root is 0, depth of a sub node of root is 1, and sub-sub nodes have a depth of 2
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getDepthReturnsCorrectDepth() {
-		$this->assertEquals(0, $this->rootNode->getDepth(), "getDepth() of root must be 0");
-
-		$testNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$this->assertEquals(2, $testNode->getDepth(), "getDepth() of subchild must be 2");
-
-		for ($it = $this->rootNode->getNodes(); $it->valid(); $it->next()) {
-			$this->assertEquals(1, $it->current()->getDepth(), "getDepth() of child node of root must be 1");
-		}
-	}
-
-	/**
-	 * Tests if getSession() is same as through which the Item was acquired
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
-	 * @test
-	 */
-	public function getSessionReturnsSourceSession() {
-		$this->assertSame($this->rootNode->getSession(), $this->session, "getSession() must return the Session through which the Node was acquired.");
-	}
-
-	/**
-	 * Tests if isNode() returns FALSE
-	 *
-	 * @author Ronny Unger <ru@php-workx.de>
-	 * @test
-	 */
-	public function isNodeReturnsTrue() {
-		$this->assertTrue($this->rootNode->isNode(), "isNode() must return TRUE.");
+	public function getPathReturnsSlashForRootNode() {
+		$node = $this->getMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$this->assertEquals('/', $node->getPath());
 	}
 
 	/**
 	 * Tests if getPath() returns the correct path.
 	 *
-	 * @author Ronny Unger <ru@php-workx.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getPathWithoutSameNameSiblingsWorks() {
-		$testNode = $this->session->getNodeByIdentifier('96bca35d-1ef5-4a47-8b0c-0ddd68507d00');
-		$this->assertEquals('/Content/News', $testNode->getPath(), "getPath() returns wrong result");
+		$parentNode = $this->getMock('F3\TYPO3CR\Node', array('getPath', 'getParent'), array(), '', FALSE);
+		$parentNode->expects($this->once())->method('getPath')->will($this->returnValue('/Content'));
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('getParent'), array(), '', FALSE);
+		$node->expects($this->once())->method('getParent')->will($this->returnValue($parentNode));
+		$node->_set('name', 'News');
+		$node->_set('parentNode', 'parentUuid');
+
+		$this->assertEquals('/Content/News', $node->getPath());
 	}
 
 	/**
 	 * Test if addNode() returns a Node.
 	 *
-	 * @author Thomas Peterson <info@thomas-peterson.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function addNodeReturnsANode() {
-		$newNode = $this->rootNode->addNode('User', 'nt:base');
-		$this->assertType('F3\PHPCR\NodeInterface', $newNode, 'addNode() does not return an object of type \F3\PHPCR\NodeInterface.');
-		$this->assertTrue($this->rootNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
-	}
+		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';
+		$expectedRawData = array(
+			'parent' => NULL,
+			'name' => 'new-node',
+			'nodetype' => 'nt:base',
+			'newidentifier' => $identifier
+		);
+		$mockNewNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockNewNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($identifier));
 
-	/**
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function addNodeWithSimpleRelativePathReturnsANode() {
-		$newNode = $this->rootNode->addNode('SomeItem', 'nt:base');
-		$this->assertType('F3\PHPCR\NodeInterface', $newNode, 'Function: addNode() - returns not an object from type \F3\PHPCR\NodeInterface.');
-	}
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeInterface', $expectedRawData, $mockSession)->will($this->returnValue($mockNewNode));
 
-	/**
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function addNodeWithComplexRelativePathReturnsANode() {
-		$newNode = $this->rootNode->addNode('Content/./News/SomeItem', 'nt:base');
-		$this->assertType('F3\PHPCR\NodeInterface', $newNode, 'Function: addNode() - returns not an object from type \F3\PHPCR\NodeInterface.');
-	}
-
-	/**
-	 * @author Thomas Peterson <info@thomas-peterson.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function addNodeWithComplexRelativePathReturnsNodeWithExpectedParent() {
-		$newNode = $this->rootNode->addNode('Content/./News/SomeItem', 'nt:base');
-		$expectedParentNode = $this->rootNode->getNode('Content/News');
-		$this->assertTrue($expectedParentNode->isSame($newNode->getParent()), 'After addNode() calling getParent() from the new node does not return the expected parent node.');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function addedNodeIsVisibleInSession() {
-		$newNode = $this->rootNode->addNode('User', 'nt:base');
-
-		$retrievedNode = $this->session->getNodeByIdentifier($newNode->getIdentifier());
-		$this->assertSame('User', $retrievedNode->getName(), 'added node is invisible to session');
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
+		$node->_set('objectManager', $mockObjectManager);
+		$this->assertSame($mockNewNode, $node->addNode('new-node', 'nt:base', $identifier));
 	}
 
 	/**
@@ -689,91 +470,115 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function addNodeSetsModifiedStatusOfNode() {
-		$this->rootNode->addNode('User', 'nt:base');
-		$this->assertTrue($this->rootNode->isModified(), 'addNode does not mark parent as modified');
+		$mockNewNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockNewNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('uuid'));
+
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->any())->method('create')->will($this->returnValue($mockNewNode));
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
+		$node->_set('objectManager', $mockObjectManager);
+		$mockSession->expects($this->once())->method('registerNodeAsDirty')->with($node);
+
+		$node->addNode('new-node', 'nt:base');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @expectedException \F3\PHPCR\NodeType\ConstraintViolationException
 	 */
-	public function addNodeRegistersNodeAsNewInSession() {
-		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
-		$mockSession->expects($this->once())->method('registerNodeAsNew');
-		$rootNode = $mockSession->getRootNode();
-		$rootNode->addNode('User', 'nt:base');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function addNodeRegistersParentNodeAsDirtyInSession() {
-		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('registerNodeAsDirty'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
-		$mockSession->expects($this->once())->method('registerNodeAsDirty');
-		$rootNode = $mockSession->getRootNode();
-		$rootNode->addNode('User', 'nt:base');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function removeNodeRegistersNodeAsRemovedInSession() {
-		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('registerNodeAsRemoved'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
-		$mockSession->expects($this->once())->method('registerNodeAsRemoved');
-		$rootNode = $mockSession->getRootNode();
-		$node = $rootNode->addNode('User', 'nt:base');
+	public function removeOnRootNodeThrowsException() {
+			// the root node is the one with parent === NULL, so this one is one :)
+		$node = $this->getMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
 		$node->remove();
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException \F3\PHPCR\PathNotFoundException
 	 */
-	public function removeNodeRemovesNode() {
-		$node = $this->rootNode->addNode('SomeNode', 'nt:base');
+	public function removeCallsRemoveOnChildNodes() {
+		$parentNode = $this->getMock('F3\TYPO3CR\Node', array(), array(), '', FALSE);
+		$subNode = $this->getMock('F3\TYPO3CR\Node', array(), array(), '', FALSE);
+		$subNode->expects($this->once())->method('remove');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockSession->expects($this->once())->method('getNodeByIdentifier')->with('subnodeuuid')->will($this->returnValue($subNode));
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('getParent'), array(), '', FALSE);
+		$node->expects($this->any())->method('getParent')->will($this->returnValue($parentNode));
+		$node->_set('nodes', array('subnodeuuid'));
+		$node->_set('session', $mockSession);
+		$node->_set('parentNode', $parentNode);
 		$node->remove();
-
-		$this->rootNode->getNode('SomeNode');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
-	public function removeNodeRemovesNodeInSession() {
-		$node = $this->rootNode->addNode('SomeNode', 'nt:base');
+	public function removeCallsRemoveOnProperties() {
+		$parentNode = $this->getMock('F3\TYPO3CR\Node', array(), array(), '', FALSE);
+		$property = $this->getMock('F3\PHPCR\PropertyInterface');
+		$property->expects($this->once())->method('remove');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('getParent'), array(), '', FALSE);
+		$node->expects($this->any())->method('getParent')->will($this->returnValue($parentNode));
+		$node->_set('properties', array($property));
+		$node->_set('session', $mockSession);
+		$node->_set('parentNode', $parentNode);
 		$node->remove();
-
-		$this->session->getNodeByIdentifier($node->getIdentifier());
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @test
 	 */
-	public function setPropertySetsModifiedStatusOfNode() {
-		$this->rootNode->setProperty('someprop', 1, \F3\PHPCR\PropertyType::LONG);
-		$this->assertTrue($this->rootNode->isModified(), 'setProperty does not mark parent as modified');
+	public function removeRegistersNodeAsRemovedInSession() {
+		$parentNode = $this->getMock('F3\TYPO3CR\Node', array(), array(), '', FALSE);
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('getParent'), array(), '', FALSE);
+		$node->expects($this->any())->method('getParent')->will($this->returnValue($parentNode));
+		$node->_set('session', $mockSession);
+		$node->_set('parentNode', $parentNode);
+
+		$mockSession->expects($this->once())->method('registerNodeAsRemoved')->with($node);
+
+		$node->remove();
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @test
 	 */
-	public function setPropertyIsVisibleToNode() {
-		$this->rootNode->setProperty('someprop', 'somePropValue', \F3\PHPCR\PropertyType::STRING);
-		$this->assertTrue($this->rootNode->hasProperty('someprop'), 'hasProperty returns FALSE for freshly added property');
+	public function removeCallsRemoveNodeOnParent() {
+		$parentNode = $this->getMock('F3\TYPO3CR\Node', array(), array(), '', FALSE);
+		$parentNode->expects($this->once())->method('removeNode')->with('nodeUuid');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('getParent'), array(), '', FALSE);
+		$node->expects($this->once())->method('getParent')->will($this->returnValue($parentNode));
+		$node->_set('session', $mockSession);
+		$node->_set('identifier', 'nodeUuid');
+		$node->_set('parentNode', $parentNode);
+
+		$node->remove();
 	}
 
+	/**
+	 * @test
+	 * @expectedException \F3\PHPCR\RepositoryException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setPropertyChecksNameWithIsValidName() {
+		$node = $this->getMock('F3\TYPO3CR\Node', array('isValidName'), array(), '', FALSE);
+		$node->expects($this->once())->method('isValidName')->with('invalidname')->will($this->returnValue(FALSE));
+       	$node->setProperty('invalidname', 'nt:base');
+	}
 
 	/**
 	 * Provides test data for setPropertySetsValue
@@ -783,43 +588,42 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function convertibleProperties() {
 		return array(
-			array(\F3\PHPCR\PropertyType::UNDEFINED, 'someValue', new \F3\TYPO3CR\Value('someValue', \F3\PHPCR\PropertyType::STRING)),
-			array(\F3\PHPCR\PropertyType::UNDEFINED, TRUE, new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::UNDEFINED, FALSE, new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::UNDEFINED, 12345, new \F3\TYPO3CR\Value(12345, \F3\PHPCR\PropertyType::LONG)),
-			array(\F3\PHPCR\PropertyType::STRING, 'someValue', new \F3\TYPO3CR\Value('someValue', \F3\PHPCR\PropertyType::STRING)),
-			array(\F3\PHPCR\PropertyType::STRING, 12345, new \F3\TYPO3CR\Value('12345', \F3\PHPCR\PropertyType::STRING)),
-			array(\F3\PHPCR\PropertyType::STRING, 12345.6, new \F3\TYPO3CR\Value('12345.6', \F3\PHPCR\PropertyType::STRING)),
-			array(\F3\PHPCR\PropertyType::STRING, TRUE, new \F3\TYPO3CR\Value('true', \F3\PHPCR\PropertyType::STRING)),
-			array(\F3\PHPCR\PropertyType::STRING, FALSE, new \F3\TYPO3CR\Value('false', \F3\PHPCR\PropertyType::STRING)),
-			array(\F3\PHPCR\PropertyType::BOOLEAN, TRUE, new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::BOOLEAN, FALSE, new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::LONG, -12345, new \F3\TYPO3CR\Value(-12345, \F3\PHPCR\PropertyType::LONG)),
-			array(\F3\PHPCR\PropertyType::LONG, 0, new \F3\TYPO3CR\Value(0, \F3\PHPCR\PropertyType::LONG)),
-			array(\F3\PHPCR\PropertyType::LONG, 12345, new \F3\TYPO3CR\Value(12345, \F3\PHPCR\PropertyType::LONG)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, -12345, new \F3\TYPO3CR\Value(-12345.0, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, 0, new \F3\TYPO3CR\Value(0.0, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, 12345, new \F3\TYPO3CR\Value(12345.0, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, -12345.6789, new \F3\TYPO3CR\Value(-12345.6789, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, 0.12345, new \F3\TYPO3CR\Value(0.12345, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, 12345.6789, new \F3\TYPO3CR\Value(12345.6789, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::URI, 'http://www.typo3.org', new \F3\TYPO3CR\Value('http://www.typo3.org', \F3\PHPCR\PropertyType::URI)),
-			array(\F3\PHPCR\PropertyType::WEAKREFERENCE, '96bca35d-1ef5-4a47-8b0c-0ddd68507d00', new \F3\TYPO3CR\Value('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', \F3\PHPCR\PropertyType::WEAKREFERENCE)),
-			array(\F3\PHPCR\PropertyType::DATE, new \DateTime('2008-12-24T12:34Z'), new \F3\TYPO3CR\Value(new \DateTime('2008-12-24T12:34+0000'), \F3\PHPCR\PropertyType::DATE)),
-			array(\F3\PHPCR\PropertyType::DATE, '2008-12-24T12:34Z', new \F3\TYPO3CR\Value(new \DateTime('2008-12-24T12:34+0000'), \F3\PHPCR\PropertyType::DATE)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, '3.4', new \F3\TYPO3CR\Value(3.4, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, '-3.4', new \F3\TYPO3CR\Value(-3.4, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::DOUBLE, '3.4E-10', new \F3\TYPO3CR\Value(3.4E-10, \F3\PHPCR\PropertyType::DOUBLE)),
-			array(\F3\PHPCR\PropertyType::LONG, '32345', new \F3\TYPO3CR\Value(32345, \F3\PHPCR\PropertyType::LONG)),
-			array(\F3\PHPCR\PropertyType::BOOLEAN, 'true', new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::BOOLEAN, 'trUe', new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::BOOLEAN, 'TRUE', new \F3\TYPO3CR\Value(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::BOOLEAN, 'yes', new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::BOOLEAN, '1', new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::BOOLEAN, '', new \F3\TYPO3CR\Value(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
-			array(\F3\PHPCR\PropertyType::NAME, 'nt:page', new \F3\TYPO3CR\Value('nt:page', \F3\PHPCR\PropertyType::NAME)),
-			array(\F3\PHPCR\PropertyType::NAME, 'text', new \F3\TYPO3CR\Value('text', \F3\PHPCR\PropertyType::NAME)),
-			array(\F3\PHPCR\PropertyType::REFERENCE, '96bca35d-1ef5-4a47-8b0c-0ddd69507d00', new \F3\TYPO3CR\Value('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', \F3\PHPCR\PropertyType::REFERENCE))
+			array(\F3\PHPCR\PropertyType::UNDEFINED, 'someValue', array('someValue', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::UNDEFINED, TRUE, array(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::UNDEFINED, FALSE, array(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::UNDEFINED, 12345, array(12345, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::STRING, 'someValue', array('someValue', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::STRING, 12345, array('12345', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::STRING, 12345.6, array('12345.6', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::STRING, TRUE, array('true', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::STRING, FALSE, array('false', \F3\PHPCR\PropertyType::STRING)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, TRUE, array(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, FALSE, array(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::LONG, -12345, array(-12345, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::LONG, 0, array(0, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::LONG, 12345, array(12345, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, -12345, array(-12345.0, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, 0, array(0.0, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, 12345, array(12345.0, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, -12345.6789, array(-12345.6789, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, 0.12345, array(0.12345, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, 12345.6789, array(12345.6789, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::URI, 'http://www.typo3.org', array('http://www.typo3.org', \F3\PHPCR\PropertyType::URI)),
+			array(\F3\PHPCR\PropertyType::WEAKREFERENCE, '96bca35d-1ef5-4a47-8b0c-0ddd68507d00', array('96bca35d-1ef5-4a47-8b0c-0ddd68507d00', \F3\PHPCR\PropertyType::WEAKREFERENCE)),
+			array(\F3\PHPCR\PropertyType::DATE, new \DateTime('2008-12-24T12:34Z'), array(new \DateTime('2008-12-24T12:34Z'), \F3\PHPCR\PropertyType::DATE)),
+			array(\F3\PHPCR\PropertyType::DATE, '2008-12-24T12:34Z', array(new \DateTime('2008-12-24T12:34Z'), \F3\PHPCR\PropertyType::DATE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, '3.4', array(3.4, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, '-3.4', array(-3.4, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::DOUBLE, '3.4E-10', array(3.4E-10, \F3\PHPCR\PropertyType::DOUBLE)),
+			array(\F3\PHPCR\PropertyType::LONG, '32345', array(32345, \F3\PHPCR\PropertyType::LONG)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, 'true', array(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, 'trUe', array(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, 'TRUE', array(TRUE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, 'yes', array(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, '1', array(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::BOOLEAN, '', array(FALSE, \F3\PHPCR\PropertyType::BOOLEAN)),
+			array(\F3\PHPCR\PropertyType::NAME, 'nt:page', array('nt:page', \F3\PHPCR\PropertyType::NAME)),
+			array(\F3\PHPCR\PropertyType::NAME, 'text', array('text', \F3\PHPCR\PropertyType::NAME)),
 		);
 	}
 
@@ -829,51 +633,65 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @dataProvider convertibleProperties
 	 */
-	public function setPropertySetsValue($propType, $propValue, $expectedResult) {
-		$this->rootNode->setProperty('someprop', $propValue, $propType);
-		$this->assertEquals($expectedResult, $this->rootNode->getProperty('someprop')->getValue(), 'unexpected value returned for freshly added property');
+	public function convertValueWorks($propType, $propValue, array $expectedResult) {
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockSession->expects($this->any())->method('getNamespacePrefixes')->will($this->returnValue(array('nt')));
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
+
+		$this->assertEquals($expectedResult, $node->_call('convertValue', $propValue, $propType, FALSE));
 	}
 
 	/**
-	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @test
+	 * @dataProvider convertibleProperties
 	 */
-	public function setPropertyCreatesReferenceFromNodeIfRequested() {
-		$uuid = '96bca35d-1ef5-4a47-8b0c-0ddd69507d00';
-		$expectedResult = new \F3\TYPO3CR\Value($uuid, \F3\PHPCR\PropertyType::REFERENCE);
+	public function convertValueWorksForMultiValues($propType, $propValue, array $expectedResult) {
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockSession->expects($this->any())->method('getNamespacePrefixes')->will($this->returnValue(array('nt')));
 
-			// used for REFERENCE from Node
-		$rawData = array(
-			'identifier' => $uuid,
-			'parent' => 0,
-			'name' => '',
-			'nodetype' => 'nt:base'
-		);
-		$node = new \F3\TYPO3CR\Node($rawData, $this->session, $this->objectFactory);
-		$this->rootNode->setProperty('someprop', $node, \F3\PHPCR\PropertyType::REFERENCE);
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
 
-		$this->assertEquals($expectedResult, $this->rootNode->getProperty('someprop')->getValue(), 'unexpected value returned for freshly added property');
+		$this->assertEquals(array(array($expectedResult[0]), $expectedResult[1]), $node->_call('convertValue', array($propValue), $propType, TRUE));
 	}
 
 	/**
-	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
 	 */
-	public function setPropertyCreatesReferenceFromNode() {
-		$uuid = '96bca35d-1ef5-4a47-8b0c-0ddd69507d00';
-		$expectedResult = new \F3\TYPO3CR\Value($uuid, \F3\PHPCR\PropertyType::REFERENCE);
+	public function convertValueRemovesNullFromArrays() {
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
 
-			// used for REFERENCE from Node
-		$rawData = array(
-			'identifier' => $uuid,
-			'parent' => 0,
-			'name' => '',
-			'nodetype' => 'nt:base'
-		);
-		$node = new \F3\TYPO3CR\Node($rawData, $this->session, $this->objectFactory);
-		$this->rootNode->setProperty('someprop', $node);
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
 
-		$this->assertEquals($expectedResult, $this->rootNode->getProperty('someprop')->getValue(), 'unexpected value returned for freshly added property');
+		$result = $node->_call('convertValue', array(NULL, 'hi there', NULL), \F3\PHPCR\PropertyType::STRING, TRUE);
+		$this->assertSame(array('hi there'), $result[0]);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function setPropertySetsValue() {
+		$mockProperty = $this->getMock('F3\PHPCR\PropertyInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\PropertyInterface', 'someprop')->will($this->returnValue($mockProperty));
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockSession->expects($this->once())->method('registerPropertyAsNew')->with($mockProperty);
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('convertValue'), array(), '', FALSE);
+		$node->expects($this->once())->method('convertValue')->with('value', 'type', FALSE)->will($this->returnValue(array('value', 'type')));
+		$node->_set('session', $mockSession);
+		$node->_set('objectManager', $mockObjectManager);
+
+		$mockSession->expects($this->once())->method('registerNodeAsDirty')->with($node);
+
+		$node->setProperty('someprop', 'value', 'type');
 	}
 
 	/**
@@ -894,15 +712,19 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @author Matthias Hoermann <hoermann@saltation.de>
 	 * @test
 	 * @dataProvider unconvertibleProperties
+	 * @expectedException \F3\PHPCR\ValueFormatException
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPropertyThrowsExceptionOnUnconvertibleType($propType, $propValue) {
-		try {
-			$this->rootNode->setProperty('someprop', $propValue, $propType);
-			$this->fail('setProperty() must throw exception if the given value is not convertible to the given type');
-		} catch (\F3\PHPCR\ValueFormatException $e) {}
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
+
+		$node->_call('convertValue', $propValue, $propType, FALSE);
 	}
 
 	/**
@@ -910,18 +732,9 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function setNewPropertyToNullIsIgnored() {
-		$this->rootNode->setProperty('someNewProp', NULL);
-		$this->assertFalse($this->rootNode->hasProperty('someNewProp'), 'Property added with NULL value was not ignored');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Matthias Hoermann <hoermann@saltation.de>
-	 * @test
-	 */
-	public function setPropertyCompactsArraysContainingNull() {
-		$this->rootNode->setProperty('newPropFromArray', array(NULL, 'hi there', NULL), \F3\PHPCR\PropertyType::STRING);
-		$this->assertTrue(count($this->rootNode->getProperty('newPropFromArray')->getValues()) == 1, 'setProperty() did not remove NULL values from an array');
+		$node = $this->getMock('F3\TYPO3CR\Node', array('hasProperty'), array(), '', FALSE);
+		$node->expects($this->once())->method('hasProperty')->with('someNewProp')->will($this->returnValue(FALSE));
+		$node->setProperty('someNewProp', NULL);
 	}
 
 	/**
@@ -930,40 +743,43 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function setExistingPropertyToNullRemovesIt() {
-		$this->rootNode->setProperty('someprop', 'somePropValue', \F3\PHPCR\PropertyType::STRING);
-		$this->rootNode->setProperty('someprop', NULL);
-		$this->assertFalse($this->rootNode->hasProperty('someprop'), 'hasProperty returns TRUE for removed property');
+		$mockProperty = $this->getMock('F3\PHPCR\PropertyInterface');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockSession->expects($this->once())->method('registerPropertyAsRemoved')->with($mockProperty);
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
+		$node->_set('properties', array('someprop' => $mockProperty, 'otherprop' => $mockProperty));
+
+		$mockSession->expects($this->once())->method('registerNodeAsDirty')->with($node);
+
+		$node->setProperty('someprop', NULL);
+		$this->assertEquals(array('otherprop' => $mockProperty), $node->_get('properties'));
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @expectedException \F3\PHPCR\NodeType\ConstraintViolationException
 	 */
-	public function removeOnRootNodeThrowsException() {
-		$this->rootNode->remove();
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function addNodeWithIdentifierAcceptsIdentifier() {
+	public function addNodeWithIdentifierUsesIdentifierForNewNode() {
 		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';
-		$newNode = $this->rootNode->addNode('WithIdentifier', 'nt:base', $identifier);
-		$this->assertEquals($identifier, $newNode->getIdentifier(), 'The new node did not have the expected identifier.');
-	}
+		$expectedRawData = array(
+			'parent' => NULL,
+			'name' => 'new-node',
+			'nodetype' => 'nt:base',
+			'newidentifier' => $identifier
+		);
+		$mockNewNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockNewNode->expects($this->any())->method('getIdentifier')->will($this->returnValue($identifier));
 
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function addNodeWithIdentifierRegistersNodeAsNewInSession() {
-		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('registerNodeAsNew'), array('default', $mockRepository, $this->mockStorageBackend, $this->objectFactory));
-		$mockSession->expects($this->once())->method('registerNodeAsNew');
-		$rootNode = $mockSession->getRootNode();
-		$rootNode->addNode('WithIdentifier', 'nt:base', '16bca35d-1ef5-4a47-8b0c-0ddd69507d00');
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeInterface', $expectedRawData, $mockSession)->will($this->returnValue($mockNewNode));
+
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
+		$node->_set('objectManager', $mockObjectManager);
+		$node->addNode('new-node', 'nt:base', $identifier);
 	}
 
 	/**
@@ -971,101 +787,27 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @expectedException \F3\PHPCR\ItemExistsException
 	 */
-	public function addNodeWithUsedIdentifierRejectsIdentifier() {
+	public function addNodeWithUsedIdentifierThrowsException() {
 		$identifier = '16bca35d-1ef5-4a47-8b0c-0ddd69507d00';
-		$this->rootNode->addNode('WithIdentifier', 'nt:base', $identifier);
-		$this->rootNode->addNode('AgainWithIdentifier', 'nt:base', $identifier);
-	}
+		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
+		$mockSession->expects($this->once())->method('hasIdentifier')->with($identifier)->will($this->returnValue(TRUE));
 
-	/**
-	 * Data provider for addNodeRejectsInvalidNames()
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function invalidLocalNames() {
-		$nonSpace = array(
-			array('/'),
-			array(':'),
-			array('['),
-			array(']'),
-			array('*'),
-			array('|'),
-			array(' '),
-			array(chr(9)), // tab
-			array(chr(10)), // line feed
-			array(chr(13)) // carriage return
-		);
-
-		$oneChar = $nonSpace;
-		$oneChar[] = array('');
-		$oneChar[] = array('.');
-
-		$twoChar = array();
-		foreach ($oneChar as $character) {
-			$twoChar[] = array($character[0] . $character[0]);
-			$twoChar[] = array('.' . $character[0]);
-			$twoChar[] = array($character[0] . '.');
-		}
-
-		$multiChar = array();
-		foreach ($nonSpace as $character) {
-			$multiChar[] = array($character[0] . $character[0] . $character[0]);
-			$multiChar[] = array($character[0] . 'middle' . $character[0]);
-		}
-
-		return array_merge($oneChar, $twoChar, $multiChar);
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Node', array('dummy'), array(), '', FALSE);
+		$node->_set('session', $mockSession);
+		$node->addNode('AgainWithIdentifier', 'nt:base', $identifier);
 	}
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @dataProvider invalidLocalNames
 	 * @expectedException \F3\PHPCR\RepositoryException
-	 */
-	public function addNodeRejectsInvalidNames($name) {
-		$this->rootNode->addNode($name, 'nt:base');
-	}
-
-	/**
-	 * Data provider for addNodeAcceptsValidNames(), tests some not too
-	 * obvious valid names.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function validLocalNames() {
-		return array(
-			array('. .'),
-			array('...'),
-			array('.a'),
-			array('a.'),
-			array('id')
-		);
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @dataProvider validLocalNames
-	 */
-	public function addNodeAcceptsValidNames($name) {
-		$this->rootNode->addNode($name, 'nt:base');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 * @expectedException \F3\PHPCR\ValueFormatException
-	 */
-	public function setPropertyToObjectThrowsValueFormatException() {
-		$this->rootNode->setProperty('someNewObjectProp', new \stdClass());
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 * @expectedException \F3\PHPCR\ValueFormatException
-	 */
-	public function setPropertyToReferenceWithInvalidTargetThrowsException() {
-		$this->rootNode->setProperty('invalidReference', '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00', \F3\PHPCR\PropertyType::REFERENCE);
+	public function addNodeChecksNameWithIsValidName() {
+		$node = $this->getMock('F3\TYPO3CR\Node', array('isValidName'), array(), '', FALSE);
+		$node->expects($this->once())->method('isValidName')->with('invalidname')->will($this->returnValue(FALSE));
+       	$node->addNode('invalidname', 'nt:base');
 	}
 
 }
+
 ?>

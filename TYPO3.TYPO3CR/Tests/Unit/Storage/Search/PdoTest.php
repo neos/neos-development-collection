@@ -25,7 +25,7 @@ namespace F3\TYPO3CR\Storage\Search;
 /**
  * Tests for the PDO search backend implementation of TYPO3CR.
  *
- * @version $Id: PdoTest.php -1   $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PdoTest extends \F3\Testing\BaseTestCase {
@@ -364,7 +364,7 @@ class PdoTest extends \F3\Testing\BaseTestCase {
 		$source->expects($this->once())->method('getSelectorName')->will($this->returnValue('sel'));
 		$source->expects($this->once())->method('getNodeTypeName')->will($this->returnValue('nt:base'));
 		$query = $this->getMock('F3\TYPO3CR\Query\QOM\QueryObjectModel', array(), array(), '', FALSE);
-		$query->expects($this->any())->method('getOrderings')->will($this->returnValue(array($this->getMock('\F3\PHPCR\Query\QOM\OrderingInterface'))));
+		$query->expects($this->any())->method('getOrderings')->will($this->returnValue(array($this->getMock('F3\PHPCR\Query\QOM\OrderingInterface'))));
 		$query->expects($this->once())->method('getSource')->will($this->returnValue($source));
 		$query->expects($this->once())->method('getConstraint')->will($this->returnValue(NULL));
 

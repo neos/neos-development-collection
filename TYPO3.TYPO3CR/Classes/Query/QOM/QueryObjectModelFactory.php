@@ -38,20 +38,20 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	protected $session;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * Constructs the Component Factory
 	 *
 	 * @param \F3\PHPCR\SessionInterface $session
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
+	public function __construct(\F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->session = $session;
-		$this->objectFactory = $objectFactory;
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -74,7 +74,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function createQuery(\F3\PHPCR\Query\QOM\SourceInterface $source, $constraint, array $orderings, array $columns) {
-		$query =  $this->objectFactory->create('F3\PHPCR\Query\QOM\QueryObjectModelInterface', $source, $constraint, $orderings, $columns);
+		$query =  $this->objectManager->create('F3\PHPCR\Query\QOM\QueryObjectModelInterface', $source, $constraint, $orderings, $columns);
 		$query->setSession($this->session);
 		return $query;
 	}
@@ -94,7 +94,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 		if ($selectorName === '') {
 			$selectorName = $nodeTypeName;
 		}
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\SelectorInterface', $selectorName, $nodeTypeName);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\SelectorInterface', $selectorName, $nodeTypeName);
 	}
 
 	/**
@@ -110,7 +110,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function join(\F3\PHPCR\Query\QOM\SourceInterface $left, \F3\PHPCR\Query\QOM\SourceInterface $right, $joinType, \F3\PHPCR\Query\QOM\JoinConditionInterface $joinCondition) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\JoinInterface', $left, $right, $joinType, $joinCondition);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\JoinInterface', $left, $right, $joinType, $joinCondition);
 	}
 
 	/**
@@ -156,7 +156,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function childNodeJoinCondition($childSelectorName, $parentSelectorName) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\ChildNodeJoinConditionInterface', $childSelectorName, $parentSelectorName);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\ChildNodeJoinConditionInterface', $childSelectorName, $parentSelectorName);
 	}
 
 	/**
@@ -185,7 +185,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function _and(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint1, \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\AndInterface', $constraint1, $constraint2);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\AndInterface', $constraint1, $constraint2);
 	}
 
 	/**
@@ -200,7 +200,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function _or(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint1, \F3\PHPCR\Query\QOM\ConstraintInterface $constraint2) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrInterface', $constraint1, $constraint2);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\OrInterface', $constraint1, $constraint2);
 	}
 
 	/**
@@ -214,7 +214,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function not(\F3\PHPCR\Query\QOM\ConstraintInterface $constraint) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\NotInterface', $constraint);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\NotInterface', $constraint);
 	}
 
 	/**
@@ -230,7 +230,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function comparison(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand1, $operator, \F3\PHPCR\Query\QOM\StaticOperandInterface $operand2) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\ComparisonInterface', $operand1, $operator, $operand2);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\ComparisonInterface', $operand1, $operator, $operand2);
 	}
 
 	/**
@@ -316,7 +316,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function propertyValue($propertyName, $selectorName = '') {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\PropertyValueInterface', $propertyName, $selectorName);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\PropertyValueInterface', $propertyName, $selectorName);
 	}
 
 	/**
@@ -382,7 +382,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function lowerCase(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\LowerCaseInterface', $operand);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\LowerCaseInterface', $operand);
 	}
 
 	/**
@@ -396,7 +396,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function upperCase(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\UpperCaseInterface', $operand);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\UpperCaseInterface', $operand);
 	}
 
 	/**
@@ -410,7 +410,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function bindVariable($bindVariableName) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\BindVariableValueInterface', $bindVariableName);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\BindVariableValueInterface', $bindVariableName);
 	}
 
 	/**
@@ -426,7 +426,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function literal(\F3\PHPCR\ValueInterface $literalValue) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\LiteralInterface', $literalValue->getString());
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\LiteralInterface', $literalValue->getString());
 	}
 
 	/**
@@ -441,7 +441,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function ascending(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrderingInterface', $operand, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_ASCENDING);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\OrderingInterface', $operand, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_ASCENDING);
 	}
 
 	/**
@@ -456,7 +456,7 @@ class QueryObjectModelFactory implements \F3\PHPCR\Query\QOM\QueryObjectModelFac
 	 * @api
 	 */
 	public function descending(\F3\PHPCR\Query\QOM\DynamicOperandInterface $operand) {
-		return $this->objectFactory->create('F3\PHPCR\Query\QOM\OrderingInterface', $operand, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING);
+		return $this->objectManager->create('F3\PHPCR\Query\QOM\OrderingInterface', $operand, \F3\PHPCR\Query\QOM\QueryObjectModelConstantsInterface::JCR_ORDER_DESCENDING);
 	}
 
 	/**

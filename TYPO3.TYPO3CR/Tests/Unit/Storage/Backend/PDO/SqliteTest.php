@@ -49,8 +49,7 @@ class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
-		$this->fixtureFolder = $environment->getPathToTemporaryDirectory() . 'TYPO3CR/Tests/';
+		$this->fixtureFolder = FLOW3_PATH_DATA . 'Temporary/TYPO3CR/Tests/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->fixtureFolder);
 		$this->fixtureDB = uniqid('sqlite') . '.db';
 		copy(__DIR__ . '/../../../Fixtures/TYPO3CR.db', $this->fixtureFolder . $this->fixtureDB);
@@ -75,4 +74,5 @@ class SqliteTest extends \F3\TYPO3CR\Storage\Backend\TestBase {
 		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->fixtureFolder);
 	}
 }
+
 ?>

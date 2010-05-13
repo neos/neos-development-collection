@@ -95,7 +95,7 @@ class PathParser {
 		$nodeIterator = $currentNode->getNodes();
 		$currentNameIndex = 1;
 		foreach ($nodeIterator as $currentSubNode) {
-			if ($currentSubNode->getName() == $name) {
+			if ($currentSubNode->getName() === $name) {
 				if ($currentNameIndex == $nameIndex) {
 					if ($numberOfRemainingPathParts == 0) {
 						if ($searchMode & self::SEARCH_MODE_NODES) {

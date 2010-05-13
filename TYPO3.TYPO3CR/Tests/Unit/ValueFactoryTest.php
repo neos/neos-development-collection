@@ -31,6 +31,11 @@ namespace F3\TYPO3CR;
 class ValueFactoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $mockObjectManager;
+
+	/**
 	 * @var \F3\PHPCR\ValueFactory
 	 */
 	protected $valueFactory;
@@ -39,76 +44,55 @@ class ValueFactoryTest extends \F3\Testing\BaseTestCase {
 	 * Set up the test environment
 	 */
 	public function setUp() {
-		$this->valueFactory = new \F3\TYPO3CR\ValueFactory($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'), $this->getMock('F3\PHPCR\SessionInterface'));
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$this->valueFactory = new \F3\TYPO3CR\ValueFactory($this->mockObjectManager, $this->getMock('F3\PHPCR\SessionInterface'));
 	}
 
 	/**
-	 * Checks if createValue can guess the STRING type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * data provider for createValueGuessesCorrectType
 	 */
-	public function createValueFromStringGuessesCorrectType() {
-		$value = $this->valueFactory->createValue('This is a string');
-		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::STRING, 'New Value object was not of type STRING.');
+	public function valuesAndExpectedTypes() {
+		return array(
+			array('This is a string', \F3\PHPCR\PropertyType::STRING),
+			array(10, \F3\PHPCR\PropertyType::LONG),
+			array(1.5, \F3\PHPCR\PropertyType::DOUBLE),
+			array(FALSE, \F3\PHPCR\PropertyType::BOOLEAN),
+			array(new \DateTime('2007-09-22'), \F3\PHPCR\PropertyType::DATE),
+			array(new \F3\TYPO3CR\Binary(), \F3\PHPCR\PropertyType::BINARY),
+		);
 	}
 
 	/**
-	 * Checks if createValue can guess the LONG type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @dataProvider valuesAndExpectedTypes
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createValueFromLongGuessesCorrectType() {
-		$value = $this->valueFactory->createValue(10);
-		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::LONG, 'New Value object was not of type LONG.');
+	public function createValueGuessesCorrectType($value, $expectedType) {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\ValueInterface', $value, $expectedType)->will($this->returnValue(new \F3\TYPO3CR\Value($value, $expectedType)));
+		$valueObject = $this->valueFactory->createValue($value);
+		$this->assertEquals($valueObject->getType(), $expectedType);
 	}
 
 	/**
-	 * Checks if createValue can guess the DOUBLE type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
+	 * data provider for createValueConvertsTypeIfRequested
 	 */
-	public function createValueFromDoubleGuessesCorrectType() {
-		$value = $this->valueFactory->createValue(1.5);
-		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::DOUBLE, 'New Value object was not of type DOUBLE.');
-	}
-
-	/**
-	 * Checks if createValue can guess the BOOLEAN type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function createValueFromBooleanGuessesCorrectType() {
-		$value = $this->valueFactory->createValue(FALSE);
-		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
-	}
-
-	/**
-	 * Checks if createValue can guess the DATE type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function createValueFromDateGuessesCorrectType() {
-		$value = $this->valueFactory->createValue(new \DateTime('2007-09-22'));
-		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::DATE, 'New Value object was not of type DATE.');
-	}
-
-	/**
-	 * Checks if createValue can guess the BINARY type
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function createValueFromBinaryGuessesCorrectType() {
-		$value = $this->valueFactory->createValue(new \F3\TYPO3CR\Binary());
-		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::BINARY, 'New Value object was not of type BINARY.');
+	public function valuesAndTypesAndExpectedTypes() {
+		return array(
+			array('This is a string', TRUE, \F3\PHPCR\PropertyType::BOOLEAN),
+			array('10 Euro', 10, \F3\PHPCR\PropertyType::LONG),
+			array(15, 15.0, \F3\PHPCR\PropertyType::DOUBLE),
+		);
 	}
 
 	/**
 	 * Checks if type conversion works, if requested using createValue()
+	 * @dataProvider valuesAndTypesAndExpectedTypes
 	 * @test
 	 */
-	public function createValueConvertsTypeToBooleanIfRequested() {
-		$value = $this->valueFactory->createValue('Some test string', \F3\PHPCR\PropertyType::BOOLEAN);
-		$this->assertSame($value->getType(), \F3\PHPCR\PropertyType::BOOLEAN, 'New Value object was not of type BOOLEAN.');
+	public function createValueConvertsTypeIfRequested($value, $expectedValue, $expectedType) {
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\ValueInterface', $this->identicalTo($expectedValue), $expectedType)->will($this->returnValue(new \F3\TYPO3CR\Value($value, $expectedType)));
+		$valueObject = $this->valueFactory->createValue($value, $expectedType);
+		$this->assertSame($valueObject->getType(), $expectedType);
 	}
 
 	/**
@@ -121,7 +105,8 @@ class ValueFactoryTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue(\F3\FLOW3\Utility\Algorithms::generateUUID()));
 		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
 		$mockSession->expects($this->any())->method('hasIdentifier')->will($this->returnValue(TRUE));
-		$valueFactory = new \F3\TYPO3CR\ValueFactory($this->objectFactory, $mockSession);
+		$valueFactory = new \F3\TYPO3CR\ValueFactory($this->mockObjectManager, $mockSession);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\ValueInterface', $mockNode->getIdentifier(), \F3\PHPCR\PropertyType::REFERENCE)->will($this->returnValue(new \F3\TYPO3CR\Value($mockNode->getIdentifier(), \F3\PHPCR\PropertyType::REFERENCE)));
 
 		$value = $valueFactory->createValue($mockNode);
 		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
@@ -138,7 +123,8 @@ class ValueFactoryTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue(\F3\FLOW3\Utility\Algorithms::generateUUID()));
 		$mockSession = $this->getMock('F3\TYPO3CR\Session', array(), array(), '', FALSE);
 		$mockSession->expects($this->any())->method('hasIdentifier')->will($this->returnValue(TRUE));
-		$valueFactory = new \F3\TYPO3CR\ValueFactory($this->objectFactory, $mockSession);
+		$valueFactory = new \F3\TYPO3CR\ValueFactory($this->mockObjectManager, $mockSession);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\ValueInterface', $mockNode->getIdentifier(), \F3\PHPCR\PropertyType::REFERENCE)->will($this->returnValue(new \F3\TYPO3CR\Value($mockNode->getIdentifier(), \F3\PHPCR\PropertyType::REFERENCE)));
 
 		$value = $valueFactory->createValue($mockNode, \F3\PHPCR\PropertyType::REFERENCE);
 		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::REFERENCE, 'New Value object was not of type REFERENCE.');
@@ -153,6 +139,7 @@ class ValueFactoryTest extends \F3\Testing\BaseTestCase {
 	public function createValueFromNodeObservesWeakParameter() {
 		$mockNode = $this->getMock('F3\PHPCR\NodeInterface');
 		$mockNode->expects($this->any())->method('getIdentifier')->will($this->returnValue(\F3\FLOW3\Utility\Algorithms::generateUUID()));
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\ValueInterface', $mockNode->getIdentifier(), \F3\PHPCR\PropertyType::WEAKREFERENCE)->will($this->returnValue(new \F3\TYPO3CR\Value($mockNode->getIdentifier(), \F3\PHPCR\PropertyType::WEAKREFERENCE)));
 		$value = $this->valueFactory->createValue($mockNode, NULL, TRUE);
 		$this->assertEquals($value->getType(), \F3\PHPCR\PropertyType::WEAKREFERENCE, 'New Value object was not of type WEAKREFERENCE.');
 		$this->assertEquals($value->getString(), $mockNode->getIdentifier(), 'The Value did not contain the Identifier of the passed Node object.');

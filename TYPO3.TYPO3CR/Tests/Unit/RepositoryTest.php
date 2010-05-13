@@ -50,7 +50,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$settings['search']['backend'] = 'mockSearchBackend';
 		$settings['search']['backendOptions'] = array();
 
-		$objectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactory', array(), array(), '', FALSE);
+		$objectFactory = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$objectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($mockSearchBackend, $mockStorageBackend, $mockTYPO3CRSession));
 
 		$repository = new \F3\TYPO3CR\Repository($objectFactory);
@@ -65,7 +65,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function credentialsOfInvalidTypeThrowException() {
-		$repository = new \F3\TYPO3CR\Repository($this->objectFactory);
+		$repository = new \F3\TYPO3CR\Repository($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
 		$repository->login(new \ArrayObject);
 	}
 
@@ -75,7 +75,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorKeysReturnsAnArrayOfStrings() {
-		$repository = new \F3\TYPO3CR\Repository($this->objectFactory);
+		$repository = new \F3\TYPO3CR\Repository($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
 		$descriptorKeys = $repository->getDescriptorKeys();
 		$this->assertTrue(is_array($descriptorKeys), 'The getDescriptorKeys method did not return an array.');
 		foreach ($descriptorKeys as $k => $v) {
@@ -89,7 +89,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getDescriptorReturnsCorrectVersionString() {
-		$repository = new \F3\TYPO3CR\Repository($this->objectFactory);
+		$repository = new \F3\TYPO3CR\Repository($this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
 		$descriptor = $repository->getDescriptor(\F3\TYPO3CR\Repository::SPEC_VERSION_DESC);
 		$this->assertEquals('2.0', $descriptor, 'getDescriptor(SPEC_VERSION_DESC) did not return \'2.0\'.');
 	}

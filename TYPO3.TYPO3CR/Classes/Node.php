@@ -604,8 +604,8 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 				$this->properties[$name] = $this->objectManager->create('F3\PHPCR\PropertyInterface', $name, $value, $type, $this, $this->session);
 				$this->session->registerPropertyAsNew($this->properties[$name]);
 			}
+			$this->session->registerNodeAsDirty($this);
 		}
-		$this->session->registerNodeAsDirty($this);
 	}
 
 	/**
@@ -1335,7 +1335,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 			),
 			\F3\PHPCR\PropertyType::BOOLEAN => array(
 				'boolean' => function($element, $type) { return array(TRUE, $element, $type, 'No conversion necessary'); },
-				'string' => function($element, $type) { return array(TRUE, preg_match('/^TRUE$/i', $element), $type, 'Converted string to boolean'); }
+				'string' => function($element, $type) { return array(TRUE, (boolean)preg_match('/^TRUE$/i', $element), $type, 'Converted string to boolean'); }
 			),
 			\F3\PHPCR\PropertyType::NAME => array(
 				'string' => function($element, $type) use ($self, $session) {
@@ -1404,7 +1404,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 				\F3\PHPCR\PropertyType::REFERENCE,
 				\F3\PHPCR\PropertyType::WEAKREFERENCE,
 				\F3\PHPCR\PropertyType::DATE);
-			if (is_string($value)) {
+			if (is_string($value) || (is_array($value) && is_string(current($value)))) {
 				$typesToTry[] = \F3\PHPCR\PropertyType::STRING;
 			} else {
 				$typesToTry[] = \F3\PHPCR\PropertyType::BOOLEAN;

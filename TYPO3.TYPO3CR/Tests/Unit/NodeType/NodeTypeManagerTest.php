@@ -97,10 +97,6 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\PHPCR\NodeType\InvalidNodeTypeDefinitionException
 	 */
 	public function registerNodeTypesAcceptsOnlyNodeTypeDefinitions() {
-		$mockNodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
-		$this->mockObjectManager->expects($this->any())->method('create')->with('F3\PHPCR\NodeType\NodeTypeInterface')->will($this->returnValue($mockNodeType));
-
-#		->create('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeName);
 		$input = array(
 			new \F3\TYPO3CR\NodeType\NodeTypeDefinition(),
 			'some string',
@@ -112,117 +108,94 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
+	 * @test
 	 */
 	public function registerNodeTypeReturnsNodeTypeOnSuccess() {
-		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$nodeTypeManager = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeManager', array('getNodeType'), array($this->mockStorageBackend, $this->mockObjectManager));
+		$nodeTypeManager->expects($this->once())->method('getNodeType')->with('testNodeType')->will($this->returnValue($nodeType));
 		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
 		$nodeTypeTemplate->setName('testNodeType');
-		$nodeType = $this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
-		$this->assertType('F3\PHPCR\NodeType\NodeTypeInterface', $nodeType, 'registerNodeType did not return a NodeType');
+
+		$returnedNodeType = $nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
+		$this->assertSame($nodeType, $returnedNodeType, 'registerNodeType did not return a NodeType');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
+	 * @test
 	 */
-	public function registerNodeTypeReturnsCallsStorageBackend() {
+	public function registerNodeTypeCallsStorageBackend() {
+		$nodeTypeManager = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeManager', array('getNodeType'), array($this->mockStorageBackend, $this->mockObjectManager));
+		$nodeTypeManager->expects($this->once())->method('getNodeType')->with('testNodeType');
 		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
 		$nodeTypeTemplate->setName('testNodeType');
+
 		$this->mockStorageBackend->expects($this->once())->method('addNodeType')->with($nodeTypeTemplate);
-		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
-		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
+		$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
+	 * @test
 	 * @expectedException \F3\PHPCR\NodeType\NoSuchNodeTypeException
 	 */
 	public function unregisterNodeTypeThrowsExceptionOnUnknownNodeType() {
-		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('unknownNodeTypeName')->will($this->returnValue(FALSE));
-		$this->nodeTypeManager->unregisterNodeType('unknownNodeTypeName');
+		$nodeTypeManager = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeManager', array('getNodeType'), array($this->mockStorageBackend, $this->mockObjectManager));
+		$nodeTypeManager->expects($this->once())->method('getNodeType')->with('unknownNodeTypeName')->will($this->throwException(new \F3\PHPCR\NodeType\NoSuchNodeTypeException()));
+		$nodeTypeManager->unregisterNodeType('unknownNodeTypeName');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
-	 * @expectedException \F3\PHPCR\NodeType\NoSuchNodeTypeException
+	 * @test
 	 */
 	public function unregisterNodeTypeRemovesNodeType() {
-		$this->mockStorageBackend->expects($this->exactly(2))->method('getRawNodeType')->with('testNodeTypeName')->will($this->onConsecutiveCalls(array('name' => 'testNodeTypeName'), FALSE));
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$nodeTypeManager = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeManager', array('getNodeType'), array($this->mockStorageBackend, $this->mockObjectManager));
+		$nodeTypeManager->expects($this->any())->method('getNodeType')->will($this->returnValue($nodeType));
+		$this->mockStorageBackend->expects($this->once())->method('deleteNodeType')->with('testNodeTypeName');
 		$nodeTypeDefintionTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
 		$nodeTypeDefintionTemplate->setName('testNodeTypeName');
-		$this->nodeTypeManager->registerNodeType($nodeTypeDefintionTemplate, FALSE);
-		$this->nodeTypeManager->unregisterNodeType('testNodeTypeName');
-
-		$this->nodeTypeManager->getNodeType('testNodeTypeName');
+		$nodeTypeManager->unregisterNodeType('testNodeTypeName');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
-	 */
-	public function unregisterNodeTypeReturnsCallsStorageBackend() {
-		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
-		$nodeTypeTemplate->setName('testNodeType');
-		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
-		$this->mockStorageBackend->expects($this->once())->method('deleteNodeType')->with('testNodeType');
-		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
-		$this->nodeTypeManager->unregisterNodeType('testNodeType');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
+	 * @test
 	 */
 	public function nodeTypeManagerLoadsExistingNodeTypes() {
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeType\NodeTypeInterface', 'nt:base')->will($this->returnValue($nodeType));
 		$this->mockStorageBackend->expects($this->atLeastOnce())->method('getRawNodeTypes')->will($this->returnValue(array(array('name' => 'nt:base'))));
-		$nodeTypeManager = new \F3\TYPO3CR\NodeType\NodeTypeManager($this->mockStorageBackend, $this->objectFactory);
-		$this->assertTrue($nodeTypeManager->hasNodeType('nt:base'), 'nt:base is missing');
+		new \F3\TYPO3CR\NodeType\NodeTypeManager($this->mockStorageBackend, $this->mockObjectManager);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
+	 * @test
 	 * @expectedException \F3\PHPCR\NodeType\NodeTypeExistsException
 	 */
 	public function registerNodeTypeThrowsExceptionIfNodeTypeExistsAndUpdateIsDisallowed() {
+		$nodeTypeManager = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeManager', array('hasNodeType'), array($this->mockStorageBackend, $this->mockObjectManager));
+		$nodeTypeManager->expects($this->any())->method('hasNodeType')->with('testNodeTypeName')->will($this->returnValue(TRUE));
 		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
-		$nodeTypeTemplate->setName('testNodeType');
-		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
-		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
+		$nodeTypeTemplate->setName('testNodeTypeName');
+		$nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
+	 * @test
 	 * @expectedException \F3\PHPCR\NodeType\NodeTypeExistsException
 	 */
 	public function registerNodeTypesThrowsExceptionIfNodeTypeExistsAndUpdateIsDisallowed() {
+		$nodeTypeManager = $this->getMock('F3\TYPO3CR\NodeType\NodeTypeManager', array('hasNodeType', 'registerNodeType'), array($this->mockStorageBackend, $this->mockObjectManager));
+		$nodeTypeManager->expects($this->any())->method('hasNodeType')->with('testNodeTypeName')->will($this->returnValue(TRUE));
+		$nodeTypeManager->expects($this->never())->method('registerNodeType');
 		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
-		$nodeTypeTemplate->setName('testNodeType');
-		$this->nodeTypeManager->registerNodeTypes(array($nodeTypeTemplate, $nodeTypeTemplate), FALSE);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @ test
-	 */
-	public function registerNodeTypesRegistersNothingIfNodeTypeExistsAndUpdateIsDisallowed() {
-		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
-		$nodeTypeTemplate->setName('testNodeType');
-		$this->mockStorageBackend->expects($this->once())->method('addNodeType')->with($nodeTypeTemplate);
-		$this->mockStorageBackend->expects($this->once())->method('getRawNodeType')->with('testNodeType')->will($this->returnValue(array('name' => 'testNodeType')));
-		$nodeTypeTemplate1 = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
-		$nodeTypeTemplate1->setName('testNodeType1');
-
-		$this->nodeTypeManager->registerNodeType($nodeTypeTemplate, FALSE);
-		try {
-			$this->nodeTypeManager->registerNodeTypes(array($nodeTypeTemplate1, $nodeTypeTemplate), FALSE);
-		} catch(\F3\PHPCR\NodeType\NodeTypeExistsException $e) {
-				// assertion is the addNodeType expectation, not the exception!
-		}
+		$nodeTypeTemplate->setName('testNodeTypeName');
+		$nodeTypeManager->registerNodeTypes(array($nodeTypeTemplate), FALSE);
 	}
 
 }

@@ -22,8 +22,6 @@ namespace F3\TYPO3CR;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('Fixtures/MockStorageBackend.php');
-
 /**
  * Tests for the Session implementation of TYPO3CR
  *
@@ -33,221 +31,57 @@ require_once('Fixtures/MockStorageBackend.php');
 class SessionTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\PHPCR\RepositoryInterface
-	 */
-	protected $mockRepository;
-
-	/**
-	 * @var \F3\TYPO3CR\MockStorageBackend
-	 */
-	protected $mockStorageBackend;
-
-	/**
-	 * @var \F3\TYPO3CR\MockValueFactory
-	 */
-	protected $mockValueFactory;
-
-	/**
-	 * @var \F3\TYPO3CR\Session
-	 */
-	protected $session;
-
-	/**
-	 * Set up the test environment
-	 */
-	public function setUp() {
-		$this->mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
-		$this->mockStorageBackend = new \F3\TYPO3CR\MockStorageBackend();
-		$this->mockStorageBackend->rawRootNodesByWorkspace = array(
-			'default' => array(
-				'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-				'parent' => 0,
-				'nodetype' => 'nt:base',
-				'name' => ''
-			)
-		);
-		$this->mockStorageBackend->rawNodesByIdentifierGroupedByWorkspace = array(
-			'default' => array(
-				'96bca35d-1ef5-4a47-8b0c-0ddd69507d00' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'parent' => 0,
-					'nodetype' => 'nt:base',
-					'name' => ''
-				),
-				'96bca35d-1ef5-4a47-8b0c-0dbd68507d00' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0dbd68507d00',
-					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'nodetype' => 'nt:base',
-					'name' => 'jcr:xmltext'
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d00',
-					'nodetype' => 0,
-					'name' => 'Content'
-				),
-				'96bca35d-1ef5-4a47-8b0c-0dbd65507d00' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0dbd65507d00',
-					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'nodetype' => 'nt:base',
-					'name' => 'jcr:xmltext'
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'nodetype' => 'nt:base',
-					'name' => 'News'
-				),
-				'96bca35d-1ef5-4a47-8c0c-6ddd68507d00' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
-					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'nodetype' => 'nt:base',
-					'name' => 'ExternalRefParent'
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
-					'parent' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
-					'nodetype' => 'nt:base',
-					'name' => 'WrongRefSource'
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
-					'parent' => '96bca35d-1ef5-4a47-8c0c-6ddd68507d00',
-					'nodetype' => 'nt:base',
-					'name' => 'RefSource'
-				),
-				'96bca35d-1df5-4a47-8c0c-6dde68607d00' => array(
-					'identifier' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
-					'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-					'nodetype' => 'nt:base',
-					'name' => 'InternalRefParent'
-				),
-				'96b6a351-1e35-4a47-8b0c-0d0d68507d07' => array(
-					'identifier' => '96b6a351-1e35-4a47-8b0c-0d0d68507d07',
-					'parent' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
-					'nodetype' => 'nt:base',
-					'name' => 'RefTarget'
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd69567d15' => array(
-					'identifier' => '96bca35d-1ef5-4a47-8b0c-0ddd69567d15',
-					'parent' => '96bca35d-1df5-4a47-8c0c-6dde68607d00',
-					'nodetype' => 'nt:base',
-					'name' => 'RefSource'
-				)
-			)
-		);
-		$this->mockStorageBackend->rawPropertiesByIdentifierGroupedByWorkspace = array(
-			'default' => array(
-				'96bca35d-1ef5-4a47-8b0c-0ddd68507d00' => array(
-					array(
-						'name' => 'title',
-						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-						'value' => 'News about FLOW3 & the TYPO3CR',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::STRING
-					)
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd69507d15' => array(
-					array(
-						'name' => 'ref',
-						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
-						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::REFERENCE
-					),
-					array(
-						'name' => 'weakref',
-						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d15',
-						'value' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d00',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::WEAKREFERENCE
-					)
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd68507d07' => array(
-					array(
-						'name' => 'wrongweakref',
-						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd68507d07',
-						'value' => '96bcd35d-2ef5-4a57-0b0c-0d3d69507d00',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::WEAKREFERENCE
-					)
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd69567d15' => array(
-					array(
-						'name' => 'ref',
-						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69567d15',
-						'value' => '96b6a351-1e35-4a47-8b0c-0d0d68507d07',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::REFERENCE
-					)
-				),
-				'96bca35d-1ef5-4a47-8b0c-0ddd69507d10' => array(
-					array(
-						'name' => 'binaryProperty',
-						'parent' => '96bca35d-1ef5-4a47-8b0c-0ddd69507d10',
-						'value' => 'a345öčřßa',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::BINARY
-					)
-				),
-				'96bca35d-1ef5-4a47-8b0c-0dbd68507d00' => array(
-					array(
-						'name' => 'jcr:xmlcharacters',
-						'parent' => '96bca35d-1ef5-4a47-8b0c-0dbd68507d00',
-						'value' => 'This is some XML text containing <weird> "stuff"',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::STRING
-					)
-				),
-				'96bca35d-1ef5-4a47-8b0c-0dbd65507d00' => array(
-					array(
-						'name' => 'jcr:xmlcharacters',
-						'parent' => '96bca35d-1ef5-4a47-8b0c-0dbd65507d00',
-						'value' => 'Another XML text node property',
-						'namespace' => '',
-						'multivalue' => FALSE,
-						'type' => \F3\PHPCR\PropertyType::STRING
-					)
-				)
-			)
-		);
-
-		$this->session = new \F3\TYPO3CR\Session('default', $this->mockRepository, $this->mockStorageBackend, $this->objectFactory);
-	}
-
-	/**
-	 * Checks if getRepository returns the Repository object used to create the Session object.
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getRepositoryReturnsTheCreatingRepository() {
-		$this->assertSame($this->mockRepository, $this->session->getRepository(), 'The session did not return the repository from which it was created.');
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
+		$session = new \F3\TYPO3CR\Session('default', $mockRepository, $this->getMock('F3\TYPO3CR\Storage\BackendInterface'), $this->getMock('F3\FLOW3\Object\ObjectManagerInterface'));
+		$this->assertSame($mockRepository, $session->getRepository(), 'The session did not return the repository from which it was created.');
 	}
 
 	/**
-	 * Checks if getWorkspace returns a Workspace object.
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getWorkspaceReturnsTheAssociatedWorkspace() {
-		$this->assertType('F3\PHPCR\WorkspaceInterface', $this->session->getWorkspace(), 'The session did not return a workspace object on getWorkspace().');
-		$this->assertEquals('default', $this->session->getWorkspace()->getName(), 'The session did not return the expected workspace object on getWorkspace().');
+		$mockWorkspace= $this->getMock('F3\PHPCR\WorkspaceInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('create')->with('F3\PHPCR\WorkspaceInterface', 'default')->will($this->returnValue($mockWorkspace));
+		$session = new \F3\TYPO3CR\Session('default', $this->getMock('F3\PHPCR\RepositoryInterface'), $this->getMock('F3\TYPO3CR\Storage\BackendInterface'), $mockObjectManager);
+
+		$this->assertSame($mockWorkspace, $session->getWorkspace());
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getRootNodeReturnsRootNodeOfDefaultWorkspace() {
-		$rootNode = $this->session->getRootNode();
-		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', $rootNode->getIdentifier(), 'The Identifier of the retrieved root node is not as expected.');
+	public function getValueFactoryReturnsAValueFactory() {
+		$mockValueFactory= $this->getMock('F3\PHPCR\ValueFactoryInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(1))->method('create')->with('F3\PHPCR\ValueFactoryInterface')->will($this->returnValue($mockValueFactory));
+		$session = new \F3\TYPO3CR\Session('default', $this->getMock('F3\PHPCR\RepositoryInterface'), $this->getMock('F3\TYPO3CR\Storage\BackendInterface'), $mockObjectManager);
+
+		$this->assertSame($mockValueFactory, $session->getValueFactory());
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function getRootNodeFetchesRootNodeIfNotYetFetched() {
+		$mockRootNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$mockRootNode->expects($this->once())->method('getIdentifier')->will($this->returnValue('rootUuid'));
+		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('getRawRootNode')->will($this->returnValue('would-be-raw-rootnode'));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeInterface', 'would-be-raw-rootnode')->will($this->returnValue($mockRootNode));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('objectManager', $mockObjectManager);
+		$session->_set('storageBackend', $mockStorageBackend);
+
+		$session->getRootNode();
 	}
 
 	/**
@@ -255,33 +89,43 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNodeByExistingIdentifierReturnsANode() {
-		$identifier = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
-		$node = $this->session->getNodeByIdentifier($identifier);
-		$this->assertType('F3\PHPCR\NodeInterface', $node, 'The session did not return a node object on getNodeByIdentifier(' . $identifier . ').');
-		$this->assertEquals($identifier, $node->getIdentifier(), 'The session did not return the expected node object on getNodeByIdentifier(' . $identifier . ').');
+	public function getNodeByIdentifierReturnsExistingNode() {
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('currentlyLoadedNodes', array('knownUuid' => 'would-be-known-node'));
+
+		$this->assertEquals('would-be-known-node', $session->getNodeByIdentifier('knownUuid'));
 	}
 
 	/**
-	 * Checks if getNodeByIdentifier fails properly on a non-existing node.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 * @expectedException \F3\PHPCR\ItemNotFoundException
 	 */
-	public function getNodeByNotExistingIdentifierFails() {
-		$identifier = 'hurzhurz-hurz-hurz-hurz-hurzhurzhurz';
-		$this->session->getNodeByIdentifier($identifier);
+	public function getNodeByIdentifierThrowsExceptionOnUnknownIdentifier() {
+		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('getRawNodeByIdentifier')->will($this->returnValue(FALSE));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('storageBackend', $mockStorageBackend);
+
+		$session->getNodeByIdentifier('unknownUuid');
 	}
 
 	/**
-	 * Checks of getNodeByIdentifier actually returns the requested node (determined through $node->getIdentifier()).
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
 	public function getNodeByIdentifierReturnsTheRequestedNode() {
-		$identifier = '96bca35d-1ef5-4a47-8b0c-0ddd69507d10';
-		$node = $this->session->getNodeByIdentifier($identifier);
-		$this->assertEquals($identifier, $node->getIdentifier(), 'The returned node did not have the same Identifier as requested.');
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->once())->method('getIdentifier')->will($this->returnValue('knownUuid'));
+		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('getRawNodeByIdentifier')->will($this->returnValue('would-be-raw-node'));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeInterface', 'would-be-raw-node')->will($this->returnValue($node));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('objectManager', $mockObjectManager);
+		$session->_set('storageBackend', $mockStorageBackend);
+
+		$this->assertSame($node, $session->getNodeByIdentifier('knownUuid'));
 	}
 
 	/**
@@ -290,79 +134,50 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function isLiveReturnsFalseAfterLogout() {
-		$this->session->logout();
-		$this->assertEquals(FALSE, $this->session->isLive(), 'isLive did not return FALSE after logout() has been called.');
+		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('disconnect');
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('storageBackend', $mockStorageBackend);
+		$session->logout();
+		$this->assertEquals(FALSE, $session->isLive(), 'isLive did not return FALSE after logout() has been called.');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getItemReturnsTheExpectedItems() {
-		$expectedTitle = 'News about FLOW3 & the TYPO3CR';
-		$newsItem = $this->session->getItem('Content/News/title');
-		$this->assertEquals($expectedTitle, $newsItem->getString(), 'getItem() did not return the property as expected.');
+	public function getItemFetchesTheExpectedItem() {
+		$rootNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('rootNode', $rootNode);
 
-		$expectedTitle = 'News';
-		$newsItem = $this->session->getItem('Content/News/');
-		$this->assertEquals($expectedTitle, $newsItem->getName(), 'getItem() did not return the expected node title.');
+		$this->assertSame($rootNode, $session->getItem('/'));
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getItemReturnsSameNodeAsAdded() {
-		$testPropertyNode = $this->session->getRootNode()->addNode('TestPropertyNode', 'nt:base');
-		$this->assertSame($testPropertyNode, $this->session->getItem('/TestPropertyNode'), 'The returned TestPropertyNode was not the same as the local one.');
+	public function getNodeFetchesTheExpectedNode() {
+		$rootNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$rootNode->expects($this->once())->method('getNode')->with('Content/News');
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('rootNode', $rootNode);
+
+		$session->getNode('Content/News');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function getNodeReturnsTheExpectedNode() {
-		$newsItem = $this->session->getNode('Content/News');
-		$this->assertEquals('News', $newsItem->getName(), 'It did not return the node.');
-	}
+	public function getPropertyFetchesTheExpectedProperty() {
+		$rootNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$rootNode->expects($this->once())->method('getProperty')->with('Content/News/title');
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('rootNode', $rootNode);
 
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getPropertyReturnsTheExpectedProperty() {
-		$property = $this->session->getProperty('Content/News/title');
-		$this->assertEquals('News about FLOW3 & the TYPO3CR', $property->getString(), 'getProperty() did not return the property.');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getValueFactoryReturnsAValueFactory() {
-		$this->assertType('F3\PHPCR\ValueFactoryInterface', $this->session->getValueFactory(), 'The session did not return a ValueFactory object on getValueFactory().');
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getNamespacePrefixesReturnsTheSameResultAsTheWorkspaceNamespaceRegistry() {
-		$persistentPrefixes = $this->session->getWorkspace()->getNamespaceRegistry()->getPrefixes();
-		$sessionPrefixes = $this->session->getNamespacePrefixes();
-		$this->assertEquals($persistentPrefixes, $sessionPrefixes, 'getNamespacePrefixes() did not return all the persistent namespaces.');
-	}
-
-	/**
-	 * Checks if fetching the URI for the jcr namespace prefix is as expected
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function getNamespaceURIReturnsCorrectURIForJCRPrefix() {
-		$expectedURI = 'http://www.jcp.org/jcr/1.0';
-		$returnedURI = $this->session->getNamespaceURI('jcr');
-		$this->assertEquals($expectedURI, $returnedURI, 'The namespace URI for the prefix "jcr" was not successfully received. (Received: ' . $returnedURI . ')');
+		$session->getProperty('Content/News/title');
 	}
 
 	/**
@@ -373,7 +188,8 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\PHPCR\NamespaceException
 	 */
 	public function setNamespacePrefixRejectsXML() {
-		$this->session->setNamespacePrefix('xMLtest', 'http://should.throw/exception');
+		$session = $this->getMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->setNamespacePrefix('xMLtest', 'http://should.throw/exception');
 	}
 
 	/**
@@ -384,7 +200,8 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\PHPCR\NamespaceException
 	 */
 	public function setNamespacePrefixRejectsEmptyPrefix() {
-		$this->session->setNamespacePrefix('', 'http://should.throw/exception');
+		$session = $this->getMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->setNamespacePrefix('', 'http://should.throw/exception');
 	}
 
 	/**
@@ -394,18 +211,9 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @expectedException \F3\PHPCR\NamespaceException
 	 */
-	public function setNamespacePrefixRejectsEmptyURI() {
-		$this->session->setNamespacePrefix('testprefix', '');
-	}
-
-	/**
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 * @expectedException \F3\PHPCR\NamespaceException
-	 */
-	public function getNamespaceUriThrowsExceptionIfPrefixIsUnknown() {
-		$this->session->getNamespaceUri('someNonExistingPrefix');
+	public function setNamespacePrefixRejectsEmptyUri() {
+		$session = $this->getMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->setNamespacePrefix('testprefix', '');
 	}
 
 	/**
@@ -414,15 +222,10 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function setNamespacePrefixRegistersNamespace() {
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
 		$testUri = 'http://typo3.org/jcr/test';
-		$this->session->setNamespacePrefix('localPrefixToTest', $testUri);
-		$this->assertEquals($testUri, $this->session->getNamespaceUri('localPrefixToTest'), 'Prefix was not registered!');
-
-		$this->session->setNamespacePrefix('nt', $testUri);
-		$this->assertEquals($testUri, $this->session->getNamespaceUri('nt'), 'Reregistering an already existing prefix does not work.');
-		if (in_array('localPrefixToTest', $this->session->getNamespacePrefixes())) {
-			$this->fail('Reregistering an already existing uri does not remove the existing prefix.');
-		}
+		$session->setNamespacePrefix('localPrefixToTest', $testUri);
+		$this->assertSame(array('localPrefixToTest' => $testUri), $session->_get('localNamespaceMappings'));
 	}
 
 	/**
@@ -430,14 +233,13 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function setNamespacePrefixReregistersNamespaceForExistingPrefix() {
+	public function setNamespacePrefixRemovesExistingPrefix() {
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
 		$testUri = 'http://typo3.org/jcr/test';
-		$this->session->setNamespacePrefix('localPrefixToTest', $testUri);
-		$this->session->setNamespacePrefix('nt', $testUri);
-		$this->assertEquals($testUri, $this->session->getNamespaceUri('nt'), 'Reregistering an already existing prefix does not work.');
-		if (in_array('localPrefixToTest', $this->session->getNamespacePrefixes())) {
-			$this->fail('Reregistering an already existing uri does not remove the existing prefix.');
-		}
+		$session->_set('localNamespaceMappings', array('existingPrefix' => $testUri));
+
+		$session->setNamespacePrefix('localPrefixToTest', $testUri);
+		$this->assertSame(array('localPrefixToTest' => $testUri), $session->_get('localNamespaceMappings'));
 	}
 
 	/**
@@ -445,12 +247,18 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesNewNodes() {
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
 		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
-		$mockStorageBackend->expects($this->once())->method('addNode');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->objectFactory));
-		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $mockSession, $this->objectFactory);
+		$mockStorageBackend->expects($this->once())->method('addNode')->with($node);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockSession = $this->getAccessibleMock('F3\TYPO3CR\Session', array('addPropertiesForNode'), array('default', $mockRepository, $mockStorageBackend, $mockObjectManager));
+		$mockSession->expects($this->once())->method('addPropertiesForNode')->with($node);
+		$mockSession->_set('currentlyNewNodes', array('fakeUuid' => $node));
 
-		$mockSession->registerNodeAsNew($node);
+		$mockSession->save();
+			// call again, must not find anymore new nodes
 		$mockSession->save();
 	}
 
@@ -459,12 +267,20 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesDirtyNodes() {
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
 		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
-		$mockStorageBackend->expects($this->once())->method('updateNode');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->objectFactory));
-		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $mockSession, $this->objectFactory);
+		$mockStorageBackend->expects($this->once())->method('updateNode')->with($node);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockSession = $this->getAccessibleMock('F3\TYPO3CR\Session', array('addPropertiesForNode', 'updatePropertiesForNode', 'removePropertiesForNode'), array('default', $mockRepository, $mockStorageBackend, $mockObjectManager));
+		$mockSession->expects($this->once())->method('addPropertiesForNode')->with($node);
+		$mockSession->expects($this->once())->method('updatePropertiesForNode')->with($node);
+		$mockSession->expects($this->once())->method('removePropertiesForNode')->with($node);
+		$mockSession->_set('currentlyDirtyNodes', array('fakeUuid' => $node));
 
-		$mockSession->registerNodeAsDirty($node);
+		$mockSession->save();
+			// call again, must not find anymore dirty nodes
 		$mockSession->save();
 	}
 
@@ -473,12 +289,18 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function saveProcessesRemovedNodes() {
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
 		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
-		$mockStorageBackend->expects($this->once())->method('removeNode');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->objectFactory));
-		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $mockSession, $this->objectFactory);
+		$mockStorageBackend->expects($this->once())->method('removeNode')->with($node);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockSession = $this->getAccessibleMock('F3\TYPO3CR\Session', array('removePropertiesForNode'), array('default', $mockRepository, $mockStorageBackend, $mockObjectManager));
+		$mockSession->expects($this->once())->method('removePropertiesForNode')->with($node);
+		$mockSession->_set('currentlyRemovedNodes', array('fakeUuid' => $node));
 
-		$mockSession->registerNodeAsRemoved($node);
+		$mockSession->save();
+			// call again, must not find anymore removed nodes
 		$mockSession->save();
 	}
 
@@ -486,113 +308,211 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function saveProcessesNewProperties() {
+	public function addPropertiesForNodeProcessesProperties() {
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
+		$property = $this->getMock('F3\PHPCR\PropertyInterface');
+		$property->expects($this->any())->method('getName')->will($this->returnValue('someProperty'));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
 		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
-		$mockStorageBackend->expects($this->once())->method('addProperty');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->objectFactory));
-		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $mockSession, $this->objectFactory);
+		$mockStorageBackend->expects($this->once())->method('addProperty')->with($property);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockSession = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array('default', $mockRepository, $mockStorageBackend, $mockObjectManager));
+		$mockSession->_set('currentlyNewProperties', array('fakeUuid' => array('someProperty' => $property)));
 
-		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
-		$property = new \F3\TYPO3CR\Property('someProp', 'someValue', \F3\PHPCR\PropertyType::STRING, $node, $mockSession, $mockValueFactory);
-
-		$mockSession->registerNodeAsDirty($node);
-		$mockSession->registerPropertyAsNew($property);
-		$mockSession->save();
+		$mockSession->_call('addPropertiesForNode', $node);
+			// call again, must not find anymore new properties
+		$mockSession->_call('addPropertiesForNode', $node);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function saveProcessesDirtyProperties() {
+	public function updatePropertiesForNodeProcessesProperties() {
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
+		$property = $this->getMock('F3\PHPCR\PropertyInterface');
+		$property->expects($this->any())->method('getName')->will($this->returnValue('someProperty'));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
 		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
-		$mockStorageBackend->expects($this->once())->method('updateProperty');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->objectFactory));
-		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $mockSession, $this->objectFactory);
+		$mockStorageBackend->expects($this->once())->method('updateProperty')->with($property);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockSession = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array('default', $mockRepository, $mockStorageBackend, $mockObjectManager));
+		$mockSession->_set('currentlyDirtyProperties', array('fakeUuid' => array('someProperty' => $property)));
 
-		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
-		$property = new \F3\TYPO3CR\Property('someProp', 'someValue', \F3\PHPCR\PropertyType::STRING, $node, $mockSession, $mockValueFactory);
-
-		$mockSession->registerNodeAsDirty($node);
-		$mockSession->registerPropertyAsDirty($property);
-		$mockSession->save();
+		$mockSession->_call('updatePropertiesForNode', $node);
+			// call again, must not find anymore dirty properties
+		$mockSession->_call('updatePropertiesForNode', $node);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function saveProcessesRemovedProperties() {
+	public function removePropertiesForNodeProcessesProperties() {
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
+		$property = $this->getMock('F3\PHPCR\PropertyInterface');
+		$property->expects($this->any())->method('getName')->will($this->returnValue('someProperty'));
+		$mockRepository = $this->getMock('F3\PHPCR\RepositoryInterface');
 		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
-		$mockStorageBackend->expects($this->once())->method('removeProperty');
-		$mockSession = $this->getMock('F3\TYPO3CR\Session', array('refresh'), array('default', $this->mockRepository, $mockStorageBackend, $this->objectFactory));
-		$node = new \F3\TYPO3CR\Node(array('identifier' => '123', 'nodetype' => 'nt:base'), $mockSession, $this->objectFactory);
+		$mockStorageBackend->expects($this->once())->method('removeProperty')->with($property);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockSession = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array('default', $mockRepository, $mockStorageBackend, $mockObjectManager));
+		$mockSession->_set('currentlyRemovedProperties', array('fakeUuid' => array('someProperty' => $property)));
 
-		$mockValueFactory = $this->getMock('F3\PHPCR\ValueFactoryInterface');
-		$property = new \F3\TYPO3CR\Property('someProp', 'someValue', \F3\PHPCR\PropertyType::STRING, $node, $mockSession, $mockValueFactory);
-
-		$mockSession->registerNodeAsDirty($node);
-		$mockSession->registerPropertyAsRemoved($property);
-		$mockSession->save();
+		$mockSession->_call('removePropertiesForNode', $node);
+			// call again, must not find anymore dirty properties
+		$mockSession->_call('removePropertiesForNode', $node);
 	}
 
 	/**
+	 * @test
+	 * @expectedException \Exception
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function saveValidatesPendingChanges() {
+		$session = $this->getMock('F3\TYPO3CR\Session', array('validatePendingChanges'), array(), '', FALSE);
+		$session->expects($this->once())->method('validatePendingChanges')->will($this->throwException(new \Exception()));
+
+		$session->save();
+
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function validatePendingChangesChecksRemovedNodesForBeingReferenced() {
+		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('isReferenceTarget')->with('removedUuid')->will($this->returnValue(FALSE));
+
+		$removedNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$removedNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('removedUuid'));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('storageBackend', $mockStorageBackend);
+		$session->_set('currentlyRemovedNodes', array('removedUuid' => $removedNode));
+
+		$session->_call('validatePendingChanges');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function validatePendingChangesAllowsRemovedOfReferencedNodesIfReferencingNodeWillBeDeletedAsWell() {
+		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('isReferenceTarget')->with('removedUuid')->will($this->returnValue(TRUE));
+
+		$removedNode = $this->getMock('F3\PHPCR\NodeInterface');
+
+		$referencingNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$referencingNode->expects($this->any())->method('getParent')->will($this->returnValue($removedNode));
+
+		$removedNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('removedUuid'));
+		$removedNode->expects($this->any())->method('getReferences')->will($this->returnValue(array($referencingNode)));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('storageBackend', $mockStorageBackend);
+		$session->_set('currentlyRemovedNodes', array('removedUuid' => $removedNode));
+
+		$session->_call('validatePendingChanges');
+	}
+
+	/**
 	 * @test
 	 * @expectedException \F3\PHPCR\ReferentialIntegrityException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function removeOnAReferenceTargetThrowsExceptionOnSave() {
-			// /Content/News is target of the REFERENCE /Content/RefParent/RefSource/ref
-		$this->session->getRootNode()->getNode('Content/News')->remove();
-		$this->session->save();
+	public function validatePendingChangesThrowsExceptionOnFailure() {
+		$mockStorageBackend = $this->getMock('F3\TYPO3CR\Storage\BackendInterface');
+		$mockStorageBackend->expects($this->once())->method('isReferenceTarget')->with('removedUuid')->will($this->returnValue(TRUE));
+
+		$otherNode = $this->getMock('F3\PHPCR\NodeInterface');
+
+		$referencingNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$referencingNode->expects($this->any())->method('getParent')->will($this->returnValue($otherNode));
+
+		$removedNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$removedNode->expects($this->any())->method('getIdentifier')->will($this->returnValue('removedUuid'));
+		$removedNode->expects($this->any())->method('getReferences')->will($this->returnValue(array($referencingNode)));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('dummy'), array(), '', FALSE);
+		$session->_set('storageBackend', $mockStorageBackend);
+		$session->_set('currentlyRemovedNodes', array('removedUuid' => $removedNode));
+
+		$session->_call('validatePendingChanges');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function exportToXMLForSystemViewDelegatesTheHardWork() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->once())->method('getDepth')->will($this->returnValue(0));
+		$node->expects($this->once())->method('getProperties')->will($this->returnValue(array()));
+		$node->expects($this->once())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+       	$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+		$session->expects($this->once())->method('getNamespacePrefixes')->will($this->returnValue(array()));
+
+		$session->_call('exportToXML', $node, $xmlWriter, FALSE, FALSE, \F3\TYPO3CR\Session::EXPORT_SYSTEM, TRUE);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function exportToXMLForDocumentViewDelegatesTheHardWork() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->once())->method('getDepth')->will($this->returnValue(0));
+		$node->expects($this->once())->method('getProperties')->will($this->returnValue(array()));
+       	$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+		$session->expects($this->once())->method('getNamespacePrefixes')->will($this->returnValue(array()));
+
+		$session->_call('exportToXML', $node, $xmlWriter, FALSE, FALSE, \F3\TYPO3CR\Session::EXPORT_DOCUMENT, TRUE);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function canRemoveASubtreeContainingExternalReference() {
-			// /Content/News is target of the REFERENCE /Content/ExternalRefParent/RefSource/ref
-		$this->session->getRootNode()->getNode('Content/ExternalRefParent')->remove();
-		$this->session->save();
+	public function writeNamespaceAttributesIteratesOverAllPrefixes() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNode', 'getNameSpacePrefixes', 'getNameSpaceURI'), array(), '', FALSE);
+		$session->expects($this->once())->method('getNameSpacePrefixes')->will($this->returnValue(array('nt')));
+		$session->expects($this->once())->method('getNameSpaceURI')->with('nt')->will($this->returnValue('http://www.jcp.org/jcr/nt/1.0'));
+
+		$session->_call('writeNamespaceAttributes', $xmlWriter);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function canRemoveASubtreeContainingInternalReference() {
-			// /Content/InternalRefParent/RefTarget is target of the REFERENCE /Content/InternalRefParent/RefSource/ref
-		$this->session->getRootNode()->getNode('Content/InternalRefParent')->remove();
-		$this->session->save();
-	}
+	public function exportToXMLForSystemViewExportsRootNodeNamedAsJcrRoot() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
 
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportSystemViewDeclaresNamespaces() {
-		$expectedNamespaces = array(
-			'sv' => 'http://www.jcp.org/jcr/sv/1.0',
-			'jcr' => 'http://www.jcp.org/jcr/1.0',
-			'nt' => 'http://www.jcp.org/jcr/nt/1.0',
-			'mix' => 'http://www.jcp.org/jcr/mix/1.0'
-		);
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->once())->method('getDepth')->will($this->returnValue(0));
+		$node->expects($this->once())->method('getProperties')->will($this->returnValue(array()));
+		$node->expects($this->once())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+       	$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+		$session->expects($this->once())->method('getNamespacePrefixes')->will($this->returnValue(array()));
 
-		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
+		$session->_call('exportToXML', $node, $xmlWriter, FALSE, FALSE, \F3\TYPO3CR\Session::EXPORT_SYSTEM, TRUE);
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertSame($expectedNamespaces, $xml->getDocNamespaces());
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportSystemViewExportsRootNodeNamedAsJcrRoot() {
-		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
 		$this->assertEquals('jcr:root', (string)$xml->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 	}
 
@@ -600,126 +520,43 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function exportSystemViewExportsRequestedPath() {
-		$this->session->exportSystemView('/Content/News', 'memory://typo3crexporttestdata', TRUE, TRUE);
+	public function exportToXMLForSystemViewExportsNodeName() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals('News', (string)$xml->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getDepth')->will($this->returnValue(1));
+		$node->expects($this->any())->method('getName')->will($this->returnValue('NodeName'));
+		$node->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+		$node->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+       	$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+		$session->expects($this->once())->method('getNamespacePrefixes')->will($this->returnValue(array()));
+
+		$session->_call('exportToXML', $node, $xmlWriter, FALSE, FALSE, \F3\TYPO3CR\Session::EXPORT_SYSTEM, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('NodeName', (string)$xml->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function exportSystemViewExportsRecursivelyIfRequested() {
-		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
+	public function exportToXMLForDocumentViewExportsRootNodeNamedAsJcrRoot() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals(2, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node));
-		$this->assertEquals(4, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node[1]->node));
-	}
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->once())->method('getDepth')->will($this->returnValue(0));
+		$node->expects($this->once())->method('getProperties')->will($this->returnValue(array()));
+       	$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes', 'getNameSpaceURI'), array(), '', FALSE);
+		$session->expects($this->once())->method('getNameSpacePrefixes')->will($this->returnValue(array('jcr')));
+		$session->expects($this->once())->method('getNameSpaceURI')->with('jcr')->will($this->returnValue('http://www.jcp.org/jcr/1.0'));
 
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportSystemViewExportsNonRecursivelyIfRequested() {
-		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
+		$session->_call('exportToXML', $node, $xmlWriter, FALSE, FALSE, \F3\TYPO3CR\Session::EXPORT_DOCUMENT, TRUE);
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals(0, count($xml->children('http://www.jcp.org/jcr/sv/1.0')->node));
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportSystemViewExportsPrimaryNodeTypeAsFirstPropertyNamedJcrPrimaryType() {
-		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals('jcr:primaryType', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[0]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportSystemViewExportsIdentifierAsThirdPropertyNamedJcrUuid() {
-		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals('jcr:uuid', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[2]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
-		$this->assertEquals('96bca35d-1ef5-4a47-8b0c-0ddd69507d00', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[2]->value[0]);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportSystemViewExportsProperties() {
-		$this->session->exportSystemView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
-
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
-		$this->assertEquals('title', (string)$children->node[1]->node[1]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
-		$this->assertEquals('String', (string)$children->node[1]->node[1]->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
-		$this->assertEquals('News about FLOW3 & the TYPO3CR', (string)$children->node[1]->node[1]->property[3]->value[0]);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportSystemViewExportsBinaryPropertyAsBase64() {
-		$this->session->exportSystemView('/Content', 'memory://typo3crexporttestdata', FALSE, TRUE);
-
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
-		$this->assertEquals('binaryProperty', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
-		$this->assertEquals('Binary', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
-		$this->assertEquals('YTM0NcO2xI3FmcOfYQ==', (string)$children->property[3]->value[0]);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportSystemViewSkipsBinaryPropertyIfRequested() {
-		$this->session->exportSystemView('/Content', 'memory://typo3crexporttestdata', TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
-		$this->assertEquals('binaryProperty', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
-		$this->assertEquals('Binary', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
-		$this->assertEquals('', (string)$children->property[3]->value[0]);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportDocumentViewDeclaresNamespaces() {
-		$expectedNamespaces = array(
-			'jcr' => 'http://www.jcp.org/jcr/1.0',
-			'nt' => 'http://www.jcp.org/jcr/nt/1.0',
-			'mix' => 'http://www.jcp.org/jcr/mix/1.0'
-		);
-
-		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertSame($expectedNamespaces, $xml->getDocNamespaces());
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 */
-	public function exportDocumentViewExportsRootNodeAsJcrRootElement() {
-		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
-
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
 		$this->assertEquals('root', $xml->getName());
 		$this->assertTrue(array_key_exists('jcr', $xml->getNamespaces(FALSE)));
 	}
@@ -728,45 +565,172 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function exportDocumentViewExportsRequestedPath() {
-		$this->session->exportDocumentView('/Content/News', 'memory://typo3crexporttestdata', TRUE, TRUE);
+	public function exportToXMLForDocumentViewExportsNodeName() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals('News', $xml->getName());
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getDepth')->will($this->returnValue(1));
+		$node->expects($this->any())->method('getName')->will($this->returnValue('NodeName'));
+		$node->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+       	$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+		$session->expects($this->once())->method('getNamespacePrefixes')->will($this->returnValue(array()));
+
+		$session->_call('exportToXML', $node, $xmlWriter, FALSE, FALSE, \F3\TYPO3CR\Session::EXPORT_DOCUMENT, TRUE);
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('NodeName', $xml->getName());
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function exportDocumentViewExportsRecursivelyIfRequested() {
-		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
+	public function exportToXMLExportsRecursivelyIfRequested() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals(1, count($xml->children()));
-		$this->assertEquals(3, count($xml->Content->children()));
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+
+		$subNode = $this->getMock('F3\PHPCR\NodeInterface');
+		$subNode->expects($this->once())->method('getDepth')->will($this->returnValue(1));
+		$subNode->expects($this->once())->method('getProperties')->will($this->returnValue(array()));
+		$subNode->expects($this->once())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+		$subNode->expects($this->once())->method('getNodes')->will($this->returnValue(array()));
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->once())->method('getDepth')->will($this->returnValue(0));
+		$node->expects($this->once())->method('getProperties')->will($this->returnValue(array()));
+		$node->expects($this->once())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+		$node->expects($this->once())->method('getNodes')->will($this->returnValue(array($subNode)));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+		$session->expects($this->once())->method('getNamespacePrefixes')->will($this->returnValue(array()));
+
+		$session->_call('exportToXML', $node, $xmlWriter, FALSE, TRUE, \F3\TYPO3CR\Session::EXPORT_SYSTEM, TRUE);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function exportDocumentViewExportsNonRecursivelyIfRequested() {
-		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, TRUE);
+	public function exportSystemViewExportsPrimaryNodeTypeAsFirstPropertyNamedJcrPrimaryType() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+		$xmlWriter->startDocument('1.0', 'UTF-8');
+		$xmlWriter->startElement('jcr:root');
+		$xmlWriter->writeAttribute('xmlns:jcr', 'http://www.jcp.org/jcr/1.0');
+		$xmlWriter->writeAttribute('xmlns:sv', 'http://www.jcp.org/jcr/sv/1.0');
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals(0, count($xml->children()));
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+		$node->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+
+		$session->_call('exportPropertiesForSystemView', $node, $xmlWriter, TRUE);
+		$xmlWriter->endElement();
+		$xmlWriter->endDocument();
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+
+		$this->assertEquals('jcr:primaryType', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[0]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function exportDocumentViewExportsProperties() {
-		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
+	public function exportSystemViewExportsIdentifierAsThirdPropertyNamedJcrUuid() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+		$xmlWriter->startDocument('1.0', 'UTF-8');
+		$xmlWriter->startElement('jcr:root');
+		$xmlWriter->writeAttribute('xmlns:jcr', 'http://www.jcp.org/jcr/1.0');
+		$xmlWriter->writeAttribute('xmlns:sv', 'http://www.jcp.org/jcr/sv/1.0');
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals('News about FLOW3 & the TYPO3CR', (string)$xml->Content[0]->News[0]->attributes()->title);
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getIdentifier')->will($this->returnValue('fakeUuid'));
+		$node->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+		$node->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+
+		$session->_call('exportPropertiesForSystemView', $node, $xmlWriter, TRUE);
+		$xmlWriter->endElement();
+		$xmlWriter->endDocument();
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+		$this->assertEquals('jcr:uuid', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[2]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+		$this->assertEquals('fakeUuid', (string)$xml->children('http://www.jcp.org/jcr/sv/1.0')->property[2]->value[0]);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewExportsBinaryPropertyAsBase64() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+		$xmlWriter->startDocument('1.0', 'UTF-8');
+		$xmlWriter->startElement('jcr:root');
+		$xmlWriter->writeAttribute('xmlns:jcr', 'http://www.jcp.org/jcr/1.0');
+		$xmlWriter->writeAttribute('xmlns:sv', 'http://www.jcp.org/jcr/sv/1.0');
+
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+
+		$value = $this->getMock('F3\PHPCR\ValueInterface');
+		$value->expects($this->once())->method('getString')->will($this->returnValue('not base 64 encoded at all'));
+
+		$property = $this->getMock('F3\PHPCR\PropertyInterface');
+		$property->expects($this->any())->method('getName')->will($this->returnValue('binaryProperty'));
+		$property->expects($this->any())->method('getType')->will($this->returnValue(\F3\PHPCR\PropertyType::BINARY));
+		$property->expects($this->any())->method('isMultiple')->will($this->returnValue(FALSE));
+		$property->expects($this->any())->method('getValue')->will($this->returnValue($value));
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getProperties')->will($this->returnValue(array($property)));
+		$node->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+
+		$session->_call('exportPropertiesForSystemView', $node, $xmlWriter, TRUE);
+		$xmlWriter->endElement();
+		$xmlWriter->endDocument();
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+
+		$children = $xml->children('http://www.jcp.org/jcr/sv/1.0');
+		$this->assertEquals('binaryProperty', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->name);
+		$this->assertEquals('Binary', (string)$children->property[3]->attributes('http://www.jcp.org/jcr/sv/1.0')->type);
+		$this->assertEquals(base64_encode('not base 64 encoded at all'), (string)$children->property[3]->value[0]);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function exportSystemViewSkipsBinaryPropertyIfRequested() {
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+
+		$value = $this->getMock('F3\PHPCR\ValueInterface');
+		$value->expects($this->never())->method('getString');
+
+		$property = $this->getMock('F3\PHPCR\PropertyInterface');
+		$property->expects($this->any())->method('getName')->will($this->returnValue('binaryProp'));
+		$property->expects($this->any())->method('getType')->will($this->returnValue(\F3\PHPCR\PropertyType::BINARY));
+		$property->expects($this->any())->method('isMultiple')->will($this->returnValue(TRUE));
+		$property->expects($this->any())->method('getValues')->will($this->returnValue(array($value)));
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getProperties')->will($this->returnValue(array($property)));
+		$node->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+
+		$session->_call('exportPropertiesForSystemView', $node, $xmlWriter, FALSE);
 	}
 
 	/**
@@ -774,10 +738,36 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsBinaryPropertyAsBase64() {
-		$this->session->exportDocumentView('/Content', 'memory://typo3crexporttestdata', FALSE, TRUE);
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
+		$xmlWriter->startDocument('1.0', 'UTF-8');
+		$xmlWriter->startElement('jcr:root');
+		$xmlWriter->writeAttribute('xmlns:jcr', 'http://www.jcp.org/jcr/1.0');
+		$xmlWriter->writeAttribute('xmlns:sv', 'http://www.jcp.org/jcr/sv/1.0');
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals('YTM0NcO2xI3FmcOfYQ==', (string)$xml->attributes()->binaryProperty);
+		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
+
+		$value = $this->getMock('F3\PHPCR\ValueInterface');
+		$value->expects($this->once())->method('getString')->will($this->returnValue('not base 64 encoded at all'));
+
+		$property = $this->getMock('F3\PHPCR\PropertyInterface');
+		$property->expects($this->any())->method('getName')->will($this->returnValue('binaryProperty'));
+		$property->expects($this->any())->method('getType')->will($this->returnValue(\F3\PHPCR\PropertyType::BINARY));
+		$property->expects($this->any())->method('isMultiple')->will($this->returnValue(FALSE));
+		$property->expects($this->any())->method('getValue')->will($this->returnValue($value));
+
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getProperties')->will($this->returnValue(array($property)));
+		$node->expects($this->any())->method('getPrimaryNodeType')->will($this->returnValue($nodeType));
+		$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+
+		$session->_call('exportPropertiesForDocumentView', $node, $xmlWriter, TRUE);
+		$xmlWriter->endElement();
+		$xmlWriter->endDocument();
+
+		$xml = new \SimpleXMLElement($xmlWriter->outputMemory());
+
+		$this->assertEquals(base64_encode('not base 64 encoded at all'), (string)$xml->attributes()->binaryProperty);
 	}
 
 	/**
@@ -785,12 +775,23 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function exportDocumentViewExportsXMLTextNodesAsXMLText() {
-		$this->session->exportDocumentView('/', 'memory://typo3crexporttestdata', TRUE, FALSE);
+		$xmlWriter = new \XMLWriter();
+		$xmlWriter->openMemory();
 
-		$xml = new \SimpleXMLElement(file_get_contents('memory://typo3crexporttestdata'));
-		$this->assertEquals('This is some XML text containing <weird> "stuff"', (string)$xml);
-		$this->assertEquals('Another XML text node property', (string)$xml->Content);
+		$property = $this->getMock('F3\PHPCR\PropertyInterface');
+		$property->expects($this->once())->method('getString')->will($this->returnValue('This is some XML text containing <weird> "stuff"'));
+		$node = $this->getMock('F3\PHPCR\NodeInterface');
+		$node->expects($this->any())->method('getDepth')->will($this->returnValue(1));
+		$node->expects($this->any())->method('getName')->will($this->returnValue('jcr:xmltext'));
+		$node->expects($this->any())->method('getProperties')->will($this->returnValue(array('jcr:xmlcharacters')));
+		$node->expects($this->once())->method('hasProperty')->with('jcr:xmlcharacters')->will($this->returnValue(TRUE));
+		$node->expects($this->once())->method('getProperty')->with('jcr:xmlcharacters')->will($this->returnValue($property));
+		$node->expects($this->any())->method('hasNodes')->will($this->returnValue(FALSE));
+       	$session = $this->getAccessibleMock('F3\TYPO3CR\Session', array('getNamespacePrefixes'), array(), '', FALSE);
+
+		$session->_call('exportToXML', $node, $xmlWriter, FALSE, FALSE, \F3\TYPO3CR\Session::EXPORT_DOCUMENT, TRUE);
 	}
 
 }
+
 ?>
