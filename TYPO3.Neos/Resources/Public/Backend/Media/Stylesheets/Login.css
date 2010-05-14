@@ -17,7 +17,17 @@ body {
 	background: #636363 -webkit-gradient(linear, left bottom, left top, color-stop(0.23, rgb(118,118,118)), color-stop(0.83, rgb(81,81,81)));
 	background: #636363 -moz-linear-gradient(center bottom, rgb(118,118,118) 23%, rgb(81,81,81) 83%);
 }
-
+a,
+a:visited,
+a:link {
+	text-decoration: underline;
+	color: #ffffff;
+}
+a:hover,
+a:focus,
+a:active {
+	text-decoration: none;
+}
 /*** LOGIN SCREEN ***/
 #loginBox {
 	margin: 10% auto 0;
@@ -115,4 +125,21 @@ ul.errorMessages {
 	color: #aa0000;
 	text-shadow: 1px 1px 0px #000000;
 	margin-bottom: 15px;
+}
+/*** FOOTER ***/
+#footer {
+	position: absolute;
+	width: 100%;
+	left: 0px;
+	bottom: 0px;
+	background: #636363 -webkit-gradient(linear, left bottom, left top, color-stop(0.23, #2d2d2d), color-stop(0.83, #5d5d5d));
+	background: #636363 -moz-linear-gradient(center bottom, #2d2d2d 23%, #5d5d5d 83%);
+	border: 0;
+	border-top: 1px solid #4a4a4a;
+}
+#footer p {
+	text-align: left;
+	font-size: 85%;
+	line-height: 1.2em;
+	padding: 10px 20px 10px 20px;
 }
