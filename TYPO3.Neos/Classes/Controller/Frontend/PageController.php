@@ -62,7 +62,11 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return string View output for the specified page
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction(\F3\TYPO3\Domain\Model\Content\Page $page, $type = 'default') {
+	public function showAction(\F3\TYPO3\Domain\Model\Content\Page $page = NULL, $type = 'default') {
+		if ($page === NULL) {
+			return $this->pageNotFoundError();
+		}
+
 		$typoScriptService = $this->contentContext->getTypoScriptService();
 		$typoScriptObjectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->contentContext->getNodePath());
 		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
@@ -84,6 +88,16 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 			'F3\TypoScript\RenderingContext', $this->controllerContext, $this->contentContext
 		);
 		return $pageTypoScriptObject->render($renderingContext);
+	}
+
+	/**
+	 * @param string $message The error message
+	 * @return void
+	 */
+	protected function pageNotFoundError() {
+		$this->response->setStatus(404);
+		$this->view = $this->objectManager->get('F3\TYPO3\View\Error\PageNotFoundView');
+		$this->view->setControllerContext($this->controllerContext);
 	}
 
 	/**
