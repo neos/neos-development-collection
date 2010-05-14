@@ -165,21 +165,13 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Returns the sections used on this page.
 	 *
-	 * @return \F3\TYPO3\TypoScript\ContentArray An array of TypoScript Objectes, indexed by section names
+	 * @return array An array of TypoScript Objectes, indexed by section names
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSections() {
-		$sections = array();
-		$pageNode = $this->model->getNode();
-		foreach ($pageNode->getUsedSectionNames() as $sectionName) {
-			$sections[$sectionName] = '';
-			foreach ($pageNode->getChildNodes($this->renderingContext->getContentContext(), $sectionName) as $childNode) {
-
-				// Preliminary:
-				$sections[$sectionName] .= $childNode->getContent($this->renderingContext->getContentContext())->getText();
-			}
-		}
-		return $sections;
+		$sections = $this->typoScriptObjectFactory->createByName('Sections');
+		$sections->setModel($this->model);
+     	return $sections;
   	}
 }
 ?>

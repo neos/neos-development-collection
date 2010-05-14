@@ -32,49 +32,78 @@ namespace F3\TYPO3\TypoScript;
 class Text extends \F3\TypoScript\AbstractContentObject {
 
 	/**
+	 * @var \F3\TYPO3\Domain\Model\Content\Text
+	 */
+	protected $model;
+
+	/**
 	 * @var string
 	 */
 	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Text';
 
 	/**
-	 * @var string Content of this Text TypoScript object
+	 * @var string
 	 */
-	protected $value = '';
+	protected $templateSource = 'package://TYPO3/Private/TypoScript/Templates/Text.html';
 
 	/**
-	 * Sets the Content
+	 * Names of the properties of this TypoScript which should be available in
+	 * this TS object's template while rendering it.
 	 *
-	 * @param string $value Text value of this Text object
+	 * @var array
+	 */
+	protected $presentationModelPropertyNames = array('headline', 'text');
+
+	/**
+	 * @var string
+	 */
+	protected $headline;
+
+	/**
+	 * @var string
+	 */
+	protected $text;
+
+	/**
+	 * Overrides the headline of this text element
+	 *
+	 * @param string $headline
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setValue($value) {
-		$this->value = (string)$value;
+	public function setHeadline($headline) {
+		$this->headline = $headline;
 	}
 
 	/**
-	 * Returns the Content of this Text object
+	 * Returns the headline of this text element
 	 *
-	 * @return string The text value of this Text object
+	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getValue() {
-		return $this->value;
+	public function getHeadline() {
+		return $this->headline;
 	}
 
 	/**
-	 * Returns the rendered content of this content object
+	 * Overrides the body text of this text element
 	 *
-	 * @param \F3\TypoScript\RenderingContext $renderingContext
-	 * @return string The rendered content as a string
+	 * @param string $text
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
-		$presentationModel = array(
-			'value' => $this->getPropertyProcessingClosure('value')
-		);
-		$this->view->assignMultiple($presentationModel);
-		return $this->view->render();
+	public function setText($text) {
+		$this->text = $text;
 	}
+
+	/**
+	 * Returns the body text of this text element
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getText() {
+		return $this->text;
 	}
+
+}
 ?>

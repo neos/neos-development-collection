@@ -56,6 +56,14 @@ class Template extends \F3\TypoScript\AbstractObject {
 	protected $variables = array();
 
 	/**
+	 * The rendering context as passed to render()
+	 *
+	 * @transient
+	 * @var \F3\TypoScript\RenderingContext
+	 */
+	protected $renderingContext;
+
+	/**
 	 * Sets the Fluid template source.
 	 * 
 	 * Valid sources are:
@@ -84,6 +92,17 @@ class Template extends \F3\TypoScript\AbstractObject {
 	}
 
 	/**
+	 * Sets the rendering context
+	 *
+	 * @param \F3\TypoScript\RenderingContext $renderingContext
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setRenderingContext(\F3\TypoScript\RenderingContext $renderingContext) {
+		$this->renderingContext = $renderingContext;
+	}
+
+	/**
 	 * Assign a value to a variable specified by $key
 	 *
 	 * @param string $key Name of the variable
@@ -102,33 +121,16 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 * @return string The rendered content as a string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
+	public function render() {
 		$this->templateParser->setConfiguration($this->buildParserConfiguration());
 		$parsedTemplate = $this->parseTemplate();
 
-		$variableContainer = $parsedTemplate->getVariableContainer();
-		return $parsedTemplate->render($this->buildFluidRenderingContext($renderingContext));
-	}
+		$this->renderingContext->setTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $this->variables));
+		$viewHelperVariableContainer = $this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer');
+		$viewHelperVariableContainer->setView($this);
+		$this->renderingContext->setViewHelperVariableContainer($viewHelperVariableContainer);
 
-	/**
-	 * Renders a given section.
-	 *
-	 * @param string $sectionName Name of section to render
-	 * @param \F3\TypoScript\RenderingContext $renderingContext
-	 * @return string rendered template for the section
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function renderSection($sectionName, \F3\TypoScript\RenderingContext $renderingContext) {
-		$this->templateParser->setConfiguration($this->buildParserConfiguration());
-		$parsedTemplate = $this->parseTemplate();
-
-		$sections = $parsedTemplate->getVariableContainer()->get('sections');
-		if(!isset($sections[$sectionName])) {
-			return FALSE;
-		}
-
-		$sections[$sectionName]->setRenderingContext($this->buildFluidRenderingContext($renderingContext));
-		return $sections[$sectionName]->evaluate();
+		return $parsedTemplate->render($this->renderingContext);
 	}
 
 	/**
@@ -139,7 +141,8 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 */
 	protected function parseTemplate() {
 		if ($this->source instanceof \F3\TypoScript\ContentObjectInterface) {
-			$parsedTemplate = $this->templateParser->parse($this->source->render($renderingContext));
+			$this->source->setRenderingContext($this->renderingContext);
+			$parsedTemplate = $this->templateParser->parse($this->source->render());
 		} elseif (is_string($this->source)) {
 			if (substr($this->source, 0, 10) === 'package://') {
 				if (file_exists($this->source)) {
@@ -164,28 +167,8 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 */
 	protected function buildParserConfiguration() {
 		$parserConfiguration = $this->objectManager->create('F3\Fluid\Core\Parser\Configuration');
-		$parserConfiguration->addInterceptor($this->objectManager->get('F3\Fluid\Core\Parser\Interceptor\Escape'));
 		$parserConfiguration->addInterceptor($this->objectManager->get('F3\Fluid\Core\Parser\Interceptor\Resource'));
 		return $parserConfiguration;
-	}
-
-	/**
-	 * Build the rendering context
-	 *
-	 * @param \F3\TypoScript\RenderingContext $typoScriptRenderingContext
-	 * @return \F3\Fluid\Core\Rendering\RenderingContext
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	protected function buildFluidRenderingContext(\F3\TypoScript\RenderingContext $typoScriptRenderingContext) {
-		$renderingContext = $this->objectManager->create('F3\Fluid\Core\Rendering\RenderingContext');
-		$renderingContext->setTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $this->variables));
-		$renderingContext->setControllerContext($typoScriptRenderingContext->getControllerContext());
-
-		$viewHelperVariableContainer = $this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer');
-		$viewHelperVariableContainer->setView($this);
-		$renderingContext->setViewHelperVariableContainer($viewHelperVariableContainer);
-		return $renderingContext;
 	}
 }
 ?>
