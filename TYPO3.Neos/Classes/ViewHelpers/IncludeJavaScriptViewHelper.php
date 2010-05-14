@@ -25,7 +25,7 @@ namespace F3\TYPO3\ViewHelpers;
 /**
  * A View Helper to include JavaScript files inside Resources/Public/JavaScript of the package.
  *
- * @version $Id: BackendController.php 3943 2010-03-15 14:56:54Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
@@ -47,24 +47,56 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 */
 	public function render($include, $exclude = NULL, $package = NULL, $subpackage = NULL) {
 		$packageKey = $package === NULL ? $this->controllerContext->getRequest()->getControllerPackageKey() : $package;
-		
 		$subpackageKey = $subpackage === NULL ? $this->controllerContext->getRequest()->getControllerSubpackageKey() : $subpackage;
-		$baseDirectory = 'package://' . $packageKey . '/Public/' . ($subpackageKey !== '' ? $subpackageKey . '/' : '') . 'JavaScript/';
 
-		$iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($baseDirectory));
+		$baseDirectory = 'package://' . $packageKey . '/Public/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
+		$staticJavaScriptWebBaseUri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $packageKey . '/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
+
+		$iterator = $this->iterateDirectoryRecursive($baseDirectory);
 
 		$output = '';
 		foreach ($iterator as $file) {
 			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
 
-			if ($exclude !== NULL && preg_match('/^' . str_replace('/', '\/', $exclude) . '$/', $relativePath)) continue;
-
-			if (preg_match('/^' . str_replace('/', '\/', $include) . '$/', $relativePath)) {
-				$uri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $packageKey . '/' . ($subpackageKey !== '' ? $subpackageKey . '/' : '') . 'JavaScript/' . $relativePath;
+			if (!$this->patternMatchesPath($exclude, $relativePath) &&
+				$this->patternMatchesPath($include, $relativePath)) {
+				$uri = $staticJavaScriptWebBaseUri . $relativePath;
 				$output .= '<script type="text/javascript" src="' . $uri . '"></script>' . chr(10);
 			}
 		}
 		return $output;
+	}
+
+	/**
+	 * Iterate over a directory with all subdirectories
+	 *
+	 * @param string $directory The directory to iterate over
+	 * @return Iterator An iterator
+	 */
+	protected function iterateDirectoryRecursive($directory) {
+		return new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
+	}
+
+	/**
+	 * Test if the (partial) pattern matches the path. Slashes in the pattern
+	 * will be escaped.
+	 *
+	 * @param string $pattern The partial regular expression pattern
+	 * @param string $relativePath The path to test
+	 * @return boolean True if the pattern matches the path
+	 */
+	protected function patternMatchesPath($pattern, $path) {
+		return $pattern !== NULL && preg_match('/^' . str_replace('/', '\/', $pattern) . '$/', $path);
+	}
+
+	/**
+	 * Set the resource publisher
+	 *
+	 * @param \F3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher 
+	 * @return void
+	 */
+	public function setResourcePublisher(\F3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher) {
+		$this->resourcePublisher = $resourcePublisher;
 	}
 }
 ?>
