@@ -91,7 +91,8 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * @param string $message The error message
+	 * Show a page not found error page
+	 *
 	 * @return void
 	 */
 	protected function pageNotFoundError() {
