@@ -635,7 +635,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 */
 	protected function setChildNodeToEmptyArrayIfNeccessary(&$objectTree, $childNodeKey) {
 		if (!is_array($objectTree) && !$objectTree instanceof \ArrayAccess) {
-			throw new \F3\TypoScript\Exception('Given object tree is not an array.', 1181743514);
+			throw new \F3\TypoScript\Exception('Given object tree is not an array.', 1273761732);
 		}
 		if (!is_integer($childNodeKey) && !isset($objectTree[$childNodeKey])) {
 			$objectTree[$childNodeKey] = array();

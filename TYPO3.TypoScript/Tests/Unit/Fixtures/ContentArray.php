@@ -34,7 +34,7 @@ class ContentArray extends \F3\TypoScript\AbstractContentArrayObject {
 	/**
 	 * @return mixed
 	 */
-	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
+	public function render() {
 		return $this->renderArray();
 	}
 }

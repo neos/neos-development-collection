@@ -1,9 +1,9 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TypoScript\Fixtures;
+namespace F3\TypoScript;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TypoScript"                  *
+ * This script belongs to the FLOW3 package "TypoScript".                 *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License as published by the Free   *
@@ -23,20 +23,31 @@ namespace F3\TypoScript\Fixtures;
  *                                                                        */
 
 /**
- * A TypoScript Page Object fixture
+ * A proxy class which is used for lazy rendering TypoScript object properties.
  *
- * @version $Id$
+ * @version $Id: AbstractObject.php 4271 2010-05-05 15:38:09Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
  */
-class Page extends \F3\TypoScript\AbstractContentArrayObject {
+class PropertyProcessingProxy implements \F3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
 
-	/**
-	 * @return mixed
-	 */
-	public function render() {
-		return $this->renderArray();
+	protected $propertyValue;
+
+	protected $processorChains;
+
+	public function __construct($propertyValue, $processorChains) {
+		$this->propertyValue = $propertyValue;
+		$this->processorChains = $processorChains;
+	}
+
+	public function setRenderingContext($renderingContext) {
+		$this->renderingContext = $renderingContext;
+	}
+
+	public function __toString() {
+		if ($this->propertyValue instanceof \F3\TypoScript\ContentObjectInterface) {
+			$this->propertyValue = $this->propertyValue->render($this->renderingContext);
+		}
+		return ($this->processorChains === NULL) ? $this->propertyValue : $this->processorChains->process($this->propertyValue);
 	}
 }
-
 ?>

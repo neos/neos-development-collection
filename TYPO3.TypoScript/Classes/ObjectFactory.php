@@ -1,9 +1,9 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TypoScript\Fixtures;
+namespace F3\TypoScript;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TypoScript"                  *
+ * This script belongs to the FLOW3 package "TypoScript".                 *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License as published by the Free   *
@@ -23,20 +23,45 @@ namespace F3\TypoScript\Fixtures;
  *                                                                        */
 
 /**
- * A TypoScript Page Object fixture
+ * A factory for TypoScript Objects
  *
- * @version $Id$
+ * @version $Id: AbstractContentObject.php 4271 2010-05-05 15:38:09Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
  */
-class Page extends \F3\TypoScript\AbstractContentArrayObject {
+class ObjectFactory {
 
 	/**
-	 * @return mixed
+	 * @inject
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	public function render() {
-		return $this->renderArray();
+	protected $objectManager;
+
+	/**
+	 * Creates a new TypoScript object which is supposed to render the given model.
+	 *
+	 * @param object $model The (usually domain) model
+	 * @return mixed Either the TypoScript Object or FALSE if no object could be created for the given model
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo This factory is currently hard-wired and needs some proper implementation once we have "prototypes"
+	 */
+	public function createByDomainModel($model) {
+		if ($model instanceof \F3\TYPO3\Domain\Model\Content\Text) {
+			$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Text');
+			$typoScriptObject->setModel($model);
+		}
+		return (isset($typoScriptObject)) ? $typoScriptObject : FALSE;
+	}
+
+	/**
+	 * Creates a new TypoScript object by the specified name.
+	 *
+	 * @param string $typoScriptObjectName Short object name
+	 * @return \F3\TypoScript\ObjectInterface The TypoScript Object
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Needs some real implementation
+	 */
+	public function createByName($typoScriptObjectName) {
+		return $this->objectManager->create('F3\TYPO3\TypoScript\\' . $typoScriptObjectName);
 	}
 }
-
 ?>

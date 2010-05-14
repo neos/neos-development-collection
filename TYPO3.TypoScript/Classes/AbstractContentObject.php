@@ -74,6 +74,17 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	}
 
 	/**
+	 * Sets the rendering context
+	 * 
+	 * @param \F3\TypoScript\RenderingContext $renderingContext 
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setRenderingContext($renderingContext) {
+		$this->renderingContext = $renderingContext;
+	}
+
+	/**
 	 * Overrides the template
 	 *
 	 * Note: You rarely want to override the actual template object - that's only
@@ -102,18 +113,32 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	/**
 	 * Returns the rendered content of this content object
 	 *
-	 * @param \F3\TypoScript\RenderingContext $renderingContext
 	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
-		$this->renderingContext = $renderingContext;
-
+	public function render() {
 		foreach ($this->presentationModelPropertyNames as $propertyName) {
-			$this->template->assign($propertyName, $this->getPropertyProcessingClosure($propertyName, $renderingContext));
+			$this->template->assign($propertyName, $this->getPropertyProcessingProxy($propertyName));
 		}
-		$content = $this->template->render($renderingContext);
+		$this->template->setRenderingContext($this->renderingContext);
+     	$content = $this->template->render();
 		return (isset($this->propertyProcessorChains['_root'])) ? $this->propertyProcessorChains['_root']->process($content) : $content;
 	}
+
+	/**
+	 * Casts this TypoScript Object to a string by invoking the render() method.
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __toString() {
+		try {
+			return $this->render();
+		} catch (\Exception $exception) {
+			return $exception->__toString();
+     	}
+	}
+
+
 }
 ?>

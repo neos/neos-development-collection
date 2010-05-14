@@ -74,7 +74,6 @@ abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContent
 	 * @throws \InvalidArgumentException
 	 */
 	public function offsetSet($offset, $value) {
-		if (!is_integer($offset)) throw new \InvalidArgumentException('Invalid offset while setting the value of an element of the content array. The offset (index) must be of type integer, ' . gettype($offset) . ' given.', 1181064753);
 		$this->contentArray[$offset] = $value;
 	}
 
@@ -88,7 +87,6 @@ abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContent
 	 * @throws \InvalidArgumentException
 	 */
 	public function offsetUnset($offset) {
-		if (!is_integer($offset)) throw new \InvalidArgumentException('Invalid offset while unsetting the value of an element of the content array. The offset (index) must be of type integer, ' . gettype($offset) . ' given.', 1181064754);
 		unset($this->contentArray[$offset]);
 	}
 
@@ -97,16 +95,15 @@ abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContent
 	 * object it finds. The result is returned as a whole, merged in the order of the
 	 * array offsets.
 	 *
-	 * @param \F3\TypoScript\RenderingContext $renderingContext
 	 * @return string The assembled content of all Content Objects in the internal content array.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function render(\F3\TypoScript\RenderingContext $renderingContext) {
-		ksort($this->contentArray);
+	public function render() {
 		$content = '';
 		foreach ($this->contentArray as $contentItem) {
 			if ($contentItem instanceof \F3\TypoScript\ContentObjectInterface) {
-				$content .= $contentItem->render($renderingContext);
+				$contentItem->setRenderingContext($this->renderingContext);
+				$content .= $contentItem->render();
 			}
 		}
 		return $content;

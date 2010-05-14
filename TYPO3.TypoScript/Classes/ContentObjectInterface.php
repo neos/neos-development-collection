@@ -28,14 +28,13 @@ namespace F3\TypoScript;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-interface ContentObjectInterface extends \F3\TypoScript\ObjectInterface {
+interface ContentObjectInterface extends \F3\TypoScript\ObjectInterface, \F3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
 
 	/**
 	 * Returns the rendered content of this content object
 	 *
-	 * @param \F3\TypoScript\RenderingContext $renderingContext
 	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
 	 */
-	public function render(\F3\TypoScript\RenderingContext $renderingContext);
+	public function render();
 }
 ?>

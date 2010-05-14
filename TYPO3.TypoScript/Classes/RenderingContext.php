@@ -34,12 +34,7 @@ namespace F3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class RenderingContext {
-
-	/**
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
-	 */
-	protected $controllerContext;
+class RenderingContext extends \F3\Fluid\Core\Rendering\RenderingContext {
 
 	/**
 	 * @var \F3\TYPO3\Domain\Service\ContentContext $contentContext
@@ -47,26 +42,14 @@ class RenderingContext {
 	protected $contentContext;
 
 	/**
-	 * Constructs this context container
+	 * Sets the content context
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext,
-			  \F3\TYPO3\Domain\Service\ContentContext $contentContext) {
-		$this->controllerContext = $controllerContext;
+	public function setContentContext(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$this->contentContext = $contentContext;
-	}
-
-	/**
-	 * Returns the controller context
-	 *
-	 * @return \F3\FLOW3\MVC\Controller\ControllerContext
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getControllerContext() {
-		return $this->controllerContext;
 	}
 
 	/**
@@ -78,5 +61,7 @@ class RenderingContext {
 	public function getContentContext() {
 		return $this->contentContext;
 	}
+
+
 }
 ?>

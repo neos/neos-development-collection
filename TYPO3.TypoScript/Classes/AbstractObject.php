@@ -55,6 +55,12 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	protected $propertyMapper;
 
 	/**
+	 * @inject
+	 * @var \F3\TypoScript\ObjectFactory
+	 */
+	protected $typoScriptObjectFactory;
+
+	/**
 	 * Injects the property mapper
 	 *
 	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
@@ -146,14 +152,13 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 * property and returns the result value.
 	 *
 	 * @param string $propertyName Name of the property to process
-	 * @param \F3\TypoScript\RenderingContext $renderingContext
-	 * @result \Closure A closure which can process the specified property
+	 * @result mixed A proxy which can process the specified property or the actual value if no processors exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getPropertyProcessingClosure($propertyName, \F3\TypoScript\RenderingContext $renderingContext) {
+	protected function getPropertyProcessingProxy($propertyName) {
 		$getterMethodName = 'get' . ucfirst($propertyName);
 		if (!method_exists($this, $getterMethodName)) {
-			throw new \InvalidArgumentException('Tried to create a processing closure for non-existing getter ' . get_class($this) . '->' . $getterMethodName . '().', 1179406581);
+			throw new \InvalidArgumentException('Tried to create a processing proxy for non-existing getter ' . get_class($this) . '->' . $getterMethodName . '().', 1179406581);
 		}
 
 		$propertyValue = $this->$getterMethodName();
@@ -163,17 +168,8 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 			}
 		}
 
-		$model = $this->model;
 		$processorChains = isset($this->propertyProcessorChains[$propertyName]) ? $this->propertyProcessorChains[$propertyName] : NULL;
-
-		$closure = function () use ($propertyValue, $processorChains, $renderingContext) {
-			if ($propertyValue instanceof \F3\TypoScript\ContentObjectInterface) {
-				$propertyValue = $propertyValue->render($renderingContext);
-			}
-			return ($processorChains === NULL) ? $propertyValue : $processorChains->process($propertyValue);
-		};
-
-		return $closure;
+		return ($processorChains === NULL) ? $propertyValue : new \F3\TypoScript\PropertyProcessingProxy($propertyValue, $processorChains);
 	}
 }
 ?>
