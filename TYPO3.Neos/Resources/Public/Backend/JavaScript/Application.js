@@ -66,11 +66,14 @@ F3.TYPO3.Application = Ext.apply(new Ext.util.Observable, {
 	_initializeConfiguration: function() {
 		var baseTag = Ext.query('base')[0];
 		if (typeof baseTag.href == 'string') {
-			F3.TYPO3.Configuration.Application.backendBaseUri = baseTag.href + 'typo3/';
+			F3.TYPO3.Configuration.Application.frontendBaseUri = baseTag.href;
 		} else {
-			F3.TYPO3.Configuration.Application.backendBaseUri = '/typo3/';
-			console.warn("Base URI could not be extracted");
+			F3.TYPO3.Configuration.Application.frontendBaseUri = '/';
+			if (window.console) {
+				console.warn("Base URI could not be extracted");
+			}
 		}
+		F3.TYPO3.Configuration.Application.backendBaseUri = F3.TYPO3.Configuration.Application.frontendBaseUri + 'typo3/';
 	},
 
 	/**

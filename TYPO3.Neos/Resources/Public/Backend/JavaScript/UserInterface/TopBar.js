@@ -12,8 +12,7 @@ F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 			border: false,
 			bodyStyle: 'background-color: #666666',
 			items: [{
-					xtype: 'F3.TYPO3.UserInterface.DummyImage',
-					backgroundImage: 'dummys/topbar_buttons.png',
+					xtype: 'box',
 					width: 150,
 					height: 25,
 					flex: 0
@@ -22,8 +21,7 @@ F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 					width: 50,
 					flex: 0
 				}, {
-					xtype: 'F3.TYPO3.UserInterface.DummyImage',
-					backgroundImage: 'dummys/topbar_message.png',
+					xtype: 'box',
 					width: 230,
 					height: 25,
 					flex: 0
@@ -31,8 +29,7 @@ F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 					xtype: 'box',
 					flex: 1
 				}, {
-					xtype: 'F3.TYPO3.UserInterface.DummyImage',
-					backgroundImage: 'dummys/topbar_logo.png',
+					xtype: 'box',
 					width: 100,
 					height: 32,
 					flex: 0

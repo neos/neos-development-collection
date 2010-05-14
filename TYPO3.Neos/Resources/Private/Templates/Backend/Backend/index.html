@@ -2,12 +2,27 @@
 <!DOCTYPE
 	html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+{namespace ext=F3\ExtJS\ViewHelpers}
+{namespace typo3=F3\TYPO3\ViewHelpers}
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title>TYPO3 Phoenix</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="TYPO3, http://typo3.org, &#169; The TYPO3 Development Team" />
+		<title>TYPO3 Backend</title>
+		<f:base />
+
+		<ext:include theme="xtheme-gray" />
+		<typo3:includeJavaScript include="Configuration/.*\.js" subpackage="Backend" />
+
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Utils.js')}"></script>
+		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application.js')}"></script>
+
+		<typo3:includeJavaScript include="Application/.*\.js" subpackage="Backend" />
+		<typo3:includeJavaScript include="UserInterface/.*\.js" subpackage="Backend" />
+		<typo3:includeJavaScript include="Content/.*\.js" subpackage="Backend" />
+
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/UserInterface.css')}" />
 	</head>
 	<body>
-		<p>THIS IS THE BACKEND</p>
-		<iframe src="http://typo3.org" />
 	</body>
 </html>

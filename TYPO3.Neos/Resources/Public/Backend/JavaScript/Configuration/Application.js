@@ -21,5 +21,16 @@ F3.TYPO3.Configuration.Application = {
 	 *
 	 * @type {String}
 	 */
-	backendBaseUri: null
+	backendBaseUri: null,
+
+	/**
+	 * The frontend base URI.
+	 *
+	 * This setting is extracted from the base-Tag of the
+	 * current page. This happens in
+	 * {@link F3.TYPO3.Application}.
+	 *
+	 * @type {String}
+	 */
+	frontendBaseUri: null
 }

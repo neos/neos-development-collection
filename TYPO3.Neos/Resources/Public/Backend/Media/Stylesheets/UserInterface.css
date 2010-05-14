@@ -1,0 +1,152 @@
+ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-ContentTab {
+	margin-right: 50px;
+}
+ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
+	margin-left: 200px;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-right,
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-left,
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-inner {
+	background: transparent;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-active span.x-tab-strip-text {
+	color: #ebebeb;
+}
+.F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
+	background: #666666;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li {
+	-webkit-border-radius: 4px;
+	-webkit-border-bottom-left-radius: 0;
+	-webkit-border-bottom-right-radius: 0;
+	-moz-border-radius: 4px 4px 0 0;
+	border: 0;
+	background-color: #b9b9b9;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#ffffff), to(#b9b9b9));
+	background: -moz-linear-gradient(top, #ffffff, #b9b9b9);
+	-moz-box-shadow: -1px 0px 6px #3F3F3F;
+	-webkit-box-shadow: -1px 0px 6px #3F3F3F;
+	margin-right: 3px;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li.x-tab-strip-active {
+	-webkit-border-radius: 4px 4px 0 0;
+	-moz-border-radius: 4px 4px 0 0;
+	border: 1px solid #838383;
+	border-bottom: 0;
+	background-color: #4c4c4c;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#767676), to(#4c4c4c));
+	background: -moz-linear-gradient(top, #767676, #4b4b4b);
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-active .x-tab-right {
+	margin-bottom:0;
+}
+.F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
+	border: 0;
+	padding-top: 4px;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-active .x-tab-right {
+	margin-bottom:0;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header {
+	padding-bottom: 0;
+	background: transparent;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header-noborder,
+.F3-TYPO3-UserInterface-SectionMenu .x-panel-body-noheader,
+.F3-TYPO3-UserInterface-SectionMenu .x-panel-mc .x-panel-body {
+	border: 0;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip span.x-tab-strip-text {
+	font-size: 13px;
+	padding: 4px 0 5px 0;
+}
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header,
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-footer,
+.F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top{
+	background: #666666;
+}
+.F3-TYPO3-UserInterface-RootlineMenu-disabled .x-btn-text {
+	color: #999;
+}
+.F3-TYPO3-UserInterface-RootlineMenu {
+	background: #3d3d3d url('../Images/UserInterface/content-filter-bg.gif') left 50% repeat-x;
+}
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-tl,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-tr,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-tc,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-ml,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-mr,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-mc,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-bl,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-br,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-bc {
+	background-image: none;
+}
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-tl,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-tr,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-tc,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-ml,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-mr,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-mc,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-bl,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-br,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-bc {
+	background-image: url('../images/btn.gif');
+}
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-text {
+	color: #ffffff;
+}
+.F3-TYPO3-UserInterface-RootlineMenu .xtb-text {
+	color: #ffffff;
+	font-size: 200%;
+}
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-text {
+	color: #ffffff;
+	text-indent: -999px;
+}
+.F3-TYPO3-UserInterface-RootlineMenu-over .x-btn-text,
+.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-text {
+	text-indent: 0px;
+}
+
+.F3-TYPO3-UserInterface-ModuleDialog {
+	color: #ffffff;
+}
+.F3-TYPO3-UserInterface-ModuleDialog .x-form-item-label,
+.F3-TYPO3-UserInterface-ModuleDialog .x-form-field {
+	font-size: 14px;
+}
+.F3-TYPO3-UserInterface-ModuleDialog .x-form-text,
+.F3-TYPO3-UserInterface-ModuleDialog .ext-ie .x-form-file {
+	height: 24px;
+}
+/* TODO jensen: Prefix with F3-... class */
+.x-toolbar-left {
+	padding: 4px;
+}
+
+.F3-TYPO3-UserInterface-ContentDialog {
+	background-color: #272727;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#4a4a4a), to(#272727));
+	background: -moz-linear-gradient(top, #4a4a4a, #272727);
+	opacity: 0.8;
+}
+.F3-TYPO3-UserInterface-ContentDialog-Panel {
+	background-color: #272727;
+	-webkit-border-radius: 4px;
+	-webkit-border-top-left-radius: 0;
+	-webkit-border-top-right-radius: 0;
+	-moz-border-radius: 0 0 4px 4px;
+}
+.F3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar {
+	background: none;
+}
+.F3-TYPO3-UserInterface-ContentDialog-Panel .x-panel-tbar-noborder .x-toolbar {
+	border: none;
+}
+.F3-TYPO3-UserInterface-ContentDialog-Panel .x-btn .x-btn-text {
+	color: #ccc;
+}
+.F3-TYPO3-UserInterface-ContentDialog-Panel .x-btn-over .x-btn-text {
+	color: #000;
+}
