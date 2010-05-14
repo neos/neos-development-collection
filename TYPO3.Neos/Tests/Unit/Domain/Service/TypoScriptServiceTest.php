@@ -41,13 +41,6 @@ class TypoScriptServiceTest extends \F3\Testing\BaseTestCase {
 		$this->assertSame($mockContentContext, $typoScriptService->getContentContext());
 	}
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getMergedTypoScriptObjectTreeMergesConfigurationFromTheRootNodeUntilTheReferenceNode() {
-		$this->markTestIncomplete();
-	}
 }
 
 ?>
