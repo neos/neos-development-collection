@@ -150,3 +150,6 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-ContentDialog-Panel .x-btn-over .x-btn-text {
 	color: #000;
 }
+#F3-TYPO3-TopBar-Logo {
+	background: url(../Images/UserInterface/typo3-logo.png) no-repeat;
+}

@@ -11,7 +11,7 @@ F3.TYPO3.Content.Bootstrap = Ext.apply(new F3.TYPO3.Application.AbstractBootstra
 			'F3-TYPO3-Content-Preview', {
 				xtype: 'F3.TYPO3.Content.FrontendEditor',
 				id: 'F3.TYPO3.Content.FrontendEditor',
-				autoHeight: 'true'
+				layout: 'fit'
 			}
 		);
 

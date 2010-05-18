@@ -7,7 +7,7 @@ Ext.ns("F3.TYPO3.Content");
  *
  * The main frontend editor.
  */
-F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Panel, {
+F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	/**
 	 * Reference to the IFrame box component
 	 */
@@ -19,13 +19,16 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Panel, {
 	initComponent: function() {
 		var config = {
 			border: false,
+			style: {
+				overflow: 'hidden'
+			},
 			items: {
 				xtype: 'box',
 				ref: '../contentIframe',
 				autoEl: {
 					tag: 'iframe',
 					// TODO Use cookie saved or configured URI
-					src: F3.TYPO3.Configuration.Application.frontendBaseUri + 'homepage/anotherpage',
+					src: F3.TYPO3.Configuration.Application.frontendBaseUri,
 					style: {
 						width: '100%',
 						height: '100%',

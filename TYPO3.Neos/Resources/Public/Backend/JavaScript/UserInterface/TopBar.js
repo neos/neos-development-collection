@@ -31,6 +31,7 @@ F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 				}, {
 					xtype: 'box',
 					width: 100,
+					id: 'F3-TYPO3-TopBar-Logo',
 					height: 32,
 					flex: 0
 				}]
