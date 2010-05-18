@@ -28,7 +28,7 @@ namespace F3\TypoScript;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContentObject implements \ArrayAccess {
+abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContentObject implements \ArrayAccess, \Countable {
 
 	/**
 	 * @var array An array which contains further content objects which can be set and retrieved through numeric indexes
@@ -88,6 +88,16 @@ abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContent
 	 */
 	public function offsetUnset($offset) {
 		unset($this->contentArray[$offset]);
+	}
+
+	/**
+	 * Returns the number of elements in this content array
+	 *
+	 * @return integer
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function count() {
+		return count($this->contentArray);
 	}
 
 	/**
