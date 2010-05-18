@@ -100,7 +100,31 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getNodeReturnsFalseIfObjectStructureHasEnoughChildNodesForTheGivenNumberOfPathSegments() {
+	public function getNodeReturnsNullIfAPathWithMoreThanOneSegmentDoesNotLeadToANode() {
+		$nodeBaz = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode');
+		$nodeBaz->expects($this->once())->method('getNodeName')->will($this->returnValue('baz'));
+
+		$nodeFoo = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode');
+		$nodeFoo->expects($this->once())->method('getNodeName')->will($this->returnValue('foo'));
+		$nodeFoo->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
+		$nodeFoo->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($nodeBaz)));
+
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
+		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($nodeFoo)));
+
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+
+		$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
+
+		$this->assertNull($nodeService->getNode($mockSite, '/foo/doesntexist'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getNodeReturnsFalseIfObjectStructureHasNotEnoughChildNodesForTheGivenNumberOfPathSegments() {
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
 		$mockSite->expects($this->once())->method('hasChildNodes')->will($this->returnValue(FALSE));
 

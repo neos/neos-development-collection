@@ -1,5 +1,12 @@
 # $Id$
 
+F3\TYPO3\Controller\Frontend\PageController:
+  properties:
+    contentContext:
+      object:
+        factoryObjectName: F3\TYPO3\Routing\PageRoutePartHandler
+        factoryMethodName: getContentContext
+
 F3\TYPO3\TypoScript\Page:
   properties:
     view:

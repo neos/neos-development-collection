@@ -31,27 +31,17 @@ namespace F3\TYPO3\Controller\Frontend;
 class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
-	 * @var \F3\TYPO3\Routing\PageRoutePartHandler
-	 */
-	protected $pageRoutePartHandler;
-
-	/**
 	 * @var \F3\TYPO3\Domain\Service\ContentContext
 	 */
 	protected $contentContext;
 
 	/**
-	 * Tasks to deal with before an action is called
-	 *
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext 
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeAction() {
-		$this->contentContext = $this->pageRoutePartHandler->getContentContext();
-		if ($this->contentContext->getCurrentSite() === NULL) {
-			throw new \F3\TYPO3\Controller\Exception\NoSite('No site has been defined or matched the current frontend context.', 1247043365);
-		}
+	public function injectContentContext(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$this->contentContext = $contentContext;
 	}
 
 	/**
@@ -62,11 +52,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return string View output for the specified page
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction(\F3\TYPO3\Domain\Model\Content\Page $page = NULL, $type = 'default') {
-		if ($page === NULL) {
-			return $this->pageNotFoundError();
-		}
-
+	public function showAction(\F3\TYPO3\Domain\Model\Content\Page $page, $type = 'default') {
 		$typoScriptService = $this->contentContext->getTypoScriptService();
 		$typoScriptObjectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->contentContext->getNodePath());
 		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
@@ -90,17 +76,6 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$pageTypoScriptObject->setModel($page);
 		$pageTypoScriptObject->setRenderingContext($renderingContext);
      	return $pageTypoScriptObject->render();
-	}
-
-	/**
-	 * Show a page not found error page
-	 *
-	 * @return void
-	 */
-	protected function pageNotFoundError() {
-		$this->response->setStatus(404);
-		$this->view = $this->objectManager->get('F3\TYPO3\View\Error\PageNotFoundView');
-		$this->view->setControllerContext($this->controllerContext);
 	}
 
 	/**

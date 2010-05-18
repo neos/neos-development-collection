@@ -7,8 +7,8 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="TYPO3, http://typo3.org, &#169; The TYPO3 Development Team" />
 		<title>TYPO3 Error</title>
-		<base href="###BASEURI###" />
-		<link rel="stylesheet" type="text/css" href="_Resources/Static/Packages/TYPO3/Error/Stylesheets/reset-fonts.css" />
+		<f:base />
+		<link rel="stylesheet" href="{f:uri.resource(path:'CSS/reset-min.css', package:'ExtJS')}" />
 		<style type="text/css">
 		html {
 			height: 100%;
@@ -52,7 +52,7 @@
 		#errorBox h3 {
 			font-size: 174%;
 			line-height: 1.2em;
-			background: url(_Resources/Static/Packages/TYPO3/Error/Images/warning-sign.png) left 50% no-repeat;
+			background: url({f:uri.resource(path: 'Frontend/Error/Images/WarningSign.png')}) left 50% no-repeat;
 			padding: 0 0 0 60px;
 			margin: 0 0 20px 0;
 			min-height: 50px;
@@ -65,7 +65,7 @@
 		}
 		#errorBox h2 {
 			text-indent: -9999px;
-			background: url(_Resources/Static/Packages/TYPO3/Error/Images/typo3-logo-upsitedown.png) left top no-repeat;
+			background: url({f:uri.resource(path: 'Frontend/Error/Images/Typo3LogoUpsideDown.png')}) left top no-repeat;
 			width: 183px;
 			height: 55px;
 			margin: 0 0 20px 0;
@@ -75,7 +75,7 @@
 			border: 0px;
 			border-top: 2px solid #7a210c;
 			border-bottom: 3px solid #7a210c;
-			background: url(_Resources/Static/Packages/TYPO3/Error/Images/bg_transparent-red.png) left top repeat;
+			background: url({f:uri.resource(path: 'Frontend/Error/Images/TransparentBackgroundWithRed.png')}) left top repeat;
 			padding: 20px;
 			text-align: left;
 			-webkit-box-shadow: #4d4d4d 1px 1px 10px;
@@ -111,14 +111,11 @@
 			<div id="errorBox">
 				<h2>TYPO3</h2>
 				<div class="errorContainer">
-					<h3>###ERROR_TITLE###</h3>
-					<h4>###ERROR_SUBTITLE###</h4>
-					<p>###ERROR_DESCRIPTION###</p>
+					<h3>{errorTitle}</h3>
+					<h4>{errorSubTitle}</h4>
+					<p>{errorDescription}</p>
 				</div>
 			</div>
-		</div>
-		<div id="footer">
-			<p>Copyright © 2005-2010 TYPO3 Association - TYPO3 comes with ABSOLUTELY NO WARRANTY.<br/>This is free software under GPL3. Obstructing the appearance of this notice is prohibited by law. See <a href="http://www.typo3.com">www.typo3.com</a> for more details.</p>
 		</div>
 	</body>
 </html>

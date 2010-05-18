@@ -33,9 +33,9 @@ class ContentContext {
 
 	/**
 	 * @inject
-	 * @var F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @inject
@@ -111,10 +111,10 @@ class ContentContext {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		$this->contentService = $this->objectFactory->create('F3\TYPO3\Domain\Service\ContentService', $this);
-		$this->nodeService = $this->objectFactory->create('F3\TYPO3\Domain\Service\NodeService', $this);
-		$this->typoScriptService = $this->objectFactory->create('F3\TYPO3\Domain\Service\TypoScriptService', $this);
-		$this->locale = $this->objectFactory->create('F3\FLOW3\Locale\Locale', 'mul-ZZ');
+		$this->contentService = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentService', $this);
+		$this->nodeService = $this->objectManager->create('F3\TYPO3\Domain\Service\NodeService', $this);
+		$this->typoScriptService = $this->objectManager->create('F3\TYPO3\Domain\Service\TypoScriptService', $this);
+		$this->locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', 'mul-ZZ');
 
 		$matchingDomains = $this->domainRepository->findByHost($this->environment->getHTTPHost());
 		if (count ($matchingDomains) > 0) {

@@ -28,21 +28,10 @@ namespace F3\TYPO3\Routing;
  */
 class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
+	const MATCHRESULT_FOUND = TRUE;
 	const MATCHRESULT_NOSITE = -1;
-	const MATCHRESULT_NOROOTNODE = -2;
-	const MATCHRESULT_NOPAGE = -3;
-
-	/**
-	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
-	 */
-	protected $objectFactory;
-
-	/**
-	 * @inject
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
-	 */
-	protected $persistenceManager;
+	const MATCHRESULT_NOSUCHNODE = -2;
+	const MATCHRESULT_NOSUCHPAGE = -3;
 
 	/**
 	 * @var \F3\TYPO3\Domain\Service\ContentContext
@@ -50,8 +39,17 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	protected $contentContext;
 
 	/**
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext 
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectContentContext(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$this->contentContext = $contentContext;
+	}
+
+	/**
 	 * Returns the current content context
-	 *
+	 * 
 	 * @return \F3\TYPO3\Domain\Service\ContentContext
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -63,11 +61,10 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * While matching, resolves the requested page
 	 *
 	 * @param string $value the complete path
-	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
+	 * @return mixed One of the MATCHRESULT_* constants
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function matchValue($value) {
-		$this->contentContext = $this->objectFactory->create('F3\TYPO3\Domain\Service\ContentContext');
 		$site = $this->contentContext->getCurrentSite();
 		if ($site === NULL) {
 			return self::MATCHRESULT_NOSITE;
@@ -75,11 +72,11 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 		$node = $this->contentContext->getNodeService()->getNode($site, '/' . $value);
 		if ($node === NULL) {
-			return self::MATCHRESULT_NOROOTNODE;
+			return self::MATCHRESULT_NOSUCHNODE;
 		}
 		$page = $node->getContent($this->contentContext);
 		if (!$page instanceof \F3\TYPO3\Domain\Model\Content\Page) {
-			return self::MATCHRESULT_NOPAGE;
+			return self::MATCHRESULT_NOSUCHPAGE;
 		}
 		$this->contentContext->setNodePath('/' . $value);
 		$this->value = array('__identity' => $page->FLOW3_Persistence_Entity_UUID);
@@ -87,25 +84,15 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	}
 
 	/**
+	 * Extracts the node path from the request path.
 	 *
 	 * @param string $requestPath The request path to be matched
 	 * @return string value to match, or an empty string if $requestPath is empty or split string was not found
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function findValueToMatch($requestPath) {
 		$dotPosition = strpos($requestPath, '.');
 		return ($dotPosition === FALSE) ? $requestPath : substr($requestPath, 0, $dotPosition);
-	}
-
-	/**
-	 * Resolves the URI to a page
-	 *
-	 * @param
-	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo
-	 */
-	protected function resolveValue($value) {
-		return FALSE;
 	}
 }
 ?>

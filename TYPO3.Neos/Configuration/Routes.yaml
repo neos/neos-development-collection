@@ -36,7 +36,7 @@
 # Frontend
 
 -
-  name:          'Frontend with path pointing to a page and optional format'
+  name:          'Frontend with path pointing to a page with type and format'
   uriPattern:    '{page}.{type}.{@format}'
   defaults:
     '@package':    'TYPO3'
@@ -49,7 +49,7 @@
 
 -
   name:          'Frontend with path pointing to a page and optional format'
-  uriPattern:    '{page}.{@format}'
+  uriPattern:    '{page}(.{@format})'
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Frontend\Page'
@@ -67,7 +67,15 @@
     '@controller':  'Frontend\Page'
     '@action':      'show'
     '@format':      'html'
-    pageViewName: 'default'
   routeParts:
     page:
       handler:    F3\TYPO3\Routing\PageRoutePartHandler
+
+-
+  name: '404 Not Found route'
+  uriPattern: '({dummy})'
+  defaults:
+    '@package':    'TYPO3'
+    '@controller': 'Frontend\Error'
+    '@action':     'notfound'
+    '@format':     'html'

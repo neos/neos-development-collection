@@ -108,11 +108,11 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 
 		$locale = new \F3\FLOW3\Locale\Locale('mul-ZZ');
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface', array('create'), array(), '', FALSE);
-		$mockObjectFactory->expects($this->at(3))->method('create')->with('F3\FLOW3\Locale\Locale', 'mul-ZZ')->will($this->returnValue($locale));
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->at(3))->method('create')->with('F3\FLOW3\Locale\Locale', 'mul-ZZ')->will($this->returnValue($locale));
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
-		$contentContext->_set('objectFactory', $mockObjectFactory);
+		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('environment', $mockEnvironment);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
@@ -141,10 +141,10 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\Configuration\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue($mockMatchingDomains));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
-		$contentContext->_set('objectFactory', $mockObjectFactory);
+		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('environment', $mockEnvironment);
 
@@ -173,10 +173,10 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\Configuration\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
-		$contentContext->_set('objectFactory', $mockObjectFactory);
+		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
 		$contentContext->_set('environment', $mockEnvironment);

@@ -78,6 +78,12 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	protected $head = array();
 
 	/**
+	 * @transient
+	 * @var \F3\TYPO3\TypoScript\Sections
+	 */
+	protected $sections;
+
+	/**
 	 * Sets the type of this page.
 	 *
 	 * @param string $type
@@ -169,9 +175,11 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSections() {
-		$sections = $this->typoScriptObjectFactory->createByName('Sections');
-		$sections->setModel($this->model);
-     	return $sections;
+		if ($this->sections === NULL) {
+			$this->sections = $this->typoScriptObjectFactory->createByName('Sections');
+		}
+		$this->sections->setModel($this->model);
+     	return $this->sections;
   	}
 }
 ?>

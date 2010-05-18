@@ -37,11 +37,6 @@ class NodeService {
 	protected $contentContext;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
-	 */
-	protected $objectFactory;
-
-	/**
 	 * Constructs this service
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context for this service
@@ -49,15 +44,6 @@ class NodeService {
 	 */
 	public function __construct(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$this->contentContext = $contentContext;
-	}
-
-	/**
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -104,7 +90,7 @@ class NodeService {
 		$nodesOnPath = array();
 		$nextReferenceNode = $referenceNode;
 		foreach ($pathSegments as $pathSegment) {
-			if ($nextReferenceNode === NULL || $nextReferenceNode->hasChildNodes() === FALSE) {
+			if ($nextReferenceNode->hasChildNodes() === FALSE) {
 				return NULL;
 			}
 			$childNodes = $nextReferenceNode->getChildNodes($this->contentContext);
@@ -114,6 +100,9 @@ class NodeService {
 					$nextReferenceNode = $childNode;
 					$nodesOnPath[] = $childNode;
 				}
+			}
+			if ($nextReferenceNode === NULL) {
+				return NULL;
 			}
 		}
 		return $nodesOnPath;

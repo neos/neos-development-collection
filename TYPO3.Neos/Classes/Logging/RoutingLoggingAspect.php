@@ -49,26 +49,28 @@ class RoutingLoggingAspect {
 	/**
 	 * Logs results of the PageRoutePartHandler's matchValue() methods
 	 *
-	 * @afterreturning class(F3\TYPO3\Routing\PageRoutePartHandler) && method(.*->matchValue())
+	 * @afterreturning method(F3\TYPO3\Routing\PageRoutePartHandler->matchValue())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logMatchValue(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		switch ($joinPoint->getResult()) {
-			case \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSITE :
-				$this->systemLogger->log('PageRoutePartHandler did not match because no site was found.', LOG_WARNING);
+		$result = $joinPoint->getResult();
+		$path = $joinPoint->getMethodArgument('value');
+     	switch (TRUE) {
+			case $result === \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSITE :
+				$this->systemLogger->log('PageRoutePartHandler did not match path "' . $path . '" because no site was found.', LOG_WARNING);
 				break;
-			case \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOROOTNODE :
-				$this->systemLogger->log('PageRoutePartHandler did not match because no root node was found.', LOG_WARNING);
+			case $result === \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHNODE :
+				$this->systemLogger->log('PageRoutePartHandler did not match path "' . $path . '" because no such node was found.', LOG_INFO);
 				break;
-			case \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOPAGE :
-				$this->systemLogger->log('PageRoutePartHandler did not match because no page was found at the site\'s root node.', LOG_WARNING);
+			case $result === \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHPAGE :
+				$this->systemLogger->log('PageRoutePartHandler did not match path "' . $path . '" because no page was found at the site\'s root node.', LOG_WARNING);
 				break;
-			case TRUE :
+			case $result === \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_FOUND :
 				$identityArray = $joinPoint->getProxy()->FLOW3_AOP_Proxy_getProperty('value');
-				$uuid = $identityArray['__identitiy'];
-				$this->systemLogger->log('PageRoutePartHandler matched page with UUID ' . $uuid, LOG_DEBUG);
+				$uuid = $identityArray['__identity'];
+				$this->systemLogger->log('PageRoutePartHandler matched page with UUID ' . $uuid . ' on path "' . $path . '".', LOG_DEBUG);
 				break;
 		}
 	}

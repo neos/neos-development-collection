@@ -99,7 +99,7 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setRenderingContext(\F3\TypoScript\RenderingContext $renderingContext) {
-		$this->renderingContext = $renderingContext;
+		$this->renderingContext = clone $renderingContext;
 	}
 
 	/**
@@ -117,7 +117,6 @@ class Template extends \F3\TypoScript\AbstractObject {
 	/**
 	 * Returns the rendered content of this content object
 	 *
-	 * @param \F3\TypoScript\RenderingContext $renderingContext
 	 * @return string The rendered content as a string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

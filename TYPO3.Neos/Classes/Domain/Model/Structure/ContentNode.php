@@ -60,12 +60,13 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
-		if ($this->contentType !== NULL && get_class($content) !== $this->contentType) {
+		if ($this->contentType === NULL) {
+			$this->contentType = ($content instanceof \F3\FLOW3\AOP\ProxyInterface) ? $content->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($content);
+		} elseif (!$content instanceof $this->contentType) {
 			throw new \F3\TYPO3\Domain\Exception\InvalidContentType('The given content was of type "' . get_class($content) . '" but the structure node already contains content of type "' . $this->contentType . '". Content types must not be mixed.', 1244713160);
 		}
 		$locale = $content->getLocale();
 		$this->contents[$locale->getLanguage()][$locale->getRegion()] = $content;
-		$this->contentType = get_class($content);
 	}
 
 	/**

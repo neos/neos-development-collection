@@ -34,7 +34,20 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matchValueCreatesAContentContextAndResolvesTheNode() {
+	public function getContentContextReturnsTheCurrentContentContext() {
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+
+		$routePartHandler = new \F3\TYPO3\Routing\PageRoutePartHandler();
+		$routePartHandler->injectContentContext($mockContentContext);
+
+		$this->assertSame($mockContentContext, $routePartHandler->getContentContext());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function matchValueResolvesTheSpecifiedNode() {
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
 
@@ -51,11 +64,8 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
 		$mockContentContext->expects($this->once())->method('setNodePath')->with('/foo/bar/baz');
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
-
 		$routePartHandler = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Routing\PageRoutePartHandler'), array('dummy'), array(), '', FALSE);
-		$routePartHandler->_set('objectFactory', $mockObjectFactory);
+		$routePartHandler->injectContentContext($mockContentContext);
 
 		$result = $routePartHandler->_call('matchValue', 'foo/bar/baz');
 
@@ -67,26 +77,87 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matchValueReturnsErrorValueIfNoNodeWithTheGivenPathExists() {
+	public function matchValueReturnsErrorValueIfNoSiteExistsForTheCurrentRequest() {
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue(NULL));
+
+		$routePartHandler = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Routing\PageRoutePartHandler'), array('dummy'), array(), '', FALSE);
+		$routePartHandler->injectContentContext($mockContentContext);
+
+		$result = $routePartHandler->_call('matchValue', '');
+
+		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSITE, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function matchValueReturnsErrorValueIfNoNodeExistsForTheGivenRequestPath() {
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
 
 		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array('getNode'), array(), '', FALSE);
-		$mockNodeService->expects($this->once())->method('getNode')->with($mockSite, '/foo/bar/baz')->will($this->returnValue(NULL));
+		$mockNodeService->expects($this->once())->method('getNode')->with($mockSite, '/')->will($this->returnValue(NULL));
 
 		$mockContentContext->expects($this->any())->method('getNodeService')->will($this->returnValue($mockNodeService));
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
+		$routePartHandler = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Routing\PageRoutePartHandler'), array('dummy'), array(), '', FALSE);
+		$routePartHandler->injectContentContext($mockContentContext);
+
+		$result = $routePartHandler->_call('matchValue', '');
+
+		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHNODE, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function matchValueReturnsErrorValueIfNodeSpecifiedByMatchDoesNotExist() {
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
+
+		$mockNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
+		$mockNode->expects($this->once())->method('getContent')->will($this->returnValue(new \stdClass));
+
+    	$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array('getNode'), array(), '', FALSE);
+		$mockNodeService->expects($this->once())->method('getNode')->with($mockSite, '/foo/bar')->will($this->returnValue($mockNode));
+
+		$mockContentContext->expects($this->any())->method('getNodeService')->will($this->returnValue($mockNodeService));
+		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$routePartHandler = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Routing\PageRoutePartHandler'), array('dummy'), array(), '', FALSE);
-		$routePartHandler->_set('objectFactory', $mockObjectFactory);
+		$routePartHandler->injectContentContext($mockContentContext);
 
-		$result = $routePartHandler->_call('matchValue', 'foo/bar/baz');
+		$result = $routePartHandler->_call('matchValue', 'foo/bar');
 
-		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOROOTNODE, $result);
+		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHPAGE, $result);
 	}
+
+	/**
+	 * Data provider for ... see below	 *
+	 */
+	public function requestPaths() {
+		return array(
+			array('homepage', 'homepage'),
+			array('homepage.html', 'homepage'),
+			array('homepage/subpage.html', 'homepage/subpage'),
+			array('homepage/subpage.rss.xml', 'homepage/subpage')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider requestPaths
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function findValueToMatchReturnsTheGivenRequestPathUntilTheFirstDot($requestPath, $valueToMatch) {
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\PageRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$this->assertSame($valueToMatch, $routePartHandler->_call('findValueToMatch', $requestPath));
+	}
+
 }
 
 ?>

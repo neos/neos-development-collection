@@ -114,14 +114,20 @@ class Sections extends \F3\TypoScript\AbstractContentObject implements \ArrayAcc
 		$pageNode = $this->model->getNode();
 
 		foreach ($pageNode->getUsedSectionNames() as $sectionName) {
-			$this->sections[$sectionName] = $this->typoScriptObjectFactory->createByName('ContentArray');
-			$position = 10;
-			foreach ($pageNode->getChildNodes($this->renderingContext->getContentContext(), $sectionName) as $childNode) {
+			$contentArray = $this->typoScriptObjectFactory->createByName('ContentArray');
+			$i = 0;
 
+			foreach ($pageNode->getChildNodes($this->renderingContext->getContentContext(), $sectionName) as $childNode) {
 				$content = $childNode->getContent($this->renderingContext->getContentContext());
-				$typoScriptObject = $this->typoScriptObjectFactory->createByDomainModel($content);
-          	$this->sections[$sectionName][$position] = $typoScriptObject;
-				$position += 10;
+				if (!$content instanceof \F3\TYPO3\Domain\Model\Content\Page) {
+					$typoScriptObject = $this->typoScriptObjectFactory->createByDomainModel($content);
+					$contentArray[$i] = $typoScriptObject;
+					$i++;
+				}
+			}
+
+			if ($i > 0) {
+				$this->sections[$sectionName] = $contentArray;
 			}
 		}
 	}
