@@ -77,5 +77,5 @@
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Frontend\Error'
-    '@action':     'notfound'
+    '@action':     'notFound'
     '@format':     'html'
