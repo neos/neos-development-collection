@@ -34,9 +34,10 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	const MATCHRESULT_NOSUCHPAGE = -3;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\ContentContext
+	 * @inject
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $contentContext;
+	protected $objectManager;
 
 	/**
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext 
@@ -54,6 +55,9 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentContext() {
+		if ($this->contentContext === NULL) {
+			$this->contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext');
+		}
 		return $this->contentContext;
 	}
 
@@ -65,20 +69,22 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function matchValue($value) {
-		$site = $this->contentContext->getCurrentSite();
+		$contentContext = $this->getContentContext();
+
+		$site = $contentContext->getCurrentSite();
 		if ($site === NULL) {
 			return self::MATCHRESULT_NOSITE;
 		}
 
-		$node = $this->contentContext->getNodeService()->getNode($site, '/' . $value);
+		$node = $contentContext->getNodeService()->getNode($site, '/' . $value);
 		if ($node === NULL) {
 			return self::MATCHRESULT_NOSUCHNODE;
 		}
-		$page = $node->getContent($this->contentContext);
+		$page = $node->getContent($contentContext);
 		if (!$page instanceof \F3\TYPO3\Domain\Model\Content\Page) {
 			return self::MATCHRESULT_NOSUCHPAGE;
 		}
-		$this->contentContext->setNodePath('/' . $value);
+		$contentContext->setNodePath('/' . $value);
 		$this->value = array('__identity' => $page->FLOW3_Persistence_Entity_UUID);
 		return TRUE;
 	}
