@@ -93,20 +93,6 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	}
 
 	/**
-	 * If this page is visible
-	 *
-	 * @return boolean TRUE if the page is visible in the frontend, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isVisible() {
-		if ($this->hidden === TRUE) return FALSE;
-		$currentTime = $this->timeService->getCurrentDateTime();
-		if ($this->startTime !== NULL && ($this->startTime > $currentTime)) return FALSE;
-		if ($this->endTime !== NULL && ($this->endTime < $currentTime)) return FALSE;
-		return TRUE;
-	}
-
-	/**
 	 * Sets the point in time from which on this page should be visible.
 	 *
 	 * @param \DateTime $startTime The start time. Passing NULL unsets the start time.
@@ -124,7 +110,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getStartTime() {
-		return $this->startTime;
+		return clone $this->startTime;
 	}
 
 	/**
@@ -145,7 +131,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getEndTime() {
-		return $this->endTime;
+		return clone $this->endTime;
 	}
 
 	/**

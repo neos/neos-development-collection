@@ -87,7 +87,6 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL, $section = 'default') {
-		$this->throwExceptionOnInvalidSection($section);
 		$language = ($locale !== NULL) ? $locale->getLanguage() : 'mul';
 		$region = ($locale !== NULL) ? $locale->getRegion() : 'ZZ';
 		$this->childNodes[$section][$language][$region][] = $childNode;
@@ -103,7 +102,6 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL, $section = 'default') {
-		$this->throwExceptionOnInvalidSection($section);
 		$locale = ($contentContext !== NULL) ? $contentContext->getLocale() : NULL;
 		if ($locale === NULL) {
 			return $this->childNodes[$section];
@@ -121,14 +119,17 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	/**
 	 * Tells if this node has any child nodes
 	 *
-	 * @param string $section Should not be specified for this kind of node.
+	 * @param string $sectionName Name of the section to check for child nodes
 	 * @return boolean TRUE if the node has child nodes, otherwise FALSE
 	 */
-	public function hasChildNodes($section = NULL) {
-		if ($section !== NULL) {
-			$this->throwExceptionOnInvalidSection($section);
+	public function hasChildNodes($sectionName = NULL) {
+		if ($sectionName === NULL) {
+			return $this->childNodes !== array('default' => array());
 		}
-		return $this->childNodes !== array('default' => array());
+		if (!isset($this->childNodes[$sectionName])) {
+			return FALSE;
+		}return TRUE;
+		return $this->childNodes[$sectionName] !== array();
 	}
 
 	/**
@@ -163,18 +164,6 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 		return clone $this->configurations;
 	}
 
-	/**
-	 * Throws an exception if the given section is not supported by this node.
-	 *
-	 * @return void
-	 * @throws \F3\TYPO3\Domain\Exception\InvalidSection
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function throwExceptionOnInvalidSection($section) {
-		if ($section !== 'default') {
-			throw new \F3\TYPO3\Domain\Exception\InvalidSection('Nodes of type "' . get_class($this) . '" only support the "default" section.', 1257780024);
-		}
-	}
 }
 
 ?>

@@ -39,6 +39,8 @@ interface IndexNodeAwareInterface {
 	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface
 	 */
 	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext, $section = 'default');
+
+
 }
 
 ?>

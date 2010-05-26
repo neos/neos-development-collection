@@ -25,51 +25,35 @@ namespace F3\TYPO3\Domain\Model\Content;
 /**
  * Testcase for the domain model of a Page
  *
- * @version $Id$
+ * @version $Id: PageTest.php 2817 2009-07-16 14:32:53Z k-fish $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageTest extends \F3\Testing\BaseTestCase {
+class TextTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aPageCanBeHiddenAndUnhidden() {
-		$page = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array('dummy'), array(), '', FALSE);
-		$page->hide();
-		$this->assertTrue($page->isHidden());
-		$page->unhide();
-		$this->assertFalse($page->isHidden());
-	}
+	public function textPropertiesCanBeSetAndRetrieved() {
+		$text = $this->getMock('F3\TYPO3\Domain\Model\Content\Text', array('dummy'), array(), '', FALSE);
+		$text->setHeadLine('On The Flight To Frankfurt');
+		$text->setText('Make sure to start watching a movie in time so you can watch the end before landing.');
+
+		$this->assertSame('On The Flight To Frankfurt', $text->getHeadline());
+		$this->assertSame('Make sure to start watching a movie in time so you can watch the end before landing.', $text->getText());
+  	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function theStartAndEndTimeForTheVisibilityOfAPageCanBeSetAndRetrieved() {
-		$startTime = new \DateTime('24.05.2010 18:50');
-		$endTime = new \DateTime('24.05.2010 18:52');
+	public function headlineIsUsedAsALabelIfAvailable() {
+		$text = $this->getMock('F3\TYPO3\Domain\Model\Content\Text', array('dummy'), array(), '', FALSE);
 
-		$page = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array('dummy'), array(), '', FALSE);
-		$page->setStartTime($startTime);
-		$this->assertEquals($startTime, $page->getStartTime());
-		$this->assertNotSame($startTime, $page->getStartTime());
-		$page->setEndTime($endTime);
-		$this->assertEquals($endTime, $page->getEndTime());
-		$this->assertNotSame($endTime, $page->getEndTime());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function theTitleIsUsedAsTheLabel() {
-		$page = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array('dummy'), array(), '', FALSE);
-		$page->setTitle('El título');
-		$this->assertSame('El título', $page->getLabel());
-		$this->assertSame('El título', $page->getTitle());
-	}
-
+		$this->assertSame('[Untitled]', $text->getLabel());
+		$text->setHeadLine('On The Flight To Frankfurt');
+		$this->assertSame('On The Flight To Frankfurt', $text->getLabel());
+  	}
 }
 
 

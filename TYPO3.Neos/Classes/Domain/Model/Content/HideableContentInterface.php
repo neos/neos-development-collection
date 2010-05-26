@@ -32,13 +32,6 @@ namespace F3\TYPO3\Domain\Model\Content;
 interface HideableContentInterface {
 
 	/**
-	 * If this content is visible
-	 *
-	 * @return boolean TRUE if the content is visible in the frontend, otherwise FALSE
-	 */
-	public function isVisible();
-
-	/**
 	 * Sets the content's state to hidden
 	 *
 	 * @return void

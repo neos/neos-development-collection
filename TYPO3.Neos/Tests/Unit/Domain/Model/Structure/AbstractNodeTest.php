@@ -74,18 +74,6 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\TYPO3\Domain\Exception\InvalidSection
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function addChildNodeOnlySupportsTheDefaultSection() {
-		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-
-		$rootNode->addChildNode($node1, NULL, 'foo');
-	}
-
-	/**
-	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addChildNodeAllowsForSpecifyingALocaleForTheChildNode() {
@@ -106,16 +94,6 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 		$this->assertSame($node1, current($actualChildNodes['mul']['ZZ']));
 		$this->assertSame($node2, current($actualChildNodes['de']['DE']));
 		$this->assertSame($node3, current($actualChildNodes['en']['EN']));
-	}
-
-	/**
-	 * @test
-	 * @expectedException F3\TYPO3\Domain\Exception\InvalidSection
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getChildNodesOnlySupportsTheDefaultSection() {
-		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
-		$rootNode->getChildNodes(NULL, 'foo');
 	}
 
 	/**
@@ -163,7 +141,28 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function hasChildNodesTellsIfTheNodeHasChildNodes() {
+	public function hasChildNodesTellsIfTheNodeHasChildNodesAtAll() {
+		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
+		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
+		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
+		$node3 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
+
+		$this->assertFalse($rootNode->hasChildNodes());
+
+		$rootNode->addChildNode($node1);
+		$this->assertTrue($rootNode->hasChildNodes());
+
+		$rootNode->addChildNode($node2);
+		$node2->addChildNode($node3);
+
+		$this->assertTrue($rootNode->hasChildNodes());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function hasChildNodesTellsIfTheSectionOfANodeHasChildNodes() {
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
@@ -173,9 +172,26 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 		$rootNode->addChildNode($node1);
 		$this->assertTrue($rootNode->hasChildNodes());
 
-		$rootNode->addChildNode($node2);
+		$rootNode->addChildNode($node2, NULL, 'OtherSection');
 
-		$this->assertTrue($rootNode->hasChildNodes());
+		$this->assertTrue($rootNode->hasChildNodes('OtherSection'));
+		$this->assertFalse($rootNode->hasChildNodes('NonExistantSection'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getUsedSectionNamesReturnsNamesOfSectionsForWhichChildNodesExist() {
+		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
+		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
+		$node2 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
+
+		$rootNode->addChildNode($node1);
+		$rootNode->addChildNode($node2, NULL, 'OtherSection');
+
+		$expectedSectionNames = array('default', 'OtherSection');
+		$this->assertSame($expectedSectionNames, $rootNode->getUsedSectionNames());
 	}
 
 	/**
