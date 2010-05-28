@@ -70,12 +70,3 @@
   routeParts:
     page:
       handler:    F3\TYPO3\Routing\PageRoutePartHandler
-
--
-  name: '404 Not Found route'
-  uriPattern: '({dummy})'
-  defaults:
-    '@package':    'TYPO3'
-    '@controller': 'Frontend\Error'
-    '@action':     'notFound'
-    '@format':     'html'
