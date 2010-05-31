@@ -27,6 +27,7 @@ namespace F3\TYPO3\Domain;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @api
  */
 class Exception extends \F3\TYPO3\Exception {
 
