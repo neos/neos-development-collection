@@ -47,12 +47,12 @@ class QueryManager implements \F3\PHPCR\Query\QueryManagerInterface {
 	 * Constructs the query manager
 	 *
 	 * @param \F3\PHPCR\SessionInterface $session
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
+	public function __construct(\F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->session = $session;
-		$this->queryObjectModelFactory = $objectFactory->create('F3\PHPCR\Query\QOM\QueryObjectModelFactoryInterface', $this->session);
+		$this->queryObjectModelFactory = $objectManager->create('F3\PHPCR\Query\QOM\QueryObjectModelFactoryInterface', $this->session);
 	}
 
 	/**

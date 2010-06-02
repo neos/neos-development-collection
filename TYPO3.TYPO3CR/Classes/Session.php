@@ -119,7 +119,7 @@ class Session implements \F3\PHPCR\SessionInterface {
 	 * @param string $workspaceName
 	 * @param \F3\PHPCR\RepositoryInterface $repository
 	 * @param \F3\TYPO3CR\Storage\BackendInterface $storageBackend
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @throws \InvalidArgumentException
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

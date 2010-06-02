@@ -33,9 +33,9 @@ namespace F3\TYPO3CR\Query;
 class Query implements \F3\PHPCR\Query\QueryInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\TYPO3CR\Storage\BackendInterface
@@ -70,12 +70,12 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -117,7 +117,7 @@ class Query implements \F3\PHPCR\Query\QueryInterface {
 	 * @api
 	 */
 	public function execute() {
-		return $this->objectFactory->create('F3\PHPCR\Query\QueryResultInterface', $this->session->getStorageBackend()->getSearchBackend()->findNodeIdentifiers($this), $this->session);
+		return $this->objectManager->create('F3\PHPCR\Query\QueryResultInterface', $this->session->getStorageBackend()->getSearchBackend()->findNodeIdentifiers($this), $this->session);
 	}
 
 	/**

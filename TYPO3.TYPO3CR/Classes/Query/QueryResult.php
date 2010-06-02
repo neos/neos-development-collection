@@ -35,7 +35,7 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	/**
 	 * Injects the Object Factory
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * @var \F3\PHPCR\SessionInterface
@@ -68,12 +68,12 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 	/**
 	 * Injects the Object Factory
 	 *
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -100,9 +100,9 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 
 		$rows = array();
 		foreach ($this->identifierTuples as $identifierTuple) {
-			$rows[] = $this->objectFactory->create('F3\PHPCR\Query\RowInterface', $identifierTuple);
+			$rows[] = $this->objectManager->create('F3\PHPCR\Query\RowInterface', $identifierTuple);
 		}
-		$rowIterator = $this->objectFactory->create('F3\PHPCR\Query\RowIteratorInterface', $rows);
+		$rowIterator = $this->objectManager->create('F3\PHPCR\Query\RowIteratorInterface', $rows);
 		$this->identifierTuples = NULL;
 
 		return $rowIterator;
@@ -125,7 +125,7 @@ class QueryResult implements \F3\PHPCR\Query\QueryResultInterface {
 		foreach ($this->identifierTuples as $identifierTuple) {
 			$nodes[] = $this->session->getNodeByIdentifier(current($identifierTuple));
 		}
-		$nodeIterator = $this->objectFactory->create('F3\PHPCR\NodeIteratorInterface', $nodes);
+		$nodeIterator = $this->objectManager->create('F3\PHPCR\NodeIteratorInterface', $nodes);
 		$this->identifierTuples = NULL;
 
 		return $nodeIterator;
