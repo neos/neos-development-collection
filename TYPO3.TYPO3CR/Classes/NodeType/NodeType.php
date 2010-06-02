@@ -37,10 +37,17 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 *
 	 * @param string $name The name of the nodetype
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
 	 */
-	public function __construct($name) {
-		$this->name = $name;
+	public function __construct(\F3\TYPO3CR\NodeType\NodeTypeDefinition $nodeTypeDefinition) {
+		$this->name = $nodeTypeDefinition->getName();
+		$this->declaredSuperTypeNames = $nodeTypeDefinition->getDeclaredSupertypeNames();
+		$this->abstract = $nodeTypeDefinition->isAbstract();
+		$this->mixin = $nodeTypeDefinition->isMixin();
+		$this->orderableChildNodes = $nodeTypeDefinition->hasOrderableChildNodes();
+		$this->primaryItemName = $nodeTypeDefinition->getPrimaryItemName();
+		$this->declaredPropertyDefinitions = $nodeTypeDefinition->getDeclaredPropertyDefinitions();
+		$this->declaredChildNodeDefinitions = $nodeTypeDefinition->getDeclaredChildNodeDefinitions();
 	}
 
 	/**
@@ -102,10 +109,23 @@ class NodeType extends \F3\TYPO3CR\NodeType\NodeTypeDefinition implements \F3\PH
 	 *
 	 * @param string $nodeTypeName the name of a node type.
 	 * @return boolean
+	 * @todo Rewrite function when node type hierarchie is implemented
 	 * @api
 	 */
 	public function isNodeType($nodeTypeName) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212400225);
+		if ($this->name === $nodeTypeName) {
+			return TRUE;
+		}
+
+		if (is_array($this->declaredSuperTypeNames)) {
+			foreach ($this->declaredSuperTypeNames as $declaredSuperTypeName) {
+				if ($nodeTypeName === $declaredSuperTypeName) {
+					return TRUE;
+				}
+			}
+		}
+
+		return FALSE;
 	}
 
 	/**

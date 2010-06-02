@@ -165,8 +165,10 @@ class NodeTypeManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function nodeTypeManagerLoadsExistingNodeTypes() {
+		$nodeTypeTemplate = $this->getMock('F3\PHPCR\NodeType\NodeTypeTemplateInterface');
 		$nodeType = $this->getMock('F3\PHPCR\NodeType\NodeTypeInterface');
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeType\NodeTypeInterface', 'nt:base')->will($this->returnValue($nodeType));
+		$this->mockObjectManager->expects($this->at(0))->method('create')->with('F3\PHPCR\NodeType\NodeTypeTemplateInterface')->will($this->returnValue($nodeTypeTemplate));
+		$this->mockObjectManager->expects($this->at(1))->method('create')->with('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeTemplate)->will($this->returnValue($nodeType));
 		$this->mockStorageBackend->expects($this->atLeastOnce())->method('getRawNodeTypes')->will($this->returnValue(array(array('name' => 'nt:base'))));
 		new \F3\TYPO3CR\NodeType\NodeTypeManager($this->mockStorageBackend, $this->mockObjectManager);
 	}

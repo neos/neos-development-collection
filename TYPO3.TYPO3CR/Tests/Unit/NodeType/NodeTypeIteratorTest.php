@@ -36,10 +36,15 @@ class NodeTypeIteratorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function getSizeReturnsCorrectResult() {
-		$iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator(array(
-			new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'),
-			new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType')
-		));
+		$firstNodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
+		$firstNodeTypeTemplate->setName('SuperDuperNodeType');
+		$firstNodeType = new \F3\TYPO3CR\NodeType\NodeType($firstNodeTypeTemplate);
+
+		$secondNodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
+		$secondNodeTypeTemplate->setName('SuperDuperNodeType');
+		$secondNodeType = new \F3\TYPO3CR\NodeType\NodeType($secondNodeTypeTemplate);
+
+		$iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator(array($firstNodeType, $secondNodeType));
 		$size = $iterator->getSize();
 		$this->assertEquals(2, $size, "getSize() does not return correct number.");
 	}
@@ -50,11 +55,16 @@ class NodeTypeIteratorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function hasNextAndNextNodeIterateThroughAllElements() {
-		$iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator(array(
-			new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType'),
-			new \F3\TYPO3CR\NodeType\NodeType('SuperDuperNodeType')
-		));
+	public function validAndNextNodeIterateThroughAllElements() {
+		$firstNodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
+		$firstNodeTypeTemplate->setName('SuperDuperNodeType');
+		$firstNodeType = new \F3\TYPO3CR\NodeType\NodeType($firstNodeTypeTemplate);
+
+		$secondNodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
+		$secondNodeTypeTemplate->setName('SuperDuperNodeType');
+		$secondNodeType = new \F3\TYPO3CR\NodeType\NodeType($secondNodeTypeTemplate);
+
+		$iterator = new \F3\TYPO3CR\NodeType\NodeTypeIterator(array($firstNodeType, $secondNodeType));
 		$count = 0;
 		while ($iterator->valid()) {
 			$iterator->nextNodeType();

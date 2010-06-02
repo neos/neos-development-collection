@@ -46,6 +46,63 @@ class MockStorageBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	public $rawRootNodesByWorkspace = array();
 
 	/**
+	 * @var array This array can be set from tests to mock raw node type arrays
+	 * @todo This is not right here
+	 */
+	public $rawNodeTypesByIdentifierGroupedByWorkspace = array(
+		'default' => array(
+			'0' => array(
+				'identifier' => '0',
+				'name' => '0',
+				'declaredSuperTypeNames' => '',
+				'abstract' => FALSE,
+				'mixin' => FALSE,
+				'orderableChildNodes' => TRUE
+			),
+			'nt:base' => array(
+				'identifier' => '1',
+				'name' => 'nt:base',
+				'declaredSuperTypeNames' => '0',
+				'abstract' => FALSE,
+				'mixin' => FALSE,
+				'orderableChildNodes' => TRUE
+			),
+			'mix:simpleVersionable' => array(
+				'identifier' => '2',
+				'name' => 'mix:simpleVersionable',
+				'declaredSuperTypeNames' => 'nt:base',
+				'abstract' => FALSE,
+				'mixin' => TRUE,
+				'orderableChildNodes' => TRUE
+			),
+			'nt:frozenNode' => array(
+				'identifier' => '3',
+				'name' => 'nt:frozenNode',
+				'declaredSuperTypeNames' => 'nt:base',
+				'abstract' => FALSE,
+				'mixin' => FALSE,
+				'orderableChildNodes' => TRUE
+			),
+			'nt:version' => array(
+				'identifier' => '4',
+				'name' => 'nt:version',
+				'declaredSuperTypeNames' => 'nt:base',
+				'abstract' => FALSE,
+				'mixin' => FALSE,
+				'orderableChildNodes' => TRUE
+			),
+			'nt:versionHistory' => array(
+				'identifier' => '4',
+				'name' => 'nt:versionHistory',
+				'declaredSuperTypeNames' => 'nt:base',
+				'abstract' => FALSE,
+				'mixin' => FALSE,
+				'orderableChildNodes' => TRUE
+			)
+		)
+	);
+
+	/**
 	 * @var array Raw properties of nodes
 	 */
 	public $rawPropertiesByIdentifierGroupedByWorkspace = array();
@@ -230,39 +287,83 @@ class MockStorageBackend implements \F3\TYPO3CR\Storage\BackendInterface {
 	 * Fetches raw data for all nodetypes from the database
 	 *
 	 * @return array
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
 	 */
 	public function getRawNodeTypes() {
+		$return = array();
 
+		if (isset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName]) === FALSE) {
+			$this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName] = array();
+		}
+
+		if (isset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			$nodeTypes = $this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName];
+		}
+
+		if (isset($nodeTypes)) {
+			foreach($nodeTypes AS $nodeTypeName => $nodeType){
+				$return[$nodeTypeName] = $this->getRawNodeType($nodeTypeName);
+			}
+		}
+
+		return $return;
 	}
 
 	/**
-	 * Fetches raw nodetype data from the database
+	 * Fetches raw node type data with given node type name from the database
 	 *
-	 * @param string $nodeTypeName The name of the nodetype record to fetch
+	 * @param string $nodeTypeName name of the node type to fetch
 	 * @return array
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
 	 */
 	public function getRawNodeType($nodeTypeName) {
+		$return = FALSE;
 
+		if (isset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			if (isset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName][$nodeTypeName])) {
+				$return = $this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName][$nodeTypeName];
+			}
+		}
+
+		return $return;
 	}
 
 	/**
-	 * Adds the given nodetype to the database
+	 * Add the given node type to the database
 	 *
-	 * @param \F3\PHPCR\NodeType\NodeTypeDefinitionInterface $nodeTypeDefinition
+	 * @param \F3\PHPCR\NodeType\NodeTypeDefinitionInterface $nodeTypeDefinition definition of node type to insert
 	 * @return void
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
 	 */
 	public function addNodeType(\F3\PHPCR\NodeType\NodeTypeDefinitionInterface $nodeTypeDefinition) {
-
+		if (isset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName]) === FALSE) {
+			$this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName] = array();
+		}
+		if (isset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			$this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName][$nodeTypeDefinition->getName()] = array(
+				'identifier' => $nodeTypeDefinition->getId(),
+				'name' => $nodeTypeDefinition->getName(),
+				'declaredSuperTypeNames' => $nodeTypeDefinition->getDeclaredSupertypeNames(),
+				'abstract' => $nodeTypeDefinition->isAbstract(),
+				'mixin' => $nodeTypeDefinition->isMixin(),
+				'orderableChildNodes' => $nodeTypeDefinition->hasOrderableChildNodes()
+			);
+		}
 	}
 
 	/**
-	 * Deletes the named nodetype from the database
+	 * Delete the node type with the given name from the database
 	 *
-	 * @param string $name
+	 * @param string $nodeTypeName name of node type to delete
 	 * @return void
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
 	 */
-	public function deleteNodeType($name) {
-
+	public function deleteNodeType($nodeTypeName) {
+		if (isset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName])) {
+			if (isset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName][$nodeTypeName])) {
+				unset($this->rawNodeTypesByIdentifierGroupedByWorkspace[$this->workspaceName][$nodeTypeName]);
+			}
+		}
 	}
 
 	/**

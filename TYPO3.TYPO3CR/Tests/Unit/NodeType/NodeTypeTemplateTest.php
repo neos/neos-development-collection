@@ -47,5 +47,28 @@ class NodeTypeTemplateTest extends \F3\Testing\BaseTestCase {
 		$this->assertNull($nodeTypeTemplate->getDeclaredPropertyDefinitions(), 'The declared property definitions of a new NodeTypeTemplate must be NULL');
 		$this->assertNull($nodeTypeTemplate->getDeclaredChildNodeDefinitions(), 'The declared child node definitions of a new NodeTypeTemplate must be NULL');
 	}
+
+	/**
+	 * Make sure the setter functions of NodeTypeTemplate work correctly
+	 *
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
+	 * @test
+	 * @todo Test all setter functions
+	 */
+	public function setterFunctionsMustSetParameters() {
+		$nodeTypeTemplate = new \F3\TYPO3CR\NodeType\NodeTypeTemplate();
+
+		$nodeTypeTemplate->setName('testName');
+		$this->assertEquals($nodeTypeTemplate->getName(), 'testName', 'Setter function must set name');
+
+		$nodeTypeTemplate->setDeclaredSuperTypeNames(array('nt:test'));
+		$this->assertEquals($nodeTypeTemplate->getDeclaredSuperTypeNames(), array('nt:test'), 'Setter function must set declaredSuperTypeNames');
+
+		$nodeTypeTemplate->setAbstract(TRUE);
+		$this->assertTrue($nodeTypeTemplate->isAbstract(), 'Setter function must set abstract');
+
+		$nodeTypeTemplate->setMixin(TRUE);
+		$this->assertTrue($nodeTypeTemplate->isMixin(), 'Setter function must set mixin');
+	}
 }
 ?>

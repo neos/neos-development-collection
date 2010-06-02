@@ -31,7 +31,7 @@ namespace F3\TYPO3CR\Query;
 class QueryResultTest extends \F3\Testing\BaseTestCase {
 
 	public function setUp() {
-		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\ObjectFactoryInterface');
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 	}
 
 	/**
@@ -41,8 +41,8 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 	public function getNodesReturnsANodeIterator() {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(), $mockSession);
-		$queryResult->injectObjectFactory($this->mockObjectFactory);
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\PHPCR\NodeIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\NodeIterator));
+		$queryResult->injectObjectManager($this->mockObjectManager);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\NodeIterator));
 		$this->assertType('F3\PHPCR\NodeIteratorInterface', $queryResult->getNodes(), 'QueryResult did not return a NodeIterator in getNodes().');
 	}
 
@@ -54,8 +54,8 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 	public function getNodesThrowsRepositoryExceptionOnSecondCall() {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(), $mockSession);
-		$queryResult->injectObjectFactory($this->mockObjectFactory);
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\PHPCR\NodeIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\NodeIterator));
+		$queryResult->injectObjectManager($this->mockObjectManager);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\NodeIterator));
 
 		$queryResult->getNodes();
 		$queryResult->getNodes();
@@ -69,8 +69,8 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 	public function getNodesThrowsRepositoryExceptionIfCalledAfterGetRows() {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(), $mockSession);
-		$queryResult->injectObjectFactory($this->mockObjectFactory);
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\PHPCR\Query\RowIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\Query\RowIterator));
+		$queryResult->injectObjectManager($this->mockObjectManager);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\Query\RowIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\Query\RowIterator));
 
 		$queryResult->getRows();
 		$queryResult->getNodes();
@@ -84,8 +84,8 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 	public function getRowsThrowsRepositoryExceptionIfCalledAfterGetNodes() {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(), $mockSession);
-		$queryResult->injectObjectFactory($this->mockObjectFactory);
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\PHPCR\NodeIteratorInterface');
+		$queryResult->injectObjectManager($this->mockObjectManager);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeIteratorInterface');
 
 		$queryResult->getNodes();
 		$queryResult->getRows();
@@ -99,8 +99,8 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 	public function getRowsThrowsRepositoryExceptionOnSecondCall() {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(), $mockSession);
-		$queryResult->injectObjectFactory($this->mockObjectFactory);
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\PHPCR\Query\RowIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\Query\RowIterator));
+		$queryResult->injectObjectManager($this->mockObjectManager);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\Query\RowIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\Query\RowIterator));
 
 		$queryResult->getRows();
 		$queryResult->getRows();
@@ -114,7 +114,7 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 	public function getNodesThrowsRepositoryExceptionOnMultipleSelectors() {
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(array('a' => '', 'b' => '')), $mockSession);
-		$queryResult->injectObjectFactory($this->mockObjectFactory);
+		$queryResult->injectObjectManager($this->mockObjectManager);
 
 		$queryResult->getNodes();
 	}
@@ -129,8 +129,8 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 		$mockSession->expects($this->at(0))->method('getNodeByIdentifier')->with('12345')->will($this->returnValue($mockNode));
 		$mockSession->expects($this->at(1))->method('getNodeByIdentifier')->with('67890')->will($this->returnValue($mockNode));
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(array('a' => '12345'), array('a' => '67890')), $mockSession);
-		$queryResult->injectObjectFactory($this->mockObjectFactory);
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\PHPCR\NodeIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\NodeIterator));
+		$queryResult->injectObjectManager($this->mockObjectManager);
+		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\PHPCR\NodeIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\NodeIterator));
 
 		$queryResult->getNodes();
 	}
@@ -143,10 +143,10 @@ class QueryResultTest extends \F3\Testing\BaseTestCase {
 		$mockRow = $this->getMock('F3\PHPCR\Query\RowInterface');
 		$mockSession = $this->getMock('F3\PHPCR\SessionInterface');
 		$queryResult = new \F3\TYPO3CR\Query\QueryResult(array(array('a' => '12345'), array('a' => '67890')), $mockSession);
-		$queryResult->injectObjectFactory($this->mockObjectFactory);
-		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\PHPCR\Query\RowInterface', array('a' => '12345'))->will($this->returnValue(new \F3\TYPO3CR\Query\Row(array(), $mockSession)));
-		$this->mockObjectFactory->expects($this->at(1))->method('create')->with('F3\PHPCR\Query\RowInterface', array('a' => '67890'))->will($this->returnValue(new \F3\TYPO3CR\Query\Row(array(), $mockSession)));
-		$this->mockObjectFactory->expects($this->at(2))->method('create')->with('F3\PHPCR\Query\RowIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\Query\RowIterator));
+		$queryResult->injectObjectManager($this->mockObjectManager);
+		$this->mockObjectManager->expects($this->at(0))->method('create')->with('F3\PHPCR\Query\RowInterface', array('a' => '12345'))->will($this->returnValue(new \F3\TYPO3CR\Query\Row(array(), $mockSession)));
+		$this->mockObjectManager->expects($this->at(1))->method('create')->with('F3\PHPCR\Query\RowInterface', array('a' => '67890'))->will($this->returnValue(new \F3\TYPO3CR\Query\Row(array(), $mockSession)));
+		$this->mockObjectManager->expects($this->at(2))->method('create')->with('F3\PHPCR\Query\RowIteratorInterface')->will($this->returnValue(new \F3\TYPO3CR\Query\RowIterator));
 
 		$queryResult->getRows();
 	}

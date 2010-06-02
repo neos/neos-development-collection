@@ -152,7 +152,12 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	/**
 	 * @var string
 	 */
-	protected $nodeTypeName;
+	protected $primaryNodeTypeName;
+
+	/**
+	 * @var array
+	 */
+	protected $mixinNodeTypeNames = array();
 
 	/**
 	 * @var string
@@ -174,9 +179,10 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @param array $rawData
 	 * @param \F3\PHPCR\SessionInterface $session
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
 	 */
 	public function __construct(array $rawData = array(), \F3\PHPCR\SessionInterface $session, \F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->session = $session;
@@ -206,13 +212,29 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 					$this->name = $value;
 					break;
 				case 'nodetype':
-					$this->nodeTypeName = $value;
+					$this->primaryNodeTypeName = $value;
+					break;
+				case 'mixintypes':
+					$this->mixinNodeTypeNames = $value;
 					break;
 			}
 		}
 
 		$this->initializeProperties();
 		$this->initializeNodes();
+		$this->initializeVersioning();
+	}
+
+	/**
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
+	 * @todo: initialize version history without causing circular dependancy
+	 */
+	protected function initializeVersioning() {
+		if ($this->isNodeType('mix:simpleVersionable') === TRUE || $this->isNodeType('mix:versionable') === TRUE) {
+			$this->properties['jcr:isCheckedOut'] = $this->objectManager->create('F3\PHPCR\PropertyInterface', 'jcr:isCheckedOut', TRUE, \F3\PHPCR\PropertyType::BOOLEAN, $this, $this->session);
+			$versionHistory = $this->session->getRootNode()->addNode('versionHistoryOf'.$this->getIdentifier(), 'nt:versionHistory');
+			$this->properties['jcr:versionHistory'] = $this->objectManager->create('F3\PHPCR\PropertyInterface', 'jcr:versionHistory', $versionHistory->getIdentifier(), \F3\PHPCR\PropertyType::REFERENCE, $this, $this->session);
+		}
 	}
 
 	/**
@@ -225,7 +247,11 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 			// jcr:uuid (string) mandatory autocreated protected initialize
 		$this->properties['jcr:uuid'] = $this->objectManager->create('F3\PHPCR\PropertyInterface', 'jcr:uuid', $this->identifier, \F3\PHPCR\PropertyType::STRING, $this, $this->session);
 			// jcr:primaryType (name) mandatory autocreated
-		$this->properties['jcr:primaryType'] = $this->objectManager->create('F3\PHPCR\PropertyInterface', 'jcr:primaryType', $this->nodeTypeName, \F3\PHPCR\PropertyType::NAME, $this, $this->session);
+		$this->properties['jcr:primaryType'] = $this->objectManager->create('F3\PHPCR\PropertyInterface', 'jcr:primaryType', $this->primaryNodeTypeName, \F3\PHPCR\PropertyType::NAME, $this, $this->session);
+
+		if (isset($this->mixinNodeTypeNames) === TRUE) {
+			$this->properties['jcr:mixinTypes'] = $this->objectManager->create('F3\PHPCR\PropertyInterface', 'jcr:mixinTypes', $this->mixinNodeTypeNames, \F3\PHPCR\PropertyType::UNDEFINED, $this, $this->session);
+		}
 
 		$rawProperties = $this->session->getStorageBackend()->getRawPropertiesOfNode($this->getIdentifier());
 		if (is_array($rawProperties)) {
@@ -962,7 +988,7 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @api
 	 */
 	public function getPrimaryNodeType() {
-		return $this->session->getWorkspace()->getNodeTypeManager()->getNodeType($this->nodeTypeName);
+		return $this->session->getWorkspace()->getNodeTypeManager()->getNodeType($this->primaryNodeTypeName);
 	}
 
 	/**
@@ -975,10 +1001,17 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 *
 	 * @return array of \F3\PHPCR\NodeType\NodeTypeInterface objects.
 	 * @throws \F3\PHPCR\RepositoryException  if an error occurs
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
 	 * @api
 	 */
 	public function getMixinNodeTypes() {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667711);
+		$return = array();
+		
+		foreach($this->mixinNodeTypeNames as $mixinNodeTypeName) {
+			$return[] = $this->session->getWorkspace()->getNodeTypeManager()->getNodeType($mixinNodeTypeName);
+		}
+
+		return $return;
 	}
 
 	/**
@@ -989,10 +1022,25 @@ class Node extends \F3\TYPO3CR\AbstractItem implements \F3\PHPCR\NodeInterface {
 	 * @param string $nodeTypeName the name of a node type.
 	 * @return boolean TRUE if this node is of the specified primary node type or mixin type, or a subtype thereof. Returns FALSE otherwise.
 	 * @throws \F3\PHPCR\RepositoryException  If an error occurs.
+	 * @author Tamas Ilsinszki <ilsinszkitamas@yahoo.com>
+	 * @todo: Checking node subtypes still needs to be implemented.
 	 * @api
 	 */
 	public function isNodeType($nodeTypeName) {
-		throw new \F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212667712);
+		$return = FALSE;
+
+		if($this->primaryNodeTypeName===$nodeTypeName) {
+			$return = TRUE;
+		}
+		else {
+			if(is_array($this->mixinNodeTypeNames)===TRUE) {
+				if(in_array($nodeTypeName, $this->mixinNodeTypeNames)===TRUE) {
+					$return = TRUE;
+				}
+			}
+		}
+
+		return $return;
 	}
 
 	/**

@@ -78,7 +78,9 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 		if (is_array($rawNodeTypes)) {
 			foreach ($rawNodeTypes as $rawNodeType) {
 				$nodeTypeName = $rawNodeType['name'];
-				$nodeType = $this->objectManager->create('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeName);
+				$nodeTypeTemplate = $this->createNodeTypeTemplate();
+				$nodeTypeTemplate->setName($nodeTypeName);
+				$nodeType = $this->objectManager->create('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeTemplate);
 				if($nodeType->isMixin()) {
 					$this->registeredMixinTypes[$nodeTypeName] = $nodeType;
 				} else {
@@ -107,7 +109,9 @@ class NodeTypeManager implements \F3\PHPCR\NodeType\NodeTypeManagerInterface {
 			if($rawNodeType === FALSE) {
 				throw new \F3\PHPCR\NodeType\NoSuchNodeTypeException('Nodetype "' . $nodeTypeName .'" is not registered', 1213012218);
 			} else {
-				$nodeType = $this->objectManager->create('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeName);
+				$nodeTypeTemplate = $this->createNodeTypeTemplate();
+				$nodeTypeTemplate->setName($nodeTypeName);
+				$nodeType = $this->objectManager->create('F3\PHPCR\NodeType\NodeTypeInterface', $nodeTypeTemplate);
 				if($nodeType->isMixin()) {
 					$this->registeredMixinTypes[$nodeTypeName] = $nodeType;
 				} else {

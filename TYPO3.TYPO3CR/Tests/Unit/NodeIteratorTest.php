@@ -49,7 +49,7 @@ class NodeIteratorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function hasNextAndNextNodeIterateThroughAllElements() {
+	public function validAndNextNodeIterateThroughAllElements() {
 		$iterator = new \F3\TYPO3CR\NodeIterator(array('one', 'two', 'three', 'four'));
 
 		$count = 0;
