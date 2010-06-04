@@ -58,6 +58,16 @@ class PageTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($endTime, $page->getEndTime());
 		$this->assertNotSame($endTime, $page->getEndTime());
 	}
+	
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function theStartAndEndTimeForTheVisibilityOfAPageAreNullByDefault() {
+		$page = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array('dummy'), array(), '', FALSE);
+		$this->assertNull($page->getStartTime());
+		$this->assertNull($page->getEndTime());
+	}
 
 	/**
 	 * @test

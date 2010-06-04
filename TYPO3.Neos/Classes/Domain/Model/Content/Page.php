@@ -110,7 +110,11 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getStartTime() {
-		return clone $this->startTime;
+		if ($this->startTime !== NULL) {
+			return clone $this->startTime;
+		} else {
+			return NULL;
+		}
 	}
 
 	/**
@@ -131,7 +135,11 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getEndTime() {
-		return clone $this->endTime;
+		if ($this->endTime !== NULL) {
+			return clone $this->endTime;
+		} else {
+			return NULL;
+		}
 	}
 
 	/**
