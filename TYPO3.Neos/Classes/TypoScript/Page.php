@@ -44,7 +44,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'package://TYPO3/Private/TypoScript/Templates/Page.html';
+	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Page.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in

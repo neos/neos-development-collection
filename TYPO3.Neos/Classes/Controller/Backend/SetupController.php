@@ -103,7 +103,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$mainText2->setHeadline('TypoScript');
 		$mainText2->setText('
 			<p>Here\'s the TypoScript template which renders this page:</p>
-			<pre><code>' . file_get_contents('package://PhoenixDemoTypo3Org/Private/TypoScripts/homepage/Root.ts2') . '</code></pre>
+			<pre><code>' . file_get_contents('resource://PhoenixDemoTypo3Org/Private/TypoScripts/homepage/Root.ts2') . '</code></pre>
 		');
 
     	$mainText3 = $contentService->createInside('text3', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'main');

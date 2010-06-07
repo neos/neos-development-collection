@@ -70,7 +70,7 @@ class Template extends \F3\TypoScript\AbstractObject {
 	 * 
 	 *  - plain string containing the actual template
 	 *  - TypoScript Content Object which can be rendered into a template
-	 *  - a package:// reference
+	 *  - a resource:// reference
 	 *
 	 *
 	 * @param mixed $source The Fluid template source
@@ -143,7 +143,7 @@ class Template extends \F3\TypoScript\AbstractObject {
 			$this->source->setRenderingContext($this->renderingContext);
 			$parsedTemplate = $this->templateParser->parse($this->source->render());
 		} elseif (is_string($this->source)) {
-			if (substr($this->source, 0, 10) === 'package://') {
+			if (substr($this->source, 0, 11) === 'resource://') {
 				if (file_exists($this->source)) {
 					$parsedTemplate = $this->templateParser->parse(file_get_contents($this->source));
 				} else {

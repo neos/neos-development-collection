@@ -77,7 +77,7 @@ class TypoScriptService {
 		if (!is_array($nodes)) return NULL;
 
 		$siteResourcesPackageKey = $this->contentContext->getCurrentSite()->getSiteResourcesPackageKey();
-		$typoScriptsPath = 'package://' . $siteResourcesPackageKey . '/Private/TypoScripts/';
+		$typoScriptsPath = 'resource://' . $siteResourcesPackageKey . '/Private/TypoScripts/';
 
 		$mergedTypoScriptCode = '';
 		foreach ($nodes as $node) {

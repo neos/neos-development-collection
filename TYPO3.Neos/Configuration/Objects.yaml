@@ -24,6 +24,6 @@ F3\TYPO3\TypoScript\Template:
         factoryObjectName: F3\TYPO3\Controller\Frontend\PageController
         factoryMethodName: getControllerContext
     layoutRootPath:
-      value: "package://TYPO3/Private/TypoScript/Layouts/"
+      value: "resource://TYPO3/Private/TypoScript/Layouts/"
     templatePathAndFilename:
-      value: "package://PhoenixDemoTypo3Org/Private/Templates/Page/Default.html"
+      value: "resource://PhoenixDemoTypo3Org/Private/Templates/Page/Default.html"

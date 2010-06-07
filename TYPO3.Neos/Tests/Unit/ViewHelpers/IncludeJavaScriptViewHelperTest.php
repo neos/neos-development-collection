@@ -55,12 +55,12 @@ class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function renderWithoutSubpackageMatchesIncludedFile() {
 		$includedFile = $this->getMock('File', array('getPathname'));
-		$includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('package://MyPackage/Public/JavaScript/Foo.js'));
+		$includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/JavaScript/Foo.js'));
 		$otherFile = $this->getMock('File', array('getPathname'));
-		$otherFile->expects($this->any())->method('getPathname')->will($this->returnValue('package://MyPackage/Public/JavaScript/Bar.js'));
+		$otherFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/JavaScript/Bar.js'));
 		$files = array($includedFile, $otherFile);
 
-		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursive')->with('package://MyPackage/Public/JavaScript/')->will($this->returnValue($files));
+		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursive')->with('resource://MyPackage/Public/JavaScript/')->will($this->returnValue($files));
 		$output = $this->viewHelper->render('Foo\.js');
 		$this->assertEquals('<script type="text/javascript" src="StaticResourceUri/Packages/MyPackage/JavaScript/Foo.js"></script>' . chr(10), $output);
 	}
@@ -70,12 +70,12 @@ class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function renderWithSubpackageIgnoresExcludedFile() {
 		$includedFile = $this->getMock('File', array('getPathname'));
-		$includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('package://MyPackage/Public/MySubpackage/JavaScript/Foo.js'));
+		$includedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/MySubpackage/JavaScript/Foo.js'));
 		$excludedFile = $this->getMock('File', array('getPathname'));
-		$excludedFile->expects($this->any())->method('getPathname')->will($this->returnValue('package://MyPackage/Public/MySubpackage/JavaScript/Bar.js'));
+		$excludedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/MySubpackage/JavaScript/Bar.js'));
 		$files = array($includedFile, $excludedFile);
 
-		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursive')->with('package://MyPackage/Public/MySubpackage/JavaScript/')->will($this->returnValue($files));
+		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursive')->with('resource://MyPackage/Public/MySubpackage/JavaScript/')->will($this->returnValue($files));
 		$output = $this->viewHelper->render('.*\.js', 'Bar.*', NULL, 'MySubpackage');
 		$this->assertEquals('<script type="text/javascript" src="StaticResourceUri/Packages/MyPackage/MySubpackage/JavaScript/Foo.js"></script>' . chr(10), $output);
 	}

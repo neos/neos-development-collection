@@ -48,7 +48,7 @@ class ErrorView extends \F3\FLOW3\MVC\View\NotFoundView {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getTemplatePathAndFilename() {
-		return 'package://TYPO3/Private/Templates/Error/error.html';
+		return 'resource://TYPO3/Private/Templates/Error/error.html';
 	}
 }
 

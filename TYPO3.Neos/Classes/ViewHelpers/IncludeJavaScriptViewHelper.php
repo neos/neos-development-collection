@@ -49,7 +49,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 		$packageKey = $package === NULL ? $this->controllerContext->getRequest()->getControllerPackageKey() : $package;
 		$subpackageKey = $subpackage === NULL ? $this->controllerContext->getRequest()->getControllerSubpackageKey() : $subpackage;
 
-		$baseDirectory = 'package://' . $packageKey . '/Public/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
+		$baseDirectory = 'resource://' . $packageKey . '/Public/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
 		$staticJavaScriptWebBaseUri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $packageKey . '/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
 
 		$iterator = $this->iterateDirectoryRecursive($baseDirectory);
