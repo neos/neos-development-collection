@@ -45,7 +45,7 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	protected $modelType;
 
 	/**
-	 * @var array <\F3\TypoScript\ProcessorChain>
+	 * @var array<\F3\TypoScript\ProcessorChain>
 	 */
 	protected $propertyProcessorChains = array();
 
@@ -150,6 +150,9 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	/**
 	 * Returns a closure which on invoke runs the processor chain for the specified
 	 * property and returns the result value.
+	 *
+	 * If the getter in the TypoScript object returns a non-NULL value that value
+	 * - coming from the TS sourcecode - is used (overriding the value in the model).
 	 *
 	 * @param string $propertyName Name of the property to process
 	 * @result mixed A proxy which can process the specified property or the actual value if no processors exist

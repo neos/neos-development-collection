@@ -113,7 +113,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	/**
 	 * Returns the rendered content of this content object
 	 *
-	 * @return string The rendered content as a string - usually (X)HTML, XML or just plaing text
+	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
