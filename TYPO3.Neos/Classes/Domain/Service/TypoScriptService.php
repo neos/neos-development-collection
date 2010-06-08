@@ -81,10 +81,8 @@ class TypoScriptService {
 
 		$mergedTypoScriptCode = '';
 		foreach ($nodes as $node) {
-			if (isset($typoScriptsPath)) {
-				$typoScriptsPath .= $node->getNodeName() . '/';
-				$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($typoScriptsPath);
-			}
+			$typoScriptsPath .= $node->getNodeName() . '/';
+			$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($typoScriptsPath) . chr(10);
 
 			$configurations = $node->getConfigurations();
 			foreach ($configurations as $configuration) {
@@ -109,11 +107,16 @@ class TypoScriptService {
 		$mergedTypoScriptCode = '';
 		if (is_dir($path)) {
 			$directoryIterator = new \DirectoryIterator($path);
+			$filenames = array();
 			foreach ($directoryIterator as $file) {
 				$filename = $file->getFilename();
 				if ($file->isFile() && substr($filename, -4) === '.ts2') {
-					$mergedTypoScriptCode .= \F3\FLOW3\Utility\Files::getFileContents($file->getPathname()) . chr(10);
+					$filePathsAndNames[] = $file->getPathname();
 				}
+			}
+			natsort($filePathsAndNames);
+			foreach ($filePathsAndNames as $filePathAndName) {
+				$mergedTypoScriptCode .= \F3\FLOW3\Utility\Files::getFileContents($filePathAndName) . chr(10);
 			}
 		}
 		return $mergedTypoScriptCode;

@@ -104,7 +104,7 @@ class ContentService {
 	}
 
 	/**
-	 * Creates new content of the specified type inside the given reference.
+	 * Creates new content of the specified type after the given reference.
 	 *
 	 * The reference may either be an existing content object (a page, text etc.) or
 	 * an object implementing the NodeInterface (eg. a Site).
@@ -115,13 +115,14 @@ class ContentService {
 	 * @return object The newly created content object
 	 * @throws \F3\TYPO3\Domain\Exception\InvalidReference if the given reference is of an invalid type
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Needs to be implemented, actually...
 	 */
 	public function createAfter($nodeName, $contentType, $reference) {
 		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
 			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411516);
 		}
 
-		// TODO
+		// fill in code here
 
 		return $content;
 	}

@@ -30,6 +30,7 @@ namespace F3\TYPO3\ViewHelpers;
  * @scope prototype
  */
 class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractViewHelper {
+
 	/**
 	 * @inject
 	 * @var \F3\FLOW3\Resource\Publishing\ResourcePublisher
@@ -44,6 +45,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 * @param string $exclude Regular expression of files to exclude
 	 * @param string $package The package key of the resources to include or current controller package if NULL
 	 * @param string $subpackage The subpackage key of the resources to include or current controller subpackage if NULL
+	 * @author Christopher Hlubek
 	 */
 	public function render($include, $exclude = NULL, $package = NULL, $subpackage = NULL) {
 		$packageKey = $package === NULL ? $this->controllerContext->getRequest()->getControllerPackageKey() : $package;
@@ -52,7 +54,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 		$baseDirectory = 'resource://' . $packageKey . '/Public/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
 		$staticJavaScriptWebBaseUri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $packageKey . '/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
 
-		$iterator = $this->iterateDirectoryRecursive($baseDirectory);
+		$iterator = $this->iterateDirectoryRecursively($baseDirectory);
 
 		$output = '';
 		foreach ($iterator as $file) {
@@ -70,10 +72,13 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	/**
 	 * Iterate over a directory with all subdirectories
 	 *
+	 * (Exists primarily to ease unit testing)
+	 *
 	 * @param string $directory The directory to iterate over
 	 * @return Iterator An iterator
+	 * @author Christopher Hlubek
 	 */
-	protected function iterateDirectoryRecursive($directory) {
+	protected function iterateDirectoryRecursively($directory) {
 		return new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
 	}
 
@@ -84,6 +89,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 * @param string $pattern The partial regular expression pattern
 	 * @param string $relativePath The path to test
 	 * @return boolean True if the pattern matches the path
+	 * @author Christopher Hlubek
 	 */
 	protected function patternMatchesPath($pattern, $path) {
 		return $pattern !== NULL && preg_match('/^' . str_replace('/', '\/', $pattern) . '$/', $path);
@@ -94,6 +100,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 *
 	 * @param \F3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher 
 	 * @return void
+	 * @author Christopher Hlubek
 	 */
 	public function setResourcePublisher(\F3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher) {
 		$this->resourcePublisher = $resourcePublisher;

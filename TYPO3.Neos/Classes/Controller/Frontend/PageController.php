@@ -62,6 +62,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		foreach ($typoScriptObjectTree as $firstLevelTypoScriptObject) {
 			if ($firstLevelTypoScriptObject instanceof \F3\TYPO3\TypoScript\Page && $firstLevelTypoScriptObject->getType() === $type) {
 				$pageTypoScriptObject = $firstLevelTypoScriptObject;
+				break;
 			}
 		}
 

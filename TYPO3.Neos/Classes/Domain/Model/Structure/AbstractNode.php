@@ -57,7 +57,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	}
 
 	/**
-	 * SSets the name of the node.
+	 * Sets the name of the node.
 	 *
 	 * @param string $nodeName The node name
 	 * @return void
@@ -102,12 +102,11 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL, $section = 'default') {
-		$locale = ($contentContext !== NULL) ? $contentContext->getLocale() : NULL;
-		if ($locale === NULL) {
+		if ($contentContext === NULL) {
 			return $this->childNodes[$section];
 		} else {
-			$language = $locale->getLanguage();
-			$region = $locale->getRegion();
+			$language = $contentContext->getLocale()->getLanguage();
+			$region = $contentContext->getLocale()->getRegion();
 
 			if (isset($this->childNodes[$section][$language]) && isset($this->childNodes[$section][$language][$region])) {
 				return $this->childNodes[$section][$language][$region];

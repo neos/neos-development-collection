@@ -29,8 +29,8 @@ namespace F3\TYPO3\ViewHelpers;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
+
 	/**
-	 *
 	 * @var \F3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper
 	 */
 	protected $viewHelper;
@@ -45,7 +45,7 @@ class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
 		$this->resourcePublisher = $this->getMock('F3\FLOW3\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
 		$this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
-		$this->viewHelper = $this->getMock('F3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursive'));
+		$this->viewHelper = $this->getMock('F3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
 		$this->viewHelper->setControllerContext($this->controllerContext);
 		$this->viewHelper->setResourcePublisher($this->resourcePublisher);
 	}
@@ -60,7 +60,7 @@ class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
 		$otherFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/JavaScript/Bar.js'));
 		$files = array($includedFile, $otherFile);
 
-		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursive')->with('resource://MyPackage/Public/JavaScript/')->will($this->returnValue($files));
+		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursively')->with('resource://MyPackage/Public/JavaScript/')->will($this->returnValue($files));
 		$output = $this->viewHelper->render('Foo\.js');
 		$this->assertEquals('<script type="text/javascript" src="StaticResourceUri/Packages/MyPackage/JavaScript/Foo.js"></script>' . chr(10), $output);
 	}
@@ -75,7 +75,7 @@ class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
 		$excludedFile->expects($this->any())->method('getPathname')->will($this->returnValue('resource://MyPackage/Public/MySubpackage/JavaScript/Bar.js'));
 		$files = array($includedFile, $excludedFile);
 
-		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursive')->with('resource://MyPackage/Public/MySubpackage/JavaScript/')->will($this->returnValue($files));
+		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursively')->with('resource://MyPackage/Public/MySubpackage/JavaScript/')->will($this->returnValue($files));
 		$output = $this->viewHelper->render('.*\.js', 'Bar.*', NULL, 'MySubpackage');
 		$this->assertEquals('<script type="text/javascript" src="StaticResourceUri/Packages/MyPackage/MySubpackage/JavaScript/Foo.js"></script>' . chr(10), $output);
 	}

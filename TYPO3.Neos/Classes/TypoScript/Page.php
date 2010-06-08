@@ -128,17 +128,16 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Sets head content of this page.
 	 *
-	 * This may either be a plain string or a TypoScript Content Object
-	 *
 	 * @param array $head
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHead($head) {
+	public function setHead(array $head) {
 		$this->head = $head;
 	}
 
 	/**
+	 * Gets head content of this page.
 	 *
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
@@ -160,6 +159,8 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 
 	/**
 	 * Returns the explicitly set body content of this page (if any).
+	 *
+	 * Either a plain string or a TypoScript Content Object
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>

@@ -105,6 +105,9 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	}
 
 	/**
+	 * Returns the entry point to the site for when this domain is used
+	 * in the request.
+	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
