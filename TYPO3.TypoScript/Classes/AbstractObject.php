@@ -50,26 +50,10 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	protected $propertyProcessorChains = array();
 
 	/**
-	 * @var \F3\FLOW3\Property\Mapper
-	 */
-	protected $propertyMapper;
-
-	/**
 	 * @inject
 	 * @var \F3\TypoScript\ObjectFactory
 	 */
 	protected $typoScriptObjectFactory;
-
-	/**
-	 * Injects the property mapper
-	 *
-	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
-		$this->propertyMapper = $propertyMapper;
-	}
 
 	/**
 	 * Sets the Domain Model the TypoScript object is based on.
