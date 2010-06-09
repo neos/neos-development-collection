@@ -1,8 +1,5 @@
-/**
- * @include /Users/nilsdehl/Entwicklung /Workspaces/TYPO3v5 GUI/gui-mockup/t3.all.js
-
- */
 Ext.ns("F3.TYPO3.UserInterface");
+
 /**
  * @class F3.TYPO3.UserInterface.RootlineMenu
  * @namespace F3.TYPO3.UserInterface
@@ -16,7 +13,7 @@ F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
 	 * to add elements to the menu.
 	 */
 
-	menuConfig: {},	
+	menuConfig: {},
 
 	/**
 	 * @cfg menu Menu as defined in {@link F3.TYPO3.Application.MenuRegistry}
@@ -60,7 +57,7 @@ F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
 			var itemPath;
 			if (Ext.isObject(menuItem)) {
 				itemPath = path.concat([menuItem.itemId]);
-				menuItem.xtype = 'F3.TYPO3.UserInterface.RootlineMenu.Button';
+				menuItem.xtype = 'F3.TYPO3.UserInterface.RootlineMenuButton';
 			} else if (menuItem === ' ') {
 				itemPath = path.concat(['spacer']);
 				menuItem = {
@@ -76,7 +73,7 @@ F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
 				menuItem.hidden = true;
 			}
 			menuItem.menuPath = itemPath.join('-');
-			if (menuItem.xtype === 'F3.TYPO3.UserInterface.RootlineMenu.Button') {
+			if (menuItem.xtype === 'F3.TYPO3.UserInterface.RootlineMenuButton') {
 				menuItem.toggleGroup = [this.menuId, this.itemId].concat(path).join('-');
 				if (menuItem.children && menuItem.children.length > 0) {
 					menuItem.leaf = false;

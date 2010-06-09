@@ -52,7 +52,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'sections');
+	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'sections', 'identity');
 
 	/**
 	 * The type is used to distinguish between different TypoScript Page objects.
@@ -182,5 +182,9 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 		$this->sections->setModel($this->model);
      	return $this->sections;
   	}
+
+	public function getIdentity() {
+		return $this->model->FLOW3_Persistence_Entity_UUID;
+	}
 }
 ?>

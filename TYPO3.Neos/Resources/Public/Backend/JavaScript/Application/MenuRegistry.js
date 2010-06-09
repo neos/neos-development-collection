@@ -12,13 +12,13 @@ F3.TYPO3.Application.MenuRegistry = Ext.apply(new Ext.util.Observable, {
 
 	/**
 	 * @event F3.TYPO3.UserInterface.RootlineMenu.buttonPressed
-	 * @param {F3.TYPO3.UserInterface.RootlineMenu.Button} button the button being pressed
+	 * @param {F3.TYPO3.UserInterface.RootlineMenuButton} button the button being pressed
 	 * Called if a button is pressed.
 	 */
 
 	/**
 	 * @event F3.TYPO3.UserInterface.RootlineMenu.buttonUnpressed
-	 * @param {F3.TYPO3.UserInterface.RootlineMenu.Button} button the button being released
+	 * @param {F3.TYPO3.UserInterface.RootlineMenuButton} button the button being released
 	 * Called if a button is unpressed.
 	 */
 	

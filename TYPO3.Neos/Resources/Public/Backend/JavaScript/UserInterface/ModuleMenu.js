@@ -33,6 +33,7 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 				},
 				itemId: 'moduleDialogContainer',
 				ref: 'moduleDialogContainer',
+				// height: 50,
 				flex: 1
 			}]
 		};
@@ -73,7 +74,7 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 			this.addedModuleHeight += 13;
 		}
 
-		this.setHeight(this.getHeight() + this.addedModuleHeight);
+		this.height = this.getHeight() + this.addedModuleHeight;
 		F3.TYPO3.UserInterface.viewport.doLayout();
 
 		if (contentDialogConfig) {
@@ -111,7 +112,7 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 			this.contentDialog.destroy();
 			delete this.contentDialog;
 		}
-		this.setHeight(this.getHeight() - this.addedModuleHeight);
+		this.height = this.getHeight() - this.addedModuleHeight;
 		F3.TYPO3.UserInterface.viewport.doLayout();
 
 		this.addedModuleHeight = 0;

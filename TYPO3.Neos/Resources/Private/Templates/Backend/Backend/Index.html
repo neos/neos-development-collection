@@ -12,11 +12,15 @@
 		<f:base />
 
 		<ext:include theme="xtheme-gray" />
+		<script type="text/javascript">
+		<ext:extDirect.provider />
+		</script>
 		<typo3:includeJavaScript include="Configuration/.*\.js" subpackage="Backend" />
 
 		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Utils.js')}"></script>
 		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application.js')}"></script>
 
+		<typo3:includeJavaScript include="Ext/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="Application/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="UserInterface/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="Content/.*\.js" subpackage="Backend" />
