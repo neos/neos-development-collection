@@ -40,7 +40,7 @@ interface ObjectInterface {
 	 *
 	 * @param object $model The domain model the TypoScript object is based on
 	 * @return void
-	 * @throws \F3\TypoScript\Exception\InvalidModel if the given model is not an instance of $this->modelType
+	 * @throws \F3\TypoScript\Exception\InvalidModelException if the given model is not an instance of $this->modelType
 	 */
 	public function setModel($model);
 
@@ -73,7 +73,7 @@ interface ObjectInterface {
 	 *
 	 * @param string $propertyName Name of the property to return the chain of
 	 * @return \F3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
-	 * @throws \LogicException
+	 * @throws \F3\TypoScript\Exception\NoProcessorChainFoundException
 	 */
 	public function getPropertyProcessorChain($propertyName);
 

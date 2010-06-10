@@ -64,12 +64,12 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 *
 	 * @param object $model The domain model the TypoScript object is based on
 	 * @return void
-	 * @throws \F3\TypoScript\Exception\InvalidModel if the given model is not an instance of $this->modelType
+	 * @throws \F3\TypoScript\Exception\InvalidModelException if the given model is not an instance of $this->modelType
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setModel($model) {
 		if ($this->modelType !== NULL && !$model instanceof $this->modelType) {
-			throw new \F3\TypoScript\Exception\InvalidModel('setModel expects an object of type "' . $this->modelType . '", ' . (is_object($model) ? get_class($model) : gettype($model)) . '" given.', 1251970434);
+			throw new \F3\TypoScript\Exception\InvalidModelException('setModel expects an object of type "' . $this->modelType . '", ' . (is_object($model) ? get_class($model) : gettype($model)) . '" given.', 1251970434);
 		}
 		$this->model = $model;
 	}
@@ -112,11 +112,11 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 *
 	 * @param string $propertyName Name of the property to return the chain of
 	 * @return \F3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
-	 * @throws \LogicException
+	 * @throws \F3\TypoScript\Exception\NoProcessorChainFoundException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyProcessorChain($propertyName) {
-		if (!isset($this->propertyProcessorChains[$propertyName])) throw new \LogicException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
+		if (!isset($this->propertyProcessorChains[$propertyName])) throw new \F3\TypoScript\Exception\NoProcessorChainFoundException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
 		return $this->propertyProcessorChains[$propertyName];
 	}
 

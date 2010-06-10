@@ -23,12 +23,12 @@ namespace F3\TypoScript\Exception;
  *                                                                        */
 
 /**
- * A "Invalid Model" exception
+ * A "No Processor Chain Found" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class InvalidModel extends \F3\TypoScript\Exception {
+class NoProcessorChainFoundException extends \F3\TypoScript\Exception {
 
 }
 

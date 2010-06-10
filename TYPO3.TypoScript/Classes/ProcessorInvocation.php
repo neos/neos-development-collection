@@ -54,7 +54,7 @@ class ProcessorInvocation {
 	 * @param array $processorArguments Arguments to pass to the processor method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \RuntimeException
+	 * @throws \F3\TypoScript\Exception\InvalidProcessorException
 	 */
 	public function __construct($processorObject, $processorMethodName, array $processorArguments) {
 		if (is_object($processorObject) && is_string($processorMethodName) && method_exists($processorObject, $processorMethodName)) {
@@ -62,7 +62,7 @@ class ProcessorInvocation {
 			$this->processorMethodName = $processorMethodName;
 			$this->processorArguments = $processorArguments;
 		} else {
-			throw new \RuntimeException('The processor object is not an object or the specified processor method does not exist!', 1179409471);
+			throw new \F3\TypoScript\Exception\InvalidProcessorException('The processor object is not an object or the specified processor method does not exist!', 1179409471);
 		}
 	}
 
