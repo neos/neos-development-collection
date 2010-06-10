@@ -17,6 +17,11 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	 * Initialize the frontend editor component
 	 */
 	initComponent: function() {
+		var uri =
+			Ext.util.Cookies.get('TYPO3FeURI') ?
+			Ext.util.Cookies.get('TYPO3FeURI') :
+			F3.TYPO3.Configuration.Application.frontendBaseUri;
+
 		var config = {
 			border: false,
 			style: {
@@ -28,8 +33,7 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 				ref: '../contentIframe',
 				autoEl: {
 					tag: 'iframe',
-					// TODO Use cookie saved or configured URI
-					src: F3.TYPO3.Configuration.Application.frontendBaseUri,
+					src: uri,
 					style: {
 						width: '100%',
 						height: '100%',
