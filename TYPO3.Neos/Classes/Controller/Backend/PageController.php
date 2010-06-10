@@ -62,7 +62,6 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function updateAction(\F3\TYPO3\Domain\Model\Content\Page $page) {
-		// TODO Fix bug when updating page object
 		$this->pageRepository->update($page);
 
 		$this->view->assign('value',
