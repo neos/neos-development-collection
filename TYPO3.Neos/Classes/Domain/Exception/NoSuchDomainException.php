@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Controller\Exception;
+namespace F3\TYPO3\Domain\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,12 +23,13 @@ namespace F3\TYPO3\Controller\Exception;
  *                                                                        */
 
 /**
- * A "No TypoScript Page Object" exception
+ * A "No such domain" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @api
  */
-class NoTypoScriptPageObject extends \F3\TYPO3\Controller\Exception {
+class NoSuchDomainException extends \F3\TYPO3\Domain\Exception {
 
 }
 

@@ -83,7 +83,6 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
 	 * @param string $section Name of the section to which the child node should be added
 	 * @return void
-	 * @throws \F3\TYPO3\Domain\Exception\InvalidSection
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL, $section = 'default') {

@@ -23,13 +23,13 @@ namespace F3\TYPO3\Domain\Exception;
  *                                                                        */
 
 /**
- * A "Node already exists" exception
+ * An "Invalid Reference" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class NodeAlreadyExists extends \F3\TYPO3\Domain\Exception {
+class InvalidReferenceException extends \F3\TYPO3\Domain\Exception {
 
 }
 

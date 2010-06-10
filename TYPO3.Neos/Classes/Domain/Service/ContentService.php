@@ -81,12 +81,12 @@ class ContentService {
 	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created inside the given reference.
 	 * @param string $section If specified, the new content is inserted into the given section of the existing node. Note that some node types (for example "Site") don't support sections.
 	 * @return object The newly created content object
-	 * @throws \F3\TYPO3\Domain\Exception\InvalidReference if the given reference is of an invalid type
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidReferenceException if the given reference is of an invalid type
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createInside($nodeName, $contentType, $reference, $section = 'default') {
 		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
-			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411515);
+			throw new \F3\TYPO3\Domain\Exception\InvalidReferenceException('The given reference is not a valid content node or site.', 1245411515);
 		}
 
 		$newNode = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\ContentNode');
@@ -113,13 +113,13 @@ class ContentService {
 	 * @param string $contentType Object name of the content to create
 	 * @param object $reference An object implementing either the ContentInterface or the NodeInterface. A new content node will be created after the given reference.
 	 * @return object The newly created content object
-	 * @throws \F3\TYPO3\Domain\Exception\InvalidReference if the given reference is of an invalid type
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidReferenceException if the given reference is of an invalid type
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Needs to be implemented, actually...
 	 */
 	public function createAfter($nodeName, $contentType, $reference) {
 		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
-			throw new \F3\TYPO3\Domain\Exception\InvalidReference('The given reference is not a valid content node or site.', 1245411516);
+			throw new \F3\TYPO3\Domain\Exception\InvalidReferenceException('The given reference is not a valid content node or site.', 1245411516);
 		}
 
 		// fill in code here

@@ -56,14 +56,14 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	 *
 	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content The content to attach to this structure node
 	 * @return void
-	 * @throws \F3\TYPO3\Domain\Exception\InvalidContentType if the content does not matche the type of previously added content.
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidContentTypeException if the content does not matche the type of previously added content.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
 		if ($this->contentType === NULL) {
 			$this->contentType = ($content instanceof \F3\FLOW3\AOP\ProxyInterface) ? $content->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($content);
 		} elseif (!$content instanceof $this->contentType) {
-			throw new \F3\TYPO3\Domain\Exception\InvalidContentType('The given content was of type "' . get_class($content) . '" but the structure node already contains content of type "' . $this->contentType . '". Content types must not be mixed.', 1244713160);
+			throw new \F3\TYPO3\Domain\Exception\InvalidContentTypeException('The given content was of type "' . get_class($content) . '" but the structure node already contains content of type "' . $this->contentType . '". Content types must not be mixed.', 1244713160);
 		}
 		$locale = $content->getLocale();
 		$this->contents[$locale->getLanguage()][$locale->getRegion()] = $content;
@@ -94,7 +94,7 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	/**
 	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content The content to attach to this structure node
 	 * @return void
-	 * @throws \F3\TYPO3\Domain\Exception\NoSuchContent if the specified content is not currently attached to this structure node
+	 * @throws \F3\TYPO3\Domain\Exception\NoSuchContentException if the specified content is not currently attached to this structure node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
@@ -103,7 +103,7 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 		$region = $locale->getRegion();
 
 		if (!isset($this->contents[$language]) || !isset($this->contents[$language][$region])) {
-			throw new \F3\TYPO3\Domain\Exception\NoSuchContent('The specified content with locale ' . $language . '-' . $region . ' is not attached to this structure node.', 1244802597);
+			throw new \F3\TYPO3\Domain\Exception\NoSuchContentException('The specified content with locale ' . $language . '-' . $region . ' is not attached to this structure node.', 1244802597);
 		}
 		unset($this->contents[$language][$region]);
 		if ($this->contents[$language] === array()) {

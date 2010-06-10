@@ -23,13 +23,13 @@ namespace F3\TYPO3\Domain\Exception;
  *                                                                        */
 
 /**
- * A "No such content" exception
+ * A "No such node" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class NoSuchContent extends \F3\TYPO3\Domain\Exception {
+class NoSuchNodeException extends \F3\TYPO3\Domain\Exception {
 
 }
 

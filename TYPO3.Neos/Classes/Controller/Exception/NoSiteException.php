@@ -23,12 +23,12 @@ namespace F3\TYPO3\Controller\Exception;
  *                                                                        */
 
 /**
- * A "No TypoScript" exception
+ * A "No Site" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class NoTypoScriptConfiguration extends \F3\TYPO3\Controller\Exception {
+class NoSiteException extends \F3\TYPO3\Controller\Exception {
 
 }
 

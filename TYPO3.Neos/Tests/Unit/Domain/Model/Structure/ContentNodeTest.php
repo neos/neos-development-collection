@@ -90,7 +90,7 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\TYPO3\Domain\Exception\InvalidContentType
+	 * @expectedException \F3\TYPO3\Domain\Exception\InvalidContentTypeException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentThrowsAnExceptionIfContentIsAddedNotMatchingTheTypeOfExistingContent() {
@@ -161,7 +161,7 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\TYPO3\Domain\Exception\NoSuchContent
+	 * @expectedException \F3\TYPO3\Domain\Exception\NoSuchContentException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeContentThrowsAnExceptionIfTheGivenContentIsNotAttachedToTheContentNode() {

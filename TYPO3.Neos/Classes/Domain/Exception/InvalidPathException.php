@@ -23,13 +23,13 @@ namespace F3\TYPO3\Domain\Exception;
  *                                                                        */
 
 /**
- * A "No such node" exception
+ * An "Invalid Path" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class NoSuchNode extends \F3\TYPO3\Domain\Exception {
+class InvalidPathException extends \F3\TYPO3\Domain\Exception {
 
 }
 

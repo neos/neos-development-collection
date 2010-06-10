@@ -90,11 +90,11 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	 * Cloning of content is not allowed by default
 	 *
 	 * @return void
-	 * @throws \F3\TYPO3\Domain\Exception\CannotClone
+	 * @throws \F3\TYPO3\Domain\Exception\CannotCloneException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __clone() {
-		throw new \F3\TYPO3\Domain\Exception\CannotClone('Cloning of ' . get_class($this) . ' is not allowed.', 1175793217);
+		throw new \F3\TYPO3\Domain\Exception\CannotCloneException('Cloning of ' . get_class($this) . ' is not allowed.', 1175793217);
 	}
 }
 ?>

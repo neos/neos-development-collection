@@ -62,10 +62,10 @@ class NodeService {
 	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode The node marking the reference for the path
 	 * @param string $path Path to the searched content node where the path segements are node names, separated by forward slashes. Example: /home/products/foo
 	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode The node found at the given path or NULL of none was found
-	 * @throws \F3\TYPO3\Domain\InvalidPath if the path is not well formed
+	 * @throws \F3\TYPO3\Domain\InvalidPathException if the path is not well formed
 	 */
 	public function getNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode, $path) {
-		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPath('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1254924207);
+		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPathException('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1254924207);
 
 		$nodesOnPath = $this->getNodesOnPath($referenceNode, $path);
 		return (is_array($nodesOnPath) && count($nodesOnPath) > 0) ? end($nodesOnPath) : NULL;
@@ -77,10 +77,10 @@ class NodeService {
 	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode The node marking the reference for the path
 	 * @param string $path Valid content node path. Path segements are node names, separated by forward slashes. Example: /home/products/foo
 	 * @return array<\F3\TYPO3\Domain\Model\Structure\ContentNode> The nodes found on the given path or NULL if the path did not point to a node
-	 * @throws \F3\TYPO3\Domain\InvalidPath if the path is not well formed
+	 * @throws \F3\TYPO3\Domain\InvalidPathException if the path is not well formed
 	 */
 	public function getNodesOnPath(\F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode, $path) {
-		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPath('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1255430851);
+		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPathException('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1255430851);
 
 		if ($path === '/') {
 			return ($referenceNode instanceof \F3\TYPO3\Domain\Model\Structure\IndexNodeAwareInterface) ? array($referenceNode->getIndexNode($this->contentContext)) : NULL;

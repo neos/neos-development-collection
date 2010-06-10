@@ -23,13 +23,13 @@ namespace F3\TYPO3\Domain\Exception;
  *                                                                        */
 
 /**
- * A "Cannot clone" exception
+ * A "Node already exists" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class CannotClone extends \F3\TYPO3\Domain\Exception {
+class NodeAlreadyExistsException extends \F3\TYPO3\Domain\Exception {
 
 }
 

@@ -134,7 +134,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\TYPO3\Domain\Exception\InvalidReference
+	 * @expectedException F3\TYPO3\Domain\Exception\InvalidReferenceException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createInsideThrowsAnExceptionOnInvalidReference() {
@@ -185,7 +185,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\TYPO3\Domain\Exception\InvalidReference
+	 * @expectedException F3\TYPO3\Domain\Exception\InvalidReferenceException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAfterThrowsAnExceptionOnInvalidReference() {

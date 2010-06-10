@@ -23,13 +23,13 @@ namespace F3\TYPO3\Domain\Exception;
  *                                                                        */
 
 /**
- * An "Invalid Path" exception
+ * A "Cannot clone" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class InvalidPath extends \F3\TYPO3\Domain\Exception {
+class CannotCloneException extends \F3\TYPO3\Domain\Exception {
 
 }
 

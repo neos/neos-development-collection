@@ -23,13 +23,13 @@ namespace F3\TYPO3\Domain\Exception;
  *                                                                        */
 
 /**
- * An "Invalid content type" exception
+ * A "No such content" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class InvalidContentType extends \F3\TYPO3\Domain\Exception {
+class NoSuchContentException extends \F3\TYPO3\Domain\Exception {
 
 }
 
