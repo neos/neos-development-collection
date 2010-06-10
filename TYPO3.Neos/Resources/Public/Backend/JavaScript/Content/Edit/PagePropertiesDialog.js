@@ -41,53 +41,114 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 		Ext.apply(this, config);
 		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.initComponent.call(this);
 
-		this.form.on('beforeaction', function(form, action) {
-			if (action.type === 'directload') {
-				this.el.mask('Loading...');
-			}
-			if (action.type === 'directsubmit') {
-				this.el.mask('Saving...');
-			}
-		}, this);
-
-		this.form.on('actioncomplete', function(form, action) {
-			if (action.type === 'directload') {
-				this.el.unmask();
-			}
-			if (action.type === 'directsubmit') {
-				this.el.unmask();
-			}
-		}, this);
-
-		this.on('render', function() {
-			this.form.load({
-				params: {
-					// TODO Get identity from data attribute of iFrame or global context
-					'__identity': this.getCurrentPageIdentity()
-				}
-			});
-		}, this);
-
-		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', function(button) {
-			if (button.itemId == 'okButton') {
-				this.form.getForm().submit({
-					additionalValues: {
-						'__identity': this.getCurrentPageIdentity()
-					},
-					success: function() {
-						this.moduleMenu.removeModuleDialog();
-						F3.TYPO3.Application.fireEvent('F3.TYPO3.Content.contentChanged', '###pageId###');
-					},
-					scope: this
-				});
-			}
-		}, this);
+		// add event listener
+		this.form.on('beforeaction', this.onFormBeforeaction , this);
+		this.form.on('actioncomplete', this.onFormActioncomplete, this);
+		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this.onOkButtonClickAction, this);
+		F3.TYPO3.Application.on('F3.TYPO3.Content.contentChanged', this.refreshFrontendEditor, this);
 	},
-	getCurrentPageIdentity: function() {
+
+	// privat
+	onRender : function(ct, position){
+		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.onRender.call(this, ct, position);
+		this.form.load({
+			params: {
+				// TODO Get identity from data attribute of iFrame or global context
+				'__identity': this.getCurrentPageIdentity()
+			}
+		});
+	},
+
+	/**
+	 * on form before action
+	 *
+	 * @param {} form
+	 * @param {} action
+	 * ®return {void}
+	 */
+	onFormBeforeaction: function(form, action) {
+		if (action.type === 'directload') {
+			this.el.mask('Loading...');
+		}
+		if (action.type === 'directsubmit') {
+			this.el.mask('Saving...');
+		}
+	},
+
+	/**
+	 * on form action complete
+	 *
+	 * @param {} form
+	 * @param {} action
+	 * ®return {void}
+	 */
+	onFormActioncomplete: function(form, action) {
+		if (action.type === 'directload') {
+			this.el.unmask();
+		}
+		if (action.type === 'directsubmit') {
+			this.el.unmask();
+		}
+	},
+
+	/**
+	 * Action when click the dialog ok button
+	 * submit the dialog form
+	 *
+	 * @param {} button
+	 * @return {void}
+	 */
+	onOkButtonClickAction: function(button) {
+		if (button.itemId == 'okButton') {
+			this.form.getForm().submit({
+				additionalValues: {
+					'__identity': this.getCurrentPageIdentity()
+				},
+				success: this.onOkButtonClickActionSuccess,
+				scope: this
+			});
+		}
+	},
+
+	/**
+	 * Action when succes on button click action
+	 * remove the dialog and refresh frontend editor
+	 *
+	 * @return {void}
+	 */
+	onOkButtonClickActionSuccess: function() {
+		this.moduleMenu.removeModuleDialog();
+		F3.TYPO3.Application.fireEvent('F3.TYPO3.Content.contentChanged', '###pageId###');
+	},
+
+	/**
+	 * get the frontent editor iframe document object
+	 *
+	 * @return {object}
+	 */
+	getIframeDocument: function() {
 		var frontendEditor = Ext.getCmp('F3.TYPO3.Content.FrontendEditor'),
 			iframeDom = frontendEditor.getComponent('contentIframe').el.dom,
 			iframeDocument = iframeDom.contentDocument ? iframeDom.contentDocument : iframeDom.Document;
-		return iframeDocument.body.getAttribute('data-identity');;
+		return iframeDocument;
+	},
+
+	/**
+	 * get current page identity
+	 *
+	 * @return {string} data-identity
+	 */
+	getCurrentPageIdentity: function() {
+		return this.getIframeDocument().body.getAttribute('data-identity');
+	},
+
+	/**
+	 * refresh the frontend editor
+	 *
+	 *  @return {void}
+	 */
+	refreshFrontendEditor: function() {
+		this.getIframeDocument().location.reload();
 	}
 });
 Ext.reg('F3.TYPO3.Content.Edit.PagePropertiesDialog', F3.TYPO3.Content.Edit.PagePropertiesDialog);
