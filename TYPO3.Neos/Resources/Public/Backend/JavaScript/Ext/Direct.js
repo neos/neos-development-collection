@@ -13,3 +13,9 @@ Ext.form.Action.F3DirectSubmit = Ext.extend(Ext.form.Action.DirectSubmit, {
     }
 });
 Ext.form.Action.ACTION_TYPES['directsubmit'] = Ext.form.Action.F3DirectSubmit;
+
+Ext.Direct.on('exception', function(event) {
+	if (window.console && console.error) {
+		console.error(event.message, event.where);
+	}
+});

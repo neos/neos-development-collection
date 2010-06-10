@@ -23,6 +23,7 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 				overflow: 'hidden'
 			},
 			items: {
+				itemId: 'contentIframe',
 				xtype: 'box',
 				ref: '../contentIframe',
 				autoEl: {

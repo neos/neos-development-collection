@@ -153,3 +153,14 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 #F3-TYPO3-TopBar-Logo {
 	background: url(../Images/UserInterface/typo3-logo.png) no-repeat;
 }
+
+/**
+ * Icons
+ */
+
+.F3-TYPO3-Content-icon-edit {
+	background-image: url('../Images/UserInterface/Icons/ContentEdit.gif') !important;
+}
+.F3-TYPO3-Content-icon-pageProperties {
+	background-image: url('../Images/UserInterface/Icons/ContentEditPageProperties.png') !important;
+}
