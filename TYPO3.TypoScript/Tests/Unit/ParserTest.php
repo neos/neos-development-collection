@@ -25,6 +25,7 @@ namespace F3\TypoScript;
 require_once('Fixtures/Text.php');
 require_once('Fixtures/Page.php');
 require_once('Fixtures/ContentArray.php');
+require_once('Fixtures/ObjectWithArrayProperty.php');
 require_once('Fixtures/Processors.php');
 
 /**
@@ -82,6 +83,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 			case 'F3\TypoScript\Fixtures\Text' :
 			case 'F3\TypoScript\Fixtures\Page' :
 			case 'F3\TypoScript\Fixtures\ContentArray' :
+			case 'F3\TypoScript\Fixtures\ObjectWithArrayProperty' :
 			case 'F3\TypoScript\Fixtures\Processors' :
 				return TRUE;
 			default :
@@ -174,8 +176,16 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture03.ts2', FILE_TEXT);
 
-		$expectedObjectTree['myObject']['mySubObject']['mySubSubObject'] = new \F3\TypoScript\Fixtures\Text;
-		$expectedObjectTree['myObject']['mySubObject']['mySubSubObject']->setValue("Espresso is a fine beverage.");
+		$expectedObjectTree['object1']['mySubObject']['mySubSubObject'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object1']['mySubObject']['mySubSubObject']->setValue("Espresso is a fine beverage.");
+
+		$expectedObjectTree['object2'] = new \F3\TypoScript\Fixtures\ObjectWithArrayProperty;
+		$expectedObjectTree['object2']->setTheArray(array('theKey' => 'theValue'));
+
+		$textObject3 = new \F3\TypoScript\Fixtures\Text;
+		$textObject3->setValue('theValue');
+		$expectedObjectTree['object3'] = new \F3\TypoScript\Fixtures\ObjectWithArrayProperty;
+		$expectedObjectTree['object3']->setTheArray(array('theKey' => $textObject3));
 
 		$actualObjectTree = $this->parser->parse($sourceCode);
 		$this->assertEquals($expectedObjectTree, $actualObjectTree, 'The object tree was not as expected after parsing fixture 03.');

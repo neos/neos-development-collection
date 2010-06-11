@@ -6,5 +6,13 @@
  */
 namespace: default = F3\TypoScript\Fixtures
  
-myObject.mySubObject.mySubSubObject = Text
-myObject.mySubObject.mySubSubObject.value = "Espresso is a fine beverage."
+object1.mySubObject.mySubSubObject = Text
+object1.mySubObject.mySubSubObject.value = "Espresso is a fine beverage."
+
+
+object2 = ObjectWithArrayProperty
+object2.theArray.theKey = "theValue"
+
+object3 = ObjectWithArrayProperty
+object3.theArray.theKey = Text
+object3.theArray.theKey.value = "theValue"

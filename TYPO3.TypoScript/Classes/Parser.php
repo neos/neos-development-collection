@@ -556,38 +556,46 @@ class Parser implements \F3\TypoScript\ParserInterface {
 			$objectTree = &$this->objectTree;
 		}
 
-		if (is_object($value)) {
-			if (count($objectPathArray)) {
-				if (is_array($objectTree) || $objectTree instanceof \ArrayAccess) {
-					$currentKey = array_shift($objectPathArray);
-					if ((integer)$currentKey > 0) $currentKey = intval($currentKey);
-					$this->setChildNodeToEmptyArrayIfNeccessary($objectTree, $currentKey);
-					$objectTree[$currentKey] = $this->setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
-				} elseif (is_object($objectTree)) {
-					$propertyName = array_shift($objectPathArray);
-					\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree, $propertyName, $value);
-				}
+		$currentKey = array_shift($objectPathArray);
+		if ((integer)$currentKey > 0) {
+			$currentKey = (integer)$currentKey;
+		}
 
-			} else {
-				$objectTree = $value;
-			}
-		} else {
-			$currentKey = array_shift($objectPathArray);
-			if ((integer)$currentKey > 0) $currentKey = (integer)$currentKey;
-			if (count($objectPathArray) > 1) {
-				$this->setChildNodeToEmptyArrayIfNeccessary($objectTree, $currentKey);
+		if (count($objectPathArray) > 1) {
+			$this->setChildNodeToEmptyArrayIfNeccessary($objectTree, $currentKey);
+			if (is_array($objectTree) || $objectTree instanceof \ArrayAccess) {
 				$objectTree[$currentKey] = $this->setValueInObjectTree($objectPathArray, $value, $objectTree[$currentKey]);
 			} else {
-				$propertyName = array_shift($objectPathArray);
+				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($objectTree, $currentKey);
+				$propertyValue = $this->setValueInObjectTree($objectPathArray, $value, $propertyValue);
+				\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree, $currentKey, $propertyValue);
+				unset($propertyValue);
+			}
+		} elseif (count($objectPathArray) === 1) {
+			$this->setChildNodeToEmptyArrayIfNeccessary($objectTree, $currentKey);
+			$propertyName = array_shift($objectPathArray);
+
+			if (is_array($objectTree) || $objectTree instanceof \ArrayAccess) {
 				if ($propertyName === NULL && $value === NULL) {
 					unset($objectTree[$currentKey]);
 				} else {
-					if (is_array($objectTree) || $objectTree instanceof \ArrayAccess) {
-						\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree[$currentKey], $propertyName, $value);
-					} else {
-						\F3\FLOW3\Reflection\ObjectAccess::setProperty(\F3\FLOW3\Reflection\ObjectAccess::getProperty($objectTree, $currentKey), $propertyName, $value);
-					}
+					\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree[$currentKey], $propertyName, $value);
 				}
+			} else {
+				if ($propertyName === NULL && $value === NULL) {
+					\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree, $currentKey, NULL);
+				} else {
+					$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($objectTree, $currentKey);
+					\F3\FLOW3\Reflection\ObjectAccess::setProperty($propertyValue, $propertyName, $value);
+					\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree, $currentKey, $propertyValue);
+					unset($propertyValue);
+				}
+			}
+		} else {
+			if ($value === NULL && (is_array($objectTree) || $objectTree instanceof \ArrayAccess)) {
+				unset($objectTree[$currentKey]);
+			} else {
+				\F3\FLOW3\Reflection\ObjectAccess::setProperty($objectTree, $currentKey, $value);
 			}
 		}
 		return $objectTree;
@@ -627,17 +635,14 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * if the childNodeKey is not the offset of a Content Array and the child node is
 	 * not already an array or Content Array.
 	 *
-	 * @param \ArrayAccess &$objectTree An object tree or sub part of the object tree which contains the child node
+	 * @param mixed &$objectTree An object tree or sub part of the object tree which contains the child node
 	 * @param string $childNodeKey Key in the objectTree which identifies the child node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see setValueInObjectTree()
 	 */
 	protected function setChildNodeToEmptyArrayIfNeccessary(&$objectTree, $childNodeKey) {
-		if (!is_array($objectTree) && !$objectTree instanceof \ArrayAccess) {
-			throw new \F3\TypoScript\Exception('Given object tree is not an array.', 1273761732);
-		}
-		if (!is_integer($childNodeKey) && !isset($objectTree[$childNodeKey])) {
+		if (!is_object($objectTree) && !is_integer($childNodeKey) && !isset($objectTree[$childNodeKey])) {
 			$objectTree[$childNodeKey] = array();
 		}
 	}

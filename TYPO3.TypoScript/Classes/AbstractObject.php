@@ -149,7 +149,7 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 		}
 
 		$propertyValue = $this->$getterMethodName();
-		if ($propertyValue === NULL) {
+		if ($propertyValue === NULL && $this->model !== NULL) {
 			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->model, $propertyName)) {
 				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->model, $propertyName);
 			}

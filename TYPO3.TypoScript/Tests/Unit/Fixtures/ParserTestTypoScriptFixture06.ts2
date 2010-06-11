@@ -26,13 +26,3 @@ object4.$firstName = "Kasper"
 object4.$lastNamePart1 = "Skår"
 object4.$lastNamePart2 = "høj"
 object4.value = "Hello, $firstName $lastNamePart1$lastNamePart2!"
-
-/*
-
-object5 = Text
-object5.$open = '<strong>'
-object5.$close = '</strong>'
-object5.value = "That's strong!"
-object5.processors.1.wrap($open, $close)
-
-*/

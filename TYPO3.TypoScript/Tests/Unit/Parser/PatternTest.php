@@ -90,7 +90,7 @@ class PatternTest extends \F3\Testing\BaseTestCase {
 	 * Checks the regular expression SPLIT_PATTERN_VALUENUMBER
 	 *
 	 * @test
-	 * @author Sebastian Kurf�rst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function testSPLIT_PATTERN_VALUENUMBER() {
 		$pattern = \F3\TypoScript\Parser::SPLIT_PATTERN_VALUENUMBER;
