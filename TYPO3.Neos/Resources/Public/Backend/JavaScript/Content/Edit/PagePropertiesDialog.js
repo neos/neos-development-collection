@@ -17,8 +17,8 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 				xtype: 'form',
 				ref: 'form',
 				api: {
-					load: F3.TYPO3_Controller_Backend_PageController.show,
-					submit: F3.TYPO3_Controller_Backend_PageController.update
+					load: F3.TYPO3_Controller_Service_PageController.show,
+					submit: F3.TYPO3_Controller_Service_PageController.update
 				},
 				paramsAsHash: true,
 				border: false,

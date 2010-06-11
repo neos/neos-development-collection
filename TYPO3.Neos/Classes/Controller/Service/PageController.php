@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Controller\Backend;
+namespace F3\TYPO3\Controller\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,7 +23,7 @@ namespace F3\TYPO3\Controller\Backend;
  *                                                                        */
 
 /**
- * The TYPO3 Page controller -- used to create/update pages.
+ * The TYPO3 Page service controller
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
@@ -32,10 +32,34 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $defaultViewObjectName = 'F3\ExtJS\ExtDirect\View';
 
 	/**
-	 * @inject
 	 * @var \F3\TYPO3\Domain\Repository\Content\PageRepository
 	 */
 	protected $pageRepository;
+
+	/**
+	 * Inject the Page repository
+	 * @param \F3\TYPO3\Domain\Repository\Content\PageRepository $pageRepository
+	 */
+	public function injectPageRepository($pageRepository) {
+		$this->pageRepository = $pageRepository;
+	}
+
+	/**
+	 * Select special views according to format
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function initializeAction() {
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+				$this->defaultViewObjectName = 'F3\ExtJS\ExtDirect\View';
+				break;
+			case 'json' :
+				$this->defaultViewObjectName = 'F3\FLOW3\MVC\View\JsonView';
+				break;
+		}
+	}
 
 	/**
 	 * Load page data
@@ -46,12 +70,19 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function showAction(\F3\TYPO3\Domain\Model\Content\Page $page) {
-		$this->view->assign('value',
-			array(
-				'data' => $page,
-				'success' => TRUE
-			)
-		);
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$this->view->assign('value',
+					array(
+						'data' => $page,
+						'success' => TRUE
+					)
+				);
+				break;
+			default :
+				$this->view->assign('page', $page);
+		}
 	}
 
 	/**
@@ -64,33 +95,48 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function updateAction(\F3\TYPO3\Domain\Model\Content\Page $page) {
 		$this->pageRepository->update($page);
 
-		$this->view->assign('value',
-			array(
-				'success' => TRUE
-			)
-		);
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$this->view->assign('value',
+					array(
+						'success' => TRUE
+					)
+				);
+				break;
+			default :
+				$this->redirect('show', NULL, NULL, array('page' => $page));
+		}
 	}
 
 	/**
-	 * Get form definition (Ext JS) for editing a page
+	 * Get information for editing a page
+	 *
+	 * @todo use some kind of TCA like configuration of page properties and form fields and convert that to Ext JS
 	 *
 	 * @param \F3\TYPO3\Domain\Model\Content\Page $page
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @extdirect
 	 */
 	public function editAction(\F3\TYPO3\Domain\Model\Content\Page $page) {
-		$this->view->assign('value', array(
-			'title' => array(
-				'xtype' => 'textfield',
-				'allowBlank' => FALSE,
-				'fieldLabel' => 'Title'
-			),
-			'hidden' => array(
-				'xtype' => 'checkbox',
-				'fieldLabel' => 'Visibility',
-				'boxLabel' => 'hidden'
-			)
-		));
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+				$this->view->assign('value', array(
+					'title' => array(
+						'xtype' => 'textfield',
+						'allowBlank' => FALSE,
+						'fieldLabel' => 'Title'
+					),
+					'hidden' => array(
+						'xtype' => 'checkbox',
+						'fieldLabel' => 'Visibility',
+						'boxLabel' => 'hidden'
+					)
+				));
+				break;
+			default:
+				$this->view->assign('page', $page);
+		}
 	}
 }
 ?>
