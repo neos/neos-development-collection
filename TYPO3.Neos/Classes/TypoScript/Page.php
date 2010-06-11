@@ -52,7 +52,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'content', 'parts', 'identity');
+	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'content', 'parts');
 
 	/**
 	 * The type is used to distinguish between different TypoScript Page objects.
@@ -224,15 +224,6 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	public function render() {
 		$this->model = $this->renderingContext->getContentContext()->getCurrentPage();
 		return parent::render();
-	}
-
-	/**
-	 * ...
-	 *
-	 * @author Christopher Hlubek
-	 */
-	public function getIdentity() {
-		return $this->model->FLOW3_Persistence_Entity_UUID;
 	}
 }
 ?>
