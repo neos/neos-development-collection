@@ -113,12 +113,17 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	/**
 	 * Returns the rendered content of this content object
 	 *
+	 * @todo Discuss how to expose the domain model for identity to the view
+	 *
 	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		foreach ($this->presentationModelPropertyNames as $propertyName) {
 			$this->template->assign($propertyName, $this->getPropertyProcessingProxy($propertyName));
+		}
+		if ($this->model !== NULL) {
+			$this->template->assign('domainModel', $this->model);
 		}
 		$this->template->setRenderingContext($this->renderingContext);
      	$content = $this->template->render();
