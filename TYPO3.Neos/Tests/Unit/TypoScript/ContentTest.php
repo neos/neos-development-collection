@@ -23,22 +23,22 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * Testcase for the TypoScript standard processors
+ * Testcase for the Content TypoScript object
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class SectionsTest extends \F3\Testing\BaseTestCase {
+class ContentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function offsetGetInitializesSectionsOnFirstCall() {
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('initializeSections'));
-		$sections->expects($this->once())->method('initializeSections');
+	public function offsetGetInitializesContentOnFirstCall() {
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeContent'));
+		$content->expects($this->once())->method('initializeContent');
 
-		$sections->offsetGet('foo');
+		$content->offsetGet('foo');
 	}
 
 	/**
@@ -46,9 +46,9 @@ class SectionsTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetGetReturnsNullForNonExistantOffset() {
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('initializeSections'));
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeContent'));
 
-		$this->assertNull($sections->offsetGet('foo'));
+		$this->assertNull($content->offsetGet('foo'));
 	}
 
 	/**
@@ -60,21 +60,21 @@ class SectionsTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->once())->method('hasChildNodes')->with('foo')->will($this->returnValue(TRUE));
 		$mockModel = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockModel->expects($this->once())->method('getNode')->will($this->returnValue($mockNode));
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('dummy'));
-		$sections->_set('model', $mockModel);
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('dummy'));
+		$content->_set('model', $mockModel);
 
-		$this->assertTrue($sections->offsetExists('foo'));
+		$this->assertTrue($content->offsetExists('foo'));
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function offsetSetInitializesSectionsOnFirstCall() {
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('initializeSections'));
-		$sections->expects($this->once())->method('initializeSections');
+	public function offsetSetInitializesContentOnFirstCall() {
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeContent'));
+		$content->expects($this->once())->method('initializeContent');
 
-		$sections->offsetSet('foo', $this->getMock('F3\TypoScript\ContentObjectInterface'));
+		$content->offsetSet('foo', $this->getMock('F3\TypoScript\ContentObjectInterface'));
 	}
 
 	/**
@@ -83,10 +83,10 @@ class SectionsTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetSetThrowsExceptionIfInvalidValueIsGiven() {
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('initializeSections'));
-		$sections->expects($this->once())->method('initializeSections');
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeContent'));
+		$content->expects($this->once())->method('initializeContent');
 
-		$sections->offsetSet('foo', 'bar');
+		$content->offsetSet('foo', 'bar');
 	}
 
 	/**
@@ -94,22 +94,22 @@ class SectionsTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function usingArrayAccessASetValueCanBeRetrievedAgain() {
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('initializeSections'));
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeContent'));
 		$value = $this->getMock('F3\TypoScript\ContentObjectInterface');
 
-		$sections['foo'] = $value;
-		$this->assertSame($value, $sections['foo']);
+		$content['foo'] = $value;
+		$this->assertSame($value, $content['foo']);
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function offsetUnsetInitializesSectionsOnFirstCall() {
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('initializeSections'));
-		$sections->expects($this->once())->method('initializeSections');
+	public function offsetUnsetInitializesContentOnFirstCall() {
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeContent'));
+		$content->expects($this->once())->method('initializeContent');
 
-		$sections->offsetUnset('foo');
+		$content->offsetUnset('foo');
 	}
 
 	/**
@@ -117,18 +117,18 @@ class SectionsTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetUnsetWorks() {
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('initializeSections'));
-		$sections['foo'] = $this->getMock('F3\TypoScript\ContentObjectInterface');
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeContent'));
+		$content['foo'] = $this->getMock('F3\TypoScript\ContentObjectInterface');
 
-		$sections->offsetUnset('foo');
-		$this->assertNull($sections['foo']);
+		$content->offsetUnset('foo');
+		$this->assertNull($content['foo']);
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeSectionsIteratesOverUsedSectionsOfPageNodeAndBuildsTypoScriptObjectsForFoundContent() {
+	public function initializeContentIteratesOverUsedContentOfPageNodeAndBuildsTypoScriptObjectsForFoundContent() {
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext');
 		$mockRenderingContext = $this->getMock('F3\TypoScript\RenderingContext');
 		$mockRenderingContext->expects($this->any())->method('getContentContext')->will($this->returnValue($mockContentContext));
@@ -140,7 +140,7 @@ class SectionsTest extends \F3\Testing\BaseTestCase {
 		$mockTextNode->expects($this->once())->method('getContent')->with($mockContentContext)->will($this->returnValue($mockTextContent));
 
 		$mockPageNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode');
-		$mockPageNode->expects($this->once())->method('getUsedSectionNames')->will($this->returnValue(array('default')));
+		$mockPageNode->expects($this->once())->method('getUsedContentNames')->will($this->returnValue(array('default')));
 		$mockPageNode->expects($this->once())->method('getChildNodes')->with($mockContentContext, 'default')->will($this->returnValue(array($mockPageNode, $mockTextNode)));
 		$mockPageNode->expects($this->once())->method('getContent')->with($mockContentContext)->will($this->returnValue($mockPageContent));
 
@@ -153,15 +153,15 @@ class SectionsTest extends \F3\Testing\BaseTestCase {
 		$mockModel = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockModel->expects($this->once())->method('getNode')->will($this->returnValue($mockPageNode));
 
-		$sections = $this->getAccessibleMock('F3\TYPO3\TypoScript\Sections', array('dummy'));
-		$sections->_set('typoScriptObjectFactory', $mockTypoScriptObjectFactory);
-		$sections->_set('renderingContext', $mockRenderingContext);
-		$sections->_set('model', $mockModel);
+		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('dummy'));
+		$content->_set('typoScriptObjectFactory', $mockTypoScriptObjectFactory);
+		$content->_set('renderingContext', $mockRenderingContext);
+		$content->_set('model', $mockModel);
 
-		$sections->_call('initializeSections');
+		$content->_call('initializeContent');
 
-		$this->assertSame($mockContentArray, $sections['default']);
-		$this->assertSame($mockTypoScriptTextObject, $sections['default'][0]);
+		$this->assertSame($mockContentArray, $content['default']);
+		$this->assertSame($mockTypoScriptTextObject, $content['default'][0]);
 	}
 }
 ?>

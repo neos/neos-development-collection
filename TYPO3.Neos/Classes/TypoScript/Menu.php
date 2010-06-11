@@ -23,46 +23,40 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * Testcase for the TypoScript standard processors
+ * A TypoScript Menu object
  *
- * @version $Id$
+ * @version $Id: Text.php 4448 2010-06-07 13:24:31Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope prototype
  */
-class PageTest extends \F3\Testing\BaseTestCase {
+class Menu extends \F3\TypoScript\AbstractContentObject {
 
 	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @var string
 	 */
-	public function getContentInitializesContentOnFirstCall() {
-		$mockContent = $this->getMock('F3\TYPO3\TypoScript\Content', array('dummy'));
-		$mockTypoScriptObjectFactory = $this->getMock('F3\TypoScript\ObjectFactory');
-		$mockTypoScriptObjectFactory->expects($this->once())->method('createByName')->with('Content')->will($this->returnValue($mockContent));
-
-		$page = $this->getAccessibleMock('F3\TYPO3\TypoScript\Page', array('dummy'));
-		$page->_set('typoScriptObjectFactory', $mockTypoScriptObjectFactory);
-		$page->_set('model', $this->getMock('F3\TYPO3\Domain\Model\Content\CompositeContentInterface'));
-
-		$this->assertSame($mockContent, $page->getContent());
-	}
+	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Menu.html';
 
 	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * Names of the properties of this TypoScript which should be available in
+	 * this TS object's template while rendering it.
+	 *
+	 * @var array
 	 */
-	public function getContentSetsTheModelOnEachCall() {
-		$mockContent = $this->getMock('F3\TYPO3\TypoScript\Content', array('setModel'));
-		$mockContent->expects($this->exactly(2))->method('setModel');
-		$mockTypoScriptObjectFactory = $this->getMock('F3\TypoScript\ObjectFactory');
-		$mockTypoScriptObjectFactory->expects($this->once())->method('createByName')->with('Content')->will($this->returnValue($mockContent));
+	protected $presentationModelPropertyNames = array('items');
 
-		$page = $this->getAccessibleMock('F3\TYPO3\TypoScript\Page', array('dummy'));
-		$page->_set('typoScriptObjectFactory', $mockTypoScriptObjectFactory);
-		$page->_set('model', $this->getMock('F3\TYPO3\Domain\Model\Content\CompositeContentInterface'));
+	/**
+	 * @var array
+	 */
+	protected $items = array();
 
-		$page->getContent();
-		$page->getContent();
-	}
-
+	/**
+	 * Returns the menu items according to the defined settings
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getItems() {
+      return $this->items;
+   }
 }
 ?>

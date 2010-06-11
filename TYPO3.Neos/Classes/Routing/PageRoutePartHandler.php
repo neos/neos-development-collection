@@ -87,7 +87,8 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 		if (!$page instanceof \F3\TYPO3\Domain\Model\Content\Page) {
 			return self::MATCHRESULT_NOSUCHPAGE;
 		}
-		$contentContext->setNodePath('/' . $value);
+		$contentContext->setCurrentPage($page);
+     	$contentContext->setNodePath('/' . $value);
 		$this->value = array('__identity' => $page->FLOW3_Persistence_Entity_UUID);
 		return TRUE;
 	}

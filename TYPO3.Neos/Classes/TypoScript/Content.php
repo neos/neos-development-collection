@@ -29,17 +29,7 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Sections extends \F3\TypoScript\AbstractContentObject implements \ArrayAccess {
-
-	/**
-	 * @var \F3\TYPO3\Domain\Model\Content\CompositeContentInterface
-	 */
-	protected $model;
-
-	/**
-	 * @var string
-	 */
-	protected $modelType = 'F3\TYPO3\Domain\Model\Content\CompositeContentInterface';
+class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAccess {
 
 	/**
 	 * @var array
@@ -68,7 +58,10 @@ class Sections extends \F3\TypoScript\AbstractContentObject implements \ArrayAcc
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetExists($offset) {
-		return $this->model->getNode()->hasChildNodes($offset);
+		if ($this->sections === NULL) {
+			$this->initializeSections();
+     	}
+		return isset($this->sections[$offset]);
 	}
 
 	/**
@@ -111,7 +104,12 @@ class Sections extends \F3\TypoScript\AbstractContentObject implements \ArrayAcc
 	 */
 	protected function initializeSections() {
     	$this->sections = array();
-		$pageNode = $this->model->getNode();
+
+		$currentPage = $this->renderingContext->getContentContext()->getCurrentPage();
+		if ($currentPage === NULL) {
+			return;
+		}
+		$pageNode = $currentPage->getNode();
 
 		foreach ($pageNode->getUsedSectionNames() as $sectionName) {
 			$contentArray = $this->typoScriptObjectFactory->createByName('ContentArray');

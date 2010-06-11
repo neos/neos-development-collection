@@ -52,7 +52,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'sections', 'identity');
+	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'content', 'parts', 'identity');
 
 	/**
 	 * The type is used to distinguish between different TypoScript Page objects.
@@ -78,10 +78,14 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	protected $head = array();
 
 	/**
-	 * @transient
-	 * @var \F3\TYPO3\TypoScript\Sections
+	 * @var \F3\TYPO3\TypoScript\Content
 	 */
-	protected $sections;
+	protected $content;
+
+	/**
+	 * @var array
+	 */
+	protected $parts = array();
 
 	/**
 	 * Sets the type of this page.
@@ -170,19 +174,63 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
-	 * Returns the sections used on this page.
+	 * Overrides the Content TypoScript Object used on this page.
 	 *
-	 * @return array An array of TypoScript Objectes, indexed by section names
+	 * @param \F3\TYPO3\TypoScript\Content $content
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getSections() {
-		if ($this->sections === NULL) {
-			$this->sections = $this->typoScriptObjectFactory->createByName('Sections');
-		}
-		$this->sections->setModel($this->model);
-     	return $this->sections;
+	public function setContent(\F3\TYPO3\TypoScript\Content $content) {
+     	$this->content = $content;
   	}
 
+	/**
+	 * Returns the content used on this page.
+	 *
+	 * @return array An array of TypoScript Objects, indexed by content names
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContent() {
+     	return $this->content;
+  	}
+
+	/**
+	 * Sets the parts array for this page
+	 *
+	 * @param array $parts
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setParts(array $parts) {
+		$this->parts = $parts;
+	}
+
+	/**
+	 * Returns the parts array of this page
+	 *
+	 * @return array An array of TypoScript objects if any have been defined
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getParts() {
+		return $this->parts;
+	}
+
+	/**
+	 * Returns the rendered content of this Page TypoScript Object
+	 *
+	 * @return string The rendered content as a string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function render() {
+		$this->model = $this->renderingContext->getContentContext()->getCurrentPage();
+		return parent::render();
+	}
+
+	/**
+	 * ...
+	 *
+	 * @author Christopher Hlubek
+	 */
 	public function getIdentity() {
 		return $this->model->FLOW3_Persistence_Entity_UUID;
 	}

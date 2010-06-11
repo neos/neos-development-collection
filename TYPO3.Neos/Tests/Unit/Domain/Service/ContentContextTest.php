@@ -217,6 +217,20 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function getCurrentPageReturnsTheCurrentPageContentObjectIfAny() {
+		$mockPage = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array(), array(), '', FALSE);
+
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
+
+		$this->assertNull($contentContext->getCurrentPage());
+		$contentContext->setCurrentPage($mockPage);
+		$this->assertSame($mockPage, $contentContext->getCurrentPage());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function setNodePathAndNodeGetPathAllowsForSettingTheCurrentNodePath() {
 		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext;
 

@@ -91,6 +91,11 @@ class ContentContext {
 	protected $currentDomain;
 
 	/**
+	 * @var \F3\TYPO3\Domain\Model\Content\Page
+	 */
+	protected $currentPage;
+
+	/**
 	 * @var string
 	 */
 	protected $nodePath;
@@ -200,6 +205,7 @@ class ContentContext {
 	 * Returns the current site from this frontend context
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\Site The current site
+	 * @author Robert Lemke <robert@tpyo3.org>
 	 */
 	public function getCurrentSite() {
 		return $this->currentSite;
@@ -209,14 +215,38 @@ class ContentContext {
 	 * Returns the current site from this frontend context
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\Domain The current site
+	 * @author Robert Lemke <robert@tpyo3.org>
 	 */
 	public function getCurrentDomain() {
 		return $this->currentDomain;
 	}
 
 	/**
+	 * Sets the current page.
+	 * This method is typically called by a route part handler or by some other
+	 * part of TYPO3 which wants to mock the "current page" information.
+	 *
+	 * @return \F3\TYPO3\Domain\Model\Content\Page $page
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setCurrentPage(\F3\TYPO3\Domain\Model\Content\Page $page) {
+		$this->currentPage = $page;
+	}
+
+	/**
+	 * Returns the current page (ie. the Page content object) from this frontend context
+	 *
+	 * @return \F3\TYPO3\Domain\Model\Content\Page The current page
+	 * @author Robert Lemke <robert@tpyo3.org>
+	 */
+	public function getCurrentPage() {
+		return $this->currentPage;
+	}
+
+	/**
 	 * Sets the current node path.
-	 * This method is typcially called by a specialized route part handler.
+	 * This method is typically called by a specialized route part handler.
 	 *
 	 * @param string $nodePath The current node path, e.g. "homepage/products/typo3"
 	 * @return void
