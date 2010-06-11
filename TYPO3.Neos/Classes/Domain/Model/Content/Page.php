@@ -35,7 +35,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	/**
 	 * The page title
 	 * @var string
-	 * @validate StringLength(minimum = 1, maximum = 250)
+	 * @validate Label, StringLength(minimum = 1, maximum = 250)
 	 */
 	protected $title = 'Untitled';
 
