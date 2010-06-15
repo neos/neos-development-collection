@@ -37,9 +37,9 @@ class ContentService {
 	protected $contentContext;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 */
-	protected $objectFactory;
+	protected $objectManager;
 
 	/**
 	 * Constructs this service
@@ -52,12 +52,12 @@ class ContentService {
 	}
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectFactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\ObjectFactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -89,11 +89,11 @@ class ContentService {
 			throw new \F3\TYPO3\Domain\Exception\InvalidReferenceException('The given reference is not a valid content node or site.', 1245411515);
 		}
 
-		$newNode = $this->objectFactory->create('F3\TYPO3\Domain\Model\Structure\ContentNode');
+		$newNode = $this->objectManager->create('F3\TYPO3\Domain\Model\Structure\ContentNode');
 		$newNode->setNodeName($nodeName);
 
 		$locale = $this->contentContext->getLocale();
-		$content = $this->objectFactory->create($contentType, $locale, $newNode);
+		$content = $this->objectManager->create($contentType, $locale, $newNode);
 
 		if ($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface) {
 			$reference->getNode()->addChildNode($newNode, $locale, $section);

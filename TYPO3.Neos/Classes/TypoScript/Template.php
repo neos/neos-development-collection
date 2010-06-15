@@ -123,6 +123,9 @@ class Template extends \F3\TypoScript\AbstractObject {
 	public function render() {
 		$this->templateParser->setConfiguration($this->buildParserConfiguration());
 		$parsedTemplate = $this->parseTemplate();
+		if (!is_object($parsedTemplate)) {
+			return $parsedTemplate;
+		}
 
 		$this->renderingContext->setTemplateVariableContainer($this->objectManager->create('F3\Fluid\Core\ViewHelper\TemplateVariableContainer', $this->variables));
 		$viewHelperVariableContainer = $this->objectManager->create('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer');

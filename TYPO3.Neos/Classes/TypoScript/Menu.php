@@ -45,18 +45,97 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	protected $presentationModelPropertyNames = array('items');
 
 	/**
-	 * @var array
+	 * The first navigation level which should be rendered.
+	 *
+	 * 0 = top level of the site
+	 * 
+	 * @var integer
 	 */
-	protected $items = array();
+	protected $firstLevel = 0;
 
 	/**
-	 * Returns the menu items according to the defined settings
+	 * The last navigation level which should be rendered.
+	 *
+	 * 0 = top level of the site
+	 * 1 = first sub level (2nd level)
+	 * 2 = second sub level (3rd level)
+	 * ...
+	 *
+	 * -1 = last level
+	 * -2 = level above the last level
+	 * ...
+	 *
+	 * @var integer
+	 */
+	protected $lastLevel = 2;
+
+	/**
+	 * @var array
+	 */
+	protected $items;
+
+	/**
+	 * Sets the first level
+	 *
+	 * @param integer $firstLevel
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setFirstLevel($firstLevel) {
+		$this->firstLevel = $firstLevel;
+	}
+
+	/**
+	 * @return integer
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getFirstLevel() {
+		return $this->firstLevel;
+	}
+
+	/**
+	 * Sets the last level
+	 *
+	 * @param integer $lastLevel
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setLastLevel($lastLevel) {
+		$this->lastLevel = $lastLevel;
+	}
+
+	/**
+	 * @return integer
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLastLevel($lastLevel) {
+		return $this->lastLevel;
+	}
+
+	/**
+	 * Returns the menu items according to the defined settings.
 	 *
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getItems() {
-      return $this->items;
+		if ($this->items === NULL) {
+			$this->items = $this->buildItems();
+		}
+     return $this->items;
    }
+
+	/**
+	 * Builds the array of menu items containing those items which match the
+	 * configuration set for this Menu object.
+	 *
+	 * @return array An array of menu items and further information
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function buildItems() {
+		return array(
+			''
+		);
+	}
 }
 ?>

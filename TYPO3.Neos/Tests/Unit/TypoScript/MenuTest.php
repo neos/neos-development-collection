@@ -22,39 +22,28 @@ namespace F3\TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
- * Testcase for the File TypoScript Object
+ * Testcase for the Menu TypoScript Object
  *
- * @version $Id$
+ * @version $Id: FileTest.php 4469 2010-06-08 16:09:45Z k-fish $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class FileTest extends \F3\Testing\BaseTestCase {
+class MenuTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function renderReturnsFileContent() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
-		file_put_contents('vfs://Foo/Bar.txt', 'expected content');
-
-		$file = new \F3\TYPO3\TypoScript\File();
-		$file->setPathAndFilename('vfs://Foo/Bar.txt');
-		$this->assertEquals('expected content', $file->render());
+	public function getItemsBuildsTheItemsArrayIfItHasNotBeenBuiltAlready() {
+		$mockItems = array('foo' => 'bar');
+		
+		$menu = $this->getMock('F3\TYPO3\TypoScript\Menu', array('buildItems'));
+		$menu->expects($this->once())->method('buildItems')->will($this->returnValue($mockItems));
+		
+		$this->assertSame($mockItems, $menu->getItems());
+		$this->assertSame($mockItems, $menu->getItems());
 	}
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function renderReturnsErrorMessageIfFileDoesNotExist() {
-		$file = new \F3\TYPO3\TypoScript\File();
-		$file->setPathAndFilename('thisdoesnotexist');
-		$this->assertEquals('WARNING: File "' . $file->getPathAndFilename() . '" not found.', $file->render());
-	}
 
 }
 ?>

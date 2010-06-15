@@ -22,38 +22,54 @@ namespace F3\TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once('vfs/vfsStream.php');
-
 /**
- * Testcase for the File TypoScript Object
+ * A TypoScript Breadcrumb Menu object
  *
- * @version $Id$
+ * @version $Id: Text.php 4448 2010-06-07 13:24:31Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope prototype
  */
-class FileTest extends \F3\Testing\BaseTestCase {
+class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
 
 	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @var string
 	 */
-	public function renderReturnsFileContent() {
-		\vfsStreamWrapper::register();
-		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
-		file_put_contents('vfs://Foo/Bar.txt', 'expected content');
-
-		$file = new \F3\TYPO3\TypoScript\File();
-		$file->setPathAndFilename('vfs://Foo/Bar.txt');
-		$this->assertEquals('expected content', $file->render());
-	}
+	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/BreadcrumbMenu.html';
 
 	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * The last navigation level which should be rendered.
+	 *
+	 * 0 = top level of the site
+	 * 1 = first sub level (2nd level)
+	 * 2 = second sub level (3rd level)
+	 * ...
+	 *
+	 * -1 = last level
+	 * -2 = level above the last level
+	 * ...
+	 *
+	 * @var integer
 	 */
-	public function renderReturnsErrorMessageIfFileDoesNotExist() {
-		$file = new \F3\TYPO3\TypoScript\File();
-		$file->setPathAndFilename('thisdoesnotexist');
-		$this->assertEquals('WARNING: File "' . $file->getPathAndFilename() . '" not found.', $file->render());
+	protected $lastLevel = -2;
+
+	/**
+	 * @var array
+	 */
+	protected $items;
+
+	/**
+	 * Returns the menu items according to the defined settings.
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getItems() {
+		$items = array();
+		$nodes = $this->renderingContext->getContentContext()->getNodeService()->getNodesOnPath($this->renderingContext->getContentContext()->getCurrentSite(), $this->renderingContext->getContentContext()->getNodePath());
+		foreach ($nodes as $node) {
+			$items[] = array('label' => $node->getNodeName());
+		}
+		return $items;
 	}
 
 }
