@@ -53,7 +53,7 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	/**
 	 * Returns the current content context
-	 * 
+	 *
 	 * @return \F3\TYPO3\Domain\Service\ContentContext
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -88,7 +88,7 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 			return self::MATCHRESULT_NOSUCHPAGE;
 		}
 		$contentContext->setCurrentPage($page);
-     	$contentContext->setNodePath('/' . $value);
+		$contentContext->setNodePath('/' . $value);
 		$this->value = array('__identity' => $page->FLOW3_Persistence_Entity_UUID);
 		return TRUE;
 	}
