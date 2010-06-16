@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Structure;
+namespace F3\TYPO3\Controller\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,22 +23,12 @@ namespace F3\TYPO3\Domain\Model\Structure;
  *                                                                        */
 
 /**
- * Marker interface for nodes which support the concept of index nodes
+ * An "Import" exception, indicating something went wrong during content import.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @author Robert Lemke <robert@typo3.org>
  */
-interface IndexNodeAwareInterface {
-
-	/**
-	 * Returns the node which acts as a index node for the children of the current node.
-	 *
-	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context
-	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface The index node or NULL if no index node exists.
-	 */
-	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext);
-
+class ImportException extends \F3\TYPO3\Controller\Exception {
 
 }
 

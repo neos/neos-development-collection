@@ -126,7 +126,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 		}
 		if (!isset($this->childNodes[$sectionName])) {
 			return FALSE;
-		}return TRUE;
+		}
 		return $this->childNodes[$sectionName] !== array();
 	}
 

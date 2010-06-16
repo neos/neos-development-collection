@@ -17,12 +17,12 @@
     '@format':     'html'
 
 -
-  name:          'Experimentation setup'
-  uriPattern:    'typo3/setup'
+  name:          'Setup'
+  uriPattern:    'typo3/setup(/{@action})'
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Backend\Setup'
-    '@action':     'setup'
+    '@action':     'index'
 
 -
   name:          'Backend Overview'

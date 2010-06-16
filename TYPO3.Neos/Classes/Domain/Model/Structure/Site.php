@@ -121,16 +121,45 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	}
 
 	/**
+	 * Adds a child node to the list of existing child nodes
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The node to add
+	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
+	 * @param string $section Must be "default"!
+	 * @return void
+	 * @throws \InvalidArgumentException if $section is not "default"
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL, $section = 'default') {
+		if ($section !== 'default') {
+			throw new \InvalidArgumentException('Site structure nodes can only have children added to the "default" section.', 1276616370);
+		}
+		parent::addChildNode($childNode, $locale, 'default');
+	}
+
+	/**
+	 * Returns the child notes of this structure node.
+	 * Note that the child nodes are indexed by language and region!
+	 *
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context for determining the locale of the nodes to return
+	 * @param string $section Always "default", will be ignored if given
+	 * @return array An array of child nodes. If no context was specified in the form of array('{language}' => array ('{region}' => {child nodes})).
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL, $section = 'default') {
+		return parent::getChildNodes($contentContext, 'default');
+	}
+
+	/**
 	 * Returns the index node of this site
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context
-	 * @param string $section Must always be "default"
-	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode
+	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode The index node or NULL if no index node exists.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext, $section = 'default') {
-		$childNodesMatchingContext = $this->getChildNodes($contentContext, $section);
-		return reset($childNodesMatchingContext);
+	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$childNodesMatchingContext = $this->getChildNodes($contentContext, 'default');
+		return reset($childNodesMatchingContext) ?: NULL;
 	}
 
 }

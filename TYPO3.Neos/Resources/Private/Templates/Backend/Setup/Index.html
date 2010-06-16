@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE
+	html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta name="generator" content="TYPO3, http://typo3.org, &#169; The TYPO3 Development Team"/>
+		<title>TYPO3 Setup</title>
+		<f:base />
+	</head>
+	<body>
+		<h1>TYPO3 Setup</h1>
+
+		<f:flashMessages/>
+
+		<h2>Import content from package</h2>
+		<f:form action="import">
+			<label for="packageKey">Package from which to import content</label><br/>
+			<f:form.select name="packageKey"  options="{packagesWithSites}"/> <br/>
+			<f:form.submit value="Import!"/>
+		</f:form>
+
+		<h2>Create user with <em>Administrator</em> role</h2>
+		<f:form action="createAdministrator">
+			<label for="identifier">Username</label>
+			<f:form.textbox name="identifier"/> <br/>
+			<label for="password">Password</label>
+			<f:form.textbox name="password"/> <br/>
+			<f:form.submit value="Create"/>
+		</f:form>
+	</body>
+</html>

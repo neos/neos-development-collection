@@ -32,6 +32,12 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
+	 * @var F3\FLOW3\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
+	 * @inject
 	 * @var F3\TYPO3\Domain\Repository\Structure\SiteRepository
 	 */
 	protected $siteRepository;
@@ -61,79 +67,130 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $accountFactory;
 
 	/**
-	 * Sets up some data for playing around ...
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setupAction() {
-		$this->siteRepository->removeAll();
-		$this->contentNodeRepository->removeAll();
-		$this->domainRepository->removeAll();
-		$this->accountRepository->removeAll();
-
-		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext');
-		$contentService = $contentContext->getContentService();
-
-		$site = $this->objectManager->create('F3\TYPO3\Domain\Model\Structure\Site');
-		$site->setName('TYPO3 Phoenix Demo Site');
-		$site->setNodeName('phoenix.demo.typo3.org');
-		$site->setSiteResourcesPackageKey('PhoenixDemoTypo3Org');
-		$this->siteRepository->add($site);
-
-		$homepage = $contentService->createInside('homepage', 'F3\TYPO3\Domain\Model\Content\Page', $site);
-		$homepage->setTitle('TYPO3 Phoenix');
-
-		$xml = simplexml_load_file('http://search.twitter.com/search.atom?q=TYPO3+Phoenix');
-		$tweet = (string)$xml->entry->title[0];
-		
-		$method = new \ReflectionMethod($this, 'setupAction');
-		$phpCode = implode(chr(10), array_slice(explode(chr(10), str_replace("\n\t", "\n", file_get_contents(__FILE__))), $method->getStartLine() - 8, -2));
-		$phpCode = \highlight_string("<?php $phpCode", TRUE);
-
-    	$mainText1 = $contentService->createInside('text1', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'main');
-		$mainText1->setHeadline('TYPO3 Phoenix Hatched');
-		$mainText1->setText('
-			<p>The fact that you can read these lines means that TYPO3 Phoenix is able to render content.
-				This page was automatically created on ' . date('F jS Y H:i (T)') . ' at ' . \gethostname() . ' by our demo setup controller.</p>
-			<p>There is even <a href="homepage/anotherpage.html">another page</a> which demonstrates that support for sub pages is also implemented already.</p>
-     	');
-
-    	$mainText2 = $contentService->createInside('text2', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'main');
-		$mainText2->setHeadline('TypoScript');
-		$mainText2->setText('
-			<p>Here\'s the TypoScript template which renders this page:</p>
-			<pre><code>' . file_get_contents('resource://PhoenixDemoTypo3Org/Private/TypoScripts/homepage/Root.ts2') . '</code></pre>
-		');
-
-    	$mainText3 = $contentService->createInside('text3', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'main');
-		$mainText3->setHeadline('PHP');
-		$mainText3->setText('
-			<p>The content for this page was created by this PHP code:</p>
-			<pre><code>' . $phpCode . '</code></pre>
-		');
-
-		$sideText = $contentService->createInside('samplecontent', 'F3\TYPO3\Domain\Model\Content\Text', $homepage, 'secondary');
-		$sideText->setHeadline('Latest Tweet');
-		$sideText->setText('
-			<p>Here\'s the latest tweet about TYPO3 Phoenix at the time this page was created:</p>
-			<p>' . $tweet . '</p>
-     	');
-
-		$anotherPage = $contentService->createInside('anotherpage', 'F3\TYPO3\Domain\Model\Content\Page', $homepage);
-		$anotherPage->setTitle('Another Page');
-
-    	$mainText1 = $contentService->createInside('text1', 'F3\TYPO3\Domain\Model\Content\Text', $anotherPage, 'main');
-		$mainText1->setHeadline('Want More?');
-		$mainText1->setText('
-			<p>This is another page which exists for the solely purpose to demonstrate sub pages in TYPO3 Phoenix.</p>
-     	');
-
-
-		$account = $this->accountFactory->createAccountWithPassword('admin', 'password', array('Administrator'));
-		$this->accountRepository->add($account);
-
-		return 'Created some data for playing around.';
+	public function indexAction() {
+		$packagesWithSites = array();
+		foreach ($this->packageManager->getActivePackages() as $package) {
+			if (file_exists('resource://' . $package->getPackageKey() . '/Private/Content/Sites.xml')) {
+				$packagesWithSites[$package->getPackageKey()] = $package->getPackageMetaData()->getTitle();
+			}
+		}
+		$this->view->assign('packagesWithSites', $packagesWithSites);
 	}
+
+	/**
+	 * Create an user with the Administrator role.
+	 *
+	 * @param string $identifier
+	 * @param string $password
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function createAdministratorAction($identifier, $password) {
+		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
+		$this->accountRepository->add($account);
+		$this->flashMessageContainer->add('User with identifier "' . $identifier . '" was created.');
+		$this->redirect('index');
+	}
+
+	/**
+	 * Checks for the presence of Content.xml in the given package and imports
+	 * it if found.
+	 *
+	 * @param string $packageKey
+	 * @return string
+	 * @throws \Exception if anything goes wrong
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function importAction($packageKey) {
+		if (!$this->packageManager->isPackageActive($packageKey)) {
+			$this->flashMessageContainer->add('Error: Package "' . $packageKey . '" is not active.');
+		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
+			$this->flashMessageContainer->add('Error: No content found in package "' . $packageKey . '".');
+		} else {
+			$this->siteRepository->removeAll();
+			$this->contentNodeRepository->removeAll();
+			$this->domainRepository->removeAll();
+
+			try {
+				$this->importSitesFromPackage($packageKey);
+				$this->flashMessageContainer->add('Imported website data from "' . $packageKey . '/Resources/Content/Sites.xml"');
+			} catch (\Exception $e) {
+				$this->flashMessageContainer->add('Error: During import an exception occured. ' . $e->getMessage());
+			}
+		}
+		$this->redirect('index');
+	}
+
+	/**
+	 * Parses the Content.xml in the given package and imports the content into TYPO3.
+	 *
+	 * @param string $packageKey
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function importSitesFromPackage($packageKey) {
+		$xml = new \SimpleXMLElement(file_get_contents('resource://' . $packageKey . '/Private/Content/Sites.xml'));
+		foreach ($xml->structure as $site) {
+			$siteNode = $this->objectManager->create((string)$site['type']);
+			$siteNode->setNodeName((string)$site['nodename']);
+			$siteNode->setName((string)$site->name);
+			$siteNode->setState((integer)$site->state);
+			$siteNode->setSiteResourcesPackageKey($packageKey);
+			$this->parseSections($site->section, $siteNode);
+			$this->siteRepository->add($siteNode);
+		}
+	}
+
+	/**
+	 * Iterates over the sections and adds the structure and content found to
+	 * the $referencingNode.
+	 *
+	 * @param \SimpleXMLElement $sections
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $referencingNode
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function parseSections(\SimpleXMLElement $sections, \F3\TYPO3\Domain\Model\Structure\NodeInterface $referencingNode) {
+		foreach ($sections as $section) {
+			$sectionName = (string)$section['name'];
+			foreach ($section->structure as $structure) {
+				$locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', (string)$structure['locale']);
+				$structureNode = $this->objectManager->create((string)$structure['type']);
+				$structureNode->setNodeName((string)$structure['nodename']);
+				$referencingNode->addChildNode($structureNode, $locale, $sectionName);
+				if ($structure->content) {
+					$this->createContentObject($structure->content, $structureNode);
+				}
+				$this->parseSections($structure->section, $structureNode);
+			}
+		}
+	}
+
+	/**
+	 * Creates a content object attached to the $structureNode.
+	 *
+	 * @param \SimpleXMLElement $content
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $structureNode
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function createContentObject(\SimpleXMLElement $content, \F3\TYPO3\Domain\Model\Structure\NodeInterface $structureNode) {
+		$contentNode = $this->objectManager->create((string)$content['type'], $this->objectManager->create('F3\FLOW3\Locale\Locale', (string)$content['locale']), $structureNode);
+		switch ((string)$content['type']) {
+			case 'F3\TYPO3\Domain\Model\Content\Page':
+				$contentNode->setTitle((string)$content->title);
+			break;
+			case 'F3\TYPO3\Domain\Model\Content\Text':
+				$contentNode->setHeadline((string)$content->headline);
+				$contentNode->setText((string)$content->text);
+			break;
+			default:
+				throw new \F3\TYPO3\Controller\Exception\ImportException('Sorry, I do not know how to handle content of type "".', 1276678236);
+		}
+	}
+
 }
 ?>

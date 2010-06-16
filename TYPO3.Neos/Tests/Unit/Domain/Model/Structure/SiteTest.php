@@ -89,6 +89,21 @@ class SiteTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertSame($mockNode1, $site->getIndexNode($mockContentContext));
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIndexNodeReturnsNullIfNoMatchingNodeWasFound() {
+		$locale1 = new \F3\FLOW3\Locale\Locale('de-DE');
+
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
+
+		$site = new \F3\TYPO3\Domain\Model\Structure\Site();
+
+		$this->assertNull($site->getIndexNode($mockContentContext));
+	}
 }
 
 ?>
