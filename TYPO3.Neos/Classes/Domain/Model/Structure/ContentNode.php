@@ -61,7 +61,7 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	 */
 	public function setContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
 		if ($content->getContainingNode() !== $this) {
-			throw new \F3\TYPO3\Domain\Exception\ContentAlreadyReferencedException('The given content of type "' . get_class($content) . '" could not be attached to the structure node because it is already connected with another structure node.', 1276682335);
+			throw new \F3\TYPO3\Domain\Exception\ContentAlreadyReferencedException('The given content of type "' . get_class($content) . '" could not be attached to this structure node (' . $this->FLOW3_Persistence_Entity_UUID . ') because it is already connected with another structure node.', 1276682335);
 		}
 
     	if ($this->contentType === NULL) {

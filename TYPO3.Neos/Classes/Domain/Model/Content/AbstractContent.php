@@ -52,8 +52,8 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	 */
 	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node) {
 		$this->locale = $locale;
-		$node->setContent($this);
 		$this->node = $node;
+		$node->setContent($this);
 	}
 
 	/**
