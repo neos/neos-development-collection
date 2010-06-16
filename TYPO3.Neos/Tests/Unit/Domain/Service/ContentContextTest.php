@@ -231,11 +231,11 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNodePathAndNodeGetPathAllowsForSettingTheCurrentNodePath() {
+	public function setCurrentNodePathAndNodeGetPathAllowsForSettingTheCurrentNodePath() {
 		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext;
 
-		$contentContext->setNodePath('foo/bar/baz');
-		$this->assertSame('foo/bar/baz', $contentContext->getNodePath());
+		$contentContext->setCurrentNodePath('foo/bar/baz');
+		$this->assertSame('foo/bar/baz', $contentContext->getCurrentNodePath());
 	}
 }
 

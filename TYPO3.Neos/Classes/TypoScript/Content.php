@@ -109,7 +109,7 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 		if ($currentPage === NULL) {
 			return;
 		}
-		$pageNode = $currentPage->getNode();
+		$pageNode = $currentPage->getContainingNode();
 
 		foreach ($pageNode->getUsedSectionNames() as $sectionName) {
 			$contentArray = $this->typoScriptObjectFactory->createByName('ContentArray');

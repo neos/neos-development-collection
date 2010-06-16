@@ -47,48 +47,38 @@ class NodeService {
 	}
 
 	/**
-	 * Returns the Content Context this service runs in
+	 * Finds a node in the structure tree of the current site by its path.
 	 *
-	 * @return \F3\TYPO3\Domain\Service\ContentContext
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getContentContext() {
-		return $this->contentContext;
-	}
-
-	/**
-	 * Finds a node by its path.
-	 *
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode The node marking the reference for the path
 	 * @param string $path Path to the searched content node where the path segements are node names, separated by forward slashes. Example: /home/products/foo
-	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode The node found at the given path or NULL of none was found
+	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface The node found at the given path or NULL of none was found
 	 * @throws \F3\TYPO3\Domain\InvalidPathException if the path is not well formed
 	 */
-	public function getNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode, $path) {
+	public function getNode($path) {
 		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPathException('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1254924207);
 
-		$nodesOnPath = $this->getNodesOnPath($referenceNode, $path);
+		$nodesOnPath = $this->getNodesOnPath($path);
 		return (is_array($nodesOnPath) && count($nodesOnPath) > 0) ? end($nodesOnPath) : NULL;
 	}
 
 	/**
-	 * Finds all nodes lying on a certain path.
+	 * Finds all nodes of the current site lying on the specified path.
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode The node marking the reference for the path
 	 * @param string $path Valid content node path. Path segements are node names, separated by forward slashes. Example: /home/products/foo
-	 * @return array<\F3\TYPO3\Domain\Model\Structure\ContentNode> The nodes found on the given path or NULL if the path did not point to a node
+	 * @return array<\F3\TYPO3\Domain\Model\Structure\NodeInterface> The nodes found on the given path or NULL if the path did not point to a node
 	 * @throws \F3\TYPO3\Domain\InvalidPathException if the path is not well formed
 	 */
-	public function getNodesOnPath(\F3\TYPO3\Domain\Model\Structure\NodeInterface $referenceNode, $path) {
+	public function getNodesOnPath($path) {
 		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPathException('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1255430851);
 
+		$currentSite = $this->contentContext->getCurrentSite();
 		if ($path === '/') {
-			return ($referenceNode instanceof \F3\TYPO3\Domain\Model\Structure\IndexNodeAwareInterface) ? array($referenceNode->getIndexNode($this->contentContext)) : NULL;
+			$indexNode = $currentSite->getIndexNode($this->contentContext);
+			return ($indexNode !== NULL) ? array($indexNode) : NULL;
 		}
 
 		$pathSegments = explode('/', substr($path, 1));
 		$nodesOnPath = array();
-		$nextReferenceNode = $referenceNode;
+		$nextReferenceNode = $currentSite;
 		foreach ($pathSegments as $pathSegment) {
 			if ($nextReferenceNode->hasChildNodes() === FALSE) {
 				return NULL;

@@ -31,10 +31,6 @@ namespace F3\TYPO3\Domain\Model\Structure;
  */
 interface NodeInterface {
 
-	const CHILDNODESORDER_UNDEFINED = 0;
-	const CHILDNODESORDER_ORDERED = 1;
-	const CHILDNODESORDER_NAMED = 2;
-
 	/**
 	 * Returns the name of the node.
 	 * This name is amongst others used for locating the node through a path

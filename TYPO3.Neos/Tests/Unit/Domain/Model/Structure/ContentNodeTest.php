@@ -44,6 +44,9 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent->expects($this->once())->method('getLocale')->will($this->returnValue($locale));
 
 		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+
+		$mockContent->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+
 		$contentNode->setContent($mockContent);
 
 		$this->assertSame($mockContent, $contentNode->getContent($mockContentContext));
@@ -63,6 +66,10 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent2->expects($this->once())->method('getLocale')->will($this->returnValue($locale2));
 
 		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+
+		$mockContent1->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+		$mockContent2->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+
 		$contentNode->setContent($mockContent1);
 		$contentNode->setContent($mockContent2);
 
@@ -83,6 +90,8 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent->expects($this->once())->method('getLocale')->will($this->returnValue($locale));
 
 		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$mockContent->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+
 		$contentNode->setContent($mockContent);
 
 		$this->assertSame(get_class($mockContent), $contentNode->getContentType());
@@ -102,6 +111,9 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array(), uniqid('SomeContentClassName'));
 
 		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$mockContent1->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+		$mockContent2->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+
 		$contentNode->setContent($mockContent1);
 		$contentNode->setContent($mockContent2);
 	}
@@ -120,6 +132,9 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent2->expects($this->once())->method('getLocale')->will($this->returnValue($locale2));
 
 		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$mockContent1->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+		$mockContent2->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+
 		$contentNode->setContent($mockContent1);
 		$contentNode->setContent($mockContent2);
 
@@ -150,6 +165,9 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContentContext2->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
 
 		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$mockContent1->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+		$mockContent2->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+
 		$contentNode->setContent($mockContent1);
 		$contentNode->setContent($mockContent2);
 
@@ -174,6 +192,8 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent2->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
 
 		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$mockContent1->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+
 		$contentNode->setContent($mockContent1);
 
 		$contentNode->removeContent($mockContent2);
@@ -188,6 +208,8 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$mockContent1->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
 
 		$contentNode = new \F3\TYPO3\Domain\Model\Structure\ContentNode();
+		$mockContent1->expects($this->once())->method('getContainingNode')->will($this->returnValue($contentNode));
+
 		$contentNode->setContent($mockContent1);
 
 		$contentNode->removeContent($mockContent1);

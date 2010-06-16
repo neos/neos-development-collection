@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\TypoScript;
+namespace F3\TYPO3\Domain\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,55 +23,14 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * A TypoScript Breadcrumb Menu object
+ * An "Content Already Referenced" exception
  *
- * @version $Id: Text.php 4448 2010-06-07 13:24:31Z robert $
+ * @version $Id: InvalidContentTypeException.php 4483 2010-06-10 13:57:32Z k-fish $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
+ * @api
  */
-class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
-
-	/**
-	 * @var string
-	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/BreadcrumbMenu.html';
-
-	/**
-	 * The last navigation level which should be rendered.
-	 *
-	 * 0 = top level of the site
-	 * 1 = first sub level (2nd level)
-	 * 2 = second sub level (3rd level)
-	 * ...
-	 *
-	 * -1 = last level
-	 * -2 = level above the last level
-	 * ...
-	 *
-	 * @var integer
-	 */
-	protected $lastLevel = -2;
-
-	/**
-	 * @var array
-	 */
-	protected $items;
-
-	/**
-	 * Returns the menu items according to the defined settings.
-	 *
-	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getItems() {
-		$items = array();
-		$contentContext = $this->renderingContext->getContentContext();
-		$nodes = $contentContext->getNodeService()->getNodesOnPath($contentContext->getCurrentNodePath());
-		foreach ($nodes as $node) {
-			$items[] = array('label' => $node->getNodeName());
-		}
-		return $items;
-	}
+class ContentAlreadyReferencedException extends \F3\TYPO3\Domain\Exception {
 
 }
+
 ?>

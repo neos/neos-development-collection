@@ -50,8 +50,8 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 
 		$mockExistingNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
-		$mockExistingContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array('getNode'), array(), '', FALSE);
-		$mockExistingContent->expects($this->once())->method('getNode')->will($this->returnValue($mockExistingNode));
+		$mockExistingContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array('getContainingNode'), array(), '', FALSE);
+		$mockExistingContent->expects($this->once())->method('getContainingNode')->will($this->returnValue($mockExistingNode));
 
 		$mockNewContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array(), array(), '', FALSE);
 		$mockNewNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
@@ -82,8 +82,8 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 
 		$mockExistingNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
-		$mockExistingContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array('getNode'), array(), '', FALSE);
-		$mockExistingContent->expects($this->once())->method('getNode')->will($this->returnValue($mockExistingNode));
+		$mockExistingContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array('getContainingNode'), array(), '', FALSE);
+		$mockExistingContent->expects($this->once())->method('getContainingNode')->will($this->returnValue($mockExistingNode));
 
 		$mockNewContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array(), array(), '', FALSE);
 		$mockNewNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
@@ -159,7 +159,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 		$mockExistingNode->expects($this->once())->method('getParentNode')->will($this->returnValue($mockExistingParentNode));
 
 		$mockExistingContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array(), array(), '', FALSE);
-		$mockExistingContent->expects($this->any())->method('getNode')->will($this->returnValue($mockExistingNode));
+		$mockExistingContent->expects($this->any())->method('getContainingNode')->will($this->returnValue($mockExistingNode));
 
 
 		$mockNewContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array(), array(), '', FALSE);

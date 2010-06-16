@@ -48,12 +48,10 @@ class TypoScriptServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getMergedTypoScriptObjectTreeReturnsNullIfPathDoesNotPointToANode() {
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
 		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array(), array(), '', FALSE);
 		$mockNodeService->expects($this->once())->method('getNodesOnPath')->will($this->returnValue(NULL));
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockContentContext->expects($this->once())->method('getNodeService')->will($this->returnValue($mockNodeService));
-		$mockContentContext->expects($this->once())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$typoScriptService = new \F3\TYPO3\Domain\Service\TypoScriptService($mockContentContext);
 		$this->assertNull($typoScriptService->getMergedTypoScriptObjectTree('/foobar'));

@@ -39,7 +39,7 @@ class AbstractContentTest extends \F3\Testing\BaseTestCase {
 		$mockContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array($mockLocale, $mockContentNode));
 		$this->assertSame($mockLocale, $content->getLocale());
-		$this->assertSame($mockContentNode, $content->getNode());
+		$this->assertSame($mockContentNode, $content->getContainingNode());
 	}
 
 	/**

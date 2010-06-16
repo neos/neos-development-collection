@@ -61,11 +61,11 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->once())->method('getContent')->with($mockContentContext)->will($this->returnValue($mockPage));
 
 		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array('getNode'), array(), '', FALSE);
-		$mockNodeService->expects($this->once())->method('getNode')->with($mockSite, '/foo/bar/baz')->will($this->returnValue($mockNode));
+		$mockNodeService->expects($this->once())->method('getNode')->with('/foo/bar/baz')->will($this->returnValue($mockNode));
 
 		$mockContentContext->expects($this->any())->method('getNodeService')->will($this->returnValue($mockNodeService));
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
-		$mockContentContext->expects($this->once())->method('setNodePath')->with('/foo/bar/baz');
+		$mockContentContext->expects($this->once())->method('setCurrentNodePath')->with('/foo/bar/baz');
 		$mockContentContext->expects($this->once())->method('setCurrentPage')->with($mockPage);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
@@ -108,7 +108,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
 
 		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array('getNode'), array(), '', FALSE);
-		$mockNodeService->expects($this->once())->method('getNode')->with($mockSite, '/')->will($this->returnValue(NULL));
+		$mockNodeService->expects($this->once())->method('getNode')->with('/')->will($this->returnValue(NULL));
 
 		$mockContentContext->expects($this->any())->method('getNodeService')->will($this->returnValue($mockNodeService));
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
@@ -133,7 +133,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
 
     	$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array('getNode'), array(), '', FALSE);
-		$mockNodeService->expects($this->once())->method('getNode')->with($mockSite, '/')->will($this->returnValue(NULL));
+		$mockNodeService->expects($this->once())->method('getNode')->with('/')->will($this->returnValue(NULL));
 
 		$mockContentContext->expects($this->any())->method('getNodeService')->will($this->returnValue($mockNodeService));
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
@@ -161,7 +161,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockNode->expects($this->once())->method('getContent')->will($this->returnValue(new \stdClass));
 
     	$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array('getNode'), array(), '', FALSE);
-		$mockNodeService->expects($this->once())->method('getNode')->with($mockSite, '/foo/bar')->will($this->returnValue($mockNode));
+		$mockNodeService->expects($this->once())->method('getNode')->with('/foo/bar')->will($this->returnValue($mockNode));
 
 		$mockContentContext->expects($this->any())->method('getNodeService')->will($this->returnValue($mockNodeService));
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));

@@ -79,7 +79,7 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 			return self::MATCHRESULT_NOSITE;
 		}
 
-		$node = $contentContext->getNodeService()->getNode($site, '/' . $value);
+		$node = $contentContext->getNodeService()->getNode('/' . $value);
 		if ($node === NULL) {
 			return self::MATCHRESULT_NOSUCHNODE;
 		}
@@ -88,7 +88,7 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 			return self::MATCHRESULT_NOSUCHPAGE;
 		}
 		$contentContext->setCurrentPage($page);
-		$contentContext->setNodePath('/' . $value);
+		$contentContext->setCurrentNodePath('/' . $value);
 		$this->value = array('__identity' => $page->FLOW3_Persistence_Entity_UUID);
 		return TRUE;
 	}

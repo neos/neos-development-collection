@@ -131,7 +131,7 @@ class ContentTest extends \F3\Testing\BaseTestCase {
 		$mockTextNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode');
 
 		$mockPageContent = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array(), array(), '', FALSE);
-		$mockPageContent->expects($this->once())->method('getNode')->will($this->returnValue($mockPageNode));
+		$mockPageContent->expects($this->once())->method('getContainingNode')->will($this->returnValue($mockPageNode));
 
      	$mockTextContent = $this->getMock('F3\TYPO3\Domain\Model\Content\Text', array(), array(), '', FALSE);
 

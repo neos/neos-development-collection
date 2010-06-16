@@ -36,9 +36,8 @@ interface ContentInterface {
 	 *
 	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
 	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $node The structure node this content is bound to
-	 * @todo re-enable this method as soon as resolution in http://www.phpunit.de/ticket/545 is released
 	 */
-#	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node);
+	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node);
 
 	/**
 	 * Returns the locale of the content object
@@ -59,6 +58,6 @@ interface ContentInterface {
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $node The structure node this content is bound to
 	 */
-	public function getNode();
+	public function getContainingNode();
 }
 ?>

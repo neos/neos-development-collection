@@ -72,8 +72,7 @@ class TypoScriptService {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMergedTypoScriptObjectTree($nodePath) {
-		$nodeService = $this->contentContext->getNodeService();
-		$nodes = $nodeService->getNodesOnPath($this->contentContext->getCurrentSite(), $nodePath);
+		$nodes = $this->contentContext->getNodeService()->getNodesOnPath($nodePath);
 		if (!is_array($nodes)) return NULL;
 
 		$siteResourcesPackageKey = $this->contentContext->getCurrentSite()->getSiteResourcesPackageKey();

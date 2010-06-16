@@ -60,7 +60,11 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
-		if ($this->contentType === NULL) {
+		if ($content->getContainingNode() !== $this) {
+			throw new \F3\TYPO3\Domain\Exception\ContentAlreadyReferencedException('The given content of type "' . get_class($content) . '" could not be attached to the structure node because it is already connected with another structure node.', 1276682335);
+		}
+
+    	if ($this->contentType === NULL) {
 			$this->contentType = ($content instanceof \F3\FLOW3\AOP\ProxyInterface) ? $content->FLOW3_AOP_Proxy_getProxyTargetClassName() : get_class($content);
 		} elseif (!$content instanceof $this->contentType) {
 			throw new \F3\TYPO3\Domain\Exception\InvalidContentTypeException('The given content was of type "' . get_class($content) . '" but the structure node already contains content of type "' . $this->contentType . '". Content types must not be mixed.', 1244713160);

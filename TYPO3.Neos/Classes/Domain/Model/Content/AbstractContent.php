@@ -82,7 +82,7 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $node The node this content is bound to
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getNode() {
+	public function getContainingNode() {
 		return $this->node;
 	}
 

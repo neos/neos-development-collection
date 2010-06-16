@@ -54,7 +54,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function showAction(\F3\TYPO3\Domain\Model\Content\Page $page, $type = 'default') {
 		$typoScriptService = $this->contentContext->getTypoScriptService();
-		$typoScriptObjectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->contentContext->getNodePath());
+		$typoScriptObjectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->contentContext->getCurrentNodePath());
 		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
 			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current page context.', 1255513200);
 		}

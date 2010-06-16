@@ -252,7 +252,7 @@ class ContentContext {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNodePath($nodePath) {
+	public function setCurrentNodePath($nodePath) {
 		$this->nodePath = $nodePath;
 	}
 
@@ -262,7 +262,7 @@ class ContentContext {
 	 * @return string The current node path, e.g. "homepage/products/typo3"
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getNodePath() {
+	public function getCurrentNodePath() {
 		return $this->nodePath;
 	}
 }

@@ -96,7 +96,7 @@ class ContentService {
 		$content = $this->objectManager->create($contentType, $locale, $newNode);
 
 		if ($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface) {
-			$reference->getNode()->addChildNode($newNode, $locale, $section);
+			$reference->getContainingNode()->addChildNode($newNode, $locale, $section);
 		} elseif ($reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface) {
 			$reference->addChildNode($newNode, $locale, $section);
 		}

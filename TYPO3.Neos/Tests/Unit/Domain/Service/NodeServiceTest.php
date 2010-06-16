@@ -37,8 +37,8 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 	public function contentServiceIsBoundToASpecificContentContext() {
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 
-		$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
-		$this->assertSame($mockContentContext, $nodeService->getContentContext());
+		$nodeService = $this->getAccessibleMock('F3\TYPO3\Domain\Service\NodeService', array('dummy'), array($mockContentContext));
+		$this->assertSame($mockContentContext, $nodeService->_get('contentContext'));
 	}
 
 	/**
@@ -57,10 +57,11 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($otherNode, $expectedNode)));
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->once())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
 
-		$actualNode = $nodeService->getNode($mockSite, '/foo');
+		$actualNode = $nodeService->getNode('/foo');
 		$this->assertSame($expectedNode, $actualNode);
 	}
 
@@ -89,10 +90,11 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($node1a, $node1b)));
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->once())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
 
-		$actualNode = $nodeService->getNode($mockSite, '/1b/2b');
+		$actualNode = $nodeService->getNode('/1b/2b');
 		$this->assertSame($expectedNode, $actualNode);
 	}
 
@@ -114,10 +116,11 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($nodeFoo)));
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->once())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
 
-		$this->assertNull($nodeService->getNode($mockSite, '/foo/doesntexist'));
+		$this->assertNull($nodeService->getNode('/foo/doesntexist'));
 	}
 
 	/**
@@ -129,9 +132,11 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$mockSite->expects($this->once())->method('hasChildNodes')->will($this->returnValue(FALSE));
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->once())->method('getCurrentSite')->will($this->returnValue($mockSite));
+
 		$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
 
-		$this->assertNull($nodeService->getNode($mockSite, '/foo'));
+		$this->assertNull($nodeService->getNode('/foo'));
 	}
 
 	/**
@@ -159,12 +164,13 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($node1a, $node1b)));
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->once())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
-		$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
+    	$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
 
 		$expectedNodes = array($node1b, $node2b);
 
-		$actualNodes = $nodeService->getNodesOnPath($mockSite, '/1b/2b');
+		$actualNodes = $nodeService->getNodesOnPath('/1b/2b');
 		$this->assertSame($expectedNodes, $actualNodes);
 	}
 
@@ -179,11 +185,12 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$mockSite->expects($this->once())->method('getIndexNode')->will($this->returnValue($node1a));
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$mockContentContext->expects($this->once())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$nodeService = new \F3\TYPO3\Domain\Service\NodeService($mockContentContext);
 
 		$expectedNodes = array($node1a);
-		$actualNodes = $nodeService->getNodesOnPath($mockSite, '/');
+		$actualNodes = $nodeService->getNodesOnPath('/');
 		$this->assertSame($expectedNodes, $actualNodes);
 	}
 }
