@@ -104,5 +104,23 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 		$dotPosition = strpos($requestPath, '.');
 		return ($dotPosition === FALSE) ? $requestPath : substr($requestPath, 0, $dotPosition);
 	}
+
+	/**
+	 * Checks, whether given value can be resolved and if so, sets $this->value to the resolved value.
+	 * If $value is empty, this method checks whether a default value exists.
+	 *
+	 * @param string $value value to resolve
+	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	protected function resolveValue($value) {
+		if ($value === NULL || !is_string($value) || $value{0} !== '/') {
+			return FALSE;
+		}
+		$this->value = substr($value, 1);
+		return TRUE;
+	}
+
 }
 ?>

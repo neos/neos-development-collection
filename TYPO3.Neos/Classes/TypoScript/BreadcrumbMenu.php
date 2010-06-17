@@ -66,9 +66,17 @@ class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
 	public function getItems() {
 		$items = array();
 		$contentContext = $this->renderingContext->getContentContext();
-		$nodes = $contentContext->getNodeService()->getNodesOnPath($contentContext->getCurrentNodePath());
-		foreach ($nodes as $node) {
-			$items[] = array('label' => $node->getNodeName());
+		$currentNodesPath = $contentContext->getCurrentNodePath();
+
+		$nodePath = '';
+		foreach ($contentContext->getNodeService()->getNodesOnPath($currentNodesPath) as $node) {
+			$nodeName = $node->getNodeName();
+			$nodePath .= '/' . $nodeName;
+			$items[] = array(
+				 'label' => $nodeName,
+				 'nodePath' => $nodePath,
+
+			);
 		}
 		return $items;
 	}
