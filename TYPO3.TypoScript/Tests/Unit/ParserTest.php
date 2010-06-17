@@ -448,7 +448,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * TODO Not implemented yet, see #7552
 	 *
-	 * test
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture13() {
@@ -462,8 +462,12 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 		$expectedObjectTree['object3']->setValue("The text might start\n\tat some line and\n\tend at some other line");
 		$expectedObjectTree['object4'] = new \F3\TypoScript\Fixtures\Text;
 		$expectedObjectTree['object4']->setValue("The text might start\n\tat some line and\n\tend at some other line");
+		$expectedObjectTree['object5'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object5']->setValue("The text might start\n\tat \"some\" line and\n\tend at some other line");
+		$expectedObjectTree['object6'] = new \F3\TypoScript\Fixtures\Text;
+		$expectedObjectTree['object6']->setValue("The text might start\n\tat 'some' line and\n\tend at some other line");
 
-		$this->mockObjectManager->expects($this->exactly(4))->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
+		$this->mockObjectManager->expects($this->exactly(6))->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$actualObjectTree = $this->parser->parse($sourceCode);
 

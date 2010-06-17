@@ -45,6 +45,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	const SPLIT_PATTERN_VALUENUMBER = '/^\s*-?\d+\s*$/';
 	const SPLIT_PATTERN_VALUEFLOATNUMBER = '/^\s*-?\d+(\.\d+)?\s*$/';
 	const SPLIT_PATTERN_VALUELITERAL = '/"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'/';
+	const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/(?P<DoubleQuoteChar>")(?P<DoubleQuoteValue>(?:\\\\.|[^\\\\"])*)$|(?P<SingleQuoteChar>\')(?P<SingleQuoteValue>(?:\\\\.|[^\\\\\'])*)$/';
 	const SPLIT_PATTERN_VALUEVARIABLE = '/(\$[a-zA-Z][a-zA-Z0-9]*)/';
 	const SPLIT_PATTERN_VALUEVARIABLES = '/\$[a-zA-Z][a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)/';
 	const SPLIT_PATTERN_VALUEOBJECTTYPE = '/^\s*(?:(?:([a-zA-Z]+[a-zA-Z0-9*]*)\\\\)?([a-zA-Z][a-zA-Z0-9]*)$)|(F3\\\\(?:\w+|\\\\)+)/';
@@ -94,13 +95,6 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	protected $currentBlockCommentState = FALSE;
 
 	/**
-	 * Determines if we are currently parsing a multiline literal and if so,
-	 * which quote character was used to start it.
-	 * @var mixed
-	 */
-	protected $currentMultilineLiteralState = FALSE;
-
-	/**
 	 * Namespace identifiers and their object name prefix
 	 * @var array
 	 */
@@ -129,13 +123,22 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	public function parse($sourceCode) {
 		if (!is_string($sourceCode)) throw new \F3\TypoScript\Exception('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
 		$this->initialize();
-
-		$typoScriptLines = explode(chr(10), $sourceCode);
-		foreach ($typoScriptLines as $typoScriptLine) {
+		$this->currentSourceCodeLines = explode(chr(10), $sourceCode);
+		while(($typoScriptLine = $this->getNextTypoScriptline()) !== FALSE) {
 			$this->parseTypoScriptLine($typoScriptLine);
-			$this->currentLineNumber ++;
 		}
 		return $this->objectTree;
+	}
+
+	/**
+	 * Get the next, unparsed line of TypoScript from this->currentSourceCodeLines and increase the pointer
+	 * @return string next line of typoscript to parse
+	 */
+	protected function getNextTypoScriptline() {
+		$typoScriptLine = current($this->currentSourceCodeLines);
+		next($this->currentSourceCodeLines);
+		$this->currentLineNumber ++;
+		return $typoScriptLine;
 	}
 
 	/**
@@ -482,6 +485,18 @@ class Parser implements \F3\TypoScript\ParserInterface {
 			$processedValue = floatval($unparsedValue);
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUELITERAL, $unparsedValue, $matches) === 1) {
 			$processedValue = stripslashes(isset($matches[2]) ? $matches[2] : $matches[1]);
+			$processedValue = $this->getValueWithEvaluatedVariables($processedValue, $objectPathArray);
+		} elseif (preg_match(self::SPLIT_PATTERN_VALUEMULTILINELITERAL, $unparsedValue, $matches) === 1) {
+			$processedValue = stripslashes(isset($matches['SingleQuoteValue']) ? $matches['SingleQuoteValue'] : $matches['DoubleQuoteValue']);
+			$closingQuoteChar = isset($matches['SingleQuoteChar']) ? $matches['SingleQuoteChar'] : $matches['DoubleQuoteChar'];
+			$regexp = '/(?P<Value>(?:\\\\.|[^\\\\' . $closingQuoteChar . '])*)(?P<QuoteChar>' . $closingQuoteChar . '?)/';
+			while(($typoScriptLine = $this->getNextTypoScriptline()) !== FALSE) {
+				preg_match($regexp, $typoScriptLine, $matches);
+				$processedValue .= "\n" . stripslashes($matches['Value']);
+				if (!empty($matches['QuoteChar'])) {
+					break;
+				}
+			}
 			$processedValue = $this->getValueWithEvaluatedVariables($processedValue, $objectPathArray);
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUEVARIABLE, $unparsedValue, $matches)) {
 			$fullVariableName = implode('.', array_slice($objectPathArray, 0, -1)) . '.' . $unparsedValue;
