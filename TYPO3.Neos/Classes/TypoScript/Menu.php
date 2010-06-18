@@ -82,7 +82,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFirstLevel($firstLevel) {
-		$this->firstLevel = $firstLevel;
+		$this->firstLevel = (integer)$firstLevel;
 	}
 
 	/**
@@ -101,7 +101,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setLastLevel($lastLevel) {
-		$this->lastLevel = $lastLevel;
+		$this->lastLevel = (integer)$lastLevel;
 	}
 
 	/**
@@ -133,9 +133,37 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildItems() {
-		return array(
-			''
-		);
+		$contentContext = $this->renderingContext->getContentContext();
+
+		$baseNodePath = '/';
+		if ($this->firstLevel === 0) {
+			$menuParentNode = $contentContext->getCurrentSite();
+		} elseif ($this->firstLevel > 0) {
+			$breadcrumbNodes = $contentContext->getNodeService()->getNodesOnPath($contentContext->getCurrentNodePath());
+			$level = 1;
+			foreach ($breadcrumbNodes as $node) {
+				$baseNodePath .= $node->getNodeName() . '/';
+				if ($level === $this->firstLevel) {
+					$menuParentNode = $node;
+					break;
+				}
+				$level ++;
+			}
+		}
+
+		if (!isset($menuParentNode)) {
+			return array();
+		}
+
+		$items = array();
+		foreach ($menuParentNode->getChildNodes($contentContext) as $node) {
+			$items[] = array(
+				 'label' => $node->getContent($contentContext)->getTitle(),
+				 'nodePath' => $baseNodePath . $node->getNodeName(),
+			);
+		}
+
+		return $items;
 	}
 }
 ?>

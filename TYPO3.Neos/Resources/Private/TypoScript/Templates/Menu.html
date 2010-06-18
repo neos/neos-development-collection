@@ -1,5 +1,7 @@
-<ul>
-	<f:for each="{items}" as="item">
-		<li>{item.label}</li>
-	</f:for>
-</ul>
+<f:if condition="{items}">
+	<ul>
+		<f:for each="{items}" as="item">
+			<li><f:link.action package="TYPO3" controller="Frontend\Page" action="show" arguments="{page: '{item.nodePath}'}">{item.label}</f:link.action></li>
+		</f:for>
+	</ul>
+</f:if>

@@ -73,9 +73,8 @@ class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
 			$nodeName = $node->getNodeName();
 			$nodePath .= '/' . $nodeName;
 			$items[] = array(
-				 'label' => $nodeName,
+				 'label' => $node->getContent($contentContext)->getTitle(),
 				 'nodePath' => $nodePath,
-
 			);
 		}
 		return $items;

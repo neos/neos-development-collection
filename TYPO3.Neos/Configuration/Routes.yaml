@@ -48,8 +48,20 @@
       handler:    F3\TYPO3\Routing\PageRoutePartHandler
 
 -
-  name:          'Frontend with path pointing to a page and optional format'
-  uriPattern:    '{page}(.{@format})'
+  name:          'Frontend with path pointing to a page and format'
+  uriPattern:    '{page}.{@format}'
+  defaults:
+    '@package':    'TYPO3'
+    '@controller': 'Frontend\Page'
+    '@action':     'show'
+    '@format':     'html'
+  routeParts:
+    page:
+      handler:    F3\TYPO3\Routing\PageRoutePartHandler
+
+-
+  name:          'Frontend with path pointing to a page'
+  uriPattern:    '{page}'
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Frontend\Page'
