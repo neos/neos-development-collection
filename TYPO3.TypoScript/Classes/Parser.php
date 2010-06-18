@@ -132,7 +132,9 @@ class Parser implements \F3\TypoScript\ParserInterface {
 
 	/**
 	 * Get the next, unparsed line of TypoScript from this->currentSourceCodeLines and increase the pointer
+	 *
 	 * @return string next line of typoscript to parse
+	 * @author Tobias Liebig <mail@etobi.de>
 	 */
 	protected function getNextTypoScriptline() {
 		$typoScriptLine = current($this->currentSourceCodeLines);

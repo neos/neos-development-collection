@@ -446,8 +446,6 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 13
 	 *
-	 * TODO Not implemented yet, see #7552
-	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
