@@ -15,5 +15,4 @@ roles:
 acls:
   Administrator:
     methods:
-	    F3_TYPO3_BackendController: GRANT
-
+      F3_TYPO3_BackendController: GRANT
