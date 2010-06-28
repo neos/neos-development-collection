@@ -29,6 +29,10 @@ namespace F3\TYPO3\Controller\Service;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
+
+	/**
+	 * @var string
+	 */
 	protected $defaultViewObjectName = 'F3\ExtJS\ExtDirect\View';
 
 	/**
@@ -39,8 +43,9 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Inject the Page repository
 	 * @param \F3\TYPO3\Domain\Repository\Content\PageRepository $pageRepository
+	 * @return void
 	 */
-	public function injectPageRepository($pageRepository) {
+	public function injectPageRepository(\F3\TYPO3\Domain\Repository\Content\PageRepository $pageRepository) {
 		$this->pageRepository = $pageRepository;
 	}
 
