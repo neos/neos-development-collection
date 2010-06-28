@@ -28,6 +28,7 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
+ * @api
  */
 interface ConfigurationInterface {
 
@@ -35,6 +36,7 @@ interface ConfigurationInterface {
 	 * Returns a short string which can be used to label the configuration object
 	 *
 	 * @return string A label for the configuration object
+	 * @api
 	 */
 	public function getLabel();
 

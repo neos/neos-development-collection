@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Structure;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity
+ * @api
  */
 abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInterface {
 
@@ -61,6 +62,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 *
 	 * @param string $nodeName The node name
 	 * @return void
+	 * @api
 	 */
 	public function setNodeName($nodeName) {
 		$this->nodeName = $nodeName;
@@ -71,6 +73,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * This name is amongst others used for locating the node through a path
 	 *
 	 * @return string The node name
+	 * @api
 	 */
 	public function getNodeName() {
 		return $this->nodeName;
@@ -84,6 +87,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * @param string $section Name of the section to which the child node should be added
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL, $section = 'default') {
 		$language = ($locale !== NULL) ? $locale->getLanguage() : 'mul';
@@ -99,6 +103,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * @param string $section Name of the section where the child nodes should be located
 	 * @return array An array of child nodes. If no context was specified in the form of array('{language}' => array ('{region}' => {child nodes})).
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL, $section = 'default') {
 		if ($contentContext === NULL) {
@@ -119,6 +124,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 *
 	 * @param string $sectionName Name of the section to check for child nodes
 	 * @return boolean TRUE if the node has child nodes, otherwise FALSE
+	 * @api
 	 */
 	public function hasChildNodes($sectionName = NULL) {
 		if ($sectionName === NULL) {
@@ -136,6 +142,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 *
 	 * @return array An array of section names which can be used for calling getChildNodes() etc.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getUsedSectionNames() {
 		return array_keys($this->childNodes);
@@ -147,6 +154,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 * @param \F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface $configuration The configuration to attach
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function addConfiguration(\F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface $configuration) {
 		$this->configurations->attach($configuration);
@@ -157,6 +165,7 @@ abstract class AbstractNode implements \F3\TYPO3\Domain\Model\Structure\NodeInte
 	 *
 	 * @return \SplObjectStorage The configuration objects
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getConfigurations() {
 		return clone $this->configurations;

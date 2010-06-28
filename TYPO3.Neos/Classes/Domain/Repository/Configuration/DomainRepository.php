@@ -27,6 +27,7 @@ namespace F3\TYPO3\Domain\Repository\Configuration;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @api
  */
 class DomainRepository extends \F3\FLOW3\Persistence\Repository {
 
@@ -43,6 +44,7 @@ class DomainRepository extends \F3\FLOW3\Persistence\Repository {
 	 *
 	 * @param string $host Host the domain should match with (eg. "localhost" or "www.typo3.org")
 	 * @return array An array of matching domains
+	 * @api
 	 */
 	public function findByHost($host) {
 		return $this->domainMatchingStrategy->getSortedMatches($host, $this->findAll());

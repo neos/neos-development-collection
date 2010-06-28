@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @entity
  * @scope prototype
+ * @api
  */
 class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration {
 
@@ -56,6 +57,7 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	 * @param string $hostPattern Pattern for the host
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setHostPattern($hostPattern) {
 		$this->hostPattern = $hostPattern;
@@ -66,6 +68,7 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	 *
 	 * @return string The host pattern
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getHostPattern() {
 		return $this->hostPattern;
@@ -77,6 +80,7 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	 * @param \F3\TYPO3\Domain\Model\Structure\Site $site The site
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setSite(\F3\TYPO3\Domain\Model\Structure\Site $site) {
 		$this->site = $site;
@@ -87,6 +91,7 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\Site
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getSite() {
 		return $this->site;
@@ -99,6 +104,7 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $siteEntryPoint The point in the site structure tree acting as the entry point
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setSiteEntryPoint(\F3\TYPO3\Domain\Model\Structure\NodeInterface $siteEntryPoint) {
 		$this->siteEntryPoint = $siteEntryPoint;
@@ -110,6 +116,7 @@ class Domain extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration 
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getSiteEntryPoint() {
 		return $this->siteEntryPoint;

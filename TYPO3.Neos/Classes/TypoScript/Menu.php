@@ -32,6 +32,14 @@ namespace F3\TYPO3\TypoScript;
 class Menu extends \F3\TypoScript\AbstractContentObject {
 
 	/**
+	 * Hard limit for the maximum number of levels supported by this menu
+	 */
+	const MAXIMUM_LEVELS_LIMIT = 100;
+
+	const STATE_ACTIVE = 'active';
+	const STATE_INACTIVE = 'inactive';
+
+	/**
 	 * @var string
 	 */
 	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Menu.html';
@@ -47,68 +55,100 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * The first navigation level which should be rendered.
 	 *
-	 * 0 = top level of the site
-	 * 
+	 * 1 = first level of the site
+	 * 2 = second level of the site
+	 * ...
+	 * 0  = same level as the current page
+	 * -1 = one level above the current page
+	 * -2 = two levels above the current page
+	 * ...
+	 *
 	 * @var integer
 	 */
-	protected $firstLevel = 0;
+	protected $entryLevel = 1;
 
 	/**
 	 * The last navigation level which should be rendered.
 	 *
-	 * 0 = top level of the site
-	 * 1 = first sub level (2nd level)
-	 * 2 = second sub level (3rd level)
+	 * 1 = first level of the site
+	 * 2 = second level of the site
 	 * ...
-	 *
-	 * -1 = last level
-	 * -2 = level above the last level
+	 * 0  = same level as the current page
+	 * -1 = one level above the current page
+	 * -2 = two levels above the current page
 	 * ...
 	 *
 	 * @var integer
 	 */
-	protected $lastLevel = 2;
+	protected $lastLevel;
 
 	/**
+	 * Maximum number of levels which should be rendered in this menu.
+	 *
+	 * @var integer
+	 */
+	protected $maximumLevels = 1;
+
+	/**
+	 * An internal cache for the built menu items array.
+	 *
 	 * @var array
 	 */
 	protected $items;
 
 	/**
-	 * Sets the first level
-	 *
-	 * @param integer $firstLevel
+	 * @param integer $entryLevel
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setFirstLevel($firstLevel) {
-		$this->firstLevel = (integer)$firstLevel;
+	public function setEntryLevel($entryLevel) {
+		$this->entryLevel = $entryLevel;
 	}
 
 	/**
 	 * @return integer
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getFirstLevel() {
-		return $this->firstLevel;
+	public function getEntryLevel() {
+		return $this->entryLevel;
 	}
 
 	/**
-	 * Sets the last level
-	 *
-	 * @param integer $lastLevel
+	 * @param integer $maximumLevels
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setMaximumLevels($maximumLevels) {
+		if ($maximumLevels > self::MAXIMUM_LEVELS_LIMIT) {
+			$maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
+		}
+		$this->maximumLevels = $maximumLevels;
+	}
+
+	/**
+	 * @return integer
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMaximumLevels($maximumLevels) {
+		return $this->maximumLevels;
+	}
+
+	/**
+	 * @param integer $lastLevel
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setLastLevel($lastLevel) {
-		$this->lastLevel = (integer)$lastLevel;
+		if ($lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
+			$lastLevel = self::MAXIMUM_LEVELS_LIMIT;
+		}
+		$this->lastLevel = $lastLevel;
 	}
 
 	/**
 	 * @return integer
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getLastLevel($lastLevel) {
+	public function getLastLevel() {
 		return $this->lastLevel;
 	}
 
@@ -120,7 +160,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 */
 	public function getItems() {
 		if ($this->items === NULL) {
-			$this->items = $this->buildItems();
+			$this->items = $this->buildItems($this->renderingContext->getContentContext());
 		}
      return $this->items;
    }
@@ -129,41 +169,100 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 * Builds the array of menu items containing those items which match the
 	 * configuration set for this Menu object.
 	 *
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
 	 * @return array An array of menu items and further information
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildItems() {
-		$contentContext = $this->renderingContext->getContentContext();
-
+	protected function buildItems(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$baseNodePath = '/';
-		if ($this->firstLevel === 0) {
-			$menuParentNode = $contentContext->getCurrentSite();
-		} elseif ($this->firstLevel > 0) {
-			$breadcrumbNodes = $contentContext->getNodeService()->getNodesOnPath($contentContext->getCurrentNodePath());
-			$level = 1;
-			foreach ($breadcrumbNodes as $node) {
-				$baseNodePath .= $node->getNodeName() . '/';
-				if ($level === $this->firstLevel) {
-					$menuParentNode = $node;
-					break;
-				}
-				$level ++;
-			}
-		}
-
-		if (!isset($menuParentNode)) {
+		$entryParentNode = $this->findParentNodeByLevel($this->entryLevel, $baseNodePath, $contentContext);
+		if ($entryParentNode === NULL) {
 			return array();
 		}
+		$lastParentNode = ($this->lastLevel !== NULL) ? $this->findParentNodeByLevel($this->lastLevel, $baseNodePath, $contentContext) : NULL;
 
+		return $this->buildRecursiveItemsArray($baseNodePath, $entryParentNode, $lastParentNode, $contentContext);
+	}
+
+	/**
+	 * Recursively called method which builds the actual items array.
+	 *
+	 * @param string $baseNodePath The base node path as identified by buildItems()
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $entryParentNode The parent node whose children should be listed as items
+	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext $contentContext The current content context
+	 * @param integer $currentLevel Level count for the recursion – don't use.
+	 * @return array A nested array of menu item information
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see buildItems()
+	 */
+	private function buildRecursiveItemsArray($baseNodePath, \F3\TYPO3\Domain\Model\Structure\NodeInterface $entryParentNode, $lastParentNode, \F3\TYPO3\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
 		$items = array();
-		foreach ($menuParentNode->getChildNodes($contentContext) as $node) {
-			$items[] = array(
-				 'label' => $node->getContent($contentContext)->getTitle(),
-				 'nodePath' => $baseNodePath . $node->getNodeName(),
+		foreach ($entryParentNode->getChildNodes($contentContext) as $currentNode) {
+			$item = array(
+				 'label' => $currentNode->getContent($contentContext)->getTitle(),
+				 'nodePath' => $baseNodePath . $currentNode->getNodeName(),
 			);
-		}
+			if ($currentNode === $contentContext->getCurrentPage()->getContainingNode()) {
+				$item['state'][self::STATE_ACTIVE] = TRUE;
+			}
 
+			if ($currentLevel < $this->maximumLevels && $entryParentNode !== $lastParentNode) {
+				$subItems = $this->buildRecursiveItemsArray($item['nodePath'] . '/', $currentNode, $lastParentNode, $contentContext, $currentLevel + 1);
+				if ($subItems !== array()) {
+					$item['subItems'] = $subItems;
+				}
+			}
+			$items[] = $item;
+		}
 		return $items;
+	}
+
+	/**
+	 * Traverses the nodes leading from the top level of the site to the current
+	 * page to determine the parent node of the current page's node.
+	 * 
+	 * @param integer $entryLevel The level of which a parent node should be returned. See $this->entryLevel for possible values.
+	 * @param string &$nodePath Contains the node path (e.g. "/homepage/products/") if a node was found
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
+	 * @return mixed The parent node of the current page's node or NULL if none was found
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function findParentNodeByLevel($entryLevel, &$nodePath, \F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+		$parentNode = NULL;
+		$nodePath = '/';
+		if ($entryLevel === 1) {
+			$parentNode = $contentContext->getCurrentSite();
+		} elseif ($entryLevel > 1) {
+			$breadcrumbNodes = $contentContext->getNodeService()->getNodesOnPath($contentContext->getCurrentNodePath());
+			$traverseLevel = 2;
+
+			foreach ($breadcrumbNodes as $potentialParentNode) {
+				$nodePath .= $potentialParentNode->getNodeName() . '/';
+				if ($traverseLevel === $entryLevel) {
+					$parentNode = $potentialParentNode;
+					break;
+				}
+				$traverseLevel ++;
+			}
+		} elseif ($entryLevel < 1) {
+			$breadcrumbNodes = $contentContext->getNodeService()->getNodesOnPath($contentContext->getCurrentNodePath());
+			$currentPageLevel = count($breadcrumbNodes);
+			$traverseLevel  = 0;
+			array_pop($breadcrumbNodes);
+			krsort($breadcrumbNodes);
+			foreach ($breadcrumbNodes as $potentialParentNode) {
+				$nodePath = '/' . $potentialParentNode->getNodeName() . $nodePath;
+				if ($traverseLevel === $entryLevel) {
+					$parentNode = $potentialParentNode;
+				}
+				$traverseLevel --;
+			}
+			if ($traverseLevel === $entryLevel) {
+				$parentNode = $contentContext->getCurrentSite();
+			}
+		}
+		return $parentNode;
 	}
 }
 ?>

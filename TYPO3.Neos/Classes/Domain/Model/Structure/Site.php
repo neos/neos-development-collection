@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Structure;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity
+ * @api
  */
 class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\TYPO3\Domain\Model\Structure\IndexNodeAwareInterface {
 
@@ -42,6 +43,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * Name of the site
 	 * @var string
 	 * @validate Label, StringLength(minimum = 1, maximum = 255)
+	 * @api
 	 */
 	protected $name = 'Untitled Site';
 
@@ -63,6 +65,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * @param string $name The site name
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setName($name) {
 		$this->name = $name;
@@ -73,6 +76,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 *
 	 * @return string The name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getName() {
 		return $this->name;
@@ -84,6 +88,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * @param integer $state The site's state, must be one of the STATUS_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setState($state) {
 		$this->state = $state;
@@ -94,6 +99,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 *
 	 * @return integer The state - one of the STATUS_* constant's values
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getState() {
 		return $this->state;
@@ -105,6 +111,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * @param string $packageKey The package key
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setSiteResourcesPackageKey($packageKey) {
 		$this->siteResourcesPackageKey = $packageKey;
@@ -115,6 +122,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 *
 	 * @return string The package key
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getSiteResourcesPackageKey() {
 		return $this->siteResourcesPackageKey;
@@ -129,6 +137,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * @return void
 	 * @throws \InvalidArgumentException if $section is not "default"
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL, $section = 'default') {
 		if ($section !== 'default') {
@@ -145,6 +154,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * @param string $section Always "default", will be ignored if given
 	 * @return array An array of child nodes. If no context was specified in the form of array('{language}' => array ('{region}' => {child nodes})).
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL, $section = 'default') {
 		return parent::getChildNodes($contentContext, 'default');
@@ -156,6 +166,7 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context
 	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode The index node or NULL if no index node exists.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$childNodesMatchingContext = $this->getChildNodes($contentContext, 'default');

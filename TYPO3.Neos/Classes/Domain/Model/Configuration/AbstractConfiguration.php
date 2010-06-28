@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity
+ * @api
  */
 abstract class AbstractConfiguration implements \F3\TYPO3\Domain\Model\Configuration\ConfigurationInterface {
 
@@ -37,6 +38,7 @@ abstract class AbstractConfiguration implements \F3\TYPO3\Domain\Model\Configura
 	 *
 	 * @return string A label for the configuration object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getLabel() {
 		return '[' . get_class($this) . ']';

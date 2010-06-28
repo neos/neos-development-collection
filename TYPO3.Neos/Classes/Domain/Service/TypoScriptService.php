@@ -28,6 +28,7 @@ namespace F3\TYPO3\Domain\Service;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
+ * @api
  */
 class TypoScriptService {
 
@@ -70,6 +71,7 @@ class TypoScriptService {
 	 * @param string $nodePath Path to the node to build the TypoScript Object Tree for
 	 * @return array The merged object tree as of the given node or NULL if the given path does not point to a node
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getMergedTypoScriptObjectTree($nodePath) {
 		$nodes = $this->contentContext->getNodeService()->getNodesOnPath($nodePath);

@@ -36,14 +36,52 @@ class MenuTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getItemsBuildsTheItemsArrayIfItHasNotBeenBuiltAlready() {
 		$mockItems = array('foo' => 'bar');
+
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext');
+
+		$mockRenderingContext = $this->getMock('F3\TypoScript\RenderingContext');
+		$mockRenderingContext->expects($this->once())->method('getContentContext')->will($this->returnValue($mockContentContext));
 		
 		$menu = $this->getMock('F3\TYPO3\TypoScript\Menu', array('buildItems'));
+		$menu->injectRenderingContext($mockRenderingContext);
+
 		$menu->expects($this->once())->method('buildItems')->will($this->returnValue($mockItems));
-		
+
 		$this->assertSame($mockItems, $menu->getItems());
 		$this->assertSame($mockItems, $menu->getItems());
 	}
 
+	/**
+	 *
+	 * test
+	 * @dataProvider buildItemData
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Either finish test implementation or replace by system test
+	 */
+	public function buildItemsCanBuildDifferentKindsOfMenus($entryLevel, $lastLevel, \F3\TYPO3\Domain\Service\ContentContext $contentContext, array $expectedItems) {
+		$menu = $this->getAccessibleMock('F3\TYPO3\TypoScript\Menu', array('dummy'));
+		$menu->setEntryLevel($entryLevel);
+		$menu->setLastLevel($lastLevel);
 
+		$actualItems = $menu->_call('buildItems', $contentContext);
+		$this->assertSame($expectedItems, $actualItems);
+	}
+
+
+	/**
+	 * 
+	 */
+	public function buildItemData() {
+		$currentSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
+
+		$contentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext');
+		$contentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($currentSite));
+
+		return array(
+			array(
+				1, 1, $contentContext, array()
+			)
+		);
+	}
 }
 ?>

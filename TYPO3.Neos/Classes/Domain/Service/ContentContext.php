@@ -28,6 +28,7 @@ namespace F3\TYPO3\Domain\Service;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
+ * @api
  */
 class ContentContext {
 
@@ -141,6 +142,7 @@ class ContentContext {
 	 *
 	 * @return \DateTime The current date and time - or a simulated version of it
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCurrentDateTime() {
 		return $this->currentDateTime;
@@ -153,6 +155,7 @@ class ContentContext {
 	 * @param \DateTime $currentDateTime A date and time to simulate.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setCurrentDateTime(\DateTime $currentDateTime) {
 		$this->currentDateTime = $currentDateTime;
@@ -164,6 +167,7 @@ class ContentContext {
 	 *
 	 * @return \F3\TYPO3\Domain\Service\ContentService
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getContentService() {
 		return $this->contentService;
@@ -175,6 +179,7 @@ class ContentContext {
 	 *
 	 * @return \F3\TYPO3\Domain\Service\NodeService
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getNodeService() {
 		return $this->nodeService;
@@ -186,6 +191,7 @@ class ContentContext {
 	 *
 	 * @return \F3\TYPO3\Domain\Service\TypoScriptService
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getTypoScriptService() {
 		return $this->typoScriptService;
@@ -196,6 +202,7 @@ class ContentContext {
 	 *
 	 * @return \F3\FLOW3\Locale\Locale
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getLocale() {
 		return $this->locale;
@@ -205,7 +212,8 @@ class ContentContext {
 	 * Returns the current site from this frontend context
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\Site The current site
-	 * @author Robert Lemke <robert@tpyo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCurrentSite() {
 		return $this->currentSite;
@@ -215,7 +223,8 @@ class ContentContext {
 	 * Returns the current site from this frontend context
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\Domain The current site
-	 * @author Robert Lemke <robert@tpyo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCurrentDomain() {
 		return $this->currentDomain;
@@ -229,6 +238,7 @@ class ContentContext {
 	 * @return \F3\TYPO3\Domain\Model\Content\Page $page
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setCurrentPage(\F3\TYPO3\Domain\Model\Content\Page $page) {
 		$this->currentPage = $page;
@@ -239,6 +249,7 @@ class ContentContext {
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Content\Page The current page
 	 * @author Robert Lemke <robert@tpyo3.org>
+	 * @api
 	 */
 	public function getCurrentPage() {
 		return $this->currentPage;
@@ -251,6 +262,7 @@ class ContentContext {
 	 * @param string $nodePath The current node path, e.g. "homepage/products/typo3"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setCurrentNodePath($nodePath) {
 		$this->nodePath = $nodePath;
@@ -261,6 +273,7 @@ class ContentContext {
 	 *
 	 * @return string The current node path, e.g. "homepage/products/typo3"
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCurrentNodePath() {
 		return $this->nodePath;

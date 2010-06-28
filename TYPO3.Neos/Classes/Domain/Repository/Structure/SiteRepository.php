@@ -27,6 +27,7 @@ namespace F3\TYPO3\Domain\Repository\Structure;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @api
  */
 class SiteRepository extends \F3\FLOW3\Persistence\Repository {
 
@@ -34,6 +35,8 @@ class SiteRepository extends \F3\FLOW3\Persistence\Repository {
 	 * Finds the first site
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\Site The first site or FALSE if none exists
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function findFirst() {
 		$query = $this->createQuery();

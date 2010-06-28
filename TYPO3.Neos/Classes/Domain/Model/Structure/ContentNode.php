@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Structure;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity
+ * @api
  */
 class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 
@@ -58,6 +59,7 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	 * @return void
 	 * @throws \F3\TYPO3\Domain\Exception\InvalidContentTypeException if the content does not matche the type of previously added content.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
 		if ($content->getContainingNode() !== $this) {
@@ -83,6 +85,7 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext Context the content should match
 	 * @return \F3\TYPO3\Domain\Model\Content\ContentInterface The content object or NULL if none matched the given context
 	 * @author Robert Lemke <rober@typo3.org>
+	 * @api
 	 */
 	public function getContent(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$locale = $contentContext->getLocale();
@@ -100,6 +103,7 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	 * @return void
 	 * @throws \F3\TYPO3\Domain\Exception\NoSuchContentException if the specified content is not currently attached to this structure node
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function removeContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
 		$locale = $content->getLocale();
@@ -123,6 +127,7 @@ class ContentNode extends \F3\TYPO3\Domain\Model\Structure\AbstractNode {
 	 *
 	 * @return string The content type (class name) or NULL if no content is attached to this node yet
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getContentType() {
 		return $this->contentType;

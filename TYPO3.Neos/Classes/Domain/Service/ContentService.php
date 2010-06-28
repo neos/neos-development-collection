@@ -28,6 +28,7 @@ namespace F3\TYPO3\Domain\Service;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
+ * @api
  */
 class ContentService {
 
@@ -65,6 +66,7 @@ class ContentService {
 	 *
 	 * @return \F3\TYPO3\Domain\Service\ContentContext
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getContentContext() {
 		return $this->contentContext;
@@ -83,6 +85,7 @@ class ContentService {
 	 * @return object The newly created content object
 	 * @throws \F3\TYPO3\Domain\Exception\InvalidReferenceException if the given reference is of an invalid type
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function createInside($nodeName, $contentType, $reference, $section = 'default') {
 		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
@@ -116,6 +119,7 @@ class ContentService {
 	 * @throws \F3\TYPO3\Domain\Exception\InvalidReferenceException if the given reference is of an invalid type
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Needs to be implemented, actually...
+	 * @api
 	 */
 	public function createAfter($nodeName, $contentType, $reference) {
 		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {

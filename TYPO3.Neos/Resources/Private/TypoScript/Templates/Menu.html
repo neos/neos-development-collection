@@ -1,7 +1,14 @@
-<f:if condition="{items}">
+<f:render section="itemList" arguments="{items: items}" />
+
+<f:section name="itemList">
 	<ul>
 		<f:for each="{items}" as="item">
-			<li><f:link.action package="TYPO3" controller="Frontend\Page" action="show" arguments="{page: '{item.nodePath}'}">{item.label}</f:link.action></li>
+			<li class="{f:if(condition: item.state.active, then: 'active')}">
+				<f:link.action package="TYPO3" controller="Frontend\Page" action="show" arguments="{page: '{item.nodePath}'}">{item.label}</f:link.action>
+				<f:if condition="{item.subItems}">
+					<f:render section="itemList" arguments="{items: item.subItems}" />
+				</f:if>
+			</li>
 		</f:for>
 	</ul>
-</f:if>
+</f:section>

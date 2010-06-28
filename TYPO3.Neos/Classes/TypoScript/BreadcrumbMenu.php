@@ -37,48 +37,52 @@ class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
 	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/BreadcrumbMenu.html';
 
 	/**
-	 * The last navigation level which should be rendered.
-	 *
-	 * 0 = top level of the site
-	 * 1 = first sub level (2nd level)
-	 * 2 = second sub level (3rd level)
-	 * ...
-	 *
-	 * -1 = last level
-	 * -2 = level above the last level
-	 * ...
+	 * Maximum number of levels which should be rendered in this menu.
 	 *
 	 * @var integer
 	 */
-	protected $lastLevel = -2;
+	protected $maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
 
 	/**
-	 * @var array
-	 */
-	protected $items;
-
-	/**
-	 * Returns the menu items according to the defined settings.
+	 * Builds the array of menu items containing those items which match the
+	 * configuration set for this Breadcrumbmenu object.
 	 *
-	 * @return array
+	 * @return array An array of menu items and further information
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getItems() {
+	protected function buildItems(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$items = array();
-		$contentContext = $this->renderingContext->getContentContext();
 		$currentNodesPath = $contentContext->getCurrentNodePath();
 
+		$dummy = '';
+		$entryParentNode = $this->findParentNodeByLevel($this->entryLevel, $dummy, $contentContext);
+		if ($entryParentNode === NULL) {
+			return array();
+		}
+		$lastParentNode = $this->findParentNodeByLevel($this->lastLevel, $dummy, $contentContext);
+
 		$nodePath = '';
+		$addItems = ($entryParentNode instanceof \F3\TYPO3\Domain\Model\Structure\Site) ? $this->maximumLevels : 0;
+
 		foreach ($contentContext->getNodeService()->getNodesOnPath($currentNodesPath) as $node) {
-			$nodeName = $node->getNodeName();
-			$nodePath .= '/' . $nodeName;
-			$items[] = array(
-				 'label' => $node->getContent($contentContext)->getTitle(),
-				 'nodePath' => $nodePath,
-			);
+			$nodePath .= '/' . $node->getNodeName();
+			if ($addItems > 0) {
+				$items[] = array(
+					 'label' => $node->getContent($contentContext)->getTitle(),
+					 'nodePath' => $nodePath,
+				);
+			}
+			$addItems --;
+			if ($node === $entryParentNode) {
+				$addItems = $this->maximumLevels;
+			}
+			if ($node === $lastParentNode) {
+				$addItems = 1;
+			}
 		}
 		return $items;
 	}
 
 }
+
 ?>

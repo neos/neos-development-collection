@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @entity
  * @scope prototype
+ * @api
  */
 class TypoScript extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfiguration {
 
@@ -50,6 +51,7 @@ class TypoScript extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfigurat
 	 * @param $sourceCode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setSourceCode($sourceCode) {
 		$this->sourceCode = $sourceCode;
@@ -60,6 +62,7 @@ class TypoScript extends \F3\TYPO3\Domain\Model\Configuration\AbstractConfigurat
 	 *
 	 * @return string The source code
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getSourceCode() {
 		return $this->sourceCode;

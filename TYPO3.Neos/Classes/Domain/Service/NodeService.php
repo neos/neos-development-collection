@@ -28,6 +28,7 @@ namespace F3\TYPO3\Domain\Service;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
+ * @api
  */
 class NodeService {
 
@@ -52,6 +53,8 @@ class NodeService {
 	 * @param string $path Path to the searched content node where the path segements are node names, separated by forward slashes. Example: /home/products/foo
 	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface The node found at the given path or NULL of none was found
 	 * @throws \F3\TYPO3\Domain\InvalidPathException if the path is not well formed
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getNode($path) {
 		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPathException('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1254924207);
@@ -66,6 +69,8 @@ class NodeService {
 	 * @param string $path Valid content node path. Path segements are node names, separated by forward slashes. Example: /home/products/foo
 	 * @return array<\F3\TYPO3\Domain\Model\Structure\NodeInterface> The nodes found on the given path or NULL if the path did not point to a node
 	 * @throws \F3\TYPO3\Domain\InvalidPathException if the path is not well formed
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getNodesOnPath($path) {
 		if ($path{0} !== '/') throw new \F3\TYPO3\Domain\Exception\InvalidPathException('"' . $path . '" is not a valid node path: Only absolute paths are supported.', 1255430851);

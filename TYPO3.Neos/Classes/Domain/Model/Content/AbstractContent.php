@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Content;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity
+ * @api
  */
 abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\ContentInterface {
 
@@ -49,6 +50,7 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
 	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $node The content node this content is bound to
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node) {
 		$this->locale = $locale;
@@ -61,6 +63,7 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	 *
 	 * @return \F3\FLOW3\Locale\Locale $locale The locale of the content
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getLocale() {
 		return $this->locale;
@@ -71,6 +74,7 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	 *
 	 * @return string A label for the content object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getLabel() {
 		return '[' . get_class($this) . ']';
@@ -81,6 +85,7 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode $node The node this content is bound to
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getContainingNode() {
 		return $this->node;

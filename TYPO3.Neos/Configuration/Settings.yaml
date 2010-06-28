@@ -10,8 +10,6 @@
 
 FLOW3:
   security:
-    enable: yes
-
     authentication:
       providers:
         DefaultProvider:

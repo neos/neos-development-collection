@@ -28,6 +28,7 @@ namespace F3\TYPO3\Domain\Model\Structure;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
+ * @api
  */
 interface IndexNodeAwareInterface {
 
@@ -36,6 +37,7 @@ interface IndexNodeAwareInterface {
 	 *
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context
 	 * @return \F3\TYPO3\Domain\Model\Structure\NodeInterface The index node or NULL if no index node exists.
+	 * @api
 	 */
 	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext);
 

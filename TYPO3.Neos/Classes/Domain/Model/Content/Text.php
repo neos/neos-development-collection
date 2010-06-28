@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Content;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity
+ * @api
  */
 class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 
@@ -52,6 +53,7 @@ class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	 * @param string $headline
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setHeadline($headline) {
 		$this->headline = $headline;
@@ -62,6 +64,7 @@ class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	 * 
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getHeadline() {
 		return $this->headline;
@@ -72,6 +75,7 @@ class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	 *
 	 * @param string $text
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setText($text) {
 		$this->text = $text;
@@ -82,6 +86,7 @@ class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	 * 
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getText() {
 		return $this->text;
@@ -92,6 +97,7 @@ class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 	 *
 	 * @return string The label
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getLabel() {
 		return ($this->headline != '') ? $this->headline : '[Untitled]';

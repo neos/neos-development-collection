@@ -29,6 +29,7 @@ namespace F3\TYPO3\Domain\Model\Content;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity
+ * @api
  */
 class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent implements \F3\TYPO3\Domain\Model\Content\HideableContentInterface {
 
@@ -62,6 +63,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function hide() {
 		$this->hidden = TRUE;
@@ -72,6 +74,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function unhide() {
 		$this->hidden = FALSE;
@@ -87,6 +90,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @return boolean TRUE if the page is hidden, otherwise FALSE
 	 * @see isVisible()
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isHidden() {
 		return $this->hidden;
@@ -98,6 +102,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @param \DateTime $startTime The start time. Passing NULL unsets the start time.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setStartTime(\DateTime $startTime) {
 		$this->startTime = $startTime;
@@ -108,6 +113,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 *
 	 * @return \DateTime The start time or NULL
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getStartTime() {
 		if ($this->startTime !== NULL) {
@@ -123,6 +129,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @param \DateTime $endTime The end time. Passing NULL unsets the end time.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setEndTime(\DateTime $endTime) {
 		$this->endTime = $endTime;
@@ -133,6 +140,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 *
 	 * @return \DateTime The end time or NULL
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getEndTime() {
 		if ($this->endTime !== NULL) {
@@ -149,6 +157,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 * @return void
 	 * @throws \InvalidArgumentException if the title is not valid
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setTitle($title) {
 		$this->title = $title;
@@ -159,6 +168,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 *
 	 * @return string The title of the page
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getTitle() {
 		return $this->title;
@@ -169,6 +179,7 @@ class Page extends \F3\TYPO3\Domain\Model\Content\AbstractCompositeContent imple
 	 *
 	 * @return string A label for this page
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getLabel() {
 		return $this->title;
