@@ -112,7 +112,7 @@ abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContent
 		$content = '';
 		foreach ($this->contentArray as $contentItem) {
 			if ($contentItem instanceof \F3\TypoScript\ContentObjectInterface) {
-				$contentItem->setRenderingContext($this->renderingContext);
+				$contentItem->injectRenderingContext($this->renderingContext);
 				$content .= $contentItem->render();
 			}
 		}

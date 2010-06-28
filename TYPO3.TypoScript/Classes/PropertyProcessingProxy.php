@@ -39,7 +39,7 @@ class PropertyProcessingProxy implements \F3\Fluid\Core\Parser\SyntaxTree\Render
 		$this->processorChains = $processorChains;
 	}
 
-	public function setRenderingContext($renderingContext) {
+	public function injectRenderingContext($renderingContext) {
 		$this->renderingContext = $renderingContext;
 	}
 

@@ -28,6 +28,7 @@ namespace F3\TypoScript;
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @api
  */
 interface ParserInterface {
 
@@ -37,6 +38,7 @@ interface ParserInterface {
 	 *
 	 * @param string $sourceCode The TypoScript source code to parse
 	 * @return \F3\TypoScript\ObjectTree A TypoScript object tree, generated from the source code
+	 * @api
 	 */
 	public function parse($sourceCode);
 
@@ -45,6 +47,7 @@ interface ParserInterface {
 	 *
 	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing "
 	 * @return void
+	 * @api
 	 */
 	public function setDefaultNamespace($objectNamePrefix);
 

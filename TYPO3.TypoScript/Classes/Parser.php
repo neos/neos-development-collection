@@ -27,6 +27,7 @@ namespace F3\TypoScript;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @api
  */
 class Parser implements \F3\TypoScript\ParserInterface {
 
@@ -119,6 +120,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * @param string $sourceCode The TypoScript source code to parse
 	 * @return \F3\TypoScript\ObjectTree A TypoScript object tree, generated from the source code
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function parse($sourceCode) {
 		if (!is_string($sourceCode)) throw new \F3\TypoScript\Exception('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
@@ -131,24 +133,12 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	}
 
 	/**
-	 * Get the next, unparsed line of TypoScript from this->currentSourceCodeLines and increase the pointer
-	 *
-	 * @return string next line of typoscript to parse
-	 * @author Tobias Liebig <mail@etobi.de>
-	 */
-	protected function getNextTypoScriptline() {
-		$typoScriptLine = current($this->currentSourceCodeLines);
-		next($this->currentSourceCodeLines);
-		$this->currentLineNumber ++;
-		return $typoScriptLine;
-	}
-
-	/**
 	 * Sets the default namespace to the given object name prefix
 	 *
 	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing \
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setDefaultNamespace($objectNamePrefix) {
 		if (!is_string($objectNamePrefix)) throw new \F3\TypoScript\Exception('The object name prefix for the default namespace must be of type string!', 1180600696);
@@ -168,6 +158,19 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		$this->currentBlockCommentState = FALSE;
 		$this->objectTree = array();
 		$this->objectVariables = array();
+	}
+
+	/**
+	 * Get the next, unparsed line of TypoScript from this->currentSourceCodeLines and increase the pointer
+	 *
+	 * @return string next line of typoscript to parse
+	 * @author Tobias Liebig <mail@etobi.de>
+	 */
+	protected function getNextTypoScriptline() {
+		$typoScriptLine = current($this->currentSourceCodeLines);
+		next($this->currentSourceCodeLines);
+		$this->currentLineNumber ++;
+		return $typoScriptLine;
 	}
 
 	/**

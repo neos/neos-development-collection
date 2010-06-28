@@ -36,7 +36,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 *
 	 * @var string
 	 */
-	protected $templateSource = '';
+	protected $templateSource;
 
 	/**
 	 * @var \F3\TYPO3\TypoScript\Template
@@ -80,7 +80,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRenderingContext($renderingContext) {
+	public function injectRenderingContext($renderingContext) {
 		$this->renderingContext = $renderingContext;
 	}
 
@@ -119,15 +119,20 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
+		$this->template->injectRenderingContext($this->renderingContext);
+
 		foreach ($this->presentationModelPropertyNames as $propertyName) {
 			$this->template->assign($propertyName, $this->getPropertyProcessingProxy($propertyName));
 		}
 		if ($this->model !== NULL) {
 			$this->template->assign('domainModel', $this->model);
 		}
-		$this->template->setRenderingContext($this->renderingContext);
-     	$content = $this->template->render();
-		return (isset($this->propertyProcessorChains['_root'])) ? $this->propertyProcessorChains['_root']->process($content) : $content;
+
+		if (isset($this->propertyProcessorChains['_root'])) {
+			return $this->propertyProcessorChains['_root']->process($this->template->render());
+		} else {
+			return $this->template->render();
+		}
 	}
 
 	/**
