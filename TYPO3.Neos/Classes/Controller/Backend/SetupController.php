@@ -179,16 +179,11 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	protected function createContentObject(\SimpleXMLElement $content, \F3\TYPO3\Domain\Model\Structure\NodeInterface $structureNode) {
 		$contentNode = $this->objectManager->create((string)$content['type'], $this->objectManager->create('F3\FLOW3\Locale\Locale', (string)$content['locale']), $structureNode);
-		switch ((string)$content['type']) {
-			case 'F3\TYPO3\Domain\Model\Content\Page':
-				$contentNode->setTitle((string)$content->title);
-			break;
-			case 'F3\TYPO3\Domain\Model\Content\Text':
-				$contentNode->setHeadline((string)$content->headline);
-				$contentNode->setText((string)$content->text);
-			break;
-			default:
-				throw new \F3\TYPO3\Controller\Exception\ImportException('Sorry, I do not know how to handle content of type "".', 1276678236);
+
+		foreach ($content->children() as $child) {
+		 if (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($contentNode, $child->getName())) {
+			 \F3\FLOW3\Reflection\ObjectAccess::setProperty($contentNode, $child->getName(), (string)$child);
+		 }
 		}
 	}
 
