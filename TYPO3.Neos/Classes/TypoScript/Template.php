@@ -56,6 +56,11 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	protected $renderingContext;
 
 	/**
+	 * @var \F3\Fluid\Core\Parser\Interceptor\Resource
+	 */
+	protected $resourceInterceptor;
+
+	/**
 	 * Dummy method
 	 *
 	 * @param object $model Not used
@@ -109,6 +114,7 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @param string $actionName Not used in this implementation
 	 * @return string The template source
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function  getTemplateSource($actionName) {
 		if ($this->source instanceof \F3\TypoScript\ContentObjectInterface) {
@@ -117,6 +123,8 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 		} elseif (is_string($this->source)) {
 			if (substr($this->source, 0, 11) === 'resource://') {
 				if (file_exists($this->source)) {
+					$uriParts = parse_url($this->source);
+					$this->resourceInterceptor->setDefaultPackageKey($uriParts['host']);
 					return file_get_contents($this->source);
 				} else {
 					return 'WARNING: Could not open template source "' . $this->source . '".';
@@ -166,10 +174,12 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 *
 	 * @return \F3\Fluid\Core\Parser\Configuration
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildParserConfiguration() {
+		$this->resourceInterceptor = $this->objectManager->get('F3\Fluid\Core\Parser\Interceptor\Resource');
 		$parserConfiguration = $this->objectManager->create('F3\Fluid\Core\Parser\Configuration');
-		$parserConfiguration->addInterceptor($this->objectManager->get('F3\Fluid\Core\Parser\Interceptor\Resource'));
+		$parserConfiguration->addInterceptor($this->resourceInterceptor);
 		return $parserConfiguration;
 	}
 
