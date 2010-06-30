@@ -53,6 +53,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	const SPLIT_PATTERN_INDEXANDMETHODCALL = '/(?P<Index>\d+)\.(?P<ObjectAndMethodName>\w+)\s*\((?P<Arguments>.*?)\)\s*$/';
 	const SPLIT_PATTERN_OBJECTANDMETHODNAME = '/(?:(<?P<ObjectName>(\\\\F3\\\\(?:\w+|\\\\)+))->)?(?P<MethodName>\w+)/';
 	const SPLIT_PATTERN_METHODARGUMENTS = '/("(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+|-?[0-9]+(\.\d+)?)/';
+	const SPLIT_PATTERN_VARIABLENAMEFROMPATH = '/\\$(?P<VariableName>[a-z][a-zA-Z0-9]*)$/';
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
@@ -64,6 +65,12 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * @var array
 	 */
 	protected $objectTree = array();
+
+	/**
+	 * Contains the global TS object variables
+	 * @var array
+	 */
+	protected $globalObjectVariables = array();
 
 	/**
 	 * Contains the TS object variables used during parse time, indexed by the object path
@@ -158,6 +165,18 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		$this->currentBlockCommentState = FALSE;
 		$this->objectTree = array();
 		$this->objectVariables = array();
+	}
+
+	/**
+	 * Presets a global object variable
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setGlobalObjectVariable($name, $value) {
+		$this->globalObjectVariables[$name] = $value;
 	}
 
 	/**
@@ -314,7 +333,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		$objectPathArray = $this->getParsedObjectPath($objectPath);
 		$processedValue = $this->getProcessedValue($objectPathArray, $value);
 
-		if ($objectPathArray[count($objectPathArray) - 1]{0} == '$') {
+		if ($objectPathArray[count($objectPathArray) - 1][0] == '$') {
 			$this->setObjectVariable($objectPathArray, $processedValue);
 		} else {
 			$this->setValueInObjectTree($objectPathArray, $processedValue);
@@ -330,7 +349,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 */
 	protected function parseValueUnAssignment($objectPath) {
 		$objectPathArray = $this->getParsedObjectPath($objectPath);
-		if ($objectPathArray[count($objectPathArray) - 1]{0} == '$') {
+		if ($objectPathArray[count($objectPathArray) - 1][0] == '$') {
 			$this->setObjectVariable($objectPathArray, NULL);
 		} else {
 			$this->setValueInObjectTree($objectPathArray, NULL);
@@ -353,7 +372,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		$originalValue = $this->getValueFromObjectTree($sourceObjectPathArray);
 		$value = is_object($originalValue) ? clone $originalValue : $originalValue;
 
-		if ($targetObjectPathArray[count($targetObjectPathArray) - 1]{0} == '$') {
+		if ($targetObjectPathArray[count($targetObjectPathArray) - 1][0] == '$') {
 			$this->setObjectVariable($targetObjectPathArray, $value);
 		} else {
 			$this->setValueInObjectTree($targetObjectPathArray, $value);
@@ -375,7 +394,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 
 		$value = $this->getValueFromObjectTree($sourceObjectPathArray);
 
-		if ($targetObjectPathArray[count($targetObjectPathArray) - 1]{0} == '$') {
+		if ($targetObjectPathArray[count($targetObjectPathArray) - 1][0] == '$') {
 			$this->setObjectVariable($targetObjectPathArray, $value);
 		} else {
 			$this->setValueInObjectTree($targetObjectPathArray, $value);
@@ -464,7 +483,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 */
 	protected function getParsedObjectPath($objectPath) {
 		if (preg_match(self::SCAN_PATTERN_OBJECTPATH, $objectPath) === 1) {
-			if ($objectPath{0} == '.') {
+			if ($objectPath[0] == '.') {
 				$objectPath = $this->getCurrentObjectPathPrefix() . substr($objectPath, 1);
 			}
 			$objectPathArray = explode('.', $objectPath);
@@ -505,7 +524,10 @@ class Parser implements \F3\TypoScript\ParserInterface {
 			$processedValue = $this->getValueWithEvaluatedVariables($processedValue, $objectPathArray);
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUEVARIABLE, $unparsedValue, $matches)) {
 			$fullVariableName = implode('.', array_slice($objectPathArray, 0, -1)) . '.' . $unparsedValue;
-			$processedValue = isset($this->objectVariables[$fullVariableName]) ? $this->objectVariables[$fullVariableName] : NULL;
+			preg_match(self::SPLIT_PATTERN_VARIABLENAMEFROMPATH, $fullVariableName, $matches);
+			$variableName = $matches['VariableName'];
+			$processedValue = isset($this->globalObjectVariables[$variableName]) ? $this->globalObjectVariables[$variableName] : NULL;
+			$processedValue = isset($this->objectVariables[$fullVariableName]) ? $this->objectVariables[$fullVariableName] : $processedValue;
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
 			if (count($matches) == 4) {
 				$typoScriptObjectName = $matches[3];
@@ -538,7 +560,11 @@ class Parser implements \F3\TypoScript\ParserInterface {
 			foreach ($matchedVariables[0] as $index => $variableName) {
 				$pattern = '/\\' . $variableName . '(?=[^a-zA-Z0-9]|$)/';
 				$fullVariableName = implode('.', array_slice($objectPathArray, 0, -1)) . '.' . $variableName;
-				$replacement = isset($this->objectVariables[$fullVariableName]) ? $this->objectVariables[$fullVariableName] : '';
+				preg_match(self::SPLIT_PATTERN_VARIABLENAMEFROMPATH, $fullVariableName, $matches);
+				$variableName = $matches['VariableName'];
+				$replacement = isset($this->globalObjectVariables[$variableName]) ? $this->globalObjectVariables[$variableName] : '';
+				$replacement = isset($this->objectVariables[$fullVariableName]) ? $this->objectVariables[$fullVariableName] : $replacement;
+
 
 				if ($replacement instanceof \F3\TypoScript\ContentObjectInterface) {
 					$replacement = '!!! TypoScript Objects as variable values are not yet supported !!!';
