@@ -31,5 +31,54 @@ namespace F3\TYPO3\TypoScript;
  */
 class Head extends \F3\TypoScript\AbstractContentObject {
 
+	/**
+	 * @var \F3\TYPO3\Domain\Model\Content\Page
+	 */
+	protected $model;
+
+	/**
+	 * @var string
+	 */
+	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Page';
+
+	/**
+	 * @var string
+	 */
+	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Head.html';
+
+	/**
+	 * Names of the properties of this TypoScript which should be available in
+	 * this TS object's template while rendering it.
+	 *
+	 * @var array
+	 */
+	protected $presentationModelPropertyNames = array('title');
+
+	/**
+	 * @var string
+	 */
+	protected $title;
+
+	/**
+	 * Overrides the title of this page.
+	 *
+	 * @param string $title
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setTitle($title) {
+		$this->title = $title;
+	}
+
+	/**
+	 * Returns the overriden title of this page.
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTitle() {
+		return $this->title;
+	}
+
 }
 ?>

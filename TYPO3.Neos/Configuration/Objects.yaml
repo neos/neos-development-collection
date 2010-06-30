@@ -9,5 +9,7 @@ F3\TYPO3\Controller\Frontend\PageController:
 
 F3\TYPO3\TypoScript\Page:
   properties:
+    head:
+      object: F3\TYPO3\TypoScript\Head
     content:
       object: F3\TYPO3\TypoScript\Content

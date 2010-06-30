@@ -52,7 +52,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'content', 'parts');
+	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'content', 'parts', 'renderingContext');
 
 	/**
 	 * The type is used to distinguish between different TypoScript Page objects.
@@ -73,9 +73,9 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	protected $body;
 
 	/**
-	 * @var array
+	 * @var \F3\TYPO3\TypoScript\Head
 	 */
-	protected $head = array();
+	protected $head;
 
 	/**
 	 * @var \F3\TYPO3\TypoScript\Content
@@ -119,6 +119,10 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 		$this->title = $title;
 	}
 
+	public function getRenderingContext() {
+		return $this->renderingContext;
+	}
+
 	/**
 	 * Returns the overriden title of this page.
 	 *
@@ -132,18 +136,18 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Sets head content of this page.
 	 *
-	 * @param array $head
+	 * @param \F3\TYPO3\TypoScript\ $head
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHead(array $head) {
+	public function setHead(\F3\TYPO3\TypoScript\Head $head) {
 		$this->head = $head;
 	}
 
 	/**
 	 * Gets head content of this page.
 	 *
-	 * @return array
+	 * @return \F3\TYPO3\TypoScript\Head
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHead() {
@@ -223,6 +227,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 */
 	public function render() {
 		$this->model = $this->renderingContext->getContentContext()->getCurrentPage();
+		$this->head->setModel($this->model);
 		return parent::render();
 	}
 }

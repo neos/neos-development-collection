@@ -101,7 +101,7 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setRenderSection($sectionName) {
+	public function setSectionName($sectionName) {
 		$this->sectionName = $sectionName;
 	}
 
@@ -110,7 +110,7 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function getRenderSection() {
+	public function getSectionName() {
 		return $this->sectionName;
 	}
 
