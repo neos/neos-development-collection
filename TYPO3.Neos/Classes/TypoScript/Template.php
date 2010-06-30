@@ -159,7 +159,7 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 			$this->templateParser->setConfiguration($this->buildParserConfiguration());
 			$parsedTemplate = $this->templateParser->parse($this->getTemplateSource($actionName));
 			$this->startRendering(self::RENDERING_TEMPLATE, $parsedTemplate, $this->baseRenderingContext);
-			return $this->renderSection($this->sectionName, array());
+			return $this->renderSection($this->sectionName, $this->baseRenderingContext->getTemplateVariableContainer()->getAll());
 		}
 		return parent::render($actionName);
 	}
