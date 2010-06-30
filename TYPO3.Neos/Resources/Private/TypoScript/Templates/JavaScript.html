@@ -1,0 +1,8 @@
+<f:if condition="{source}">
+	<f:then>
+		<script type="text/javascript" src="{f:uri.resource(uri: source)}"></script>
+	</f:then>
+	<f:else>
+		<script type="text/javascript">{inline}</script>
+	</f:else>
+</f:if>

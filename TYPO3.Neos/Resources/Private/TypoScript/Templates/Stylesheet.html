@@ -1,0 +1,10 @@
+<f:if condition="{source}">
+	<f:then>
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(uri: source)}" media="{media}" />
+	</f:then>
+	<f:else>
+		<style type="text/css">
+			{inline}
+		</style>
+	</f:else>
+</f:if>

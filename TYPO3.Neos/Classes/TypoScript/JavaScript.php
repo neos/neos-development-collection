@@ -23,28 +23,18 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * The TypoScript "Head" object
+ * The TypoScript "JavaScript" object
  *
  * @version $Id: Page.php 4264 2010-05-03 09:49:03Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Head extends \F3\TypoScript\AbstractContentObject {
-
-	/**
-	 * @var \F3\TYPO3\Domain\Model\Content\Page
-	 */
-	protected $model;
+class JavaScript extends \F3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @var string
 	 */
-	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Page';
-
-	/**
-	 * @var string
-	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Head.html';
+	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/JavaScript.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in
@@ -52,59 +42,51 @@ class Head extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('title', 'javaScripts', 'stylesheets');
+	protected $presentationModelPropertyNames = array('source', 'inline');
 
 	/**
 	 * @var string
 	 */
-	protected $title;
+	protected $source;
 
 	/**
-	 * @var array<\F3\TYPO3\TypoScript\JavaScript>
+	 * @var string
 	 */
-	protected $javaScripts = array();
+	protected $inline;
 
 	/**
-	 * @var array<\F3\TYPO3\TypoScript\Stylesheet>
-	 */
-	protected $stylesheets = array();
-
-
-	/**
-	 * Overrides the title of this page.
 	 *
-	 * @param string $title
+	 * @return string The source
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getSource() {
+		return $this->source;
+	}
+
+	/**
+	 * @param string $source The JavaScript source as an URL
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function setTitle($title) {
-		$this->title = $title;
+	public function setSource($source) {
+		$this->source = $source;
 	}
 
 	/**
-	 * Returns the overriden title of this page.
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return string The inline JavaScript content
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getTitle() {
-		return $this->title;
+	public function getInline() {
+		return $this->inline;
 	}
 
-	public function getJavaScripts() {
-		return $this->javaScripts;
-	}
-
-	public function setJavaScripts($javaScripts) {
-		$this->javaScripts = $javaScripts;
-	}
-
-	public function getStylesheets() {
-		return $this->stylesheets;
-	}
-
-	public function setStylesheets($stylesheets) {
-		$this->stylesheets = $stylesheets;
+	/**
+	 * @param string $inline The inline JavaScript content
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function setInline($inline) {
+		$this->inline = $inline;
 	}
 
 }
