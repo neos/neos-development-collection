@@ -11,7 +11,7 @@
 		<title>TYPO3 Login</title>
 		<f:base />
 
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'CSS/reset-min.css', package:'ExtJS')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'CSS/reset-min.css', package: 'ExtJS')}" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/Login.css')}" />
 	</head>
 	<body>
@@ -23,17 +23,17 @@
 						<f:flashMessages class="errorMessages" />
 						<div class="loginData">
 							<label class="username">User</label>
-							<input type="text" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" id="username" />
+							<input type="text" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" id="username" tabindex="1" />
 							<a href="#" class="inputClear" id="clearUsername"></a>
 						</div>
 						<div class="loginData">
 							<label class="password">Password</label>
-							<input type="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" id="password" />
+							<input type="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" id="password" tabindex="2" />
 							<a href="#" class="inputClear" id="clearPassword"></a>
 							<!--<a href="#">Forgot Password?</a>-->
 						</div>
 						<div class="loginActions">
-							<input value="Login" type="submit" />
+							<input value="Login" type="submit" tabindex="3" />
 							<!--<a href="#">Switch to OpenID</a>-->
 						</div>
 					</div>
