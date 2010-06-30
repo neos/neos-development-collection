@@ -17,7 +17,7 @@
 		{f:raw(value: head.script)}
 		{f:raw(value: head.style)}
 	</head>
-	<body{bodyAttributes}>
+	<body data-identity="{domainModel -> f:identity.json() -> f:escape()}" {bodyAttributes}>
 		{f:raw(value: body)}
 	</body>
 
