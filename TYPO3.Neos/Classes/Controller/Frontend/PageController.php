@@ -74,7 +74,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$renderingContext->setControllerContext($this->controllerContext);
 		$renderingContext->setContentContext($this->contentContext);
 
-		$pageTypoScriptObject->injectRenderingContext($renderingContext);
+		$pageTypoScriptObject->setRenderingContext($renderingContext);
 		return $pageTypoScriptObject->render();
 	}
 

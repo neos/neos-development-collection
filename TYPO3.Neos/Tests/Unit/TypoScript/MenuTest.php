@@ -43,7 +43,7 @@ class MenuTest extends \F3\Testing\BaseTestCase {
 		$mockRenderingContext->expects($this->once())->method('getContentContext')->will($this->returnValue($mockContentContext));
 		
 		$menu = $this->getMock('F3\TYPO3\TypoScript\Menu', array('buildItems'));
-		$menu->injectRenderingContext($mockRenderingContext);
+		$menu->setRenderingContext($mockRenderingContext);
 
 		$menu->expects($this->once())->method('buildItems')->will($this->returnValue($mockItems));
 

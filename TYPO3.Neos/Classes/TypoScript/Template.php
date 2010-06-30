@@ -29,7 +29,7 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoScript\ObjectInterface {
+class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoScript\ObjectInterface, \F3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
 
 	/**
 	 * @var array<\F3\TypoScript\ProcessorChain>
@@ -37,7 +37,6 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	protected $propertyProcessorChains = array();
 
 	/**
-	 * @inject
 	 * @var \F3\TypoScript\ObjectFactory
 	 */
 	protected $typoScriptObjectFactory;
@@ -46,6 +45,14 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @var mixed
 	 */
 	protected $source;
+
+	/**
+	 * If defined, only the specified section is rendered (instead of the whole
+	 * template).
+	 *
+	 * @var string
+	 */
+	protected $sectionName;
 
 	/**
 	 * The rendering context as passed to render()
@@ -59,6 +66,15 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @var \F3\Fluid\Core\Parser\Interceptor\Resource
 	 */
 	protected $resourceInterceptor;
+
+	/**
+	 * @param \F3\TypoScript\ObjectFactory $typoScriptObjectFactory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectTypoScriptObjectFactory(\F3\TypoScript\ObjectFactory $typoScriptObjectFactory) {
+		$this->typoScriptObjectFactory = $typoScriptObjectFactory;
+	}
 
 	/**
 	 * Dummy method
@@ -77,6 +93,25 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getModel() {
+	}
+
+	/**
+	 * @param string $sectionName
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function setRenderSection($sectionName) {
+		$this->sectionName = $sectionName;
+	}
+
+	/**
+	 * @return mixed
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getRenderSection() {
+		return $this->sectionName;
 	}
 
 	/**
@@ -108,6 +143,28 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	}
 
 	/**
+	 * Loads the template source and render the template.
+	 * If "layoutName" is set in a PostParseFacet callback, it will render the file with the given layout.
+	 *
+	 * Differing from the original Fluid render method this method will render
+	 * only a certain section if $this->sectionName was set.
+	 *
+	 * @param string $actionName Not used in this context
+	 * @return string Rendered Template
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function render($actionName = NULL) {
+		if ($this->sectionName !== NULL) {
+			$this->templateParser->setConfiguration($this->buildParserConfiguration());
+			$parsedTemplate = $this->templateParser->parse($this->getTemplateSource($actionName));
+			$this->startRendering(self::RENDERING_TEMPLATE, $parsedTemplate, $this->baseRenderingContext);
+			return $this->renderSection($this->sectionName, array());
+		}
+		return parent::render($actionName);
+	}
+
+	/**
 	 * Returns the (usually HTML) template source of this Template object.
 	 * Basically transforms the configured source pointer into real source code.
 	 *
@@ -116,7 +173,7 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function  getTemplateSource($actionName) {
+	public function getTemplateSource($actionName) {
 		if ($this->source instanceof \F3\TypoScript\ContentObjectInterface) {
 			$this->source->setRenderingContext($this->renderingContext);
 			return $this->source->render();
@@ -258,5 +315,18 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 		return ($processorChains === NULL) ? $propertyValue : new \F3\TypoScript\PropertyProcessingProxy($propertyValue, $processorChains);
 	}
 
+	/**
+	 * Casts this TypoScript Object to a string by invoking the render() method.
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __toString() {
+		try {
+			return $this->render();
+		} catch (\Exception $exception) {
+			return $exception->__toString();
+     	}
+	}
 }
 ?>

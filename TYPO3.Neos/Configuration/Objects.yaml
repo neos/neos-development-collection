@@ -9,21 +9,5 @@ F3\TYPO3\Controller\Frontend\PageController:
 
 F3\TYPO3\TypoScript\Page:
   properties:
-    view:
-      object: F3\TYPO3\TypoScript\Template
-
-F3\TYPO3\TypoScript\Text:
-  properties:
-    view:
-      object: F3\TYPO3\TypoScript\Template
-
-F3\TYPO3\TypoScript\Template:
-  properties:
-    controllerContext:
-      object:
-        factoryObjectName: F3\TYPO3\Controller\Frontend\PageController
-        factoryMethodName: getControllerContext
-    layoutRootPath:
-      value: "resource://TYPO3/Private/TypoScript/Layouts/"
-    templatePathAndFilename:
-      value: "resource://PhoenixDemoTypo3Org/Private/Templates/Page/Default.html"
+    content:
+      object: F3\TYPO3\TypoScript\Content
