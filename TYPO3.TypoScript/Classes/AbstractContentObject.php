@@ -76,11 +76,14 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	/**
 	 * Sets the rendering context
 	 * 
-	 * @param \F3\TypoScript\RenderingContext $renderingContext 
+	 * @param \F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectRenderingContext($renderingContext) {
+	public function setRenderingContext(\F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
+		if (!$renderingContext instanceof \F3\TypoScript\RenderingContext) {
+			throw new \InvalidArgumentException('AbstractContentObject only supports \F3\TypoScript\RenderingContext as a rendering context.', 1277825291);
+		}
 		$this->renderingContext = $renderingContext;
 	}
 
@@ -119,7 +122,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		$this->template->injectRenderingContext($this->renderingContext);
+		$this->template->setRenderingContext($this->renderingContext);
 
 		foreach ($this->presentationModelPropertyNames as $propertyName) {
 			$this->template->assign($propertyName, $this->getPropertyProcessingProxy($propertyName));
