@@ -44,18 +44,17 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 		// add event listener
 		this.form.on('beforeaction', this.onFormBeforeaction , this);
 		this.form.on('actioncomplete', this.onFormActioncomplete, this);
+		this.form.on('actionfailed', this.onFormActioncomplete, this);
 		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this.onOkButtonClickAction, this);
 		F3.TYPO3.Application.on('F3.TYPO3.Content.contentChanged', this.refreshFrontendEditor, this);
 	},
 
 	// privat
-	onRender : function(ct, position){
+	onRender : function(ct, position) {
+		this.pageIdentity = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentPageIdentity();
 		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.onRender.call(this, ct, position);
 		this.form.load({
-			params: {
-				// TODO Get identity from data attribute of iFrame or global context
-				'__identity': this.getCurrentPageIdentity()
-			}
+			params: this.pageIdentity
 		});
 	},
 
@@ -101,9 +100,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	onOkButtonClickAction: function(button) {
 		if (button.itemId == 'okButton') {
 			this.form.getForm().submit({
-				additionalValues: {
-					'__identity': this.getCurrentPageIdentity()
-				},
+				additionalValues: this.pageIdentity,
 				success: this.onOkButtonClickActionSuccess,
 				scope: this
 			});
@@ -122,33 +119,12 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	},
 
 	/**
-	 * get the frontent editor iframe document object
-	 *
-	 * @return {object}
-	 */
-	getIframeDocument: function() {
-		var frontendEditor = Ext.getCmp('F3.TYPO3.Content.FrontendEditor'),
-			iframeDom = frontendEditor.getComponent('contentIframe').el.dom,
-			iframeDocument = iframeDom.contentDocument ? iframeDom.contentDocument : iframeDom.Document;
-		return iframeDocument;
-	},
-
-	/**
-	 * get current page identity
-	 *
-	 * @return {string} data-identity
-	 */
-	getCurrentPageIdentity: function() {
-		return this.getIframeDocument().body.getAttribute('data-identity');
-	},
-
-	/**
 	 * refresh the frontend editor
 	 *
 	 *  @return {void}
 	 */
 	refreshFrontendEditor: function() {
-		this.getIframeDocument().location.reload();
+		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').reload();
 	}
 });
 Ext.reg('F3.TYPO3.Content.Edit.PagePropertiesDialog', F3.TYPO3.Content.Edit.PagePropertiesDialog);

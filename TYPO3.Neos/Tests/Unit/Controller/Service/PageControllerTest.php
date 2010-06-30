@@ -25,7 +25,7 @@ namespace F3\TYPO3\Controller\Service;
 /**
  * Testcase for the Page controller
  *
- * @version $Id: DomainTest.php 2817 2009-07-16 14:32:53Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class PageControllerTest extends \F3\Testing\BaseTestCase {

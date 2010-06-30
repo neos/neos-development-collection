@@ -44,6 +44,37 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.Content.FrontendEditor.superclass.initComponent.call(this);
+	},
+
+	/**
+	 * Reload the IFrame content
+	 *
+	 * @return {void}
+	 */
+	reload: function() {
+		this.getIframeDocument().location.reload();
+	},
+
+	/**
+	 * get the frontent editor iframe document object
+	 *
+	 * @return {object}
+	 */
+	getIframeDocument: function() {
+		var iframeDom = this.getComponent('contentIframe').el.dom,
+			iframeDocument = iframeDom.contentDocument ? iframeDom.contentDocument : iframeDom.Document;
+		return iframeDocument;
+	},
+
+
+	/**
+	 * Get the current page identity as a JavaScript object
+	 *
+	 * @return {object} identity of domain object
+	 */
+	getCurrentPageIdentity: function() {
+		var encodedIdentity = this.getIframeDocument().body.getAttribute('data-identity');
+		return Ext.decode(encodedIdentity);
 	}
 });
 Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);

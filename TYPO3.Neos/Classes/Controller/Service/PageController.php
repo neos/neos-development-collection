@@ -59,6 +59,7 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :
 				$this->defaultViewObjectName = 'F3\ExtJS\ExtDirect\View';
+				$this->errorMethodName = 'extErrorAction';
 				break;
 			case 'json' :
 				$this->defaultViewObjectName = 'F3\FLOW3\MVC\View\JsonView';
@@ -142,6 +143,18 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 			default:
 				$this->view->assign('page', $page);
 		}
+	}
+
+	/**
+	 * A preliminary error action for handling validation errors
+	 * by assigning them to the ExtDirect View that takes care of
+	 * converting them.
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function extErrorAction() {
+		$this->view->assignErrors($this->argumentsMappingResults->getErrors());
 	}
 }
 ?>
