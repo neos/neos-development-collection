@@ -48,6 +48,9 @@ class ObjectFactory {
 		if ($model instanceof \F3\TYPO3\Domain\Model\Content\Text) {
 			$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Text');
 			$typoScriptObject->setModel($model);
+		} elseif ($model instanceof \F3\TYPO3\Domain\Model\Content\Block) {
+			$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Block');
+			$typoScriptObject->setModel($model);
 		}
 		return (isset($typoScriptObject)) ? $typoScriptObject : FALSE;
 	}
