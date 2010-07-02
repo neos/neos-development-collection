@@ -15,7 +15,13 @@
     '@controller': 'Backend\Login'
     '@action':     'index'
     '@format':     'html'
-
+-
+  name:  'Logout'
+  uriPattern: 'typo3/logout'
+  defaults:
+    '@package':    'TYPO3'
+    '@controller': 'Backend\Login'
+    '@action':     'logout'
 -
   name:          'Setup'
   uriPattern:    'typo3/setup(/{@action})'

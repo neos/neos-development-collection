@@ -44,6 +44,8 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.Content.FrontendEditor.superclass.initComponent.call(this);
+
+		F3.TYPO3.Application.on('F3.TYPO3.Application.AlohaConnector.contentChanged', this._contentChanged, this);
 	},
 
 	/**
@@ -53,6 +55,15 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	 */
 	reload: function() {
 		this.getIframeDocument().location.reload();
+	},
+
+	/**
+	 * Callback fired if content is changed
+	 */
+	_contentChanged: function(data) {
+		var dataToSubmit = Ext.decode(data.identity);
+		dataToSubmit.html = data.html;
+		F3.TYPO3_Controller_Service_BlockController.update(dataToSubmit);
 	},
 
 	/**
