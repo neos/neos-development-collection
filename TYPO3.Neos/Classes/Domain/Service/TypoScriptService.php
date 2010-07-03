@@ -80,7 +80,7 @@ class TypoScriptService {
 		$siteResourcesPackageKey = $this->contentContext->getCurrentSite()->getSiteResourcesPackageKey();
 		$typoScriptsPath = 'resource://' . $siteResourcesPackageKey . '/Private/TypoScripts/';
 
-		$mergedTypoScriptCode = '';
+		$mergedTypoScriptCode = $this->readExternalTypoScriptFiles($typoScriptsPath) . chr(10);
 		foreach ($nodes as $node) {
 			$typoScriptsPath .= $node->getNodeName() . '/';
 			$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($typoScriptsPath) . chr(10);
@@ -108,7 +108,7 @@ class TypoScriptService {
 		$mergedTypoScriptCode = '';
 		if (is_dir($path)) {
 			$directoryIterator = new \DirectoryIterator($path);
-			$filenames = array();
+			$filePathsAndNames = array();
 			foreach ($directoryIterator as $file) {
 				$filename = $file->getFilename();
 				if ($file->isFile() && substr($filename, -4) === '.ts2') {

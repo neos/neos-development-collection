@@ -79,8 +79,8 @@ class TypoScriptServiceTest extends \F3\Testing\BaseTestCase {
 
 		$typoScriptService = $this->getAccessibleMock('F3\TYPO3\Domain\Service\TypoScriptService', array('readExternalTypoScriptFiles'), array($mockContentContext));
 		$typoScriptService->_set('typoScriptParser', $this->getMock('F3\TypoScript\Parser', array(), array(), '', FALSE));
-		$typoScriptService->expects($this->at(0))->method('readExternalTypoScriptFiles')->with('resource://SitePackage/Private/TypoScripts/foo/');
-		$typoScriptService->expects($this->at(1))->method('readExternalTypoScriptFiles')->with('resource://SitePackage/Private/TypoScripts/foo/bar/');
+		$typoScriptService->expects($this->at(1))->method('readExternalTypoScriptFiles')->with('resource://SitePackage/Private/TypoScripts/foo/');
+		$typoScriptService->expects($this->at(2))->method('readExternalTypoScriptFiles')->with('resource://SitePackage/Private/TypoScripts/foo/bar/');
 		$typoScriptService->getMergedTypoScriptObjectTree('/foo/bar');
 	}
 
@@ -133,11 +133,11 @@ class TypoScriptServiceTest extends \F3\Testing\BaseTestCase {
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
 
 		$mockTypoScriptParser = $this->getMock('F3\TypoScript\Parser', array(), array(), '', FALSE);
-		$mockTypoScriptParser->expects($this->once())->method('parse')->with('FROM FILE' . chr(10) . 'FROM CONFIGURATION' . chr(10))->will($this->returnValue('PARSED TYPOSCRIPT OBJECT TREE'));
+		$mockTypoScriptParser->expects($this->once())->method('parse')->with('FROM FILE 1' . chr(10) . 'FROM FILE 2' . chr(10) . 'FROM CONFIGURATION' . chr(10))->will($this->returnValue('PARSED TYPOSCRIPT OBJECT TREE'));
 
 		$typoScriptService = $this->getAccessibleMock('F3\TYPO3\Domain\Service\TypoScriptService', array('readExternalTypoScriptFiles'), array($mockContentContext));
 		$typoScriptService->_set('typoScriptParser', $mockTypoScriptParser);
-		$typoScriptService->expects($this->any())->method('readExternalTypoScriptFiles')->will($this->returnValue('FROM FILE'));
+		$typoScriptService->expects($this->any())->method('readExternalTypoScriptFiles')->will($this->onConsecutiveCalls('FROM FILE 1', 'FROM FILE 2'));
 		$this->assertEquals('PARSED TYPOSCRIPT OBJECT TREE', $typoScriptService->getMergedTypoScriptObjectTree('/foo'));
 	}
 
