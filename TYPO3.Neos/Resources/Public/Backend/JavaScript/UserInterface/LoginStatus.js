@@ -13,7 +13,7 @@ F3.TYPO3.UserInterface.LoginStatus = Ext.extend(Ext.Container, {
 					itemId: 'logoutButton',
 					text: 'Logout',
 					handler: function() {
-						
+						F3.TYPO3.Login.Service.logout();
 					},
 					scope: this
 				}]

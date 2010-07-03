@@ -42,6 +42,12 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $securityContext;
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 */
+	protected $authenticationManager;
+
+	/**
 	 * Select special views according to format
 	 *
 	 * @return void
@@ -62,7 +68,6 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Load current account data
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Content\Page $page
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @extdirect
 	 */
@@ -81,6 +86,28 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 				break;
 			default :
 				$this->view->assign('party', $party);
+		}
+	}
+
+	/**
+	 * Logout the current user
+	 *
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @extdirect
+	 */
+	public function destroyAction() {
+		$this->authenticationManager->logout();
+
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$this->view->assign('value',
+					array(
+						'success' => TRUE
+					)
+				);
+				break;
+			default :
 		}
 	}
 
