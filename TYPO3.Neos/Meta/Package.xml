@@ -2,8 +2,8 @@
 <package xmlns="http://typo3.org/ns/2008/flow3/package">
     <key>TYPO3</key>
     <title>TYPO3</title>
-    <description></description>
-    <version>5.0.0-alpha1</version>
+    <description>The next generation of the popular open-source CMS.</description>
+    <version>5.0.0 Sprint 2</version>
     <state>Development</state>
     <categories>
         <category>Frontend</category>
