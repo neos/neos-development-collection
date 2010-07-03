@@ -1,7 +1,7 @@
 Ext.ns('F3.TYPO3.UserInterface');
 
 F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
-	height: 50,
+	height: 70,
 	
 	initComponent: function() {
 		var config = {
@@ -29,11 +29,22 @@ F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 					xtype: 'box',
 					flex: 1
 				}, {
-					xtype: 'box',
-					width: 100,
-					id: 'F3-TYPO3-TopBar-Logo',
-					height: 32,
-					flex: 0
+					width: 200,
+					height: 70,
+					xtype: 'container',
+					layout: 'vbox',
+					items: [{
+						xtype: 'box',
+						id: 'F3-TYPO3-TopBar-Logo',
+						height: 32,
+						width: 100,
+						flex: 0
+					}, {
+						xtype: 'F3.TYPO3.UserInterface.LoginStatus',
+						height: 38,
+						width: 200,
+						flex: 0
+					}]
 				}]
 		};
 		Ext.apply(this, config);
