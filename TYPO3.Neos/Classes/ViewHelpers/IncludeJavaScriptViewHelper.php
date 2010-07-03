@@ -59,6 +59,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 		$output = '';
 		foreach ($iterator as $file) {
 			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
+			$relativePath = \F3\FLOW3\Utility\Files::getUnixStylePath($relativePath);
 
 			if (!$this->patternMatchesPath($exclude, $relativePath) &&
 				$this->patternMatchesPath($include, $relativePath)) {
