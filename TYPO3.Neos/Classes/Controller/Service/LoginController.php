@@ -37,9 +37,9 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var \F3\FLOW3\Security\Context
 	 */
-	protected $authenticationManager;
+	protected $securityContext;
 
 	/**
 	 * Select special views according to format
@@ -67,10 +67,7 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function showAction() {
-		$securityContext = $this->authenticationManager->getSecurityContext();
-		$party = $securityContext->getParty();
-
-		\F3\var_dump($party);
+		$party = $this->securityContext->getParty();
 
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :

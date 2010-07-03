@@ -13,6 +13,12 @@
 		<h1>TYPO3 Setup</h1>
 
 		<f:flashMessages/>
+		<f:form.errors for="person">
+			<div class="error">
+				<strong>{error.propertyName}</strong>:
+				<f:for each="{error.errors}" as="errorDetail">{errorDetail.message}</f:for>
+			</div>
+		</f:form.errors>
 
 		<h2>Import content from package</h2>
 		<f:form action="import">
@@ -26,7 +32,16 @@
 			<label for="identifier">Username</label>
 			<f:form.textbox name="identifier"/> <br/>
 			<label for="password">Password</label>
-			<f:form.textbox name="password"/> <br/>
+			<f:form.password name="password"/> <br/>
+			<label for="person[name][firstName]">Firstname</label>
+			<f:form.textbox name="person[name][firstName]"/> <br/>
+			<label for="person[name][lastName]">Lastname</label>
+			<f:form.textbox name="person[name][lastName]"/> <br/>
+			<!--
+			<label for="person[primaryElectronicAddress][identifier]">E-Mail</label>
+			<f:form.textbox name="person[primaryElectronicAddress][identifier]"/> <br/>
+			<f:form.hidden name="person[primaryElectronicAddress][type]" value="Email" /> <br/>
+			-->
 			<f:form.submit value="Create"/>
 		</f:form>
 	</body>
