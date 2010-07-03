@@ -90,9 +90,11 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function createAdministratorAction($identifier, $password, $person) {
+	public function createAdministratorAction($identifier, $password, $person = NULL) {
 		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
-		$account->setParty($person);
+		if ($person !== NULL) {
+			$account->setParty($person);
+		}
 		$this->accountRepository->add($account);
 		$this->flashMessageContainer->add('User with identifier "' . $identifier . '" was created.');
 		$this->redirect('index');
