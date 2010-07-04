@@ -10,5 +10,5 @@ namespace: default = F3\TypoScript\Fixtures
 page = Page
 page.10 = Text
 page.10.value = "Hello World!"
-page.10.value << 1.substring(6, 5)
-page.10.value << 2.substring(-6)
+page.10.value << 1.substring(start: 6, length: 5)
+page.10.value << 2.substring(start: -6)

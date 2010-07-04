@@ -10,4 +10,4 @@ namespace: default = F3\TypoScript\Fixtures
 page = Page
 page.10 = Text
 page.10.value = "10"
-page.10.value << 1.multiply(1.5)
+page.10.value << 1.multiply(factor: 1.5)

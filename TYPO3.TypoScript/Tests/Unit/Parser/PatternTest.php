@@ -103,23 +103,28 @@ class PatternTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Checks the regular expression SPLIT_PATTERN_METHODARGUMENTS
+	 * Checks the regular expression SPLIT_PATTERN_PROCESSORARGUMENTS
 	 *
 	 *
 	 */
-	public function testSPLIT_PATTERN_METHODARGUMENTS() {
-		$pattern = \F3\TypoScript\Parser::SPLIT_PATTERN_METHODARGUMENTS;
+	public function testSPLIT_PATTERN_PROCESSORARGUMENTS() {
+		$pattern = \F3\TypoScript\Parser::SPLIT_PATTERN_PROCESSORARGUMENTS;
 
-		$this->assertEquals(preg_match($pattern, '" hallo"'), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a double-quoted string.');
-		$this->assertEquals(preg_match($pattern, '" ha\"llo"'), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a double-quoted string with an escaped quote inside.');
-		$this->assertEquals(preg_match($pattern, '\'huhu\''), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a single-quoted string.');
-		$this->assertEquals(preg_match($pattern, "'huh\'u'"), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a single-quoted string with an escaped quote.');
-		$this->assertEquals(preg_match($pattern, '$bEdkLKla'), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a variable.');
-		//$this->assertEquals(preg_match($pattern, '\$bla'), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a negative number.');
-		$this->assertEquals(preg_match($pattern, '-12'), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a negative number.');
-		$this->assertEquals(preg_match($pattern, '12'), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a number.');
-		$this->assertEquals(preg_match($pattern, '123.23'), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a float number.');
-		$this->assertEquals(preg_match($pattern, '-123.23'), 1, 'The SPLIT_PATTERN_METHODARGUMENTS pattern did not match a negative float number.');
+		$this->assertEquals(preg_match($pattern, 'foo: " hallo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a double-quoted string.');
+		$this->assertEquals(preg_match($pattern, 'foo:"hallo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a key-value pair without whitespace.');
+		$this->assertEquals(preg_match($pattern, 'foo:  "hallo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a key-value pair with more than one whitespace.');
+		$this->assertEquals(preg_match($pattern, 'foo: " ha\"llo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a double-quoted string with an escaped quote inside.');
+		$this->assertEquals(preg_match($pattern, 'foo: \'huhu\''), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a single-quoted string.');
+		$this->assertEquals(preg_match($pattern, "foo: 'huh\'u'"), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a single-quoted string with an escaped quote.');
+		$this->assertEquals(preg_match($pattern, 'foo: $bEdkLKla'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a variable.');
+		$this->assertEquals(preg_match($pattern, 'foo: -12'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a negative number.');
+		$this->assertEquals(preg_match($pattern, 'foo: 12'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a number.');
+		$this->assertEquals(preg_match($pattern, 'foo: 123.23'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a float number.');
+		$this->assertEquals(preg_match($pattern, 'foo: -123.23'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a negative float number.');
+		$this->assertEquals(preg_match($pattern, '\'noName\''), 0, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did match an unnamed string argument.');
+		$this->assertEquals(preg_match($pattern, '123'), 0, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did match an unnamed integer argument.');
+		$this->assertEquals(preg_match($pattern, '"foo": "bar"'), 0, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did match a quoted argument name.');
+
 	}
 }
 ?>

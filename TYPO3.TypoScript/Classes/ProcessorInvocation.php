@@ -37,11 +37,6 @@ class ProcessorInvocation {
 	protected $processorObject;
 
 	/**
-	 * @var string Name of the processor method
-	 */
-	protected $processorMethodName;
-
-	/**
 	 * @var array Arguments to pass to the processor method
 	 */
 	protected $processorArguments;
@@ -49,34 +44,34 @@ class ProcessorInvocation {
 	/**
 	 * Constructor of the processor invocation.
 	 *
-	 * @param object $processorObject An instance of the class containing the processor
-	 * @param string $processorMethodName Name of the processor method
-	 * @param array $processorArguments Arguments to pass to the processor method
+	 * @param \F3\TypoScript\ProcessorInterface $processorObject An instance of the class containing the processor
+	 * @param array $processorArguments associative array of Arguments to pass to the processor method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @throws \F3\TypoScript\Exception\InvalidProcessorException
 	 */
-	public function __construct($processorObject, $processorMethodName, array $processorArguments) {
-		if (is_object($processorObject) && is_string($processorMethodName) && method_exists($processorObject, $processorMethodName)) {
-			$this->processorObject = $processorObject;
-			$this->processorMethodName = $processorMethodName;
-			$this->processorArguments = $processorArguments;
-		} else {
-			throw new \F3\TypoScript\Exception\InvalidProcessorException('The processor object is not an object or the specified processor method does not exist!', 1179409471);
+	public function __construct(\F3\TypoScript\ProcessorInterface $processorObject, array $processorArguments) {
+		if (!is_object($processorObject)) {
+			throw new \F3\TypoScript\Exception\InvalidProcessorException('The processor object is not an object!', 1179409471);
 		}
+		$this->processorObject = $processorObject;
+		$this->processorArguments = $processorArguments;
 	}
 
 	/**
 	 * Invokes the processor to process the given subject
 	 *
-	 * @param string $subject The string to process
-	 * @return string The processed string
+	 * @param mixed $subject The subject (mostly a string) to process
+	 * @return mixed The processed value
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
-		$arguments = $this->processorArguments;
-		array_unshift($arguments, $subject);
-		return call_user_func_array(array($this->processorObject, $this->processorMethodName), $arguments);
+		foreach($this->processorArguments as $argumentName => $argumentValue) {
+			\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->processorObject, $argumentName, $argumentValue);
+		}
+		return $this->processorObject->process($subject);
 	}
 }
 ?>

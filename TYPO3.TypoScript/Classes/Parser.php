@@ -50,9 +50,9 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	const SPLIT_PATTERN_VALUEVARIABLE = '/(\$[a-zA-Z][a-zA-Z0-9]*)/';
 	const SPLIT_PATTERN_VALUEVARIABLES = '/\$[a-zA-Z][a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)/';
 	const SPLIT_PATTERN_VALUEOBJECTTYPE = '/^\s*(?:(?:([a-zA-Z]+[a-zA-Z0-9*]*)\\\\)?([a-zA-Z][a-zA-Z0-9]*)$)|(F3\\\\(?:\w+|\\\\)+)/';
-	const SPLIT_PATTERN_INDEXANDMETHODCALL = '/(?P<Index>\d+)\.(?P<ObjectAndMethodName>\w+)\s*\((?P<Arguments>.*?)\)\s*$/';
-	const SPLIT_PATTERN_OBJECTANDMETHODNAME = '/(?:(<?P<ObjectName>(\\\\F3\\\\(?:\w+|\\\\)+))->)?(?P<MethodName>\w+)/';
-	const SPLIT_PATTERN_METHODARGUMENTS = '/("(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+|-?[0-9]+(\.\d+)?)/';
+	const SPLIT_PATTERN_INDEXANDPROCESSORCALL = '/(?P<Index>\d+)\.(?P<ProcessorSignature>\w+)\s*\((?P<Arguments>.*?)\)\s*$/';
+	const SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME = '/(?:(<?P<Namespace>(\\\\F3\\\\(?:\w+|\\\\)+))->)?(?P<ProcessorName>\w+)/';
+	const SPLIT_PATTERN_PROCESSORARGUMENTS = '/(?P<ArgumentName>[a-zA-Z0-9]+):\s*(?P<ArgumentValue>"(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+|-?[0-9]+(\.\d+)?)/';
 	const SPLIT_PATTERN_VARIABLENAMEFROMPATH = '/\\$(?P<VariableName>[a-z][a-zA-Z0-9]*)$/';
 
 	/**
@@ -410,9 +410,10 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * @param string $objectPropertyPath Specifies the object path of the property to process
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function parseValueProcessing($indexAndMethodCall, $objectPropertyPath) {
-		if (preg_match(self::SPLIT_PATTERN_INDEXANDMETHODCALL, $indexAndMethodCall, $matches) > 0) {
+		if (preg_match(self::SPLIT_PATTERN_INDEXANDPROCESSORCALL, $indexAndMethodCall, $matches) > 0) {
 			$objectPropertyPathArray = $this->getParsedObjectPath($objectPropertyPath);
 			$objectPathArray = array_slice($objectPropertyPathArray, 0, -1);
 			$propertyName = implode(array_slice($objectPropertyPathArray, -1, 1));
@@ -421,14 +422,15 @@ class Parser implements \F3\TypoScript\ParserInterface {
 			if (!method_exists($typoScriptObject, 'set' . ucfirst($propertyName))) throw new \F3\TypoScript\Exception('Tried to process the value of a non-existing property "' . $propertyName . '" of a TypoScript object of type "' . get_class($typoScriptObject) . '".', 1181830570);
 
 			$processorArguments = array();
-			if (preg_match_all(self::SPLIT_PATTERN_METHODARGUMENTS, $matches['Arguments'], $matchedArguments) > 0) {
-				foreach ($matchedArguments[0] as $matchedArgument) {
-					$processorArguments[] = $this->getProcessedValue($objectPropertyPathArray, $matchedArgument);
+			if (preg_match_all(self::SPLIT_PATTERN_PROCESSORARGUMENTS, $matches['Arguments'], $matchedArguments) > 0) {
+				foreach ($matchedArguments['ArgumentValue'] as $argumentIndex => $matchedArgumentValue) {
+					$matchedArgumentName = $matchedArguments['ArgumentName'][$argumentIndex];
+					$processorArguments[$matchedArgumentName] = $this->getProcessedValue($objectPropertyPathArray, $matchedArgumentValue);
 				}
 			}
 
 			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->objectManager->create('F3\TypoScript\ProcessorChain');
-			$processorInvocation = $this->getProcessorInvocation($matches['ObjectAndMethodName'], $processorArguments);
+			$processorInvocation = $this->getProcessorInvocation($matches['ProcessorSignature'], $processorArguments);
 			$processorChain->setProcessorInvocation((integer)$matches['Index'], $processorInvocation);
 
 			$typoScriptObject->setPropertyProcessorChain($propertyName, $processorChain);
@@ -457,21 +459,35 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	 * Parses the given object-and-method-name string and then returns a new processor invocation
 	 * object calling the specified processor with the given arguments.
 	 *
-	 * @param string $processorObjectAndMethodName Either just a method name (then the default namespace is used) or a full object/method name as in "F3\Package\Object->methodName"
+	 * @param string $processorSignature Either just a method name (then the default namespace is used) or a full object/method name as in "F3\Package\Object->methodName"
 	 * @param array $processorArguments An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
 	 * @return \F3\TypoScript\ProcessorInvocation The prepared processor invocation object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function getProcessorInvocation($processorObjectAndMethodName, array $processorArguments) {
-		preg_match(self::SPLIT_PATTERN_OBJECTANDMETHODNAME, $processorObjectAndMethodName, $matchedObjectAndMethodName);
+	protected function getProcessorInvocation($processorSignature, array $processorArguments) {
+		preg_match(self::SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME, $processorSignature, $matchedObjectAndMethodName);
 
-		$processorObjectName = isset($matchedObjectAndMethodName['ObjectName']) ? $matchedObjectAndMethodName['ObjectName'] : $this->namespaces['default'] . '\Processors';
-		$processorMethodName = isset($matchedObjectAndMethodName['MethodName']) ? 'processor_' . $matchedObjectAndMethodName['MethodName'] : NULL;
-		if (!$this->objectManager->isObjectRegistered($processorObjectName)) throw new \F3\TypoScript\Exception('Unknown processor object "' . $processorObjectName . '"', 1181903857);
+		if (isset($matchedObjectAndMethodName['Namespace']) && strlen($matchedObjectAndMethodName['Namespace']) > 0) {
+			$processorNamespace = $matchedObjectAndMethodName['Namespace'];
+		} else {
+			$processorNamespace = $this->namespaces['default'] . '\Processors';
+		}
+		$processorObjectName = $processorNamespace . '\\' . ucfirst($matchedObjectAndMethodName['ProcessorName']) . 'Processor';
+
+		if (!$this->objectManager->isObjectRegistered($processorObjectName)) {
+			throw new \F3\TypoScript\Exception('Unknown processor object "' . $processorObjectName . '"', 1181903857);
+		}
 		$processor = $this->objectManager->get($processorObjectName);
-		if (!method_exists($processor, $processorMethodName)) throw new \F3\TypoScript\Exception('Unknown processor method "' . $processorObjectName . '->' . $processorMethodName . '"', 1181903857);
-
-		return $this->objectManager->create('F3\TypoScript\ProcessorInvocation', $processor, $processorMethodName, $processorArguments);
+		if (!$processor instanceof \F3\TypoScript\ProcessorInterface) {
+			throw new \F3\TypoScript\Exception('"' . $processorObjectName . '" is not a valid TypoScript Processor', 1277105589);
+		}
+		foreach($processorArguments as $argumentName => $argumentValue) {
+			if (!\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($processor, $argumentName)) {
+				throw new \F3\TypoScript\Exception('Can\'t set paramenter "' . $argumentName .'" for processor "' . $processorObjectName . '"', 1181903857);
+			}
+		}
+		return $this->objectManager->create('F3\TypoScript\ProcessorInvocation', $processor, $processorArguments);
 	}
 
 	/**

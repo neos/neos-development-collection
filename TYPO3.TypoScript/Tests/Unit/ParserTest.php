@@ -84,7 +84,10 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 			case 'F3\TypoScript\Fixtures\Page' :
 			case 'F3\TypoScript\Fixtures\ContentArray' :
 			case 'F3\TypoScript\Fixtures\ObjectWithArrayProperty' :
-			case 'F3\TypoScript\Fixtures\Processors' :
+			case 'F3\TypoScript\Fixtures\Processors\WrapProcessor' :
+			case 'F3\TypoScript\Fixtures\Processors\SubstringProcessor' :
+			case 'F3\TypoScript\Fixtures\Processors\MultiplyProcessor' :
+			case 'F3\SomeOther\Namespace\MyWrapProcessor' :
 				return TRUE;
 			default :
 				return FALSE;
@@ -338,38 +341,46 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture10() {
-		$processors = new \F3\TypoScript\Fixtures\Processors;
-		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
+		$mockWrapProcessor = $this->getMock('F3\TypoScript\Fixtures\Processors', array('setPrefix', 'setSuffix'));
+		$objectManagerGetCallback = function() use ($mockWrapProcessor) {
+			$arguments = func_get_args();
+			if ($arguments[0] === 'F3\TypoScript\Fixtures\Processors\WrapProcessor'
+				|| $arguments[0] === 'F3\SomeOther\Namespace\MyWrapProcessor') {
+				return $mockWrapProcessor;
+			}
+		};
+
+		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback($objectManagerGetCallback));
 		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture10.ts2', FILE_TEXT);
-		$processorObject = new \F3\TypoScript\Fixtures\Processors;
 
+		$expectedObjectTree = array();
 		$propertyProcessorChain = new \F3\TypoScript\ProcessorChain;
 		$expectedObjectTree['object1'] = new \F3\TypoScript\Fixtures\Text;
 		$expectedObjectTree['object1']->setValue('Hello world!');
 		$expectedObjectTree['object1']->setPropertyProcessorChain('value', $propertyProcessorChain);
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_wrap', array('<strong>', '</strong>'));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockWrapProcessor, array('prefix' => '<strong>', 'suffix' => '</strong>'));
 		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
 
 		$propertyProcessorChain = new \F3\TypoScript\ProcessorChain;
 		$expectedObjectTree['object2'] = new \F3\TypoScript\Fixtures\Text;
 		$expectedObjectTree['object2']->setValue('Bumerang');
 		$expectedObjectTree['object2']->setPropertyProcessorChain('value', $propertyProcessorChain);
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_wrap', array('ein ', ';'));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockWrapProcessor, array('prefix' => 'ein ', 'suffix' => ';'));
 		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_wrap', array('War ', ''));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockWrapProcessor, array('prefix' => 'War '));
 		$propertyProcessorChain->setProcessorInvocation(3, $processorInvocation);
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_wrap', array('einmal (vielleicht auch zweimal) ', ''));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockWrapProcessor, array('prefix' => 'einmal (vielleicht auch zweimal) '));
 		$propertyProcessorChain->setProcessorInvocation(2, $processorInvocation);
 
 		$propertyProcessorChain = new \F3\TypoScript\ProcessorChain;
 		$expectedObjectTree['object3'] = new \F3\TypoScript\Fixtures\Text;
 		$expectedObjectTree['object3']->setValue('345');
 		$expectedObjectTree['object3']->setPropertyProcessorChain('value', $propertyProcessorChain);
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_wrap', array('2', '6'));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockWrapProcessor, array('prefix' => '2', 'suffix' => '6'));
 		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_wrap', array('1', '789 ...'));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockWrapProcessor, array('prefix' => '1', 'suffix' => '789 ...'));
 		$propertyProcessorChain->setProcessorInvocation(2, $processorInvocation);
 
 		$propertyProcessorChain = new \F3\TypoScript\ProcessorChain;
@@ -377,7 +388,7 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 		$expectedObjectTree['object4'][10] = new \F3\TypoScript\Fixtures\Text;
 		$expectedObjectTree['object4'][10]->setValue('cc');
 		$expectedObjectTree['object4'][10]->setPropertyProcessorChain('value', $propertyProcessorChain);
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_wrap', array('su', 'ess'));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockWrapProcessor, array('prefix' => 'su', 'suffix' => 'ess'));
 		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
 
 		$actualObjectTree = $this->parser->parse($sourceCode);
@@ -391,18 +402,17 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture11() {
-		$processors = new \F3\TypoScript\Fixtures\Processors;
-		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
+		$mockSubstringProcessor = $this->getMock('F3\TypoScript\Fixtures\Processors', array('setStart', 'setLength'));
+		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\TypoScript\Fixtures\Processors\SubstringProcessor')->will($this->returnValue($mockSubstringProcessor));
 		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture11.ts2', FILE_TEXT);
 
-		$processorObject = new \F3\TypoScript\Fixtures\Processors;
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_substring', array(6, 5));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockSubstringProcessor, array('start' => 6, 'length' => 5));
 		$propertyProcessorChain = new \F3\TypoScript\ProcessorChain();
 		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
 
-		$processorInvocation2 = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_substring', array(-6));
+		$processorInvocation2 = new \F3\TypoScript\ProcessorInvocation($mockSubstringProcessor, array('start' => -6));
 		$propertyProcessorChain->setProcessorInvocation(2, $processorInvocation2);
 
 		$expectedObjectTree = array();
@@ -422,14 +432,13 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture12() {
-		$processors = new \F3\TypoScript\Fixtures\Processors;
-		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\TypoScript\Fixtures\Processors')->will($this->returnValue($processors));
+		$mockMultiplyProcessor = $this->getMock('F3\TypoScript\Fixtures\Processors', array('setFactor'));
+		$this->mockObjectManager->expects($this->any())->method('get')->with('F3\TypoScript\Fixtures\Processors\MultiplyProcessor')->will($this->returnValue($mockMultiplyProcessor));
 		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture12.ts2', FILE_TEXT);
 
-		$processorObject = new \F3\TypoScript\Fixtures\Processors;
-		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($processorObject, 'processor_multiply', array(1.5));
+		$processorInvocation = new \F3\TypoScript\ProcessorInvocation($mockMultiplyProcessor, array('factor' => 1.5));
 		$propertyProcessorChain = new \F3\TypoScript\ProcessorChain();
 		$propertyProcessorChain->setProcessorInvocation(1, $processorInvocation);
 
