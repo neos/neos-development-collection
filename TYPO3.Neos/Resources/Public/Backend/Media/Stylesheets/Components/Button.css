@@ -10,6 +10,9 @@
 	padding: 2px;
 	color: #000000;
 
+	/* Scale to the width of the button component */
+	width: 100%;
+
 	cursor: pointer;
 }
 .F3-TYPO3-Components-Button button:hover {
@@ -22,6 +25,7 @@
 	-moz-box-shadow: none;
 }
 .F3-TYPO3-Components-Button-link button span {
+	font-weight: bold;
 	text-decoration: underline;
 }
 .F3-TYPO3-Components-Button-link button:hover {

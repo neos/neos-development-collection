@@ -29,6 +29,7 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 			}
 			toolbarConfig.items.push({
 				xtype: 'F3.TYPO3.Components.Button',
+				width: 40,
 				itemId: 'okButton',
 				text: 'OK',
 				scale: 'large',
