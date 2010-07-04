@@ -24,6 +24,7 @@
 		<typo3:includeJavaScript include="Components/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="Application/.*\.js" subpackage="Backend" />
 
+		<typo3:includeJavaScript include="History/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="Stores/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="Login/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="UserInterface/.*\.js" subpackage="Backend" />
@@ -34,5 +35,10 @@
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/Icons.css')}" />
 	</head>
 	<body>
+		<!-- Fields required for history management -->
+		<form id="history-form" class="x-hidden">
+			<input type="hidden" id="x-history-field" />
+			<iframe id="x-history-frame"></iframe>
+		</form>
 	</body>
 </html>

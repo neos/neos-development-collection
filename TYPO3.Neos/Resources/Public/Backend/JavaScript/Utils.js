@@ -39,6 +39,16 @@ F3.TYPO3.Utils = {
 		}
 		return c;
 	},
+	
+	each: function(object, callback, scope) {
+		var p;
+		for (p in object) {
+			if (object.hasOwnProperty(p)) {
+				v = object[p];
+				callback.call(scope, v, p);
+			}
+		}
+	},
 
 	/**
 	 * Build an uri for the backend, considering the base URL.
