@@ -4,6 +4,15 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-ContentTab {
 ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-left: 200px;
 }
+
+.x-form-item {
+	font: 12px helvetica, arial, sans-serif;
+}
+
+.x-tab-strip span.x-tab-strip-text {
+	font: 11px helvetica, arial, sans-serif;
+}
+
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-right,
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-left,
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-inner {
@@ -11,6 +20,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-active span.x-tab-strip-text {
 	color: #ebebeb;
+	font-weight: bold;
 }
 .F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
 	background: #666666;
@@ -115,6 +125,11 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-ModuleDialog .x-form-item-label,
 .F3-TYPO3-UserInterface-ModuleDialog .x-form-field {
 	font-size: 14px;
+}
+.F3-TYPO3-UserInterface-ModuleDialog .x-form-item-label {
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 22px;
 }
 .F3-TYPO3-UserInterface-ModuleDialog .x-form-text,
 .F3-TYPO3-UserInterface-ModuleDialog .ext-ie .x-form-file {

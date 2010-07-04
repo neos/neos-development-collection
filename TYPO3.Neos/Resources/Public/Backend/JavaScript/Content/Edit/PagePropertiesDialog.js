@@ -24,6 +24,9 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 				border: false,
 				style: 'padding: 10px',
 				bodyStyle: 'background: transparent',
+				layoutConfig: {
+					labelSeparator: ''
+				},
 				items: [{
 					xtype: 'textfield',
 					fieldLabel: 'Page title',
