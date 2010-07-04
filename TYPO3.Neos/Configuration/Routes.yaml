@@ -88,3 +88,12 @@
   routeParts:
     page:
       handler:    F3\TYPO3\Routing\PageRoutePartHandler
+
+-
+  name: 'No site defined, that is why a text is explained.'
+  uriPattern: ''
+  defaults:
+    '@package':     'TYPO3'
+    '@controller':  'Backend\Setup'
+    '@action':      'start'
+    '@format':      'html'

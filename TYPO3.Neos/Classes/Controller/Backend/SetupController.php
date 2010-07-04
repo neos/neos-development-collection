@@ -67,6 +67,13 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $accountFactory;
 
 	/**
+	 * The StartAction is called in case no site has been defined yet.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function startAction() {
+	}
+
+	/**
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -85,19 +92,19 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param string $identifier
 	 * @param string $password
+	 * @param $person
 	 * @param \F3\Party\Domain\Model\Person $person
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function createAdministratorAction($identifier, $password, $person = NULL) {
+
+	public function createAdministrator($identifier, $password, $person = NULL) {
 		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
 		if ($person !== NULL) {
 			$account->setParty($person);
 		}
 		$this->accountRepository->add($account);
-		$this->flashMessageContainer->add('User with identifier "' . $identifier . '" was created.');
-		$this->redirect('index');
 	}
 
 	/**
@@ -105,11 +112,20 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * it if found.
 	 *
 	 * @param string $packageKey
+	 * @param string $identifier
+	 * @param string $password
+	 * @param \F3\Party\Domain\Model\Person $person
 	 * @return string
 	 * @throws \Exception if anything goes wrong
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function importAction($packageKey) {
+	public function importAndCreateAdministratorAction($packageKey, $identifier, $password, $person = NULL) {
+		$this->importPackage($packageKey);
+		$this->createAdministrator($identifier, $password, $person);
+		$this->redirect('index', 'Frontend\Page');
+	}
+
+	public function importPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
 			$this->flashMessageContainer->add('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
@@ -121,14 +137,11 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 			try {
 				$this->importSitesFromPackage($packageKey);
-				$this->flashMessageContainer->add('Imported website data from "' . $packageKey . '/Resources/Content/Sites.xml"');
 			} catch (\Exception $e) {
 				$this->flashMessageContainer->add('Error: During import an exception occured. ' . $e->getMessage());
 			}
 		}
-		$this->redirect('index');
 	}
-
 	/**
 	 * Parses the Content.xml in the given package and imports the content into TYPO3.
 	 *

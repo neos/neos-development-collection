@@ -6,7 +6,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="TYPO3, http://typo3.org, &#169; The TYPO3 Development Team" />
-		<title>TYPO3 Error</title>
+		<title>TYPO3 Setup</title>
 		<f:base />
 		<link rel="stylesheet" href="{f:uri.resource(path:'CSS/reset-min.css', package:'ExtJS')}" />
 		<style type="text/css">
@@ -22,7 +22,7 @@
 			color: #ffffff;
 			margin: 0px 0px 0px 0px;
 			padding: 0px 0px 0px 0px;
-			text-align: center;
+			/*text-align: center;*/
 			line-height: 1.5em;
 		}
 		body {
@@ -44,47 +44,58 @@
 			text-decoration: none;
 		}
 		/*** ERROR SCREEN ***/
-		#errorBox {
+		#middleBox {
 			margin: 0 auto 0;
 			width: 600px;
 			padding-top: 5%;
 		}
-		#errorBox h3 {
+		#middleBox h3 {
 			font-size: 174%;
 			line-height: 1.2em;
-			background: url({f:uri.resource(path: 'Frontend/Error/Images/WarningSign.png')}) left 50% no-repeat;
-			padding: 0 0 0 60px;
-			margin: 0 0 20px 0;
+			padding: 0 0 0 20px;
+			margin: 0 0 0 0;
 			min-height: 50px;
 		}
-		#errorBox h4 {
+		#middleBox h4 {
 			font-size: 153.9%;
 			color: #aca8a6;
 			line-height: 1.2em;
-			padding: 0 0 50px 60px;
+			padding: 25px 0 5px 20px;
 		}
-		#errorBox h2 {
+		#middleBox h2 {
 			text-indent: -9999px;
-			background: url({f:uri.resource(path: 'Frontend/Error/Images/Typo3LogoUpsideDown.png')}) left top no-repeat;
+
 			width: 183px;
 			height: 55px;
 			margin: 0 0 20px 0;
 		}
-		#errorBox .errorContainer {
+		#middleBox #contents {
+			margin-left:20px;
+		}
+		#middleBox #contents h4 {
+			padding-left:0;
+		}
+		#contents label {
+			width:135px;
+			display:block;
+			float:left;
+		}
+		#contents p {
+			margin-top:15px;
+			margin-bottom:5px;
+		}
+
+		#middleBox .errorContainer {
 			margin: 0px auto 0;
 			border: 0px;
-			border-top: 2px solid #7a210c;
-			border-bottom: 3px solid #7a210c;
 			background: url({f:uri.resource(path: 'Frontend/Error/Images/TransparentBackgroundWithRed.png')}) left top repeat;
 			padding: 20px;
 			text-align: left;
 			-webkit-box-shadow: #4d4d4d 1px 1px 10px;
 			-moz-box-shadow: #4d4d4d 1px 1px 10px;
 			filter:DropShadow(color=#4d4d4d, offx=1, offy=1);
-		}
-		#errorBox p {
-			padding: 0 0 0 60px;
-			font-size: 108%;
+			border-top: 2px solid #EA891D;
+			border-bottom: 3px solid #EA891D;
 		}
 
 		/*** FOOTER ***/
@@ -108,12 +119,12 @@
 	</head>
 	<body>
 		<div id="site">
-			<div id="errorBox">
+			<div id="middleBox">
 				<h2>TYPO3</h2>
 				<div class="errorContainer">
-					<h3>###ERROR_TITLE###</h3>
-					<h4>###ERROR_SUBTITLE###</h4>
-					<p>###ERROR_DESCRIPTION###</p>
+					<h3><f:render section="title" /></h3>
+					<h4><f:render section="subtitle" /></h4>
+					<div id="contents"><f:render section="description" /></div>
 				</div>
 			</div>
 		</div>
