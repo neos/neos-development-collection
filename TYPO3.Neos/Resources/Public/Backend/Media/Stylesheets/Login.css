@@ -29,6 +29,9 @@ a:active {
 	text-decoration: none;
 }
 /*** LOGIN SCREEN ***/
+#F3_TYPO3_Login_Screen {
+	clear: both;
+}
 #loginBox {
 	margin: 10% auto 0;
 	width: 400px;
@@ -39,6 +42,7 @@ a:active {
 	width: 183px;
 	height: 60px;
 	margin: 0 0 20px 0;
+	float: right;
 }
 #loginBox .loginContainer {
 	margin: 0px auto 0;
@@ -128,7 +132,7 @@ ul.errorMessages {
 }
 /*** FOOTER ***/
 #footer {
-	position: absolute;
+	position: fixed;
 	width: 100%;
 	left: 0px;
 	bottom: 0px;
@@ -136,10 +140,14 @@ ul.errorMessages {
 	background: #636363 -moz-linear-gradient(center bottom, #2d2d2d 23%, #5d5d5d 83%);
 	border: 0;
 	border-top: 1px solid #4a4a4a;
+	z-index: -1;
+	text-align: center;
 }
 #footer p {
 	text-align: left;
 	font-size: 77%;
 	line-height: 1.2em;
 	padding: 10px 20px 10px 20px;
+	max-width: 930px;
+	margin: 0px auto 0;
 }
