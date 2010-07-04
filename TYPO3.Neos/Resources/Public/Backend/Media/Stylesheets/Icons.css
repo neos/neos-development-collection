@@ -1,0 +1,10 @@
+/**
+ * Icons
+ */
+
+.F3-TYPO3-Content-icon-edit {
+	background-image: url('../Images/UserInterface/Icons/ContentEdit.gif') !important;
+}
+.F3-TYPO3-Content-icon-pageProperties {
+	background-image: url('../Images/UserInterface/Icons/ContentEditPageProperties.png') !important;
+}

@@ -14,6 +14,8 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 		};
 		if (this.showCancelButton) {
 			toolbarConfig.items.push({
+				xtype: 'F3.TYPO3.Components.Button',
+				cls: 'F3-TYPO3-Components-Button-link',
 				itemId: 'cancelButton',
 				text: 'Cancel',
 				scale: 'large',
@@ -26,9 +28,9 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 				toolbarConfig.items.push({xtype: 'tbspacer', width: 20});
 			}
 			toolbarConfig.items.push({
+				xtype: 'F3.TYPO3.Components.Button',
 				itemId: 'okButton',
 				text: 'OK',
-				width: '40',
 				scale: 'large',
 				handler: this._handleButtonClick,
 				scope: this

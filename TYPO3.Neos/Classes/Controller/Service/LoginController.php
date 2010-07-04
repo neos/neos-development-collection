@@ -95,7 +95,7 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @extdirect
 	 */
-	public function destroyAction() {
+	public function logoutAction() {
 		$this->authenticationManager->logout();
 
 		switch ($this->request->getFormat()) {

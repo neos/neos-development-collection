@@ -14,7 +14,7 @@ F3.TYPO3.Login.Service = Ext.apply(new Ext.util.Observable, {
 	 * @return {void}
 	 */
 	logout: function() {
-		F3.TYPO3_Controller_Service_LoginController.destroy(function(result) {
+		F3.TYPO3_Controller_Service_LoginController.logout(function(result) {
 			F3.TYPO3.Application.fireEvent('F3.TYPO3.Login.logout');
 		});
 	}

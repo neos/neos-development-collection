@@ -144,23 +144,20 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-ContentDialog-Panel .x-panel-tbar-noborder .x-toolbar {
 	border: none;
 }
+/*
 .F3-TYPO3-UserInterface-ContentDialog-Panel .x-btn .x-btn-text {
 	color: #ccc;
 }
 .F3-TYPO3-UserInterface-ContentDialog-Panel .x-btn-over .x-btn-text {
 	color: #000;
 }
+*/
 #F3-TYPO3-TopBar-Logo {
-	background: url(../Images/UserInterface/typo3-logo.png) no-repeat;
+	background: url(../Images/UserInterface/typo3-logo.png) right top no-repeat;
 }
 
-/**
- * Icons
- */
-
-.F3-TYPO3-Content-icon-edit {
-	background-image: url('../Images/UserInterface/Icons/ContentEdit.gif') !important;
-}
-.F3-TYPO3-Content-icon-pageProperties {
-	background-image: url('../Images/UserInterface/Icons/ContentEditPageProperties.png') !important;
+#F3-TYPO3-TopBar-StatusText {
+	color: #ffffff;
+	font-size: 12px;
+	font-family: Helvetica, Arial, sans-serif;
 }

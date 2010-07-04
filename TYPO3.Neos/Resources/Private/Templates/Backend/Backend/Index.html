@@ -11,7 +11,7 @@
 		<title>TYPO3 Backend</title>
 		<f:base />
 
-		<ext:include theme="xtheme-gray" />
+		<ext:include theme="xtheme-gray" debug="true" />
 		<script type="text/javascript">
 		<ext:extDirect.provider />
 		</script>
@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="{f:uri.resource(path: 'Backend/JavaScript/Application.js')}"></script>
 
 		<typo3:includeJavaScript include="Ext/.*\.js" subpackage="Backend" />
+		<typo3:includeJavaScript include="Components/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="Application/.*\.js" subpackage="Backend" />
 
 		<typo3:includeJavaScript include="Stores/.*\.js" subpackage="Backend" />
@@ -28,7 +29,9 @@
 		<typo3:includeJavaScript include="UserInterface/.*\.js" subpackage="Backend" />
 		<typo3:includeJavaScript include="Content/.*\.js" exclude="Content/AlohaConnector\.js" subpackage="Backend" />
 
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/Components/Button.css')}" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/UserInterface.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/Icons.css')}" />
 	</head>
 	<body>
 	</body>

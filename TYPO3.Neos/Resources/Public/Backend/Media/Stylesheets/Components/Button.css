@@ -1,0 +1,31 @@
+.F3-TYPO3-Components-Button button {
+	background: #B9B9B9;
+	background: -moz-linear-gradient(center top , #FFFFFF, #B9B9B9) repeat scroll 0 0 transparent;
+	-moz-box-shadow: 0 0 6px #3F3F3F;
+	border: 0px;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	height: 18px;
+	padding: 2px;
+	color: #000000;
+
+	cursor: pointer;
+}
+.F3-TYPO3-Components-Button button:hover {
+	background: -moz-linear-gradient(center top , #EEEEEE, #A9A9A9) repeat scroll 0 0 transparent;
+}
+.F3-TYPO3-Components-Button-link button {
+	color: #ffffff;
+	background: none;
+	border: none;
+	-moz-box-shadow: none;
+}
+.F3-TYPO3-Components-Button-link button span {
+	text-decoration: underline;
+}
+.F3-TYPO3-Components-Button-link button:hover {
+	color: #ffffff;
+	text-decoration: underline;
+	background: none;
+}
