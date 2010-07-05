@@ -1,5 +1,6 @@
 ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-ContentTab {
 	margin-right: 50px;
+	margin-left: 10px;
 }
 ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-left: 200px;
@@ -135,11 +136,14 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-ModuleDialog .ext-ie .x-form-file {
 	height: 24px;
 }
-/* TODO jensen: Prefix with F3-... class */
-.x-toolbar-left {
+/* TODO jensen: check if Prefix with F3-class leads to errors */
+.F3-TYPO3-UserInterface-ContentDialog .x-toolbar-left {
 	padding: 4px;
+	width: auto;
 }
-
+.F3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar-ct {
+	width: auto;
+}
 .F3-TYPO3-UserInterface-ContentDialog {
 	background-color: #272727;
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#4a4a4a), to(#272727));

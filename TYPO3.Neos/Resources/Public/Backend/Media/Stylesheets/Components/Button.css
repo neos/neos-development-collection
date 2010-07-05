@@ -1,7 +1,9 @@
 .F3-TYPO3-Components-Button button {
 	background: #B9B9B9;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#ffffff), to(#B9B9B9));
 	background: -moz-linear-gradient(center top , #FFFFFF, #B9B9B9) repeat scroll 0 0 transparent;
 	-moz-box-shadow: 0 0 6px #3F3F3F;
+	-webkit-box-shadow: 0 0 6px #3F3F3F;
 	border: 0px;
 	border-radius: 3px;
 	-moz-border-radius: 3px;
@@ -17,12 +19,14 @@
 }
 .F3-TYPO3-Components-Button button:hover {
 	background: -moz-linear-gradient(center top , #EEEEEE, #A9A9A9) repeat scroll 0 0 transparent;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#EEEEEE), to(#A9A9A9));
 }
 .F3-TYPO3-Components-Button-link button {
 	color: #ffffff;
 	background: none;
 	border: none;
 	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
 }
 .F3-TYPO3-Components-Button-link button span {
 	font-weight: bold;
