@@ -24,6 +24,18 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 				border: false,
 				style: 'padding: 10px',
 				bodyStyle: 'background: transparent',
+				defaults: {
+					 listeners: {
+						specialkey: {
+							fn: function(field, e){
+								if (e.getKey() == e.ENTER) {
+									this._submitForm();
+								}
+							},
+							scope: this
+						}
+					 }
+				},
 				layoutConfig: {
 					labelSeparator: ''
 				},
@@ -45,14 +57,14 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.initComponent.call(this);
 
 		// add event listener
-		this.form.on('beforeaction', this.onFormBeforeaction , this);
-		this.form.on('actioncomplete', this.onFormActioncomplete, this);
-		this.form.on('actionfailed', this.onFormActioncomplete, this);
-		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this.onOkButtonClickAction, this);
-		F3.TYPO3.Application.on('F3.TYPO3.Content.contentChanged', this.refreshFrontendEditor, this);
+		this.form.on('beforeaction', this._onFormBeforeAction , this);
+		this.form.on('actioncomplete', this._onFormActionComplete, this);
+		this.form.on('actionfailed', this._onFormActionComplete, this);
+		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this._onOkButtonClickAction, this);
+		F3.TYPO3.Application.on('F3.TYPO3.Content.contentChanged', this._refreshFrontendEditor, this);
 	},
 
-	// privat
+	// private
 	onRender : function(ct, position) {
 		this.pageIdentity = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentPageIdentity();
 		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.onRender.call(this, ct, position);
@@ -62,13 +74,13 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	},
 
 	/**
-	 * on form before action
+	 * on form before action, triggered before any action is performed.
 	 *
 	 * @param {} form
 	 * @param {} action
 	 * ®return {void}
 	 */
-	onFormBeforeaction: function(form, action) {
+	_onFormBeforeAction: function(form, action) {
 		if (action.type === 'directload') {
 			this.el.mask('Loading...');
 		}
@@ -84,7 +96,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 * @param {} action
 	 * ®return {void}
 	 */
-	onFormActioncomplete: function(form, action) {
+	_onFormActionComplete: function(form, action) {
 		if (action.type === 'directload') {
 			this.el.unmask();
 		}
@@ -94,20 +106,26 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	},
 
 	/**
-	 * Action when click the dialog ok button
-	 * submit the dialog form
+	 * Action when clicking the dialog ok button
 	 *
 	 * @param {} button
 	 * @return {void}
 	 */
-	onOkButtonClickAction: function(button) {
+	_onOkButtonClickAction: function(button) {
 		if (button.itemId == 'okButton') {
-			this.form.getForm().submit({
-				additionalValues: this.pageIdentity,
-				success: this.onOkButtonClickActionSuccess,
-				scope: this
-			});
+			this._submitForm();
 		}
+	},
+
+	/**
+	 * Submit the form to the server.
+	 */
+	_submitForm: function() {
+		this.form.getForm().submit({
+			additionalValues: this.pageIdentity,
+			success: this._onOkButtonClickActionSuccess,
+			scope: this
+		});
 	},
 
 	/**
@@ -116,7 +134,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 *
 	 * @return {void}
 	 */
-	onOkButtonClickActionSuccess: function() {
+	_onOkButtonClickActionSuccess: function() {
 		this.moduleMenu.removeModuleDialog();
 		F3.TYPO3.Application.fireEvent('F3.TYPO3.Content.contentChanged', '###pageId###');
 	},
@@ -126,7 +144,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 *
 	 *  @return {void}
 	 */
-	refreshFrontendEditor: function() {
+	_refreshFrontendEditor: function() {
 		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').reload();
 	}
 });
