@@ -23,7 +23,7 @@
 						<f:flashMessages class="errorMessages" />
 						<div class="loginData">
 							<label class="username">User</label>
-							<input type="text" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" id="username" tabindex="1" />
+							<input type="text" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" id="username" tabindex="1" autofocus="autofocus" />
 						</div>
 						<div class="loginData">
 							<label class="password">Password</label>
@@ -47,15 +47,7 @@
 		<ext:include theme="xtheme-gray" includeStylesheets="false" />
 		<script type="text/javascript">
 			Ext.onReady(function() {
-				Ext.each(Ext.query('a.inputClear'), function(element) {
-					Ext.fly(element).on('click', function(event) {
-						var inputDom;
-						event.preventDefault();
-						inputDom = Ext.fly(event.getTarget()).prev('input', true);
-						inputDom.value = '';
-						inputDom.focus();
-					});
-				});
+				Ext.DomQuery.selectNode("input[autofocus]").focus();
 			});
 		</script>
 	</body>
