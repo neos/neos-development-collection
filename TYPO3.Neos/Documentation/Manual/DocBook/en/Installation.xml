@@ -106,12 +106,13 @@
       </step>
 
       <step>
-        <para>To have the demo site loaded into the TYPO3 system at that
-        point, run
-        <uri>http://<replaceable>&lt;hostname&gt;/typo3/setup</replaceable></uri>
-        and wait (this may take some time on the first call, because FLOW3
-        needs to initialize itself and to create caching data) for that to
-        complete.</para>
+        <para>Now, just go to
+        <uri>http://<replaceable>&lt;hostname&gt;/</replaceable></uri> and
+        wait (this may take some time on the first call, because FLOW3 needs
+        to initialize itself and to create caching data). You will get a
+        notice that TYPO3 has not been initialized yet. Follow the
+        instructions to import some demo content, and set your desired Backend
+        Username and Password.</para>
       </step>
     </procedure>
 
@@ -124,7 +125,7 @@
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%" fileref="StartPage.png"
-                         scalefit="1" width="100%"/>
+                         scalefit="1" width="100%"></imagedata>
             </imageobject>
           </mediaobject>
         </screenshot>

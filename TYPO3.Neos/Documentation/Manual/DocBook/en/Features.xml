@@ -44,4 +44,36 @@
         </listitem>
       </itemizedlist></para>
   </section>
+
+  <section>
+    <title>TYPO3 Phoenix Sprint Release 2</title>
+
+    <itemizedlist>
+      <listitem>
+        <para>Dynamic Navigation and Menus</para>
+
+        <para><itemizedlist>
+            <listitem>
+              <para>The menu is created using the <literal>Menu</literal>
+              TypoScript Object.</para>
+            </listitem>
+
+            <listitem>
+              <para>The Menu is rendered via a recursive fluid
+              template.</para>
+            </listitem>
+          </itemizedlist></para>
+      </listitem>
+
+      <listitem>
+        <para>Edit Page Properties of the current page</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>The page title of the current page can be changed.</para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </itemizedlist>
+  </section>
 </chapter>
