@@ -132,19 +132,31 @@ class ParserTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Checks if an arbitrary string after a namespace declaration throws an exception
+	 * Checks if a leading slash in the namespace declaration throws an exception
 	 *
 	 * @test
+	 * @expectedException \F3\TypoScript\Exception
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function parserThrowsSyntaxExceptionStringAfterNamespaceDeclaration() {
-		$sourceCode = "namespace: cms=\F3\TypoScript\Fixtures xyz";
-		try {
-			$this->parser->parse($sourceCode);
-			$this->fail('String after namespace declaration did not throw an exception.');
-		} catch (\Exception $exception) {
+	public function parserThrowsTypoScriptExceptionIfNamespaceDeclarationIsInvalid() {
+		$sourceCode = "namespace: cms=\F3\TypoScript\Fixtures";
+		$this->parser->parse($sourceCode);
+	}
 
-		}
+	/**
+	 * Checks if referring to an unknown namespace throws an exception
+	 *
+	 * @test
+	 * @expectedException \F3\TypoScript\Exception
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function parserThrowsTypoScriptExceptionWhenReferringToUnknownNamespaceReferenceInProcessorCall() {
+		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
+		$sourceCode = "namespace: default = F3\TypoScript\Fixtures
+			foo = Text
+			foo.value << 1.unknownNamespace:wrap()";
+		$this->parser->parse($sourceCode);
 	}
 
 	/**

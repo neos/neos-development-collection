@@ -50,8 +50,8 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	const SPLIT_PATTERN_VALUEVARIABLE = '/(\$[a-zA-Z][a-zA-Z0-9]*)/';
 	const SPLIT_PATTERN_VALUEVARIABLES = '/\$[a-zA-Z][a-zA-Z0-9]*(?=[^a-zA-Z0-9]|$)/';
 	const SPLIT_PATTERN_VALUEOBJECTTYPE = '/^\s*(?:(?:([a-zA-Z]+[a-zA-Z0-9*]*)\\\\)?([a-zA-Z][a-zA-Z0-9]*)$)|(F3\\\\(?:\w+|\\\\)+)/';
-	const SPLIT_PATTERN_INDEXANDPROCESSORCALL = '/(?P<Index>\d+)\.(?P<ProcessorSignature>\w+)\s*\((?P<Arguments>.*?)\)\s*$/';
-	const SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME = '/(?:(<?P<Namespace>(\\\\F3\\\\(?:\w+|\\\\)+))->)?(?P<ProcessorName>\w+)/';
+	const SPLIT_PATTERN_INDEXANDPROCESSORCALL = '/(?P<Index>\d+)\.(?P<ProcessorSignature>[^(]+)\s*\((?P<Arguments>.*?)\)\s*$/';
+	const SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME = '/(?:(?P<NamespaceReference>[a-zA-Z]+[a-zA-Z0-9]*+)\s*:\s*)?(?P<ProcessorName>\w+)/';
 	const SPLIT_PATTERN_PROCESSORARGUMENTS = '/(?P<ArgumentName>[a-zA-Z0-9]+):\s*(?P<ArgumentValue>"(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|\$[a-zA-Z0-9]+|-?[0-9]+(\.\d+)?)/';
 	const SPLIT_PATTERN_VARIABLENAMEFROMPATH = '/\\$(?P<VariableName>[a-z][a-zA-Z0-9]*)$/';
 
@@ -442,13 +442,13 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	/**
 	 * Parses a namespace declaration and stores the result in the namespace registry.
 	 *
-	 * @param string $namespaceDeclaration The namespace declaration, for example "cms = \F3\TYPO3\TypoScript"
+	 * @param string $namespaceDeclaration The namespace declaration, for example "cms = F3\TYPO3\TypoScript"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseNamespaceDeclaration($namespaceDeclaration) {
 		$result = preg_match(self::SPLIT_PATTERN_NAMESPACEDECLARATION, $namespaceDeclaration, $matches);
-		if ($result !== 1 || count($matches) != 3) throw new \F3\TypoScript\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
+		if ($result !== 1 || count($matches) !== 3) throw new \F3\TypoScript\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
 
 		$namespaceIdentifier = $matches[1];
 		$objectNamePrefix = $matches[2];
@@ -468,15 +468,18 @@ class Parser implements \F3\TypoScript\ParserInterface {
 	protected function getProcessorInvocation($processorSignature, array $processorArguments) {
 		preg_match(self::SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME, $processorSignature, $matchedObjectAndMethodName);
 
-		if (isset($matchedObjectAndMethodName['Namespace']) && strlen($matchedObjectAndMethodName['Namespace']) > 0) {
-			$processorNamespace = $matchedObjectAndMethodName['Namespace'];
+		if (isset($matchedObjectAndMethodName['NamespaceReference']) && strlen($matchedObjectAndMethodName['NamespaceReference']) > 0) {
+			$namespaceReference = $matchedObjectAndMethodName['NamespaceReference'];
+			if (!isset($this->namespaces[$namespaceReference]) || strlen($this->namespaces[$namespaceReference]) === 0) throw new \F3\TypoScript\Exception('Referring to undefined namespace "' . $namespaceReference . '" in processor invocation.', 1278451837);
+			$processorNamespace = $this->namespaces[$namespaceReference];
 		} else {
-			$processorNamespace = $this->namespaces['default'] . '\Processors';
+			$processorNamespace = $this->namespaces['default'];
 		}
+		$processorNamespace .= '\Processors';
 		$processorObjectName = $processorNamespace . '\\' . ucfirst($matchedObjectAndMethodName['ProcessorName']) . 'Processor';
 
 		if (!$this->objectManager->isObjectRegistered($processorObjectName)) {
-			throw new \F3\TypoScript\Exception('Unknown processor object "' . $processorObjectName . '"', 1181903857);
+			throw new \F3\TypoScript\Exception('Unknown processor object "' . $processorObjectName . '"', 1181903856);
 		}
 		$processor = $this->objectManager->get($processorObjectName);
 		if (!$processor instanceof \F3\TypoScript\ProcessorInterface) {
