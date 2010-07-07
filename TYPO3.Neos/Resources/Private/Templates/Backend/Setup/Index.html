@@ -1,14 +1,16 @@
 <f:layout name="Setup" />
 
 <f:section name="title">TYPO3 Setup</f:section>
-<f:section name="subtitle">Import content from package</f:section>
 <f:section name="description">
 	<f:flashMessages/>
-	<p>Please select the package from which to import content below.</p>
+	<p>Getting started with TYPO3 is easy – just select a package from below in order
+		to import a site along with its content:</p>
 	<f:form action="importAndCreateAdministrator">
 		<label for="packageKey">Package</label>
 		<f:form.select name="packageKey"  options="{packagesWithSites}"/> <br/>
-		<p>Please define a username and password for the administrator.</p>
+		<p>Finally you need to create an administrator account.<br />
+			Please enter the necessary
+			details in the form below:</p>
 		<label for="identifier">Username</label>
 		<f:form.textbox name="identifier"/> <br/>
 		<label for="password">Password</label>
@@ -18,6 +20,7 @@
 			<f:form.textbox name="person[name][firstName]"/> <br/>
 			<label for="person[name][lastName]">Lastname</label>
 			<f:form.textbox name="person[name][lastName]"/> <br/>
-		<f:form.submit value="Import!"/>
+			<br />
+		<f:form.submit value="Create Site"/>
 	</f:form>
 </f:section>

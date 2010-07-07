@@ -70,9 +70,13 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * The StartAction is called in case no site has been defined yet.
 	 *
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function startAction() {
+		$titles = array('Velkommen til TYPO3!', 'Willkommen zu TYPO3!', 'Welcome to TYPO3!',
+			 '¡Bienvenido a TYPO3!', '¡Benvingut a TYPO3!', 'Laipni lūdzam TYPO3!', 'Bienvenue sur TYPO3!',
+			 'Welkom op TYPO3!', 'Добро пожаловать в TYPO3!');
+		$this->view->assign('title', $titles[rand(0, count($titles) - 1)]);
 	}
 
 	/**
