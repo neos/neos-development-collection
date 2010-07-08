@@ -111,6 +111,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function importAndCreateAdministratorAction($packageKey, $identifier, $password, \F3\Party\Domain\Model\Person $person) {
 		$this->importPackage($packageKey);
 		$this->createAdministrator($identifier, $password, $person);
+		$this->flashMessageContainer->flush();
 		$this->redirect('index', 'Frontend\Page');
 	}
 
