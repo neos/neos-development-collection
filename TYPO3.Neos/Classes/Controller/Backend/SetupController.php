@@ -67,12 +67,12 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $accountFactory;
 
 	/**
-	 * The StartAction is called in case no site has been defined yet.
+	 * Action which displays a message that no site has yet been defined.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function startAction() {
+	public function noSiteAction() {
 		$titles = array('Velkommen til TYPO3!', 'Willkommen zu TYPO3!', 'Welcome to TYPO3!',
 			 '¡Bienvenido a TYPO3!', '¡Benvingut a TYPO3!', 'Laipni lūdzam TYPO3!', 'Bienvenue sur TYPO3!',
 			 'Welkom op TYPO3!', 'Добро пожаловать в TYPO3!');
@@ -80,6 +80,9 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
+	 * Displays the main setup screen with the opportunity to import a site provided
+	 * by some package.
+	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -94,65 +97,37 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Create an user with the Administrator role.
-	 *
-	 * @param string $identifier
-	 * @param string $password
-	 * @param \F3\Party\Domain\Model\Person $person
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function createAdministratorAction($identifier, $password, $person = NULL) {
-		$this->createAdministrator($identifier, $password, $person);
-		$this->flashMessageContainer->add('User with identifier "' . $identifier . '" was created.');
-		$this->redirect('index');
-	}
-
-	/**
-	 * Create an user with the Administrator role.
-	 *
-	 * @param string $identifier
-	 * @param string $password
-	 * @param \F3\Party\Domain\Model\Person $person
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function createAdministrator($identifier, $password, $person = NULL) {
-		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
-		if ($person !== NULL) {
-			$account->setParty($person);
-		}
-		$this->accountRepository->add($account);
-	}
-
-	/**
 	 * Imports content and creates user, then redirects to frontend.
 	 *
-	 * @param string $packageKey
-	 * @param string $identifier
-	 * @param string $password
-	 * @param \F3\Party\Domain\Model\Person $person
+	 * @param string $packageKey Specifies the package which contains the site to be imported
+	 * @param string $identifier Identifier of the account to be created
+	 * @param string $password The clear text password of the new account
+	 * @param \F3\Party\Domain\Model\Person $person Person containing first and last name. Will be owner of the new account.
 	 * @return void
-	 * @throws \Exception if anything goes wrong
+	 * @validate $identifier Label, NotEmpty
+	 * @validate $password NotEmpty
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function importAndCreateAdministratorAction($packageKey, $identifier, $password, $person = NULL) {
+	public function importAndCreateAdministratorAction($packageKey, $identifier, $password, \F3\Party\Domain\Model\Person $person) {
 		$this->importPackage($packageKey);
 		$this->createAdministrator($identifier, $password, $person);
-		$this->flashMessageContainer->flush();
 		$this->redirect('index', 'Frontend\Page');
 	}
 
 	/**
-	 * Imports content from xml file.
+	 * Create a user with the Administrator role.
 	 *
-	 * @param string $packageKey
+	 * @param string $identifier Identifier of the account to be created
+	 * @param string $password The clear text password of the new account
+	 * @param \F3\Party\Domain\Model\Person $person Person containing first and last name. Will be owner of the new account.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function importAction($packageKey) {
-		$this->importPackage($packageKey);
-		$this->redirect('index');
+	protected function createAdministrator($identifier, $password, \F3\Party\Domain\Model\Person $person) {
+		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
+		$account->setParty($person);
+		$this->accountRepository->add($account);
 	}
 
 	/**
@@ -166,7 +141,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function importPackage($packageKey) {
+	protected function importPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
 			$this->flashMessageContainer->add('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
@@ -246,6 +221,18 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 			 \F3\FLOW3\Reflection\ObjectAccess::setProperty($contentNode, $child->getName(), (string)$child);
 		 }
 		}
+	}
+
+	/**
+	 * A template method for displaying custom error flash messages, or to
+	 * display no flash message at all on errors. Override this to customize
+	 * the flash message in your action controller.
+	 *
+	 * @return string|boolean The flash message or FALSE if no flash message should be set
+	 * @api
+	 */
+	protected function getErrorFlashMessage() {
+		return '';
 	}
 
 }

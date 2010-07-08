@@ -90,10 +90,10 @@
       handler:    F3\TYPO3\Routing\PageRoutePartHandler
 
 -
-  name: 'No site defined, that is why a text is explained.'
+  name: 'Fallback rule – for when no site has been defined yet'
   uriPattern: ''
   defaults:
     '@package':     'TYPO3'
     '@controller':  'Backend\Setup'
-    '@action':      'start'
+    '@action':      'noSite'
     '@format':      'html'
