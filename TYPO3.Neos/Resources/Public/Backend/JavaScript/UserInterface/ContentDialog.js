@@ -44,7 +44,7 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 			items: {
 				xtype: 'panel',
 				cls: 'F3-TYPO3-UserInterface-ContentDialog-Panel',
-				style: 'position: absolute; top: 13px; right: 100px',
+				style: 'position: absolute; top: 12px; right: 100px',
 				border: false,
 				tbar: toolbarConfig,
 				ref: 'panel'

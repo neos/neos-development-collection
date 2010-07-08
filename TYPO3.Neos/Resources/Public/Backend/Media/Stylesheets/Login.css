@@ -33,7 +33,7 @@ a:active {
 	clear: both;
 }
 #loginBox {
-	margin: 10% auto 0;
+	margin: 3% auto 0;
 	width: 400px;
 }
 #loginBox h2 {
@@ -130,6 +130,23 @@ ul.errorMessages {
 	text-shadow: 1px 1px 0px #000000;
 	margin-bottom: 15px;
 }
+/*** LOGIN PICTURE **/
+#F3-TYPO3-Login-Picture {
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	z-index: -1;
+	width: 100%;
+}
+
+#F3-TYPO3-Login-Picture span {
+	background: url(../Images/Login/t35-team.png) left 50% no-repeat;
+	width: 700px;
+	height: 434px;
+	display: block;
+	margin: 0px auto 0;
+}
+
 /*** FOOTER ***/
 #footer {
 	position: fixed;
