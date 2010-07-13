@@ -173,7 +173,7 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getTemplateSource($actionName) {
+	public function getTemplateSource($actionName = NULL) {
 		if ($this->source instanceof \F3\TypoScript\ContentObjectInterface) {
 			$this->source->setRenderingContext($this->renderingContext);
 			return $this->source->render();
