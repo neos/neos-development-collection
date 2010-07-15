@@ -74,8 +74,8 @@ class SiteTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIndexNodeReturnsTheFirstNodeOnTheFirstLevelMatchingTheContextsLocale() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('de-DE');
-		$locale2 = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale1 = new \F3\FLOW3\I18n\Locale('de-DE');
+		$locale2 = new \F3\FLOW3\I18n\Locale('en-EN');
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
@@ -95,7 +95,7 @@ class SiteTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIndexNodeReturnsNullIfNoMatchingNodeWasFound() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale1 = new \F3\FLOW3\I18n\Locale('de-DE');
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));

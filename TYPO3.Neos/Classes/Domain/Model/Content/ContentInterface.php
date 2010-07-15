@@ -35,15 +35,15 @@ interface ContentInterface {
 	/**
 	 * Constructs the content object
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
+	 * @param \F3\FLOW3\I18n\Locale $locale The locale of the content
 	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $node The structure node this content is bound to
 	 */
-	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node);
+	public function __construct(\F3\FLOW3\I18n\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node);
 
 	/**
 	 * Returns the locale of the content object
 	 *
-	 * @return \F3\FLOW3\Locale\Locale The locale of the content
+	 * @return \F3\FLOW3\I18n\Locale The locale of the content
 	 */
 	public function getLocale();
 

@@ -45,12 +45,12 @@ interface NodeInterface {
 	 * Adds a child node to the list of existing child nodes
 	 *
 	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The node to add
-	 * @param \F3\FLOW3\Locale\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
+	 * @param \F3\FLOW3\I18n\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
 	 * @param string $section Name of the section to which the child node should be added
 	 * @return void
 	 * @api
 	 */
-	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\Locale\Locale $locale = NULL, $section = 'default');
+	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\I18n\Locale $locale = NULL, $section = 'default');
 
 	/**
 	 * Returns the child notes of this node.

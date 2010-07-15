@@ -35,7 +35,7 @@ class AbstractContentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theLocaleAndNodeOfAContentElementMustBePassedToTheConstructor() {
-		$mockLocale = $this->getMock('F3\FLOW3\Locale\Locale', array(), array(), '', FALSE);
+		$mockLocale = $this->getMock('F3\FLOW3\I18n\Locale', array(), array(), '', FALSE);
 		$mockContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 		$content = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Model\Content\AbstractContent'), array('dummy'), array($mockLocale, $mockContentNode));
 		$this->assertSame($mockLocale, $content->getLocale());
@@ -56,7 +56,7 @@ class AbstractContentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorAddsTheContentObjectToTheContentNodeByCallingAddContent() {
-		$mockLocale = $this->getMock('F3\FLOW3\Locale\Locale', array(), array(), '', FALSE);
+		$mockLocale = $this->getMock('F3\FLOW3\I18n\Locale', array(), array(), '', FALSE);
 		$mockContentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 		$mockContentNode->expects($this->once())->method('setContent');
 

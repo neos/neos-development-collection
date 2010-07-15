@@ -77,7 +77,7 @@ class ContentContext {
 	protected $typoScriptService;
 
 	/**
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $locale;
 
@@ -120,7 +120,7 @@ class ContentContext {
 		$this->contentService = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentService', $this);
 		$this->nodeService = $this->objectManager->create('F3\TYPO3\Domain\Service\NodeService', $this);
 		$this->typoScriptService = $this->objectManager->create('F3\TYPO3\Domain\Service\TypoScriptService', $this);
-		$this->locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', 'mul-ZZ');
+		$this->locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', 'mul-ZZ');
 
 		$matchingDomains = $this->domainRepository->findByHost($this->environment->getHTTPHost());
 		if (count ($matchingDomains) > 0) {
@@ -200,7 +200,7 @@ class ContentContext {
 	/**
 	 * Returns the locale of this context.
 	 *
-	 * @return \F3\FLOW3\Locale\Locale
+	 * @return \F3\FLOW3\I18n\Locale
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

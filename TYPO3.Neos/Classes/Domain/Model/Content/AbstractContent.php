@@ -34,7 +34,7 @@ namespace F3\TYPO3\Domain\Model\Content;
 abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\ContentInterface {
 
 	/**
-	 * @var \F3\FLOW3\Locale\Locale
+	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $locale;
 
@@ -47,12 +47,12 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	/**
 	 * Constructs the content object
 	 *
-	 * @param \F3\FLOW3\Locale\Locale $locale The locale of the content
+	 * @param \F3\FLOW3\I18n\Locale $locale The locale of the content
 	 * @param \F3\TYPO3\Domain\Model\Structure\ContentNode $node The content node this content is bound to
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function __construct(\F3\FLOW3\Locale\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node) {
+	public function __construct(\F3\FLOW3\I18n\Locale $locale, \F3\TYPO3\Domain\Model\Structure\ContentNode $node) {
 		$this->locale = $locale;
 		$this->node = $node;
 		$node->setContent($this);
@@ -61,7 +61,7 @@ abstract class AbstractContent implements \F3\TYPO3\Domain\Model\Content\Content
 	/**
 	 * Returns the locale of the content object
 	 *
-	 * @return \F3\FLOW3\Locale\Locale $locale The locale of the content
+	 * @return \F3\FLOW3\I18n\Locale $locale The locale of the content
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

@@ -194,7 +194,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		foreach ($sections as $section) {
 			$sectionName = (string)$section['name'];
 			foreach ($section->structure as $structure) {
-				$locale = $this->objectManager->create('F3\FLOW3\Locale\Locale', (string)$structure['locale']);
+				$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', (string)$structure['locale']);
 				$structureNode = $this->objectManager->create((string)$structure['type']);
 				$structureNode->setNodeName((string)$structure['nodename']);
 				$referencingNode->addChildNode($structureNode, $locale, $sectionName);
@@ -215,7 +215,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createContentObject(\SimpleXMLElement $content, \F3\TYPO3\Domain\Model\Structure\NodeInterface $structureNode) {
-		$contentNode = $this->objectManager->create((string)$content['type'], $this->objectManager->create('F3\FLOW3\Locale\Locale', (string)$content['locale']), $structureNode);
+		$contentNode = $this->objectManager->create((string)$content['type'], $this->objectManager->create('F3\FLOW3\I18n\Locale', (string)$content['locale']), $structureNode);
 
 		foreach ($content->children() as $child) {
 		 if (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($contentNode, $child->getName())) {

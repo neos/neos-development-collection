@@ -77,8 +77,8 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addChildNodeAllowsForSpecifyingALocaleForTheChildNode() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('de-DE');
-		$locale2 = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale1 = new \F3\FLOW3\I18n\Locale('de-DE');
+		$locale2 = new \F3\FLOW3\I18n\Locale('en-EN');
 
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
@@ -101,7 +101,7 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodesOnlyReturnsNodesMatchingTheSpecifiedContext() {
-		$locale = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale = new \F3\FLOW3\I18n\Locale('en-EN');
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale));
 
@@ -121,7 +121,7 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodesReturnsAnEmptyArrayIfNoNodesMatchedTheLocale() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale1 = new \F3\FLOW3\I18n\Locale('en-EN');
 
 		$rootNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
 		$node1 = $this->getMock('F3\TYPO3\Domain\Model\Structure\AbstractNode', array('dummy'), array(), uniqid('Node'));
@@ -130,7 +130,7 @@ class AbstractNodeTest extends \F3\Testing\BaseTestCase {
 		$rootNode->addChildNode($node1);
 		$rootNode->addChildNode($node2, $locale1);
 
-		$locale2 = new \F3\FLOW3\Locale\Locale('dk-DK');
+		$locale2 = new \F3\FLOW3\I18n\Locale('dk-DK');
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
 

@@ -46,7 +46,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createInsideCreatesContentAndAContentNodeInsideTheSpecifiedExistingContent() {
-		$locale = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale = new \F3\FLOW3\I18n\Locale('de-DE');
 
 		$mockExistingNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
@@ -78,7 +78,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createInsideCanCreateContentInTheSpecifiedSection() {
-		$locale = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale = new \F3\FLOW3\I18n\Locale('de-DE');
 
 		$mockExistingNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 
@@ -110,7 +110,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createInsideCanCreateContentInsideTheSpecifiedSite() {
-		$locale = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale = new \F3\FLOW3\I18n\Locale('de-DE');
 
 		$mockNewContent = $this->getMock('F3\TYPO3\Domain\Model\Content\AbstractContent', array(), array(), '', FALSE);
 		$mockNewNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
@@ -151,7 +151,7 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createAfterCreatesContentAndAContentNodeAfterTheSpecifiedExistingContent() {
-		$locale = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale = new \F3\FLOW3\I18n\Locale('de-DE');
 
 		$mockExistingParentNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
 

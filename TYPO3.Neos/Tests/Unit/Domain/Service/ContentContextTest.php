@@ -106,10 +106,10 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 
 		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\Structure\SiteRepository', array('findFirst'), array(), '', FALSE);
 
-		$locale = new \F3\FLOW3\Locale\Locale('mul-ZZ');
+		$locale = new \F3\FLOW3\I18n\Locale('mul-ZZ');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(3))->method('create')->with('F3\FLOW3\Locale\Locale', 'mul-ZZ')->will($this->returnValue($locale));
+		$mockObjectManager->expects($this->at(3))->method('create')->with('F3\FLOW3\I18n\Locale', 'mul-ZZ')->will($this->returnValue($locale));
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
 		$contentContext->_set('objectManager', $mockObjectManager);

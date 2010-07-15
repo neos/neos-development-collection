@@ -35,7 +35,7 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentAttachesContentToTheContentNode() {
-		$locale = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale = new \F3\FLOW3\I18n\Locale('en-EN');
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale));
@@ -57,7 +57,7 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentOverwritesAnyExistingContentMatchingTheSameLanguageAndRegion() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale1 = new \F3\FLOW3\I18n\Locale('en-EN');
 		$mockContent1 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockContent1->expects($this->once())->method('getLocale')->will($this->returnValue($locale1));
 
@@ -85,7 +85,7 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentSetsTheContentNodesContentTypeAccordingly() {
-		$locale = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale = new \F3\FLOW3\I18n\Locale('en-EN');
 		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockContent->expects($this->once())->method('getLocale')->will($this->returnValue($locale));
 
@@ -103,7 +103,7 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentThrowsAnExceptionIfContentIsAddedNotMatchingTheTypeOfExistingContent() {
-		$locale = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale = new \F3\FLOW3\I18n\Locale('en-EN');
 
 		$mockContent1 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array(), uniqid('SomeContentClassName'));
 		$mockContent1->expects($this->once())->method('getLocale')->will($this->returnValue($locale));
@@ -123,11 +123,11 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentReturnsNullIfNoContentMatchedTheLocale() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale1 = new \F3\FLOW3\I18n\Locale('en-EN');
 		$mockContent1 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockContent1->expects($this->once())->method('getLocale')->will($this->returnValue($locale1));
 
-		$locale2 = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale2 = new \F3\FLOW3\I18n\Locale('de-DE');
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface');
 		$mockContent2->expects($this->once())->method('getLocale')->will($this->returnValue($locale2));
 
@@ -138,7 +138,7 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 		$contentNode->setContent($mockContent1);
 		$contentNode->setContent($mockContent2);
 
-		$locale3 = new \F3\FLOW3\Locale\Locale('dk-DK');
+		$locale3 = new \F3\FLOW3\I18n\Locale('dk-DK');
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockContentContext->expects($this->any())->method('getLocale')->will($this->returnValue($locale3));
 
@@ -150,11 +150,11 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeContentDetachesTheGivenContentObjectFromTheContentNode() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale1 = new \F3\FLOW3\I18n\Locale('en-EN');
 		$mockContent1 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array());
 		$mockContent1->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
 
-		$locale2 = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale2 = new \F3\FLOW3\I18n\Locale('de-DE');
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array());
 		$mockContent2->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
 
@@ -183,11 +183,11 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeContentThrowsAnExceptionIfTheGivenContentIsNotAttachedToTheContentNode() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale1 = new \F3\FLOW3\I18n\Locale('en-EN');
 		$mockContent1 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array());
 		$mockContent1->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
 
-		$locale2 = new \F3\FLOW3\Locale\Locale('de-DE');
+		$locale2 = new \F3\FLOW3\I18n\Locale('de-DE');
 		$mockContent2 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array());
 		$mockContent2->expects($this->any())->method('getLocale')->will($this->returnValue($locale2));
 
@@ -203,7 +203,7 @@ class ContentNodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function removeContentUnsetsTheContentTypeIfTheLastContentObjectIsRemoved() {
-		$locale1 = new \F3\FLOW3\Locale\Locale('en-EN');
+		$locale1 = new \F3\FLOW3\I18n\Locale('en-EN');
 		$mockContent1 = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array());
 		$mockContent1->expects($this->any())->method('getLocale')->will($this->returnValue($locale1));
 
