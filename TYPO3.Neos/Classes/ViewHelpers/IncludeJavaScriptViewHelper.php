@@ -45,14 +45,15 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 * @param string $exclude Regular expression of files to exclude
 	 * @param string $package The package key of the resources to include or current controller package if NULL
 	 * @param string $subpackage The subpackage key of the resources to include or current controller subpackage if NULL
+	 * @param string $directory The directory inside the current subpackage. By default, the "JavaScript" directory will be used.
 	 * @author Christopher Hlubek
 	 */
-	public function render($include, $exclude = NULL, $package = NULL, $subpackage = NULL) {
+	public function render($include, $exclude = NULL, $package = NULL, $subpackage = NULL, $directory = 'JavaScript') {
 		$packageKey = $package === NULL ? $this->controllerContext->getRequest()->getControllerPackageKey() : $package;
 		$subpackageKey = $subpackage === NULL ? $this->controllerContext->getRequest()->getControllerSubpackageKey() : $subpackage;
 
-		$baseDirectory = 'resource://' . $packageKey . '/Public/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
-		$staticJavaScriptWebBaseUri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $packageKey . '/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . 'JavaScript/';
+		$baseDirectory = 'resource://' . $packageKey . '/Public/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . $directory . '/';
+		$staticJavaScriptWebBaseUri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $packageKey . '/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . $directory . '/';
 
 		$iterator = $this->iterateDirectoryRecursively($baseDirectory);
 

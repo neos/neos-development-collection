@@ -1,3 +1,5 @@
+{namespace ext=F3\ExtJS\ViewHelpers}
+{namespace typo3=F3\TYPO3\ViewHelpers}
 <f:base/>
 <title>{title}</title>
 <f:for each="{stylesheets}" as="stylesheet">
@@ -6,3 +8,42 @@
 <f:for each="{javaScripts}" as="javaScript">
 	{javaScript}
 </f:for>
+
+<f:security.ifAccess resource="F3_TYPO3_BackendController">
+	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
+	<ext:include theme="xtheme-gray" debug="true" />
+	<typo3:includeJavaScript include="utils/.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
+	<typo3:includeJavaScript include="core/.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
+	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Format/plugin\.js" subpackage="Backend"
+	directory="Aloha/WebContent" />
+	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Table/plugin\.js" subpackage="Backend"
+	directory="Aloha/WebContent" />
+	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.List/plugin\.js" subpackage="Backend"
+	directory="Aloha/WebContent" />
+
+	<script type="text/javascript" src="{f:uri.resource(package:'TYPO3', path:'Backend/JavaScript/Content/AlohaConnector.js')}"></script>
+	<script type="text/javascript">
+
+	GENTICS.Aloha.settings = {
+		"i18n": {"current": "en"},
+		"plugins": {
+			"com.gentics.aloha.plugins.GCN": {
+				enabled: false
+			},
+			"com.gentics.aloha.plugins.Format": {
+				config : [ 'b', 'i','u','del','sub','sup', 'p', 'title', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre', 'removeFormat'],
+				editables : {
+					title	: [ ], // no formatting allowed
+					teaser 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup'  ] // just basic formattings, no headers, etc.
+				}
+			}
+		}
+	};
+
+	Ext.onReady(function() {
+		// TODO: only activate by event
+		jQuery('.f3-typo3-editable').aloha();
+	});
+	</script>
+</f:security.ifAccess>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
