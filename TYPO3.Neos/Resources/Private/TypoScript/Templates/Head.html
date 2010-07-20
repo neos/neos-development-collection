@@ -10,8 +10,8 @@
 </f:for>
 
 <f:security.ifAccess resource="F3_TYPO3_BackendController">
-	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
 	<ext:include theme="xtheme-gray" debug="true" />
+	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
 	<typo3:includeJavaScript include="utils/.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
 	<typo3:includeJavaScript include="core/.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
 	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Format/plugin\.js" subpackage="Backend"
@@ -20,8 +20,8 @@
 	directory="Aloha/WebContent" />
 	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.List/plugin\.js" subpackage="Backend"
 	directory="Aloha/WebContent" />
+	<typo3:includeJavaScript include="Content/AlohaConnector/plugin\.js" subpackage="Backend" />
 
-	<script type="text/javascript" src="{f:uri.resource(package:'TYPO3', path:'Backend/JavaScript/Content/AlohaConnector.js')}"></script>
 	<script type="text/javascript">
 
 	GENTICS.Aloha.settings = {
@@ -37,9 +37,9 @@
 					teaser 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup'  ] // just basic formattings, no headers, etc.
 				}
 			}
-		}
+		},
+		ribbonEnabled: false
 	};
-
 	Ext.onReady(function() {
 		// TODO: only activate by event
 		jQuery('.f3-typo3-editable').aloha();
