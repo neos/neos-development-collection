@@ -57,17 +57,27 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 
 		$iterator = $this->iterateDirectoryRecursively($baseDirectory);
 
-		$output = '';
+		$uris = array();
+		
 		foreach ($iterator as $file) {
 			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
 			$relativePath = \F3\FLOW3\Utility\Files::getUnixStylePath($relativePath);
 
 			if (!$this->patternMatchesPath($exclude, $relativePath) &&
 				$this->patternMatchesPath($include, $relativePath)) {
-				$uri = $staticJavaScriptWebBaseUri . $relativePath;
-				$output .= '<script type="text/javascript" src="' . $uri . '"></script>' . chr(10);
+				$uris[] = $staticJavaScriptWebBaseUri . $relativePath;
 			}
 		}
+
+		// Sadly, the aloha editor needs a predefined inclusion order, which right now matches
+		// the sorted URI list. that's why we sort here...
+		asort($uris);
+
+		$output = '';
+		foreach ($uris as $uri) {
+			$output .= '<script type="text/javascript" src="' . $uri . '"></script>';
+		}
+
 		return $output;
 	}
 
