@@ -58,7 +58,6 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 		$iterator = $this->iterateDirectoryRecursively($baseDirectory);
 
 		$uris = array();
-		
 		foreach ($iterator as $file) {
 			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
 			$relativePath = \F3\FLOW3\Utility\Files::getUnixStylePath($relativePath);
@@ -75,9 +74,8 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 
 		$output = '';
 		foreach ($uris as $uri) {
-			$output .= '<script type="text/javascript" src="' . $uri . '"></script>';
+			$output .= '<script type="text/javascript" src="' . $uri . '"></script>' . chr(10);
 		}
-
 		return $output;
 	}
 
