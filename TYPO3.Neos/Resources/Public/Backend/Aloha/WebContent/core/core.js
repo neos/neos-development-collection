@@ -72,17 +72,6 @@ GENTICS.Aloha.prototype.dictionaries = {};
 GENTICS.Aloha.prototype.settings = {};
 
 /**
- * settings object containing the default values of all settings.
- *
- * The GENTICS.Aloha.settings object is merged on top of these default settings.
- *
- * @cfg {Object} object Aloha's default settings
- */
-GENTICS.Aloha.prototype.defaultSettings = {
-	ribbonEnabled: true
-};
-
-/**
  * Initialize Aloha
  * called automatically by the loader
  * @hide
@@ -105,12 +94,7 @@ GENTICS.Aloha.prototype.init = function () {
 			that.activeEditable = null;
 		}
 	});
-
-	// Merge user-defined settings onto the default settings.
-	var settings = this.defaultSettings;
-	jQuery.extend(settings, this.settings);
-	this.settings = settings;
-
+	
 	// initialize the base path to the aloha files
 	if (typeof this.settings.base == 'undefined' || !this.settings.base) {
 		this.settings.base = GENTICS.Aloha.autobase;
@@ -137,11 +121,9 @@ GENTICS.Aloha.prototype.init = function () {
 	// initialize all plugins
 	this.PluginRegistry.init();
 	// TODO call init on all other Aloha Core objects (messageline, etc.)
-
-	if (this.settings.ribbonEnabled) {
-		// intitialize the ribbon
-		this.Ribbon.init();
-	}
+	
+	// intitialize the ribbon
+	this.Ribbon.init();
 
 	// initialize the floatingmenu
 	this.FloatingMenu.init();
