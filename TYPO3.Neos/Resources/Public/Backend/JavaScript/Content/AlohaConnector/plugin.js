@@ -197,6 +197,7 @@ console.log(i,GENTICS.Aloha.editables[i]);
 		 * with the information which should be persist by the Backend
 		 *
 		 * @author Nils Dehl <nils.dehl@dkd.de>
+		 * @author Sebastian Kurfürst <sebastian@typo3.org>
 		 * @param {Object} editable
 		 * @return {void}
 		 * @private
@@ -207,7 +208,6 @@ console.log(i,GENTICS.Aloha.editables[i]);
 			editable.obj.find('*[data-property]').each(function(index, element) {
 				data[element.getAttribute('data-property')] = element.innerHTML
 			});
-
 
 			if (typeof window.parent.F3.TYPO3.Application !== 'undefined') {
 				/**
@@ -224,7 +224,6 @@ console.log(i,GENTICS.Aloha.editables[i]);
 					data
 				);
 			}
-			console.log('saveChanges', data, editable );
 		},
 
 		/**
