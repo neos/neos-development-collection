@@ -261,7 +261,7 @@ GENTICS.Aloha.prototype.initI18n = function() {
 	}
 
 	if (typeof this.settings.i18n.available == 'undefined' || !this.settings.i18n.available) {
-		this.settings.i18n.available = ['en', 'de'];
+		this.settings.i18n.available = ['en', 'de', 'fr', 'eo'];
 	}
 
 	if (typeof this.settings.i18n.current == 'undefined' || !this.settings.i18n.current) {
@@ -483,6 +483,24 @@ GENTICS.Aloha.prototype.isMessageVisible = function () {
  */
 GENTICS.Aloha.prototype.toString = function () {
 	return 'GENTICS.Aloha';
+};
+
+/**
+ * Check whether at least one editable was modified
+ * @method
+ * @return {boolean} true when at least one editable was modified, false if not
+ */
+GENTICS.Aloha.prototype.isModified = function () {
+	// check if something needs top be saved
+	for (var i in this.editables) {
+		if (this.editables[i].isModified) {
+			if (this.editables[i].isModified()) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 };
 
 GENTICS.Aloha = new GENTICS.Aloha();
