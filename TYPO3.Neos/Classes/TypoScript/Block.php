@@ -52,12 +52,17 @@ class Block extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('html');
+	protected $presentationModelPropertyNames = array('html', 'headline');
 
 	/**
 	 * @var string
 	 */
 	protected $html;
+
+	/**
+	 * @var string
+	 */
+	protected $headline;
 
 	/**
 	 * Overrides the body html of this html element
@@ -78,6 +83,25 @@ class Block extends \F3\TypoScript\AbstractContentObject {
 	public function getHtml() {
 		return $this->html;
 	}
+
+	/**
+	 * Returns the headline of this element.
+	 * @return string 
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getHeadline() {
+		return $this->headline;
+	}
+
+	/**
+	 * Overrides the headline of this element.
+	 * @param string $headline
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setHeadline($headline) {
+		$this->headline = $headline;
+	}
+
 
 }
 ?>

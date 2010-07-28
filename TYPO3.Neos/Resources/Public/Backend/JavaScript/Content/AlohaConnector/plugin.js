@@ -202,10 +202,12 @@ console.log(i,GENTICS.Aloha.editables[i]);
 		 * @private
 		 */
 		saveChanges: function(editable) {
-			var data = {
-				identity: editable.obj[0].getAttribute('data-identity'),
-				html: editable.getContents()
-			};
+			var data = Ext.decode(editable.obj[0].getAttribute('data-identity'));
+
+			editable.obj.find('*[data-property]').each(function(index, element) {
+				data[element.getAttribute('data-property')] = element.innerHTML
+			});
+
 
 			if (typeof window.parent.F3.TYPO3.Application !== 'undefined') {
 				/**

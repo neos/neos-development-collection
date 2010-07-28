@@ -34,11 +34,39 @@ namespace F3\TYPO3\Domain\Model\Content;
 class Block extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
 
 	/**
+	 * The headline of this block element
+	 * @var string
+	 * @validate String
+	 */
+	protected $headline = '';
+
+	/**
 	 * The HTML of this block element
 	 * @var string
 	 * @validate String
 	 */
 	protected $html = '';
+
+	/**
+	 * Get the headline of this block element
+	 *
+	 * @return string
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getHeadline() {
+		return $this->headline;
+	}
+
+	/**
+	 * Set the headline for this block element
+	 *
+	 * @param string $headline
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setHeadline($headline) {
+		$this->headline = $headline;
+	}
 
 	/**
 	 * @return string the HTML
