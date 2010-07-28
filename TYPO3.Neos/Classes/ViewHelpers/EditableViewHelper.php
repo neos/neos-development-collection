@@ -66,7 +66,7 @@ class EditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 		}
 		if ($this->hasAccessToResource('F3_TYPO3_BackendController')) {
 			$this->tag->setContent($this->renderChildren());
-			$this->tag->addAttribute('contenteditable', 'true');
+			$this->tag->addAttribute('class', 'f3-typo3-editable');
 			$this->tag->addAttribute('data-property', $property);
 			return $this->tag->render();
 		} else {

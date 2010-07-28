@@ -124,7 +124,6 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 * @private
 		 */
 		onEditableActivated: function(event, editable) {
-			console.log('onEditableActivated', arguments);
 		},
 
 		/**
@@ -135,10 +134,8 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 * @private
 		 */
 		onEditableDeactivated: function(event, editable) {
-			console.log('onEditableDeactivated', arguments);
-
 			// function call must be with F3.TYPO3.Content.AlohaConnector
-			// because the scope of this is GENTICS.Aloha
+			// because the scope of "this" is GENTICS.Aloha
 			F3.TYPO3.Content.AlohaConnector.saveChanges(editable.editable);
 		},
 
@@ -203,9 +200,11 @@ console.log(i,GENTICS.Aloha.editables[i]);
 		 * @private
 		 */
 		saveChanges: function(editable) {
-			var data = Ext.decode(editable.obj[0].getAttribute('data-identity'));
+			var currentContentElement = editable.obj.parents('*[data-identity]').first();
 
-			editable.obj.find('*[data-property]').each(function(index, element) {
+			var data = Ext.decode(currentContentElement.attr('data-identity'));
+			
+			currentContentElement.find('*[data-property]').each(function(index, element) {
 				data[element.getAttribute('data-property')] = element.innerHTML
 			});
 
