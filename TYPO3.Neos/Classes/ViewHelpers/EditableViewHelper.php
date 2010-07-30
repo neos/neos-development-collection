@@ -57,10 +57,10 @@ class EditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 		switch ($context) {
 			case 'inline':
 				$this->tag->setTagName('span');
-				break;
+			break;
 			case 'block':
 				$this->tag->setTagName('div');
-				break;
+			break;
 			default:
 				throw new F3\TYPO3\Exception('<t:editable> only supports "inline" and "block" as $context arguments.', 1280307072);
 		}
