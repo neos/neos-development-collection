@@ -54,6 +54,16 @@ GENTICS.Utils.RangeObject = function(param) {
 	this.endOffset;
 
 	/**
+	 * Parents of the start container up to different limit objects
+	 */
+	this.startParents = [];
+
+	/**
+	 * Parents of the end container up to different limit objects
+	 */
+	this.endParents = [];
+
+	/**
 	 * @hide
 	 * RangeTree cache for different root objects
 	 */
@@ -130,51 +140,73 @@ GENTICS.Utils.RangeObject.prototype.getCommonAncestorContainer = function() {
 };
 
 /**
- * Get the parent elements of the startcontainer. Note: when the startcontainer
+ * Get the parent elements of the startContainer/endContainer up to the given limit. When the startContainer/endContainer
  * is no text element, but a node, the node itself is returned as first element.
- * @return {jQuery} parent elements of the startcontainer as jQuery objects
+ * @param {jQuery} limit limit object (default: body)
+ * @param {boolean} fromStart true to fetch the parents from the startContainer, false for the endContainer
+ * @return {jQuery} parent elements of the startContainer/endContainer as jQuery objects
  * @method
  */
-GENTICS.Utils.RangeObject.prototype.getStartContainerParents = function() {
-	if (!this.startContainer) {
+GENTICS.Utils.RangeObject.prototype.getContainerParents = function (limit, fromEnd) {
+	var container = fromEnd ? this.endContainer : this.startContainer;
+	var parentStore = fromEnd ? this.endParents : this.startParents;
+
+	if (!container) {
 		return false;
 	}
 
-	// for text nodes, get the parents
-	if (this.startContainer.nodeType == 3) {
-		return jQuery(this.startContainer).parents();
-	} else {
-		var parents = jQuery(this.startContainer).parents();
-		for (var i = parents.length; i > 0; --i) {
-			parents[i] = parents[i - 1];
-		}
-		parents[0] = this.startContainer;
-		return parents;
+	if (typeof limit == 'undefined') {
+		limit = jQuery('body');
 	}
+
+	if (!parentStore[limit]) {
+		var parents;
+
+		// for text nodes, get the parents
+		if (container.nodeType == 3) {
+			parents = jQuery(container).parents();
+		} else {
+			parents = jQuery(container).parents();
+			for (var i = parents.length; i > 0; --i) {
+				parents[i] = parents[i - 1];
+			}
+			parents[0] = container;
+		}
+
+		// now slice this array
+		var limitIndex = parents.index(limit);
+
+		if (limitIndex >= 0) {
+			parents = parents.slice(0, limitIndex);
+		}
+
+		// store it (might be used again)
+		parentStore[limit] = parents;
+	}
+
+	return parentStore[limit];
 };
 
 /**
- * Get the parent elements of the endcontainer. Note: when the endcontainer is
- * no text element, but a node, the node itself is returned as first element.
- * @return {jQuery} parent elements of the endcontainer as jQuery objects
+ * Get the parent elements of the startContainer up to the given limit. When the startContainer
+ * is no text element, but a node, the node itself is returned as first element.
+ * @param {jQuery} limit limit object (default: body)
+ * @return {jQuery} parent elements of the startContainer as jQuery objects
  * @method
  */
-GENTICS.Utils.RangeObject.prototype.getEndContainerParents = function() {
-	if (!this.endContainer) {
-		return false;
-	}
+GENTICS.Utils.RangeObject.prototype.getStartContainerParents = function(limit) {
+	return this.getContainerParents(limit, false);
+};
 
-	// for text nodes, get the parents
-	if (this.endContainer.nodeType == 3) {
-		return jQuery(this.endContainer).parents();
-	} else {
-		var parents = jQuery(this.endContainer).parents();
-		for (var i = parents.length; i > 0; --i) {
-			parents[i] = parents[i - 1];
-		}
-		parents[0] = this.endContainer;
-		return parents;
-	}
+/**
+ * Get the parent elements of the endContainer up to the given limit. When the endContainer is
+ * no text element, but a node, the node itself is returned as first element.
+ * @param {jQuery} limit limit object (default: body)
+ * @return {jQuery} parent elements of the endContainer as jQuery objects
+ * @method
+ */
+GENTICS.Utils.RangeObject.prototype.getEndContainerParents = function(limit) {
+	return this.getContainerParents(limit, true);
 };
 
 /**
@@ -418,29 +450,6 @@ GENTICS.Utils.RangeObject.prototype.update = function(event) {
  * @hide
  */
 GENTICS.Utils.RangeObject.prototype.initializeFromUserSelection = function(event) {
-	// definition of the needed helper function to find textNode
-	var findLowestChild = function(container, offset, startOrEnd) {
-		
-		// if container is undefined, return false (happens, when the offset is after the last 
-		// childNode, which happens, when the whole thing is selected. will be corrected later
-		if (typeof container === 'undefined') {
-			GENTICS.Utils.RangeObject.prototype.log('returning false due to an undefined container (full selection)');
-			return false;
-		}
-		
-		GENTICS.Utils.RangeObject.prototype.log((startOrEnd?'end':'start') + 'Container: ' + container.nodeName + ' (' + container.data + '), offset: ' + offset);
-		// we are looking for the lowest element without children. if this is a type 1 node, it will be corrected later
-		if (container.childNodes.length === 0) {
-			GENTICS.Utils.RangeObject.prototype.log('returning childless node; type: ' + container.nodeType);
-			return container;
-		}
-				
-		// get childNodes
-		if (container.childNodes.length > 0 && offset <= container.childNodes.length) {
-			return findLowestChild(container.childNodes[offset], 0, startOrEnd); // this could possibly be wrong. maybe the 2nd parameter (offset) should depend on the 3rd parameter (startOrEnd)
-		}
-	};
-
 	// get Browser selection via IERange standardized window.getSelection()
 	var selection = window.getSelection();
 	if (!selection) {
@@ -641,6 +650,8 @@ GENTICS.Utils.RangeObject.prototype.correctRange = function() {
  */
 GENTICS.Utils.RangeObject.prototype.clearCaches = function () {
 	this.rangeTree = [];
+	this.startParents = [];
+	this.endParents = [];
 	this.commonAncestorContainer = undefined;
 };
 
@@ -817,6 +828,38 @@ GENTICS.Utils.RangeObject.prototype.recursiveGetRangeTree = function (currentObj
 	}
 
 	return currentElements;
+};
+
+/**
+ * Find certain the first occurrence of some markup within the parents of either the start or the end of this range.
+ * The markup can be identified by means of a given comparator function. The function will be passed every parent (up to the eventually given limit object, which itself is not considered) to the comparator function as this.
+ * When the comparator function returns boolean true, the markup found and finally returned from this function as dom object.<br/>
+ * Example for finding an anchor tag at the start of the range up to the active editable object:<br/>
+ * <pre>
+ * range.findMarkup(
+ *   function() {
+ *     return this.nodeName.toLowerCase() == 'a';
+ *   },
+ *   jQuery(GENTICS.Aloha.activeEditable.obj)
+ * );
+ * </pre>
+ * @param {function} comparator comparator function to find certain markup
+ * @param {jQuery} limit limit objects for limit the parents taken into consideration
+ * @param {boolean} atEnd true for searching at the end of the range, false for the start (default: false)
+ * @return {DOMObject} the found dom object or false if nothing found.
+ * @method
+ */
+GENTICS.Utils.RangeObject.prototype.findMarkup = function (comparator, limit, atEnd) {
+	var parents = this.getContainerParents(limit, atEnd);
+	var returnValue = false;
+	jQuery.each(parents, function (index, domObj) {
+		if (comparator.apply(domObj)) {
+			returnValue = domObj;
+			return false;
+		}
+	});
+
+	return returnValue;
 };
 
 /**

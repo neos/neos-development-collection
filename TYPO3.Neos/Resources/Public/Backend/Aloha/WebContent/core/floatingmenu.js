@@ -228,12 +228,12 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 	});
 	
 	// add the dropshadow
-	jQuery('body').append('<div id="GENTICS_floatingmenu_shadow" class="GENTICS_shadow">&nbsp;</div>');
+	jQuery('body').append('<div id="GENTICS_floatingmenu_shadow" class="GENTICS_shadow">&#160;</div>');
 	this.shadow = jQuery('#GENTICS_floatingmenu_shadow');
 	
 	// add an empty pin tab item, store reference
 	var pinTab = this.extTabPanel.add({
-		title : '&nbsp;'
+		title : '&#160;'
 	});
 
 	// finally render the panel to the body
@@ -242,7 +242,7 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 	// finish the pin element after the FM has rendered (before there are noe html contents to be manipulated
 	jQuery(pinTab.tabEl)
 		.addClass('GENTICS_floatingmenu_pin')
-		.html('&nbsp;')
+		.html('&#160;')
 		.mousedown(function (e) {
 			that.togglePin();
 			e.stopPropagation();
@@ -537,7 +537,7 @@ GENTICS.Aloha.FloatingMenu.setScope = function(scope) {
 
 	if (typeof scopeObject == 'undefined') {
 		// TODO log an error
-	} else {
+	} else if (this.currentScope != scope) {
 		this.currentScope = scope;
 
 		// first hide all buttons
@@ -796,7 +796,7 @@ GENTICS.Aloha.FloatingMenu.Group.prototype.getExtComponent = function () {
 			items.push(button.button.getExtConfigProperties());
 
 			// count the number of buttons (large buttons count as 2)
-			buttonCount += button.button.size == 'large' ? 2 : 1;
+			buttonCount += button.button.size == 'small' ? 1 : 2;
 		});
 
 		this.extButtonGroup = new Ext.ButtonGroup({

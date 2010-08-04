@@ -327,7 +327,7 @@ GENTICS.Aloha.TablePlugin.createTable = function(cols, rows) {
 		table.appendChild(tbody);
 
 		// insert at current cursor position
-		this.insertAtCursorPos(table);
+		GENTICS.Utils.Dom.insertIntoDOM(jQuery(table), GENTICS.Aloha.Selection.getRangeObject(), jQuery(GENTICS.Aloha.activeEditable.obj));
 		
 		// if the table is inserted
 		var tableReloadedFromDOM = document.getElementById(tableId);
@@ -354,41 +354,6 @@ GENTICS.Aloha.TablePlugin.createTable = function(cols, rows) {
 	// no active editable => error
 	}else{
 		this.error('There is no active Editable where the table can be inserted!');
-	}
-};
-
-/**
- * TODO: this should not be done like this!
- * Inserts the given element at the cursor position of the current active Editable
- * 
- * @param elementThe element which should be inserted (a DOM-object)
- */
-GENTICS.Aloha.TablePlugin.insertAtCursorPos = function(element) {
-	// check if the element-parameter is set
-	if (typeof element != 'undefined') {
-		// check if there is an active editable
-		if (typeof GENTICS.Aloha.activeEditable.obj != 'undefined'){
-			var range, html;
-			// insertion for IE
-			if (jQuery.browser.msie) {
-				range = GENTICS.Aloha.Editable.range;
-				html = (element.nodeType == 3) ? element.data : element.outerHTML;
-				range.pasteHTML(html);
-				
-			// insertion for other browser
-			} else if (window.getSelection && window.getSelection().getRangeAt){
-				range = GENTICS.Aloha.Editable.range;
-				range.insertNode(element);
-				
-			// insertion didn't work trigger ERROR to user!
-			} else {
-				this.error("Table couldn't be inserted");
-			}
-		}else{
-			this.warn('No active Editable => do nothing.');
-		}
-	}else{
-		this.error('This method didn\'t get an element to insert!');
 	}
 };
 
@@ -671,7 +636,7 @@ GENTICS.Aloha.Table.prototype.activate = function() {
 	
 	// alter the table attributes
 	this.obj.addClass(this.get('className'));
-	this.obj.attr('contentEditable', 'false');
+	this.obj.attr('contenteditable', 'false');
 
 	// set an id to the table if not already set
 	if (this.obj.attr('id') == '') {
@@ -705,7 +670,7 @@ GENTICS.Aloha.Table.prototype.activate = function() {
 		
 		// if a mousedown is done on the table, just focus the first cell of the table
 		setTimeout(function() {
-			var firstCell = that.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contentEditable=true]').get(0);
+			var firstCell = that.obj.find('tr:nth-child(2) td:nth-child(2)').children('div[contenteditable=true]').get(0);
 			GENTICS.Aloha.TableHelper.unselectCells();
 			jQuery(firstCell).get(0).focus();
 		}, 5);
@@ -719,7 +684,7 @@ GENTICS.Aloha.Table.prototype.activate = function() {
 	// ### create a wrapper for the table (@see HINT below)
 	// wrapping div for the table to suppress the display of the resize-controls of
 	// the editable divs within the cells
-	var tableWrapper = jQuery('<div class="' + this.get('classTableWrapper') + '" contentEditable="false"></div>');
+	var tableWrapper = jQuery('<div class="' + this.get('classTableWrapper') + '" contenteditable="false"></div>');
 	
 	// wrap the tableWrapper around the table
 	this.obj.wrap(tableWrapper);
@@ -1855,7 +1820,7 @@ GENTICS.Aloha.Table.Cell.prototype.editableBlur = function(jqEvent){
 GENTICS.Aloha.Table.Cell.prototype.activate = function() {
 	// create the editable wrapper for the cells
 	var wrapper = jQuery('<div>');
-	wrapper.attr('contentEditable', 'true');
+	wrapper.attr('contenteditable', 'true');
 	wrapper.addClass('GENTICS_Table_Cell_editable');
 
 	var that = this;
@@ -1881,7 +1846,13 @@ GENTICS.Aloha.Table.Cell.prototype.activate = function() {
 	wrapper.bind('blur',      function(jqEvent) { that.editableBlur(jqEvent);      });
 	wrapper.bind('keyup',     function(jqEvent) { that.editableKeyUp(jqEvent);     });
 	wrapper.bind('keydown',   function(jqEvent) { that.editableKeyDown(jqEvent);   });
-	
+
+	// we will treat the wrapper just like an editable
+	wrapper.GENTICS_contentEditableSelectionChange(function (event) {
+		GENTICS.Aloha.Selection.onChange(wrapper, event);
+		return wrapper;
+	});
+
 	this.obj.bind('mousedown', function(jqEvent) {
 		setTimeout(function() {
 			that.wrapper.trigger('focus');
@@ -1966,7 +1937,7 @@ GENTICS.Aloha.Table.Cell.prototype.selectAll = function(editableNode) {
 			// workaround for bug # 42885
 			if (window.opera
 					&& e.innerHTML.substring(e.innerHTML.length - 4) == '<BR>') {
-				e.innerHTML = e.innerHTML + '&nbsp;';
+				e.innerHTML = e.innerHTML + '&#160;';
 			}
 
 			var r = document.createRange();
@@ -2102,6 +2073,10 @@ GENTICS.Aloha.Table.Cell.prototype.editableKeyDown = function(jqEvent) {
  * @return void
  */
 GENTICS.Aloha.Table.Cell.prototype.checkForEmptyEvent = function(jqEvent) {
+	if (jQuery(this.wrapper).children().length > 0) {
+		return;
+	}
+
 	// get the editable contents
 	var text = this.wrapper.text();
 	

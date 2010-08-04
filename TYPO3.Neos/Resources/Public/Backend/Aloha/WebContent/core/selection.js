@@ -23,7 +23,7 @@ jQuery.fn.textNodes = function(excludeBreaks, includeEmptyTextNodes) {
             }
         }
     })(this[0]);
-    return $(ret);
+    return jQuery(ret);
 };
 
 /**
@@ -168,7 +168,8 @@ GENTICS.Aloha.Selection.prototype.updateSelection = function(event) {
 	// find the CAC (Common Ancestor Container) and update the selection Tree
 	rangeObject.update();
 
-	// throw a new event when the editable has been created
+	// throw the event that the selection has changed. Plugins now have the
+	// chance to react on the changed selection
 	GENTICS.Aloha.EventRegistry.trigger(
 			new GENTICS.Aloha.Event(
 					'selectionChanged',
@@ -1013,7 +1014,7 @@ GENTICS.Aloha.Selection.prototype.wrapMarkupAroundSelectionTree = function(selec
 		}
 
 		// skip empty text nodes
-		if (el.domobj && el.domobj.nodeType == 3 && jQuery.trim(el.domobj.data).length == 0) {
+		if (el.domobj && el.domobj.nodeType == 3 && jQuery.trim(jQuery(el.domobj).outerHTML()).length == 0) {
 			continue;
 		}
 
