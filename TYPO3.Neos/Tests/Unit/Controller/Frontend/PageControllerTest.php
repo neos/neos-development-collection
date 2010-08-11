@@ -39,7 +39,7 @@ class PageControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Service\PageController'), array('dummy'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Frontend\PageController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('view', $mockView);
 
@@ -65,7 +65,7 @@ class PageControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Service\PageController'), array('redirect'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Frontend\PageController'), array('redirect'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->injectPageRepository($mockPageRepository);
 		$controller->_set('view', $mockView);
@@ -85,7 +85,7 @@ class PageControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Service\PageController'), array('redirect'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Frontend\PageController'), array('redirect'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->injectPageRepository($mockPageRepository);
 		$controller->_set('view', $mockView);
