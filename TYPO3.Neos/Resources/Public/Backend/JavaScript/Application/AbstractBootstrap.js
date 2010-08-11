@@ -58,7 +58,7 @@ F3.TYPO3.Application.AbstractBootstrap = Ext.extend(Ext.util.Observable, {
 	 */
 	handleButtonPress: function(path, callback, scope) {
 		var joinedPath = path.join('-');
-		F3.TYPO3.Application.MenuRegistry.on('F3.TYPO3.UserInterface.RootlineMenu.buttonPressed', function(button) {
+		F3.TYPO3.Application.MenuRegistry.on('F3.TYPO3.UserInterface.BreadcrumbMenu.buttonPressed', function(button) {
 			if (button.getFullPath() === joinedPath) {
 				callback.call(scope, button);
 			}
@@ -74,7 +74,7 @@ F3.TYPO3.Application.AbstractBootstrap = Ext.extend(Ext.util.Observable, {
 	 */
 	handleButtonUnpress: function(path, callback, scope) {
 		var joinedPath = path.join('-');
-		F3.TYPO3.Application.MenuRegistry.on('F3.TYPO3.UserInterface.RootlineMenu.buttonUnpressed', function(button) {
+		F3.TYPO3.Application.MenuRegistry.on('F3.TYPO3.UserInterface.BreadcrumbMenu.buttonUnpressed', function(button) {
 			if (button.getFullPath() === joinedPath) {
 				callback.call(scope, button);
 			}

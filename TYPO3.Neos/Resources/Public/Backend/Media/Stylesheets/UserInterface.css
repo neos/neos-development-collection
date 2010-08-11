@@ -76,47 +76,47 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top{
 	background: #666666;
 }
-.F3-TYPO3-UserInterface-RootlineMenu-disabled .x-btn-text {
+.F3-TYPO3-UserInterface-BreadcrumbMenu-disabled .x-btn-text {
 	color: #999;
 }
-.F3-TYPO3-UserInterface-RootlineMenu {
+.F3-TYPO3-UserInterface-BreadcrumbMenu {
 	background: #3d3d3d url('../Images/UserInterface/content-filter-bg.gif') left 50% repeat-x;
 }
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-tl,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-tr,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-tc,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-ml,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-mr,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-mc,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-bl,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-br,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-bc {
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tl,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tr,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tc,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-ml,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-mr,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-mc,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-bl,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-br,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-bc {
 	background-image: none;
 }
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-tl,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-tr,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-tc,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-ml,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-mr,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-mc,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-bl,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-br,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-bc {
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tl,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tr,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tc,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-ml,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-mr,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-mc,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-bl,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-br,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-bc {
 	background-image: url('../images/btn.gif');
 }
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-text {
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-text {
 	color: #ffffff;
 }
-.F3-TYPO3-UserInterface-RootlineMenu .xtb-text {
+.F3-TYPO3-UserInterface-BreadcrumbMenu .xtb-text {
 	color: #ffffff;
 	font-size: 200%;
 }
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-text {
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-text {
 	color: #ffffff;
 	text-indent: -999px;
 }
-.F3-TYPO3-UserInterface-RootlineMenu-over .x-btn-text,
-.F3-TYPO3-UserInterface-RootlineMenu .x-btn-pressed .x-btn-text {
+.F3-TYPO3-UserInterface-BreadcrumbMenu-over .x-btn-text,
+.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-text {
 	text-indent: 0px;
 }
 

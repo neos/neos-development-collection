@@ -37,6 +37,30 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $authenticationManager;
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
+	 * Select special views according to format
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function initializeAction() {
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+				$this->defaultViewObjectName = 'F3\ExtJS\ExtDirect\View';
+				$this->errorMethodName = 'extErrorAction';
+				break;
+			case 'json' :
+				$this->defaultViewObjectName = 'F3\FLOW3\MVC\View\JsonView';
+				break;
+		}
+	}
+
+	/**
 	 * Default action, displays the login screen
 	 *
 	 * @return void
@@ -66,37 +90,37 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
 		}
 
+		if ($authenticated) {
+			$this->redirect('index', 'Backend\Backend');
+		} else {
+			$this->flashMessageContainer->add('Wrong username or password.');
+			$this->redirect('index');
+		}
+	}
+
+
+	/**
+	 * Shows some information about the currently logged in account
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @extdirect
+	 */
+	public function showAction() {
+		$party = $this->securityContext->getParty();
+
 		switch ($this->request->getFormat()) {
+			case 'extdirect' :
 			case 'json' :
-				if ($authenticated) {
-					$response = array(
-						'success' => TRUE,
-						'redirectUri' => $this->uriBuilder
-							->reset()
-							->setCreateAbsoluteUri(TRUE)
-							->uriFor('index', array(), 'Backend\Backend', 'TYPO3')
-					);
-				} else {
-					$response = array(
-						'success' => FALSE,
-						'errors' => array(
-							'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'Wrong username or password',
-							'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'Wrong username or password'
-						),
-						'redirectUri' => $this->uriBuilder
-							->reset()
-							->setCreateAbsoluteUri(TRUE)
-							->uriFor('index')
-					);
-				}
-				return json_encode($response);
+				$this->view->assign('value',
+					array(
+						'data' => $party,
+						'success' => TRUE
+					)
+				);
+				break;
 			default :
-				if ($authenticated) {
-					$this->redirect('index', 'Backend\Backend');
-				} else {
-					$this->flashMessageContainer->add('Wrong username or password.');
-					$this->redirect('index');
-				}
+				$this->view->assign('party', $party);
 		}
 	}
 
@@ -105,20 +129,36 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
 	 */
 	public function logoutAction() {
 		$this->authenticationManager->logout();
 
 		switch ($this->request->getFormat()) {
+			case 'extdirect' :
 			case 'json' :
-				$response = array(
-					'success' => TRUE
+				$this->view->assign('value',
+					array(
+						'success' => TRUE
+					)
 				);
-				return json_encode($response);
+				break;
 			default :
 				$this->flashMessageContainer->add('Successfully logged out.');
 				$this->redirect('index');
 		}
+	}
+
+	/**
+	 * A preliminary error action for handling validation errors
+	 * by assigning them to the ExtDirect View that takes care of
+	 * converting them.
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function extErrorAction() {
+		$this->view->assignErrors($this->argumentsMappingResults->getErrors());
 	}
 
 }

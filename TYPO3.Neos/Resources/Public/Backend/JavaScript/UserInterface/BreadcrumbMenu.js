@@ -1,14 +1,14 @@
 Ext.ns("F3.TYPO3.UserInterface");
 
 /**
- * @class F3.TYPO3.UserInterface.RootlineMenu
+ * @class F3.TYPO3.UserInterface.BreadcrumbMenu
  * @namespace F3.TYPO3.UserInterface
  * @extends Ext.Toolbar
  */
-F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
+F3.TYPO3.UserInterface.BreadcrumbMenu = Ext.extend(Ext.Toolbar, {
 	/**
-	 * @event F3.TYPO3.UserInterface.RootlineMenu.afterInit
-	 * @param {F3.TYPO3.UserInterface.RootlineMenu} a reference to the submenu.
+	 * @event F3.TYPO3.UserInterface.BreadcrumbMenu.afterInit
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenu} a reference to the submenu.
 	 * Event triggered after initialization of the menu. Should be used
 	 * to add elements to the menu.
 	 */
@@ -21,12 +21,12 @@ F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
 	
 	initComponent: function() {
 		var config = {
-			cls: 'F3-TYPO3-UserInterface-RootlineMenu',
+			cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu',
 			items: this._getMenuItems()
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.UserInterface.RootlineMenu.superclass.initComponent.call(this);
-		F3.TYPO3.Application.fireEvent('F3.TYPO3.UserInterface.RootlineMenu.afterInit', this);
+		F3.TYPO3.UserInterface.BreadcrumbMenu.superclass.initComponent.call(this);
+		F3.TYPO3.Application.fireEvent('F3.TYPO3.UserInterface.BreadcrumbMenu.afterInit', this);
 
 		this.on('afterrender', function(menu) {
 			menu.items.each(function(menuItem, i) {
@@ -57,7 +57,7 @@ F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
 			var itemPath;
 			if (Ext.isObject(menuItem)) {
 				itemPath = path.concat([menuItem.itemId]);
-				menuItem.xtype = 'F3.TYPO3.UserInterface.RootlineMenuButton';
+				menuItem.xtype = 'F3.TYPO3.UserInterface.BreadcrumbMenuButton';
 			} else if (menuItem === ' ') {
 				itemPath = path.concat(['spacer']);
 				menuItem = {
@@ -73,7 +73,7 @@ F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
 				menuItem.hidden = true;
 			}
 			menuItem.menuPath = itemPath.join('-');
-			if (menuItem.xtype === 'F3.TYPO3.UserInterface.RootlineMenuButton') {
+			if (menuItem.xtype === 'F3.TYPO3.UserInterface.BreadcrumbMenuButton') {
 				menuItem.toggleGroup = [this.menuId, this.itemId].concat(path).join('-');
 				if (menuItem.children && menuItem.children.length > 0) {
 					menuItem.leaf = false;
@@ -99,4 +99,4 @@ F3.TYPO3.UserInterface.RootlineMenu = Ext.extend(Ext.Toolbar, {
 		}, this);
 	}
 });
-Ext.reg('F3.TYPO3.UserInterface.RootlineMenu', F3.TYPO3.UserInterface.RootlineMenu);
+Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu', F3.TYPO3.UserInterface.BreadcrumbMenu);

@@ -1,31 +1,31 @@
 Ext.ns("F3.TYPO3.UserInterface");
 
 /**
- * @class F3.TYPO3.UserInterface.RootlineMenuButton
+ * @class F3.TYPO3.UserInterface.BreadcrumbMenuButton
  * @namespace F3.TYPO3.UserInterface
  * @extends Ext.Button
  *
- * Button of the rootline menu
+ * Button of the breadcrumb menu
  */
-F3.TYPO3.UserInterface.RootlineMenuButton = Ext.extend(Ext.Button, {
+F3.TYPO3.UserInterface.BreadcrumbMenuButton = Ext.extend(Ext.Button, {
     enableToggle: true,
 
     initComponent: function() {
 	var config = {
 	    scale: 'large',
-	    overCls: 'F3-TYPO3-UserInterface-RootlineMenu-over'
+	    overCls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-over'
 	};
 	Ext.apply(this, config);
-	F3.TYPO3.UserInterface.RootlineMenuButton.superclass.initComponent.call(this);
+	F3.TYPO3.UserInterface.BreadcrumbMenuButton.superclass.initComponent.call(this);
 
 	this.enableBubble([
-	    'F3.TYPO3.UserInterface.RootlineMenu.buttonPressed',
-	    'F3.TYPO3.UserInterface.RootlineMenu.buttonUnpressed'
+	    'F3.TYPO3.UserInterface.BreadcrumbMenu.buttonPressed',
+	    'F3.TYPO3.UserInterface.BreadcrumbMenu.buttonUnpressed'
 	]);
 
 	this.on(
 	    'toggle',
-	    this.onToogleAction,
+	    this.onToggleAction,
 	    this
 	    );
 
@@ -37,12 +37,12 @@ F3.TYPO3.UserInterface.RootlineMenuButton = Ext.extend(Ext.Button, {
     },
 
     /**
-     * @method onToogleAction
+     * @method onToggleAction
      * @param {object} button
      * @param {bool} pressed
      * @return void
      */
-    onToogleAction: function(button, pressed) {
+    onToggleAction: function(button, pressed) {
 	if (pressed) {
 	    this._onButtonPress(button);
 	} else {
@@ -81,7 +81,7 @@ F3.TYPO3.UserInterface.RootlineMenuButton = Ext.extend(Ext.Button, {
 		}
 	    }
 	}, this);
-	button.fireEvent('F3.TYPO3.UserInterface.RootlineMenu.buttonPressed', this);
+	button.fireEvent('F3.TYPO3.UserInterface.BreadcrumbMenu.buttonPressed', this);
     },
 
     _onButtonUnpress: function(button) {
@@ -115,7 +115,7 @@ F3.TYPO3.UserInterface.RootlineMenuButton = Ext.extend(Ext.Button, {
 		}
 	    }
 	}, this);
-	button.fireEvent('F3.TYPO3.UserInterface.RootlineMenu.buttonUnpressed', this);
+	button.fireEvent('F3.TYPO3.UserInterface.BreadcrumbMenu.buttonUnpressed', this);
     },
 
     getFullPath: function() {
@@ -132,4 +132,4 @@ F3.TYPO3.UserInterface.RootlineMenuButton = Ext.extend(Ext.Button, {
     }
 
 });
-Ext.reg('F3.TYPO3.UserInterface.RootlineMenuButton', F3.TYPO3.UserInterface.RootlineMenuButton);
+Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenuButton', F3.TYPO3.UserInterface.BreadcrumbMenuButton);

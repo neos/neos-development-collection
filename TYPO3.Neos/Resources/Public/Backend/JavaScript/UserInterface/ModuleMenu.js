@@ -18,9 +18,9 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 				align: 'stretch'
 			},
 			items: [{
-				xtype: 'F3.TYPO3.UserInterface.RootlineMenu',
+				xtype: 'F3.TYPO3.UserInterface.BreadcrumbMenu',
 				itemId: this.itemId,
-				ref: 'rootlineMenu',
+				ref: 'breadcrumbMenu',
 				menuId: this.menuId,
 				menuConfig: this.menuConfig,
 				height: 50,
@@ -90,7 +90,7 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 		}
 
 		// Remove module dialog if any button is pressed
-		F3.TYPO3.Application.MenuRegistry.on('F3.TYPO3.UserInterface.RootlineMenu.buttonPressed', function(button) {		
+		F3.TYPO3.Application.MenuRegistry.on('F3.TYPO3.UserInterface.BreadcrumbMenu.buttonPressed', function(button) {		
 			if (!dialogRemoved) {
 				this.removeModuleDialog();
 			}

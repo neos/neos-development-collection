@@ -13,7 +13,7 @@ F3.TYPO3.Login.Bootstrap = Ext.apply(new F3.TYPO3.Application.AbstractBootstrap,
 	 */
 	initialize: function() {
 		F3.TYPO3.Application.on('F3.TYPO3.Application.afterBootstrap', function() {
-			F3.TYPO3_Controller_Service_LoginController.show(function(result) {
+			F3.TYPO3_Controller_Backend_LoginController.show(function(result) {
 				F3.TYPO3.Application.fireEvent('F3.TYPO3.Login.updated', result.data);
 			});
 		}, this);

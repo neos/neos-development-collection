@@ -23,7 +23,7 @@ namespace F3\TYPO3\Controller\Service;
  *                                                                        */
 
 /**
- * The TYPO3 Page service controller
+ * The TYPO3 Block service controller
  *
  * @version $Id: PageController.php 4676 2010-06-30 09:03:43Z networkteam_hlubek $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
