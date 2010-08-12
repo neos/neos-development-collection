@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Controller\Frontend;
+namespace F3\TYPO3\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,12 +23,12 @@ namespace F3\TYPO3\Controller\Frontend;
  *                                                                        */
 
 /**
- * TYPO3's frontend page controller
+ * A generic controller for displaying and managing content objects
  *
- * @version $Id$
+ * @version $Id:  $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
+class ContentController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @var string
@@ -36,31 +36,31 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $defaultViewObjectName = 'F3\Fluid\View\TemplateView';
 
 	/**
+	 * @var \F3\TYPO3\Domain\Repository\Content\ContentRepository
+	 */
+	protected $contentRepository;
+
+	/**
 	 * @var \F3\TYPO3\Domain\Service\ContentContext
 	 */
 	protected $contentContext;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Repository\Content\PageRepository
+	 * @param \F3\TYPO3\Domain\Repository\Content\ContentRepository $contentRepository
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected $pageRepository;
+	public function injectContentRepository(\F3\TYPO3\Domain\Repository\Content\ContentRepository $contentRepository) {
+		$this->contentRepository = $contentRepository;
+	}
 
 	/**
-	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext 
+	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectContentContext(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$this->contentContext = $contentContext;
-	}
-
-	/**
-	 * @param \F3\TYPO3\Domain\Repository\Content\PageRepository $pageRepository
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectPageRepository(\F3\TYPO3\Domain\Repository\Content\PageRepository $pageRepository) {
-		$this->pageRepository = $pageRepository;
 	}
 
 	/**
@@ -82,30 +82,30 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Shows the page specified in the "page" argument.
+	 * Shows the specified content
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Content\Page $page The page to show
-	 * @return string View output for the specified page
+	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content The content to show
+	 * @param string $type The type as configured in the TypoScript for rendering the content
+	 * @return string View output for the specified content
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function showAction(\F3\TYPO3\Domain\Model\Content\Page $page) {
+	public function showAction(\F3\TYPO3\Domain\Model\Content\ContentInterface $content, $type = 'default') {
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :
 			case 'json' :
 				$this->view->assign('value',
 					array(
-						'data' => $page,
+						'data' => $content,
 						'success' => TRUE,
 					)
 				);
 			break;
 			case 'html' :
-				$type = 'default';
 				$typoScriptService = $this->contentContext->getTypoScriptService();
 				$typoScriptObjectTree = $typoScriptService->getMergedTypoScriptObjectTree($this->contentContext->getCurrentNodePath());
 				if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
-					throw new \F3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current page context.', 1255513200);
+					throw new \F3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current position in the content tree.', 1255513200);
 				}
 
 				foreach ($typoScriptObjectTree as $firstLevelTypoScriptObject) {
@@ -129,37 +129,15 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Shows the page specified in the "page" argument.
+	 * Update content
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Content\Page $page The page to show
-	 * @param string $type The type for identifying the TypoScript page object
-	 * @return string View output for the specified page
+	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content The cloned, updated content
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function show2Action(\F3\TYPO3\Domain\Model\Content\Page $page) {
-		switch ($this->request->getFormat()) {
-			case 'extdirect' :
-			case 'json' :
-				$this->view->assign('value',
-					array(
-						'data' => $page,
-						'success' => TRUE,
-					)
-				);
-			break;
-		}
-	}
-
-	/**
-	 * Update a page
-	 *
-	 * @param \F3\TYPO3\Domain\Model\Content\Page $page
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @extdirect
-	 */
-	public function updateAction(\F3\TYPO3\Domain\Model\Content\Page $page) {
-		$this->pageRepository->update($page);
+	public function updateAction(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
+		$this->contentRepository->update($content);
 
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :
@@ -170,38 +148,6 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 					)
 				);
 				break;
-			default :
-				$this->redirect('show', NULL, NULL, array('page' => $page));
-		}
-	}
-
-	/**
-	 * Get information for editing a page
-	 *
-	 * @todo use some kind of TCA like configuration of page properties and form fields and convert that to Ext JS
-	 *
-	 * @param \F3\TYPO3\Domain\Model\Content\Page $page
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @extdirect
-	 */
-	public function editAction(\F3\TYPO3\Domain\Model\Content\Page $page) {
-		switch ($this->request->getFormat()) {
-			case 'extdirect' :
-				$this->view->assign('value', array(
-					'title' => array(
-						'xtype' => 'textfield',
-						'allowBlank' => FALSE,
-						'fieldLabel' => 'Title'
-					),
-					'hidden' => array(
-						'xtype' => 'checkbox',
-						'fieldLabel' => 'Visibility',
-						'boxLabel' => 'hidden'
-					)
-				));
-				break;
-			default:
-				$this->view->assign('page', $page);
 		}
 	}
 
@@ -229,5 +175,6 @@ class PageController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$view->setControllerContext($this->controllerContext);
 		return $view;
 	}
+
 }
 ?>

@@ -23,22 +23,18 @@ namespace F3\TYPO3\Routing;
  *                                                                        */
 
 /**
- * A route part handler for Pages
+ * A route part handler for generic content
  *
- * This route part handler also accommodates the (Frontend) Content Context. Wherever
- * the current context is needed (e.g. in the Page Controller) this class is the ultimate
- * authority to be asked.
- *
- * @version $Id$
+ * @version $Id: $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+class ContentRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	const MATCHRESULT_FOUND = TRUE;
 	const MATCHRESULT_NOSITE = -1;
 	const MATCHRESULT_NOSUCHNODE = -2;
-	const MATCHRESULT_NOSUCHPAGE = -3;
+	const MATCHRESULT_NOSUCHCONTENT = -3;
 
 	/**
 	 * @inject
@@ -65,7 +61,7 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	}
 
 	/**
-	 * While matching, resolves the requested page
+	 * While matching, resolves the requested content
 	 *
 	 * @param string $value the complete path
 	 * @return mixed One of the MATCHRESULT_* constants
@@ -73,7 +69,6 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 */
 	protected function matchValue($value) {
 		$contentContext = $this->getContentContext();
-
 		$site = $contentContext->getCurrentSite();
 		if ($site === NULL) {
 			return self::MATCHRESULT_NOSITE;
@@ -83,13 +78,13 @@ class PageRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 		if ($node === NULL) {
 			return self::MATCHRESULT_NOSUCHNODE;
 		}
-		$page = $node->getContent($contentContext);
-		if (!$page instanceof \F3\TYPO3\Domain\Model\Content\Page) {
-			return self::MATCHRESULT_NOSUCHPAGE;
+		$content = $node->getContent($contentContext);
+		if (!$content instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface) {
+			return self::MATCHRESULT_NOSUCHCONTENT;
 		}
-		$contentContext->setCurrentPage($page);
+		$contentContext->setCurrentNodeContent($content);
 		$contentContext->setCurrentNodePath('/' . $value);
-		$this->value = array('__identity' => $page->FLOW3_Persistence_Entity_UUID);
+		$this->value = array('__identity' => $content->FLOW3_Persistence_Entity_UUID);
 		return TRUE;
 	}
 

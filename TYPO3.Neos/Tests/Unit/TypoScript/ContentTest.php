@@ -136,7 +136,7 @@ class ContentTest extends \F3\Testing\BaseTestCase {
      	$mockTextContent = $this->getMock('F3\TYPO3\Domain\Model\Content\Text', array(), array(), '', FALSE);
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext');
-		$mockContentContext->expects($this->once())->method('getCurrentPage')->will($this->returnValue($mockPageContent));
+		$mockContentContext->expects($this->once())->method('getCurrentNodeContent')->will($this->returnValue($mockPageContent));
 
 		$mockRenderingContext = $this->getMock('F3\TypoScript\RenderingContext');
 		$mockRenderingContext->expects($this->any())->method('getContentContext')->will($this->returnValue($mockContentContext));

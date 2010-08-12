@@ -94,7 +94,7 @@ class ContentContext {
 	/**
 	 * @var \F3\TYPO3\Domain\Model\Content\Page
 	 */
-	protected $currentPage;
+	protected $currentNodeContent;
 
 	/**
 	 * @var string
@@ -231,17 +231,18 @@ class ContentContext {
 	}
 
 	/**
-	 * Sets the current page.
+	 * Sets the current node content object.
+	 *
 	 * This method is typically called by a route part handler or by some other
 	 * part of TYPO3 which wants to mock the "current page" information.
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Content\Page $page
+	 * @return \F3\TYPO3\Domain\Model\Content\ContentInterface $nodeContent
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setCurrentPage(\F3\TYPO3\Domain\Model\Content\Page $page) {
-		$this->currentPage = $page;
+	public function setCurrentNodeContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $nodeContent) {
+		$this->currentNodeContent = $nodeContent;
 	}
 
 	/**
@@ -251,8 +252,8 @@ class ContentContext {
 	 * @author Robert Lemke <robert@tpyo3.org>
 	 * @api
 	 */
-	public function getCurrentPage() {
-		return $this->currentPage;
+	public function getCurrentNodeContent() {
+		return $this->currentNodeContent;
 	}
 
 	/**

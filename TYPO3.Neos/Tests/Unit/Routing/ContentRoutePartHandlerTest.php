@@ -23,12 +23,12 @@ namespace F3\TYPO3\Routing;
  *                                                                        */
 
 /**
- * Testcase for the Page Routepart Handler
+ * Testcase for the Content Routepart Handler
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
+class ContentRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -40,7 +40,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
 
-		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\PageRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\ContentRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$routePartHandler->_set('objectManager', $mockObjectManager);
 
 		$this->assertSame($mockContentContext, $routePartHandler->getContentContext());
@@ -54,11 +54,11 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
 
-		$mockPage = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array(), array(), '', FALSE);
-		$mockPage->FLOW3_Persistence_Entity_UUID = '4D666FAE-0414-718D-050D6DAEAB872A38';
+		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array(), '', FALSE);
+		$mockContent->FLOW3_Persistence_Entity_UUID = '4D666FAE-0414-718D-050D6DAEAB872A38';
 
 		$mockNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array('getContent'), array(), '', FALSE);
-		$mockNode->expects($this->once())->method('getContent')->with($mockContentContext)->will($this->returnValue($mockPage));
+		$mockNode->expects($this->once())->method('getContent')->with($mockContentContext)->will($this->returnValue($mockContent));
 
 		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array('getNode'), array(), '', FALSE);
 		$mockNodeService->expects($this->once())->method('getNode')->with('/foo/bar/baz')->will($this->returnValue($mockNode));
@@ -66,12 +66,12 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockContentContext->expects($this->any())->method('getNodeService')->will($this->returnValue($mockNodeService));
 		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($mockSite));
 		$mockContentContext->expects($this->once())->method('setCurrentNodePath')->with('/foo/bar/baz');
-		$mockContentContext->expects($this->once())->method('setCurrentPage')->with($mockPage);
+		$mockContentContext->expects($this->once())->method('setCurrentNodeContent')->with($mockContent);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
 
-		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\PageRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\ContentRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$routePartHandler->_set('objectManager', $mockObjectManager);
 
 		$result = $routePartHandler->_call('matchValue', 'foo/bar/baz');
@@ -91,12 +91,12 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
 
-		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\PageRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\ContentRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$routePartHandler->_set('objectManager', $mockObjectManager);
 
 		$result = $routePartHandler->_call('matchValue', '');
 
-		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSITE, $result);
+		$this->assertEquals(\F3\TYPO3\Routing\ContentRoutePartHandler::MATCHRESULT_NOSITE, $result);
 	}
 
 	/**
@@ -116,12 +116,12 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
 
-		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\PageRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\ContentRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$routePartHandler->_set('objectManager', $mockObjectManager);
 
 		$result = $routePartHandler->_call('matchValue', '');
 
-		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHNODE, $result);
+		$this->assertEquals(\F3\TYPO3\Routing\ContentRoutePartHandler::MATCHRESULT_NOSUCHNODE, $result);
 	}
 
 	/**
@@ -141,19 +141,19 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
 
-		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\PageRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\ContentRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$routePartHandler->_set('objectManager', $mockObjectManager);
 
 		$result = $routePartHandler->_call('matchValue', '');
 
-		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHNODE, $result);
+		$this->assertEquals(\F3\TYPO3\Routing\ContentRoutePartHandler::MATCHRESULT_NOSUCHNODE, $result);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matchValueReturnsErrorValueIfPageSpecifiedByMatchDoesNotExist() {
+	public function matchValueReturnsErrorValueIfContentSpecifiedByMatchDoesNotExist() {
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
 
@@ -169,12 +169,12 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
 
-		$routePartHandler = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Routing\PageRoutePartHandler'), array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Routing\ContentRoutePartHandler'), array('dummy'), array(), '', FALSE);
 		$routePartHandler->_set('objectManager', $mockObjectManager);
 
 		$result = $routePartHandler->_call('matchValue', 'foo/bar');
 
-		$this->assertEquals(\F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHPAGE, $result);
+		$this->assertEquals(\F3\TYPO3\Routing\ContentRoutePartHandler::MATCHRESULT_NOSUCHCONTENT, $result);
 	}
 
 	/**
@@ -195,7 +195,7 @@ class PageRoutePartHandlerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findValueToMatchReturnsTheGivenRequestPathUntilTheFirstDot($requestPath, $valueToMatch) {
-		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\PageRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\ContentRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$this->assertSame($valueToMatch, $routePartHandler->_call('findValueToMatch', $requestPath));
 	}
 

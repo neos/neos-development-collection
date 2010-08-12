@@ -61,7 +61,7 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	 * Callback fired if content is changed
 	 */
 	_contentChanged: function(data) {
-		F3.TYPO3_Controller_Service_BlockController.update(data);
+		F3.TYPO3_Controller_ContentController.update(data);
 	},
 
 	/**

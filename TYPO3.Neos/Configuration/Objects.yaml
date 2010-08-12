@@ -1,10 +1,10 @@
 # $Id$
 
-F3\TYPO3\Controller\Frontend\PageController:
+F3\TYPO3\Controller\ContentController:
   properties:
     contentContext:
       object:
-        factoryObjectName: F3\TYPO3\Routing\PageRoutePartHandler
+        factoryObjectName: F3\TYPO3\Routing\ContentRoutePartHandler
         factoryMethodName: getContentContext
 
 F3\TYPO3\TypoScript\Page:

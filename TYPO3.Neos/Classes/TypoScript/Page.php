@@ -226,7 +226,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		$this->model = $this->renderingContext->getContentContext()->getCurrentPage();
+		$this->model = $this->renderingContext->getContentContext()->getCurrentNodeContent();
 		$this->head->setModel($this->model);
 		return parent::render();
 	}

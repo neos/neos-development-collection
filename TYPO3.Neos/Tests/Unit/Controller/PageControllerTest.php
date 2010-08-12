@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Controller\Frontend;
+namespace F3\TYPO3\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,56 +23,56 @@ namespace F3\TYPO3\Controller\Frontend;
  *                                                                        */
 
 /**
- * Testcase for the Page controller
+ * Testcase for the Content controller
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageControllerTest extends \F3\Testing\BaseTestCase {
+class ContentControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function showActionAssignsPageToDataValueForExtDirectFormat() {
-		$mockPage = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array(), array(), '', FALSE);
+	public function showActionAssignsContentToDataValueForExtDirectFormat() {
+		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Frontend\PageController'), array('dummy'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\ContentController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('view', $mockView);
 
 		$mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue('extdirect'));
 
 		$expectedValue = array(
-			'data' => $mockPage,
+			'data' => $mockContent,
 			'success' => true
 		);
 
 		$mockView->expects($this->atLeastOnce())->method('assign')->with('value', $expectedValue);
 
-		$controller->showAction($mockPage);
+		$controller->showAction($mockContent);
 	}
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function updateActionCallsUpdateOnPageRepository() {
-		$mockPage = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array(), array(), '', FALSE);
-		$mockPageRepository = $this->getMock('F3\TYPO3\Domain\Repository\Content\PageRepository', array(), array(), '', FALSE);
+	public function updateActionCallsUpdateOnContentRepository() {
+		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array(), '', FALSE);
+		$mockContentRepository = $this->getMock('F3\TYPO3\Domain\Repository\Content\ContentRepository', array(), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Frontend\PageController'), array('redirect'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\ContentController'), array('redirect'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
-		$controller->injectPageRepository($mockPageRepository);
+		$controller->injectContentRepository($mockContentRepository);
 		$controller->_set('view', $mockView);
 
-		$mockPageRepository->expects($this->atLeastOnce())->method('update')->with($mockPage);
+		$mockContentRepository->expects($this->atLeastOnce())->method('update')->with($mockContent);
 
-		$controller->updateAction($mockPage);
+		$controller->updateAction($mockContent);
 	}
 
 	/**
@@ -80,14 +80,14 @@ class PageControllerTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function updateActionSetsSuccessValueForExtDirectFormat() {
-		$mockPage = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array(), array(), '', FALSE);
-		$mockPageRepository = $this->getMock('F3\TYPO3\Domain\Repository\Content\PageRepository', array(), array(), '', FALSE);
+		$mockContent = $this->getMock('F3\TYPO3\Domain\Model\Content\ContentInterface', array(), array(), '', FALSE);
+		$mockContentRepository = $this->getMock('F3\TYPO3\Domain\Repository\Content\ContentRepository', array(), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\Frontend\PageController'), array('redirect'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\ContentController'), array('redirect'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
-		$controller->injectPageRepository($mockPageRepository);
+		$controller->injectContentRepository($mockContentRepository);
 		$controller->_set('view', $mockView);
 
 		$mockRequest->expects($this->any())->method('getFormat')->will($this->returnValue('extdirect'));
@@ -98,7 +98,7 @@ class PageControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockView->expects($this->atLeastOnce())->method('assign')->with('value', $expectedValue);
 
-		$controller->updateAction($mockPage);
+		$controller->updateAction($mockContent);
 	}
 }
 ?>

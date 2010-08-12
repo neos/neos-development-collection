@@ -23,13 +23,18 @@ namespace F3\TYPO3\Domain\Repository\Content;
  *                                                                        */
 
 /**
- * The Block Repository
+ * A generic Content Repository
  *
  * @version $Id: PageRepository.php 4657 2010-06-28 22:25:49Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class BlockRepository extends \F3\FLOW3\Persistence\Repository {
+class ContentRepository extends \F3\FLOW3\Persistence\Repository {
+
+	/**
+	 * @var string
+	 */
+	protected $objectType = 'F3\TYPO3\Domain\Model\Content\ContentInterface';
 
 }
 ?>

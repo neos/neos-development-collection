@@ -105,7 +105,7 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 	protected function initializeSections() {
     	$this->sections = array();
 
-		$currentPage = $this->renderingContext->getContentContext()->getCurrentPage();
+		$currentPage = $this->renderingContext->getContentContext()->getCurrentNodeContent();
 		if ($currentPage === NULL) {
 			return;
 		}

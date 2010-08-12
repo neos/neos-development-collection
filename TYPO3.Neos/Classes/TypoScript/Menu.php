@@ -203,7 +203,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 				 'label' => $currentNode->getContent($contentContext)->getTitle(),
 				 'nodePath' => $baseNodePath . $currentNode->getNodeName(),
 			);
-			if ($currentNode === $contentContext->getCurrentPage()->getContainingNode()) {
+			if ($currentNode === $contentContext->getCurrentNodeContent()->getContainingNode()) {
 				$item['state'][self::STATE_ACTIVE] = TRUE;
 			}
 
