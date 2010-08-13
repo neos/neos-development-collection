@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript\Processors;
 /**
  * Processor that overrides the current subject with the given value, if the value is not empty.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class OverrideProcessor implements \F3\TypoScript\ProcessorInterface {

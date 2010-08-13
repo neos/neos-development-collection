@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Model\Configuration;
 /**
  * Testcase for the "Domain" domain model
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class DomainTest extends \F3\Testing\BaseTestCase {

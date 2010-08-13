@@ -25,7 +25,6 @@ namespace F3\TYPO3\Controller\Backend;
 /**
  * The TYPO3 Setup
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {

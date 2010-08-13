@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript\Processors;
 /**
  * Testcase for the TypoScript OverrideProcessor
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class OverrideProcessorTest extends \F3\Testing\BaseTestCase {

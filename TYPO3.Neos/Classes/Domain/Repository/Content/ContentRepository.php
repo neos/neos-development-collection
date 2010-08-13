@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Repository\Content;
 /**
  * A generic Content Repository
  *
- * @version $Id: PageRepository.php 4657 2010-06-28 22:25:49Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */

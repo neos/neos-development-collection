@@ -23,17 +23,10 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  *                                                                        */
 
 /**
- * @package TYPO3
- * @subpackage Domain
- * @version $Id$
- */
-
-/**
  * Testcase for the "Domain" domain model
  *
  * @package TYPO3
  * @subpackage Domain
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class TypoScriptTest extends \F3\Testing\BaseTestCase {

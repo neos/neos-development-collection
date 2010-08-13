@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript\Processors;
 /**
  * Processor that wraps the specified string into a prefix- and a suffix string.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class WrapProcessor implements \F3\TypoScript\ProcessorInterface {

@@ -26,7 +26,6 @@ namespace F3\TYPO3\ViewHelpers;
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
  * The wrapper contains the property name which should be made editable, and is either a "span" or a "div" tag (depending on the context)
  *
- * @version $Id: IncludeJavaScriptViewHelper.php 4881 2010-07-20 09:41:12Z sebastian $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */

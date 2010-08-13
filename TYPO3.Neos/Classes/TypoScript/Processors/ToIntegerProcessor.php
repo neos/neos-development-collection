@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript\Processors;
 /**
  * Processor that onverts the subject into an integer.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ToIntegerProcessor implements \F3\TypoScript\ProcessorInterface {

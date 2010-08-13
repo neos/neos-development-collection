@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Service;
 /**
  * The Content Service
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @api

@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Model\Configuration;
 /**
  * Contract for a Configuration object
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
  * @api

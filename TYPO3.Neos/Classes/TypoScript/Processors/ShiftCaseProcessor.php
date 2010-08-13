@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript\Processors;
 /**
  * Processor that shifts the case of a string into the specified direction.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ShiftCaseProcessor implements \F3\TypoScript\ProcessorInterface {

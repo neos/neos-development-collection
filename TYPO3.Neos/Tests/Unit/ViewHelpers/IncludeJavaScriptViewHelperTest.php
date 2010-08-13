@@ -25,7 +25,6 @@ namespace F3\TYPO3\ViewHelpers;
 /**
  * Testcase for the IncludeJavaScript view helper
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {

@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Model\Content;
 /**
  * Domain model of a generic composite content
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity

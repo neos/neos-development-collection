@@ -25,7 +25,6 @@ namespace F3\TYPO3\View\Error;
 /**
  * A page not found error view
  *
- * @version $Id: Exception.php 4221 2010-04-27 13:53:40Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class PageNotFoundView extends \F3\TYPO3\View\Error\ErrorView {

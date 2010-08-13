@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript;
 /**
  * Testcase for the Menu TypoScript Object
  *
- * @version $Id: FileTest.php 4469 2010-06-08 16:09:45Z k-fish $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class MenuTest extends \F3\Testing\BaseTestCase {

@@ -25,7 +25,6 @@ namespace F3\TYPO3\Controller\Exception;
 /**
  * A "No Site" exception
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class NoSiteException extends \F3\TYPO3\Controller\Exception {

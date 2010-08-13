@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Model\Structure;
 /**
  * Domain model of a site
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @entity

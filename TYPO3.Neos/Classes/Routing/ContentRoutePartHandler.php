@@ -25,7 +25,6 @@ namespace F3\TYPO3\Routing;
 /**
  * A route part handler for generic content
  *
- * @version $Id: $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */

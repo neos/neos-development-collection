@@ -27,7 +27,6 @@ require_once('vfs/vfsStream.php');
 /**
  * Testcase for the File TypoScript Object
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class FileTest extends \F3\Testing\BaseTestCase {

@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript;
 /**
  * The TypoScript "JavaScript" object
  *
- * @version $Id: Page.php 4264 2010-05-03 09:49:03Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */

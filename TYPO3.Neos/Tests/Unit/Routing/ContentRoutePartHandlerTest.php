@@ -25,7 +25,6 @@ namespace F3\TYPO3\Routing;
 /**
  * Testcase for the Content Routepart Handler
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ContentRoutePartHandlerTest extends \F3\Testing\BaseTestCase {

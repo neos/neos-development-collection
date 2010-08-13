@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Repository\Configuration;
 /**
  * Testcase for the Domain Repository
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class DomainRepositoryTest extends \F3\Testing\BaseTestCase {

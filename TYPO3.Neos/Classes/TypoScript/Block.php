@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript;
 /**
  * A TypoScript Html object
  *
- * @version $Id: Html.php 4448 2010-06-07 13:24:31Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */

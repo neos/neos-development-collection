@@ -25,7 +25,6 @@ namespace F3\TYPO3\TypoScript;
 /**
  * A TypoScript Page object
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
@@ -124,7 +123,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
-	 * Returns the overriden title of this page.
+	 * Returns the overridden title of this page.
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>

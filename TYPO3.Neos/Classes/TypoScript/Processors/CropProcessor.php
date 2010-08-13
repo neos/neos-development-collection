@@ -26,7 +26,6 @@ namespace F3\TYPO3\TypoScript\Processors;
  * Processor that crops a part of a string and optionally replaces the cropped part by a string,
  * typically three dots ("...").
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class CropProcessor implements \F3\TypoScript\ProcessorInterface {

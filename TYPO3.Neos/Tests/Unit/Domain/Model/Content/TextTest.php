@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Model\Content;
 /**
  * Testcase for the domain model of a Page
  *
- * @version $Id: PageTest.php 2817 2009-07-16 14:32:53Z k-fish $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class TextTest extends \F3\Testing\BaseTestCase {

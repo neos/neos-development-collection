@@ -25,7 +25,6 @@ namespace F3\TYPO3\Controller\Exception;
 /**
  * An "Import" exception, indicating something went wrong during content import.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ImportException extends \F3\TYPO3\Controller\Exception {

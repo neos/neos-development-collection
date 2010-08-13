@@ -26,7 +26,6 @@ namespace F3\TYPO3\TypoScript\Processors;
  * Processor that rounds a given float value.
  * If integer given, nothing happens.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class RoundProcessor implements \F3\TypoScript\ProcessorInterface {

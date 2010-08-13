@@ -25,7 +25,6 @@ namespace F3\TYPO3\Controller\Backend;
 /**
  * A controller which allows for logging into the backend
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {

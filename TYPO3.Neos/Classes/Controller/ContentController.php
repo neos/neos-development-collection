@@ -25,7 +25,6 @@ namespace F3\TYPO3\Controller;
 /**
  * A generic controller for displaying and managing content objects
  *
- * @version $Id:  $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ContentController extends \F3\FLOW3\MVC\Controller\ActionController {

@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Model\Content;
 /**
  * Testcase for the Abstract Composite Content domain model
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class AbstractCompositeContentTest extends \F3\Testing\BaseTestCase {

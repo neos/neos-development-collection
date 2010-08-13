@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Exception;
 /**
  * An "Content Already Referenced" exception
  *
- * @version $Id: InvalidContentTypeException.php 4483 2010-06-10 13:57:32Z k-fish $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */

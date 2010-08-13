@@ -25,7 +25,6 @@ namespace F3\TYPO3\Domain\Model\Structure;
 /**
  * Testcase for the "Site" domain model
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class SiteTest extends \F3\Testing\BaseTestCase {

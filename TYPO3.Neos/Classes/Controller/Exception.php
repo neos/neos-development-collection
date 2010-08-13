@@ -25,7 +25,6 @@ namespace F3\TYPO3\Controller;
 /**
  * A generic TYPO3 Controller exception
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class Exception extends \F3\TYPO3\Exception {

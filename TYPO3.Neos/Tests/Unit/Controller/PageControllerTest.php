@@ -25,7 +25,6 @@ namespace F3\TYPO3\Controller;
 /**
  * Testcase for the Content controller
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ContentControllerTest extends \F3\Testing\BaseTestCase {

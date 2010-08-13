@@ -26,7 +26,6 @@ namespace F3\TYPO3\TypoScript\Processors;
  * Processor that transforms an UNIX timestamp according to the given format.
  * For the possible format values, look at the php date() function.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class DateProcessor implements \F3\TypoScript\ProcessorInterface {
