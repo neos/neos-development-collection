@@ -25,7 +25,6 @@ namespace F3\TypoScript;
 /**
  * Common class for TypoScript Content Objects
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\ContentObjectInterface {

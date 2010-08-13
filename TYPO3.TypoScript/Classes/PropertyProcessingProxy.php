@@ -25,7 +25,6 @@ namespace F3\TypoScript;
 /**
  * A proxy class which is used for lazy rendering TypoScript object properties.
  *
- * @version $Id: AbstractObject.php 4271 2010-05-05 15:38:09Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class PropertyProcessingProxy implements \F3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {

@@ -25,7 +25,6 @@ namespace F3\TypoScript\Fixtures;
 /**
  * A TypoScript object fixture
  *
- * @version $Id: Text.php 4303 2010-05-14 17:28:55Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */

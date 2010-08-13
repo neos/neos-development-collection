@@ -25,7 +25,6 @@ namespace F3\TypoScript;
 /**
  * A factory for TypoScript Objects
  *
- * @version $Id: AbstractContentObject.php 4271 2010-05-05 15:38:09Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ObjectFactory {

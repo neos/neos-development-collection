@@ -25,7 +25,6 @@ namespace F3\TypoScript\Fixtures;
 /**
  * Processors for use in the Parser tests
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */

@@ -25,7 +25,6 @@ namespace F3\TypoScript\Parser;
 /**
  * Testcase for the TypoScript Parser - tests the regex patterns
  *
- * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class PatternTest extends \F3\Testing\BaseTestCase {

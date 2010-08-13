@@ -25,7 +25,6 @@ namespace F3\TypoScript;
 /**
  * Interface for TypoScript Processors
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 interface ProcessorInterface {

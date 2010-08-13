@@ -30,7 +30,6 @@ namespace F3\TypoScript;
  * Most importantly that's the Controller Context (which contains the current
  * Request object and further MVC related information).
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */

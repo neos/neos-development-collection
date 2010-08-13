@@ -25,7 +25,6 @@ namespace F3\TypoScript;
 /**
  * The TypoScript Parser
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */

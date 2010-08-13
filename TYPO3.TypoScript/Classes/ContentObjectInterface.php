@@ -25,7 +25,6 @@ namespace F3\TypoScript;
 /**
  * Contract for TypoScript Content Objects
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 interface ContentObjectInterface extends \F3\TypoScript\ObjectInterface, \F3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
