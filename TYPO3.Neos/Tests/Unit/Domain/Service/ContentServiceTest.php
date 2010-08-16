@@ -196,6 +196,20 @@ class ContentServiceTest extends \F3\Testing\BaseTestCase {
 		$contentService->createAfter('foo', get_class($this), 'bar');
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function deleteCanDeleteAContentNodeAlongWithItsContent() {
+		$mockNewContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+
+		$mockNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode', array(), array(), '', FALSE);
+
+		$contentService = new \F3\TYPO3\Domain\Service\ContentService($mockNewContentContext);
+		$contentService->delete($mockNode);
+
+	}
+
 }
 
 ?>

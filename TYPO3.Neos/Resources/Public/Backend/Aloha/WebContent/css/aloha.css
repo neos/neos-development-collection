@@ -15,7 +15,7 @@
 .GENTICS_editable {}
 
 .GENTICS_editable_highlight {
-	outline: #FFE767 solid 5px !important;
+	outline: transparent solid 5px !important;
 }
 
 .GENTICS_editable_active, .GENTICS_editable_active[contenteditable=true]:focus {

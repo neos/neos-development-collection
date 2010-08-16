@@ -177,7 +177,7 @@ GENTICS.Aloha.prototype.fadeEditables = function () {
 		var editable = this.editables[i].obj;
 		if (editable.hasClass('GENTICS_editable_highlight')) {
 			editable.removeClass('GENTICS_editable_highlight')
-				.css('outline', '5px solid #FFE767')
+				.css('outline', '5px solid transparent')
 				.animate({
 					outlineWidth : '0px'
 				}, 300, 'swing', function () {

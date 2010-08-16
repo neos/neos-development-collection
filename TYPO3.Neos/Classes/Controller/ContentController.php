@@ -27,12 +27,17 @@ namespace F3\TYPO3\Controller;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ContentController extends \F3\FLOW3\MVC\Controller\ActionController {
+class ContentController extends \F3\FLOW3\MVC\Controller\RestController {
 
 	/**
 	 * @var string
 	 */
 	protected $defaultViewObjectName = 'F3\Fluid\View\TemplateView';
+
+	/**
+	 * @var string
+	 */
+	protected $resourceArgumentName = 'content';
 
 	/**
 	 * @var \F3\TYPO3\Domain\Repository\Content\ContentRepository
@@ -147,6 +152,32 @@ class ContentController extends \F3\FLOW3\MVC\Controller\ActionController {
 					)
 				);
 				break;
+		}
+	}
+
+	/**
+	 * Delete content
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Content\ContentInterface $content
+	 * @return void
+	 * @author Robert Lemke
+	 * @extdirect
+	 */
+	public function deleteAction(\F3\TYPO3\Domain\Model\Content\ContentInterface $content) {
+		$this->contentContext->getContentService()->delete($content);
+
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$this->view->assign('value',
+					array(
+						'success' => TRUE
+					)
+				);
+			break;
+			case 'html' :
+				$this->redirect('index');
+			break;
 		}
 	}
 

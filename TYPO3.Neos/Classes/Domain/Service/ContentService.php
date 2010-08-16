@@ -129,5 +129,21 @@ class ContentService {
 
 		return $content;
 	}
+
+	/**
+	 * Deletes the given content object or content node.
+	 *
+	 * @param object $reference The object to delete. Must either implement the ContentInterface or the NodeInterface.
+	 * @return void
+	 * @throws \F3\TYPO3\Domain\Exception\InvalidReferenceException if the given reference is of an invalid type
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function delete($reference) {
+		if (!is_object($reference) || !($reference instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface || $reference instanceof \F3\TYPO3\Domain\Model\Structure\NodeInterface)) {
+			throw new \F3\TYPO3\Domain\Exception\InvalidReferenceException('The given reference is not a valid content node or site.', 1281696431);
+		}
+		
+	}
 }
 ?>

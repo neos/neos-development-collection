@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Controller\Backend;
+namespace F3\TYPO3\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -25,6 +25,7 @@ namespace F3\TYPO3\Controller\Backend;
 /**
  * A controller which allows for logging into the backend
  *
+ * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
@@ -118,8 +119,6 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 					)
 				);
 				break;
-			default :
-				$this->view->assign('party', $party);
 		}
 	}
 

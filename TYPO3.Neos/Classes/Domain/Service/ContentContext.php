@@ -233,7 +233,7 @@ class ContentContext {
 	 * Sets the current node content object.
 	 *
 	 * This method is typically called by a route part handler or by some other
-	 * part of TYPO3 which wants to mock the "current page" information.
+	 * part of TYPO3 which wants to mock the "current node content" information.
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Content\ContentInterface $nodeContent
 	 * @return void
@@ -245,7 +245,8 @@ class ContentContext {
 	}
 
 	/**
-	 * Returns the current page (ie. the Page content object) from this frontend context
+	 * Returns the current node content, for example the page (ie. the Page content object)
+	 * from this frontend context
 	 *
 	 * @return \F3\TYPO3\Domain\Model\Content\Page The current page
 	 * @author Robert Lemke <robert@tpyo3.org>

@@ -12,7 +12,7 @@
   uriPattern: 'typo3/login(/{@action}.{@format})'
   defaults:
     '@package':    'TYPO3'
-    '@controller': 'Backend\Login'
+    '@controller': 'Login'
     '@action':     'index'
     '@format':     'html'
 -
@@ -20,7 +20,7 @@
   uriPattern: 'typo3/logout'
   defaults:
     '@package':    'TYPO3'
-    '@controller': 'Backend\Login'
+    '@controller': 'Login'
     '@action':     'logout'
 -
   name:          'Setup'
@@ -47,7 +47,6 @@
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Content'
-    '@action':     'show'
     '@format':     'html'
   routeParts:
     content:
@@ -59,7 +58,6 @@
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Content'
-    '@action':     'show'
     '@format':     'html'
   routeParts:
     content:
@@ -71,7 +69,6 @@
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Content'
-    '@action':     'show'
     '@format':     'html'
   routeParts:
     content:
