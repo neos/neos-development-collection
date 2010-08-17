@@ -49,8 +49,11 @@
 		<ext:include theme="xtheme-gray" includeStylesheets="false" />
 		<script type="text/javascript">
 			Ext.onReady(function() {
-				Ext.DomQuery.selectNode("input[autofocus]").focus();
+				if (Ext.select("input:focus").elements.length === 0) {
+					Ext.DomQuery.selectNode("input[autofocus]").focus();
+				}
 			});
 		</script>
+
 	</body>
 </html>
