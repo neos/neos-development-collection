@@ -76,8 +76,8 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * to the login screen.
 	 *
 	 * Note: You need to send the username and password these two POST parameters:
-	 *       F3\FLOW3\Security\Authentication\Token\UsernamePassword::username
-	 *   and F3\FLOW3\Security\Authentication\Token\UsernamePassword::password
+	 *       F3[FLOW3][Security][Authentication][Token][UsernamePassword][username]
+	 *   and F3[FLOW3][Security][Authentication][Token][UsernamePassword][password]
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
