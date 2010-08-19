@@ -32,12 +32,17 @@ class ContentController extends \F3\FLOW3\MVC\Controller\RestController {
 	/**
 	 * @var string
 	 */
-	protected $defaultViewObjectName = 'F3\Fluid\View\TemplateView';
+	protected $resourceArgumentName = 'content';
 
 	/**
-	 * @var string
+	 *
+	 * @var <type> 
 	 */
-	protected $resourceArgumentName = 'content';
+	protected $viewFormatToObjectNameMap = array(
+		 'html' => 'F3\Fluid\View\TemplateView',
+		 'extdirect' => 'F3\ExtJS\ExtDirect\View',
+		 'json' => 'F3\FLOW3\MVC\View\JsonView',
+	);
 
 	/**
 	 * @var \F3\TYPO3\Domain\Repository\Content\ContentRepository
@@ -68,20 +73,14 @@ class ContentController extends \F3\FLOW3\MVC\Controller\RestController {
 	}
 
 	/**
-	 * Select special views according to format
+	 * Select special error action
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeAction() {
-		switch ($this->request->getFormat()) {
-			case 'extdirect' :
-				$this->defaultViewObjectName = 'F3\ExtJS\ExtDirect\View';
-				$this->errorMethodName = 'extErrorAction';
-				break;
-			case 'json' :
-				$this->defaultViewObjectName = 'F3\FLOW3\MVC\View\JsonView';
-				break;
+		if ($this->request->getFormat() == 'extdirect') {
+			$this->errorMethodName = 'extErrorAction';
 		}
 	}
 
@@ -191,19 +190,6 @@ class ContentController extends \F3\FLOW3\MVC\Controller\RestController {
 	 */
 	public function extErrorAction() {
 		$this->view->assignErrors($this->argumentsMappingResults->getErrors());
-	}
-
-	/**
-	 * This controller does not need Fluid templates therefore we use the explicitly
-	 * defined view object names to resolve the view.
-	 *
-	 * @return \F3\FLOW3\MVC\View\ViewInterface
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function resolveView() {
-		$view = $this->objectManager->create($this->defaultViewObjectName);
-		$view->setControllerContext($this->controllerContext);
-		return $view;
 	}
 
 }
