@@ -23,7 +23,7 @@
 	<typo3:includeJavaScript include="Content/AlohaConnector/plugin\.js" subpackage="Backend" />
 
 	<script type="text/javascript">
-
+	<![CDATA[
 	GENTICS.Aloha.settings = {
 		"i18n": {"current": "en"},
 		"plugins": {
@@ -44,6 +44,7 @@
 		// TODO: only activate by event
 		jQuery('.f3-typo3-editable').aloha();
 	});
+	]]>
 	</script>
 </f:security.ifAccess>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
