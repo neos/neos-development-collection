@@ -43,6 +43,12 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $securityContext;
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Security\AccountRepository
+	 */
+	protected $accountRepository;
+
+	/**
 	 * Select special views according to format
 	 *
 	 * @return void
@@ -67,6 +73,9 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
+		if ($this->accountRepository->countAll() === 0) {
+			$this->forward('noAccount', 'Backend\Setup');
+		}
 	}
 
 	/**
