@@ -25,7 +25,6 @@ namespace F3\TYPO3CR\Storage;
 /**
  * An abstract storage backend for SQL RDBMS
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

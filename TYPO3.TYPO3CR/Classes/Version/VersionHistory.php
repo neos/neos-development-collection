@@ -26,7 +26,6 @@ namespace F3\TYPO3CR\Version;
  * A VersionHistory object wraps an nt:versionHistory node. It provides
  * convenient access to version history information.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

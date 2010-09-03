@@ -25,7 +25,6 @@ namespace F3\TYPO3CR;
 /**
  * Tests for the PathParser implementation of TYPO3CR
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PathParserTest extends \F3\Testing\BaseTestCase {

@@ -25,7 +25,6 @@ namespace F3\TYPO3CR\Admin\Service\Controller;
 /**
  * The "Nodes" service
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class NodesController extends \F3\FLOW3\MVC\Controller\RESTController {

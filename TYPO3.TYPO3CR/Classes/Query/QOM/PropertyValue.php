@@ -33,7 +33,6 @@ namespace F3\TYPO3CR\Query\QOM;
  * selector is not the name of a selector in the query, or
  * property is not a syntactically valid JCR name.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

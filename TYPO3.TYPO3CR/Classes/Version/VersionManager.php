@@ -33,7 +33,6 @@ namespace F3\TYPO3CR\Version;
  *  Configuration feature
  *  Activity feature
  *
- * @version $Id: Version.php 2624 2009-06-18 10:52:19Z ilsinszki $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

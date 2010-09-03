@@ -25,7 +25,6 @@ namespace F3\TYPO3CR\Storage\Search;
 /**
  * A storage indexing/search backend using PDO and SQL
  *
- * @version $Id: Pdo.php -1   $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

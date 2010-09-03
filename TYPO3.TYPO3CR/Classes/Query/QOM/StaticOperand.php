@@ -26,7 +26,6 @@ namespace F3\TYPO3CR\Query\QOM;
  * An operand whose value can be determined from static analysis of the query,
  * prior to its evaluation.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

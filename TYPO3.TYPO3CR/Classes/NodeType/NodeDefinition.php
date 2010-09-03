@@ -25,7 +25,6 @@ namespace F3\TYPO3CR\NodeType;
 /**
  * A node definition. Used in node type definitions.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

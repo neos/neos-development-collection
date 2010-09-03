@@ -65,7 +65,6 @@ namespace F3\TYPO3CR\Query\QOM;
  * * the string "\x" matches the character "x", and
  *   all other characters match themselves.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

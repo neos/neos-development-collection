@@ -25,7 +25,6 @@ namespace F3\TYPO3CR\Tests\Fixtures;
 /**
  * Fixture class for Persistence\BackendTest->complexObjectsAreStoredCorrectly()
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
  */

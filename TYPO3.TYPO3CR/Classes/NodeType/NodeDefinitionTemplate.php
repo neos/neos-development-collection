@@ -31,7 +31,6 @@ namespace F3\TYPO3CR\NodeType;
  * default values assumed when a new empty NodeDefinitionTemplate is created (as
  * opposed to one extracted from an existing NodeType).
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

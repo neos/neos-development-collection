@@ -30,7 +30,6 @@ namespace F3\TYPO3CR\Query\QOM;
  *  satisfy constraint2 but not constraint1, or
  *  satisfy both constraint1 and constraint2.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

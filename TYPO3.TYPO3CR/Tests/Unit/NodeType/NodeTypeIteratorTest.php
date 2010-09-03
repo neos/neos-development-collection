@@ -25,7 +25,6 @@ namespace F3\TYPO3CR\NodeType;
 /**
  * Test the NodeTypeIterator implementation.
  *
- * @version  $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class NodeTypeIteratorTest extends \F3\Testing\BaseTestCase {

@@ -33,7 +33,6 @@ namespace F3\TYPO3CR\Query\QOM;
  * the node has a mixin node type that is nodeType, or
  * the node has a mixin node type that is a subtype of nodeType.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @api
  * @scope prototype

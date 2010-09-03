@@ -23,17 +23,8 @@ namespace F3\TYPO3CR\NodeType;
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @subpackage Tests
- * @version $Id: NodeTypeDefinitionTest.php 1811 2009-06-30 12:04:49Z ilsinszki $
- */
-
-/**
  * Tests for the NodeTypeDefinition implementation of TYPO3CR
  *
- * @package TYPO3CR
- * @subpackage Tests
- * @version $Id: NodeTypeDefinitionTest.php 1811 2009-06-30 12:04:49Z ilsinszki $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class NodeTypeDefinitionTest extends \F3\Testing\BaseTestCase {

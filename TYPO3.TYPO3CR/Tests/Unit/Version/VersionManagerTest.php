@@ -27,7 +27,6 @@ require_once(__DIR__ . '/../Fixtures/MockStorageBackend.php');
 /**
  * Tests for the Version implementation.
  *
- * @version $Id: VersionManagerTest.php 2961 2009-08-01 12:03:22Z ilsinszki $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class VersionManagerTest extends \F3\Testing\BaseTestCase {

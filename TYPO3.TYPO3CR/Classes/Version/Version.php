@@ -26,7 +26,6 @@ namespace F3\TYPO3CR\Version;
  * A Version object wraps an nt:version node. It provides convenient access to
  * version information.
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
