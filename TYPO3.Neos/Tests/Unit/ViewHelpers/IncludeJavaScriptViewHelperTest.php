@@ -44,9 +44,9 @@ class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
 		$this->resourcePublisher = $this->getMock('F3\FLOW3\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
 		$this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
-		$this->viewHelper = $this->getMock('F3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
+		$this->viewHelper = $this->getAccessibleMock('F3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
 		$this->viewHelper->setControllerContext($this->controllerContext);
-		$this->viewHelper->setResourcePublisher($this->resourcePublisher);
+		$this->viewHelper->_set('resourcePublisher', $this->resourcePublisher);
 	}
 
 	/**

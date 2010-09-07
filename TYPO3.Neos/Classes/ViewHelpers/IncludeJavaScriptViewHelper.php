@@ -45,6 +45,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 * @param string $package The package key of the resources to include or current controller package if NULL
 	 * @param string $subpackage The subpackage key of the resources to include or current controller subpackage if NULL
 	 * @param string $directory The directory inside the current subpackage. By default, the "JavaScript" directory will be used.
+	 * @return string
 	 * @author Christopher Hlubek
 	 */
 	public function render($include, $exclude = NULL, $package = NULL, $subpackage = NULL, $directory = 'JavaScript') {
@@ -67,8 +68,8 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 			}
 		}
 
-		// Sadly, the aloha editor needs a predefined inclusion order, which right now matches
-		// the sorted URI list. that's why we sort here...
+			// Sadly, the aloha editor needs a predefined inclusion order, which right now matches
+			// the sorted URI list. that's why we sort here...
 		asort($uris);
 
 		$output = '';
@@ -84,7 +85,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 * (Exists primarily to ease unit testing)
 	 *
 	 * @param string $directory The directory to iterate over
-	 * @return Iterator An iterator
+	 * @return \RecursiveIteratorIterator
 	 * @author Christopher Hlubek
 	 */
 	protected function iterateDirectoryRecursively($directory) {
@@ -102,17 +103,6 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 */
 	protected function patternMatchesPath($pattern, $path) {
 		return $pattern !== NULL && preg_match('/^' . str_replace('/', '\/', $pattern) . '$/', $path);
-	}
-
-	/**
-	 * Set the resource publisher
-	 *
-	 * @param \F3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher 
-	 * @return void
-	 * @author Christopher Hlubek
-	 */
-	public function setResourcePublisher(\F3\FLOW3\Resource\Publishing\ResourcePublisher $resourcePublisher) {
-		$this->resourcePublisher = $resourcePublisher;
 	}
 }
 ?>
