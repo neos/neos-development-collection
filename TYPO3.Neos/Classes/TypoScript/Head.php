@@ -31,16 +31,6 @@ namespace F3\TYPO3\TypoScript;
 class Head extends \F3\TypoScript\AbstractContentObject {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Content\Page
-	 */
-	protected $model;
-
-	/**
-	 * @var string
-	 */
-	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Page';
-
-	/**
 	 * @var string
 	 */
 	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Head.html';
@@ -68,7 +58,6 @@ class Head extends \F3\TypoScript\AbstractContentObject {
 	 */
 	protected $stylesheets = array();
 
-
 	/**
 	 * Overrides the title of this page.
 	 *
@@ -90,19 +79,33 @@ class Head extends \F3\TypoScript\AbstractContentObject {
 		return $this->title;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getJavaScripts() {
 		return $this->javaScripts;
 	}
 
-	public function setJavaScripts($javaScripts) {
+	/**
+	 * @param array $javaScripts
+	 * @return void
+	 */
+	public function setJavaScripts(array $javaScripts) {
 		$this->javaScripts = $javaScripts;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getStylesheets() {
 		return $this->stylesheets;
 	}
 
-	public function setStylesheets($stylesheets) {
+	/**
+	 * @param  $stylesheets
+	 * @return void
+	 */
+	public function setStylesheets(array $stylesheets) {
 		$this->stylesheets = $stylesheets;
 	}
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Content;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,13 +23,33 @@ namespace F3\TYPO3\Domain\Model\Content;
  *                                                                        */
 
 /**
- * Domain model of a generic composite content
+ * Testcase for the "Domain" domain model
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
- * @entity
  */
-abstract class AbstractCompositeContent extends \F3\TYPO3\Domain\Model\Content\AbstractContent implements \F3\TYPO3\Domain\Model\Content\CompositeContentInterface {
+class DomainTest extends \F3\Testing\BaseTestCase {
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain() {
+		$domain = new \F3\TYPO3\Domain\Model\Domain();
+		$domain->setHostPattern('typo3.com');
+		$this->assertSame('typo3.com', $domain->getHostPattern());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setSiteSetsTheSiteTheDomainIsPointingTo() {
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);
+
+		$domain = new \F3\TYPO3\Domain\Model\Domain;
+		$domain->setSite($mockSite);
+		$this->assertSame($mockSite, $domain->getSite());
+	}
 }
+
 ?>

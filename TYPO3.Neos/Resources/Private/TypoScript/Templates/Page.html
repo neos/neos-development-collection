@@ -1,18 +1,16 @@
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 	
 	<!--
-		This website is powered by TYPO3 Phoenix - enabling people to communicate!
-		TYPO3 is a free open source Content Management Framework licensed under GNU/GPL.
-		Information and contribution at http://typo3.com/ and http://typo3.org/
+		This website is powered by TYPO3 - enabling people to communicate!
+		TYPO3 is a free open source Content Management Framework licensed under the GNU/GPL.
+		Information and contribution at http://typo3.org
 	-->
 
 	<head>
 		{f:raw(value: head)}
 	</head>
-	<body data-identity="{domainModel -> f:identity.json() -> f:escape()}" {bodyAttributes}>
+	<body data-identity="{node -> f:identity.json() -> f:escape()}" {bodyAttributes}>
 		{f:raw(value: body)}
 	</body>
 

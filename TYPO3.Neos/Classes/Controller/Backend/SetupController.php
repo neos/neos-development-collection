@@ -43,15 +43,39 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
+	 * @var \F3\Party\Domain\Repository\PersonRepository
+	 */
+	protected $personRepository;
+
+	/**
+	 * @inject
 	 * @var \F3\FLOW3\Security\AccountFactory
 	 */
 	protected $accountFactory;
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Service\SiteImportService
+	 * @var \F3\TYPO3\Domain\Service\SiteImportService
 	 */
 	protected $siteImportService;
+
+	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
+	 * @inject
+	 * @var F3\TYPO3\Domain\Repository\SiteRepository
+	 */
+	protected $siteRepository;
 
 	/**
 	 * Action which displays a message that no site has yet been defined.
@@ -120,9 +144,12 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 				$this->flashMessageContainer->add($e->getMessage());
 			}
 		}
+		$this->accountRepository->removeAll();
+		$this->personRepository->removeAll();
 		$this->createAdministrator($identifier, $password, $person);
 		$this->flashMessageContainer->flush();
-		$this->redirect('index', 'Frontend\Page');
+
+		$this->redirect('show', 'Node');
 	}
 
 	/**

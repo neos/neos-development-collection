@@ -37,17 +37,6 @@ class DomainRepository extends \F3\FLOW3\Persistence\Repository {
 	protected $domainMatchingStrategy;
 
 	/**
-	 * Returns all objects of this repository (in an array)
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	public function findAll() {
-		return $this->createQuery()->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_ARRAY);
-	}
-
-	/**
 	 * Finds all active domains matching the given host.
 	 *
 	 * Their order is determined by how well they match, best match first.
@@ -57,7 +46,7 @@ class DomainRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @api
 	 */
 	public function findByHost($host) {
-		return $this->domainMatchingStrategy->getSortedMatches($host, $this->findAll());
+		return $this->domainMatchingStrategy->getSortedMatches($host, $this->findAll()->toArray());
 	}
 
 }

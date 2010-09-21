@@ -39,40 +39,57 @@
     '@action':     'index'
 
 ##
-# Content Service
+# Frontend
 
 -
-  name:          'Generic content with node path pointing to a content object, with format and type'
-  uriPattern:    '{content}.{@format}/{type}'
+  name:          'Frontend content with format and type'
+  uriPattern:    '{node}.html/{type}'
   defaults:
     '@package':    'TYPO3'
-    '@controller': 'Content'
+    '@controller': 'Node'
     '@format':     'html'
+    '@action':     'show'
   routeParts:
-    content:
-      handler:    F3\TYPO3\Routing\ContentRoutePartHandler
+    node:
+      handler:    F3\TYPO3\Routing\NodeRoutePartHandler
 
 -
-  name:          'Generic content with node path pointing to a content object, with format'
-  uriPattern:    '{content}.{@format}'
+  name:          'Frontend content with format'
+  uriPattern:    '{node}.html'
   defaults:
     '@package':    'TYPO3'
-    '@controller': 'Content'
+    '@controller': 'Node'
     '@format':     'html'
+    '@action':     'show'
   routeParts:
-    content:
-      handler:    F3\TYPO3\Routing\ContentRoutePartHandler
+    node:
+      handler:    F3\TYPO3\Routing\NodeRoutePartHandler
 
 -
-  name:          'Generic content with optional node path pointing to a content object, with default format HTML'
-  uriPattern:    '({content})'
+  name:          'Frontend content without a specified format'
+  uriPattern:    '({node})'
   defaults:
     '@package':    'TYPO3'
-    '@controller': 'Content'
+    '@controller': 'Node'
     '@format':     'html'
+    '@action':     'show'
   routeParts:
-    content:
-      handler:    F3\TYPO3\Routing\ContentRoutePartHandler
+    node:
+      handler:    F3\TYPO3\Routing\NodeRoutePartHandler
+
+##
+# Content Repository services
+
+-
+  name:          'Frontend content with format'
+  uriPattern:    'typo3/service/v1/content/{node}.{@format}'
+  defaults:
+    '@package':    'TYPO3'
+    '@subpackage': 'Service'
+    '@controller': 'Node'
+  routeParts:
+    node:
+      handler:    F3\TYPO3\Routing\NodeServiceRoutePartHandler
 
 -
   name: 'Fallback rule – for when no site has been defined yet'

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Content;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,68 +23,70 @@ namespace F3\TYPO3\Domain\Model\Content;
  *                                                                        */
 
 /**
- * Domain model of a Text content element
+ * Domain Model of a Domain
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
  * @entity
- * @api
+ * @scope prototype
  */
-class Block extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
+class Domain  {
 
 	/**
-	 * The headline of this block element
 	 * @var string
-	 * @validate String
+	 * @validate StringLength(minimum = 1, maximum = 255)
 	 */
-	protected $headline = '';
+	protected $hostPattern = '*';
 
 	/**
-	 * The HTML of this block element
-	 * @var string
-	 * @validate String
+	 * @var \F3\TYPO3\Domain\Model\Site
+	 * @validate NotEmpty
 	 */
-	protected $html = '';
+	protected $site;
 
 	/**
-	 * Get the headline of this block element
+	 * Sets the pattern for the host of the domain
 	 *
-	 * @return string
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function getHeadline() {
-		return $this->headline;
-	}
-
-	/**
-	 * Set the headline for this block element
-	 *
-	 * @param string $headline
+	 * @param string $hostPattern Pattern for the host
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function setHeadline($headline) {
-		$this->headline = $headline;
-	}
-
-	/**
-	 * @return string the HTML
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function getHtml() {
-		return $this->html;
+	public function setHostPattern($hostPattern) {
+		$this->hostPattern = $hostPattern;
 	}
 
 	/**
-	 * @param string $html the HTML
-	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * Returns the host pattern for this domain
+	 *
+	 * @return string The host pattern
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setHtml($html) {
-		$this->html = $html;
+	public function getHostPattern() {
+		return $this->hostPattern;
+	}
+
+	/**
+	 * Sets the site this domain is pointing to
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Site $site The site
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function setSite(\F3\TYPO3\Domain\Model\Site $site) {
+		$this->site = $site;
+	}
+
+	/**
+	 * Returns the site this domain is pointing to
+	 *
+	 * @return \F3\TYPO3\Domain\Model\Site
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getSite() {
+		return $this->site;
 	}
 }
-
 ?>

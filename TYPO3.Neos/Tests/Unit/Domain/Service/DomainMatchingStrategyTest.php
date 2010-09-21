@@ -34,7 +34,7 @@ class DomainMatchingStrategyTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly() {
-		$mockDomains = array($this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE));
+		$mockDomains = array($this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE));
 		$mockDomains[0]->expects($this->any())->method('getHostPattern')->will($this->returnValue('www.typo3.org'));
 		$expectedDomains = array($mockDomains[0]);
 
@@ -49,10 +49,10 @@ class DomainMatchingStrategyTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getSortedMatchesFiltersTheGivenDomainsByTheSpecifiedHostAndReturnsThemSortedWithBestMatchesFirst() {
 		$mockDomains = array(
-			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array('dummy'), array(), '', FALSE),
-			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array('dummy'), array(), '', FALSE),
-			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array('dummy'), array(), '', FALSE),
-			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
 		);
 
 		$mockDomains[0]->setHostPattern('*.typo3.org');

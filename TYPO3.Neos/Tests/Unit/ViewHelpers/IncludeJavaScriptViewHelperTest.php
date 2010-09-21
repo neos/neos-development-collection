@@ -61,7 +61,7 @@ class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
 
 		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursively')->with('resource://MyPackage/Public/JavaScript/')->will($this->returnValue($files));
 		$output = $this->viewHelper->render('Foo\.js');
-		$this->assertEquals('<script type="text/javascript" src="StaticResourceUri/Packages/MyPackage/JavaScript/Foo.js"></script>' . chr(10), $output);
+		$this->assertEquals('<script src="StaticResourceUri/Packages/MyPackage/JavaScript/Foo.js"></script>' . chr(10), $output);
 	}
 
 	/**
@@ -76,7 +76,7 @@ class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
 
 		$this->viewHelper->expects($this->atLeastOnce())->method('iterateDirectoryRecursively')->with('resource://MyPackage/Public/MySubpackage/JavaScript/')->will($this->returnValue($files));
 		$output = $this->viewHelper->render('.*\.js', 'Bar.*', NULL, 'MySubpackage');
-		$this->assertEquals('<script type="text/javascript" src="StaticResourceUri/Packages/MyPackage/MySubpackage/JavaScript/Foo.js"></script>' . chr(10), $output);
+		$this->assertEquals('<script src="StaticResourceUri/Packages/MyPackage/MySubpackage/JavaScript/Foo.js"></script>' . chr(10), $output);
 	}
 }
 ?>

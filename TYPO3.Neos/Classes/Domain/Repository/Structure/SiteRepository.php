@@ -38,7 +38,7 @@ class SiteRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @api
 	 */
 	public function findFirst() {
-		return $this->createQuery()->setLimit(1)->execute(\F3\FLOW3\Persistence\QueryInterface::FETCH_OBJECT);
+		return $this->createQuery()->execute()->getFirst();
 	}
 }
 

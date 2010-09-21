@@ -50,38 +50,57 @@ class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildItems(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
-		$items = array();
-		$currentNodesPath = $contentContext->getCurrentNodePath();
 
-		$dummy = '';
-		$entryParentNode = $this->findParentNodeByLevel($this->entryLevel, $dummy, $contentContext);
-		if ($entryParentNode === NULL) {
+		$breadcrumbNodes = $contentContext->getNodesOnPath($contentContext->getCurrentSiteNode(), $contentContext->getCurrentNode());
+		$currentSiteLevel = count($breadcrumbNodes) - 1;
+		$normalizedEntryLevel = FALSE;
+		$normalizedLastLevel = $currentSiteLevel;
+
+		if ($this->entryLevel > 0 && isset($breadcrumbNodes[$this->entryLevel])) {
+			$normalizedEntryLevel = $this->entryLevel;
+		} elseif ($this->entryLevel <= 0) {
+			if ($currentSiteLevel + $this->entryLevel < 1) {
+				$normalizedEntryLevel = 1;
+			} else {
+				$normalizedEntryLevel = $currentSiteLevel + $this->entryLevel;
+			}
+		}
+
+		if ($normalizedEntryLevel === FALSE) {
 			return array();
 		}
-		$lastParentNode = $this->findParentNodeByLevel($this->lastLevel, $dummy, $contentContext);
 
-		$nodePath = '';
-		$addItems = ($entryParentNode instanceof \F3\TYPO3\Domain\Model\Structure\Site) ? $this->maximumLevels : 0;
-
-		foreach ($contentContext->getNodeService()->getNodesOnPath($currentNodesPath) as $node) {
-			$nodePath .= '/' . $node->getNodeName();
-			if ($addItems > 0) {
-				$items[] = array(
-					 'label' => $node->getContent($contentContext)->getTitle(),
-					 'nodePath' => $nodePath,
-				);
-			}
-			$addItems --;
-			if ($node === $entryParentNode) {
-				$addItems = $this->maximumLevels;
-			}
-			if ($node === $lastParentNode) {
-				$addItems = 1;
+		if ($this->lastLevel > 0 && isset($breadcrumbNodes[$this->lastLevel])) {
+			$normalizedLastLevel = $this->lastLevel;
+		} elseif ($this->lastLevel <= 0) {
+			if ($currentSiteLevel + $this->lastLevel < 1) {
+				$normalizedLastLevel = 1;
+			} else {
+				$normalizedLastLevel = $currentSiteLevel + $this->lastLevel;
 			}
 		}
+
+		if ($normalizedLastLevel < $normalizedEntryLevel) {
+			$normalizedLastLevel = $normalizedEntryLevel;
+		}
+
+		$items = array();
+		for ($i = $normalizedEntryLevel; $i <= $normalizedLastLevel; $i++) {
+			$node = $breadcrumbNodes[$i];
+
+			$item = array(
+				 'label' => $node->getProperty('title'),
+				 'node' => $node,
+			);
+			if ($node === $contentContext->getCurrentNode()) {
+				$item['state'][self::STATE_ACTIVE] = TRUE;
+			}
+
+			$items[] = $item;
+		}
+
 		return $items;
 	}
-
 }
 
 ?>

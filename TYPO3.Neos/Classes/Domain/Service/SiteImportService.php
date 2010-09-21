@@ -45,21 +45,33 @@ class SiteImportService {
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\Structure\SiteRepository
+	 * @var F3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\Structure\ContentNodeRepository
+	 * @var F3\TYPO3\Domain\Repository\DomainRepository
 	 */
-	protected $contentNodeRepository;
+	protected $domainRepository;
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
+	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
-	protected $domainRepository;
+	protected $nodeRepository;
+
+	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @inject
+	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
 
 	/**
 	 * Checks for the presence of Content.xml in the given package and imports
@@ -76,9 +88,12 @@ class SiteImportService {
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
 			throw new \F3\FLOW3\Exception('Error: No content found in package "' . $packageKey . '".');
 		} else {
-			$this->siteRepository->removeAll();
-			$this->contentNodeRepository->removeAll();
+			$this->nodeRepository->removeAll();
+			$this->workspaceRepository->removeAll();
 			$this->domainRepository->removeAll();
+			$this->siteRepository->removeAll();
+
+			$this->persistenceManager->persistAll();
 
 			try {
 				$this->importSitesFromPackage($packageKey);
@@ -96,60 +111,46 @@ class SiteImportService {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function importSitesFromPackage($packageKey) {
+		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+
 		$xml = new \SimpleXMLElement(file_get_contents('resource://' . $packageKey . '/Private/Content/Sites.xml'));
-		foreach ($xml->structure as $site) {
-			$siteNode = $this->objectManager->create((string)$site['type']);
-			$siteNode->setNodeName((string)$site['nodename']);
-			$siteNode->setName((string)$site->name);
-			$siteNode->setState((integer)$site->state);
-			$siteNode->setSiteResourcesPackageKey($packageKey);
-			$this->parseSections($site->section, $siteNode);
-			$this->siteRepository->add($siteNode);
+		foreach ($xml->site as $siteXml) {
+			$site = $this->objectManager->create('F3\TYPO3\Domain\Model\Site', (string)$siteXml['nodeName']);
+			$site->setName((string)$siteXml->properties->name);
+			$site->setState((integer)$siteXml->properties->state);
+			$site->setSiteResourcesPackageKey($packageKey);
+			$this->siteRepository->add($site);
+
+			$rootNode = $contentContext->getWorkspace()->getRootNode();
+			$siteNode = $rootNode->createNode('sites')->createNode($site->getNodeName());
+			$siteNode->setContentObject($site);
+
+			$this->parseNodes($siteXml, $siteNode);
 		}
 	}
 
 	/**
-	 * Iterates over the sections and adds the structure and content found to
-	 * the $referencingNode.
+	 * Iterates over the nodes and adds them to the workspace.
 	 *
-	 * @param \SimpleXMLElement $sections
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $referencingNode
+	 * @param \SimpleXMLElement $parentXml
+	 * @param \F3\TYPO3CR\Domain\Model\Node $parentNode
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function parseSections(\SimpleXMLElement $sections, \F3\TYPO3\Domain\Model\Structure\NodeInterface $referencingNode) {
-		foreach ($sections as $section) {
-			$sectionName = (string)$section['name'];
-			foreach ($section->structure as $structure) {
-				$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', (string)$structure['locale']);
-				$structureNode = $this->objectManager->create((string)$structure['type']);
-				$structureNode->setNodeName((string)$structure['nodename']);
-				$referencingNode->addChildNode($structureNode, $locale, $sectionName);
-				if ($structure->content) {
-					$this->createContentObject($structure->content, $structureNode);
+	protected function parseNodes(\SimpleXMLElement $parentXml, $parentNode) {
+		foreach ($parentXml->node as $childNodeXml) {
+			$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', (string)$childNodeXml['locale']);
+			$childNode = $parentNode->createNode((string)$childNodeXml['nodeName']);
+			$childNode->setContentType((string)$childNodeXml['type']);
+			if ($childNodeXml->properties) {
+				foreach ($childNodeXml->properties->children() as $childXml) {
+					$childNode->setProperty($childXml->getName(), (string)$childXml);
 				}
-				$this->parseSections($structure->section, $structureNode);
+			}
+			if ($childNodeXml->node) {
+				$this->parseNodes($childNodeXml, $childNode);
 			}
 		}
 	}
-
-	/**
-	 * Creates a content object attached to the $structureNode.
-	 *
-	 * @param \SimpleXMLElement $content
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $structureNode
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function createContentObject(\SimpleXMLElement $content, \F3\TYPO3\Domain\Model\Structure\NodeInterface $structureNode) {
-		$contentNode = $this->objectManager->create((string)$content['type'], $this->objectManager->create('F3\FLOW3\I18n\Locale', (string)$content['locale']), $structureNode);
-
-		foreach ($content->children() as $child) {
-		 if (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($contentNode, $child->getName())) {
-			 \F3\FLOW3\Reflection\ObjectAccess::setProperty($contentNode, $child->getName(), (string)$child);
-		 }
-		}
-	}
-
 }
 ?>

@@ -1,5 +1,5 @@
 <f:if condition="{items}">
 	<f:for each="{items}" as="item">
-		&gt; <f:link.action package="TYPO3" controller="Content" arguments="{content: '{item.nodePath}'}">{item.label}</f:link.action>
+		&gt; <f:link.action package="TYPO3" controller="Node" arguments="{node: item.node}">{item.label}</f:link.action>
 	</f:for>
 </f:if>

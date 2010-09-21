@@ -121,6 +121,13 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :
 			case 'json' :
+				$this->view->setConfiguration(
+					array(
+						'value' => array(
+							 'descend' => array('personName')
+						)
+					)
+				);
 				$this->view->assign('value',
 					array(
 						'data' => $party,

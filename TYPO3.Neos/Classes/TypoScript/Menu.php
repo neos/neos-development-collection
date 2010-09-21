@@ -173,41 +173,39 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildItems(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
-		$baseNodePath = '/';
-		$entryParentNode = $this->findParentNodeByLevel($this->entryLevel, $baseNodePath, $contentContext);
+		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->entryLevel, $contentContext);
 		if ($entryParentNode === NULL) {
 			return array();
 		}
-		$lastParentNode = ($this->lastLevel !== NULL) ? $this->findParentNodeByLevel($this->lastLevel, $baseNodePath, $contentContext) : NULL;
+		$lastParentNode = ($this->lastLevel !== NULL) ? $this->findParentNodeInBreadcrumbPathByLevel($this->lastLevel, $contentContext) : NULL;
 
-		return $this->buildRecursiveItemsArray($baseNodePath, $entryParentNode, $lastParentNode, $contentContext);
+		return $this->buildRecursiveItemsArray($entryParentNode, $lastParentNode, $contentContext);
 	}
 
 	/**
 	 * Recursively called method which builds the actual items array.
 	 *
-	 * @param string $baseNodePath The base node path as identified by buildItems()
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $entryParentNode The parent node whose children should be listed as items
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
+	 * @param \F3\TYPO3CR\Domain\Model\Node $entryParentNode The parent node whose children should be listed as items
+	 * @param \F3\TYPO3CR\Domain\Model\Node $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext $contentContext The current content context
 	 * @param integer $currentLevel Level count for the recursion – don't use.
 	 * @return array A nested array of menu item information
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see buildItems()
 	 */
-	private function buildRecursiveItemsArray($baseNodePath, \F3\TYPO3\Domain\Model\Structure\NodeInterface $entryParentNode, $lastParentNode, \F3\TYPO3\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
+	private function buildRecursiveItemsArray(\F3\TYPO3CR\Domain\Model\Node $entryParentNode, $lastParentNode, \F3\TYPO3\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
 		$items = array();
-		foreach ($entryParentNode->getChildNodes($contentContext) as $currentNode) {
+		foreach ($entryParentNode->getChildNodes('typo3:page') as $currentNode) {
 			$item = array(
-				 'label' => $currentNode->getContent($contentContext)->getTitle(),
-				 'nodePath' => $baseNodePath . $currentNode->getNodeName(),
+				 'label' => $currentNode->getProperty('title'),
+				 'node' => $currentNode,
 			);
-			if ($currentNode === $contentContext->getCurrentNodeContent()->getContainingNode()) {
+			if ($currentNode === $contentContext->getCurrentNode()) {
 				$item['state'][self::STATE_ACTIVE] = TRUE;
 			}
 
 			if ($currentLevel < $this->maximumLevels && $entryParentNode !== $lastParentNode) {
-				$subItems = $this->buildRecursiveItemsArray($item['nodePath'] . '/', $currentNode, $lastParentNode, $contentContext, $currentLevel + 1);
+				$subItems = $this->buildRecursiveItemsArray($currentNode, $lastParentNode, $contentContext, $currentLevel + 1);
 				if ($subItems !== array()) {
 					$item['subItems'] = $subItems;
 				}
@@ -218,47 +216,26 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
-	 * Traverses the nodes leading from the top level of the site to the current
-	 * page to determine the parent node of the current page's node.
+	 * Finds the node in the current breadcrumb path between current site node and
+	 * current node whose level matches the specified entry level.
 	 * 
-	 * @param integer $entryLevel The level of which a parent node should be returned. See $this->entryLevel for possible values.
-	 * @param string &$nodePath Contains the node path (e.g. "/homepage/products/") if a node was found
+	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
-	 * @return mixed The parent node of the current page's node or NULL if none was found
+	 * @return \F3\TYPO3CR\Domain\Model\Node The parent node of the node at the specified level or NULL if none was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function findParentNodeByLevel($entryLevel, &$nodePath, \F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, \F3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$parentNode = NULL;
-		$nodePath = '/';
-		if ($entryLevel === 1) {
-			$parentNode = $contentContext->getCurrentSite();
-		} elseif ($entryLevel > 1) {
-			$breadcrumbNodes = $contentContext->getNodeService()->getNodesOnPath($contentContext->getCurrentNodePath());
-			$traverseLevel = 2;
+		$breadcrumbNodes = $contentContext->getNodesOnPath($contentContext->getCurrentSiteNode(), $contentContext->getCurrentNode());
 
-			foreach ($breadcrumbNodes as $potentialParentNode) {
-				$nodePath .= $potentialParentNode->getNodeName() . '/';
-				if ($traverseLevel === $entryLevel) {
-					$parentNode = $potentialParentNode;
-					break;
-				}
-				$traverseLevel ++;
-			}
-		} elseif ($entryLevel < 1) {
-			$breadcrumbNodes = $contentContext->getNodeService()->getNodesOnPath($contentContext->getCurrentNodePath());
-			$currentPageLevel = count($breadcrumbNodes);
-			$traverseLevel  = 0;
-			array_pop($breadcrumbNodes);
-			krsort($breadcrumbNodes);
-			foreach ($breadcrumbNodes as $potentialParentNode) {
-				$nodePath = '/' . $potentialParentNode->getNodeName() . $nodePath;
-				if ($traverseLevel === $entryLevel) {
-					$parentNode = $potentialParentNode;
-				}
-				$traverseLevel --;
-			}
-			if ($traverseLevel === $entryLevel) {
-				$parentNode = $contentContext->getCurrentSite();
+		if ($givenSiteLevel > 0 && isset($breadcrumbNodes[$givenSiteLevel - 1])) {
+			$parentNode = $breadcrumbNodes[$givenSiteLevel - 1];
+		} elseif ($givenSiteLevel <= 0) {
+			$currentSiteLevel = count($breadcrumbNodes) - 1;
+			if ($currentSiteLevel + $givenSiteLevel < 1) {
+				$parentNode = $breadcrumbNodes[0];
+			} else {
+				$parentNode = $breadcrumbNodes[$currentSiteLevel + $givenSiteLevel - 1];
 			}
 		}
 		return $parentNode;

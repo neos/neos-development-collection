@@ -23,17 +23,19 @@ namespace F3\TYPO3\Routing;
  *                                                                        */
 
 /**
- * A route part handler for generic content
+ * A route part handler for nodes
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope singleton
  */
-class ContentRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+class NodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	const MATCHRESULT_FOUND = TRUE;
-	const MATCHRESULT_NOSITE = -1;
-	const MATCHRESULT_NOSUCHNODE = -2;
-	const MATCHRESULT_NOSUCHCONTENT = -3;
+	const MATCHRESULT_NOWORKSPACE = -1;
+	const MATCHRESULT_NOSITE = -2;
+	const MATCHRESULT_NOSITENODE = -3;
+	const MATCHRESULT_NOSUCHNODE = -4;
+	const MATCHRESULT_NOSUCHCONTENT = -5;
+	const MATCHRESULT_INVALIDPATH = -6;
 
 	/**
 	 * @inject
@@ -47,19 +49,6 @@ class ContentRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart
 	protected $contentContext;
 
 	/**
-	 * Returns the current content context
-	 *
-	 * @return \F3\TYPO3\Domain\Service\ContentContext
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getContentContext() {
-		if ($this->contentContext === NULL) {
-			$this->contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext');
-		}
-		return $this->contentContext;
-	}
-
-	/**
 	 * While matching, resolves the requested content
 	 *
 	 * @param string $value the complete path
@@ -67,24 +56,34 @@ class ContentRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function matchValue($value) {
-		$contentContext = $this->getContentContext();
-		$site = $contentContext->getCurrentSite();
-		if ($site === NULL) {
+		if ($this->contentContext === NULL) {
+			$this->contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		}
+
+		$workspace = $this->contentContext->getWorkspace();
+		if (!$workspace) {
+			return self::MATCHRESULT_NOWORKSPACE;
+		}
+
+		$site = $this->contentContext->getCurrentSite();
+		if (!$site) {
 			return self::MATCHRESULT_NOSITE;
 		}
 
-		$node = $contentContext->getNodeService()->getNode('/' . $value);
-		if ($node === NULL) {
+		$siteNode = $this->contentContext->getCurrentSiteNode();
+		if (!$siteNode) {
+			return self::MATCHRESULT_NOSITENODE;
+		}
+
+		$currentNode = ($value === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($value);
+		if (!$currentNode) {
 			return self::MATCHRESULT_NOSUCHNODE;
 		}
-		$content = $node->getContent($contentContext);
-		if (!$content instanceof \F3\TYPO3\Domain\Model\Content\ContentInterface) {
-			return self::MATCHRESULT_NOSUCHCONTENT;
-		}
-		$contentContext->setCurrentNodeContent($content);
-		$contentContext->setCurrentNodePath('/' . $value);
-		$this->value = array('__identity' => $content->FLOW3_Persistence_Entity_UUID);
-		return TRUE;
+
+		$this->contentContext->setCurrentNode($currentNode);
+
+		$this->value = $currentNode;
+		return self::MATCHRESULT_FOUND;
 	}
 
 	/**
@@ -106,13 +105,12 @@ class ContentRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart
 	 * @param string $value value to resolve
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	protected function resolveValue($value) {
-		if ($value === NULL || !is_string($value) || $value{0} !== '/') {
+		if (!$value instanceof \F3\TYPO3CR\Domain\Model\Node) {
 			return FALSE;
 		}
-		$this->value = substr($value, 1);
+		$this->value = substr($value->getPath(), strlen($value->getContext()->getCurrentSiteNode()->getPath()) + 1);
 		return TRUE;
 	}
 

@@ -126,31 +126,28 @@ class ContentTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeSectionsIteratesOverUsedSectionsOfPageNodeAndBuildsTypoScriptObjectsForFoundContent() {
-		$mockPageNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode');
-		$mockTextNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode');
+		$mockContentNode1 = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockContentNode2 = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockContentNode2->expects($this->once())->method('getContentType')->will($this->returnValue('typo3:page'));
 
-		$mockPageContent = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array(), array(), '', FALSE);
-		$mockPageContent->expects($this->once())->method('getContainingNode')->will($this->returnValue($mockPageNode));
+		$mockSectionNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockSectionNode->expects($this->once())->method('getName')->will($this->returnValue('default'));
+		$mockSectionNode->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($mockContentNode1, $mockContentNode2)));
 
-     	$mockTextContent = $this->getMock('F3\TYPO3\Domain\Model\Content\Text', array(), array(), '', FALSE);
+		$mockCurrentNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockCurrentNode->expects($this->once())->method('getChildNodes')->with('typo3:section')->will($this->returnValue(array($mockSectionNode)));
 
-		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext');
-		$mockContentContext->expects($this->once())->method('getCurrentNodeContent')->will($this->returnValue($mockPageContent));
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array('live'));
+		$mockContentContext->expects($this->once())->method('getCurrentNode')->will($this->returnValue($mockCurrentNode));
 
 		$mockRenderingContext = $this->getMock('F3\TypoScript\RenderingContext');
 		$mockRenderingContext->expects($this->any())->method('getContentContext')->will($this->returnValue($mockContentContext));
 
-		$mockTextNode->expects($this->once())->method('getContent')->with($mockContentContext)->will($this->returnValue($mockTextContent));
-
-		$mockPageNode->expects($this->once())->method('getUsedSectionNames')->will($this->returnValue(array('default')));
-		$mockPageNode->expects($this->once())->method('getChildNodes')->with($mockContentContext, 'default')->will($this->returnValue(array($mockPageNode, $mockTextNode)));
-		$mockPageNode->expects($this->once())->method('getContent')->with($mockContentContext)->will($this->returnValue($mockPageContent));
-
 		$mockTypoScriptTextObject = $this->getMock('F3\TYPO3\TypoScript\Text');
-		$mockContentArray = $this->getMock('F3\TYPO3\TypoScript\ContentArray', array('setModel'));
+		$mockContentArray = $this->getMock('F3\TYPO3\TypoScript\ContentArray', array('dummy'));
 		$mockTypoScriptObjectFactory = $this->getMock('F3\TypoScript\ObjectFactory');
 		$mockTypoScriptObjectFactory->expects($this->once())->method('createByName')->with('ContentArray')->will($this->returnValue($mockContentArray));
-		$mockTypoScriptObjectFactory->expects($this->once())->method('createByDomainModel')->with($mockTextContent)->will($this->returnValue($mockTypoScriptTextObject));
+		$mockTypoScriptObjectFactory->expects($this->once())->method('createByNode')->with($mockContentNode1)->will($this->returnValue($mockTypoScriptTextObject));
 
 		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('dummy'));
 		$content->_set('typoScriptObjectFactory', $mockTypoScriptObjectFactory);

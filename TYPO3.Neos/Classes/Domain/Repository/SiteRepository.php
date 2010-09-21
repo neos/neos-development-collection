@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Content;
+namespace F3\TYPO3\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,13 +23,23 @@ namespace F3\TYPO3\Domain\Model\Content;
  *                                                                        */
 
 /**
- * Contract for composite content objects
+ * The Site Repository
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
-interface CompositeContentInterface {
+class SiteRepository extends \F3\FLOW3\Persistence\Repository {
 
+	/**
+	 * Finds the first site
+	 *
+	 * @return \F3\TYPO3\Domain\Model\Site The first site or FALSE if none exists
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function findFirst() {
+		return $this->createQuery()->execute()->getFirst();
+	}
 }
+
 ?>

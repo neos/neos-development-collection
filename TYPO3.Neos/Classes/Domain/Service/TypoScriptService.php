@@ -33,62 +33,41 @@ class TypoScriptService {
 
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\ContentContext
-	 */
-	protected $contentContext;
-
-	/**
 	 * @inject
 	 * @var \F3\TypoScript\Parser
 	 */
 	protected $typoScriptParser;
 
 	/**
-	 * Constructs this service
+	 * Returns a merged TypoScript object tree in the context of the given nodes
 	 *
-	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The context for this service
+	 * The start node and end node mark the starting point and end point of the
+	 * path to take while searching for TypoScript configuration. The path of the
+	 * start node must be the base path of the end node's path.
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $startNode Node marking the starting point
+	 * @param \F3\TYPO3CR\Domain\Model\Node $endNode Node marking the end point
+	 * @return array The merged object tree as of the given node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
-		$this->contentContext = $contentContext;
-	}
+	public function getMergedTypoScriptObjectTree(\F3\TYPO3CR\Domain\Model\Node $startNode, \F3\TYPO3CR\Domain\Model\Node $endNode) {
+		$contentContext = $startNode->getContext();
+		$parentNodes = $contentContext->getNodesOnPath($startNode->getPath(), $endNode->getPath());
+		if (!is_array($parentNodes)) {
+			return NULL;
+		}
 
-	/**
-	 * Returns the Content Context this service runs in
-	 *
-	 * @return \F3\TYPO3\Domain\Service\ContentContext
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getContentContext() {
-		return $this->contentContext;
-	}
-
-	/**
-	 * Returns a merged TypoScript object tree in the context of a node specified by the given
-	 * node path.
-	 *
-	 * @param string $nodePath Path to the node to build the TypoScript Object Tree for
-	 * @return array The merged object tree as of the given node or NULL if the given path does not point to a node
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getMergedTypoScriptObjectTree($nodePath) {
-		$nodes = $this->contentContext->getNodeService()->getNodesOnPath($nodePath);
-		if (!is_array($nodes)) return NULL;
-
-		$siteResourcesPackageKey = $this->contentContext->getCurrentSite()->getSiteResourcesPackageKey();
+		$siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
 		$typoScriptsPath = 'resource://' . $siteResourcesPackageKey . '/Private/TypoScripts/';
 
 		$mergedTypoScriptCode = $this->readExternalTypoScriptFiles($typoScriptsPath) . chr(10);
-		foreach ($nodes as $node) {
-			$typoScriptsPath .= $node->getNodeName() . '/';
-			$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($typoScriptsPath) . chr(10);
+		foreach ($parentNodes as $node) {
+			$currentTypoScriptPath = $typoScriptsPath . substr($node->getPath(), strlen($startNode->getPath()));
+			$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($currentTypoScriptPath) . chr(10);
 
-			$configurations = $node->getConfigurations();
-			foreach ($configurations as $configuration) {
-				if ($configuration instanceof \F3\TYPO3\Domain\Model\Configuration\TypoScript) {
-					$mergedTypoScriptCode .= $configuration->getSourceCode() . chr(10);
-				}
+			$typoScriptNodes = $node->getChildNodes('typo3:typoscript');
+			foreach ($typoScriptNodes as $typoScriptNode) {
+				$mergedTypoScriptCode .= $typoScriptNode->getProperty('sourceCode') . chr(10);
 			}
 		}
 		$this->typoScriptParser->setDefaultNamespace('F3\TYPO3\TypoScript');

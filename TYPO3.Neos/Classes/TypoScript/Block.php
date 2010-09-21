@@ -31,14 +31,9 @@ namespace F3\TYPO3\TypoScript;
 class Block extends \F3\TypoScript\AbstractContentObject {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Content\Block
-	 */
-	protected $model;
-
-	/**
 	 * @var string
 	 */
-	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Block';
+	protected $contentType = 'TYPO3\Block';
 
 	/**
 	 * @var string

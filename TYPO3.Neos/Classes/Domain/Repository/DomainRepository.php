@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Repository\Content;
+namespace F3\TYPO3\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,12 +23,31 @@ namespace F3\TYPO3\Domain\Repository\Content;
  *                                                                        */
 
 /**
- * The Page Repository
+ * The Site Repository
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class PageRepository extends \F3\FLOW3\Persistence\Repository {
+class DomainRepository extends \F3\FLOW3\Persistence\Repository {
+
+	/**
+	 * @inject
+	 * @var F3\TYPO3\Domain\Service\DomainMatchingStrategy
+	 */
+	protected $domainMatchingStrategy;
+
+	/**
+	 * Finds all active domains matching the given host.
+	 *
+	 * Their order is determined by how well they match, best match first.
+	 *
+	 * @param string $host Host the domain should match with (eg. "localhost" or "www.typo3.org")
+	 * @return array An array of matching domains
+	 * @api
+	 */
+	public function findByHost($host) {
+		return $this->domainMatchingStrategy->getSortedMatches($host, iterator_to_array($this->findAll()));
+	}
 
 }
 ?>

@@ -76,22 +76,22 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	}
 
 	/**
-	 * Dummy method
+	 * Dummy method, not used
 	 *
-	 * @param object $model Not used
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setModel($model) {
+	public function setNode(\F3\TYPO3CR\Domain\Model\Node $node) {
 	}
 
 	/**
-	 * Dummy method
+	 * Dummy method, not used
 	 *
 	 * @return NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getModel() {
+	public function getNode() {
 	}
 
 	/**
