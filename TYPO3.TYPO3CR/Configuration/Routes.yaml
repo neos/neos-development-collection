@@ -2,50 +2,19 @@
 # Default subroutes configuration for the TYPO3CR package                #
 #                                                                        #
 
-# $Id$
-
-##
-# Routes definitions for the services
-
 -
   name: 'REST service with controller and id'
-  uriPattern: '/service/v1/{@controller}/{id}(.{@format})'
-  defaults: 
+  uriPattern: '{@controller}/{id}(.{@format})'
+  defaults:
     '@package':    'TYPO3CR'
-    '@subpackage': 'Admin\Service'
+    '@subpackage': 'Service'
     '@format':     'json'
+    '@action': 'andi'
 
 -
   name: 'REST service with controller'
-  uriPattern: '/service/v1/{@controller}(.{@format})'
+  uriPattern: '{@controller}(.{@format})'
   defaults:
     '@package':    'TYPO3CR'
-    '@subpackage': 'Admin\Service'
+    '@subpackage': 'Service'
     '@format':     'json'
-
-##
-# TYPO3CR default routes
-
--
-  name: 'Default with controller and action'
-  uriPattern: '/{@controller}/{@action}'
-  defaults:
-    '@package':    'TYPO3CR'
-    '@subpackage': 'Admin'
-
--
-  name: 'Default with controller'
-  uriPattern: '/{@controller}'
-  defaults:
-    '@package':    'TYPO3CR'
-    '@subpackage': 'Admin'
-    '@action':     'index'
-
--
-  name: 'TYPO3CR Fallback'
-  uriPattern: ''
-  defaults:
-    '@package':    'TYPO3CR'
-    '@subpackage': 'Admin'
-    '@controller': 'Standard'
-    '@action':     'index'

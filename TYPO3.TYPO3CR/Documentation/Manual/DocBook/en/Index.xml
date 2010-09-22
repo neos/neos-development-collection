@@ -13,8 +13,7 @@
 
   <info>
     <abstract>
-      <para>The TYPO3 Content Repository is a pure PHP implementation of the
-      JSR-283 specification.</para>
+      <para>The TYPO3 Content Repository is very slightly similar to a JCR.</para>
     </abstract>
 
     <author>
@@ -28,7 +27,7 @@
     </author>
 
     <copyright>
-      <year>2009</year>
+      <year>2010</year>
 
       <holder>Karsten Dambekalns</holder>
     </copyright>
@@ -37,10 +36,5 @@
   <!-- Chapters -->
 
   <xi:include href="Introduction.xml"/>
-  <xi:include href="Configuration.xml"/>
-  <xi:include href="Usage.xml"/>
 
-  <!-- Appendixes -->
-
-  <xi:include href="AppendixTesting.xml"/>
 </book>

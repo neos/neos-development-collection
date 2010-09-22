@@ -9,47 +9,6 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>Introduction</title>
 
-  <para>The <link ns6:href="http://jcp.org/en/jsr/summary?id=283">JSR-283
-  specification</link> defines an API for a Content Repository (CR). The TYPO3
-  Content Repository aims to implement that in pure PHP.</para>
+  <para>The TYPO3 Content Repository is used to store content for TYPO3.</para>
 
-  <section>
-    <title>Current Status</title>
-
-    <para>The specification defines a very broad range of functionality, and
-    currently only some parts of it are actually implemented. That
-    includes:<itemizedlist>
-        <listitem>
-          <para>creating and removing nodes</para>
-        </listitem>
-
-        <listitem>
-          <para>setting, updating and removing properties on nodes</para>
-        </listitem>
-
-        <listitem>
-          <para>node and property retrieveal by traversal</para>
-        </listitem>
-
-        <listitem>
-          <para>parts of the query object model for basic search
-          operations</para>
-        </listitem>
-
-        <listitem>
-          <para>nodetypes can be registered and unregistered (only the
-          nodetype name is recorded)</para>
-        </listitem>
-
-        <listitem>
-          <para>a backend for the FLOW3 persistence subpackage comes with the
-          CR</para>
-        </listitem>
-      </itemizedlist>Further features will be implemented a needed for FLOW3
-    and TYPO3 version 5, only later we will actively work towards JSR-283
-    compliance.</para>
-
-    <para>WebDAV access to the TYPO3 Content Repository will be provided by
-    the seperate WebDAV package.</para>
-  </section>
 </chapter>

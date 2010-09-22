@@ -1,6 +1,0 @@
-When new classes are added, their interfaces are copied as is and the methods are
-filled with a single line throwing an exception, like this:
-
- throw new F3\PHPCR\UnsupportedRepositoryOperationException('Method not yet implemented, sorry!', 1212408404);
-
-Thus it is easy to see what is still missing.
