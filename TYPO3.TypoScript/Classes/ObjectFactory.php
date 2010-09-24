@@ -36,20 +36,23 @@ class ObjectFactory {
 	protected $objectManager;
 
 	/**
-	 * Creates a new TypoScript object which is supposed to render the given model.
+	 * Creates a new TypoScript object which is supposed to render the given node.
 	 *
-	 * @param object $model The (usually domain) model
-	 * @return mixed Either the TypoScript Object or FALSE if no object could be created for the given model
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node
+	 * @return mixed Either the TypoScript Object or FALSE if no object could be created for the given node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo This factory is currently hard-wired and needs some proper implementation once we have "prototypes"
 	 */
-	public function createByDomainModel($model) {
-		if ($model instanceof \F3\TYPO3\Domain\Model\Content\Text) {
-			$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Text');
-			$typoScriptObject->setModel($model);
-		} elseif ($model instanceof \F3\TYPO3\Domain\Model\Content\Block) {
-			$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Block');
-			$typoScriptObject->setModel($model);
+	public function createByNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+		switch ($node->getContentType()) {
+			case 'typo3:text' :
+				$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Text');
+				$typoScriptObject->setNode($node);
+			break;
+			case 'typo3:block' :
+				$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Block');
+				$typoScriptObject->setNode($node);
+			break;
 		}
 		return (isset($typoScriptObject)) ? $typoScriptObject : FALSE;
 	}

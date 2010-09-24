@@ -31,24 +31,23 @@ namespace F3\TypoScript;
 interface ObjectInterface {
 
 	/**
-	 * Sets the Domain Model the TypoScript object is based on.
+	 * Sets the node the TypoScript object is based on.
 	 *
-	 * All accesible properties of that model can become properties of the TypoScript
-	 * object as well. If they can be set via TypoScript depends on if a setter
+	 * All properties of the node can become part of the TypoScript object
+	 * as well. If they can be set via TypoScript depends on if a setter
 	 * method exists in the respective TypoScript Object class.
 	 *
-	 * @param object $model The domain model the TypoScript object is based on
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node the TypoScript object is based on
 	 * @return void
-	 * @throws \F3\TypoScript\Exception\InvalidModelException if the given model is not an instance of $this->modelType
 	 */
-	public function setModel($model);
+	public function setNode(\F3\TYPO3CR\Domain\Model\Node $node);
 
 	/**
-	 * Returns the model the TypoScript object is based on
+	 * Returns the node the TypoScript object is based on
 	 *
-	 * @return object The domain model the TypoScript object is based on
+	 * @return \F3\TYPO3CR\Domain\Model\Node The node the TypoScript object is based on
 	 */
-	public function getModel();
+	public function getNode();
 
 	/**
 	 * Sets the property processor chain for a specific property

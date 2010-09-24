@@ -30,18 +30,18 @@ namespace F3\TypoScript;
 abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 
 	/**
-	 * The (usually domain) model the TypoScript Object is based on (if any)
+	 * The node the TypoScript Object is based on
 	 *
-	 * @var object
+	 * @var \F3\TYPO3CR\Domain\Model\Node
 	 */
-	protected $model;
+	protected $node;
 
 	/**
-	 * Fully qualified class name of the model this TS Object is based on. Must be defined by the concrete implementation.
+	 * Content type of the node this TS Object is based on. Must be defined by the concrete implementation.
 	 *
 	 * @var string
 	 */
-	protected $modelType;
+	protected $contentType;
 
 	/**
 	 * @var array<\F3\TypoScript\ProcessorChain>
@@ -55,32 +55,29 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	protected $typoScriptObjectFactory;
 
 	/**
-	 * Sets the Domain Model the TypoScript object is based on.
+	 * Sets the node the TypoScript object is based on.
 	 *
-	 * All accesible properties of that model can become properties of the TypoScript
-	 * object as well. If they can be set via TypoScript depends on if a setter
+	 * All properties of the node can become part of the TypoScript object
+	 * as well. If they can be set via TypoScript depends on if a setter
 	 * method exists in the respective TypoScript Object class.
 	 *
-	 * @param object $model The domain model the TypoScript object is based on
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node the TypoScript object is based on
 	 * @return void
-	 * @throws \F3\TypoScript\Exception\InvalidModelException if the given model is not an instance of $this->modelType
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Implement check for content type
 	 */
-	public function setModel($model) {
-		if ($this->modelType !== NULL && !$model instanceof $this->modelType) {
-			throw new \F3\TypoScript\Exception\InvalidModelException('setModel expects an object of type "' . $this->modelType . '", ' . (is_object($model) ? get_class($model) : gettype($model)) . '" given.', 1251970434);
-		}
-		$this->model = $model;
+	public function setNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+		$this->node = $node;
 	}
 
 	/**
-	 * Returns the model the TypoScript object is based on
+	 * Returns the node the TypoScript object is based on
 	 *
-	 * @return object The domain model the TypoScript object is based on
+	 * @return \F3\TYPO3CR\Domain\Model\Node The node the TypoScript object is based on
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getModel() {
-		return $this->model;
+	public function getNode() {
+		return $this->node;
 	}
 
 	/**
@@ -148,9 +145,9 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 		}
 
 		$propertyValue = $this->$getterMethodName();
-		if ($propertyValue === NULL && $this->model !== NULL) {
-			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->model, $propertyName)) {
-				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->model, $propertyName);
+		if ($propertyValue === NULL && $this->node !== NULL) {
+			if ($this->node->hasProperty($propertyName)) {
+				$propertyValue = $this->node->getProperty($propertyName);
 			}
 		}
 

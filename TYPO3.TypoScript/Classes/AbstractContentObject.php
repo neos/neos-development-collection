@@ -46,8 +46,6 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 * Names of the properties of this TypoScript which should be available in
 	 * this TS object's template while rendering it.
 	 *
-	 * Note: Make sure that a getter method for the respective property exists.
-	 *
 	 * @var array
 	 */
 	protected $presentationModelPropertyNames = array();
@@ -115,10 +113,9 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	/**
 	 * Returns the rendered content of this content object
 	 *
-	 * @todo Discuss how to expose the domain model for identity to the view
-	 *
 	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Discuss how to expose the domain model for identity to the view
 	 */
 	public function render() {
 		$this->template->setRenderingContext($this->renderingContext);
@@ -126,8 +123,8 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 		foreach ($this->presentationModelPropertyNames as $propertyName) {
 			$this->template->assign($propertyName, $this->getPropertyProcessingProxy($propertyName));
 		}
-		if ($this->model !== NULL) {
-			$this->template->assign('domainModel', $this->model);
+		if ($this->node !== NULL) {
+			$this->template->assign('node', $this->node);
 		}
 
 		if (isset($this->propertyProcessorChains['_root'])) {
