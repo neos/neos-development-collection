@@ -74,7 +74,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 
 		$output = '';
 		foreach ($uris as $uri) {
-			$output .= '<script type="text/javascript" src="' . $uri . '"></script>' . chr(10);
+			$output .= '<script src="' . $uri . '"></script>' . chr(10);
 		}
 		return $output;
 	}

@@ -31,14 +31,11 @@ namespace F3\TYPO3\TypoScript;
 class Text extends \F3\TypoScript\AbstractContentObject {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Content\Text
-	 */
-	protected $model;
-
-	/**
+	 * Content type of the node this TS Object is based on.
+	 *
 	 * @var string
 	 */
-	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Text';
+	protected $contentType = 'typo3:text';
 
 	/**
 	 * @var string

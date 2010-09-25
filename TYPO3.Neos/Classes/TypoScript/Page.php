@@ -31,14 +31,11 @@ namespace F3\TYPO3\TypoScript;
 class Page extends \F3\TypoScript\AbstractContentObject {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Content\Page
-	 */
-	protected $model;
-
-	/**
+	 * Content type of the node this TS Object is based on.
+	 *
 	 * @var string
 	 */
-	protected $modelType = 'F3\TYPO3\Domain\Model\Content\Page';
+	protected $contentType = 'typo3:page';
 
 	/**
 	 * @var string
@@ -89,6 +86,9 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Sets the type of this page.
 	 *
+	 * What is used as a type string is completely up to the TypoScript integrator.
+	 * The default type is "default".
+	 *
 	 * @param string $type
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -118,10 +118,6 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 		$this->title = $title;
 	}
 
-	public function getRenderingContext() {
-		return $this->renderingContext;
-	}
-
 	/**
 	 * Returns the overridden title of this page.
 	 *
@@ -135,7 +131,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Sets head content of this page.
 	 *
-	 * @param \F3\TYPO3\TypoScript\ $head
+	 * @param \F3\TYPO3\TypoScript\Head $head
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -219,14 +215,27 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
+	 * Returns the rendering context
+	 *
+	 *  - currently neccessary for the JSON identity view helper -
+	 *
+	 * @return \F3\TypoScript\RenderingContext
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @fixme
+	 */
+	public function getRenderingContext() {
+		return $this->renderingContext;
+	}
+
+	/**
 	 * Returns the rendered content of this Page TypoScript Object
 	 *
 	 * @return string The rendered content as a string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		$this->model = $this->renderingContext->getContentContext()->getCurrentNodeContent();
-		$this->head->setModel($this->model);
+		$this->node = $this->renderingContext->getContentContext()->getCurrentNode();
+		$this->head->setNode($this->node);
 		return parent::render();
 	}
 }

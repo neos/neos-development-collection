@@ -100,10 +100,10 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getHTTPHost')->will($this->returnValue('myhost'));
 
-		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\Configuration\DomainRepository', array(), array(), '', FALSE);
+		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
 
-		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\Structure\SiteRepository', array('findFirst'), array(), '', FALSE);
+		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
 
 		$locale = new \F3\FLOW3\I18n\Locale('mul-ZZ');
 
@@ -128,16 +128,16 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getHTTPHost')->will($this->returnValue('myhost'));
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);
 
 		$mockMatchingDomains = array(
-			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE),
-			$this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE)
+			$this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE)
 		);
 
 		$mockMatchingDomains[0]->expects($this->once())->method('getSite')->will($this->returnValue($mockSite));
 
-		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\Configuration\DomainRepository', array(), array(), '', FALSE);
+		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue($mockMatchingDomains));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
@@ -162,14 +162,14 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 		$mockEnvironment->expects($this->once())->method('getHTTPHost')->will($this->returnValue('myhost'));
 
 		$mockSites = array(
-			$this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE),
-			$this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE)
+			$this->getMock('F3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE),
+			$this->getMock('F3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE)
 		);
 
-		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\Structure\SiteRepository', array('findFirst'), array(), '', FALSE);
+		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
 		$mockSiteRepository->expects($this->once())->method('findFirst')->will($this->returnValue($mockSites[0]));
 
-		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\Configuration\DomainRepository', array(), array(), '', FALSE);
+		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
@@ -191,7 +191,7 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentSiteReturnsTheCurrentSite() {
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
 		$contentContext->_set('currentSite', $mockSite);
@@ -203,7 +203,7 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentDomainReturnsTheCurrentDomainIfAny() {
-		$mockDomain = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE);
+		$mockDomain = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
 

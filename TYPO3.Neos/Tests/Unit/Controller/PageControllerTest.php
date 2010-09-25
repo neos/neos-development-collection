@@ -27,7 +27,7 @@ namespace F3\TYPO3\Controller;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ContentControllerTest extends \F3\Testing\BaseTestCase {
+class NodeControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -38,7 +38,7 @@ class ContentControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\ContentController'), array('dummy'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\NodeController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('view', $mockView);
 
@@ -64,7 +64,7 @@ class ContentControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\ContentController'), array('redirect'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\NodeController'), array('redirect'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->injectContentRepository($mockContentRepository);
 		$controller->_set('view', $mockView);
@@ -84,7 +84,7 @@ class ContentControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\ContentController'), array('redirect'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Controller\NodeController'), array('redirect'), array(), '', FALSE);
 		$controller->_set('request', $mockRequest);
 		$controller->injectContentRepository($mockContentRepository);
 		$controller->_set('view', $mockView);

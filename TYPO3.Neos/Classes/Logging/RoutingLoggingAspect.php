@@ -46,31 +46,36 @@ class RoutingLoggingAspect {
 	}
 
 	/**
-	 * Logs results of the PageRoutePartHandler's matchValue() methods
+	 * Logs results of the NodeRoutePartHandler's matchValue() methods
 	 *
-	 * @afterreturning method(F3\TYPO3\Routing\PageRoutePartHandler->matchValue())
+	 * @afterreturning method(F3\TYPO3\Routing\NodeRoutePartHandler->matchValue()) || method(F3\TYPO3\Routing\NodeServiceRoutePartHandler->matchValue())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logMatchValue(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$result = $joinPoint->getResult();
 		$path = $joinPoint->getMethodArgument('value');
-		
+		$resultCode = $joinPoint->getResult();
+
      	switch (TRUE) {
-			case $result === \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSITE :
-				$this->systemLogger->log('PageRoutePartHandler did not match path "' . $path . '" because no site was found.', LOG_WARNING);
+			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_INVALIDPATH :
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because the path was not valid.', LOG_INFO);
 				break;
-			case $result === \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHNODE :
-				$this->systemLogger->log('PageRoutePartHandler did not match path "' . $path . '" because no root node was found.', LOG_WARNING);
+			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOWORKSPACE :
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no workspace was found.', LOG_WARNING);
 				break;
-			case $result === \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_NOSUCHPAGE :
-				$this->systemLogger->log('PageRoutePartHandler did not match path "' . $path . '" because no page was found at the site\'s root node.', LOG_WARNING);
+			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSITE :
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no site was found.', LOG_WARNING);
 				break;
-			case $result === \F3\TYPO3\Routing\PageRoutePartHandler::MATCHRESULT_FOUND :
-				$identityArray = $joinPoint->getProxy()->FLOW3_AOP_Proxy_getProperty('value');
-				$uuid = $identityArray['__identity'];
-				$this->systemLogger->log('PageRoutePartHandler matched page with UUID ' . $uuid . ' on path "' . $path . '".', LOG_DEBUG);
+			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSITENODE :
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match because no site node was found.', LOG_WARNING);
+				break;
+			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSUCHNODE :
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no such node was found.', LOG_WARNING);
+				break;
+			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_FOUND :
+				$node = $joinPoint->getProxy()->FLOW3_AOP_Proxy_getProperty('value');
+				$this->systemLogger->log($joinPoint->getClassName() . ' matched node "' . $node->getPath() . '" of type ' . $node->getContentType() . '.', LOG_INFO);
 				break;
 		}
 	}

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Structure;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -30,7 +30,7 @@ namespace F3\TYPO3\Domain\Model\Structure;
  * @entity
  * @api
  */
-class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\TYPO3\Domain\Model\Structure\IndexNodeAwareInterface {
+class Site {
 
 	/**
 	 * Site statusses
@@ -40,11 +40,22 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 
 	/**
 	 * Name of the site
+	 *
 	 * @var string
-	 * @validate Label, StringLength(minimum = 1, maximum = 255)
-	 * @api
+	 * @validate Label, StringLength(minimum = 1, maximum = 250)
 	 */
 	protected $name = 'Untitled Site';
+
+	/**
+	 * Node name of this site in the content repository.
+	 *
+	 * The first level of nodes of a site can be reached via a path like
+	 * "/Sites/MySite/" where "MySite" is the nodeName.
+	 *
+	 * @var string
+	 * @identity
+	 */
+	protected $nodeName;
 
 	/**
 	 * The site's state
@@ -57,6 +68,16 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 * @var string
 	 */
 	protected $siteResourcesPackageKey;
+
+	/**
+	 * Constructs this Site object
+	 *
+	 * @param string $nodeName Node name of this site in the content repository
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($nodeName) {
+		$this->nodeName = $nodeName;
+	}
 
 	/**
 	 * Sets the name for this site
@@ -79,6 +100,17 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * Returns the node name of this site
+	 *
+	 * @return string The node name
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function getNodeName() {
+		return $this->nodeName;
 	}
 
 	/**
@@ -127,51 +159,5 @@ class Site extends \F3\TYPO3\Domain\Model\Structure\AbstractNode implements \F3\
 		return $this->siteResourcesPackageKey;
 	}
 
-	/**
-	 * Adds a child node to the list of existing child nodes
-	 *
-	 * @param \F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode The node to add
-	 * @param \F3\FLOW3\I18n\Locale $locale If specified, the child node is marked with that locale. If not specified, multilingual and international is assumed.
-	 * @param string $section Must be "default"!
-	 * @return void
-	 * @throws \InvalidArgumentException if $section is not "default"
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function addChildNode(\F3\TYPO3\Domain\Model\Structure\NodeInterface $childNode, \F3\FLOW3\I18n\Locale $locale = NULL, $section = 'default') {
-		if ($section !== 'default') {
-			throw new \InvalidArgumentException('Site structure nodes can only have children added to the "default" section.', 1276616370);
-		}
-		parent::addChildNode($childNode, $locale, 'default');
-	}
-
-	/**
-	 * Returns the child notes of this structure node.
-	 * Note that the child nodes are indexed by language and region!
-	 *
-	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context for determining the locale of the nodes to return
-	 * @param string $section Always "default", will be ignored if given
-	 * @return array An array of child nodes. If no context was specified in the form of array('{language}' => array ('{region}' => {child nodes})).
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getChildNodes(\F3\TYPO3\Domain\Service\ContentContext $contentContext = NULL, $section = 'default') {
-		return parent::getChildNodes($contentContext, 'default');
-	}
-
-	/**
-	 * Returns the index node of this site
-	 *
-	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext The current content context
-	 * @return \F3\TYPO3\Domain\Model\Structure\ContentNode The index node or NULL if no index node exists.
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getIndexNode(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
-		$childNodesMatchingContext = $this->getChildNodes($contentContext, 'default');
-		return reset($childNodesMatchingContext) ?: NULL;
-	}
-
 }
-
 ?>

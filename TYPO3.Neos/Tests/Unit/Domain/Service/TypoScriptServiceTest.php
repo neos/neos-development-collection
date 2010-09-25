@@ -68,7 +68,7 @@ class TypoScriptServiceTest extends \F3\Testing\BaseTestCase {
 		$mockBarNode->expects($this->any())->method('getNodeName')->will($this->returnValue('bar'));
 		$mockBarNode->expects($this->any())->method('getConfigurations')->will($this->returnValue(array()));
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->any())->method('getSiteResourcesPackageKey')->will($this->returnValue('SitePackage'));
 		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array(), array(), '', FALSE);
 		$mockNodeService->expects($this->any())->method('getNodesOnPath')->will($this->returnValue(array($mockFooNode, $mockBarNode)));
@@ -99,7 +99,7 @@ class TypoScriptServiceTest extends \F3\Testing\BaseTestCase {
 		$mockBarNode->expects($this->any())->method('getNodeName')->will($this->returnValue('bar'));
 		$mockBarNode->expects($this->any())->method('getConfigurations')->will($this->returnValue(array($mockBarConfiguration)));
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->any())->method('getSiteResourcesPackageKey')->will($this->returnValue('SitePackage'));
 		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array(), array(), '', FALSE);
 		$mockNodeService->expects($this->any())->method('getNodesOnPath')->will($this->returnValue(array($mockFooNode, $mockBarNode)));
@@ -123,7 +123,7 @@ class TypoScriptServiceTest extends \F3\Testing\BaseTestCase {
 		$mockFooNode->expects($this->any())->method('getNodeName')->will($this->returnValue('foo'));
 		$mockFooNode->expects($this->any())->method('getConfigurations')->will($this->returnValue(array($mockFooConfiguration)));
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->any())->method('getSiteResourcesPackageKey')->will($this->returnValue('SitePackage'));
 		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array(), array(), '', FALSE);
 		$mockNodeService->expects($this->any())->method('getNodesOnPath')->will($this->returnValue(array($mockFooNode)));

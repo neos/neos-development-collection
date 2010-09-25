@@ -46,7 +46,7 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 	public function offsetGet($offset) {
 		if ($this->sections === NULL) {
 			$this->initializeSections();
-     	}
+		}
 		return (isset($this->sections[$offset])) ? $this->sections[$offset] : NULL;
 	}
 
@@ -59,7 +59,7 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 	public function offsetExists($offset) {
 		if ($this->sections === NULL) {
 			$this->initializeSections();
-     	}
+		}
 		return isset($this->sections[$offset]);
 	}
 
@@ -74,10 +74,10 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 	public function offsetSet($offset, $value) {
 		if ($this->sections === NULL) {
 			$this->initializeSections();
-     	}
+		}
 		if (!$value instanceof \F3\TypoScript\ContentObjectInterface) {
 			throw new \InvalidArgumentException('A section must be a valid TypoScript content object.', 1273764535);
-     	}
+		}
 		$this->sections[$offset] = $value;
 	}
 
@@ -91,7 +91,7 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 	public function offsetUnset($offset) {
 		if ($this->sections === NULL) {
 			$this->initializeSections();
-     	}
+		}
 		unset($this->sections[$offset]);
 	}
 
@@ -102,29 +102,25 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeSections() {
-    	$this->sections = array();
+		$this->sections = array();
 
-		$currentPage = $this->renderingContext->getContentContext()->getCurrentNodeContent();
-		if ($currentPage === NULL) {
-			return;
-		}
-		$pageNode = $currentPage->getContainingNode();
+		$contentContext = $this->renderingContext->getContentContext();
 
-		foreach ($pageNode->getUsedSectionNames() as $sectionName) {
+		$sectionNodes = $contentContext->getCurrentNode()->getChildNodes('typo3:section');
+		foreach ($sectionNodes as $sectionNode) {
 			$contentArray = $this->typoScriptObjectFactory->createByName('ContentArray');
 			$i = 0;
 
-			foreach ($pageNode->getChildNodes($this->renderingContext->getContentContext(), $sectionName) as $childNode) {
-				$content = $childNode->getContent($this->renderingContext->getContentContext());
-				if (!$content instanceof \F3\TYPO3\Domain\Model\Content\Page) {
-					$typoScriptObject = $this->typoScriptObjectFactory->createByDomainModel($content);
+			foreach ($sectionNode->getChildNodes() as $sectionChildNode) {
+				if ($sectionChildNode->getContentType() !== 'typo3:page') {
+					$typoScriptObject = $this->typoScriptObjectFactory->createByNode($sectionChildNode);
 					$contentArray[$i] = $typoScriptObject;
 					$i++;
 				}
 			}
 
 			if ($i > 0) {
-				$this->sections[$sectionName] = $contentArray;
+				$this->sections[$sectionNode->getName()] = $contentArray;
 			}
 		}
 	}

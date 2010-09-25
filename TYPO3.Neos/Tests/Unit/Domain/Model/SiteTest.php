@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Configuration;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,45 +23,51 @@ namespace F3\TYPO3\Domain\Model\Configuration;
  *                                                                        */
 
 /**
- * Testcase for the "Domain" domain model
+ * Testcase for the "Site" domain model
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class DomainTest extends \F3\Testing\BaseTestCase {
+class SiteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain() {
-		$domain = new \F3\TYPO3\Domain\Model\Configuration\Domain;
-		$domain->setHostPattern('typo3.com');
-		$this->assertSame('typo3.com', $domain->getHostPattern());
+	public function aNameCanBeSetAndRetrievedFromTheSite() {
+		$site = new \F3\TYPO3\Domain\Model\Site('');
+		$site->setName('My cool website');
+		$this->assertSame('My cool website', $site->getName());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSiteEntryPointSetsTheEntryPointForTheDomain() {
-		$mockNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\NodeInterface', array(), array(), '', FALSE);
-
-		$domain = new \F3\TYPO3\Domain\Model\Configuration\Domain;
-		$domain->setSiteEntryPoint($mockNode);
-		$this->assertSame($mockNode, $domain->getSiteEntryPoint());
+	public function theDefaultStateOfASiteIsOnline() {
+		$site = new \F3\TYPO3\Domain\Model\Site('');
+		$this->assertSame(\F3\TYPO3\Domain\Model\Site::STATE_ONLINE, $site->getState());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSiteSetsTheSiteTheDomainIsPointingTo() {
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
-
-		$domain = new \F3\TYPO3\Domain\Model\Configuration\Domain;
-		$domain->setSite($mockSite);
-		$this->assertSame($mockSite, $domain->getSite());
+	public function theStateCanBeSetAndRetrieved() {
+		$site = new \F3\TYPO3\Domain\Model\Site('');
+		$site->setState(\F3\TYPO3\Domain\Model\Site::STATE_OFFLINE);
+		$this->assertSame(\F3\TYPO3\Domain\Model\Site::STATE_OFFLINE, $site->getState());
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theSiteResourcesPackageKeyCanBeSetAndRetrieved() {
+		$site = new \F3\TYPO3\Domain\Model\Site('');
+		$site->setSiteResourcesPackageKey('Foo');
+		$this->assertSame('Foo', $site->getSiteResourcesPackageKey());
+	}
+
 }
 
 ?>

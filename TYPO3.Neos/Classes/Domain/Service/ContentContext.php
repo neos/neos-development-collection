@@ -29,13 +29,7 @@ namespace F3\TYPO3\Domain\Service;
  * @scope prototype
  * @api
  */
-class ContentContext {
-
-	/**
-	 * @inject
-	 * @var F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
+class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 
 	/**
 	 * @inject
@@ -45,13 +39,13 @@ class ContentContext {
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\Structure\SiteRepository
+	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\Configuration\DomainRepository
+	 * @var F3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
 
@@ -61,53 +55,19 @@ class ContentContext {
 	protected $currentDateTime;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\ContentService
-	 */
-	protected $contentService;
-
-	/**
-	 * @var \F3\TYPO3\Domain\Service\NodeService
-	 */
-	protected $nodeService;
-
-	/**
-	 * @var \F3\TYPO3\Domain\Service\TypoScriptService
-	 */
-	protected $typoScriptService;
-
-	/**
 	 * @var \F3\FLOW3\I18n\Locale
 	 */
 	protected $locale;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Structure\Site
+	 * @var \F3\TYPO3\Domain\Model\Site
 	 */
 	protected $currentSite;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Configuration\Domain
+	 * @var \F3\TYPO3\Domain\Model\Domain
 	 */
 	protected $currentDomain;
-
-	/**
-	 * @var \F3\TYPO3\Domain\Model\Content\Page
-	 */
-	protected $currentNodeContent;
-
-	/**
-	 * @var string
-	 */
-	protected $nodePath;
-
-	/**
-	 * Constructs this content context
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct() {
-		$this->currentDateTime = new \DateTime();
-	}
 
 	/**
 	 * Initializes the context after all dependencies have been injected.
@@ -116,10 +76,8 @@ class ContentContext {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		$this->contentService = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentService', $this);
-		$this->nodeService = $this->objectManager->create('F3\TYPO3\Domain\Service\NodeService', $this);
-		$this->typoScriptService = $this->objectManager->create('F3\TYPO3\Domain\Service\TypoScriptService', $this);
 		$this->locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', 'mul-ZZ');
+		$this->currentDateTime = new \DateTime();
 
 		$matchingDomains = $this->domainRepository->findByHost($this->environment->getHTTPHost());
 		if (count ($matchingDomains) > 0) {
@@ -141,7 +99,6 @@ class ContentContext {
 	 *
 	 * @return \DateTime The current date and time - or a simulated version of it
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function getCurrentDateTime() {
 		return $this->currentDateTime;
@@ -154,46 +111,9 @@ class ContentContext {
 	 * @param \DateTime $currentDateTime A date and time to simulate.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function setCurrentDateTime(\DateTime $currentDateTime) {
 		$this->currentDateTime = $currentDateTime;
-	}
-
-	/**
-	 * Returns the content service which is bound to this context.
-	 * Only use THIS method for retrieving an instance of the Content Service!
-	 *
-	 * @return \F3\TYPO3\Domain\Service\ContentService
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getContentService() {
-		return $this->contentService;
-	}
-
-	/**
-	 * Returns the node service which is bound to this context.
-	 * Only use THIS method for retrieving an instance of the Node Service!
-	 *
-	 * @return \F3\TYPO3\Domain\Service\NodeService
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getNodeService() {
-		return $this->nodeService;
-	}
-
-	/**
-	 * Returns the TypoScript service which is bound to this context.
-	 * Only use THIS method for retrieving an instance of the TypoScript service!
-	 *
-	 * @return \F3\TYPO3\Domain\Service\TypoScriptService
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getTypoScriptService() {
-		return $this->typoScriptService;
 	}
 
 	/**
@@ -201,7 +121,6 @@ class ContentContext {
 	 *
 	 * @return \F3\FLOW3\I18n\Locale
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function getLocale() {
 		return $this->locale;
@@ -210,12 +129,25 @@ class ContentContext {
 	/**
 	 * Returns the current site from this frontend context
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Structure\Site The current site
+	 * @return \F3\TYPO3\Domain\Model\Site The current site
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function getCurrentSite() {
 		return $this->currentSite;
+	}
+
+	/**
+	 * Sets the current site.
+	 *
+	 * Note that changing the current site after the context has been in use
+	 * already can lead to unexpected behavior.
+	 *
+	 * @param \F3\TYPO3\Domain\Model\Site $site
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setCurrentSite(\F3\TYPO3\Domain\Model\Site $site) {
+		$this->currentSite = $site;
 	}
 
 	/**
@@ -230,54 +162,13 @@ class ContentContext {
 	}
 
 	/**
-	 * Sets the current node content object.
+	 * Returns the absolute node path of the current site.
 	 *
-	 * This method is typically called by a route part handler or by some other
-	 * part of TYPO3 which wants to mock the "current node content" information.
-	 *
-	 * @return \F3\TYPO3\Domain\Model\Content\ContentInterface $nodeContent
-	 * @return void
+	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
-	public function setCurrentNodeContent(\F3\TYPO3\Domain\Model\Content\ContentInterface $nodeContent) {
-		$this->currentNodeContent = $nodeContent;
-	}
-
-	/**
-	 * Returns the current node content, for example the page (ie. the Page content object)
-	 * from this frontend context
-	 *
-	 * @return \F3\TYPO3\Domain\Model\Content\Page The current page
-	 * @author Robert Lemke <robert@tpyo3.org>
-	 * @api
-	 */
-	public function getCurrentNodeContent() {
-		return $this->currentNodeContent;
-	}
-
-	/**
-	 * Sets the current node path.
-	 * This method is typically called by a specialized route part handler.
-	 *
-	 * @param string $nodePath The current node path, e.g. "homepage/products/typo3"
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function setCurrentNodePath($nodePath) {
-		$this->nodePath = $nodePath;
-	}
-
-	/**
-	 * Returns the current node path.
-	 *
-	 * @return string The current node path, e.g. "homepage/products/typo3"
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getCurrentNodePath() {
-		return $this->nodePath;
+	public function getCurrentSiteNode() {
+		return ($this->currentSite === NULL) ? NULL : $this->getNode('/sites/' . $this->currentSite->getNodeName());
 	}
 }
 ?>

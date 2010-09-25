@@ -5,8 +5,7 @@
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="generator" content="TYPO3, http://typo3.org, &#169; The TYPO3 Development Team" />
-		<title>TYPO3 Error</title>
+		<title>{pageTitle}</title>
 		<f:base />
 		<link rel="stylesheet" href="{f:uri.resource(path:'CSS/reset-min.css', package:'ExtJS')}" />
 		<style type="text/css">
@@ -83,7 +82,7 @@
 			filter:DropShadow(color=#4d4d4d, offx=1, offy=1);
 		}
 		#errorBox p {
-			padding: 0 0 0 60px;
+			padding: 0 0 16px 60px;
 			font-size: 108%;
 		}
 
@@ -111,9 +110,8 @@
 			<div id="errorBox">
 				<h2>TYPO3</h2>
 				<div class="errorContainer">
-					<h3>###ERROR_TITLE###</h3>
-					<h4>###ERROR_SUBTITLE###</h4>
-					<p>###ERROR_DESCRIPTION###</p>
+					<h3>{errorTitle}</h3>
+					<p><f:raw>{errorDescription}</f:raw></p>
 				</div>
 			</div>
 		</div>

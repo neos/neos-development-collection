@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Model\Content;
+namespace F3\TYPO3\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,85 +23,67 @@ namespace F3\TYPO3\Domain\Model\Content;
  *                                                                        */
 
 /**
- * Domain model of a Text content element
+ * Error Controller
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
- * @entity
- * @api
  */
-class Text extends \F3\TYPO3\Domain\Model\Content\AbstractContent {
+class ErrorController extends \F3\FLOW3\MVC\Controller\ActionController implements \F3\FLOW3\MVC\Controller\NotFoundControllerInterface {
 
 	/**
-	 * Headline for this text element
-	 * @var string
-	 * @validate Label, StringLength(maximum = 250)
+	 * @var array
 	 */
-	protected $headline = '';
+	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\Cli\Request');
 
 	/**
-	 * The text of this text element
-	 * @var string
-	 * @validate String
+	 * @var \F3\FLOW3\MVC\Controller\Exception
 	 */
-	protected $text = '';
+	protected $exception;
 
 	/**
-	 * Sets the headline of this text element
-	 * 
-	 * @param string $headline
+	 * Sets the controller exception
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\Exception $exception
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setException(\F3\FLOW3\MVC\Controller\Exception $exception) {
+		$this->exception = $exception;
+	}
+
+	/**
+	 * Default action of this controller.
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
-	public function setHeadline($headline) {
-		$this->headline = $headline;
+	public function indexAction() {
+		if ($this->exception !== NULL) {
+			$this->view->assign('errorMessage', $this->exception->getMessage());
+		}
+		switch (get_class($this->request)) {
+			case 'F3\FLOW3\MVC\Web\Request' :
+				$this->view->assign('pageTitle', '404 Not Found');
+				$this->view->assign('errorTitle', 'Page Not Found');
+				$this->view->assign('errorDescription', 'Sorry, we could not find any page at this URL.<br />Please visit the <a href="/">homepage</a> to get back on the path.');
+				$this->response->setStatus(404);
+				break;
+			default :
+				return "\n404 Not Found\n\nNo controller could be resolved which would match your request.\n";
+		}
 	}
 
 	/**
-	 * Returns the headline of this text element
-	 * 
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getHeadline() {
-		return $this->headline;
-	}
-
-	/**
-	 * Sets the body text of this text element
+	 * Prepares a view for the current action and stores it in $this->view.
 	 *
-	 * @param string $text
+	 * @return \F3\Fluid\View\ViewInterface the resolved view
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
-	public function setText($text) {
-		$this->text = $text;
-	}
-
-	/**
-	 * Returns the body text of this text element
-	 * 
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getText() {
-		return $this->text;
-	}
-
-	/**
-	 * Returns a label for this Text element
-	 *
-	 * @return string The label
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getLabel() {
-		return ($this->headline != '') ? $this->headline : '[Untitled]';
+	protected function resolveView() {
+		$view = $this->objectManager->create($this->defaultViewObjectName);
+		$view->setTemplatePathAndFilename('resource://TYPO3/Private/Templates/Error/Index.html');
+		$view->setControllerContext($this->controllerContext);
+		return $view;
 	}
 
 }
-
 ?>

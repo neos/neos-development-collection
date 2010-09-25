@@ -36,7 +36,7 @@ class MenuTest extends \F3\Testing\BaseTestCase {
 	public function getItemsBuildsTheItemsArrayIfItHasNotBeenBuiltAlready() {
 		$mockItems = array('foo' => 'bar');
 
-		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext');
+		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array('live'));
 
 		$mockRenderingContext = $this->getMock('F3\TypoScript\RenderingContext');
 		$mockRenderingContext->expects($this->once())->method('getContentContext')->will($this->returnValue($mockContentContext));
@@ -71,7 +71,7 @@ class MenuTest extends \F3\Testing\BaseTestCase {
 	 * 
 	 */
 	public function buildItemData() {
-		$currentSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site', array(), array(), '', FALSE);
+		$currentSite = $this->getMock('F3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);
 
 		$contentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext');
 		$contentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($currentSite));

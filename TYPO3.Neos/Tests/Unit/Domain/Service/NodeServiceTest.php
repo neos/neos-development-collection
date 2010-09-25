@@ -51,7 +51,7 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$expectedNode = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode');
 		$expectedNode->expects($this->once())->method('getNodeName')->will($this->returnValue('foo'));
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
 		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($otherNode, $expectedNode)));
 
@@ -84,7 +84,7 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$node1b->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
 		$node1b->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($node2a, $expectedNode)));
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
 		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($node1a, $node1b)));
 
@@ -110,7 +110,7 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$nodeFoo->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
 		$nodeFoo->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($nodeBaz)));
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
 		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($nodeFoo)));
 
@@ -127,7 +127,7 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeReturnsFalseIfObjectStructureHasNotEnoughChildNodesForTheGivenNumberOfPathSegments() {
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->once())->method('hasChildNodes')->will($this->returnValue(FALSE));
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
@@ -158,7 +158,7 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 		$node1b->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
 		$node1b->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($node2a, $node2b)));
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->once())->method('hasChildNodes')->will($this->returnValue(TRUE));
 		$mockSite->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($node1a, $node1b)));
 
@@ -180,7 +180,7 @@ class NodeServiceTest extends \F3\Testing\BaseTestCase {
 	public function getNodesOnPathReturnsTheIndexNodeIfTheReferenceNodeSupportsIt() {
 		$node1a = $this->getMock('F3\TYPO3\Domain\Model\Structure\ContentNode');
 
-		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Structure\Site');
+		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site');
 		$mockSite->expects($this->once())->method('getIndexNode')->will($this->returnValue($node1a));
 
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);

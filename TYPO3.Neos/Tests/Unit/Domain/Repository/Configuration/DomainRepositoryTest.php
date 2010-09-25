@@ -37,16 +37,16 @@ class DomainRepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockDomains = array();
 
 		$mockDomains = array();
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE);
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE);
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Configuration\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
 
 		$expectedDomains = array($mockDomains[0], $mockDomains[2]);
 
 		$mockDomainMatchingStrategy = $this->getMock('F3\TYPO3\Domain\Service\DomainMatchingStrategy', array(), array(), '', FALSE);
 		$mockDomainMatchingStrategy->expects($this->any())->method('getSortedMatches')->with('myhost', $mockDomains)->will($this->returnValue($expectedDomains));
 
-		$domainRepository = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Repository\Configuration\DomainRepository'), array('findAll'), array(), '', FALSE);
+		$domainRepository = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Repository\DomainRepository'), array('findAll'), array(), '', FALSE);
 		$domainRepository->expects($this->once())->method('findAll')->will($this->returnValue($mockDomains));
 		$domainRepository->_set('domainMatchingStrategy', $mockDomainMatchingStrategy);
 
