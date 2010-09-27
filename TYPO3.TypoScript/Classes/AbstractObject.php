@@ -61,6 +61,8 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 * as well. If they can be set via TypoScript depends on if a setter
 	 * method exists in the respective TypoScript Object class.
 	 *
+	 * The default "Node" TypoScript object will expose all available properties.
+	 *
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node the TypoScript object is based on
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -140,7 +142,7 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 */
 	protected function getPropertyProcessingProxy($propertyName) {
 		$getterMethodName = 'get' . ucfirst($propertyName);
-		if (!method_exists($this, $getterMethodName)) {
+		if (!is_callable(array($this, $getterMethodName))) {
 			throw new \InvalidArgumentException('Tried to create a processing proxy for non-existing getter ' . get_class($this) . '->' . $getterMethodName . '().', 1179406581);
 		}
 

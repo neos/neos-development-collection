@@ -44,17 +44,9 @@ class ObjectFactory {
 	 * @todo This factory is currently hard-wired and needs some proper implementation once we have "prototypes"
 	 */
 	public function createByNode(\F3\TYPO3CR\Domain\Model\Node $node) {
-		switch ($node->getContentType()) {
-			case 'typo3:text' :
-				$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Text');
-				$typoScriptObject->setNode($node);
-			break;
-			case 'typo3:block' :
-				$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Block');
-				$typoScriptObject->setNode($node);
-			break;
-		}
-		return (isset($typoScriptObject)) ? $typoScriptObject : FALSE;
+		$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Node');
+		$typoScriptObject->setNode($node);
+		return $typoScriptObject;
 	}
 
 	/**
