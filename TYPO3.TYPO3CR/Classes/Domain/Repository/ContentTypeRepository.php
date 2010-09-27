@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3CR\Domain\Service;
+namespace F3\TYPO3CR\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -23,51 +23,11 @@ namespace F3\TYPO3CR\Domain\Service;
  *                                                                        */
 
 /**
- * Context Interface
+ * The repository for content types
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface ContextInterface {
-
-	/**
-	 * Returns the current workspace.
-	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Workspace
-	 */
-	public function getWorkspace();
-
-	/**
-	 * Sets the current node.
-	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
-	 * @return void
-	 */
-	public function setCurrentNode(\F3\TYPO3CR\Domain\Model\Node $node);
-
-	/**
-	 * Returns the current node
-	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node
-	 */
-	public function getCurrentNode();
-
-	/**
-	 * Returns a node specified by the given absolute path.
-	 *
-	 * @param string $path Absolute path specifying the node
-	 * @return \F3\TYPO3CR\Domain\Model\Node The specified node or NULL if no such node exists
-	 */
-	public function getNode($path);
-
-	/**
-	 * Finds all nodes lying on the path specified by (and including) the given
-	 * starting point and end point.
-	 *
-	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
-	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
-	 * @return array<\F3\TYPO3CR\Domain\Model\Node> The nodes found between and including the given paths or an empty array of none were found
-	 */
-	public function getNodesOnPath($startingPoint, $endPoint);
+class ContentTypeRepository extends \F3\FLOW3\Persistence\Repository {
 
 }
 ?>

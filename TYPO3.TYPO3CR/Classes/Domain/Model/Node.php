@@ -101,6 +101,12 @@ class Node {
 
 	/**
 	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
+	 * @inject
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -232,6 +238,7 @@ class Node {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo finish implementation
 	 */
 	public function moveBefore(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
 		if ($this->path === '/') {
@@ -323,6 +330,20 @@ class Node {
 	}
 
 	/**
+	 * Returns the names of all properties of this node.
+	 *
+	 * @return array Property names
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPropertyNames() {
+		if (is_object($this->contentObject)) {
+			return \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObject);
+		} else {
+			return array_keys($this->properties);
+		}
+	}
+
+	/**
 	 * Sets a content object for this node.
 	 *
 	 * @param object $contentObject The content object
@@ -364,6 +385,9 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentType($contentType) {
+		if (!$this->contentTypeManager->hasContentType($contentType)) {
+			throw new \F3\TYPO3CR\Exception\NodeException('Unknown content type "' . $contentType . '".', 1285519999);
+		}
 		$this->contentType = $contentType;
 	}
 
@@ -445,6 +469,19 @@ class Node {
 			$childNode->setContext($this->context);
 		}
 		return $nodes;
+	}
+
+	/**
+	 * Removes this node and all its child nodes.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function remove() {
+		foreach ($this->getChildNodes() as $childNode) {
+			$childNode->remove();
+		}
+		$this->nodeRepository->remove($this);
 	}
 
 	/**
