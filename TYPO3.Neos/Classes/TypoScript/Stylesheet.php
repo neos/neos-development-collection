@@ -95,14 +95,14 @@ class Stylesheet extends \F3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @return string The stylesheet media type
-	 * @author Christopher Hlubek <hlubek@networkteam.com> 
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getMedia() {
 		return $this->media;
 	}
 
 	/**
-	 * @param string $inline The stylesheet media type
+	 * @param string $media The stylesheet media type
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */

@@ -40,7 +40,7 @@ class ShiftCaseProcessor implements \F3\TypoScript\ProcessorInterface {
 	protected $direction;
 
 	/**
-	 * @param string $prefixString a string to be prepended
+	 * @param string $direction Direction to shift case in, one of SHIFT_CASE_TO_*
 	 * @return void
 	 */
 	public function setDirection($direction) {
@@ -48,7 +48,7 @@ class ShiftCaseProcessor implements \F3\TypoScript\ProcessorInterface {
 	}
 
 	/**
-	 * @return string the string which is to be prepended to the subject
+	 * @return string Direction to shift case in, one of SHIFT_CASE_TO_*
 	 */
 	public function getDirection() {
 		return $this->direction;

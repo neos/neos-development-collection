@@ -97,7 +97,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 	 * will be escaped.
 	 *
 	 * @param string $pattern The partial regular expression pattern
-	 * @param string $relativePath The path to test
+	 * @param string $path The path to test
 	 * @return boolean True if the pattern matches the path
 	 * @author Christopher Hlubek
 	 */

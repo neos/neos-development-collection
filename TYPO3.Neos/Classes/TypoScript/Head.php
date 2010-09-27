@@ -102,7 +102,7 @@ class Head extends \F3\TypoScript\AbstractContentObject {
 	}
 
 	/**
-	 * @param  $stylesheets
+	 * @param array $stylesheets
 	 * @return void
 	 */
 	public function setStylesheets(array $stylesheets) {
