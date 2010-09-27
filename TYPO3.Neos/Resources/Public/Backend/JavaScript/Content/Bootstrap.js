@@ -9,7 +9,7 @@ F3.TYPO3.Content.Bootstrap = Ext.apply(new F3.TYPO3.Application.AbstractBootstra
 			// style: 'opacity: 0;',
 		children: [{
 			iconCls: 'F3-TYPO3-Content-icon-pageProperties',
-			text: 'Page properties',
+			text: 'Page Properties',
 			itemId: 'pageProperties'
 		}] }]);
 

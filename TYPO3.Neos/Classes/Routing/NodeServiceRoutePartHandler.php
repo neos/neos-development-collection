@@ -45,11 +45,11 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 	protected function matchValue($value) {
 		$pathSegments = explode('/', $value);
 
-		if (count($pathSegments) < 3) {
+		if (count($pathSegments) < 2) {
 			return self::MATCHRESULT_INVALIDPATH;
 		}
 
-		$workspaceName = array_shift($pathSegments);
+		$workspaceName = 'live';
 		if ($this->contentContext === NULL) {
 			$this->contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName);
 		}

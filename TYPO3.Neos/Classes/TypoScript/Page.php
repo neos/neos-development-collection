@@ -40,7 +40,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Page.html';
+	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/Page.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in
@@ -184,9 +184,9 @@ class Page extends \F3\TypoScript\AbstractContentObject {
   	}
 
 	/**
-	 * Returns the content used on this page.
+	 * Returns the Content TypoScript Object used on this page.
 	 *
-	 * @return array An array of TypoScript Objects, indexed by content names
+	 * @return \F3\TYPO3\TypoScript\Content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContent() {

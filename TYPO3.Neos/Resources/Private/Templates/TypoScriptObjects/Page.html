@@ -10,7 +10,7 @@
 	<head>
 		{f:raw(value: head)}
 	</head>
-	<body data-identity="{node -> f:identity.json() -> f:escape()}" {bodyAttributes}>
+	<body data-nodepath="{node.context.currentNode.path}" data-workspacename="{node.context.workspace.name}" {bodyAttributes}>
 		{f:raw(value: body)}
 	</body>
 

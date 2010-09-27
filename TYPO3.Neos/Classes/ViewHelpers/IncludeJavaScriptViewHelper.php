@@ -55,6 +55,9 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 		$baseDirectory = 'resource://' . $packageKey . '/Public/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . $directory . '/';
 		$staticJavaScriptWebBaseUri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/' . $packageKey . '/' . ($subpackageKey !== NULL ? $subpackageKey . '/' : '') . $directory . '/';
 
+		if (!is_dir($baseDirectory)) {
+			return '<!-- Warning: Cannot include JavaScript because directory "' . $baseDirectory . '" does not exist. -->';
+		}
 		$iterator = $this->iterateDirectoryRecursively($baseDirectory);
 
 		$uris = array();

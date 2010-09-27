@@ -106,13 +106,13 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 
 		$contentContext = $this->renderingContext->getContentContext();
 
-		$sectionNodes = $contentContext->getCurrentNode()->getChildNodes('typo3:section');
+		$sectionNodes = $contentContext->getCurrentNode()->getChildNodes('TYPO3:Section');
 		foreach ($sectionNodes as $sectionNode) {
 			$contentArray = $this->typoScriptObjectFactory->createByName('ContentArray');
 			$i = 0;
 
 			foreach ($sectionNode->getChildNodes() as $sectionChildNode) {
-				if ($sectionChildNode->getContentType() !== 'typo3:page') {
+				if ($sectionChildNode->getContentType() !== 'TYPO3:Page') {
 					$typoScriptObject = $this->typoScriptObjectFactory->createByNode($sectionChildNode);
 					$contentArray[$i] = $typoScriptObject;
 					$i++;

@@ -142,13 +142,14 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 				}
 			} catch (\Exception $e) {
 				$this->flashMessageContainer->add($e->getMessage());
+				$this->redirect('index');
 			}
 		}
+
 		$this->accountRepository->removeAll();
 		$this->personRepository->removeAll();
 		$this->createAdministrator($identifier, $password, $person);
 		$this->flashMessageContainer->flush();
-
 		$this->redirect('show', 'Node');
 	}
 

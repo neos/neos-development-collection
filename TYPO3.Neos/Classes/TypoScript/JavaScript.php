@@ -33,7 +33,7 @@ class JavaScript extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/JavaScript.html';
+	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/JavaScript.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in

@@ -33,7 +33,7 @@ class Stylesheet extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Stylesheet.html';
+	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/Stylesheet.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in

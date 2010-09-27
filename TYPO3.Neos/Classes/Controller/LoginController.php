@@ -116,25 +116,29 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function showAction() {
-		$party = $this->securityContext->getParty();
+		$person = $this->securityContext->getParty();
 
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :
 			case 'json' :
 				$this->view->setConfiguration(
-					array(
-						'value' => array(
-							 'descend' => array('personName')
+					array('value' =>
+						array(
+							'data' => array(
+								'descend' => array('name' => array())
+							)
 						)
 					)
 				);
 				$this->view->assign('value',
 					array(
-						'data' => $party,
+						'data' => $person,
 						'success' => TRUE
 					)
 				);
 				break;
+			default :
+				return 'Hello ' . $person->getName()->getFirstName() . '. You are currently logged in with the account '. $this->securityContext->getAccount()->getAccountIdentifier() . '.';
 		}
 	}
 

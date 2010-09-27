@@ -1,0 +1,6 @@
+{namespace t=F3\TYPO3\ViewHelpers}
+<f:security.ifAccess resource="F3_TYPO3_BackendController"><div data-nodepath="{node.path}"></f:security.ifAccess>
+<f:for each="{properties}" as="property">
+<div>{property}</div>
+</f:for>
+<f:security.ifAccess resource="F3_TYPO3_BackendController"></div></f:security.ifAccess>

@@ -17,8 +17,8 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 				xtype: 'form',
 				ref: 'form',
 				api: {
-					load: F3.TYPO3_Controller_ContentController.show,
-					submit: F3.TYPO3_Controller_ContentController.update
+					load: F3.TYPO3_Controller_NodeController.show,
+					submit: F3.TYPO3_Controller_NodeController.update
 				},
 				paramsAsHash: true,
 				border: false,
@@ -42,13 +42,13 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 				items: [{
 					xtype: 'textfield',
 					fieldLabel: 'Page title',
-					name: 'title',
+					name: 'properties[title]',
 					width: 400
 				}, {
 					xtype: 'checkbox',
 					fieldLabel: 'Visibility',
 					boxLabel: 'hidden',
-					name: 'hidden',
+					name: 'properties[hidden]',
 					width: 400
 				}]
 			}
@@ -66,10 +66,10 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 
 	// private
 	onRender : function(ct, position) {
-		this.pageIdentity = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentPageIdentity();
+		this.currentContext = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
 		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.onRender.call(this, ct, position);
 		this.form.load({
-			params: this.pageIdentity
+			params: this.currentContext
 		});
 	},
 
@@ -122,7 +122,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 */
 	_submitForm: function() {
 		this.form.getForm().submit({
-			additionalValues: this.pageIdentity,
+			additionalValues: this.currentContext,
 			success: this._onOkButtonClickActionSuccess,
 			scope: this
 		});

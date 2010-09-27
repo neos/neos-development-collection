@@ -69,6 +69,18 @@ class SiteImportService {
 
 	/**
 	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\ContentTypeRepository
+	 */
+	protected $contentTypeRepository;
+
+	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
+	 * @inject
 	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -81,6 +93,7 @@ class SiteImportService {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
+	 * @todo Don't remove all existing content without asking - and probably do somewhere else
 	 */
 	public function importPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
@@ -88,12 +101,26 @@ class SiteImportService {
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
 			throw new \F3\FLOW3\Exception('Error: No content found in package "' . $packageKey . '".');
 		} else {
+
+				// Remove all content and related data - for now. In the future we
+				// need some more sophisticated cleanup and don't delete everything
+				// without asking ...
+
 			$this->nodeRepository->removeAll();
 			$this->workspaceRepository->removeAll();
 			$this->domainRepository->removeAll();
 			$this->siteRepository->removeAll();
+			$this->contentTypeRepository->removeAll();
 
 			$this->persistenceManager->persistAll();
+
+			$folderContentType = $this->contentTypeManager->createContentType('TYPO3CR:Folder');
+
+			$pageContentType = $this->contentTypeManager->createContentType('TYPO3:Page');
+			$pageContentType->setDeclaredSuperTypes(array($folderContentType));
+
+			$this->contentTypeManager->createContentType('TYPO3:Section');
+			$this->contentTypeManager->createContentType('TYPO3:Text');
 
 			try {
 				$this->importSitesFromPackage($packageKey);
@@ -140,6 +167,7 @@ class SiteImportService {
 	protected function parseNodes(\SimpleXMLElement $parentXml, $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
 			$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', (string)$childNodeXml['locale']);
+
 			$childNode = $parentNode->createNode((string)$childNodeXml['nodeName']);
 			$childNode->setContentType((string)$childNodeXml['type']);
 			if ($childNodeXml->properties) {

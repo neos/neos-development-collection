@@ -33,7 +33,7 @@ class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/BreadcrumbMenu.html';
+	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html';
 
 	/**
 	 * Maximum number of levels which should be rendered in this menu.

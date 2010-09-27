@@ -27,13 +27,45 @@ namespace F3\TYPO3\Controller;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
+class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Service\TypoScriptService
+	 * @var \F3\TYPO3\Domain\Service\TypoScriptService
 	 */
 	protected $typoScriptService;
+
+	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
+	 * @var string
+	 */
+	protected $resourceArgumentName = 'node';
+
+	/**
+	 * @var array
+	 */
+	protected $viewFormatToObjectNameMap = array(
+		 'html' => 'F3\Fluid\View\TemplateView',
+		 'extdirect' => 'F3\ExtJS\ExtDirect\View',
+		 'json' => 'F3\FLOW3\MVC\View\JsonView',
+	);
+
+	/**
+	 * Select special error action
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function initializeAction() {
+		if ($this->request->getFormat() == 'extdirect') {
+			$this->errorMethodName = 'extErrorAction';
+		}
+	}
 
 	/**
 	 * Shows the specified node
@@ -41,33 +73,120 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
 	 */
 	public function showAction(\F3\TYPO3CR\Domain\Model\Node $node) {
 		$contentContext = $node->getContext();
 
 		$type = 'default';
-		$typoScriptObjectTree = $this->typoScriptService->getMergedTypoScriptObjectTree($contentContext->getCurrentSiteNode(), $node);
-		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
-			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current position in the content tree.', 1255513200);
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$this->view->setConfiguration(
+					array(
+						'value' => array(
+							'data' => array(
+								'only' => array('name', 'path', 'identifier', 'properties'),
+								'descend' => array('properties' => array())
+							)
+						)
+					)
+				);
+				$this->view->assign('value',
+					array(
+						'data' => $node,
+						'success' => TRUE,
+					)
+				);
+			break;
+			case 'html' :
+				$type = 'default';
+				$typoScriptObjectTree = $this->typoScriptService->getMergedTypoScriptObjectTree($contentContext->getCurrentSiteNode(), $node);
+				if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
+					throw new \F3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current position in the content tree.', 1255513200);
+				}
+
+				foreach ($typoScriptObjectTree as $firstLevelTypoScriptObject) {
+					if ($firstLevelTypoScriptObject instanceof \F3\TYPO3\TypoScript\Page && $firstLevelTypoScriptObject->getType() === $type) {
+						$pageTypoScriptObject = $firstLevelTypoScriptObject;
+						break;
+					}
+				}
+
+				if (!isset($pageTypoScriptObject)) {
+					throw new \F3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
+				}
+
+				$renderingContext = $this->objectManager->create('F3\TypoScript\RenderingContext');
+				$renderingContext->setControllerContext($this->controllerContext);
+				$renderingContext->setContentContext($contentContext);
+
+				$pageTypoScriptObject->setRenderingContext($renderingContext);
+				return $pageTypoScriptObject->render();
 		}
-
-		foreach ($typoScriptObjectTree as $firstLevelTypoScriptObject) {
-			if ($firstLevelTypoScriptObject instanceof \F3\TYPO3\TypoScript\Page && $firstLevelTypoScriptObject->getType() === $type) {
-				$pageTypoScriptObject = $firstLevelTypoScriptObject;
-				break;
-			}
-		}
-
-		if (!isset($pageTypoScriptObject)) {
-			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
-		}
-
-		$renderingContext = $this->objectManager->create('F3\TypoScript\RenderingContext');
-		$renderingContext->setControllerContext($this->controllerContext);
-		$renderingContext->setContentContext($contentContext);
-
-		$pageTypoScriptObject->setRenderingContext($renderingContext);
-		return $pageTypoScriptObject->render();
 	}
+
+	/**
+	 * Creates a new node
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createAction(\F3\TYPO3Cr\Domain\Model\Node $node) {
+		$contentContext = $node->getContext();
+
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$this->view->assign('value',
+					array(
+						'data' => $node,
+						'success' => TRUE,
+					)
+				);
+			break;
+		}
+	}
+
+	/**
+	 * Updates the specified node
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @return string View output for the specified node
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
+	 */
+	public function updateAction(\F3\TYPO3CR\Domain\Model\Node $node) {
+		$this->nodeRepository->update($node);
+
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$this->view->assign('value', array('data' => '', 'success' => TRUE));
+			break;
+		}
+	}
+
+	/**
+	 * Deletes the specified node and all of its sub nodes
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @return string A response string
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
+	 */
+	public function deleteAction(\F3\TYPO3CR\Domain\Model\Node $node) {
+		$node->remove();
+
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$this->view->assign('value', array('data' => '', 'success' => TRUE));
+			break;
+		}
+	}
+
+
 }
 ?>

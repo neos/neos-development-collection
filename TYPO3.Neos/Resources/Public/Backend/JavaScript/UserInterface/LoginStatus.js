@@ -12,7 +12,7 @@ F3.TYPO3.UserInterface.LoginStatus = Ext.extend(Ext.Container, {
 					xtype: 'box',
 					width: 150,
 					itemId: 'statusText',
-					tpl: '<tpl for="name">Hello, {fullName}</tpl>',
+					tpl: '<tpl for="name">{fullName}</tpl>',
 					id: 'F3-TYPO3-TopBar-StatusText'
 				}, {
 					xtype: 'F3.TYPO3.Components.Button',

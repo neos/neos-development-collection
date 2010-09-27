@@ -1,5 +1,0 @@
-{namespace t=F3\TYPO3\ViewHelpers}
-<f:security.ifAccess resource="F3_TYPO3_BackendController"><div data-identity="{domainModel -> f:identity.json() -> f:escape()}"></f:security.ifAccess>
-	<h1><t:editable property="headline" context="inline">{headline}</t:editable></h1>
-	<div><t:editable property="html" context="block">{html}</t:editable></div>
-<f:security.ifAccess resource="F3_TYPO3_BackendController"></div></f:security.ifAccess>

@@ -23,24 +23,17 @@ namespace F3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * A TypoScript Text object
+ * A TypoScript Node object
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Text extends \F3\TypoScript\AbstractContentObject {
-
-	/**
-	 * Content type of the node this TS Object is based on.
-	 *
-	 * @var string
-	 */
-	protected $contentType = 'typo3:text';
+class Node extends \F3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Text.html';
+	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Node.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in
@@ -48,58 +41,52 @@ class Text extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('headline', 'text');
+	protected $presentationModelPropertyNames = array('properties');
 
 	/**
-	 * @var string
+	 * A copy of the node's properties
+	 * 
+	 * @var array
 	 */
-	protected $headline;
+	protected $properties = array();
 
 	/**
-	 * @var string
-	 */
-	protected $text;
-
-	/**
-	 * Overrides the headline of this text element
+	 * Sets the node the TypoScript object is based on.
+	 * All available properties of the node will be registered as presentation model
+	 * properties.
 	 *
-	 * @param string $headline
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node the TypoScript object is based on
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHeadline($headline) {
-		$this->headline = $headline;
+	public function setNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+		parent::setNode($node);
+		$this->properties = $node->getProperties();
+
+		list($packageKey, $typeName) = explode(':', $node->getContentType());
+		$possibleTemplateSource = 'resource://' . $packageKey . '/Private/Templates/TypoScriptObjects/' . $typeName . '.html';
+		if (file_exists($possibleTemplateSource)) {
+			$this->templateSource = $possibleTemplateSource;
+			$this->template->setSource($this->templateSource);
+		}
+	}
+
+	public function getProperties() {
+		return $this->properties;
+	}
+
+	public function setProperties(array $properties) {
+		$this->properties = $properties;
 	}
 
 	/**
-	 * Returns the headline of this text element
+	 * Returns the rendered content of this content object
 	 *
-	 * @return string
+	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getHeadline() {
-		return $this->headline;
+	public function render() {
+		return parent::render();
 	}
-
-	/**
-	 * Overrides the body text of this text element
-	 *
-	 * @param string $text
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setText($text) {
-		$this->text = $text;
-	}
-
-	/**
-	 * Returns the body text of this text element
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getText() {
-		return $this->text;
-	}
-
 }
 ?>

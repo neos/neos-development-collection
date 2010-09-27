@@ -33,7 +33,7 @@ class Head extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Head.html';
+	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/Head.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in

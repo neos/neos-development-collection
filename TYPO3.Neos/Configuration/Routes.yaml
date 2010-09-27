@@ -82,10 +82,12 @@
 
 -
   name:          'Frontend content with format'
+
+  # Example URL: http://myhost/typo3/service/v1/content/live/sites/phoenix.demo.typo3.org/homepage.json
+
   uriPattern:    'typo3/service/v1/content/{node}.{@format}'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Service'
     '@controller': 'Node'
   routeParts:
     node:

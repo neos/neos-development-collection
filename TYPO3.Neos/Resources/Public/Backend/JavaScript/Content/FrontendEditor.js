@@ -18,8 +18,8 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	 */
 	initComponent: function() {
 		var uri =
-			Ext.util.Cookies.get('TYPO3FeURI') ?
-			Ext.util.Cookies.get('TYPO3FeURI') :
+			Ext.util.Cookies.get('TYPO3_lastVisitedFrontendUri') ?
+			Ext.util.Cookies.get('TYPO3_lastVisitedFrontendUri') :
 			F3.TYPO3.Configuration.Application.frontendBaseUri;
 
 		var config = {
@@ -61,7 +61,7 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	 * Callback fired if content is changed
 	 */
 	_contentChanged: function(data) {
-		F3.TYPO3_Controller_ContentController.update(data);
+		F3.TYPO3_Controller_NodeController.update(data);
 	},
 
 	/**
@@ -77,13 +77,19 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 
 
 	/**
-	 * Get the current page identity as a JavaScript object
+	 * Get the current context path
 	 *
-	 * @return {object} identity of domain object
+	 * @return {object} current context path
 	 */
-	getCurrentPageIdentity: function() {
-		var encodedIdentity = this.getIframeDocument().body.getAttribute('data-identity');
-		return Ext.decode(encodedIdentity);
+	getCurrentContext: function() {
+		var context = {
+			'__context': {
+				workspaceName: this.getIframeDocument().body.getAttribute('data-workspacename'),
+				nodePath: this.getIframeDocument().body.getAttribute('data-nodepath')
+			}
+		}
+		return context;
 	}
+
 });
 Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);
