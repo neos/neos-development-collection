@@ -78,7 +78,7 @@ class ContentTypeManager {
 	/**
 	 * Creates a new content type
 	 *
-	 * @param string $contentTypeName Unique ame of the new content type. Example: "typo3:page"
+	 * @param string $contentTypeName Unique ame of the new content type. Example: "TYPO3:Page"
 	 * @return \F3\TYPO3CR\Domain\Model\ContentType The new content type
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
