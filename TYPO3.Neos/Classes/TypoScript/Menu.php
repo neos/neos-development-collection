@@ -195,7 +195,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 */
 	private function buildRecursiveItemsArray(\F3\TYPO3CR\Domain\Model\Node $entryParentNode, $lastParentNode, \F3\TYPO3\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
 		$items = array();
-		foreach ($entryParentNode->getChildNodes('typo3:page') as $currentNode) {
+		foreach ($entryParentNode->getChildNodes('TYPO3:Page') as $currentNode) {
 			$item = array(
 				 'label' => $currentNode->getProperty('title'),
 				 'node' => $currentNode,
@@ -218,7 +218,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Finds the node in the current breadcrumb path between current site node and
 	 * current node whose level matches the specified entry level.
-	 * 
+	 *
 	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
 	 * @return \F3\TYPO3CR\Domain\Model\Node The parent node of the node at the specified level or NULL if none was found

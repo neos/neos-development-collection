@@ -65,7 +65,7 @@ class TypoScriptService {
 			$currentTypoScriptPath = $typoScriptsPath . substr($node->getPath(), strlen($startNode->getPath()));
 			$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($currentTypoScriptPath) . chr(10);
 
-			$typoScriptNodes = $node->getChildNodes('typo3:typoscript');
+			$typoScriptNodes = $node->getChildNodes('TYPO3:TypoScript');
 			foreach ($typoScriptNodes as $typoScriptNode) {
 				$mergedTypoScriptCode .= $typoScriptNode->getProperty('sourceCode') . chr(10);
 			}

@@ -35,7 +35,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @var string
 	 */
-	protected $contentType = 'typo3:page';
+	protected $contentType = 'TYPO3:Page';
 
 	/**
 	 * @var string
