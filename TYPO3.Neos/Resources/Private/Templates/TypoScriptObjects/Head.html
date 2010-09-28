@@ -8,7 +8,7 @@
 	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
 	<script>document.cookie = "TYPO3_lastVisitedFrontendUri=" + window.location.href + ";path=/";</script>
 <f:security.ifAccess resource="F3_TYPO3_BackendController">
-	<ext:include theme="xtheme-gray" debug="true" />
+	<ext:include theme="xtheme-gray" debug="true" includeStylesheets="false" />
 	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
 	<typo3:includeJavaScript include="utils/.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
 	<typo3:includeJavaScript include="core/.*\.js" subpackage="Backend" directory="Aloha/WebContent" exclude="core/include.js" />
