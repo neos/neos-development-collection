@@ -112,12 +112,12 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function indexAction() {
-		$packagesWithSites = array('0' => '');
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			if (file_exists('resource://' . $package->getPackageKey() . '/Private/Content/Sites.xml')) {
 				$packagesWithSites[$package->getPackageKey()] = $package->getPackageMetaData()->getTitle();
 			}
 		}
+		$packagesWithSites['0'] = '';
 		$this->view->assign('packagesWithSites', $packagesWithSites);
 	}
 
