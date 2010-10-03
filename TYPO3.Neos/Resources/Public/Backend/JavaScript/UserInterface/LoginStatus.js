@@ -27,7 +27,7 @@ F3.TYPO3.UserInterface.LoginStatus = Ext.extend(Ext.Container, {
 		Ext.apply(this, config);
 		F3.TYPO3.UserInterface.LoginStatus.superclass.initComponent.call(this);
 
-		F3.TYPO3.Application.on('F3.TYPO3.Login.updated', function(party) {
+		F3.TYPO3.Login.LoginModule.on('updated', function(party) {
 			this.getComponent('statusText').update(party);
 			this.getComponent('statusText').el.fadeIn();
 			this.doLayout();

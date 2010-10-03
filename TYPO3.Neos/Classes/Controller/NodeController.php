@@ -42,6 +42,12 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	protected $nodeRepository;
 
 	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
 	 * @var string
 	 */
 	protected $resourceArgumentName = 'node';
@@ -86,7 +92,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 					array(
 						'value' => array(
 							'data' => array(
-								'only' => array('name', 'path', 'identifier', 'properties'),
+								'only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
 								'descend' => array('properties' => array())
 							)
 						)
@@ -129,19 +135,37 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	/**
 	 * Creates a new node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param \F3\TYPO3CR\Domain\Model\Node $parentNode
+	 * @param array $nodeData
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
 	 */
-	public function createAction(\F3\TYPO3Cr\Domain\Model\Node $node) {
-		$contentContext = $node->getContext();
+	public function createAction(\F3\TYPO3CR\Domain\Model\Node $parentNode, array $nodeData) {
+		$newNode = $parentNode->createNode($nodeData['nodeName']);
+
+		$newNode->setContentType($nodeData['contentType']);
+
+		foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
+			$newNode->setProperty($propertyName, $propertyValue);
+		}
 
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :
 			case 'json' :
+				$this->view->setConfiguration(
+					array(
+						'value' => array(
+							'data' => array(
+								'only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
+								'descend' => array('properties' => array())
+							)
+						)
+					)
+				);
 				$this->view->assign('value',
 					array(
-						'data' => $node,
+						'data' => $newNode,
 						'success' => TRUE,
 					)
 				);
@@ -156,10 +180,9 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
+	 * @todo the updateAction now implicitly saves the node, as the NodeObjectConverter does not clone the node right now. This is a hack, and needs to be cleaned up.
 	 */
 	public function updateAction(\F3\TYPO3CR\Domain\Model\Node $node) {
-		$this->nodeRepository->update($node);
-
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :
 			case 'json' :

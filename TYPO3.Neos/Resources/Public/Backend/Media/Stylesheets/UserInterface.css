@@ -54,6 +54,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
 	border: 0;
 	padding-top: 4px;
+	margin-bottom: -1px;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-active .x-tab-right {
 	margin-bottom:0;
@@ -164,20 +165,22 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	border: 1px solid #808080;
 	border-top: 0px;
 }
+
+.F3-TYPO3-UserInterface-ContentDialog-warning {
+	background-color: #5d0f0e;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#9b201d), to(#5d0f0e));
+	background: -moz-linear-gradient(top, #9b201d, #5d0f0e);
+}
+.F3-TYPO3-UserInterface-ContentDialog-warning .F3-TYPO3-UserInterface-ContentDialog-Panel {
+	background-color: #5d0f0e;
+}
+
 .F3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar {
 	background: none;
 }
 .F3-TYPO3-UserInterface-ContentDialog-Panel .x-panel-tbar-noborder .x-toolbar {
 	border: none;
 }
-/*
-.F3-TYPO3-UserInterface-ContentDialog-Panel .x-btn .x-btn-text {
-	color: #ccc;
-}
-.F3-TYPO3-UserInterface-ContentDialog-Panel .x-btn-over .x-btn-text {
-	color: #000;
-}
-*/
 #F3-TYPO3-TopBar-Logo {
 	background: url(../Images/UserInterface/typo3-logo.png) right top no-repeat;
 }
@@ -186,4 +189,9 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	color: #ffffff;
 	font-size: 12px;
 	font-family: Helvetica, Arial, sans-serif;
+}
+
+.F3-TYPO3-UserInterface-Form-GenericForm form {
+	background:transparent;
+	padding: 10px;
 }

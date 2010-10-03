@@ -1,11 +1,35 @@
-Ext.ns("F3.TYPO3.UserInterface");
+/*                                                                        *
+ * This script belongs to the TYPO3 project.                              *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License as published by the *
+ * Free Software Foundation, either version 3 of the License, or (at your *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
+ * General Public License for more details.                               *
+ *                                                                        *
+ * You should have received a copy of the GNU Lesser General Public       *
+ * License along with the script.                                         *
+ * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+Ext.namespace('F3.TYPO3.UserInterface');
 
 /**
- * @class F3.TYPO3.UserInterface.BreadcrumbMenu
  * @namespace F3.TYPO3.UserInterface
- * @extends Ext.Toolbar
+ * @extends Ext.tree.TreePanel
+ * @author Rens Admiraal <rens@rensnel.nl>
  */
-F3.TYPO3.UserInterface.BreadcrumbMenu = Ext.extend(Ext.Toolbar, {
+F3.TYPO3.UserInterface.BreadcrumbMenu = function() {
+    F3.TYPO3.UserInterface.BreadcrumbMenu.superclass.constructor.apply(this, arguments);
+};
+
+Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu, Ext.tree.TreePanel, {
 	/**
 	 * @event F3.TYPO3.UserInterface.BreadcrumbMenu.afterInit
 	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenu} a reference to the submenu.
@@ -15,20 +39,42 @@ F3.TYPO3.UserInterface.BreadcrumbMenu = Ext.extend(Ext.Toolbar, {
 
 	menuConfig: {},
 
+	basePath: null,
+
 	/**
-	 * @cfg menu Menu as defined in {@link F3.TYPO3.Application.MenuRegistry}
+	 * @cfg menu Menu as defined in {@link F3.TYPO3.Core.Application.MenuRegistry}
 	 */
 	
 	initComponent: function() {
+
+		var rootNodeConfig = {
+			expanded: true,
+			leaf: false,
+			text: 'Tree Root',
+			children: this._getMenuItems()
+		};
+
 		var config = {
 			cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu',
-			items: this._getMenuItems()
+			loader: new F3.TYPO3.UserInterface.BreadcrumbMenu.Loader(),
+			root: new F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode(rootNodeConfig),
+			singleExpand: 1,
+			animate: true,
+			enableDD: false,
+			containerScroll: true,
+			border: false,
+			rootVisible: false
 		};
 		Ext.apply(this, config);
+
+		if(!this.eventModel){
+            this.eventModel = new F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel(this);
+        }
+
 		F3.TYPO3.UserInterface.BreadcrumbMenu.superclass.initComponent.call(this);
-		F3.TYPO3.Application.fireEvent('F3.TYPO3.UserInterface.BreadcrumbMenu.afterInit', this);
 
 		this.on('afterrender', function(menu) {
+			menu.getRootNode().expand();
 			menu.items.each(function(menuItem, i) {
 				menuItem.addListener('afterrender',	function() {
 					var task = new Ext.util.DelayedTask(function () {
@@ -42,7 +88,9 @@ F3.TYPO3.UserInterface.BreadcrumbMenu = Ext.extend(Ext.Toolbar, {
 		});
 	},
 
-	// private
+	/**
+	 * @private
+	 */
 	_getMenuItems: function() {
 		var menu = F3.TYPO3.Utils.clone(this.menuConfig),
 			items = [];
@@ -50,53 +98,45 @@ F3.TYPO3.UserInterface.BreadcrumbMenu = Ext.extend(Ext.Toolbar, {
 		return items;
 	},
 
-	// private
+	/**
+	 * @private
+	 */
 	_convertMenuConfig: function(menu, items, level, path) {
 		var itemStack = [];
 		Ext.each(menu, function(menuItem) {
 			var itemPath;
 			if (Ext.isObject(menuItem)) {
-				itemPath = path.concat([menuItem.itemId]);
-				menuItem.xtype = 'F3.TYPO3.UserInterface.BreadcrumbMenuButton';
+				itemPath = path.concat([menuItem.key]);
+				menuItem.path = this.basePath + '/' + itemPath.join('/children/');
 			} else if (menuItem === ' ') {
 				itemPath = path.concat(['spacer']);
-				menuItem = {
-					xtype: 'tbspacer',
-					width: 25
-				};
+				menuItem = {};
 			}
 
 			menuItem.sectionId = this.itemId;
 			menuItem.menuId = this.menuId;
-			menuItem.menuLevel = level;
-			if (level > 0) {
-				menuItem.hidden = true;
-			}
 			menuItem.menuPath = itemPath.join('-');
-			if (menuItem.xtype === 'F3.TYPO3.UserInterface.BreadcrumbMenuButton') {
-				menuItem.toggleGroup = [this.menuId, this.itemId].concat(path).join('-');
-				if (menuItem.children && menuItem.children.length > 0) {
-					menuItem.leaf = false;
-					itemStack.push({
-						xtype: 'tbtext',
-						text: '&nbsp;>&nbsp;',
-						menuLevel: level + 1,
-						hidden: true,
-						itemId: 'F3-arrow',
-						menuPath: menuItem.menuPath + '-F3-arrow'
-					});
-					this._convertMenuConfig(menuItem.children, itemStack, level + 1, itemPath);
-				} else {
-					menuItem.leaf = true;
-				}
-				menuItem.itemId = menuItem.menuPath + menuItem.itemId;
-				delete menuItem.children;
+
+			if (menuItem.children && menuItem.children.length > 0) {
+				this._addItemPaths(menuItem.children, this.basePath, itemPath);
 			}
+
 			items.push(menuItem);
 		}, this);
 		Ext.each(itemStack, function(item) {
 			items.push(item);
 		}, this);
+	},
+
+	_addItemPaths: function(items, basePath, path) {
+		Ext.each(items, function (menuItem) {
+			var itemPath = path.concat([menuItem.key]);
+			menuItem.path = basePath + '/' + itemPath.join('/children/');
+
+			if (menuItem.children && menuItem.children.length > 0) {
+				this._addItemPaths(menuItem.children);
+			}
+		});
 	}
 });
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu', F3.TYPO3.UserInterface.BreadcrumbMenu);

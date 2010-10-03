@@ -8,6 +8,7 @@ Ext.ns("F3.TYPO3.UserInterface");
 F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 	menuId: null,
 	menuConfig: {},
+	basePath: null,
 
 	initComponent: function() {
 		var config = {
@@ -23,6 +24,7 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 				ref: 'breadcrumbMenu',
 				menuId: this.menuId,
 				menuConfig: this.menuConfig,
+				basePath: this.basePath,
 				height: 50,
 				flex: 0
 			}, {
@@ -33,7 +35,6 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 				},
 				itemId: 'moduleDialogContainer',
 				ref: 'moduleDialogContainer',
-				// height: 50,
 				flex: 1
 			}]
 		};
@@ -75,26 +76,19 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 		}
 
 		this.height = this.getHeight() + this.addedModuleHeight;
-		F3.TYPO3.UserInterface.viewport.doLayout();
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.doLayout();
 
 		if (contentDialogConfig) {
-			// TODO Too much coupling to the container markup
+				// TODO Too much coupling to the container markup
 			var innerTabContainerEl = sectionMenuTab.getEl().child('.x-box-inner');
 		
 			this.contentDialog = Ext.ComponentMgr.create(contentDialogConfig);
 			this.contentDialog.moduleDialog = this.moduleDialog;
 			innerTabContainerEl.setStyle('position', 'relative');
 			this.contentDialog.render(innerTabContainerEl);
-			// TODO calculate height dynamically!
+				// TODO calculate height dynamically!!!
 			this.contentDialog.setPosition(0, 130);
 		}
-
-		// Remove module dialog if any button is pressed
-		F3.TYPO3.Application.MenuRegistry.on('F3.TYPO3.UserInterface.BreadcrumbMenu.buttonPressed', function(button) {		
-			if (!dialogRemoved) {
-				this.removeModuleDialog();
-			}
-		}, this, {single: true});
 
 		return this.moduleDialog;
 	},
@@ -113,7 +107,7 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 			delete this.contentDialog;
 		}
 		this.height = this.getHeight() - this.addedModuleHeight;
-		F3.TYPO3.UserInterface.viewport.doLayout();
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.doLayout();
 
 		this.addedModuleHeight = 0;
 	}

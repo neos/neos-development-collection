@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>JavaScript Test Runner</title>
+
+		<!--CSS-->
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/logger/assets/logger.css" />
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/yuitest/assets/testlogger.css" />
+		<style type="text/css">
+			.yui-log-container {
+				width:50%;
+				font-size: 100%;
+			}
+		</style>
+
+		<!-- Dependencies -->
+		<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+		<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
+
+		<!-- Source File -->
+		<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yuitest/yuitest-min.js"></script>
+
+		<script type="text/javascript" src="../../../../Framework/ExtJS/Resources/Public/JavaScript/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="../../../../Framework/ExtJS/Resources/Public/JavaScript/ext-all.js"></script>
+		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/Utils.js"></script>
+		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/Core/Registry.js"></script>
+		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/UserInterface/Form/FormFactory.js"></script>
+
+		<script type="text/javascript" src="Backend/Core/RegistryTest.js"></script>
+		<script type="text/javascript" src="Backend/UserInterface/Form/FormFactoryTest.js"></script>
+
+		<script type="text/javascript">
+			var testClasses = [
+					'F3.TYPO3.Core.RegistryTest',
+					'F3.TYPO3.UserInterface.Form.FormFactoryTest'
+				],
+				runTests = function() {
+					YAHOO.tool.TestRunner.clear();
+
+					Ext.each(testClasses, function(testClass) {
+						YAHOO.tool.TestRunner.add(eval(testClass));
+					});
+
+					YAHOO.tool.TestRunner.run();
+				};
+
+			YAHOO.util.Event.onDOMReady(function (){
+				var logger = new YAHOO.tool.TestLogger("testLogger");
+
+				runTests();
+			});
+		</script>
+	</head>
+
+	<body>
+		<h1>JavaScript Test Runner</h1>
+		<h2>Tests</h2>
+		<form id="testSelector" action="#">
+		</form>
+	</body>
+</html>

@@ -112,8 +112,6 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 * @private
 		 */
 		onEditableCreated: function(event, editable) {
-			console.log('onEditableCreated', arguments);
-
 		},
 
 		/**
@@ -179,7 +177,6 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 					if (GENTICS.Aloha.editables[i].isModified()) {
 						// if an editable has been modified, the user can confirm if he wants the page to be saved
 						if (true || confirm('Saved unsaved content?')) {
-console.log(i,GENTICS.Aloha.editables[i]);
 							// TODO Save unsaved content here
 							return false;
 						}
@@ -200,26 +197,24 @@ console.log(i,GENTICS.Aloha.editables[i]);
 		 * @private
 		 */
 		saveChanges: function(editable) {
-			var currentContentElement = editable.obj.parents('*[data-identity]').first();
+			var currentContentElement = editable.obj.parents('*[data-nodepath]').first();
 
-			var data = Ext.decode(currentContentElement.attr('data-identity'));
-			
+			var nodePath = currentContentElement.attr('data-nodepath');
+			var workspaceName = currentContentElement.attr('data-workspacename');
+			var data = {};
+			data.__context = {
+				workspaceName: workspaceName,
+				nodePath: nodePath
+			};
+			data.properties = {};
+
 			currentContentElement.find('*[data-property]').each(function(index, element) {
-				data[element.getAttribute('data-property')] = element.innerHTML
+				data.properties[element.getAttribute('data-property')] = element.innerHTML;
 			});
 
-			if (typeof window.parent.F3.TYPO3.Application !== 'undefined') {
-				/**
-				 * @event F3.TYPO3.Application.AlohaConnector.contentChanged
-				 * fires when there is changed content which should persist by the TYPO3 backend.<br>
-				 * this event is fired in the following <b>scope:</b> <i>window.parent.F3.TYPO3.Application</i>
-				 * @param {object} data <ul>
-				 * <li><b>identity:</b> Identity of the element</li>
-				 * <li><b>html:</b> the html content</li>
-				 * </ul>
-				 */
-				window.parent.F3.TYPO3.Application.fireEvent(
-					'F3.TYPO3.Application.AlohaConnector.contentChanged',
+			if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
+				window.parent.F3.TYPO3.Content.ContentModule.fireEvent(
+					'AlohaConnector.contentChanged',
 					data
 				);
 			}
@@ -232,15 +227,14 @@ console.log(i,GENTICS.Aloha.editables[i]);
 		 * @author Sebastian Kurfürst <sebastian@typo3.org>
 		 * @return {void}
 		 * @private
+		 * @todo implement so that it really works.
 		 */
 		addInsertNewSectionButton: function() {
 			var button = new GENTICS.Aloha.ui.Button({
 				'label' : 'Add section',
 				'size' : 'small',
 				'onclick' : function() {
-					console.log(GENTICS.Aloha.activeEditable,  GENTICS.Aloha.activeEditable.obj[0]);
 					var newHtmlElement = Ext.DomHelper.insertAfter(GENTICS.Aloha.activeEditable.obj[0], '<div class="f3-typo3-editable"><div contenteditable="false"><h2 contenteditable="true">[headline]</h2><div contenteditable="true">[content]</div></div></div>');
-					console.log(newHtmlElement);
 					jQuery(newHtmlElement).aloha();
 				},
 				'tooltip' : 'tooltip'

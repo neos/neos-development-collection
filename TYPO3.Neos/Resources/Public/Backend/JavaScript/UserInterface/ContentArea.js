@@ -19,7 +19,7 @@ F3.TYPO3.UserInterface.ContentArea = Ext.extend(Ext.Panel, {
 		Ext.apply(this, config);
 		F3.TYPO3.UserInterface.ContentArea.superclass.initComponent.call(this);
 
-		F3.TYPO3.Application.fireEvent('F3.TYPO3.UserInterface.ContentArea.afterInit', this);
+		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('ContentArea.initialized', this);
 	}
 });
 

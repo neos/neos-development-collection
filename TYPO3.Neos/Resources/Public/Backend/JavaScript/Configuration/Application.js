@@ -14,7 +14,7 @@ F3.TYPO3.Configuration.Application = {
 	/**
 	 * This setting is extracted from the base-Tag of the
 	 * current page, and a "typo3/" appended to it. This happens in
-	 * {@link F3.TYPO3.Application}.
+	 * {@link F3.TYPO3.Core.Application}.
 	 *
 	 * Instead of using this setting directly, instead use
 	 * {@link F3.TYPO3.Utils#buildBackendUri}
@@ -28,7 +28,7 @@ F3.TYPO3.Configuration.Application = {
 	 *
 	 * This setting is extracted from the base-Tag of the
 	 * current page. This happens in
-	 * {@link F3.TYPO3.Application}.
+	 * {@link F3.TYPO3.Core.Application}.
 	 *
 	 * @type {String}
 	 */

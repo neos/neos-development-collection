@@ -1,18 +1,309 @@
-This README explains how Aloha can be properly developed in the context of TYPO3.
-The problem is as follows: in TYPO3 SVN, we only need the "WebContent" folder, without the "deps/extjs" folder; as ExtJS is already included in TYPO3.
+Examples for Registry Entries
+=============================
 
-However, the git repository which we use, is a fork of the official repository which can be found at http://github.com/skurfuerst/Aloha-Editor. We want to stay as close as possible to the official git repository, to improve the workflow and use new features more quickly.
+PRIORITY: highest priority of applied operation (highest wins)
 
-That's why, if you want to develop Aloha, you need to connect SVN and git together. This is what we explain here.
+SET: sets a value, replaces everything in there, i.e. highest priority wins (COMPLETELY)
+	- set configuration
+	- convert the type for a certain text field from "input" to "textarea"
 
-1) run the following commands in the directory where you find this README.txt.
-git clone http://github.com/skurfuerst/Aloha-Editor.git
-mv Aloha-Editor/.git Aloha/
-rm -Rf Aloha-Editor
+APPEND: - append an element to an END of the array
 
-2) Ignore .svn directories in Git, and recreate the files which are in Git, but not in SVN.
-cd Aloha
-echo ".svn" >> .git/info/exclude
-git ls-files -d | xargs git checkout --
+PREPEND: - prepend an element to the BEGINNING of an array
 
-Now, everything is monitored by Git AND additionally, the WebContent directory is monitored by SVN.
+INSERT: at specific point
+
+KEY: Named array entry
+
+insertAfter
+
+insertBefore (... key ...)
+
+=====================
+
+set('foo', 'bar');
+
+{
+	foo: {
+		operations: {
+			set: [{
+				value: 'bar',
+				priority: 0
+			}]
+		},
+		children: {}
+	}
+}
+
+{ foo: "bar" }
+
+================
+
+set('foo', ['a', 'b']);
+
+{
+	foo: {
+		operations: {
+			set: [{
+				value: ['a', 'b'],
+				priority: 0
+			}]
+		},
+		children: {}
+	}
+}
+
+{ foo: ['a', 'b'] }
+
+================
+
+set('foo', ['x', 'y'], 100); // Higher priority
+set('foo', ['a', 'b']);
+{
+	foo: {
+		operations: {
+			set: [{
+				value: ['x', 'y'],
+				priority: 100
+			}, {
+				value: ['a', 'b'],
+				priority: 0
+			}
+		},
+		children: {}
+	}
+}
+
+{ foo: ['x', 'y'] }
+
+======================
+REWRITING:
+
+set('foo/bar', 'baz');
+==
+set('foo', {bar: 'baz'}) -> set('foo/bar', 'baz', 0)
+
+{
+	foo: {
+		operations: {},
+		children: {
+			bar: {
+				operations: {
+					set: [{
+						value: 'baz',
+						priority: 0
+					}]
+				}
+			}
+		}
+	}
+}
+
+{foo: {bar: ' baz'}}
+
+=================
+TWO PROPERTIES overriding nested properties
+set('foo', {bar: 'baz', x: 'y'}) -> set('foo/bar', 'baz', 0) && set('foo/x', 'y', 0)
+set('foo/bar', 'HELLO', 10);
+
+{
+	foo: {
+		operations: {},
+		children: {
+			bar: {
+				operations: {
+					set: [{
+						value: 'baz',
+						priority: 0
+					},{
+						value: 'HELLO',
+						priority: 10
+					}]
+				}
+			},
+			x: {
+				operations: {
+					set: [{
+						value: 'y',
+						priority: 0
+					}]
+				}
+			}
+		}
+	}
+}
+
+{foo: {bar: 'HELLO', x: 'y'}}
+
+=================
+Arrays:
+append("menu/main", 'edit', { // Path, Key, Value
+	title: 'Edit'
+});
+=> set("menu/main/edit/title", "Edit")
+
+{
+	menu: {
+		operations: {},
+		children: {
+			main: {
+				operations: {
+					append: [{
+						key: 'edit',
+						priority: 0
+					}]
+				},
+				children: {
+					edit: {
+						children:{
+							title: {
+								operations: {
+									set: [{
+										value: 'Edit',
+										priority: 0
+									}]
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+SET with array => multiple appends
+
+
+{
+	menu: {
+		main: [{
+			title: 'Edit',
+		}]
+	}
+}
+
+
+
+
+- FIRST evaluate children, THEN evaluate operations
+- ORDER of operations
+	- set -> for primitive types, or converted to multiple SET operations
+	- delete
+	- prepend (Arrays) => append with negative priorities
+	- append (Arrays)
+		-> should not fail if element in "children" is not there anymore, as it could have been deleted
+	- insertAfter / insertBefore --> warning if element could not be inserted
+- Errors in the following cases:
+	- set & append in operations list
+
+PRIORITIES: NO negative numbers
+
+
+Datastructure after compilation:
+arbitary JSON
+
+
+================================================================================
+
+
+{
+	schema: {
+		"typo3:page": {
+			service: {
+				load: F3.TYPO3...NodeService.load,
+				store: F3.TYPO3...NodeService.store
+			},
+			properties: {
+				// Flach, da assoc. array
+				'properties.title': {
+					type: 'string',
+					validations: [{
+						key: 'v1',
+						type: 'NotEmpty'
+					}, {
+						key: 'v2',
+						type: 'Label'
+					}, {
+						key: 'v3',
+						type: 'StringLength',
+						options: {
+							maximum: 50
+						}
+					}]
+				},
+				'properties.navigationTitle': {
+					type: 'string'
+				}
+			}
+		},
+		'F3...Person': {
+			properties: {
+				personName: {
+					type: 'F3...PersonName'
+				}
+			}
+		},
+		'F3...PersonName': {
+			...
+		}
+	},
+	form: {
+		editor: {
+			// By type
+			"string": {
+				xtype: 'textfield'
+			},
+			"superStringEditor": {
+				xtype: 'textarea',
+				transform: ...
+			}
+		}
+		type: {
+			"typo3:page": {
+				default: {
+					title: 'Page',
+					children: [{
+						key: 'pageProperties',
+						type: 'fieldset',
+						title: 'Page properties',
+						children: [{
+							key: 'title',
+							type: 'field',
+							property: 'properties.title',
+							label: 'Page title'
+						}, {
+							key: 'navigationTitle',
+							type: 'field',
+							property: 'properties.navigationTitle',
+							label: 'Navigation title'
+						}]
+					}]
+				},
+				pageProperties: {
+					title: 'Page properties',
+					children: [{
+						key: 'title',
+						type: 'field',
+						property: 'properties.title',
+						label: 'Page title'
+					}, {
+						key: 'navigationTitle',
+						type: 'field',
+						property: 'properties.navigationTitle',
+						label: 'Navigation title'
+					}]
+				}
+			}
+		}
+	}
+}
+
+---->
+
+{
+	xtype: 'F3.TYPO3.UserInterface.Form.GenericForm',
+	type: 'typo3:page',
+	view: 'pageProperties'
+}
+

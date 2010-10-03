@@ -1,7 +1,10 @@
 Ext.ns("F3.TYPO3.UserInterface");
 
 F3.TYPO3.UserInterface.ModuleDialog = Ext.extend(Ext.Panel, {
+	layout: 'fit',
+	bodyStyle: 'background: #656565',
 	removeOnContentDialogCancel: true,
+
 	initComponent: function() {
 		var config = {
 			border: false,

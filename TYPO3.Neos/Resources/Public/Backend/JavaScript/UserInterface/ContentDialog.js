@@ -5,6 +5,8 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 	showOkButton: true,
 	dialogPosition: 'right',
 	moduleDialog: null,
+	cls: 'F3-TYPO3-UserInterface-ContentDialog',
+
 	initComponent: function() {
 		var config,
 			toolbarConfig;
@@ -39,7 +41,6 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 		}
 		config = {
 			height: 13,
-			cls: 'F3-TYPO3-UserInterface-ContentDialog',
 			style: 'position: relative; z-index: 500; overflow: show',
 			items: {
 				xtype: 'panel',

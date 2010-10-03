@@ -103,6 +103,14 @@ class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface
 		}
 
 		$contentContext->setCurrentNode($currentNode);
+
+		if (isset($source['properties'])) {
+			// TODO Do clone
+			foreach ($source['properties'] as $propertyName => $propertyValue) {
+				$currentNode->setProperty($propertyName, $propertyValue);
+			}
+		}
+
 		return $currentNode;
 	}
 }
