@@ -35,8 +35,6 @@ class DomainRepositoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function findByHostInvokesTheDomainMatchingStrategyToFindDomainsMatchingTheGivenHost() {
 		$mockDomains = array();
-
-		$mockDomains = array();
 		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
 		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
 		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
@@ -46,8 +44,10 @@ class DomainRepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockDomainMatchingStrategy = $this->getMock('F3\TYPO3\Domain\Service\DomainMatchingStrategy', array(), array(), '', FALSE);
 		$mockDomainMatchingStrategy->expects($this->any())->method('getSortedMatches')->with('myhost', $mockDomains)->will($this->returnValue($expectedDomains));
 
+		$mockResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
+		$mockResult->expects($this->once())->method('toArray')->will($this->returnValue($mockDomains));
 		$domainRepository = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Repository\DomainRepository'), array('findAll'), array(), '', FALSE);
-		$domainRepository->expects($this->once())->method('findAll')->will($this->returnValue($mockDomains));
+		$domainRepository->expects($this->once())->method('findAll')->will($this->returnValue($mockResult));
 		$domainRepository->_set('domainMatchingStrategy', $mockDomainMatchingStrategy);
 
 		$actualDomains = $domainRepository->findByHost('myhost');

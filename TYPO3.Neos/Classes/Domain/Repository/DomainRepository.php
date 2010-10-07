@@ -46,7 +46,7 @@ class DomainRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @api
 	 */
 	public function findByHost($host) {
-		return $this->domainMatchingStrategy->getSortedMatches($host, iterator_to_array($this->findAll()));
+		return $this->domainMatchingStrategy->getSortedMatches($host, $this->findAll()->toArray());
 	}
 
 }

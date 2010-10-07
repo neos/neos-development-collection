@@ -33,47 +33,24 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getContentServiceReturnsTheContentServiceBoundToTheContext() {
-		$mockContentService = $this->getMock('F3\TYPO3\Domain\Service\ContentService', array(), array(), '', FALSE);
-
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
-		$contentContext->_set('contentService', $mockContentService);
-		$this->assertSame($mockContentService, $contentContext->getContentService());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getNodeServiceReturnsTheNodeServiceBoundToTheContext() {
-		$mockNodeService = $this->getMock('F3\TYPO3\Domain\Service\NodeService', array(), array(), '', FALSE);
-
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
-		$contentContext->_set('nodeService', $mockNodeService);
-		$this->assertSame($mockNodeService, $contentContext->getNodeService());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getTypoScriptServiceReturnsTheTypoScriptServiceBoundToTheContext() {
-		$mockTypoScriptService = $this->getMock('F3\TYPO3\Domain\Service\TypoScriptService', array(), array(), '', FALSE);
-
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
-		$contentContext->_set('typoScriptService', $mockTypoScriptService);
-		$this->assertSame($mockTypoScriptService, $contentContext->getTypoScriptService());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function getCurrentDateTimeReturnsACurrentDateAndTime() {
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->once())->method('getHTTPHost')->will($this->returnValue('myhost'));
+		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
+		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
+		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
+		$locale = new \F3\FLOW3\I18n\Locale('mul-ZZ');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Locale', 'mul-ZZ')->will($this->returnValue($locale));
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
+		$contentContext->_set('objectManager', $mockObjectManager);
+		$contentContext->_set('environment', $mockEnvironment);
+		$contentContext->_set('domainRepository', $mockDomainRepository);
+		$contentContext->_set('siteRepository', $mockSiteRepository);
+		$contentContext->initializeObject();
+
 		$almostCurrentTime = new \DateTime();
 		date_sub($almostCurrentTime, new \DateInterval('P0DT1S'));
-
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext();
 		$currentTime = $contentContext->getCurrentDateTime();
 		$this->assertTrue($almostCurrentTime < $currentTime);
 	}
@@ -86,7 +63,7 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 		$simulatedCurrentTime = new \DateTime();
 		date_add($simulatedCurrentTime, new \DateInterval('P1D'));
 
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext();
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
 		$contentContext->setCurrentDateTime($simulatedCurrentTime);
 
 		$this->assertEquals($simulatedCurrentTime, $contentContext->getCurrentDateTime());
@@ -108,9 +85,9 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 		$locale = new \F3\FLOW3\I18n\Locale('mul-ZZ');
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->at(3))->method('create')->with('F3\FLOW3\I18n\Locale', 'mul-ZZ')->will($this->returnValue($locale));
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Locale', 'mul-ZZ')->will($this->returnValue($locale));
 
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
 		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('environment', $mockEnvironment);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
@@ -142,7 +119,7 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
 		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('environment', $mockEnvironment);
@@ -174,7 +151,7 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
 		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
@@ -193,7 +170,7 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 	public function getCurrentSiteReturnsTheCurrentSite() {
 		$mockSite = $this->getMock('F3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);
 
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
 		$contentContext->_set('currentSite', $mockSite);
 		$this->assertSame($mockSite, $contentContext->getCurrentSite());
 	}
@@ -205,37 +182,13 @@ class ContentContextTest extends \F3\Testing\BaseTestCase {
 	public function getCurrentDomainReturnsTheCurrentDomainIfAny() {
 		$mockDomain = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
 
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
+		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
 
 		$this->assertNull($contentContext->getCurrentDomain());
 		$contentContext->_set('currentDomain', $mockDomain);
 		$this->assertSame($mockDomain, $contentContext->getCurrentDomain());
 	}
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getCurrentNodeContentReturnsTheCurrentPageContentObjectIfAny() {
-		$mockPage = $this->getMock('F3\TYPO3\Domain\Model\Content\Page', array(), array(), '', FALSE);
-
-		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'));
-
-		$this->assertNull($contentContext->getCurrentNodeContent());
-		$contentContext->setCurrentNodeContent($mockPage);
-		$this->assertSame($mockPage, $contentContext->getCurrentNodeContent());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setCurrentNodePathAndNodeGetPathAllowsForSettingTheCurrentNodePath() {
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext;
-
-		$contentContext->setCurrentNodePath('foo/bar/baz');
-		$this->assertSame('foo/bar/baz', $contentContext->getCurrentNodePath());
-	}
 }
 
 

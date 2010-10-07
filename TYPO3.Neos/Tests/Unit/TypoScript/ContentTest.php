@@ -121,42 +121,5 @@ class ContentTest extends \F3\Testing\BaseTestCase {
 		$this->assertNull($content['foo']);
 	}
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function initializeSectionsIteratesOverUsedSectionsOfPageNodeAndBuildsTypoScriptObjectsForFoundContent() {
-		$mockContentNode1 = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
-		$mockContentNode2 = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
-		$mockContentNode2->expects($this->once())->method('getContentType')->will($this->returnValue('TYPO3:Page'));
-
-		$mockSectionNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
-		$mockSectionNode->expects($this->once())->method('getName')->will($this->returnValue('default'));
-		$mockSectionNode->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($mockContentNode1, $mockContentNode2)));
-
-		$mockCurrentNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
-		$mockCurrentNode->expects($this->once())->method('getChildNodes')->with('TYPO3:Section')->will($this->returnValue(array($mockSectionNode)));
-
-		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array('live'));
-		$mockContentContext->expects($this->once())->method('getCurrentNode')->will($this->returnValue($mockCurrentNode));
-
-		$mockRenderingContext = $this->getMock('F3\TypoScript\RenderingContext');
-		$mockRenderingContext->expects($this->any())->method('getContentContext')->will($this->returnValue($mockContentContext));
-
-		$mockTypoScriptTextObject = $this->getMock('F3\TYPO3\TypoScript\Text');
-		$mockContentArray = $this->getMock('F3\TYPO3\TypoScript\ContentArray', array('dummy'));
-		$mockTypoScriptObjectFactory = $this->getMock('F3\TypoScript\ObjectFactory');
-		$mockTypoScriptObjectFactory->expects($this->once())->method('createByName')->with('ContentArray')->will($this->returnValue($mockContentArray));
-		$mockTypoScriptObjectFactory->expects($this->once())->method('createByNode')->with($mockContentNode1)->will($this->returnValue($mockTypoScriptTextObject));
-
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('dummy'));
-		$content->_set('typoScriptObjectFactory', $mockTypoScriptObjectFactory);
-		$content->_set('renderingContext', $mockRenderingContext);
-
-		$content->_call('initializeSections');
-
-		$this->assertSame($mockContentArray, $content['default']);
-		$this->assertSame($mockTypoScriptTextObject, $content['default'][0]);
-	}
 }
 ?>
