@@ -28,7 +28,7 @@ Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
  * @author Rens Admiraal <rens@rensnel.nl>
  */
 F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI = function() {
-    F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI.superclass.constructor.apply(this, arguments);
+	F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI.superclass.constructor.apply(this, arguments);
 };
 
 Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
@@ -49,7 +49,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 
 	getFullPath: function() {
 		return this.menuId + '-' + this.sectionId + '-' + this.menuPath;
-    },
+	},
 
 	getModuleMenu: function() {
 		return this.node.ownerTree.findParentByType(F3.TYPO3.UserInterface.ModuleMenu);
@@ -107,6 +107,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 
 		this.anchor = cs[index];
 		this.textNode = cs[1];
+		this.isOpen = false;
 	},
 
 	/**
@@ -117,20 +118,25 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	onOver : function(e) {
 		Ext.get(this.getEl()).setStyle({width: 'auto'});
 		Ext.get(this.elNode).setStyle({width: 'auto'});
-
-		F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOver(this, e);
-    },
+		if (this.isOpen === false) {
+			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOver(this, e);
+			this.isOpen = true;
+		}
+	},
 
 	/**
 	 * @param {Object} e
 	 * @return {void}
 	 * @private
 	 */
-    onOut : function(e) {
+	onOut : function(e) {
 		Ext.get(this.getEl()).setStyle({width: 'auto'});
 		Ext.get(this.elNode).setStyle({width: 'auto'});
-		F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOut(this, e);
-    },
+		if(this.isOpen === true  && !e.within(Ext.get(this.elNode), 1)){
+			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOut(this, e);
+			this.isOpen = false;
+		}
+	},
 
 
 	/**
@@ -155,46 +161,46 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	 * @return {void}
 	 * @private
 	 */
-    animExpand : function(callback){
-        var ct = Ext.get(this.ctNode);
-        ct.stopFx();
+	animExpand : function(callback){
+		var ct = Ext.get(this.ctNode);
+		ct.stopFx();
 
-        if(!this.node.isExpandable()){
-            this.updateExpandIcon();
-            this.ctNode.style.display = "";
-            Ext.callback(callback);
-            return;
-        }
-        this.animating = true;
-        this.updateExpandIcon();
+		if(!this.node.isExpandable()){
+			this.updateExpandIcon();
+			this.ctNode.style.display = "";
+			Ext.callback(callback);
+			return;
+		}
+		this.animating = true;
+		this.updateExpandIcon();
 
 		F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.expandNode(ct, callback, this);
-    },
+	},
 
 	/**
 	 * @param {Function}
 	 * @return {void}
 	 * @private
 	 */
-    animCollapse : function(callback){
-        var ct = Ext.get(this.ctNode);
-        ct.stopFx();
+	animCollapse : function(callback){
+		var ct = Ext.get(this.ctNode);
+		ct.stopFx();
 
-        this.animating = true;
-        this.updateExpandIcon();
+		this.animating = true;
+		this.updateExpandIcon();
 
 		F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.collapseNode(ct, callback, this);
-    },
+	},
 
 	/**
 	 * @return {void}
 	 * @private
 	 */
-    renderIndent : function(){
-        if(this.rendered){
-            this.updateExpandIcon();
-        }
-    }
+	renderIndent : function(){
+		if(this.rendered){
+			this.updateExpandIcon();
+		}
+	}
 });
 
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu', F3.TYPO3.UserInterface.BreadcrumbMenu);
