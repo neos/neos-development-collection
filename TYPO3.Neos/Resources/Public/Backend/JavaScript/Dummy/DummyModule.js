@@ -23,12 +23,6 @@ F3.TYPO3.Dummy.DummyModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.Du
 			itemId: 'system'
 		});
 
-			// Extend content menu
-		registry.insertAfter('menu[main]/content[]/edit', 'movePage', {
-			itemId: 'Move',
-			text: 'Move Page',
-			iconCls: 'F3-TYPO3-Content-icon-movePage'
-		});
 	},
 	initialize: function(application) {
 		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {
