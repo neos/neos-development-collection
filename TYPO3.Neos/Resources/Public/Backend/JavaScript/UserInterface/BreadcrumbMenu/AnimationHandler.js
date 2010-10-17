@@ -123,10 +123,9 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 		label.setStyle({
 			width: '0px',
 			display: 'inline-block',
-			height: 47,
+			height: '47px',
 			overflow: 'hidden',
 			whiteSpace:'nowrap',
-			height: '20px',
 			padding: '10px 5px',
 			opacity: 0
 		});

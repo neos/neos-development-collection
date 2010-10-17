@@ -13,31 +13,32 @@ F3.TYPO3.Content.ContentModule = F3.TYPO3.Core.Application.createModule('F3.TYPO
 	 */
 
 	configure: function(registry) {
-		registry.append('menu[main]', 'content', {
+
+		registry.append('menu/main', 'content', {
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
 			title: 'Content',
 			itemId: 'content'
 		});
 
-		registry.append('menu[main]/content[]', 'edit', {
+		registry.append('menu/main/content[]', 'edit', {
 			itemId: 'edit',
 			text: 'Edit',
 			iconCls: 'F3-TYPO3-Content-icon-edit'
 		});
 
-		registry.append('menu[main]/content[]/edit[]', 'pageProperties', {
+		registry.append('menu/main/content[]/edit[]', 'pageProperties', {
 			itemId: 'pageProperties',
 			text: 'Page properties',
 			iconCls: 'F3-TYPO3-Content-icon-pageProperties'
 		});
 
-		registry.append('menu[main]/content[]', 'createPage', {
+		registry.append('menu/main/content[]', 'createPage', {
 			itemId: 'Create',
 			text: 'Create Page',
 			iconCls: 'F3-TYPO3-Content-icon-createPage'
 		});
 
-		registry.append('menu[main]/content[]', 'deletePage', {
+		registry.append('menu/main/content[]', 'deletePage', {
 			itemId: 'Delete',
 			text: 'Delete Page',
 			iconCls: 'F3-TYPO3-Content-icon-deletePage'
@@ -140,17 +141,17 @@ F3.TYPO3.Content.ContentModule = F3.TYPO3.Core.Application.createModule('F3.TYPO
 				xtype: 'F3.TYPO3.Content.FrontendEditor',
 				id: 'F3.TYPO3.Content.FrontendEditor'
 			});
-			userInterfaceModule.contentAreaOn('menu[main]/content', 'content', 'frontendEditor');
+			userInterfaceModule.contentAreaOn('menu/main/content', 'content', 'frontendEditor');
 
-			userInterfaceModule.moduleDialogOn('menu[main]/content[]/edit[]/pageProperties',
+			userInterfaceModule.moduleDialogOn('menu/main/content[]/edit[]/pageProperties',
 				{ xtype: 'F3.TYPO3.Content.Edit.PagePropertiesDialog' },
 				{ xtype: 'F3.TYPO3.UserInterface.ContentDialog' }
 			);
-			userInterfaceModule.moduleDialogOn('menu[main]/content[]/createPage',
+			userInterfaceModule.moduleDialogOn('menu/main/content[]/createPage',
 				{ xtype: 'F3.TYPO3.Content.Edit.CreatePageDialog' },
 				{ xtype: 'F3.TYPO3.UserInterface.ContentDialog' }
 			);
-			userInterfaceModule.moduleDialogOn('menu[main]/content[]/deletePage',
+			userInterfaceModule.moduleDialogOn('menu/main/content[]/deletePage',
 				{ xtype: 'F3.TYPO3.Content.Edit.DeletePageDialog' },
 				{
 					xtype: 'F3.TYPO3.UserInterface.ContentDialog',

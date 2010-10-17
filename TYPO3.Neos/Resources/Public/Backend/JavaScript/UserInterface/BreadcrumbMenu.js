@@ -26,7 +26,7 @@ Ext.namespace('F3.TYPO3.UserInterface');
  * @author Rens Admiraal <rens@rensnel.nl>
  */
 F3.TYPO3.UserInterface.BreadcrumbMenu = function() {
-    F3.TYPO3.UserInterface.BreadcrumbMenu.superclass.constructor.apply(this, arguments);
+	F3.TYPO3.UserInterface.BreadcrumbMenu.superclass.constructor.apply(this, arguments);
 };
 
 Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu, Ext.tree.TreePanel, {
@@ -41,11 +41,15 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu, Ext.tree.TreePanel, {
 
 	basePath: null,
 
+	util: {},
+
 	/**
 	 * @cfg menu Menu as defined in {@link F3.TYPO3.Core.Application.MenuRegistry}
 	 */
 	
 	initComponent: function() {
+
+		this.util = F3.TYPO3.UserInterface.BreadcrumbMenu.Util;
 
 		var rootNodeConfig = {
 			expanded: true,
@@ -92,51 +96,21 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu, Ext.tree.TreePanel, {
 	 * @private
 	 */
 	_getMenuItems: function() {
-		var menu = F3.TYPO3.Utils.clone(this.menuConfig),
-			items = [];
-		this._convertMenuConfig(menu, items, 0, []);
-		return items;
+		var menu = F3.TYPO3.Utils.clone(this.menuConfig);
+		return this.util.convertMenuConfig(menu, 1, '', 'menu/main/content', {sectionId:'',menuId:'mainMenu',menuPath:''});
 	},
 
-	/**
-	 * @private
-	 */
-	_convertMenuConfig: function(menu, items, level, path) {
-		var itemStack = [];
-		Ext.each(menu, function(menuItem) {
-			var itemPath;
-			if (Ext.isObject(menuItem)) {
-				itemPath = path.concat([menuItem.key]);
-				menuItem.path = this.basePath + '/' + itemPath.join('/children/');
-			} else if (menuItem === ' ') {
-				itemPath = path.concat(['spacer']);
-				menuItem = {};
-			}
+	deactivateNodesFrameNode: function(node) {
+		var scope = this;
 
-			menuItem.sectionId = this.itemId;
-			menuItem.menuId = this.menuId;
-			menuItem.menuPath = itemPath.join('-');
-
-			if (menuItem.children && menuItem.children.length > 0) {
-				this._addItemPaths(menuItem.children, this.basePath, itemPath);
-			}
-
-			items.push(menuItem);
-		}, this);
-		Ext.each(itemStack, function(item) {
-			items.push(item);
-		}, this);
-	},
-
-	_addItemPaths: function(items, basePath, path) {
-		Ext.each(items, function (menuItem) {
-			var itemPath = path.concat([menuItem.key]);
-			menuItem.path = basePath + '/' + itemPath.join('/children/');
-
-			if (menuItem.children && menuItem.children.length > 0) {
-				this._addItemPaths(menuItem.children);
-			}
-		});
+		if (node.childNodes && node.childNodes.length > 0) {
+			Ext.each(node.childNodes, function() {
+				F3.TYPO3.Core.Application.fireEvent('F3.TYPO3.UserInterface.BreadcrumbMenu.deactivateNode', this);
+				this.active = false;
+				scope.deactivateNodesFrameNode(this);
+			});
+		}
 	}
 });
+
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu', F3.TYPO3.UserInterface.BreadcrumbMenu);

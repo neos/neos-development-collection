@@ -22,7 +22,6 @@ Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
 
 /**
  * @class F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI
- *
  * @namespace F3.TYPO3.UserInterface.BreadcrumbMenu
  * @extends Ext.tree.TreeNodeUI
  * @author Rens Admiraal <rens@rensnel.nl>
@@ -33,17 +32,14 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI = function() {
 
 Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	active: false,
+	isLabelOpen: false,
+
 	onClick: function(e) {
 		F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI.superclass.onClick.call(this, e);
-
 		if (this.active) {
-			this.active = false;
-			Ext.get(this.getEl()).removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Node-active');
-			F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('deactivate-' + this.path, this);
+			this.activate();
 		} else {
-			this.active = true;
-			Ext.get(this.getEl()).addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Node-active');
-			F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('activate-' + this.path, this);
+			this.deactivate();
 		}
 	},
 
@@ -107,7 +103,6 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 
 		this.anchor = cs[index];
 		this.textNode = cs[1];
-		this.isOpen = false;
 	},
 
 	/**
@@ -118,9 +113,10 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	onOver : function(e) {
 		Ext.get(this.getEl()).setStyle({width: 'auto'});
 		Ext.get(this.elNode).setStyle({width: 'auto'});
-		if (this.isOpen === false) {
+
+		if (this.isLabelOpen === false) {
+			this.isLabelOpen = true;
 			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOver(this, e);
-			this.isOpen = true;
 		}
 	},
 
@@ -132,12 +128,12 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	onOut : function(e) {
 		Ext.get(this.getEl()).setStyle({width: 'auto'});
 		Ext.get(this.elNode).setStyle({width: 'auto'});
-		if(this.isOpen === true  && !e.within(Ext.get(this.elNode), 1)){
+
+		if(this.isLabelOpen === true && !e.within(Ext.get(this.elNode), 1)) {
+			this.isLabelOpen = false;
 			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOut(this, e);
-			this.isOpen = false;
 		}
 	},
-
 
 	/**
 	 * @param {Boolean} state
@@ -174,6 +170,13 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 		this.animating = true;
 		this.updateExpandIcon();
 
+		/**
+		 * TODO: add configuration for this settings
+		 */
+		if (true) {
+			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.hideSiblings(this.node, this);
+		}
+
 		F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.expandNode(ct, callback, this);
 	},
 
@@ -189,6 +192,13 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 		this.animating = true;
 		this.updateExpandIcon();
 
+		/**
+		 * TODO: add configuration for this settings
+		 */
+		if (true) {
+			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.showSiblings(this.node, this);
+		}
+
 		F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.collapseNode(ct, callback, this);
 	},
 
@@ -200,6 +210,18 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 		if(this.rendered){
 			this.updateExpandIcon();
 		}
+	},
+
+	activate: function() {
+		this.active = false;
+		Ext.get(this.getEl()).removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Node-active');
+		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('deactivate-' + this.path, this);
+	},
+
+	deactivate: function() {
+		this.active = true;
+		Ext.get(this.getEl()).addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Node-active');
+		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('activate-' + this.path, this);
 	}
 });
 

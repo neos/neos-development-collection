@@ -370,7 +370,31 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 			}
 		}), Ext.encode(this.registry.get()));
 	},
-	testCompileWitPrependAndAppend: function() {
+	testCompileWithMultiLevelAppend: function() {
+		this.registry.append('menu/main', 'content', {title:'Content'});
+		this.registry.append('menu/main/content[]', 'pages', {title:'Pages'});
+		this.registry.append('menu/main/content[]/pages[]', 'new', {title:'New'});
+
+		this.registry.compile();
+
+		YAHOO.util.Assert.areEqual(Ext.encode({
+			menu: {
+				main: [{
+					title: 'Content',
+					children: [{
+						title: 'Pages',
+						children: [{
+							title: 'New',
+							key: 'new'
+						}],
+						key: 'pages'
+					}],
+					key: 'content'
+				}]
+			}
+		}), Ext.encode(this.registry.get()));
+	},
+	testCompileWithPrependAndAppend: function() {
 		this.registry.append('menu/main', 'delete', {title: 'Delete'});
 		this.registry.prepend('menu/main', 'edit', {title: 'Edit'}, 10);
 		this.registry.prepend('menu/main', 'preview', {title: 'Preview'});

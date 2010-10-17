@@ -7,33 +7,44 @@
 		<title>JavaScript Test Runner</title>
 
 		<!--CSS-->
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/logger/assets/logger.css" />
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/yuitest/assets/testlogger.css" />
+		<link rel="stylesheet" type="text/css" href="yui/logger.css" />
+		<link rel="stylesheet" type="text/css" href="yui/testlogger.css" />
 		<style type="text/css">
-			.yui-log-container {
-				width:50%;
-				font-size: 100%;
+			.yui-log-container, .yui-log-bd pre {
+				width:96%;
+				font-family: arial;
+				font-size: 11px;
+			}
+			.yui-log-bd .info, .yui-log-bd .fail, .yui-log-bd .pass {
+				display: inline-block;
+				padding: 1px 3px;
+				font-size: 10px;
+				font-weight: bold;
 			}
 		</style>
 
 		<!-- Dependencies -->
-		<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-		<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/logger/logger-min.js"></script>
+		<script type="text/javascript" src="yui/yahoo-dom-event.js"></script>
+		<script type="text/javascript" src="yui/logger-min.js"></script>
 
 		<!-- Source File -->
-		<script type="text/javascript" src="http://yui.yahooapis.com/2.8.1/build/yuitest/yuitest-min.js"></script>
+		<script type="text/javascript" src="yui/yuitest-min.js"></script>
 
 		<script type="text/javascript" src="../../../../Framework/ExtJS/Resources/Public/JavaScript/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="../../../../Framework/ExtJS/Resources/Public/JavaScript/ext-all.js"></script>
 		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/Utils.js"></script>
 		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/Core/Registry.js"></script>
 		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/UserInterface/Form/FormFactory.js"></script>
+		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/UserInterface/BreadcrumbMenu.js"></script>
+		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/UserInterface/BreadcrumbMenu/Util.js"></script>
 
 		<script type="text/javascript" src="Backend/Core/RegistryTest.js"></script>
 		<script type="text/javascript" src="Backend/UserInterface/Form/FormFactoryTest.js"></script>
+		<script type="text/javascript" src="Backend/UserInterface/BreadcrumbMenu/ItemPaths.js"></script>
 
 		<script type="text/javascript">
 			var testClasses = [
+					'F3.TYPO3.Core.BreadCrumbItemPathsTest',
 					'F3.TYPO3.Core.RegistryTest',
 					'F3.TYPO3.UserInterface.Form.FormFactoryTest'
 				],
