@@ -28,7 +28,7 @@ Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
  * @author Rens Admiraal <rens@rensnel.nl>
  */
 F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel = function() {
-    F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel.superclass.constructor.apply(this, arguments);
+	F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel.superclass.constructor.apply(this, arguments);
 };
 
 Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventModel, {
@@ -37,313 +37,139 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	 * @return {void}
 	 * @public
 	 */
-	initEvents : function(){
-        if(this.tree.trackMouseOver !== false){
-            this.tree.mon(this.tree.innerCt, {
-                scope: this,
-                mouseover: this.delegateOver,
-                mouseout: this.delegateOut
-            });
-        }
-        this.tree.mon(this.tree.getTreeEl(), {
-            scope: this,
-            click: this.delegateClick,
-            dblclick: this.delegateDblClick,
-            contextmenu: this.delegateContextMenu
-        });
-    },
+	initEvents : function() {
+		if (this.tree.trackMouseOver !== false) {
+			this.tree.mon(this.tree.innerCt, {
+				scope: this,
+				mouseover: this.delegateOver,
+				mouseout: this.delegateOut
+			});
+		}
+		this.tree.mon(this.tree.getTreeEl(), {
+			scope: this,
+			click: this.delegateClick,
+			dblclick: this.delegateDblClick,
+			contextmenu: this.delegateContextMenu
+		});
+	},
 
 	/**
-	 * @param {Object} e
+	 * @param {Object} event
 	 * @return {Object}
 	 * @public
 	 */
-    getNode : function(e){
-		var t;
-        if(t = e.getTarget('.f3-BreadcrumbMenu-node-el', 10)){
-            var id = Ext.fly(t, '_treeEvents').getAttribute('tree-node-id', 'ext');
-            if(id){
-                return this.tree.getNodeById(id);
-            }
-        }
-        return null;
-    },
+	getNode : function(event) {
+		var target;
+		if (target = event.getTarget('.f3-BreadcrumbMenu-node-el', 10)) {
+			var id = Ext.fly(target, '_treeEvents').getAttribute('tree-node-id', 'ext');
+			if (id) {
+				return this.tree.getNodeById(id);
+			}
+		}
+		return null;
+	},
 
 	/**
-	 * @param {Object} e
+	 * @param {Object} event
 	 * @return {Object}
 	 * @public
 	 */
-    getNodeTarget : function(e){
-        var t = e.getTarget('.f3-BreadcrumbMenu-node-icon', 1);
-        if(!t){
-            t = e.getTarget('.f3-BreadcrumbMenu-node-el', 6);
-        }
-        return t;
-    },
+	getNodeTarget : function(event) {
+		var target = event.getTarget('.f3-BreadcrumbMenu-node-icon', 1);
+		if (!target) {
+			target = event.getTarget('.f3-BreadcrumbMenu-node-el', 6);
+		}
+		return target;
+	},
 
 	/**
-	 * @param {Object} e
-	 * @param {Object} t
+	 * @param {Object} event
+	 * @param {Object} target
 	 * @return {void}
 	 * @public
 	 */
-    delegateOut : function(e, t){
-        if(!this.beforeEvent(e)){
-            return;
-        }
-        if(e.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)){
-            var n = this.getNode(e);
-            this.onIconOut(e, n);
-            if(n == this.lastEcOver){
-                delete this.lastEcOver;
-            }
-        }
-        if((t = this.getNodeTarget(e)) && !e.within(t, true)){
-            this.onNodeOut(e, this.getNode(e));
-        }
-    },
+	delegateOut : function(event, target) {
+		if (!this.beforeEvent(event)) {
+			return;
+		}
+		if (event.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)) {
+			var n = this.getNode(event);
+			this.onIconOut(event, n);
+			if (n == this.lastEcOver) {
+				delete this.lastEcOver;
+			}
+		}
+		if ((target = this.getNodeTarget(event)) && !event.within(target, true)) {
+			this.onNodeOut(event, this.getNode(event));
+		}
+	},
 
 	/**
-	 * @param {Object} e
-	 * @param {Object} t
+	 * @param {Object} event
+	 * @param {Object} target
 	 * @return {void}
 	 * @public
 	 */
-    delegateOver : function(e, t){
-        if(!this.beforeEvent(e)){
-            return;
-        }
-        if(Ext.isGecko && !this.trackingDoc){ // prevent hanging in FF
-            Ext.getBody().on('mouseover', this.trackExit, this);
-            this.trackingDoc = true;
-        }
-        if(this.lastEcOver){ // prevent hung highlight
-            this.onIconOut(e, this.lastEcOver);
-            delete this.lastEcOver;
-        }
-        if(e.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)){
-            this.lastEcOver = this.getNode(e);
-            this.onIconOver(e, this.lastEcOver);
-        }
-        if(t = this.getNodeTarget(e)){
-            this.onNodeOver(e, this.getNode(e));
-        }
-    },
+	delegateOver : function(event, target) {
+		if (!this.beforeEvent(event)) {
+			return;
+		}
+		if (Ext.isGecko && !this.trackingDoc) { // prevent hanging in FF
+			Ext.getBody().on('mouseover', this.trackExit, this);
+			this.trackingDoc = true;
+		}
+		if (this.lastEcOver) { // prevent hung highlight
+			this.onIconOut(event, this.lastEcOver);
+			delete this.lastEcOver;
+		}
+		if (event.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)) {
+			this.lastEcOver = this.getNode(event);
+			this.onIconOver(event, this.lastEcOver);
+		}
+		if (target = this.getNodeTarget(event)) {
+			this.onNodeOver(event, this.getNode(event));
+		}
+	},
 
 	/**
-	 * @param {Object} e
+	 * @param {Object} event
+	 * @param {Object} target
 	 * @return {void}
 	 * @public
 	 */
-    trackExit : function(e){
-        if(this.lastOverNode){
-            if(this.lastOverNode.ui && !e.within(this.lastOverNode.ui.getEl())){
-                this.onNodeOut(e, this.lastOverNode);
-            }
-            delete this.lastOverNode;
-            Ext.getBody().un('mouseover', this.trackExit, this);
-            this.trackingDoc = false;
-        }
-
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} t
-	 * @return {void}
-	 * @public
-	 */
-    delegateClick : function(e, t){
-        if(this.beforeEvent(e)){
-            if(e.getTarget('input[type=checkbox]', 1)){
-                this.onCheckboxClick(e, this.getNode(e));
-            }else if(e.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)){
-                this.onIconClick(e, this.getNode(e));
-            }else if(this.getNodeTarget(e)){
-                this.onNodeClick(e, this.getNode(e));
-            }
-        }else{
-            this.checkContainerEvent(e, 'click');
-        }
-    },
+	delegateClick : function(event, target) {
+		if (this.beforeEvent(event)) {
+			if (event.getTarget('input[type=checkbox]', 1)) {
+				this.onCheckboxClick(event, this.getNode(event));
+			}else if (event.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)) {
+				this.onIconClick(event, this.getNode(event));
+			}else if (this.getNodeTarget(event)) {
+				this.onNodeClick(event, this.getNode(event));
+			}
+		} else {
+			this.checkContainerEvent(event, 'click');
+		}
+	},
 
 	/**
-	 * @param {Object} e
-	 * @param {Object} t
-	 * @return {void}
-	 * @public
-	 */
-    delegateDblClick : function(e, t){
-        if(this.beforeEvent(e)){
-            if(this.getNodeTarget(e)){
-                this.onNodeDblClick(e, this.getNode(e));
-            }
-        }else{
-            this.checkContainerEvent(e, 'dblclick');
-        }
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} t
-	 * @return {void}
-	 * @public
-	 */
-    delegateContextMenu : function(e, t){
-        if(this.beforeEvent(e)){
-            if(this.getNodeTarget(e)){
-                this.onNodeContextMenu(e, this.getNode(e));
-            }
-        }else{
-            this.checkContainerEvent(e, 'contextmenu');
-        }
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} type
-	 * @return {Boolean}
-	 * @public
-	 */
-    checkContainerEvent: function(e, type){
-        if(this.disabled){
-            e.stopEvent();
-            return false;
-        }
-        this.onContainerEvent(e, type);
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} type
-	 * @return {void}
-	 * @public
-	 */
-    onContainerEvent: function(e, type){
-        this.tree.fireEvent('container' + type, this.tree, e);
-    },
-
-	/**
-	 * @param {Object} e
+	 * @param {Object} event
 	 * @param {Object} node
 	 * @return {void}
 	 * @public
 	 */
-    onNodeClick : function(e, node){
-        node.ui.onClick(e);
-    },
+	onIconOver : function(event, node) {
+		node.ui.addClass('f3-BreadcrumbMenu-ec-over');
+	},
 
 	/**
-	 * @param {Object} e
+	 * @param {Object} event
 	 * @param {Object} node
 	 * @return {void}
 	 * @public
 	 */
-    onNodeOver : function(e, node){
-        this.lastOverNode = node;
-        node.ui.onOver(e);
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} node
-	 * @return {void}
-	 * @public
-	 */
-    onNodeOut : function(e, node){
-        node.ui.onOut(e);
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} node
-	 * @return {void}
-	 * @public
-	 */
-    onIconOver : function(e, node){
-        node.ui.addClass('f3-BreadcrumbMenu-ec-over');
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} node
-	 * @return {void}
-	 * @public
-	 */
-    onIconOut : function(e, node){
-        node.ui.removeClass('f3-BreadcrumbMenu-ec-over');
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} node
-	 * @return {void}
-	 * @public
-	 */
-    onIconClick : function(e, node){
-        node.ui.ecClick(e);
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} node
-	 * @return {void}
-	 * @public
-	 */
-    onCheckboxClick : function(e, node){
-        node.ui.onCheckChange(e);
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} node
-	 * @return {void}
-	 * @public
-	 */
-    onNodeDblClick : function(e, node){
-        node.ui.onDblClick(e);
-    },
-
-	/**
-	 * @param {Object} e
-	 * @param {Object} node
-	 * @return {void}
-	 * @public
-	 */
-    onNodeContextMenu : function(e, node){
-        node.ui.onContextMenu(e);
-    },
-
-	/**
-	 * @param {Object} e
-	 * @return {Boolean}
-	 * @public
-	 */
-    beforeEvent : function(e){
-        var node = this.getNode(e);
-        if(this.disabled || !node || !node.ui){
-            e.stopEvent();
-            return false;
-        }
-        return true;
-    },
-
-	/**
-	 * @return {void}
-	 * @public
-	 */
-    disable: function(){
-        this.disabled = true;
-    },
-
-	/**
-	 * @return {void}
-	 * @public
-	 */
-    enable: function(){
-        this.disabled = false;
-    }
+	onIconOut : function(event, node) {
+		node.ui.removeClass('f3-BreadcrumbMenu-ec-over');
+	}
 });
 
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel', F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel);
