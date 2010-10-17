@@ -60,10 +60,8 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.Util = {
 	addItemPaths: function(items, basePath, path) {
 		Ext.each(items, function (menuItem) {
 			var itemPath = path.concat([menuItem.key]);
-			var scope = this;
 
 			menuItem.path = basePath + '/' + itemPath.join('/children/');
 		});
 	}
-
 };

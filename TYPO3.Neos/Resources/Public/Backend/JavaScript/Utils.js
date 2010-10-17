@@ -60,5 +60,19 @@ F3.TYPO3.Utils = {
 	 */
 	buildBackendUri: function(path) {
 		return F3.TYPO3.Configuration.Application.backendBaseUri + path;
+	},
+
+	/**
+	 * Checks if an object is an empty object
+	 *
+	 * @param {Object}
+	 * @return {Boolean} true if empty object, false if no object or non empty object
+	 */
+	isEmptyObject: function(object) {
+		var i;
+		for (i in object) {
+			return false;
+		}
+		return true;
 	}
 };

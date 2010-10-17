@@ -1,6 +1,6 @@
-Ext.ns("F3.TYPO3.Core");
+Ext.ns("F3.TYPO3.UserInterface.BreadcrumbMenu");
 
-F3.TYPO3.Core.BreadCrumbItemPathsTest = new YAHOO.tool.TestCase({
+F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest = new YAHOO.tool.TestCase({
 
 	name: "Test item path builder",
 
@@ -114,7 +114,6 @@ F3.TYPO3.Core.BreadCrumbItemPathsTest = new YAHOO.tool.TestCase({
 		});
 
 		this.registry.compile();
-		console.log(this.registry.get('menu/main'));
 		var testObject = this.menuUtility.convertMenuConfig(this.registry.get('menu/main'), 0, '', 'menu/main/content', {sectionId:'',menuId:'mainMenu',menuPath:''});
 
 		YAHOO.util.Assert.areEqual(Ext.encode([{
@@ -168,5 +167,4 @@ F3.TYPO3.Core.BreadCrumbItemPathsTest = new YAHOO.tool.TestCase({
 			menuPath: ''
 		}]), Ext.encode(testObject));
 	}
-
 });

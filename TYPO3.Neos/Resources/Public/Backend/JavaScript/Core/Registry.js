@@ -39,15 +39,8 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 	 * @private
 	 */
 	_compileVisit: function(context) {
-		var child,
-			isEmpty = function(o) {
-				var i;
-				for (i in o) {
-					return false;
-				}
-				return true;
-			};
-		if (!isEmpty(context._children)) {
+		var child;
+		if (!F3.TYPO3.Utils.isEmptyObject(context._children)) {
 			for (child in context._children) {
 				context[child] = this._compileVisit(context._children[child]);
 			}
