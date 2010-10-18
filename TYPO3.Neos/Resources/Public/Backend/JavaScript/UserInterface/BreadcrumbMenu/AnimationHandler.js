@@ -155,12 +155,40 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 		});
 	},
 
+	/**
+	 * @param {Object} node The node currently being expanded
+	 * @param {Object} scope
+	 * @return {void}
+	 */
 	hideSiblings: function (node, scope) {
-
+		Ext.each(node.parentNode.childNodes, function(sibling){
+			if (sibling !== node) {
+				Ext.get(sibling.ui.iconNode).shift({
+					opacity: 0,
+					display: 'none',
+					width: '0px',
+					duration: .25
+				});
+			}
+		});
 	},
 
+	/**
+	 * @param {Object} node The node currently being collapsed
+	 * @param {Object} scope
+	 * @return {void}
+	 */
 	showSiblings: function (node, scope) {
-
+		Ext.each(node.parentNode.childNodes, function(sibling){
+			if (sibling !== node) {
+				Ext.get(sibling.ui.iconNode).shift({
+					opacity: 1,
+					display: 'inline-block',
+					width: '47px',
+					duration: .25
+				});
+			}
+		});
 	}
 };
 
