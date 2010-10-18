@@ -18,7 +18,7 @@
     <title>Requirements</title>
 
     <para>The following minimum requirements are operating system independent.
-    Developers report working setups on Debian Linux, MacOS, Windows XP and
+    Developers report working setups on Debian Linux, MacOS, Windows XP,
     Windows Vista and Windows 7.</para>
 
     <itemizedlist>
@@ -64,11 +64,7 @@
     </itemizedlist>
 
     <para>Other webservers could work, but have not been tested until
-    now.<warning>
-        <para>XAMPP 1.7.2a on MacOS does <emphasis>not</emphasis> work, it
-        complains about syntax errors in the source files, probably caused by
-        a bug in the implementation of the zend string optimizer.</para>
-      </warning></para>
+    now.</para>
   </section>
 
   <section>
@@ -125,7 +121,7 @@
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%" fileref="StartPage.png"
-                         scalefit="1" width="100%"></imagedata>
+                         scalefit="1" width="100%"/>
             </imageobject>
           </mediaobject>
         </screenshot>
