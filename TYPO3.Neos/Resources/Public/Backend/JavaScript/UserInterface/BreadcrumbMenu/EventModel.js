@@ -60,7 +60,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	 */
 	getNode : function(event) {
 		var target;
-		if (target = event.getTarget('.f3-BreadcrumbMenu-node-el', 10)) {
+		if (target = event.getTarget('.F3-TYPO3-UserInterface-BreadcrumbMenu-node-el', 10)) {
 			var id = Ext.fly(target, '_treeEvents').getAttribute('tree-node-id', 'ext');
 			if (id) {
 				return this.tree.getNodeById(id);
@@ -75,9 +75,9 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	 * @public
 	 */
 	getNodeTarget : function(event) {
-		var target = event.getTarget('.f3-BreadcrumbMenu-node-icon', 1);
+		var target = event.getTarget('.F3-TYPO3-UserInterface-BreadcrumbMenu-node-icon', 1);
 		if (!target) {
-			target = event.getTarget('.f3-BreadcrumbMenu-node-el', 6);
+			target = event.getTarget('.F3-TYPO3-UserInterface-BreadcrumbMenu-node-el', 6);
 		}
 		return target;
 	},
@@ -92,7 +92,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 		if (!this.beforeEvent(event)) {
 			return;
 		}
-		if (event.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)) {
+		if (event.getTarget('.F3-TYPO3-UserInterface-BreadcrumbMenu-ec-icon', 1)) {
 			var n = this.getNode(event);
 			this.onIconOut(event, n);
 			if (n == this.lastEcOver) {
@@ -122,7 +122,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 			this.onIconOut(event, this.lastEcOver);
 			delete this.lastEcOver;
 		}
-		if (event.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)) {
+		if (event.getTarget('.F3-TYPO3-UserInterface-BreadcrumbMenu-ec-icon', 1)) {
 			this.lastEcOver = this.getNode(event);
 			this.onIconOver(event, this.lastEcOver);
 		}
@@ -141,9 +141,9 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 		if (this.beforeEvent(event)) {
 			if (event.getTarget('input[type=checkbox]', 1)) {
 				this.onCheckboxClick(event, this.getNode(event));
-			}else if (event.getTarget('.f3-BreadcrumbMenu-ec-icon', 1)) {
+			} else if (event.getTarget('.F3-TYPO3-UserInterface-BreadcrumbMenu-ec-icon', 1)) {
 				this.onIconClick(event, this.getNode(event));
-			}else if (this.getNodeTarget(event)) {
+			} else if (this.getNodeTarget(event)) {
 				this.onNodeClick(event, this.getNode(event));
 			}
 		} else {
@@ -158,7 +158,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	 * @public
 	 */
 	onIconOver : function(event, node) {
-		node.ui.addClass('f3-BreadcrumbMenu-ec-over');
+		node.ui.addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-ec-over');
 	},
 
 	/**
@@ -168,7 +168,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	 * @public
 	 */
 	onIconOut : function(event, node) {
-		node.ui.removeClass('f3-BreadcrumbMenu-ec-over');
+		node.ui.removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-ec-over');
 	}
 });
 

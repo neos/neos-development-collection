@@ -39,8 +39,8 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.Loader = Ext.extend(Ext.tree.TreeLoader, {
 			attr.uiProvider = F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI;
 		}
 		attr.singleClickExpand = true;
-        return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
-    }
+		return Ext.tree.TreeLoader.prototype.createNode.call(this, attr);
+	}
 });
 
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu.Loader', F3.TYPO3.UserInterface.BreadcrumbMenu.Loader);

@@ -33,16 +33,16 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.RootNodeUI = Ext.extend(Ext.tree.RootTreeN
 	 * @return {void}
 	 * @private
 	 */
-    render : function(){
-        if(!this.rendered){
-            var targetNode = this.node.ownerTree.innerCt.dom;
-            this.node.expanded = true;
-            targetNode.innerHTML = '<div class="f3-BreadcrumbMenu-root-node"></div>';
-            this.wrap = this.ctNode = targetNode.firstChild;
-        }
-    },
-    collapse : Ext.emptyFn,
-    expand : Ext.emptyFn
+	render : function(){
+		if(!this.rendered) {
+			var targetNode = this.node.ownerTree.innerCt.dom;
+			this.node.expanded = true;
+			targetNode.innerHTML = '<div class="F3-TYPO3-UserInterface-BreadcrumbMenu-root-node"></div>';
+			this.wrap = this.ctNode = targetNode.firstChild;
+		}
+	},
+	collapse : Ext.emptyFn,
+	expand : Ext.emptyFn
 });
 
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu.RootNodeUI', F3.TYPO3.UserInterface.BreadcrumbMenu.RootNodeUI);

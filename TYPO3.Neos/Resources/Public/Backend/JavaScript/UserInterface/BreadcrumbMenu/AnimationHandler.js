@@ -45,7 +45,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 					duration: .25
 				});
 
-				Ext.get(node.ui.ecNode).removeClass('f3-BreadcrumbMenu-elbow-expanded');
+				Ext.get(node.ui.ecNode).removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-elbow-expanded');
 
 				if (node.childNodes && node.childNodes.length > 0) {
 					scope._collapseSubNodes(node, scope);
@@ -63,7 +63,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 	 */
 	collapseNode: function (ct, callback, scope) {
 		this._collapseSubNodes(scope.node, this);
-		Ext.get(scope.node.ui.getEl()).removeClass('f3-BreadcrumbMenu-node-expanded');
+		Ext.get(scope.node.ui.getEl()).removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-node-expanded');
 
 		Ext.callback(callback);
 		scope.animating = false;
@@ -78,7 +78,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 	 */
 	expandNode: function (ct, callback, scope) {
 
-		Ext.get(scope.node.ui.getEl()).addClass('f3-BreadcrumbMenu-node-expanded');
+		Ext.get(scope.node.ui.getEl()).addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-node-expanded');
 		Ext.get(scope.node.ui.getEl()).setStyle({width: 'auto'});
 
 		Ext.each(
@@ -153,6 +153,14 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 				label.setStyle({display:'none'});
 			}
 		});
+	},
+
+	hideSiblings: function (node, scope) {
+
+	},
+
+	showSiblings: function (node, scope) {
+
 	}
 };
 

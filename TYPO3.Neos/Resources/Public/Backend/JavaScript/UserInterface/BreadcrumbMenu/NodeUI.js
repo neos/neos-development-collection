@@ -63,24 +63,24 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 		var href = a.href ? a.href : Ext.isGecko ? "" : "#";
 
 		var buf = [
-			'<span class="f3-BreadcrumbMenu-node">',
+			'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node">',
 				'<span ext:tree-node-id="', n.id,
-				'" class="f3-BreadcrumbMenu-node-el f3-BreadcrumbMenu-node-leaf x-unselectable ', a.cls,
+				'" class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-el F3-TYPO3-UserInterface-BreadcrumbMenu-node-leaf x-unselectable ', a.cls,
 				'" unselectable="on">',
 					// Icon
-					'<span class="f3-BreadcrumbMenu-node-icon', (a.icon ? " f3-BreadcrumbMenu-node-inline-icon" : ""),
+					'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-icon', (a.icon ? " F3-TYPO3-UserInterface-BreadcrumbMenu-node-inline-icon" : ""),
 					(a.iconCls ? " "+a.iconCls : ""), '" unselectable="on" style="background-image: ',
 					a.icon || this.emptyIcon, '"></span>',
 
 					// Link / label
-					'<a hidefocus="on" class="f3-BreadcrumbMenu-node-anchor" href="', href, '" tabIndex="1" ',
-					a.hrefTarget ? ' target="' + a.hrefTarget+'"' : "", '><span class="f3-BreadcrumbMenu-node-el-label" unselectable="on">',
+					'<a hidefocus="on" class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-anchor" href="', href, '" tabIndex="1" ',
+					a.hrefTarget ? ' target="' + a.hrefTarget+'"' : "", '><span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-el-label" unselectable="on">',
 					n.text,"</span></a>",
 					// 'spacer'
-					'<span class="f3-BreadcrumbMenu-elbow"></span>',
+					'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-elbow"></span>',
 
 				"</span>",
-				'<span class="f3-BreadcrumbMenu-node-ct" style="display:none;"></span>',
+				'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-ct" style="display:none;"></span>',
 			"</span>"
 		].join('');
 
@@ -128,7 +128,6 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	onOut : function(e) {
 		Ext.get(this.getEl()).setStyle({width: 'auto'});
 		Ext.get(this.elNode).setStyle({width: 'auto'});
-
 		if(this.isLabelOpen === true && !e.within(Ext.get(this.elNode), 1)) {
 			this.isLabelOpen = false;
 			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOut(this, e);
@@ -146,9 +145,9 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	updateExpandIcon: function() {
 		var elbowElement = Ext.get(this.node.ui.ecNode);
 		if (this.node.expanded) {
-			elbowElement.addClass('f3-BreadcrumbMenu-elbow-expanded');
+			elbowElement.addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-elbow-expanded');
 		} else {
-			elbowElement.removeClass('f3-BreadcrumbMenu-elbow-expanded');
+			elbowElement.removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-elbow-expanded');
 		}
 	},
 
