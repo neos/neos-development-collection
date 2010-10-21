@@ -210,6 +210,57 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 		}
 	}
 
+	/**
+	 * Return child nodes of specified node
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param string $contentType
+	 * @return string A response string
+	 * @author Christian Müller <christian@kitsunet.de>
+	 * @extdirect
+	 */
+	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
+
+		$childNodes = $node->getChildNodes($contentType);
+
+		switch ($this->request->getFormat()) {
+			case 'extdirect' :
+			case 'json' :
+				$tempConfiguration =	array(
+					'value' => array(
+						'descend' => array(
+							'data' => array(
+								'descend' => array(
+								)
+							)
+						)
+					)
+				);
+				$tempData = array();
+				foreach ($childNodes as $key => $childNode) {
+					$tempConfiguration['value']['descend']['data']['descend'][$key] = array(
+						'only' => array('path'),
+					);
+
+					$tempData[$key] = array(
+						'id' => $childNode->getPath(),
+						'text' => $childNode->getProperty('title')
+
+					);
+
+				}
+				$this->view->setConfiguration($tempConfiguration);
+				$this->view->assign('value',
+					array(
+						'data' => $tempData,
+						'success' => TRUE,
+					)
+				);
+			break;
+		}
+
+	}
+
 
 }
 ?>

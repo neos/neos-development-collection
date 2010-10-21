@@ -3,10 +3,6 @@ Ext.ns("F3.TYPO3.Dummy");
 F3.TYPO3.Dummy.DummyModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
 
 	configure: function(registry) {
-		registry.append('menu[main]', 'management', {
-			title: 'Management',
-			itemId: 'management'
-		});
 
 		registry.append('menu[main]', 'report', {
 			title: 'Report',
@@ -26,12 +22,6 @@ F3.TYPO3.Dummy.DummyModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.Du
 	},
 	initialize: function(application) {
 		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {
-			userInterfaceModule.addContentArea('management', 'dummy', {
-				xtype: 'F3.TYPO3.Dummy.DummyContentArea',
-				name: 'Management'
-			});
-			userInterfaceModule.contentAreaOn('menu[main]/management', 'management', 'dummy');
-
 
 			userInterfaceModule.addContentArea('report', 'dummy', {
 				xtype: 'F3.TYPO3.Dummy.DummyContentArea',
