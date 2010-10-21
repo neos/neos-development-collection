@@ -36,4 +36,5 @@
   <!-- Chapters -->
 
   <xi:include href="Introduction.xml"/>
+  <xi:include href="Architecture.xml"/>
 </book>
