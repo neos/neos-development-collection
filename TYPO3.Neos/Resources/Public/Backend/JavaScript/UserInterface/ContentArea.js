@@ -14,6 +14,7 @@ F3.TYPO3.UserInterface.ContentArea = Ext.extend(Ext.Panel, {
 		var config = {
 			autoScroll: true,
 			border: false,
+			layoutOnCardChange: true,
 			items: []
 		};
 		Ext.apply(this, config);
