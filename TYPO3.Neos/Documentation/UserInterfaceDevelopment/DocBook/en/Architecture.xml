@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>Architecture</title>
+
+  <section>
+    <title>TYPO3 Phoenix User Interface Development</title>
+
+    <para>Blah blah blah...</para>
+  </section>
+
+  <section>
+    <title>JS Packages / Modules?</title>
+
+    <para>TODO: Find a good name for these "JavaScript packages of
+    functionality"</para>
+
+    <para>TODO: Separate Core from the rest, and move to other package!</para>
+  </section>
+
+  <section>
+    <title>Bootstrap</title>
+
+    <para>- explain the startup process, and the modules</para>
+  </section>
+
+  <section>
+    <title>Registry</title>
+
+    <para>- explain the registry</para>
+  </section>
+
+  <section>
+    <title>Events</title>
+
+    <para>- explain event dispatching in Modules</para>
+  </section>
+
+  <section>
+    <title>Exception Handling</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Custom widgets explained</title>
+
+    <para></para>
+
+    <section>
+      <title>BreadcrumbMenu</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title></title>
+
+      <para></para>
+    </section>
+  </section>
+</chapter>
