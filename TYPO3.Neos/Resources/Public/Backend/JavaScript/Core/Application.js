@@ -19,6 +19,15 @@ Ext.ns("F3.TYPO3.Core");
  */
 F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	/**
+	 * @event _afterInitializationOf.[ModuleName]
+	 * For each initialized module, one of these events is executed.
+	 * All callbacks which are registered with the afterInitializationOf
+	 * are used here.
+	 * @param {[ModuleObject]} module the target module is passed as first and only parameter.
+	 * @private
+	 */
+
+	/**
 	 * @event afterBootstrap After bootstrap event. Should
 	 * be used for main initialization
 	 */
@@ -32,13 +41,6 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	 * @private
 	 */
 	modules: {},
-
-	/**
-	 * List of callbacks to be called after initialization
-	 * @private
-	 * @todo instead of these afterInitializationCallbacks, we could as well use the Observable.
-	 */
-	afterInitializationCallbacks: [],
 
 	/**
 	 * Main bootstrap. This is called by Ext.onReady and calls all registered
@@ -89,35 +91,39 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	},
 
 	/**
-	 * Invoke the registered modules.
+	 * Invoke the initialize() method on the registered modules,
+	 * and afterwards, invoke all "afterInitializationOf" callbacks for the
+	 * registered modules.
 	 * @private
 	 */
 	_initializeModules: function() {
-		for (var moduleName in this.modules) {
+		var moduleName;
+		for (moduleName in this.modules) {
 			if (this.modules[moduleName].initialize !== undefined) {
 				this.modules[moduleName].initialize(F3.TYPO3.Core.Application);
 			}
 		}
 
-		Ext.each(this.afterInitializationCallbacks, function(c) {
-			if (this.modules[c.moduleName]) {
-				c.callback.call(c.scope, this.modules[c.moduleName]);
-			}
-		}, this);
-		this.afterInitializationCallbacks = [];
+		for (moduleName in this.modules) {
+			this.fireEvent('_afterInitializationOf.' + moduleName, this.modules[moduleName]);
+		}
 	},
 
 	/**
-	 * Register after module initialization handler
+	 * Register a new Module Initialization Handler.
 	 *
+	 * After the module specified with {moduleName} is initialized, the specified
+	 * {callback} is invoked, and receives the specified module as parameter.
+	 *
+	 * This method should only be called inside "initialize" of each module.
+	 *
+	 * @param {String} moduleName the module name to listen to
+	 * @param {Function} callback the callback function
+	 * @param {Object} scope scope for the callback
 	 * @api
 	 */
 	afterInitializationOf: function(moduleName, callback, scope) {
-		this.afterInitializationCallbacks.push({
-			moduleName: moduleName,
-			callback: callback,
-			scope: scope
-		});
+		this.addListener('_afterInitializationOf.' + moduleName, callback, scope);
 	},
 
 	/**

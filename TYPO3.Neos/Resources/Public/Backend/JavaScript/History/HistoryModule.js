@@ -1,9 +1,9 @@
 Ext.ns("F3.TYPO3.History");
 /**
  * @class F3.TYPO3.History.HistoryModule
- * @namespace F3.TYPO3.History
  *
  * Module for history management
+ * @namespace F3.TYPO3.History
  */
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.History.HistoryModule', {
 	/**

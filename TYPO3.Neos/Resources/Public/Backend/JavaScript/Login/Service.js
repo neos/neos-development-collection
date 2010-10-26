@@ -2,9 +2,9 @@ Ext.ns("F3.TYPO3.Login");
 
 /**
  * @class F3.TYPO3.Login.LoginService
- * @namespace F3.TYPO3.Login
  *
  * Login service for login related functions
+ * @namespace F3.TYPO3.Login
  */
 F3.TYPO3.Login.Service = Ext.apply(new Ext.util.Observable, {
 	/**
