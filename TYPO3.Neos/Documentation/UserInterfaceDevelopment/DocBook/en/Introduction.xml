@@ -8,10 +8,9 @@
          xmlns:mathml="http://www.w3.org/1998/Math/MathML">
   <title>Introduction</title>
 
-  <section>
-    <title>TYPO3 Phoenix User Interface Development</title>
+  <para>This guideline explains the architecture of the TYPO3 Phoenix User
+  Interface, also commonly referred to as <emphasis>Backend</emphasis>.</para>
 
-    <para>Blah blah blah...</para>
-  </section>
-
+  <para>This guideline is still very much in progress, so if you want to help
+  out, just contact the Phoenix team.</para>
 </chapter>

@@ -8,37 +8,230 @@
          xmlns:mathml="http://www.w3.org/1998/Math/MathML">
   <title>Architecture</title>
 
+  <para>In this chapter, the basic architecture of the user interface is
+  explained.</para>
+
+  <para>We have some key design goals we followed while creating this
+  architecture:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para><emphasis>Extensibility:</emphasis> TYPO3 is famous for its
+      extensibility, and this of course should also apply to the TYPO3 Phoenix
+      User Interface. In this chapter, the basic extensibility principles are
+      explained.</para>
+    </listitem>
+
+    <listitem>
+      <para><emphasis>Loading Order Independence:</emphasis> Often, big
+      JavaScript applications are very fragile, or even break, because of
+      wrong inclusion order of their JavaScript files. Because our system is
+      highly extensible, much work has been done to make sure the whole system
+      has only very small loading order dependencies, i.e. for most files, the
+      loading order is completely irrelevant, but still providing predictable
+      results.</para>
+    </listitem>
+  </itemizedlist>
+
   <section>
-    <title>TYPO3 Phoenix User Interface Development</title>
+    <title>JavaScript Modules</title>
 
-    <para>Blah blah blah...</para>
-  </section>
+    <para>All JavaScript is encapsulated in so-called
+    <emphasis>modules</emphasis>, which are packages of (JavaScript)
+    functionality. Modules are built in a way such that if you add or remove a
+    module, there will be no JavaScript errors (if the module itself does not
+    contain syntax errors of course).</para>
 
-  <section>
-    <title>JS Packages / Modules?</title>
+    <para>The base directory where all built-in TYPO3 Backend modules are
+    located is in <filename>TYPO3/Public/Backend/JavaScript</filename>.</para>
 
-    <para>TODO: Find a good name for these "JavaScript packages of
-    functionality"</para>
+    <para>Each module has a <emphasis>Module Descriptor</emphasis> file (TODO:
+    Name?) which is named
+    <filename><replaceable>Modulename</replaceable>Module.js</filename>, i.e.
+    the module descriptor for the <emphasis>Content</emphasis> module can be
+    found inside <filename>Content/ContentModule.js</filename>. The Module
+    Descriptor is a <emphasis>singleton</emphasis> and also acts as an
+    <emphasis>event bridge</emphasis> for the module.</para>
+
+    <para>Every module descriptor can have the following two methods:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><methodname>configure(F3.TYPO3.Core.Registry)</methodname>: this
+        method should do all changes to the central registry (which gets
+        passed as argument) inside this method. See the sectioon on the
+        Registry for more explanation what it does. Essentially, the registry
+        is just an extensible JSON structure which is used at many places to
+        configure the TYPO3 Backend User Interface.</para>
+      </listitem>
+
+      <listitem>
+        <para><methodname>initialize(F3.TYPO3.Core.Application)</methodname>:
+        in this method, the module descriptor can register itself to be called
+        after another dependent module has been initialized, using the
+        <code>application.afterInitializationOf(<replaceable>moduleName</replaceable>,
+        <replaceable>callback</replaceable>,
+        <replaceable>scope</replaceable>)</code> method.</para>
+      </listitem>
+
+      <listitem>
+        <para>Additionally, the module descriptor exposes the public API of
+        this module.</para>
+      </listitem>
+
+      <listitem>
+        <para>And, of course it can also have private methods used to
+        structure the code.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Let's look at an example for a module descriptor:</para>
+
+    <example>
+      <title>Example Module Descriptor</title>
+
+      <programlisting>Ext.ns("F3.TYPO3.Dummy");
+
+F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
+
+	configure: function(registry) {
+		registry.append('menu[main]', 'report', {<co
+          xml:id="example-module-descriptor.1" />
+			title: 'Report',
+			itemId: 'report'
+		});
+	},
+
+	initialize: function(application) {
+		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {<co
+          xml:id="example-module-descriptor.2" />
+
+			userInterfaceModule.addContentArea('report', 'dummy', {<co
+          xml:id="example-module-descriptor.3" />
+				xtype: 'F3.TYPO3.Dummy.DummyContentArea',
+				name: 'Report'
+			});
+			userInterfaceModule.contentAreaOn('menu[main]/report', 'report', 'dummy');<co
+          xml:id="example-module-descriptor.4" />
+	}
+});</programlisting>
+
+      <calloutlist>
+        <callout arearefs="example-module-descriptor.1">
+          <para>Inside the <methodname>configure</methodname> method, a new
+          module called <emphasis>report</emphasis> is being added to the
+          registry.</para>
+        </callout>
+
+        <callout arearefs="example-module-descriptor.2">
+          <para>The <code>DummyModule</code> needs the
+          <code>UserInterfaceModule</code> to work correctly; that's why it
+          expresses a dependency inside the
+          <methodname>initialize</methodname> method, using the
+          <code>application.afterInitializationOf(...)</code> method. The
+          specified callback function is only executed if the
+          <code>UserInterfaceModule</code> is present and has been
+          loaded.</para>
+        </callout>
+
+        <callout arearefs="example-module-descriptor.3">
+          <para>Now follows the other module's specific initialization code.
+          The <package>UserInterfaceModule</package> has a method
+          <code>addContentArea(<replaceable>mainTabName</replaceable>,
+          <replaceable>name</replaceable>,
+          <replaceable>configuration</replaceable>)</code> which adds a new
+          content area to the specified main tab name.</para>
+        </callout>
+
+        <callout arearefs="example-module-descriptor.4">
+          <para>The <package>UserInterfaceModule</package> has another method
+          <methodname>contentAreaOn(<replaceable>nameOfActivatedElement</replaceable>,
+          <replaceable>mainTabName</replaceable>,
+          <replaceable>name</replaceable>)</methodname>, which is used to show
+          the content area if a certain element, specified through the first
+          parameter, is activated.</para>
+        </callout>
+      </calloutlist>
+    </example>
 
     <para>TODO: Separate Core from the rest, and move to other package!</para>
+
+    <para>TODO: add doc comments to example module descriptor</para>
   </section>
 
   <section>
-    <title>Bootstrap</title>
+    <title>The Registry</title>
 
-    <para>- explain the startup process, and the modules</para>
-  </section>
+    <para>The TYPO3 backend is mainly extensible because of a central
+    component which stores how the User Interface is built together: the
+    <emphasis>registry</emphasis>. This is a singleton object available inside
+    <classname>F3.TYPO3.Core.Registry</classname>, and is thus accessible in
+    all components.</para>
 
-  <section>
-    <title>Registry</title>
+    <para><emphasis>The Registry is an extensible JSON
+    structure.</emphasis></para>
 
-    <para>- explain the registry</para>
+    <para>It works in two steps: First, all modules can add / change things
+    inside the registry inside the <methodname>configure</methodname> method
+    of their Module Descriptor. After that, the registry is
+    <emphasis>compiled</emphasis>, and after that, is just a regular JSON
+    structure. Let's follow an example what the registry does, so you can gain
+    an intuitive understanding of it:</para>
+
+    <programlisting>// Inside a Module Descriptor
+configure: function(registry) {
+	registry.set('some/path/foo', {title: 'Hello'}); 
+	// this is the same as:
+	registry.set('some/path/foo/title', 'Hello');
+}
+// after the registry is compiled, it looks like:
+{ some: { path: {foo: {title: 'Hello'}}}}</programlisting>
+
+    <para>So far, this is what you would expect. Now follows an example which
+    shows the interaction between multiple modules:</para>
+
+    <programlisting>// Inside a Module Descriptor
+configure: function(registry) {
+	registry.set('some/path', 'foo', {title: 'World'}<emphasis>, 10</emphasis>);
+}
+// Inside another module descriptor:
+configure: function(registry) {
+	registry.set('some/path', 'foo', {title: 'Hello'});
+}
+
+// after the registry is compiled, it looks like:
+{ some: { path: {foo: {title: 'World'}}}}</programlisting>
+
+    <para>If two modules try to set the same key, somehow it has to be
+    determined which value "wins" -- and as we do not want to depend on the
+    loading order, we have added the concept of
+    <emphasis>priorities</emphasis> to the registry. In the above example, you
+    see that in the result, the string <code>World</code> is displayed because
+    it has a priority of 10, and the other call to set the same key has no
+    priority set (which defaults to a priority value of zero). If the two
+    <code>registry.set</code> calls were executed in a different order, the
+    result after the compilation would still be the same. So,
+    <emphasis>priorities make sure the registry behaves
+    deterministically</emphasis>.</para>
+
+    <para>So far, you have seen how to build JSON objects with the registry --
+    and now we will look at creating arrays with the registry.</para>
+
+    <para></para>
+
+    <para>- DELETE example</para>
+
+    <section>
+      <title>special paths in the registry</title>
+
+      <para></para>
+    </section>
   </section>
 
   <section>
     <title>Events</title>
 
-    <para>- explain event dispatching in Modules</para>
+    <para>- explain event dispatching in Modules, and event names</para>
   </section>
 
   <section>
@@ -50,7 +243,7 @@
   <section>
     <title>Custom widgets explained</title>
 
-    <para></para>
+    <para>-&gt; extra chapter</para>
 
     <section>
       <title>BreadcrumbMenu</title>
