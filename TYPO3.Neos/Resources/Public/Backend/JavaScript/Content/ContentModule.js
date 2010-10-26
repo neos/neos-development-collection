@@ -1,6 +1,6 @@
 Ext.ns("F3.TYPO3.Content");
 
-F3.TYPO3.Content.ContentModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
+F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 
 	/**
 	 * @event AlohaConnector.contentChanged

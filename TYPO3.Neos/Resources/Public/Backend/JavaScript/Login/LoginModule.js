@@ -6,7 +6,7 @@ Ext.ns("F3.TYPO3.Login");
  *
  * Bootstrap for login related stores, data and components
  */
-F3.TYPO3.Login.LoginModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.Login.LoginModule', {
+F3.TYPO3.Core.Application.createModule('F3.TYPO3.Login.LoginModule', {
 	/**
 	 * @return {void}
 	 */

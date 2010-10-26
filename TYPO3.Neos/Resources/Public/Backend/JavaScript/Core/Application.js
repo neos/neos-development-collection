@@ -36,6 +36,7 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	/**
 	 * List of callbacks to be called after initialization
 	 * @private
+	 * @todo instead of these afterInitializationCallbacks, we could as well use the Observable.
 	 */
 	afterInitializationCallbacks: [],
 
@@ -125,9 +126,17 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	 * @api
 	 */
 	createModule: function(moduleName, moduleDefinition) {
-		var module = Ext.apply(new Ext.util.Observable(), moduleDefinition);
+		var module = Ext.apply(new Ext.util.Observable(), moduleDefinition),
+		    splittedModuleName, o;
+
 		this.modules[moduleName] = module;
-		return module;
+
+		splittedModuleName = moduleName.split('.');
+		o = window[splittedModuleName[0]] = window[splittedModuleName[0]] || {};
+		Ext.each(splittedModuleName.slice(1, -1), function(moduleNamePart) {
+			o = o[moduleNamePart] = o[moduleNamePart] || {};
+		});
+		o[splittedModuleName[splittedModuleName.length-1]] = module;
 	}
 });
 

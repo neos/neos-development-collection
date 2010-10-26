@@ -5,7 +5,7 @@ Ext.ns("F3.TYPO3.History");
  *
  * Module for history management
  */
-F3.TYPO3.History.HistoryModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.History.HistoryModule', {
+F3.TYPO3.Core.Application.createModule('F3.TYPO3.History.HistoryModule', {
 	/**
 	 * @return {void}
 	 */

@@ -3,7 +3,7 @@ Ext.ns("F3.TYPO3.UserInterface");
 /**
  * @singleton
  */
-F3.TYPO3.UserInterface.UserInterfaceModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModule', {
+F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModule', {
 
 	/**
 	 * @event activate-[FullyQualifiedButtonPath]

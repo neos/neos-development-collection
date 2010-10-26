@@ -1,6 +1,6 @@
 Ext.ns("F3.TYPO3.Dummy");
 
-F3.TYPO3.Dummy.DummyModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
+F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
 
 	configure: function(registry) {
 

@@ -8,7 +8,7 @@ Ext.ns("F3.TYPO3.Management");
  *
  * The Management Module Main component
  */
-F3.TYPO3.Management.ManagementModule = F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
+F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
 
 	configure: function(registry) {
 		registry.append('menu[main]', 'management', {
