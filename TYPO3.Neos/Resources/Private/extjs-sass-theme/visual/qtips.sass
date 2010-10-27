@@ -1,0 +1,31 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-tip
+  .x-tip-close
+    background-image: url (#{$img_path+"/qtip/close.gif"})
+  .x-tip-tc, .x-tip-tl, .x-tip-tr, .x-tip-bc, .x-tip-bl, .x-tip-br, .x-tip-ml, .x-tip-mr
+    background-image: url (#{$img_path+"/qtip/tip-sprite.gif"})
+  .x-tip-mc
+    font: normal 11px tahoma,arial,helvetica,sans-serif
+  .x-tip-ml
+    background-color: adjust_hue(#fff, $hue)
+  .x-tip-header-text
+    font: bold 11px tahoma,arial,helvetica,sans-serif
+    color: adjust_hue(#444, $hue)
+  .x-tip-body
+    font: normal 11px tahoma,arial,helvetica,sans-serif
+    color: adjust_hue(#444, $hue)
+
+.x-form-invalid-tip
+  .x-tip-tc, .x-tip-tl, .x-tip-tr, .x-tip-bc, .x-tip-bl, .x-tip-br, .x-tip-ml, .x-tip-mr
+    background-image: url (#{$img_path+"/form/error-tip-corners.gif"})
+  .x-tip-body
+    background-image: url (#{$img_path+"/form/exclamation.gif"})
+
+.x-tip-anchor
+  background-image: url (#{$img_path+"/qtip/tip-anchor-sprite.gif"})

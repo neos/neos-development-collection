@@ -1,0 +1,25 @@
+@import '../defines.sass'
+/*!
+ * Ext JS Library 3.3.0
+ * Copyright(c) 2006-2010 Ext JS, Inc.
+ * licensing@extjs.com
+ * http://www.extjs.com/license
+
+.x-dd-drag-ghost
+  color: adjust_hue(#000, $hue)
+  font: normal 11px arial, helvetica, sans-serif
+  border-color: adjust_hue(#ddd, $hue) #bbb #bbb #ddd
+  background-color: adjust_hue(#fff, $hue)
+
+.x-dd-drop-nodrop .x-dd-drop-icon
+  background-image: url (#{$img_path+"/dd/drop-no.gif"})
+
+.x-dd-drop-ok .x-dd-drop-icon
+  background-image: url (#{$img_path+"/dd/drop-yes.gif"})
+
+.x-dd-drop-ok-add .x-dd-drop-icon
+  background-image: url (#{$img_path+"/dd/drop-add.gif"})
+
+.x-view-selector
+  background-color: adjust_hue(#c3daf9, $hue)
+  border-color: adjust_hue(#3399bb, $hue)
