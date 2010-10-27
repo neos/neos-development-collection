@@ -1,6 +1,6 @@
 Ext.ns("F3.TYPO3.UserInterface.Form");
 
-F3.TYPO3.UserInterface.Form.FormFactoryTest = new YAHOO.tool.TestCase({
+F3.TYPO3.UserInterface.Form.FormFactoryTest = {
 	name: 'Test Registry',
 	setUp: function() {
 		this.factory = F3.TYPO3.UserInterface.Form.FormFactory;
@@ -9,8 +9,8 @@ F3.TYPO3.UserInterface.Form.FormFactoryTest = new YAHOO.tool.TestCase({
 			schema: {
 				"typo3:page": {
 					service: {
-						load: 'F3.TYPO3.UserInterface.Form',
-						submit: 'F3.TYPO3.UserInterface.Form'
+						show: 'F3.TYPO3.UserInterface.Form',
+						update: 'F3.TYPO3.UserInterface.Form'
 					},
 					properties: {
 						'properties.title': {
@@ -88,15 +88,15 @@ F3.TYPO3.UserInterface.Form.FormFactoryTest = new YAHOO.tool.TestCase({
 	},
 	testCreateFormSetsType: function() {
 		var config = this.factory.createForm('typo3:page');
-		YAHOO.util.Assert.areEqual('typo3:page', config.type);
+		Y.Assert.areEqual('typo3:page', config.type);
 	},
 	testCreateFormWithoutViewUsesStandard: function() {
 		var config = this.factory.createForm('typo3:page');
-		YAHOO.util.Assert.areEqual('Page', config.title);
+		Y.Assert.areEqual('Page', config.title);
 	},
 	testCreateFormWithViewUsesSpecifiedView: function() {
 		var config = this.factory.createForm('typo3:page', 'pageProperties');
-		YAHOO.util.Assert.areEqual('Page properties', config.title);
+		Y.Assert.areEqual('Page properties', config.title);
 	},
 	testCreateFormAddsField: function() {
 		var config = this.factory.createForm('typo3:page', 'pageProperties'),
@@ -104,20 +104,20 @@ F3.TYPO3.UserInterface.Form.FormFactoryTest = new YAHOO.tool.TestCase({
 
 		item = config.items[0];
 
-		YAHOO.util.Assert.areEqual('textfield', item.xtype);
-		YAHOO.util.Assert.areEqual('Page title', item.fieldLabel);
+		Y.Assert.areEqual('textfield', item.xtype);
+		Y.Assert.areEqual('Page title', item.fieldLabel);
 	},
 	testCreateFormSetsApiFromSchema: function() {
 		var config = this.factory.createForm('typo3:page', 'pageProperties');
 
-		YAHOO.util.Assert.areEqual(F3.TYPO3.UserInterface.Form, config.api.load);
-		YAHOO.util.Assert.areEqual(F3.TYPO3.UserInterface.Form, config.api.submit);
+		Y.Assert.areEqual(F3.TYPO3.UserInterface.Form, config.api.load);
+		Y.Assert.areEqual(F3.TYPO3.UserInterface.Form, config.api.submit);
 	},
 	testCreateFormWithOverrideConfig: function() {
 		var config = this.factory.createForm('typo3:page', 'pageProperties', {
 			title: 'Foo'
 		});
 
-		YAHOO.util.Assert.areEqual('Foo', config.title);
+		Y.Assert.areEqual('Foo', config.title);
 	}
-});
+};

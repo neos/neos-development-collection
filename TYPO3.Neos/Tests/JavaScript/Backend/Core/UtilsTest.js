@@ -1,6 +1,6 @@
 Ext.ns("F3.TYPO3.Core");
 
-F3.TYPO3.Core.UtilsTest = new YAHOO.tool.TestCase({
+F3.TYPO3.Core.UtilsTest = {
 
 	name: "Test Utils",
 
@@ -10,24 +10,24 @@ F3.TYPO3.Core.UtilsTest = new YAHOO.tool.TestCase({
 	},
 
 	testIsEmptyObjectWithEmptyObject: function() {
-		YAHOO.util.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject({}), true);
+		Y.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject({}), true);
 	},
 
 	testIsEmptyObjectWithNonEmptyObject: function() {
-		YAHOO.util.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject({
+		Y.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject({
 			foo: 'bar'
 		}), false);
 	},
 
 	testIsEmptyObjectWithString: function() {
-		YAHOO.util.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject('string'), false);
+		Y.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject('string'), false);
 	},
 
 	testIsEmptyObjectWithInteger: function() {
-		YAHOO.util.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject(0), false);
+		Y.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject(0), false);
 	},
 
 	testIsEmptyObjectWithArray: function() {
-		YAHOO.util.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject([]), false);
+		Y.Assert.areEqual(F3.TYPO3.Utils.isEmptyObject([]), false);
 	}
-});
+};

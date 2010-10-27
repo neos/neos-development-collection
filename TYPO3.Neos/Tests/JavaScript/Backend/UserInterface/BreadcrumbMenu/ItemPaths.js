@@ -1,6 +1,6 @@
 Ext.ns("F3.TYPO3.UserInterface.BreadcrumbMenu");
 
-F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest = new YAHOO.tool.TestCase({
+F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest = {
 
 	name: "Test item path builder",
 
@@ -26,7 +26,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest = new YAHOO.tool.T
 
 		var testObject = this.menuUtility.convertMenuConfig(this.registry.get('menu/main'), 0, '', 'menu/main/content', {sectionId:'',menuId:'mainMenu',menuPath:''});
 
-		YAHOO.util.Assert.areEqual(Ext.encode([{
+		Y.Assert.areEqual(Ext.encode([{
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
 			title: 'Content',
 			itemId: 'content',
@@ -55,7 +55,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest = new YAHOO.tool.T
 
 		var testObject = this.menuUtility.convertMenuConfig(this.registry.get('menu/main'), 0, '', 'menu/main/content', {sectionId:'',menuId:'mainMenu',menuPath:''});
 
-		YAHOO.util.Assert.areEqual(Ext.encode([{
+		Y.Assert.areEqual(Ext.encode([{
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
 			title: 'Content',
 			itemId: 'content',
@@ -116,7 +116,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest = new YAHOO.tool.T
 		this.registry.compile();
 		var testObject = this.menuUtility.convertMenuConfig(this.registry.get('menu/main'), 0, '', 'menu/main/content', {sectionId:'',menuId:'mainMenu',menuPath:''});
 
-		YAHOO.util.Assert.areEqual(Ext.encode([{
+		Y.Assert.areEqual(Ext.encode([{
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
 			title: 'Content',
 			itemId: 'content',
@@ -167,4 +167,4 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest = new YAHOO.tool.T
 			menuPath: ''
 		}]), Ext.encode(testObject));
 	}
-});
+};

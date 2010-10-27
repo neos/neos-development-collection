@@ -7,29 +7,11 @@
 		<title>JavaScript Test Runner</title>
 
 		<!--CSS-->
-		<link rel="stylesheet" type="text/css" href="yui/logger.css" />
-		<link rel="stylesheet" type="text/css" href="yui/testlogger.css" />
-		<style type="text/css">
-			.yui-log-container, .yui-log-bd pre {
-				width:96%;
-				font-family: arial;
-				font-size: 11px;
-			}
-			.yui-log-bd .info, .yui-log-bd .fail, .yui-log-bd .pass {
-				display: inline-block;
-				padding: 1px 3px;
-				font-size: 10px;
-				font-weight: bold;
-			}
-		</style>
+		<link rel="stylesheet" type="text/css" href="yui/yui.css" />
+		<!-- YUI with all dependencies, taken from YUI 3 Configuration -->
+		<script type="text/javascript" src="yui/yui-min.js"></script>
 
-		<!-- Dependencies -->
-		<script type="text/javascript" src="yui/yahoo-dom-event.js"></script>
-		<script type="text/javascript" src="yui/logger-min.js"></script>
-
-		<!-- Source File -->
-		<script type="text/javascript" src="yui/yuitest-min.js"></script>
-
+		<!-- JS classes under test -->
 		<script type="text/javascript" src="../../../../Framework/ExtJS/Resources/Public/JavaScript/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="../../../../Framework/ExtJS/Resources/Public/JavaScript/ext-all.js"></script>
 		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/Utils.js"></script>
@@ -44,34 +26,47 @@
 		<script type="text/javascript" src="Backend/UserInterface/BreadcrumbMenu/ItemPaths.js"></script>
 
 		<script type="text/javascript">
-			var testClasses = [
-					'F3.TYPO3.Core.UtilsTest',
-					'F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest',
-					'F3.TYPO3.Core.RegistryTest',
-					'F3.TYPO3.UserInterface.Form.FormFactoryTest'
-				],
-				runTests = function() {
-					YAHOO.tool.TestRunner.clear();
 
-					Ext.each(testClasses, function(testClass) {
-						YAHOO.tool.TestRunner.add(eval(testClass));
+			YUI({
+				logInclude: { TestRunner: true },
+				lang: 'en'
+			}).use('node', 'test', 'console', 'intl', function(Y){
+				Y.on("domready", run);
+				function run() {
+						//create a test suite
+					var suite = new Y.Test.Suite("AllTests");
+					var testClasses = [
+						'F3.TYPO3.Core.UtilsTest',
+						'F3.TYPO3.UserInterface.BreadcrumbMenu.BreadCrumbItemPathsTest',
+						'F3.TYPO3.Core.RegistryTest',
+						'F3.TYPO3.UserInterface.Form.FormFactoryTest'
+					];
+					Ext.each(testClasses, function(testClassName) {
+						suite.add(new Y.Test.Case(eval(testClassName)));
 					});
+						//initialize the console
+					var yconsole = new Y.Console({
+						newestOnTop: false,
+						verbose: true,
+						height:'500px',
+						width:'95%',
+						style:'block'
+					});
+					yconsole.render('#log');
 
-					YAHOO.tool.TestRunner.run();
-				};
-
-			YAHOO.util.Event.onDOMReady(function (){
-				var logger = new YAHOO.tool.TestLogger("testLogger");
-
-				runTests();
+						//run the tests
+					window.Y = Y;
+					Y.Test.Runner.add(suite);
+					Y.Test.Runner.run();
+				}
 			});
 		</script>
 	</head>
 
-	<body>
+	<body class="yui3-skin-sam">
 		<h1>JavaScript Test Runner</h1>
 		<h2>Tests</h2>
-		<form id="testSelector" action="#">
-		</form>
+		<div id="log">
+		</div>
 	</body>
 </html>

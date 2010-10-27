@@ -1,6 +1,6 @@
 Ext.ns("F3.TYPO3.Core");
 
-F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
+F3.TYPO3.Core.RegistryTest = {
 
 	name: "Test Registry",
 
@@ -12,7 +12,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testSetSimpleValueAndDefaultPriority: function() {
 		this.registry.set('foo', 'bar');
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				foo: {
 					_operations: {
@@ -29,7 +29,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testSetWithPriority: function() {
 		this.registry.set('foo', 'bar', 50);
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				foo: {
 					_operations: {
@@ -46,7 +46,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testSetWithPath: function() {
 		this.registry.set('foo/bar', 'baz');
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				foo: {
 					_operations: {},
@@ -68,7 +68,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testSetRewritesObjectValueToSetWithPath: function() {
 		this.registry.set('foo', {bar: 'baz', x: 'y'});
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				foo: {
 					_operations: {},
@@ -99,7 +99,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testAppendCallsSetAndRegistersAppend: function() {
 		this.registry.append('menu/main', 'edit', {title: 'Edit'});
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				menu: {
 					_operations: {},
@@ -136,7 +136,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testPrependCallsSetAndRegistersPrepend: function() {
 		this.registry.prepend('menu/main', 'edit', {title: 'Edit'}, 42);
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				menu: {
 					_operations: {},
@@ -173,7 +173,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testInsertAfterAddsInsertOperation: function() {
 		this.registry.insertAfter('menu/main/edit', 'preview', {title: 'Preview'});
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				menu: {
 					_operations: {},
@@ -211,7 +211,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testInsertBeforeAddsInsertOperation: function() {
 		this.registry.insertBefore('menu/main/edit', 'preview', {title: 'Preview'}, 50);
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				menu: {
 					_operations: {},
@@ -249,7 +249,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 	testRemoveAddsRemoveOperation: function() {
 		this.registry.remove('menu/main/preview', 60);
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			_children: {
 				menu: {
 					_operations: {},
@@ -278,7 +278,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			foo: 'baz'
 		}), Ext.encode(this.registry.get()));
 	},
@@ -288,7 +288,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			foo: {
 				bar: 'x',
 				x: 'y'
@@ -301,7 +301,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			foo: 'y'
 		}), Ext.encode(this.registry.get()));
 	},
@@ -311,7 +311,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			foo: {
 				bar: undefined
 			}
@@ -324,7 +324,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			menu: {
 				main: [{
 					title: 'Edit',
@@ -343,7 +343,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode(
+		Y.Assert.areEqual(Ext.encode(
 			[{
 				title: 'Edit',
 				key: 'edit'
@@ -361,7 +361,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			menu: {
 				main: [{
 					title: 'Bearbeiten',
@@ -377,7 +377,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			menu: {
 				main: [{
 					title: 'Content',
@@ -401,7 +401,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			menu: {
 				main: [{
 					title: 'Edit',
@@ -427,7 +427,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 		// TODO: here is still an error I think: "delete" should be the last element,
 		// as "preview" should be inserted after "edit", and "publish" after "preview".
 		// Thus, the order should be: "edit -> preview -> publich -> delete"
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			menu: {
 				main: [{
 					title: 'Edit',
@@ -454,7 +454,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			menu: {
 				main: [{
 					title: 'Edit',
@@ -481,7 +481,7 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 		this.registry.compile();
 
-		YAHOO.util.Assert.areEqual(Ext.encode({
+		Y.Assert.areEqual(Ext.encode({
 			menu: {
 				main: [{
 					title: 'Content',
@@ -526,8 +526,6 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 		};
 		this.registry.set('schema', data);
 		this.registry.compile();
-		YAHOO.util.Assert.areEqual(Ext.encode(data), Ext.encode(this.registry.get('schema')));
+		Y.Assert.areEqual(Ext.encode(data), Ext.encode(this.registry.get('schema')));
 	}
-
-
-});
+};
