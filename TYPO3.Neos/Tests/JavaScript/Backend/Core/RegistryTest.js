@@ -424,7 +424,9 @@ F3.TYPO3.Core.RegistryTest = new YAHOO.tool.TestCase({
 
 
 		this.registry.compile();
-
+		// TODO: here is still an error I think: "delete" should be the last element,
+		// as "preview" should be inserted after "edit", and "publish" after "preview".
+		// Thus, the order should be: "edit -> preview -> publich -> delete"
 		YAHOO.util.Assert.areEqual(Ext.encode({
 			menu: {
 				main: [{
