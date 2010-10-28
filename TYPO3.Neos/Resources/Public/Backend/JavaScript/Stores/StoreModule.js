@@ -2,6 +2,7 @@ Ext.ns("F3.TYPO3.Stores");
 
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.Stores.StoreModule', {
 	/**
+	 * @param {F3.TYPO3.Core.Application} The application object
 	 * @return {void}
 	 */
 	initialize: function(application) {
@@ -10,6 +11,8 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Stores.StoreModule', {
 
 	/**
 	 * Initialize stores
+	 *
+	 * @private
 	 */
 	_initStores: function() {
 

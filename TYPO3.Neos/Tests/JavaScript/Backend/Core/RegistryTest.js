@@ -24,7 +24,7 @@ F3.TYPO3.Core.RegistryTest = {
 					_children: {}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testSetWithPriority: function() {
 		this.registry.set('foo', 'bar', 50);
@@ -41,7 +41,7 @@ F3.TYPO3.Core.RegistryTest = {
 					_children: {}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testSetWithPath: function() {
 		this.registry.set('foo/bar', 'baz');
@@ -63,7 +63,7 @@ F3.TYPO3.Core.RegistryTest = {
 					}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testSetRewritesObjectValueToSetWithPath: function() {
 		this.registry.set('foo', {bar: 'baz', x: 'y'});
@@ -94,7 +94,7 @@ F3.TYPO3.Core.RegistryTest = {
 					}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testAppendCallsSetAndRegistersAppend: function() {
 		this.registry.append('menu/main', 'edit', {title: 'Edit'});
@@ -131,7 +131,7 @@ F3.TYPO3.Core.RegistryTest = {
 					}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testPrependCallsSetAndRegistersPrepend: function() {
 		this.registry.prepend('menu/main', 'edit', {title: 'Edit'}, 42);
@@ -168,7 +168,7 @@ F3.TYPO3.Core.RegistryTest = {
 					}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testInsertAfterAddsInsertOperation: function() {
 		this.registry.insertAfter('menu/main/edit', 'preview', {title: 'Preview'});
@@ -206,7 +206,7 @@ F3.TYPO3.Core.RegistryTest = {
 					}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testInsertBeforeAddsInsertOperation: function() {
 		this.registry.insertBefore('menu/main/edit', 'preview', {title: 'Preview'}, 50);
@@ -244,7 +244,7 @@ F3.TYPO3.Core.RegistryTest = {
 					}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testRemoveAddsRemoveOperation: function() {
 		this.registry.remove('menu/main/preview', 60);
@@ -270,7 +270,7 @@ F3.TYPO3.Core.RegistryTest = {
 					}
 				}
 			}
-		}), Ext.encode(this.registry.configuration));
+		}), Ext.encode(this.registry._configuration));
 	},
 	testCompileConvertsSetWithPriority: function() {
 		this.registry.set('foo', 'bar');

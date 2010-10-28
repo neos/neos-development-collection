@@ -1,3 +1,5 @@
+Ext.namespace('F3.TYPO3.Content.AlohaConnector');
+
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
  *                                                                        *
@@ -18,160 +20,150 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-Ext.namespace('F3.TYPO3.Content.AlohaConnector');
 /**
  * @class F3.TYPO3.Content.AlohaConnector
- * TYPO3 to Aloha connector plugin<br>
- * <br>
- * This plugin tracks content changes by the aloha editor and communicat this<br>
- * informations to the TYPO3 backend<br>
+ *
+ * TYPO3 to Aloha connector plugin<br />
+ * <br />
+ * This plugin tracks content changes by the aloha editor and communicates this
+ * information to the TYPO3 backend.
+ * This class does NOT run inside the backend, but is included in the Frontend
+ * iframe.
  *
  * @namespace F3.TYPO3.Content
  * @extends GENTICS.Aloha.Plugin
- * @author Nils Dehl <nils.dehl@dkd.de>
- * @version $Id$
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @singleton
  */
 F3.TYPO3.Content.AlohaConnector = Ext.apply(
-	new GENTICS.Aloha.Plugin(
-		'F3.TYPO3.Content.AlohaConnector'
-	),
+	new GENTICS.Aloha.Plugin('F3.TYPO3.Content.AlohaConnector'),
 	{
-
 		/**
 		 * Configure the available languages
 		 *
-		 * @type array
+		 * @type {Array}
 		 */
 		languages: ['en', 'de'],
 
 		/**
 		 * init the Aloha connector for TYPO3
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
 		 * @return {void}
 		 * @private
 		 */
 		init: function() {
-
-			// subscribe event listener
-			this.subscribeToAlohaEvents();
-
-			// add a "insert a new section" button which adds a new section.
-			this.addInsertNewSectionButton();
+			this._subscribeToAlohaEvents();
+			this._addInsertNewSectionButton();
 		},
 
 		/**
 		 * subscribe to the aloha content edit events
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
 		 * @return {void}
 		 * @private
 		 */
-		subscribeToAlohaEvents: function() {
-
-
+		_subscribeToAlohaEvents: function() {
 			GENTICS.Aloha.EventRegistry.subscribe(
 				GENTICS.Aloha,
 				'editableCreated',
-				this.onEditableCreated
+				this._onEditableCreated
 			);
 
 			GENTICS.Aloha.EventRegistry.subscribe(
 				GENTICS.Aloha,
 				'editableActivated',
-				this.onEditableActivated
+				this._onEditableActivated
 			);
 
 			GENTICS.Aloha.EventRegistry.subscribe(
 				GENTICS.Aloha,
 				'editableDeactivated',
-				this.onEditableDeactivated
+				this._onEditableDeactivated
 			);
 
 			Ext.EventManager.on(
 				window,
 				'beforeunload',
-				this.onBeforeunload,
+				this._onBeforeunload,
 				this
 			);
 
 			Ext.EventManager.on(
 				window,
 				'unload',
-				this.onUnload,
+				this._onUnload,
 				this
 			);
-
 		},
 
 		/**
-		 * On Aloha Event: "onEditableCreated"
+		 * On Aloha Event: "onEditableCreated"<br />
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
+		 * The scope of "this" is GENTICS.Aloha
+		 *
+		 * @param {Object} event Event object
+		 * @param {GENTICS.Aloha.editable} editable current aloha Editable object
 		 * @return {void}
 		 * @private
 		 */
-		onEditableCreated: function(event, editable) {
+		_onEditableCreated: function(event, editable) {
 		},
 
 		/**
-		 * On Aloha Event: "onEditableActivated"
+		 * On Aloha Event: "onEditableActivated"<br />
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
+		 * The scope of "this" is GENTICS.Aloha
+		 *
+		 * @param {Object} event Event object
+		 * @param {GENTICS.Aloha.editable} editable current aloha Editable object
 		 * @return {void}
 		 * @private
 		 */
-		onEditableActivated: function(event, editable) {
+		_onEditableActivated: function(event, editable) {
 		},
 
 		/**
-		 * On Aloha Event: "onEditableDeactivated"
+		 * On Aloha Event: "onEditableDeactivated"<br />
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
+		 * The scope of "this" is GENTICS.Aloha
+		 *
+		 * @param {Object} event Event object
+		 * @param {GENTICS.Aloha.editable} editable current aloha Editable object
 		 * @return {void}
 		 * @private
 		 */
-		onEditableDeactivated: function(event, editable) {
-			// function call must be with F3.TYPO3.Content.AlohaConnector
-			// because the scope of "this" is GENTICS.Aloha
-			F3.TYPO3.Content.AlohaConnector.saveChanges(editable.editable);
+		_onEditableDeactivated: function(event, editable) {
+			F3.TYPO3.Content.AlohaConnector._saveChanges(editable.editable);
 		},
 
 		/**
 		 * On browser window event: "beforeunload"
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
 		 * @return {void}
 		 * @private
 		 */
-		onBeforeunload: function() {
-			//alert('cross-exit tab click AND cross-exit browser click');
-			// TODO check if there is something to save before closeing the tab /window
-			this.checkForUnsavedChanges();
+		_onBeforeunload: function() {
+			// TODO check if there is something to save before closing the tab /window
+			this._checkForUnsavedChanges();
 		},
 
 		/**
 		 * On browser window event: "unload"
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
 		 * @return {void}
 		 * @private
 		 */
-		onUnload: function() {
-			//alert('cross-exit tab click');
-			// TODO check if there is something to save before closeing the tab /window
+		_onUnload: function() {
+			// TODO check if there is something to save before closing the tab /window
 		},
 
 		/**
 		 * Checks for unsaved content,
 		 * the user can confirm if he wants to save this content
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
-		 * @return {Boolean}
+		 * @return {Boolean} TRUE if there are unsaved changes, FALSE otherwise.
 		 * @private
 		 */
-		checkForUnsavedChanges: function() {
+		_checkForUnsavedChanges: function() {
 			// check if something needs top be saved
 			for (var i in GENTICS.Aloha.editables) {
 				if (GENTICS.Aloha.editables[i].isModified) {
@@ -191,13 +183,11 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 * Fires Event which in the scope of the TYPO3 Backend
 		 * with the information which should be persist by the Backend
 		 *
-		 * @author Nils Dehl <nils.dehl@dkd.de>
-		 * @author Sebastian Kurfürst <sebastian@typo3.org>
-		 * @param {Object} editable
+		 * @param {GENTICS.Aloha.Editable} editable the editable to save
 		 * @return {void}
 		 * @private
 		 */
-		saveChanges: function(editable) {
+		_saveChanges: function(editable) {
 			var currentContentElement = editable.obj.parents('*[data-nodepath]').first();
 
 			var nodePath = currentContentElement.attr('data-nodepath');
@@ -225,12 +215,11 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 * Adds a "insert new Section" button.
 		 * when this button is pressed, a new aloha element is created.
 		 *
-		 * @author Sebastian Kurfürst <sebastian@typo3.org>
 		 * @return {void}
 		 * @private
 		 * @todo implement so that it really works.
 		 */
-		addInsertNewSectionButton: function() {
+		_addInsertNewSectionButton: function() {
 			var button = new GENTICS.Aloha.ui.Button({
 				'label' : 'Add section',
 				'size' : 'small',

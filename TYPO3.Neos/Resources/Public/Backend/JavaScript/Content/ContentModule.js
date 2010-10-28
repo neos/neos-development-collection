@@ -1,17 +1,55 @@
 Ext.ns("F3.TYPO3.Content");
 
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+/**
+ * @class F3.TYPO3.Content.ContentModule
+ *
+ * The Module Descriptor for the Content module
+ *
+ * @namespace F3.TYPO3.Content
+ * @extends Ext.util.Observable
+ * @singleton
+ */
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 
 	/**
 	 * @event AlohaConnector.contentChanged
-	 * fires when there is changed content which should persist by the TYPO3 backend.<br>
-	 * this event is fired in the following <b>scope:</b> <i>window.parent.F3.TYPO3.Core.Application</i>
-	 * @param {object} data <ul>
-	 * <li><b>identity:</b> Identity of the element</li>
-	 * <li><b>html:</b> the html content</li>
+	 *
+	 * fires when there is changed content which should be persisted by the TYPO3 backend.
+	 * @param {Object} data <ul>
+	 *   <li><b>__context</b>: <ul>
+	 *     <li><b>workspaceName</b>: Name of workspace the object should be saved into</li>
+	 *     <li><b>nodePath</b>: Path to node which should be saved
+	 *   </ul></li>
+	 *   <li><b>properties</b>: All properties of the content object, which should be saved.</li>
 	 * </ul>
 	 */
 
+	/**
+	 * Modify the registry
+	 *
+	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @return {void}
+	 */
 	configure: function(registry) {
 
 		registry.append('menu/main', 'content', {
@@ -135,6 +173,13 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			}
 		});
 	},
+
+	/**
+	 * Set up event handlers
+	 *
+	 * @param {F3.TYPO3.Core.Application} The Application object
+	 * @return {void}
+	 */
 	initialize: function(application) {
 		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('content', 'frontendEditor', {
@@ -144,15 +189,15 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			userInterfaceModule.contentAreaOn('menu/main/content', 'content', 'frontendEditor');
 
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/edit[]/pageProperties',
-				{ xtype: 'F3.TYPO3.Content.Edit.PagePropertiesDialog' },
-				{ xtype: 'F3.TYPO3.UserInterface.ContentDialog' }
+				{xtype: 'F3.TYPO3.Content.Edit.PagePropertiesDialog'},
+				{xtype: 'F3.TYPO3.UserInterface.ContentDialog'}
 			);
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/createPage',
-				{ xtype: 'F3.TYPO3.Content.Edit.CreatePageDialog' },
-				{ xtype: 'F3.TYPO3.UserInterface.ContentDialog' }
+				{xtype: 'F3.TYPO3.Content.Edit.CreatePageDialog'},
+				{xtype: 'F3.TYPO3.UserInterface.ContentDialog'}
 			);
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/deletePage',
-				{ xtype: 'F3.TYPO3.Content.Edit.DeletePageDialog' },
+				{xtype: 'F3.TYPO3.Content.Edit.DeletePageDialog'},
 				{
 					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
 					cls: 'F3-TYPO3-UserInterface-ContentDialog F3-TYPO3-UserInterface-ContentDialog-warning'

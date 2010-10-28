@@ -39,7 +39,15 @@ F3.TYPO3.Utils = {
 		}
 		return c;
 	},
-	
+
+	/**
+	 * Iterate over all properties of an object
+	 *
+	 * @param {Object} object
+	 * @param {Function} callback
+	 * @param {Object} scope
+	 * @return {void}
+	 */
 	each: function(object, callback, scope) {
 		var p;
 		for (p in object) {
