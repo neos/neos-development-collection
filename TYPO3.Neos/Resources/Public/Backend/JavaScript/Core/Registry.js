@@ -1,11 +1,32 @@
 Ext.ns("F3.TYPO3.Core");
+
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 /**
  * @class F3.TYPO3.Core.Registry
- * @namespace F3.TYPO3.Core
- * @extends Ext.util.Observable
  *
  * The registry provides the structure of all menus used in the application.
  *
+ * @namespace F3.TYPO3.Core
+ * @extends Ext.util.Observable
  * @singleton
  */
 F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
@@ -15,13 +36,13 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 	 *
 	 * @private
 	 */
-	configuration: null,
+	_configuration: null,
 
 	/**
 	 * Initialize the registry
 	 */
 	initialize: function() {
-		this.configuration = {
+		this._configuration = {
 			_children: {}
 		};
 	},
@@ -30,12 +51,14 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 	 * Compiles the registry configuration after all operations have been added
 	 */
 	compile: function() {
-		this.configuration = this._compileVisit(this.configuration);
+		this._configuration = this._compileVisit(this._configuration);
 	},
 
 	/**
 	 * Recursive compilation of registry
 	 *
+	 * @param {Object} context The current object in the registry configuration
+	 * @return {Object} The object with compiled children and all operations applied
 	 * @private
 	 */
 	_compileVisit: function(context) {
@@ -49,6 +72,14 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		return this._apply_operations(context);
 	},
 
+	/**
+	 * Apply operations to a configuration object after all
+	 * children were compiled.
+	 *
+	 * @param {Object} context The current object in the registry configuration
+	 * @return {Object} The object with all operations applied
+	 * @private
+	 */
 	_apply_operations: function(context) {
 		var result,
 			index,
@@ -145,9 +176,16 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		return context;
 	},
 
+	/**
+	 * Set a value at "path" with the given priority.
+	 *
+	 * @param {String} path
+	 * @param (Object} value
+	 * @param {Integer} priority
+	 */
 	set: function(path, value, priority) {
 		path = this.rewritePath(path);
-		var context = this._getOrCreatePath(this.configuration, path),
+		var context = this._getOrCreatePath(this._configuration, path),
 			key;
 		if (priority === undefined) {
 			priority = 0;
@@ -167,19 +205,45 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 			});
 		}
 	},
+
+	/**
+	 * Append a value to the array at "path"
+	 *
+	 * @param {String} path The path pointing to an array
+	 * @param {String} key The array key of the new element
+	 * @param {Object} value The value to be appended
+	 * @param {Integer} priority Priority of the operation
+	 */
 	append: function(path, key, value, priority) {
 		this._addOperation('append', path, key, value, priority);
 		this.set(path + '/' + key, value, priority);
 	},
 
+	/**
+	 * Prepend a value to the array at "path"
+	 *
+	 * @param {String} path The path pointing to an array
+	 * @param {String} key The array key of the new element
+	 * @param {Object} value The value to be prepended
+	 * @param {Integer} priority Priority of the operation
+	 */
 	prepend: function(path, key, value, priority) {
 		this._addOperation('prepend', path, key, value, priority);
 		this.set(path + '/' + key, value, priority);
 	},
 
+	/**
+	 * Add an append or prepend operation
+	 *
+	 * @param {String} path The path pointing to an array
+	 * @param {String} key The array key of the new element
+	 * @param {Object} value The value to be appended / prepended
+	 * @param {Integer} priority Priority of the operation
+	 * @private
+	 */
 	_addOperation: function(operation, path, key, value, priority) {
 		path = this.rewritePath(path);
-		var context = this._getOrCreatePath(this.configuration, path),
+		var context = this._getOrCreatePath(this._configuration, path),
 			key;
 		if (priority === undefined) {
 			priority = 0;
@@ -193,9 +257,15 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		});
 	},
 
+	/**
+	 * Remove the element at "path"
+	 *
+	 * @param {String} path The path to be removed
+	 * @param {Integer} priority Priority of the operation
+	 */
 	remove: function(path, priority) {
 		path = this.rewritePath(path);
-		var context = this._getOrCreatePath(this.configuration, path);
+		var context = this._getOrCreatePath(this._configuration, path);
 		if (priority === undefined) {
 			priority = 0;
 		}
@@ -207,12 +277,21 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		});
 	},
 
+	/**
+	 * Insert the new element into an array, after the element which
+	 * is referenced by "path".
+	 *
+	 * @param {String} path The path pointing to an array element
+	 * @param {String} key The array key of the new element
+	 * @param {Object} value The value to be inserted
+	 * @param {Integer} priority Priority of the operation
+	 */
 	insertAfter: function(pathWithPosition, key, value, priority) {
 		pathWithPosition = this.rewritePath(pathWithPosition);
 		var pathParts = pathWithPosition.split('/'),
 			arrayPath = pathParts.slice(0, -1).join('/'),
 			position = pathParts[pathParts.length - 1],
-			context = this._getOrCreatePath(this.configuration, arrayPath),
+			context = this._getOrCreatePath(this._configuration, arrayPath),
 			key;
 		if (priority === undefined) {
 			priority = 0;
@@ -228,12 +307,21 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		this.set(arrayPath + '/' + key, value, priority);
 	},
 
+	/**
+	 * Insert the new element into an array, before the element which
+	 * is referenced by "path".
+	 *
+	 * @param {String} path The path pointing to an array element
+	 * @param {String} key The array key of the new element
+	 * @param {Object} value The value to be inserted
+	 * @param {Integer} priority Priority of the operation
+	 */
 	insertBefore: function(pathWithPosition, key, value, priority) {
 		pathWithPosition = this.rewritePath(pathWithPosition);
 		var pathParts = pathWithPosition.split('/'),
 			arrayPath = pathParts.slice(0, -1).join('/'),
 			position = pathParts[pathParts.length - 1],
-			context = this._getOrCreatePath(this.configuration, arrayPath),
+			context = this._getOrCreatePath(this._configuration, arrayPath),
 			key;
 		if (priority === undefined) {
 			priority = 0;
@@ -249,6 +337,12 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		this.set(arrayPath + '/' + key, value, priority);
 	},
 
+	/**
+	 * Get the data inside the registry at the given path.
+	 *
+	 * @param {String} path The path to fetch in the registry path syntax
+	 * @return {Object} The data inside the registry at the given path
+	 */
 	get: function(path) {
 		if (path === undefined) {
 			path = '';
@@ -257,7 +351,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		}
 
 		var parts = path.split('/'),
-			context = this.configuration;
+			context = this._configuration;
 		Ext.each(parts, function(part) {
 			if (context[part] === undefined) {
 				return undefined;
@@ -267,12 +361,27 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		return context;
 	},
 
+	/**
+	 * Expand a path with brackets in there (like 'menu/main[]')
+	 * to its expanded form ('menu/main/children').
+	 *
+	 * @param {String} path The path to rewrite
+	 * @return {String} The expanded path
+	 */
 	rewritePath: function(path) {
 		path = path.replace(/\[\]/g, '[children]');
 		path = path.replace(/\[([^\]]+)\]/g, '/$1');
 		return path;
 	},
 
+	/**
+	 * Create or get a path inside the object structure
+	 *
+	 * @param {Object} The context (e.g. configuration)
+	 * @param {String} The path in expanded form to get or create
+	 * @return {Object} The object at the given path
+	 * @private
+	 */
 	_getOrCreatePath: function(object, path) {
 		var parts = path.split('/'),
 			context = object;

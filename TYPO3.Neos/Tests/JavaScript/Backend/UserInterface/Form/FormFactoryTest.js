@@ -5,7 +5,7 @@ F3.TYPO3.UserInterface.Form.FormFactoryTest = {
 	setUp: function() {
 		this.factory = F3.TYPO3.UserInterface.Form.FormFactory;
 		this.registry = F3.TYPO3.Core.Registry;
-		this.registry.configuration = {
+		this.registry._configuration = {
 			schema: {
 				"typo3:page": {
 					service: {

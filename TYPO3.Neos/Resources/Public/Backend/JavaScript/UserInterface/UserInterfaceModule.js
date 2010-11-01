@@ -16,6 +16,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 	 */
 	viewport: null,
 
+	/**
+	 * Register default form editors
+	 *
+	 * @param {F3.TYPO3.Core.Registry} The registry
+	 * @return {void}
+	 */
 	configure: function(registry) {
 		registry.set('form/editor', {
 			// By type
@@ -29,15 +35,23 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 		});
 	},
 
+	/**
+	 * Initialize the viewport after boostrap
+	 *
+	 * @param {F3.TYPO3.Core.Application} The Application object
+	 * @return {void}
+	 */
 	initialize: function(application) {
-		application.on('afterBootstrap', this.initViewport, this);
+		application.on('afterBootstrap', this._initViewport, this);
 	},
 
 	/**
 	 * Create the main viewport for layouting all components in a full
 	 * width and height browser window.
+	 *
+	 * @private
 	 */
-	initViewport: function() {
+	_initViewport: function() {
 		this.viewport = new F3.TYPO3.UserInterface.Layout();
 	},
 
@@ -67,6 +81,14 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 		});
 	},
 
+	/**
+	 * Add a content area to the user interface
+	 *
+	 * @param {String} sectionId The section where the area should be added
+	 * @param {String} itemId The id of the content area inside the section (e.g. 'managementView')
+	 * @param {Object} configuration Configuration for building the component
+	 * @return {void}
+	 */
 	addContentArea: function(sectionId, itemId, configuration) {
 		// TODO: if default content area, we activate it.
 		this.on('ContentArea.initialized', function(contentArea) {
@@ -77,13 +99,23 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 			}
 		});
 	},
-	contentAreaOn: function(path, sectionId, contentAreaItemId) {
+
+	/**
+	 * Add a listener to a menu to activate the given content area if the menu item
+	 * is activated.
+	 *
+	 * @param {String} path The menu item path (e.g. 'menu[main]/management')
+	 * @param {String} sectionId The section of the content area
+	 * @param {String} itemId The id of the content area inside the section
+	 * @return {void}
+	 */
+	contentAreaOn: function(path, sectionId, itemId) {
 		path = F3.TYPO3.Core.Registry.rewritePath(path);
 		// TODO: "path" is not always a reference to a tab, so it might not be safe to go locally from the button to the moduleMenu.
 		this.on('activate-' + path, function() {
 			var viewport = F3.TYPO3.UserInterface.UserInterfaceModule.viewport;
 			var tab = viewport.sectionMenu.getComponent(sectionId);
-			tab.contentArea.getLayout().setActiveItem(contentAreaItemId);
+			tab.contentArea.getLayout().setActiveItem(itemId);
 			tab.contentArea.doLayout();
 		});
 	}

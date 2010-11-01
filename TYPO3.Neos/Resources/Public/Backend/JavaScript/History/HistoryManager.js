@@ -1,12 +1,33 @@
 Ext.ns("F3.TYPO3.History");
+
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 /**
  * @class F3.TYPO3.History.HistoryManager
- * @namespace F3.TYPO3.History
- * @extends Ext.History
  *
  * The history manager allows to use the browser back/forth button
  * and offers convenient methods for adding state to the URL.
- * 
+ *
+ * @namespace F3.TYPO3.History
+ * @extends Ext.History
  * @singleton
  */
 F3.TYPO3.History.HistoryManager = Ext.apply(Ext.History, {
@@ -15,8 +36,9 @@ F3.TYPO3.History.HistoryManager = Ext.apply(Ext.History, {
 	 * The saved state
 	 *
 	 * @type Object
+	 * @private
 	 */
-	state: {},
+	_state: {},
 
 	/**
 	 * Initialize the history manager and
@@ -26,7 +48,7 @@ F3.TYPO3.History.HistoryManager = Ext.apply(Ext.History, {
 	initialize: function() {
 		this.init();
 		this.on('change', function(token) {
-			this.updateState(token);
+			this._updateState(token);
 		});
 	},
 
@@ -39,28 +61,26 @@ F3.TYPO3.History.HistoryManager = Ext.apply(Ext.History, {
 	 * with "-changed", "-removed" and "-added".
 	 *
 	 * @param {String} token The new token to process (URL fragment)
+	 * @private
 	 */
-	updateState: function(token) {
-		token = this.decode(token);
-		
-		F3.TYPO3.Utils.each(this.state, function(value, key) {
+	_updateState: function(token) {
+		token = this._decode(token);
+
+		F3.TYPO3.Utils.each(this._state, function(value, key) {
 			if (token[key]) {
-				this.state[key] = token[key];
+				this._state[key] = token[key];
 				this.fireEvent(key + '-changed', token[key]);
 			} else {
 				this.fireEvent(key + '-removed', token[value]);
-				delete(this.state[key]);
+				delete(this._state[key]);
 			}
-			
 			delete(token[key]);
-			
 		}, this);
-		
+
 		F3.TYPO3.Utils.each(token, function(value, key) {
-			this.state[key] = value;
+			this._state[key] = value;
 			this.fireEvent(key + '-added', value);
 		}, this);
-		
 	},
 
 	/**
@@ -72,9 +92,9 @@ F3.TYPO3.History.HistoryManager = Ext.apply(Ext.History, {
 	 * @return {F3.TYPO3.History.HistoryManager} A reference to the history manager
 	 */
 	set: function(key, value) {
-		var newState = F3.TYPO3.Utils.clone(this.state);
+		var newState = F3.TYPO3.Utils.clone(this._state);
 		newState[key] = value;
-		this.add(this.encode(newState));
+		this.add(this._encode(newState));
 		return this;
 	},
 
@@ -86,29 +106,41 @@ F3.TYPO3.History.HistoryManager = Ext.apply(Ext.History, {
 	 * @return {F3.TYPO3.History.HistoryManager} A reference to the history manager
 	 */
 	remove: function(key) {
-		var newState = F3.TYPO3.Utils.clone(this.state);
+		var newState = F3.TYPO3.Utils.clone(this._state);
 		delete(newState[key]);
-		this.add(this.encode(newState));
+		this.add(this._encode(newState));
 		return this;
 	},
 
-	// private
-	encode: function(string) {
+	/**
+	 * Encode a state value to store it in the URL
+	 *
+	 * @param {String} The value to encode
+	 * @return {String} The encoded value
+	 * @private
+	 */
+	_encode: function(string) {
 		string = Ext.util.JSON.encode(string);
 		// TODO remove outer { and } as it's always needed and can be auto-attached
 		string = string.substr(1, string.length-2);
-		
+
 		string = string.replace(/"/g, '');
 		string = string.replace(/\{/g, '!');
 		string = string.replace(/\}/g, '$');
 		string = string.replace(/:/g, '=');
 		string = string.replace(/,/g, '&');
-		
+
 		return string;
 	},
 
-	// private
-	decode: function(string) {
+	/**
+	 * Decode a state value from the URL
+	 *
+	 * @param {String} The value to decode
+	 * @return {String} The decoded value
+	 * @private
+	 */
+	_decode: function(string) {
 		string = decodeURIComponent(string);
 		string = string.replace(/\=!/g, '":{"');
 		string = string.replace(/\$&/g, '"},"');
@@ -117,11 +149,10 @@ F3.TYPO3.History.HistoryManager = Ext.apply(Ext.History, {
 		string = string.replace(/\$/g, '"}');
 		string = string.replace(/\=/g, '":"');
 		string = string.replace(/&/g, '","');
-		
+
 		string = '{"' + string + '"}';
 		string = Ext.util.JSON.decode(string);
-		
+
 		return string;
 	}
-
 });

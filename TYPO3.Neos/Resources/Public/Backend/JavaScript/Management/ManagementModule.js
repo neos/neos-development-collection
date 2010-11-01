@@ -10,6 +10,11 @@ Ext.ns("F3.TYPO3.Management");
  */
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
 
+	/**
+	 *
+	 * @param {F3.TYPO3.Core.Registry} The registry
+	 * @return {void}
+	 */
 	configure: function(registry) {
 		registry.append('menu[main]', 'management', {
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ManagementTab',
@@ -18,6 +23,11 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
 		});
 	},
 
+	/**
+	 *
+	 * @param {F3.TYPO3.Core.Application} The Application object
+	 * @return {void}
+	 */
 	initialize: function(application) {
 		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('management', 'managementView', {
