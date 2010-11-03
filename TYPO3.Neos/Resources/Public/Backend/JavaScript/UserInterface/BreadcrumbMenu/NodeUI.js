@@ -1,3 +1,5 @@
+Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
+
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
  *                                                                        *
@@ -18,13 +20,15 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
-
 /**
  * @class F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI
+ *
+ * Provides the UI implementation of the menu nodes
+ *
+ * This class extends ExtJS and therefore not all private methods are starting with a _
+ *
  * @namespace F3.TYPO3.UserInterface.BreadcrumbMenu
  * @extends Ext.tree.TreeNodeUI
- * @author Rens Admiraal <rens@rensnel.nl>
  */
 F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI = function() {
 	F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI.superclass.constructor.apply(this, arguments);
@@ -34,19 +38,29 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	active: false,
 	isLabelOpen: false,
 
+	/**
+	 * @param {Ext.EventObject} e
+	 * @return {void}
+	 */
 	onClick: function(e) {
 		F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI.superclass.onClick.call(this, e);
 		if (this.active) {
-			this.activate();
+			this._activate();
 		} else {
-			this.deactivate();
+			this._deactivate();
 		}
 	},
 
+	/**
+	 * @return {void}
+	 */
 	getFullPath: function() {
 		return this.menuId + '-' + this.sectionId + '-' + this.menuPath;
 	},
 
+	/**
+	 * @return {void}
+	 */
 	getModuleMenu: function() {
 		return this.node.ownerTree.findParentByType(F3.TYPO3.UserInterface.ModuleMenu);
 	},
@@ -64,23 +78,34 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 
 		var buf = [
 			'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node">',
-				'<span ext:tree-node-id="', n.id,
-				'" class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-el F3-TYPO3-UserInterface-BreadcrumbMenu-node-leaf x-unselectable ', a.cls,
-				'" unselectable="on">',
-					// Icon
-					'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-icon', (a.icon ? " F3-TYPO3-UserInterface-BreadcrumbMenu-node-inline-icon" : ""),
-					(a.iconCls ? " "+a.iconCls : ""), '" unselectable="on" style="background-image: ',
-					a.icon || this.emptyIcon, '"></span>',
+			'<span ext:tree-node-id="',
+			n.id,
+			'" class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-el F3-TYPO3-UserInterface-BreadcrumbMenu-node-leaf x-unselectable ',
+			a.cls,
+			'" unselectable="on">',
 
-					// Link / label
-					'<a hidefocus="on" class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-anchor" href="', href, '" tabIndex="1" ',
-					a.hrefTarget ? ' target="' + a.hrefTarget+'"' : "", '><span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-el-label" unselectable="on">',
-					n.text,"</span></a>",
-					// 'spacer'
-					'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-elbow"></span>',
+			// Icon
+			'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-icon',
+			(a.icon ? " F3-TYPO3-UserInterface-BreadcrumbMenu-node-inline-icon" : ""),
+			(a.iconCls ? " "+a.iconCls : ""),
+			'" unselectable="on" style="background-image: ',
+			a.icon || this.emptyIcon,
+			'"></span>',
 
-				"</span>",
-				'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-ct" style="display:none;"></span>',
+			// Link / label
+			'<a hidefocus="on" class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-anchor" href="', 
+			href,
+			'" tabIndex="1" ',
+			(a.hrefTarget ? ' target="' + a.hrefTarget+'"' : ""),
+			'><span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-el-label" unselectable="on">',
+			n.text,
+			"</span></a>",
+
+			// 'spacer'
+			'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-elbow"></span>',
+
+			"</span>",
+			'<span class="F3-TYPO3-UserInterface-BreadcrumbMenu-node-ct" style="display:none;"></span>',
 			"</span>"
 		].join('');
 
@@ -106,7 +131,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	},
 
 	/**
-	 * @param {Object} e
+	 * @param {Ext.EventObject} e
 	 * @return {void}
 	 * @private
 	 */
@@ -116,12 +141,12 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 
 		if (this.isLabelOpen === false) {
 			this.isLabelOpen = true;
-			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOver(this, e);
+			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOver(this);
 		}
 	},
 
 	/**
-	 * @param {Object} e
+	 * @param {Ext.EventObject} e
 	 * @return {void}
 	 * @private
 	 */
@@ -130,18 +155,21 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 		Ext.get(this.elNode).setStyle({width: 'auto'});
 		if(this.isLabelOpen === true && !e.within(Ext.get(this.elNode), 1)) {
 			this.isLabelOpen = false;
-			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOut(this, e);
+			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.nodeOnOut(this);
 		}
 	},
 
 	/**
-	 * @param {Boolean} state
+	 * @param {Boolean} state The current state of the node
 	 * @return {void}
 	 * @private
 	 */
 	onSelectedChange: function(state) {
 	},
 
+	/**
+	 * @return {void}
+	 */
 	updateExpandIcon: function() {
 		var elbowElement = Ext.get(this.node.ui.ecNode);
 		if (this.node.expanded) {
@@ -152,9 +180,8 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	},
 
 	/**
-	 * @param {Function} callback
+	 * @param {Function} callback This callback is called when the animation is done
 	 * @return {void}
-	 * @private
 	 */
 	animExpand : function(callback){
 		var ct = Ext.get(this.ctNode);
@@ -180,9 +207,8 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 	},
 
 	/**
-	 * @param {Function}
+	 * @param {Function} callback This function is called after the collapse
 	 * @return {void}
-	 * @private
 	 */
 	animCollapse : function(callback){
 		var ct = Ext.get(this.ctNode);
@@ -198,12 +224,11 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 			F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.showSiblings(this.node, this);
 		}
 
-		F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.collapseNode(ct, callback, this);
+		F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler.collapseNode(callback, this);
 	},
 
 	/**
 	 * @return {void}
-	 * @private
 	 */
 	renderIndent : function(){
 		if(this.rendered){
@@ -211,17 +236,25 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI, Ext.tree.TreeNodeUI, {
 		}
 	},
 
-	activate: function() {
+	/**
+	 * @return {void}
+	 * @private
+	 */
+	_activate: function() {
 		this.active = false;
 		Ext.get(this.getEl()).removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Node-active');
 		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('deactivate-' + this.path, this);
 	},
 
-	deactivate: function() {
+	/**
+	 * @return {void}
+	 * @private
+	 */
+	_deactivate: function() {
 		this.active = true;
 		Ext.get(this.getEl()).addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Node-active');
 		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('activate-' + this.path, this);
 	}
 });
 
-Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu', F3.TYPO3.UserInterface.BreadcrumbMenu);
+Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI', F3.TYPO3.UserInterface.BreadcrumbMenu.NodeUI);

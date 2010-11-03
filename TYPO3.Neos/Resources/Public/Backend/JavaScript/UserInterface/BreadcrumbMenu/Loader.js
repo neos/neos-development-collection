@@ -1,3 +1,5 @@
+Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
+
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
  *                                                                        *
@@ -18,21 +20,19 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
-
 /**
  * @class F3.TYPO3.UserInterface.BreadcrumbMenu.Loader
  *
+ * Provides for lazy loading of the BreadcrumbMenuComponent's child nodes
+ *
  * @namespace F3.TYPO3.UserInterface.BreadcrumbMenu
  * @extends Ext.tree.TreeLoader
- * @author Rens Admiraal <rens@rensnel.nl>
  */
 F3.TYPO3.UserInterface.BreadcrumbMenu.Loader = Ext.extend(Ext.tree.TreeLoader, {
 
 	/**
 	 * @param {Object} attr
 	 * @return {Object}
-	 * @public
 	 */
 	createNode : function(attr) {
 		if (!attr.uiProvider) {

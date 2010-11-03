@@ -19,7 +19,7 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 				align: 'stretch'
 			},
 			items: [{
-				xtype: 'F3.TYPO3.UserInterface.BreadcrumbMenu',
+				xtype: 'F3.TYPO3.UserInterface.BreadcrumbMenuComponent',
 				itemId: this.itemId,
 				ref: 'breadcrumbMenu',
 				menuId: this.menuId,

@@ -1,3 +1,5 @@
+Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
+
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
  *                                                                        *
@@ -18,20 +20,18 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
-
 /**
  * @class F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode
  *
+ * A node for the BreadcrumbMenuComponent
+ *
  * @namespace F3.TYPO3.UserInterface.BreadcrumbMenu
  * @extends Ext.tree.AsyncTreeNode
- * @author Rens Admiraal <rens@rensnel.nl>
  */
 F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode = Ext.extend(Ext.tree.AsyncTreeNode, {
 
 	/**
 	 * @return {void}
-	 * @public
 	 */
 	initComponent: function() {
 		var config = {

@@ -1,3 +1,5 @@
+Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
+
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
  *                                                                        *
@@ -18,16 +20,21 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
-
 /**
  * @class F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler
  *
+ * This class handles the animations within the BreadcrumbMenuComponent.
+ * This is mainly done to keep more overview in the compononent itself
+ *
  * @namespace F3.TYPO3.UserInterface.BreadcrumbMenu
- * @author Rens Admiraal <rens@rensnel.nl>
  */
 F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 
+	/**
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode} node the current node object
+	 * @param {Object} scope
+	 * @private
+	 */
 	_collapseSubNodes: function (node, scope) {
 		Ext.each(
 			node.childNodes,
@@ -46,6 +53,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 				});
 
 				Ext.get(node.ui.ecNode).removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-elbow-expanded');
+				F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('F3.TYPO3.UserInterface.BreadcrumbMenuComponent.deactivateNode', node);
 
 				if (node.childNodes && node.childNodes.length > 0) {
 					scope._collapseSubNodes(node, scope);
@@ -55,14 +63,12 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 	},
 
 	/**
-	 * @param {Object} ct
-	 * @param {Function} callback
+	 * @param {Function} callback Callback function, which is called after the collapse
 	 * @param {Object} scope
 	 * @return {void}
-	 * @public
 	 */
-	collapseNode: function (ct, callback, scope) {
-		this._collapseSubNodes(scope.node, this);
+	collapseNode: function (callback, scope) {
+		this._collapseSubNodes(scope.node, scope);
 		Ext.get(scope.node.ui.getEl()).removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-node-expanded');
 
 		Ext.callback(callback);
@@ -70,14 +76,12 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 	},
 
 	/**
-	 * @param {Object} ct
-	 * @param {Function} callback
+	 * @param {Ext.Element} ct The container
+	 * @param {Function} callback Callback function which is called after the node is expanded
 	 * @param {Object} scope
 	 * @return {void}
-	 * @public
 	 */
 	expandNode: function (ct, callback, scope) {
-
 		Ext.get(scope.node.ui.getEl()).addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-node-expanded');
 		Ext.get(scope.node.ui.getEl()).setStyle({width: 'auto'});
 
@@ -113,11 +117,9 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 
 	/**
 	 * @param {Object} scope
-	 * @param {Object} e
 	 * @return {void}
-	 * @public
 	 */
-	nodeOnOver: function (scope, e) {
+	nodeOnOver: function (scope) {
 		var label = Ext.get(scope.node.ui.textNode);
 
 		label.setStyle({
@@ -139,11 +141,9 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 
 	/**
 	 * @param {Object} scope
-	 * @param {Object} e
 	 * @return {void}
-	 * @public
 	 */
-	nodeOnOut: function (scope, e) {
+	nodeOnOut: function (scope) {
 		var label = Ext.get(scope.node.ui.textNode);
 		label.shift({
 			opacity: 0,
@@ -156,7 +156,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 	},
 
 	/**
-	 * @param {Object} node The node currently being expanded
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode} node The node currently being expanded
 	 * @param {Object} scope
 	 * @return {void}
 	 */
@@ -174,7 +174,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = {
 	},
 
 	/**
-	 * @param {Object} node The node currently being collapsed
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode} node The node currently being collapsed
 	 * @param {Object} scope
 	 * @return {void}
 	 */

@@ -1,3 +1,5 @@
+Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
+
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
  *                                                                        *
@@ -18,14 +20,14 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
-
 /**
  * @class F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel
  *
+ * The event model for the BreacrumbMenuComponent. Handles the events within
+ * the component.
+ *
  * @namespace F3.TYPO3.UserInterface.BreadcrumbMenu
  * @extends Ext.tree.TreeEventModel
- * @author Rens Admiraal <rens@rensnel.nl>
  */
 F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel = function() {
 	F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel.superclass.constructor.apply(this, arguments);
@@ -35,7 +37,6 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 
 	/**
 	 * @return {void}
-	 * @public
 	 */
 	initEvents : function() {
 		if (this.tree.trackMouseOver !== false) {
@@ -54,9 +55,8 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	},
 
 	/**
-	 * @param {Object} event
-	 * @return {Object}
-	 * @public
+	 * @param {Ext.EventObject} event
+	 * @return {F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode}
 	 */
 	getNode : function(event) {
 		var target;
@@ -70,9 +70,8 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	},
 
 	/**
-	 * @param {Object} event
-	 * @return {Object}
-	 * @public
+	 * @param {Ext.EventObject} event
+	 * @return {HTMLelement}
 	 */
 	getNodeTarget : function(event) {
 		var target = event.getTarget('.F3-TYPO3-UserInterface-BreadcrumbMenu-node-icon', 1);
@@ -83,10 +82,9 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	},
 
 	/**
-	 * @param {Object} event
-	 * @param {Object} target
+	 * @param {Ext.EventObject} event
+	 * @param {HTMLelement} target
 	 * @return {void}
-	 * @public
 	 */
 	delegateOut : function(event, target) {
 		if (!this.beforeEvent(event)) {
@@ -105,10 +103,9 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	},
 
 	/**
-	 * @param {Object} event
-	 * @param {Object} target
+	 * @param {Ext.EventObject} event
+	 * @param {HTMLelement} target
 	 * @return {void}
-	 * @public
 	 */
 	delegateOver : function(event, target) {
 		if (!this.beforeEvent(event)) {
@@ -132,10 +129,9 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	},
 
 	/**
-	 * @param {Object} event
-	 * @param {Object} target
+	 * @param {Ext.EventObject} event
+	 * @param {HTMLelement} target
 	 * @return {void}
-	 * @public
 	 */
 	delegateClick : function(event, target) {
 		if (this.beforeEvent(event)) {
@@ -152,20 +148,18 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel, Ext.tree.TreeEventM
 	},
 
 	/**
-	 * @param {Object} event
-	 * @param {Object} node
+	 * @param {Ext.EventObject} event
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode} node
 	 * @return {void}
-	 * @public
 	 */
 	onIconOver : function(event, node) {
 		node.ui.addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-ec-over');
 	},
 
 	/**
-	 * @param {Object} event
-	 * @param {Object} node
+	 * @param {Ext.EventObject} event
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode} node
 	 * @return {void}
-	 * @public
 	 */
 	onIconOut : function(event, node) {
 		node.ui.removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-ec-over');
