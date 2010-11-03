@@ -4,7 +4,10 @@ Ext.ns("F3.TYPO3.Login");
  * @class F3.TYPO3.Login.LoginService
  *
  * Login service for login related functions
+ *
  * @namespace F3.TYPO3.Login
+ * @extends Ext.util.Observable
+ * @singleton
  */
 F3.TYPO3.Login.Service = Ext.apply(new Ext.util.Observable, {
 	/**

@@ -1,6 +1,31 @@
 Ext.ns("F3.TYPO3.UserInterface");
 
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 /**
+ * @class F3.TYPO3.UserInterface.UserInterfaceModule
+ *
+ * Module descriptor for the user interface parts..
+ *
+ * @namespace F3.TYPO3.UserInterface
  * @singleton
  */
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModule', {
@@ -8,6 +33,15 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 	/**
 	 * @event activate-[FullyQualifiedButtonPath]
 	 * @event deactivate-[FullyQualifiedButtonPath]
+	 */
+
+	/**
+	 * @event _ContentArea.initialized
+	 * @param {F3.TYPO3.UserInterface.ContentArea} contentArea the content area which has been initialized
+	 * @private
+	 *
+	 * Fired after a content area has been initialized. Internally used to
+	 * add elements to the content area.
 	 */
 
 	/**
@@ -91,7 +125,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 	 */
 	addContentArea: function(sectionId, itemId, configuration) {
 		// TODO: if default content area, we activate it.
-		this.on('ContentArea.initialized', function(contentArea) {
+		this.on('_ContentArea.initialized', function(contentArea) {
 			if (sectionId + '-contentArea' == contentArea.itemId) {
 				contentArea.add(Ext.apply(configuration, {
 					itemId: itemId

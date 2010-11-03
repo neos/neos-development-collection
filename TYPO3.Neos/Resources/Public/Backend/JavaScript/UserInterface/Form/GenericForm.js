@@ -1,11 +1,32 @@
 Ext.ns("F3.TYPO3.UserInterface.Form");
+
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 /**
  * @class F3.TYPO3.UserInterface.Form.GenericForm
- * @namespace F3.TYPO3.UserInterface.Form
- * @extends Ext.form.FormPanel
  *
  * The generic form is a base for UI forms
  *
+ * @namespace F3.TYPO3.UserInterface.Form
+ * @extends Ext.form.FormPanel
  */
 F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	initComponent: function() {
@@ -39,10 +60,14 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 		this.on('actioncomplete', this._onFormActionComplete, this);
 		this.on('actionfailed', this._onFormActionComplete, this);
 
-		this.on('render', this.onRenderLoad, this);
+		this.on('render', this._onRenderLoad, this);
 	},
 
-	onRenderLoad: function() {
+	/**
+	 * @return {void}
+	 * @private
+	 */
+	_onRenderLoad: function() {
 		this.getForm().load({
 			params: this.getLoadIdentifier(),
 			success: this._loadValues,
@@ -50,19 +75,46 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 		});
 	},
 
+	/**
+	 * TODO: Document
+	 *
+	 * @param {...} form
+	 * @param {...} action
+	 * @return {void}
+	 * @private
+	 */
+
 	_loadValues: function(form, action) {
-		var data = action.result.data,
-			convertedData = this._convertNestedDataToFlatProperties(data);
+		var data, convertedData;
+
+		data = action.result.data;
+		convertedData = this._convertNestedDataToFlatProperties(data);
 
 		this.getForm().setValues(convertedData);
 	},
 
+	/**
+	 * TODO: Document
+	 *
+	 * @param {...}
+	 * @return {...}
+	 * @private
+	 */
 	_convertNestedDataToFlatProperties: function(data) {
 		var result = {};
 		this._convertNestedDataToFlatPropertiesVisit(data, result, '')
 		return result;
 	},
 
+	/**
+	 * TODO: Document
+	 *
+	 * @param {...}
+	 * @param {...}
+	 * @param {...}
+	 * @return {void}
+	 * @private
+	 */
 	_convertNestedDataToFlatPropertiesVisit: function(data, result, path) {
 		var key;
 		for (key in data) {
@@ -76,6 +128,8 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 
 	/**
 	 * Submit the form
+	 *
+	 * @return {void}
 	 */
 	doSubmitForm: function() {
 		var data = this.getForm().getValues();
@@ -84,6 +138,13 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 		this.getForm().api.submit.call(this, data, this.onSubmitSuccess, this);
 	},
 
+	/**
+	 * TODO: document
+	 *
+	 * @param {Object} properties
+	 * @return {...}
+	 * @private
+	 */
 	_convertFlatPropertiesToNestedData: function(properties) {
 		var result = {}, key, context;
 		for (key in properties) {
@@ -118,7 +179,6 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	onSubmitSuccess: function() {
 	},
 
-
 	/**
 	 * on form before action, triggered before any action is performed.
 	 *
@@ -150,6 +210,5 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 			this.el.unmask();
 		}
 	}
-
 });
 Ext.reg('F3.TYPO3.UserInterface.Form.GenericForm', F3.TYPO3.UserInterface.Form.GenericForm);

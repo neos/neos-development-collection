@@ -1,3 +1,5 @@
+Ext.namespace('F3.TYPO3.UserInterface');
+
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
  *                                                                        *
@@ -18,9 +20,11 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-Ext.namespace('F3.TYPO3.UserInterface');
-
 /**
+ * @class F3.TYPO3.UserInterface.BreadcrumbMenu
+ *
+ * TODO: insert description
+ *
  * @namespace F3.TYPO3.UserInterface
  * @extends Ext.tree.TreePanel
  */
