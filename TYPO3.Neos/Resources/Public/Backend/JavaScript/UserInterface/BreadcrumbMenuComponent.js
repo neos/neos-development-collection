@@ -23,16 +23,15 @@ Ext.namespace('F3.TYPO3.UserInterface');
 /**
  * @namespace F3.TYPO3.UserInterface
  * @extends Ext.tree.TreePanel
- * @author Rens Admiraal <rens@rensnel.nl>
  */
-F3.TYPO3.UserInterface.BreadcrumbMenu = function() {
-	F3.TYPO3.UserInterface.BreadcrumbMenu.superclass.constructor.apply(this, arguments);
+F3.TYPO3.UserInterface.BreadcrumbMenuComponent = function() {
+	F3.TYPO3.UserInterface.BreadcrumbMenuComponent.superclass.constructor.apply(this, arguments);
 };
 
-Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu, Ext.tree.TreePanel, {
+Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.tree.TreePanel, {
 	/**
-	 * @event F3.TYPO3.UserInterface.BreadcrumbMenu.afterInit
-	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenu} a reference to the submenu.
+	 * @event F3.TYPO3.UserInterface.BreadcrumbMenuComponent.afterInit
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenuComponent} a reference to the submenu.
 	 * Event triggered after initialization of the menu. Should be used
 	 * to add elements to the menu.
 	 */
@@ -45,8 +44,8 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu, Ext.tree.TreePanel, {
 
 	/**
 	 * @cfg menu Menu as defined in {@link F3.TYPO3.Core.Application.MenuRegistry}
+	 * @return {void}
 	 */
-	
 	initComponent: function() {
 
 		this.util = F3.TYPO3.UserInterface.BreadcrumbMenu.Util;
@@ -75,7 +74,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu, Ext.tree.TreePanel, {
             this.eventModel = new F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel(this);
         }
 
-		F3.TYPO3.UserInterface.BreadcrumbMenu.superclass.initComponent.call(this);
+		F3.TYPO3.UserInterface.BreadcrumbMenuComponent.superclass.initComponent.call(this);
 
 		this.on('afterrender', function(menu) {
 			menu.getRootNode().expand();
@@ -97,20 +96,18 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenu, Ext.tree.TreePanel, {
 	 */
 	_getMenuItems: function() {
 		var menu = F3.TYPO3.Utils.clone(this.menuConfig);
-		return this.util.convertMenuConfig(menu, 1, '', 'menu/main/content', {sectionId:'',menuId:'mainMenu',menuPath:''});
-	},
-
-	deactivateNodesFrameNode: function(node) {
-		var scope = this;
-
-		if (node.childNodes && node.childNodes.length > 0) {
-			Ext.each(node.childNodes, function() {
-				F3.TYPO3.Core.Application.fireEvent('F3.TYPO3.UserInterface.BreadcrumbMenu.deactivateNode', this);
-				this.active = false;
-				scope.deactivateNodesFrameNode(this);
-			});
-		}
+		return this.util.convertMenuConfig(
+			menu,
+			1,
+			'',
+			'menu/main/content',
+			{
+				sectionId: '',
+				menuId:'mainMenu',
+				menuPath:''
+			}
+		);
 	}
 });
 
-Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenu', F3.TYPO3.UserInterface.BreadcrumbMenu);
+Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenuComponent', F3.TYPO3.UserInterface.BreadcrumbMenuComponent);

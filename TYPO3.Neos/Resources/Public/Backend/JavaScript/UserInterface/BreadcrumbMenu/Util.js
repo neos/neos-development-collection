@@ -1,3 +1,5 @@
+Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
+
 /*                                                                        *
  * This script belongs to the TYPO3 project.                              *
  *                                                                        *
@@ -18,19 +20,26 @@
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-Ext.namespace('F3.TYPO3.UserInterface.BreadcrumbMenu');
-
 /**
  * @class F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler
+ *
+ * This is a utility class for the breadcrumbmenu
+ *
  * @namespace F3.TYPO3.UserInterface.BreadcrumbMenu
- * @author Rens Admiraal <rens@rensnel.nl>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @demo http://phoenix.demo.typo3.org/
  */
-
 F3.TYPO3.UserInterface.BreadcrumbMenu.Util = {
 
-	// private
+	/**
+	 * Convert the menu configuration so it can be handled by the menu.
+	 * We need a path and menuPath for example
+	 *
+	 * @param {Array} menu item array
+	 * @param {Integer} level start level
+	 * @param {String} menuPath 'rootline path' through the menu
+	 * @param {String} full path to the items
+	 * @param {Object} scope
+	 * @return {Array} converted menu item array
+	 */
 	convertMenuConfig: function(menu, level, menuPath, path, scope) {
 		var itemStack = [];
 
@@ -48,20 +57,18 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.Util = {
 			}
 
 			if (menuItem.children && menuItem.children.length > 0) {
-				menuItem.children = F3.TYPO3.UserInterface.BreadcrumbMenu.Util.convertMenuConfig(menuItem.children, level + 1, menuItem.menuPath, menuItem.path, scope);
+				menuItem.children = F3.TYPO3.UserInterface.BreadcrumbMenu.Util.convertMenuConfig(
+					menuItem.children,
+					level + 1,
+					menuItem.menuPath,
+					menuItem.path,
+					scope
+				);
 			}
 
 			itemStack.push(menuItem);
 		}, this);
 
 		return itemStack;
-	},
-
-	addItemPaths: function(items, basePath, path) {
-		Ext.each(items, function (menuItem) {
-			var itemPath = path.concat([menuItem.key]);
-
-			menuItem.path = basePath + '/' + itemPath.join('/children/');
-		});
 	}
 };
