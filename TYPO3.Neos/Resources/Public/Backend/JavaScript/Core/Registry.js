@@ -97,7 +97,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 				return undefined;
 			} else if (context._operations.set !== undefined) {
 				context._operations.set.sort(function(op1, op2) {
-					return op1.priority < op2.priority;
+					return (op2.priority - op1.priority);
 				});
 				return context._operations.set[0].value;
 			} else if (context._operations.append !== undefined ||
@@ -107,7 +107,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 				result = [];
 				if (context._operations.prepend !== undefined) {
 					context._operations.prepend.sort(function(op1, op2) {
-						return op1.priority < op2.priority;
+						return (op2.priority - op1.priority);
 					});
 
 					Ext.each(context._operations.prepend, function(operation) {
@@ -119,7 +119,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 				}
 				if (context._operations.append !== undefined) {
 					context._operations.append.sort(function(op1, op2) {
-						return op1.priority > op2.priority;
+						return (op1.priority - op2.priority);
 					});
 
 					Ext.each(context._operations.append, function(operation) {
@@ -131,7 +131,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 				}
 				if (context._operations.insertBefore !== undefined) {
 					context._operations.insertBefore.sort(function(op1, op2) {
-						return op1.priority > op2.priority;
+						return (op1.priority - op2.priority);
 					});
 
 					// TODO We should iterate more than once!
@@ -150,7 +150,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 				}
 				if (context._operations.insertAfter !== undefined) {
 					context._operations.insertAfter.sort(function(op1, op2) {
-						return op1.priority < op2.priority;
+						return (op2.priority - op1.priority);
 					});
 
 					// TODO We should iterate more than once!
