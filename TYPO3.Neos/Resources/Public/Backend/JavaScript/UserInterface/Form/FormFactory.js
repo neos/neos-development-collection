@@ -85,10 +85,10 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 				title: definition.title,
 				api: {
 					// TODO Evaluate how to define APIs
-					load: eval(schemaDefinition.service.show),
-					submit: eval(schemaDefinition.service.update),
-					update: eval(schemaDefinition.service.update),
-					create: eval(schemaDefinition.service.create)
+					load: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.show),
+					submit: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
+					update: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
+					create: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.create)
 				}
 			}
 			childDefaultType = 'field';

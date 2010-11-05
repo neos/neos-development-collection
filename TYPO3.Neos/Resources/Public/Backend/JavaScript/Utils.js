@@ -100,5 +100,29 @@ F3.TYPO3.Utils = {
 			return false;
 		}
 		return true;
+	},
+
+	/**
+	 * Returns a reference to a global object, when the string towards
+	 * this object gets passed.
+	 * Example: If you pass in the string "F3.TYPO3.Core.Application", then
+	 * you get back the actual object reference to the F3.TYPO3.Core.Application,
+	 * or undefined if it does not exist.
+	 *
+	 * @param {String} objectPath the object path to be found
+	 * @return {Object|undefined} the object itself, or undefined if it does not exist
+	 */
+	getObjectByString: function(objectPath) {
+		var splittedObjectPath, iterator;
+		if (typeof objectPath !== 'string') {
+			return undefined;
+		}
+
+		splittedObjectPath = objectPath.split('.');
+		iterator = window[splittedObjectPath[0]];
+		Ext.each(splittedObjectPath.slice(1), function(moduleNamePart) {
+			iterator = iterator[moduleNamePart];
+		});
+		return iterator;
 	}
 };

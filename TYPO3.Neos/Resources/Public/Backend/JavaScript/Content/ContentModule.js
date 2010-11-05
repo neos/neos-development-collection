@@ -90,8 +90,8 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 					update: 'F3.TYPO3_Controller_NodeController.update',
 					create: 'F3.TYPO3_Controller_NodeController.create',
 						// "delete" is a special case because it's a reserved keyword.
-						// Need this workaround at least for WebKit:
-					'delete': 'F3.TYPO3_Controller_NodeController["delete"]'
+						// Because of this, it needs to be quoted on the left side.
+					'delete': 'F3.TYPO3_Controller_NodeController.delete'
 				},
 				properties: {
 					'nodeName': {
