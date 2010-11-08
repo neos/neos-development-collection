@@ -1,18 +1,38 @@
 Ext.ns("F3.TYPO3.Management");
 
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
 /**
  * @class F3.TYPO3.Management.ManagementModule
- * @namespace F3.TYPO3.Management
- * @extends Ext.util.Observable
- * @author Christian Müller <christian@kitsunet.de>
  *
- * The Management Module Main component
+ * Management Module Component
+ *
+ * @namespace F3.TYPO3.Management
+ * @singleton
  */
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
 
 	/**
 	 *
-	 * @param {F3.TYPO3.Core.Registry} The registry
+	 * @param {F3.TYPO3.Core.Registry} registry
 	 * @return {void}
 	 */
 	configure: function(registry) {
@@ -25,7 +45,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
 
 	/**
 	 *
-	 * @param {F3.TYPO3.Core.Application} The Application object
+	 * @param {F3.TYPO3.Core.Application} application
 	 * @return {void}
 	 */
 	initialize: function(application) {
