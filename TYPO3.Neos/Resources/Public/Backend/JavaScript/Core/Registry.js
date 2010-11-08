@@ -180,7 +180,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 	 * Set a value at "path" with the given priority.
 	 *
 	 * @param {String} path
-	 * @param (Object} value
+	 * @param {Object} value
 	 * @param {Integer} priority
 	 */
 	set: function(path, value, priority) {
@@ -194,7 +194,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		if (Ext.isObject(value)) {
 			for (key in value) {
 				this.set(path + '/' + key, value[key], priority);
-			}	
+			}
 		} else {
 			if (context._operations.set === undefined) {
 				context._operations.set = [];
