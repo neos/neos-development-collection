@@ -97,7 +97,13 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function findValueToMatch($requestPath) {
-		return $requestPath;
+		$lastDotPosition = strrpos($requestPath, '.');
+		$lastSlashPosition = strrpos($requestPath, '/');
+		if ($lastDotPosition === FALSE || $lastSlashPosition === FALSE || $lastSlashPosition > $lastDotPosition) {
+			return $requestPath;
+		} else {
+			return substr($requestPath, 0, $lastDotPosition);
+		}
 	}
 
 	/**

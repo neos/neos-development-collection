@@ -94,8 +94,13 @@ class NodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function findValueToMatch($requestPath) {
-		$dotPosition = strpos($requestPath, '.');
-		return ($dotPosition === FALSE) ? $requestPath : substr($requestPath, 0, $dotPosition);
+		$lastDotPosition = strrpos($requestPath, '.');
+		$lastSlashPosition = strrpos($requestPath, '/');
+		if ($lastDotPosition === FALSE || $lastSlashPosition === FALSE || $lastSlashPosition > $lastDotPosition) {
+			return $requestPath;
+		} else {
+			return substr($requestPath, 0, $lastDotPosition);
+		}
 	}
 
 	/**

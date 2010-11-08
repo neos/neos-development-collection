@@ -30,7 +30,7 @@
 
 -
   name:          'Backend Overview'
-  uriPattern: 'typo3'
+  uriPattern:    'typo3'
   defaults:
     '@package':    'TYPO3'
     '@controller': 'Backend\Backend'
@@ -40,11 +40,25 @@
 # REST services
 
 -
-  name:          'REST Service: Node actions'
+  name:          'REST Service: Node actions without format'
 
   # Example URL: http://myhost/typo3/service/v1/content/live/sites/phoenix.demo.typo3.org/homepage
 
   uriPattern:    'typo3/service/rest/v1/node/{node}'
+  defaults:
+    '@package':    'TYPO3'
+    '@subpackage': 'Service\Rest\V1'
+    '@controller': 'Node'
+  routeParts:
+    node:
+      handler:    F3\TYPO3\Routing\NodeServiceRoutePartHandler
+
+-
+  name:          'REST Service: Node actions with format'
+
+  # Example URL: http://myhost/typo3/service/v1/content/live/sites/phoenix.demo.typo3.org/homepage.json
+
+  uriPattern:    'typo3/service/rest/v1/node/{node}(.{@format})'
   defaults:
     '@package':    'TYPO3'
     '@subpackage': 'Service\Rest\V1'

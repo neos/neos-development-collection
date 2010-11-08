@@ -136,17 +136,12 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	 * Deletes the specified node and all of its sub nodes
 	 *
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
-	 * @return string A response string
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deleteAction(\F3\TYPO3CR\Domain\Model\Node $node) {
 		$node->remove();
-
-		switch ($this->request->getFormat()) {
-			case 'json' :
-				$this->view->assign('value', array('data' => '', 'success' => TRUE));
-			break;
-		}
+		$this->forward('show', NULL, NULL, array('node' => $node));
 	}
 
 }
