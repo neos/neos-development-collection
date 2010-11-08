@@ -229,7 +229,9 @@ class Node {
 			return NULL;
 		}
 		$parentNodePath = substr($this->path, 0, strrpos($this->path, '/'));
-		return $this->nodeRepository->findOneByPath($parentNodePath, $this->workspace);
+		$parentNode = $this->nodeRepository->findOneByPath($parentNodePath, $this->workspace);
+		$parentNode->setContext($this->context);
+		return $parentNode;
 	}
 
 	/**
