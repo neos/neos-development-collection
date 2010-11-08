@@ -81,7 +81,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 */
 	_onOkButtonClickActionSuccess: function() {
 		this.ownerCt.moduleMenu.removeModuleDialog();
-		F3.TYPO3.Core.Application.fireEvent('F3.TYPO3.Content.contentChanged', '###pageId###');
+		F3.TYPO3.Core.Application.fireEvent('F3.TYPO3.Content.contentChanged');
 	},
 
 	/**

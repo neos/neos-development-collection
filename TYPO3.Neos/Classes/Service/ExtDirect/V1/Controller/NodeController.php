@@ -99,7 +99,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
-		$tempConfiguration =	array(
+		$tempConfiguration = array(
 			'value' => array(
 				'descend' => array(
 					'data' => array(
@@ -121,7 +121,6 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 				'text' => $childNode->getProperty('title')
 
 			);
-
 		}
 		$this->view->setConfiguration($tempConfiguration);
 		$this->view->assign('value',
@@ -184,7 +183,12 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function deleteAction(\F3\TYPO3CR\Domain\Model\Node $node) {
 		$node->remove();
-		$this->view->assign('value', array('data' => '', 'success' => TRUE));
+		$nextUri = $this->controllerContext->getUriBuilder()
+			->reset()
+			->setFormat('html')
+			->setCreateAbsoluteUri(TRUE)
+			->uriFor('show', array('node' => $node->getParent(), 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
+		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 }
 ?>

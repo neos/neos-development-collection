@@ -68,6 +68,16 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	},
 
 	/**
+	 * Load the uri in the iFrame
+	 *
+	 * @param {String} uri
+	 * @return {void}
+	 */
+	loadPage: function(uri) {
+		this._getIframeDocument().location.assign(uri);
+	},
+
+	/**
 	 * Reload the iFrame content
 	 *
 	 * @return {void}

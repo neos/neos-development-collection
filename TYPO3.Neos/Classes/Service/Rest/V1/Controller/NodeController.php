@@ -116,10 +116,11 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function deleteAction(\F3\TYPO3CR\Domain\Model\Node $node) {
 		$node->remove();
-		$this->forward('show', NULL, NULL, array('node' => $node));
+		$this->redirect('show', NULL, NULL, array('node' => $node->getParent()));
 	}
 
 }

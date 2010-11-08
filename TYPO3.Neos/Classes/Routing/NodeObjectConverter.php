@@ -66,13 +66,12 @@ class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface
 			return FALSE;
 		}
 
-		$pathSegments = explode('/', $source['__context']['nodePath']);
+		$pathSegments = explode('/', ltrim($source['__context']['nodePath'], '/'));
 
 		if (count($pathSegments) < 3) {
 			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the context path was invalid.', 1285162903);
 		}
 
-		$workspaceName = array_shift($pathSegments);
 		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $source['__context']['workspaceName']);
 		$workspace = $contentContext->getWorkspace();
 		if (!$workspace) {

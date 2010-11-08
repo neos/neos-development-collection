@@ -73,20 +73,13 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 * Action when succes on button click action
 	 * remove the dialog and refresh frontend editor
 	 *
+	 * @param {} response
 	 * @return {void}
 	 */
-	_onOkButtonClickActionSuccess: function() {
+	_onOkButtonClickActionSuccess: function(response) {
 		this.moduleMenu.removeModuleDialog();
-		F3.TYPO3.Core.Application.fireEvent('F3.TYPO3.Content.contentChanged', '###pageId###');
-	},
-
-	/**
-	 * refresh the frontend editor
-	 *
-	 *  @return {void}
-	 */
-	_refreshFrontendEditor: function() {
-		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').reload();
+		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
 	}
+
 });
 Ext.reg('F3.TYPO3.Content.Edit.DeletePageDialog', F3.TYPO3.Content.Edit.DeletePageDialog);
