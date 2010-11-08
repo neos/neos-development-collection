@@ -88,7 +88,7 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 
 		this.panel.getBubbleTarget = function() {
 			return this.ownerCt.moduleDialog;
-		};			
+		};
 	},
 
 	/**

@@ -60,14 +60,17 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 		this.on('actioncomplete', this._onFormActionComplete, this);
 		this.on('actionfailed', this._onFormActionComplete, this);
 
-		this.on('render', this._onRenderLoad, this);
+		this.on('render', this.onRenderLoad, this);
 	},
 
 	/**
+	 * Load initial values for the form on render event.
+	 *
+	 * Override this method to implement custom form load logic.
+	 *
 	 * @return {void}
-	 * @private
 	 */
-	_onRenderLoad: function() {
+	onRenderLoad: function() {
 		this.getForm().load({
 			params: this.getLoadIdentifier(),
 			success: this._loadValues,
@@ -76,14 +79,13 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	},
 
 	/**
-	 * TODO: Document
+	 * Fill the form with the loaded data
 	 *
 	 * @param {...} form
 	 * @param {...} action
 	 * @return {void}
 	 * @private
 	 */
-
 	_loadValues: function(form, action) {
 		var data, convertedData;
 
