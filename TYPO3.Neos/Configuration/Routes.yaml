@@ -2,8 +2,6 @@
 # Default subroutes configuration for the TYPO3 package                  #
 #                                                                        #
 
-# $Id$
-
 ##
 # Backend
 
@@ -39,6 +37,23 @@
     '@action':     'index'
 
 ##
+# REST services
+
+-
+  name:          'REST Service: Node actions'
+
+  # Example URL: http://myhost/typo3/service/v1/content/live/sites/phoenix.demo.typo3.org/homepage
+
+  uriPattern:    'typo3/service/rest/v1/node/{node}'
+  defaults:
+    '@package':    'TYPO3'
+    '@subpackage': 'Service\Rest\V1'
+    '@controller': 'Node'
+  routeParts:
+    node:
+      handler:    F3\TYPO3\Routing\NodeServiceRoutePartHandler
+
+##
 # Frontend
 
 -
@@ -46,6 +61,7 @@
   uriPattern:    '{node}.html/{type}'
   defaults:
     '@package':    'TYPO3'
+    '@subpackage': 'Service\Rest\V1'
     '@controller': 'Node'
     '@format':     'html'
     '@action':     'show'
@@ -58,6 +74,7 @@
   uriPattern:    '{node}.html'
   defaults:
     '@package':    'TYPO3'
+    '@subpackage': 'Service\Rest\V1'
     '@controller': 'Node'
     '@format':     'html'
     '@action':     'show'
@@ -70,28 +87,13 @@
   uriPattern:    '({node})'
   defaults:
     '@package':    'TYPO3'
+    '@subpackage': 'Service\Rest\V1'
     '@controller': 'Node'
     '@format':     'html'
     '@action':     'show'
   routeParts:
     node:
       handler:    F3\TYPO3\Routing\NodeRoutePartHandler
-
-##
-# Content Repository services
-
--
-  name:          'Frontend content with format'
-
-  # Example URL: http://myhost/typo3/service/v1/content/live/sites/phoenix.demo.typo3.org/homepage.json
-
-  uriPattern:    'typo3/service/v1/content/{node}.{@format}'
-  defaults:
-    '@package':    'TYPO3'
-    '@controller': 'Node'
-  routeParts:
-    node:
-      handler:    F3\TYPO3\Routing\NodeServiceRoutePartHandler
 
 -
   name: 'Fallback rule – for when no site has been defined yet'

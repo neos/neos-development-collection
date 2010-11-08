@@ -73,6 +73,20 @@ class ErrorController extends \F3\FLOW3\MVC\Controller\ActionController implemen
 	}
 
 	/**
+	 * Catch all action forwarding to the indexAction.
+	 *
+	 * @param string $methodName Original method name
+	 * @param array $arguments Arguments
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __call($methodName, array $arguments) {
+		if (substr($methodName, -6, 6) !== 'Action') {
+			trigger_error('Tried to call unknown method "' . $methodName . '".', \E_USER_ERROR);
+		}
+		$this->forward('index');
+	}
+
+	/**
 	 * Prepares a view for the current action and stores it in $this->view.
 	 *
 	 * @return \F3\Fluid\View\ViewInterface the resolved view

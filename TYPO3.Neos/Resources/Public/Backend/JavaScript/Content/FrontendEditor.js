@@ -83,7 +83,7 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	 * @private
 	 */
 	_onContentChanged: function(data) {
-		F3.TYPO3_Controller_NodeController.update(data);
+		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data);
 	},
 
 	/**

@@ -86,12 +86,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 		registry.set('schema', {
 			"TYPO3:Page": {
 				service: {
-					show: 'F3.TYPO3_Controller_NodeController.show',
-					update: 'F3.TYPO3_Controller_NodeController.update',
-					create: 'F3.TYPO3_Controller_NodeController.create',
+					show: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.show',
+					update: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update',
+					create: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create',
 						// "delete" is a special case because it's a reserved keyword.
 						// Because of this, it needs to be quoted on the left side.
-					'delete': 'F3.TYPO3_Controller_NodeController.delete'
+					'delete': 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.delete'
 				},
 				properties: {
 					'nodeName': {

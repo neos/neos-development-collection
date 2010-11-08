@@ -49,7 +49,7 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 			return self::MATCHRESULT_INVALIDPATH;
 		}
 
-		$workspaceName = 'live';
+		$workspaceName = array_shift($pathSegments);
 		if ($this->contentContext === NULL) {
 			$this->contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName);
 		}
@@ -65,6 +65,7 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 		$siteNodeName = array_shift($pathSegments);
 
 		$site = $this->siteRepository->findOneByNodeName($siteNodeName);
+
 		if (!$site) {
 			return self::MATCHRESULT_NOSITE;
 		}
@@ -96,8 +97,7 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function findValueToMatch($requestPath) {
-		$dotPosition = strrpos($requestPath, '.');
-		return ($dotPosition === FALSE) ? $requestPath : substr($requestPath, 0, $dotPosition);
+		return $requestPath;
 	}
 
 	/**

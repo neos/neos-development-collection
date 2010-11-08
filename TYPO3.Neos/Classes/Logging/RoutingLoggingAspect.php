@@ -62,16 +62,16 @@ class RoutingLoggingAspect {
 				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because the path was not valid.', LOG_INFO);
 				break;
 			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOWORKSPACE :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no workspace was found.', LOG_WARNING);
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no workspace was found.', LOG_INFO);
 				break;
 			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSITE :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no site was found.', LOG_WARNING);
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no site was found.', LOG_INFO);
 				break;
 			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSITENODE :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match because no site node was found.', LOG_WARNING);
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match because no site node was found.', LOG_INFO);
 				break;
 			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSUCHNODE :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no such node was found.', LOG_WARNING);
+				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no such node was found.', LOG_INFO);
 				break;
 			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_FOUND :
 				$node = $joinPoint->getProxy()->FLOW3_AOP_Proxy_getProperty('value');

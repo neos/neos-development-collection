@@ -45,7 +45,7 @@ F3.TYPO3.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 				nodePath: currentNodePath
 			}
 		};
-		F3.TYPO3_Controller_NodeController.getChildNodes(context, 'TYPO3:Page', callback);
+		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(context, 'TYPO3:Page', callback);
 	},
 
 	/**
