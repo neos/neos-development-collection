@@ -5,7 +5,7 @@
 	<ul>
 		<f:for each="{items}" as="item">
 			<li class="{f:if(condition: item.state.active, then: 'active')}">
-				<f:link.action package="TYPO3" controller="Node" arguments="{node: item.node}">{item.label}</f:link.action>
+				<typo3:link.node node="{item.node}">{item.label}</typo3:link.node>
 				<f:if condition="{item.subItems}">
 					<f:render section="itemList" arguments="{items: item.subItems}" />
 				</f:if>
