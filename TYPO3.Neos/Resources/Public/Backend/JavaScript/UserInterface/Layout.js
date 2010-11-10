@@ -47,5 +47,18 @@ F3.TYPO3.UserInterface.Layout = Ext.extend(Ext.Viewport, {
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.UserInterface.Layout.superclass.initComponent.call(this);
+		this.on('afterrender', this._addWallpaper, this);
+	},
+
+	/**
+	 * Add the Wallpaper css class to the outer div of the viewport
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_addWallpaper: function() {
+		if (Ext.isDefined(this.layout.innerCt)) {
+			this.layout.innerCt.addClass('F3-TYPO3-Wallpaper');
+		}
 	}
 });

@@ -39,7 +39,7 @@ F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 				align: 'stretch'
 			},
 			border: false,
-			bodyStyle: 'background-color: #666666',
+			bodyCssClass: 'F3-TYPO3-UserInterface-TopBar-Wallpaper',
 			items: [{
 				height: 32,
 				xtype: 'container',
@@ -64,8 +64,8 @@ F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 					}, {
 						xtype: 'box',
 						id: 'F3-TYPO3-TopBar-Logo',
-						height: 32,
-						width: 200,
+						height: 34,
+						width: 113,
 						flex: 2
 					}]
 				}, {

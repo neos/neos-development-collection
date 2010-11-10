@@ -13,7 +13,12 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .x-tab-strip span.x-tab-strip-text {
 	font: 11px helvetica, arial, sans-serif;
 }
-
+.F3-TYPO3-Wallpaper {
+	background: url(../Images/Backgrounds/wallpaper.jpg) 50% top repeat-x;
+}
+.F3-TYPO3-UserInterface-TopBar-Wallpaper {
+	background: transparent;
+}
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-right,
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-left,
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-inner {
@@ -38,6 +43,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-moz-box-shadow: -1px 0px 6px #3F3F3F;
 	-webkit-box-shadow: -1px 0px 6px #3F3F3F;
 	margin-right: 3px;
+	opacity: 0.5;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li.x-tab-strip-active {
 	-webkit-border-radius: 4px 4px 0 0;
@@ -47,6 +53,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	background-color: #4c4c4c;
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#767676), to(#4c4c4c));
 	background: -moz-linear-gradient(top, #767676, #4b4b4b);
+	opacity: 1;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-active .x-tab-right {
 	margin-bottom:0;
@@ -75,7 +82,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header,
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-footer,
 .F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top{
-	background: #666666;
+	background: transparent;
 }
 .F3-TYPO3-UserInterface-BreadcrumbMenu-disabled .x-btn-text {
 	color: #999;
