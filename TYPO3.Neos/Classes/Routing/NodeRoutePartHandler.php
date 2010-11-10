@@ -92,14 +92,20 @@ class NodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @param string $requestPath The request path to be matched
 	 * @return string value to match, or an empty string if $requestPath is empty or split string was not found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function findValueToMatch($requestPath) {
-		$lastDotPosition = strrpos($requestPath, '.');
-		$lastSlashPosition = strrpos($requestPath, '/');
-		if ($lastDotPosition === FALSE || $lastSlashPosition === FALSE || $lastSlashPosition > $lastDotPosition) {
+		if (strpos($requestPath, '.') === FALSE) {
 			return $requestPath;
 		} else {
-			return substr($requestPath, 0, $lastDotPosition);
+			$splitRequestPath = explode('/', $requestPath);
+			$lastPart = array_pop($splitRequestPath);
+			$dotPosition = strpos($lastPart, '.');
+			if ($dotPosition !== FALSE) {
+				$lastPart = substr($lastPart, 0, $dotPosition);
+			}
+			array_push($splitRequestPath, $lastPart);
+			return implode('/', $splitRequestPath);
 		}
 	}
 
