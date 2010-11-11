@@ -85,6 +85,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	 * @param array $nodeData
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createAction(\F3\TYPO3CR\Domain\Model\Node $parentNode, array $nodeData) {
 		$newNode = $parentNode->createNode($nodeData['nodeName']);
@@ -93,27 +94,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 		foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
 			$newNode->setProperty($propertyName, $propertyValue);
 		}
-
-		switch ($this->request->getFormat()) {
-			case 'json' :
-				$this->view->setConfiguration(
-					array(
-						'value' => array(
-							'data' => array(
-								'only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
-								'descend' => array('properties' => array())
-							)
-						)
-					)
-				);
-				$this->view->assign('value',
-					array(
-						'data' => $newNode,
-						'success' => TRUE,
-					)
-				);
-			break;
-		}
+		$this->redirect('show', NULL, NULL, array('node' => $newNode), 0, 201);
 	}
 
 	/**
@@ -122,14 +103,11 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo the updateAction now implicitly saves the node, as the NodeObjectConverter does not clone the node right now. This is a hack, and needs to be cleaned up.
 	 */
 	public function updateAction(\F3\TYPO3CR\Domain\Model\Node $node) {
-		switch ($this->request->getFormat()) {
-			case 'json' :
-				$this->view->assign('value', array('data' => '', 'success' => TRUE));
-			break;
-		}
+		$this->redirect('show', NULL, NULL, array('node' => $node), 0, 200);
 	}
 
 	/**
