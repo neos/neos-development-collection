@@ -45,7 +45,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Shows the specified node
+	 * Returns the specified node
 	 *
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @return string View output for the specified node
@@ -64,6 +64,72 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			)
 		);
 		$this->view->assign('value', array('data' => $node, 'success' => TRUE));
+	}
+
+	/**
+	 * Returns the primary child node (if any) of the specified node
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @return string View output for the specified node
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
+	 */
+	public function getPrimaryChildNodeAction(\F3\TYPO3CR\Domain\Model\Node $node) {
+		$this->view->setConfiguration(
+			array(
+				'value' => array(
+					'data' => array(
+						'only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
+						'descend' => array('properties' => array())
+					)
+				)
+			)
+		);
+
+		$this->view->assign('value', array('data' => $node->getPrimaryChildNode(), 'success' => TRUE));
+	}
+
+	/**
+	 * Return child nodes of specified node
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param string $contentType
+	 * @return string A response string
+	 * @author Christian Müller <christian@kitsunet.de>
+	 * @extdirect
+	 */
+	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
+		$tempConfiguration =	array(
+			'value' => array(
+				'descend' => array(
+					'data' => array(
+						'descend' => array(
+						)
+					)
+				)
+			)
+		);
+		$data = array();
+
+		foreach ($node->getChildNodes($contentType) as $key => $childNode) {
+			$tempConfiguration['value']['descend']['data']['descend'][$key] = array(
+				'only' => array('path'),
+			);
+
+			$data[$key] = array(
+				'id' => $childNode->getPath(),
+				'text' => $childNode->getProperty('title')
+
+			);
+
+		}
+		$this->view->setConfiguration($tempConfiguration);
+		$this->view->assign('value',
+			array(
+				'data' => $data,
+				'success' => TRUE,
+			)
+		);
 	}
 
 	/**
@@ -119,50 +185,6 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function deleteAction(\F3\TYPO3CR\Domain\Model\Node $node) {
 		$node->remove();
 		$this->view->assign('value', array('data' => '', 'success' => TRUE));
-	}
-
-	/**
-	 * Return child nodes of specified node
-	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
-	 * @param string $contentType
-	 * @return string A response string
-	 * @author Christian Müller <christian@kitsunet.de>
-	 * @extdirect
-	 */
-	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
-		$childNodes = $node->getChildNodes($contentType);
-
-		$tempConfiguration =	array(
-			'value' => array(
-				'descend' => array(
-					'data' => array(
-						'descend' => array(
-						)
-					)
-				)
-			)
-		);
-		$tempData = array();
-		foreach ($childNodes as $key => $childNode) {
-			$tempConfiguration['value']['descend']['data']['descend'][$key] = array(
-				'only' => array('path'),
-			);
-
-			$tempData[$key] = array(
-				'id' => $childNode->getPath(),
-				'text' => $childNode->getProperty('title')
-
-			);
-
-		}
-		$this->view->setConfiguration($tempConfiguration);
-		$this->view->assign('value',
-			array(
-				'data' => $tempData,
-				'success' => TRUE,
-			)
-		);
 	}
 }
 ?>
