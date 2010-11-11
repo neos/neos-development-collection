@@ -15,44 +15,55 @@
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Backend/Media/Stylesheets/Login.css')}" />
 	</head>
 	<body>
-		<div id="site">
-			<div id="loginBox">
-				<h2>TYPO3</h2>
-				<f:form id="F3_TYPO3_Login_Screen" action="authenticate" >
-					<div class="loginContainer">
-						<f:flashMessages class="errorMessages" />
-						<div class="loginData">
-							<label class="username">User</label>
-							<input type="text" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" autofocus="autofocus" />
+		<div id="f3-typo3-login-site">
+		<h2 class="f3-typo3-version-information">Version 5.02.117</h2>
+			<div id="f3-typo3-login-wallpaper">
+				<div id="f3-typo3-login-box">
+				<!-- for grid-debugging <div class="grid"></div>-->
+					<h2 class="f3-typo3-login-domain"><strong>domain.org</strong> TYPO3 Login</h2>
+					<f:form id="f3-typo3-login-form" action="authenticate" >
+						<div class="f3-typo3-login-container">
+							<f:flashMessages class="errorMessages" />
+							<div class="f3-typo3-login-fields">
+								<label class="username">User</label>
+								<input type="text" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" autofocus="autofocus" />
+								<span class="f3-typo3-login-input-delete">x</span>
+							</div>
+							<div class="f3-typo3-login-fields">
+								<label class="password">Password</label>
+								<input class="active" type="password" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" tabindex="2" />
+								<span class="f3-typo3-login-input-delete">x</span>
+							</div>
+							<a class="f3-typo3-link-help" href="#">Forgot password?</a>
+							<div class="f3-typo3-login-actions">
+								<a href="#" id="f3-typo3-login-button" class="f3-typo3-login-button"><span>Login</span></a>
+								<a href="#" class="f3-typo3-openid-button"><span>OpenID Login</span></a>
+							</div>
 						</div>
-						<div class="loginData">
-							<label class="password">Password</label>
-							<input type="password" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" tabindex="2" />
-						</div>
-						<div class="loginActions">
-							<input value="Login" type="submit" tabindex="3" />
-						</div>
-					</div>
-				</f:form>
+						<span class="f3-typo3-login-lock"></span>
+					</f:form>
+				</div>
+			</div>
+			<div id="f3-typo3-login-footer">
+				<p>TYPO3 (Phoenix) – © 2006-2010 by Robert Lemke, Karsten Dambekalns, Sebastian Kurf&uuml;rst, Andreas F&ouml;rthner, Bastian Waidelich, Christopher Hlubek, Jens Hoffmann,
+					Nils Dehl, Berit Jensen, Christian M&uuml;ller, Rens Admiraal and more great guys from the TYPO3 community.
+					This is free software, licensed under GPL3 or higher. TYPO3 comes with MANY GREAT FEATURES but WITHOUT ANY WARRANTY.	See <a href="http://www.typo3.org">www.typo3.org</a> for more details.
+					Removing or obstructing the appearance of this notice is not nice and for the rest prohibited by law. Reading fineprint can damage your eyes.
+				</p>
 			</div>
 		</div>
-
-		<div id="F3-TYPO3-Login-Picture"><span></span></div>
-
-		<div id="footer">
-			<p>TYPO3 (Phoenix) – © 2006-2010 by Robert Lemke, Karsten Dambekalns, Sebastian Kurf&uuml;rst, Andreas F&ouml;rthner, Bastian Waidelich, Christopher Hlubek, Jens Hoffmann,
-				Nils Dehl, Berit Jensen, Christian M&uuml;ller, Rens Admiraal and more great guys from the TYPO3 community.
-				This is free software, licensed under GPL3 or higher. TYPO3 comes with MANY GREAT FEATURES but WITHOUT ANY WARRANTY.	See <a href="http://www.typo3.org">www.typo3.org</a> for more details.
-				Removing or obstructing the appearance of this notice is not nice and for the rest prohibited by law. Reading fineprint can damage your eyes.</p>
-		</div>
-
 		<ext:include theme="xtheme-gray" includeStylesheets="false" />
 		<script type="text/javascript">
 			Ext.onReady(function() {
 				if (Ext.select("input:focus").elements.length === 0) {
 					Ext.DomQuery.selectNode("input[autofocus]").focus();
 				}
+				Ext.get('f3-typo3-login-button').on('click', function(event) {
+					event.preventDefault();
+					Ext.get('f3-typo3-login-form').dom.submit();
+				});
 			});
+
 		</script>
 
 	</body>

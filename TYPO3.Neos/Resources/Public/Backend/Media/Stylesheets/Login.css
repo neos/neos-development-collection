@@ -1,170 +1,259 @@
 html {
-	min-height: 100%;
-	overflow: auto;
-	background: none;
-	font-size: 13px;
+  height: 100%;
+  overflow: auto;
+  background: none;
+  font-size: 13px;
 }
+
 body, table, form {
-	font-family: Verdana,Helvetica,Arial,sans-serif;
-	font-size: 13px;
-	color: #ffffff;
-	margin: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 0px;
-	text-align: center;
-	line-height: 1.5em;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  color: #ffffff;
+  margin: 0px;
+  padding: 0px;
+  line-height: 1.5em;
 }
+
 body {
-	background: #636363 -webkit-gradient(linear, left bottom, left top, color-stop(0.23, rgb(118,118,118)), color-stop(0.83, rgb(81,81,81)));
-	background: #636363 -moz-linear-gradient(center bottom, rgb(118,118,118) 23%, rgb(81,81,81) 83%);
-}
-a,
-a:visited,
-a:link {
-	text-decoration: underline;
-	color: #ffffff;
-}
-a:hover,
-a:focus,
-a:active {
-	text-decoration: none;
-}
-/*** LOGIN SCREEN ***/
-#F3_TYPO3_Login_Screen {
-	clear: both;
-}
-#loginBox {
-	margin: 3% auto 0;
-	width: 400px;
-}
-#loginBox h2 {
-	text-indent: -9999px;
-	background: url(../Images/Login/typo3-logo.png) left top no-repeat;
-	width: 183px;
-	height: 60px;
-	margin: 0 0 20px 0;
-	float: right;
-}
-#loginBox .loginContainer {
-	margin: 0px auto 0;
-	border: 1px solid #ffffff;
-	background: url(../Images/Login/bg_transparent-black.png) left top repeat;
-	padding: 20px;
-	text-align: left;
-	-webkit-box-shadow: #000000 2px 2px 15px;
-	-moz-box-shadow: #000000 2px 2px 15px;
-}
-#loginBox .loginData {
-	display: block;
-	clear: both;
-	margin: 0 0 10px 0;
-	position: relative;
-}
-#loginBox label.username,
-#loginBox label.password {
-	text-indent: -9999px;
-	width: 25px;
-	margin: 0 15px 0 0;
-	display: block;
-	float: left;
-	height: 30px;
-}
-#loginBox label.username {
-	background: url(../Images/Login/login_user.png) left 50% no-repeat;
-}
-#loginBox label.password {
-	background: url(../Images/Login/login_password.png) left 50% no-repeat;
-}
-#loginBox input[type=text],
-#loginBox input[type=password] {
-	background: #ffffff -webkit-gradient(linear, left bottom, left top, color-stop(0.62, rgb(255,252,255)), color-stop(0.95, rgb(146,146,146)));
-	background: -moz-linear-gradient(center bottom, rgb(255,252,255) 62%, rgb(146,146,146) 95%);
-	font-size: 146.5%;
-	font-weight: bold;
-	padding: 8px;
-	/*border: 2px solid #313942;*/
-	border: 0;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	width: 300px;
-}
-#loginBox input[type=submit] {
-	background: -webkit-gradient(linear, left bottom, left top, color-stop(0.62, rgb(228,228,228)), color-stop(0.95, rgb(253,253,253)));
-	background: -moz-linear-gradient(center bottom, rgb(228,228,228) 62%, rgb(253,253,253) 95%);
-	height: 30px;
-	width: 100px;
-	font-size: 146.5%;
-	font-weight: bold;
-	border: 0;
-	-moz-border-radius: 4px;
-	-webkit-border-radius: 4px;
-	margin: 0 0 0 40px;
-	cursor: pointer;
-}
-#loginBox a {
-	color: #ffffff;
-	text-align: right;
-	display: block;
-	margin: 4px 0 0 0;
-}
-#loginBox .loginActions a {
-	float: right;
-	margin: 10px 0 0 0;
-}
-#loginBox a:hover,
-#loginBox a:active,
-#loginBox a:focus {
-	text-decoration: none;
-}
-#loginBox .inputClear {
-	text-indent: -9999px;
-	position: absolute;
-	right: 5px;
-	top: 3px;
-	background: url(../Images/Login/icon_delete.gif) left top no-repeat;
-	width: 15px;
-	height: 13px;
-	margin: 0;
-}
-ul.errorMessages {
-	color: #aa0000;
-	text-shadow: 1px 1px 0px #000000;
-	margin-bottom: 15px;
-}
-/*** LOGIN PICTURE **/
-#F3-TYPO3-Login-Picture {
-	position: absolute;
-	bottom: 0px;
-	left: 0px;
-	z-index: -1;
-	width: 100%;
+  background: black url(../Images/Login/WallpaperRepeater.jpg) 25% top repeat-x;
+  height: 100%;
 }
 
-#F3-TYPO3-Login-Picture span {
-	background: url(../Images/Login/t35-team.png) left 50% no-repeat;
-	width: 700px;
-	height: 434px;
-	display: block;
-	margin: 0px auto 0;
+#f3-typo3-login-site {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: url(../Images/Login/FooterBg.png) 50% bottom repeat-x;
+  position: relative;
 }
 
-/*** FOOTER ***/
-#footer {
-	position: fixed;
-	width: 100%;
-	left: 0px;
-	bottom: 0px;
-	background: #636363 -webkit-gradient(linear, left bottom, left top, color-stop(0.23, #2d2d2d), color-stop(0.83, #5d5d5d));
-	background: #636363 -moz-linear-gradient(center bottom, #2d2d2d 23%, #5d5d5d 83%);
-	border: 0;
-	border-top: 1px solid #4a4a4a;
-	z-index: -1;
-	text-align: center;
+#f3-typo3-login-wallpaper {
+  width: 100%;
+  height: 100%;
+  background: url(../Images/Login/Wallpaper.png) 50% bottom no-repeat;
+  position: absolute;
+  bottom: 256px;
 }
-#footer p {
-	text-align: left;
-	font-size: 77%;
-	line-height: 1.2em;
-	padding: 10px 20px 10px 20px;
-	max-width: 930px;
-	margin: 0px auto 0;
+
+.f3-typo3-version-information {
+  font-size: 77%;
+  color: #535353;
+  background: url(../Images/TYPO3ApplicationLogo-50px.png) left top no-repeat;
+  padding: 44px 0 0 10px;
+  font-weight: normal;
+  min-width: 125px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+#f3-typo3-login-box {
+  width: 391px;
+  max-width: 428px;
+  height: 320px;
+  position: absolute;
+  bottom: -125px;
+  left: 50%;
+  margin-left: -214px;
+  padding: 20px 0 0 37px;
+  background: url(../Images/Login/LoginBoxBg.png) left top no-repeat;
+}
+#f3-typo3-login-box form {
+  margin: 1px;
+  padding: 17px 55px 17px 17px;
+  float: left;
+}
+#f3-typo3-login-box form .errorMessages {
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconError.png) 9px 50% no-repeat #5d0f0e;
+  position: absolute;
+  right: 55px;
+  top: 43px;
+  padding: 5px 5px 5px 37px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 1px solid #000000;
+}
+#f3-typo3-login-box form a.f3-typo3-link-help {
+  color: #9e9e9e;
+  text-shadow: black 0 -1px 0;
+  font-size: 88%;
+  float: right;
+  margin: -7px 0 10px 0;
+}
+#f3-typo3-login-box form .f3-typo3-login-fields {
+  clear: both;
+  margin: 0 0 10px 0;
+  position: relative;
+}
+#f3-typo3-login-box form .f3-typo3-login-fields label {
+  width: 75px;
+  display: block;
+  float: left;
+  font-size: 93%;
+  font-weight: normal;
+  font-family: Arial, sans-serif;
+  text-shadow: black 0 -1px 0;
+}
+#f3-typo3-login-box form .f3-typo3-login-fields input {
+  width: 235px;
+  height: 20px;
+  padding: 0 2px 0 2px;
+  color: #000000;
+  position: relative;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-box-shadow: 0 0 0 1px #9e9e9e, 0 0 0 2px #131313, 0 1px 0 2px rgba(88, 88, 88, 0.6);
+  -webkit-box-shadow: 0 0 0 1px #9e9e9e, 0 0 0 2px #131313, 0 1px 0 2px rgba(88, 88, 88, 0.6);
+  border: 1px solid #b6b6b6;
+  background: #c5c5c5;
+  font-size: 93%;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+#f3-typo3-login-box form .f3-typo3-login-fields input:active, #f3-typo3-login-box form .f3-typo3-login-fields input:focus {
+  -moz-box-shadow: 0 0 1px 1px #c7885b, 0 0 0 2px #131313, 0px 1px 0 2px rgba(88, 88, 88, 0.6);
+  outline: none 0px;
+  -webkit-box-shadow: 0 0 1px 1px #c7885b, 0 0 0 2px #131313, 0px 1px 0 2px rgba(88, 88, 88, 0.6);
+  border: 1px solid #ffd4b6;
+  background: #ffffff;
+}
+#f3-typo3-login-box form .f3-typo3-login-fields input:focus + .f3-typo3-login-input-delete {
+  opacity: 1;
+  border: 1px solid #b75858;
+  text-shadow: #ac6767 0 -1px 0;
+  -moz-box-shadow: 0 0 1px 1px #ddadad, 0 0 0 2px #f2dada;
+  -webkit-box-shadow: 0 0 1px 1px #ddadad, 0 0 0 2px #f2dada;
+}
+#f3-typo3-login-box form .f3-typo3-login-fields .f3-typo3-login-input-delete {
+  height: 12px;
+  width: 12px;
+  line-height: 12px;
+  position: absolute;
+  right: 5px;
+  top: 4px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.4);
+  display: block;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  font-family: Arial, sans-serif;
+  font-size: 88%;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  opacity: 0.5;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions {
+  clear: both;
+  padding: 20px 0 0 0;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button,
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button {
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #ff8700;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  height: 30px;
+  display: block;
+  padding-left: 48px;
+  margin-left: 10px;
+  border: 1px solid #000000;
+  display: block;
+  -moz-box-shadow: 0 1px 0 0 rgba(88, 88, 88, 0.6);
+  float: right;
+  text-decoration: none;
+  outline: 0;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button:hover,
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:hover {
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #ff9600;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button:hover span,
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:hover span {
+  background-color: #ff9600;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button:focus,
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:focus {
+  background: url(../Images/Login/ButtonBgLeftFocus.png) -1px 50% no-repeat, url(../Images/Login/IconShotdown.png) left top no-repeat #ff8700;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button:focus span,
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:focus span {
+  background: #ff8700 url(../Images/Login/ButtonBgRightFocus.png) right 50% no-repeat;
+  line-height: 32px;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button span,
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button span {
+  color: #ffffff;
+  background: #ff8700 url(../Images/Login/ButtonBgRight.png) right 50% no-repeat;
+  border: 0;
+  padding-right: 14px;
+  -moz-border-radius: 0 5px 5px 0;
+  -webkit-border-radius: 5px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 93%;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  text-shadow: #333333 0 -1px 0;
+  display: block;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button {
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #4f4f4f;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:hover, #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:focus {
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #4f4f4f;
+  cursor: default;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:hover span, #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:focus span {
+  background: #4f4f4f url(../Images/Login/ButtonBgRight.png) right 50% no-repeat;
+  line-height: 30px;
+  cursor: default;
+}
+#f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button span {
+  background: #4f4f4f url(../Images/Login/ButtonBgRight.png) right 50% no-repeat;
+  cursor: default;
+}
+#f3-typo3-login-box h2.f3-typo3-login-domain {
+  text-shadow: black 0 -1px 0;
+  margin: 12px 0 12px 15px;
+  font-family: Share-Regular, Arial, sans-serif;
+  font-size: 153.9%;
+  font-weight: normal;
+}
+#f3-typo3-login-box h2.f3-typo3-login-domain strong {
+  font-weight: bold;
+}
+
+.f3-typo3-login-lock {
+  position: absolute;
+  left: 38px;
+  bottom: 59px;
+  width: 76px;
+  height: 108px;
+  display: block;
+  background: url(../Images/Login/Lock.png) 50% 50% no-repeat;
+}
+
+#f3-typo3-login-footer {
+  width: 70%;
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  margin-left: -35%;
+  text-align: center;
+}
+#f3-typo3-login-footer p {
+  font-size: 77%;
+  color: #535353;
+  line-height: 1.3em;
+}
+#f3-typo3-login-footer a {
+  color: #535353;
+}
+
+.grid {
+  width: 100%;
+  height: 400px;
+  display: block;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  background: url(../Images/Login/PixelGrid.png) left top repeat;
 }
