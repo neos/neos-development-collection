@@ -23,89 +23,29 @@ namespace F3\TYPO3CR\Domain\Model;
  *                                                                        */
 
 /**
- * A Node
+ * A Proxy Node which behaves like a real Node but acts as a placeholder for nodes
+ * of other workspaces than the current workspace.
+ *
+ * This is used for realizing a copy-on-write / lazy cloning functionality.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
  * @scope prototype
  */
-class Node {
-
-	const SCAN_PATTERN_PATH = '/^\/|\/[a-zA-Z0-9][a-zA-Z0-9\-\/][a-zA-Z0-9]{0,254}$/';
+class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 
 	/**
-	 * Absolute path of this node
+	 * The original node this proxy refers to
 	 *
-	 * @var string
+	 * @var \F3\TYPO3CR\Domain\Model\Node
 	 */
-	protected $path;
+	protected $originalNode;
 
 	/**
-	 * Workspace this node is contained in
 	 *
-	 * @var \F3\TYPO3CR\Domain\Model\Workspace
+	 * @var \F3\TYPO3CR\Domain\Model\Node
 	 */
-	protected $workspace;
-
-	/**
-	 * Identifier of this node which is unique within its workspace
-	 *
-	 * @var string
-	 */
-	protected $identifier;
-
-	/**
-	 * Depth at which this node is located
-	 *
-	 * @var integer
-	 */
-	protected $depth;
-
-	/**
-	 * Index within the nodes with the same parent
-	 *
-	 * @var integer
-	 */
-	protected $index;
-
-	/**
-	 * Properties of this Node
-	 *
-	 * @var array
-	 */
-	protected $properties = array();
-
-	/**
-	 * An optional object which contains the content of this node
-	 *
-	 * @var object
-	 */
-	protected $contentObject;
-
-	/**
-	 * The content type of this node
-	 *
-	 * @var string
-	 */
-	protected $contentType = 'unstructured';
-
-	/**
-	 * @var \F3\TYPO3CR\Domain\Service\Context
-	 * @transient
-	 */
-	protected $context;
-
-	/**
-	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
-	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Service\ContentTypeManager
-	 */
-	protected $contentTypeManager;
+	protected $newNode;
 
 	/**
 	 * @inject
@@ -114,17 +54,29 @@ class Node {
 	protected $objectManager;
 
 	/**
-	 * Constructs this node
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
+	 * @var \F3\TYPO3CR\Domain\Service\Context
+	 * @transient
+	 */
+	protected $context;
+
+	/**
+	 * Constructs this proxy node
 	 *
-	 * @param string $path Absolute path of this node
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
-	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating Corresponding Nodes
+	 * @param \F3\TYPO3CR\Domain\Model\Node $originalNode
+	 * @autowiring off
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function  __construct($path, \F3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
-		$this->setPath($path);
-		$this->workspace = $workspace;
-		$this->identifier = ($identifier === NULL) ? \F3\FLOW3\Utility\Algorithms::generateUUID() : $identifier;
+	public function  __construct(\F3\TYPO3CR\Domain\Model\Node $originalNode) {
+		if ($originalNode instanceof \F3\TYPO3CR\Domain\Model\ProxyNode) {
+			throw new \InvalidArgumentException('The original node must not be a ProxyNode', 1289475179);
+		}
+		$this->originalNode = $originalNode;
 	}
 
 	/**
@@ -138,11 +90,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPath($path) {
-		if (!is_string($path) || !preg_match(self::SCAN_PATTERN_PATH, $path)) {
-			throw new \InvalidArgumentException('Invalid path: A path must be a valid string, be absolute (starting with a slash) and contain only the allowed characters.', 1284369857);
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
 		}
-		$this->path = $path;
-		$this->depth = ($path === '/') ? 0 : substr_count($path, '/');
+		$this->newNode->setPath($path);
 	}
 
 	/**
@@ -152,7 +103,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPath() {
-		return $this->path;
+		return (isset($this->newNode) ? $this->newNode->getPath() : $this->originalNode->getPath());
 	}
 
 	/**
@@ -163,7 +114,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDepth() {
-		return $this->depth;
+		return (isset($this->newNode) ? $this->newNode->getDepth() : $this->originalNode->getDepth());
 	}
 
 	/**
@@ -173,21 +124,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getName() {
-		return ($this->path === '/') ? '' : substr($this->path, strrpos($this->path, '/') + 1);
-	}
-
-	/**
-	 * Sets the workspace of this node.
-	 *
-	 * This method is only for internal use by the content repository. Changing
-	 * the workspace of a node manually may lead to unexpected behavior.
-	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$this->workspace = $workspace;
+		return (isset($this->newNode) ? $this->newNode->getName() : $this->originalNode->getName());
 	}
 
 	/**
@@ -197,7 +134,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWorkspace() {
-		return $this->workspace;
+		return (isset($this->newNode) ? $this->newNode->getWorkspace() : $this->originalNode->getWorkspace());
 	}
 
 	/**
@@ -207,7 +144,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIdentifier() {
-		return $this->identifier;
+		return $this->originalNode->getIdentifier();
 	}
 
 	/**
@@ -220,7 +157,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setIndex($index) {
-		$this->index = $index;
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->setIndex($index);
 	}
 
 	/**
@@ -231,7 +171,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIndex() {
-		return $this->index;
+		return (isset($this->newNode) ? $this->newNode->getIndex() : $this->originalNode->getIndex());
 	}
 
 	/**
@@ -241,12 +181,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParent() {
-		if ($this->path === '/') {
-			return NULL;
-		}
-		$parentNodePath = substr($this->path, 0, strrpos($this->path, '/'));
-		$parentNode = $this->nodeRepository->findOneByPath($parentNodePath, $this->context->getWorkspace());
-		return $this->treatNodeWithContext($parentNode);
+		return (isset($this->newNode) ? $this->newNode->getParent() : $this->originalNode->getParent());
 	}
 
 	/**
@@ -255,20 +190,12 @@ class Node {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo finish implementation
-	 * @todo make workspaces compliant
 	 */
 	public function moveBefore(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
-		if ($this->path === '/') {
-			throw new \F3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
 		}
-
-		$referenceNodePath = $referenceNode->getPath();
-		if (substr($this->path, 0, strrpos($this->path, '/')) !== substr($referenceNodePath, 0, strrpos($referenceNodePath, '/'))) {
-			throw new \F3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
-		}
-
-#		$rebalanceStartIndex = ($referenceNode->getIndex() < $this->index) ?
+		$this->newNode->moveBefore($referenceNode);
 	}
 
 	/**
@@ -283,13 +210,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperty($propertyName, $value) {
-		if (is_object($this->contentObject)) {
-			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObject, $propertyName)) {
-				\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->contentObject, $propertyName, $value);
-			}
-		} else {
-			$this->properties[$propertyName] = $value;
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
 		}
+		$this->newNode->setProperty($propertyName, $value);
 	}
 
 	/**
@@ -303,11 +227,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasProperty($propertyName) {
-		if (is_object($this->contentObject)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObject, $propertyName);
-		} else {
-			return isset($this->properties[$propertyName]);
-		}
+		return (isset($this->newNode) ? $this->newNode->hasProperty($propertyName) : $this->originalNode->hasProperty($propertyName));
 	}
 
 	/**
@@ -321,13 +241,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($propertyName) {
-		if (is_object($this->contentObject)) {
-			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObject, $propertyName)) {
-				return \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObject, $propertyName);
-			}
-		} else {
-			return isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
-		}
+		return (isset($this->newNode) ? $this->newNode->getProperty($propertyName) : $this->originalNode->getProperty($propertyName));
 	}
 
 	/**
@@ -340,11 +254,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties() {
-		if (is_object($this->contentObject)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->contentObject);
-		} else {
-			return $this->properties;
-		}
+		return (isset($this->newNode) ? $this->newNode->getProperties() : $this->originalNode->getProperties());
 	}
 
 	/**
@@ -354,11 +264,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyNames() {
-		if (is_object($this->contentObject)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObject);
-		} else {
-			return array_keys($this->properties);
-		}
+		return (isset($this->newNode) ? $this->newNode->getPropertyNames() : $this->originalNode->getPropertyNames());
 	}
 
 	/**
@@ -369,10 +275,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentObject($contentObject) {
-		if (!is_object($contentObject)) {
-			throw new \InvalidArgumentException('Argument must be an object, ' . \gettype($contentObject) . ' given.', 1283522467);
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
 		}
-		$this->contentObject = $contentObject;
+		$this->newNode->setContentObject($contentObject);
 	}
 
 	/**
@@ -382,7 +288,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentObject() {
-		return $this->contentObject;
+		return (isset($this->newNode) ? $this->newNode->getContentObject() : $this->originalNode->getContentObject());
 	}
 
 	/**
@@ -392,7 +298,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetContentObject() {
-		$this->contentObject = NULL;
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->unsetContentObject();
 	}
 
 	/**
@@ -403,10 +312,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentType($contentType) {
-		if (!$this->contentTypeManager->hasContentType($contentType)) {
-			throw new \F3\TYPO3CR\Exception\NodeException('Unknown content type "' . $contentType . '".', 1285519999);
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
 		}
-		$this->contentType = $contentType;
+		$this->newNode->setContentType($contentType);
 	}
 
 	/**
@@ -416,7 +325,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentType() {
-		return $this->contentType;
+		return (isset($this->newNode) ? $this->newNode->getContentType() : $this->originalNode->getContentType());
 	}
 
 	/**
@@ -427,16 +336,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createNode($name) {
-		$currentWorkspace = $this->context->getWorkspace();
-
-		$newPath = $this->path . ($this->path !== '/' ? '/' : '') . $name;
-		$newIndex = $this->nodeRepository->countByParentAndContentType($this->path, NULL, $currentWorkspace) + 1;
-
-		$newNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', $newPath, $currentWorkspace);
-		$newNode->setIndex($newIndex);
-
-		$this->nodeRepository->add($newNode);
-		return $this->treatNodeWithContext($newNode);
+		return (isset($this->newNode) ? $this->newNode->createNode($name) : $this->originalNode->createNode($name));
 	}
 
 	/**
@@ -447,12 +347,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
-		$normalizedPath = $this->normalizeRelativePath($path);
-		$node = $this->nodeRepository->findOneByPath($normalizedPath, $this->context->getWorkspace());
-		if (!$node) {
-			return NULL;
-		}
-		return $this->treatNodeWithContext($node);
+		return (isset($this->newNode) ? $this->newNode->getNode($path) : $this->originalNode->getNode($path));
 	}
 
 	/**
@@ -465,11 +360,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNode() {
-		$node = $this->nodeRepository->findFirstByParentAndContentType($this->path, NULL, $this->context->getWorkspace());
-		if (!$node) {
-			return NULL;
-		}
-		return $this->treatNodeWithContext($node);
+		return (isset($this->newNode) ? $this->newNode->getPrimaryChildNode() : $this->originalNode->getPrimaryChildNode());
 	}
 
 	/**
@@ -481,8 +372,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodes($contentType = NULL) {
-		$nodes = $this->nodeRepository->findByParentAndContentType($this->path, $contentType, $this->context->getWorkspace());
-		return $this->treatNodesWithContext($nodes);
+		return (isset($this->newNode) ? $this->newNode->getChildNodes($contentType) : $this->originalNode->getChildNodes($contentType));
 	}
 
 	/**
@@ -492,14 +382,11 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function remove() {
-		foreach ($this->getChildNodes() as $childNode) {
-			$childNode->remove();
-		}
-		$this->nodeRepository->remove($this);
+		throw new \F3\TYPO3CR\Exception\NodeException('Removing proxy nodes is not yet implemented.', 1289477576);
 	}
 
 	/**
-	 * Sets the context from which this node was acquired.
+	 * Sets the context from which this proxy node was acquired.
 	 *
 	 * This will be set by the context or other nodes while retrieving this node.
 	 * This method is only for internal use, don't mess with it.
@@ -510,10 +397,11 @@ class Node {
 	 */
 	public function setContext(\F3\TYPO3CR\Domain\Service\Context $context) {
 		$this->context = $context;
+		$this->originalNode->setContext($context);
 	}
 
 	/**
-	 * Returns the current context this node operates in.
+	 * Returns the current context this proxy node operates in.
 	 *
 	 * @return \F3\TYPO3CR\Domain\Service\Context
 	 * @author Robert Lemke <robert@typo3.org>
@@ -523,52 +411,27 @@ class Node {
 	}
 
 	/**
-	 * Normalizes the given relative path
+	 * Materializes the original node (of a different workspace) into the current
+	 * workspace.
 	 *
-	 * @param string $relativePath The unnormalized relative path
-	 * @return string The normalized absolute path
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Properly implement relative path support
 	 */
-	protected function normalizeRelativePath($relativePath) {
-		if ($relativePath === '.') {
-			return $this->path;
-		}
-		if ($relativePath === './') {
-			return $this->path . '/';
-		}
-		return $this->path . ($this->path !== '/' ? '/' : '') . $relativePath;
-	}
+	protected function cloneOriginalNode() {
+		$this->newNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', $this->originalNode->getPath(), $this->context->getWorkspace(), $this->originalNode->getIdentifier());
 
-	/**
-	 *
-	 * @param array $originalNodes
-	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function treatNodesWithContext(array $originalNodes) {
-		$proxyNodes = array();
-		foreach ($originalNodes as $index => $node) {
-			$proxyNodes[$index] = $this->treatNodeWithContext($node);
+		foreach ($this->originalNode->getProperties() as $propertyName => $propertyValue) {
+			$this->newNode->setProperty($propertyName, $propertyValue);
 		}
-		return $proxyNodes;
-	}
+		$this->newNode->setIndex($this->originalNode->getIndex());
+		$this->newNode->setContentType($this->originalNode->getContentType());
+		$contentObject = $this->originalNode->getContentObject();
+		if ($contentObject !== NULL) {
+			$this->newNode->setContentObject($contentObject);
+		}
+		$this->newNode->setContext($this->context);
 
-	/**
-	 *
-	 *
-	 * @param mixed $node
-	 * @return \F3\TYPO3CR\Domain\Model\Node
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function treatNodeWithContext($node) {
-		if ($node instanceof \F3\TYPO3CR\Domain\Model\Node) {
-			if ($node->getWorkspace() !== $this->context->getWorkspace()) {
-				$node = $this->objectManager->create('F3\TYPO3CR\Domain\Model\ProxyNode', $node);
-			}
-			$node->setContext($this->context);
-		}
-		return $node;
+		$this->nodeRepository->add($this->newNode);
 	}
 }
 

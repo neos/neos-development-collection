@@ -30,7 +30,10 @@ namespace F3\TYPO3CR\Domain\Repository;
 class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 
 	/**
-	 * Finds a node by its path and workspace
+	 * Finds a node by its path and workspace.
+	 *
+	 * If the node does not exist in the specified workspace, this function will
+	 * try to find one with the given path in one of the base workspaces (if any).
 	 *
 	 * Examples for valid paths:
 	 *
@@ -60,16 +63,25 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 		}
 
 		$depth = substr_count($path, '/');
-		$query = $this->createQuery();
-		$query->setOrderings(array('index' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
-		$query->matching(
-			$query->logicalAnd(
-				$query->equals('workspace', $workspace),
-				$query->equals('depth', $depth),
-				$query->like('path', $path)
-			)
-		);
-		return $query->execute()->getFirst();
+		while($workspace !== NULL) {
+			$query = $this->createQuery();
+			$query->setOrderings(array('index' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
+			$query->matching(
+				$query->logicalAnd(
+					$query->equals('workspace', $workspace),
+					$query->equals('depth', $depth),
+					$query->like('path', $path)
+				)
+			);
+
+			$node = $query->execute()->getFirst();
+			if ($node) {
+				return $node;
+			}
+			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		return NULL;
 	}
 
 	/**
@@ -80,6 +92,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @param integer $index Only nodes with an index higher than $index are returned
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return array<\F3\TYPO3\Domain\Model\Node> The nodes found
+	 * @todo Check for workspace compliance
 	 */
 	public function findByHigherIndex($parentPath, $index, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$query = $this->createQueryForFindByParentAndContentType($parentPath, NULL, $workspace);
@@ -96,6 +109,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return integer The number of nodes found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Check for workspace compliance
 	 */
 	public function countByParentAndContentType($parentPath, $contentType, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$result = $this->createQueryForFindByParentAndContentType($parentPath, $contentType, $workspace)->execute()->count();
@@ -118,8 +132,21 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findByParentAndContentType($parentPath, $contentType, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentType, $workspace);
-		return $query->execute()->toArray();
+		$foundNodes = array();
+
+		while ($workspace !== NULL) {
+			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentType, $workspace);
+			$nodesInThisWorkspace = $query->execute()->toArray();
+			foreach ($nodesInThisWorkspace as $node) {
+				if (!isset($foundNodes[$node->getIndex()])) {
+					$foundNodes[$node->getIndex()] = $node;
+				}
+			}
+			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		ksort($foundNodes);
+		return $foundNodes;
 	}
 
 	/**
@@ -130,6 +157,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \F3\TYPO3\Domain\Model\Node The node found or NULL
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Check for workspace compliance
 	 */
 	public function findFirstByParentAndContentType($parentPath, $contentType, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentType, $workspace);
@@ -139,6 +167,9 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	/**
 	 * Finds all nodes of the specified workspace lying on the path specified by
 	 * (and including) the given starting point and end point.
+	 *
+	 * If some node does not exist in the specified workspace, this function will
+	 * try to find a corresponding node in one of the base workspaces (if any).
 	 *
 	 * @param string $pathStartingPoint Absolute path specifying the starting point
 	 * @param string $pathEndPoint Absolute path specifying the end point
@@ -151,30 +182,45 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 			throw new \InvalidArgumentException('Invalid paths: path of starting point must first part of end point path.', 1284391181);
 		}
 
-		$query = $this->createQuery();
-
-		$pathConstraints = array();
-		$constraintPath = $pathStartingPoint;
+		$foundNodes = array();
 		$pathSegments = explode('/', substr($pathEndPoint, strlen($pathStartingPoint)));
 
-		foreach ($pathSegments as $pathSegment) {
-			$constraintPath .= $pathSegment;
-			$pathConstraints[] = $query->equals('path', $constraintPath);
-			$constraintPath .= '/';
-		}
-		$query->matching(
-			$query->logicalAnd(
-				$query->logicalOr($pathConstraints),
-				$query->equals('workspace', $workspace)
-			)
-		);
-		$query->setOrderings(array('depth' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
+		while($workspace !== NULL && count($foundNodes) < count($pathSegments)) {
+			$query = $this->createQuery();
+			$pathConstraints = array();
+			$constraintPath = $pathStartingPoint;
 
-		return $query->execute()->toArray();
+			foreach ($pathSegments as $pathSegment) {
+				$constraintPath .= $pathSegment;
+				$pathConstraints[] = $query->equals('path', $constraintPath);
+				$constraintPath .= '/';
+			}
+
+			$query->matching(
+				$query->logicalAnd(
+					$query->logicalOr($pathConstraints),
+					$query->equals('workspace', $workspace)
+				)
+			);
+
+			$nodesInThisWorkspace = $query->execute()->toArray();
+			foreach ($nodesInThisWorkspace as $node) {
+				if (!isset($foundNodes[$node->getDepth()])) {
+					$foundNodes[$node->getDepth()] = $node;
+				}
+			}
+			$workspace = $workspace->getBaseWorkspace();
+		}
+		ksort($foundNodes);
+		return (count($foundNodes) === count($pathSegments)) ? array_values($foundNodes) : array();
 	}
 
 	/**
-	 * Creates a query for finding a single node by its parent and (optionally) by its content type
+	 * Creates a query for finding a single node by its parent and (optionally) by
+	 * its content type.
+	 *
+	 * Does not traverse base workspaces, returns ary query only matching nodes of
+	 * the given workspace.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $contentType Content type - or NULL

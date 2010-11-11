@@ -62,7 +62,7 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 
 	/**
 	 * Constructs this context.
-	 * 
+	 *
 	 * @param string $workspaceName
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -80,7 +80,7 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	}
 
 	/**
-	 * @param \F3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository 
+	 * @param \F3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -99,7 +99,7 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 
 	/**
 	 * Returns the current workspace.
-	 * 
+	 *
 	 * @return \F3\TYPO3CR\Domain\Model\Workspace
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -107,7 +107,11 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 		if ($this->workspace === NULL) {
 			$this->workspace = $this->workspaceRepository->findOneByName($this->workspaceName);
 			if (!$this->workspace) {
-				$this->workspace = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Workspace', $this->workspaceName);
+				$liveWorkspace = $this->workspaceRepository->findOneByName('live');
+				if (!$liveWorkspace) {
+					$liveWorkspace = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Workspace', 'live');
+				}
+				$this->workspace = ($this->workspaceName === 'live') ? $liveWorkspace : $this->objectManager->create('F3\TYPO3CR\Domain\Model\Workspace', $this->workspaceName, $liveWorkspace);
 			}
 			$this->workspace->setContext($this);
 		}

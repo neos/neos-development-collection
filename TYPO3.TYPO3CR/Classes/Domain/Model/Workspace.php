@@ -40,10 +40,10 @@ class Workspace {
 
 	/**
 	 * Workspace (if any) this workspace is based on.
-	 * 
+	 *
 	 * Content from the base workspace will shine through in this workspace
 	 * as long as they are not modified in this workspace.
-	 * 
+	 *
 	 * @var \F3\TYPO3CR\Domain\Model\Workspace
 	 */
 	protected $baseWorkspace;
@@ -60,6 +60,12 @@ class Workspace {
 	 * @transient
 	 */
 	protected $context;
+
+	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
 
 	/**
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
@@ -116,7 +122,7 @@ class Workspace {
 
 	/**
 	 * Returns the base workspace, if any
-	 * 
+	 *
 	 * @return \F3\TYPO3CR\Domain\Model\Workspace
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -154,12 +160,45 @@ class Workspace {
 
 	/**
 	 * Returns the current context this workspace operates in.
-	 * 
+	 *
 	 * @return \F3\TYPO3CR\Domain\Service\Context
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContext() {
 		return $this->context;
+	}
+
+	/**
+	 * Publishes the content of this workspace to another workspace.
+	 *
+	 * The specified workspace must be a base workspace of this workspace.
+	 *
+	 * @param string $targetWorkspaceName Name of the workspace to publish to
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function publish($targetWorkspaceName) {
+		$targetWorkspace = $this->baseWorkspace;
+		while ($targetWorkspaceName !== $targetWorkspace->getName()) {
+			$targetWorkspace = $targetWorkspace->getBaseWorkspace();
+			if ($targetWorkspace === NULL) {
+				throw new \F3\TYPO3CR\Exception\WorkspaceException('The specified workspace "' . $targetWorkspaceName . ' is not a base workspace of "' . $this->name . '".', 1289499117);
+			}
+		}
+
+		$logger = $this->objectManager->get('F3\FLOW3\Log\SystemLoggerInterface');
+		$sourceNodes = $this->nodeRepository->findByWorkspace($this);
+		foreach ($sourceNodes as $sourceNode) {
+			if ($sourceNode->getPath() !== '/') {
+				$targetNode = $this->nodeRepository->findOneByPath($sourceNode->getPath(), $targetWorkspace);
+				if ($targetNode !== NULL) {
+					$this->nodeRepository->remove($targetNode);
+				}
+				$logger->log('Published node ' . $sourceNode->getPath() . ' to workspace ' . $targetWorkspace->getName());
+				$sourceNode->setWorkspace($targetWorkspace);
+			}
+		}
+
 	}
 }
 
