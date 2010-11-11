@@ -71,14 +71,15 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 					return context;
 				},
 				/**
-				 * Action when succes on button click action
-				 * remove the dialog and refresh frontend editor
+				 * Action when success on button click action
+				 * remove the dialog and load new page in frontend editor
 				 *
+				 * @param {} response
 				 * @return {void}
 				 */
-				_onOkButtonClickActionSuccess: function() {
+				_onOkButtonClickActionSuccess: function(response) {
 					this.ownerCt.moduleMenu.removeModuleDialog();
-					F3.TYPO3.Core.Application.fireEvent('F3.TYPO3.Content.contentChanged');
+					Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
 				}
 			}
 		);
@@ -86,7 +87,6 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 		F3.TYPO3.Content.Edit.CreatePageDialog.superclass.initComponent.call(this);
 
 		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this._onButtonClick, this);
-		F3.TYPO3.Core.Application.on('F3.TYPO3.Content.contentChanged', this._refreshFrontendEditor, this);
 	},
 
 	/**
@@ -99,15 +99,6 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 		if (button.itemId == 'okButton') {
 			this.form.doSubmitForm();
 		}
-	},
-
-	/**
-	 * refresh the frontend editor
-	 *
-	 * @private
-	 */
-	_refreshFrontendEditor: function() {
-		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').reload();
 	}
 });
 Ext.reg('F3.TYPO3.Content.Edit.CreatePageDialog', F3.TYPO3.Content.Edit.CreatePageDialog);

@@ -138,6 +138,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param array $nodeData
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @extdirect
 	 */
 	public function createAction(\F3\TYPO3CR\Domain\Model\Node $parentNode, array $nodeData) {
@@ -147,17 +148,12 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$newNode->setProperty($propertyName, $propertyValue);
 		}
 
-		$this->view->setConfiguration(
-			array(
-				'value' => array(
-					'data' => array(
-						'only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
-						'descend' => array('properties' => array())
-					)
-				)
-			)
-		);
-		$this->view->assign('value', array('data' => $newNode, 'success' => TRUE));
+		$nextUri = $this->controllerContext->getUriBuilder()
+			->reset()
+			->setFormat('html')
+			->setCreateAbsoluteUri(TRUE)
+			->uriFor('show', array('node' => $newNode, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
+		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
 	/**
