@@ -38,9 +38,11 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 		var uri, config;
 
 		uri =
-			Ext.util.Cookies.get('TYPO3_lastVisitedFrontendUri') ?
-			Ext.util.Cookies.get('TYPO3_lastVisitedFrontendUri') :
-			F3.TYPO3.Configuration.Application.frontendBaseUri;
+			F3.TYPO3.Configuration.Application.backendBaseUri +
+			"service/rest/v1/node/" +
+			F3.TYPO3.Configuration.Application.workspaceName +
+			Ext.util.Cookies.get('TYPO3_lastVisitedNode') +
+			".html";
 
 		config = {
 			border: false,

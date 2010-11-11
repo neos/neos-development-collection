@@ -9,6 +9,7 @@ Ext.ns("F3.TYPO3.Login");
  * @singleton
  */
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.Login.LoginModule', {
+
 	/**
 	 * Get login status after boostrap and handle logout event
 	 *

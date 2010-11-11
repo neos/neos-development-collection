@@ -65,10 +65,10 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 		$siteNodeName = array_shift($pathSegments);
 
 		$site = $this->siteRepository->findOneByNodeName($siteNodeName);
-
 		if (!$site) {
 			return self::MATCHRESULT_NOSITE;
 		}
+
 		$this->contentContext->setCurrentSite($site);
 
 		$siteNode = $this->contentContext->getCurrentSiteNode();

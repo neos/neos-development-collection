@@ -45,6 +45,14 @@ F3.TYPO3.UserInterface.LoginStatus = Ext.extend(Ext.Container, {
 					id: 'F3-TYPO3-TopBar-StatusText'
 				}, {
 					xtype: 'F3.TYPO3.Components.Button',
+					itemId: 'publishWorkspaceButton',
+					text: 'Publish',
+					handler: function() {
+						F3.TYPO3.Login.Service.publishWorkspace();
+					},
+					scope: this
+				}, {
+					xtype: 'F3.TYPO3.Components.Button',
 					itemId: 'logoutButton',
 					text: 'Logout',
 					handler: function() {

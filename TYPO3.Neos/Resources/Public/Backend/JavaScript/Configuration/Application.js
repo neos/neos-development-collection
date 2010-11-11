@@ -22,7 +22,7 @@ Ext.ns('F3.TYPO3.Configuration');
 
 /**
  * @class F3.TYPO3.Configuration.Application
- * 
+ *
  * This object contains the configuration for the main TYPO3 application.
  *
  * @namespace F3.TYPO3.Configuration
@@ -30,6 +30,7 @@ Ext.ns('F3.TYPO3.Configuration');
  * @singleton
  */
 F3.TYPO3.Configuration.Application = {
+
 	/**
 	 * This setting is extracted from the base-Tag of the
 	 * current page, and a "typo3/" appended to it. This happens in
@@ -51,5 +52,20 @@ F3.TYPO3.Configuration.Application = {
 	 *
 	 * @type {String}
 	 */
-	frontendBaseUri: null
+	frontendBaseUri: null,
+
+	/**
+	 * Name of the workspace of the currently logged in user.
+	 *
+	 * This setting is set by a small script in the Backend
+	 * Fluid template and is used by the FrontendEditor.
+	 *
+	 * Don't use or rely on it yet, as this solution still
+	 * is to be discussed.
+	 *
+	 * @todo
+	 * @type {String}
+	 */
+	workspaceName: null
+
 }

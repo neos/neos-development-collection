@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Controller\Backend;
+namespace F3\TYPO3\Service\ExtDirect\V1\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,26 +23,32 @@ namespace F3\TYPO3\Controller\Backend;
  *                                                                        */
 
 /**
- * The TYPO3 Backend controller
+ * ExtDirect Controller for managing Workspaces
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
+class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\Security\Context
+	 * @var string
 	 */
-	protected $securityContext;
+	protected $viewObjectNamePattern = 'F3\ExtJS\ExtDirect\View';
 
 	/**
-	 * Default action of the backend controller.
+	 * Publishes the given sourceWorkspace to the specified targetWorkspace
 	 *
-	 * @return string
+	 * @param string $sourceWorkspaceName
+	 * @param string $targetWorkspaceName
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
 	 */
-	public function indexAction() {
-		$this->view->assign('workspaceName', 'user-' . $this->securityContext->getAccount()->getAccountIdentifier());
+	public function publishAction($sourceWorkspaceName, $targetWorkspaceName) {
+		$sourceWorkspace = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $sourceWorkspaceName)->getWorkspace();
+		$sourceWorkspace->publish($targetWorkspaceName);
+
+		$this->view->assign('value', array('data' => '', 'success' => TRUE));
 	}
+
 }
 ?>

@@ -11,6 +11,14 @@ Ext.ns("F3.TYPO3.Login");
  */
 F3.TYPO3.Login.Service = Ext.apply(new Ext.util.Observable, {
 	/**
+	 * Publishes the current user workspace
+	 *
+	 * @return {void}
+	 */
+	publishWorkspace: function() {
+		F3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publish(F3.TYPO3.Configuration.Application.workspaceName, 'live');
+	},
+	/**
 	 * Logout the current user
 	 *
 	 * @return {void}
