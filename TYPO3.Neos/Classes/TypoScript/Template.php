@@ -76,6 +76,24 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	}
 
 	/**
+	 * Injects a fresh rendering context
+	 *
+	 * @param \F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setRenderingContext(\F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
+		if (!$renderingContext instanceof \F3\TypoScript\RenderingContext) {
+			throw new \InvalidArgumentException(__CLASS__ . ' requires a TypoScript Rendering Context to be injected, but got a ' . get_class($renderingContext). '.', 1289556151);
+		}
+
+		$viewHelperVariableContainer = $renderingContext->getViewHelperVariableContainer();
+		$contentContext = $renderingContext->getContentContext();
+		$viewHelperVariableContainer->addOrUpdate('F3\\TYPO3', 'contentContext', $contentContext);
+		parent::setRenderingContext($renderingContext);
+	}
+
+	/**
 	 * Dummy method, not used
 	 *
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node

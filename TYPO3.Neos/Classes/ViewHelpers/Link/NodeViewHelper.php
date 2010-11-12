@@ -77,8 +77,26 @@ class NodeViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelpe
 	 * @return string The rendered link
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function render($node, $format = 'html', $service = 'Frontend', $absolute = FALSE) {
+	public function render($node = NULL, $format = NULL, $service = NULL, $absolute = FALSE) {
 		$uriBuilder = $this->controllerContext->getUriBuilder();
+		$request = $this->controllerContext->getRequest();
+
+		if ($node === NULL) {
+			$contentContext = $this->viewHelperVariableContainer->get('F3\TYPO3', 'contentContext');
+			if (!$contentContext instanceof \F3\TYPO3\Domain\Service\ContentContext) {
+				throw new \F3\TYPO3\Exception(__CLASS__ . ' requires a valid ContentContext delivered through the View Helper Variable Container.', 1289557401);
+			}
+			$node = $contentContext->getCurrentNode();
+		}
+
+		if ($format === NULL) {
+			$format = $request->getFormat();
+		}
+
+		if ($service === NULL && $request->hasArgument('service')) {
+			$service = $request->getArgument('service');
+		}
+
 		$uri = $uriBuilder
 			->reset()
 			->setCreateAbsoluteUri($absolute)

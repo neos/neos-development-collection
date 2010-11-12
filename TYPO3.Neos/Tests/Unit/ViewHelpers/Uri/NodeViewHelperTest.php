@@ -44,21 +44,56 @@ class NodeViewHelperTest extends \F3\Testing\BaseTestCase {
 		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
 		$this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
-		$this->viewHelper = $this->getAccessibleMock('F3\TYPO3\ViewHelpers\Uri\NodeViewHelper', array('dummy'));
+		$this->tagBuilder = $this->getMock('F3\Fluid\Core\ViewHelper\TagBuilder');
+		$this->viewHelperVariableContainer = $this->getMock('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer', array(), array(), '', FALSE);
+		$this->viewHelper = $this->getAccessibleMock('F3\TYPO3\ViewHelpers\Link\NodeViewHelper', array('renderChildren'));
 		$this->viewHelper->setControllerContext($this->controllerContext);
+		$this->viewHelper->injectTagBuilder($this->tagBuilder);
+		$this->viewHelper->setViewHelperVariableContainer($this->viewHelperVariableContainer);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function renderWithoutNodeGeneratesUriToCurrentNode() {
+		$currentNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+
+		$context = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$context->expects($this->once())->method('getCurrentNode')->will($this->returnValue($currentNode));
+
+		$this->request->expects($this->once())->method('hasArgument')->with('service')->will($this->returnValue(TRUE));
+		$this->request->expects($this->once())->method('getArgument')->with('service')->will($this->returnValue('REST'));
+		$this->request->expects($this->once())->method('getFormat')->will($this->returnValue('xml.rss'));
+
+		$this->viewHelperVariableContainer->expects($this->once())->method('get')->with('F3\TYPO3', 'contentContext')->will($this->returnValue($context));
+
+		$this->uriBuilder->expects($this->once())->method('reset')->will($this->returnValue($this->uriBuilder));
+		$this->uriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(FALSE)->will($this->returnValue($this->uriBuilder));
+		$this->uriBuilder->expects($this->once())->method('setFormat')->with('xml.rss')->will($this->returnValue($this->uriBuilder));
+		$this->uriBuilder->expects($this->once())->method('uriFor')->with(NULL, array('node' => $currentNode, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1')->will($this->returnValue('http://someuri/path'));
+
+		$this->tagBuilder->expects($this->once())->method('addAttribute')->with('href', 'http://someuri/path');
+		$this->tagBuilder->expects($this->once())->method('render')->will($this->returnValue('http://someuri/path'));
+
+		$output = $this->viewHelper->render();
+		$this->assertEquals('http://someuri/path', $output);
 	}
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function renderWithNodeGeneratesUriToHtmlFrontend() {
+	public function renderWithNodeGeneratesUriToGivenNode() {
 		$node = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
 
 		$this->uriBuilder->expects($this->once())->method('reset')->will($this->returnValue($this->uriBuilder));
 		$this->uriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(FALSE)->will($this->returnValue($this->uriBuilder));
-		$this->uriBuilder->expects($this->once())->method('setFormat')->with('html')->will($this->returnValue($this->uriBuilder));
-		$this->uriBuilder->expects($this->once())->method('uriFor')->with(NULL, array('node' => $node, 'service' => 'Frontend'), 'Node', 'TYPO3', 'Service\Rest\V1')->will($this->returnValue('http://someuri/path'));
+		$this->uriBuilder->expects($this->once())->method('setFormat')->with(NULL)->will($this->returnValue($this->uriBuilder));
+		$this->uriBuilder->expects($this->once())->method('uriFor')->with(NULL, array('node' => $node, 'service' => NULL), 'Node', 'TYPO3', 'Service\Rest\V1')->will($this->returnValue('http://someuri/path'));
+
+		$this->tagBuilder->expects($this->once())->method('addAttribute')->with('href', 'http://someuri/path');
+		$this->tagBuilder->expects($this->once())->method('render')->will($this->returnValue('http://someuri/path'));
 
 		$output = $this->viewHelper->render($node);
 		$this->assertEquals('http://someuri/path', $output);
