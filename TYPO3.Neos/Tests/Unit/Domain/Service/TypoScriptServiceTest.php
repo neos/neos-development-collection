@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Service;
+namespace F3\TYPO3\Tests\Unit\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
