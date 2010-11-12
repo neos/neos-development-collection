@@ -117,37 +117,13 @@ body {
   border: 1px solid #ffd4b6;
   background: #ffffff;
 }
-#f3-typo3-login-box form .f3-typo3-login-fields input:focus + .f3-typo3-login-input-delete {
-  opacity: 1;
-  border: 1px solid #b75858;
-  text-shadow: #ac6767 0 -1px 0;
-  -moz-box-shadow: 0 0 1px 1px #ddadad, 0 0 0 2px #f2dada;
-  -webkit-box-shadow: 0 0 1px 1px #ddadad, 0 0 0 2px #f2dada;
-}
-#f3-typo3-login-box form .f3-typo3-login-fields .f3-typo3-login-input-delete {
-  height: 12px;
-  width: 12px;
-  line-height: 12px;
-  position: absolute;
-  right: 5px;
-  top: 4px;
-  text-align: center;
-  color: rgba(0, 0, 0, 0.4);
-  display: block;
-  border: 1px solid rgba(0, 0, 0, 0.4);
-  font-family: Arial, sans-serif;
-  font-size: 88%;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  opacity: 0.5;
-}
 #f3-typo3-login-box form .f3-typo3-login-actions {
   clear: both;
   padding: 20px 0 0 0;
 }
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button,
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button {
-  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #ff8700;
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat #ff8700;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   height: 30px;
@@ -163,7 +139,7 @@ body {
 }
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button:hover,
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:hover {
-  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #ff9600;
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat #ff9600;
 }
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button:hover span,
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:hover span {
@@ -171,7 +147,7 @@ body {
 }
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button:focus,
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:focus {
-  background: url(../Images/Login/ButtonBgLeftFocus.png) -1px 50% no-repeat, url(../Images/Login/IconShotdown.png) left top no-repeat #ff8700;
+  background: url(../Images/Login/ButtonBgLeftFocus.png) -1px 50% no-repeat, url(../Images/Login/IconShutdown.png) left top no-repeat #ff8700;
 }
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-login-button:focus span,
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:focus span {
@@ -195,10 +171,10 @@ body {
   display: block;
 }
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button {
-  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #4f4f4f;
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat #4f4f4f;
 }
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:hover, #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:focus {
-  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #4f4f4f;
+  background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat #4f4f4f;
   cursor: default;
 }
 #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:hover span, #f3-typo3-login-box form .f3-typo3-login-actions .f3-typo3-openid-button:focus span {
