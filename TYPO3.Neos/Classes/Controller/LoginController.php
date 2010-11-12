@@ -25,7 +25,6 @@ namespace F3\TYPO3\Controller;
 /**
  * A controller which allows for logging into the backend
  *
- * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
@@ -47,6 +46,12 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @var \F3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
+
+	/**
+	 * @inject
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
 
 	/**
 	 * Select special views according to format
@@ -76,6 +81,9 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if ($this->accountRepository->countAll() === 0) {
 			$this->forward('noAccount', 'Backend\Setup');
 		}
+
+		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
+		$this->view->assign('version', $version);
 	}
 
 	/**
