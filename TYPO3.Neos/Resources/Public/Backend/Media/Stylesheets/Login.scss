@@ -248,13 +248,15 @@ body {
         }
       }
       .f3-typo3-openid-button {
-        background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat #4f4f4f;
+        background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconOpenId.png) left 50% no-repeat #4f4f4f;
+        opacity: 0.4;
         &:hover,
         &:focus {
-          background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat #4f4f4f;
+          background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconOpenId.png) left 50% no-repeat #4f4f4f;
           cursor: default;
           span {
             background: #4f4f4f url(../Images/Login/ButtonBgRight.png) right 50% no-repeat;
+            opacity: 0.4;
             line-height: 30px;
             cursor: default;
           }
