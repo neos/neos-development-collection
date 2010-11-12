@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TypoScript\Parser;
+namespace F3\TypoScript\Tests\Unit\Parser;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
