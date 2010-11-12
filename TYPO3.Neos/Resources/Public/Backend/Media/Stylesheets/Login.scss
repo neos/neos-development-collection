@@ -200,28 +200,6 @@ body {
         &:focus {
           @include input-txt-active;
         }
-        &:focus + .f3-typo3-login-input-delete {
-          opacity: 1;
-          border: 1px solid #b75858;
-          @include txt-shadow-red;
-          @include red-shadow;
-        }
-      }
-      .f3-typo3-login-input-delete {
-        height: 12px;
-        width: 12px;
-        line-height: 12px;
-        position: absolute;
-        right: 5px;
-        top: 4px;
-        text-align: center;
-        color: rgba(0, 0, 0, 0.4);
-        display: block;
-        border: 1px solid rgba(0, 0, 0, 0.4);
-        font-family: $font-family;
-        font-size: 88%;
-        @include rounded-corners-small;
-        opacity: 0.5;
       }
     }
     .f3-typo3-login-actions {
@@ -270,10 +248,10 @@ body {
         }
       }
       .f3-typo3-openid-button {
-        background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #4f4f4f;
+        background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat #4f4f4f;
         &:hover,
         &:focus {
-          background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShotdown.png) left 50% no-repeat #4f4f4f;
+          background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat #4f4f4f;
           cursor: default;
           span {
             background: #4f4f4f url(../Images/Login/ButtonBgRight.png) right 50% no-repeat;
