@@ -97,6 +97,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return string A response string
 	 * @author Christian Müller <christian@kitsunet.de>
 	 * @extdirect
+	 * @todo $childNode->getPrimaryChildNode() === NULL didn't work, check why. Use JsonView array handling as soon as available.
 	 */
 	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
 		$tempConfiguration = array(
@@ -112,13 +113,15 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$data = array();
 
 		foreach ($node->getChildNodes($contentType) as $key => $childNode) {
-			$tempConfiguration['value']['descend']['data']['descend'][$key] = array(
+			$tempConfiguration['value']['descend']['data']['descend'][] = array(
 				'only' => array('path'),
 			);
 
-			$data[$key] = array(
+			$data[] = array(
 				'id' => $childNode->getPath(),
-				'text' => $childNode->getProperty('title')
+				'text' => $childNode->getProperty('title'),
+				'leaf' => (count($childNode->getChildNodes()) === 0) ? TRUE : FALSE,
+				'cls' => 'folder'
 
 			);
 		}

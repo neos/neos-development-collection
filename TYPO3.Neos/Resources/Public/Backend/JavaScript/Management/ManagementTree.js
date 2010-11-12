@@ -40,7 +40,7 @@ F3.TYPO3.Management.ManagementTree = Ext.extend(Ext.tree.TreePanel, {
 				text: 'homepage',
 				draggable: false,
 				autoScroll: true,
-				id: '/sites/phoenix.demo.typo3.org'
+				id: '/sites/phoenixdemotypo3org/homepage'
 			},
 			loader: new F3.TYPO3.Management.Tree.TreeLoader()
 		};

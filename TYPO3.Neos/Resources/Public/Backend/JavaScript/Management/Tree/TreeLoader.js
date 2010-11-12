@@ -41,7 +41,7 @@ F3.TYPO3.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 	directFn: function(currentNodePath, callback) {
 		var context = {
 			'__context': {
-				workspaceName: 'live',
+				workspaceName: F3.TYPO3.Configuration.Application.workspaceName,
 				nodePath: currentNodePath
 			}
 		};
