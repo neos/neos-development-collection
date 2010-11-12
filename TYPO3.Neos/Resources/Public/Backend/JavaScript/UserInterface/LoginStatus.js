@@ -44,11 +44,15 @@ F3.TYPO3.UserInterface.LoginStatus = Ext.extend(Ext.Container, {
 					tpl: '<tpl for="name">{fullName}</tpl>',
 					id: 'F3-TYPO3-TopBar-StatusText'
 				}, {
+					width: 100,
 					xtype: 'F3.TYPO3.Components.Button',
 					itemId: 'publishWorkspaceButton',
-					text: 'Publish',
+					hidden: true,
+					text: 'Publish changes',
 					handler: function() {
 						F3.TYPO3.Login.Service.publishWorkspace();
+						this.getComponent('publishWorkspaceButton').disable();
+						this.getComponent('publishWorkspaceButton').setText('Publishing ...');
 					},
 					scope: this
 				}, {
@@ -72,6 +76,25 @@ F3.TYPO3.UserInterface.LoginStatus = Ext.extend(Ext.Container, {
 			this.getComponent('statusText').el.fadeIn();
 			this.doLayout();
 		}, this);
+
+		F3.TYPO3.Login.LoginModule.on('updatedWorkspaceStatus', function(status) {
+			if (status.nodeCount > 1 && this.getComponent('publishWorkspaceButton').disabled === false) {
+				this.getComponent('publishWorkspaceButton').show();
+				this.doLayout();
+			}
+		}, this);
+
+		var updateWorkspaceStatusTask = {
+			run: F3.TYPO3.Login.Service.getWorkspaceStatus,
+			interval: 7000
+		}
+		Ext.TaskMgr.start(updateWorkspaceStatusTask);
+
+		F3.TYPO3.Login.LoginModule.on('publishedWorkspace', function() {
+			this.getComponent('publishWorkspaceButton').hide();
+			this.getComponent('publishWorkspaceButton').setText('Publish changes');
+			this.getComponent('publishWorkspaceButton').enable();
+		}, this)
 	}
 
 });

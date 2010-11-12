@@ -35,6 +35,23 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $viewObjectNamePattern = 'F3\ExtJS\ExtDirect\View';
 
 	/**
+	 * Returns some status information about the given workspace
+	 *
+	 * @param string $workspaceName Name of the workspace
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
+	 */
+	public function getStatusAction($workspaceName) {
+		$workspace = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName)->getWorkspace();
+		$data = array(
+			'name' => $workspace->getName(),
+			'nodeCount' => $workspace->getNodeCount()
+		);
+		$this->view->assign('value', array('data' => $data, 'success => TRUE'));
+	}
+
+	/**
 	 * Publishes the given sourceWorkspace to the specified targetWorkspace
 	 *
 	 * @param string $sourceWorkspaceName
