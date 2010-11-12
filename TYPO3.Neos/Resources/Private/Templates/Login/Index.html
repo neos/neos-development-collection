@@ -59,6 +59,13 @@
 					event.preventDefault();
 					Ext.get('f3-typo3-login-form').dom.submit();
 				});
+				Ext.get('f3-typo3-login-form').on('keypress', function(event) {
+					if (event.keyCode == 13) {
+						event.preventDefault();
+						Ext.get('f3-typo3-login-form').dom.submit();
+					}
+
+				});
 			});
 
 		</script>
