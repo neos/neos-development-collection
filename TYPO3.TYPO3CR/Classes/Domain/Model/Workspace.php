@@ -68,8 +68,8 @@ class Workspace {
 	protected $nodeRepository;
 
 	/**
+	 * @inject
 	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 * @transient
 	 */
 	protected $objectManager;
 
@@ -83,15 +83,6 @@ class Workspace {
 	public function __construct($name, \F3\TYPO3CR\Domain\Model\Workspace $baseWorkspace = NULL) {
 		$this->name = $name;
 		$this->baseWorkspace = $baseWorkspace;
-	}
-
-	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -199,6 +190,25 @@ class Workspace {
 			}
 		}
 
+	}
+
+	/**
+	 * Returns the number of nodes in this workspace.
+	 *
+	 * If $includeBaseWorkspaces is enabled, also nodes of base workspaces are
+	 * taken into account. If it is disabled (default) then the number of nodes
+	 * is the actual number (+1) of changes related to its base workspaces.
+	 *
+	 * A node count of 1 with $includeBaseWorkspaces = FALSE means that no changes
+	 * are pending in this workspace because a workspace always contains at least
+	 * its Root Node.
+	 *
+	 * @param boolean $includeBaseWorkspaces If base workspaces should be taken into account
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getNodeCount($includeBaseWorkspaces = FALSE) {
+		return $this->nodeRepository->countByWorkspace($this, $includeBaseWorkspaces);
 	}
 }
 

@@ -123,6 +123,24 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	}
 
 	/**
+	 * Counts the number of nodes within the specified workspace
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param boolean $includeBaseWorkspaces If base workspaces should be taken into account
+	 * @return integer The number of nodes found
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function countByWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace, $includeBaseWorkspaces = FALSE) {
+		$query = $this->createQuery();
+		$nodeCount = $query->matching($query->equals('workspace', $workspace))->execute()->count();
+		while ($includeBaseWorkspaces === TRUE && ($workspace = $workspace->getBaseWorkspace()) !== NULL) {
+			$query = $this->createQuery();
+			$nodeCount += $query->matching($query->equals('workspace', $workspace))->execute()->count();
+		}
+		return $nodeCount;
+	}
+
+	/**
 	 * Finds nodes by its parent and (optionally) by its content type
 	 *
 	 * @param string $parentPath Absolute path of the parent node
