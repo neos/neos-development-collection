@@ -52,6 +52,9 @@ F3.TYPO3.UserInterface.LoginStatus = Ext.extend(Ext.Container, {
 					},
 					scope: this
 				}, {
+					xtype: 'box',
+					width: 18
+				}, {
 					xtype: 'F3.TYPO3.Components.Button',
 					itemId: 'logoutButton',
 					text: 'Logout',
