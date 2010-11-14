@@ -20,6 +20,7 @@
     '@package':    'TYPO3'
     '@controller': 'Login'
     '@action':     'logout'
+    '@format':     'html'
 -
   name:          'Setup'
   uriPattern:    'typo3/setup(/{@action})'
@@ -27,6 +28,7 @@
     '@package':    'TYPO3'
     '@controller': 'Backend\Setup'
     '@action':     'index'
+    '@format':     'html'
 
 -
   name:          'Backend Overview'
@@ -35,6 +37,7 @@
     '@package':    'TYPO3'
     '@controller': 'Backend\Backend'
     '@action':     'index'
+    '@format':     'html'
 
 ##
 # REST services
