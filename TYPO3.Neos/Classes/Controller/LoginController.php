@@ -130,10 +130,10 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 			case 'extdirect' :
 			case 'json' :
 				$this->view->setConfiguration(
-					array('value' =>
-						array(
+					array(
+						'value' => array(
 							'data' => array(
-								'descend' => array('name' => array())
+								'_descend' => array('name' => array())
 							)
 						)
 					)
