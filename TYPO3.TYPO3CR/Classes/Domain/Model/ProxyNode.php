@@ -382,7 +382,10 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function remove() {
-		throw new \F3\TYPO3CR\Exception\NodeException('Removing proxy nodes is not yet implemented.', 1289477576);
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->remove();
 	}
 
 	/**

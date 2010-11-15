@@ -185,8 +185,13 @@ class Workspace {
 				if ($targetNode !== NULL) {
 					$this->nodeRepository->remove($targetNode);
 				}
-				$logger->log('Published node ' . $sourceNode->getPath() . ' to workspace ' . $targetWorkspace->getName());
-				$sourceNode->setWorkspace($targetWorkspace);
+				if ($sourceNode->isRemoved() === FALSE) {
+					$sourceNode->setWorkspace($targetWorkspace);
+					$logger->log('publish(): replaced node ' . $sourceNode->getPath() . ' in workspace ' . $targetWorkspace->getName());
+				} else {
+					$this->nodeRepository->remove($sourceNode);
+					$logger->log('publish(): removed node ' . $sourceNode->getPath() . ' in workspace ' . $targetWorkspace->getName());
+				}
 			}
 		}
 
@@ -199,16 +204,15 @@ class Workspace {
 	 * taken into account. If it is disabled (default) then the number of nodes
 	 * is the actual number (+1) of changes related to its base workspaces.
 	 *
-	 * A node count of 1 with $includeBaseWorkspaces = FALSE means that no changes
-	 * are pending in this workspace because a workspace always contains at least
-	 * its Root Node.
+	 * A node count of 1 means that no changes are pending in this workspace
+	 * because a workspace always contains at least its Root Node.
 	 *
 	 * @param boolean $includeBaseWorkspaces If base workspaces should be taken into account
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getNodeCount($includeBaseWorkspaces = FALSE) {
-		return $this->nodeRepository->countByWorkspace($this, $includeBaseWorkspaces);
+	public function getNodeCount() {
+		return $this->nodeRepository->countByWorkspace($this);
 	}
 }
 

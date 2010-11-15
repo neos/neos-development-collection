@@ -90,6 +90,15 @@ class Node {
 	protected $contentType = 'unstructured';
 
 	/**
+	 * If this is a removed node. This flag can and is only used in workspaces
+	 * which do have a base workspace. In a bottom level workspace nodes are
+	 * really removed, in other workspaces, removal is realized by this flag.
+	 *
+	 * @var boolean
+	 */
+	protected $removed = FALSE;
+
+	/**
 	 * @var \F3\TYPO3CR\Domain\Service\Context
 	 * @transient
 	 */
@@ -495,7 +504,22 @@ class Node {
 		foreach ($this->getChildNodes() as $childNode) {
 			$childNode->remove();
 		}
-		$this->nodeRepository->remove($this);
+
+		if ($this->workspace->getBaseWorkspace() === NULL) {
+			$this->nodeRepository->remove($this);
+		} else {
+			$this->removed = TRUE;
+		}
+	}
+
+	/**
+	 * If this node is a removed node.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isRemoved() {
+		return $this->removed;
 	}
 
 	/**

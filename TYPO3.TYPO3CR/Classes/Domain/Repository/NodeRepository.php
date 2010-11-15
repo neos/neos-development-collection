@@ -76,7 +76,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 
 			$node = $query->execute()->getFirst();
 			if ($node) {
-				return $node;
+				return ($node->isRemoved() === FALSE) ? $node : NULL;
 			}
 			$workspace = $workspace->getBaseWorkspace();
 		}
@@ -125,23 +125,21 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	/**
 	 * Counts the number of nodes within the specified workspace
 	 *
+	 * Note: Also counts removed nodes
+	 *
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @param boolean $includeBaseWorkspaces If base workspaces should be taken into account
 	 * @return integer The number of nodes found
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function countByWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace, $includeBaseWorkspaces = FALSE) {
+	public function countByWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$query = $this->createQuery();
-		$nodeCount = $query->matching($query->equals('workspace', $workspace))->execute()->count();
-		while ($includeBaseWorkspaces === TRUE && ($workspace = $workspace->getBaseWorkspace()) !== NULL) {
-			$query = $this->createQuery();
-			$nodeCount += $query->matching($query->equals('workspace', $workspace))->execute()->count();
-		}
-		return $nodeCount;
+		return $query->matching($query->equals('workspace', $workspace))->execute()->count();
 	}
 
 	/**
-	 * Finds nodes by its parent and (optionally) by its content type
+	 * Finds nodes by its parent and (optionally) by its content type.
+	 *
+	 * Note: Filters out removed nodes.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $contentType Content type - or NULL
@@ -154,13 +152,19 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 
 		while ($workspace !== NULL) {
 			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentType, $workspace);
-			$nodesInThisWorkspace = $query->execute()->toArray();
-			foreach ($nodesInThisWorkspace as $node) {
+			$nodesFoundInThisWorkspace = $query->execute()->toArray();
+			foreach ($nodesFoundInThisWorkspace as $node) {
 				if (!isset($foundNodes[$node->getIndex()])) {
 					$foundNodes[$node->getIndex()] = $node;
 				}
 			}
 			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		foreach ($foundNodes as $index => $node) {
+			if ($node->isRemoved()) {
+				unset ($foundNodes[$index]);
+			}
 		}
 
 		ksort($foundNodes);
@@ -229,13 +233,19 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 			}
 			$workspace = $workspace->getBaseWorkspace();
 		}
+
+		foreach ($foundNodes as $index => $node) {
+			if ($node->isRemoved()) {
+				unset ($foundNodes[$index]);
+			}
+		}
+
 		ksort($foundNodes);
 		return (count($foundNodes) === count($pathSegments)) ? array_values($foundNodes) : array();
 	}
 
 	/**
-	 * Creates a query for finding a single node by its parent and (optionally) by
-	 * its content type.
+	 * Creates a query for findinnodes by its parent and (optionally) by its content type.
 	 *
 	 * Does not traverse base workspaces, returns ary query only matching nodes of
 	 * the given workspace.
