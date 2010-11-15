@@ -57,8 +57,8 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			array(
 				'value' => array(
 					'data' => array(
-						'only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
-						'descend' => array('properties' => array())
+						'_only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
+						'_descend' => array('properties' => array())
 					)
 				)
 			)
@@ -79,8 +79,8 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			array(
 				'value' => array(
 					'data' => array(
-						'only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
-						'descend' => array('properties' => array())
+						'_only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
+						'_descend' => array('properties' => array())
 					)
 				)
 			)
@@ -97,26 +97,11 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return string A response string
 	 * @author Christian Müller <christian@kitsunet.de>
 	 * @extdirect
-	 * @todo $childNode->getPrimaryChildNode() === NULL didn't work, check why. Use JsonView array handling as soon as available.
+	 * @todo $childNode->getPrimaryChildNode() === NULL didn't work, check why.
 	 */
 	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
-		$tempConfiguration = array(
-			'value' => array(
-				'descend' => array(
-					'data' => array(
-						'descend' => array(
-						)
-					)
-				)
-			)
-		);
 		$data = array();
-
 		foreach ($node->getChildNodes($contentType) as $key => $childNode) {
-			$tempConfiguration['value']['descend']['data']['descend'][] = array(
-				'only' => array('path'),
-			);
-
 			$data[] = array(
 				'id' => $childNode->getPath(),
 				'text' => $childNode->getProperty('title'),
@@ -125,7 +110,15 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 			);
 		}
-		$this->view->setConfiguration($tempConfiguration);
+		$this->view->setConfiguration(
+			array(
+				'value' => array(
+					'data' => array(
+						'_descendAll' => array()
+					)
+				)
+			)
+		);
 		$this->view->assign('value',
 			array(
 				'data' => $data,

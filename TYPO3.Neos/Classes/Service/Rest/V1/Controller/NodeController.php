@@ -68,8 +68,8 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 				$this->view->setConfiguration(
 					array(
 						'value' => array(
-							'only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
-							'descend' => array('properties' => array())
+							'_only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
+							'_descend' => array('properties' => array())
 						)
 					)
 				);
