@@ -82,13 +82,11 @@ F3.TYPO3.UserInterface.LoginStatus = Ext.extend(Ext.Container, {
 				this.getComponent('publishWorkspaceButton').show();
 				this.doLayout();
 			}
+			window.setTimeout(F3.TYPO3.Login.Service.getWorkspaceStatus, 5000);
 		}, this);
 
-		var updateWorkspaceStatusTask = {
-			run: F3.TYPO3.Login.Service.getWorkspaceStatus,
-			interval: 7000
-		}
-		Ext.TaskMgr.start(updateWorkspaceStatusTask);
+			// this should be bound to some event to be run as soon as the BE is ready...
+		window.setTimeout(F3.TYPO3.Login.Service.getWorkspaceStatus, 5000);
 
 		F3.TYPO3.Login.LoginModule.on('publishedWorkspace', function() {
 			this.getComponent('publishWorkspaceButton').hide();
