@@ -3,7 +3,7 @@
     <key>TYPO3</key>
     <title>TYPO3</title>
     <description>The next generation of the popular open-source CMS.</description>
-    <version>5.0.0 Sprint 5</version>
+    <version>5.0.0 Sprint 6</version>
     <state>Development</state>
     <categories>
         <category>Frontend</category>
