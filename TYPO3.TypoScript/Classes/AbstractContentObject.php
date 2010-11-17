@@ -51,12 +51,28 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	protected $presentationModelPropertyNames = array();
 
 	/**
+	 * @var \F3\FLOW3\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * The rendering context as passed to render()
-	 * 
+	 *
 	 * @transient
 	 * @var \F3\TypoScript\RenderingContext
 	 */
 	protected $renderingContext;
+
+	/**
+	 * Injects the system logger
+	 *
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
 
 	/**
 	 * Injects a fresh template
@@ -72,7 +88,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 
 	/**
 	 * Sets the rendering context
-	 * 
+	 *
 	 * @param \F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -113,25 +129,31 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	/**
 	 * Returns the rendered content of this content object
 	 *
+	 * Any exception thrown while preparing or rendering the template is caught,
+	 * logged and returned as an HTML comment.
+	 *
 	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Discuss how to expose the domain model for identity to the view
 	 */
 	public function render() {
-		$this->template->setRenderingContext($this->renderingContext);
+		try {
+			$this->template->setRenderingContext($this->renderingContext);
+			foreach ($this->presentationModelPropertyNames as $propertyName) {
+				$this->template->assign($propertyName, $this->getPropertyProcessingProxy($propertyName));
+			}
+			if ($this->node !== NULL) {
+				$this->template->assign('node', $this->node);
+			}
 
-		foreach ($this->presentationModelPropertyNames as $propertyName) {
-			$this->template->assign($propertyName, $this->getPropertyProcessingProxy($propertyName));
-		}
-		if ($this->node !== NULL) {
-			$this->template->assign('node', $this->node);
-		}
-
-		if (isset($this->propertyProcessorChains['_root'])) {
-			return $this->propertyProcessorChains['_root']->process($this->template->render());
-		} else {
-			return $this->template->render();
-		}
+			if (isset($this->propertyProcessorChains['_root'])) {
+				return $this->propertyProcessorChains['_root']->process($this->template->render());
+			} else {
+				return $this->template->render();
+			}
+		} catch (\Exception $exception) {
+			$this->systemLogger->logException(new \F3\TypoScript\Exception('Exception caught in ' . get_class($this) . '::render()', 1289997632, $exception));
+			return '<!-- Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details. -->';
+     	}
 	}
 
 	/**
@@ -141,11 +163,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __toString() {
-		try {
-			return $this->render();
-		} catch (\Exception $exception) {
-			return $exception->__toString();
-     	}
+		return $this->render();
 	}
 
 
