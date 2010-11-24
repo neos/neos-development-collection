@@ -68,7 +68,7 @@ class ContentType {
 	/**
 	 * Declares the super types this content type inherits from.
 	 *
-	 * @param array<\F3\TYPO3CR\Domain\Model\ContentType>
+	 * @param array<\F3\TYPO3CR\Domain\Model\ContentType> $types
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
