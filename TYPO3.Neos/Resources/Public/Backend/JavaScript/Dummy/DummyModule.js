@@ -38,21 +38,14 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
 	 */
 	configure: function(registry) {
 
-		registry.append('menu[main]', 'report', {
-			title: 'Report',
-			itemId: 'report'
-		});
-
-		registry.append('menu[main]', 'layout', {
-			title: 'Layout',
-			itemId: 'layout'
-		});
-
-		registry.append('menu[main]', 'system', {
-			title: 'System',
-			itemId: 'system'
-		});
-
+		/**
+		 * This is an exmple of how a module can be registered in the registry
+		 *
+		 * registry.append('menu[main]', 'report', {
+		 *	title: 'Report',
+		 *	itemId: 'report'
+		 * });
+		 */
 	},
 
 	/**
