@@ -104,11 +104,10 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.tree.TreePanel, {
 			menu,
 			1,
 			'',
-			'menu/main/content',
-			{
+			this.basePath, {
 				sectionId: '',
-				menuId:'mainMenu',
-				menuPath:''
+				menuId: 'mainMenu',
+				menuPath: ''
 			}
 		);
 	}

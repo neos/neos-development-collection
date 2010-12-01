@@ -81,7 +81,7 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 					ref: 'moduleMenu',
 					menuId: 'mainMenu',
 					itemId: menuItem.itemId,
-					basePath: 'menu/main/' + menuItem.key + '/children',
+					basePath: 'menu/main/' + menuItem.key,
 					menuConfig: menuItem.children,
 					flex: 0
 				}, {
