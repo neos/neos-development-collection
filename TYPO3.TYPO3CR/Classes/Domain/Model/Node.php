@@ -431,11 +431,12 @@ class Node {
 	/**
 	 * Creates, adds and returns a child node of this node.
 	 *
-	 * @param string $name
+	 * @param string $name Name of the new node
+	 * @param string $contentType Content type of the new node (optional)
 	 * @return \F3\TYPO3CR\Domain\Model\Node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createNode($name) {
+	public function createNode($name, $contentType = NULL) {
 		$currentWorkspace = $this->context->getWorkspace();
 
 		$newPath = $this->path . ($this->path !== '/' ? '/' : '') . $name;
@@ -443,6 +444,9 @@ class Node {
 
 		$newNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', $newPath, $currentWorkspace);
 		$newNode->setIndex($newIndex);
+		if ($contentType !== NULL) {
+			$newNode->setContentType($contentType);
+		}
 
 		$this->nodeRepository->add($newNode);
 		return $this->treatNodeWithContext($newNode);

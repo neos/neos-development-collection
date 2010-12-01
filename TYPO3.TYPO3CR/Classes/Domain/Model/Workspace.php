@@ -97,7 +97,7 @@ class Workspace {
 	public function initializeObject($initializationCause) {
 		if ($initializationCause === \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED) {
 			$this->rootNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', '/', $this);
-			$this->objectManager->get('F3\TYPO3CR\Domain\Repository\NodeRepository')->add($this->rootNode);
+			$this->nodeRepository->add($this->rootNode);
 		}
 	}
 
@@ -169,16 +169,9 @@ class Workspace {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publish($targetWorkspaceName) {
-		$targetWorkspace = $this->baseWorkspace;
-		while ($targetWorkspaceName !== $targetWorkspace->getName()) {
-			$targetWorkspace = $targetWorkspace->getBaseWorkspace();
-			if ($targetWorkspace === NULL) {
-				throw new \F3\TYPO3CR\Exception\WorkspaceException('The specified workspace "' . $targetWorkspaceName . ' is not a base workspace of "' . $this->name . '".', 1289499117);
-			}
-		}
-
-		$logger = $this->objectManager->get('F3\FLOW3\Log\SystemLoggerInterface');
+		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
 		$sourceNodes = $this->nodeRepository->findByWorkspace($this);
+
 		foreach ($sourceNodes as $sourceNode) {
 			if ($sourceNode->getPath() !== '/') {
 				$targetNode = $this->nodeRepository->findOneByPath($sourceNode->getPath(), $targetWorkspace);
@@ -187,14 +180,11 @@ class Workspace {
 				}
 				if ($sourceNode->isRemoved() === FALSE) {
 					$sourceNode->setWorkspace($targetWorkspace);
-					$logger->log('publish(): replaced node ' . $sourceNode->getPath() . ' in workspace ' . $targetWorkspace->getName());
 				} else {
 					$this->nodeRepository->remove($sourceNode);
-					$logger->log('publish(): removed node ' . $sourceNode->getPath() . ' in workspace ' . $targetWorkspace->getName());
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -214,6 +204,27 @@ class Workspace {
 	public function getNodeCount() {
 		return $this->nodeRepository->countByWorkspace($this);
 	}
+
+	/**
+	 * Checks if the specified workspace is a base workspace of this workspace
+	 * and if so, returns it.
+	 *
+	 * @param string $targetWorkspaceName Name of the target workspace
+	 * @return \F3\TYPO3CR\Domain\Model\Workspace The target workspace
+	 * @throws \F3\TYPO3CR\Exception\WorkspaceException if the specified workspace is not a base workspace of this workspace
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function getPublishingTargetWorkspace($targetWorkspaceName) {
+		$targetWorkspace = $this->baseWorkspace;
+		while ($targetWorkspaceName !== $targetWorkspace->getName()) {
+			$targetWorkspace = $targetWorkspace->getBaseWorkspace();
+			if ($targetWorkspace === NULL) {
+				throw new \F3\TYPO3CR\Exception\WorkspaceException('The specified workspace "' . $targetWorkspaceName . ' is not a base workspace of "' . $this->name . '".', 1289499117);
+			}
+		}
+		return $targetWorkspace;
+	}
+
 }
 
 ?>

@@ -32,7 +32,7 @@ namespace F3\TYPO3CR\Domain\Model;
 class ContentType {
 
 	/**
-	 * Name of this content type. Example: "typo3cr:folder"
+	 * Name of this content type. Example: "TYPO3CR:Folder"
 	 *
 	 * @var string
 	 */

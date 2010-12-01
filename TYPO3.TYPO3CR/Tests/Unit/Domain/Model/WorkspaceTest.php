@@ -33,6 +33,114 @@ class WorkspaceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function aWorkspaceCanBeBasedOnAnotherWorkspace() {
+		$baseWorkspace = new \F3\TYPO3CR\Domain\Model\Workspace('BaseWorkspace');
+
+		$workspace = new \F3\TYPO3CR\Domain\Model\Workspace('MyWorkspace', $baseWorkspace);
+		$this->assertSame('MyWorkspace', $workspace->getName());
+		$this->assertSame($baseWorkspace, $workspace->getBaseWorkspace());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function onInitializationANewlyCreatedWorkspaceCreatesItsOwnRootNode() {
+		$workspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
+
+		$mockRootNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
+		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3CR\Domain\Model\Node', '/', $this->isInstanceOf(get_class($workspace)))->will($this->returnValue($mockRootNode));
+
+		$mockNodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('add'), array(), '', FALSE);
+		$mockNodeRepository->expects($this->once())->method('add')->with($mockRootNode);
+
+		$workspace->_set('nodeRepository', $mockNodeRepository);
+		$workspace->_set('objectManager', $mockObjectManager);
+
+		$workspace->initializeObject(\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED);
+
+		$this->assertSame($mockRootNode, $workspace->getRootNode());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theCurrentContextCanBeAssignedAndRetrievedOfAWorkspace() {
+		$mockContext = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+
+		$mockRootNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockRootNode->expects($this->once())->method('setContext')->with($mockContext);
+
+		$workspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
+		$workspace->_set('rootNode', $mockRootNode);
+
+		$workspace->setContext($mockContext);
+		$this->assertSame($mockContext, $workspace->getContext());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function publishWillReplaceExistingNodesInBaseWorkspaceByNodeInWorkspaceToBePubslished() {
+		$mockNodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByPath', 'remove', 'add'), array(), '', FALSE);
+
+		$targetWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
+		$existingNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+
+		$currentWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
+		$currentWorkspace->_set('nodeRepository', $mockNodeRepository);
+		$currentWorkspace->expects($this->once())->method('getPublishingTargetWorkspace')->with('live')->will($this->returnValue($targetWorkspace));
+
+		$nodesInCurrentWorkspace = array(
+			$this->getMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $currentWorkspace)),
+			$this->getMock('F3\TYPO3CR\Domain\Model\Node', array('isRemoved', 'setWorkspace'), array('/sites/foo/homepage', $currentWorkspace)),
+		);
+		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
+		$nodesInCurrentWorkspace[1]->expects($this->once())->method('setWorkspace')->with($targetWorkspace);
+
+		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($nodesInCurrentWorkspace));
+		$mockNodeRepository->expects($this->once())->method('findOneByPath')->with('/sites/foo/homepage')->will($this->returnValue($existingNode));
+		$mockNodeRepository->expects($this->once())->method('remove')->with($existingNode);
+
+		$currentWorkspace->publish('live');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function publishWillRemoveNodesInTargetWorkspaceIfTheyHaveBeenMarkedAsRemovedInSourceWorkspace() {
+		$mockNodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByPath', 'remove', 'add'), array(), '', FALSE);
+
+		$targetWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
+		$existingNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+
+		$currentWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
+		$currentWorkspace->_set('nodeRepository', $mockNodeRepository);
+		$currentWorkspace->expects($this->once())->method('getPublishingTargetWorkspace')->with('live')->will($this->returnValue($targetWorkspace));
+
+		$nodesInCurrentWorkspace = array(
+			$this->getMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $currentWorkspace)),
+			$this->getMock('F3\TYPO3CR\Domain\Model\Node', array('isRemoved'), array('/sites/foo/homepage', $currentWorkspace)),
+		);
+		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(TRUE));
+
+		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($nodesInCurrentWorkspace));
+		$mockNodeRepository->expects($this->once())->method('findOneByPath')->with('/sites/foo/homepage')->will($this->returnValue($existingNode));
+		$mockNodeRepository->expects($this->at(2))->method('remove')->with($existingNode);
+		$mockNodeRepository->expects($this->at(3))->method('remove')->with($nodesInCurrentWorkspace[1]);
+
+		$currentWorkspace->publish('live');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getNodeCountCallsRepositoryFunction() {
 		$mockNodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('countByWorkspace'), array(), '', FALSE);
 
@@ -42,6 +150,40 @@ class WorkspaceTest extends \F3\Testing\BaseTestCase {
 		$mockNodeRepository->expects($this->once())->method('countByWorkspace')->with($workspace)->will($this->returnValue(42));
 
 		$this->assertSame(42, $workspace->getNodeCount());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPublishingTargetWorkspaceReturnsSpecifiedWorkspaceIfItIsABaseWorkspace() {
+		$lowesWorkspace = new \F3\TYPO3CR\Domain\Model\Workspace('live');
+		$currentWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('user-foo', $lowesWorkspace));
+
+		$actualTargetWorkspace = $currentWorkspace->_call('getPublishingTargetWorkspace', 'live');
+		$this->assertSame($lowesWorkspace, $actualTargetWorkspace);
+
+		$lowesWorkspace = new \F3\TYPO3CR\Domain\Model\Workspace('live');
+		$intermediateWorkspace = new \F3\TYPO3CR\Domain\Model\Workspace('foo', $lowesWorkspace);
+		$currentWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('bar', $intermediateWorkspace));
+
+		$actualTargetWorkspace = $currentWorkspace->_call('getPublishingTargetWorkspace', 'live');
+		$this->assertSame($lowesWorkspace, $actualTargetWorkspace);
+
+		$actualTargetWorkspace = $currentWorkspace->_call('getPublishingTargetWorkspace', 'foo');
+		$this->assertSame($intermediateWorkspace, $actualTargetWorkspace);
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\TYPO3CR\Exception\WorkspaceException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace() {
+		$someBaseWorkspace = new \F3\TYPO3CR\Domain\Model\Workspace('live');
+		$currentWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array('user-foo', $someBaseWorkspace));
+
+		$currentWorkspace->_call('getPublishingTargetWorkspace', 'group-bar');
 	}
 }
 

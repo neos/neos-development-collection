@@ -331,12 +331,13 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	/**
 	 * Creates, adds and returns a child node of this node.
 	 *
-	 * @param string $name
+	 * @param string $name Name of the new node
+	 * @param string $contentType Content type of the new node (optional)
 	 * @return \F3\TYPO3CR\Domain\Model\Node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createNode($name) {
-		return (isset($this->newNode) ? $this->newNode->createNode($name) : $this->originalNode->createNode($name));
+	public function createNode($name, $contentType = NULL) {
+		return (isset($this->newNode) ? $this->newNode->createNode($name, $contentType) : $this->originalNode->createNode($name, $contentType));
 	}
 
 	/**
