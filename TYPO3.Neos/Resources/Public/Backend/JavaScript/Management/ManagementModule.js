@@ -41,6 +41,17 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
 			title: 'Management',
 			itemId: 'management'
 		});
+
+		registry.append('management/components/west', 'defaultTree', {
+			xtype: 'F3.TYPO3.Management.ManagementTree',
+			itemId: 'managementWestDefaultTree'
+		});
+
+		registry.append('management/components/center', 'defaultGrid', {
+			xtype: 'F3.TYPO3.Management.ManagementGrid',
+			itemId: 'managementCenterDefaultGrid'
+		});
+
 	},
 
 	/**
