@@ -42,7 +42,6 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	protected $originalNode;
 
 	/**
-	 *
 	 * @var \F3\TYPO3CR\Domain\Model\Node
 	 */
 	protected $newNode;
@@ -402,6 +401,9 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	public function setContext(\F3\TYPO3CR\Domain\Service\Context $context) {
 		$this->context = $context;
 		$this->originalNode->setContext($context);
+		if (isset($this->newNode)) {
+			$this->newNode->setContext($context);
+		}
 	}
 
 	/**

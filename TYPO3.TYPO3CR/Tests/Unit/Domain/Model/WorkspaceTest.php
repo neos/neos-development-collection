@@ -25,7 +25,7 @@ namespace F3\TYPO3CR\Tests\Unit\Domain\Model;
 /**
  * Testcase for the "Workspace" domain model
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class WorkspaceTest extends \F3\Testing\BaseTestCase {
 

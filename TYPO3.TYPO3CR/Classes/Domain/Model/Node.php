@@ -292,12 +292,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperty($propertyName, $value) {
-		if (is_object($this->contentObject)) {
-			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObject, $propertyName)) {
-				\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->contentObject, $propertyName, $value);
-			}
-		} else {
+		if (!is_object($this->contentObject)) {
 			$this->properties[$propertyName] = $value;
+		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObject, $propertyName)) {
+			\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->contentObject, $propertyName, $value);
 		}
 	}
 
@@ -327,16 +325,16 @@ class Node {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return mixed value of the property
+	 * @throws \F3\TYPO3CR\Exception\NodeException if the a content object exists but does not contain the specified property
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($propertyName) {
-		if (is_object($this->contentObject)) {
-			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObject, $propertyName)) {
-				return \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObject, $propertyName);
-			}
-		} else {
+		if (!is_object($this->contentObject)) {
 			return isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
+		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObject, $propertyName)) {
+			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObject, $propertyName);
 		}
+		throw new \F3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObject)), 1291286995);
 	}
 
 	/**
@@ -556,22 +554,35 @@ class Node {
 	 * @param string $relativePath The unnormalized relative path
 	 * @return string The normalized absolute path
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Properly implement relative path support
 	 */
 	protected function normalizeRelativePath($relativePath) {
 		if ($relativePath === '.') {
 			return $this->path;
 		}
-		if ($relativePath === './') {
-			return $this->path . '/';
+
+		$absolutePath = ($relativePath[0] === '/') ? $relativePath : ($this->path . '/' . $relativePath);
+		$pathSegments = explode('/', $absolutePath);
+
+		while (each($pathSegments)) {
+			if (current($pathSegments) === '..') {
+				prev($pathSegments);
+				unset($pathSegments[key($pathSegments)]);
+				unset($pathSegments[key($pathSegments)]);
+				prev($pathSegments);
+			} elseif (current($pathSegments) === '.') {
+				unset($pathSegments[key($pathSegments)]);
+				prev($pathSegments);
+			}
 		}
-		return $this->path . ($this->path !== '/' ? '/' : '') . $relativePath;
+		$normalizedPath = implode('/', $pathSegments);
+		return ($normalizedPath === '') ? '/' : $normalizedPath;
 	}
 
 	/**
+	 * Treats the given nodes with the current context
 	 *
-	 * @param array $originalNodes
-	 * @return array
+	 * @param array $originalNodes The nodes to contextize
+	 * @return array The same node objects, but with the context of this node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function treatNodesWithContext(array $originalNodes) {
@@ -583,10 +594,10 @@ class Node {
 	}
 
 	/**
+	 * Treats the given node with the current context
 	 *
-	 *
-	 * @param mixed $node
-	 * @return \F3\TYPO3CR\Domain\Model\Node
+	 * @param mixed $node The node to contextize
+	 * @return \F3\TYPO3CR\Domain\Model\Node The same node, but with the context of this node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function treatNodeWithContext($node) {

@@ -73,6 +73,11 @@ class ContentType {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDeclaredSuperTypes(array $types) {
+		foreach ($types as $type) {
+			if (!$type instanceof \F3\TYPO3CR\Domain\Model\ContentType) {
+				throw new \InvalidArgumentException('$types must be an array of ContentType objects', 1291300950);
+			}
+		}
 		$this->declaredSuperTypes = $types;
 	}
 
@@ -98,7 +103,7 @@ class ContentType {
 		if ($contentTypeName === $this->name) {
 			return TRUE;
 		}
-		foreach ($this->superTypes as $superType) {
+		foreach ($this->declaredSuperTypes as $superType) {
 			if ($superType->isOfType($contentTypeName) === TRUE) {
 				return TRUE;
 			}
