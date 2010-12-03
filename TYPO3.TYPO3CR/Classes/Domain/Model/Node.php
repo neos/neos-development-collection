@@ -458,7 +458,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
-		$normalizedPath = $this->normalizeRelativePath($path);
+		$normalizedPath = $this->normalizePath($path);
 		$node = $this->nodeRepository->findOneByPath($normalizedPath, $this->context->getWorkspace());
 		if (!$node) {
 			return NULL;
@@ -549,18 +549,26 @@ class Node {
 	}
 
 	/**
-	 * Normalizes the given relative path
+	 * Normalizes the given path and returns an absolute path
 	 *
-	 * @param string $relativePath The unnormalized relative path
+	 * @param string $path The unnormalized path
 	 * @return string The normalized absolute path
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function normalizeRelativePath($relativePath) {
-		if ($relativePath === '.') {
+	protected function normalizePath($path) {
+		if ($path === '.') {
 			return $this->path;
 		}
 
-		$absolutePath = ($relativePath[0] === '/') ? $relativePath : ($this->path . '/' . $relativePath);
+		if (strpos($path, '//') !== FALSE) {
+			throw new \InvalidArgumentException('Paths must not contain two consecutive slashes.', 1291371910);
+		}
+
+		if ($path[0] === '/') {
+			$absolutePath = $path;
+		} else {
+			$absolutePath = ($this->path === '/' ? '' : $this->path). '/' . $path;
+		}
 		$pathSegments = explode('/', $absolutePath);
 
 		while (each($pathSegments)) {

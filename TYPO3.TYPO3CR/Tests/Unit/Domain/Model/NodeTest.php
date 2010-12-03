@@ -329,11 +329,11 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath'), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('findOneByPath')->with('/foo/bar', $workspace)->will($this->returnValue($expectedNode));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('normalizeRelativePath', 'treatNodeWithContext'), array('/foo/baz', $workspace));
+		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('normalizePath', 'treatNodeWithContext'), array('/foo/baz', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->_set('nodeRepository', $nodeRepository);
 
-		$currentNode->expects($this->once())->method('normalizeRelativePath')->with('../bar')->will($this->returnValue('/foo/bar'));
+		$currentNode->expects($this->once())->method('normalizePath')->with('../bar')->will($this->returnValue('/foo/bar'));
 		$currentNode->expects($this->once())->method('treatNodeWithContext')->with($expectedNode)->will($this->returnValue($expectedNode));
 
 		$actualNode = $currentNode->getNode('../bar');
@@ -353,11 +353,11 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath'), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('findOneByPath')->with('/foo/quux', $workspace)->will($this->returnValue(NULL));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('normalizeRelativePath'), array('/foo/baz', $workspace));
+		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('normalizePath'), array('/foo/baz', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->_set('nodeRepository', $nodeRepository);
 
-		$currentNode->expects($this->once())->method('normalizeRelativePath')->with('/foo/quux')->will($this->returnValue('/foo/quux'));
+		$currentNode->expects($this->once())->method('normalizePath')->with('/foo/quux')->will($this->returnValue('/foo/quux'));
 
 		$this->assertNull($currentNode->getNode('/foo/quux'));
 	}
@@ -480,22 +480,24 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider unnormalizedPaths
+	 * @dataProvider abnormalPaths
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function normalizeRelativePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath) {
+	public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath) {
 		$node = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
 		$node->_set('path', $currentPath);
-		$this->assertSame($normalizedPath, $node->_call('normalizeRelativePath', $relativePath));
+		$this->assertSame($normalizedPath, $node->_call('normalizePath', $relativePath));
 	}
 
 	/**
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function unnormalizedPaths() {
+	public function abnormalPaths() {
 		return array(
 			array('/', '/', '/'),
+			array('/', '/.', '/'),
 			array('/', '.', '/'),
+			array('/', 'foo/bar', '/foo/bar'),
 			array('/foo', '.', '/foo'),
 			array('/foo', '/foo/.', '/foo'),
 			array('/foo', '../', '/'),
@@ -505,8 +507,18 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 			array('/foo/bar', '../../.', '/'),
 			array('/foo/bar/baz', '../..', '/foo'),
 			array('/foo/bar/baz', '../quux', '/foo/bar/quux'),
-			array('/foo/bar/baz', '../quux/.', '/foo/bar/quux'),
+			array('/foo/bar/baz', '../quux/.', '/foo/bar/quux')
 		);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash() {
+		$node = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
+		$node->_call('normalizePath', 'foo//bar');
 	}
 
 	/**
