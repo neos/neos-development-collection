@@ -39,26 +39,44 @@ F3.TYPO3.Management.ManagementView = Ext.extend(Ext.Container, {
 		var config = {
 			layout: 'border',
 			items: [{
-				title: 'TYPOtree',
 				region:'west',
 				margins: '0 0 0 0',
 				width: 200,
 				split: true,
 				collapsible: false,
-				layout: 'fit',
-				xtype: 'F3.TYPO3.Management.ManagementTree'
+				layout: 'card',
+				items: this._getRegionItems('west'),
+				activeItem: 0
+
 			},
 			{
 				region: 'center',
-				layout: 'fit',
+				layout: 'card',
 				margins: '0 5 0 5',
-				xtype: 'F3.TYPO3.Management.ManagementGrid'
+				items: this._getRegionItems('center'),
+				activeItem: 0
 			}]
 		};
 		Ext.apply(this, config);
 
 		F3.TYPO3.Management.ManagementView.superclass.initComponent.call(this);
+	},
+
+	/**
+	 * @private
+	 * @return {Array} an array of region items fetched from the registry.
+	 */
+	_getRegionItems: function(region) {
+		var items = [];
+		var config = F3.TYPO3.Core.Registry.get('management/components/'+region);
+		Ext.each(config, function(component) {
+			var item = {};
+			Ext.apply(item, component, {layout: 'fit'});
+			items.push(item);
+		});
+		return items;
 	}
+
 });
 
 Ext.reg('F3.TYPO3.Management.ManagementView', F3.TYPO3.Management.ManagementView);
