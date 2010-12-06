@@ -44,7 +44,7 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 * Initializer
 	 */
 	initComponent: function() {
-		var	context, config = {};
+		var context, config = {};
 
 		config.items = F3.TYPO3.UserInterface.Form.FormFactory.createForm(
 			'TYPO3:Page',
@@ -77,9 +77,15 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 				 * @param {} response
 				 * @return {void}
 				 */
-				_onOkButtonClickActionSuccess: function(response) {
-					this.ownerCt.moduleMenu.removeModuleDialog();
-					Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
+				_onOkButtonClickActionSuccess: function(response, status) {
+					if (response) {
+						this.ownerCt.moduleMenu.removeModuleDialog();
+						Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
+					} else if (status.type == 'exception') {
+						Ext.MessageBox.alert('An Error occured', status.message);
+					} else {
+						Ext.MessageBox.alert('An unknown error occured');
+					}
 				}
 			}
 		);

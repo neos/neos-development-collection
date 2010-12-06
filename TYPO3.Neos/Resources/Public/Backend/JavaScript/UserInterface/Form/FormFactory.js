@@ -71,7 +71,7 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 	_processDefinition: function(definition, objectType, defaultType) {
 		var registry = F3.TYPO3.Core.Registry,
 			type = definition.type,
-			config,	childDefaultType, fieldType, schemaDefinition, schemaPropertyDefinition;
+			config, childDefaultType, fieldType, schemaDefinition, schemaPropertyDefinition;
 
 		if (type === undefined) {
 			type = defaultType;
