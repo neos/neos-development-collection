@@ -31,12 +31,13 @@ namespace F3\TYPO3CR\Domain\Model;
  */
 class Node {
 
-	const SCAN_PATTERN_PATH = '/^\/|\/[a-zA-Z0-9][a-zA-Z0-9\-\/][a-zA-Z0-9]{0,254}$/';
+	const MATCH_PATTERN_PATH = '/^(\/|(?:\/[a-z0-9\-]+)+)$/i';
 
 	/**
 	 * Absolute path of this node
 	 *
 	 * @var string
+	 * @validate StringLength(minimum = 1, maximum = 255)
 	 */
 	protected $path;
 
@@ -147,7 +148,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPath($path) {
-		if (!is_string($path) || !preg_match(self::SCAN_PATTERN_PATH, $path)) {
+		if (!is_string($path) || preg_match(self::MATCH_PATTERN_PATH, $path) !== 1) {
 			throw new \InvalidArgumentException('Invalid path: A path must be a valid string, be absolute (starting with a slash) and contain only the allowed characters.', 1284369857);
 		}
 		$this->path = $path;

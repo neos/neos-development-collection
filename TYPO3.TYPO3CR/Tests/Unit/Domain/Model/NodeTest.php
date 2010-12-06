@@ -46,13 +46,58 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @expectedException InvalidArgumentException
+	 * @dataProvider invalidPaths()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPathThrowsAnExceptionIfAnInvalidPathIsPassed() {
+	public function setPathThrowsAnExceptionIfAnInvalidPathIsPassed($path) {
 		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
 		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $mockWorkspace);
-		$node->setPath('foo');
+		$node->setPath($path);
+	}
+
+	/**
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function invalidPaths() {
+		return array(
+			array('foo'),
+			array('/ '),
+			array('//'),
+			array('/foo//bar'),
+			array('/foo/ bar'),
+			array('/foo/bar/'),
+			array('/123 bar'),
+
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider validPaths()
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setPathAcceptsAValidPath($path) {
+		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+
+		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $mockWorkspace);
+		$node->setPath($path);
+	}
+
+	/**
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function validPaths() {
+		return array(
+			array('/foo'),
+			array('/foo/bar'),
+			array('/foo/bar/baz'),
+			array('/12/foo'),
+			array('/12356'),
+			array('/foo-bar'),
+			array('/foo-bar/1-5'),
+			array('/foo-bar/bar/asdkak/dsflasdlfkjasd/asdflnasldfkjalsd/134-111324823-234234-234/sdasdflkj'),
+		);
 	}
 
 	/**
