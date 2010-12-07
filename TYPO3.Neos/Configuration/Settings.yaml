@@ -17,5 +17,6 @@ FLOW3:
           entryPoint:
             webRedirect:
               uri: typo3/login
+      authenticationStrategy: oneToken
   mvc:
     notFoundController: F3\TYPO3\Controller\ErrorController
