@@ -33,7 +33,7 @@ class Node extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/TypoScript/Templates/Node.html';
+	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/Node.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in
