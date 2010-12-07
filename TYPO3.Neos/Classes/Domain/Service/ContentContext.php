@@ -162,9 +162,9 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 	}
 
 	/**
-	 * Returns the absolute node path of the current site.
+	 * Returns the node of the current site.
 	 *
-	 * @return string
+	 * @return \F3\TYPO3CR\Domain\Model\Node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentSiteNode() {

@@ -42,7 +42,11 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
-		$this->view->assign('workspaceName', 'user-' . $this->securityContext->getAccount()->getAccountIdentifier());
+		$workspaceName = 'user-' . $this->securityContext->getAccount()->getAccountIdentifier();
+		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName);
+		$this->view->assign('workspaceName', $workspaceName);
+		$this->view->assign('siteName', $contentContext->getCurrentSite()->getName());
+		$this->view->assign('siteNodePath', $contentContext->getCurrentSiteNode()->getPath());
 	}
 }
 ?>
