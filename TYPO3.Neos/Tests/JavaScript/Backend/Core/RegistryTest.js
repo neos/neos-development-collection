@@ -527,5 +527,21 @@ F3.TYPO3.Core.RegistryTest = {
 		this.registry.set('schema', data);
 		this.registry.compile();
 		Y.Assert.areEqual(Ext.encode(data), Ext.encode(this.registry.get('schema')));
+	},
+	testGetWorksAlsoWithArrayParts: function() {
+		this.registry.append('menu/main', 'content', {title: 'Content'});
+		this.registry.append('menu/main/content[]', 'edit', {title: 'Edit'});
+
+		this.registry.compile();
+
+		Y.Assert.areEqual(
+			Ext.encode({
+				title: 'Edit',
+				key: 'edit'
+			}),
+			Ext.encode(this.registry.get('menu/main/content/children/edit'))
+		);
+		Y.Assert.areEqual(null, this.registry.get('notExistingPath'));
+		Y.Assert.areEqual(null, this.registry.get('menu/main/content/children/edit/children/edit'));
 	}
 };

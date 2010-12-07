@@ -7,30 +7,32 @@ F3.TYPO3.UserInterface.Form.FormFactoryTest = {
 		this.registry = F3.TYPO3.Core.Registry;
 		this.registry._configuration = {
 			schema: {
-				"typo3:page": {
-					service: {
-						show: 'F3.TYPO3.UserInterface.Form',
-						update: 'F3.TYPO3.UserInterface.Form'
-					},
-					properties: {
-						'properties.title': {
-							type: 'string',
-							validations: [{
-								key: 'v1',
-								type: 'NotEmpty'
-							}, {
-								key: 'v2',
-								type: 'Label'
-							}, {
-								key: 'v3',
-								type: 'StringLength',
-								options: {
-									maximum: 50
-								}
-							}]
+				type: {
+					"typo3:page": {
+						service: {
+							show: 'F3.TYPO3.UserInterface.Form',
+							update: 'F3.TYPO3.UserInterface.Form'
 						},
-						'properties.navigationTitle': {
-							type: 'string'
+						properties: {
+							'properties.title': {
+								type: 'string',
+								validations: [{
+									key: 'v1',
+									type: 'NotEmpty'
+								}, {
+									key: 'v2',
+									type: 'Label'
+								}, {
+									key: 'v3',
+									type: 'StringLength',
+									options: {
+										maximum: 50
+									}
+								}]
+							},
+							'properties.navigationTitle': {
+								type: 'string'
+							}
 						}
 					}
 				}

@@ -350,15 +350,31 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 			path = this.rewritePath(path);
 		}
 
-		var parts = path.split('/'),
+		var resultFound = true,
+			parts = path.split('/'),
 			context = this._configuration;
+
+		if (path === '') return context;
+
 		Ext.each(parts, function(part) {
-			if (context[part] === undefined) {
-				return undefined;
+			if (context.constructor == (new Array).constructor) {
+				Ext.each(context, function(contextElement) {
+					if (contextElement.key == part) {
+						context = contextElement;
+						return false;
+					}
+				});
+			} else if (context[part] === undefined) {
+				resultFound = false;
+			} else {
+				context = context[part];
 			}
-			context = context[part];
 		});
-		return context;
+
+		if (!resultFound) {
+			return null;
+		}
+		return F3.TYPO3.Utils.clone(context);
 	},
 
 	/**
