@@ -151,7 +151,7 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 		if (!is_string($path) || $path[0] !== '/') {
 			throw new \InvalidArgumentException('Only absolute paths are allowed for Context::getNode()', 1284975105);
 		}
-		return ($path === '/') ? $this->workspace->getRootNode() : $this->workspace->getRootNode()->getNode(substr($path, 1));
+		return ($path === '/') ? $this->getWorkspace()->getRootNode() : $this->getWorkspace()->getRootNode()->getNode(substr($path, 1));
 	}
 
 	/**
