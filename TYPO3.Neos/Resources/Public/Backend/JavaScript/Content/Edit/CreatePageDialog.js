@@ -33,63 +33,67 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	height: 80,
 
 	/**
-	 * Context of the parent page of the page to be created
-	 *
-	 * @type {Object}
-	 * @private
-	 */
-	_context: null,
-
-	/**
 	 * Initializer
 	 */
 	initComponent: function() {
-		var context, config = {};
-
-		config.items = F3.TYPO3.UserInterface.Form.FormFactory.createForm(
-			'TYPO3:Page',
-			'create',
-			{
-				ref: 'form',
-				autoLoad: false,
-				doSubmitForm: function() {
-					var data = this.getForm().getValues();
-					data = this._convertFlatPropertiesToNestedData(data);
-					data['contentType'] = 'TYPO3:Page';
-					this.getForm().api.create.call(this, this.getSubmitIdentifier(), data, this._onOkButtonClickActionSuccess, this);
-				},
-				/**
-				 * Do not load any data, but store the initial context when
-				 * the form was loaded.
-				 *
-				 * @return {void}
-				 */
-				onRenderLoad: function() {
-					context = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
-				},
-				getSubmitIdentifier: function() {
-					return context;
-				},
-				/**
-				 * Action when success on button click action
-				 * remove the dialog and load new page in frontend editor
-				 *
-				 * @param {} response
-				 * @return {void}
-				 */
-				_onOkButtonClickActionSuccess: function(response, status) {
-					if (response) {
-						this.ownerCt.moduleMenu.removeModuleDialog();
-						Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
-					} else if (status.type == 'exception') {
-						Ext.MessageBox.alert('An Error occured', status.message);
-					} else {
-						Ext.MessageBox.alert('An unknown error occured');
+		var context,
+			config = {
+				items: F3.TYPO3.UserInterface.Form.FormFactory.createForm(
+					'TYPO3:Page',
+					'create',
+					{
+						ref: 'form',
+						autoLoad: false,
+						/**
+						 * Validate form and submit
+						 *
+						 * @return {void}
+						 */
+						doSubmitForm: function() {
+							if (!this.getForm().isValid()) return;
+							var data = this.getForm().getValues();
+							data = this._convertFlatPropertiesToNestedData(data);
+							data['contentType'] = 'TYPO3:Page';
+							this.getForm().api.create.call(this, this.getSubmitIdentifier(), data, this._onOkButtonClickActionSuccess, this);
+						},
+						/**
+						 * Do not load any data, but store the initial context when
+						 * the form was loaded in a closure variable;
+						 *
+						 * @return {void}
+						 */
+						onRenderLoad: function() {
+							context = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
+						},
+						/**
+						 * Return the stored context from the closure variable
+						 *
+						 * @return {string}
+						 */
+						getSubmitIdentifier: function() {
+							return context;
+						},
+						/**
+						 * Action when success on button click action
+						 * remove the dialog and load new page in frontend editor
+						 *
+						 * @param {} response
+						 * @return {void}
+						 */
+						_onOkButtonClickActionSuccess: function(response, status) {
+							if (response) {
+								this.ownerCt.moduleMenu.removeModuleDialog();
+								Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
+							} else if (status.type == 'exception') {
+								Ext.MessageBox.alert('An Error occured', status.message);
+							} else {
+								Ext.MessageBox.alert('An unknown error occured');
+							}
+						}
 					}
-				}
-			}
-		);
-		Ext.apply(this, config);
+				)
+			};
+		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		F3.TYPO3.Content.Edit.CreatePageDialog.superclass.initComponent.call(this);
 
 		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this._onButtonClick, this);

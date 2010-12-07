@@ -129,11 +129,12 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	},
 
 	/**
-	 * Submit the form
+	 * Validate form and submit
 	 *
 	 * @return {void}
 	 */
 	doSubmitForm: function() {
+		if (!this.getForm().isValid()) return;
 		var data = this.getForm().getValues();
 		data = this._convertFlatPropertiesToNestedData(data);
 		Ext.apply(data, this.getSubmitIdentifier());

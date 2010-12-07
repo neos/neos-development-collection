@@ -95,22 +95,20 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				},
 				properties: {
 					'nodeName': {
-						type: 'string'
+						type: 'string',
+						validations: [{
+							type: 'NotEmpty'
+						}, {
+							type: 'RegularExpression',
+							options: {
+								regularExpression: '^[a-zA-Z0-9][a-zA-Z0-9\\-\\/][a-zA-Z0-9]{0,254}$'
+							}
+						}]
 					},
 					'properties.title': {
 						type: 'string',
 						validations: [{
-							key: 'v1',
 							type: 'NotEmpty'
-						}, {
-							key: 'v2',
-							type: 'Label'
-						}, {
-							key: 'v3',
-							type: 'StringLength',
-							options: {
-								maximum: 50
-							}
 						}]
 					},
 					'properties.navigationTitle': {

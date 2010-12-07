@@ -101,6 +101,22 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 				name: definition.property,
 				fieldLabel: definition.title
 			});
+
+			if (schemaPropertyDefinition.validations) {
+				Ext.each(schemaPropertyDefinition.validations, function(validation) {
+					if (validation.type === 'NotEmpty') {
+						config.allowBlank = false;
+					} else if (validation.type === 'RegularExpression') {
+						config.validator = function(value) {
+							if (value.match(new RegExp(validation.options.regularExpression))) {
+								return true;
+							} else {
+								return "The given subject did not match the pattern.";
+							}
+						};
+					}
+				});
+			}
 		} else {
 			// Nothing found!
 			return undefined;
