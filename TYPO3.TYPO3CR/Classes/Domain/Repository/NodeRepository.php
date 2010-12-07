@@ -105,14 +105,14 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * content type
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentType Content type - or NULL
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return integer The number of nodes found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Check for workspace compliance
 	 */
-	public function countByParentAndContentType($parentPath, $contentType, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$result = $this->createQueryForFindByParentAndContentType($parentPath, $contentType, $workspace)->execute()->count();
+	public function countByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+		$result = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace)->execute()->count();
 
 		foreach ($this->addedObjects as $addedNode) {
 			if (substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
@@ -142,16 +142,16 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * Note: Filters out removed nodes.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentType Content type - or NULL
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return array<\F3\TYPO3\Domain\Model\Node> The nodes found on the given path
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findByParentAndContentType($parentPath, $contentType, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$foundNodes = array();
 
 		while ($workspace !== NULL) {
-			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentType, $workspace);
+			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace);
 			$nodesFoundInThisWorkspace = $query->execute()->toArray();
 			foreach ($nodesFoundInThisWorkspace as $node) {
 				if (!isset($foundNodes[$node->getIndex()])) {
@@ -175,15 +175,22 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * Finds a single node by its parent and (optionally) by its content type
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentType Content type - or NULL
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \F3\TYPO3\Domain\Model\Node The node found or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Check for workspace compliance
 	 */
-	public function findFirstByParentAndContentType($parentPath, $contentType, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentType, $workspace);
-		return $query->execute()->getFirst();
+	public function findFirstByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+		while ($workspace !== NULL) {
+			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace);
+			$firstNodeFoundInThisWorkspace = $query->execute()->getFirst();
+			if ($firstNodeFoundInThisWorkspace !== FALSE) {
+				return $firstNodeFoundInThisWorkspace;
+			}
+			$workspace = $workspace->getBaseWorkspace();
+		}
+		return NULL;
 	}
 
 	/**
@@ -251,12 +258,12 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * the given workspace.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentType Content type - or NULL
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \F3\FLOW3\Peristence\QueryInterface The query
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function createQueryForFindByParentAndContentType($parentPath, $contentType, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	protected function createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $parentPath . '" is not a valid path: must start but not end with a slash.', 1284985610);
 		}
@@ -269,8 +276,23 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 			$query->like('path', $parentPath . '/%'),
 		);
 
-		if ($contentType !== NULL) {
-			$constraints[] = $query->equals('contentType', $contentType);
+		if ($contentTypeFilter !== NULL) {
+			$includeContentTypeConstraints = array();
+			$excludeContentTypeConstraints = array();
+			$contentTypeFilterParts = explode(',', $contentTypeFilter);
+			foreach ($contentTypeFilterParts as $contentTypeFilterPart) {
+				if (strpos($contentTypeFilterPart, '!') === 0) {
+					$excludeContentTypeConstraints[] = $query->logicalNot($query->equals('contentType', substr($contentTypeFilterPart, 1)));
+				} else {
+					$includeContentTypeConstraints[] = $query->equals('contentType', $contentTypeFilterPart);
+				}
+			}
+			if (count($excludeContentTypeConstraints) > 0) {
+				$constraints[] = $query->logicalAnd($excludeContentTypeConstraints);
+			}
+			if (count($includeContentTypeConstraints) > 0) {
+				$constraints[] = $query->logicalOr($includeContentTypeConstraints);
+			}
 		}
 
 		$query->matching($query->logicalAnd($constraints));
