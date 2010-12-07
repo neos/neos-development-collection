@@ -68,7 +68,7 @@ class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface
 
 		$pathSegments = explode('/', ltrim($source['__context']['nodePath'], '/'));
 
-		if (count($pathSegments) < 3) {
+		if (count($pathSegments) < 2) {
 			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the context path was invalid.', 1285162903);
 		}
 
@@ -92,6 +92,10 @@ class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface
 		$siteNode = $contentContext->getCurrentSiteNode();
 		if (!$siteNode) {
 			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the specified site node does not exist.', 1285162907);
+		}
+
+		if (count($pathSegments) === 0) {
+			return $siteNode;
 		}
 
 		$nodePath = implode('/', $pathSegments);

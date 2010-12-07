@@ -58,7 +58,6 @@ F3.TYPO3.Management.ManagementView = Ext.extend(Ext.Container, {
 			}]
 		};
 		Ext.apply(this, config);
-
 		F3.TYPO3.Management.ManagementView.superclass.initComponent.call(this);
 	},
 
@@ -68,7 +67,7 @@ F3.TYPO3.Management.ManagementView = Ext.extend(Ext.Container, {
 	 */
 	_getRegionItems: function(region) {
 		var items = [];
-		var config = F3.TYPO3.Core.Registry.get('management/components/'+region);
+		var config = F3.TYPO3.Core.Registry.get('management/components/' + region);
 		Ext.each(config, function(component) {
 			var item = {};
 			Ext.apply(item, component, {layout: 'fit'});
@@ -78,5 +77,4 @@ F3.TYPO3.Management.ManagementView = Ext.extend(Ext.Container, {
 	}
 
 });
-
 Ext.reg('F3.TYPO3.Management.ManagementView', F3.TYPO3.Management.ManagementView);

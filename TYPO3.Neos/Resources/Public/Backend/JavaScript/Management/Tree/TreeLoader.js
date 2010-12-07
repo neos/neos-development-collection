@@ -31,7 +31,7 @@ Ext.ns("F3.TYPO3.Management.Tree");
 F3.TYPO3.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
 	/**
-	 * wrapper for extDirect call to NodeController
+	 * Wrapper for extDirect call to NodeController which
 	 * adds context information to the extDirect call
 	 *
 	 * @param {String} currentNodePath the current NodePath to get subnodes from
@@ -45,11 +45,12 @@ F3.TYPO3.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 				nodePath: currentNodePath
 			}
 		};
-		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(context, 'TYPO3:Page', callback);
+		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(context, 'TYPO3:Page', callback);
 	},
 
 	/**
-	 * process the response of directFn and give the appropriate data to handleResponse
+	 * Process the response of directFn and give the appropriate data to handleResponse
+	 *
 	 * @param {Object} result the result part from the response of the server request
 	 * @param {Object} response the response object of the server request
 	 * @param {Object} args request arguments passed through

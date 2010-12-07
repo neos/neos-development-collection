@@ -66,6 +66,19 @@ F3.TYPO3.Configuration.Application = {
 	 * @todo
 	 * @type {String}
 	 */
-	workspaceName: null
+	workspaceName: null,
 
+	/**
+	 * Name of the currently selected site
+	 *
+	 * @type {string}
+	 */
+	siteName: null,
+
+	/**
+	 * Node path of the currently selected site
+	 *
+	 * @type {string}
+	 */
+	siteNodePath: null
 }

@@ -21,35 +21,35 @@ Ext.ns("F3.TYPO3.Management");
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Management.ManagementTree
+ * @class F3.TYPO3.Management.ManagementNodeView
  *
- * the default management tree view component
+ * container for grid component
  *
  * @namespace F3.TYPO3.Management
- * @extends Ext.tree.TreePanel
+ * @extends Ext.Container
  */
-F3.TYPO3.Management.ManagementTree = Ext.extend(Ext.tree.TreePanel, {
+F3.TYPO3.Management.ManagementNodeView = Ext.extend(Ext.Container, {
 
 	/**
 	 * Initializer
 	 */
 	initComponent: function() {
 		var config = {
-			root: {
-				nodeType: 'async',
-				text: F3.TYPO3.Configuration.Application.siteName,
-				draggable: false,
-				autoScroll: true,
-				id: F3.TYPO3.Configuration.Application.siteNodePath
-			},
-			loader: new F3.TYPO3.Management.Tree.TreeLoader()
+			border: false,
+			layout: 'fit'
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Management.ManagementTree.superclass.initComponent.call(this);
+		F3.TYPO3.Management.ManagementNodeView.superclass.initComponent.call(this);
 
-		this.on('click', function(node) {
-			F3.TYPO3.Management.ManagementModule.fireEvent('F3.TYPO3.Management.nodeSelected', node);
-		});
+		F3.TYPO3.Management.ManagementModule.on('F3.TYPO3.Management.nodeSelected', function(node) {
+			this.removeAll(true);
+			this.add({
+				xtype: 'F3.TYPO3.Management.ManagementGrid',
+				title: node.attributes.text,
+				nodePath: node.attributes.id
+			});
+			this.doLayout();
+		}, this);
 	}
 });
-Ext.reg('F3.TYPO3.Management.ManagementTree', F3.TYPO3.Management.ManagementTree);
+Ext.reg('F3.TYPO3.Management.ManagementNodeView', F3.TYPO3.Management.ManagementNodeView);

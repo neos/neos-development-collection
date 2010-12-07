@@ -20,3 +20,16 @@
 .F3-TYPO3-UserInterface-BreadcrumbMenu-elbow-expanded {
 	background-image: url('../Images/UserInterface/Icons/BreadcrumbMenuFold.png') !important;
 }
+
+.F3-TYPO3-Management-ManagementGrid-Icon {
+	display: block;
+	width: 16px;
+	height: 16px;
+	background-repeat: no-repeat;
+}
+.F3-TYPO3-Icon-ContentType-TYPO3_Text {
+	background-image: url('../Images/UserInterface/Icons/ContentType-TYPO3_Text.png') !important;
+}
+.F3-TYPO3-Icon-ContentType-TYPO3_Section {
+	background-image: url('../Images/UserInterface/Icons/ContentType-TYPO3_Section.png') !important;
+}

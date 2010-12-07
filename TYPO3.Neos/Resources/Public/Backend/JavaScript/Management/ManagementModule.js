@@ -48,8 +48,8 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
 		});
 
 		registry.append('management/components/center', 'defaultGrid', {
-			xtype: 'F3.TYPO3.Management.ManagementGrid',
-			itemId: 'managementCenterDefaultGrid'
+			xtype: 'F3.TYPO3.Management.ManagementNodeView',
+			itemId: 'managementCenterNodeView'
 		});
 
 	},

@@ -90,16 +90,16 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Return child nodes of specified node
+	 * Return child nodes of specified node for usage in a TreeLoader
 	 *
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @param string $contentType
 	 * @return string A response string
 	 * @author Christian Müller <christian@kitsunet.de>
 	 * @extdirect
-	 * @todo $childNode->getPrimaryChildNode() === NULL didn't work, check why.
 	 */
-	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
+	public function getChildNodesForTreeAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
+		if ($contentType === '') $contentType = NULL;
 		$data = array();
 		foreach ($node->getChildNodes($contentType) as $key => $childNode) {
 			$data[] = array(
@@ -125,6 +125,70 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 				'success' => TRUE,
 			)
 		);
+	}
+
+	/**
+	 * Return child nodes of specified node with all details and
+	 * metadata.
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param string $contentTypeFilter
+	 * @return string A response string
+	 * @author Christian Müller <christian@kitsunet.de>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @extdirect
+	 */
+	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter) {
+		$data = array();
+		$propertyNames = array();
+		$this->collectChildNodeData($data, $propertyNames, $node, $contentTypeFilter);
+		$this->view->setConfiguration(
+			array(
+				'value' => array(
+					'data' => array(
+						'_descendAll' => array()
+					)
+				)
+			)
+		);
+		$this->view->assign('value',
+			array(
+				'data' => $data,
+				'metaData' => array(
+					'idProperty' => '__nodePath',
+					'root' => 'data',
+					'fields' => array_keys($propertyNames)
+				),
+				'success' => TRUE,
+			)
+		);
+	}
+
+	/**
+	 * Collect node data and recurse into child nodes
+	 *
+	 * @param array &$data
+	 * @param array &$propertyNames
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param string $contentTypeFilter
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function collectChildNodeData(array &$data, array &$propertyNames, \F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter) {
+		foreach ($node->getChildNodes($contentTypeFilter) as $key => $childNode) {
+			$properties = $childNode->getProperties();
+			$properties['__nodePath'] = $childNode->getPath();
+			$properties['__workspaceName'] = $childNode->getWorkspace()->getName();
+			$properties['__nodeName'] = $childNode->getName();
+			$properties['__contentType'] = $childNode->getContentType();
+			$data[] = $properties;
+
+			foreach ($properties as $propertyName => $propertyValue) {
+				$propertyNames[$propertyName] = TRUE;
+			}
+
+			$this->collectChildNodeData($data, $propertyNames, $childNode, $contentTypeFilter);
+		}
 	}
 
 	/**
