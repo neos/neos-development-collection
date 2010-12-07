@@ -17,9 +17,6 @@
 .F3-TYPO3-Content-icon-movePage {
 	background-image: url('../Images/UserInterface/Icons/ContentMovePage.gif') !important;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu-elbow-expanded {
-	background-image: url('../Images/UserInterface/Icons/BreadcrumbMenuFold.png') !important;
-}
 
 .F3-TYPO3-Management-ManagementGrid-Icon {
 	display: block;

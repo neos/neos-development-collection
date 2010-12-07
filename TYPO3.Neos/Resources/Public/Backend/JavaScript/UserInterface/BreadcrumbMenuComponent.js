@@ -21,96 +21,211 @@ Ext.namespace('F3.TYPO3.UserInterface');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.UserInterface.BreadcrumbMenu
+ * @class F3.TYPO3.UserInterface.BreadcrumbMenuComponent
  *
- * TODO: insert description
+ * Breadcrumb Menu component, which is used in the top area.
  *
  * @namespace F3.TYPO3.UserInterface
- * @extends Ext.tree.TreePanel
+ * @extends Ext.BoxComponent
  */
 F3.TYPO3.UserInterface.BreadcrumbMenuComponent = function() {
 	F3.TYPO3.UserInterface.BreadcrumbMenuComponent.superclass.constructor.apply(this, arguments);
 };
 
-Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.tree.TreePanel, {
+Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
+
 	/**
-	 * @event F3.TYPO3.UserInterface.BreadcrumbMenuComponent.afterInit
-	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenuComponent} a reference to the submenu.
-	 * Event triggered after initialization of the menu. Should be used
-	 * to add elements to the menu.
+	 * Base path to an element in the registry for this menu
+	 * @cfg string
 	 */
-
-	menuConfig: {},
-
 	basePath: null,
 
-	util: {},
-
 	/**
-	 * @cfg menu Menu as defined in {@link F3.TYPO3.Core.Application.MenuRegistry}
 	 * @return {void}
 	 */
 	initComponent: function() {
-
-		this.util = F3.TYPO3.UserInterface.BreadcrumbMenu.Util;
-
-		var rootNodeConfig = {
-			expanded: true,
-			leaf: false,
-			text: 'Tree Root',
-			children: this._getMenuItems()
-		};
-
 		var config = {
 			cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu',
-			loader: new F3.TYPO3.UserInterface.BreadcrumbMenu.Loader(),
-			root: new F3.TYPO3.UserInterface.BreadcrumbMenu.AsyncNode(rootNodeConfig),
-			singleExpand: 1,
-			animate: true,
-			enableDD: false,
-			containerScroll: true,
-			border: false,
-			rootVisible: false
+			height: '47px'
 		};
 		Ext.apply(this, config);
-
-		if(!this.eventModel){
-            this.eventModel = new F3.TYPO3.UserInterface.BreadcrumbMenu.EventModel(this);
-        }
-
 		F3.TYPO3.UserInterface.BreadcrumbMenuComponent.superclass.initComponent.call(this);
 
-		this.on('afterrender', function(menu) {
-			menu.getRootNode().expand();
-			menu.items.each(function(menuItem, i) {
-				menuItem.addListener('afterrender',	function() {
-					var task = new Ext.util.DelayedTask(function () {
-						this.el.fadeIn({
-							duration: .2
-						});
-					}, this);
-					task.delay(200 * i);
-				});
+		this.on('afterrender', function() {
+			this._renderLevel(this.basePath);
+		}, this);
+	},
+
+	/**
+	 * Renders a new level of the menu, on the right side of all currently
+	 * displayed ones.
+	 *
+	 * @param {String} basePath the base path to render right now.
+	 * @return {void}
+	 * @private
+	 */
+	_renderLevel: function(basePath) {
+		var levelContainer;
+
+		levelContainer = Ext.DomHelper.append(this.el, {
+			tag: 'span',
+			cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-SingleLevel'
+		});
+
+		Ext.each(F3.TYPO3.Core.Registry.get(basePath + '/children'), function(menuItem) {
+			var menuItemElement, innerMenuItemElement;
+
+			menuItemElement = Ext.DomHelper.append(levelContainer, {
+				tag: 'span',
+				cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem ' + menuItem.iconCls,
+				'data-menupath': basePath + '/children/' + menuItem.key
+			});
+			innerMenuItemElement = Ext.DomHelper.append(menuItemElement, {
+				tag: 'span',
+				cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text',
+				children: menuItem.text
+			});
+			Ext.get(menuItemElement).on('click', this._onMenuItemClick, this);
+			Ext.get(innerMenuItemElement).on('click', this._onInnerMenuItemClick, this);
+		}, this);
+	},
+
+	/**
+	 * Event handler for clicking a menu item.
+	 *
+	 * @param {Ext.EventObject} event
+	 * @param {DOMElement} clickedMenuItemDomElement the MenuItem which is clicked
+	 * @return {void}
+	 * @private
+	 */
+	_onMenuItemClick: function(event, clickedMenuItemDomElement) {
+		var clickedMenuItem = Ext.get(clickedMenuItemDomElement);
+
+		if (clickedMenuItem.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
+			this._deactivateActiveItem(clickedMenuItem);
+		} else {
+			this._activateItem(clickedMenuItem);
+		}
+	},
+
+	/**
+	 * Event handler for clicking a menu item text, which we just
+	 * forward to the handler of the current menu item.
+	 *
+	 * @param {Ext.EventObject} event
+	 * @param {DOMElement} clickedMenuItemDomElement the MenuItem which is clicked
+	 * @return {void}
+	 * @private
+	 */
+	_onInnerMenuItemClick: function(event, clickedMenuItemDomElement) {
+		this._onMenuItemClick(event, clickedMenuItemDomElement.parentNode);
+	},
+
+	/**
+	 * Activate the currently clicked menu item.
+	 *
+	 * @param {Ext.Element} clickedMenuItem the clicked menu item element
+	 * @return {void}
+	 * @private
+	 */
+	_activateItem: function(clickedMenuItem) {
+		var currentlyClickedMenuPath = clickedMenuItem.getAttribute('data-menupath');
+
+		clickedMenuItem.parent().select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
+			this._deactivateActiveItem(activeItem);
+		}, this);
+
+		clickedMenuItem.addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active');
+
+		if (this._hasChildren(currentlyClickedMenuPath)) {
+			this._hideSiblings(clickedMenuItem);
+			this._renderArrow();
+			this._renderLevel(currentlyClickedMenuPath);
+		}
+
+		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('activate-' + currentlyClickedMenuPath, this);
+
+		// show label
+		clickedMenuItem.setStyle('width', clickedMenuItem.getTextWidth() + 'px');
+	},
+
+	/**
+	 * Deactivate the currently clicked menu item.
+	 *
+	 * @param {Ext.Element} clickedMenuItem the clicked menu item element
+	 * @return {void}
+	 * @private
+	 */
+	_deactivateActiveItem: function(clickedMenuItem) {
+		var currentlyClickedMenuPath = clickedMenuItem.getAttribute('data-menupath');
+
+		clickedMenuItem.removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active');
+		clickedMenuItem.setStyle('width', null);
+
+		// Show siblings again
+		clickedMenuItem.parent().select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden').removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
+
+		// Delete everything right of the parent node, i.e. higher levels of the menu, and fire the right events on it.
+		var rightSibling = clickedMenuItem.parent().next();
+		while (rightSibling) {
+			rightSibling.select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
+				F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('deactivate-' + activeItem.getAttribute('data-menupath'), this);
 			}, this);
+			rightSibling.remove();
+			rightSibling = clickedMenuItem.parent().next();
+		}
+		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('deactivate-' + currentlyClickedMenuPath, this);
+	},
+
+	/**
+	 * Does the given menuPath have children?
+	 *
+	 * @param {String} menupath menu path in the registry
+	 * @return {Boolean} true if the menu path has children, false otherwise.
+	 * @private
+	 */
+	_hasChildren: function(menupath) {
+		var childNodes = F3.TYPO3.Core.Registry.get(menupath + '/children');
+		return (childNodes && childNodes.length > 0);
+	},
+
+	/**
+	 * Render an arrow between menu levels.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_renderArrow: function() {
+		Ext.DomHelper.append(this.el, {
+			tag: 'span',
+			cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-Separator'
 		});
 	},
 
 	/**
+	 * Hide the siblings of the passed menu item
+	 *
+	 * @param {Ext.Element} menuItem the clicked menu item element
+	 * @return {void}
 	 * @private
 	 */
-	_getMenuItems: function() {
-		var menu = F3.TYPO3.Utils.clone(this.menuConfig);
-		return this.util.convertMenuConfig(
-			menu,
-			1,
-			'',
-			this.basePath, {
-				sectionId: '',
-				menuId: 'mainMenu',
-				menuPath: ''
+	_hideSiblings: function(menuItem) {
+		Ext.each(menuItem.dom.parentNode.children, function(sibling) {
+			if (sibling !== menuItem.dom) {
+				Ext.fly(sibling).addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
 			}
-		);
+		});
+	},
+
+	/**
+	 * Callback method used in event handlers which listen to
+	 * activate-* and deactivate-*, to find the ModuleMenu in which the
+	 * breadcrumb menu is embedded
+	 *
+	 * @return {F3.TYPO3.UserInterface.ModuleMenu}
+	 */
+	getModuleMenu: function() {
+		return this.findParentByType(F3.TYPO3.UserInterface.ModuleMenu);
 	}
 });
-
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenuComponent', F3.TYPO3.UserInterface.BreadcrumbMenuComponent);

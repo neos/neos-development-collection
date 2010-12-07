@@ -79,10 +79,8 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 				items: [{
 					xtype: 'F3.TYPO3.UserInterface.ModuleMenu',
 					ref: 'moduleMenu',
-					menuId: 'mainMenu',
 					itemId: menuItem.itemId,
 					basePath: 'menu/main/' + menuItem.key,
-					menuConfig: menuItem.children,
 					flex: 0
 				}, {
 					xtype: 'F3.TYPO3.UserInterface.ContentArea',

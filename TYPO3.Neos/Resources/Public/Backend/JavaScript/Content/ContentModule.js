@@ -83,7 +83,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 		});
 
 			// This will come from the server later on
-		registry.set('schema', {
+		registry.set('schema/type', {
 			"TYPO3:Page": {
 				service: {
 					show: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.show',

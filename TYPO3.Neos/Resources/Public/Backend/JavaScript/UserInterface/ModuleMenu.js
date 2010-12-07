@@ -29,8 +29,6 @@ Ext.ns("F3.TYPO3.UserInterface");
  * @extends Ext.Panel
  */
 F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
-	menuId: null,
-	menuConfig: {},
 	basePath: null,
 
 	initComponent: function() {
@@ -45,10 +43,7 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Panel, {
 				xtype: 'F3.TYPO3.UserInterface.BreadcrumbMenuComponent',
 				itemId: this.itemId,
 				ref: 'breadcrumbMenu',
-				menuId: this.menuId,
-				menuConfig: this.menuConfig,
 				basePath: this.basePath,
-				height: 50,
 				flex: 0
 			}, {
 				xtype: 'container',
