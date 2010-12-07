@@ -41,10 +41,19 @@ class ObjectFactory {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node
 	 * @return mixed Either the TypoScript Object or FALSE if no object could be created for the given node
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo This factory is currently hard-wired and needs some proper implementation once we have "prototypes"
 	 */
 	public function createByNode(\F3\TYPO3CR\Domain\Model\Node $node) {
-		$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Node');
+		$contentType = $node->getContentType();
+		if (strpos($contentType, ':') !== FALSE) {
+			list($packageKey, $typoScriptObjectName) = explode(':', $contentType);
+			$possibleTypoScriptObjectName = 'F3\\'. $packageKey . '\\TypoScript\\' . $typoScriptObjectName;
+			if ($this->objectManager->isRegistered($possibleTypoScriptObjectName) === TRUE) {
+				$typoScriptObject = $this->objectManager->create($possibleTypoScriptObjectName);
+			}
+		}
+		if (!isset($typoScriptObject)) {
+			$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Node');
+		}
 		$typoScriptObject->setNode($node);
 		return $typoScriptObject;
 	}
