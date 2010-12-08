@@ -53,6 +53,7 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->view->assign('workspaceName', $workspaceName);
 		$this->view->assign('siteName', $contentContext->getCurrentSite()->getName());
 		$this->view->assign('siteNodePath', $contentContext->getCurrentSiteNode()->getPath());
+		$this->view->assign('contextLocale', $contentContext->getLocale()->getLanguage());
 
 		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
 		$this->view->assign('version', $version);

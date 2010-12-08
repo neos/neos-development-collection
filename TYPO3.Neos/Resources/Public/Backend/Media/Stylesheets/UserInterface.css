@@ -279,3 +279,6 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-Content-Node.x-view-selected {
 	background: lightblue;
 }
+.F3-TYPO3-Overflow-Visible{
+	overflow: visible;
+}

@@ -41,6 +41,7 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 		this.on('tabchange', function(sectionMenu, tab) {
 			F3.TYPO3.History.HistoryManager.set('SectionMenu', tab.itemId);
 			F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('activate-menu/main/' + tab.itemId, tab);
+
 		}, this);
 
 		F3.TYPO3.History.HistoryManager.on('SectionMenu-changed', function(section) {
@@ -77,8 +78,9 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 	 * @return {Object}
 	 */
 	_getTabComponentForMenuItem: function(menuItem) {
+		var viewFilter = menuItem.viewFilter ? menuItem.viewFilter : {xtype: 'container', 'height': 0};
 		return {
-			xtype: 'container',
+			xtype: 'F3.TYPO3.Components.ModuleContainer',
 			layout: 'vbox',
 			layoutConfig: {
 				align: 'stretch'
@@ -94,12 +96,12 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 				itemId: menuItem.itemId,
 				basePath: 'menu/main/' + menuItem.key,
 				menuConfig: menuItem.children,
+				viewFilter: viewFilter,
 				flex: 0
 			}, {
 				xtype: 'F3.TYPO3.UserInterface.ContentArea',
 				itemId: menuItem.itemId + '-contentArea',
 				ref: 'contentArea',
-
 				flex: 1
 			}]
 		};

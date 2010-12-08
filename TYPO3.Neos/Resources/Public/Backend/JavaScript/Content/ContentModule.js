@@ -58,35 +58,48 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	 * @return {void}
 	 */
 	configure: function(registry) {
-
 		registry.append('menu/main', 'content', {
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
 			title: 'Content',
-			itemId: 'content'
+			itemId: 'content',
+			viewFilter: {
+				xtype: 'F3.TYPO3.UserInterface.ViewFilterToolbar'
+			}
 		});
-
 		registry.append('menu/main/content[]', 'edit', {
 			itemId: 'edit',
 			text: 'Edit',
 			iconCls: 'F3-TYPO3-Content-icon-edit'
 		});
-
 		registry.append('menu/main/content[]/edit[]', 'pageProperties', {
 			itemId: 'pageProperties',
 			text: 'Page properties',
 			iconCls: 'F3-TYPO3-Content-icon-pageProperties'
 		});
-
 		registry.append('menu/main/content[]', 'createPage', {
 			itemId: 'Create',
 			text: 'Create Page',
 			iconCls: 'F3-TYPO3-Content-icon-createPage'
 		});
-
 		registry.append('menu/main/content[]', 'deletePage', {
 			itemId: 'Delete',
 			text: 'Delete Page',
 			iconCls: 'F3-TYPO3-Content-icon-deletePage'
+		});
+
+		registry.append('menu/viewFilterToolbar', 'workspaceName', {
+			text: F3.TYPO3.Configuration.Application.workspaceName,
+			cls: 'F3-TYPO3-ContextToolbar-icon-workspaceName'
+		});
+		registry.append('menu/viewFilterToolbar', 'siteName', {
+			text: F3.TYPO3.Configuration.Application.siteName,
+			cls: 'F3-TYPO3-ContextToolbar-icon-siteName',
+			disabled: true
+		});
+		registry.append('menu/viewFilterToolbar', 'contextLocale', {
+			text: F3.TYPO3.Configuration.Application.contextLocale,
+			cls: 'F3-TYPO3-ContextToolbar-icon-contextLocale',
+			disabled: true
 		});
 
 			// This will come from the server later on

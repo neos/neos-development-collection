@@ -30,8 +30,6 @@ Ext.ns("F3.TYPO3.Content.Edit");
  */
 F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleDialog, {
 
-	height: 80,
-
 	/**
 	 * Initializer
 	 */

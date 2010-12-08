@@ -1,4 +1,4 @@
-Ext.ns("F3.TYPO3.UserInterface");
+Ext.ns("F3.TYPO3.Components");
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,31 +21,25 @@ Ext.ns("F3.TYPO3.UserInterface");
  *                                                                        */
 
 /**
- * @class F3.TYPO3.UserInterface.ModuleDialog
+ * @class F3.TYPO3.Components.ModuleContainer
  *
- * A module dialog
+ * default component to include modules into the backend
  *
- * @namespace F3.TYPO3.UserInterface
- * @extends Ext.Panel
+ * @namespace F3.TYPO3.Components
+ * @extends Ext.Container
  */
-F3.TYPO3.UserInterface.ModuleDialog = Ext.extend(Ext.Panel, {
-	bodyStyle: 'background: #656565',
-	removeOnContentDialogCancel: true,
+F3.TYPO3.Components.ModuleContainer = Ext.extend(Ext.Container, {
 
 	initComponent: function() {
 		var config = {
-			border: false,
-			flex: 0,
-			cls: 'F3-TYPO3-UserInterface-ModuleDialog'
+			cls: 'F3-TYPO3-Components-ModuleContainer',
+			layout: 'vbox',
+			layoutConfig: {
+				align: 'stretch'
+			}
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.UserInterface.ModuleDialog.superclass.initComponent.call(this);
-
-		if (this.removeOnContentDialogCancel) {
-			this.on('F3.TYPO3.UserInterface.ContentDialog.cancelled', function() {
-				this.moduleMenu.removeModuleDialog();
-			});
-		}
+		F3.TYPO3.Components.ModuleContainer.superclass.initComponent.call(this);
 	}
 });
-Ext.reg('F3.TYPO3.UserInterface.ModuleDialog', F3.TYPO3.UserInterface.ModuleDialog);
+Ext.reg('F3.TYPO3.Components.ModuleContainer', F3.TYPO3.Components.ModuleContainer);

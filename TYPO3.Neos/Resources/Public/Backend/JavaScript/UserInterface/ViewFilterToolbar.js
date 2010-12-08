@@ -1,4 +1,4 @@
-Ext.ns("F3.TYPO3.Content.Edit");
+Ext.ns('F3.TYPO3.UserInterface');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,64 +21,70 @@ Ext.ns("F3.TYPO3.Content.Edit");
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Content.Edit.DeletePageDialog
+ * @class F3.TYPO3.UserInterface.ViewFilterToolbar
  *
- * An empty dialog for deleting pages
+ * context menu
  *
- * @namespace F3.TYPO3.Content.Edit
- * @extends F3.TYPO3.UserInterface.ModuleDialog
+ * @namespace F3.TYPO3.UserInterface
+ * @extends Ext.Toolbar
  */
-F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleDialog, {
-
-	/**
-	 * Context of the current page which is deleted
-	 *
-	 * @type {Object}
-	 * @private
-	 */
-	_context: null,
+F3.TYPO3.UserInterface.ViewFilterToolbar = Ext.extend(Ext.Toolbar, {
 
 	/**
 	 * Initializer
 	 */
 	initComponent: function() {
-		var config;
-
-		this._context = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
-		config = {
-			height: 1,
-			items: []
+		var config = {
+			height: 24,
+			padding: '0 0 0 12px',
+			flex: 0,
+			cls: 'F3-TYPO3-UserInterface-ViewFilterToolbar',
+			items: this._getToolbarItems()
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Content.Edit.DeletePageDialog.superclass.initComponent.call(this);
-
-		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this._onOkButtonClickAction, this);
-		F3.TYPO3.Core.Application.on('F3.TYPO3.Content.contentChanged', this._refreshFrontendEditor, this);
+		F3.TYPO3.UserInterface.ViewFilterToolbar.superclass.initComponent.call(this);
+		this.on('render', this._afterRender, this);
 	},
 
 	/**
-	 * Action when clicking the dialog ok button
-	 *
-	 * @param {} button
-	 * @return {void}
+	 * @private
+	 * @return void
 	 */
-	_onOkButtonClickAction: function(button) {
-		if (button.itemId == 'okButton') {
-			F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/TYPO3:Page/service/delete')).call(this, this._context, this._onOkButtonClickActionSuccess, this);
-		}
+	_afterRender: function(){
+		this.getEl().on('mouseover', this._onMouseOver, this);
+		this.getEl().on('mouseout', this._onMouseOut, this);
 	},
 
 	/**
-	 * Action when succes on button click action
-	 * remove the dialog and refresh frontend editor
-	 *
-	 * @param {} response
-	 * @return {void}
+	 * @private
+	 * @return void
 	 */
-	_onOkButtonClickActionSuccess: function(response) {
-		this.moduleMenu.removeModuleDialog();
-		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
+	_getToolbarItems: function() {
+		var items = [];
+		var config = F3.TYPO3.Core.Registry.get('menu/viewFilterToolbar');
+		Ext.each(config, function(component) {
+			var item = {};
+			Ext.apply(item, component, {});
+			items.push(item);
+		});
+		return items;
+	},
+
+	/**
+	 * @private
+	 * @return void
+	 */
+	_onMouseOver: function(event) {
+		this.removeClass('F3-TYPO3-disabled');
+	},
+
+	/**
+	 * @private
+	 * @return void
+	 */
+	_onMouseOut: function(event) {
+		this.addClass('F3-TYPO3-disabled');
 	}
 
 });
-Ext.reg('F3.TYPO3.Content.Edit.DeletePageDialog', F3.TYPO3.Content.Edit.DeletePageDialog);
+Ext.reg('F3.TYPO3.UserInterface.ViewFilterToolbar', F3.TYPO3.UserInterface.ViewFilterToolbar);
