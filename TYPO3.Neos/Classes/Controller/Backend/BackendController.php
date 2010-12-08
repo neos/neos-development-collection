@@ -36,6 +36,12 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $securityContext;
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * Default action of the backend controller.
 	 *
 	 * @return string
@@ -47,6 +53,9 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->view->assign('workspaceName', $workspaceName);
 		$this->view->assign('siteName', $contentContext->getCurrentSite()->getName());
 		$this->view->assign('siteNodePath', $contentContext->getCurrentSiteNode()->getPath());
+
+		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
+		$this->view->assign('version', $version);
 	}
 }
 ?>

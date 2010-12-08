@@ -80,5 +80,18 @@ F3.TYPO3.Configuration.Application = {
 	 *
 	 * @type {string}
 	 */
-	siteNodePath: null
+	siteNodePath: null,
+
+	/**
+	 * The current TYPO3 version number
+	 *
+	 * This setting is set by a small script in the Backend
+	 * Fluid template and is used by the FrontendEditor.
+	 *
+	 * Don't use or rely on it yet, as this solution still
+	 * is to be discussed.
+	 *
+	 * @type {String}
+	 */
+	version: null
 }
