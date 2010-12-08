@@ -11,38 +11,79 @@
 	</script>
 <f:security.ifAccess resource="F3_TYPO3_BackendController">
 	<ext:include theme="xtheme-gray" debug="true" />
+	
+<!--
+Search:  document.write('<script type="text/javascript" src="'+GENTICS_Aloha_base+'
+Replace: <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/Backend/Aloha/WebContent/
 
-	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
-	<typo3:includeJavaScript include="utils/.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
+Search:  "></script>');
+Replace: ')}"></script>
+-->
 
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ext-alohaproxy.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ext-alohareader.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ext-alohatreeloader.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/core.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui-attributefield.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/css.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/editable.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ribbon.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/event.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/floatingmenu.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ierange-m2.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/jquery.aloha.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/log.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/markup.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/message.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/plugin.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/selection.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/sidebar.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/repositorymanager.js')}"></script>
-	<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/repository.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery-1.4.4.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery.json-2.2.min.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery.getUrlParam.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/prettyPhoto/jquery.prettyPhoto.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery.cookie.js')}"></script>
+<!--<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/ext-jquery-adapter-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/ext-foundation-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/cmp-foundation-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/data-foundation-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/data-json-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/data-list-views-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/ext-dd-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/window-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/resizable-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/pkg-buttons-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/pkg-tabs-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/pkg-tips-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/pkg-tree-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/pkg-grid-foundation-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/pkg-toolbars-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/pkg-menu-debug.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/extjs/pkg-forms-debug.js')}"></script>-->
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/jquery.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/lang.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/range.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/position.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/dom.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/indexof.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/license.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ext-alohaproxy.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ext-alohareader.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ext-alohatreeloader.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/core.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui-attributefield.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui-browser.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/css.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/editable.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ribbon.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/event.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/floatingmenu.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ierange-m2.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/jquery.aloha.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/log.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/markup.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/message.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/plugin.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/selection.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/sidebar.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/repositorymanager.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/repository.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/repositoryobjects.js')}"></script>
 
-	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Format/plugin\.js" subpackage="Backend"	directory="Aloha/WebContent" />
-	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Table/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
-	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.List/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
-	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.HighlightEditables/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
-	<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Link/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
-	<typo3:includeJavaScript include="Content/AlohaConnector/plugin\.js" subpackage="Backend" />
+
+<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Format/plugin\.js" subpackage="Backend"	directory="Aloha/WebContent" />
+<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Table/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
+<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.List/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
+<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Link/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
+<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.HighlightEditables/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
+
+<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Paste/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
+<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Paste/wordpastehandler\.js" subpackage="Backend" directory="Aloha/WebContent" />
+
+<typo3:includeJavaScript include="Content/AlohaConnector/plugin\.js" subpackage="Backend" />
 
 	<script><![CDATA[
 		GENTICS.Aloha.settings = {
