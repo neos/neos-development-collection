@@ -1,6 +1,9 @@
+body {
+	font-family: Arial, sans-serif;
+}
 ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-ContentTab {
-	margin-right: 50px;
-	margin-left: 10px;
+	margin-right: 10px;
+	margin-left: 12px;
 }
 ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-left: 200px;
@@ -14,8 +17,9 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	font: 11px helvetica, arial, sans-serif;
 	color: #ffffff;
 }
-.F3-TYPO3-UserInterface-SectionMenu > .x-tab-panel-bwrap {
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-bwrap {
 	-moz-box-shadow: 0px -4px 4px #1d1d1d;
+	-webkit-box-shadow: 0px -4px 4px #1d1d1d;
 }
 .F3-TYPO3-Wallpaper {
 	background: url(../Images/Backgrounds/wallpaper.jpg) 50% top repeat-x;
@@ -49,11 +53,11 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-right: 3px;
 	opacity: 0.5;
 	filter: Alpha(opacity=50);
-	transition: all 0.3s linear;
-   -o-transition: all 0.3s linear;
-   -moz-transition: all 0.3s linear;
-   -webkit-transition: all 0.3s linear;
-   text-shadow: -1px -1px 0px #000000;
+	transition: opacity 0.5s linear;
+	-o-transition: opacity 0.5s linear;
+	-moz-transition: opacity 0.5s linear;
+	-webkit-transition: opacity 0.5s linear;
+	text-shadow: -1px -1px 0px #000000;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li:hover,
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li:focus {
@@ -78,8 +82,8 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 /* active tab glow start */
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li.x-tab-strip-active .x-tab-strip-inner {
 	background: #FF8700;
-	-moz-box-shadow: 45px 0 18px -30px #5B5B5B inset, -45px 0 18px -30px #5B5B5B inset;
-	-webkit-box-shadow: 45px 0 18px -30px #5B5B5B inset, -45px 0 18px -30px #5B5B5B inset;
+	-moz-box-shadow: 55px 0 34px -23px #5B5B5B inset, -55px 0 34px -23px #5B5B5B inset;
+	-webkit-box-shadow: 55px 0 34px -23px #5B5B5B inset, -55px 0 34px -23px #5B5B5B inset;
 	margin-bottom: 2px;
 	margin-top: -1px;
 }
@@ -90,6 +94,10 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-bottom: 0;
 }
 /* active tab glow end */
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-right .x-tab-left .x-tab-strip-text {
+	padding-right: 26px;
+	padding-left: 26px;
+}
 .F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
 	border: 0;
 	padding-top: 4px;
@@ -105,7 +113,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip span.x-tab-strip-text {
 	font-size: 13px;
-	padding: 4px 0 5px 0;
+	padding: 6px 0 5px 0;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header,
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-footer,
@@ -220,6 +228,13 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 }
 #F3-TYPO3-TopBar-Logo {
 	background: url(../Images/UserInterface/typo3-logo.png) right top no-repeat;
+}
+.F3-TYPO3-Version .x-panel-body {
+	background: transparent;
+	border: 0;
+	color: #ffffff;
+	font-size: 63%;
+	opacity: 0.4;
 }
 
 #F3-TYPO3-TopBar-StatusText {
