@@ -107,7 +107,7 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 					$data[] = array(
 						'id' => $childNode->getPath(),
 						'text' => $childNode->getProperty('title'),
-						'leaf' => (count($childNode->getChildNodes()) === 0) ? TRUE : FALSE,
+						'leaf' => $childNode->hasChildNodes() === FALSE,
 						'cls' => 'folder'
 
 					);

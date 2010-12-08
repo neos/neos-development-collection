@@ -52,7 +52,7 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$workspace = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName)->getWorkspace();
 		$data = array(
 			'name' => $workspace->getName(),
-			'nodeCount' => $workspace->getNodeCount()
+			'unpublishedNodesCount' => $workspace->getNodeCount() - 1
 		);
 		$this->view->assign('value', array('data' => $data, 'success => TRUE'));
 	}
@@ -70,7 +70,14 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if ($workspace === NULL) {
 			throw new \InvalidArgumentException('Unknown workspace "' . $workspaceName. '".', 1291745692);
 		}
-		$this->view->assignNodes($this->nodeRepository->findByWorkspace($workspace)->toArray());
+		$nodes = $this->nodeRepository->findByWorkspace($workspace)->toArray();
+		foreach ($nodes as $index => $node) {
+			if ($node->getPath() === '/') {
+				unset ($nodes[$index]);
+				break;
+			}
+		}
+		$this->view->assignNodes($nodes);
 	}
 
 	/**
