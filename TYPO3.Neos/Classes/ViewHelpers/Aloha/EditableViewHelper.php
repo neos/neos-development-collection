@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\ViewHelpers;
+namespace F3\TYPO3\ViewHelpers\Aloha;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *

@@ -78,12 +78,13 @@ Replace: ')}"></script>
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Table/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.List/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Link/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
-<typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.HighlightEditables/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
 
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Paste/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Paste/wordpastehandler\.js" subpackage="Backend" directory="Aloha/WebContent" />
 
 <typo3:includeJavaScript include="Content/AlohaConnector/plugin\.js" subpackage="Backend" />
+<typo3:includeJavaScript include="Content/AlohaConnector/AlohaInitializer\.js" subpackage="Backend" />
+<link rel="stylesheet" href="{f:uri.resource(path:'Backend/Media/Stylesheets/Aloha.css')}" />
 
 	<script><![CDATA[
 		GENTICS.Aloha.settings = {
@@ -102,9 +103,5 @@ Replace: ')}"></script>
 			},
 			ribbon: false
 		};
-		Ext.onReady(function() {
-			// TODO: only activate by event
-			jQuery('.f3-typo3-editable').aloha();
-		});
 	]]></script>
 </f:security.ifAccess>

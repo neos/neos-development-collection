@@ -32,6 +32,13 @@ Ext.ns("F3.TYPO3.Content");
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 
 	/**
+	 * Are we currently in Editing Mode?
+	 *
+	 * @var {Boolean}
+	 */
+	_isEditing: false,
+
+	/**
 	 * @event AlohaConnector.contentChanged
 	 *
 	 * fires when there is changed content which should be persisted by the TYPO3 backend.
@@ -201,6 +208,34 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 					cls: 'F3-TYPO3-UserInterface-ContentDialog F3-TYPO3-UserInterface-ContentDialog-warning'
 				}
 			);
+
+			userInterfaceModule.on('activate-menu/main/content/children/edit', function() {
+				Ext.getCmp('F3.TYPO3.Content.FrontendEditor').overlayUneditableAreas();
+				F3.TYPO3.Content.ContentModule._isEditing = true;
+			});
+
+			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function() {
+				Ext.getCmp('F3.TYPO3.Content.FrontendEditor').disableEditing();
+				F3.TYPO3.Content.ContentModule._isEditing = false;
+			});
 		});
+	},
+
+	/**
+	 * @return {Boolean} true if the Aloha Editing mode is active, false otherwise.
+	 */
+	isEditing: function() {
+		return this._isEditing;
+	},
+
+	/**
+	 * Enable the editing mode, selecting the appropriate element in the breadcrumb menu,
+	 * and thus firing the events for activating an element.
+	 *
+	 * @return {void}
+	 */
+	enableEditing: function() {
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
 	}
 });

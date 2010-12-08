@@ -99,7 +99,7 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 * Get the frontent editor IFrame document object
+	 * Get the frontend editor IFrame document object
 	 *
 	 * @return {Object}
 	 * @private
@@ -110,6 +110,22 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 		iframeDom = this.getComponent('contentIframe').el.dom,
 		iframeDocument = iframeDom.contentDocument ? iframeDom.contentDocument : iframeDom.Document;
 		return iframeDocument;
+	},
+
+	/**
+	 * Get the frontend editor Aloha Initializer from the iframe
+	 *
+	 * @return {F3.TYPO3.Content.AlohaConnector.AlohaInitializer} the aloha initializer, or undefined, if the frame is not there-
+	 * @private
+	 */
+	_getAlohaInitializer: function() {
+		var iframeDom, iframeDocument;
+		iframeDom = this.getComponent('contentIframe').el.dom;
+		if (iframeDom.contentWindow.F3) {
+			return iframeDom.contentWindow.F3.TYPO3.Content.AlohaConnector.AlohaInitializer;
+		} else {
+			return undefined;
+		}
 	},
 
 	/**
@@ -124,6 +140,28 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 				nodePath: this._getIframeDocument().body.getAttribute('data-nodepath')
 			}
 		};
+	},
+
+	/**
+	 * Overlay the uneditable areas in the frontend editor.
+	 *
+	 * @return {void}
+	 */
+	overlayUneditableAreas: function() {
+		if (this._getAlohaInitializer()) {
+			this._getAlohaInitializer().overlayUneditableAreas();
+		}
+	},
+
+	/**
+	 * Disable editing again
+	 *
+	 * @return {void}
+	 */
+	disableEditing: function() {
+		if (this._getAlohaInitializer()) {
+			this._getAlohaInitializer().disableEditing();
+		}
 	}
 });
 Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);

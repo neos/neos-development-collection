@@ -266,6 +266,21 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 */
 	getModuleMenu: function() {
 		return this.findParentByType(F3.TYPO3.UserInterface.ModuleMenu);
+	},
+
+	/**
+	 * Activate the given menu path, if it is not activated yet.
+	 *
+	 * @param {String} menupath menu path in the registry
+	 * @return {void}
+	 */
+	activateItem: function(menupath) {
+		var targetElement;
+		targetElement = this.el.select('*[data-menupath=' + F3.TYPO3.Core.Registry.rewritePath(menupath) + ']').first();
+		if (targetElement.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
+			return;
+		}
+		this._activateItem(targetElement);
 	}
 });
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenuComponent', F3.TYPO3.UserInterface.BreadcrumbMenuComponent);
