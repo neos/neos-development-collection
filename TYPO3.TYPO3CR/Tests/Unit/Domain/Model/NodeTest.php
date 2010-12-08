@@ -45,6 +45,37 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLabelCropsTheLabelIfNecessary() {
+		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \F3\TYPO3CR\Domain\Model\Node('/foo/bar', $mockWorkspace);
+
+		$this->assertEquals('(unstructured) bar', $node->getLabel());
+
+		$node->setProperty('title', 'The point of this title is, that it`s a bit long and needs to be cropped.');
+		$this->assertEquals('The point of this title is, th …', $node->getLabel());
+
+		$node->setProperty('title', 'A better title');
+		$this->assertEquals('A better title', $node->getLabel());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAbstractReturnsAnAbstract() {
+		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \F3\TYPO3CR\Domain\Model\Node('/foo/bar', $mockWorkspace);
+
+		$node->setProperty('title', 'The title of this node');
+		$node->setProperty('text', 'Shall I or <em>shall</em> I not, leak or not leak?');
+
+		$this->assertEquals('The title of this node – Shall I or shall I not, leak or not leak?', $node->getAbstract());
+	}
+
+	/**
+	 * @test
 	 * @expectedException InvalidArgumentException
 	 * @dataProvider invalidPaths()
 	 * @author Robert Lemke <robert@typo3.org>

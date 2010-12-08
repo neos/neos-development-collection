@@ -33,6 +33,8 @@ class Node {
 
 	const MATCH_PATTERN_PATH = '/^(\/|(?:\/[a-z0-9\-]+)+)$/i';
 
+	const LABEL_MAXIMUM_CHARACTERS = 30;
+
 	/**
 	 * Absolute path of this node
 	 *
@@ -184,6 +186,31 @@ class Node {
 	 */
 	public function getName() {
 		return ($this->path === '/') ? '' : substr($this->path, strrpos($this->path, '/') + 1);
+	}
+
+	/**
+	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description of this node
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLabel() {
+		$label = $this->hasProperty('title') ? strip_tags($this->getProperty('title')) : '(' . $this->contentType . ') '. $this->getName();
+		$croppedLabel = \F3\FLOW3\Utility\Unicode\Functions::substr($label, 0, self::LABEL_MAXIMUM_CHARACTERS);
+		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
+	}
+
+	/**
+	 * Returns a short abstract describing / containing summarized content of this node
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Implement real abstract rendering ...
+	 */
+	public function getAbstract() {
+		$abstract = strip_tags(implode(' – ', $this->getProperties()));
+		$croppedAbstract = \F3\FLOW3\Utility\Unicode\Functions::substr($abstract, 0, 253);
+		return $croppedAbstract . (strlen($croppedAbstract) < strlen($abstract) ? ' …' : '');
 	}
 
 	/**
