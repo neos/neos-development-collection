@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.UserInterface');
+Ext.ns("F3.TYPO3.Dashboard");
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,72 +21,54 @@ Ext.ns('F3.TYPO3.UserInterface');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.UserInterface.TopBar
+ * @class F3.TYPO3.Dashboard.DashboardView
  *
- * Top bar for the user interface
+ * The dashboard main view with the portal component
  *
- * @namespace F3.TYPO3.UserInterface
- * @extends Ext.Panel
+ * @namespace F3.TYPO3.Dashboard
+ * @extends Ext.Container
  */
-F3.TYPO3.UserInterface.TopBar = Ext.extend(Ext.Panel, {
-	height: 62,
-	
+F3.TYPO3.Dashboard.DashboardView = Ext.extend(Ext.Panel, {
+
+	/**
+	 * Initializer
+	 */
 	initComponent: function() {
 		var config = {
-			layout: 'vbox',
-			layoutConfig: {
-				padding: '5px',
-				align: 'stretch'
-			},
-			border: false,
-			bodyCssClass: 'F3-TYPO3-UserInterface-TopBar-Wallpaper',
+			layout: 'fit',
 			items: [{
-				height: 32,
-				xtype: 'container',
-				layout: 'hbox',
+				itemId: 'fifty-fifty',
+				xtype: 'portal',
+				border: false,
 				items: [{
-						xtype: 'box',
-						width: 150,
-						height: 32,
-						flex: 0
-					}, {
-						xtype: 'box',
-						width: 32,
-						flex: 0
-					}, {
-						xtype: 'box',
-						width: 230,
-						height: 32,
-						flex: 0
-					}, {
-						xtype: 'box',
-						flex: 1
-					}, {
-						xtype: 'box',
-						id: 'F3-TYPO3-TopBar-Logo',
-						height: 34,
-						width: 113,
-						flex: 2
-					}]
+					columnWidth: 0.5,
+					style: 'padding: 10px',
+					items: this._getColumnItems('left')
 				}, {
-					xtype: 'container',
-					layout: 'hbox',
-					items: [{
-						xtype: 'box',
-						height: 12,
-						flex: 1
-					}, {
-						xtype: 'panel',
-						cls: 'F3-TYPO3-Version',
-						width: 107,
-						height: 12,
-						html: 'Version ' + F3.TYPO3.Configuration.Application.version,
-						flex: 0
-					}]
+					columnWidth: 0.5,
+					style: 'padding: 10px',
+					items: this._getColumnItems('right')
 				}]
+			}]
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.UserInterface.TopBar.superclass.initComponent.call(this);
+		F3.TYPO3.Dashboard.DashboardView.superclass.initComponent.call(this);
+	},
+
+	/**
+	 * @private
+	 * @return {Array} an array of portal items fetched from the registry.
+	 */
+	_getColumnItems: function(column) {
+		var items = [];
+		var config = F3.TYPO3.Core.Registry.get('dashboard/column/' + column);
+		Ext.each(config, function(component) {
+			var item = {};
+			Ext.apply(item, component);
+			items.push(item);
+		});
+		return items;
 	}
+
 });
-Ext.reg('F3.TYPO3.UserInterface.TopBar', F3.TYPO3.UserInterface.TopBar);
+Ext.reg('F3.TYPO3.Dashboard.DashboardView', F3.TYPO3.Dashboard.DashboardView);

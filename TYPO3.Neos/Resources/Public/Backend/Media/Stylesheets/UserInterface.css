@@ -1,12 +1,20 @@
 body {
 	font-family: Arial, sans-serif;
 }
+/*
+ * SectionMenu
+ */
+.ul.x-tab-strip > .x-tab-panel-header > .x-tab-strip-wrap > ul.x-tab-strip {
+	width: auto;
+	position: relative;
+}
 ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-ContentTab {
 	margin-right: 10px;
 	margin-left: 12px;
 }
 ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
-	margin-left: 200px;
+	position: absolute;
+	right: 20px;
 }
 
 .x-form-item {
@@ -246,4 +254,22 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-Form-GenericForm form {
 	background:transparent;
 	padding: 10px;
+}
+
+.F3-TYPO3-UserInterface-SectionMenu .F3-TYPO3-Dashboard-PublishedContentCount {
+	display: none;
+	position: absolute;
+	top: -7px;
+	left: -25px;
+	width: 33px;
+	height: 26px;
+	background: url(../Images/UserInterface/DashboardTabBubble.png) no-repeat;
+	color: #ffffff;
+	padding: 6px 0 0 13px;
+	font-size: 12px;
+	font-family: Helvetica,Arial,sans-serif;
+	font-weight: bold;
+}
+.F3-Content-Node.x-view-selected {
+	background: lightblue;
 }

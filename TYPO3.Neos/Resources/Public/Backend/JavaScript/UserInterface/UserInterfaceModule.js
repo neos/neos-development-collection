@@ -46,6 +46,13 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 	 */
 
 	/**
+	 * @event Viewport.initialized
+	 * @param {F3.TYPO3.UserInterface.Layout} the viewport reference
+	 *
+	 * Fired after the viewport has been initialized.
+	 */
+
+	/**
 	 * @var F3.TYPO3.UserInterface.Layout
 	 * @api
 	 */
