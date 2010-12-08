@@ -32,7 +32,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * @var string
 	 */
-	protected $viewObjectNamePattern = 'F3\ExtJS\ExtDirect\View';
+	protected $viewObjectNamePattern = 'F3\TYPO3\Service\ExtDirect\V1\View\NodeView';
 
 	/**
 	 * Select special error action
@@ -53,17 +53,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function showAction(\F3\TYPO3CR\Domain\Model\Node $node) {
-		$this->view->setConfiguration(
-			array(
-				'value' => array(
-					'data' => array(
-						'_only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
-						'_descend' => array('properties' => array())
-					)
-				)
-			)
-		);
-		$this->view->assign('value', array('data' => $node, 'success' => TRUE));
+		$this->view->assignNode($node);
 	}
 
 	/**
@@ -75,56 +65,20 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function getPrimaryChildNodeAction(\F3\TYPO3CR\Domain\Model\Node $node) {
-		$this->view->setConfiguration(
-			array(
-				'value' => array(
-					'data' => array(
-						'_only' => array('name', 'path', 'identifier', 'properties', 'contentType'),
-						'_descend' => array('properties' => array())
-					)
-				)
-			)
-		);
-
-		$this->view->assign('value', array('data' => $node->getPrimaryChildNode(), 'success' => TRUE));
+		$this->view->assignNode($node->getPrimaryChildNode());
 	}
 
 	/**
 	 * Return child nodes of specified node for usage in a TreeLoader
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
-	 * @param string $contentType
-	 * @return string A response string
-	 * @author Christian Müller <christian@kitsunet.de>
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node to find child nodes for
+	 * @param string $contentTypeFilter A content type filter
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function getChildNodesForTreeAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentType) {
-		if ($contentType === '') $contentType = NULL;
-		$data = array();
-		foreach ($node->getChildNodes($contentType) as $key => $childNode) {
-			$data[] = array(
-				'id' => $childNode->getPath(),
-				'text' => $childNode->getProperty('title'),
-				'leaf' => (count($childNode->getChildNodes()) === 0) ? TRUE : FALSE,
-				'cls' => 'folder'
-
-			);
-		}
-		$this->view->setConfiguration(
-			array(
-				'value' => array(
-					'data' => array(
-						'_descendAll' => array()
-					)
-				)
-			)
-		);
-		$this->view->assign('value',
-			array(
-				'data' => $data,
-				'success' => TRUE,
-			)
-		);
+	public function getChildNodesForTreeAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter) {
+		$this->view->assignChildNodes($node, $contentTypeFilter, \F3\TYPO3\Service\ExtDirect\V1\View\NodeView::TREESTYLE);
 	}
 
 	/**
@@ -134,61 +88,11 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @param string $contentTypeFilter
 	 * @return string A response string
-	 * @author Christian Müller <christian@kitsunet.de>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
 	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter) {
-		$data = array();
-		$propertyNames = array();
-		$this->collectChildNodeData($data, $propertyNames, $node, $contentTypeFilter);
-		$this->view->setConfiguration(
-			array(
-				'value' => array(
-					'data' => array(
-						'_descendAll' => array()
-					)
-				)
-			)
-		);
-		$this->view->assign('value',
-			array(
-				'data' => $data,
-				'metaData' => array(
-					'idProperty' => '__nodePath',
-					'root' => 'data',
-					'fields' => array_keys($propertyNames)
-				),
-				'success' => TRUE,
-			)
-		);
-	}
-
-	/**
-	 * Collect node data and recurse into child nodes
-	 *
-	 * @param array &$data
-	 * @param array &$propertyNames
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
-	 * @param string $contentTypeFilter
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	protected function collectChildNodeData(array &$data, array &$propertyNames, \F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter) {
-		foreach ($node->getChildNodes($contentTypeFilter) as $key => $childNode) {
-			$properties = $childNode->getProperties();
-			$properties['__nodePath'] = $childNode->getPath();
-			$properties['__workspaceName'] = $childNode->getWorkspace()->getName();
-			$properties['__nodeName'] = $childNode->getName();
-			$properties['__contentType'] = $childNode->getContentType();
-			$data[] = $properties;
-
-			foreach ($properties as $propertyName => $propertyValue) {
-				$propertyNames[$propertyName] = TRUE;
-			}
-
-			$this->collectChildNodeData($data, $propertyNames, $childNode, $contentTypeFilter);
-		}
+		$this->view->assignChildNodes($node, $contentTypeFilter, \F3\TYPO3\Service\ExtDirect\V1\View\NodeView::LISTSTYLE);
 	}
 
 	/**

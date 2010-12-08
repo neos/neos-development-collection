@@ -30,9 +30,15 @@ namespace F3\TYPO3\Service\ExtDirect\V1\Controller;
 class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * @var string
 	 */
-	protected $viewObjectNamePattern = 'F3\ExtJS\ExtDirect\View';
+	protected $viewObjectNamePattern = 'F3\TYPO3\Service\ExtDirect\V1\View\NodeView';
 
 	/**
 	 * Returns some status information about the given workspace
@@ -49,6 +55,22 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 			'nodeCount' => $workspace->getNodeCount()
 		);
 		$this->view->assign('value', array('data' => $data, 'success => TRUE'));
+	}
+
+	/**
+	 * Returns a list of nodes which have not yet been published
+	 *
+	 * @param string $workspaceName Name of the workspace containing the nodes
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
+	 */
+	public function getUnpublishedNodesAction($workspaceName) {
+		$workspace = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName)->getWorkspace();
+		if ($workspace === NULL) {
+			throw new \InvalidArgumentException('Unknown workspace "' . $workspaceName. '".', 1291745692);
+		}
+		$this->view->assignNodes($this->nodeRepository->findByWorkspace($workspace)->toArray());
 	}
 
 	/**
