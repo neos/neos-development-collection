@@ -167,21 +167,37 @@ class Workspace {
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function publish($targetWorkspaceName) {
-		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
 		$sourceNodes = $this->nodeRepository->findByWorkspace($this);
+		$this->publishNodes($sourceNodes, $targetWorkspaceName);
+	}
 
-		foreach ($sourceNodes as $sourceNode) {
-			if ($sourceNode->getPath() !== '/') {
-				$targetNode = $this->nodeRepository->findOneByPath($sourceNode->getPath(), $targetWorkspace);
+	/**
+	 * Publishes the given nodes to the target workspace.
+	 *
+	 * The specified workspace must be a base workspace of this workspace.
+	 *
+	 * @param array<\F3\TYPO3\Domain\Model\Node> $nodes
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param string $targetWorkspaceName Name of the workspace to publish to
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function publishNodes(array $nodes, $targetWorkspaceName) {
+		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
+		foreach ($nodes as $node) {
+			if ($node->getPath() !== '/') {
+				$targetNode = $this->nodeRepository->findOneByPath($node->getPath(), $targetWorkspace);
 				if ($targetNode !== NULL) {
 					$this->nodeRepository->remove($targetNode);
 				}
-				if ($sourceNode->isRemoved() === FALSE) {
-					$sourceNode->setWorkspace($targetWorkspace);
+				if ($node->isRemoved() === FALSE) {
+					$node->setWorkspace($targetWorkspace);
 				} else {
-					$this->nodeRepository->remove($sourceNode);
+					$this->nodeRepository->remove($node);
 				}
 			}
 		}
