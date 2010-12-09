@@ -156,7 +156,6 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 				this._createOverlaysForEditableElements();
 			}, this);
 		}, this);
-		this._createOverlaysForEditableElements();
 	},
 
 	/**
