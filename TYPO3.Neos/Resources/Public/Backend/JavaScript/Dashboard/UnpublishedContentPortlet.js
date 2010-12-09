@@ -57,12 +57,11 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 				}
 			}],
 			title: 'Modified content',
-			autoHeight: true,
+			height: 400,
 			items: {
 				itemId: 'contentView',
 				xtype: 'F3.TYPO3.Dashboard.UnpublishedContentView',
-				ref: 'contentView',
-				height: 400
+				ref: 'contentView'
 			},bbar: [{
 				itemId: 'publishAll',
 				text: 'Publish all',
@@ -98,18 +97,19 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 			items: [{
 				xtype: 'button',
 				text: 'Publish',
-				handler: function() {
+				handler: function(button) {
 					var record;
 					if (this.contentToolbar.contentIndex !== null) {
 						record = this.contentView.store.getAt(this.contentToolbar.contentIndex);
+							// Remove before waiting for the callback to prevent further user interaction
+						this.contentToolbar.hide();
+						this.contentView.store.remove(record);
 						F3.TYPO3.Workspace.Service.publishNode({
 							'__context': {
 								workspaceName: record.data.__workspaceName,
 								nodePath: record.data.__nodePath
 							}
-						}, function() {
-							this.getComponent('contentView').store.load();
-						}, this);
+						});
 					}
 				},
 				scope: this
@@ -182,6 +182,7 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 	},
 
 	_publishAll: function() {
+		this.contentView.store.removeAll();
 		F3.TYPO3.Workspace.Service.publishUserWorkspace(function() {
 			this.getComponent('contentView').store.load();
 		}, this);
@@ -189,15 +190,15 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 
 	_publishSelected: function() {
 		var records = this.contentView.getSelectedRecords();
+		this.contentToolbar.hide();
 		Ext.each(records, function(record) {
+			this.contentView.store.remove(record);
 			F3.TYPO3.Workspace.Service.publishNode({
 				'__context': {
 					workspaceName: record.data.__workspaceName,
 					nodePath: record.data.__nodePath
 				}
-			}, function() {
-				this.getComponent('contentView').store.load();
-			}, this);
+			});
 		}, this);
 	}
 
