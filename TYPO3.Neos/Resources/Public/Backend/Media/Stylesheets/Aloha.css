@@ -1,0 +1,19 @@
+/* This style sheet is loaded in the frontend, if aloha is activated. */
+
+body.f3-typo3-editmode-active .f3-typo3-contentelement:hover {
+	-moz-box-shadow: 0 0 1px 2px #FF8700;
+	-webkit-box-shadow: 0 0 1px 2px #FF8700;
+	box-shadow: 0 0 1px 2px #FF8700;
+}
+
+.f3-typo3-notEditable-visible {
+	background-image: url('../Images/UserInterface/Icons/AlohaNotEditable2.png') !important;
+	opacity: 0.3;
+	cursor: not-allowed;
+}
+.f3-typo3-notEditable-visible:hover {
+	background-color:#FF0000;
+	-moz-box-shadow: 0 0 15px #FF0000;
+	-webkit-box-shadow: 0 0 15px #FF0000;
+	box-shadow: 0 0 15px #FF0000;
+}

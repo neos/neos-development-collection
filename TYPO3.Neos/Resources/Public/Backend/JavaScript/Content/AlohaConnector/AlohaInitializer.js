@@ -38,6 +38,8 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 */
 	_contentModule: null,
 
+	_alohaActivated: false,
+
 	/**
 	 * Main entry point for the initializer, called on load of the page.
 	 *
@@ -92,7 +94,11 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 * @private
 	 */
 	_shouldActivateAloha: function(event) {
-		jQuery('.f3-typo3-editable').aloha();
+		if (!this._alohaActivated) {
+			jQuery('.f3-typo3-editable').aloha();
+			Ext.getBody().removeClass('f3-typo3-editmode-active');
+			this._alohaActivated = true;
+		}
 	},
 
 	/**
@@ -101,16 +107,28 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 * @return {void}
 	 */
 	overlayUneditableAreas: function() {
-		jQuery('.f3-typo3-notEditable').each(function(index, element) {
-			element = jQuery(element);
-			var offset = element.offset();
-			Ext.DomHelper.append(window.document.body, {
+		Ext.each(Ext.query('.f3-typo3-notEditable'), function(element) {
+			var offset, createdOverlay;
+			element = Ext.get(element);
+			offset = element.getXY();
+			createdOverlay = Ext.DomHelper.append(window.document.body, {
 				cls: 'f3-typo3-notEditable-visible',
-				style: 'position: absolute; left: ' + offset.left + 'px; top: '+offset.top+'px;width:'+element.width()+'px;height:'+element.height()+'px'
+				style: 'position: absolute; left: ' + offset[0] + 'px; top: '+offset[1]+'px;width:'+element.getComputedWidth()+'px;height:'+element.getComputedHeight()+'px'
 			});
-		});
-	},
 
+			Ext.get(createdOverlay).on('click', this._disableAloha, this);
+		}, this);
+		Ext.getBody().addClass('f3-typo3-editmode-active');
+	},
+	_disableAloha: function() {
+		while (GENTICS.Aloha.editables.length > 0) {
+			GENTICS.Aloha.editables[0].destroy();
+		}
+		GENTICS.Aloha.FloatingMenu.obj.hide();
+		GENTICS.Aloha.FloatingMenu.shadow.hide();
+		Ext.getBody().addClass('f3-typo3-editmode-active');
+
+	},
 	/**
 	 * Disable editing of the current page.
 	 *
@@ -118,8 +136,8 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 */
 	disableEditing: function() {
 		jQuery('.f3-typo3-notEditable-visible').remove();
-		jQuery('.f3-typo3-editable').mahalo();
-		window.addEventListener('dblclick', this._onDblClick, true);
+		this._disableAloha();
+		Ext.getBody().removeClass('f3-typo3-editmode-active');
 	}
 };
 

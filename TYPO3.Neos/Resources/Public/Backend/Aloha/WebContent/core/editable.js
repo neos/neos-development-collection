@@ -91,6 +91,7 @@ GENTICS.Aloha.Editable.prototype.check = function() {
 				'span', 'strong',  'sub', 'sup', 'var']; 	
 	
 	for (var i = 0; i < textElements.length; i++) {
+		var e = nodeName;
 		if ( nodeName == textElements[i] ) {
 			return true;
 		}
@@ -159,12 +160,11 @@ GENTICS.Aloha.Editable.prototype.init = function() {
 		
 		// add focus event to the object to activate
 		this.obj.mousedown(function(e) {
-			that.activate(e);
-			e.stopPropagation();
+			return that.activate(e);
 		});
 		
 		this.obj.focus(function(e) {
-			that.activate(e);
+			return that.activate(e);
 		});
 		
 		// by catching the keydown we can prevent the browser from doing its own thing
@@ -196,11 +196,11 @@ GENTICS.Aloha.Editable.prototype.init = function() {
 		 * @param {Array} a an array which contains a reference to the currently created editable on its first position 
 		 */
 		GENTICS.Aloha.EventRegistry.trigger(
-			new GENTICS.Aloha.Event(
-				'editableCreated',
-				GENTICS.Aloha,
-				[ this ]
-			)
+				new GENTICS.Aloha.Event(
+						'editableCreated',
+						GENTICS.Aloha,
+						[ this ]
+				)
 		);
 
 		// mark the editable as unmodified
@@ -244,6 +244,13 @@ GENTICS.Aloha.Editable.prototype.destroy = function() {
 	});
 	*/
 	
+	// also hide the floating menu if the current editable was active
+	if (this.isActive) {
+		GENTICS.Aloha.FloatingMenu.obj.hide();
+		GENTICS.Aloha.FloatingMenu.shadow.hide();
+	}
+	
+	
 	// throw a new event when the editable has been created
 	/**
 	 * @event editableCreated fires after a new editable has been destroyes, eg. via $('#editme').mahalo()
@@ -252,11 +259,11 @@ GENTICS.Aloha.Editable.prototype.destroy = function() {
 	 * @param {Array} a an array which contains a reference to the currently created editable on its first position 
 	 */
 	GENTICS.Aloha.EventRegistry.trigger(
-		new GENTICS.Aloha.Event(
-			'editableDestroyed',
-			GENTICS.Aloha,
-			[ this ]
-		)
+			new GENTICS.Aloha.Event(
+					'editableDestroyed',
+					GENTICS.Aloha,
+					[ this ]
+			)
 	);
 
 	// finally register the editable with Aloha
@@ -279,7 +286,11 @@ GENTICS.Aloha.Editable.prototype.setUnmodified = function () {
  * @return boolean true if the editable has been modified, false otherwise
  */
 GENTICS.Aloha.Editable.prototype.isModified = function () {
-	return this.originalContent != this.getContents();
+	if (this.originalContent != this.getContents()) {
+		return true;
+	} else {
+		return false;
+	}
 };
 
 /**
@@ -295,7 +306,11 @@ GENTICS.Aloha.Editable.prototype.toString = function() {
  * check whether the editable has been disabled 
  */
 GENTICS.Aloha.Editable.prototype.isDisabled = function () {
-	return this.obj.attr("contentEditable") == "false" || !this.obj.attr("contentEditable");
+	if (this.obj.attr("contentEditable") == "false" || !this.obj.attr("contentEditable")) {
+		return true;
+	} else {
+		return false;
+	}
 };
 
 /**
@@ -303,9 +318,10 @@ GENTICS.Aloha.Editable.prototype.isDisabled = function () {
  * a disabled editable cannot be written on by keyboard
  */
 GENTICS.Aloha.Editable.prototype.disable = function() {
-	if (!this.isDisabled()) {
-		this.obj.attr("contentEditable", "false");
+	if (this.isDisabled()) {
+		return;
 	}
+	this.obj.attr("contentEditable", "false");
 };
 
 /**
@@ -313,9 +329,10 @@ GENTICS.Aloha.Editable.prototype.disable = function() {
  * reenables a disabled editable to be writteable again 
  */
 GENTICS.Aloha.Editable.prototype.enable = function() {
-	if (this.isDisabled()) {
-		this.obj.attr("contentEditable", "true");
+	if (!this.isDisabled()) {
+		return;
 	}
+	this.obj.attr("contentEditable", "true");
 };
 
 
@@ -325,14 +342,28 @@ GENTICS.Aloha.Editable.prototype.enable = function() {
  * @method
  */
 GENTICS.Aloha.Editable.prototype.activate = function(e) {
-	
-	// leave immediately if this is already the active editable
-	if (this.isActive || this.isDisabled()) {
-		return;
+	// stop event propagation for nested editables
+	if (e) {
+		e.stopPropagation();
 	}
 
 	// get active Editable before setting the new one.
 	var oldActive = GENTICS.Aloha.getActiveEditable(); 
+
+	// handle special case in which a nested editable is focused by a click
+	// in this case the "focus" event would be triggered on the parent element
+	// which actually shifts the focus away to it's parent. this if is here to
+	// prevent this situation
+	if (e && e.type == "focus" && oldActive != null && oldActive.obj.parent().get(0) == e.currentTarget) {
+		return;
+	}
+	
+	// leave immediately if this is already the active editable
+	if (this.isActive || this.isDisabled()) {
+		// we don't want parent editables to be triggered as well, so return false
+		return;
+	}
+
 	
 	// set active Editable in core
 	GENTICS.Aloha.activateEditable( this );
@@ -368,11 +399,10 @@ GENTICS.Aloha.Editable.prototype.activate = function(e) {
 	 */
 	// and trigger our *finished* event
 	GENTICS.Aloha.EventRegistry.trigger(
-		new GENTICS.Aloha.Event('editableActivated', this, {
-			'oldActive' : GENTICS.Aloha.getActiveEditable()
-		})
+			new GENTICS.Aloha.Event('editableActivated', this, {
+				'oldActive' : GENTICS.Aloha.getActiveEditable()
+			})
 	);
-
 };
 
 /**
@@ -408,7 +438,7 @@ GENTICS.Aloha.Editable.prototype.blur = function() {
 	 * @param {Event} e the event object
 	 */	
 	GENTICS.Aloha.EventRegistry.trigger(
-		new GENTICS.Aloha.Event('editableDeactivated', this)
+			new GENTICS.Aloha.Event('editableDeactivated', this)
 	);
 };
 
@@ -419,9 +449,12 @@ GENTICS.Aloha.Editable.prototype.blur = function() {
  * @hide
  */
 GENTICS.Aloha.Editable.prototype.empty = function(str) {
-	return (null === str)
+	if (null === str) {
+		return true;
+	}
+
 	// br is needed for chrome
-	|| (GENTICS.Aloha.trim(str) == '' || str == '<br>');
+	return (GENTICS.Aloha.trim(str) == '' || str == '<br>');
 };
 
 /**
@@ -432,6 +465,10 @@ GENTICS.Aloha.Editable.prototype.empty = function(str) {
 GENTICS.Aloha.Editable.prototype.getContents = function() {
 	// clone the object
 	var clonedObj = this.obj.clone(true);
+
+	// do core cleanup
+	clonedObj.find('.GENTICS_cleanme').remove();
+
 	GENTICS.Aloha.PluginRegistry.makeClean(clonedObj);
 	return clonedObj.html();
 };

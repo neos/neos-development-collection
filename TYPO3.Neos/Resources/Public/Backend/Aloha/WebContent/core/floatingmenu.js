@@ -51,7 +51,7 @@ GENTICS.Aloha.FloatingMenu.scopes = {
  * Array of tabs within the floatingmenu
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.tabs = [];
+GENTICS.Aloha.FloatingMenu.tabs = new Array();
 
 /**
  * 'Map' of tabs (for easy access)
@@ -69,7 +69,7 @@ GENTICS.Aloha.FloatingMenu.initialized = false;
  * Array containing all buttons
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.allButtons = [];
+GENTICS.Aloha.FloatingMenu.allButtons = new Array();
 
 /**
  * top part of the floatingmenu position
@@ -331,14 +331,13 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
  * @method
  */
 GENTICS.Aloha.FloatingMenu.refreshShadow = function () {
-	if (this.panelBody) {
-		GENTICS.Aloha.FloatingMenu.shadow.css({
-			'top': this.top + 24, // 24px top offset to reflect tab bar height
-			'left': this.left,
-			'width': this.panelBody.width() + 'px',
-			'height': this.panelBody.height() + 'px'
-		});
+	if (!this.panelBody) {
+		return;
 	}
+	GENTICS.Aloha.FloatingMenu.shadow.css('top', this.top + 24); // 24px top offset to reflect tab bar height
+	GENTICS.Aloha.FloatingMenu.shadow.css('left', this.left);
+	GENTICS.Aloha.FloatingMenu.shadow.width(this.panelBody.width());
+	GENTICS.Aloha.FloatingMenu.shadow.height(this.panelBody.height());
 };
 
 /**
@@ -351,10 +350,8 @@ GENTICS.Aloha.FloatingMenu.togglePin = function() {
 		el.removeClass('GENTICS_floatingmenu_pinned');
 		this.top = this.obj.offset().top;
 		
-		this.obj.css({
-			'top': this.top,
-			'position': 'absolute'
-		});
+		this.obj.css('top', this.top);
+		this.obj.css('position', 'absolute');
 
 		this.shadow.css('position', 'absolute');
 		this.refreshShadow();
@@ -364,10 +361,10 @@ GENTICS.Aloha.FloatingMenu.togglePin = function() {
 		el.addClass('GENTICS_floatingmenu_pinned');
 		this.top = this.obj.offset().top - this.window.scrollTop();
 		
-		this.obj.css({
-			'top': this.top, // update position as preparation for fixed position 
-			'position': 'fixed' // fix the floating menu in place
-		});
+		// update position as preparation for fixed position 
+		this.obj.css('top', this.top);
+		// fix the floating menu in place
+		this.obj.css('position', 'fixed');
 		
 		// do the same for the shadow
 		this.shadow.css('position', 'fixed');
@@ -725,7 +722,7 @@ GENTICS.Aloha.FloatingMenu.floatTo = function(position) {
  */
 GENTICS.Aloha.FloatingMenu.Tab = function(label) {
 	this.label = label;
-	this.groups = [];
+	this.groups = new Array();
 	this.groupMap = {};
 	this.visible = true;
 };
@@ -807,7 +804,7 @@ GENTICS.Aloha.FloatingMenu.Tab.prototype.doLayout = function() {
  * @constructor
  */
 GENTICS.Aloha.FloatingMenu.Group = function() {
-	this.buttons = [];
+	this.buttons = new Array();
 };
 
 /**
@@ -827,7 +824,7 @@ GENTICS.Aloha.FloatingMenu.Group.prototype.getExtComponent = function () {
 	var that = this;
 
 	if (typeof this.extButtonGroup == 'undefined') {
-		var items = [];
+		var items = new Array();
 		var buttonCount = 0;
 
 		// add all buttons
