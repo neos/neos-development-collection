@@ -53,11 +53,25 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	initialize: function() {
 		if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
 			this._contentModule = window.parent.F3.TYPO3.Content.ContentModule;
+			GENTICS.Aloha.EventRegistry.subscribe(
+					GENTICS.Aloha,
+					"editableCreated",
+					function (event, editable) {
+						editable.obj.unbind('keyup');
+						editable.disable();
+						editable.blur(); // TODO: does not fully work yet.
+						GENTICS.Aloha.FloatingMenu.obj.hide();
+						GENTICS.Aloha.FloatingMenu.shadow.hide();
+						F3.TYPO3.Content.AlohaConnector.AlohaInitializer._alohaEnabled = false;
+					}
+			);
+			jQuery('.f3-typo3-editable').aloha();
 
 			window.addEventListener('dblclick', this._onDblClick.createDelegate(this), true);
 			if (this._contentModule.isEditing()) {
 				this.enableEditing();
 			}
+			Ext.getBody().on('keydown', this._onKeyDown, this);
 		}
 	},
 
@@ -70,11 +84,23 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 * @private
 	 */
 	_onDblClick: function(event) {
-		if (this._contentModule.isEditing()) {
-			this._removeOverlaysForEditableElements();
-			this._enableAloha(event);
-		} else {
-			this._shouldActivateEditingMode(event);
+		if (!this._contentModule.isEditing()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this._contentModule.enableEditing();
+		}
+	},
+
+	/**
+	 * On key down
+	 *
+	 * @param {DOMEvent} event the DOM event
+	 * @return {void}
+	 * @private
+	 */
+	_onKeyDown: function(event) {
+		if (event.keyCode == 27) {
+			this._contentModule.disableEditing();
 		}
 	},
 
@@ -85,7 +111,7 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 */
 	enableEditing: function() {
 		this._overlayUneditableAreas();
-		this._createOverlaysForEditableElements();
+		this._enableAloha();
 	},
 
 	/**
@@ -96,46 +122,35 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	disableEditing: function() {
 		this._removeUneditableAreas();
 		this._disableAloha();
-		this._removeOverlaysForEditableElements();
-	},
-
-	/**
-	 * Callback which calls the parent frame to activate the editing mode.
-	 *
-	 * @param {DOMEvent} event the DOM event
-	 * @return {void}
-	 * @private
-	 */
-	_shouldActivateEditingMode: function(event) {
-		event.preventDefault();
-		event.stopPropagation();
-
-		this._contentModule.enableEditing();
 	},
 
 	/**
 	 * Enable aloha
 	 *
-	 * @param {DOMEvent} event the DOM event
 	 * @return {void}
 	 * @private
 	 */
-	_enableAloha: function(event) {
+	_enableAloha: function() {
 		if (!this._alohaEnabled) {
-			jQuery('.f3-typo3-editable').aloha();
-			this._removeOverlaysForEditableElements();
+			for (var i=0; i < GENTICS.Aloha.editables.length; i++) {
+				GENTICS.Aloha.editables[i].enable();
+			}
+			GENTICS.Aloha.FloatingMenu.obj.show();
+			GENTICS.Aloha.FloatingMenu.shadow.show();
 			this._alohaEnabled = true;
 		}
 	},
 
 	/**
 	 * Disable aloha
+	 *
 	 * @return {void}
 	 * @private
 	 */
 	_disableAloha: function() {
-		while (GENTICS.Aloha.editables.length > 0) {
-			GENTICS.Aloha.editables[0].destroy();
+		for (var i=0; i < GENTICS.Aloha.editables.length; i++) {
+			GENTICS.Aloha.editables[i].disable();
+			GENTICS.Aloha.editables[i].blur();
 		}
 		GENTICS.Aloha.FloatingMenu.obj.hide();
 		GENTICS.Aloha.FloatingMenu.shadow.hide();
@@ -150,11 +165,7 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 */
 	_overlayUneditableAreas: function() {
 		Ext.each(Ext.query('.f3-typo3-notEditable'), function(element) {
-			var createdOverlay = this._createOverlayForElement(element, 'f3-typo3-notEditable-visible');
-			Ext.get(createdOverlay).on('click', function() {
-				this._disableAloha();
-				this._createOverlaysForEditableElements();
-			}, this);
+			this._createOverlayForElement(element, 'f3-typo3-notEditable-visible');
 		}, this);
 	},
 
@@ -166,28 +177,6 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 */
 	_removeUneditableAreas: function() {
 		jQuery('.f3-typo3-notEditable-visible').remove();
-	},
-
-	/**
-	 * Create overlays for editable elements
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_createOverlaysForEditableElements: function() {
-		Ext.each(Ext.query('.f3-typo3-contentelement'), function(element) {
-			var createdOverlay = this._createOverlayForElement(element, 'f3-typo3-contentelement-overlay');
-		}, this);
-	},
-
-	/**
-	 * Remove the overlays for editable content.
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_removeOverlaysForEditableElements: function() {
-		jQuery('.f3-typo3-contentelement-overlay').remove();
 	},
 
 	/**

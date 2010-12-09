@@ -281,6 +281,21 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 			return;
 		}
 		this._activateItem(targetElement);
+	},
+
+	/**
+	 * Deactivate the given menu path, if it is not deactivated yet.
+	 *
+	 * @param {String} menupath menu path in the registry
+	 * @return {void}
+	 */
+	deactivateItem: function(menupath) {
+		var targetElement;
+		targetElement = this.el.select('*[data-menupath=' + F3.TYPO3.Core.Registry.rewritePath(menupath) + ']').first();
+		if (!targetElement.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
+			return;
+		}
+		this._deactivateActiveItem(targetElement);
 	}
 });
 Ext.reg('F3.TYPO3.UserInterface.BreadcrumbMenuComponent', F3.TYPO3.UserInterface.BreadcrumbMenuComponent);

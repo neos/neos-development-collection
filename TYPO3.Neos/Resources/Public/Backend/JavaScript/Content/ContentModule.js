@@ -237,5 +237,14 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	enableEditing: function() {
 		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
 		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
+	},
+
+	/**
+	 * Disable editing mode
+	 *
+	 * @return {void}
+	 */
+	disableEditing: function() {
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.deactivateItem('menu/main/content[]/edit');
 	}
 });
