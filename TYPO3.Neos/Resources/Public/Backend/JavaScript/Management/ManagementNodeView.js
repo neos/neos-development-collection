@@ -28,7 +28,7 @@ Ext.ns("F3.TYPO3.Management");
  * @namespace F3.TYPO3.Management
  * @extends Ext.Container
  */
-F3.TYPO3.Management.ManagementNodeView = Ext.extend(Ext.Container, {
+F3.TYPO3.Management.ManagementNodeView = Ext.extend(Ext.Panel, {
 
 	/**
 	 * Initializer
@@ -36,7 +36,11 @@ F3.TYPO3.Management.ManagementNodeView = Ext.extend(Ext.Container, {
 	initComponent: function() {
 		var config = {
 			border: false,
-			layout: 'fit'
+			layout: 'fit',
+			tbar: [{
+				text: 'Content',
+				iconCls: 'F3-TYPO3-Management-Content'
+			}]
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.Management.ManagementNodeView.superclass.initComponent.call(this);
@@ -45,7 +49,9 @@ F3.TYPO3.Management.ManagementNodeView = Ext.extend(Ext.Container, {
 			this.removeAll(true);
 			this.add({
 				xtype: 'F3.TYPO3.Management.ManagementGrid',
-				title: node.attributes.text,
+				border: true,
+				padding: '6px',
+				cls: 'F3-TYPO3-Management-Grid-Element',
 				nodePath: node.attributes.id
 			});
 			this.doLayout();

@@ -1,0 +1,75 @@
+#F3-TYPO3-Management-ManagementView {
+  background: #a6a6a6; }
+
+#F3-TYPO3-Management-ManagementView .x-panel-body {
+  background: transparent; }
+
+#F3-TYPO3-Management-ManagementView .x-tree-node a span {
+  color: rgba(0, 0, 0, 0.8); }
+
+.x-tree-node-collapsed .x-tree-node-icon,
+.x-tree-node-expanded .x-tree-node-icon,
+.x-tree-node-leaf .x-tree-node-icon {
+  background-image: url(../Icons/FugueIcons/document.png); }
+
+.F3-TYPO3-Tree-Container {
+  background: #f0f0f0;
+  border: 0;
+  -moz-box-shadow: 0 0 1px 1px #c4c4c4, 0 0 0 1px #888888; }
+
+#F3-TYPO3-Management-ManagementView .x-toolbar {
+  background-image: -moz-linear-gradient(center top, #e3e3e3, #dbdbdb);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#e3e3e3), to(#dbdbdb)); }
+
+#F3-TYPO3-Management-ManagementView .x-panel-tbar-noheader {
+  background: #dbdbdb;
+  background-image: -moz-linear-gradient(left, #ffedd9 0%, #d07d00 50%, #ffedd9);
+  background-image: -webkit-gradient(linear, left top, right top, color-stop(0%, #ffedd9), color-stop(50%, #d07d00), color-stop(100%, #ffedd9));
+  margin-bottom: 2px;
+  -moz-box-shadow: 0 1px 3px #6f6f6f;
+  -webkit-box-shadow: 0 1px 3px #6f6f6f; }
+
+.F3-TYPO3-Tree-Container .x-panel-bwrap .x-panel-body {
+  background: #f0f0f0;
+  -moz-box-shadow: 0 0 0 1px #c8c8c8, 0 0 1px 1px #a0a0a0;
+  -webkit-box-shadow: 0 0 0 1px #c8c8c8, 0 0 1px 1px #a0a0a0; }
+
+#F3-TYPO3-Management-ManagementView .x-panel-tbar-noheader .x-toolbar {
+  margin-bottom: 1px;
+  border: 0; }
+
+.F3-TYPO3-Tree-Container .x-panel-bwrap .x-panel-body ul.x-tree-lines {
+  margin-top: 7px;
+  margin-left: 10px; }
+
+#F3-TYPO3-Management-ManagementView .x-grid3-header {
+  background-image: -moz-linear-gradient(center top, #373737, #696969);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#373737), to(#696969)); }
+
+#F3-TYPO3-Management-ManagementView .x-grid3-header thead {
+  color: #ffffff; }
+
+#F3-TYPO3-Management-ManagementView .x-layout-split {
+  background-image: -moz-linear-gradient(left center, #2b2b2b, #181818);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#2b2b2b), to(#181818)); }
+
+#F3-TYPO3-Management-ManagementView .F3-TYPO3-Management-Grid-Element .x-grid3 {
+  border: 1px solid #0d0a07; }
+
+#F3-TYPO3-Management-ManagementView .F3-TYPO3-Management-Grid-Element .x-panel-body {
+  background: #a6a6a6; }
+
+#F3-TYPO3-Management-ManagementView .F3-TYPO3-Management-Grid-Element .x-panel-body .x-grid3 {
+  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5); }
+
+#F3-TYPO3-Management-ManagementView .x-panel-bwrap .x-panel-body-noheader,
+#F3-TYPO3-Management-ManagementView .x-panel-noborder .x-panel-bwrap .x-panel-body-noheader .x-grid-panel .x-panel-body-noheader {
+  border: 0; }
+
+#F3-TYPO3-Management-ManagementView td.x-grid3-hd-over .x-grid3-hd-inner,
+#F3-TYPO3-Management-ManagementView td.sort-desc .x-grid3-hd-inner,
+#F3-TYPO3-Management-ManagementView td.sort-asc .x-grid3-hd-inner,
+#F3-TYPO3-Management-ManagementView td.x-grid3-hd-menu-open .x-grid3-hd-inner {
+  background-image: -moz-linear-gradient(center top, #373737, #919191);
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#373737), to(#919191)); }

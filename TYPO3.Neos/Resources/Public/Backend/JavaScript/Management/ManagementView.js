@@ -52,7 +52,7 @@ F3.TYPO3.Management.ManagementView = Ext.extend(Ext.Container, {
 			{
 				region: 'center',
 				layout: 'card',
-				margins: '0 5 0 5',
+				margins: '0',
 				items: this._getRegionItems('center'),
 				activeItem: 0
 			}]

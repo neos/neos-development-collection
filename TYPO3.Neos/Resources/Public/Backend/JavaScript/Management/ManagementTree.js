@@ -35,6 +35,11 @@ F3.TYPO3.Management.ManagementTree = Ext.extend(Ext.tree.TreePanel, {
 	 */
 	initComponent: function() {
 		var config = {
+			cls: 'F3-TYPO3-Tree-Container',
+			tbar: [{
+				text: 'Page Tree',
+				iconCls: 'F3-TYPO3-Management-Tree'
+			}],
 			root: {
 				nodeType: 'async',
 				text: F3.TYPO3.Configuration.Application.siteName,
