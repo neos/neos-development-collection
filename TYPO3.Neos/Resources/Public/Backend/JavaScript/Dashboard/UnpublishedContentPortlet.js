@@ -91,84 +91,6 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 			}
 		}, this);
 
-			// Create toolbar for hover over content
-		var fadeOutTimeout = null;
-		this.contentToolbar = new Ext.Panel({
-			items: [{
-				xtype: 'button',
-				text: 'Publish',
-				handler: function(button) {
-					var record;
-					if (this.contentToolbar.contentIndex !== null) {
-						record = this.contentView.store.getAt(this.contentToolbar.contentIndex);
-							// Remove before waiting for the callback to prevent further user interaction
-						this.contentToolbar.hide();
-						this.contentView.store.remove(record);
-						F3.TYPO3.Workspace.Service.publishNode({
-							'__context': {
-								workspaceName: record.data.__workspaceName,
-								nodePath: record.data.__nodePath
-							}
-						});
-					}
-				},
-				scope: this
-			}, {
-				xtype: 'button',
-				text: 'Discard',
-				handler: function() {
-					var record;
-					if (this.contentToolbar.contentIndex !== null) {
-						record = this.contentView.store.getAt(this.contentToolbar.contentIndex);
-						// TODO Discard individual record
-					}
-				},
-				scope: this
-			}],
-			layout: 'hbox',
-			layoutConfig: {
-				align: 'middle',
-				pack: 'end',
-				padding: '6'
-			},
-			width: 120,
-			height: 20,
-			floating: true,
-			border: false,
-			shadow: false,
-			renderTo: document.body,
-			hidden: true
-		});
-		this.contentToolbar.el.on('mouseenter', function() {
-			Ext.fly(this.contentToolbar.currentNode).addClass('x-view-over');
-			if (fadeOutTimeout) {
-				clearTimeout(fadeOutTimeout);
-			}
-		}, this);
-		this.contentToolbar.el.on('mouseleave', function() {
-			Ext.fly(this.contentToolbar.currentNode).removeClass('x-view-over');
-			if (fadeOutTimeout) {
-				fadeOutTimeout = setTimeout(this.contentToolbar.hide.createDelegate(this.contentToolbar), 50);
-			}
-		}, this);
-		this.contentView.on('mouseenter', function(view, index, node, event) {
-			if (fadeOutTimeout) {
-				clearTimeout(fadeOutTimeout);
-			}
-			var nodeEl = Ext.fly(node);
-			if (nodeEl) {
-				this.contentToolbar.contentIndex = index;
-					// FIXME Check if this is safe
-				this.contentToolbar.currentNode = node;
-				this.contentToolbar.show();
-				this.contentToolbar.setPosition(nodeEl.getRight() - (120 + 1), nodeEl.getTop() + 1);
-				this.contentToolbar.setHeight(nodeEl.getHeight() - 2);
-			}
-		}, this);
-		this.contentView.on('mouseleave', function() {
-			fadeOutTimeout = setTimeout(this.contentToolbar.hide.createDelegate(this.contentToolbar), 50);
-		}, this);
-
 			// Update button status when  selection changes
 		this.contentView.on('selectionchange', function(dataView, selections) {
 			if (selections.length > 0) {
@@ -181,24 +103,32 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 		}, this);
 	},
 
-	_publishAll: function() {
-		this.contentView.store.removeAll();
+	_publishAll: function(button) {
+		button.disable();
 		F3.TYPO3.Workspace.Service.publishUserWorkspace(function() {
-			this.getComponent('contentView').store.load();
+			this.getComponent('contentView').store.load({callback: function() {
+				button.enable();
+			}, scope: this});
 		}, this);
 	},
 
-	_publishSelected: function() {
-		var records = this.contentView.getSelectedRecords();
-		this.contentToolbar.hide();
+	_publishSelected: function(button) {
+		button.disable();
+		var records = this.contentView.getSelectedRecords(), count = records.length, publishCount = 0;
 		Ext.each(records, function(record) {
-			this.contentView.store.remove(record);
 			F3.TYPO3.Workspace.Service.publishNode({
 				'__context': {
 					workspaceName: record.data.__workspaceName,
 					nodePath: record.data.__nodePath
 				}
-			});
+			}, function() {
+				publishCount++;
+				if (publishCount == count) {
+					this.getComponent('contentView').store.load({callback: function() {
+						button.enable();
+					}, scope: this});
+				}
+			}, this);
 		}, this);
 	}
 
