@@ -147,9 +147,9 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	 *
 	 * @return {void}
 	 */
-	overlayUneditableAreas: function() {
+	enableEditing: function() {
 		if (this._getAlohaInitializer()) {
-			this._getAlohaInitializer().overlayUneditableAreas();
+			this._getAlohaInitializer().enableEditing();
 		}
 	},
 

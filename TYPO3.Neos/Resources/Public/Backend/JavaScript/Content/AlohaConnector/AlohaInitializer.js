@@ -38,7 +38,12 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 */
 	_contentModule: null,
 
-	_alohaActivated: false,
+	/**
+	 * Is aloha activated right now?
+	 * @var {Boolean}
+	 * @private
+	 */
+	_alohaEnabled: false,
 
 	/**
 	 * Main entry point for the initializer, called on load of the page.
@@ -49,33 +54,55 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 		if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
 			this._contentModule = window.parent.F3.TYPO3.Content.ContentModule;
 
-			window.addEventListener('dblclick', this._onDblClick, true);
+			window.addEventListener('dblclick', this._onDblClick.createDelegate(this), true);
 			if (this._contentModule.isEditing()) {
-				this.overlayUneditableAreas();
-			} else {
-				window.addEventListener('dblclick', this._onDblClick, true);
+				this.enableEditing();
 			}
 		}
 	},
 
 	/**
-	 * Double click handler.
+	 * Double click handler. On first double click, we activate the editing mode.
+	 * On second double click, we activate aloha.
 	 *
+	 * @param {DOMEvent} event the DOM event
 	 * @return {void}
 	 * @private
 	 */
 	_onDblClick: function(event) {
-		if (F3.TYPO3.Content.AlohaConnector.AlohaInitializer._contentModule.isEditing()) {
-			F3.TYPO3.Content.AlohaConnector.AlohaInitializer._shouldActivateAloha.call(F3.TYPO3.Content.AlohaConnector.AlohaInitializer, event);
+		if (this._contentModule.isEditing()) {
+			this._removeOverlaysForEditableElements();
+			this._enableAloha(event);
 		} else {
-			F3.TYPO3.Content.AlohaConnector.AlohaInitializer._shouldActivateEditingMode.call(F3.TYPO3.Content.AlohaConnector.AlohaInitializer, event);
+			this._shouldActivateEditingMode(event);
 		}
 	},
 
 	/**
-	 * Callback which activates the editing mode
+	 * Enable the editing functionality.
 	 *
-	 * @param {DOMEvent} the DOM event
+	 * @return {void}
+	 */
+	enableEditing: function() {
+		this._overlayUneditableAreas();
+		this._createOverlaysForEditableElements();
+	},
+
+	/**
+	 * Disable editing of the current page.
+	 *
+	 * @return {void}
+	 */
+	disableEditing: function() {
+		this._removeUneditableAreas();
+		this._disableAloha();
+		this._removeOverlaysForEditableElements();
+	},
+
+	/**
+	 * Callback which calls the parent frame to activate the editing mode.
+	 *
+	 * @param {DOMEvent} event the DOM event
 	 * @return {void}
 	 * @private
 	 */
@@ -87,57 +114,100 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	},
 
 	/**
-	 * Should activate aloha
+	 * Enable aloha
 	 *
-	 * @param {DOMEvent} the DOM event
+	 * @param {DOMEvent} event the DOM event
 	 * @return {void}
 	 * @private
 	 */
-	_shouldActivateAloha: function(event) {
-		if (!this._alohaActivated) {
+	_enableAloha: function(event) {
+		if (!this._alohaEnabled) {
 			jQuery('.f3-typo3-editable').aloha();
-			Ext.getBody().removeClass('f3-typo3-editmode-active');
-			this._alohaActivated = true;
+			this._removeOverlaysForEditableElements();
+			this._alohaEnabled = true;
 		}
 	},
 
 	/**
-	 * Add the overlay for the not editable areas.
-	 *
+	 * Disable aloha
 	 * @return {void}
+	 * @private
 	 */
-	overlayUneditableAreas: function() {
-		Ext.each(Ext.query('.f3-typo3-notEditable'), function(element) {
-			var offset, createdOverlay;
-			element = Ext.get(element);
-			offset = element.getXY();
-			createdOverlay = Ext.DomHelper.append(window.document.body, {
-				cls: 'f3-typo3-notEditable-visible',
-				style: 'position: absolute; left: ' + offset[0] + 'px; top: '+offset[1]+'px;width:'+element.getComputedWidth()+'px;height:'+element.getComputedHeight()+'px'
-			});
-
-			Ext.get(createdOverlay).on('click', this._disableAloha, this);
-		}, this);
-		Ext.getBody().addClass('f3-typo3-editmode-active');
-	},
 	_disableAloha: function() {
 		while (GENTICS.Aloha.editables.length > 0) {
 			GENTICS.Aloha.editables[0].destroy();
 		}
 		GENTICS.Aloha.FloatingMenu.obj.hide();
 		GENTICS.Aloha.FloatingMenu.shadow.hide();
-		Ext.getBody().addClass('f3-typo3-editmode-active');
-
+		this._alohaEnabled = false;
 	},
+
 	/**
-	 * Disable editing of the current page.
+	 * Add the overlay for the not editable areas.
 	 *
 	 * @return {void}
+	 * @private
 	 */
-	disableEditing: function() {
+	_overlayUneditableAreas: function() {
+		Ext.each(Ext.query('.f3-typo3-notEditable'), function(element) {
+			var createdOverlay = this._createOverlayForElement(element, 'f3-typo3-notEditable-visible');
+			Ext.get(createdOverlay).on('click', function() {
+				this._disableAloha();
+				this._createOverlaysForEditableElements();
+			}, this);
+		}, this);
+		this._createOverlaysForEditableElements();
+	},
+
+	/**
+	 * Remove the overlays for uneditable areas.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_removeUneditableAreas: function() {
 		jQuery('.f3-typo3-notEditable-visible').remove();
-		this._disableAloha();
-		Ext.getBody().removeClass('f3-typo3-editmode-active');
+	},
+
+	/**
+	 * Create overlays for editable elements
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_createOverlaysForEditableElements: function() {
+		Ext.each(Ext.query('.f3-typo3-contentelement'), function(element) {
+			var createdOverlay = this._createOverlayForElement(element, 'f3-typo3-contentelement-overlay');
+		}, this);
+	},
+
+	/**
+	 * Remove the overlays for editable content.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_removeOverlaysForEditableElements: function() {
+		jQuery('.f3-typo3-contentelement-overlay').remove();
+	},
+
+	/**
+	 * Helper method: Create an overlay div appended to the body area, which
+	 * will exactly overlay the given element, and return the overlay div.
+	 *
+	 * @param {DOMElement} element the element which should be overlaid
+	 * @param {String} cssClass the css class for the newly created overlay
+	 * @return {DOMElement} the newly created element
+	 * @private
+	 */
+	_createOverlayForElement: function(element, cssClass) {
+		var offset;
+		element = Ext.get(element);
+		offset = element.getXY();
+		return Ext.DomHelper.append(window.document.body, {
+			cls: cssClass,
+			style: 'position: absolute; left: ' + offset[0] + 'px; top: '+offset[1]+'px;width:'+element.getComputedWidth()+'px;height:'+element.getComputedHeight()+'px'
+		});
 	}
 };
 
