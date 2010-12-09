@@ -109,17 +109,10 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return integer The number of nodes found
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Check for workspace compliance
+	 * @todo Implement a count which also considers to not count removed nodes and does not actually loads nodes
 	 */
 	public function countByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$result = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace)->execute()->count();
-
-		foreach ($this->addedObjects as $addedNode) {
-			if (substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
-				$result ++;
-			}
-		}
-		return $result;
+		return count($this->findByParentAndContentType($parentPath, $contentTypeFilter,$workspace));
 	}
 
 	/**

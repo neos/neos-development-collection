@@ -496,6 +496,33 @@ class NodeTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function hasChildNodesChecksForChildNodesOptionallyFilteredyByContentType() {
+		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+
+		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+
+		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('countByParentAndContentType'), array(), '', FALSE);
+		$nodeRepository->expects($this->at(0))->method('countByParentAndContentType')->with('/foo', 'TYPO3CR:Folder', $workspace)->will($this->returnValue(3));
+		$nodeRepository->expects($this->at(1))->method('countByParentAndContentType')->with('/foo', 'Foo:Bar', $workspace)->will($this->returnValue(0));
+
+		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('getPath'), array('/foo', $workspace));
+
+			// we need to use getPath() instead of $this->path because otherwise the Proxy Node would
+			// access $this->path as well - which would be NULL
+		$currentNode->expects($this->exactly(2))->method('getPath')->will($this->returnValue('/foo'));
+
+		$currentNode->_set('context', $context);
+		$currentNode->_set('nodeRepository', $nodeRepository);
+
+		$this->assertTrue($currentNode->hasChildNodes('TYPO3CR:Folder'));
+		$this->assertFalse($currentNode->hasChildNodes('Foo:Bar'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function removeRemovesAllChildNodesAndTheNodeItself() {
 		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(NULL));

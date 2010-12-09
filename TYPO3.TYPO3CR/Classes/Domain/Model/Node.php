@@ -515,13 +515,24 @@ class Node {
 	 * Returns all direct child nodes of this node.
 	 * If a content type is specified, only nodes of that type are returned.
 	 *
-	 * @param string $contentType If specified, only nodes with that content type are considered
+	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
 	 * @return array<\F3\TYPO3CR\Domain\Model\Node> An array of nodes or an empty array if no child nodes matched
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getChildNodes($contentType = NULL) {
-		$nodes = $this->nodeRepository->findByParentAndContentType($this->path, $contentType, $this->context->getWorkspace());
+	public function getChildNodes($contentTypeFilter = NULL) {
+		$nodes = $this->nodeRepository->findByParentAndContentType($this->path, $contentTypeFilter, $this->context->getWorkspace());
 		return $this->treatNodesWithContext($nodes);
+	}
+
+	/**
+	 * Checks if this node has any child nodes.
+	 *
+	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
+	 * @return boolean TRUE if this node has child nodes, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function hasChildNodes($contentTypeFilter = NULL) {
+		return $this->nodeRepository->countByParentAndContentType($this->getPath(), $contentTypeFilter, $this->context->getWorkspace()) > 0;
 	}
 
 	/**
