@@ -35,14 +35,14 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 	 * Initialize the frontend editor component
 	 */
 	initComponent: function() {
-		var uri, config;
-
+		var uri, config, cookieLastVisited;
+		cookieLastVisited = Ext.util.Cookies.get('TYPO3_lastVisitedNode');
 		uri =
 			F3.TYPO3.Configuration.Application.backendBaseUri +
 			"service/rest/v1/node/" +
 			F3.TYPO3.Configuration.Application.workspaceName +
-			Ext.util.Cookies.get('TYPO3_lastVisitedNode') +
-			".html";
+			(cookieLastVisited ? cookieLastVisited + ".html" :
+				F3.TYPO3.Configuration.Application.siteNodePath + '/.html');
 
 		config = {
 			border: false,
