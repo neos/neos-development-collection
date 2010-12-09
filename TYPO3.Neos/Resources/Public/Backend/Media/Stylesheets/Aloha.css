@@ -1,19 +1,17 @@
 /* This style sheet is loaded in the frontend, if aloha is activated. */
 
-body.f3-typo3-editmode-active .f3-typo3-contentelement:hover {
+.f3-typo3-contentelement-overlay:hover {
 	-moz-box-shadow: 0 0 1px 2px #FF8700;
 	-webkit-box-shadow: 0 0 1px 2px #FF8700;
 	box-shadow: 0 0 1px 2px #FF8700;
 }
 
 .f3-typo3-notEditable-visible {
-	background-image: url('../Images/UserInterface/Icons/AlohaNotEditable2.png') !important;
-	opacity: 0.3;
+	background-image: url('../Images/UserInterface/Icons/aloha-notEditable-dark-24bit.png') !important;
+	/* TODO: Calculate the background-position, if the position of the overlay is even or odd (horizontally and vertically) */
+	/*background-image: url('../Images/UserInterface/Icons/aloha-notEditable-light-24bit.png') !important;*/
 	cursor: not-allowed;
 }
 .f3-typo3-notEditable-visible:hover {
-	background-color:#FF0000;
-	-moz-box-shadow: 0 0 15px #FF0000;
-	-webkit-box-shadow: 0 0 15px #FF0000;
-	box-shadow: 0 0 15px #FF0000;
+	background-color:rgba(255,0,0,0.3);
 }

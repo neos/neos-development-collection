@@ -210,7 +210,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			);
 
 			userInterfaceModule.on('activate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.FrontendEditor').overlayUneditableAreas();
+				Ext.getCmp('F3.TYPO3.Content.FrontendEditor').enableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = true;
 			});
 
