@@ -64,9 +64,6 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dashboard.DashboardModule', {
 	 * @return {void}
 	 */
 	initialize: function(application) {
-		application.on('afterBootstrap', function() {
-			F3.TYPO3.Login.Service.updateWorkspaceStatus();
-		});
 		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('dashboard', 'dashboardView', {
 				xtype: 'F3.TYPO3.Dashboard.DashboardView',
@@ -75,26 +72,28 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dashboard.DashboardModule', {
 			userInterfaceModule.contentAreaOn('menu/main/dashboard', 'dashboard', 'dashboardView');
 		});
 		application.afterInitializationOf('F3.TYPO3.Login.LoginModule', function(loginModule) {
+				// Put name of user into dashboard tab
 			loginModule.on('updated', function(party) {
 				var fullName = party.name.fullName,
 					el = F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getTabEl('dashboard');
 				Ext.fly(el).child('.x-tab-strip-text').update(fullName);
 			});
-			loginModule.on('updatedWorkspaceStatus', function(status) {
+		});
+		application.afterInitializationOf('F3.TYPO3.Workspace.WorkspaceModule', function(workspaceModule) {
+				// Listen to update workspace status
+			workspaceModule.on('updatedWorkspaceStatus', function(status) {
 				if (status.changed) {
 					var el = F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getTabEl('dashboard'),
 						bubble = Ext.fly(el).child('.F3-TYPO3-Dashboard-PublishedContentCount');
 						// TODO CSS animation if count changed
 
-					if (status.nodeCount > 1) {
+					if (status.unpublishedNodesCount > 0) {
 						bubble.fadeIn();
-						bubble.update((status.nodeCount - 1) + '');
+						bubble.update(status.unpublishedNodesCount.toString());
 					} else {
 						bubble.hide();
 					}
 				}
-
-				window.setTimeout(F3.TYPO3.Login.Service.updateWorkspaceStatus, 60000);
 			});
 		});
 	}

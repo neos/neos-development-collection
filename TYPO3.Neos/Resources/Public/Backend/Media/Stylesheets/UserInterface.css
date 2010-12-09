@@ -270,6 +270,14 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	font-family: Helvetica,Arial,sans-serif;
 	font-weight: bold;
 }
+.F3-Content-Node {
+	border: 1px solid grey;
+	min-height: 30px;
+	background: #ebebeb;
+}
+.F3-Content-Node.x-view-over {
+	background: #ffffff;
+}
 .F3-Content-Node.x-view-selected {
 	background: lightblue;
 }

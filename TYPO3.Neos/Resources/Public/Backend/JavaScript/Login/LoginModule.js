@@ -19,7 +19,9 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Login.LoginModule', {
 	initialize: function(application) {
 		application.on('afterBootstrap', function() {
 			F3.TYPO3_Controller_LoginController.show(function(result) {
-				F3.TYPO3.Login.LoginModule.fireEvent('updated', result.data);
+				if (result) {
+					F3.TYPO3.Login.LoginModule.fireEvent('updated', result.data);
+				}
 			});
 		}, this);
 
