@@ -6,46 +6,74 @@
 	background: -moz-linear-gradient(top, #4b4b4b, #767676);
 }
 
+.F3-TYPO3-UserInterface-BreadcrumbMenu {
+}
+
 .F3-TYPO3-UserInterface-BreadcrumbMenu span {
 	display: inline-block;
-	float: left;
+}
+
+/**
+ * Add the transition settings
+ */
+.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem,
+.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text,
+.F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
+	-moz-transition-property: opacity, width;
+	-moz-transition-duration: 0.1s, 0.2s;
+	-moz-transition-delay: 0s, 0.1s;
+	-moz-transition-timing-function: ease-in-out;
+/*	-moz-transition-duration: 1s, 1s;
+	-moz-transition-delay: 0s, 1s;*/
 }
 
 .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem {
-	min-width:47px;
-	width:47px;
+	width: 47px;
 	height: 47px;
 	background-repeat: no-repeat;
 	background-position: left 10px;
-	cursor:pointer;
+	cursor: pointer;
+	overflow: hidden;
+	white-space: nowrap;
 	opacity: 0.7;
-	overflow:hidden;
-	white-space:nowrap;
-
-	-moz-transition: all 0.15s ease-in-out;
-	transition: all 0.15s ease-in-out;
-	/* TODO: add for webkit*/
 }
+
+.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden {
+	width: 0px;
+	opacity: 0;
+}
+
+.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active {
+	opacity: 1;
+}
+
 .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
 	color: #ffffff;
 	font: 13px helvetica, arial, sans-serif;
 	font-weight:bold;
-	margin-left:47px;
-	padding-top:14px;
-
+	height: 47px;
+	line-height: 47px;
+	opacity: 0;
+	margin-left: 47px;
+	padding: 0px 10px 0px 0px;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden {
-	display:none !important;
-}
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active {
+.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active > .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
 	opacity: 1;
 }
 
 .F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
 	background-image: url('../Images/UserInterface/Icons/BreadcrumbMenuFold.png') !important;
-	width: 47px;
-	height: 47px;
 	background-repeat: no-repeat;
 	background-position: left 10px;
+	background-size: 0px 25px;
+	width: 0px;
+	height: 47px;
+	opacity: 0;
+}
+
+.F3-TYPO3-UserInterface-BreadcrumbMenu-Separator-active {
+	background-size: 25px 25px;
+	width: 35px;
+	opacity: 1;
 }
