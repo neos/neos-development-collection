@@ -54,7 +54,7 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 			'name' => $workspace->getName(),
 			'unpublishedNodesCount' => $workspace->getNodeCount() - 1
 		);
-		$this->view->assign('value', array('data' => $data, 'success => TRUE'));
+		$this->view->assign('value', array('data' => $data, 'success' => TRUE));
 	}
 
 	/**
@@ -89,11 +89,27 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function publishAction($sourceWorkspaceName, $targetWorkspaceName) {
+	public function publishWorkspaceAction($sourceWorkspaceName, $targetWorkspaceName) {
 		$sourceWorkspace = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $sourceWorkspaceName)->getWorkspace();
 		$sourceWorkspace->publish($targetWorkspaceName);
 
-		$this->view->assign('value', array('data' => '', 'success' => TRUE));
+		$this->view->assign('value', array('success' => TRUE));
+	}
+
+	/**
+	 * Publishes the given node to the specified targetWorkspace
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param string $targetWorkspaceName
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @extdirect
+	 */
+	public function publishNodeAction(\F3\TYPO3CR\Domain\Model\Node $node, $targetWorkspaceName) {
+		$sourceWorkspace = $node->getWorkspace();
+		$sourceWorkspace->publishNodes(array($node), $targetWorkspaceName);
+
+		$this->view->assign('value', array('success' => TRUE));
 	}
 
 }
