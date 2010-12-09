@@ -129,6 +129,11 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 * @private
 	 */
 	_activateItem: function(clickedMenuItem) {
+		if (clickedMenuItem.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text')) {
+			// TODO: Somehow prefend the event to be fired twice
+			return;
+		}
+
 		var currentlyClickedMenuPath = clickedMenuItem.getAttribute('data-menupath');
 
 		clickedMenuItem.parent().select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
@@ -145,8 +150,11 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 
 		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('activate-' + currentlyClickedMenuPath, this);
 
-		// show label
-		clickedMenuItem.setStyle('width', clickedMenuItem.getTextWidth() + 'px');
+		if (clickedMenuItem.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem')) {
+			clickedMenuItem.setStyle({
+				'width': clickedMenuItem.getTextWidth() + 'px'
+			});
+		}
 	},
 
 	/**
@@ -160,21 +168,53 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		var currentlyClickedMenuPath = clickedMenuItem.getAttribute('data-menupath');
 
 		clickedMenuItem.removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active');
-		clickedMenuItem.setStyle('width', null);
+		//clickedMenuItem.setStyle('width', null);
+		
+		// TODO: get the transition time from the CSS rule
+		setTimeout(this._removeWidthPropertyFromElement, 25, [clickedMenuItem]);
 
 		// Show siblings again
 		clickedMenuItem.parent().select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden').removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
 
 		// Delete everything right of the parent node, i.e. higher levels of the menu, and fire the right events on it.
+
 		var rightSibling = clickedMenuItem.parent().next();
 		while (rightSibling) {
-			rightSibling.select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
-				F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('deactivate-' + activeItem.getAttribute('data-menupath'), this);
-			}, this);
-			rightSibling.remove();
-			rightSibling = clickedMenuItem.parent().next();
+			var currentSibling = Ext.get(rightSibling);
+
+			if (currentSibling.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Separator')) {
+				// Trigger the transition on the seperator
+				currentSibling.removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Separator-active');
+				setTimeout(this._removeWidthPropertyFromElement, 25, [currentSibling]);
+				
+			} else if (currentSibling.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-SingleLevel')) {
+				// Trigger the effect on the child items of the container
+				currentSibling.select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
+					F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('deactivate-' + activeItem.getAttribute('data-menupath'), this);
+					activeItem.removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active');
+				}, this);
+
+				currentSibling.select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem').each(function(activeItem) {
+					if (activeItem.getStyle('opacity') !== 0) {
+						activeItem.addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hideTransition');
+					}
+				}, this);
+			}
+			
+			// Remove the item
+			setTimeout(this._removeElement, 200, [currentSibling]);
+			
+			rightSibling = currentSibling.next();
 		}
 		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('deactivate-' + currentlyClickedMenuPath, this);
+	},
+
+	_removeElement: function(element) {
+		Ext.get(element).remove();
+	},
+
+	_removeWidthPropertyFromElement: function(element) {
+		Ext.get(element).setStyle('width', null);
 	},
 
 	/**
