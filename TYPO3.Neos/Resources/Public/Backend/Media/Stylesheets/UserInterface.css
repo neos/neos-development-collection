@@ -89,9 +89,9 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 }
 /* active tab glow start */
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li.x-tab-strip-active .x-tab-strip-inner {
-	background: #FF8700;
-	-moz-box-shadow: 55px 0 34px -23px #5B5B5B inset, -55px 0 34px -23px #5B5B5B inset;
-	-webkit-box-shadow: 55px 0 34px -23px #5B5B5B inset, -55px 0 34px -23px #5B5B5B inset;
+	background: #5b5b5b;
+	background-image: -moz-linear-gradient(left, rgba(255, 255, 255, 0.0) 0%, #FF8700 50%, rgba(255, 255, 255, 0.0));
+	background-image: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255, 255, 255, 0.0)), color-stop(50%,#FF8700), color-stop(100%,rgba(255, 255, 255, 0.0)));
 	margin-bottom: 2px;
 	margin-top: -1px;
 }
@@ -114,9 +114,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	padding-bottom: 0;
 	background: transparent;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header-noborder,
-.F3-TYPO3-UserInterface-SectionMenu .x-panel-body-noheader,
-.F3-TYPO3-UserInterface-SectionMenu .x-panel-mc .x-panel-body {
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header-noborder {
 	border: 0;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip span.x-tab-strip-text {
