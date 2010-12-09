@@ -171,7 +171,7 @@ class Workspace {
 	 */
 	public function publish($targetWorkspaceName) {
 		$sourceNodes = $this->nodeRepository->findByWorkspace($this);
-		$this->publishNodes($sourceNodes, $targetWorkspaceName);
+		$this->publishNodes($sourceNodes->toArray(), $targetWorkspaceName);
 	}
 
 	/**
@@ -180,7 +180,6 @@ class Workspace {
 	 * The specified workspace must be a base workspace of this workspace.
 	 *
 	 * @param array<\F3\TYPO3\Domain\Model\Node> $nodes
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

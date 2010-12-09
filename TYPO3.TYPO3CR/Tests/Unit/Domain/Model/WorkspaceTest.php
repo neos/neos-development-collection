@@ -102,7 +102,9 @@ class WorkspaceTest extends \F3\Testing\BaseTestCase {
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('setWorkspace')->with($targetWorkspace);
 
-		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($nodesInCurrentWorkspace));
+		$mockQueryResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
+		$mockQueryResult->expects($this->once())->method('toArray')->will($this->returnValue($nodesInCurrentWorkspace));
+		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
 		$mockNodeRepository->expects($this->once())->method('findOneByPath')->with('/sites/foo/homepage')->will($this->returnValue($existingNode));
 		$mockNodeRepository->expects($this->once())->method('remove')->with($existingNode);
 
@@ -129,7 +131,9 @@ class WorkspaceTest extends \F3\Testing\BaseTestCase {
 		);
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(TRUE));
 
-		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($nodesInCurrentWorkspace));
+		$mockQueryResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
+		$mockQueryResult->expects($this->once())->method('toArray')->will($this->returnValue($nodesInCurrentWorkspace));
+		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
 		$mockNodeRepository->expects($this->once())->method('findOneByPath')->with('/sites/foo/homepage')->will($this->returnValue($existingNode));
 		$mockNodeRepository->expects($this->at(2))->method('remove')->with($existingNode);
 		$mockNodeRepository->expects($this->at(3))->method('remove')->with($nodesInCurrentWorkspace[1]);
