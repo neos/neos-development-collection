@@ -101,6 +101,20 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	}
 
 	/**
+	 * Counts the number of nodes within the specified workspace
+	 *
+	 * Note: Also counts removed nodes
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return integer The number of nodes found
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function countByWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+		$query = $this->createQuery();
+		return $query->matching($query->equals('workspace', $workspace))->execute()->count();
+	}
+
+	/**
 	 * Counts the number of nodes specified by its parent and (optionally) by its
 	 * content type
 	 *
@@ -113,20 +127,6 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 */
 	public function countByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		return count($this->findByParentAndContentType($parentPath, $contentTypeFilter,$workspace));
-	}
-
-	/**
-	 * Counts the number of nodes within the specified workspace
-	 *
-	 * Note: Also counts removed nodes
-	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return integer The number of nodes found
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function countByWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$query = $this->createQuery();
-		return $query->matching($query->equals('workspace', $workspace))->execute()->count();
 	}
 
 	/**
@@ -152,6 +152,12 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 				}
 			}
 			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		foreach ($this->addedObjects as $addedNode) {
+			if (substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
+				$foundNodes[$addedNode->getIndex()] = $addedNode;
+			}
 		}
 
 		foreach ($foundNodes as $index => $node) {
