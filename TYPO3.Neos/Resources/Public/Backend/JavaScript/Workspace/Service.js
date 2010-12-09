@@ -17,9 +17,22 @@ F3.TYPO3.Workspace.Service = Ext.apply(new Ext.util.Observable, {
 	 * @return {void}
 	 */
 	publishUserWorkspace: function(callback, scope) {
-		F3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publish(F3.TYPO3.Configuration.Application.workspaceName, 'live', function(result) {
+		F3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishWorkspace(F3.TYPO3.Configuration.Application.workspaceName, 'live', function(result) {
 			F3.TYPO3.Workspace.Service.updateWorkspaceStatus();
 			F3.TYPO3.Workspace.WorkspaceModule.fireEvent('publishedWorkspace');
+			if (Ext.isFunction(callback)) callback.call(scope, result);
+		});
+	},
+
+	/**
+	 * Publishes the given node records
+	 *
+	 * @return {void}
+	 */
+	publishNode: function(node, callback, scope) {
+		F3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode(node, 'live', function(result) {
+			F3.TYPO3.Workspace.Service.updateWorkspaceStatus();
+			F3.TYPO3.Workspace.WorkspaceModule.fireEvent('publishedNodes', node);
 			if (Ext.isFunction(callback)) callback.call(scope, result);
 		});
 	},

@@ -102,7 +102,14 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 					var record;
 					if (this.contentToolbar.contentIndex !== null) {
 						record = this.contentView.store.getAt(this.contentToolbar.contentIndex);
-						// TODO Publish individual record
+						F3.TYPO3.Workspace.Service.publishNode({
+							'__context': {
+								workspaceName: record.data.__workspaceName,
+								nodePath: record.data.__nodePath
+							}
+						}, function() {
+							this.getComponent('contentView').store.load();
+						}, this);
 					}
 				},
 				scope: this
@@ -182,7 +189,16 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 
 	_publishSelected: function() {
 		var records = this.contentView.getSelectedRecords();
-		// console.log('Not implemented...');
+		Ext.each(records, function(record) {
+			F3.TYPO3.Workspace.Service.publishNode({
+				'__context': {
+					workspaceName: record.data.__workspaceName,
+					nodePath: record.data.__nodePath
+				}
+			}, function() {
+				this.getComponent('contentView').store.load();
+			}, this);
+		}, this);
 	}
 
 });
