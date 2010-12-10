@@ -3,7 +3,6 @@
 #                                                                        #
 
 # @package TYPO3
-# @version $Id$
 
 resources:
   methods:
