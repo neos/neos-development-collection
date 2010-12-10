@@ -131,9 +131,6 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 							type: 'NotEmpty'
 						}]
 					},
-					'properties.navigationTitle': {
-						type: 'string'
-					}
 				}
 			}
 		});
@@ -152,11 +149,6 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 							type: 'field',
 							property: 'properties.title',
 							title: 'Page title'
-						}, {
-							key: 'navigationTitle',
-							type: 'field',
-							property: 'properties.navigationTitle',
-							title: 'Navigation title'
 						}]
 					}]
 				},
@@ -167,11 +159,6 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 						type: 'field',
 						property: 'properties.title',
 						title: 'Page title'
-					}, {
-						key: 'navigationTitle',
-						type: 'field',
-						property: 'properties.navigationTitle',
-						title: 'Navigation title'
 					}]
 				},
 				create: {
