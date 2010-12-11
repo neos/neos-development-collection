@@ -67,7 +67,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dashboard.DashboardModule', {
 		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('dashboard', 'dashboardView', {
 				xtype: 'F3.TYPO3.Dashboard.DashboardView',
-				id: 'F3.TYPO3.Dashboard.DashboardView'
+				id: 'F3-TYPO3-Dashboard-DashboardView'
 			});
 			userInterfaceModule.contentAreaOn('menu/main/dashboard', 'dashboard', 'dashboardView');
 		});

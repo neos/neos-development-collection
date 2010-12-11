@@ -2,7 +2,7 @@ body {
 	font-family: Arial, sans-serif;
 }
 /*
- * SectionMenu
+ * SectionMenu start
  */
 .ul.x-tab-strip > .x-tab-panel-header > .x-tab-strip-wrap > ul.x-tab-strip {
 	width: auto;
@@ -16,11 +16,12 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	position: absolute;
 	right: 20px;
 }
-
+/*
+ * SectionMenu end
+ */
 .x-form-item {
 	font: 12px helvetica, arial, sans-serif;
 }
-
 .x-tab-strip span.x-tab-strip-text {
 	font: 11px helvetica, arial, sans-serif;
 	color: #ffffff;
@@ -29,10 +30,12 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-moz-box-shadow: 0px -4px 4px #1d1d1d;
 	-webkit-box-shadow: 0px -4px 4px #1d1d1d;
 }
-.F3-TYPO3-Wallpaper {
-	background: url(../Images/Backgrounds/wallpaper.jpg) 50% top repeat-x;
+.F3-TYPO3-Wallpaper,
+#F3-TYPO3-Dashboard-DashboardView {
+	background: url(../Images/Backgrounds/wallpaper.jpg) 50% top repeat;
 }
-.F3-TYPO3-UserInterface-TopBar-Wallpaper {
+.F3-TYPO3-UserInterface-TopBar-Wallpaper,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-body {
 	background: transparent;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-right,
@@ -242,18 +245,15 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	font-size: 63%;
 	opacity: 0.4;
 }
-
 #F3-TYPO3-TopBar-StatusText {
 	color: #ffffff;
 	font-size: 12px;
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: Arial, sans-serif;
 }
-
 .F3-TYPO3-UserInterface-Form-GenericForm form {
 	background:transparent;
 	padding: 10px;
 }
-
 .F3-TYPO3-UserInterface-SectionMenu .F3-TYPO3-Dashboard-PublishedContentCount {
 	display: none;
 	position: absolute;
@@ -265,7 +265,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	color: #ffffff;
 	padding: 6px 0 0 13px;
 	font-size: 12px;
-	font-family: Helvetica,Arial,sans-serif;
+	font-family: Arial,sans-serif;
 	font-weight: bold;
 }
 .F3-Content-Node {
@@ -276,9 +276,86 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-Content-Node.x-view-over {
 	background: #ffffff;
 }
-.F3-Content-Node.x-view-selected {
-	background: lightblue;
-}
 .F3-TYPO3-Overflow-Visible{
 	overflow: visible;
+}
+#F3-TYPO3-Dashboard-DashboardView {
+	color: #ffffff;
+}
+#F3-TYPO3-Dashboard-DashboardView .x-panel-tl,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-tr,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-header {
+	background-image: -moz-linear-gradient(center top , #373737, #696969);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#373737), to(#696969));
+	border: 0;
+}
+#F3-TYPO3-Dashboard-DashboardView .x-panel-tl,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-tr {
+	-moz-border-radius: 4px 4px 0 0;
+	-webkit-border-radius: 4px 4px 0 0;
+}
+#F3-TYPO3-Dashboard-DashboardView .x-panel-bl,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-br,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-bc,
+#F3-TYPO3-Dashboard-DashboardView .x-toolbar {
+	-moz-border-radius: 0 0 4px 4px;
+	-webkit-border-radius: 0 0 4px 4px;
+	border: 0;
+}
+#F3-TYPO3-Dashboard-DashboardView .x-panel-header {
+	color: #ffffff;
+}
+#F3-TYPO3-Dashboard-DashboardView .x-panel-ml,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-mr,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-mc,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-bl,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-br,
+#F3-TYPO3-Dashboard-DashboardView .x-panel-bc,
+#F3-TYPO3-Dashboard-DashboardView .x-toolbar {
+	padding: 0;
+	background: #202020;
+}
+#F3-TYPO3-Dashboard-DashboardView .F3-Content-Node {
+	background: #202020;
+	border: 0;
+	border-bottom: 1px solid #4d4d4d;
+	padding: 6px;
+}
+#F3-TYPO3-Dashboard-DashboardView .F3-Content-Node.x-view-over {
+	background: #373737;
+}
+#F3-TYPO3-Dashboard-DashboardView .F3-Content-Node.x-view-selected {
+	background-image: -moz-linear-gradient(center top , #e09e54, #ff8700);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#e09e54), to(#ff8700));
+	text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.8);
+}
+#F3-TYPO3-Dashboard-DashboardView .abstract-wrap {
+	opacity: 0.5;
+}
+#F3-TYPO3-Dashboard-DashboardView .x-btn-tl,
+#F3-TYPO3-Dashboard-DashboardView .x-btn-tr,
+#F3-TYPO3-Dashboard-DashboardView .x-btn-tc,
+#F3-TYPO3-Dashboard-DashboardView .x-btn-ml,
+#F3-TYPO3-Dashboard-DashboardView .x-btn-mr,
+#F3-TYPO3-Dashboard-DashboardView .x-btn-mc,
+#F3-TYPO3-Dashboard-DashboardView .x-btn-bl,
+#F3-TYPO3-Dashboard-DashboardView .x-btn-br,
+#F3-TYPO3-Dashboard-DashboardView .x-btn-bc {
+	background-image: none;
+}
+#F3-TYPO3-Dashboard-DashboardView .x-toolbar-ct {
+	padding: 0 6px;
+}
+#F3-TYPO3-Dashboard-DashboardView .x-btn button {
+	color: #ffffff;
+}
+#F3-TYPO3-Dashboard-DashboardView table.x-btn-noicon {
+	background: -moz-linear-gradient(center top , #373737, #696969) left top repeat;
+	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#373737), to(#696969)) left top repeat;
+	-moz-border-radius: 4px 4px 4px 4px;
+	-webkit-border-radius: 4px 4px 4px 4px;
+}
+#F3-TYPO3-Dashboard-DashboardView table.x-btn-over {
+	background: -moz-linear-gradient(center top, #373737, #919191) left top repeat;
+	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#373737), to(#919191)) left top repeat;
 }
