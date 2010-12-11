@@ -47,6 +47,17 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dashboard.DashboardModule', {
 					tabPanel.on('render', function(tabPanel) {
 						var el = tabPanel.getTabEl('dashboard');
 						Ext.fly(el).insertHtml('afterBegin', '<div class="F3-TYPO3-Dashboard-PublishedContentCount"></div>');
+						var logoutEl = Ext.DomHelper.append(Ext.fly(el), {
+							tag: 'a',
+							href: '#',
+							cls: 'F3-TYPO3-Dashboard-Logout',
+							html: 'Logout'
+						});
+						Ext.fly(logoutEl).on('click', function(event) {
+							event.preventDefault();
+							F3.TYPO3.Login.Service.logout();
+							return false;
+						})
 					});
 				}
 			}
