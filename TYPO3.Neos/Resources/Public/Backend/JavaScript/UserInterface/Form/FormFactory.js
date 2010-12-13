@@ -37,7 +37,7 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 	 * Create a form for the given type and optional view or config
 	 *
 	 * @param {String} objectType the Object type a form should be created for. This is looked up in form/type/[....] in the registry.
-	 * @param (String) view (optional) name of the view for the object. If none given, defaults to "standard"
+	 * @param {String} view (optional) name of the view for the object. If none given, defaults to "standard"
 	 * @param {Object} overrideConfig override configuration for the form
 	 * @return {Object} resulting view configuration
 	 */
@@ -90,7 +90,7 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 					update: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
 					create: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.create)
 				}
-			}
+			};
 			childDefaultType = 'field';
 		} else if (type == 'field') {
 			schemaPropertyDefinition = registry.get('schema/type/' + objectType + '/properties/' + definition.property);

@@ -166,8 +166,6 @@ class SiteImportService {
 	 */
 	protected function parseNodes(\SimpleXMLElement $parentXml, $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
-			$locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', (string)$childNodeXml['locale']);
-
 			$childNode = $parentNode->createNode((string)$childNodeXml['nodeName']);
 			$childNode->setContentType((string)$childNodeXml['type']);
 			if ($childNodeXml->properties) {
