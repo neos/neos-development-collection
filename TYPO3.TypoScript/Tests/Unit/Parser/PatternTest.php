@@ -27,7 +27,7 @@ namespace F3\TypoScript\Tests\Unit\Parser;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PatternTest extends \F3\Testing\BaseTestCase {
+class PatternTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Checks the regular expression SCAN_PATTERN_COMMENT

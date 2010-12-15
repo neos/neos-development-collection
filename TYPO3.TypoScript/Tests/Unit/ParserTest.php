@@ -33,7 +33,7 @@ require_once('Fixtures/Processors.php');
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ParserTest extends \F3\Testing\BaseTestCase {
+class ParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\TypoScript\Parser
