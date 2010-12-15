@@ -27,7 +27,7 @@ namespace F3\TYPO3\Tests\Unit\ViewHelpers;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class IncludeJavaScriptViewHelperTest extends \F3\Testing\BaseTestCase {
+class IncludeJavaScriptViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper

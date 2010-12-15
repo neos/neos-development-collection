@@ -29,7 +29,7 @@ require_once (__DIR__ . '/../../Fixtures/MockTypoScriptObject.php');
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ToIntegerProcessorTest extends \F3\Testing\BaseTestCase {
+class ToIntegerProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\TYPO3\TypoScript\Processors\ToIntegerProcessor

@@ -27,7 +27,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class WrapProcessorTest extends \F3\Testing\BaseTestCase {
+class WrapProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @var \F3\TYPO3\TypoScript\Processors\WrapProcessor
