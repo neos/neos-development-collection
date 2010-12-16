@@ -57,15 +57,12 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	},
 
 	/**
-	 * Action when clicking the dialog ok button
+	 * Callback which is called when the OK button is clicked
 	 *
-	 * @param {} button
 	 * @return {void}
 	 */
-	_onOkButtonClickAction: function(button) {
-		if (button.itemId == 'okButton') {
-			F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, this._context, this._onOkButtonClickActionSuccess, this);
-		}
+	onOk: function() {
+		F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, this._context, this._onDeleteSuccess, this);
 	},
 
 	/**
@@ -74,8 +71,9 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 *
 	 * @param {} response
 	 * @return {void}
+	 * @private
 	 */
-	_onOkButtonClickActionSuccess: function(response) {
+	_onDeleteSuccess: function(response) {
 		this.moduleMenu.removeModuleDialog();
 		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
 	}

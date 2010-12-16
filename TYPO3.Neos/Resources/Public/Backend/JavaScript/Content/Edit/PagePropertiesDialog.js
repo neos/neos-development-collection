@@ -48,7 +48,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 				getSubmitIdentifier: function() {
 					return context;
 				},
-				onSubmitSuccess: this._onOkButtonClickActionSuccess
+				onSubmitSuccess: this._onPagePropertiesSaved.createDelegate(this)
 			}
 		);
 
@@ -62,13 +62,10 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	/**
 	 * Action when clicking the dialog ok button
 	 *
-	 * @param {Ext.Component} button
-	 * @private
+	 * @return {void}
 	 */
-	_onButtonClick: function(button) {
-		if (button.itemId == 'okButton') {
-			this.form.doSubmitForm();
-		}
+	onOk: function() {
+		this.form.doSubmitForm();
 	},
 
 	/**
@@ -77,8 +74,8 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 *
 	 * @private
 	 */
-	_onOkButtonClickActionSuccess: function() {
-		this.ownerCt.moduleMenu.removeModuleDialog();
+	_onPagePropertiesSaved: function() {
+		this.moduleMenu.removeModuleDialog();
 		F3.TYPO3.Core.Application.fireEvent('F3.TYPO3.Content.contentChanged');
 	},
 

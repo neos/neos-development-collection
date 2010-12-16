@@ -53,6 +53,13 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 	mode: 'success',
 	moduleDialog: null,
 
+	/**
+	 * @event _okButtonClick
+	 */
+
+	/**
+	 * @event _cancelButtonClick
+	 */
 	initComponent: function() {
 		var config, toolbarConfig;
 
@@ -99,19 +106,10 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.UserInterface.ContentDialog.superclass.initComponent.call(this);
-
-		this.panel.enableBubble([
-			'F3.TYPO3.UserInterface.ContentDialog.buttonClick',
-			'F3.TYPO3.UserInterface.ContentDialog.cancelled'
-		]);
-
-		this.panel.getBubbleTarget = function() {
-			return this.ownerCt.moduleDialog;
-		};
 	},
 
 	/**
-	 * TODO: document
+	 * Handle the button click, by firing the appropriate event
 	 *
 	 * @param {...} button
 	 * @param {...} event
@@ -119,12 +117,11 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 	 * @private
 	 */
 	_handleButtonClick: function(button, event) {
-		// TODO: it seems that these events here are on the wrong objects.
-		this.panel.fireEvent('F3.TYPO3.UserInterface.ContentDialog.buttonClick', button);
 		if (button.itemId === 'cancelButton') {
-			this.panel.fireEvent('F3.TYPO3.UserInterface.ContentDialog.cancelled');
+			this.fireEvent('_cancelButtonClick');
+		} else if (button.itemId === 'okButton') {
+			this.fireEvent('_okButtonClick');
 		}
-		// TODO: How to handle validation errors?
 	}
 });
 Ext.reg('F3.TYPO3.UserInterface.ContentDialog', F3.TYPO3.UserInterface.ContentDialog);

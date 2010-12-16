@@ -32,6 +32,22 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	basePath: null,
 	viewFilter: {},
 
+	/**
+	 * The instance of the module dialog if it is currently opened.
+	 *
+	 * @var {F3.TYPO3.UserInterface.ModuleDialog}
+	 * @private
+	 */
+	_moduleDialog: null,
+
+	/**
+	 * The instance of the content dialog if it is currently opened.
+	 *
+	 * @var {F3.TYPO3.UserInterface.ContentDialog}
+	 * @private
+	 */
+	_contentDialog: null,
+
 	initComponent: function() {
 		var config = {
 			cls: 'F3-TYPO3-UserInterface-ModuleMenu',
@@ -70,50 +86,45 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	 * Show a module dialog inside this module menu.
 	 * The xtype in the config should extend F3.TYPO3.UserInterface.ModuleDialog.
 	 *
-	 * The module dialog will be automatically removed, if any button in the menu
-	 * gets clicked.
+	 * Normally, this method does not need to be called explicitely. Instead,
+	 * you will usually call F3.TYPO3.UserInterface.UserInterfaceModule#moduleDialogOn()
 	 *
 	 * @param {Object} config The module dialog component config
 	 * @param {Object} contentDialogConfig Configuration for the content dialog
+	 * @return {F3.TYPO3.UserInterface.ModuleDialog} the ModuleDialog instance
 	 */
 	showModuleDialog: function(config, contentDialogConfig) {
-		var dialogRemoved = false,
-			sectionMenuTab = this.findParentByType('F3.TYPO3.Components.ModuleContainer');
-		config = Ext.apply(config, {
-			listeners: {
-				removed: function() {
-					dialogRemoved = true;
-				}
-			}
-		});
-		if (config) {
-			this.moduleDialog = this.moduleDialogContainer.add(config);
-			this.moduleDialog.moduleMenu = this;
-		}
+		var sectionMenuTab = this.findParentByType('F3.TYPO3.Components.ModuleContainer');
+
+		this._moduleDialog = this.moduleDialogContainer.add(config);
+		this._moduleDialog.moduleMenu = this;
+
 		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.doLayout();
 		sectionMenuTab.doLayout();
 
 		if (contentDialogConfig) {
-			this.contentDialog = Ext.ComponentMgr.create(contentDialogConfig);
-			this.contentDialog.moduleDialog = this.moduleDialog;
-			this.add(this.contentDialog);
+			this._contentDialog = Ext.ComponentMgr.create(contentDialogConfig);
+			this.add(this._contentDialog);
+			this._contentDialog.on('_okButtonClick', this._moduleDialog.onOk, this._moduleDialog);
+			this._contentDialog.on('_cancelButtonClick', this._moduleDialog.onCancel, this._moduleDialog);
 		}
 
-		return this.moduleDialog;
+		return this._moduleDialog;
 	},
 
 	/**
-	 * Remove an existing module dialog AND content dialog from the module menu.
+	 * Remove the existing ModuleDialog AND ContentDialog from the module menu.
 	 *
+	 * @return {void}
 	 */
 	removeModuleDialog: function() {
 		var sectionMenuTab = this.findParentByType('F3.TYPO3.Components.ModuleContainer');
-		if (this.moduleDialog) {
+		if (this._moduleDialog) {
 			this.moduleDialogContainer.removeAll();
 		}
-		if (this.contentDialog) {
-			this.contentDialog.destroy();
-			delete this.contentDialog;
+		if (this._contentDialog) {
+			this._contentDialog.destroy();
+			this._contentDialog = null;
 		}
 
 		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.doLayout();

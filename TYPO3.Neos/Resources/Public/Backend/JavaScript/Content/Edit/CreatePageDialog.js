@@ -100,13 +100,10 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	/**
 	 * When clicking the dialog ok button, we submit the form.
 	 *
-	 * @param {Ext.Component} button
-	 * @private
+	 * @return {void}
 	 */
-	_onButtonClick: function(button) {
-		if (button.itemId == 'okButton') {
-			this.form.doSubmitForm();
-		}
+	onOk: function() {
+		this.form.doSubmitForm();
 	}
 });
 Ext.reg('F3.TYPO3.Content.Edit.CreatePageDialog', F3.TYPO3.Content.Edit.CreatePageDialog);
