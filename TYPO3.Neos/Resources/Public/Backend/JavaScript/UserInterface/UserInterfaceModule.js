@@ -108,13 +108,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 	moduleDialogOn: function(path, moduleDialogConfiguration, contentDialogConfiguration) {
 		path = F3.TYPO3.Core.Registry.rewritePath(path);
 
-		// TODO: "path" is not always a reference to a button, so it might not be safe to go locally from the button to the moduleMenu.
 		this.on('activate-' + path, function(node) {
 			var moduleDialog = node.getModuleMenu().showModuleDialog(moduleDialogConfiguration, contentDialogConfiguration);
 
 			// Untoggle button on module dialog destroy
 			moduleDialog.on('destroy', function() {
-				node.active = false;
+				node.getModuleMenu().breadcrumbMenu.deactivateItem(path);
 			});
 		});
 

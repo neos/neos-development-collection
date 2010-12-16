@@ -130,7 +130,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 						validations: [{
 							type: 'NotEmpty'
 						}]
-					},
+					}
 				}
 			}
 		});

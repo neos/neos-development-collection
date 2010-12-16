@@ -73,7 +73,8 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	 * The module dialog will be automatically removed, if any button in the menu
 	 * gets clicked.
 	 *
-	 * @param {Array} config The module dialog component config
+	 * @param {Object} config The module dialog component config
+	 * @param {Object} contentDialogConfig Configuration for the content dialog
 	 */
 	showModuleDialog: function(config, contentDialogConfig) {
 		var dialogRemoved = false,
