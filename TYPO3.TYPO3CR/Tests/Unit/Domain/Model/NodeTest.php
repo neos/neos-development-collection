@@ -380,7 +380,7 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$nodeRepository->expects($this->once())->method('countByParentAndContentType')->with('/', NULL, $workspace)->will($this->returnValue(0));
 		$nodeRepository->expects($this->once())->method('add')->with($newNode);
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext'), array('/', $workspace));
+		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext', 'getNode'), array('/', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->_set('objectManager', $objectManager);
 		$currentNode->_set('nodeRepository', $nodeRepository);
@@ -388,6 +388,26 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$currentNode->expects($this->once())->method('treatNodeWithContext')->with($newNode)->will($this->returnValue($newNode));
 
 		$this->assertSame($newNode, $currentNode->createNode('foo', 'mycontenttype'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \F3\TYPO3CR\Exception\NodeException
+	 */
+	public function createNodeThrowsNodeExceptionIfPathAlreadyExists() {
+		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+
+		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
+
+		$oldNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array(), array('/foo', $workspace));
+
+		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('getNode'), array('/', $workspace));
+		$currentNode->_set('context', $context);
+		$currentNode->expects($this->once())->method('getNode')->with('/foo')->will($this->returnValue($oldNode));
+
+		$currentNode->createNode('foo');
 	}
 
 	/**

@@ -466,6 +466,9 @@ class Node {
 		$currentWorkspace = $this->context->getWorkspace();
 
 		$newPath = $this->path . ($this->path !== '/' ? '/' : '') . $name;
+		if ($this->getNode($newPath) !== NULL) {
+			throw new \F3\TYPO3CR\Exception\NodeException('Node with path "' . $newPath . '" already exists.', 1292503465);
+		}
 		$newIndex = $this->nodeRepository->countByParentAndContentType($this->path, NULL, $currentWorkspace) + 1;
 
 		$newNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', $newPath, $currentWorkspace);
