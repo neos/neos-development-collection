@@ -31,21 +31,10 @@ Ext.ns("F3.TYPO3.Content.Edit");
 F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleDialog, {
 
 	/**
-	 * Context of the current page which is deleted
-	 *
-	 * @type {Object}
-	 * @private
-	 */
-	_context: null,
-
-	/**
 	 * Initializer
 	 */
 	initComponent: function() {
-		var config;
-
-		this._context = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
-		config = {
+		var config = {
 			height: 1,
 			items: []
 		};
@@ -62,7 +51,8 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 * @return {void}
 	 */
 	onOk: function() {
-		F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, this._context, this._onDeleteSuccess, this);
+		var context = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
+		F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, context, this._onDeleteSuccess, this);
 	},
 
 	/**

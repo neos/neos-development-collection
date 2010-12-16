@@ -55,21 +55,12 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 							this.getForm().api.create.call(this, this.getSubmitIdentifier(), data, this._onOkButtonClickActionSuccess, this);
 						},
 						/**
-						 * Do not load any data, but store the initial context when
-						 * the form was loaded in a closure variable;
-						 *
-						 * @return {void}
-						 */
-						onRenderLoad: function() {
-							context = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
-						},
-						/**
 						 * Return the stored context from the closure variable
 						 *
 						 * @return {string}
 						 */
 						getSubmitIdentifier: function() {
-							return context;
+							return Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
 						},
 						/**
 						 * Action when success on button click action
