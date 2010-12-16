@@ -64,7 +64,7 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 */
 	_onOkButtonClickAction: function(button) {
 		if (button.itemId == 'okButton') {
-			F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/TYPO3:Page/service/delete')).call(this, this._context, this._onOkButtonClickActionSuccess, this);
+			F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, this._context, this._onOkButtonClickActionSuccess, this);
 		}
 	},
 
