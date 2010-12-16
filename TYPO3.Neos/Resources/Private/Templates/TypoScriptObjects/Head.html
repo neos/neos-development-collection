@@ -20,6 +20,14 @@ Search:  "></script>');
 Replace: ')}"></script>
 -->
 
+<!-- these stylesheets normally come from the css.js file inside aloha core, but we include them separately as we already have
+ExtJS loaded -->
+<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/css/aloha.css')}" />
+<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/prettyPhoto/resources/css/prettyPhoto.css')}" />
+<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/plugins/com.gentics.aloha.plugins.Table/resources/table.css')}" />
+<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/plugins/com.gentics.aloha.plugins.Link/css/Link.css')}" />
+<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/plugins/com.gentics.aloha.plugins.LinkChecker/css/LinkChecker.css')}" />
+
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery-1.4.2.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery.json-2.2.min.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery.getUrlParam.js')}"></script>
@@ -47,7 +55,6 @@ Replace: ')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/range.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/position.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/dom.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/indexof.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/license.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ext-alohaproxy.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ext-alohareader.js')}"></script>
@@ -56,7 +63,7 @@ Replace: ')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui-attributefield.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui-browser.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/css.js')}"></script>
+<!--<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/css.js')}"></script>-->
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/editable.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ribbon.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/event.js')}"></script>

@@ -42,7 +42,7 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 *
 		 * @type {Array}
 		 */
-		languages: ['en', 'de'],
+		languages: [],
 
 		/**
 		 * init the Aloha connector for TYPO3
