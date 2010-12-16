@@ -28,11 +28,30 @@ Ext.ns("F3.TYPO3.UserInterface");
  * @extends Ext.Container
  */
 F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
+
+	/**
+	 * Show cancel button
+	 *
+	 * @cfg {boolean}
+	 */
 	showCancelButton: true,
+
+	/**
+	 * Show OK button
+	 *
+	 * @cfg {boolean}
+	 */
 	showOkButton: true,
-	dialogPosition: 'right',
+
+	/**
+	 * Mode. If "success" (the default), the content dialog has a dark background
+	 * and the buttons are on the left. If "warning", the content dialog
+	 * has a red background, and the buttons are on the right.
+	 *
+	 * @cfg {String}
+	 */
+	mode: 'success',
 	moduleDialog: null,
-	cls: 'F3-TYPO3-UserInterface-ContentDialog',
 
 	initComponent: function() {
 		var config, toolbarConfig;
@@ -72,11 +91,11 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 			items: {
 				xtype: 'panel',
 				cls: 'F3-TYPO3-UserInterface-ContentDialog-Panel',
-				style: 'position: absolute; top: 12px; right: 100px',
 				border: false,
 				tbar: toolbarConfig,
 				ref: 'panel'
-			}
+			},
+			cls: 'F3-TYPO3-UserInterface-ContentDialog F3-TYPO3-UserInterface-ContentDialog-mode-' + this.mode
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.UserInterface.ContentDialog.superclass.initComponent.call(this);

@@ -205,7 +205,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				{xtype: 'F3.TYPO3.Content.Edit.DeletePageDialog'},
 				{
 					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
-					cls: 'F3-TYPO3-UserInterface-ContentDialog F3-TYPO3-UserInterface-ContentDialog-warning'
+					mode: 'warning'
 				}
 			);
 
