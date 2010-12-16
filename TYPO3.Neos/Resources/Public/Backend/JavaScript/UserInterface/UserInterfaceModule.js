@@ -157,7 +157,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 			var viewport = F3.TYPO3.UserInterface.UserInterfaceModule.viewport;
 			var tab = viewport.sectionMenu.getComponent(sectionId);
 			tab.contentArea.getLayout().setActiveItem(itemId);
-			tab.contentArea.doLayout();
+			tab.doLayout();
 		});
 	}
 });
