@@ -105,6 +105,27 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-bottom: 0;
 }
 /* active tab glow end */
+.F3-TYPO3-UserInterface-SectionMenu .F3-TYPO3-UserInterface-SectionMenu-DashboardTab .x-tab-right .x-tab-left .x-tab-strip-text {
+	padding-left: 4px;
+	padding-right: 6px;
+}
+.F3-TYPO3-UserInterface-SectionMenu-DashboardTab a {
+	float: left;
+}
+a.F3-TYPO3-Dashboard-Logout {
+	display: block;
+	background: url(../Images/UserInterface/Icons/Icon-Logout-24bit.png) 50% 50% no-repeat;
+	width: 46px;
+	max-width: 22px;
+	padding: 6px 12px 0 12px;
+	text-indent: -9999px;
+	-moz-box-shadow: -3px 19px 0 #141414, -1px 4px 1px #595959, -2px 4px 1px #020202;
+	-webkit-box-shadow: -3px 19px 0 #141414, -1px 4px 1px #595959, -2px 4px 1px #020202;
+}
+.x-tab-strip-active a.F3-TYPO3-Dashboard-Logout {
+	-moz-box-shadow: -3px 22px 0 #545454, -1px 4px 1px #545454, -2px 4px 1px #484848;
+	-webkit-box-shadow: -3px 22px 0 #545454, -1px 4px 1px #545454, -2px 4px 1px #484848;
+}
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-right .x-tab-left .x-tab-strip-text {
 	padding-right: 26px;
 	padding-left: 26px;
