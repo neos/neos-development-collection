@@ -32,7 +32,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 }
 .F3-TYPO3-Wallpaper,
 #F3-TYPO3-Dashboard-DashboardView {
-	background: url(../Images/Backgrounds/wallpaper.jpg) 50% top repeat;
+	background: url(../Images/Backgrounds/Wallpaper.jpg) 50% top repeat;
 }
 .F3-TYPO3-UserInterface-TopBar-Wallpaper,
 #F3-TYPO3-Dashboard-DashboardView .x-panel-body {
@@ -157,7 +157,7 @@ a.F3-TYPO3-Dashboard-Logout {
 	color: #999;
 }
 .F3-TYPO3-UserInterface-BreadcrumbMenu {
-	background: #3d3d3d url('../Images/UserInterface/content-filter-bg.gif') left 50% repeat-x;
+	background: #3d3d3d url("'../Images/UserInterface/ContentFilterBg.gif'") left 50% repeat-x;
 }
 .F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tl,
 .F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tr,
@@ -262,7 +262,7 @@ a.F3-TYPO3-Dashboard-Logout {
 	border: none;
 }
 #F3-TYPO3-TopBar-Logo {
-	background: url(../Images/UserInterface/typo3-logo.png) right top no-repeat;
+	background: url(../Images/UserInterface/Typo3Logo.png) right top no-repeat;
 }
 .F3-TYPO3-Version .x-panel-body {
 	background: transparent;
