@@ -5,13 +5,14 @@
 	<meta charset="UTF-8">
 	<f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
 	<f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
-	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent" />
 	<script>
 		document.cookie = "TYPO3_lastVisitedNode={node.context.currentNode.path};path=/";
 	</script>
 <f:security.ifAccess resource="F3_TYPO3_BackendController">
-	<ext:include theme="xtheme-gray" debug="true" />
-	
+<f:alias map="{liveWorkspaceName: 'live'}"><f:if condition="{node.context.workspace.name} != {liveWorkspaceName}">
+	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent"/>
+	<ext:include theme="xtheme-gray"/>
+
 <!--
 Search:  document.write('<script type="text/javascript" src="'+GENTICS_Aloha_base+'
 Replace: <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/Backend/Aloha/WebContent/
@@ -20,8 +21,8 @@ Search:  "></script>');
 Replace: ')}"></script>
 -->
 
-<!-- these stylesheets normally come from the css.js file inside aloha core, but we include them separately as we already have
-ExtJS loaded -->
+<!-- these stylesheets normally come from the css.js file inside aloha core,
+ but we include them separately as we already have ExtJS loaded -->
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/css/aloha.css')}" />
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/prettyPhoto/resources/css/prettyPhoto.css')}" />
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/plugins/com.gentics.aloha.plugins.Table/resources/table.css')}" />
@@ -93,4 +94,5 @@ ExtJS loaded -->
 			ribbon: false
 		};
 	]]></script>
+</f:if></f:alias>
 </f:security.ifAccess>
