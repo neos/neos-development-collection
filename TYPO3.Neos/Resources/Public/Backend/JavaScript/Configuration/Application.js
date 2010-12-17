@@ -58,7 +58,7 @@ F3.TYPO3.Configuration.Application = {
 	 * Name of the workspace of the currently logged in user.
 	 *
 	 * This setting is set by a small script in the Backend
-	 * Fluid template and is used by the FrontendEditor.
+	 * Fluid template and is used by the ContentEditor.
 	 *
 	 * Don't use or rely on it yet, as this solution still
 	 * is to be discussed.
@@ -86,7 +86,7 @@ F3.TYPO3.Configuration.Application = {
 	 * The current TYPO3 version number
 	 *
 	 * This setting is set by a small script in the Backend
-	 * Fluid template and is used by the FrontendEditor.
+	 * Fluid template and is used by the ContentEditor.
 	 *
 	 * Don't use or rely on it yet, as this solution still
 	 * is to be discussed.

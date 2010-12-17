@@ -188,8 +188,8 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	initialize: function(application) {
 		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('content', 'frontendEditor', {
-				xtype: 'F3.TYPO3.Content.FrontendEditor',
-				id: 'F3.TYPO3.Content.FrontendEditor'
+				xtype: 'F3.TYPO3.Content.ContentEditor',
+				id: 'F3.TYPO3.Content.ContentEditor'
 			});
 			userInterfaceModule.contentAreaOn('menu/main/content', 'content', 'frontendEditor');
 
@@ -210,12 +210,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			);
 
 			userInterfaceModule.on('activate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.FrontendEditor').enableEditing();
+				Ext.getCmp('F3.TYPO3.Content.ContentEditor').enableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = true;
 			});
 
 			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.FrontendEditor').disableEditing();
+				Ext.getCmp('F3.TYPO3.Content.ContentEditor').disableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = false;
 			});
 		});
@@ -246,5 +246,25 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	 */
 	disableEditing: function() {
 		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.deactivateItem('menu/main/content[]/edit');
+	},
+
+	/**
+	 * Get the frontend context of the page currently being displayed in the
+	 * iframe.
+	 *
+	 * @return {Object} the current frontend context
+	 */
+	getCurrentContentContext: function() {
+		return Ext.getCmp('F3.TYPO3.Content.ContentEditor').getCurrentContext();
+	},
+
+	/**
+	 * Load a certain page inside the ContentEditor iframe
+	 *
+	 * @param {String} uri the URI to load inside the ContentEditor
+	 * @return {void}
+	 */
+	loadPage: function(uri) {
+		Ext.getCmp('F3.TYPO3.Content.ContentEditor').loadPage(uri);
 	}
 });

@@ -41,8 +41,7 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 		Ext.apply(this, config);
 		F3.TYPO3.Content.Edit.DeletePageDialog.superclass.initComponent.call(this);
 
-		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this._onOkButtonClickAction, this);
-		F3.TYPO3.Core.Application.on('F3.TYPO3.Content.contentChanged', this._refreshFrontendEditor, this);
+		F3.TYPO3.Core.Application.on('F3.TYPO3.Content.contentChanged', this._refreshContentEditor, this);
 	},
 
 	/**
@@ -51,7 +50,7 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 * @return {void}
 	 */
 	onOk: function() {
-		var context = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
+		var context = F3.TYPO3.Content.ContentModule.getCurrentContentContext();
 		F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, context, this._onDeleteSuccess, this);
 	},
 
@@ -65,7 +64,7 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 */
 	_onDeleteSuccess: function(response) {
 		this.moduleMenu.removeModuleDialog();
-		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
+		F3.TYPO3.Content.ContentModule.loadPage(response.data.nextUri);
 	}
 
 });

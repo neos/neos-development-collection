@@ -21,7 +21,7 @@ Ext.ns("F3.TYPO3.Content");
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Content.FrontendEditor
+ * @class F3.TYPO3.Content.ContentEditor
  *
  * The main frontend editor widget, which is shown in the lower part of the
  * Backend.
@@ -29,7 +29,7 @@ Ext.ns("F3.TYPO3.Content");
  * @namespace F3.TYPO3.Content
  * @extends Ext.Container
  */
-F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
+F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 
 	/**
 	 * Initialize the frontend editor component
@@ -65,7 +65,7 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 			}
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Content.FrontendEditor.superclass.initComponent.call(this);
+		F3.TYPO3.Content.ContentEditor.superclass.initComponent.call(this);
 
 		F3.TYPO3.Content.ContentModule.on('AlohaConnector.contentChanged', this._onContentChanged, this);
 	},
@@ -165,4 +165,4 @@ F3.TYPO3.Content.FrontendEditor = Ext.extend(Ext.Container, {
 		}
 	}
 });
-Ext.reg('F3.TYPO3.Content.FrontendEditor', F3.TYPO3.Content.FrontendEditor);
+Ext.reg('F3.TYPO3.Content.ContentEditor', F3.TYPO3.Content.ContentEditor);

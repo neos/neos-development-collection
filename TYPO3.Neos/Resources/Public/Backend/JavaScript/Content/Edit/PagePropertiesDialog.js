@@ -42,7 +42,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 			{
 				ref: 'form',
 				getLoadIdentifier: function() {
-					context = Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
+					context = F3.TYPO3.Content.ContentModule.getCurrentContentContext();
 					return context;
 				},
 				getSubmitIdentifier: function() {
@@ -55,8 +55,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 		Ext.apply(this, config);
 		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.initComponent.call(this);
 
-		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this._onButtonClick, this);
-		F3.TYPO3.Core.Application.on('F3.TYPO3.Content.contentChanged', this._refreshFrontendEditor, this);
+		F3.TYPO3.Core.Application.on('F3.TYPO3.Content.contentChanged', this._refreshContentEditor, this);
 	},
 
 	/**
@@ -84,8 +83,8 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 *
 	 * @private
 	 */
-	_refreshFrontendEditor: function() {
-		Ext.getCmp('F3.TYPO3.Content.FrontendEditor').reload();
+	_refreshContentEditor: function() {
+		Ext.getCmp('F3.TYPO3.Content.ContentEditor').reload();
 	}
 });
 Ext.reg('F3.TYPO3.Content.Edit.PagePropertiesDialog', F3.TYPO3.Content.Edit.PagePropertiesDialog);

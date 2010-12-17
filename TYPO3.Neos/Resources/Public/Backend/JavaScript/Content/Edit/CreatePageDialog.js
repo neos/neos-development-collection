@@ -52,15 +52,13 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 							var data = this.getForm().getValues();
 							data = this._convertFlatPropertiesToNestedData(data);
 							data['contentType'] = 'TYPO3:Page';
-							this.getForm().api.create.call(this, this.getSubmitIdentifier(), data, this._onOkButtonClickActionSuccess, this);
-						},
-						/**
-						 * Return the stored context from the closure variable
-						 *
-						 * @return {string}
-						 */
-						getSubmitIdentifier: function() {
-							return Ext.getCmp('F3.TYPO3.Content.FrontendEditor').getCurrentContext();
+							this.getForm().api.create.call(
+								this,
+								F3.TYPO3.Content.ContentModule.getCurrentContentContext(),
+								data,
+								this._onFormSubmitSuccess,
+								this
+							);
 						},
 						/**
 						 * Action when success on button click action
@@ -69,10 +67,10 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 						 * @param {} response
 						 * @return {void}
 						 */
-						_onOkButtonClickActionSuccess: function(response, status) {
+						_onFormSubmitSuccess: function(response, status) {
 							if (response) {
 								this.ownerCt.moduleMenu.removeModuleDialog();
-								Ext.getCmp('F3.TYPO3.Content.FrontendEditor').loadPage(response.data.nextUri);
+								F3.TYPO3.Content.ContentModule.loadPage(response.data.nextUri);
 							} else if (status.type == 'exception') {
 								Ext.MessageBox.alert('An Error occured', status.message);
 							} else {
@@ -84,8 +82,6 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 			};
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		F3.TYPO3.Content.Edit.CreatePageDialog.superclass.initComponent.call(this);
-
-		this.on('F3.TYPO3.UserInterface.ContentDialog.buttonClick', this._onButtonClick, this);
 	},
 
 	/**
