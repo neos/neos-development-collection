@@ -8,9 +8,9 @@
 }
 
 .f3-typo3-notEditable-visible {
-	background-image: url("'../Images/UserInterface/Icons/AlohaNotEditable-Dark-24bit.png'") !important;
+	background-image: url(../Images/UserInterface/Icons/AlohaNotEditable-Dark-24bit.png) !important;
 	/* TODO: Calculate the background-position, if the position of the overlay is even or odd (horizontally and vertically) */
-	/*background-image: url('../Images/UserInterface/Icons/aloha-notEditable-light-24bit.png') !important;*/
+	/*background-image: url(../Images/UserInterface/Icons/AlohaNotEditable-Light-24bit.png) !important;*/
 	cursor: not-allowed;
 }
 .f3-typo3-notEditable-visible:hover {

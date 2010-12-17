@@ -157,7 +157,7 @@ a.F3-TYPO3-Dashboard-Logout {
 	color: #999;
 }
 .F3-TYPO3-UserInterface-BreadcrumbMenu {
-	background: #3d3d3d url("'../Images/UserInterface/ContentFilterBg.gif'") left 50% repeat-x;
+	background: #3d3d3d url(../Images/UserInterface/ContentFilterBg.gif) left 50% repeat-x;
 }
 .F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tl,
 .F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tr,
@@ -179,7 +179,7 @@ a.F3-TYPO3-Dashboard-Logout {
 .F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-bl,
 .F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-br,
 .F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-bc {
-	background-image: url('../images/btn.gif');
+	background-image: none;
 }
 .F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-text {
 	color: #ffffff;
@@ -295,7 +295,7 @@ a.F3-TYPO3-Dashboard-Logout {
 	font-weight: bold;
 }
 .F3-Content-Node {
-	border: 1px solid grey;
+	border: 1px solid gray;
 	min-height: 30px;
 	background: #ebebeb;
 }
