@@ -488,7 +488,7 @@ class Node {
 	public function getNode($path) {
 		$normalizedPath = $this->normalizePath($path);
 		$node = $this->nodeRepository->findOneByPath($normalizedPath, $this->context->getWorkspace());
-		if (!$node) {
+		if ($node === NULL) {
 			return NULL;
 		}
 		return $this->treatNodeWithContext($node);

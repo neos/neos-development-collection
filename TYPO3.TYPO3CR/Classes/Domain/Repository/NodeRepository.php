@@ -75,7 +75,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 			);
 
 			$node = $query->execute()->getFirst();
-			if ($node) {
+			if ($node !== NULL) {
 				return ($node->isRemoved() === FALSE) ? $node : NULL;
 			}
 			$workspace = $workspace->getBaseWorkspace();
@@ -184,7 +184,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 		while ($workspace !== NULL) {
 			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace);
 			$firstNodeFoundInThisWorkspace = $query->execute()->getFirst();
-			if ($firstNodeFoundInThisWorkspace !== FALSE) {
+			if ($firstNodeFoundInThisWorkspace !== NULL) {
 				return $firstNodeFoundInThisWorkspace;
 			}
 			$workspace = $workspace->getBaseWorkspace();
