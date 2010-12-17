@@ -56,14 +56,21 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 			return $workspace->getRootNode();
 		}
 
-		foreach ($this->addedObjects as $addedNode) {
-			if ($addedNode->getPath() === $path) {
-				return $addedNode;
-			}
-		}
-
 		$depth = substr_count($path, '/');
 		while($workspace !== NULL) {
+
+			foreach ($this->addedObjects as $node) {
+				if ($node->getPath() === $path && $node->getWorkspace() === $workspace) {
+					return $node;
+				}
+			}
+
+			foreach ($this->removedObjects as $node) {
+				if ($node->getPath() === $path && $node->getWorkspace() === $workspace) {
+					return NULL;
+				}
+			}
+
 			$query = $this->createQuery();
 			$query->setOrderings(array('index' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
 			$query->matching(
@@ -299,5 +306,22 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 		return $query;
 	}
 
+	/**
+	 * Iterates of the array of objects and removes all those which have recently been removed from the repository,
+	 * but whose removal has not yet been persisted.
+	 *
+	 * Technically this is a check of the given array against $this->removedObjects.
+	 *
+	 * @param array &$objects An array of objects to filter, passed by reference.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function filterOutRemovedObjects(array &$objects) {
+		foreach ($objects as $index => $object) {
+			if ($this->removedObjects->contains($object)) {
+				unset($objects[$index]);
+			}
+		}
+	}
 }
 ?>

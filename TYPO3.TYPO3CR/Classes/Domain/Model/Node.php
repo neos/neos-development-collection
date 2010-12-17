@@ -32,6 +32,7 @@ namespace F3\TYPO3CR\Domain\Model;
 class Node {
 
 	const MATCH_PATTERN_PATH = '/^(\/|(?:\/[a-z0-9\-]+)+)$/i';
+	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/i';
 
 	const LABEL_MAXIMUM_CHARACTERS = 30;
 
@@ -463,6 +464,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createNode($name, $contentType = NULL) {
+		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
+			throw new \InvalidArgumentException('Invalid node name: A node name must only contain characters, numbers and the "-" sign.', 1292428697);
+		}
+
 		$currentWorkspace = $this->context->getWorkspace();
 
 		$newPath = $this->path . ($this->path !== '/' ? '/' : '') . $name;
@@ -491,10 +496,7 @@ class Node {
 	public function getNode($path) {
 		$normalizedPath = $this->normalizePath($path);
 		$node = $this->nodeRepository->findOneByPath($normalizedPath, $this->context->getWorkspace());
-		if ($node === NULL) {
-			return NULL;
-		}
-		return $this->treatNodeWithContext($node);
+		return ($node !== NULL) ? $this->treatNodeWithContext($node) : NULL;
 	}
 
 	/**
