@@ -84,8 +84,7 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 			$this->currentDomain = $matchingDomains[0];
 			$this->currentSite = $matchingDomains[0]->getSite();
 		} else {
-			$site = $this->siteRepository->findFirst();
-			$this->currentSite = ($site === FALSE) ? NULL : $site;
+			$this->currentSite = $this->siteRepository->findFirst();
 		}
 	}
 

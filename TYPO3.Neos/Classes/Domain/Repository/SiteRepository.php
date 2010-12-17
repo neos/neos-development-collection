@@ -33,7 +33,7 @@ class SiteRepository extends \F3\FLOW3\Persistence\Repository {
 	/**
 	 * Finds the first site
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Site The first site or FALSE if none exists
+	 * @return \F3\TYPO3\Domain\Model\Site The first site or NULL if none exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
