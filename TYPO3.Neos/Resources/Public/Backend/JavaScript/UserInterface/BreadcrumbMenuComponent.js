@@ -236,6 +236,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 * @private
 	 */
 	_renderArrow: function() {
+		return;
 		Ext.DomHelper.append(this.el, {
 			tag: 'span',
 			cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-Separator'

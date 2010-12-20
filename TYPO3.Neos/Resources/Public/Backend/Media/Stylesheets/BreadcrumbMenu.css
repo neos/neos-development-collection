@@ -43,6 +43,12 @@
 	opacity: 0;
 }
 
+/* Hack for webkit based browsers, to force the current rendering if
+   breadcrumb menu items are expanded. */
+.ext-webkit .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden {
+	width: 1px;
+}
+
 .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active {
 	opacity: 1;
 }
@@ -67,7 +73,8 @@
 	background-repeat: no-repeat;
 	background-position: left 10px;
 	background-size: 0px 25px;
-	width: 0px;
+	padding: 0px;
+	width: 1px;
 	height: 47px;
 	opacity: 0;
 }
