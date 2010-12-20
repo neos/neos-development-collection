@@ -53,21 +53,79 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	initialize: function() {
 		if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
 			this._contentModule = window.parent.F3.TYPO3.Content.ContentModule;
+
+			// Helper function
+			var makeAlohaElementEditableAndActivateItImmediately = function(editable, event) {
+				// Aloha is enabled right now, but the
+				// contenteditable attribute is not set yet...
+				// we set it, and by the setTimeout make sure the
+				// browser refreshes its DOM.
+				editable.obj.attr('contenteditable', 'true');
+				window.setTimeout(function() {
+					// Now, the contenteditable setting has reached the DOM
+					// and we can activate the editable.
+					editable.activate(event);
+					// Now, we still need to throw an onChange
+					// event on the selection, so that the floating
+					// menu recalculates its position.
+					GENTICS.Aloha.Selection.onChange(editable.obj, event);
+				}, 5);
+			};
+
+			// Here, we modify the aloha editable behavior
 			GENTICS.Aloha.EventRegistry.subscribe(
 					GENTICS.Aloha,
 					"editableCreated",
 					function (event, editable) {
-						editable.obj.unbind('keyup');
-						editable.disable();
-						editable.blur(); // TODO: does not fully work yet.
-						GENTICS.Aloha.FloatingMenu.obj.hide();
-						GENTICS.Aloha.FloatingMenu.shadow.hide();
-						F3.TYPO3.Content.AlohaConnector.AlohaInitializer._alohaEnabled = false;
+						// We need to re-wire the Aloha editable events a bit,
+						// that's why we disable all internal event handlers
+						editable.obj.unbind('mousedown');
+						editable.obj.unbind('focus');
+						editable.obj.unbind('keydown');
+
+						editable.obj.mousedown(function(event) {
+							if (F3.TYPO3.Content.AlohaConnector.AlohaInitializer._alohaEnabled) {
+								if (editable.isDisabled()) {
+									makeAlohaElementEditableAndActivateItImmediately(editable, event);
+								} else {
+									// Editable is already enabled, so we want to activate it straight away
+									editable.activate(event);
+								}
+							}
+							return true;
+						});
+
+						// we only want to forward the keystrokes in case aloha
+						// is enabled.
+						editable.obj.keydown(function(event) {
+							if (F3.TYPO3.Content.AlohaConnector.AlohaInitializer._alohaEnabled) {
+								return GENTICS.Aloha.Markup.preProcessKeyStrokes(event);
+							} else {
+								return false;
+							}
+						});
+
+						// Add new double click event listener.
+						editable.obj.dblclick(function(event) {
+							if (F3.TYPO3.Content.AlohaConnector.AlohaInitializer._alohaEnabled) {
+								// Aloha is already enabled, so we do not need
+								// to react on double click.
+								return true;
+							}
+
+							// Enable the editing mode
+							F3.TYPO3.Content.AlohaConnector.AlohaInitializer._contentModule.enableEditing();
+
+							makeAlohaElementEditableAndActivateItImmediately(editable, event);
+							return true;
+						});
+						editable.obj.attr("contentEditable", "false");
 					}
 			);
-			jQuery('.f3-typo3-editable').aloha();
 
-			window.addEventListener('dblclick', this._onDblClick.createDelegate(this), true);
+			jQuery('.f3-typo3-editable').aloha();
+			window.addEventListener('dblclick', this._onDblClick.createDelegate(this), false);
+
 			if (this._contentModule.isEditing()) {
 				this.enableEditing();
 			}
@@ -131,14 +189,7 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 * @private
 	 */
 	_enableAloha: function() {
-		if (!this._alohaEnabled) {
-			for (var i=0; i < GENTICS.Aloha.editables.length; i++) {
-				GENTICS.Aloha.editables[i].enable();
-			}
-			GENTICS.Aloha.FloatingMenu.obj.show();
-			GENTICS.Aloha.FloatingMenu.shadow.show();
-			this._alohaEnabled = true;
-		}
+		this._alohaEnabled = true;
 	},
 
 	/**
