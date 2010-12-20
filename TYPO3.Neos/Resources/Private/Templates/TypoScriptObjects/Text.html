@@ -1,11 +1,10 @@
 {namespace t=F3\TYPO3\ViewHelpers}
-
 <f:security.ifAccess resource="F3_TYPO3_BackendController">
 	<div data-nodepath="{node.path}" data-workspacename="{node.context.workspace.name}" class="f3-typo3-contentelement">
 </f:security.ifAccess>
 
-     <h2><t:aloha.editable property="headline" context="inline">{properties.headline}</t:aloha.editable></h2>
-     <p><t:aloha.editable property="text" context="block">{properties.text}</t:aloha.editable></p>
+<h2><t:aloha.editable property="headline" context="inline">{properties.headline}</t:aloha.editable></h2>
+<p><t:aloha.editable property="text" context="block">{properties.text}</t:aloha.editable></p>
 
 <f:security.ifAccess resource="F3_TYPO3_BackendController">
 	</div>

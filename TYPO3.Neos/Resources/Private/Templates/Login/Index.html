@@ -26,11 +26,11 @@
 							<f:flashMessages class="errorMessages" />
 							<div class="f3-typo3-login-fields">
 								<label class="username">User</label>
-								<input type="text" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" autofocus="autofocus" />
+								<input type="text" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" {f:if(condition:'{username}', then: 'tabindex="2"', else:'autofocus="autofocus"')} value="{username}" />
 							</div>
 							<div class="f3-typo3-login-fields">
 								<label class="password">Password</label>
-								<input class="active" type="password" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" tabindex="2" />
+								<input class="active" type="password" name="F3[FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" {f:if(condition:'{username}', then:'autofocus="autofocus"', else: 'tabindex="2"')} />
 							</div>
 							<div class="f3-typo3-login-actions">
 								<a href="#" id="f3-typo3-login-button" class="f3-typo3-login-button"><span>Login</span></a>

@@ -74,13 +74,16 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Default action, displays the login screen
 	 *
+	 * @param string $username Optional: A username to prefill into the username field
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function indexAction() {
+	public function indexAction($username = NULL) {
 		if ($this->accountRepository->countAll() === 0) {
 			$this->forward('noAccount', 'Backend\Setup');
 		}
+
+		$this->view->assign('username', $username);
 
 		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
 		$this->view->assign('version', $version);
