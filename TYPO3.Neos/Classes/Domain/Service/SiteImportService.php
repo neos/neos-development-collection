@@ -122,6 +122,7 @@ class SiteImportService {
 			$this->contentTypeManager->createContentType('TYPO3:Section');
 			$this->contentTypeManager->createContentType('TYPO3:Text');
 			$this->contentTypeManager->createContentType('Twitter:LatestTweets');
+			$this->contentTypeManager->createContentType('PhoenixDemoTypo3Org:Registration');
 
 			try {
 				$this->importSitesFromPackage($packageKey);

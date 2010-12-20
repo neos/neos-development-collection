@@ -66,7 +66,14 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 	/**
 	 * @var string
 	 */
-	protected $action = 'index';
+	protected $action = NULL;
+
+
+	/**
+	 * @inject
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * The rendering context as passed to render()
@@ -160,24 +167,34 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 		$parentRequest = $this->renderingContext->getControllerContext()->getRequest();
 		$argumentNamespace = $this->getPluginNamespace();
 		$pluginRequest = $this->subRequestBuilder->build($parentRequest, $argumentNamespace);
+
 		if ($pluginRequest->getControllerPackageKey() === NULL) {
-			$pluginRequest->setControllerPackageKey($this->package);
+			$pluginRequest->setControllerPackageKey($this->node->getProperty('package') ?: $this->package);
 		}
 		if ($pluginRequest->getControllerSubpackageKey() === NULL) {
-			$pluginRequest->setControllerSubpackageKey($this->subpackage);
+			$pluginRequest->setControllerSubpackageKey($this->node->getProperty('subpackage') ?: $this->subpackage);
 		}
 		if ($pluginRequest->getControllerName() === NULL) {
-			$pluginRequest->setControllerName($this->controller);
+			$pluginRequest->setControllerName($this->node->getProperty('controller') ?: $this->controller);
+		}
+		if ($this->action === NULL) {
+			$this->action = 'index';
 		}
 		if ($pluginRequest->getControllerActionName() === NULL) {
-			$pluginRequest->setControllerActionName($this->action);
+			$pluginRequest->setControllerActionName($this->node->getProperty('action') ?: $this->action);
 		}
 
 		$parentResponse = $this->renderingContext->getControllerContext()->getResponse();
 		$pluginResponse = $this->objectManager->create('F3\FLOW3\MVC\Web\SubResponse', $parentResponse);
 
-		$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
-		return $pluginResponse->getContent();
+		try {
+			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
+			return $pluginResponse->getContent();
+		} catch (\Exception $exception) {
+			$this->systemLogger->logException($exception);
+			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
+			return ($this->objectManager->getContext() === 'Development') ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
+		}
 	}
 
 	/**
