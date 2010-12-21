@@ -35,8 +35,9 @@ F3.TYPO3.UserInterface.ViewFilterToolbar = Ext.extend(Ext.Toolbar, {
 	 */
 	initComponent: function() {
 		var config = {
-			height: 24,
-			padding: '0 0 0 12px',
+			height: 25,
+			border: 0,
+			padding: 0,
 			flex: 0,
 			cls: 'F3-TYPO3-UserInterface-ViewFilterToolbar',
 			items: this._getToolbarItems()
