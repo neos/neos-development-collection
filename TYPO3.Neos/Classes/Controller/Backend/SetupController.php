@@ -109,6 +109,9 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function indexAction() {
+		if($this->siteRepository->countAll() > 0) {
+			$this->forward('alreadyExecuted');
+		}
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			if (file_exists('resource://' . $package->getPackageKey() . '/Private/Content/Sites.xml')) {
 				$packagesWithSites[$package->getPackageKey()] = $package->getPackageMetaData()->getTitle();
@@ -136,6 +139,9 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function importAndCreateAdministratorAction($packageKey, $identifier, $password, \F3\Party\Domain\Model\Person $person) {
+		if($this->siteRepository->countAll() > 0) {
+			$this->forward('alreadyExecuted');
+		}
 		if ($packageKey !== '0') {
 			try {
 				$importResult = $this->siteImportService->importPackage($packageKey);
@@ -153,6 +159,15 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->createAdministrator($identifier, $password, $person);
 		$this->flashMessageContainer->flush();
 		$this->redirect('show', 'Node');
+	}
+
+	/**
+	 * Action which displays a message that the setup has been executed already
+	 *
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function alreadyExecutedAction() {
 	}
 
 	/**
