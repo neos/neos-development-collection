@@ -87,18 +87,19 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			iconCls: 'F3-TYPO3-Content-icon-deletePage'
 		});
 
-		registry.append('menu/viewFilterToolbar', 'workspaceName', {
-			text: F3.TYPO3.Configuration.Application.workspaceName,
-			cls: 'F3-TYPO3-ContextToolbar-icon-workspaceName'
-		});
 		registry.append('menu/viewFilterToolbar', 'siteName', {
 			text: F3.TYPO3.Configuration.Application.siteName,
-			cls: 'F3-TYPO3-ContextToolbar-icon-siteName',
+			iconCls: 'F3-TYPO3-ContextToolbar-icon-siteName',
+			disabled: true
+		});
+		registry.append('menu/viewFilterToolbar', 'workspaceName', {
+			text: F3.TYPO3.Configuration.Application.workspaceName,
+			iconCls: 'F3-TYPO3-ContextToolbar-icon-workspaceName',
 			disabled: true
 		});
 		registry.append('menu/viewFilterToolbar', 'contextLocale', {
 			text: F3.TYPO3.Configuration.Application.contextLocale,
-			cls: 'F3-TYPO3-ContextToolbar-icon-contextLocale',
+			iconCls: 'F3-TYPO3-ContextToolbar-icon-contextLocale',
 			disabled: true
 		});
 

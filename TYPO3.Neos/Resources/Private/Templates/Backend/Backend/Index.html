@@ -15,10 +15,10 @@
 
 		<typo3:includeJavaScript include="Configuration/.*\.js" subpackage="Backend" />
 		<script type="text/javascript">
-			F3.TYPO3.Configuration.Application.workspaceName = '{workspaceName}';
-			F3.TYPO3.Configuration.Application.siteName = '{siteName}';
-			F3.TYPO3.Configuration.Application.siteNodePath = '{siteNodePath}';
-			F3.TYPO3.Configuration.Application.contextLocale = '{contextLocale}';
+			F3.TYPO3.Configuration.Application.workspaceName = '{contentContext.workspace.name}';
+			F3.TYPO3.Configuration.Application.siteName = '{contentContext.currentSite.name}';
+			F3.TYPO3.Configuration.Application.siteNodePath = '{contentContext.currentSiteNode.path}';
+			F3.TYPO3.Configuration.Application.contextLocale = '{contentContext.locale.language}';
 			F3.TYPO3.Configuration.Application.version = '{version}';
 		</script>
 

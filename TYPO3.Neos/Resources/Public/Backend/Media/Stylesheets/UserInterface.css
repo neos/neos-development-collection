@@ -406,9 +406,6 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-left: 12px;
 	margin-bottom: 2px;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .x-btn {
-	margin-left: 17px;
-}
 .F3-TYPO3-UserInterface-ViewFilterToolbar .x-btn-noicon .x-btn-small .x-btn-text {
 	text-shadow: 0px -1px 0px #000000;
 	opacity: 1;
@@ -418,6 +415,21 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 .F3-TYPO3-UserInterface-ViewFilterToolbar .x-item-disabled .x-btn-small .x-btn-text {
 	color: rgba(255, 255, 255, 0.5) !important;
 }
+.F3-TYPO3-UserInterface-ViewFilterToolbar .x-btn {
+	margin-left: 1px;
+	margin-right: 16px;
+}
+.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-siteName {
+	background-image: url(../Images/UserInterface/Icons/ViewFilter-SiteName.png);
+}
+.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName {
+	background-image: url(../Images/UserInterface/Icons/ViewFilter-WorkspaceName.png);
+}
+.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-contextLocale {
+	background-image: url(../Images/UserInterface/Icons/ViewFilter-ContextLocale.png);
+	padding-left: 28px !important;
+}
+	/* TODO Use styles for enabled toolbar items */
 .F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName {
 	border: 1px solid transparent;
 	margin-bottom: 1px;

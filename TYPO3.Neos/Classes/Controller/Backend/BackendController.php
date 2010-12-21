@@ -50,10 +50,8 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function indexAction() {
 		$workspaceName = 'user-' . $this->securityContext->getAccount()->getAccountIdentifier();
 		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName);
-		$this->view->assign('workspaceName', $workspaceName);
-		$this->view->assign('siteName', $contentContext->getCurrentSite()->getName());
-		$this->view->assign('siteNodePath', $contentContext->getCurrentSiteNode()->getPath());
-		$this->view->assign('contextLocale', $contentContext->getLocale()->getLanguage());
+
+		$this->view->assign('contentContext', $contentContext);
 
 		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
 		$this->view->assign('version', $version);
