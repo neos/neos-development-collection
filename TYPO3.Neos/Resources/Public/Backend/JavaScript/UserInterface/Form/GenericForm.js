@@ -67,15 +67,18 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	 * Load initial values for the form on render event.
 	 *
 	 * Override this method to implement custom form load logic.
+	 * To not do any loading, specify autoLoad: false for the form.
 	 *
 	 * @return {void}
 	 */
 	onRenderLoad: function() {
-		this.getForm().load({
-			params: this.getLoadIdentifier(),
-			success: this._loadValues,
-			scope: this
-		});
+		if (this.autoLoad !== false) {
+			this.getForm().load({
+				params: this.getLoadIdentifier(),
+				success: this._loadValues,
+				scope: this
+			});
+		}
 	},
 
 	/**
