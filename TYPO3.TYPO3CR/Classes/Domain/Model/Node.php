@@ -196,7 +196,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLabel() {
-		$label = $this->hasProperty('title') ? strip_tags($this->getProperty('title')) : '(' . $this->contentType . ') '. $this->getName();
+		$label = $this->hasProperty('title') ? strip_tags($this->getProperty('title')) : '(' . $this->getContentType() . ') '. $this->getName();
 		$croppedLabel = \F3\FLOW3\Utility\Unicode\Functions::substr($label, 0, self::LABEL_MAXIMUM_CHARACTERS);
 		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
 	}

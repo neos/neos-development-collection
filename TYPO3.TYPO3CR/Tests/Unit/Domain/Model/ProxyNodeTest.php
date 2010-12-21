@@ -328,6 +328,19 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function getLabelUsesGetterMethodsToRenderTheLabel() {
+		$proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\ProxyNode', array('getContentType', 'getName', 'hasProperty'), array(), '', FALSE);
+		$proxyNode->expects($this->once())->method('hasProperty')->with('title')->will($this->returnValue(FALSE));
+		$proxyNode->expects($this->once())->method('getName')->will($this->returnValue('thename'));
+		$proxyNode->expects($this->once())->method('getContentType')->will($this->returnValue('TYPO3:TheContentType'));
+
+		$this->assertSame('(TYPO3:TheContentType) thename', $proxyNode->getLabel());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function setContextSetsTheContextOfTheProxyNodeTheOriginalNodeAndTheNewNode() {
 		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 
