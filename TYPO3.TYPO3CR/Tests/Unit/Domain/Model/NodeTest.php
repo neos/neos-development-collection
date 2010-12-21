@@ -699,11 +699,11 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
 		$proxyNode->expects($this->once())->method('setContext')->with($context);
 
-		$objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$objectManager->expects($this->once())->method('create')->with('F3\TYPO3CR\Domain\Model\ProxyNode', $subjectNode)->will($this->returnValue($proxyNode));
+		$proxyNodeFactory = $this->getMock('F3\TYPO3CR\Domain\Factory\ProxyNodeFactory');
+		$proxyNodeFactory->expects($this->once())->method('createFromNode')->with($subjectNode)->will($this->returnValue($proxyNode));
 
 		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
-		$currentNode->_set('objectManager', $objectManager);
+		$currentNode->_set('proxyNodeFactory', $proxyNodeFactory);
 		$currentNode->_set('context', $context);
 
 		$returnedNode = $currentNode->_call('treatNodeWithContext', $subjectNode);

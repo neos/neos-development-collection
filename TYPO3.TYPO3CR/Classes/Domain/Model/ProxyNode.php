@@ -29,7 +29,6 @@ namespace F3\TYPO3CR\Domain\Model;
  * This is used for realizing a copy-on-write / lazy cloning functionality.
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @entity
  * @scope prototype
  */
 class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {

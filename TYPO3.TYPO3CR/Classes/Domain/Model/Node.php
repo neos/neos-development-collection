@@ -127,6 +127,12 @@ class Node {
 	protected $objectManager;
 
 	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Factory\ProxyNodeFactory
+	 */
+	protected $proxyNodeFactory;
+
+	/**
 	 * Constructs this node
 	 *
 	 * @param string $path Absolute path of this node
@@ -494,8 +500,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
-		$normalizedPath = $this->normalizePath($path);
-		$node = $this->nodeRepository->findOneByPath($normalizedPath, $this->context->getWorkspace());
+		$node = $this->nodeRepository->findOneByPath($this->normalizePath($path), $this->context->getWorkspace());
 		return ($node !== NULL) ? $this->treatNodeWithContext($node) : NULL;
 	}
 
@@ -655,7 +660,7 @@ class Node {
 	protected function treatNodeWithContext($node) {
 		if ($node instanceof \F3\TYPO3CR\Domain\Model\Node) {
 			if ($node->getWorkspace() !== $this->context->getWorkspace()) {
-				$node = $this->objectManager->create('F3\TYPO3CR\Domain\Model\ProxyNode', $node);
+				$node = $this->proxyNodeFactory->createFromNode($node);
 			}
 			$node->setContext($this->context);
 		}
