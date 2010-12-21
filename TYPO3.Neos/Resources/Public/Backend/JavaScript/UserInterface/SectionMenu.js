@@ -29,6 +29,10 @@ Ext.ns("F3.TYPO3.UserInterface");
  * @extends Ext.TabPanel
  */
 F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
+
+	/**
+	 * @return {void}
+	 */
 	initComponent: function() {
 		var config = {
 			border: false,
@@ -78,7 +82,8 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 	 * @return {Object}
 	 */
 	_getTabComponentForMenuItem: function(menuItem) {
-		var viewFilter = menuItem.viewFilter ? menuItem.viewFilter : {xtype: 'container', 'height': 0};
+		var viewFilter = menuItem.viewFilter ? menuItem.viewFilter : {xtype: 'container', 'height': 0},
+			specialMenu = menuItem.specialMenu ? menuItem.specialMenu : {xtype: 'box', 'width': 0};
 		return {
 			xtype: 'F3.TYPO3.Components.ModuleContainer',
 			layout: 'vbox',
@@ -97,6 +102,7 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 				basePath: 'menu/main/' + menuItem.key,
 				menuConfig: menuItem.children,
 				viewFilter: viewFilter,
+				specialMenu: specialMenu,
 				flex: 0
 			}, {
 				xtype: 'F3.TYPO3.UserInterface.ContentArea',

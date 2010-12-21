@@ -31,6 +31,7 @@ Ext.ns("F3.TYPO3.UserInterface");
 F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	basePath: null,
 	viewFilter: {},
+	specialMenu: null,
 
 	/**
 	 * The instance of the module dialog if it is currently opened.
@@ -62,10 +63,15 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 				align: 'stretch'
 			},
 			items: [this.viewFilter, {
-				xtype: 'F3.TYPO3.UserInterface.BreadcrumbMenuComponent',
-				itemId: this.itemId,
-				ref: 'breadcrumbMenu',
-				basePath: this.basePath,
+				xtype: 'container',
+				layout: 'hbox',
+				items: [{
+					xtype: 'F3.TYPO3.UserInterface.BreadcrumbMenuComponent',
+					itemId: this.itemId,
+					ref: '../breadcrumbMenu',
+					basePath: this.basePath,
+					flex: 1
+				}, this.specialMenu],
 				flex: 0
 			}, {
 				xtype: 'container',

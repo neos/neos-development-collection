@@ -35,6 +35,7 @@ F3.TYPO3.Dashboard.DashboardView = Ext.extend(Ext.Panel, {
 	 */
 	initComponent: function() {
 		var config = {
+			border: false,
 			layout: 'fit',
 			items: [{
 				itemId: 'fifty-fifty',
