@@ -46,6 +46,7 @@ F3.TYPO3.Dashboard.UnpublishedContentView = Ext.extend(Ext.DataView, {
 					fields: []
 				},
 				autoScroll: true,
+				height: 360,
 				multiSelect: true,
 				itemSelector: 'div.F3-Content-Node',
 				overClass: 'x-view-over',
