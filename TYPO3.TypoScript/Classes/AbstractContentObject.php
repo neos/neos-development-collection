@@ -51,7 +51,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	protected $presentationModelPropertyNames = array();
 
 	/**
-	 * @var \F3\FLOW3\SystemLoggerInterface
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -152,8 +152,9 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 			}
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException(new \F3\TypoScript\Exception('Exception caught in ' . get_class($this) . '::render()', 1289997632, $exception));
-			return '<!-- Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details. -->';
-     	}
+			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
+			return ($this->objectManager->getContext() === 'Development') ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
+		}
 	}
 
 	/**
