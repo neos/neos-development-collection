@@ -125,7 +125,7 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 
 			jQuery('.f3-typo3-editable').aloha();
 			window.addEventListener('dblclick', this._onDblClick.createDelegate(this), false);
-
+			window.addEventListener('resize', this._onResize.createDelegate(this), false);
 			if (this._contentModule.isEditing()) {
 				this.enableEditing();
 			}
@@ -146,6 +146,19 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 			event.preventDefault();
 			event.stopPropagation();
 			this._contentModule.enableEditing();
+		}
+	},
+
+	/**
+	 * Handler on window resize, needed to reposition the non-editable areas.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_onResize: function() {
+		if (this._alohaEnabled) {
+			this._removeUneditableAreas();
+			this._overlayUneditableAreas();
 		}
 	},
 
