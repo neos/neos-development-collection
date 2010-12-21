@@ -55,6 +55,10 @@ F3.TYPO3.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 				},
 				dataIndex: '__contentType'
 			},
+			labelColumn = {
+				header: 'label',
+				dataIndex: '__label'
+			},
 			nodePath = this.nodePath,
 			config = {
 				store: new Ext.data.DirectStore({
@@ -85,7 +89,7 @@ F3.TYPO3.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 
 			// Reconfigure column model with server side fields
 		this.store.on('metachange', function(store, meta) {
-			var columns = [iconColumn];
+			var columns = [iconColumn, labelColumn];
 			Ext.each(meta.fields, function(fieldName) {
 				if (!fieldName.match(/^__/)) {
 					columns.push({header: fieldName, dataIndex: fieldName});
