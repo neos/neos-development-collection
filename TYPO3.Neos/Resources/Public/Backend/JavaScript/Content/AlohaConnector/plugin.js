@@ -64,61 +64,9 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		_subscribeToAlohaEvents: function() {
 			GENTICS.Aloha.EventRegistry.subscribe(
 				GENTICS.Aloha,
-				'editableCreated',
-				this._onEditableCreated
-			);
-
-			GENTICS.Aloha.EventRegistry.subscribe(
-				GENTICS.Aloha,
-				'editableActivated',
-				this._onEditableActivated
-			);
-
-			GENTICS.Aloha.EventRegistry.subscribe(
-				GENTICS.Aloha,
 				'editableDeactivated',
 				this._onEditableDeactivated
 			);
-
-			Ext.EventManager.on(
-				window,
-				'beforeunload',
-				this._onBeforeunload,
-				this
-			);
-
-			Ext.EventManager.on(
-				window,
-				'unload',
-				this._onUnload,
-				this
-			);
-		},
-
-		/**
-		 * On Aloha Event: "onEditableCreated"<br />
-		 *
-		 * The scope of "this" is GENTICS.Aloha
-		 *
-		 * @param {Object} event Event object
-		 * @param {GENTICS.Aloha.editable} editable current aloha Editable object
-		 * @return {void}
-		 * @private
-		 */
-		_onEditableCreated: function(event, editable) {
-		},
-
-		/**
-		 * On Aloha Event: "onEditableActivated"<br />
-		 *
-		 * The scope of "this" is GENTICS.Aloha
-		 *
-		 * @param {Object} event Event object
-		 * @param {GENTICS.Aloha.editable} editable current aloha Editable object
-		 * @return {void}
-		 * @private
-		 */
-		_onEditableActivated: function(event, editable) {
 		},
 
 		/**
@@ -132,50 +80,8 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 * @private
 		 */
 		_onEditableDeactivated: function(event, editable) {
-			F3.TYPO3.Content.AlohaConnector._saveChanges(editable.editable);
-		},
-
-		/**
-		 * On browser window event: "beforeunload"
-		 *
-		 * @return {void}
-		 * @private
-		 */
-		_onBeforeunload: function() {
-			// TODO check if there is something to save before closing the tab /window
-			this._checkForUnsavedChanges();
-		},
-
-		/**
-		 * On browser window event: "unload"
-		 *
-		 * @return {void}
-		 * @private
-		 */
-		_onUnload: function() {
-			// TODO check if there is something to save before closing the tab /window
-		},
-
-		/**
-		 * Checks for unsaved content,
-		 * the user can confirm if he wants to save this content
-		 *
-		 * @return {Boolean} TRUE if there are unsaved changes, FALSE otherwise.
-		 * @private
-		 */
-		_checkForUnsavedChanges: function() {
-			// check if something needs top be saved
-			for (var i in GENTICS.Aloha.editables) {
-				if (GENTICS.Aloha.editables[i].isModified) {
-					if (GENTICS.Aloha.editables[i].isModified()) {
-						// if an editable has been modified, the user can confirm if he wants the page to be saved
-						if (true || confirm('Saved unsaved content?')) {
-							// TODO Save unsaved content here
-							return false;
-						}
-						return true;
-					}
-				}
+			if (editable.editable.isModified()) {
+				F3.TYPO3.Content.AlohaConnector._saveChanges(editable.editable);
 			}
 		},
 
