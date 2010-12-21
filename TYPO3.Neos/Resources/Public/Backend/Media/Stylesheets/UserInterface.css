@@ -30,13 +30,15 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-moz-box-shadow: 0px -4px 4px #1d1d1d;
 	-webkit-box-shadow: 0px -4px 4px #1d1d1d;
 }
-.F3-TYPO3-Wallpaper,
-#F3-TYPO3-Dashboard-DashboardView {
+.F3-TYPO3-Wallpaper {
 	background: url(../Images/Backgrounds/Wallpaper.jpg) 50% top repeat;
 }
 .F3-TYPO3-UserInterface-TopBar-Wallpaper,
 #F3-TYPO3-Dashboard-DashboardView .x-panel-body {
 	background: transparent;
+}
+#F3-TYPO3-Dashboard-DashboardView {
+	background: #A6A6A6;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-right,
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-left,
