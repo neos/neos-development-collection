@@ -30,18 +30,25 @@ Ext.ns("F3.TYPO3.UserInterface");
 F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 
 	/**
-	 * Show cancel button
+	 * Cancel button label, if false no cancel button is displayed.
 	 *
-	 * @cfg {boolean}
+	 * @cfg {String}
 	 */
-	showCancelButton: true,
+	cancelButton: false,
 
 	/**
-	 * Show OK button
+	 * OK button label, if false no OK button is displayed.
 	 *
-	 * @cfg {boolean}
+	 * @cfg {String}
 	 */
-	showOkButton: true,
+	okButton: false,
+
+	/**
+	 * additional info text for buttons, if false nothing is displayed.
+	 *
+	 * @cfg {String}
+	 */
+	infoText: false,
 
 	/**
 	 * Mode. If "success" (the default), the content dialog has a dark background
@@ -61,47 +68,64 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 	 * @event _cancelButtonClick
 	 */
 	initComponent: function() {
-		var config, toolbarConfig;
+		var config, toolbarConfig, itemsConfig, keyMap;
+
+		itemsConfig = [];
+		keyMap = new Ext.KeyMap(document, []);
 
 		toolbarConfig = {
 			xtype: 'toolbar',
 			items: []
 		};
-		if (this.showCancelButton) {
+		if (this.cancelButton != false) {
 			toolbarConfig.items.push({
 				xtype: 'F3.TYPO3.Components.Button',
-				cls: 'F3-TYPO3-Components-Button-link',
+				cls: 'F3-TYPO3-Components-Button',
 				itemId: 'cancelButton',
-				text: 'Cancel',
+				text: this.cancelButton,
 				scale: 'large',
-				handler: this._handleButtonClick,
+				handler: this._fireCancelEvent,
 				scope: this
 			});
+			keyMap.on(Ext.EventObject.ESC, this._fireCancelEvent, this);
 		}
-		if (this.showOkButton) {
+		if (this.okButton != false) {
 			if (toolbarConfig.items.length > 0) {
 				toolbarConfig.items.push({xtype: 'tbspacer', width: 20});
 			}
 			toolbarConfig.items.push({
 				xtype: 'F3.TYPO3.Components.Button',
-				width: 40,
 				itemId: 'okButton',
-				text: 'OK',
+				text: this.okButton,
 				scale: 'large',
-				handler: this._handleButtonClick,
-				scope: this
+				handler: this._fireOkEvent,
+				scope: this,
+				cls: 'F3-TYPO3-Components-Button-type-' + this.mode
+			});
+			keyMap.on(Ext.EventObject.ENTER, this._fireOkEvent, this);
+		}
+		if (this.infoText != false) {
+			itemsConfig.push({
+				xtype: 'panel',
+				cls: 'F3-TYPO3-UserInterface-ContentDialog-InfoText',
+				border: false,
+				html: this.infoText,
+				flex: 0
 			});
 		}
+
+		itemsConfig.push({
+			xtype: 'panel',
+			cls: 'F3-TYPO3-UserInterface-ContentDialog-Panel',
+			border: false,
+			tbar: toolbarConfig,
+			ref: 'panel'
+		});
+
 		config = {
-			height: 13,
+			height: 22,
 			style: 'position: relative; z-index: 500; overflow: show',
-			items: {
-				xtype: 'panel',
-				cls: 'F3-TYPO3-UserInterface-ContentDialog-Panel',
-				border: false,
-				tbar: toolbarConfig,
-				ref: 'panel'
-			},
+			items: itemsConfig,
 			cls: 'F3-TYPO3-UserInterface-ContentDialog F3-TYPO3-UserInterface-ContentDialog-mode-' + this.mode
 		};
 		Ext.apply(this, config);
@@ -109,19 +133,23 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 * Handle the button click, by firing the appropriate event
+	 * fire the cancel event
 	 *
-	 * @param {...} button
-	 * @param {...} event
 	 * @return {void}
 	 * @private
 	 */
-	_handleButtonClick: function(button, event) {
-		if (button.itemId === 'cancelButton') {
-			this.fireEvent('_cancelButtonClick');
-		} else if (button.itemId === 'okButton') {
-			this.fireEvent('_okButtonClick');
-		}
+	_fireCancelEvent: function() {
+		this.fireEvent('_cancelButtonClick');
+	},
+
+	/**
+	 * fire the ok event
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_fireOkEvent: function() {
+		this.fireEvent('_okButtonClick');
 	}
 });
 Ext.reg('F3.TYPO3.UserInterface.ContentDialog', F3.TYPO3.UserInterface.ContentDialog);

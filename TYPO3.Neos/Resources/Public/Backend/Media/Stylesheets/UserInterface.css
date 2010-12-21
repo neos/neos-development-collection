@@ -202,7 +202,6 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 }
 /* TODO jensen: check if Prefix with F3-class leads to errors */
 .F3-TYPO3-UserInterface-ContentDialog .x-toolbar-left {
-	padding: 4px;
 	width: auto;
 }
 .F3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar-ct {
@@ -213,7 +212,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#4a4a4a), to(#272727));
 	background: -moz-linear-gradient(top, #4a4a4a, #272727);
 	border: 0px;
-	border-bottom: 1px solid #808080;
+	border-bottom: 1px solid #0B0B0B;
 	-moz-box-shadow: 0 2px 6px #1F1D1D;
 	-webkit-box-shadow: 0 2px 6px #1F1D1D;
 }
@@ -223,24 +222,35 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-webkit-border-top-left-radius: 0;
 	-webkit-border-top-right-radius: 0;
 	-moz-border-radius: 0 0 4px 4px;
-	-moz-box-shadow: 0 2px 6px #1F1D1D;
-	-webkit-box-shadow: 0 2px 6px #1F1D1D;
-	border: 1px solid #808080;
+	-moz-box-shadow: 0 2px 2px #1F1D1D;
+	-webkit-box-shadow: 0 2px 2px #1F1D1D;
+	border: 1px solid #0B0B0B;
 	border-top: 0px;
 	position: absolute;
-	top: 12px;
-	left: 10px
+	top: 21px;
+	left: 10px;
+}
+.F3-TYPO3-UserInterface-ContentDialog-InfoText .x-panel-body{
+	background: transparent;
+	color: #ffffff;
+	text-align: left;
+	font-size: 12px;
+	padding: 2px 0 0 10px;
 }
 
-.F3-TYPO3-UserInterface-ContentDialog-mode-warning {
-	background-color: #5d0f0e;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#9b201d), to(#5d0f0e));
-	background: -moz-linear-gradient(top, #9b201d, #5d0f0e);
+.F3-TYPO3-UserInterface-ContentDialog-mode-negative {
+	background: url(../Images/Backgrounds/DangerZoneBackground.png) right top;
 }
-.F3-TYPO3-UserInterface-ContentDialog-mode-warning .F3-TYPO3-UserInterface-ContentDialog-Panel {
-	background-color: #5d0f0e;
+.F3-TYPO3-UserInterface-ContentDialog-mode-negative .F3-TYPO3-UserInterface-ContentDialog-Panel {
+	background: url(../Images/Backgrounds/DangerZoneBackground.png);
+	background-position: right -16px;
 	left: auto;
-	right: 100px;
+	right: 4px;
+}
+
+.F3-TYPO3-UserInterface-ContentDialog-mode-negative .F3-TYPO3-UserInterface-ContentDialog-InfoText .x-panel-body {
+	text-align: right;
+	padding: 3px 5px 0 0;
 }
 
 .F3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar {
@@ -303,6 +313,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-webkit-border-radius: 0;
 	-moz-box-shadow: none;
 	-webkit-box-shadow: none;
+	border: 0px none;
 }
 .F3-TYPO3-Dashboard-Logout button:hover {
 	background: url(../Images/UserInterface/Icons/Icon-Logout-24bit.png) 50% 50% no-repeat;
@@ -424,6 +435,9 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-left: 1px;
 	border: 1px solid transparent;
 	margin-bottom: 1px;
+	padding-left: 16px;
+	background-repeat: no-repeat;
+	background-position: 0 4px;
 }
 .F3-TYPO3-UserInterface-ViewFilterToolbar .x-btn-noicon .x-btn-small .x-btn-text {
 	text-shadow: 0px -1px 0px #000000;

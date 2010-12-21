@@ -87,19 +87,18 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			iconCls: 'F3-TYPO3-Content-icon-deletePage'
 		});
 
-		registry.append('menu/viewFilterToolbar', 'siteName', {
-			text: F3.TYPO3.Configuration.Application.siteName,
-			iconCls: 'F3-TYPO3-ContextToolbar-icon-siteName',
-			disabled: true
-		});
 		registry.append('menu/viewFilterToolbar', 'workspaceName', {
 			text: F3.TYPO3.Configuration.Application.workspaceName,
-			iconCls: 'F3-TYPO3-ContextToolbar-icon-workspaceName',
+			cls: 'F3-TYPO3-ContextToolbar-icon-workspaceName'
+		});
+		registry.append('menu/viewFilterToolbar', 'siteName', {
+			text: F3.TYPO3.Configuration.Application.siteName,
+			cls: 'F3-TYPO3-ContextToolbar-icon-siteName',
 			disabled: true
 		});
 		registry.append('menu/viewFilterToolbar', 'contextLocale', {
 			text: F3.TYPO3.Configuration.Application.contextLocale,
-			iconCls: 'F3-TYPO3-ContextToolbar-icon-contextLocale',
+			cls: 'F3-TYPO3-ContextToolbar-icon-contextLocale',
 			disabled: true
 		});
 
@@ -196,17 +195,30 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/edit[]/pageProperties',
 				{xtype: 'F3.TYPO3.Content.Edit.PagePropertiesDialog'},
-				{xtype: 'F3.TYPO3.UserInterface.ContentDialog'}
+				{
+					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
+					okButton: 'Update Page',
+					cancelButton: 'Cancel',
+					mode: 'positive'
+				}
 			);
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/createPage',
 				{xtype: 'F3.TYPO3.Content.Edit.CreatePageDialog'},
-				{xtype: 'F3.TYPO3.UserInterface.ContentDialog'}
+				{
+					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
+					okButton: 'Create Page',
+					cancelButton: 'Cancel',
+					mode: 'positive'
+				}
 			);
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/deletePage',
 				{xtype: 'F3.TYPO3.Content.Edit.DeletePageDialog'},
 				{
 					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
-					mode: 'warning'
+					infoText: 'Are you sure you want to delete this page? Any content on this page will be lost.',
+					okButton: 'Delete Page',
+					cancelButton: 'Cancel',
+					mode: 'negative'
 				}
 			);
 
