@@ -53,7 +53,7 @@ F3.TYPO3.Dashboard.UnpublishedContentView = Ext.extend(Ext.DataView, {
 				tpl: new Ext.XTemplate(
 					'<tpl for=".">',
 						'<div class="F3-Content-Node">',
-							'<div class="label-wrap"><b>{__label}</b></div>',
+							'<div class="label-wrap"><b>{__nodePath}</b></div>',
 							'<div class="abstract-wrap">{__abstract}</div>',
 						'</div>',
 					'</tpl>',

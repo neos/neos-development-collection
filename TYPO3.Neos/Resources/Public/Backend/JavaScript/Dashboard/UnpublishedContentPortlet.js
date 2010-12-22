@@ -36,51 +36,44 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 	initComponent: function() {
 		var config = {
 			collapsible: false,
-			tools: [{
-				id: 'gear',
-				handler: function(event) {
-					var menu = new Ext.menu.Menu({
-						// TODO re-use edit action
-						items: [{
-							text: 'Configure widget'
-						}, {
-							text: 'Rename title'
-						}, '-', {
-							text: 'Remove from dashboard'
-						}],
-						listeners: {
-							hide: function(menu) {
-								menu.destroy();
-							}
-						}
-					}).showAt(event.getXY());
-				}
-			}],
-			title: 'Modified content',
-			height: 400,
+			title: 'Workspace Overview',
 			items: {
 				itemId: 'contentView',
 				xtype: 'F3.TYPO3.Dashboard.UnpublishedContentView',
-				ref: 'contentView'
-			},bbar: [{
+				ref: 'contentView',
+				cls: 'F3-TYPO3-Dashboard-DashboardView-ContentView'
+			},
+			bbar: [{
+				itemId: 'description',
+				xtype: 'panel',
+				html: 'The listed content is currently only visible in your personal workspace and can be published to the live website.',
+				border: false,
+				cls: 'F3-TYPO3-Dashboard-DashboardView-Description'
+			}, {
+				itemId: 'noContent',
+				hidden: true,
+				xtype: 'panel',
+				html: 'The current workspace does not contain any unpublished content.',
+				border: false,
+				cls: 'F3-TYPO3-Dashboard-DashboardView-Description'
+			}, '->', {
+				xtype: 'F3.TYPO3.Components.Button',
 				itemId: 'publishAll',
 				text: 'Publish all',
 				handler: this._publishAll,
-				scope: this
+				scope: this,
+				cls: 'F3-TYPO3-Components-Button-type-positive F3-TYPO3-Dashboard-DashboardView-PublishButton'
 			}, {
+				xtype: 'F3.TYPO3.Components.Button',
 				hidden: true,
 				itemId: 'publishSelected',
 				text: 'Publish selected',
 				handler: this._publishSelected,
-				scope: this
-			}, '->', {
-				text: 'Update list',
-				handler: function() {
-					this.getComponent('contentView').store.load();
-				},
-				scope: this
+				scope: this,
+				cls: 'F3-TYPO3-Components-Button-type-positive F3-TYPO3-Dashboard-DashboardView-PublishButton'
 			}]
 		};
+
 		Ext.apply(this, config);
 		F3.TYPO3.Dashboard.UnpublishedContentPortlet.superclass.initComponent.call(this);
 
@@ -89,9 +82,18 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 			if (status.changed) {
 				this.getComponent('contentView').store.load();
 			}
+			if (status.unpublishedNodesCount > 0) {
+				this.getBottomToolbar().getComponent('description').show();
+				this.getBottomToolbar().getComponent('noContent').hide();
+				this.getBottomToolbar().getComponent('publishAll').enable();
+			} else {
+				this.getBottomToolbar().getComponent('description').hide();
+				this.getBottomToolbar().getComponent('noContent').show();
+				this.getBottomToolbar().getComponent('publishAll').disable();
+			}
 		}, this);
 
-			// Update button status when  selection changes
+			// Update button status when selection changes
 		this.contentView.on('selectionchange', function(dataView, selections) {
 			if (selections.length > 0) {
 				this.getBottomToolbar().getComponent('publishAll').hide();

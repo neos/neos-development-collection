@@ -21,7 +21,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Workspace.WorkspaceModule', {
 			F3.TYPO3.Workspace.Service.updateWorkspaceStatus();
 		});
 		F3.TYPO3.Workspace.WorkspaceModule.on('updatedWorkspaceStatus', function() {
-			window.setTimeout(F3.TYPO3.Workspace.Service.updateWorkspaceStatus, 60000);
+			window.setTimeout(F3.TYPO3.Workspace.Service.updateWorkspaceStatus, 6000);
 		});
 	}
 });
