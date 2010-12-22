@@ -102,7 +102,6 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 				scope: this,
 				cls: 'F3-TYPO3-Components-Button-type-' + this.mode
 			});
-			keyMap.on(Ext.EventObject.ENTER, this._fireOkEvent, this);
 		}
 		if (this.infoText != false) {
 			itemsConfig.push({
