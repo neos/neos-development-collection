@@ -78,30 +78,6 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $siteRepository;
 
 	/**
-	 * Action which displays a message that no site has yet been defined.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function noSiteAction() {
-		$this->forward('index');
-	}
-
-	/**
-	 * Action which displays a message that no site has yet been defined.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function noAccountAction() {
-		$titles = array('Velkommen til TYPO3!', 'Willkommen zu TYPO3!', 'Welcome to TYPO3!',
-			 '¡Bienvenido a TYPO3!', '¡Benvingut a TYPO3!', 'Laipni lūdzam TYPO3!', 'Bienvenue sur TYPO3!',
-			 'Welkom op TYPO3!', 'Добро пожаловать в TYPO3!', 'ようこそTYPO3へ');
-		$this->view->assign('title', $titles[rand(0, count($titles) - 1)]);
-	}
-
-	/**
 	 * Displays the main setup screen with the opportunity to import a site provided
 	 * by some package.
 	 *
@@ -109,9 +85,17 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function indexAction() {
-		if($this->siteRepository->countAll() > 0) {
+		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$homepageNode  = $contentContext->getWorkspace()->getRootNode()->getNode('/sites/phoenixdemotypo3org/homepage');
+
+		if($homepageNode !== NULL) {
 			$this->forward('alreadyExecuted');
 		}
+
+		if ($this->siteRepository->countAll() === 1) {
+			$this->forward('reimportContent');
+		}
+
 		foreach ($this->packageManager->getActivePackages() as $package) {
 			if (file_exists('resource://' . $package->getPackageKey() . '/Private/Content/Sites.xml')) {
 				$packagesWithSites[$package->getPackageKey()] = $package->getPackageMetaData()->getTitle();
@@ -139,7 +123,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function importAndCreateAdministratorAction($packageKey, $identifier, $password, \F3\Party\Domain\Model\Person $person) {
-		if($this->siteRepository->countAll() > 0) {
+		if($this->siteRepository->countAll() === 1) {
 			$this->forward('alreadyExecuted');
 		}
 		if ($packageKey !== '0') {
@@ -158,7 +142,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->personRepository->removeAll();
 		$this->createAdministrator($identifier, $password, $person);
 		$this->flashMessageContainer->flush();
-		$this->redirect('show', 'Node');
+ 		$this->redirect('show', 'Node');
 	}
 
 	/**
@@ -168,6 +152,22 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function alreadyExecutedAction() {
+	}
+
+	/**
+	 * Reimports the content of the live workspace for the site which was originally
+	 * imported.
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reimportContentAction() {
+		$site = $this->siteRepository->findFirst();
+		$packageKey = $site->getSiteResourcesPackageKey();
+
+		$this->siteImportService->updateFromPackage($packageKey);
+
+		$this->flashMessageContainer->flush();
+		$this->redirect('show', 'Node');
 	}
 
 	/**

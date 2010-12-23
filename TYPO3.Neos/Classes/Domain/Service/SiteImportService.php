@@ -93,7 +93,6 @@ class SiteImportService {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
-	 * @todo Don't remove all existing content without asking - and probably do somewhere else
 	 */
 	public function importPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
@@ -133,6 +132,35 @@ class SiteImportService {
 	}
 
 	/**
+	 * Checks for the presence of Content.xml in the given package and re-imports
+	 * the nodes of the live workspace.
+	 *
+	 * @param string $packageKey
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function updateFromPackage($packageKey) {
+		if (!$this->packageManager->isPackageActive($packageKey)) {
+			throw new \F3\FLOW3\Exception('Error: Package "' . $packageKey . '" is not active.');
+		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
+			throw new \F3\FLOW3\Exception('Error: No content found in package "' . $packageKey . '".');
+		}
+
+		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$siteNode = $contentContext->getCurrentSiteNode();
+		if ($siteNode !== NULL) {
+			$siteNode->remove();
+			$this->persistenceManager->persistAll();
+		}
+
+		try {
+			$this->importSitesFromPackage($packageKey);
+		} catch (\Exception $e) {
+			throw new \F3\FLOW3\Exception('Error: During import an exception occured. ' . $e->getMessage());
+		}
+	}
+
+	/**
 	 * Parses the Content.xml in the given package and imports the content into TYPO3.
 	 *
 	 * @param string $packageKey
@@ -144,14 +172,25 @@ class SiteImportService {
 
 		$xml = new \SimpleXMLElement(file_get_contents('resource://' . $packageKey . '/Private/Content/Sites.xml'));
 		foreach ($xml->site as $siteXml) {
-			$site = $this->objectManager->create('F3\TYPO3\Domain\Model\Site', (string)$siteXml['nodeName']);
+			$site = $this->siteRepository->findOneByName((string)$siteXml['nodeName']);
+			if ($site === NULL) {
+				$site = $this->objectManager->create('F3\TYPO3\Domain\Model\Site', (string)$siteXml['nodeName']);
+				$this->siteRepository->add($site);
+			}
 			$site->setName((string)$siteXml->properties->name);
 			$site->setState((integer)$siteXml->properties->state);
 			$site->setSiteResourcesPackageKey($packageKey);
-			$this->siteRepository->add($site);
 
 			$rootNode = $contentContext->getWorkspace()->getRootNode();
-			$siteNode = $rootNode->createNode('sites')->createNode($site->getNodeName());
+
+			if($rootNode->getNode('/sites') === NULL) {
+				$rootNode->createNode('sites');
+			}
+
+			$siteNode = $rootNode->getNode('/sites/' . $site->getNodeName());
+			if ($siteNode === NULL) {
+				$siteNode = $rootNode->getNode('/sites')->createNode($site->getNodeName());
+			}
 			$siteNode->setContentObject($site);
 
 			$this->parseNodes($siteXml, $siteNode);
@@ -168,7 +207,10 @@ class SiteImportService {
 	 */
 	protected function parseNodes(\SimpleXMLElement $parentXml, $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
-			$childNode = $parentNode->createNode((string)$childNodeXml['nodeName']);
+			$childNode = $parentNode->getNode((string)$childNodeXml['nodeName']);
+			if ($childNode === NULL) {
+				$childNode = $parentNode->createNode((string)$childNodeXml['nodeName']);
+			}
 			$childNode->setContentType((string)$childNodeXml['type']);
 			if ($childNodeXml->properties) {
 				foreach ($childNodeXml->properties->children() as $childXml) {

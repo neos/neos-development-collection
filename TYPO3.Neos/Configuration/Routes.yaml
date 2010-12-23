@@ -123,5 +123,5 @@
   defaults:
     '@package':     'TYPO3'
     '@controller':  'Backend\Setup'
-    '@action':      'noSite'
+    '@action':      'index'
     '@format':      'html'

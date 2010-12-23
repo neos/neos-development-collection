@@ -80,7 +80,7 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function indexAction($username = NULL) {
 		if ($this->accountRepository->countAll() === 0) {
-			$this->forward('noAccount', 'Backend\Setup');
+			$this->forward('index', 'Backend\Setup');
 		}
 
 		$this->view->assign('username', $username);
