@@ -55,6 +55,12 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 	protected $workspaceRepository;
 
 	/**
+	 * @inject
+	 * @var \F3\TypoScript\ObjectFactory
+	 */
+	protected $typoScriptObjectFactory;
+
+	/**
 	 * Renders the node assigned to this view, based on the TypoScript configuration
 	 * which applies to the current content context.
 	 *
@@ -75,25 +81,41 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current position in the content tree.', 1255513200);
 		}
 
-		foreach ($typoScriptObjectTree as $firstLevelTypoScriptObject) {
-			if ($firstLevelTypoScriptObject instanceof \F3\TYPO3\TypoScript\Page && $firstLevelTypoScriptObject->getType() === $type) {
-				$pageTypoScriptObject = $firstLevelTypoScriptObject;
-				break;
-			}
-		}
+		$expectedTypoScriptObjectName = $this->typoScriptObjectFactory->getTypoScriptObjectNameByNode($node);
 
-		if (!isset($pageTypoScriptObject)) {
-			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
+		$firstLevelTypoScriptObject = NULL;
+		if ($expectedTypoScriptObjectName === 'F3\TYPO3\TypoScript\Page') {
+			foreach ($typoScriptObjectTree as $possibleFirstLevelTypoScriptObject) {
+				if (is_a($possibleFirstLevelTypoScriptObject, $expectedTypoScriptObjectName) && $possibleFirstLevelTypoScriptObject->getType() === $type) {
+					$firstLevelTypoScriptObject = $possibleFirstLevelTypoScriptObject;
+					break;
+				}
+			}
+
+			if ($firstLevelTypoScriptObject === NULL) {
+				throw new \F3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
+			}
+		} else {
+			foreach ($typoScriptObjectTree as $possibleFirstLevelTypoScriptObject) {
+				if (is_a($possibleFirstLevelTypoScriptObject, $expectedTypoScriptObjectName)) {
+					$fristLevelTypoScriptObject = $possibleFirstLevelTypoScriptObject;
+					break;
+				}
+			}
+
+			if ($firstLevelTypoScriptObject === NULL) {
+					// No configured TS Object found, so we use a default one
+				$firstLevelTypoScriptObject = $this->objectManager->create($expectedTypoScriptObjectName);
+			}
+			$firstLevelTypoScriptObject->setNode($node);
 		}
 
 		$renderingContext = $this->objectManager->create('F3\TypoScript\RenderingContext');
 		$renderingContext->setControllerContext($this->controllerContext);
 		$renderingContext->setContentContext($contentContext);
 
-		$pageTypoScriptObject->setRenderingContext($renderingContext);
-		return $pageTypoScriptObject->render();
+		$firstLevelTypoScriptObject->setRenderingContext($renderingContext);
+		return $firstLevelTypoScriptObject->render();
 	}
-
 }
-
 ?>
