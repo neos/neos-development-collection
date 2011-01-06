@@ -45,7 +45,7 @@
 -
   name:          'REST Service: Node actions with format'
 
-  # Example URL: http://myhost/typo3/service/v1/content/live/sites/phoenix.demo.typo3.org/homepage.json
+  # Example URL: http://myhost/typo3/service/rest/v1/node/live/sites/phoenixdemotypo3org/homepage.json
 
   uriPattern:    'typo3/service/rest/v1/node/{node}.{@format}'
   defaults:
@@ -60,7 +60,7 @@
 -
   name:          'REST Service: Node actions without format'
 
-  # Example URL: http://myhost/typo3/service/v1/content/live/sites/phoenix.demo.typo3.org/homepage
+  # Example URL: http://myhost/typo3/service/rest/v1/node/live/sites/phoenixdemotypo3org/homepage
 
   uriPattern:    'typo3/service/rest/v1/node/{node}'
   defaults:
