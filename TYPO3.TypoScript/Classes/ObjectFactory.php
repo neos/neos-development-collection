@@ -43,19 +43,32 @@ class ObjectFactory {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createByNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+		$typoScriptObjectName = $this->getTypoScriptObjectNameByNode($node);
+
+		$typoScriptObject = $this->objectManager->create($typoScriptObjectName);
+		$typoScriptObject->setNode($node);
+		return $typoScriptObject;
+	}
+
+	/**
+	 * Figures out which TypoScript object to use for rendering a given node,
+	 * and returns the class name as string.
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node
+	 * @return string The TypoScript object name with which the current node should be rendered with.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getTypoScriptObjectNameByNode(\F3\TYPO3CR\Domain\Model\Node $node) {
 		$contentType = $node->getContentType();
 		if (strpos($contentType, ':') !== FALSE) {
 			list($packageKey, $typoScriptObjectName) = explode(':', $contentType);
 			$possibleTypoScriptObjectName = 'F3\\'. $packageKey . '\\TypoScript\\' . $typoScriptObjectName;
 			if ($this->objectManager->isRegistered($possibleTypoScriptObjectName) === TRUE) {
-				$typoScriptObject = $this->objectManager->create($possibleTypoScriptObjectName);
+				return $possibleTypoScriptObjectName;
 			}
 		}
-		if (!isset($typoScriptObject)) {
-			$typoScriptObject = $this->objectManager->create('F3\TYPO3\TypoScript\Node');
-		}
-		$typoScriptObject->setNode($node);
-		return $typoScriptObject;
+
+		return 'F3\TYPO3\TypoScript\Node';
 	}
 
 	/**
