@@ -52,7 +52,7 @@ class ParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	protected function setUp() {
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
-		$this->mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
+		$this->mockObjectManager->expects($this->any())->method('isRegistered')->will($this->returnCallback(array($this, 'objectManagerIsRegisteredCallback')));
 
 		$this->parser = new \F3\TypoScript\Parser($this->mockObjectManager);
 	}

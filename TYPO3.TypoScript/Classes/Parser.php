@@ -477,7 +477,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 		$processorNamespace .= '\Processors';
 		$processorObjectName = $processorNamespace . '\\' . ucfirst($matchedObjectAndMethodName['ProcessorName']) . 'Processor';
 
-		if (!$this->objectManager->isObjectRegistered($processorObjectName)) {
+		if (!$this->objectManager->isRegistered($processorObjectName)) {
 			throw new \F3\TypoScript\Exception('Unknown processor object "' . $processorObjectName . '"', 1181903856);
 		}
 		$processor = $this->objectManager->get($processorObjectName);
@@ -554,7 +554,7 @@ class Parser implements \F3\TypoScript\ParserInterface {
 				if (!isset($this->namespaces[$namespace]) || strlen($this->namespaces[$namespace]) == 0) throw new \F3\TypoScript\Exception('Referring to undefined namespace "' . $namespace . '" in object type assignment.', 1180605249);
 				$typoScriptObjectName = $this->namespaces[$namespace] . '\\' . $matches[2];
 			}
-			if (!$this->objectManager->isObjectRegistered($typoScriptObjectName)) {
+			if (!$this->objectManager->isRegistered($typoScriptObjectName)) {
 				throw new \F3\TypoScript\Exception('Referring to unknown TypoScript Object Type "' . $typoScriptObjectName . '" in object type assignment.', 1180605250);
 			}
 			$processedValue = $this->objectManager->create($typoScriptObjectName);
