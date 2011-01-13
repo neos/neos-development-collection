@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>JavaScript Test Runner</title>
+
+		<link rel="stylesheet" type="text/css" href="../../../../../Build/Common/JSUnit/Jasmine/ext/jasmine.css" />
+
+		<script type="text/javascript" src="../../../../../Build/Common/JSUnit/Jasmine/ext/jasmine.js"></script>
+		<script type="text/javascript" src="../../../../../Build/Common/JSUnit/Jasmine/ext/jasmine-html.js"></script>
+		<script type="text/javascript" src="../../../../../Build/Common/JSUnit/Jasmine/src/jasmine.console_reporter.js"></script>
+
+		<script type="text/javascript" src="../../../../Framework/ExtJS/Resources/Public/JavaScript/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="../../../../Framework/ExtJS/Resources/Public/JavaScript/ext-all.js"></script>
+		<script type="text/javascript" src="../../Resources/Public/Backend/JavaScript/Utils.js"></script>
+		<script type="text/javascript" src="../../Resources/Public/Backend/JavaScript/Core/Registry.js"></script>
+		<script type="text/javascript" src="../../../../Application/TYPO3/Resources/Public/Backend/JavaScript/UserInterface/Form/FormFactory.js"></script>
+
+		<script type="text/javascript" src="Tests/Core/RegistryTest.js"></script>
+		<script type="text/javascript" src="Tests/Core/UtilsTest.js"></script>
+		<script type="text/javascript" src="Tests/UserInterface/Form/FormFactoryTest.js"></script>
+
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			jasmine.getEnv().addReporter(new jasmine.ConsoleReporter());
+			jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+			jasmine.getEnv().execute();
+		</script>
+	</body>
+</html>

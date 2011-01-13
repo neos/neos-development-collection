@@ -1,11 +1,14 @@
 Ext.ns("F3.TYPO3.UserInterface.Form");
 
-F3.TYPO3.UserInterface.Form.FormFactoryTest = {
-	name: 'Test Registry',
-	setUp: function() {
-		this.factory = F3.TYPO3.UserInterface.Form.FormFactory;
-		this.registry = F3.TYPO3.Core.Registry;
-		this.registry._configuration = {
+describe("Test form factory", function() {
+
+	var factory, registry;
+
+	beforeEach(function() {
+		factory = F3.TYPO3.UserInterface.Form.FormFactory;
+		registry = F3.TYPO3.Core.Registry;
+
+		registry._configuration = {
 			schema: {
 				type: {
 					"typo3:page": {
@@ -86,40 +89,45 @@ F3.TYPO3.UserInterface.Form.FormFactoryTest = {
 					}
 				}
 			}
-		};
-	},
-	testCreateFormSetsType: function() {
-		var config = this.factory.createForm('typo3:page');
-		Y.Assert.areEqual('typo3:page', config.type);
-	},
-	testCreateFormWithoutViewUsesStandard: function() {
-		var config = this.factory.createForm('typo3:page');
-		Y.Assert.areEqual('Page', config.title);
-	},
-	testCreateFormWithViewUsesSpecifiedView: function() {
-		var config = this.factory.createForm('typo3:page', 'pageProperties');
-		Y.Assert.areEqual('Page properties', config.title);
-	},
-	testCreateFormAddsField: function() {
-		var config = this.factory.createForm('typo3:page', 'pageProperties'),
-			item;
+		}
+	});
 
-		item = config.items[0];
+	it ("Create form sets type.", function() {
+		var config = factory.createForm('typo3:page');
+		expect(config.type).toEqual('typo3:page');
+	});
 
-		Y.Assert.areEqual('textfield', item.xtype);
-		Y.Assert.areEqual('Page title', item.fieldLabel);
-	},
-	testCreateFormSetsApiFromSchema: function() {
-		var config = this.factory.createForm('typo3:page', 'pageProperties');
+	it ("Create form without view uses standard.", function() {
+		var config = factory.createForm('typo3:page');
+		expect(config.title).toEqual('Page');
+	});
 
-		Y.Assert.areEqual(F3.TYPO3.UserInterface.Form, config.api.load);
-		Y.Assert.areEqual(F3.TYPO3.UserInterface.Form, config.api.submit);
-	},
-	testCreateFormWithOverrideConfig: function() {
-		var config = this.factory.createForm('typo3:page', 'pageProperties', {
+	it ("Create form with view uses specified view.", function() {
+		var config = factory.createForm('typo3:page', 'pageProperties');
+		expect(config.title).toEqual('Page properties');
+	});
+
+	it ("Create form adds field.", function() {
+		var config = factory.createForm('typo3:page', 'pageProperties');
+		var item = config.items[0];
+
+		expect(item.xtype).toEqual('textfield');
+		expect(item.fieldLabel).toEqual('Page title');
+	});
+
+	it ("Create form sets API from schema.", function() {
+		var config = factory.createForm('typo3:page', 'pageProperties');
+
+		expect(config.api.load).toEqual(F3.TYPO3.UserInterface.Form);
+		expect(config.api.submit).toEqual(F3.TYPO3.UserInterface.Form);
+	});
+
+	it ("Create form with override config.", function() {
+		var config = factory.createForm('typo3:page', 'pageProperties', {
 			title: 'Foo'
 		});
 
-		Y.Assert.areEqual('Foo', config.title);
-	}
-};
+		expect(config.title).toEqual('Foo', config.title);
+	});
+
+});
