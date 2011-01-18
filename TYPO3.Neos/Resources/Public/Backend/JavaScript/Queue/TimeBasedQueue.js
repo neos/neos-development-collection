@@ -29,7 +29,7 @@ Ext.ns('F3.TYPO3.Queue');
  * @namespace F3.TYPO3.Queue
  */
 
-F3.TYPO3.Queue.TimeBasedQueue = {
+F3.TYPO3.Queue.TimeBasedQueue = Ext.extend(function() {}, {
 
 	/**
 	 * Array with registered actions, queued to be executed
@@ -44,10 +44,6 @@ F3.TYPO3.Queue.TimeBasedQueue = {
 	 * @private
 	 */
 	_running: false,
-
-	initialize: function() {
-		this.reset();
-	},
 
 	/**
 	 * Stop execution of the queue and remove all actions from the queue
@@ -82,8 +78,10 @@ F3.TYPO3.Queue.TimeBasedQueue = {
 	 * @api
 	 */
 	start: function() {
-		this._running = true;
-		this._executeQueueCycle();
+		if (this._running == false) {
+			this._running = true;
+			this._executeQueueCycle();
+		}
 	},
 
 	/**
@@ -143,4 +141,4 @@ F3.TYPO3.Queue.TimeBasedQueue = {
 		this._running = false;
 	}
 
-};
+});

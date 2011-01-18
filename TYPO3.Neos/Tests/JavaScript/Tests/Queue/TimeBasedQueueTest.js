@@ -2,8 +2,7 @@ Ext.ns('F3.TYPO3.Queue');
 
 describe('Time based queue', function() {
 
-	var queue = F3.TYPO3.Queue.TimeBasedQueue;
-	queue.initialize();
+	var queue = new F3.TYPO3.Queue.TimeBasedQueue();
 
 	describe('Basic events', function() {
 		beforeEach(function() {
@@ -75,6 +74,10 @@ describe('Time based queue', function() {
 	});
 
 	describe ('Test execution of the queue with some none-delayed executions', function() {
+		it ('delay', function() {
+			waits(100);
+		});
+
 		it ('Init queue', function() {
 			queue.reset();
 			expect(queue.count()).toEqual(0);
@@ -108,7 +111,7 @@ describe('Time based queue', function() {
 		it ('Test if last action is still running', function() {
 			expect(queue.count()).toEqual(1);
 			expect(queue.isRunning()).toEqual(true);
-			waits(50);
+			waits(100);
 		});
 
 		it ('Test if queue is empty and stopped', function() {
@@ -117,4 +120,13 @@ describe('Time based queue', function() {
 		});
 	});
 
+	it ('2 Queues', function() {
+		queue.reset();
+		queue.add(function() {}, 0);
+		var queue2 = new F3.TYPO3.Queue.TimeBasedQueue();
+		queue2.add(function() {}, 0);
+
+		expect(queue.count()).toEqual(1);
+		expect(queue2.count()).toEqual(1);
+	});
 });

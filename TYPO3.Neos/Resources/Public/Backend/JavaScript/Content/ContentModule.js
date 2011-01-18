@@ -87,6 +87,32 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			iconCls: 'F3-TYPO3-Content-icon-deletePage'
 		});
 
+		registry.append('menu/main/content[]', 'structure', {
+			itemId: 'Structure',
+			text: 'Structure',
+			iconCls: 'F3-TYPO3-Content-icon-deletePage'
+		});
+
+		for (i = 0; i <= 3; i ++) {
+			registry.append('menu/main/content[]/structure[]', 'sub' + i, {
+				itemId: 'sub' + i,
+				text: 'Sub ' + i,
+				iconCls: 'F3-TYPO3-Content-icon-createPage'
+			});
+		}
+
+		registry.append('menu/main/content[]/structure[]/sub1[]', 'test', {
+			itemId: 'test',
+			text: 'Test',
+			iconCls: 'F3-TYPO3-Content-icon-deletePage'
+		});
+
+		registry.append('menu/main/content[]/structure[]/sub1[]', 'foo', {
+			itemId: 'foo',
+			text: 'Foo',
+			iconCls: 'F3-TYPO3-Content-icon-createPage'
+		});
+
 		registry.append('menu/viewFilterToolbar', 'workspaceName', {
 			text: F3.TYPO3.Configuration.Application.workspaceName,
 			cls: 'F3-TYPO3-ContextToolbar-icon-workspaceName'

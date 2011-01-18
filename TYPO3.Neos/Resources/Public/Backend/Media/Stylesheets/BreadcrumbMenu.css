@@ -19,12 +19,34 @@
 .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem,
 .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text,
 .F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
-	-moz-transition-property: opacity, width;
-	-moz-transition-duration: 0.1s, 0.2s;
-	-moz-transition-delay: 0s, 0.1s;
+	-moz-transition-property: width, opacity;
+	-moz-transition-duration: 0.1s, 0.1s;
+	-moz-transition-delay: 0s, 0.05s;
 	-moz-transition-timing-function: ease-in-out;
-/*	-moz-transition-duration: 1s, 1s;
-	-moz-transition-delay: 0s, 1s;*/
+
+	-webkit-transition-property: width, opacity;
+	-webkit-transition-duration: 0.1s, 0.1s;
+	-webkit-transition-delay: 0s, 0.05s;
+	-webkit-transition-timing-function: ease-in-out;
+}
+
+.F3-TYPO3-UserInterface-BreadcrumbMenu-Debug .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem,
+.F3-TYPO3-UserInterface-BreadcrumbMenu-Debug .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text,
+.F3-TYPO3-UserInterface-BreadcrumbMenu-Debug .F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
+	-moz-transition-duration: .5s, .5s;
+	-moz-transition-delay: 0s, .1s;
+
+	-webkit-transition-duration: .5s, .5s;
+	-webkit-transition-delay: 0s, .1s;
+}
+
+
+.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
+	-moz-transition-property: all;
+}
+
+.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-onRender {
+	width: 0px;
 }
 
 .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem {
@@ -57,22 +79,36 @@
 	color: #ffffff;
 	font: 13px helvetica, arial, sans-serif;
 	font-weight:bold;
-	height: 47px;
 	line-height: 47px;
+	cursor: pointer;
+	height: 47px;
+	display: inline-block;
+	overflow: hidden;
 	opacity: 0;
-	margin-left: 47px;
-	padding: 0px 10px 0px 0px;
+	width: 0px;
+	padding: 0px;
+	padding-right: 10px;
+	margin-right: 10px;
+	vertical-align:top;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active > .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
+.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text-active {
 	opacity: 1;
 }
+
+
+/*.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active > .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
+	opacity: 1;
+	width: auto;
+	padding-right: 10px;
+}*/
 
 .F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
 	background-image: url('../Images/UserInterface/Icons/BreadcrumbMenuFold.png') !important;
 	background-repeat: no-repeat;
 	background-position: left 10px;
-	background-size: 0px 25px;
+	background-size: 25px 25px;
+	overflow: hidden;
 	padding: 0px;
 	width: 1px;
 	height: 47px;
