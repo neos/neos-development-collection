@@ -52,7 +52,7 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 */
 		init: function() {
 			this._subscribeToAlohaEvents();
-			this._addInsertNewSectionButton();
+			this._addCreateContentElementButtons();
 		},
 
 		/**
@@ -118,30 +118,39 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		},
 
 		/**
-		 * Adds a "insert new Section" button.
-		 * when this button is pressed, a new aloha element is created.
+		 * Adds the "create content element" buttons.
 		 *
 		 * @return {void}
 		 * @private
-		 * @todo implement so that it really works.
 		 */
-		_addInsertNewSectionButton: function() {
-			var button = new GENTICS.Aloha.ui.Button({
-				'label' : 'Add section',
-				'size' : 'small',
-				'onclick' : function() {
-					var newHtmlElement = Ext.DomHelper.insertAfter(GENTICS.Aloha.activeEditable.obj[0], '<div class="f3-typo3-editable"><div contenteditable="false"><h2 contenteditable="true">[headline]</h2><div contenteditable="true">[content]</div></div></div>');
-					jQuery(newHtmlElement).aloha();
-				},
-				'tooltip' : 'tooltip'
-			});
+		_addCreateContentElementButtons: function() {
+			Ext.each(this.settings.contentTypes, function(contentType) {
+				var button = new GENTICS.Aloha.ui.Button({
+					'label' : contentType.label,
+					'size' : 'small',
+					'onclick' : this._onNewContentElementClick.createDelegate(this, [contentType.name])
+				});
+				GENTICS.Aloha.FloatingMenu.addButton(
+					'GENTICS.Aloha.continuoustext',
+					button,
+					GENTICS.Aloha.i18n(GENTICS.Aloha, 'floatingmenu.tab.insert'),
+					2
+				);
+			}, this);
+		},
 
-			GENTICS.Aloha.FloatingMenu.addButton(
-				'GENTICS.Aloha.continuoustext',
-				button,
-				GENTICS.Aloha.i18n(GENTICS.Aloha, 'floatingmenu.tab.insert'),
-				4
-			);
+		/**
+		 * @param {String} nameOfContentType the name of the content type to be created after the current one.
+		 * @return {void}
+		 * @private
+		 */
+		_onNewContentElementClick: function(nameOfContentType) {
+			console.log(this, arguments);
+			//GENTICS.Aloha.activeEditable.obj
+			/*  {
+						var newHtmlElement = Ext.DomHelper.insertAfter(GENTICS.Aloha.activeEditable.obj[0], '<div class="f3-typo3-editable"><div contenteditable="false"><h2 contenteditable="true">[headline]</h2><div contenteditable="true">[content]</div></div></div>');
+						jQuery(newHtmlElement).aloha();
+					}*/
 		}
 	}
 );
