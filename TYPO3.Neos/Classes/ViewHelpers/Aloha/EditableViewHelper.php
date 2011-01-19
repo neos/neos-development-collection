@@ -64,6 +64,7 @@ class EditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 				throw new F3\TYPO3\Exception('<t:editable> only supports "inline" and "block" as $context arguments.', 1280307072);
 		}
 		if ($this->hasAccessToResource('F3_TYPO3_BackendController')) {
+			$this->tag->forceClosingTag(TRUE);
 			$this->tag->setContent($this->renderChildren());
 			$this->tag->addAttribute('class', 'f3-typo3-editable');
 			$this->tag->addAttribute('data-property', $property);

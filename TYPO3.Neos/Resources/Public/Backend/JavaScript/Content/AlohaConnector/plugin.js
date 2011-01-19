@@ -94,15 +94,10 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		 * @private
 		 */
 		_saveChanges: function(editable) {
-			var currentContentElement = editable.obj.parents('*[data-nodepath]').first();
+			var currentContentElement = this._findParentContentElement(editable.obj);
 
-			var nodePath = currentContentElement.attr('data-nodepath');
-			var workspaceName = currentContentElement.attr('data-workspacename');
-			var data = {};
-			data.__context = {
-				workspaceName: workspaceName,
-				nodePath: nodePath
-			};
+
+			var data = this._createNodeFromContentElement(currentContentElement);
 			data.properties = {};
 
 			currentContentElement.find('*[data-property]').each(function(index, element) {
@@ -140,17 +135,72 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		},
 
 		/**
+		 * Event handler triggered if a "new content element" button is clicked.
+		 *
 		 * @param {String} nameOfContentType the name of the content type to be created after the current one.
 		 * @return {void}
 		 * @private
 		 */
 		_onNewContentElementClick: function(nameOfContentType) {
-			console.log(this, arguments);
-			//GENTICS.Aloha.activeEditable.obj
-			/*  {
-						var newHtmlElement = Ext.DomHelper.insertAfter(GENTICS.Aloha.activeEditable.obj[0], '<div class="f3-typo3-editable"><div contenteditable="false"><h2 contenteditable="true">[headline]</h2><div contenteditable="true">[content]</div></div></div>');
-						jQuery(newHtmlElement).aloha();
-					}*/
+			var currentContentElement = this._findParentContentElement(GENTICS.Aloha.activeEditable.obj);
+			var data = this._createNodeFromContentElement(currentContentElement);
+
+			if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
+				var loadingIndicatorDom = Ext.DomHelper.insertAfter(currentContentElement.get(0), '<div>LOADING</div>');
+
+				window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.createFollowingSibling(data, nameOfContentType, function(result) {
+					this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
+				}.createDelegate(this));
+			}
+		},
+
+		/**
+		 * Load the newly created content element specified by uri, and replace
+		 * the loading indicator by it. After that, activate Aloha for the newly
+		 * inserted element.
+		 *
+		 * @param {String} uri URI of the content element
+		 * @param {DOMElement} loadingIndicatorDom DOM element which is replaced by the content element
+		 * @return {void}
+		 * @private
+		 */
+		_loadNewlyCreatedContentElement: function(uri, loadingIndicatorDom) {
+			Ext.Ajax.request({
+				url: uri,
+				method: 'GET',
+				success: function(response) {
+					var newContentElement = Ext.DomHelper.insertBefore(loadingIndicatorDom, Ext.util.Format.trim(response.responseText));
+					Ext.fly(loadingIndicatorDom).remove();
+					jQuery('.f3-typo3-editable', newElement).aloha();
+				}
+			});
+		},
+
+		/**
+		 * Helper function which finds the parent content element from the given DOM node
+		 *
+		 * @param {jQuery} jQueryDomNode a DOM node wrapped by jQuery, from which the search should start
+		 * @return {jQuery} the DOM node of the content element, having data-nodepath and data-workspacename set.
+		 * @private
+		 */
+		_findParentContentElement: function(jQueryDomNode) {
+			return jQueryDomNode.parents('*[data-nodepath]').first();
+		},
+
+		/**
+		 * Helper function which creates a JSON structure which can be mapped
+		 * to a TYPO3CR Node if used as argument for an Ext.Direct call.
+		 *
+		 * @param {jQuery} contentElement the Content Element container
+		 * @return {Object} a JSON object with the __context set correctly.
+		 */
+		_createNodeFromContentElement: function(contentElement) {
+			var data = {};
+			data.__context = {
+				workspaceName: contentElement.attr('data-workspacename'),
+				nodePath: contentElement.attr('data-nodepath')
+			};
+			return data;
 		}
 	}
 );

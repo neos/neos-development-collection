@@ -115,7 +115,29 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$this->createTypeHereTextNode($newNode);
 		}
 
-		$nextUri = $this->controllerContext->getUriBuilder()
+		$nextUri = $this->uriBuilder
+			->reset()
+			->setFormat('html')
+			->setCreateAbsoluteUri(TRUE)
+			->uriFor('show', array('node' => $newNode, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
+		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
+	}
+
+	/**
+	 * Creates a new node as the following sibling of the given node.
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $preceedingSibling
+	 * @param string $nodeType
+	 * @return void
+	 * @extdirect
+	 */
+	public function createFollowingSiblingAction(\F3\TYPO3CR\Domain\Model\Node $preceedingSibling, $contentType) {
+		$parentNode = $preceedingSibling->getParent();
+
+		$newNode = $parentNode->createNode(uniqid(), $contentType);
+		$newNode->moveAfter($preceedingSibling);
+
+		$nextUri = $this->uriBuilder
 			->reset()
 			->setFormat('html')
 			->setCreateAbsoluteUri(TRUE)
@@ -164,7 +186,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function deleteAction(\F3\TYPO3CR\Domain\Model\Node $node) {
 		$node->remove();
-		$nextUri = $this->controllerContext->getUriBuilder()
+		$nextUri = $this->uriBuilder
 			->reset()
 			->setFormat('html')
 			->setCreateAbsoluteUri(TRUE)
