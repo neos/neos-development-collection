@@ -203,6 +203,7 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 */
 	_enableAloha: function() {
 		this._alohaEnabled = true;
+		Ext.getBody().addClass('f3-typo3-aloha-enabled');
 	},
 
 	/**
@@ -212,6 +213,7 @@ F3.TYPO3.Content.AlohaConnector.AlohaInitializer = {
 	 * @private
 	 */
 	_disableAloha: function() {
+		Ext.getBody().removeClass('f3-typo3-aloha-enabled');
 		for (var i=0; i < GENTICS.Aloha.editables.length; i++) {
 			GENTICS.Aloha.editables[i].disable();
 			GENTICS.Aloha.editables[i].blur();

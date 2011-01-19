@@ -53,10 +53,12 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		init: function() {
 			this._subscribeToAlohaEvents();
 			this._addCreateContentElementButtons();
+
+			jQuery('.f3-typo3-placeholder').live('click', this._onPlaceholderClick);
 		},
 
 		/**
-		 * subscribe to the aloha content edit events
+		 * subscribe to the aloha events, like when an editable is created or deactivated
 		 *
 		 * @return {void}
 		 * @private
@@ -64,30 +66,49 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		_subscribeToAlohaEvents: function() {
 			GENTICS.Aloha.EventRegistry.subscribe(
 				GENTICS.Aloha,
+				'editableCreated',
+				this._onEditableCreated.createDelegate(this)
+			);
+
+			GENTICS.Aloha.EventRegistry.subscribe(
+				GENTICS.Aloha,
 				'editableDeactivated',
-				this._onEditableDeactivated
+				this._onEditableDeactivated.createDelegate(this)
 			);
 		},
 
 		/**
-		 * On Aloha Event: "onEditableDeactivated"<br />
-		 *
-		 * The scope of "this" is GENTICS.Aloha
+		 * Event handler for aloha event "editable created".
+		 * Adds a placeholder if the element is empty.
 		 *
 		 * @param {Object} event Event object
-		 * @param {GENTICS.Aloha.editable} editable current aloha Editable object
+		 * @param {GENTICS.Aloha.Editable} editable the created editable
+		 * @return {void}
+		 * @private
+		 */
+		_onEditableCreated: function(event, editable) {
+			this._insertPlaceholderIfEditableIsEmpty(editable);
+		},
+
+		/**
+		 * On Aloha Event: "onEditableDeactivated", saves changes
+		 * if the element has changed.
+		 *
+		 * @param {Object} event Event object
+		 * @param {GENTICS.Aloha.Editable} editable the aloha Editable object which has been deactivated
 		 * @return {void}
 		 * @private
 		 */
 		_onEditableDeactivated: function(event, editable) {
 			if (editable.editable.isModified()) {
-				F3.TYPO3.Content.AlohaConnector._saveChanges(editable.editable);
+				this._saveChanges(editable.editable);
+				this._insertPlaceholderIfEditableIsEmpty(editable.editable);
 			}
 		},
 
 		/**
 		 * Fires Event which in the scope of the TYPO3 Backend
-		 * with the information which should be persist by the Backend
+		 * with the information which should be persisted by the Backend
 		 *
 		 * @param {GENTICS.Aloha.Editable} editable the editable to save
 		 * @return {void}
@@ -96,12 +117,12 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 		_saveChanges: function(editable) {
 			var currentContentElement = this._findParentContentElement(editable.obj);
 
-
 			var data = this._createNodeFromContentElement(currentContentElement);
 			data.properties = {};
 
 			currentContentElement.find('*[data-property]').each(function(index, element) {
-				data.properties[element.getAttribute('data-property')] = element.innerHTML;
+				// We are stripping trailing and leading whitespaces, as they have been added for Firefox.
+				data.properties[element.getAttribute('data-property')] = Ext.util.Format.trim(element.innerHTML).replace(/^&nbsp;|&nbsp;$/g, ''); // TODO: use getContents() on the editable!
 			});
 
 			if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
@@ -110,6 +131,44 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 					data
 				);
 			}
+		},
+
+		/**
+		 * Insert Placeholder for editable in case it is empty.
+		 *
+		 * @param {GENTICS.Aloha.Editable} editable if this editable is empty, a placeholder is automatically inserted.
+		 * @return {void}
+		 * @private
+		 */
+		_insertPlaceholderIfEditableIsEmpty: function(editable) {
+			var contents = Ext.util.Format.trim(editable.getContents());
+			if (contents == '' || contents == '&nbsp;' || contents == '<br />' || contents == '<br>') {
+				editable.obj.html('<span class="f3-typo3-placeholder">[enter some content here]</span>');
+			}
+		},
+
+		/**
+		 * Event handler, on click of a placeholder. Removes the placeholder, and
+		 * sets the cursor, so the user can directly start typing.
+		 *
+		 * @param {Event} event click event object
+		 * @return {void}
+		 * @private
+		 * @todo should maybe use the Aloha functionality instead of native DOM, so that it also works in Internet Explorer.
+		 */
+		_onPlaceholderClick: function(event) {
+			var parentObject = jQuery(event.target).parent();
+			var range = document.createRange();
+			parentObject.html('&nbsp;');
+
+			range.selectNodeContents(parentObject.get(0));
+
+			if (Ext.isGecko) {
+					// Firefox hack -> Collapse the selection such that the user can start typing right away.
+				range.collapse();
+			}
+
+			window.getSelection().addRange(range);
 		},
 
 		/**
@@ -171,7 +230,7 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 				success: function(response) {
 					var newContentElement = Ext.DomHelper.insertBefore(loadingIndicatorDom, Ext.util.Format.trim(response.responseText));
 					Ext.fly(loadingIndicatorDom).remove();
-					jQuery('.f3-typo3-editable', newElement).aloha();
+					jQuery('.f3-typo3-editable', newContentElement).aloha();
 				}
 			});
 		},

@@ -16,3 +16,12 @@
 .f3-typo3-notEditable-visible:hover {
 	background-color:rgba(255,0,0,0.3);
 }
+.f3-typo3-placeholder {
+	display:none;
+}
+.f3-typo3-aloha-enabled .f3-typo3-placeholder {
+	display:inline;
+	background: #ED7B26;
+	border-radius:5px;
+	padding:2px;
+}
