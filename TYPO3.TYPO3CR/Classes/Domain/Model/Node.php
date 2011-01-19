@@ -299,7 +299,7 @@ class Node {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo finish implementation
+	 * @author Christian Müller <christian@kitsunet.de>
 	 * @todo make workspaces compliant
 	 */
 	public function moveBefore(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
@@ -312,7 +312,63 @@ class Node {
 			throw new \F3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
 		}
 
-#		$rebalanceStartIndex = ($referenceNode->getIndex() < $this->index) ?
+		$moveTo = $referenceNode->getIndex();
+		$moveFrom = $this->getIndex();
+		if (($referenceNode === $this) || ($moveFrom === ($moveTo-1))) {
+			return;
+		}
+		if($moveTo > $moveFrom) {
+			$moveTo -= 1;
+		}
+
+		$siblingsAndSelf = $this->getParent()->getChildNodes();
+		foreach ($siblingsAndSelf as $currentIndex => $currentNode) {
+			if ($currentIndex >= $moveTo && $currentIndex < $moveFrom) {
+				$currentNode->setIndex($currentNode->getIndex()+1);
+			} elseif ($currentIndex > $moveFrom && $currentIndex <= $moveTo) {
+				$currentNode->setIndex($currentNode->getIndex()-1);
+			}
+		}
+		$this->setIndex($moveTo);
+	}
+
+	/**
+	 * Moves this node after the given node
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christian Müller <christian@kitsunet.de>
+	 * @todo make workspaces compliant
+	 */
+	function moveAfter(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
+		if ($this->path === '/') {
+			throw new \F3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
+		}
+
+		$referenceNodePath = $referenceNode->getPath();
+		if (substr($this->path, 0, strrpos($this->path, '/')) !== substr($referenceNodePath, 0, strrpos($referenceNodePath, '/'))) {
+			throw new \F3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
+		}
+
+		$moveTo = $referenceNode->getIndex();
+		$moveFrom = $this->getIndex();
+		if (($referenceNode === $this) || ($moveFrom === ($moveTo+1))) {
+			return;
+		}
+		if($moveTo < $moveFrom) {
+			$moveTo += 1;
+		}
+
+		$siblingsAndSelf = $this->getParent()->getChildNodes();
+		foreach ($siblingsAndSelf as $currentIndex => $currentNode) {
+			if ($currentIndex >= $moveTo && $currentIndex < $moveFrom) {
+				$currentNode->setIndex($currentNode->getIndex()+1);
+			} elseif ($currentIndex > $moveFrom && $currentIndex <= $moveTo) {
+				$currentNode->setIndex($currentNode->getIndex()-1);
+			}
+		}
+		$this->setIndex($moveTo);
 	}
 
 	/**
