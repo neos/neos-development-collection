@@ -39,7 +39,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	_isEditing: false,
 
 	/**
-	 * @event AlohaConnector.contentChanged
+	 * @event AlohaConnector.persistChangedContent
 	 *
 	 * fires when there is changed content which should be persisted by the TYPO3 backend.
 	 * @param {Object} data <ul>
@@ -49,6 +49,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	 *   </ul></li>
 	 *   <li><b>properties</b>: All properties of the content object, which should be saved.</li>
 	 * </ul>
+	 */
+
+	/**
+	 * @event F3.TYPO3.Content.reloadContentEditor
+	 *
+	 * fires when a module requests a reload of the content editor
 	 */
 
 	/**
@@ -85,32 +91,6 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			itemId: 'Delete',
 			text: 'Delete Page',
 			iconCls: 'F3-TYPO3-Content-icon-deletePage'
-		});
-
-		registry.append('menu/main/content[]', 'structure', {
-			itemId: 'Structure',
-			text: 'Structure',
-			iconCls: 'F3-TYPO3-Content-icon-deletePage'
-		});
-
-		for (i = 0; i <= 3; i ++) {
-			registry.append('menu/main/content[]/structure[]', 'sub' + i, {
-				itemId: 'sub' + i,
-				text: 'Sub ' + i,
-				iconCls: 'F3-TYPO3-Content-icon-createPage'
-			});
-		}
-
-		registry.append('menu/main/content[]/structure[]/sub1[]', 'test', {
-			itemId: 'test',
-			text: 'Test',
-			iconCls: 'F3-TYPO3-Content-icon-deletePage'
-		});
-
-		registry.append('menu/main/content[]/structure[]/sub1[]', 'foo', {
-			itemId: 'foo',
-			text: 'Foo',
-			iconCls: 'F3-TYPO3-Content-icon-createPage'
 		});
 
 		registry.append('menu/viewFilterToolbar', 'workspaceName', {
@@ -257,7 +237,22 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				Ext.getCmp('F3.TYPO3.Content.ContentEditor').disableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = false;
 			});
+
 		});
+
+		F3.TYPO3.Content.ContentModule.on('F3.TYPO3.Content.reloadContentEditor',
+			this._reloadContentEditor,
+			this
+		);
+	},
+
+	/**
+	 * reload the frontend editor
+	 *
+	 * @private
+	 */
+	_reloadContentEditor: function() {
+		Ext.getCmp('F3.TYPO3.Content.ContentEditor').reload();
 	},
 
 	/**

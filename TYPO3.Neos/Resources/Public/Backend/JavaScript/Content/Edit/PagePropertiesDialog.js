@@ -54,8 +54,6 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 
 		Ext.apply(this, config);
 		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.initComponent.call(this);
-
-		F3.TYPO3.Core.Application.on('F3.TYPO3.Content.contentChanged', this._refreshContentEditor, this);
 	},
 
 	/**
@@ -75,16 +73,8 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 */
 	_onPagePropertiesSaved: function() {
 		this.moduleMenu.removeModuleDialog();
-		F3.TYPO3.Core.Application.fireEvent('F3.TYPO3.Content.contentChanged');
-	},
 
-	/**
-	 * refresh the frontend editor
-	 *
-	 * @private
-	 */
-	_refreshContentEditor: function() {
-		Ext.getCmp('F3.TYPO3.Content.ContentEditor').reload();
+		F3.TYPO3.Content.ContentModule.fireEvent('F3.TYPO3.Content.reloadContentEditor');
 	}
 });
 Ext.reg('F3.TYPO3.Content.Edit.PagePropertiesDialog', F3.TYPO3.Content.Edit.PagePropertiesDialog);

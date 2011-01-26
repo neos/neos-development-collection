@@ -67,7 +67,7 @@ F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 		Ext.apply(this, config);
 		F3.TYPO3.Content.ContentEditor.superclass.initComponent.call(this);
 
-		F3.TYPO3.Content.ContentModule.on('AlohaConnector.contentChanged', this._onContentChanged, this);
+		F3.TYPO3.Content.ContentModule.on('AlohaConnector.persistChangedContent', this._onContentChanged, this);
 	},
 
 	/**
@@ -92,7 +92,7 @@ F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 	/**
 	 * Callback fired if content is changed
 	 *
-	 * @param {Object} data See "AlohaConnector.contentChanged" event for detail description of the parameters.
+	 * @param {Object} data See "AlohaConnector.persistChangedContent" event for detail description of the parameters.
 	 * @private
 	 */
 	_onContentChanged: function(data) {

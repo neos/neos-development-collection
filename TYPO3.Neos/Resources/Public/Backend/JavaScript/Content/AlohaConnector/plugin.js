@@ -127,7 +127,7 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 
 			if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
 				window.parent.F3.TYPO3.Content.ContentModule.fireEvent(
-					'AlohaConnector.contentChanged',
+					'AlohaConnector.persistChangedContent',
 					data
 				);
 			}

@@ -40,8 +40,6 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.Content.Edit.DeletePageDialog.superclass.initComponent.call(this);
-
-		F3.TYPO3.Core.Application.on('F3.TYPO3.Content.contentChanged', this._refreshContentEditor, this);
 	},
 
 	/**
