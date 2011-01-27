@@ -98,44 +98,50 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Creates a new node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $parentNode
+	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
 	 * @param array $nodeData
+	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Rens Admiraal <rens@rensnel.nl>
+	 * @todo: maybe the actual creation should be put in a helper / service class
 	 * @extdirect
 	 */
-	public function createAction(\F3\TYPO3CR\Domain\Model\Node $parentNode, array $nodeData) {
-		$newNode = $parentNode->createNode($nodeData['nodeName'], $nodeData['contentType']);
-		foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
-			$newNode->setProperty($propertyName, $propertyValue);
+	public function createAction(\F3\TYPO3CR\Domain\Model\Node $referenceNode, array $nodeData, $position) {
+		if (!in_array($position, array(-1, 0, 1))) {
+			throw new \F3\TYPO3CR\Exception\NodeException('The position should be one of the following: -1, 0, 1.', 1296132542);
+		}
+
+			// Generate a nodeName if not given
+		if (empty($nodeData['nodeName'])) {
+			$nodeData['nodeName'] = uniqid();
+		}
+
+		if ($position == 0) {
+				// Place the new node in the referenceNode
+			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeData['contentType']);
+		} else {
+				// Place the node before or after the reference
+			$parentNode = $referenceNode->getParent();
+			$newNode = $parentNode->createNode(uniqid(), $nodeData['contentType']);
+
+			if ($position == -1) {
+				$newNode->moveBefore($referenceNode);
+			} elseif ($position == 1) {
+				$newNode->moveAfter($referenceNode);
+			}
+		}
+
+		if (isset($nodeData['properties']) && is_array($nodeData['properties'])) {
+			foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
+				$newNode->setProperty($propertyName, $propertyValue);
+			}
 		}
 
 		if ($nodeData['contentType'] === 'TYPO3:Page') {
 			$this->createTypeHereTextNode($newNode);
 		}
-
-		$nextUri = $this->uriBuilder
-			->reset()
-			->setFormat('html')
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('show', array('node' => $newNode, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
-		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
-	}
-
-	/**
-	 * Creates a new node as the following sibling of the given node.
-	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $preceedingSibling
-	 * @param string $nodeType
-	 * @return void
-	 * @extdirect
-	 */
-	public function createFollowingSiblingAction(\F3\TYPO3CR\Domain\Model\Node $preceedingSibling, $contentType) {
-		$parentNode = $preceedingSibling->getParent();
-
-		$newNode = $parentNode->createNode(uniqid(), $contentType);
-		$newNode->moveAfter($preceedingSibling);
 
 		$nextUri = $this->uriBuilder
 			->reset()

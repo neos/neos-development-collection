@@ -56,6 +56,7 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 								this,
 								F3.TYPO3.Content.ContentModule.getCurrentContentContext(),
 								data,
+								0, // Position 0 = inside
 								this._onFormSubmitSuccess,
 								this
 							);

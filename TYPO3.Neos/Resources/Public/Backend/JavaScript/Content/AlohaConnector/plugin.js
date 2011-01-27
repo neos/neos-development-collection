@@ -207,7 +207,7 @@ F3.TYPO3.Content.AlohaConnector = Ext.apply(
 			if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
 				var loadingIndicatorDom = Ext.DomHelper.insertAfter(currentContentElement.get(0), '<div>LOADING</div>');
 
-				window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.createFollowingSibling(data, nameOfContentType, function(result) {
+				window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(data, {contentType: nameOfContentType}, 1, function(result) {
 					this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
 				}.createDelegate(this));
 			}
