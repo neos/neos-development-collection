@@ -72,8 +72,12 @@ Replace: ')}"></script>
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Paste/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Paste/wordpastehandler\.js" subpackage="Backend" directory="Aloha/WebContent" />
 
-<typo3:includeJavaScript include="Content/AlohaConnector/plugin\.js" subpackage="Backend" />
-<typo3:includeJavaScript include="Content/AlohaConnector/AlohaInitializer\.js" subpackage="Backend" />
+
+<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Core.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Aloha/Initializer.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Aloha/Plugin.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/UneditableAreaOverlay.js')}"></script>
+
 <link rel="stylesheet" href="{f:uri.resource(path:'Backend/Media/Stylesheets/Aloha.css')}" />
 
 	<script><![CDATA[
@@ -90,12 +94,12 @@ Replace: ')}"></script>
 						teaser 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup'  ] // just basic formattings, no headers, etc.
 					}
 				},
-				'F3.TYPO3.Content.AlohaConnector': {}
+				'F3.TYPO3.Content.ContentEditorFrontend.AlohaPlugin': {}
 			},
 			ribbon: false
 		};
 	]]>
-	GENTICS.Aloha.settings.plugins['F3.TYPO3.Content.AlohaConnector'] = {typo3:aloha.alohaConfiguration()}
+	GENTICS.Aloha.settings.plugins['F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin'] = {typo3:aloha.alohaConfiguration()}
 	</script>
 </f:if></f:alias>
 </f:security.ifAccess>

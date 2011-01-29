@@ -229,12 +229,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			);
 
 			userInterfaceModule.on('activate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.ContentEditor').enableEditing();
+				Ext.getCmp('F3.TYPO3.Content.ContentEditor')._enableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = true;
 			});
 
 			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.ContentEditor').disableEditing();
+				Ext.getCmp('F3.TYPO3.Content.ContentEditor')._disableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = false;
 			});
 
@@ -263,8 +263,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	},
 
 	/**
-	 * Enable the editing mode, selecting the appropriate element in the breadcrumb menu,
-	 * and thus firing the events for activating an element.
+	 * Enable the editing mode and selecting the appropriate element in the breadcrumb menu,
 	 *
 	 * @return {void}
 	 */
@@ -274,7 +273,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	},
 
 	/**
-	 * Disable editing mode
+	 * Disable editing mode, and disabling the element in the breadcrumb menu.
 	 *
 	 * @return {void}
 	 */

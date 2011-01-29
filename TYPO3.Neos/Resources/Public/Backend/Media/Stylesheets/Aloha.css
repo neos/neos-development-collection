@@ -19,9 +19,38 @@
 .f3-typo3-placeholder {
 	display:none;
 }
-.f3-typo3-aloha-enabled .f3-typo3-placeholder {
+.f3-typo3-editing-enabled .f3-typo3-placeholder {
 	display:inline;
 	background: #ED7B26;
 	border-radius:5px;
 	padding:2px;
+}
+
+.f3-typo3-editing-enabled .f3-typo3-contentelement:hover {
+	-webkit-box-shadow: 0px 0px 10px red;
+	-moz-box-shadow: 0px 0px 10px red;
+	box-shadow: 0px 0px 10px red;
+}
+
+.f3-typo3-editing-enabled.f3-typo3-modifier-ctrl .f3-typo3-contentelement:hover {
+	cursor:move;
+}
+
+.dropzoneOver {
+	background:red;
+}
+
+.ddProxy {
+	background-color: #FFFF00;
+}
+
+.f3-typo3-dropzone {
+	height:0px;
+	overflow:hidden;
+}
+
+.f3-typo3-dropzone-visible {
+	height:15px;
+	display:block;
+	border: 2px solid red;
 }

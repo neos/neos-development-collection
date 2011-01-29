@@ -47,12 +47,12 @@
     </listitem>
 
     <listitem>
-      <para><classname>AlohaInitializer</classname>: This module enables and
+      <para><classname>Aloha.Initializer</classname>: This module enables and
       disables Aloha on editing.</para>
     </listitem>
 
     <listitem>
-      <para><classname>AlohaPlugin</classname>: This class does
+      <para><classname>Aloha.Plugin</classname>: This class does
       <emphasis>not</emphasis> interact with the <classname>Core</classname>
       class, but instead is an Aloha Plugin; following their conventions. It
       takes care of saving the changed content.</para>

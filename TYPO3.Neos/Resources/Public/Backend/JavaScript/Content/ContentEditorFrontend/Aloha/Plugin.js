@@ -1,4 +1,4 @@
-Ext.namespace('F3.TYPO3.Content.AlohaConnector');
+Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Aloha');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,7 +21,7 @@ Ext.namespace('F3.TYPO3.Content.AlohaConnector');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Content.AlohaConnector
+ * @class F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin
  *
  * TYPO3 to Aloha connector plugin<br />
  * <br />
@@ -30,12 +30,12 @@ Ext.namespace('F3.TYPO3.Content.AlohaConnector');
  * This class does NOT run inside the backend, but is included in the Frontend
  * iframe.
  *
- * @namespace F3.TYPO3.Content
+ * @namespace F3.TYPO3.Content.ContentEditorFrontend.Aloha
  * @extends GENTICS.Aloha.Plugin
  * @singleton
  */
-F3.TYPO3.Content.AlohaConnector = Ext.apply(
-	new GENTICS.Aloha.Plugin('F3.TYPO3.Content.AlohaConnector'),
+F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
+	new GENTICS.Aloha.Plugin('F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin'),
 	{
 		/**
 		 * Configure the available languages

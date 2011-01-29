@@ -114,16 +114,16 @@ F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 * Get the frontend editor Aloha Initializer from the iframe
+	 * Get the frontend editor core from the iFrame
 	 *
-	 * @return {F3.TYPO3.Content.AlohaConnector.AlohaInitializer} the aloha initializer, or undefined, if the frame is not there-
+	 * @return {F3.TYPO3.Content.ContentEditorFrontend.Core} the frontend editor core, or undefined, if the frame is not there-
 	 * @private
 	 */
-	_getAlohaInitializer: function() {
-		var iframeDom, iframeDocument;
+	_getFrontendEditorCore: function() {
+		var iframeDom;
 		iframeDom = this.getComponent('contentIframe').el.dom;
 		if (iframeDom.contentWindow.F3) {
-			return iframeDom.contentWindow.F3.TYPO3.Content.AlohaConnector.AlohaInitializer;
+			return iframeDom.contentWindow.F3.TYPO3.Content.ContentEditorFrontend.Core;
 		} else {
 			return undefined;
 		}
@@ -144,24 +144,26 @@ F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 * Overlay the uneditable areas in the frontend editor.
+	 * Enable editing. Only used internally; To enable editing mode, use F3.TYPO3.Content.ContentModule.enableEditing();
 	 *
 	 * @return {void}
+	 * @private
 	 */
-	enableEditing: function() {
-		if (this._getAlohaInitializer()) {
-			this._getAlohaInitializer().enableEditing();
+	_enableEditing: function() {
+		if (this._getFrontendEditorCore()) {
+			this._getFrontendEditorCore()._enableEditing();
 		}
 	},
 
 	/**
-	 * Disable editing again
+	 * Disable editing. Only used internally; To disable editing mode, use F3.TYPO3.Content.ContentModule.disableEditing();
 	 *
 	 * @return {void}
+	 * @private
 	 */
-	disableEditing: function() {
-		if (this._getAlohaInitializer()) {
-			this._getAlohaInitializer().disableEditing();
+	_disableEditing: function() {
+		if (this._getFrontendEditorCore()) {
+			this._getFrontendEditorCore()._disableEditing();
 		}
 	}
 });
