@@ -103,7 +103,7 @@ class ParserTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->mockObjectManager->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'objectManagerCallback')));
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture01.ts2', FILE_TEXT);
 		$objectTree = $this->parser->parse($sourceCode);
-		$this->assertType('array', $objectTree, 'The TypoScript parser did not return an array.');
+		$this->assertInternalType('array', $objectTree, 'The TypoScript parser did not return an array.');
 	}
 
 	/**
