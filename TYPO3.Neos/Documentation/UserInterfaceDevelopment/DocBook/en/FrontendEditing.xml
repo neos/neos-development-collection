@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>Frontend Editing</title>
+
+  <para>In this chapter, we'll explain the basic structure and constraints of
+  the Frontend Editing based on Aloha.</para>
+
+  <para>First off, we must always remember that two parts are involved there:
+  The outer frame which contains the TYPO3 Backend, and an <code>iframe</code>
+  containing the frontend.</para>
+
+  <para>In the TYPO3 Backend, the following classes are involved:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para><classname>F3.TYPO3.Content.ContentModule</classname>: Module
+      Descriptor of the <emphasis>Content</emphasis> module, containing API
+      methods to enable/disable frontend editing.</para>
+    </listitem>
+
+    <listitem>
+      <para><classname>F3.TYPO3.Content.ContentEditor</classname>: An ExtJS
+      component which contains the <code>iframe</code> containing the
+      frontend. This component wraps the code executed in the iframe.</para>
+    </listitem>
+  </itemizedlist>
+
+  <para>In the <emphasis>frontend iframe</emphasis>, the following classes are
+  involved, all residing in the
+  <package>F3.TYPO3.Content.ContentEditorFrontend</package>, and all being
+  Singletons:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para><classname>Core</classname>: The bootstrap for the editing
+      functionality in the frontend. This class is responsible for managing
+      the lifecycle of frontend editing, and serves as event bridge of all
+      components involved in frontend editing. Furthermore, this class
+      maintains the connection to the TYPO3 Backend and makes sure it is
+      available.</para>
+    </listitem>
+
+    <listitem>
+      <para><classname>AlohaInitializer</classname>: This module enables and
+      disables Aloha on editing.</para>
+    </listitem>
+
+    <listitem>
+      <para><classname>AlohaPlugin</classname>: This class does
+      <emphasis>not</emphasis> interact with the <classname>Core</classname>
+      class, but instead is an Aloha Plugin; following their conventions. It
+      takes care of saving the changed content.</para>
+    </listitem>
+
+    <listitem>
+      <para><classname>UneditableAreaOverlay</classname>: Overlays
+      non-editable areas when the editing mode is active.</para>
+    </listitem>
+
+    <listitem>
+      <para><classname>DragDrop</classname>: Implements Drag-and-Drop
+      functionality of content elements, used for re-ordering</para>
+    </listitem>
+  </itemizedlist>
+
+  <note>
+    <para>We do not use <code>F3.TYPO3.Core.Application</code> in the
+    frontend, as this is too heavy for the frontend editing. That's why an
+    extra, more minimal, bootstrap has been created for the Frontend
+    Editor.</para>
+  </note>
+
+  <para>Editing can be enabled through a multitude of ways: Either by clicking
+  on the <emphasis>Pencil</emphasis> icon in the rootline menu, or by
+  double-clicking on the page. In the first case, the breadcrumb menu throws
+  an event that the element has been activated. In the second case, the
+  content iframe activates the method <methodname>enableEditing()</methodname>
+  on the <classname>ContentModule</classname>. The general flow can be seen in
+  the next image:</para>
+
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="enableEditing.png"></imagedata>
+    </imageobject>
+  </mediaobject>
+
+  <para>Disabling the editing mode works in the same way.</para>
+</chapter>

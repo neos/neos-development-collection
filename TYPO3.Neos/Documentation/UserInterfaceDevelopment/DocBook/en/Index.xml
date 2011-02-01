@@ -37,4 +37,5 @@
 
   <xi:include href="Introduction.xml"/>
   <xi:include href="Architecture.xml"/>
+  <xi:include href="FrontendEditing.xml"/>
 </book>
