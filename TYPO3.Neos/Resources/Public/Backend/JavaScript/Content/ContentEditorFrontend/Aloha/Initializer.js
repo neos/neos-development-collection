@@ -86,7 +86,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 				// We need to re-wire the Aloha editable events a bit,
 				// that's why we disable all internal event handlers
 				editable.obj.unbind('mousedown');
-				editable.obj.unbind('focus');
+				editable.obj.unbind('focus'); // TODO: Handle focus event as well!!!
 				editable.obj.unbind('keydown');
 
 				editable.obj.mousedown(function(event) {

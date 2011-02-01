@@ -1,12 +1,15 @@
 /* This style sheet is loaded in the frontend, if aloha is activated. */
 
-.f3-typo3-contentelement-overlay:hover {
-	-moz-box-shadow: 0 0 1px 2px #FF8700;
-	-webkit-box-shadow: 0 0 1px 2px #FF8700;
-	box-shadow: 0 0 1px 2px #FF8700;
-	cursor: crosshair;
+
+.f3-typo3-editing-enabled .f3-typo3-contentelement:hover {
+	-webkit-box-shadow: 0px 0px 10px red;
+	-moz-box-shadow: 0px 0px 10px red;
+	box-shadow: 0px 0px 10px red;
 }
 
+/*********************************
+ * SECTION UneditableAreaOverlay *
+ *********************************/
 .f3-typo3-notEditable-visible {
 	background-image: url(../Images/UserInterface/Icons/AlohaNotEditable-Dark-24bit.png) !important;
 	/* TODO: Calculate the background-position, if the position of the overlay is even or odd (horizontally and vertically) */
@@ -16,6 +19,10 @@
 .f3-typo3-notEditable-visible:hover {
 	background-color:rgba(255,0,0,0.3);
 }
+
+/*********************************
+ * SECTION Aloha                 *
+ *********************************/
 .f3-typo3-placeholder {
 	display:none;
 }
@@ -26,12 +33,9 @@
 	padding:2px;
 }
 
-.f3-typo3-editing-enabled .f3-typo3-contentelement:hover {
-	-webkit-box-shadow: 0px 0px 10px red;
-	-moz-box-shadow: 0px 0px 10px red;
-	box-shadow: 0px 0px 10px red;
-}
-
+/*********************************
+ * SECTION Drag Drop             *
+ *********************************/
 .f3-typo3-editing-enabled.f3-typo3-modifier-ctrl .f3-typo3-contentelement:hover {
 	cursor:move;
 }
@@ -45,12 +49,21 @@
 }
 
 .f3-typo3-dropzone {
+	-webkit-transition-property: height;
+	-webkit-transition-duration:0.3s;
+
+	-moz-transition-property: height;
+	-moz-transition-duration:0.3s;
+
+	transition-property: height;
+	transition-duration:0.3s;
+
 	height:0px;
+	display:block;
 	overflow:hidden;
 }
 
 .f3-typo3-dropzone-visible {
 	height:15px;
-	display:block;
 	border: 2px solid red;
 }

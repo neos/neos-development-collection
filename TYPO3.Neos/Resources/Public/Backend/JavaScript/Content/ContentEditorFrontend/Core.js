@@ -126,7 +126,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 		if (!this._getContentModule().isEditing()) {
 			event.preventDefault();
 			event.stopPropagation();
-			this._getContentModule().enableEditing();
+			this.shouldEnableEditing();
 		}
 	},
 
@@ -235,6 +235,24 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 	_getContentModule: function() {
 		return window.parent.F3.TYPO3.Content.ContentModule;
+	},
+
+	/**
+	 * Helper function which creates a JSON structure which can be mapped
+	 * to a TYPO3CR Node if used as argument for an Ext.Direct call.
+	 *
+	 * @param {String} nodePath the node path
+	 * @param {String} workspaceName the workspace name
+	 * @return {Object} a JSON object with the __context set correctly.
+	 * @todo move to a NodeFactory which is used in Frontend and Backend JavaScript
+	 */
+	createNode: function(nodePath, workspaceName) {
+		var data = {};
+		data.__context = {
+			workspaceName: workspaceName,
+			nodePath: nodePath
+		};
+		return data;
 	}
 });
 

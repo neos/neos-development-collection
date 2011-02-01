@@ -152,6 +152,32 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
+	 * Move $node before $targetNode
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param F3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @extdirect
+	 */
+	public function moveBeforeAction(\F3\TYPO3CR\Domain\Model\Node $node, \F3\TYPO3CR\Domain\Model\Node $targetNode) {
+		$node->moveBefore($targetNode);
+	}
+
+	/**
+	 * Move $node after $targetNode
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param F3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @extdirect
+	 */
+	public function moveAfterAction(\F3\TYPO3CR\Domain\Model\Node $node, \F3\TYPO3CR\Domain\Model\Node $targetNode) {
+		$node->moveAfter($targetNode);
+	}
+
+	/**
 	 * Create a section + text node for the new page.
 	 *
 	 * The section name is currently hardcoded, but should be determined by the currently selected Fluid template

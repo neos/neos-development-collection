@@ -23,54 +23,36 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend');
 /**
  * @class F3.TYPO3.Content.ContentEditorFrontend.DragDrop
  *
- * The aloha initializer which is loaded INSIDE the iframe.
+ * This class handles the drag and drop functionality of content elements
  *
  * @namespace F3.TYPO3.Content.ContentEditorFrontend
  * @singleton
  */
-F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentEditorFrontend.DragDrop', {
+F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 	/**
-	 * shortcut reference to the Content Module
+	 * Initializer, called on page load. Is used to register event
+	 * listeners on the core.
 	 *
-	 * @var {F3.TYPO3.Content.ContentModule}
-	 * @private
-	 */
-	_contentModule: null,
-
-	/**
-	 * Editing enabled
-	 *
-	 * @var {boolean}
-	 * @private
-	 */
-	_editingEnabled: false,
-
-	/**
-	 * Initialize drag & drop
-	 *
-	 * @param {F3.TYPO3.Core.Application} application
+	 * @param {F3.TYPO3.Content.ContentEditorFrontend.Core} core
 	 * @return {void}
 	 */
-	initialize: function(application) {
-
-		application.on('backendAvailable', function(contentModule) {
-			this._contentModule = contentModule;
+	initialize: function(core) {
+		core.on('afterPageLoad', function() {
 			this._addDropZones();
+			this._enableDragDrop();
+			Ext.dd.DragDropMgr.lock();
 		}, this);
 
-		application.afterInitializationOf('F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer', function(alohaInitializer) {
-			alohaInitializer.on('enableEditing', function() {
-				this._editingEnabled = true;
-			}, this);
-
-			alohaInitializer.on('disableEditing', function() {
-				this._editingEnabled = false;
-			}, this);
+		core.on('enableEditing', function() {
+			Ext.dd.DragDropMgr.unlock();
+		}, this);
+		core.on('disableEditing', function() {
+			Ext.dd.DragDropMgr.lock();
 		}, this);
 	},
 
 	/**
-	 * Add the drop zones
+	 * Add drop zones before and after each content element.
 	 *
 	 * @return {void}
 	 * @private
@@ -85,17 +67,97 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentEditorFrontend.D
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
 			Ext.DomHelper.insertBefore(el, Ext.apply(elementDefinition, {
 				'data-nodepath': el.getAttribute('data-nodepath'),
+				'data-workspacename': el.getAttribute('data-workspacename'),
 				'data-position': 'before'
 			}));
 		});
 
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
-			if (!el.next().hasClass('f3-typo3-dropzone')) {
-				Ext.DomHelper.insertBefore(el, Ext.apply(elementDefinition, {
+			if (el.next() && !el.next().hasClass('f3-typo3-dropzone')) {
+				Ext.DomHelper.insertAfter(el, Ext.apply(elementDefinition, {
 					'data-nodepath': el.getAttribute('data-nodepath'),
+					'data-workspacename': el.getAttribute('data-workspacename'),
 					'data-position': 'after'
 				}));
 			}
 		});
+	},
+
+	/**
+	 * Enable drag and drop functionality
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_enableDragDrop: function() {
+		var ddTargets = [];
+		var overrides = {
+			startDrag: function() {
+				// Show drop zones
+				Ext.select('.f3-typo3-dropzone').addClass('f3-typo3-dropzone-visible');
+				window.setTimeout(function() {
+					Ext.select('.f3-typo3-dropzone').each(function(el) {
+						ddTargets.push(new Ext.dd.DDTarget(el, 'f3-typo3-contentelements'));
+					});
+				}, 500);
+
+				// Style drag proxy and the element to move
+				var dragProxy = Ext.get(this.getDragEl());
+				var sourceElement = Ext.get(this.getEl());
+
+				sourceElement.setStyle('opacity', 0.5);
+				dragProxy.addClass('ddProxy');
+				dragProxy.update(sourceElement.getAttribute('data-nodepath'));
+			},
+			onDragEnter : function(evtObj, targetElId) {
+				var targetEl = Ext.get(targetElId);
+				targetEl.addClass('dropzoneOver');
+			},
+			onDragOut : function(evtObj, targetElId) {
+				var targetEl = Ext.get(targetElId);
+				targetEl.removeClass('dropzoneOver');
+			},
+			onInvalidDrop : function() {
+				this.invalidDrop = true;
+			},
+			onDragDrop: function(evtObj, targetElId) { // Only called on valid drop
+				var targetEl = Ext.get(targetElId);
+				var sourceElement = Ext.get(this.getEl());
+
+				if (!window.parent.F3) return;
+
+				var sourceNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(sourceElement.getAttribute('data-nodepath'), sourceElement.getAttribute('data-workspacename'));
+				var targetNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(targetEl.getAttribute('data-nodepath'), targetEl.getAttribute('data-workspacename'));
+
+				var onMoveFinished = function() {
+					window.location.reload();
+				};
+				if (targetEl.getAttribute('data-position') == 'before') {
+					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveBefore(sourceNode, targetNode, onMoveFinished);
+				} else {
+					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveAfter(sourceNode, targetNode, onMoveFinished);
+				}
+			},
+			endDrag: function() { // Called both on invalid and on valid drop
+				if (this.invalidDrop) {
+					var sourceElement = Ext.get(this.getEl());
+					sourceElement.setStyle('opacity', 1);
+					delete this.invalidDrop;
+				}
+
+				Ext.select('.f3-typo3-dropzone').removeClass('f3-typo3-dropzone-visible').removeClass('dropzoneOver');
+				Ext.each(ddTargets, function(ddTarget) {
+					ddTarget.destroy();
+				});
+			}
+		};
+		Ext.select('.f3-typo3-contentelement').each(function(el) {
+			var dd = new Ext.dd.DDProxy(el, 'f3-typo3-contentelements', {
+				isTarget: false
+			});
+			Ext.apply(dd, overrides);
+		});
 	}
-});
+};
+
+F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.DragDrop);

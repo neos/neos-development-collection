@@ -165,7 +165,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 
 			if (Ext.isGecko) {
 					// Firefox hack -> Collapse the selection such that the user can start typing right away.
-				range.collapse();
+				range.collapse(true);
 			}
 
 			window.getSelection().addRange(range);
@@ -252,14 +252,10 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 *
 		 * @param {jQuery} contentElement the Content Element container
 		 * @return {Object} a JSON object with the __context set correctly.
+		 * @private
 		 */
 		_createNodeFromContentElement: function(contentElement) {
-			var data = {};
-			data.__context = {
-				workspaceName: contentElement.attr('data-workspacename'),
-				nodePath: contentElement.attr('data-nodepath')
-			};
-			return data;
+			return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(contentElement.attr('data-nodepath'), contentElement.attr('data-workspacename'));
 		}
 	}
 );
