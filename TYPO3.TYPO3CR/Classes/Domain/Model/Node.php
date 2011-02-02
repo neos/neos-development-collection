@@ -300,7 +300,6 @@ class Node {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
-	 * @todo make workspaces compliant
 	 */
 	public function moveBefore(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
 		if ($this->path === '/') {
@@ -339,7 +338,6 @@ class Node {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
-	 * @todo make workspaces compliant
 	 */
 	function moveAfter(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
 		if ($this->path === '/') {
