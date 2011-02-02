@@ -20,13 +20,13 @@
 .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text,
 .F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
 	-moz-transition-property: width, opacity;
-	-moz-transition-duration: 0.1s, 0.1s;
-	-moz-transition-delay: 0s, 0.05s;
+	-moz-transition-duration: 0.1s, 0.2s;
+	-moz-transition-delay: 0.0s, 0.0s;
 	-moz-transition-timing-function: ease-in-out;
 
 	-webkit-transition-property: width, opacity;
-	-webkit-transition-duration: 0.1s, 0.1s;
-	-webkit-transition-delay: 0s, 0.05s;
+	-webkit-transition-duration: 0.1s, 0.2s;
+	-webkit-transition-delay: 0.0s, 0.0s;
 	-webkit-transition-timing-function: ease-in-out;
 }
 
