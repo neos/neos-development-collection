@@ -78,7 +78,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function getChildNodesForTreeAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter) {
-		$this->view->assignChildNodes($node, $contentTypeFilter, \F3\TYPO3\Service\ExtDirect\V1\View\NodeView::TREESTYLE);
+		$this->view->assignChildNodes($node, $contentTypeFilter, \F3\TYPO3\Service\ExtDirect\V1\View\NodeView::TREESTYLE, 0);
 	}
 
 	/**
@@ -87,12 +87,13 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @param string $contentTypeFilter
-	 * @return string A response string
+	 * @param integer $depth levels of childNodes (0 = unlimited)
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter) {
-		$this->view->assignChildNodes($node, $contentTypeFilter, \F3\TYPO3\Service\ExtDirect\V1\View\NodeView::LISTSTYLE);
+	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter, $depth) {
+		$this->view->assignChildNodes($node, $contentTypeFilter, \F3\TYPO3\Service\ExtDirect\V1\View\NodeView::LISTSTYLE, $depth);
 	}
 
 	/**

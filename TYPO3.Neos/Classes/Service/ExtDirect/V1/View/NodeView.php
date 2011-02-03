@@ -91,12 +91,13 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node to fetch child nodes of
 	 * @param string $contentTypeFilter Criteria for filtering the child nodes
 	 * @param integer $outputStyle Either TREESTYLE or LISTSTYLE
+	 * @param integer $depth how many levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function assignChildNodes(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter, $outputStyle = self::LISTSTYLE) {
+	public function assignChildNodes(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter, $outputStyle = self::LISTSTYLE, $depth = 0) {
 		$contentTypeFilter = ($contentTypeFilter === '' ? NULL : $contentTypeFilter);
 		$metaData = array();
 
@@ -117,7 +118,7 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 			case self::LISTSTYLE :
 				$data = array();
 				$propertyNames = array();
-				$this->collectChildNodeData($data, $propertyNames, $node, $contentTypeFilter);
+				$this->collectChildNodeData($data, $propertyNames, $node, $contentTypeFilter, $depth);
 				$metaData = array(
 					'idProperty' => '__nodePath',
 					'root' => 'data',
@@ -140,13 +141,17 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	 * @param array &$propertyNames
 	 * @param \F3\TYPO3CR\Domain\Model\Node $node
 	 * @param string $contentTypeFilter
+	 * @param integer $depth levels of child nodes to fetch. 0 = unlimited
+	 * @param integer $recursionPointer current recursion level
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function collectChildNodeData(array &$data, array &$propertyNames, \F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter) {
+	protected function collectChildNodeData(array &$data, array &$propertyNames, \F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter, $depth = 0, $recursionPointer = 1) {
 		foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
 			$this->collectNodeData($data, $propertyNames, $childNode);
-			$this->collectChildNodeData($data, $propertyNames, $childNode, $contentTypeFilter);
+			if ($depth === 0 || ($recursionPointer < $depth)) {
+				$this->collectChildNodeData($data, $propertyNames, $childNode, $contentTypeFilter, $depth, ($recursionPointer+1));
+			}
 		}
 	}
 
