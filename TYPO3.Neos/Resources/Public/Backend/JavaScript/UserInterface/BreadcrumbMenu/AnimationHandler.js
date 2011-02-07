@@ -38,7 +38,7 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Use
 	/**
 	 * @private
 	 */
-	_defaultAnimationDuration: 20,
+	_defaultAnimationDuration: 50,
 
 	/**
 	 * @var F3.TYPO3.Queue.TimeBasedQueue
