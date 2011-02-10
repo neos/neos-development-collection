@@ -66,7 +66,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	configure: function(registry) {
 		registry.append('menu/main', 'content', {
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
-			title: 'Content',
+			title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'content'),
 			itemId: 'content',
 			viewFilter: {
 				xtype: 'F3.TYPO3.UserInterface.ViewFilterToolbar'
@@ -74,22 +74,22 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 		});
 		registry.append('menu/main/content[]', 'edit', {
 			itemId: 'edit',
-			text: 'Edit',
+			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'edit'),
 			iconCls: 'F3-TYPO3-Content-icon-edit'
 		});
 		registry.append('menu/main/content[]/edit[]', 'pageProperties', {
 			itemId: 'pageProperties',
-			text: 'Page properties',
+			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageProperties'),
 			iconCls: 'F3-TYPO3-Content-icon-pageProperties'
 		});
 		registry.append('menu/main/content[]', 'createPage', {
 			itemId: 'Create',
-			text: 'Create Page',
+			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'createPage'),
 			iconCls: 'F3-TYPO3-Content-icon-createPage'
 		});
 		registry.append('menu/main/content[]', 'deletePage', {
 			itemId: 'Delete',
-			text: 'Delete Page',
+			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'deletePage'),
 			iconCls: 'F3-TYPO3-Content-icon-deletePage'
 		});
 
@@ -145,40 +145,40 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 		registry.set('form/type', {
 			"TYPO3:Page": {
 				standard: {
-					title: 'Page',
+					title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'page'),
 					children: [{
 						key: 'pageProperties',
 						type: 'fieldset',
-						title: 'Page properties',
+						title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageProperties'),
 						children: [{
 							key: 'title',
 							type: 'field',
 							property: 'properties.title',
-							title: 'Page title'
+							title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageTitle')
 						}]
 					}]
 				},
 				pageProperties: {
-					title: 'Page properties',
+					title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageProperties'),
 					children: [{
 						key: 'title',
 						type: 'field',
 						property: 'properties.title',
-						title: 'Page title'
+						title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageTitle')
 					}]
 				},
 				create: {
-					title: 'Create page',
+					title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'createPage'),
 					children: [{
 						key: 'nodeName',
 						type: 'field',
 						property: 'nodeName',
-						title: 'Node name'
+						title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'nodeName')
 					}, {
 						key: 'title',
 						type: 'field',
 						property: 'properties.title',
-						title: 'Page title'
+						title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageTitle')
 					}]
 				}
 			}
@@ -203,8 +203,8 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				{xtype: 'F3.TYPO3.Content.Edit.PagePropertiesDialog'},
 				{
 					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
-					okButton: 'Update Page',
-					cancelButton: 'Cancel',
+					okButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'updatePage'),
+					cancelButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'cancel'),
 					mode: 'positive'
 				}
 			);
@@ -212,8 +212,8 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				{xtype: 'F3.TYPO3.Content.Edit.CreatePageDialog'},
 				{
 					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
-					okButton: 'Create Page',
-					cancelButton: 'Cancel',
+					okButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'createPage'),
+					cancelButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'cancel'),
 					mode: 'positive'
 				}
 			);
@@ -221,9 +221,9 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				{xtype: 'F3.TYPO3.Content.Edit.DeletePageDialog'},
 				{
 					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
-					infoText: 'Are you sure you want to delete this page? Any content on this page will be lost.',
-					okButton: 'Delete Page',
-					cancelButton: 'Cancel',
+					infoText: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageDeleteConfirm'),
+					okButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'deletePage'),
+					cancelButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'cancel'),
 					mode: 'negative'
 				}
 			);

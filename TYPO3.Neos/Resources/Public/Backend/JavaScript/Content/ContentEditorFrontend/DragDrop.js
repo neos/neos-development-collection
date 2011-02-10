@@ -61,7 +61,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 		var elementDefinition = {
 			tag: 'div',
 			cls: 'f3-typo3-dropzone',
-			html: 'Drop content here'
+			html: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'dropContentHere')
 		};
 
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
