@@ -95,7 +95,7 @@ class Workspace {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject($initializationCause) {
-		if ($initializationCause === \F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED) {
+		if ($initializationCause === \F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
 			$this->rootNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', '/', $this);
 			$this->nodeRepository->add($this->rootNode);
 		}

@@ -59,7 +59,7 @@ class WorkspaceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$workspace->_set('nodeRepository', $mockNodeRepository);
 		$workspace->_set('objectManager', $mockObjectManager);
 
-		$workspace->initializeObject(\F3\FLOW3\Object\Container\ObjectContainerInterface::INITIALIZATIONCAUSE_CREATED);
+		$workspace->initializeObject(\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
 		$this->assertSame($mockRootNode, $workspace->getRootNode());
 	}
