@@ -52,7 +52,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 */
 		init: function() {
 			this._subscribeToAlohaEvents();
-			this._addCreateContentElementButtons();
+				// Adds the "create content element" buttons to the 'insert' tab.
+			this._addButtons(
+				this.settings.contentTypes,
+				'floatingmenu.tab.insert',
+				this._onNewContentElementClick
+			);
 
 			jQuery('.f3-typo3-placeholder').live('click', this._onPlaceholderClick);
 		},
@@ -172,22 +177,25 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		},
 
 		/**
-		 * Adds the "create content element" buttons.
+		 * Adds buttons to the aloha editor
 		 *
+		 * @param {array} buttons array with objects ({label:'',name:''})
+		 * @param {string} tab name of the Aloha tab to add the buttons to
+		 * @param {Function} onClick callback function to be executed once a button click occurs. This callback function is executed in the scope of this Plugin, and gets the "name" of the button passed as parameter.
 		 * @return {void}
 		 * @private
 		 */
-		_addCreateContentElementButtons: function() {
-			Ext.each(this.settings.contentTypes, function(contentType) {
-				var button = new GENTICS.Aloha.ui.Button({
-					'label' : contentType.label,
+		_addButtons: function(buttons, tab, onClick) {
+			Ext.each(buttons, function(button) {
+				var newButton = new GENTICS.Aloha.ui.Button({
+					'label' : button.label,
 					'size' : 'small',
-					'onclick' : this._onNewContentElementClick.createDelegate(this, [contentType.name])
+					'onclick' : onClick.createDelegate(this, [button.name])
 				});
 				GENTICS.Aloha.FloatingMenu.addButton(
 					'GENTICS.Aloha.continuoustext',
-					button,
-					GENTICS.Aloha.i18n(GENTICS.Aloha, 'floatingmenu.tab.insert'),
+					newButton,
+					GENTICS.Aloha.i18n(GENTICS.Aloha, tab),
 					2
 				);
 			}, this);
