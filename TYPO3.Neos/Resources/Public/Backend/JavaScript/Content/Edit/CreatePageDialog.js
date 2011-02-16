@@ -73,9 +73,9 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 								this.ownerCt.moduleMenu.removeModuleDialog();
 								F3.TYPO3.Content.ContentModule.loadPage(response.data.nextUri);
 							} else if (status.type == 'exception') {
-								Ext.MessageBox.alert('An Error occured', status.message);
+								Ext.MessageBox.alert(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'errorOccurred'), status.message);
 							} else {
-								Ext.MessageBox.alert('An unknown error occured');
+								Ext.MessageBox.alert(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'unknownErrorOccurred'));
 							}
 						}
 					}
