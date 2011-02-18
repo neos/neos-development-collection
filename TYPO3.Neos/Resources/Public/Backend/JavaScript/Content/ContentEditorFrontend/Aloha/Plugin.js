@@ -54,11 +54,20 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 
 			this._overrideI18nLocalization();
 			this._subscribeToAlohaEvents();
+
 				// Adds the "create content element" buttons to the 'insert' tab.
 			this._addButtons(
 				this.settings.contentTypes,
 				'floatingmenu.tab.insert',
 				this._onNewContentElementClick
+			);
+
+				// Add the "delete" buttons to the 'actions' tab.
+			this._addButtons([{
+					label: window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'delete')
+				}],
+				'floatingMenuTabAction',
+				this._onDeleteButtonClick
 			);
 
 			jQuery('.f3-typo3-placeholder').live('click', this._onPlaceholderClick);
@@ -218,6 +227,23 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 
 			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(data, {contentType: nameOfContentType}, 1, function(result) {
 				this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
+			}.createDelegate(this));
+		},
+
+		/**
+		 * Event handler triggered if a "delete" button is clicked.
+		 *
+		 * @return {void}
+		 * @private
+		 */
+		_onDeleteButtonClick: function() {
+			var currentContentElement = this._findParentContentElement(GENTICS.Aloha.activeEditable.obj);
+			var data = this._createNodeFromContentElement(currentContentElement);
+			console.log(currentContentElement);
+
+				// We have to use call() since delete is a reserved word and will invalidate code validation
+			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(this, data, function(result) {
+				currentContentElement.remove();
 			}.createDelegate(this));
 		},
 

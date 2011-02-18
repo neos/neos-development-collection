@@ -55,6 +55,7 @@ F3.TYPO3.UserInterface.I18n = {
 				currentlyLoading: 'Loading...',
 				currentlySaving: 'Saving...',
 				createPage: 'Create page',
+				'delete': 'Delete', // quoted on the left-side since deleted is reserved
 				deletePage: 'Delete page',
 				dropContentHere: 'Drop content here',
 				edit: 'Edit',
