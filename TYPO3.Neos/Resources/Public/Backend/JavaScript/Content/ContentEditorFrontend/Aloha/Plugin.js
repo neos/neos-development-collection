@@ -51,6 +51,8 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 * @private
 		 */
 		init: function() {
+
+			this._overrideI18nLocalization();
 			this._subscribeToAlohaEvents();
 				// Adds the "create content element" buttons to the 'insert' tab.
 			this._addButtons(
@@ -264,6 +266,25 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 */
 		_createNodeFromContentElement: function(contentElement) {
 			return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(contentElement.attr('data-nodepath'), contentElement.attr('data-workspacename'));
+		},
+
+		/**
+		 * Override the i18n method of Aloha so localization is primarily based
+		 * on the TYPO3 I18n class, and Aloha dictionary files are just used
+		 * as fallback
+		 *
+		 * @return {string} the localized string
+		 * @private
+		 */
+		_overrideI18nLocalization: function() {
+			var alohaI18n = GENTICS.Aloha.i18n;
+			GENTICS.Aloha.i18n = function (component, key, replacements) {
+				var localizedString = window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', key);
+				if (localizedString === key) {
+					return alohaI18n.call(this, component, key, replacements);
+				}
+				return localizedString;
+			}
 		}
 	}
 );
