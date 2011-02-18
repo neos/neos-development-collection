@@ -194,10 +194,10 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	 */
 	_onFormBeforeAction: function(form, action) {
 		if (action.type === 'directload') {
-			this.el.mask('Loading...');
+			this.el.mask(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'currentlyLoading'));
 		}
 		if (action.type === 'directsubmit') {
-			this.el.mask('Saving...');
+			this.el.mask(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'currentlySaving'));
 		}
 	},
 

@@ -37,7 +37,7 @@ F3.TYPO3.Management.ManagementTree = Ext.extend(Ext.tree.TreePanel, {
 		var config = {
 			cls: 'F3-TYPO3-Tree-Container',
 			tbar: [{
-				text: 'Page Tree',
+				text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageTree'),
 				iconCls: 'F3-TYPO3-Management-Tree'
 			}],
 			root: {

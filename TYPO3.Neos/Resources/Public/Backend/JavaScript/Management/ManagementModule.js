@@ -38,7 +38,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Management.ManagementModule', {
 	configure: function(registry) {
 		registry.append('menu[main]', 'management', {
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ManagementTab',
-			title: 'Management',
+			title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'management'),
 			itemId: 'management'
 		});
 

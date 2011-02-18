@@ -111,7 +111,7 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 							if (value.match(new RegExp(validation.options.regularExpression))) {
 								return true;
 							} else {
-								return "The given subject did not match the pattern.";
+								return F3.TYPO3.UserInterface.I18n.get('TYPO3', 'valueDoesNotMatchPattern');
 							}
 						};
 					}

@@ -150,7 +150,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		_insertPlaceholderIfEditableIsEmpty: function(editable) {
 			var contents = Ext.util.Format.trim(editable.getContents());
 			if (contents == '' || contents == '&nbsp;' || contents == '<br />' || contents == '<br>') {
-				editable.obj.html('<span class="f3-typo3-placeholder">[enter some content here]</span>');
+				editable.obj.html('<span class="f3-typo3-placeholder">[' + window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'enterSomeContent') + ']</span>');
 			}
 		},
 
@@ -215,7 +215,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 			var data = this._createNodeFromContentElement(currentContentElement);
 
 			if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
-				var loadingIndicatorDom = Ext.DomHelper.insertAfter(currentContentElement.get(0), '<div>LOADING</div>');
+				var loadingIndicatorDom = Ext.DomHelper.insertAfter(currentContentElement.get(0), '<div>' + window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'loading').toUpperCase() + '</div>');
 
 				window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(data, {contentType: nameOfContentType}, 1, function(result) {
 					this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);

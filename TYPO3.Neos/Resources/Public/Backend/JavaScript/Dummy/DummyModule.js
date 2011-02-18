@@ -59,19 +59,19 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
 
 			userInterfaceModule.addContentArea('report', 'dummy', {
 				xtype: 'F3.TYPO3.Dummy.DummyContentArea',
-				name: 'Report'
+				name: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'report')
 			});
 			userInterfaceModule.contentAreaOn('menu[main]/report', 'report', 'dummy');
 
 			userInterfaceModule.addContentArea('layout', 'dummy', {
 				xtype: 'F3.TYPO3.Dummy.DummyContentArea',
-				name: 'Layout'
+				name: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'layout')
 			});
 			userInterfaceModule.contentAreaOn('menu[main]/layout', 'layout', 'dummy');
 
 			userInterfaceModule.addContentArea('system', 'dummy', {
 				xtype: 'F3.TYPO3.Dummy.DummyContentArea',
-				name: 'System'
+				name: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'system')
 			});
 			userInterfaceModule.contentAreaOn('menu[main]/system', 'system', 'dummy');
 		});

@@ -40,7 +40,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dashboard.DashboardModule', {
 	configure: function(registry) {
 		registry.append('menu/main', 'dashboard', {
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-DashboardTab',
-			title: 'Welcome',
+			title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'welcome'),
 			itemId: 'dashboard',
 			listeners: {
 				added: function(tab, tabPanel) {
@@ -57,7 +57,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dashboard.DashboardModule', {
 					cls: 'F3-TYPO3-Dashboard-Logout',
 					height: 47,
 					width: 47,
-					text: 'logout',
+					text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'logout'),
 					handler: function() {
 						F3.TYPO3.Login.Service.logout();
 					}

@@ -80,7 +80,7 @@ F3.TYPO3.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 		F3.TYPO3.Management.ManagementGrid.superclass.initComponent.call(this);
 
 		this.on('render', function() {
-			this.body.mask('Loading...');
+			this.body.mask(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'currentlyLoading'));
 		});
 
 		this.store.on('load', function() {

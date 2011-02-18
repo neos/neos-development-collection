@@ -36,7 +36,7 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 	initComponent: function() {
 		var config = {
 			collapsible: false,
-			title: 'Workspace Overview',
+			title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'workspaceOverview'),
 			items: {
 				itemId: 'contentView',
 				xtype: 'F3.TYPO3.Dashboard.UnpublishedContentView',
@@ -46,20 +46,20 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 			bbar: [{
 				itemId: 'description',
 				xtype: 'panel',
-				html: 'The listed content is currently only visible in your personal workspace and can be published to the live website.',
+				html: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'unpublishedContentDescription'),
 				border: false,
 				cls: 'F3-TYPO3-Dashboard-DashboardView-Description'
 			}, {
 				itemId: 'noContent',
 				hidden: true,
 				xtype: 'panel',
-				html: 'The current workspace does not contain any unpublished content.',
+				html: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'workspaceHasNoUnpublishedContent'),
 				border: false,
 				cls: 'F3-TYPO3-Dashboard-DashboardView-Description'
 			}, '->', {
 				xtype: 'F3.TYPO3.Components.Button',
 				itemId: 'publishAll',
-				text: 'Publish all',
+				text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'publishAll'),
 				handler: this._publishAll,
 				scope: this,
 				cls: 'F3-TYPO3-Components-Button-type-positive F3-TYPO3-Dashboard-DashboardView-PublishButton'
@@ -67,7 +67,7 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 				xtype: 'F3.TYPO3.Components.Button',
 				hidden: true,
 				itemId: 'publishSelected',
-				text: 'Publish selected',
+				text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'publishSelected'),
 				handler: this._publishSelected,
 				scope: this,
 				cls: 'F3-TYPO3-Components-Button-type-positive F3-TYPO3-Dashboard-DashboardView-PublishButton'

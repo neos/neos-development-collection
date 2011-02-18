@@ -87,7 +87,7 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 		} else {
 			F3.TYPO3.Configuration.Application.frontendBaseUri = '/';
 			if (window.console) {
-				console.warn("Base URI could not be extracted");
+				console.warn(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'couldNotExtraBaseURI'));
 			}
 		}
 		F3.TYPO3.Configuration.Application.backendBaseUri = F3.TYPO3.Configuration.Application.frontendBaseUri + 'typo3/';

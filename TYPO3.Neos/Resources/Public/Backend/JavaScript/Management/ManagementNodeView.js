@@ -38,7 +38,7 @@ F3.TYPO3.Management.ManagementNodeView = Ext.extend(Ext.Panel, {
 			border: false,
 			layout: 'fit',
 			tbar: [{
-				text: 'Content',
+				text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'content'),
 				iconCls: 'F3-TYPO3-Management-Content'
 			}]
 		};
