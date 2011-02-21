@@ -214,13 +214,11 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 			var currentContentElement = this._findParentContentElement(GENTICS.Aloha.activeEditable.obj);
 			var data = this._createNodeFromContentElement(currentContentElement);
 
-			if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
-				var loadingIndicatorDom = Ext.DomHelper.insertAfter(currentContentElement.get(0), '<div>' + window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'loading').toUpperCase() + '</div>');
+			var loadingIndicatorDom = Ext.DomHelper.insertAfter(currentContentElement.get(0), '<div>' + window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'loading').toUpperCase() + '</div>');
 
-				window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(data, {contentType: nameOfContentType}, 1, function(result) {
-					this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
-				}.createDelegate(this));
-			}
+			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(data, {contentType: nameOfContentType}, 1, function(result) {
+				this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
+			}.createDelegate(this));
 		},
 
 		/**
