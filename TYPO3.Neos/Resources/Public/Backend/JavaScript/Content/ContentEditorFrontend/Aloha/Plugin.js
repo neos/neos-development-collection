@@ -190,7 +190,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		_addButtons: function(buttons, tab, onClick) {
 			Ext.each(buttons, function(button) {
 				var newButton = new GENTICS.Aloha.ui.Button({
-					'label' : button.label,
+					'label' : window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', button.label),
 					'size' : 'small',
 					'onclick' : onClick.createDelegate(this, [button.name])
 				});
