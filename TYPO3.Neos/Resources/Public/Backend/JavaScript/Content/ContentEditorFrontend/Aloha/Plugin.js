@@ -239,7 +239,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		_onDeleteButtonClick: function() {
 			var currentContentElement = this._findParentContentElement(GENTICS.Aloha.activeEditable.obj);
 			var data = this._createNodeFromContentElement(currentContentElement);
-			console.log(currentContentElement);
 
 				// We have to use call() since delete is a reserved word and will invalidate code validation
 			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(this, data, function(result) {
