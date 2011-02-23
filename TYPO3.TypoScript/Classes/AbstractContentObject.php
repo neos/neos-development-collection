@@ -153,7 +153,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException(new \F3\TypoScript\Exception('Exception caught in ' . get_class($this) . '::render()', 1289997632, $exception));
 			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
-			return ($this->objectManager->getContext() === 'Development') ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
+			return ($this->renderingContext->getObjectManager()->getContext() === 'Development') ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
 		}
 	}
 
