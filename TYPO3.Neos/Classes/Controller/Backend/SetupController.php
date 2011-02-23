@@ -128,10 +128,8 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		}
 		if ($packageKey !== '0') {
 			try {
-				$importResult = $this->siteImportService->importPackage($packageKey);
-				if ($importResult === true) {
-					$this->flashMessageContainer->add('Imported website data from "' . $packageKey . '/Resources/Content/Sites.xml"');
-				}
+				$this->siteImportService->importPackage($packageKey);
+				$this->flashMessageContainer->add('Imported website data from "' . $packageKey . '/Resources/Content/Sites.xml"');
 			} catch (\Exception $e) {
 				$this->flashMessageContainer->add($e->getMessage());
 				$this->redirect('index');

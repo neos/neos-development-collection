@@ -6,7 +6,7 @@
 
 resources:
   methods:
-    F3_TYPO3_BackendController: "method(F3\TYPO3\Controller\Backend\BackendController->.*())"
+    F3_TYPO3_Backend_BackendController: "method(F3\TYPO3\Controller\Backend\BackendController->.*())"
 
 roles:
   Administrator: []
@@ -14,4 +14,4 @@ roles:
 acls:
   Administrator:
     methods:
-      F3_TYPO3_BackendController: GRANT
+      F3_TYPO3_Backend_BackendController: GRANT
