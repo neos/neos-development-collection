@@ -24,10 +24,7 @@
  * @api
  */
 jQuery.fn.aloha = function() {
-	return this.each(function() {
-		// create a new aloha editable object for each queried object
-		new GENTICS.Aloha.Editable(jQuery(this));
-	});
+	return this.GENTICS_aloha();
 };
 
 /**
@@ -40,7 +37,9 @@ jQuery.fn.aloha = function() {
 jQuery.fn.GENTICS_aloha = function() {
 	return this.each(function() {
 		// create a new aloha editable object for each queried object
-		new GENTICS.Aloha.Editable(jQuery(this));
+		if (!GENTICS.Aloha.isEditable(this)) {
+			new GENTICS.Aloha.Editable(jQuery(this));
+		}
 	});
 }; 
 
@@ -52,15 +51,7 @@ jQuery.fn.GENTICS_aloha = function() {
  * @api
  */
 jQuery.fn.mahalo = function() {
-	return this.each(function() {
-		if ( jQuery(this).hasClass('GENTICS_editable') ) {
-			for (var i=0; i<GENTICS.Aloha.editables.length; i++) {
-				if ( GENTICS.Aloha.editables[i].obj.get(0) === this ) {
-					GENTICS.Aloha.editables[i].destroy();
-				}
-			}
-		}
-	});
+	return this.GENTICS_mahalo();
 };
 
 /**
@@ -72,7 +63,9 @@ jQuery.fn.mahalo = function() {
  */
 jQuery.fn.GENTICS_mahalo = function() {
 	return this.each(function() {
-		var that = this;
+		if (GENTICS.Aloha.isEditable(this)) {
+			GENTICS.Aloha.getEditableById(jQuery(this).attr('id')).destroy();
+		}
 	});
 }; 
 
@@ -116,6 +109,6 @@ jQuery.fn.outerHTML = function(s) {
 	if (s) {
 		return this.before(s).remove();
 	} else {
-		return jQuery("<p>").append(this.eq(0).clone()).html();
+		return jQuery('<p>').append(this.eq(0).clone()).html();
 	}
 };	

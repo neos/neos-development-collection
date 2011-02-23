@@ -176,22 +176,24 @@ GENTICS.Aloha.ui.Browser = function () {
 		var sel = (sm) ? sm.getSelected() : null;
 		var resourceItem = (sel) ? sel.data : null;
 		this.win.hide();
-		if ( typeof this.onSelect == 'function' ) {
+		if ( typeof this.onSelect === 'function' ) {
 			this.onSelect.call(this, resourceItem);
 		}
 	};
 };
-	
-GENTICS.Aloha.ui.Browser.prototype.setObjectTypeFilter = function(otf) {
-	this.objectTypeFilter = otf;
-};
 
-GENTICS.Aloha.ui.Browser.prototype.getObjectTypeFilter = function() {
-	return this.objectTypeFilter;
-};
+GENTICS.Aloha.ui.Browser.prototype = {	
+	setObjectTypeFilter: function(otf) {
+		this.objectTypeFilter = otf;
+	},
 
-GENTICS.Aloha.ui.Browser.prototype.show = function() {
-	this.win.show(); // first show,
-	this.win.toFront(true);
-	this.win.focus();
+	getObjectTypeFilter: function() {
+		return this.objectTypeFilter;
+	},
+
+	show: function() {
+		this.win.show(); // first show,
+		this.win.toFront(true);
+		this.win.focus();
+	}
 };

@@ -1927,7 +1927,7 @@ GENTICS.Aloha.Table.prototype.selectRows = function() {
  */
 GENTICS.Aloha.Table.prototype.deactivate = function() {
 	this.obj.removeClass(this.get('className'));
-	if (GENTICS.Aloha.trim(this.obj.attr('class')) == '') {
+	if (jQuery.trim(this.obj.attr('class')) == '') {
 		this.obj.removeAttr('class');
 	}
 //	this.obj.contentEditable('');
@@ -2168,19 +2168,23 @@ GENTICS.Aloha.Table.Cell.prototype.deactivate = function() {
 	var wrapper = this.obj.children('.GENTICS_Table_Cell_editable');
 
 	if (wrapper.length) {
-		// unwrap the contents of the wrapper (which removes the wrapper)
-		wrapper.contents().unwrap();
+		// get the inner html of the contenteditable div
+		var innerHtml = wrapper.html();
 		
-		// remove the contenteditable div and its attached events (is this still necessary?)
+		// remove the contenteditable div and its attached events
 		wrapper.unbind();
 		wrapper.remove();
 		
 		// remove the click event of the
 		this.obj.unbind('click');
 		
-		if (GENTICS.Aloha.trim(this.obj.attr('class')) == '') {
+		if (jQuery.trim(this.obj.attr('class')) == '') {
 			this.obj.removeAttr('class');
 		}
+		
+		// set the inner html of the contenteditable div as html for the table-data
+		// field
+		this.obj.html(innerHtml);
 	}
 };
 

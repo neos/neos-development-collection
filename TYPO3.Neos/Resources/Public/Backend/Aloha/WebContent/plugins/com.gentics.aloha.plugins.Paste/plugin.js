@@ -36,7 +36,7 @@ GENTICS.Aloha.PastePlugin.init = function() {
 		} else {
 			editable.obj.bind('paste', function(event) {
 				that.redirectPaste();
-				window.setTimeout(function() {that.getPastedContent();}, 10);
+				window.setTimeout(function() {that.getPastedContent(event);}, 10);
 				event.stopPropagation();
 			});
 		}
@@ -45,7 +45,7 @@ GENTICS.Aloha.PastePlugin.init = function() {
 	// for msie, we need to bind an event to our pasteDiv
 	if (jQuery.browser.msie) {
 		this.pasteDiv.bind('paste', function(event) {
-			window.setTimeout(function() {that.getPastedContent();}, 10);
+			window.setTimeout(function() {that.getPastedContent(event);}, 10);
 		});
 	}
 };
@@ -60,12 +60,21 @@ GENTICS.Aloha.PastePlugin.redirectPaste = function() {
 	this.currentRange = new GENTICS.Utils.RangeObject(true);
 	this.currentEditable = GENTICS.Aloha.activeEditable;
 
+	// store the current scroll position
+	var w = jQuery(window);
+	this.scrollTop = w.scrollTop();
+	this.scrollLeft = w.scrollLeft();
+	this.height = jQuery(document).height();
+
 	// empty the pasteDiv
 	this.pasteDiv.text('');
 
 	// blur the active editable
 	if (this.currentEditable) {
-		this.currentEditable.blur();
+		// @todo test in IE!
+		//this.currentEditable.blur();
+		// alternative:
+		this.currentEditable.obj.blur();
 	}
 
 	// set the cursor into the paste div
@@ -78,14 +87,14 @@ GENTICS.Aloha.PastePlugin.redirectPaste = function() {
 /**
  * Get the pasted content and insert into the current editable
  */
-GENTICS.Aloha.PastePlugin.getPastedContent = function() {
+GENTICS.Aloha.PastePlugin.getPastedContent = function(event) {
 	var that = this;
 
 	// call all paste handlers
 	for (var i = 0; i < this.pasteHandlers.length; ++i) {
 		this.pasteHandlers[i].handlePaste(this.pasteDiv);
 	}
-
+	
 	// TODO collapse the range or remove the currently selected DOM
 
 	// insert the content into the editable at the current range
@@ -93,12 +102,12 @@ GENTICS.Aloha.PastePlugin.getPastedContent = function() {
 		var pasteDivContents = this.pasteDiv.contents();
 		for (var i = pasteDivContents.length - 1; i >= 0; --i) {
 			// insert the elements
-			// TODO when inserting is not possible, eventually unwrap the contents and insert that?
-			GENTICS.Utils.Dom.insertIntoDOM(jQuery(pasteDivContents.get(i)), that.currentRange, that.currentEditable.obj, false);
+			that.pasteElement(pasteDivContents.get(i));
 		}
 
 		// activate and focus the editable
-		this.currentEditable.activate();
+		// @todo test in IE
+		//this.currentEditable.activate();
 		this.currentEditable.obj.focus();
 
 		// set the cursor after the inserted DOM element
@@ -108,12 +117,51 @@ GENTICS.Aloha.PastePlugin.getPastedContent = function() {
 			// if nothing was pasted, just reselect the old range
 			this.currentRange.select();
 		}
+
+		// finally scroll back to the original scroll position, plus eventually difference in height
+		if (this.scrollTop !== false && this.scrollLeft !== false && this.height !== false) {
+			var w = jQuery(window);
+			var heightDiff = jQuery(document).height() - this.height;
+			w.scrollTop(this.scrollTop + heightDiff);
+			w.scrollLeft(this.scrollLeft);
+		}
 	}
 	this.currentRange = false;
 	this.currentEditable = false;
+	this.scrollTop = false;
+	this.scollLeft = false;
+	this.height = false;
+
+	// call smartContentChange after paste action
+	GENTICS.Aloha.activeEditable.smartContentChange(event);
 
 	// empty the pasteDiv
 	this.pasteDiv.text('');
+};
+
+/**
+ * Paste the given object into the current selection.
+ * If inserting fails (because the object is not allowed to be inserted), unwrap the contents and try with that.
+ * @param object object to be pasted
+ */
+GENTICS.Aloha.PastePlugin.pasteElement = function(object) {
+	var jqObject = jQuery(object);
+	var that = this;
+	// try to insert the element into the DOM
+	if (!GENTICS.Utils.Dom.insertIntoDOM(jqObject, this.currentRange, this.currentEditable.obj, false)) {
+		// if that is not possible, we unwrap the content and insert every child element
+		var contents = jqObject.contents();
+
+		// when a block level element was unwrapped, we at least insert a break
+		if (GENTICS.Utils.Dom.isBlockLevelElement(object) || GENTICS.Utils.Dom.isListElement(object)) {
+			that.pasteElement(jQuery('<br/>').get(0));
+		}
+
+		// and now all children (starting from the back)
+		for (var i = contents.length - 1; i >= 0; --i) {
+			that.pasteElement(contents[i]);
+		}
+	}
 };
 
 /**

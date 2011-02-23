@@ -17,7 +17,7 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-if (typeof GENTICS.Aloha.ui == 'undefined') {
+if (typeof GENTICS.Aloha.ui === 'undefined') {
 	GENTICS.Aloha.ui = function() {};
 }
 
@@ -38,272 +38,274 @@ GENTICS.Aloha.ui.Button = function(properties) {
 };
 
 /**
- * Init method for an Aloha button.
- * This method is necessary due to JS specific initalization.
- * @namespace GENTICS.Aloha.ui
- * @class Button
- * @param {Object} properties Properties of the button:
- * - label: Label that is displayed on the button.
- * - onclick: Callback function of the button when activated.
- * - menu: Array of GENTICS.Aloha.ui.Button elements that are displayed as drop-down menu.
- * - iconClass: Icon displayed on the button.
- * - icon: URL to an icon that is displayed on the button.
- * - toggle: Boolean that indicates if the button is a toggle button.
- */
-GENTICS.Aloha.ui.Button.prototype.init = function(properties) {
-	/**
-	 * Label that is displayed on the button
-	 * @hide
-	 */
-	this.label;
-	
-	/**
-	 * CSS class for an icon on the button
-	 * @hide
-	 */
-	this.iconClass;
-	
-	/**
-	 * URL to an icon to display on the button
-	 * @hide
-	 */
-	this.icon;
-	
-	/**
-	 * Callback function when the button is activated.
-	 * The "this" variable refers to the button inside the callback function.
-	 * @hide
-	 */
-	this.onclick;
-	
-	/**
-	 * Array of buttons that are displayed in a drop down menu.
-	 * If a menu is provided and no onclick callback then clicking the button also opens the menu
-	 * @hide
-	 */
-	this.menu;
-	
-	/**
-	 * Indicates if the button is a toggle button
-	 * @hide
-	 */
-	this.toggle;
-	
-	/**
-	 * Property that indicates if the button is in pressed state
-	 * @hide
-	 */
-	this.pressed = false;
-
-	/**
-	 * Property that indicates whether the button is currently visible
-	 * @hide
-	 */
-	this.visible = true;
-
-	/**
-	 * Property that indicates whether the button is currently enabled
-	 * @hide
-	 */
-	this.enabled = true;
-
-	/**
-	 * Tooltip text
-	 * @hide
-	 */
-	this.tooltip;
-
-	/**
-	 * holds the ext object of the button
-	 * @hide
-	 */
-	this.extButton;
-
-	/**
-	 * holds the listeners of the button
-	 * @hide
-	 */
-	this.listenerQueue = [];
-	
-	GENTICS.Utils.applyProperties(this, properties);
-
-	/**
-	 * Unique Id of the button
-	 * @hide
-	 */
-	this.id = this.generateId();
-};
-
-/**
  * id counter, for generation of unique id's for the buttons
  * @hide
  */
 GENTICS.Aloha.ui.Button.idCounter = 0;
 
-/**
- * Generate a unique id for the button
- * @return unique id
- * @hide
- */
-GENTICS.Aloha.ui.Button.prototype.generateId = function () {
-	GENTICS.Aloha.ui.Button.idCounter = GENTICS.Aloha.ui.Button.idCounter + 1;
-	return 'GENTICS_Aloha_ui_Button_' + GENTICS.Aloha.ui.Button.idCounter;
-};
+GENTICS.Aloha.ui.Button.prototype = {
 
-/**
- * Set the 'pressed' state of the button if it is a toggle button
- * @param {bool} pressed true when the button shall be 'pressed', false if not
- */
-GENTICS.Aloha.ui.Button.prototype.setPressed = function(pressed) {
-	if (this.toggle) {
-		this.pressed = pressed;
-		if (typeof this.extButton == 'object' && this.extButton.pressed != pressed) {
-			this.extButton.toggle(this.pressed);
+	/**
+	 * Init method for an Aloha button.
+	 * This method is necessary due to JS specific initalization.
+	 * @namespace GENTICS.Aloha.ui
+	 * @class Button
+	 * @param {Object} properties Properties of the button:
+	 * - label: Label that is displayed on the button.
+	 * - onclick: Callback function of the button when activated.
+	 * - menu: Array of GENTICS.Aloha.ui.Button elements that are displayed as drop-down menu.
+	 * - iconClass: Icon displayed on the button.
+	 * - icon: URL to an icon that is displayed on the button.
+	 * - toggle: Boolean that indicates if the button is a toggle button.
+	 */
+	init: function(properties) {
+		/**
+		 * Label that is displayed on the button
+		 * @hide
+		 */
+		this.label;
+	
+		/**
+		 * CSS class for an icon on the button
+		 * @hide
+		 */
+		this.iconClass;
+	
+		/**
+		 * URL to an icon to display on the button
+		 * @hide
+		 */
+		this.icon;
+	
+		/**
+		 * Callback function when the button is activated.
+		 * The "this" variable refers to the button inside the callback function.
+		 * @hide
+		 */
+		this.onclick;
+	
+		/**
+		 * Array of buttons that are displayed in a drop down menu.
+		 * If a menu is provided and no onclick callback then clicking the button also opens the menu
+		 * @hide
+		 */
+		this.menu;
+	
+		/**
+		 * Indicates if the button is a toggle button
+		 * @hide
+		 */
+		this.toggle;
+	
+		/**
+		 * Property that indicates if the button is in pressed state
+		 * @hide
+		 */
+		this.pressed = false;
+
+		/**
+		 * Property that indicates whether the button is currently visible
+		 * @hide
+		 */
+		this.visible = true;
+
+		/**
+		 * Property that indicates whether the button is currently enabled
+		 * @hide
+		 */
+		this.enabled = true;
+
+		/**
+		 * Tooltip text
+		 * @hide
+		 */
+		this.tooltip;
+
+		/**
+		 * holds the ext object of the button
+		 * @hide
+		 */
+		this.extButton;
+
+		/**
+		 * holds the listeners of the button
+		 * @hide
+		 */
+		this.listenerQueue = [];
+	
+		GENTICS.Utils.applyProperties(this, properties);
+
+		/**
+		 * Unique Id of the button
+		 * @hide
+		 */
+		this.id = this.generateId();
+	},
+
+	/**
+	 * Generate a unique id for the button
+	 * @return unique id
+	 * @hide
+	 */
+	generateId: function () {
+		GENTICS.Aloha.ui.Button.idCounter = GENTICS.Aloha.ui.Button.idCounter + 1;
+		return 'GENTICS_Aloha_ui_Button_' + GENTICS.Aloha.ui.Button.idCounter;
+	},
+
+	/**
+	 * Set the 'pressed' state of the button if it is a toggle button
+	 * @param {bool} pressed true when the button shall be 'pressed', false if not
+	 */
+	setPressed: function(pressed) {
+		if (this.toggle) {
+			this.pressed = pressed;
+			if (typeof this.extButton == 'object' && this.extButton.pressed != pressed) {
+				this.extButton.toggle(this.pressed);
+			}
 		}
-	}
-};
+	},
 
-/**
- * Indicates if the button is currently in "pressed" state. 
- * This is only relevant if the button is a toggle button.
- * If the button is no toggle button this function always returns false.
- * @return {bool} True if the button is pressed, false otherwise.
- */
-GENTICS.Aloha.ui.Button.prototype.isPressed = function() {
-	if (this.toggle) {
-		return this.pressed;
-	} else {
+	/**
+	 * Indicates if the button is currently in "pressed" state. 
+	 * This is only relevant if the button is a toggle button.
+	 * If the button is no toggle button this function always returns false.
+	 * @return {bool} True if the button is pressed, false otherwise.
+	 */
+	isPressed: function() {
+		if (this.toggle) {
+			return this.pressed;
+		}
 		return false;
-	}
-};
+	},
 
-/**
- * Show the button. When this button is added to the FloatingMenu, it is
- * necessary to call GENTICS.Aloha.FloatingMenu.doLayout() after the visibility
- * of the button is changed
- */
-GENTICS.Aloha.ui.Button.prototype.show = function() {
-	this.visible = true;
-};
+	/**
+	 * Show the button. When this button is added to the FloatingMenu, it is
+	 * necessary to call GENTICS.Aloha.FloatingMenu.doLayout() after the visibility
+	 * of the button is changed
+	 */
+	show: function() {
+		this.visible = true;
+	},
 
-/**
- * Hide the button. When this button is added to the FloatingMenu, it is
- * necessary to call GENTICS.Aloha.FloatingMenu.doLayout() after the visibility
- * of the button is changed
- */
-GENTICS.Aloha.ui.Button.prototype.hide = function() {
-	this.visible = false;
-};
+	/**
+	 * Hide the button. When this button is added to the FloatingMenu, it is
+	 * necessary to call GENTICS.Aloha.FloatingMenu.doLayout() after the visibility
+	 * of the button is changed
+	 */
+	hide: function() {
+		this.visible = false;
+	},
 
-/**
- * Check whether the button is visible or not
- * @return true when the button is visible, false if not
- */
-GENTICS.Aloha.ui.Button.prototype.isVisible = function() {
-	return this.visible;
-};
+	/**
+	 * Check whether the button is visible or not
+	 * @return true when the button is visible, false if not
+	 */
+	isVisible: function() {
+		return this.visible;
+	},
 
-/**
- * Enable the button - make it clickable
- */
-GENTICS.Aloha.ui.Button.prototype.enable = function() {
-	this.enabled = true;
-	if (typeof this.extButton == 'object') {
-		this.extButton.enable();
-	}
-};
-
-/**
- * Disable the button
- */
-GENTICS.Aloha.ui.Button.prototype.disable = function() {
-	this.enabled = false;
-	if (typeof this.extButton == 'object') {
-		this.extButton.disable();
-	}
-};
-
-/**
- * Check whether the button is currently enabled
- * @return true when the button is enabled, false if it is disabled
- */
-GENTICS.Aloha.ui.Button.prototype.isEnabled = function() {
-	return this.enabled;
-};
-
-/**
- * Get the Ext menu from this button
- * @return Ext menu
- * @hide
- */
-GENTICS.Aloha.ui.Button.prototype.getExtMenu = function() {
-	if (typeof this.menu === 'object') {
-		// build the drop down menu
-		var menu = new Ext.menu.Menu();
-		for (var i = 0; i < this.menu.length; ++i) {
-			var entry = this.menu[i];
-			menu.addItem(new Ext.menu.Item(entry.getExtMenuConfigProperties()));
+	/**
+	 * Enable the button - make it clickable
+	 */
+	enable: function() {
+		this.enabled = true;
+		if (typeof this.extButton === 'object') {
+			this.extButton.enable();
 		}
-	}
-	return menu;
-};
+	},
 
-/**
- * Get the config properties for this button as menu entry
- * @return config properties for this button as menu entry
- * @hide
- */
-GENTICS.Aloha.ui.Button.prototype.getExtMenuConfigProperties = function() {
-	var that = this;
-	var submenu = this.getExtMenu();
+	/**
+	 * Disable the button
+	 */
+	disable: function() {
+		this.enabled = false;
+		if (typeof this.extButton === 'object') {
+			this.extButton.disable();
+		}
+	},
 
-	return {
-		text: this.label,
-		icon: this.icon,
-		iconCls: this.iconClass,
-		handler: function () {
-			if (typeof that.onclick == 'function') {
-				that.onclick();
+	/**
+	 * Check whether the button is currently enabled
+	 * @return true when the button is enabled, false if it is disabled
+	 */
+	isEnabled: function() {
+		return this.enabled;
+	},
+
+	/**
+	 * Get the Ext menu from this button
+	 * @return Ext menu
+	 * @hide
+	 */
+	getExtMenu: function() {
+		if (typeof this.menu === 'object') {
+			// build the drop down menu
+			var menu = new Ext.menu.Menu();
+			for (var i = 0; i < this.menu.length; ++i) {
+				var entry = this.menu[i];
+				menu.addItem(new Ext.menu.Item(entry.getExtMenuConfigProperties()));
 			}
-		},
-		menu: submenu 
-	};
-};
+		}
+		return menu;
+	},
 
-/**
- * Return an object containing the config properties to generate this button
- * @return config properties
- * @hide
- */
-GENTICS.Aloha.ui.Button.prototype.getExtConfigProperties = function() {
-	var that = this;
-	var menu = this.getExtMenu();
+	/**
+	 * Get the config properties for this button as menu entry
+	 * @return config properties for this button as menu entry
+	 * @hide
+	 */
+	getExtMenuConfigProperties: function() {
+		var that = this,
+			submenu = this.getExtMenu();
+
+		return {
+			text: this.label,
+			icon: this.icon,
+			iconCls: this.iconClass,
+			handler: function () {
+				if (typeof that.onclick == 'function') {
+					that.onclick();
+				}
+			},
+			menu: submenu 
+		};
+	},
+
+	/**
+	 * Return an object containing the config properties to generate this button
+	 * @return config properties
+	 * @hide
+	 */
+	getExtConfigProperties: function() {
+		var that = this,
+			menu = this.getExtMenu(),
 		
-	// configuration for the button
-	var buttonConfig = {
-		text : this.label,
-		enableToggle: this.toggle,
-		pressed : this.pressed,
-		icon: this.icon,
-		iconCls: this.iconClass,
-		scale : this.scale||this.size,
-		width : this.width||undefined,
-		rowspan : this.rowspan || ((this.size == 'large' || this.size == 'medium') ? 2 : 1),
-		menu : menu,
-		handler : function(element, event) {
-			if (typeof that.onclick === 'function') {
-				that.onclick.apply(that, [element, event]);
-			}
-			that.pressed = !that.pressed;
-		},
-		xtype : (menu && typeof this.onclick == 'function') ? 'splitbutton' : 'button',
-		tooltipType : 'qtip',
-		tooltip : this.tooltip,
-		id : this.id,
-        arrowAlign: this.arrowAlign || (this.size == 'large' || this.size == 'small' ? 'right' : 'bottom')
-	};
+		// configuration for the button
+			buttonConfig = {
+			text : this.label,
+			enableToggle: this.toggle,
+			pressed : this.pressed,
+			icon: this.icon,
+			iconCls: this.iconClass,
+			scale : this.scale||this.size,
+			width : this.width||undefined,
+			rowspan : this.rowspan || ((this.size == 'large' || this.size == 'medium') ? 2 : 1),
+			menu : menu,
+			handler : function(element, event) {
+				if (typeof that.onclick === 'function') {
+					that.onclick.apply(that, [element, event]);
+				}
+				that.pressed = !that.pressed;
+			},
+			xtype : (menu && typeof this.onclick == 'function') ? 'splitbutton' : 'button',
+			tooltipType : 'qtip',
+			tooltip : this.tooltip,
+			id : this.id,
+		    arrowAlign: this.arrowAlign || (this.size == 'large' || this.size == 'small' ? 'right' : 'bottom')
+		};
 
-	return buttonConfig;
+		return buttonConfig;
+	}
 };
 
 /**
@@ -369,13 +371,13 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 		// create a reference to this elements dom object
     	this.wrapper = jQuery(this.el.dom);
 
-    	var item;
-        var html = '<ul class="GENTICS_multisplit">';
+    	var item,
+    		html = '<ul class="GENTICS_multisplit">';
 
 		// add a new button to the list for each configured item
 		for (var i=0; i<this.items.length; i++) {
 			item = this.items[i];
-			if (item.visible == undefined) {
+			if (typeof item.visible == 'undefined') {
 				item.visible = true;
 			}
 			// wide buttons will always be rendered at the bottom of the list
@@ -417,16 +419,16 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
     	});
 
 		// add onclick event handler
-		this.ulObj = jQuery(this.el.createChild(html).dom);
-		this.ulObj.click(function (event) {
+		this.ulObj = jQuery(this.el.createChild(html).dom)
+		.click(function (event) {
 			that.onClick(event);
 		});
 		
 		// add the expand button
 		this.panelButton = jQuery(
 			this.el.createChild('<button class="GENTICS_multisplit_toggle GENTICS_multisplit_toggle_open">&#160;</button>').dom
-		);
-		this.panelButton.click(function () {
+		)
+		.click(function () {
 			that.togglePanel();
 		});
     },
@@ -470,7 +472,7 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 		if (this.activeItem == name) {
 			return;
 		}
-
+		
 		for (var i=0; i < this.items.length; i++) {
 			if (this.items[i].name == name) {
 				// found the item
@@ -493,7 +495,7 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 	setActiveDOMElement: function(el) {
 		// when the component (or one of its owners) is currently hidden, we need to set the active item later
     	var ct = this;
-    	while (typeof ct != 'undefined') {
+    	while (typeof ct !== 'undefined') {
     		if (ct.hidden) {
     			this.activeDOMElement = el;
     			return;
@@ -514,8 +516,10 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 		if (el && this.ulObj) {
 			this.ulObj.css('margin-top', 0);
 			var top = el.position().top;
-			this.ulObj.css('margin-top', - top + 6);
-			this.ulObj.css('height', 46 + top - 6);
+			this.ulObj.css({
+				'margin-top': - top + 6,
+				'height': 46 + top - 6
+			});
 		}
 
 		this.activeDOMElement = undefined;
@@ -544,26 +548,31 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 			return;
 		}
 		
+		var o = this.wrapper.offset();
+		
     	// detach the ul element and reattach it onto the body
-		this.ulObj.appendTo(jQuery(document.body));
-		this.ulObj.addClass('GENTICS_multisplit-expanded');
-		this.ulObj.mousedown(function (e) {
+		this.ulObj
+		.appendTo(jQuery('body'))
+		.addClass('GENTICS_multisplit-expanded')
+		.mousedown(function (e) {
 			e.stopPropagation();
-		});
+		})
 
 		// relocate the ul
-		var o = this.wrapper.offset();
-		this.ulObj.css('top', o.top - 1);
-		this.ulObj.css('left', o.left - 1);
+		.css({
+			'top': o.top - 1,
+			'left': o.left - 1
+		})
 
 		// display expand animation
-		this.ulObj.animate({
+		.animate({
 			height: this.ulObj.attr('scrollHeight')
 		});
 
 		// TODO change to css
-		this.panelButton.removeClass('GENTICS_multisplit_toggle_open');
-		this.panelButton.addClass('GENTICS_multisplit_toggle_close');
+		this.panelButton
+			.removeClass('GENTICS_multisplit_toggle_open')
+			.addClass('GENTICS_multisplit_toggle_close');
 		this.panelOpened = true;
     },
 
@@ -577,12 +586,14 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 			return;
 		}
 
-		this.ulObj.removeClass('GENTICS_multisplit-expanded');
-		this.ulObj.appendTo(this.wrapper);
+		this.ulObj
+			.removeClass('GENTICS_multisplit-expanded')
+			.appendTo(this.wrapper);
 
 		// TODO change to css
-		this.panelButton.addClass('GENTICS_multisplit_toggle_open');
-		this.panelButton.removeClass('GENTICS_multisplit_toggle_close');
+		this.panelButton
+			.addClass('GENTICS_multisplit_toggle_open')
+			.removeClass('GENTICS_multisplit_toggle_close');
 		this.panelOpened = false;
 	},
 	
@@ -657,64 +668,68 @@ GENTICS.Aloha.ui.MultiSplitButton = function(properties) {
  */
 GENTICS.Aloha.ui.MultiSplitButton.idCounter = 0;
 
-/**
- * Generate a unique id for the button
- * @return unique id
- * @hide
- */
-GENTICS.Aloha.ui.MultiSplitButton.prototype.generateId = function () {
-	GENTICS.Aloha.ui.MultiSplitButton.idCounter = GENTICS.Aloha.ui.MultiSplitButton.idCounter + 1;
-	return 'GENTICS_Aloha_ui_MultiSplitButton_' + GENTICS.Aloha.ui.MultiSplitButton.idCounter;
-};
+GENTICS.Aloha.ui.MultiSplitButton.prototype = {
+	/**
+	 * Generate a unique id for the button
+	 * @return unique id
+	 * @hide
+	 */
+	generateId: function () {
+		GENTICS.Aloha.ui.MultiSplitButton.idCounter = GENTICS.Aloha.ui.MultiSplitButton.idCounter + 1;
+		return 'GENTICS_Aloha_ui_MultiSplitButton_' + GENTICS.Aloha.ui.MultiSplitButton.idCounter;
+	},
 
-/**
- * Return an object containing the config properties to generate this button
- * @return config properties
- * @hide
- */
-GENTICS.Aloha.ui.MultiSplitButton.prototype.getExtConfigProperties = function() {
-	return {
-		'xtype' : 'genticsmultisplitbutton',
-		'items' : this.items,
-		'id' : this.id
-	};
-};
+	/**
+	 * Return an object containing the config properties to generate this button
+	 * @return config properties
+	 * @hide
+	 */
+	getExtConfigProperties: function() {
+		return {
+			'xtype' : 'genticsmultisplitbutton',
+			'items' : this.items,
+			'id' : this.id
+		};
+	},
 
-/**
- * Set the active item of the multisplitbutton
- * @param {String} name	name of the item to be set active
- */
-GENTICS.Aloha.ui.MultiSplitButton.prototype.setActiveItem = function(name) {
-	this.extButton.setActiveItem(name);
-};
-
-/**
- * check whether the multisplit button is visible
- * @return boolean true if visible
- */
-GENTICS.Aloha.ui.MultiSplitButton.prototype.isVisible = function() {
-	// if all items are hidden, disable this item
-	for (var i=0; i<this.items.length; i++) {
-		// if just one item is visible that's enough
-		if (this.items[i].visible) {
-			return true;
+	/**
+	 * Set the active item of the multisplitbutton
+	 * @param {String} name	name of the item to be set active
+	 */
+	setActiveItem: function(name) {
+		if (typeof name !== 'undefined') {
+			this.extButton.setActiveItem(name);
 		}
+	},
+
+	/**
+	 * check whether the multisplit button is visible
+	 * @return boolean true if visible
+	 */
+	isVisible: function() {
+		// if all items are hidden, disable this item
+		for (var i=0; i<this.items.length; i++) {
+			// if just one item is visible that's enough
+			if (this.items[i].visible) {
+				return true;
+			}
+		}
+		return false;
+	},
+
+	/**
+	 * shows an item of the multisplit button
+	 * @param {String} name the item's name
+	 */
+	showItem: function(name) {
+		this.extButton.showItem(name);
+	},
+
+	/**
+	 * hides an item of the multisplit button
+	 * @param {String} name the item's name
+	 */
+	hideItem: function(name) {
+		this.extButton.hideItem(name);
 	}
-	return false;
-};
-
-/**
- * shows an item of the multisplit button
- * @param {String} name the item's name
- */
-GENTICS.Aloha.ui.MultiSplitButton.prototype.showItem = function(name) {
-	this.extButton.showItem(name);
-};
-
-/**
- * hides an item of the multisplit button
- * @param {String} name the item's name
- */
-GENTICS.Aloha.ui.MultiSplitButton.prototype.hideItem = function(name) {
-	this.extButton.hideItem(name);
 };
