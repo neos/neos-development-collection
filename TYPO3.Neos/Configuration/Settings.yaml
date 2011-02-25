@@ -15,7 +15,7 @@ FLOW3:
         DefaultProvider:
           providerClass: PersistedUsernamePasswordProvider
           entryPoint:
-            webRedirect:
+            WebRedirect:
               uri: typo3/login
       authenticationStrategy: oneToken
   mvc:
