@@ -8,7 +8,7 @@
 	<script>
 		document.cookie = "TYPO3_lastVisitedNode={node.context.currentNode.path};path=/";
 	</script>
-<f:security.ifAccess resource="F3_TYPO3_BackendController">
+<f:security.ifAccess resource="F3_TYPO3_Backend_BackendController">
 <f:alias map="{liveWorkspaceName: 'live'}"><f:if condition="{node.context.workspace.name} != {liveWorkspaceName}">
 	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent"/>
 	<ext:include theme="xtheme-gray"/>

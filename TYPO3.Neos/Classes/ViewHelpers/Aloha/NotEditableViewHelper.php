@@ -53,7 +53,7 @@ class NotEditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function render() {
-		if ($this->hasAccessToResource('F3_TYPO3_BackendController')) {
+		if ($this->hasAccessToResource('F3_TYPO3_Backend_BackendController')) {
 			$this->tag->setContent($this->renderChildren());
 			$this->tag->addAttribute('class', 'f3-typo3-notEditable');
 			return $this->tag->render();
