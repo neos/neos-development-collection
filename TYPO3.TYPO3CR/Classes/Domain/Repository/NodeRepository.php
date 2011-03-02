@@ -31,6 +31,54 @@ namespace F3\TYPO3CR\Domain\Repository;
 class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 
 	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $addedObjects;
+
+	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $removedObjects;
+
+	/**
+	 * Adds an object to the persistence.
+	 *
+	 * @param object $object The object to add
+	 * @return void
+	 * @api
+	 */
+	public function add($object) {
+		$this->addedObjects->attach($object);
+		$this->removedObjects->detach($object);
+		parent::add($object);
+	}
+
+	/**
+	 * Removes an object to the persistence.
+	 *
+	 * @param object $object The object to remove
+	 * @return void
+	 * @api
+	 */
+	public function remove($object) {
+		if ($this->addedObjects->contains($object)) {
+			$this->addedObjects->detach($object);
+		} else {
+			$this->removedObjects->attach($object);
+		}
+		parent::remove($object);
+	}
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->addedObjects = new \SplObjectStorage();
+		$this->removedObjects = new \SplObjectStorage();
+		parent::__construct();
+	}
+
+	/**
 	 * Finds a node by its path and workspace.
 	 *
 	 * If the node does not exist in the specified workspace, this function will
@@ -295,7 +343,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 				}
 			}
 			if (count($excludeContentTypeConstraints) > 0) {
-				$constraints[] = $query->logicalAnd($excludeContentTypeConstraints);
+				$constraints = array_merge($excludeContentTypeConstraints, $constraints);
 			}
 			if (count($includeContentTypeConstraints) > 0) {
 				$constraints[] = $query->logicalOr($includeContentTypeConstraints);

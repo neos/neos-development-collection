@@ -32,6 +32,15 @@ namespace F3\TYPO3CR\Domain\Model;
 class Workspace {
 
 	/**
+	 * This ID is only for the ORM.
+	 *
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
+	*/
+	protected $id;
+
+	/**
 	 * @var string
 	 * @identity
 	 * @validate StringLength(minimum = 1, maximum = 200)
@@ -45,6 +54,7 @@ class Workspace {
 	 * as long as they are not modified in this workspace.
 	 *
 	 * @var \F3\TYPO3CR\Domain\Model\Workspace
+	 * @ManyToOne
 	 */
 	protected $baseWorkspace;
 
@@ -52,6 +62,8 @@ class Workspace {
 	 * Root node of this workspace
 	 *
 	 * @var \F3\TYPO3CR\Domain\Model\Node
+	 * @ManyToOne(cascade={"persist"})
+	 * @JoinColumn(referencedColumnName="id")
 	 */
 	protected $rootNode;
 

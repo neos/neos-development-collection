@@ -32,6 +32,15 @@ namespace F3\TYPO3CR\Domain\Model;
 class ContentType {
 
 	/**
+	 * This ID is only for the ORM.
+	 *
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
+	*/
+	protected $id;
+
+	/**
 	 * Name of this content type. Example: "TYPO3CR:Folder"
 	 *
 	 * @var string
@@ -41,9 +50,13 @@ class ContentType {
 	/**
 	 * Content types this content type directly inherits from
 	 *
-	 * @var array<\F3\TYPO3CR\Domain\Model\ContentType>
+	 * @var \Doctrine\Common\Collections\ArrayCollection<\F3\TYPO3CR\Domain\Model\ContentType>
+	 * @ManyToMany
+	 * @JoinTable(name="contentTypesDeclaredSuperTypes",
+	 *      joinColumns={@JoinColumn(name="declaredSuperTypeId", referencedColumnName="id")}
+	 *      )
 	 */
-	protected $declaredSuperTypes = array();
+	protected $declaredSuperTypes;
 
 	/**
 	 * Constructs this content type
@@ -53,6 +66,7 @@ class ContentType {
 	 */
 	public function __construct($name) {
 		$this->name = $name;
+		$this->declaredSuperTypes = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 
 	/**
@@ -68,11 +82,11 @@ class ContentType {
 	/**
 	 * Declares the super types this content type inherits from.
 	 *
-	 * @param array<\F3\TYPO3CR\Domain\Model\ContentType> $types
+	 * @param \Doctrine\Common\Collections\ArrayCollection<\F3\TYPO3CR\Domain\Model\ContentType> $types
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setDeclaredSuperTypes(array $types) {
+	public function setDeclaredSuperTypes(\Doctrine\Common\Collections\ArrayCollection $types) {
 		foreach ($types as $type) {
 			if (!$type instanceof \F3\TYPO3CR\Domain\Model\ContentType) {
 				throw new \InvalidArgumentException('$types must be an array of ContentType objects', 1291300950);
@@ -85,7 +99,7 @@ class ContentType {
 	 * Returns the direct, explicitly declared super types
 	 * of this content type.
 	 *
-	 * @return array<\F3\TYPO3CR\Domain\Model\ContentType>
+	 * @return \Doctrine\Common\Collections\ArrayCollection<\F3\TYPO3CR\Domain\Model\ContentType>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaredSuperTypes() {

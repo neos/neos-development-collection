@@ -37,6 +37,15 @@ class Node {
 	const LABEL_MAXIMUM_CHARACTERS = 30;
 
 	/**
+	 * This ID is only for the ORM.
+	 *
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
+	*/
+	protected $id;
+
+	/**
 	 * Absolute path of this node
 	 *
 	 * @var string
@@ -48,6 +57,8 @@ class Node {
 	 * Workspace this node is contained in
 	 *
 	 * @var \F3\TYPO3CR\Domain\Model\Workspace
+	 * @ManyToOne(cascade={"persist"})
+	 * @JoinColumn(onDelete="SET NULL")
 	 */
 	protected $workspace;
 
@@ -69,22 +80,24 @@ class Node {
 	 * Index within the nodes with the same parent
 	 *
 	 * @var integer
+	 * @Column(name="sorting_index",nullable=true)
 	 */
 	protected $index;
 
 	/**
 	 * Properties of this Node
 	 *
-	 * @var array
+	 * @var array<mixed>
 	 */
 	protected $properties = array();
 
 	/**
 	 * An optional object which contains the content of this node
 	 *
-	 * @var object
+	 * @var \F3\TYPO3CR\Domain\Model\ContentObjectProxy
+	 * @ManyToOne(cascade={"all"})
 	 */
-	protected $contentObject;
+	protected $contentObjectProxy;
 
 	/**
 	 * The content type of this node
@@ -381,10 +394,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperty($propertyName, $value) {
-		if (!is_object($this->contentObject)) {
+		if (!is_object($this->contentObjectProxy)) {
 			$this->properties[$propertyName] = $value;
-		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObject, $propertyName)) {
-			\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->contentObject, $propertyName, $value);
+		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
+			\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->contentObjectProxy->getObject(), $propertyName, $value);
 		}
 	}
 
@@ -399,8 +412,8 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasProperty($propertyName) {
-		if (is_object($this->contentObject)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObject, $propertyName);
+		if (is_object($this->contentObjectProxy)) {
+			return \F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
 		} else {
 			return isset($this->properties[$propertyName]);
 		}
@@ -418,10 +431,10 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($propertyName) {
-		if (!is_object($this->contentObject)) {
+		if (!is_object($this->contentObjectProxy)) {
 			return isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
-		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObject, $propertyName)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObject, $propertyName);
+		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
+			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
 		}
 		throw new \F3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObject)), 1291286995);
 	}
@@ -436,8 +449,8 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties() {
-		if (is_object($this->contentObject)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->contentObject);
+		if (is_object($this->contentObjectProxy)) {
+			return \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
 		} else {
 			return $this->properties;
 		}
@@ -450,8 +463,8 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyNames() {
-		if (is_object($this->contentObject)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObject);
+		if (is_object($this->contentObjectProxy)) {
+			return \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObjectProxy->getObject());
 		} else {
 			return array_keys($this->properties);
 		}
@@ -468,7 +481,7 @@ class Node {
 		if (!is_object($contentObject)) {
 			throw new \InvalidArgumentException('Argument must be an object, ' . \gettype($contentObject) . ' given.', 1283522467);
 		}
-		$this->contentObject = $contentObject;
+		$this->contentObjectProxy = new ContentObjectProxy($contentObject);
 	}
 
 	/**
@@ -478,7 +491,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentObject() {
-		return $this->contentObject;
+		return ($this->contentObjectProxy !== NULL ? $this->contentObjectProxy->getObject(): NULL);
 	}
 
 	/**
@@ -488,7 +501,7 @@ class Node {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetContentObject() {
-		$this->contentObject = NULL;
+		$this->contentObjectProxy = NULL;
 	}
 
 	/**

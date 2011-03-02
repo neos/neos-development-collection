@@ -34,14 +34,25 @@ namespace F3\TYPO3CR\Domain\Model;
 class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 
 	/**
+	 * This ID is only for the ORM.
+	 *
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
+	*/
+	protected $id;
+
+	/**
 	 * The original node this proxy refers to
 	 *
 	 * @var \F3\TYPO3CR\Domain\Model\Node
+	 * @ManyToOne
 	 */
 	protected $originalNode;
 
 	/**
 	 * @var \F3\TYPO3CR\Domain\Model\Node
+	 * @ManyToOne
 	 */
 	protected $newNode;
 
