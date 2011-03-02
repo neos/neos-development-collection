@@ -89,7 +89,9 @@ F3.TYPO3.UserInterface.I18n = {
 				valueDoesNotMatchPattern: 'The given subject did not match the pattern.',
 				welcome: 'Welcome',
 				workspaceHasNoUnpublishedContent: 'The current workspace does not contain any unpublished content.',
-				workspaceOverview: 'Workspace overview'
+				workspaceOverview: 'Workspace overview',
+				orderSelectDrag: 'Place this page.',
+				orderSelectAddNew: 'Add new page here'
 			}
 		}
 	},

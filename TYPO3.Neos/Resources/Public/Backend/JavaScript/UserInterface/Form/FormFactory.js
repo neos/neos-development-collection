@@ -1,4 +1,4 @@
-Ext.ns("F3.TYPO3.UserInterface.Form");
+Ext.ns('F3.TYPO3.UserInterface.Form');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -30,7 +30,7 @@ Ext.ns("F3.TYPO3.UserInterface.Form");
  * @extends Ext.util.Observable
  *
  * @singleton
- * @todo: why does the form factory extnd OBSERVABLE?
+ * @todo: why does the form factory extend OBSERVABLE?
  */
 F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 	/**
@@ -77,7 +77,9 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 			type = defaultType;
 		}
 
-		if (type == 'form') {
+		if (type === 'custom') {
+			return definition;
+		} else if (type === 'form') {
 			schemaDefinition = registry.get('schema/type/' + objectType);
 			config = {
 				xtype: 'F3.TYPO3.UserInterface.Form.GenericForm',
@@ -91,8 +93,11 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 					create: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.create)
 				}
 			};
+			if (definition.layout !== undefined) {
+				Ext.apply(config, {layout: definition.layout});
+			}
 			childDefaultType = 'field';
-		} else if (type == 'field') {
+		} else if (type === 'field') {
 			schemaPropertyDefinition = registry.get('schema/type/' + objectType + '/properties/' + definition.property);
 			fieldType = schemaPropertyDefinition.type;
 			config = F3.TYPO3.Utils.clone(registry.get('form/editor/' + fieldType));
@@ -123,12 +128,22 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 		}
 
 		if (definition.children !== undefined) {
-			config.items = [];
-			Ext.each(definition.children, function(child) {
-				config.items.push(this._processDefinition(child, objectType, childDefaultType));
-			}, this);
+			config.items = this.getChildren(definition.children, objectType, childDefaultType);
 		}
 
 		return config;
+	},
+
+	getChildren: function(children, objectType, childDefaultType) {
+		var items = [];
+		Ext.each(children, function(child) {
+			var config = this._processDefinition(child, objectType, childDefaultType);
+			if (config === undefined) return;
+			if (child.children !== undefined) {
+				config.items = this.getChildren(child.children, objectType, childDefaultType);
+			}
+			items.push(config);
+		}, this);
+		return items;
 	}
 }));

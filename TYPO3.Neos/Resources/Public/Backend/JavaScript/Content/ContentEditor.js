@@ -77,7 +77,7 @@ F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 	 * @return {void}
 	 */
 	loadPage: function(uri) {
-		this._getIframeDocument().location.assign(uri);
+		this._getIframeDocument().location.assign(Ext.select('base').first().getAttribute('href') + uri);
 	},
 
 	/**

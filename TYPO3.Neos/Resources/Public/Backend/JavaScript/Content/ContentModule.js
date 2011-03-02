@@ -1,4 +1,4 @@
-Ext.ns("F3.TYPO3.Content");
+Ext.ns('F3.TYPO3.Content');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -110,7 +110,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 
 			// This will come from the server later on
 		registry.set('schema/type', {
-			"TYPO3:Page": {
+			'TYPO3:Page': {
 				service: {
 					show: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.show',
 					update: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update',
@@ -143,7 +143,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 
 			// Set forms for default types
 		registry.set('form/type', {
-			"TYPO3:Page": {
+			'TYPO3:Page': {
 				standard: {
 					title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'page'),
 					children: [{
@@ -169,16 +169,30 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				},
 				create: {
 					title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'createPage'),
+					layout: 'hbox',
 					children: [{
-						key: 'nodeName',
-						type: 'field',
-						property: 'nodeName',
-						title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'nodeName')
+						type: 'custom',
+						xtype: 'container',
+						layout: 'form',
+						flex: 3,
+						children: [{
+							key: 'nodeName',
+							property: 'nodeName',
+							title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'nodeName')
+						}, {
+							key: 'title',
+							property: 'properties.title',
+							title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageTitle')
+						}]
 					}, {
-						key: 'title',
-						type: 'field',
-						property: 'properties.title',
-						title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageTitle')
+						type: 'custom',
+						xtype: 'container',
+						flex: 1,
+						children: [{
+							type: 'custom',
+							xtype: 'F3.TYPO3.Components.OrderSelect',
+							id: 'F3.TYPO3.Content.ContentModule.create'
+						}]
 					}]
 				}
 			}
