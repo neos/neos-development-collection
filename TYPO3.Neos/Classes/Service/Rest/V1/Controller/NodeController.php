@@ -25,6 +25,7 @@ namespace F3\TYPO3\Service\Rest\V1\Controller;
 /**
  * REST Controller for managing Nodes
  *
+ * @scope singleton
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class NodeController extends \F3\FLOW3\MVC\Controller\RestController {

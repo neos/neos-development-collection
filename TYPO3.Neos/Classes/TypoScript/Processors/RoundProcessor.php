@@ -56,7 +56,7 @@ class RoundProcessor implements \F3\TypoScript\ProcessorInterface {
 	 *
 	 * @param float/string $subject The subject to round.
 	 * @return float Rounded value
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Sebastian KurfÃ¼rst <sebastian@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {

@@ -26,6 +26,7 @@ namespace F3\TYPO3\Service\ExtDirect\V1\Controller;
  * ExtDirect Controller for managing Workspaces
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope singleton
  */
 class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 

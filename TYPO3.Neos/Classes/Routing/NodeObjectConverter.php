@@ -29,6 +29,7 @@ namespace F3\TYPO3\Routing;
  * This converter is registered automatically because it implements ObjectConverterInerface.
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope singleton
  */
 class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface {
 
