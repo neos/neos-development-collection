@@ -32,6 +32,15 @@ namespace F3\TYPO3\Domain\Model;
 class Domain  {
 
 	/**
+	 * This ID is only for the ORM.
+	 *
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
+	*/
+	protected $id;
+
+	/**
 	 * @var string
 	 * @validate StringLength(minimum = 1, maximum = 255)
 	 */
@@ -39,6 +48,7 @@ class Domain  {
 
 	/**
 	 * @var \F3\TYPO3\Domain\Model\Site
+	 * @ManyToOne
 	 * @validate NotEmpty
 	 */
 	protected $site;

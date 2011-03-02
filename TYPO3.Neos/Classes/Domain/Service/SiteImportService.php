@@ -116,7 +116,7 @@ class SiteImportService {
 			$folderContentType = $this->contentTypeManager->createContentType('TYPO3CR:Folder');
 
 			$pageContentType = $this->contentTypeManager->createContentType('TYPO3:Page');
-			$pageContentType->setDeclaredSuperTypes(array($folderContentType));
+			$pageContentType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($folderContentType)));
 
 			$this->contentTypeManager->createContentType('TYPO3:Section');
 			$this->contentTypeManager->createContentType('TYPO3:Text');
