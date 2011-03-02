@@ -26,6 +26,7 @@ namespace F3\TYPO3CR\Domain\Repository;
  * The repository for content types
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope singleton
  */
 class ContentTypeRepository extends \F3\FLOW3\Persistence\Repository {
 
