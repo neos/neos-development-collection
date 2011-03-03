@@ -90,7 +90,8 @@ F3.TYPO3.UserInterface.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 					load: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.show),
 					submit: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
 					update: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
-					create: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.create)
+					create: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.create),
+					move: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.move)
 				}
 			};
 			if (definition.layout !== undefined) {

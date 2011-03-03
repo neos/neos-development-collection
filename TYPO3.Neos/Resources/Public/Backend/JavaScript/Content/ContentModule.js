@@ -72,6 +72,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				xtype: 'F3.TYPO3.UserInterface.ViewFilterToolbar'
 			}
 		});
+
 		registry.append('menu/main/content[]', 'edit', {
 			itemId: 'edit',
 			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'edit'),
@@ -82,6 +83,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageProperties'),
 			iconCls: 'F3-TYPO3-Content-icon-pageProperties'
 		});
+		registry.append('menu/main/content[]', 'movePage', {
+			itemId: 'movePage',
+			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'movePage'),
+			iconCls: 'F3-TYPO3-Content-icon-movePage'
+		});
+
 		registry.append('menu/main/content[]', 'createPage', {
 			itemId: 'Create',
 			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'createPage'),
@@ -115,6 +122,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 					show: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.show',
 					update: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update',
 					create: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create',
+					move: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.move',
 						// "delete" is a special case because it's a reserved keyword.
 						// Because of this, it needs to be quoted on the left side.
 					'delete': 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.delete'
@@ -165,6 +173,21 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 						type: 'field',
 						property: 'properties.title',
 						title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'pageTitle')
+					}]
+				},
+				move: {
+					title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'movePage'),
+					layout: 'hbox',
+					children: [{
+						type: 'custom',
+						xtype: 'container',
+						flex: 1,
+						children: [{
+							type: 'custom',
+							xtype: 'F3.TYPO3.Components.OrderSelect',
+							id: 'F3.TYPO3.Content.ContentModule.move',
+							move: true
+						}]
 					}]
 				},
 				create: {
@@ -218,6 +241,15 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				{
 					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
 					okButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'updatePage'),
+					cancelButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'cancel'),
+					mode: 'positive'
+				}
+			);
+			userInterfaceModule.moduleDialogOn('menu/main/content[]/movePage',
+				{xtype: 'F3.TYPO3.Content.Edit.MovePageDialog'},
+				{
+					xtype: 'F3.TYPO3.UserInterface.ContentDialog',
+					okButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'movePage'),
 					cancelButton: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'cancel'),
 					mode: 'positive'
 				}

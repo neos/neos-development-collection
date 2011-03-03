@@ -54,6 +54,7 @@ F3.TYPO3.UserInterface.I18n = {
 				couldNotExtraBaseURI: 'Base URI could not be extracted',
 				currentlyLoading: 'Loading...',
 				currentlySaving: 'Saving...',
+				movePage: 'Move this page',
 				createPage: 'Create page',
 				confirm: 'Confirm',
 				'delete': 'Delete', // quoted on the left-side since deleted is reserved

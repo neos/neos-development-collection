@@ -8,6 +8,9 @@
 .F3-TYPO3-Content-icon-pageProperties {
 	background-image: url('../Images/UserInterface/Icons/ContentEditPageProperties.png') !important;
 }
+.F3-TYPO3-Content-icon-movePage {
+	background-image: url('../Images/UserInterface/Icons/ContentMovePage.gif') !important;
+}
 .F3-TYPO3-Content-icon-createPage {
 	background-image: url('../Images/UserInterface/Icons/ContentCreatePage.gif') !important;
 }

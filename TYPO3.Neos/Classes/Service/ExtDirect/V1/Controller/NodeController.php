@@ -98,6 +98,21 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
+	 * Return child nodes of specified node with all details and
+	 * metadata.
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param string $contentTypeFilter
+	 * @param integer $depth levels of childNodes (0 = unlimited)
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @extdirect
+	 */
+	public function getChildNodesFromParentAction(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter, $depth) {
+		$this->getChildNodesAction($node->getParent(), $contentTypeFilter, $depth);
+	}
+
+	/**
 	 * Creates a new node
 	 *
 	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
@@ -150,6 +165,42 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			->setFormat('html')
 			->setCreateAbsoluteUri(TRUE)
 			->uriFor('show', array('node' => $newNode, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
+		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
+	}
+
+	/**
+	 * Move $node before, into or after $targetNode
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param \F3\TYPO3CR\Domain\Model\Node $targetNode
+	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
+	 * @return void
+	 * @author Aske Ertmann <aske@mocsystems.com>
+	 * @extdirect
+	 */
+	public function moveAction(\F3\TYPO3CR\Domain\Model\Node $node, \F3\TYPO3CR\Domain\Model\Node $targetNode, $position) {
+		if (!in_array($position, array(-1, 0, 1), TRUE)) {
+			throw new \F3\TYPO3CR\Exception\NodeException('The position should be one of the following: -1, 0, 1.', 1296132542);
+		}
+
+		switch ($position) {
+			case -1:
+				$node->moveBefore($targetNode);
+				break;
+			case 0:
+				//@TODO: Create a moveInto action on the node domain
+				//$node->moveInto($targetNode);
+				break;
+			case 1:
+				$node->moveAfter($targetNode);
+				break;
+		}
+
+		$nextUri = $this->uriBuilder
+			->reset()
+			->setFormat('html')
+			->setCreateAbsoluteUri(TRUE)
+			->uriFor('show', array('node' => $node, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 

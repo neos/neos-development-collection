@@ -38,6 +38,9 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 	autoWidth: true,
 	hideHeaders: true,
 	autoExpandColumn: 'title',
+	dragableId: '',
+	move: false,
+	stripeRows: true,
 	columns: [
 		{
 			id: 'id',
@@ -47,29 +50,13 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			dataIndex: 'title'
 		}
 	],
-	viewConfig: {
-		getRowClass: function(record) {
-			if (record.get('id') === -1) {
-				return 'dragable-row';
-			}
-			return 'undragable-row';
-		}
-	},
 	context: {
 		'__context': {
-			workspaceName: '',
-			nodePath: ''
+			nodePath: '',
+			workspaceName: ''
 		}
 	},
 	position: 0,
-	sm: new Ext.grid.RowSelectionModel({
-		singleSelect: true,
-		listeners: {
-			beforerowselect: function(sm, i, ke, row) {
-				return (parseInt(row.data.id, 10) === -1);
-			}
-		}
-	}),
 	listeners: {
 		'viewready': function(scope) {
 			var store = scope.getStore(),
@@ -79,20 +66,18 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			scope.selectDragable();
 			// Make sure only the dragable element can be dragged
 			view.dragZone.onBeforeDrag = function(data) {
-				return (parseInt(store.getAt(data.rowIndex).data.id, 10) === -1);
+				return (store.getAt(data.rowIndex).id === scope.dragableId);
 			};
 			// Create custom dropTarget
 			var ddrow = new Ext.dd.DropTarget(view.mainBody, {
 				ddGroup: 'orderSelect',
-				notifyDrop: function(dd, e, data) {
-					var rows = sm.getSelections();
+				notifyOver: function(dd, e, data) {
+					var row = sm.getSelected();
 					var cIndex = dd.getDragData(e).rowIndex;
-					if (sm.hasSelection()) {
-						for (i = 0; i < rows.length; i++) {
-							store.remove(store.getById(rows[i].id));
-							store.insert(cIndex, rows[i]);
-						}
-						sm.selectRecords(rows);
+					if (sm.hasSelection() && (cIndex !== undefined) && (store.indexOf(row) !== cIndex)) {
+						store.remove(store.getById(row.id));
+						store.insert(cIndex, row);
+						sm.selectRow(cIndex);
 						scope.updateContextAndPosition(cIndex);
 					}
 				}
@@ -106,13 +91,17 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {void}
 	 */
 	initComponent: function() {
-		var self = this;
+		var self = this,
+			context = Ext.getCmp('F3.TYPO3.Content.ContentEditor').getCurrentContext();
 
 		this.ddText = F3.TYPO3.UserInterface.I18n.get('TYPO3', 'orderSelectDrag');
 
 		var directFn = function(callback) {
-			var context = Ext.getCmp('F3.TYPO3.Content.ContentEditor').getCurrentContext();
-			F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(context, 'TYPO3:Page', 1, callback);
+			if(self.move) {
+				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent(context, 'TYPO3:Page', 1, callback);
+			} else {
+				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(context, 'TYPO3:Page', 1, callback);
+			}
 		};
 		directFn.directCfg = {
 			method: {
@@ -129,9 +118,25 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			fields: [],
 			listeners: {
 				'load': function(store) {
-					var new_page = new Ext.data.Record({'id': -1, 'title': F3.TYPO3.UserInterface.I18n.get('TYPO3', 'orderSelectAddNew')});
-					store.add(new_page);
+					var dragableId;
+					if(self.move) {
+						dragableId = context.__context.nodePath;
+					} else {
+						var dragable = new Ext.data.Record({'title': F3.TYPO3.UserInterface.I18n.get('TYPO3', 'orderSelectAddNew')});
+						store.insert(0, dragable);
+						dragableId = dragable.id;
+					}
+					self.dragableId = dragableId;
 					self.selectDragable();
+				}
+			}
+		});
+
+		this.sm = new Ext.grid.RowSelectionModel({
+			singleSelect: true,
+			listeners: {
+				beforerowselect: function(sm, i, ke, row) {
+					return (row.id === self.dragableId);
 				}
 			}
 		});
@@ -173,8 +178,8 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 	 * @return {void}
 	 */
 	selectDragable: function() {
-		var dragable = this.getStore().findExact('id', -1);
-		// FindExact returns -1 if not found
+		var dragable = this.getStore().indexOfId(this.dragableId);
+		// indexOfId returns -1 if not found
 		if (dragable !== -1) {
 			this.getSelectionModel().selectRow(dragable);
 			this.updateContextAndPosition(dragable);

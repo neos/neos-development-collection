@@ -2,23 +2,6 @@
 	color: #000000;
 }
 
-.F3-TYPO3-Components-OrderSelect ul {
-	border: 1px solid #000000;
-	background-color: #ffffff;
-}
-
-.F3-TYPO3-Components-OrderSelect ul li {
-	margin: 5px;
-	color: #000000;
-	padding: 0px 16px;
-	background: #B9B9B9;
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#ffffff), to(#B9B9B9));
-	background: -moz-linear-gradient(center top , #FFFFFF, #B9B9B9) repeat scroll 0 0 transparent;
-	-moz-box-shadow: 0 0 3px #3F3F3F;
-	-webkit-box-shadow: 0 0 3px #3F3F3F;
-	height: 23px;
-	font-size: 10px;
-
-	/* Scale to the width of the button component */
+.F3-TYPO3-Components-OrderSelect .x-grid3-row-selected {
 	cursor: move;
 }
