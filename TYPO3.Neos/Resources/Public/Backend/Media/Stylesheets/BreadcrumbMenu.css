@@ -11,6 +11,7 @@
 
 .F3-TYPO3-UserInterface-BreadcrumbMenu span {
 	display: inline-block;
+	white-space: nowrap;
 }
 
 /**
