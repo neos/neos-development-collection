@@ -26,6 +26,7 @@ namespace F3\TYPO3\Domain\Repository;
  * The Site Repository
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope singleton
  * @api
  */
 class SiteRepository extends \F3\FLOW3\Persistence\Repository {
