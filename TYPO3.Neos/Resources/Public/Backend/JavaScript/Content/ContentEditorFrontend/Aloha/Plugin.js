@@ -264,6 +264,11 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 					var newContentElement = Ext.DomHelper.insertBefore(loadingIndicatorDom, Ext.util.Format.trim(response.responseText));
 					Ext.fly(loadingIndicatorDom).remove();
 					jQuery('.f3-typo3-editable', newContentElement).aloha();
+					// @todo: move this to another location since it's not for alohas
+					if(Ext.get(newContentElement).hasClass('f3-typo3-contentelement-html')) {
+						Ext.get(newContentElement).update(window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'enterSomeContent'));
+						new F3.TYPO3.Content.ContentEditorFrontend.Html.Editor(Ext.get(newContentElement));
+					}
 				}
 			});
 		},

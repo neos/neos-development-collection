@@ -78,6 +78,7 @@ F3.TYPO3.UserInterface.I18n = {
 				report: 'Report',
 				system: 'System',
 				'Twitter:LatestTweets': 'Latest tweets',
+				'TYPO3:Html': 'HTML',
 				'TYPO3:Section': 'Section',
 				'TYPO3:Text': 'Text',
 				unknownErrorOccurred: 'An unknown error occurred',
