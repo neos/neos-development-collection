@@ -74,7 +74,7 @@
 	border: 2px solid red;
 }
 
-/** Hide dropdown icon next to paragraph styles
+/** Hide dropdown icon next to paragraph styles **/
 button.GENTICS_multisplit_toggle_open,
 button.GENTICS_multisplit_toggle_close {
 	display: none;
