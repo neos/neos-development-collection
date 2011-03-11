@@ -21,80 +21,27 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer
+ * @class F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin
  *
- * Abstract initializer class. A ContentEditorFrontend initializer
- * loads a new ContentEditor into the frontend and registers it
- * in the ContentEditorFrontend.
+ * Abstract plugin class, implements basic functionality and required
+ * methods for a ContentEditor plugin.
  *
  * @namespace F3.TYPO3.Content.ContentEditorFrontend
   */
-F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer = {
+F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin = {
 
 	/**
-	 * Activated right now?
-	 * @var {Boolean}
+	 * Helper function which creates a JSON structure which can be mapped
+	 * to a TYPO3CR Node if used as argument for an Ext.Direct call.
+	 *
+	 * @param {jQuery} contentElement the Content Element container
+	 * @return {Object} a JSON object with the __context set correctly.
 	 * @private
 	 */
-	_enabled: false,
-
-	/**
-	 * Initializer, called on page load. Is used to register event
-	 * listeners on the core.
-	 *
-	 * @param {F3.TYPO3.Content.ContentEditorFrontend.Core} core
-	 * @return {void}
-	 */
-	initialize: function(core) {
-		core.on('afterPageLoad', function() {
-			this._loadOnStartup();
-		}, this);
-
-		core.on('enableEditing', this._enable, this);
-		core.on('disableEditing', this._disable, this);
-
-		core.on('loadNewlyCreatedContentElement', this.afterLoadNewContentElementHandler, this);
-	},
-
-	/**
-	 * Called when the loadNewlyCreatedContentElement event is thrown. Adds the editor
-	 * plugin frontend to the new element
-	 *
-	 * @param {DOMElement} newContentElement
-	 * @return {void}
-	 */
-	afterLoadNewContentElementHandler: function(newContentElement) {
-	},
-
-	/**
-	 * Loads after the page load.
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_loadOnStartup: function() {
-	},
-
-	/**
-	 * Enable editor
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_enable: function() {
-		this._enabled = true;
-	},
-
-	/**
-	 * Disable editor
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_disable: function() {
-		this._enabled = false;
+	_createNodeFromContentElement: function(contentElement) {
+		return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(contentElement.getAttribute('data-nodepath'), contentElement.getAttribute('data-workspacename'));
 	}
 
 };
 
-Ext.reg('F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer', F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer);
+Ext.reg('F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin', F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin);

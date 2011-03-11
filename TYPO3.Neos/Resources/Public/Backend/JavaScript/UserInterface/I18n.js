@@ -55,6 +55,7 @@ F3.TYPO3.UserInterface.I18n = {
 				currentlyLoading: 'Loading...',
 				currentlySaving: 'Saving...',
 				createPage: 'Create page',
+				confirm: 'Confirm',
 				'delete': 'Delete', // quoted on the left-side since deleted is reserved
 				deletePage: 'Delete page',
 				dropContentHere: 'Drop content here',
@@ -62,6 +63,7 @@ F3.TYPO3.UserInterface.I18n = {
 				errorOccurred: 'An Error occurred',
 				enterSomeContent: 'enter some content here',
 				floatingMenuTabAction: 'Actions',
+				htmlEditor: 'HTML Editor',
 				layout: 'Layout',
 				loading: 'Loading',
 				logout: 'logout',

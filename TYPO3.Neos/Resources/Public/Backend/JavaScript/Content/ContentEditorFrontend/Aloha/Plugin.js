@@ -132,7 +132,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 */
 		_saveChanges: function(editable) {
 			var currentContentElement = this._findParentContentElement(editable.obj);
-
 			var data = this._createNodeFromContentElement(currentContentElement);
 			data.properties = {};
 
@@ -221,13 +220,14 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 */
 		_onNewContentElementClick: function(nameOfContentType) {
 			var currentContentElement = this._findParentContentElement(GENTICS.Aloha.activeEditable.obj);
+
 			var data = this._createNodeFromContentElement(currentContentElement);
 
-			var loadingIndicatorDom = Ext.DomHelper.insertAfter(currentContentElement.get(0), '<div>' + window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'loading').toUpperCase() + '</div>');
-
-			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(data, {contentType: nameOfContentType}, 1, function(result) {
-				this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
-			}.createDelegate(this));
+			F3.TYPO3.Content.ContentEditorFrontend.Core.createNewContentElement(
+				nameOfContentType,
+				data,
+				currentContentElement.get(0)
+			);
 		},
 
 		/**
@@ -244,33 +244,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(this, data, function(result) {
 				currentContentElement.remove();
 			}.createDelegate(this));
-		},
-
-		/**
-		 * Load the newly created content element specified by uri, and replace
-		 * the loading indicator by it. After that, activate Aloha for the newly
-		 * inserted element.
-		 *
-		 * @param {String} uri URI of the content element
-		 * @param {DOMElement} loadingIndicatorDom DOM element which is replaced by the content element
-		 * @return {void}
-		 * @private
-		 */
-		_loadNewlyCreatedContentElement: function(uri, loadingIndicatorDom) {
-			Ext.Ajax.request({
-				url: uri,
-				method: 'GET',
-				success: function(response) {
-					var newContentElement = Ext.DomHelper.insertBefore(loadingIndicatorDom, Ext.util.Format.trim(response.responseText));
-					Ext.fly(loadingIndicatorDom).remove();
-					jQuery('.f3-typo3-editable', newContentElement).aloha();
-					// @todo: move this to another location since it's not for alohas
-					if(Ext.get(newContentElement).hasClass('f3-typo3-contentelement-html')) {
-						Ext.get(newContentElement).update(window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'enterSomeContent'));
-						new F3.TYPO3.Content.ContentEditorFrontend.Html.Editor(Ext.get(newContentElement));
-					}
-				}
-			});
 		},
 
 		/**
@@ -314,5 +287,5 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 				return localizedString;
 			}
 		}
-	}
+	}, F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin
 );
