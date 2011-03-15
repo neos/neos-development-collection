@@ -111,7 +111,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function createAction(\F3\TYPO3CR\Domain\Model\Node $referenceNode, array $nodeData, $position) {
-		if (!in_array($position, array(-1, 0, 1))) {
+		if (!in_array($position, array(-1, 0, 1), TRUE)) {
 			throw new \F3\TYPO3CR\Exception\NodeException('The position should be one of the following: -1, 0, 1.', 1296132542);
 		}
 
@@ -120,17 +120,17 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$nodeData['nodeName'] = uniqid();
 		}
 
-		if ($position == 0) {
+		if ($position === 0) {
 				// Place the new node in the referenceNode
 			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeData['contentType']);
 		} else {
 				// Place the node before or after the reference
 			$parentNode = $referenceNode->getParent();
-			$newNode = $parentNode->createNode(uniqid(), $nodeData['contentType']);
+			$newNode = $parentNode->createNode($nodeData['nodeName'], $nodeData['contentType']);
 
-			if ($position == -1) {
+			if ($position === -1) {
 				$newNode->moveBefore($referenceNode);
-			} elseif ($position == 1) {
+			} elseif ($position === 1) {
 				$newNode->moveAfter($referenceNode);
 			}
 		}
