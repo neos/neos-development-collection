@@ -45,7 +45,7 @@ class ContentTypeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setDeclaredSuperTypesExpectsAnArrayOfContentTypes() {
 		$folderType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Folder');
-		$folderType->setDeclaredSuperTypes(array('foo'));
+		$folderType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array('foo')));
 	}
 
 	/**
@@ -56,14 +56,14 @@ class ContentTypeTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$baseType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Base');
 
 		$folderType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Folder');
-		$folderType->setDeclaredSuperTypes(array($baseType));
+		$folderType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($baseType)));
 
 		$hideableContentType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3:HideableContent');
 		$pageType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3:Page');
 
-		$pageType->setDeclaredSuperTypes(array($folderType, $hideableContentType));
+		$pageType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($folderType, $hideableContentType)));
 
-		$this->assertEquals(array($folderType, $hideableContentType), $pageType->getDeclaredSuperTypes());
+		$this->assertEquals(array($folderType, $hideableContentType), $pageType->getDeclaredSuperTypes()->toArray());
 
 		$this->assertTrue($pageType->isOfType('TYPO3:Page'));
 		$this->assertTrue($pageType->isOfType('TYPO3:HideableContent'));

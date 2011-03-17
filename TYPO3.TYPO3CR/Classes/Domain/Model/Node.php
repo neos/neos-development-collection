@@ -397,7 +397,8 @@ class Node {
 		if (!is_object($this->contentObjectProxy)) {
 			$this->properties[$propertyName] = $value;
 		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
-			\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->contentObjectProxy->getObject(), $propertyName, $value);
+			$contentObject = $this->contentObjectProxy->getObject();
+			\F3\FLOW3\Reflection\ObjectAccess::setProperty($contentObject, $propertyName, $value);
 		}
 	}
 
@@ -436,7 +437,7 @@ class Node {
 		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
 			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
 		}
-		throw new \F3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObject)), 1291286995);
+		throw new \F3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObjectProxy->getObject())), 1291286995);
 	}
 
 	/**
