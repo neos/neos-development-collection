@@ -126,8 +126,8 @@ class SiteImportService {
 
 			try {
 				$this->importSitesFromPackage($packageKey);
-			} catch (\Exception $e) {
-				throw new \F3\FLOW3\Exception('Error: During import an exception occured. ' . $e->getMessage());
+			} catch (\Exception $exception) {
+				throw new \F3\FLOW3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360480, $exception);
 			}
 		}
 	}
@@ -156,8 +156,8 @@ class SiteImportService {
 
 		try {
 			$this->importSitesFromPackage($packageKey);
-		} catch (\Exception $e) {
-			throw new \F3\FLOW3\Exception('Error: During import an exception occured. ' . $e->getMessage());
+		} catch (\Exception $exception) {
+			throw new \F3\FLOW3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360479, $exception);
 		}
 	}
 

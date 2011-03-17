@@ -131,8 +131,8 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 			try {
 				$this->siteImportService->importPackage($packageKey);
 				$this->flashMessageContainer->add('Imported website data from "' . $packageKey . '/Resources/Content/Sites.xml"');
-			} catch (\Exception $e) {
-				$this->flashMessageContainer->add($e->getMessage());
+			} catch (\Exception $exception) {
+				$this->flashMessageContainer->add($exception->getMessage());
 				$this->redirect('index');
 			}
 		}
@@ -141,7 +141,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->personRepository->removeAll();
 		$this->createAdministrator($identifier, $password, $person);
 		$this->flashMessageContainer->flush();
- 		$this->redirect('show', 'Node');
+		$this->redirect('show', 'Node');
 	}
 
 	/**
