@@ -63,7 +63,14 @@ class Node extends \F3\TypoScript\AbstractContentObject {
 		parent::setNode($node);
 		$this->properties = $node->getProperties();
 
-		list($packageKey, $typeName) = explode(':', $node->getContentType());
+		$contentType = $node->getContentType();
+		if (strpos($contentType, ':') !== FALSE) {
+			list($packageKey, $typeName) = explode(':', $node->getContentType());
+		} else {
+			$packageKey = 'TYPO3';
+			$typeName = $contentType;
+		}
+
 		$possibleTemplateSource = 'resource://' . $packageKey . '/Private/Templates/TypoScriptObjects/' . $typeName . '.html';
 		if (file_exists($possibleTemplateSource)) {
 			$this->templateSource = $possibleTemplateSource;
