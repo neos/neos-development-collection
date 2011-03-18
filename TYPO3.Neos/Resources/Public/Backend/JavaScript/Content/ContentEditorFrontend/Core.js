@@ -79,6 +79,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 
 	/**
+	 * @event loadNewlyCreatedContentElement
+	 *
+	 * Thrown when a new content element is created, and added to the page
+	 */
+
+	/**
 	 * Initializer. Called on Ext.onReady().
 	 *
 	 * @return {void}
@@ -253,7 +259,55 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 			nodePath: nodePath
 		};
 		return data;
+	},
+
+	/**
+	 * Create a new content element on the page
+	 *
+	 * @param {string} nameOfContentType
+	 * @param {object} referenceNode
+	 * @param {DOMElement} referenceDomElement
+	 * @param {integer} position
+	 * @return {void}
+	 */
+	createNewContentElement: function(nameOfContentType, referenceNode, referenceDomElement, position) {
+		var position = !position || position == 1 ? 1 : -1;
+		var loadIndicatorContent = '<div>' + window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'loading').toUpperCase() + '</div>';
+
+		if (position == -1) {
+			var loadingIndicatorDom = Ext.DomHelper.insertBefore(referenceDomElement, loadIndicatorContent);
+		} else {
+			var loadingIndicatorDom = Ext.DomHelper.insertAfter(referenceDomElement, loadIndicatorContent);
+		}
+
+		window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(referenceNode, {contentType: nameOfContentType}, position, function(result) {
+			this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
+		}.createDelegate(this));
+	},
+
+	/**
+	 * Load the HTML source of the new content element using AJAX.
+	 * After that insert it, remove the loading indicator and fire the loadNewlyCreatedContentElement event
+	 *
+	 * @param {string} uri
+	 * @param {DOMElement} loadingIndicatorDom
+	 * @return {void}
+	 * @private
+	 */
+	_loadNewlyCreatedContentElement: function(uri, loadingIndicatorDom) {
+		var scope = this;
+
+		Ext.Ajax.request({
+			url: uri,
+			method: 'GET',
+			success: function(response) {
+				var newContentElement = Ext.DomHelper.insertBefore(loadingIndicatorDom, Ext.util.Format.trim(response.responseText));
+				Ext.fly(loadingIndicatorDom).remove();
+				scope.fireEvent('loadNewlyCreatedContentElement', newContentElement);
+			}
+		});
 	}
+
 });
 
 Ext.onReady(function() {

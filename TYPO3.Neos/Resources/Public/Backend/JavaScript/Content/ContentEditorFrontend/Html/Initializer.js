@@ -28,7 +28,7 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Html');
  * @namespace F3.TYPO3.Content.ContentEditorFrontend.Html
  * @singleton
  */
-F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply(F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer, {
+F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 
 	/**
 	 * Loads the editor after the page load.
@@ -38,13 +38,41 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply(F3.TYPO3.Con
 	 */
 	_loadOnStartup: function() {
 		var scope = this;
+		Ext.each(Ext.query('.f3-typo3-contentelement-html'), function(element) {
+			scope._attachEventListeners(element);
+		});
+	},
 
-		Ext.select('.f3-typo3-contentelement-html', true).on('dblclick', function(event, element) {
-			element = Ext.get(element).findParent('.f3-typo3-contentelement-html', 10, true);
-			new F3.TYPO3.Content.ContentEditorFrontend.Html.Editor(element);
+	/**
+	 * Called when the loadNewlyCreatedContentElement event is thrown. Adds the editor
+	 * plugin frontend to the new element
+	 *
+	 * @param {DOMElement} newContentElement
+	 * @return {void}
+	 */
+	afterLoadNewContentElementHandler: function(newContentElement) {
+		if(Ext.get(newContentElement).hasClass('f3-typo3-contentelement-html')) {
+			Ext.get(newContentElement).update(window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'enterSomeContent'));
+			this._attachEventListeners(Ext.get(newContentElement));
+			// @todo: make a new instance now and on dblClick? Find a way to optimize this later on
+			new F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin(Ext.get(newContentElement));
+		}
+	},
+
+	/**
+	 * Atach the event listeners to an instance of the HTML plugin
+	 *
+	 * @param {Ext.Element} element
+	 * @return {void}
+	 */
+	_attachEventListeners: function(element) {
+		element = Ext.get(element).findParent('.f3-typo3-contentelement-html', 10, true);
+		element.on('dblclick', function(event, element) {
+			new F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin(Ext.get(element));
 		}, this);
+
 	}
 
-});
+}, F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer);
 
 F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer);

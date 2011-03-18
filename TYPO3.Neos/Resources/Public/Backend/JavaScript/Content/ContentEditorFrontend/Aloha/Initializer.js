@@ -28,30 +28,7 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Aloha');
  * @namespace F3.TYPO3.Content.ContentEditorFrontend.Aloha
  * @singleton
  */
-F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
-
-	/**
-	 * Is aloha activated right now?
-	 * @var {Boolean}
-	 * @private
-	 */
-	_alohaEnabled: false,
-
-	/**
-	 * Initializer, called on page load. Is used to register event
-	 * listeners on the core.
-	 *
-	 * @param {F3.TYPO3.Content.ContentEditorFrontend.Core} core
-	 * @return {void}
-	 */
-	initialize: function(core) {
-		core.on('afterPageLoad', function() {
-			this._loadAlohaOnStartup();
-		}, this);
-
-		core.on('enableEditing', this._enableAloha, this);
-		core.on('disableEditing', this._disableAloha, this);
-	},
+F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 
 	/**
 	 * Loads Aloha after the page load.
@@ -59,7 +36,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 	 * @return {void}
 	 * @private
 	 */
-	_loadAlohaOnStartup: function() {
+	_loadOnStartup: function() {
 		// Helper function
 		var makeAlohaElementEditableAndActivateItImmediately = function(editable, event) {
 			// Aloha is enabled right now, but the
@@ -81,7 +58,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 		// Here, we modify the aloha editable behavior
 		GENTICS.Aloha.EventRegistry.subscribe(
 			GENTICS.Aloha,
-			"editableCreated",
+			'editableCreated',
 			function (event, editable) {
 				// We need to re-wire the Aloha editable events a bit,
 				// that's why we disable all internal event handlers
@@ -90,7 +67,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 				editable.obj.unbind('keydown');
 
 				editable.obj.mousedown(function(event) {
-					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._alohaEnabled) {
+					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._enabled) {
 						if (editable.isDisabled()) {
 							makeAlohaElementEditableAndActivateItImmediately(editable, event);
 						} else {
@@ -104,7 +81,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 				// we only want to forward the keystrokes in case aloha
 				// is enabled.
 				editable.obj.keydown(function(event) {
-					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._alohaEnabled) {
+					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._enabled) {
 						return GENTICS.Aloha.Markup.preProcessKeyStrokes(event);
 					} else {
 						return false;
@@ -113,7 +90,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 
 				// Add new double click event listener.
 				editable.obj.dblclick(function(event) {
-					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._alohaEnabled) {
+					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._enabled) {
 						// Aloha is already enabled, so we do not need
 						// to react on double click.
 						return true;
@@ -125,21 +102,11 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 					makeAlohaElementEditableAndActivateItImmediately(editable, event);
 					return true;
 				});
-				editable.obj.attr("contentEditable", "false");
+				editable.obj.attr('contentEditable', 'false');
 			}
 		);
 
 		jQuery('.f3-typo3-editable').aloha();
-	},
-
-	/**
-	 * Enable aloha
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_enableAloha: function() {
-		this._alohaEnabled = true;
 	},
 
 	/**
@@ -148,15 +115,27 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 	 * @return {void}
 	 * @private
 	 */
-	_disableAloha: function() {
+	_disable: function() {
 		for (var i=0; i < GENTICS.Aloha.editables.length; i++) {
 			GENTICS.Aloha.editables[i].disable();
 			GENTICS.Aloha.editables[i].blur();
 		}
 		GENTICS.Aloha.FloatingMenu.obj.hide();
 		GENTICS.Aloha.FloatingMenu.shadow.hide();
-		this._alohaEnabled = false;
+		this._enabled = false;
+	},
+
+	/**
+	 * Called when the loadNewlyCreatedContentElement event is thrown. Adds the editor
+	 * plugin frontend to the new element
+	 *
+	 * @param {DOMElement} newContentElement
+	 */
+	afterLoadNewContentElementHandler: function(newContentElement) {
+		this._disable();
+		jQuery('.f3-typo3-editable', newContentElement).aloha();
 	}
-};
+
+}, F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer);
 
 F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer);

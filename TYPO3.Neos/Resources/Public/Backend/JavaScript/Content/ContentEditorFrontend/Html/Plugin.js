@@ -21,19 +21,13 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Html');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Content.ContentEditorFrontend.Html.Editor
+ * @class F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin
  *
  * Initialize Html editor in the ContentEditorFrontend
  *
  * @namespace F3.TYPO3.Content.ContentEditorFrontend.Html
  */
-F3.TYPO3.Content.ContentEditorFrontend.Html.Editor = function(element) {
-	this._element = element;
-	this.initialize();
-}
-
-F3.TYPO3.Content.ContentEditorFrontend.Html.Editor = Ext.extend(F3.TYPO3.Content.ContentEditorFrontend.Html.Editor, {
-
+F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = Ext.apply(F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin, {
 	/**
 	 * @var {Ext.Element}
 	 */
@@ -49,19 +43,26 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Editor = Ext.extend(F3.TYPO3.Content
 	 */
 	_htmlEditorTextarea: null,
 
-	initialize: function() {
+	/**
+	 * Initialize the plugin
+	 *
+	 * @return {void}
+	 */
+	init: function() {
 		var scope = this;
 
 		var confirmButton = new Ext.Button({
-			text: 'Confirm',
+			text: top.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'confirm'),
 			disabled: true,
 			handler: function() {
 				scope._saveHandler.call(scope);
 			}
 		});
 
-		var html = scope._element.dom.innerHTML;
-		html = html.replace(/(^\s+|\s+$)/g,'');
+		var html = null;
+		if (scope._element.dom) {
+			html = scope._element.dom.innerHTML.replace(/(^\s+|\s+$)/g,'');
+		}
 
 		this._htmlEditorTextarea = new Ext.form.TextArea({
 			value: html,
@@ -78,7 +79,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Editor = Ext.extend(F3.TYPO3.Content
 		});
 
 		this._htmlEditorWindow = new Ext.Window({
-			title: 'HTML Editor',
+			title: top.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'htmlEditor'),
 			modal: true,
 			closeAction:'hide',
 			plain: true,
@@ -88,7 +89,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Editor = Ext.extend(F3.TYPO3.Content
 				this._htmlEditorTextarea
 			],
 			buttons: [confirmButton, {
-				text: 'Cancel',
+				text: top.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'cancel'),
 				handler: function() {
 					scope._htmlEditorWindow.hide();
 				}
@@ -106,7 +107,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Editor = Ext.extend(F3.TYPO3.Content
 		this._element.dom.innerHTML = this._htmlEditorTextarea.getValue();
 		this._element.dom.innerHTML = this._element.dom.innerHTML.replace(/id="ext-gen[0-9]*"/, '');
 
-		var node = F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer._createNodeFromContentElement(this._element);
+		var node = this._createNodeFromContentElement(this._element);
 		node.properties = {
 			source: this._element.dom.innerHTML
 		};
@@ -119,4 +120,20 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Editor = Ext.extend(F3.TYPO3.Content
 
 });
 
-Ext.reg('F3.TYPO3.Content.ContentEditorFrontend.Html.Editor', F3.TYPO3.Content.ContentEditorFrontend.Html.Editor);
+/**
+ * Constructor method
+ */
+F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = Ext.extend(
+	/**
+	 *
+	 * @param {Ext.Element} element
+	 * @return {void}
+	 */
+	function(element) {
+		this._element = element;
+		this.init();
+	},
+	F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin
+);
+
+Ext.reg('F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin', F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin);
