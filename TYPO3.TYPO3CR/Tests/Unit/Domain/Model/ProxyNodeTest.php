@@ -207,6 +207,15 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function moveAfterCallsMoveAfterOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
+		$referenceNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('moveAfter', $referenceNode);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function setPropertySetsThePropertyOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setProperty', 'propertyName', 'value');
 	}

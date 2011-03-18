@@ -208,6 +208,20 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	}
 
 	/**
+	 * Moves this node after the given node
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function moveAfter(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->moveAfter($referenceNode);
+	}
+
+	/**
 	 * Sets the specified property.
 	 *
 	 * If the node has a content object attached, the property will be set there
