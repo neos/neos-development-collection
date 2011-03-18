@@ -118,12 +118,6 @@ class SiteImportService {
 			$pageContentType = $this->contentTypeManager->createContentType('TYPO3:Page');
 			$pageContentType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($folderContentType)));
 
-			$this->contentTypeManager->createContentType('TYPO3:Section');
-			$this->contentTypeManager->createContentType('TYPO3:Text');
-			$this->contentTypeManager->createContentType('TYPO3:Html');
-			$this->contentTypeManager->createContentType('Twitter:LatestTweets');
-			$this->contentTypeManager->createContentType('PhoenixDemoTypo3Org:Registration');
-
 			try {
 				$this->importSitesFromPackage($packageKey);
 			} catch (\Exception $exception) {
@@ -212,7 +206,13 @@ class SiteImportService {
 			if ($childNode === NULL) {
 				$childNode = $parentNode->createNode((string)$childNodeXml['nodeName']);
 			}
-			$childNode->setContentType((string)$childNodeXml['type']);
+
+			$contentTypeName = (string)$childNodeXml['type'];
+			if (!$this->contentTypeManager->hasContentType($contentTypeName)) {
+				$this->contentTypeManager->createContentType($contentTypeName);
+			}
+
+			$childNode->setContentType($contentTypeName);
 			if ($childNodeXml->properties) {
 				foreach ($childNodeXml->properties->children() as $childXml) {
 					$childNode->setProperty($childXml->getName(), (string)$childXml);
