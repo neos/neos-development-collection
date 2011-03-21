@@ -190,6 +190,9 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 *
 	 * Note: Filters out removed nodes.
 	 *
+	 * The primary sort key is the *index*, the secondary sort key (if indices are equal, which
+	 * only occurs in very rare cases) is the *identifier*.
+	 *
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
@@ -203,8 +206,8 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace);
 			$nodesFoundInThisWorkspace = $query->execute()->toArray();
 			foreach ($nodesFoundInThisWorkspace as $node) {
-				if (!isset($foundNodes[$node->getIndex()])) {
-					$foundNodes[$node->getIndex()] = $node;
+				if (!isset($foundNodes[$node->getIdentifier()])) {
+					$foundNodes[$node->getIdentifier()] = $node;
 				}
 			}
 			$workspace = $workspace->getBaseWorkspace();
@@ -212,17 +215,26 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 
 		foreach ($this->addedObjects as $addedNode) {
 			if (substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
-				$foundNodes[$addedNode->getIndex()] = $addedNode;
+				$foundNodes[$addedNode->getIdentifier()] = $addedNode;
 			}
 		}
 
-		foreach ($foundNodes as $index => $node) {
+		foreach ($foundNodes as $identifier => $node) {
 			if ($node->isRemoved()) {
-				unset ($foundNodes[$index]);
+				unset($foundNodes[$identifier]);
 			}
 		}
 
-		ksort($foundNodes);
+		usort($foundNodes, function($element1, $element2) {
+			if ($element1->getIndex() < $element2->getIndex()) {
+				return -1;
+			} elseif ($element1->getIndex() > $element2->getIndex()) {
+				return 1;
+			} else {
+				return strcmp($element1->getIdentifier(), $element2->getIdentifier());
+			}
+		});
+
 		return $foundNodes;
 	}
 
