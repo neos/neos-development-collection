@@ -32,12 +32,6 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @inject
 	 * @var \F3\TYPO3\Domain\Service\TypoScriptService
 	 */
 	protected $typoScriptService;
@@ -105,12 +99,12 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 
 			if ($firstLevelTypoScriptObject === NULL) {
 					// No configured TS Object found, so we use a default one
-				$firstLevelTypoScriptObject = $this->objectManager->create($expectedTypoScriptObjectName);
+				$firstLevelTypoScriptObject = new $expectedTypoScriptObjectName();
 			}
 			$firstLevelTypoScriptObject->setNode($node);
 		}
 
-		$renderingContext = $this->objectManager->create('F3\TypoScript\RenderingContext');
+		$renderingContext = new \F3\TypoScript\RenderingContext();
 		$renderingContext->setControllerContext($this->controllerContext);
 		$renderingContext->setContentContext($contentContext);
 
