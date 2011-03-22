@@ -67,7 +67,7 @@ F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 		Ext.apply(this, config);
 		F3.TYPO3.Content.ContentEditor.superclass.initComponent.call(this);
 
-		F3.TYPO3.Content.ContentModule.on('AlohaConnector.persistChangedContent', this._onContentChanged, this);
+		F3.TYPO3.Content.ContentModule.on('AlohaConnector.modifiedContent', this._onModifiedContent, this);
 	},
 
 	/**
@@ -90,13 +90,13 @@ F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 * Callback fired if content is changed
+	 * Called if content was modified and the save button should be activated
 	 *
-	 * @param {Object} data See "AlohaConnector.persistChangedContent" event for detail description of the parameters.
-	 * @private
+	 * @return {void}
 	 */
-	_onContentChanged: function(data) {
-		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data);
+	_onModifiedContent: function() {
+		var moduleMenu = F3.TYPO3.UserInterface.UserInterfaceModule.getModuleMenu('content');
+		moduleMenu.getContentDialog().activateSave();
 	},
 
 	/**
@@ -138,9 +138,18 @@ F3.TYPO3.Content.ContentEditor = Ext.extend(Ext.Container, {
 		return {
 			'__context': {
 				workspaceName: this._getIframeDocument().body.getAttribute('data-workspacename'),
-				nodePath: this._getIframeDocument().body.getAttribute('data-nodepath')
+				nodePath: this._getIframeDocument().body.getAttribute('about')
 			}
 		};
+	},
+
+	/**
+	 * Trigger save of content inside the content editor frontend
+	 *
+	 * @return {void}
+	 */
+	saveContent: function() {
+		this._getFrontendEditorCore().fireEvent('saveContent');
 	},
 
 	/**

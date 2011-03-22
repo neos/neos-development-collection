@@ -3,7 +3,7 @@ git clone git://github.com/alohaeditor/Aloha-Editor.git
 
 cd Aloha-Editor
 
-git checkout stable
+git checkout dev
 git submodule init
 find . -name .gitmodules -or -name config | while read afile; do sed -i -e 's/https:\/\/github/git:\/\/github/g' $afile; done
 git submodule update

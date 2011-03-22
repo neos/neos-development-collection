@@ -59,6 +59,7 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 	 */
 	mode: 'success',
 	moduleDialog: null,
+	toolbarConfig: {},
 
 	/**
 	 * @event _okButtonClick
@@ -68,17 +69,17 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 	 * @event _cancelButtonClick
 	 */
 	initComponent: function() {
-		var config, toolbarConfig, itemsConfig, keyMap;
+		var config, itemsConfig, keyMap;
 
 		itemsConfig = [];
 		keyMap = new Ext.KeyMap(document, []);
 
-		toolbarConfig = {
+		this.toolbarConfig = {
 			xtype: 'toolbar',
 			items: []
 		};
 		if (this.cancelButton != false) {
-			toolbarConfig.items.push({
+			this.toolbarConfig.items.push({
 				xtype: 'F3.TYPO3.Components.Button',
 				cls: 'F3-TYPO3-Components-Button',
 				itemId: 'cancelButton',
@@ -90,10 +91,10 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 			keyMap.on(Ext.EventObject.ESC, this._fireCancelEvent, this);
 		}
 		if (this.okButton != false) {
-			if (toolbarConfig.items.length > 0) {
-				toolbarConfig.items.push({xtype: 'tbspacer', width: 20});
+			if (this.toolbarConfig.items.length > 0) {
+				this.toolbarConfig.items.push({xtype: 'tbspacer', width: 20});
 			}
-			toolbarConfig.items.push({
+			this.toolbarConfig.items.push({
 				xtype: 'F3.TYPO3.Components.Button',
 				itemId: 'okButton',
 				text: this.okButton,
@@ -113,11 +114,13 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 			});
 		}
 
+		this.toolbarConfig = this._prepareToolbarConfig(this.toolbarConfig);
+
 		itemsConfig.push({
 			xtype: 'panel',
 			cls: 'F3-TYPO3-UserInterface-ContentDialog-Panel',
 			border: false,
-			tbar: toolbarConfig,
+			tbar: this.toolbarConfig,
 			ref: 'panel'
 		});
 
@@ -129,6 +132,15 @@ F3.TYPO3.UserInterface.ContentDialog = Ext.extend(Ext.Container, {
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.UserInterface.ContentDialog.superclass.initComponent.call(this);
+	},
+
+	/**
+	 * Template method to prepare the toolbar config
+	 *
+	 * @return {object}
+	 */
+	_prepareToolbarConfig: function() {
+		return this.toolbarConfig;
 	},
 
 	/**

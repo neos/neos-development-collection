@@ -380,3 +380,7 @@ div.GENTICS_floatingmenu .x-btn-pressed.x-btn-click {
 .GENTICS_Table_Createdialog table td.hover {
 	background-color: #FFFAF5;
 }
+/* Quick fix to remove list bullets */
+ul.GENTICS_multisplit li {
+	list-style-type: none;
+}

@@ -39,19 +39,6 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	_isEditing: false,
 
 	/**
-	 * @event AlohaConnector.persistChangedContent
-	 *
-	 * fires when there is changed content which should be persisted by the TYPO3 backend.
-	 * @param {Object} data <ul>
-	 *   <li><b>__context</b>: <ul>
-	 *     <li><b>workspaceName</b>: Name of workspace the object should be saved into</li>
-	 *     <li><b>nodePath</b>: Path to node which should be saved
-	 *   </ul></li>
-	 *   <li><b>properties</b>: All properties of the content object, which should be saved.</li>
-	 * </ul>
-	 */
-
-	/**
 	 * @event F3.TYPO3.Content.reloadContentEditor
 	 *
 	 * fires when a module requests a reload of the content editor
@@ -278,6 +265,13 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				Ext.getCmp('F3.TYPO3.Content.ContentEditor')._enableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = true;
 			});
+				// Show save button in editing mode
+			userInterfaceModule.on('activate-menu/main/content/children/edit', function(node) {
+				var moduleDialog = node.getModuleMenu().showModuleDialog({xtype: 'F3.TYPO3.UserInterface.EmptyDialog'}, {xtype: 'F3.TYPO3.Content.Edit.SaveContentContentDialog'});
+			});
+			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function(button) {
+				button.getModuleMenu().removeModuleDialog();
+			});
 
 			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function() {
 				Ext.getCmp('F3.TYPO3.Content.ContentEditor')._disableEditing();
@@ -345,5 +339,28 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	 */
 	loadPage: function(uri) {
 		Ext.getCmp('F3.TYPO3.Content.ContentEditor').loadPage(uri);
+	},
+
+	/**
+	 * Save a node
+	 *
+	 * @param {Object} contentContext
+	 * @param {Object} properties
+	 * @param {Function} callback
+	 * @param {Object} scope
+	 * @private
+	 */
+	saveNode: function(contentContext, properties, callback, scope) {
+		var data = {__context: contentContext, properties: properties};
+		var contentDialog = F3.TYPO3.UserInterface.UserInterfaceModule.getModuleMenu('content').getContentDialog();
+		if (contentDialog) {
+			contentDialog.startSave();
+		}
+		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data, function(result) {
+			if (contentDialog) {
+				contentDialog.finishSaving();
+			}
+			callback.call(scope);
+		});
 	}
 });

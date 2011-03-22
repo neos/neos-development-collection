@@ -137,6 +137,20 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 		sectionMenuTab.doLayout();
 
 		this.addedModuleHeight = 0;
+	},
+
+	/**
+	 *
+	 */
+	getModuleDialog: function() {
+		return this._moduleDialog;
+	},
+
+	/**
+	 * 
+	 */
+	getContentDialog: function() {
+		return this._contentDialog;
 	}
 });
 Ext.reg('F3.TYPO3.UserInterface.ModuleMenu', F3.TYPO3.UserInterface.ModuleMenu);

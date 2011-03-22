@@ -79,6 +79,8 @@ F3.TYPO3.UserInterface.I18n = {
 				publishAll: 'Publish all',
 				publishSelected: 'Publish selected',
 				report: 'Report',
+				save: 'Save',
+				saving: 'Saving',
 				system: 'System',
 				'Twitter:LatestTweets': 'Latest tweets',
 				'TYPO3:Html': 'HTML',
@@ -93,6 +95,12 @@ F3.TYPO3.UserInterface.I18n = {
 				workspaceOverview: 'Workspace overview',
 				orderSelectDrag: 'Place this page.',
 				orderSelectAddNew: 'Add new page here'
+			},
+			ContentTypes: {
+				TYPO3_Text: 'Text',
+				TYPO3_Section: 'Section',
+				Twitter_LatestTweets: 'Latest Tweets',
+				PhoenixDemoTypo3Org_Registration: 'Demo Registration'
 			}
 		}
 	},

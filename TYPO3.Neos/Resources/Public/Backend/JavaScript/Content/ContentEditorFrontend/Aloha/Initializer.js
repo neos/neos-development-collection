@@ -31,82 +31,70 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Aloha');
 F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 
 	/**
-	 * Loads Aloha after the page load.
+	 * Is aloha activated right now?
+	 * @var {Boolean}
+	 * @private
+	 */
+	_alohaEnabled: false,
+
+	/**
+	 * Initializer, called on page load. Is used to register event
+	 * listeners on the core.
 	 *
+	 * @param {F3.TYPO3.Content.ContentEditorFrontend.Core} core
+	 * @return {void}
+	 */
+	initialize: function(core) {
+		core.on('enableEditing', this._enableAloha, this);
+		core.on('disableEditing', this._disableAloha, this);
+	},
+
+	/**
+	 * Enable aloha
+	 *
+	 * @param {DOMElement} target
 	 * @return {void}
 	 * @private
 	 */
-	_loadOnStartup: function() {
-		// Helper function
-		var makeAlohaElementEditableAndActivateItImmediately = function(editable, event) {
-			// Aloha is enabled right now, but the
-			// contenteditable attribute is not set yet...
-			// we set it, and by the setTimeout make sure the
-			// browser refreshes its DOM.
-			editable.obj.attr('contenteditable', 'true');
+	_enableAloha: function(target) {
+		if (!this._alohaEnabled) {
+			this._alohaEnabled = true;
+
+				// Select all contentelements and build models for that
+			jQuery('.f3-typo3-contentelement').vieSemanticAloha();
+
+				// Explicitly activate editable for the clicked element (double click selection hack)
+			if (target) {
+				var editableElement = Ext.fly(target).findParent('.f3-typo3-editable');
+				if (editableElement && editableElement.id) {
+					GENTICS.Aloha.getEditableById(editableElement.id).activate();
+				}
+			}
+
+				// Force update of selection after activation
 			window.setTimeout(function() {
-				// Now, the contenteditable setting has reached the DOM
-				// and we can activate the editable.
-				editable.activate(event);
-				// Now, we still need to throw an onChange
-				// event on the selection, so that the floating
-				// menu recalculates its position.
-				GENTICS.Aloha.Selection.onChange(editable.obj, event);
-			}, 5);
-		};
+				GENTICS.Aloha.Selection.updateSelection();
+				var range = GENTICS.Aloha.Selection.getRangeObject();
+				if (range.select) {
+					range.endOffset = range.startOffset += Math.floor((range.endOffset - range.startOffset) / 2);
+					range.select();
+					GENTICS.Aloha.Selection.updateSelection();
+				}
+			}, 10);
 
-		// Here, we modify the aloha editable behavior
-		GENTICS.Aloha.EventRegistry.subscribe(
-			GENTICS.Aloha,
-			'editableCreated',
-			function (event, editable) {
-				// We need to re-wire the Aloha editable events a bit,
-				// that's why we disable all internal event handlers
-				editable.obj.unbind('mousedown');
-				editable.obj.unbind('focus'); // TODO: Handle focus event as well!!!
-				editable.obj.unbind('keydown');
-
-				editable.obj.mousedown(function(event) {
-					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._enabled) {
-						if (editable.isDisabled()) {
-							makeAlohaElementEditableAndActivateItImmediately(editable, event);
-						} else {
-							// Editable is already enabled, so we want to activate it straight away
-							editable.activate(event);
+				// TODO Use smart content change events!
+			this.checkModificationsTask = {
+				run: function() {
+					if (GENTICS.Aloha.getActiveEditable() && GENTICS.Aloha.getActiveEditable().isModified()) {
+						if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
+							window.parent.F3.TYPO3.Content.ContentModule.fireEvent('AlohaConnector.modifiedContent');
 						}
 					}
-					return true;
-				});
-
-				// we only want to forward the keystrokes in case aloha
-				// is enabled.
-				editable.obj.keydown(function(event) {
-					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._enabled) {
-						return GENTICS.Aloha.Markup.preProcessKeyStrokes(event);
-					} else {
-						return false;
-					}
-				});
-
-				// Add new double click event listener.
-				editable.obj.dblclick(function(event) {
-					if (F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer._enabled) {
-						// Aloha is already enabled, so we do not need
-						// to react on double click.
-						return true;
-					}
-
-					// Enable the editing mode
-					F3.TYPO3.Content.ContentEditorFrontend.Core.shouldEnableEditing();
-
-					makeAlohaElementEditableAndActivateItImmediately(editable, event);
-					return true;
-				});
-				editable.obj.attr('contentEditable', 'false');
-			}
-		);
-
-		jQuery('.f3-typo3-editable').aloha();
+				},
+				interval: 1000
+			};
+			Ext.TaskMgr.start(this.checkModificationsTask);
+		}
 	},
 
 	/**
@@ -115,27 +103,40 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 	 * @return {void}
 	 * @private
 	 */
-	_disable: function() {
-		for (var i=0; i < GENTICS.Aloha.editables.length; i++) {
-			GENTICS.Aloha.editables[i].disable();
-			GENTICS.Aloha.editables[i].blur();
+	_disableAloha: function() {
+		if (this._alohaEnabled) {
+			if (this.checkModificationsTask) {
+				Ext.TaskMgr.stop(this.checkModificationsTask);
+			}
+
+			jQuery('.f3-typo3-editable').mahalo();
+			VIE.ContainerManager.cleanup();
+			this._alohaEnabled = false;
 		}
-		GENTICS.Aloha.FloatingMenu.obj.hide();
-		GENTICS.Aloha.FloatingMenu.shadow.hide();
-		this._enabled = false;
-	},
-
-	/**
-	 * Called when the loadNewlyCreatedContentElement event is thrown. Adds the editor
-	 * plugin frontend to the new element
-	 *
-	 * @param {DOMElement} newContentElement
-	 */
-	afterLoadNewContentElementHandler: function(newContentElement) {
-		this._disable();
-		jQuery('.f3-typo3-editable', newContentElement).aloha();
 	}
-
 }, F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer);
-
 F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer);
+
+	// Override backbone sync for node model (actual saving of nodes)
+Backbone.sync = function(method, model, success, error) {
+	var properties = {},
+		contentContext = {
+			workspaceName: model.workspaceName,
+			nodePath: model.id
+		};
+	jQuery.each(model.attributes, function(propertyName, value) {
+		if (propertyName == 'id') {
+			return;
+		}
+			// TODO If TYPO3 supports mapping of fully qualified properties, send with namespace
+		properties[propertyName.split(':', 2)[1]] = value;
+	});
+	window.parent.F3.TYPO3.Content.ContentModule.saveNode(contentContext, properties, function() {
+
+	});
+};
+
+	// Add additional model properties from elements
+VIE.ContainerManager.findAdditionalInstanceProperties = function(element, modelInstance) {
+	modelInstance.workspaceName = jQuery(element).attr('data-workspacename');
+};

@@ -2,7 +2,7 @@
 {namespace typo3=F3\TYPO3\ViewHelpers}
 	<f:base/>
 	<title>{title}</title>
-	<meta charset="UTF-8">
+	<meta charset="UTF-8" />
 	<f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
 	<f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
 	<script>
@@ -10,16 +10,7 @@
 	</script>
 <f:security.ifAccess resource="F3_TYPO3_Backend_BackendController">
 <f:alias map="{liveWorkspaceName: 'live'}"><f:if condition="{node.context.workspace.name} != {liveWorkspaceName}">
-	<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent"/>
 	<ext:include theme="xtheme-gray"/>
-
-<!--
-Search:  document.write('<script type="text/javascript" src="'+GENTICS_Aloha_base+'
-Replace: <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/Backend/Aloha/WebContent/
-
-Search:  "></script>');
-Replace: ')}"></script>
--->
 
 <!-- these stylesheets normally come from the css.js file inside aloha core,
  but we include them separately as we already have ExtJS loaded -->
@@ -29,11 +20,14 @@ Replace: ')}"></script>
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/plugins/com.gentics.aloha.plugins.Link/css/Link.css')}" />
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/WebContent/plugins/com.gentics.aloha.plugins.LinkChecker/css/LinkChecker.css')}" />
 
-<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery-1.4.2.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery.json-2.2.min.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery.getUrlParam.js')}"></script>
+<typo3:includeJavaScript include="deps/jquery.*\.js" subpackage="Backend" directory="Aloha/WebContent"/>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/prettyPhoto/jquery.prettyPhoto.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/deps/jquery.cookie.js')}"></script>
+
+<script src="{f:uri.resource(path:'Frontend/JavaScript/VIE/underscore-min.js')}"></script>
+<script src="{f:uri.resource(path:'Frontend/JavaScript/VIE/backbone-min.js')}"></script>
+<script src="{f:uri.resource(path:'Frontend/JavaScript/VIE/vie-containermanager.js')}"></script>
+<script src="{f:uri.resource(path:'Frontend/JavaScript/VIE/vie-aloha.js')}"></script>
+
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/jquery.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/lang.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/utils/range.js')}"></script>
@@ -48,7 +42,6 @@ Replace: ')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui-attributefield.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ui-browser.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/editable.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ribbon.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/event.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/floatingmenu.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/ierange-m2.js')}"></script>
@@ -63,12 +56,10 @@ Replace: ')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/repository.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/Aloha/WebContent/core/repositoryobjects.js')}"></script>
 
-
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Format/plugin\.js" subpackage="Backend"	directory="Aloha/WebContent" />
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Table/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.List/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Link/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
-
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Paste/plugin\.js" subpackage="Backend" directory="Aloha/WebContent" />
 <typo3:includeJavaScript include="plugins/com.gentics.aloha.plugins.Paste/wordpastehandler\.js" subpackage="Backend" directory="Aloha/WebContent" />
 
@@ -79,31 +70,37 @@ Replace: ')}"></script>
 <script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Aloha/Plugin.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Html/Initializer.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Html/Plugin.js')}"></script>
+<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Aloha/PageRepository.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/UneditableAreaOverlay.js')}"></script>
 <script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/DragDrop.js')}"></script>
 
+<script src="{f:uri.resource(path:'Backend/JavaScript/UserInterface/I18n.js')}"></script>
+
 <link rel="stylesheet" href="{f:uri.resource(path:'Backend/Media/Stylesheets/Aloha.css')}" />
 
-	<script><![CDATA[
-		GENTICS.Aloha.settings = {
-			"i18n": {"current": "en"},
-			"plugins": {
-				"com.gentics.aloha.plugins.GCN": {
-					enabled: false
-				},
-				"com.gentics.aloha.plugins.Format": {
-					config : ['b', 'i', 'u', 'del', 'sub', 'sup', 'p', 'title', 'h1', 'h2', 'h3'],
-					editables : {
-						title	: [], // no formatting allowed
-						teaser 	: ['b', 'i', 'u', 'del', 'sub', 'sup'] // just basic formattings, no headers, etc.
-					}
-				},
-				'F3.TYPO3.Content.ContentEditorFrontend.AlohaPlugin': {}
-			},
-			ribbon: false
-		};
-	]]>
-	GENTICS.Aloha.settings.plugins['F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin'] = {typo3:aloha.alohaConfiguration()}
-	</script>
+<script><![CDATA[
+GENTICS.Aloha.settings = {
+	"i18n": {"current": "en"},
+	"plugins": {
+		"com.gentics.aloha.plugins.GCN": {
+			enabled: false
+		},
+		"com.gentics.aloha.plugins.Format": {
+			config : [ 'b', 'i','u','del','sub','sup', 'p', 'title', 'h1', 'h2', 'h3', 'removeFormat'],
+			editables : {
+				title	: [ ], // no formatting allowed
+				teaser 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup'  ] // just basic formattings, no headers, etc.
+			}
+		}
+	},
+	"repositories": {
+	 	"F3.TYPO3.Content.ContentEditorFrontend.Aloha.PageRepository": {}
+	},
+	ribbon: false
+};
+]]>
+GENTICS_Aloha_base = "{f:uri.resource(path:'Backend/Aloha/WebContent/')}";
+GENTICS.Aloha.settings.plugins['F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin'] = {typo3:aloha.alohaConfiguration()}
+</script>
 </f:if></f:alias>
 </f:security.ifAccess>

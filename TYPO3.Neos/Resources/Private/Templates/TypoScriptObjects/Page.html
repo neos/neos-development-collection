@@ -1,17 +1,14 @@
 <!DOCTYPE html>
-<html>
-	
+<html version="HTML+RDFa 1.1" xmlns:typo3="http://www.typo3.org">
 	<!--
 		This website is powered by TYPO3 - enabling people to communicate!
 		TYPO3 is a free open source Content Management Framework licensed under the GNU/GPL.
 		Information and contribution at http://typo3.org
 	-->
-
 	<head>
 		{f:raw(value: head)}
 	</head>
-	<body data-nodepath="{node.context.currentNode.path}" data-workspacename="{node.context.workspace.name}" {bodyAttributes}>
+	<body about="{node.context.currentNode.path}" data-workspacename="{node.context.workspace.name}" {bodyAttributes}>
 		{f:raw(value: body)}
 	</body>
-
 </html>

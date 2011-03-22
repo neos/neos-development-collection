@@ -66,7 +66,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
 			Ext.DomHelper.insertBefore(el, Ext.apply(elementDefinition, {
-				'data-nodepath': el.getAttribute('data-nodepath'),
+				'about': el.getAttribute('about'),
 				'data-workspacename': el.getAttribute('data-workspacename'),
 				'data-position': 'before'
 			}));
@@ -75,7 +75,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
 			if (el.next() && !el.next().hasClass('f3-typo3-dropzone')) {
 				Ext.DomHelper.insertAfter(el, Ext.apply(elementDefinition, {
-					'data-nodepath': el.getAttribute('data-nodepath'),
+					'about': el.getAttribute('about'),
 					'data-workspacename': el.getAttribute('data-workspacename'),
 					'data-position': 'after'
 				}));
@@ -107,7 +107,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 
 				sourceElement.setStyle('opacity', 0.5);
 				dragProxy.addClass('ddProxy');
-				dragProxy.update(sourceElement.getAttribute('data-nodepath'));
+				dragProxy.update(sourceElement.getAttribute('about'));
 			},
 			onDragEnter : function(evtObj, targetElId) {
 				var targetEl = Ext.get(targetElId);
@@ -126,8 +126,8 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 
 				if (!window.parent.F3) return;
 
-				var sourceNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(sourceElement.getAttribute('data-nodepath'), sourceElement.getAttribute('data-workspacename'));
-				var targetNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(targetEl.getAttribute('data-nodepath'), targetEl.getAttribute('data-workspacename'));
+				var sourceNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(sourceElement.getAttribute('about'), sourceElement.getAttribute('data-workspacename'));
+				var targetNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(targetEl.getAttribute('about'), targetEl.getAttribute('data-workspacename'));
 
 				var onMoveFinished = function() {
 					window.location.reload();
@@ -159,5 +159,4 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 		});
 	}
 };
-
 F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.DragDrop);

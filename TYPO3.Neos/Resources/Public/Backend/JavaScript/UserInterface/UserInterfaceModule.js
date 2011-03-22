@@ -159,5 +159,16 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 			tab.contentArea.getLayout().setActiveItem(itemId);
 			tab.doLayout();
 		});
+	},
+
+	onPath: function(path, callback, scope) {
+		path = F3.TYPO3.Core.Registry.rewritePath(path);
+		this.on('activate-' + path, function() {
+			callback.call(scope);
+		});
+	},
+
+	getModuleMenu: function(sectionId) {
+		return F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent(sectionId).moduleMenu;
 	}
 });

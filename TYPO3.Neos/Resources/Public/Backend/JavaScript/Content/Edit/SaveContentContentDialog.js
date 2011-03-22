@@ -1,4 +1,4 @@
-Ext.ns("F3.TYPO3.UserInterface");
+Ext.ns("F3.TYPO3.Content.Edit");
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,66 +21,14 @@ Ext.ns("F3.TYPO3.UserInterface");
  *                                                                        */
 
 /**
- * @class F3.TYPO3.UserInterface.ModuleDialog
- *
- * A module dialog
- *
- * @namespace F3.TYPO3.UserInterface
- * @extends Ext.Panel
- */
-F3.TYPO3.UserInterface.ModuleDialog = Ext.extend(Ext.Panel, {
-	bodyStyle: 'background: #656565',
-
-	/**
-	 * The parent module menu, which is automatically set before the ModuleDialog
-	 * is displayed.
-	 *
-	 * @var {F3.TYPO3.UserInterface.ModuleMenu}
-	 */
-	moduleMenu: null,
-
-	initComponent: function() {
-		var config = {
-			border: false,
-			flex: 0,
-			cls: 'F3-TYPO3-UserInterface-ModuleDialog'
-		};
-		Ext.apply(this, config);
-		F3.TYPO3.UserInterface.ModuleDialog.superclass.initComponent.call(this);
-	},
-
-	/**
-	 * Callback which is executed when the OK button is pressed.
-	 * Override to implement custom behavior!
-	 *
-	 * @return {void}
-	 */
-	onOk: function() {
-		this.moduleMenu.removeModuleDialog();
-	},
-
-	/**
-	 * Callback which is executed after the cancel button is pressed.
-	 * The default behavior just removes the module dialog.
-	 *
-	 * @return {void}
-	 */
-	onCancel: function() {
-		this.moduleMenu.removeModuleDialog();
-	}
-});
-Ext.reg('F3.TYPO3.UserInterface.ModuleDialog', F3.TYPO3.UserInterface.ModuleDialog);
-
-
-/**
- * @class F3.TYPO3.UserInterface.EmptyDialog
+ * @class F3.TYPO3.Content.Edit.SaveContentDialog
  *
  * An empty dialog for deleting pages
  *
- * @namespace F3.TYPO3.UserInterface
+ * @namespace F3.TYPO3.Content.Edit
  * @extends F3.TYPO3.UserInterface.ModuleDialog
  */
-F3.TYPO3.UserInterface.EmptyDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleDialog, {
+F3.TYPO3.Content.Edit.SaveContentContentDialog = Ext.extend(F3.TYPO3.UserInterface.ContentDialog, {
 
 	/**
 	 * Initializer
@@ -91,8 +39,48 @@ F3.TYPO3.UserInterface.EmptyDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleDia
 			items: []
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.UserInterface.EmptyDialog.superclass.initComponent.call(this);
+		F3.TYPO3.Content.Edit.SaveContentContentDialog.superclass.initComponent.call(this);
+	},
+
+	/**
+	 * @return {object}
+	 */
+	_prepareToolbarConfig: function(toolbarConfig) {
+		toolbarConfig.items.push({
+			xtype: 'F3.TYPO3.Components.Button',
+			itemId: 'saveButton',
+			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'save'),
+			scale: 'large',
+			handler: this._onSave,
+			disabled: true,
+			scope: this,
+			cls: 'F3-TYPO3-Components-Button-type-neutral',
+			ref: 'saveButton'
+		});
+		return toolbarConfig;
+	},
+
+	/**
+	 * Callback which is called when the save button is clicked
+	 *
+	 * @return {void}
+	 */
+	_onSave: function() {
+		Ext.getCmp('F3.TYPO3.Content.ContentEditor').saveContent();
+	},
+
+	activateSave: function() {
+		this.panel.getTopToolbar().saveButton.enable();
+	},
+
+	startSave: function() {
+		this.panel.getTopToolbar().saveButton.setText(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'saving'));
+	},
+
+	finishSaving: function() {
+		this.panel.getTopToolbar().saveButton.setText(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'save'));
+		this.panel.getTopToolbar().saveButton.disable();
 	}
 
 });
-Ext.reg('F3.TYPO3.UserInterface.EmptyDialog', F3.TYPO3.UserInterface.EmptyDialog);
+Ext.reg('F3.TYPO3.Content.Edit.SaveContentContentDialog', F3.TYPO3.Content.Edit.SaveContentContentDialog);

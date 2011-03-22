@@ -41,6 +41,7 @@ class AlohaConfigurationViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractVie
 	protected $contentTypeRepository;
 
 	/**
+	 * @return string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function render() {
@@ -50,6 +51,9 @@ class AlohaConfigurationViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractVie
 		return json_encode($this->configuration);
 	}
 
+	/**
+	 * @return void
+	 */
 	protected function buildListOfContentTypes() {
 		$contentTypes = $this->contentTypeRepository->findAll();
 
@@ -64,10 +68,11 @@ class AlohaConfigurationViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractVie
 		foreach ($contentTypesNotBeingOfTypeFolder as $contentType) {
 			$contentTypeConfiguration[] = array(
 				'name' => $contentType->getName(),
-				'label' => $contentType->getName()
+				'labelKey' => strtr($contentType->getName(), ':', '_')
 			);
 		}
 		$this->configuration['contentTypes'] = $contentTypeConfiguration;
 	}
+
 }
 ?>

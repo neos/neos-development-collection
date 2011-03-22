@@ -45,13 +45,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		languages: [],
 
 		/**
-		 * init the Aloha connector for TYPO3
+		 * Initialize the Aloha connector for TYPO3
 		 *
 		 * @return {void}
 		 * @private
 		 */
 		init: function() {
-
 			this._overrideI18nLocalization();
 			this._subscribeToAlohaEvents();
 
@@ -69,6 +68,21 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 				'floatingMenuTabAction',
 				this._onDeleteButtonClick
 			);
+
+			F3.TYPO3.Content.ContentEditorFrontend.Core.on('saveContent', function() {
+				VIE.Aloha.saveModified(function() {
+
+				});
+				var that = this;
+					// Save modified editables
+				jQuery.each(VIE.ContainerManager.instances, function() {
+					jQuery.each(this.editables, function() {
+						if (this.isModified()) {
+							that._saveChanges(this);
+						}
+					});
+				});
+			}, this);
 
 			jQuery('.f3-typo3-placeholder').live('click', this._onPlaceholderClick);
 		},
@@ -131,21 +145,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 * @private
 		 */
 		_saveChanges: function(editable) {
-			var currentContentElement = this._findParentContentElement(editable.obj);
-			var data = this._createNodeFromContentElement(currentContentElement);
-			data.properties = {};
-
-			currentContentElement.find('*[data-property]').each(function(index, element) {
-				// We are stripping trailing and leading whitespaces, as they have been added for Firefox.
-				data.properties[element.getAttribute('data-property')] = Ext.util.Format.trim(element.innerHTML).replace(/^&nbsp;|&nbsp;$/g, ''); // TODO: use getContents() on the editable!
-			});
-
-			if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
-				window.parent.F3.TYPO3.Content.ContentModule.fireEvent(
-					'AlohaConnector.persistChangedContent',
-					data
-				);
-			}
+			editable.setUnmodified();
 		},
 
 		/**
@@ -198,9 +198,9 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		_addButtons: function(buttons, tab, onClick) {
 			Ext.each(buttons, function(button) {
 				var newButton = new GENTICS.Aloha.ui.Button({
-					'label' : window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', button.label),
-					'size' : 'small',
-					'onclick' : onClick.createDelegate(this, [button.name])
+					'label': F3.TYPO3.UserInterface.I18n.get('ContentTypes', button.labelKey),
+					'size': 'small',
+					'onclick': onClick.createDelegate(this, [button.name])
 				});
 				GENTICS.Aloha.FloatingMenu.addButton(
 					'GENTICS.Aloha.continuoustext',
@@ -250,11 +250,11 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 * Helper function which finds the parent content element from the given DOM node
 		 *
 		 * @param {jQuery} jQueryDomNode a DOM node wrapped by jQuery, from which the search should start
-		 * @return {jQuery} the DOM node of the content element, having data-nodepath and data-workspacename set.
+		 * @return {jQuery} the DOM node of the content element, having about and data-workspacename set.
 		 * @private
 		 */
 		_findParentContentElement: function(jQueryDomNode) {
-			return jQueryDomNode.parents('*[data-nodepath]').first();
+			return jQueryDomNode.parents('*[about]').first();
 		},
 
 		/**
@@ -266,7 +266,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 * @private
 		 */
 		_createNodeFromContentElement: function(contentElement) {
-			return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(contentElement.attr('data-nodepath'), contentElement.attr('data-workspacename'));
+			return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(contentElement.attr('about'), contentElement.attr('data-workspacename'));
 		},
 
 		/**

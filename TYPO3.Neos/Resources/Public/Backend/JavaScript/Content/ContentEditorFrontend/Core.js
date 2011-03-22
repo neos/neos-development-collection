@@ -132,8 +132,11 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 		if (!this._getContentModule().isEditing()) {
 			event.preventDefault();
 			event.stopPropagation();
+			// Force enable editing
+			this._enableEditing(event.target);
 			this.shouldEnableEditing();
 		}
+		return false;
 	},
 
 	/**
@@ -213,12 +216,13 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * Called from the outside frame to enable editing. Do not call directly;
 	 * instead use shouldEnableEditing().
 	 *
+	 * @param {DOMElement} Target of the editing event (if any)
 	 * @return {void}
 	 * @private
 	 */
-	_enableEditing: function() {
+	_enableEditing: function(target) {
 		Ext.getBody().addClass('f3-typo3-editing-enabled');
-		this.fireEvent('enableEditing');
+		this.fireEvent('enableEditing', target);
 	},
 
 	/**
