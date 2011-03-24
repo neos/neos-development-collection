@@ -63,7 +63,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 
 				// Add the "delete" buttons to the 'actions' tab.
 			this._addButtons([{
-					label: window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'delete')
+					labelKey: window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'delete')
 				}],
 				'floatingMenuTabAction',
 				this._onDeleteButtonClick

@@ -82,10 +82,6 @@ F3.TYPO3.UserInterface.I18n = {
 				save: 'Save',
 				saving: 'Saving',
 				system: 'System',
-				'Twitter:LatestTweets': 'Latest tweets',
-				'TYPO3:Html': 'HTML',
-				'TYPO3:Section': 'Section',
-				'TYPO3:Text': 'Text',
 				unknownErrorOccurred: 'An unknown error occurred',
 				unpublishedContentDescription: 'The listed content is currently only visible in your personal workspace and can be published to the live website.',
 				updatePage: 'Update page',
@@ -99,6 +95,7 @@ F3.TYPO3.UserInterface.I18n = {
 			ContentTypes: {
 				TYPO3_Text: 'Text',
 				TYPO3_Section: 'Section',
+				TYPO3_Html: 'HTML',
 				Twitter_LatestTweets: 'Latest Tweets',
 				PhoenixDemoTypo3Org_Registration: 'Demo Registration'
 			}

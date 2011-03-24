@@ -140,14 +140,14 @@ F3.TYPO3.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 *
+	 * @return {F3.TYPO3.UserInterface.ModuleDialog}
 	 */
 	getModuleDialog: function() {
 		return this._moduleDialog;
 	},
 
 	/**
-	 * 
+	 * @return {F3.TYPO3.UserInterface.ModuleDialog}
 	 */
 	getContentDialog: function() {
 		return this._contentDialog;
