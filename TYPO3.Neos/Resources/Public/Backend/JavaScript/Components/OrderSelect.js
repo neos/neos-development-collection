@@ -92,7 +92,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	initComponent: function() {
 		var self = this,
-			context = Ext.getCmp('F3.TYPO3.Content.ContentEditor').getCurrentContext();
+			context = Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentContext();
 
 		this.ddText = F3.TYPO3.UserInterface.I18n.get('TYPO3', 'orderSelectDrag');
 
@@ -167,7 +167,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			this.position = position;
 		} else {
 			// Find current context if no siblings are available
-			this.context = Ext.getCmp('F3.TYPO3.Content.ContentEditor').getCurrentContext();
+			this.context = Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentContext();
 			this.position = 0;
 		}
 	},

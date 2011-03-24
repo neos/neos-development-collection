@@ -25,7 +25,7 @@
     </listitem>
 
     <listitem>
-      <para><classname>F3.TYPO3.Content.ContentEditor</classname>: An ExtJS
+      <para><classname>F3.TYPO3.Content.WebsiteContainer</classname>: An ExtJS
       component which contains the <code>iframe</code> containing the
       frontend. This component wraps the code executed in the iframe.</para>
     </listitem>

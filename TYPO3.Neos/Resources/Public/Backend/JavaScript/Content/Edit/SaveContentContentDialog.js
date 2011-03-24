@@ -66,7 +66,7 @@ F3.TYPO3.Content.Edit.SaveContentContentDialog = Ext.extend(F3.TYPO3.UserInterfa
 	 * @return {void}
 	 */
 	_onSave: function() {
-		Ext.getCmp('F3.TYPO3.Content.ContentEditor').saveContent();
+		Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').saveContent();
 	},
 
 	activateSave: function() {

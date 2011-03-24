@@ -218,8 +218,8 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	initialize: function(application) {
 		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('content', 'frontendEditor', {
-				xtype: 'F3.TYPO3.Content.ContentEditor',
-				id: 'F3.TYPO3.Content.ContentEditor'
+				xtype: 'F3.TYPO3.Content.WebsiteContainer',
+				id: 'F3.TYPO3.Content.WebsiteContainer'
 			});
 			userInterfaceModule.contentAreaOn('menu/main/content', 'content', 'frontendEditor');
 
@@ -262,7 +262,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			);
 
 			userInterfaceModule.on('activate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.ContentEditor')._enableEditing();
+				Ext.getCmp('F3.TYPO3.Content.WebsiteContainer')._enableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = true;
 			});
 				// Show save button in editing mode
@@ -274,7 +274,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 			});
 
 			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.ContentEditor')._disableEditing();
+				Ext.getCmp('F3.TYPO3.Content.WebsiteContainer')._disableEditing();
 				F3.TYPO3.Content.ContentModule._isEditing = false;
 			});
 
@@ -292,7 +292,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	 * @private
 	 */
 	_reloadContentEditor: function() {
-		Ext.getCmp('F3.TYPO3.Content.ContentEditor').reload();
+		Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').reload();
 	},
 
 	/**
@@ -328,17 +328,17 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	 * @return {Object} the current frontend context
 	 */
 	getCurrentContentContext: function() {
-		return Ext.getCmp('F3.TYPO3.Content.ContentEditor').getCurrentContext();
+		return Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentContext();
 	},
 
 	/**
-	 * Load a certain page inside the ContentEditor iframe
+	 * Load a certain page inside the WebsiteContainer iframe
 	 *
-	 * @param {String} uri the URI to load inside the ContentEditor
+	 * @param {String} uri the URI to load inside the WebsiteContainer
 	 * @return {void}
 	 */
 	loadPage: function(uri) {
-		Ext.getCmp('F3.TYPO3.Content.ContentEditor').loadPage(uri);
+		Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').loadPage(uri);
 	},
 
 	/**
