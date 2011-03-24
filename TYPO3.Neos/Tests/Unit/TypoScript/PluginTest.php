@@ -210,5 +210,49 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->plugin->render();
 	}
 
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPluginNamespaceReturnsTheNodesValueIfItIsSetThere() {
+		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue('someArgumentNamespace'));
+
+		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));
+		$plugin->setNode($mockNode);
+		$plugin->setArgumentNamespace('someDefaultArgumentNamespace');
+
+		$this->assertEquals($plugin->_call('getPluginNamespace'), 'someArgumentNamespace');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPluginNamespaceReturnsTheNamespaceSetInThePluginClassIfNoneIsSetInTheNode() {
+		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue(NULL));
+
+		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));
+		$plugin->setNode($mockNode);
+		$plugin->setArgumentNamespace('someDefaultArgumentNamespace');
+
+		$this->assertEquals($plugin->_call('getPluginNamespace'), 'someDefaultArgumentNamespace');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPluginNamespaceCompilesTheNamespaceFromTheClassNameIfNoneIsSetInThePluginClassNorInTheNode() {
+		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue(NULL));
+
+		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));
+		$plugin->setNode($mockNode);
+
+		$this->assertEquals($plugin->_call('getPluginNamespace'), strtolower(str_replace('\\', '_', get_class($plugin))));
+	}
+
 }
 ?>

@@ -68,6 +68,11 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 	 */
 	protected $action = NULL;
 
+	/**
+	 * @var string
+	 */
+	protected $argumentNamespace = NULL;
+
 
 	/**
 	 * @inject
@@ -157,6 +162,21 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 	}
 
 	/**
+	 * @param string $argumentNamespace
+	 * @return void
+	 */
+	public function setArgumentNamespace($argumentNamespace) {
+		$this->argumentNamespace = $argumentNamespace;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getArgumentNamespace() {
+		return $this->argumentNamespace;
+	}
+
+	/**
 	 * Returns the rendered content of this plugin
 	 *
 	 * @return string The rendered content as a string
@@ -206,6 +226,12 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 	 * @todo make this configurable
 	 */
 	protected function getPluginNamespace() {
+		$nodeArgumentNamespace = $this->node->getProperty('argumentNamespace');
+		if ($nodeArgumentNamespace !== NULL) {
+			return $nodeArgumentNamespace;
+		} elseif ($this->argumentNamespace !== NULL) {
+			return $this->argumentNamespace;
+		}
 		return strtolower(str_replace('\\', '_', get_class($this)));
 	}
 
