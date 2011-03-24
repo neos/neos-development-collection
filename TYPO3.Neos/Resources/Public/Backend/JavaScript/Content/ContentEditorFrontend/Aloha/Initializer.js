@@ -45,8 +45,8 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 	 * @return {void}
 	 */
 	initialize: function(core) {
-		core.on('enableEditing', this._enableAloha, this);
-		core.on('disableEditing', this._disableAloha, this);
+		core.on('enableEditingMode', this._enableAloha, this);
+		core.on('disableEditingMode', this._disableAloha, this);
 	},
 
 	/**
@@ -86,9 +86,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 			this.checkModificationsTask = {
 				run: function() {
 					if (GENTICS.Aloha.getActiveEditable() && GENTICS.Aloha.getActiveEditable().isModified()) {
-						if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
-							window.parent.F3.TYPO3.Content.ContentModule.fireEvent('AlohaConnector.modifiedContent');
-						}
+						F3.TYPO3.Content.ContentEditorFrontend.Core.fireEvent('modifiedContent');
 					}
 				},
 				interval: 1000
@@ -110,6 +108,9 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 			}
 
 			jQuery('.f3-typo3-editable').mahalo();
+			GENTICS.Aloha.FloatingMenu.extTabPanel.hide();
+			GENTICS.Aloha.FloatingMenu.shadow.hide();
+
 			VIE.ContainerManager.cleanup();
 			this._alohaEnabled = false;
 		}
@@ -124,6 +125,7 @@ Backbone.sync = function(method, model, success, error) {
 			workspaceName: model.workspaceName,
 			nodePath: model.id
 		};
+
 	jQuery.each(model.attributes, function(propertyName, value) {
 		if (propertyName == 'id') {
 			return;
@@ -131,9 +133,8 @@ Backbone.sync = function(method, model, success, error) {
 			// TODO If TYPO3 supports mapping of fully qualified properties, send with namespace
 		properties[propertyName.split(':', 2)[1]] = value;
 	});
-	window.parent.F3.TYPO3.Content.ContentModule.saveNode(contentContext, properties, function() {
 
-	});
+	F3.TYPO3.Content.ContentEditorFrontend.Core.saveNode(contentContext, properties, function() {});
 };
 
 	// Add additional model properties from elements

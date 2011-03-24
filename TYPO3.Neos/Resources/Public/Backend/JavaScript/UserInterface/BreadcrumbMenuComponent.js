@@ -47,6 +47,13 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	_animationHandler: null,
 
 	/**
+	 * @var {string]
+	 * @private
+	 */
+	_activeMenupath: null,
+
+
+	/**
 	 * If true, all animations will run a lot slower for better debugging.
 	 *
 	 * @cfg boolean
@@ -93,6 +100,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 
 		var clickedMenuItem = Ext.get(clickedMenuItemDomElement);
 		if (clickedMenuItem.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
+			this._activeMenupath = null;
 			this._shouldDeactivateItem(clickedMenuItem);
 		} else {
 			this._shouldActivateItem(clickedMenuItem);
@@ -108,6 +116,11 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 */
 	_shouldActivateItem: function(clickedMenuItem) {
 		var currentlyClickedMenuPath = clickedMenuItem.getAttribute('data-menupath');
+
+		if (currentlyClickedMenuPath === this._activeMenupath) {
+			return null;
+		}
+		this._activeMenupath = currentlyClickedMenuPath;
 
 			// If a sibling of the to-be-activated node is active, deactivate it
 		clickedMenuItem.parent().select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
@@ -280,7 +293,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		var targetElement;
 		targetElement = this.el.select('*[data-menupath=' + F3.TYPO3.Core.Registry.rewritePath(menupath) + ']').first();
 		if (targetElement.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
-			return null;
+			return;
 		}
 		this._shouldActivateItem(targetElement);
 	},
@@ -295,7 +308,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		var targetElement;
 		targetElement = this.el.select('*[data-menupath=' + F3.TYPO3.Core.Registry.rewritePath(menupath) + ']').first();
 		if (!targetElement.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
-			return null;
+			return;
 		}
 		this._shouldDeactivateItem(targetElement);
 	}

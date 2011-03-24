@@ -32,19 +32,6 @@ Ext.ns('F3.TYPO3.Content');
 F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 
 	/**
-	 * Are we currently in Editing Mode?
-	 *
-	 * @var {Boolean}
-	 */
-	_isEditing: false,
-
-	/**
-	 * @event F3.TYPO3.Content.reloadContentEditor
-	 *
-	 * fires when a module requests a reload of the content editor
-	 */
-
-	/**
 	 * Modify the registry
 	 *
 	 * @param {F3.TYPO3.Core.Registry} registry
@@ -261,106 +248,30 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				}
 			);
 
-			userInterfaceModule.on('activate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.WebsiteContainer')._enableEditing();
-				F3.TYPO3.Content.ContentModule._isEditing = true;
-			});
-				// Show save button in editing mode
 			userInterfaceModule.on('activate-menu/main/content/children/edit', function(node) {
-				var moduleDialog = node.getModuleMenu().showModuleDialog({xtype: 'F3.TYPO3.UserInterface.EmptyDialog'}, {xtype: 'F3.TYPO3.Content.Edit.SaveContentContentDialog'});
-			});
+				this.getWebsiteContainer().enableSelectionMode();
+					// Show save button in editing mode
+				var moduleDialog = node.getModuleMenu().showModuleDialog(
+					{xtype: 'F3.TYPO3.UserInterface.EmptyDialog'},
+					{xtype: 'F3.TYPO3.Content.Edit.SaveContentContentDialog', websiteContainer: this.getWebsiteContainer()}
+				);
+			}, this);
 			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function(button) {
+				this.getWebsiteContainer().enableNavigationMode();
 				button.getModuleMenu().removeModuleDialog();
-			});
+			}, this);
 
-			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function() {
-				Ext.getCmp('F3.TYPO3.Content.WebsiteContainer')._disableEditing();
-				F3.TYPO3.Content.ContentModule._isEditing = false;
-			});
-
-		});
-
-		F3.TYPO3.Content.ContentModule.on('F3.TYPO3.Content.reloadContentEditor',
-			this._reloadContentEditor,
-			this
-		);
+		}, this);
 	},
 
 	/**
-	 * reload the frontend editor
+	 * Get the website container
 	 *
-	 * @private
+	 * @return {Ext.Component}
+	 * @api
 	 */
-	_reloadContentEditor: function() {
-		Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').reload();
-	},
-
-	/**
-	 * @return {Boolean} true if the Aloha Editing mode is active, false otherwise.
-	 */
-	isEditing: function() {
-		return this._isEditing;
-	},
-
-	/**
-	 * Enable the editing mode and selecting the appropriate element in the breadcrumb menu,
-	 *
-	 * @return {void}
-	 */
-	enableEditing: function() {
-		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
-		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
-	},
-
-	/**
-	 * Disable editing mode, and disabling the element in the breadcrumb menu.
-	 *
-	 * @return {void}
-	 */
-	disableEditing: function() {
-		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.deactivateItem('menu/main/content[]/edit');
-	},
-
-	/**
-	 * Get the frontend context of the page currently being displayed in the
-	 * iframe.
-	 *
-	 * @return {Object} the current frontend context
-	 */
-	getCurrentContentContext: function() {
-		return Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentContext();
-	},
-
-	/**
-	 * Load a certain page inside the WebsiteContainer iframe
-	 *
-	 * @param {String} uri the URI to load inside the WebsiteContainer
-	 * @return {void}
-	 */
-	loadPage: function(uri) {
-		Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').loadPage(uri);
-	},
-
-	/**
-	 * Save a node
-	 *
-	 * @param {Object} contentContext
-	 * @param {Object} properties
-	 * @param {Function} callback
-	 * @param {Object} scope
-	 * @private
-	 */
-	saveNode: function(contentContext, properties, callback, scope) {
-		var data = {__context: contentContext, properties: properties};
-		var contentDialog = F3.TYPO3.UserInterface.UserInterfaceModule.getModuleMenu('content').getContentDialog();
-		if (contentDialog) {
-			contentDialog.startSave();
-		}
-		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data, function(result) {
-			if (contentDialog) {
-				contentDialog.finishSaving();
-			}
-			callback.call(scope);
-		});
+	getWebsiteContainer: function() {
+		return Ext.getCmp('F3.TYPO3.Content.WebsiteContainer');
 	}
+
 });

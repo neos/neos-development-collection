@@ -97,7 +97,9 @@ F3.TYPO3.UserInterface.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Use
 	addClass: function (element, className, duration) {
 		this.add(
 			function() {
-				element.addClass(className);
+				if (element.dom) {
+					element.addClass(className);
+				}
 			},
 			duration
 		);

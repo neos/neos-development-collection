@@ -50,8 +50,8 @@ F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer = {
 			this._loadOnStartup();
 		}, this);
 
-		core.on('enableEditing', this._enable, this);
-		core.on('disableEditing', this._disable, this);
+		core.on('enableEditingMode', this._enable, this);
+		core.on('disableEditingMode', this._disable, this);
 
 		core.on('loadNewlyCreatedContentElement', this.afterLoadNewContentElementHandler, this);
 	},

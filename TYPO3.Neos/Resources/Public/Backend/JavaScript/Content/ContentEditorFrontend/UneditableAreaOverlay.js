@@ -1,4 +1,4 @@
-Ext.ns("F3.TYPO3.Content.ContentEditorFrontend");
+Ext.ns('F3.TYPO3.Content.ContentEditorFrontend');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -31,6 +31,12 @@ Ext.ns("F3.TYPO3.Content.ContentEditorFrontend");
 F3.TYPO3.Content.ContentEditorFrontend.UneditableAreaOverlay = {
 
 	/**
+	 * @var {boolean}
+	 * @private
+	 */
+	_enabled: false,
+
+	/**
 	 * Initializer, called on page load. Is used to register event
 	 * listeners on the core.
 	 *
@@ -38,11 +44,13 @@ F3.TYPO3.Content.ContentEditorFrontend.UneditableAreaOverlay = {
 	 * @return {void}
 	 */
 	initialize: function(core) {
-		core.on('enableEditing', this._overlayUneditableAreas, this);
-		core.on('disableEditing', this._removeUneditableAreas, this);
+		core.on('enableEditingMode', this._overlayUneditableAreas, this);
+		core.on('disableEditingMode', this._removeUneditableAreas, this);
 		core.on('windowResize', function() {
-			this._removeUneditableAreas();
-			this._overlayUneditableAreas();
+			if (this._enabled) {
+				this._removeUneditableAreas();
+				this._overlayUneditableAreas();
+			}
 		}, this);
 	},
 
@@ -53,6 +61,7 @@ F3.TYPO3.Content.ContentEditorFrontend.UneditableAreaOverlay = {
 	 * @private
 	 */
 	_overlayUneditableAreas: function() {
+		this._enabled = true;
 		Ext.each(Ext.query('.f3-typo3-notEditable'), function(element) {
 			this._createOverlayForElement(element, 'f3-typo3-notEditable-visible');
 		}, this);
@@ -65,6 +74,7 @@ F3.TYPO3.Content.ContentEditorFrontend.UneditableAreaOverlay = {
 	 * @private
 	 */
 	_removeUneditableAreas: function() {
+		this._enabled = false;
 		jQuery('.f3-typo3-notEditable-visible').remove();
 	},
 

@@ -42,7 +42,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 			{
 				ref: 'form',
 				getLoadIdentifier: function() {
-					context = F3.TYPO3.Content.ContentModule.getCurrentContentContext();
+					context = F3.TYPO3.Content.ContentModule.getWebsiteContainer().getCurrentContext();
 					return context;
 				},
 				getSubmitIdentifier: function() {
@@ -74,7 +74,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	_onPagePropertiesSaved: function() {
 		this.moduleMenu.removeModuleDialog();
 
-		F3.TYPO3.Content.ContentModule.fireEvent('F3.TYPO3.Content.reloadContentEditor');
+		F3.TYPO3.Content.ContentModule.getWebsiteContainer().reload();
 	}
 });
 Ext.reg('F3.TYPO3.Content.Edit.PagePropertiesDialog', F3.TYPO3.Content.Edit.PagePropertiesDialog);

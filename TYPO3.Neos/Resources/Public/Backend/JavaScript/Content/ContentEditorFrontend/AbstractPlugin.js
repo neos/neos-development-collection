@@ -34,12 +34,15 @@ F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin = {
 	 * Helper function which creates a JSON structure which can be mapped
 	 * to a TYPO3CR Node if used as argument for an Ext.Direct call.
 	 *
-	 * @param {jQuery} contentElement the Content Element container
+	 * @param {Ext.Element} contentElement the Content Element container
 	 * @return {Object} a JSON object with the __context set correctly.
 	 * @private
 	 */
 	_createNodeFromContentElement: function(contentElement) {
-		return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(contentElement.getAttribute('data-nodepath'), contentElement.getAttribute('data-workspacename'));
+		return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(
+			contentElement.getAttribute('data-nodepath'),
+			contentElement.getAttribute('data-workspacename')
+		);
 	}
 
 };

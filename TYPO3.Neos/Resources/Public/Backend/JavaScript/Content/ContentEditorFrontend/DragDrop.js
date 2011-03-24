@@ -126,16 +126,30 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 
 				if (!window.parent.F3) return;
 
-				var sourceNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(sourceElement.getAttribute('about'), sourceElement.getAttribute('data-workspacename'));
-				var targetNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(targetEl.getAttribute('about'), targetEl.getAttribute('data-workspacename'));
+				var sourceNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(
+					sourceElement.getAttribute('about'),
+					sourceElement.getAttribute('data-workspacename')
+				);
+				var targetNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(
+					targetEl.getAttribute('about'),
+					targetEl.getAttribute('data-workspacename')
+				);
 
 				var onMoveFinished = function() {
 					window.location.reload();
 				};
 				if (targetEl.getAttribute('data-position') == 'before') {
-					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveBefore(sourceNode, targetNode, onMoveFinished);
+					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveBefore(
+						sourceNode,
+						targetNode,
+						onMoveFinished
+					);
 				} else {
-					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveAfter(sourceNode, targetNode, onMoveFinished);
+					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveAfter(
+						sourceNode,
+						targetNode,
+						onMoveFinished
+					);
 				}
 			},
 			endDrag: function() { // Called both on invalid and on valid drop

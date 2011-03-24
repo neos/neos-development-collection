@@ -49,15 +49,40 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 
 	/**
-	 * @event enableEditing
+	 * @event enableNavigationMode
 	 *
-	 * Thrown when the editing mode is started.
+	 * Thrown when the navigation mode is entered.
 	 */
 
 	/**
-	 * @event disableEditing
+	 * @event disableNavigationMode
 	 *
-	 * Thrown when the editing mode is stopped.
+	 * Thrown when the navigation mode is left, prior to entering another mode.
+	 */
+
+	/**
+	 * @event enableSelectionMode
+	 *
+	 * Thrown when the selection mode is entered.
+	 */
+
+	/**
+	 * @event disableSelectionMode
+	 *
+	 * Thrown when the selection mode is left, prior to entering another mode.
+	 */
+
+	/**
+	 * @event enableEditingMode
+	 * @param {DOMEvent} event the DOM event which was used to trigger this mode. Optional parameter.
+	 *
+	 * Thrown when the editing mode is entered.
+	 */
+
+	/**
+	 * @event disableEditingMode
+	 *
+	 * Thrown when the editing mode is left, prior to entering another mode.
 	 */
 
 	/**
@@ -75,7 +100,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	/**
 	 * @event windowResize
 	 *
-	 * Thrown when the window is resized and the user is in editing mode.
+	 * Thrown when the window is resized.
 	 */
 
 	/**
@@ -85,23 +110,31 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 
 	/**
+	 * @event modifiedContent
+	 *
+	 * Thrown when content is changed
+	 */
+
+	/**
 	 * Initializer. Called on Ext.onReady().
 	 *
 	 * @return {void}
-	 * @private
 	 */
 	initialize: function() {
 		Ext.each(this._modules, function(module) {
 			module.initialize(this);
 		}, this);
 
-		this._registerEventListeners();
-
-		if (window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
+		if (window.parent !== undefined && window.parent.F3 !== undefined && window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
+			this._registerEventListeners();
 			this.fireEvent('afterPageLoad');
 
-			if (this._getContentModule().isEditing()) {
-				this._enableEditing();
+			if (this._getWebsiteContainer().isNavigationModeEnabled()) {
+				this._enableNavigationMode();
+			} else if (this._getWebsiteContainer().isSelectionModeEnabled()) {
+				this._enableSelectionMode();
+			} else if (this._getWebsiteContainer().isEditingModeEnabled()) {
+				this._enableEditingMode();
 			}
 		}
 	},
@@ -118,65 +151,10 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 		window.addEventListener('keydown', this._onKeyDown.createDelegate(this), false);
 		window.addEventListener('keyup', this._onKeyUp.createDelegate(this), false);
 
-		this.on('keyDown-ESC', this.shouldDisableEditing, this);
-	},
-
-	/**
-	 * Double click handler. If we are not in editing mode, we enable it.
-	 *
-	 * @param {DOMEvent} event the DOM event
-	 * @return {void}
-	 * @private
-	 */
-	_onDblClick: function(event) {
-		if (!this._getContentModule().isEditing()) {
-			event.preventDefault();
-			event.stopPropagation();
-			// Force enable editing
-			this._enableEditing(event.target);
-			this.shouldEnableEditing();
-		}
-		return false;
-	},
-
-	/**
-	 * Handler on window resize.
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_onResize: function() {
-		if (this._getContentModule().isEditing()) {
-			this.fireEvent('windowResize');
-		}
-	},
-
-	/**
-	 * Event handler on key down
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_onKeyDown: function(event) {
-		if (event.keyCode == 27) { // ESC
-			this.fireEvent('keyDown-ESC');
-		} else if (event.keyCode == 17) { // CTRL
-			this.fireEvent('keyDown-CTRL');
-		}
-	},
-
-	/**
-	 * Event handler on key down
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_onKeyUp: function(event) {
-		if (event.keyCode == 27) { // ESC
-			this.fireEvent('keyUp-ESC');
-		} else if (event.keyCode == 17) { // CTRL
-			this.fireEvent('keyUp-CTRL');
-		}
+		this.on('keyDown-ESC', this._getWebsiteContainer().leaveCurrentMode, this._getWebsiteContainer());
+		this.on('modifiedContent', function() {
+			this._getWebsiteContainer().fireEvent('container.modifiedContent');
+		}, this);
 	},
 
 	/**
@@ -186,55 +164,118 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 *
 	 * @param {Object} module
 	 * @return {void}
+	 * @api
 	 */
 	registerModule: function(module) {
 		this._modules.push(module);
 	},
 
-
 	/**
-	 * Should be called to enable editing mode.
+	 * Call this function from custom ContentEditorFrontend Modules to enable
+	 * the navigation mode.
 	 *
 	 * @return {void}
-	 * @private
+	 * @api
 	 */
-	shouldEnableEditing: function() {
-		this._getContentModule().enableEditing();
+	shouldEnableNavigationMode: function() {
+		this._getWebsiteContainer().enableNavigationMode();
 	},
 
 	/**
-	 * Should be called to disable editing mode.
+	 * Call this function from custom ContentEditorFrontend Modules to enable
+	 * the selection mode.
 	 *
 	 * @return {void}
-	 * @private
+	 * @api
 	 */
-	shouldDisableEditing: function() {
-		this._getContentModule().disableEditing();
+	shouldEnableSelectionMode: function() {
+		this._getWebsiteContainer().enableSelectionMode();
 	},
 
 	/**
-	 * Called from the outside frame to enable editing. Do not call directly;
-	 * instead use shouldEnableEditing().
+	 * Call this function from custom ContentEditorFrontend Modules to enable
+	 * the selection mode.
 	 *
-	 * @param {DOMElement} Target of the editing event (if any)
+	 * @param {DOMEvent} event the DOM event which was used to trigger this mode. Optional parameter.
+	 * @return {void}
+	 * @api
+	 */
+	shouldEnableEditingMode: function(event) {
+		this._getWebsiteContainer().enableEditingMode(event);
+	},
+
+	/**
+	 * Called from the outside frame to enable navigation mode.
+	 * DO NOT CALL DIRECTLY, instead, use shouldEnableNavigationMode().
+	 *
 	 * @return {void}
 	 * @private
 	 */
-	_enableEditing: function(target) {
+	_enableNavigationMode: function() {
+		this.fireEvent('enableNavigationMode');
+	},
+
+	/**
+	 * Called from the outside frame to disable navigation mode.
+	 * DO NOT CALL DIRECTLY, instead, use should*Mode() methods
+	 * to switch to another mode.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_disableNavigationMode: function() {
+		this.fireEvent('disableNavigationMode');
+	},
+
+	/**
+	 * Called from the outside frame to enable selection mode.
+	 * DO NOT CALL DIRECTLY, instead, use shouldEnableSelectionMode().
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_enableSelectionMode: function() {
+		Ext.getBody().addClass('f3-typo3-selection-enabled');
+		this.fireEvent('enableSelectionMode');
+	},
+
+	/**
+	 * Called from the outside frame to disable selection mode.
+	 * DO NOT CALL DIRECTLY, instead, use should*Mode() methods
+	 * to switch to another mode.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_disableSelectionMode: function() {
+		Ext.getBody().removeClass('f3-typo3-selection-enabled');
+		this.fireEvent('disableSelectionMode');
+	},
+
+	/**
+	 * Called from the outside frame to enable editing mode.
+	 * DO NOT CALL DIRECTLY, instead, use shouldEnableEditingMode().
+	 *
+	 * @param {DOMEvent} event the DOM event which was used to trigger this mode. Optional parameter.
+	 * @return {void}
+	 * @private
+	 */
+	_enableEditingMode: function(event) {
 		Ext.getBody().addClass('f3-typo3-editing-enabled');
-		this.fireEvent('enableEditing', target);
+		this.fireEvent('enableEditingMode', event);
 	},
 
 	/**
-	 * Called from the outside frame to disable editing. Do not call directly;
-	 * instead use shouldDisableEditing().
+	 * Called from the outside frame to disable selection mode.
+	 * DO NOT CALL DIRECTLY, instead, use should*Mode() methods
+	 * to switch to another mode.
 	 *
 	 * @return {void}
 	 * @private
 	 */
-	_disableEditing: function() {
+	_disableEditingMode: function() {
 		Ext.getBody().removeClass('f3-typo3-editing-enabled');
-		this.fireEvent('disableEditing');
+		this.fireEvent('disableEditingMode');
 	},
 
 	/**
@@ -245,6 +286,16 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 	_getContentModule: function() {
 		return window.parent.F3.TYPO3.Content.ContentModule;
+	},
+
+	/**
+	 * Access the website container in the parent window
+	 *
+	 * @return {F3.TYPO3.Content.WebsiteContainer}
+	 * @private
+	 */
+	_getWebsiteContainer: function() {
+		return this._getContentModule().getWebsiteContainer();
 	},
 
 	/**
@@ -310,8 +361,94 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 				scope.fireEvent('loadNewlyCreatedContentElement', newContentElement);
 			}
 		});
-	}
+	},
 
+	/**
+	 * Save a node
+	 *
+	 * @param {Object} contentContext
+	 * @param {Object} properties
+	 * @param {Function} callback
+	 * @param {Object} scope
+	 * @private
+	 */
+	saveNode: function(contentContext, properties, callback, scope) {
+		var data = {__context: contentContext, properties: properties};
+		var contentDialog = window.parent.F3.TYPO3.UserInterface.UserInterfaceModule.getModuleMenu('content').getContentDialog();
+		if (contentDialog) {
+			contentDialog.startSave();
+		}
+		window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data, function(result) {
+			if (contentDialog) {
+				contentDialog.finishSaving();
+			}
+			callback.call(scope);
+		});
+	},
+
+	/**
+	 * Load the uri in current frame
+	 *
+	 * @param {String} uri
+	 * @return {void}
+	 */
+	loadPage: function(uri) {
+		this._getWebsiteContainer().loadPage(uri);
+	},
+
+	/**
+	 * Double click handler. If we are not in editing mode, we enable it.
+	 *
+	 * @param {DOMEvent} event the DOM event
+	 * @return {void}
+	 * @private
+	 */
+	_onDblClick: function(event) {
+		if (!this._getWebsiteContainer().isEditingModeEnabled()) {
+			event.preventDefault();
+			event.stopPropagation();
+			this.shouldEnableEditingMode(event);
+		}
+		return false;
+	},
+
+	/**
+	 * Handler on window resize.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_onResize: function() {
+		this.fireEvent('windowResize');
+	},
+
+	/**
+	 * Event handler on key down
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_onKeyDown: function(event) {
+		if (event.keyCode == 27) { // ESC
+			this.fireEvent('keyDown-ESC');
+		} else if (event.keyCode == 17) { // CTRL
+			this.fireEvent('keyDown-CTRL');
+		}
+	},
+
+	/**
+	 * Event handler on key up
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_onKeyUp: function(event) {
+		if (event.keyCode == 27) { // ESC
+			this.fireEvent('keyUp-ESC');
+		} else if (event.keyCode == 17) { // CTRL
+			this.fireEvent('keyUp-CTRL');
+		}
+	}
 });
 
 Ext.onReady(function() {

@@ -1,4 +1,4 @@
-Ext.ns("F3.TYPO3.Content.Edit");
+Ext.ns('F3.TYPO3.Content.Edit');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -31,21 +31,51 @@ Ext.ns("F3.TYPO3.Content.Edit");
 F3.TYPO3.Content.Edit.SaveContentContentDialog = Ext.extend(F3.TYPO3.UserInterface.ContentDialog, {
 
 	/**
+	 * @var {F3.TYPO3.Content.WebsiteContainer}
+	 */
+	websiteContainer: null,
+
+	/**
 	 * Initializer
 	 */
 	initComponent: function() {
 		var config = {
 			height: 1,
-			items: []
+			items: [],
+			listeners: {
+				afterrender: function() {
+					this.websiteContainer.on('modeChange', this._onModeChange, this);
+					this._onModeChange();
+				}.createDelegate(this),
+				beforeDestroy: function() {
+					this.websiteContainer.removeListener('modeChange', this._onModeChange, this);
+				}.createDelegate(this)
+			}
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.Content.Edit.SaveContentContentDialog.superclass.initComponent.call(this);
+	},
+	_onModeChange: function() {
+		if (this.websiteContainer.isSelectionModeEnabled()) {
+			this._setModeName(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'selectionMode'));
+		} else if (this.websiteContainer.isEditingModeEnabled()) {
+			this._setModeName(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'editingMode'));
+		}
 	},
 
 	/**
 	 * @return {object}
 	 */
 	_prepareToolbarConfig: function(toolbarConfig) {
+		toolbarConfig.items.push({
+			xtype: 'F3.TYPO3.Components.Button',
+			itemId: 'modeButton',
+			text: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'selectionMode'),
+			scale: 'large',
+			disabled: true,
+			cls: 'F3-TYPO3-Components-Button-type-neutral',
+			ref: 'modeButton'
+		});
 		toolbarConfig.items.push({
 			xtype: 'F3.TYPO3.Components.Button',
 			itemId: 'saveButton',
@@ -67,6 +97,14 @@ F3.TYPO3.Content.Edit.SaveContentContentDialog = Ext.extend(F3.TYPO3.UserInterfa
 	 */
 	_onSave: function() {
 		Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').saveContent();
+	},
+
+	/**
+	 * @param {String} mode name to set inside button.
+	 * @private
+	 */
+	_setModeName: function(modeName) {
+		this.panel.getTopToolbar().modeButton.setText(modeName);
 	},
 
 	activateSave: function() {

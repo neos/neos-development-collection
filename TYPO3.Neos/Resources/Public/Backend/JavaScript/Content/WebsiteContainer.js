@@ -1,4 +1,4 @@
-Ext.ns("F3.TYPO3.Content");
+Ext.ns('F3.TYPO3.Content');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -25,11 +25,74 @@ Ext.ns("F3.TYPO3.Content");
  *
  * The main frontend editor widget, which is shown in the lower part of the
  * Backend.
+ * This class is the main interface to the frontend editing from the rest of the backend.
+ * You should never directly call any classes of the Frontend Editor loaded on the page,
+ * but always use this class as connector.
  *
  * @namespace F3.TYPO3.Content
  * @extends Ext.Container
  */
 F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
+
+	/**
+	 * @event modifiedContent
+	 *
+	 * Thrown when content is changed
+	 */
+
+	/**
+	 * @event modeChange
+	 *
+	 * Thrown when editing / navigation / selection mode changes.
+	 * Use the is*ModeEnabled() methods to check for the currently
+	 * active mode.
+	 */
+
+	/**
+	 * @event enableEditing
+	 *
+	 * Thrown when editing is enabled
+	 */
+
+	/**
+	 * Navigation mode
+	 *
+	 * @var {integer}
+	 */
+	NAVIGATION_MODE: 0,
+
+	/**
+	 * Selection mode
+	 *
+	 * @var {integer}
+	 */
+	SELECTION_MODE: 1,
+
+	/**
+	 * Edit mode
+	 *
+	 * @var {integer}
+	 */
+	EDITING_MODE: 2,
+
+	/**
+	 * The current mode
+	 *
+	 * @var {integer}
+	 * @private
+	 */
+	_mode: 0,
+
+
+	/**
+	 * Flag which indicates if a mode change is currently running. If yes,
+	 * changes to the breadcrumb menu do NOT change the state; to prevent
+	 * recursion.
+	 *
+	 * @var {boolean}
+	 * @private
+	 */
+	_modeChangeRunning: false,
 
 	/**
 	 * Initialize the frontend editor component
@@ -67,7 +130,131 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 		Ext.apply(this, config);
 		F3.TYPO3.Content.WebsiteContainer.superclass.initComponent.call(this);
 
-		F3.TYPO3.Content.ContentModule.on('AlohaConnector.modifiedContent', this._onModifiedContent, this);
+		this.on('container.modifiedContent', this._onModifiedContent, this);
+	},
+
+	/**
+	 * Enable navigation mode
+	 *
+	 * @return {void}
+	 * @api
+	 */
+	enableNavigationMode: function() {
+		if (this._modeChangeRunning) return;
+		if (this.isNavigationModeEnabled()) return;
+
+		this._modeChangeRunning = true;
+
+		if (this.isSelectionModeEnabled()) {
+			this._getFrontendEditorCore()._disableSelectionMode();
+		} else if (this.isEditingModeEnabled()) {
+			this._getFrontendEditorCore()._disableEditingMode();
+		}
+		this._mode = this.NAVIGATION_MODE;
+		this._getFrontendEditorCore()._enableNavigationMode();
+		this.fireEvent('modeChange');
+
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.deactivateItem('menu/main/content[]/edit');
+
+		this._modeChangeRunning = false;
+	},
+
+	/**
+	 * Enable selection mode
+	 *
+	 * @return {void}
+	 * @api
+	 */
+	enableSelectionMode: function() {
+		if (this._modeChangeRunning) return;
+		if (this.isSelectionModeEnabled()) return;
+
+		this._modeChangeRunning = true;
+
+		if (this.isNavigationModeEnabled()) {
+			this._getFrontendEditorCore()._disableNavigationMode();
+		} else if (this.isEditingModeEnabled()) {
+			this._getFrontendEditorCore()._disableEditingMode();
+		}
+
+		this._mode = this.SELECTION_MODE;
+		this._getFrontendEditorCore()._enableSelectionMode();
+		this.fireEvent('modeChange');
+
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
+
+		this._modeChangeRunning = false;
+	},
+
+	/**
+	 * Enable the editing mode and selecting the appropriate element in the breadcrumb menu.
+	 *
+	 * @param {DOMEvent} event the DOM event which was used to trigger this mode. Optional parameter.
+	 * @return {void}
+	 * @api
+	 */
+	enableEditingMode: function(event) {
+		if (this._modeChangeRunning) return;
+		if (this.isEditingModeEnabled()) return;
+
+		this._modeChangeRunning = true;
+
+		if (this.isNavigationModeEnabled()) {
+			this._getFrontendEditorCore()._disableNavigationMode();
+		} else if (this.isSelectionModeEnabled()) {
+			this._getFrontendEditorCore()._disableSelectionMode();
+		}
+
+		this._mode = this.EDITING_MODE;
+		this._getFrontendEditorCore()._enableEditingMode(event);
+		this.fireEvent('modeChange');
+
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
+		F3.TYPO3.UserInterface.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
+
+		this._modeChangeRunning = false;
+	},
+
+	/**
+	 * Return true if navigation mode is enabled
+	 * @return {boolean}
+	 * @api
+	 */
+	isNavigationModeEnabled: function() {
+		return this._mode === this.NAVIGATION_MODE;
+	},
+
+	/**
+	 * Return true if selection mode is enabled
+	 * @return {boolean}
+	 * @api
+	 */
+	isSelectionModeEnabled: function() {
+		return this._mode === this.SELECTION_MODE;
+	},
+
+	/**
+	 * Return true if editing mode is enabled
+	 * @return {boolean}
+	 * @api
+	 */
+	isEditingModeEnabled: function() {
+		return this._mode === this.EDITING_MODE;
+	},
+
+	/**
+	 * Disable editing or selection mode depending on current mode
+	 * @return {void}
+	 * @api
+	 */
+	leaveCurrentMode: function() {
+		if (this.isEditingModeEnabled()) {
+			this.enableSelectionMode();
+		} else if (this.isSelectionModeEnabled()) {
+			this.enableNavigationMode();
+		}
 	},
 
 	/**
@@ -114,9 +301,11 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 * Get the frontend editor core from the iFrame
+	 * Get the frontend editor core from the iFrame.
+	 * If the frontend editor core could not be loaded, returns a stub which replaces
+	 * all called methods of the core with empty functions, to prevent syntax errors.
 	 *
-	 * @return {F3.TYPO3.Content.ContentEditorFrontend.Core} the frontend editor core, or undefined, if the frame is not there-
+	 * @return {F3.TYPO3.Content.ContentEditorFrontend.Core} the frontend editor core
 	 * @private
 	 */
 	_getFrontendEditorCore: function() {
@@ -125,7 +314,15 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 		if (iframeDom.contentWindow.F3) {
 			return iframeDom.contentWindow.F3.TYPO3.Content.ContentEditorFrontend.Core;
 		} else {
-			return undefined;
+			return {
+				_enableNavigationMode: Ext.emptyFn,
+				_disableNavigationMode: Ext.emptyFn,
+				_enableSelectionMode: Ext.emptyFn,
+				_disableSelectionMode: Ext.emptyFn,
+				_enableEditingMode: Ext.emptyFn,
+				_disableEditingMode: Ext.emptyFn,
+				_fireEvent: Ext.emptyFn
+			};
 		}
 	},
 
@@ -150,30 +347,8 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	 */
 	saveContent: function() {
 		this._getFrontendEditorCore().fireEvent('saveContent');
-	},
-
-	/**
-	 * Enable editing. Only used internally; To enable editing mode, use F3.TYPO3.Content.ContentModule.enableEditing();
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_enableEditing: function() {
-		if (this._getFrontendEditorCore()) {
-			this._getFrontendEditorCore()._enableEditing();
-		}
-	},
-
-	/**
-	 * Disable editing. Only used internally; To disable editing mode, use F3.TYPO3.Content.ContentModule.disableEditing();
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_disableEditing: function() {
-		if (this._getFrontendEditorCore()) {
-			this._getFrontendEditorCore()._disableEditing();
-		}
 	}
+
 });
+
 Ext.reg('F3.TYPO3.Content.WebsiteContainer', F3.TYPO3.Content.WebsiteContainer);

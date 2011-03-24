@@ -266,7 +266,10 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 * @private
 		 */
 		_createNodeFromContentElement: function(contentElement) {
-			return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(contentElement.attr('about'), contentElement.attr('data-workspacename'));
+			return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(
+				contentElement.attr('about'),
+				contentElement.attr('data-workspacename')
+			);
 		},
 
 		/**

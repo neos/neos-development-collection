@@ -66,7 +66,7 @@ F3.TYPO3.Content.Edit.MovePageDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleD
 						_onFormSubmitSuccess: function(response, status) {
 							if (response) {
 								this.ownerCt.moduleMenu.removeModuleDialog();
-								F3.TYPO3.Content.ContentModule.loadPage(response.data.nextUri);
+								F3.TYPO3.Content.ContentModule.getWebsiteContainer().loadPage(response.data.nextUri);
 							} else if (status.type === 'exception') {
 								Ext.MessageBox.alert(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'errorOccurred'), status.message);
 							} else {
