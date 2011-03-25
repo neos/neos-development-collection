@@ -32,17 +32,14 @@ F3.TYPO3.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
 	/**
 	 * Wrapper for extDirect call to NodeController which
-	 * adds context information to the extDirect call
+	 * adds the current node path information to the extDirect call
 	 *
 	 * @param {String} currentNodePath the current NodePath to get subnodes from
 	 * @param {Function} callback function after request is done
 	 * @return {void}
 	 */
 	directFn: function(currentNodePath, callback) {
-		var context = {
-			'__context': '/' + F3.TYPO3.Configuration.Application.workspaceName + currentNodePath
-		};
-		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(context, 'TYPO3:Page', callback);
+		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree({__nodePath: currentNodePath}, 'TYPO3:Page', callback); // TODO: Refactor {__nodePath...} once new property mapper is in core.
 	},
 
 	/**

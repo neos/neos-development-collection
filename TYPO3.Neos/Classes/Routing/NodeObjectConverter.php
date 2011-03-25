@@ -46,6 +46,12 @@ class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface
 	protected $siteRepository;
 
 	/**
+	 * @inject
+	 * @var \F3\TYPO3\Domain\Service\PreferencesService
+	 */
+	protected $preferencesService;
+
+	/**
 	 * Returns a list of fully qualified class names of those classes which are supported
 	 * by this property editor.
 	 *
@@ -64,25 +70,24 @@ class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface
 	 */
 	public function convertFrom($source) {
 		if (is_string($source)) {
-			$source = array('__context' => $source);
+			$source = array('__nodePath' => $source);
 		}
-		if (!is_array($source) || !isset($source['__context'])) {
+
+		if (!is_array($source) || !isset($source['__nodePath'])) {
 			return FALSE;
 		}
 
-		$pathSegments = explode('/', ltrim($source['__context'], '/'));
+		$pathSegments = explode('/', ltrim($source['__nodePath'], '/'));
 
-		if (count($pathSegments) < 3) {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the context path was invalid. The path must have at least three parts: [workspace-name]/sites/[pathToNode]', 1285162903);
+		if (count($pathSegments) < 2) {
+			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the node path was invalid. The path must have at least two parts: /sites/[pathToNode]', 1285162903);
 		}
-
-		$workspaceName = array_shift($pathSegments);
 
 		if (array_shift($pathSegments) !== 'sites') {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the context path was invalid. The second segment was not "sites"', 1285168001);
+			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the node path was invalid. The first segment was not "sites"', 1285168001);
 		}
 
-		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName);
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($this->preferencesService->getCurrentWorkspaceName());
 		$workspace = $contentContext->getWorkspace();
 		if (!$workspace) {
 			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the specified workspace does not exist.', 1285162905);

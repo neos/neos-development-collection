@@ -32,16 +32,16 @@ namespace F3\TYPO3\ViewHelpers\Link;
  * </code>
  *
  * Output:
- * <a href="live/sites/mysite.com/homepage/about.html">some link</a>
- * (depending on current workspace, current node, format etc.)
+ * <a href="sites/mysite.com/homepage/about.html">some link</a>
+ * (depending on current node, format etc.)
  *
  * <code title="Additional arguments">
  * <typo3:link.node node="{myNode}" format="json" service="rest">some link</typo3:link.node>
  * </code>
  *
  * Output:
- * <a href="typo3/service/rest/v1/node/live/sites/mysite.com/homepage/about.json">some link</a>
- * (depending on current workspace, current node, format etc.)
+ * <a href="typo3/service/rest/v1/node/sites/mysite.com/homepage/about.json">some link</a>
+ * (depending on current current node, format etc.)
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype

@@ -172,7 +172,6 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 		$properties['__contentType'] = $node->getContentType();
 		$properties['__label'] = $node->getLabel();
 		$properties['__abstract'] = $node->getAbstract();
-		$properties['__context'] = '/' . $node->getWorkspace()->getName() . $node->getPath();
 		$data[] = $properties;
 
 		foreach ($properties as $propertyName => $propertyValue) {

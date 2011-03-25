@@ -112,6 +112,18 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 
 	/**
+	 * @event beforeSave
+	 *
+	 * Thrown immediately before data is saved to the server
+	 */
+
+	/**
+	 * @event afterSave
+	 *
+	 * Thrown immediately after data has been saved to the server.
+	 */
+
+	/**
 	 * @event loadNewlyCreatedContentElement
 	 *
 	 * Thrown when a new content element is created, and added to the page
@@ -121,6 +133,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * @event modifiedContent
 	 *
 	 * Thrown when content is changed
+	 */
+
+	/**
+	 * @event shouldSaveContent
+	 *
+	 * Thrown when an explicit content save is triggered.
 	 */
 
 	/**
@@ -314,6 +332,15 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	},
 
 	/**
+	 * Method to call in case the content should be saved.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_shouldSaveContent: function() {
+		this.fireEvent('shouldSaveContent');
+	},
+	/**
 	 * Create a new content element on the page
 	 *
 	 * @param {string} nameOfContentType
@@ -363,26 +390,27 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	/**
 	 * Save a node
 	 *
-	 * @param {String} nodeContext
+	 * @param {String} nodePath the path of the node which should be saved.
 	 * @param {Object} properties
 	 * @param {Function} callback
 	 * @param {Object} scope
 	 * @private
 	 */
-	saveNode: function(nodeContext, properties, callback, scope) {
-		var data = {__context: nodeContext };
+	saveNode: function(nodePath, properties, callback, scope) {
+		var data = {__nodePath: nodePath };
 
 		data.properties = properties;
-		var contentDialog = window.parent.F3.TYPO3.UserInterface.UserInterfaceModule.getModuleMenu('content').getContentDialog();
-		if (contentDialog) {
-			contentDialog.startSave();
-		}
+
+		this.fireEvent('beforeSave');
+		this._getWebsiteContainer().fireEvent('container.beforeSave');
 		window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data, function(result) {
-			if (contentDialog) {
-				contentDialog.finishSaving();
+			this.fireEvent('afterSave');
+			this._getWebsiteContainer().fireEvent('container.afterSave');
+
+			if (callback) {
+				callback.call(scope);
 			}
-			callback.call(scope);
-		});
+		}.createDelegate(this));
 	},
 
 	/**

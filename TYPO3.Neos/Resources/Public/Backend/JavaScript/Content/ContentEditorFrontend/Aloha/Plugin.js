@@ -69,7 +69,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 				this._onDeleteButtonClick
 			);
 
-			F3.TYPO3.Content.ContentEditorFrontend.Core.on('saveContent', function() {
+			F3.TYPO3.Content.ContentEditorFrontend.Core.on('shouldSaveContent', function() {
 				VIE.Aloha.saveModified(function() {
 
 				});
@@ -219,6 +219,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 * @private
 		 */
 		_onNewContentElementClick: function(nameOfContentType) {
+			if (GENTICS.Aloha.activeEditable === null) return;
 			var currentContentElement = this._findParentContentElement(GENTICS.Aloha.activeEditable.obj);
 
 			var data = this._createNodeFromContentElement(currentContentElement);
@@ -258,7 +259,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		},
 
 		_createNodeFromContentElement: function(element) {
-			return {'__context': element.attr('about')}; // TODO: Remove {...} once new property mapper is merged
+			return {'__nodePath': element.attr('about')}; // TODO: Remove {...} once new property mapper is merged
 		},
 
 		/**

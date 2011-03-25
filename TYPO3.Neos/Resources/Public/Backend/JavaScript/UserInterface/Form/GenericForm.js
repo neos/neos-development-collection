@@ -74,7 +74,7 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	onRenderLoad: function() {
 		if (this.autoLoad !== false) {
 			this.getForm().load({
-				params: {'__context': this.getLoadIdentifier()},
+				params: {__nodePath: this.getLoadIdentifier()},
 				success: this._loadValues,
 				scope: this
 			});
@@ -140,7 +140,7 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 		if (!this.getForm().isValid()) return;
 		var data = this.getForm().getValues();
 		data = this._convertFlatPropertiesToNestedData(data);
-		data['__context'] = this.getSubmitIdentifier();
+		data['__nodePath'] = this.getSubmitIdentifier();
 		this.getForm().api.submit.call(this, data, this.onSubmitSuccess, this);
 	},
 

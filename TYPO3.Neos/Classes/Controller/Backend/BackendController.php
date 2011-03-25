@@ -43,14 +43,25 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $packageManager;
 
 	/**
+	 * @inject
+	 * @var \F3\TYPO3\Domain\Service\PreferencesService
+	 */
+	protected $preferencesService;
+
+	/**
 	 * Default action of the backend controller.
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
-		$workspaceName = 'user-' . $this->securityContext->getAccount()->getAccountIdentifier();
-		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName);
+		if ($this->preferencesService->getCurrentWorkspaceName() === NULL) {
+			$workspaceName = 'user-' . $this->securityContext->getAccount()->getAccountIdentifier();
+			$this->preferencesService->setCurrentWorkspaceName($workspaceName);
+		} else {
+			$workspaceName = $this->preferencesService->getCurrentWorkspaceName();
+		}
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($workspaceName);
 
 		$this->view->assign('contentContext', $contentContext);
 

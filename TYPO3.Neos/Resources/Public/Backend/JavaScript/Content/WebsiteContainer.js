@@ -35,7 +35,7 @@ Ext.ns('F3.TYPO3.Content');
 F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 
 	/**
-	 * @event modifiedContent
+	 * @event container.modifiedContent
 	 *
 	 * Thrown when content is changed
 	 */
@@ -49,9 +49,15 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	 */
 
 	/**
-	 * @event enableEditing
+	 * @event container.beforeSave
 	 *
-	 * Thrown when editing is enabled
+	 * Thrown immediately before data is saved to the server
+	 */
+
+	/**
+	 * @event container.afterSave
+	 *
+	 * Thrown immediately after data has been saved to the server.
 	 */
 
 	/**
@@ -102,8 +108,7 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 		cookieLastVisited = Ext.util.Cookies.get('TYPO3_lastVisitedNode');
 		uri =
 			F3.TYPO3.Configuration.Application.backendBaseUri +
-			"service/rest/v1/node/" +
-			F3.TYPO3.Configuration.Application.workspaceName +
+			"service/rest/v1/node" +
 			(cookieLastVisited ? cookieLastVisited + ".html" :
 				F3.TYPO3.Configuration.Application.siteNodePath + '/.html');
 
@@ -129,8 +134,6 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.Content.WebsiteContainer.superclass.initComponent.call(this);
-
-		this.on('container.modifiedContent', this._onModifiedContent, this);
 	},
 
 	/**
@@ -277,16 +280,6 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 * Called if content was modified and the save button should be activated
-	 *
-	 * @return {void}
-	 */
-	_onModifiedContent: function() {
-		var moduleMenu = F3.TYPO3.UserInterface.UserInterfaceModule.getModuleMenu('content');
-		moduleMenu.getContentDialog().activateSave();
-	},
-
-	/**
 	 * Get the frontend editor IFrame document object
 	 *
 	 * @return {Object}
@@ -327,11 +320,11 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	},
 
 	/**
-	 * Get the current context path
+	 * Get the current page path
 	 *
-	 * @return {String} current context
+	 * @return {String} current page path
 	 */
-	getCurrentContext: function() {
+	getCurrentPagePath: function() {
 		return this._getIframeDocument().body.getAttribute('about');
 	},
 
@@ -341,7 +334,7 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	 * @return {void}
 	 */
 	saveContent: function() {
-		this._getFrontendEditorCore().fireEvent('saveContent');
+		this._getFrontendEditorCore()._shouldSaveContent();
 	}
 
 });

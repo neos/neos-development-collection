@@ -23,7 +23,7 @@ namespace F3\TYPO3\Routing;
  *                                                                        */
 
 /**
- * A route part handler for nodes
+ * A route part handler for nodes. Used to fetch nodes in LIVE workspace.
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton

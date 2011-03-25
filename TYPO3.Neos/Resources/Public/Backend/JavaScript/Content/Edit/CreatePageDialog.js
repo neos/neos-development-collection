@@ -34,8 +34,7 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 * Initializer
 	 */
 	initComponent: function() {
-		var context,
-			config = {
+		var config = {
 				items: F3.TYPO3.UserInterface.Form.FormFactory.createForm(
 					'TYPO3:Page',
 					'create',
@@ -54,7 +53,7 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 							data['contentType'] = 'TYPO3:Page';
 							this.getForm().api.create.call(
 								this,
-								{__context: Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getContext()}, // TODO: can be removed after new property mapper has been merged.
+								{__nodePath: Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getNodePath()}, // TODO: adjust after new property mapper has been merged!
 								data,
 								Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getPosition(),
 								this._onFormSubmitSuccess,

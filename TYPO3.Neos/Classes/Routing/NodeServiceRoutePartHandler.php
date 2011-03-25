@@ -23,7 +23,8 @@ namespace F3\TYPO3\Routing;
  *                                                                        */
 
 /**
- * A route part handler for the Node Service
+ * A route part handler for the Node Service. This one uses the workspace
+ * from the current User Preferences.
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
@@ -37,6 +38,12 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 	protected $siteRepository;
 
 	/**
+	 * @inject
+	 * @var \F3\TYPO3\Domain\Service\PreferencesService
+	 */
+	protected $preferencesService;
+
+	/**
 	 * While matching, resolves the requested content
 	 *
 	 * @param string $value the complete path
@@ -46,13 +53,12 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 	protected function matchValue($value) {
 		$pathSegments = explode('/', $value);
 
-		if (count($pathSegments) < 2) {
+		if (count($pathSegments) < 1) {
 			return self::MATCHRESULT_INVALIDPATH;
 		}
 
-		$workspaceName = array_shift($pathSegments);
 		if ($this->contentContext === NULL) {
-			$this->contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName);
+			$this->contentContext = new \F3\TYPO3\Domain\Service\ContentContext($this->preferencesService->getCurrentWorkspaceName());
 		}
 
 		$workspace = $this->contentContext->getWorkspace();
@@ -119,7 +125,7 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 		if (!$value instanceof \F3\TYPO3CR\Domain\Model\Node) {
 			return FALSE;
 		}
-		$this->value = $value->getContext()->getWorkspace()->getName() . $value->getPath();
+		$this->value = ltrim($value->getPath(), '/');
 		return TRUE;
 	}
 

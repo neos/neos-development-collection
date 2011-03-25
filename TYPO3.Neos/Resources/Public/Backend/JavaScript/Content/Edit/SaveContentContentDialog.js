@@ -46,9 +46,17 @@ F3.TYPO3.Content.Edit.SaveContentContentDialog = Ext.extend(F3.TYPO3.UserInterfa
 				afterrender: function() {
 					this.websiteContainer.on('modeChange', this._onModeChange, this);
 					this._onModeChange();
+
+					this.websiteContainer.on('container.modifiedContent', this._onModifiedContent, this);
+					this.websiteContainer.on('container.beforeSave', this._onBeforeSave, this);
+					this.websiteContainer.on('container.afterSave', this._onAfterSave, this);
 				}.createDelegate(this),
 				beforeDestroy: function() {
 					this.websiteContainer.removeListener('modeChange', this._onModeChange, this);
+
+					this.websiteContainer.removeListener('container.modifiedContent', this._onModifiedContent, this);
+					this.websiteContainer.removeListener('container.beforeSave', this._onBeforeSave, this);
+					this.websiteContainer.removeListener('container.afterSave', this._onAfterSave, this);
 				}.createDelegate(this)
 			}
 		};
@@ -101,21 +109,42 @@ F3.TYPO3.Content.Edit.SaveContentContentDialog = Ext.extend(F3.TYPO3.UserInterfa
 
 	/**
 	 * @param {String} mode name to set inside button.
+	 * @return {void}
 	 * @private
 	 */
 	_setModeName: function(modeName) {
 		this.panel.getTopToolbar().modeButton.setText(modeName);
 	},
 
-	activateSave: function() {
+	/**
+	 * Callback executed when content is changed, and the save button
+	 * needs to be enabled.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_onModifiedContent: function() {
 		this.panel.getTopToolbar().saveButton.enable();
 	},
 
-	startSave: function() {
+	/**
+	 * Callback which sets the text of the save button to "Saving"
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_onBeforeSave: function() {
 		this.panel.getTopToolbar().saveButton.setText(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'saving'));
 	},
 
-	finishSaving: function() {
+	/**
+	 * Here, the text of the save button is reset, and the button is disabled
+	 * again.
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_onAfterSave: function() {
 		this.panel.getTopToolbar().saveButton.setText(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'save'));
 		this.panel.getTopToolbar().saveButton.disable();
 	}

@@ -43,10 +43,10 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 			Ext.dd.DragDropMgr.lock();
 		}, this);
 
-		core.on('enableEditing', function() {
+		core.on('enableSelectionMode', function() {
 			Ext.dd.DragDropMgr.unlock();
 		}, this);
-		core.on('disableEditing', function() {
+		core.on('disableSelectionMode', function() {
 			Ext.dd.DragDropMgr.lock();
 		}, this);
 	},
@@ -66,8 +66,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
 			Ext.DomHelper.insertBefore(el, Ext.apply(elementDefinition, {
-				'about': el.getAttribute('about'),
-				'data-workspacename': el.getAttribute('data-workspacename'),
+				'data-nodepath': el.getAttribute('about'),
 				'data-position': 'before'
 			}));
 		});
@@ -75,8 +74,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
 			if (el.next() && !el.next().hasClass('f3-typo3-dropzone')) {
 				Ext.DomHelper.insertAfter(el, Ext.apply(elementDefinition, {
-					'about': el.getAttribute('about'),
-					'data-workspacename': el.getAttribute('data-workspacename'),
+					'data-nodepath': el.getAttribute('about'),
 					'data-position': 'after'
 				}));
 			}
@@ -127,21 +125,21 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 				if (!window.parent.F3) return;
 
 				var sourceNode = sourceElement.getAttribute('about');
-				var targetNode = targetEl.getAttribute('about');
+				var targetNode = targetEl.getAttribute('data-nodepath');
 
 				var onMoveFinished = function() {
 					window.location.reload();
 				};
 				if (targetEl.getAttribute('data-position') == 'before') {
 					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveBefore(
-						sourceNode,
-						targetNode,
+						{__nodePath: sourceNode}, // TODO: Refactor after Property Mapper changes
+						{__nodePath: targetNode}, // TODO: Refactor after Property Mapper changes
 						onMoveFinished
 					);
 				} else {
 					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveAfter(
-						sourceNode,
-						targetNode,
+						{__nodePath: sourceNode}, // TODO: Refactor after Property Mapper changes
+						{__nodePath: targetNode}, // TODO: Refactor after Property Mapper changes
 						onMoveFinished
 					);
 				}
@@ -167,4 +165,4 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 		});
 	}
 };
-//F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.DragDrop);
+F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.DragDrop);

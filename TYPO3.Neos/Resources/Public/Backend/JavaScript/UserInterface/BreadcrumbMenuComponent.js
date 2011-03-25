@@ -50,7 +50,7 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 * @var {string]
 	 * @private
 	 */
-	_activeMenupath: null,
+	_activeMenuPath: null,
 
 
 	/**
@@ -100,7 +100,6 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 
 		var clickedMenuItem = Ext.get(clickedMenuItemDomElement);
 		if (clickedMenuItem.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
-			this._activeMenupath = null;
 			this._shouldDeactivateItem(clickedMenuItem);
 		} else {
 			this._shouldActivateItem(clickedMenuItem);
@@ -117,10 +116,10 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	_shouldActivateItem: function(clickedMenuItem) {
 		var currentlyClickedMenuPath = clickedMenuItem.getAttribute('data-menupath');
 
-		if (currentlyClickedMenuPath === this._activeMenupath) {
+		if (currentlyClickedMenuPath === this._activeMenuPath) {
 			return null;
 		}
-		this._activeMenupath = currentlyClickedMenuPath;
+		this._activeMenuPath = currentlyClickedMenuPath;
 
 			// If a sibling of the to-be-activated node is active, deactivate it
 		clickedMenuItem.parent().select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
@@ -139,6 +138,10 @@ Ext.extend(F3.TYPO3.UserInterface.BreadcrumbMenuComponent, Ext.BoxComponent, {
 			this._animationHandler.renderArrow(this.el);
 			this._renderLevel(currentlyClickedMenuPath);
 		}
+
+		this._animationHandler.add(function() {
+			this._activeMenuPath = null;
+		}.createDelegate(this), 5);
 
 		this._animationHandler.start();
 		F3.TYPO3.UserInterface.UserInterfaceModule.fireEvent('activate-' + currentlyClickedMenuPath, this);

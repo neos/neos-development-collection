@@ -92,17 +92,19 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 				// Mozilla, see https://github.com/alohaeditor/Aloha-Editor/issues/72
 			this._checkModificationsTask = {
 				run: function() {
-					VIE.EntityManager.entities.each(function(objectInstance, index) {
-						if (typeof objectInstance.editables !== 'undefined') {
-							if (VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
-								F3.TYPO3.Content.ContentEditorFrontend.Core.fireEvent('modifiedContent');
-								objectInstance.save();
-								jQuery.each(objectInstance.editables, function() {
-									this.setUnmodified();
-								});
+					if (VIE && VIE.EntityManager && VIE.EntityManager.entities) {
+						VIE.EntityManager.entities.each(function(objectInstance, index) {
+							if (typeof objectInstance.editables !== 'undefined') {
+								if (VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
+									F3.TYPO3.Content.ContentEditorFrontend.Core.fireEvent('modifiedContent');
+									objectInstance.save();
+									jQuery.each(objectInstance.editables, function() {
+										this.setUnmodified();
+									});
+								}
 							}
-						}
-					});
+						});
+					}
 				},
 				interval: 5000
 			};

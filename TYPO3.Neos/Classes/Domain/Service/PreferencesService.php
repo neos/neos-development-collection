@@ -1,4 +1,6 @@
-Ext.ns("F3.TYPO3.Content.Edit");
+<?php
+declare(ENCODING = 'utf-8');
+namespace F3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,60 +23,34 @@ Ext.ns("F3.TYPO3.Content.Edit");
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Content.Edit.PagePropertiesDialog
+ * User Preferences, should be lateron stored in the database; but stored in
+ * the session right now.
  *
- * The dialog for editing page properties, e.g. title and navigation title
- *
- * @namespace F3.TYPO3.Content.Edit
- * @extends F3.TYPO3.UserInterface.ModuleDialog
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ * @scope session
  */
-F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleDialog, {
+class PreferencesService {
 
 	/**
-	 * Initializer
+	 * Name of the current workspace.
+	 * @var string
 	 */
-	initComponent: function() {
-		var currentPagePath, config = {};
-
-		config.items = F3.TYPO3.UserInterface.Form.FormFactory.createForm(
-			'TYPO3:Page',
-			'pageProperties',
-			{
-				ref: 'form',
-				getLoadIdentifier: function() {
-					currentPagePath = F3.TYPO3.Content.ContentModule.getWebsiteContainer().getCurrentPagePath();
-					return currentPagePath;
-				},
-				getSubmitIdentifier: function() {
-					return currentPagePath;
-				},
-				onSubmitSuccess: this._onPagePropertiesSaved.createDelegate(this)
-			}
-		);
-
-		Ext.apply(this, config);
-		F3.TYPO3.Content.Edit.PagePropertiesDialog.superclass.initComponent.call(this);
-	},
+	protected $currentWorkspaceName;
 
 	/**
-	 * Action when clicking the dialog ok button
-	 *
-	 * @return {void}
+	 * @return string the current workspace
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	onOk: function() {
-		this.form.doSubmitForm();
-	},
-
-	/**
-	 * Action when succes on button click action
-	 * remove the dialog and refresh frontend editor
-	 *
-	 * @private
-	 */
-	_onPagePropertiesSaved: function() {
-		this.moduleMenu.removeModuleDialog();
-
-		F3.TYPO3.Content.ContentModule.getWebsiteContainer().reload();
+	public function getCurrentWorkspaceName() {
+		return $this->currentWorkspaceName;
 	}
-});
-Ext.reg('F3.TYPO3.Content.Edit.PagePropertiesDialog', F3.TYPO3.Content.Edit.PagePropertiesDialog);
+
+	/**
+	 * Set the workspace which should be used.
+	 * @param string $currentWorkspaceName
+	 */
+	public function setCurrentWorkspaceName($currentWorkspaceName) {
+		$this->currentWorkspaceName = $currentWorkspaceName;
+	}
+}
+?>
