@@ -63,7 +63,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 
 				// Add the "delete" buttons to the 'actions' tab.
 			this._addButtons([{
-					labelKey: window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'delete')
+					labelKey: F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'delete')
 				}],
 				'floatingMenuTabAction',
 				this._onDeleteButtonClick
@@ -158,7 +158,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		_insertPlaceholderIfEditableIsEmpty: function(editable) {
 			var contents = Ext.util.Format.trim(editable.getContents());
 			if (contents == '' || contents == '&nbsp;' || contents == '<br />' || contents == '<br>') {
-				editable.obj.html('<span class="f3-typo3-placeholder">[' + window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'enterSomeContent') + ']</span>');
+				editable.obj.html('<span class="f3-typo3-placeholder">[' + F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'enterSomeContent') + ']</span>');
 			}
 		},
 
@@ -198,7 +198,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		_addButtons: function(buttons, tab, onClick) {
 			Ext.each(buttons, function(button) {
 				var newButton = new GENTICS.Aloha.ui.Button({
-					'label': F3.TYPO3.UserInterface.I18n.get('ContentTypes', button.labelKey),
+					'label': F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('ContentTypes', button.labelKey),
 					'size': 'small',
 					'onclick': onClick.createDelegate(this, [button.name])
 				});
@@ -250,26 +250,15 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 * Helper function which finds the parent content element from the given DOM node
 		 *
 		 * @param {jQuery} jQueryDomNode a DOM node wrapped by jQuery, from which the search should start
-		 * @return {jQuery} the DOM node of the content element, having about and data-workspacename set.
+		 * @return {jQuery} the DOM node of the content element, having "about" property set.
 		 * @private
 		 */
 		_findParentContentElement: function(jQueryDomNode) {
 			return jQueryDomNode.parents('*[about]').first();
 		},
 
-		/**
-		 * Helper function which creates a JSON structure which can be mapped
-		 * to a TYPO3CR Node if used as argument for an Ext.Direct call.
-		 *
-		 * @param {jQuery} contentElement the Content Element container
-		 * @return {Object} a JSON object with the __context set correctly.
-		 * @private
-		 */
-		_createNodeFromContentElement: function(contentElement) {
-			return F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(
-				contentElement.attr('about'),
-				contentElement.attr('data-workspacename')
-			);
+		_createNodeFromContentElement: function(element) {
+			return {'__context': element.attr('about')}; // TODO: Remove {...} once new property mapper is merged
 		},
 
 		/**
@@ -283,12 +272,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		_overrideI18nLocalization: function() {
 			var alohaI18n = GENTICS.Aloha.i18n;
 			GENTICS.Aloha.i18n = function (component, key, replacements) {
-				var localizedString = window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', key);
+				var localizedString = F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', key);
 				if (localizedString === key) {
 					return alohaI18n.call(this, component, key, replacements);
 				}
 				return localizedString;
 			}
 		}
-	}, F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin
+	}
 );

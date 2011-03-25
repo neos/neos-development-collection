@@ -329,15 +329,10 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	/**
 	 * Get the current context path
 	 *
-	 * @return {Object} current context
+	 * @return {String} current context
 	 */
 	getCurrentContext: function() {
-		return {
-			'__context': {
-				workspaceName: this._getIframeDocument().body.getAttribute('data-workspacename'),
-				nodePath: this._getIframeDocument().body.getAttribute('about')
-			}
-		};
+		return this._getIframeDocument().body.getAttribute('about');
 	},
 
 	/**

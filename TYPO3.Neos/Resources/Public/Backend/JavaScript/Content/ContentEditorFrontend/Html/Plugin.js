@@ -27,7 +27,7 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Html');
  *
  * @namespace F3.TYPO3.Content.ContentEditorFrontend.Html
  */
-F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = Ext.apply(F3.TYPO3.Content.ContentEditorFrontend.AbstractPlugin, {
+F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = {
 	/**
 	 * @var {Ext.Element}
 	 */
@@ -39,7 +39,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = Ext.apply(F3.TYPO3.Content.
 	_htmlEditorWindow: null,
 
 	/**
-	 * @var {Ext.form.TextArea}
+	 * @var {CodeMirror}
 	 */
 	_htmlEditorTextarea: null,
 
@@ -49,53 +49,50 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = Ext.apply(F3.TYPO3.Content.
 	 * @return {void}
 	 */
 	init: function() {
-		var scope = this;
-
 		var confirmButton = new Ext.Button({
-			text: top.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'confirm'),
+			text: F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'confirm'),
 			disabled: true,
 			handler: function() {
-				scope._saveHandler.call(scope);
-			}
+				this._saveHandler();
+			}.createDelegate(this)
 		});
 
-		var html = null;
-		if (scope._element.dom) {
-			html = scope._element.dom.innerHTML.replace(/(^\s+|\s+$)/g,'');
-		}
-
-		this._htmlEditorTextarea = new Ext.form.TextArea({
-			value: html,
-			width: '100%',
-			height: '100%',
-			enableKeyEvents: true,
-			listeners: {
-				keyup: function(event) {
-					if (confirmButton.disabled === true) {
-						confirmButton.enable();
-					}
-				}
-			}
-		});
+		var htmlSource = null;
+		var containerInstance = VIE.RDFaEntities.getInstance(this._element.dom);
+		htmlSource = containerInstance.get('typo3:source').replace(/(^\s+|\s+$)/g,'');
 
 		this._htmlEditorWindow = new Ext.Window({
-			title: top.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'htmlEditor'),
+			title: F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'htmlEditor'),
 			modal: true,
 			closeAction:'hide',
 			plain: true,
 			height: top.Ext.getBody().getHeight() - 250,// @todo: decide something about the size later on to find
 			width: top.Ext.getBody().getWidth() - 300,// a clean way we can manage the size
-			items: [
-				this._htmlEditorTextarea
-			],
+
 			buttons: [confirmButton, {
-				text: top.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'cancel'),
+				text: F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'cancel'),
 				handler: function() {
-					scope._htmlEditorWindow.hide();
-				}
+					this._htmlEditorWindow.hide();
+				}.createDelegate(this)
 			}],
+			listeners: {
+				afterRender: function(htmlEditor) {
+					this._htmlEditorTextarea = new CodeMirror(htmlEditor.body.dom, {
+						lineNumbers: true,
+						mode: 'xml',
+						value: htmlSource,
+						onChange: function() {
+							if (confirmButton.disabled === true) {
+								confirmButton.enable();
+							}
+						},
+						height: '100%'
+					});
+				}.createDelegate(this)
+			},
 			renderTo: Ext.getBody()
-		}).show();
+		});
+		this._htmlEditorWindow.show();
 	},
 
 	/**
@@ -104,21 +101,13 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = Ext.apply(F3.TYPO3.Content.
 	 * @return {void}
 	 */
 	_saveHandler: function() {
-		this._element.dom.innerHTML = this._htmlEditorTextarea.getValue();
-		this._element.dom.innerHTML = this._element.dom.innerHTML.replace(/id="ext-gen[0-9]*"/, '');
-
-		var node = this._createNodeFromContentElement(this._element);
-		node.properties = {
-			source: this._element.dom.innerHTML
-		};
-
-		var scope = this;
-		top.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update.call(this, node, function(result) {
-			scope._htmlEditorWindow.hide();
-		});
+		var containerInstance = VIE.RDFaEntities.getInstance(this._element.dom);
+		containerInstance.set({'typo3:source': this._htmlEditorTextarea.getValue()});
+		containerInstance.save();
+		this._htmlEditorWindow.hide();
 	}
 
-});
+};
 
 /**
  * Constructor method

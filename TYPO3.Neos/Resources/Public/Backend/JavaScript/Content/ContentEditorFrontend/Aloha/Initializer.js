@@ -28,7 +28,7 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Aloha');
  * @namespace F3.TYPO3.Content.ContentEditorFrontend.Aloha
  * @singleton
  */
-F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
+F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 
 	/**
 	 * Is aloha activated right now?
@@ -36,6 +36,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 	 * @private
 	 */
 	_alohaEnabled: false,
+
+	/**
+	 * Task which checks for modifications.
+	 * @private
+	 */
+	_checkModificationsTask: null,
 
 	/**
 	 * Initializer, called on page load. Is used to register event
@@ -61,7 +67,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 			this._alohaEnabled = true;
 
 				// Select all contentelements and build models for that
-			jQuery('.f3-typo3-contentelement').vieSemanticAloha();
+			jQuery('.f3-typo3-contentelement-aloha').vieSemanticAloha();
 
 				// Explicitly activate editable for the clicked element (double click selection hack)
 			if (target) {
@@ -82,16 +88,25 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 				}
 			}, 10);
 
-				// TODO Use smart content change events!
-			this.checkModificationsTask = {
+				// TODO Use "smartContentChanged" event on GENTICS.Aloha, as soon as they work in
+				// Mozilla, see https://github.com/alohaeditor/Aloha-Editor/issues/72
+			this._checkModificationsTask = {
 				run: function() {
-					if (GENTICS.Aloha.getActiveEditable() && GENTICS.Aloha.getActiveEditable().isModified()) {
-						F3.TYPO3.Content.ContentEditorFrontend.Core.fireEvent('modifiedContent');
-					}
+					VIE.EntityManager.entities.each(function(objectInstance, index) {
+						if (typeof objectInstance.editables !== 'undefined') {
+							if (VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
+								F3.TYPO3.Content.ContentEditorFrontend.Core.fireEvent('modifiedContent');
+								objectInstance.save();
+								jQuery.each(objectInstance.editables, function() {
+									this.setUnmodified();
+								});
+							}
+						}
+					});
 				},
-				interval: 1000
+				interval: 5000
 			};
-			Ext.TaskMgr.start(this.checkModificationsTask);
+			Ext.TaskMgr.start(this._checkModificationsTask);
 		}
 	},
 
@@ -103,41 +118,15 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = Ext.apply({}, {
 	 */
 	_disableAloha: function() {
 		if (this._alohaEnabled) {
-			if (this.checkModificationsTask) {
-				Ext.TaskMgr.stop(this.checkModificationsTask);
+			if (this._checkModificationsTask) {
+				Ext.TaskMgr.stop(this._checkModificationsTask);
 			}
-
 			jQuery('.f3-typo3-editable').mahalo();
 			GENTICS.Aloha.FloatingMenu.extTabPanel.hide();
 			GENTICS.Aloha.FloatingMenu.shadow.hide();
 
-			VIE.ContainerManager.cleanup();
 			this._alohaEnabled = false;
 		}
 	}
-}, F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer);
+};
 F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer);
-
-	// Override backbone sync for node model (actual saving of nodes)
-Backbone.sync = function(method, model, success, error) {
-	var properties = {},
-		contentContext = {
-			workspaceName: model.workspaceName,
-			nodePath: model.id
-		};
-
-	jQuery.each(model.attributes, function(propertyName, value) {
-		if (propertyName == 'id') {
-			return;
-		}
-			// TODO If TYPO3 supports mapping of fully qualified properties, send with namespace
-		properties[propertyName.split(':', 2)[1]] = value;
-	});
-
-	F3.TYPO3.Content.ContentEditorFrontend.Core.saveNode(contentContext, properties, function() {});
-};
-
-	// Add additional model properties from elements
-VIE.ContainerManager.findAdditionalInstanceProperties = function(element, modelInstance) {
-	modelInstance.workspaceName = jQuery(element).attr('data-workspacename');
-};

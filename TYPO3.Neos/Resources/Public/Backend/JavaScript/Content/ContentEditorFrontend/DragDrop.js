@@ -61,7 +61,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 		var elementDefinition = {
 			tag: 'div',
 			cls: 'f3-typo3-dropzone',
-			html: top.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'dropContentHere')
+			html: F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'dropContentHere')
 		};
 
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
@@ -126,14 +126,8 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 
 				if (!window.parent.F3) return;
 
-				var sourceNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(
-					sourceElement.getAttribute('about'),
-					sourceElement.getAttribute('data-workspacename')
-				);
-				var targetNode = F3.TYPO3.Content.ContentEditorFrontend.Core.createNode(
-					targetEl.getAttribute('about'),
-					targetEl.getAttribute('data-workspacename')
-				);
+				var sourceNode = sourceElement.getAttribute('about');
+				var targetNode = targetEl.getAttribute('about');
 
 				var onMoveFinished = function() {
 					window.location.reload();
@@ -173,4 +167,4 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 		});
 	}
 };
-F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.DragDrop);
+//F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.DragDrop);

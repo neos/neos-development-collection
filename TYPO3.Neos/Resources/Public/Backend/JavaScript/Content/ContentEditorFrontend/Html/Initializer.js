@@ -31,32 +31,16 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Html');
 F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 
 	/**
-	 * Loads the editor after the page load.
+	 * Initializer, called on page load. Is used to register event
+	 * listeners on the core.
 	 *
-	 * @return {void}
-	 * @private
-	 */
-	_loadOnStartup: function() {
-		var scope = this;
-		Ext.each(Ext.query('.f3-typo3-contentelement-html'), function(element) {
-			scope._attachEventListeners(element);
-		});
-	},
-
-	/**
-	 * Called when the loadNewlyCreatedContentElement event is thrown. Adds the editor
-	 * plugin frontend to the new element
-	 *
-	 * @param {DOMElement} newContentElement
+	 * @param {F3.TYPO3.Content.ContentEditorFrontend.Core} core
 	 * @return {void}
 	 */
-	afterLoadNewContentElementHandler: function(newContentElement) {
-		if(Ext.get(newContentElement).hasClass('f3-typo3-contentelement-html')) {
-			Ext.get(newContentElement).update(window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'enterSomeContent'));
-			this._attachEventListeners(Ext.get(newContentElement));
-			// @todo: make a new instance now and on dblClick? Find a way to optimize this later on
-			new F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin(Ext.get(newContentElement));
-		}
+	initialize: function(core) {
+		core.on('enableEditingMode', this._registerEventHandlers, this);
+		core.on('disableEditingMode', this._unregisterEventHandlers, this);
+		core.on('loadNewlyCreatedContentElement', this._onNewlyCreatedContentElement);
 	},
 
 	/**
@@ -65,14 +49,23 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 	 * @param {Ext.Element} element
 	 * @return {void}
 	 */
-	_attachEventListeners: function(element) {
-		element = Ext.get(element).findParent('.f3-typo3-contentelement-html', 10, true);
-		element.on('dblclick', function(event, element) {
-			new F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin(Ext.get(element));
-		}, this);
+	_registerEventHandlers: function() {
+		jQuery('.f3-typo3-contentelement-html').each(function(index, element) {
+			var contents = Ext.util.Format.trim(jQuery(element).html());
+			if (!contents || contents == '' || contents == '&nbsp;' || contents == '<br />' || contents == '<br>') {
+				//jQuery(element).html('<span class="f3-typo3-html-placeholder">[' + F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'enterSomeContent') + ']</span>');
+				jQuery(element).html('TEST HTML');
+			}
+		});
+		jQuery('.f3-typo3-contentelement-html').live('dblclick', function() {
+			new F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin(Ext.get(this));
+		});
+	},
 
+	_unregisterEventHandlers: function() {
+		jQuery('.f3-typo3-contentelement-html').die('dblclick');
+		jQuery('.f3-typo3-html-placeholder').remove();
 	}
-
-}, F3.TYPO3.Content.ContentEditorFrontend.AbstractInitializer);
+});
 
 F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer);

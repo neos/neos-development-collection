@@ -35,13 +35,8 @@ F3.TYPO3.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	initComponent: function() {
 		var directFn = function(callback) {
-				var context = {
-					'__context': {
-						workspaceName: F3.TYPO3.Configuration.Application.workspaceName,
-						nodePath: nodePath
-					}
-				};
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(context, '!TYPO3:Page', 0, callback);
+				var context = '/' + F3.TYPO3.Configuration.Application.workspaceName + nodePath;
+				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes({__context: context}, '!TYPO3:Page', 0, callback); // TODO: remove {__context:...} after new property mapper has landed.
 			};
 		directFn.directCfg = {
 			method: {

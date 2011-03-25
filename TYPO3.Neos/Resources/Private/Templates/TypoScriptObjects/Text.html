@@ -1,6 +1,6 @@
 {namespace t=F3\TYPO3\ViewHelpers}
 <f:security.ifAccess resource="F3_TYPO3_Backend_BackendController">
-	<div typeof="typo3:{node.contentType}" about="{node.path}" data-workspacename="{node.context.workspace.name}" class="f3-typo3-contentelement">
+	<div typeof="typo3:{node.contentType}" about="/{node.context.workspace.name}{node.path}" class="f3-typo3-contentelement f3-typo3-contentelement-aloha">
 </f:security.ifAccess>
 
 <h2><t:aloha.editable property="headline" context="inline">{properties.headline}</t:aloha.editable></h2>

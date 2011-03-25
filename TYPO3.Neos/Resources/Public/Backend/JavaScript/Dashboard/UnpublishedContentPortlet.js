@@ -119,10 +119,7 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 		var records = this.contentView.getSelectedRecords(), count = records.length, publishCount = 0;
 		Ext.each(records, function(record) {
 			F3.TYPO3.Workspace.Service.publishNode({
-				'__context': {
-					workspaceName: record.data.__workspaceName,
-					nodePath: record.data.__nodePath
-				}
+				'__context': F3.TYPO3.Utils.getContextObjectFromNode(record.data)
 			}, function() {
 				publishCount++;
 				if (publishCount == count) {

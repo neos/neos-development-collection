@@ -50,12 +50,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			dataIndex: 'title'
 		}
 	],
-	context: {
-		'__context': {
-			nodePath: '',
-			workspaceName: ''
-		}
-	},
+	context: '',
 	position: 0,
 	listeners: {
 		'viewready': function(scope) {
@@ -98,9 +93,9 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 
 		var directFn = function(callback) {
 			if(self.move) {
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent(context, 'TYPO3:Page', 1, callback);
+				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent({__context: context}, 'TYPO3:Page', 1, callback); // TODO: the {__context:context} can be replaced by "context" once the new property mapper has landed in core.
 			} else {
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(context, 'TYPO3:Page', 1, callback);
+				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes({__context: context}, 'TYPO3:Page', 1, callback); // TODO: the {__context:context} can be replaced by "context" once the new property mapper has landed in core.
 			}
 		};
 		directFn.directCfg = {
@@ -120,7 +115,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 				'load': function(store) {
 					var dragableId;
 					if(self.move) {
-						dragableId = context.__context.nodePath;
+						dragableId = context;
 					} else {
 						var dragable = new Ext.data.Record({'title': F3.TYPO3.UserInterface.I18n.get('TYPO3', 'orderSelectAddNew')});
 						store.insert(0, dragable);
@@ -163,7 +158,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 				node = store.getAt((index - 1));
 				position = 1;
 			}
-			this.context.__context = F3.TYPO3.Utils.getContextObjectFromNode(node.data);
+			this.context = node.data['__context'];
 			this.position = position;
 		} else {
 			// Find current context if no siblings are available

@@ -40,10 +40,7 @@ F3.TYPO3.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 	 */
 	directFn: function(currentNodePath, callback) {
 		var context = {
-			'__context': {
-				workspaceName: F3.TYPO3.Configuration.Application.workspaceName,
-				nodePath: currentNodePath
-			}
+			'__context': '/' + F3.TYPO3.Configuration.Application.workspaceName + currentNodePath
 		};
 		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(context, 'TYPO3:Page', callback);
 	},

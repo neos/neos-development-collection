@@ -63,25 +63,31 @@ class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function convertFrom($source) {
-		if (!is_array($source) || !isset($source['__context']) || !isset($source['__context']['nodePath']) || !isset($source['__context']['workspaceName'])) {
+		if (is_string($source)) {
+			$source = array('__context' => $source);
+		}
+		if (!is_array($source) || !isset($source['__context'])) {
 			return FALSE;
 		}
 
-		$pathSegments = explode('/', ltrim($source['__context']['nodePath'], '/'));
+		$pathSegments = explode('/', ltrim($source['__context'], '/'));
 
-		if (count($pathSegments) < 2) {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the context path was invalid.', 1285162903);
+		if (count($pathSegments) < 3) {
+			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the context path was invalid. The path must have at least three parts: [workspace-name]/sites/[pathToNode]', 1285162903);
 		}
 
-		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $source['__context']['workspaceName']);
+		$workspaceName = array_shift($pathSegments);
+
+		if (array_shift($pathSegments) !== 'sites') {
+			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the context path was invalid. The second segment was not "sites"', 1285168001);
+		}
+
+		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName);
 		$workspace = $contentContext->getWorkspace();
 		if (!$workspace) {
 			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the specified workspace does not exist.', 1285162905);
 		}
 
-		if (array_shift($pathSegments) !== 'sites') {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the context path was invalid.', 1285168001);
-		}
 
 		$siteNodeName = array_shift($pathSegments);
 		$site = $this->siteRepository->findOneByNodeName($siteNodeName);

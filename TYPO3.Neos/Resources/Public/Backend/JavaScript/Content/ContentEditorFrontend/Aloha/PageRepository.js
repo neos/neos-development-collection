@@ -33,6 +33,7 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Aloha');
  * @namespace F3.TYPO3.Content.ContentEditorFrontend.Aloha
  * @extends GENTICS.Aloha.Plugin
  * @singleton
+ * @todo fix this
  */
 F3.TYPO3.Content.ContentEditorFrontend.Aloha.PageRepository = Ext.apply(
 	new GENTICS.Aloha.Repository('F3.TYPO3.Content.ContentEditorFrontend.Aloha.PageRepository'),
@@ -50,10 +51,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.PageRepository = Ext.apply(
 				callback.call(this, []);
 			}
 			var context = {
-					'__context': {
-						workspaceName: window.parent.F3.TYPO3.Configuration.Application.workspaceName,
-						nodePath: window.parent.F3.TYPO3.Configuration.Application.siteNodePath
-					}
+					'__context': '/' + window.parent.F3.TYPO3.Configuration.Application.workspaceName + window.parent.F3.TYPO3.Configuration.Application.siteNodePath
 				};
 			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(context, 'TYPO3:Page', 0, function(result) {
 				var items = [];

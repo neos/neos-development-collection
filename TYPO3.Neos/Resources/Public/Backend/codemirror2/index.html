@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+  <head>
+    <title>CodeMirror 2</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="lib/codemirror.css">
+    <script src="lib/codemirror.js"></script>
+    <script src="mode/javascript/javascript.js"></script>
+    <link rel="stylesheet" href="mode/javascript/javascript.css">
+    <style type="text/css">
+      .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
+    </style>
+    <link rel="stylesheet" href="docs.css">
+  </head>
+  <body>
+    <h1>CodeMirror 2</h1>
+
+<form><textarea id="code" name="code">
+// Demo code (the actual new parser character stream implementation)
+
+function StringStream(string) {
+  this.pos = 0;
+  this.string = string;
+}
+
+StringStream.prototype = {
+  done: function() {return this.pos >= this.string.length;},
+  peek: function() {return this.string.charAt(this.pos);},
+  next: function() {
+    if (this.pos &lt; this.string.length)
+      return this.string.charAt(this.pos++);
+  },
+  eat: function(match) {
+    var ch = this.string.charAt(this.pos);
+    if (typeof match == "string") var ok = ch == match;
+    else var ok = ch &amp;&amp; match.test ? match.test(ch) : match(ch);
+    if (ok) {this.pos++; return ch;}
+  },
+  eatWhile: function(match) {
+    var start = this.pos;
+    while (this.eat(match));
+    if (this.pos > start) return this.string.slice(start, this.pos);
+  },
+  backUp: function(n) {this.pos -= n;},
+  column: function() {return this.pos;},
+  eatSpace: function() {
+    var start = this.pos;
+    while (/\s/.test(this.string.charAt(this.pos))) this.pos++;
+    return this.pos - start;
+  },
+  match: function(pattern, consume, caseInsensitive) {
+    if (typeof pattern == "string") {
+      function cased(str) {return caseInsensitive ? str.toLowerCase() : str;}
+      if (cased(this.string).indexOf(cased(pattern), this.pos) == this.pos) {
+        if (consume !== false) this.pos += str.length;
+        return true;
+      }
+    }
+    else {
+      var match = this.string.slice(this.pos).match(pattern);
+      if (match &amp;&amp; consume !== false) this.pos += match[0].length;
+      return match;
+    }
+  }
+};
+</textarea></form>
+
+    <script>
+      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        lineNumbers: true,
+        matchBrackets: true
+      });
+    </script>
+
+    <h3>Available modes:</h3>
+
+    <ul>
+      <li><a href="mode/javascript/">JavaScript</a></li>
+      <li><a href="mode/xml/">XML/HTML</a></li>
+      <li><a href="mode/css/">CSS</a></li>
+      <li><a href="mode/htmlmixed/">Mixed-mode HTML</a></li>
+      <li><a href="mode/clike/">Simple mode for C-like languages (C, C++, Java)</a></li>
+      <li><a href="mode/php/">PHP</a></li>
+      <li><a href="mode/diff/">Diff</a></li>
+      <li><a href="mode/haskell/">Haskell</a></li>
+      <li><a href="mode/stex/">sTeX</a></li>
+    </ul>
+
+    <h3>Usage demos:</h3>
+
+    <ul>
+      <li><a href="demo/complete.html">Clever JS autocompletion</a></li>
+      <li><a href="demo/mustache.html">Parsing Mustache templates using an overlay</a></li>
+      <li><a href="demo/search.html">Search/replace and text marking</a></li>
+      <li><a href="demo/resize.html">Non-scrolling, resizing editor</a></li>
+      <li><a href="demo/marker.html">Setting breakpoints</a></li>
+    </ul>
+
+    <h3>Getting the Code</h3>
+
+    <p>The recommended way to get the files is...</p>
+
+    <pre style="margin-left: 1em">git clone http://marijnhaverbeke.nl/git/codemirror2</pre>
+
+    <p>There is
+    also <a href="https://github.com/marijnh/codemirror2">github</a>
+    and a zip containing the
+    current <a href="http://codemirror.net/2/codemirror2-latest.zip">development
+    snapshot</a>. Once we have non-beta releases, those will also be
+    avaible in zip form.</p>
+
+    <h3>CodeMirror 2: beta 2</h3>
+
+    <p><a href="https://github.com/marijnh/codemirror2/tree/beta2">Beta
+    2</a> was released on February 22th 2011. The code is somewhat
+    more well-tested, and the API has matured a bit since beta 1. The
+    main thing we need right now is more ports of CodeMirror 1
+    modes—you're invited to <a href="manual.html#modeapi">help</a>
+    with that!</p>
+
+    <h3>CodeMirror 2: beta 1</h3>
+
+    <p>Beta 1 was released on February 8th 2011. There are no release
+    files yet, just
+    a <a href="https://github.com/marijnh/codemirror2/tree/beta1">git
+    tag</a>.</p>
+
+    <p>There is now a <a href="manual.html">manual</a>, and you are
+    encouraged to try the library out and leave bug reports at
+    the <a href="https://github.com/marijnh/codemirror2/issues">github
+    issue tracker</a> (anything from the editor behaving badly to a
+    typo in the docs).</p>
+
+  </body>
+</html>

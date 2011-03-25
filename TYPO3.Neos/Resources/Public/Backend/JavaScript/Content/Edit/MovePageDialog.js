@@ -49,7 +49,7 @@ F3.TYPO3.Content.Edit.MovePageDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleD
 						doSubmitForm: function() {
 							this.getForm().api.move.call(
 								this,
-								Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentContext(),
+								F3.TYPO3.Content.ContentModule.getWebsiteContainer().getCurrentContext(),
 								Ext.getCmp('F3.TYPO3.Content.ContentModule.move').getContext(),
 								Ext.getCmp('F3.TYPO3.Content.ContentModule.move').getPosition(),
 								this._onFormSubmitSuccess,

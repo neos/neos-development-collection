@@ -21,7 +21,7 @@ Ext.ns('F3.TYPO3.UserInterface');
  *                                                                        */
 
 /**
- * @class
+ * @class F3.TYPO3.UserInterface.I18n
  *
  * Object used to store and fetch localized strings
  * based on package / key combination

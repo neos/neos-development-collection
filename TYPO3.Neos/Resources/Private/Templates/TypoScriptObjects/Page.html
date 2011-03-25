@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html version="HTML+RDFa 1.1" xmlns:typo3="http://www.typo3.org">
+<html version="HTML+RDFa 1.1" xmlns:typo3="http://www.typo3.org/ns/2011/FLOW3/Packages/TYPO3/Content/">
 	<!--
 		This website is powered by TYPO3 - enabling people to communicate!
 		TYPO3 is a free open source Content Management Framework licensed under the GNU/GPL.
@@ -8,7 +8,7 @@
 	<head>
 		{f:raw(value: head)}
 	</head>
-	<body about="{node.context.currentNode.path}" data-workspacename="{node.context.workspace.name}" {bodyAttributes}>
+	<body typeof="typo3:{node.contentType}" about="/{node.context.workspace.name}{node.context.currentNode.path}" {bodyAttributes}>
 		{f:raw(value: body)}
 	</body>
 </html>

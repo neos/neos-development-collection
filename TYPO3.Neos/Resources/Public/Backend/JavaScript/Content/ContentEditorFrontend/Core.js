@@ -42,6 +42,14 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	_modules: [],
 
 	/**
+	 * The Internationalization component, used to get translated strings.
+	 * This is just a shortcut to the localization component in the parent frame.
+	 *
+	 * @var F3.TYPO3.UserInterface.I18n
+	 */
+	I18n: null,
+
+	/**
 	 * @event afterPageLoad
 	 *
 	 * Thrown when a page is fully loaded, and if the TYPO3 Backend is reachable.
@@ -126,6 +134,8 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 		}, this);
 
 		if (window.parent !== undefined && window.parent.F3 !== undefined && window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
+			this.I18n = window.parent.F3.TYPO3.UserInterface.I18n;
+
 			this._registerEventListeners();
 			this.fireEvent('afterPageLoad');
 
@@ -135,6 +145,10 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 				this._enableSelectionMode();
 			} else if (this._getWebsiteContainer().isEditingModeEnabled()) {
 				this._enableEditingMode();
+			}
+		} else {
+			this.I18n = {
+				get: Ext.emptyFn
 			}
 		}
 	},
@@ -276,6 +290,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	_disableEditingMode: function() {
 		Ext.getBody().removeClass('f3-typo3-editing-enabled');
 		this.fireEvent('disableEditingMode');
+		VIE.cleanup();
 	},
 
 	/**
@@ -299,24 +314,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	},
 
 	/**
-	 * Helper function which creates a JSON structure which can be mapped
-	 * to a TYPO3CR Node if used as argument for an Ext.Direct call.
-	 *
-	 * @param {String} nodePath the node path
-	 * @param {String} workspaceName the workspace name
-	 * @return {Object} a JSON object with the __context set correctly.
-	 * @todo move to a NodeFactory which is used in Frontend and Backend JavaScript
-	 */
-	createNode: function(nodePath, workspaceName) {
-		var data = {};
-		data.__context = {
-			workspaceName: workspaceName,
-			nodePath: nodePath
-		};
-		return data;
-	},
-
-	/**
 	 * Create a new content element on the page
 	 *
 	 * @param {string} nameOfContentType
@@ -327,7 +324,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 	createNewContentElement: function(nameOfContentType, referenceNode, referenceDomElement, position) {
 		var position = !position || position == 1 ? 1 : -1;
-		var loadIndicatorContent = '<div>' + window.parent.F3.TYPO3.UserInterface.I18n.get('TYPO3', 'loading').toUpperCase() + '</div>';
+		var loadIndicatorContent = '<div>' + this.I18n.get('TYPO3', 'loading') + '</div>';
 
 		if (position == -1) {
 			var loadingIndicatorDom = Ext.DomHelper.insertBefore(referenceDomElement, loadIndicatorContent);
@@ -366,14 +363,16 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	/**
 	 * Save a node
 	 *
-	 * @param {Object} contentContext
+	 * @param {String} nodeContext
 	 * @param {Object} properties
 	 * @param {Function} callback
 	 * @param {Object} scope
 	 * @private
 	 */
-	saveNode: function(contentContext, properties, callback, scope) {
-		var data = {__context: contentContext, properties: properties};
+	saveNode: function(nodeContext, properties, callback, scope) {
+		var data = {__context: nodeContext };
+
+		data.properties = properties;
 		var contentDialog = window.parent.F3.TYPO3.UserInterface.UserInterfaceModule.getModuleMenu('content').getContentDialog();
 		if (contentDialog) {
 			contentDialog.startSave();
@@ -450,6 +449,20 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 		}
 	}
 });
+
+
+	// Override backbone sync for node model (actual saving of nodes)
+Backbone.sync = function(method, model, success, error) {
+	var properties = {};
+	jQuery.each(model.attributes, function(propertyName, value) {
+		if (propertyName == 'id') {
+			return;
+		}
+			// TODO If TYPO3 supports mapping of fully qualified properties, send with namespace
+		properties[propertyName.split(':', 2)[1]] = value;
+	});
+	F3.TYPO3.Content.ContentEditorFrontend.Core.saveNode(model.id, properties, function() {});
+};
 
 Ext.onReady(function() {
 	F3.TYPO3.Content.ContentEditorFrontend.Core.initialize();

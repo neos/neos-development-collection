@@ -22,7 +22,7 @@ Ext.ns('F3.TYPO3');
 
 /**
  * @class F3.TYPO3.Utils
- * 
+ *
  * Utility functions to use.
  *
  * @namespace F3.TYPO3
@@ -80,7 +80,7 @@ F3.TYPO3.Utils = {
 	 * Build an uri for the backend, considering the base URL.
 	 * In case you want to build an URL to "typo3/login/index", just pass
 	 * "login/index" to the method (everything after "typo3/")
-	 * 
+	 *
 	 * @param {String} path The path to build the URI for.
 	 * @return {String} the full backend URI.
 	 */
@@ -124,32 +124,5 @@ F3.TYPO3.Utils = {
 			iterator = iterator[moduleNamePart];
 		});
 		return iterator;
-	},
-
-	/**
-	 * Returns a context object from a node to be used in service calls.
-	 *
-	 * @param {Object} node the node object to get context from
-	 * @return {Object|undefined} the context or undefined if no context could be found
-	 */
-	getContextObjectFromNode: function(node) {
-		var nodeContext = {};
-		if (typeof node !== 'object') {
-			return undefined;
-		}
-
-		if (node.hasOwnProperty('__workspaceName')) {
-			nodeContext.workspaceName = node['__workspaceName'];
-		} else {
-			return undefined;
-		}
-
-		if (node.hasOwnProperty('__nodePath')) {
-			nodeContext.nodePath = node['__nodePath'];
-		} else {
-			return undefined;
-		}
-
-		return nodeContext;
 	}
 };

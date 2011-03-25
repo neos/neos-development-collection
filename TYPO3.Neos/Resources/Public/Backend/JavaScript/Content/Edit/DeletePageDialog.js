@@ -49,7 +49,7 @@ F3.TYPO3.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 */
 	onOk: function() {
 		var context = F3.TYPO3.Content.ContentModule.getWebsiteContainer().getCurrentContext();
-		F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, context, this._onDeleteSuccess, this);
+		F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, {__context: context}, this._onDeleteSuccess, this); // TODO: Change after new property mapper has landed.
 	},
 
 	/**
