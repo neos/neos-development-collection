@@ -58,6 +58,9 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 		}
 
 		if ($this->contentContext === NULL) {
+			if ($this->preferencesService->getCurrentWorkspaceName() === NULL) {
+				return self::MATCHRESULT_NOWORKSPACE;
+			}
 			$this->contentContext = new \F3\TYPO3\Domain\Service\ContentContext($this->preferencesService->getCurrentWorkspaceName());
 		}
 

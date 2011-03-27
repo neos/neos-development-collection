@@ -278,5 +278,17 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			->uriFor('show', array('node' => $node->getParent(), 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
+
+	/**
+	 * A preliminary error action for handling validation errors
+	 * by assigning them to the ExtDirect View that takes care of
+	 * converting them.
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function extErrorAction() {
+		$this->view->assignErrors($this->arguments->getValidationResults());
+	}
 }
 ?>

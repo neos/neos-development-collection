@@ -31,7 +31,11 @@ namespace F3\TYPO3\Routing;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface {
+class NodeObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+
+	protected $sourceTypes = array('string', 'array');
+	protected $targetType = 'F3\TYPO3CR\Domain\Model\Node';
+	protected $priority = 1;
 
 	/**
 	 * @inject
@@ -52,23 +56,17 @@ class NodeObjectConverter implements \F3\FLOW3\Property\ObjectConverterInterface
 	protected $preferencesService;
 
 	/**
-	 * Returns a list of fully qualified class names of those classes which are supported
-	 * by this property editor.
-	 *
-	 * @return array<string>
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getSupportedTypes() {
-		return array('F3\TYPO3CR\Domain\Model\Node');
-	}
-
-	/**
 	 * Converts the given string, array or number to a Node, including a matching context
 	 *
+	 * @param mixed $source
+	 * @param string $targetType
+	 * @param array $subProperties
+	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return mixed An object or \F3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function convertFrom($source) {
+	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
 			$source = array('__nodePath' => $source);
 		}
