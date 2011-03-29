@@ -210,6 +210,8 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 		try {
 			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
 			return $pluginResponse->getContent();
+		} catch (\F3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
+			throw $stopActionException;
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException($exception);
 			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
