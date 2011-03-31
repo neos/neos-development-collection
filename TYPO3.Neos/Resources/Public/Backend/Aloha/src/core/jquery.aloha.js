@@ -213,7 +213,7 @@
 
 		// Fetch already bound events
 		var boundHandlers = [];
-		$.each($this.data('events')[eventName], function(i,event){
+		$.each(($this.data('events') || {})[eventName] || [], function(i,event){
 			boundHandlers.push(event.handler);
 		});
 

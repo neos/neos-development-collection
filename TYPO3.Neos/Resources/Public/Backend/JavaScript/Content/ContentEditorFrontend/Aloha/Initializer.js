@@ -92,8 +92,8 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 				// Mozilla, see https://github.com/alohaeditor/Aloha-Editor/issues/72
 			this._checkModificationsTask = {
 				run: function() {
-					if (VIE && VIE.EntityManager && VIE.EntityManager.entities) {
-						VIE.EntityManager.entities.each(function(objectInstance, index) {
+					if (VIE && VIE.ContainerManager && VIE.ContainerManager.instances) {
+						jQuery.each(VIE.ContainerManager.instances, function(index, objectInstance) {
 							if (typeof objectInstance.editables !== 'undefined') {
 								if (VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
 									F3.TYPO3.Content.ContentEditorFrontend.Core.fireEvent('modifiedContent');
