@@ -1,0 +1,22 @@
+How to add the plugin
+---------------------
+
+Insert in the <head></head> :
+
+<script type="text/javascript" src="aloha/plugins/com.gentics.aloha.plugins.CropNResize/plugin.js"></script>
+
+This plugin depends upon jCrop ( http://deepliquid.com/content/Jcrop.html ) and jQuery UI ( http://www.jqueryui.com/ ).
+The only used components of jQuery UI is the Resizable one (with its dependancies).
+
+Config example
+--------------
+
+"com.gentics.aloha.plugins.CropNResize": {
+	crop: true, // Allows (or denies) the crop feature
+	resize: true, // Allows (or denies) the crop feature
+  	onResized : function () { }, // On resized callback
+  	onCropped: function () { }, // On cropped callback
+  	onReset: function () { }, // On reset callback
+  	aspectRatio: true // Whether to keep or not the ratio when resizing
+}
+
