@@ -7,58 +7,97 @@
 #	Refer to the README file for usage
 #
 # == Options
-#	-h, --help          Displays help message
-#	-v, --version       Display the version, then exit
-#	-q, --quiet         Output as little as possible, overrides verbose
-#	-V, --verbose       Verbose output
+#	-h, --help					Displays help message
+#	-v, --version			 Display the version, then exit
+#	-q, --quiet				 Output as little as possible, overrides verbose
+#	-V, --verbose			 Verbose output
 #
 
 require 'optparse'
-require 'rdoc/usage'
 require 'ostruct'
 require 'date'
 
+begin
+	require 'rdoc/usage'
+	RDOC_INCLUDED = true
+rescue LoadError
+	RDOC_INCLUDED = false
+end
+
+IS_WINDOWS = ENV['windir'] ? true : false
+WINDOWS_CLI = `echo $PATH`.strip().eql?('$PATH') ? true : false
+
 class App
 	# Remotes
-	REMOTE_ALOHA_URL	= 'http://github.com/alohaeditor/Aloha-Editor.git'
-	REMOTE_ALOHA			= 'aloha'
+	REMOTE_GIT_URL	= 'http://github.com/alohaeditor/Aloha-Editor.git'
+	REMOTE_GIT			= 'aloha'
 
 	# Versioning
 	BRANCH_DEV			= 'dev'
-	BRANCH_VERSION	= '0.9.4'
+	BRANCH_VERSION	= '0.10'
 	BRANCH_MASTER		= 'master'
-
-	# Building
-	BUILD_DIR			= './.build'
-
-	# Uglifiy
-	UGLIFY_URL		= 'https://github.com/mishoo/UglifyJS/raw/master/bin/uglifyjs'
-	UGLIFY_DIR		= './.build/uglify'
-	UGLIFY_FILE		= './.build/uglify/uglify'
-
-	# Closure
-	CLOSURE_URL		= 'http://closure-compiler.googlecode.com/files/compiler-latest.zip'
-	CLOSURE_DIR		= './.build/closure'
-	CLOSURE_ZIP		= './.build/closure/compiler.zip'
-	CLOSURE_FILE	= './.build/closure/compiler.jar'
-	SOURCE_MAP		= './scripts/closure.map'
-
-	# YUI
-	YUI_URL				= 'http://yuilibrary.com/downloads/yuicompressor/yuicompressor-2.4.2.zip'
-	YUI_DIR				= './.build/yui'
-	YUI_ZIP				= './.build/yui/compiler.zip'
-	YUI_FILE			= './.build/yui/yuicompressor-2.4.2/build/yuicompressor-2.4.2.jar'
 
 	# ===========================================================================
 	# Init Helpers
 
 	# Run a Command
-	def run ( cmd )
-		puts cmd + "\n"
-		result = `#{cmd}`
-		puts result
+	def run ( command, output=true )
+    # Recurse
+		if command.kind_of?(Array)
+			result = ""
+			command.each do |c|
+				result = result + run(c,output)
+			end
+			return result
+		end
+
+    # Output
+		if output
+			puts command + "\n"
+		end
+
+    # Windows
+    if WINDOWS_CLI
+      command_e = command.gsub('"','\\"')
+      result = `bash -c "#{command_e}"`
+    else
+		  result = `#{command}`
+		end
+
+    # Output
+		if output
+			puts result
+		end
+
+		# Done
 		return result
 	end
+
+  # Check if a binary exists
+  def bin_exists? (bin)
+  	exists = !run("which #{bin}",false).strip.empty?
+  	return exists
+  end
+
+  # Fail if the binary doesn't exist
+  def check_req (req)
+    # Recurse
+  	if req.kind_of?(Array)
+  		req.each do |r|
+  			check_req(r)
+  		end
+  		return true
+  	end
+
+    # Check
+  	req_exists = bin_exists?(req)
+  	unless req_exists
+  		abort("CLI requires the following binary which is not installed: #{req}")
+  	end
+
+    # Done
+  	return true
+  end
 
 	# Download a File
 	def download ( url, file )
@@ -68,7 +107,7 @@ class App
 	# Extract a File
 	def extract ( dir, file )
 		file = file.gsub(dir,'.')
-		result = run("cd #{dir} ; tar -xf #{file} ; rm -Rf #{file}")
+		result = run(["cd #{dir}","tar -xf #{file}","rm -Rf #{file}"])
 	end
 
 	# ===========================================================================
@@ -82,110 +121,7 @@ class App
 	# Initialise our Environment
 	def init_env
 		# Check for Requirements
-		reqs = ['mkdir','curl','tar','git','ant']
-		reqs.each do |req|
-			has_req = `which #{req}`.strip
-			if has_req.empty?
-				abort("CLI requires the following binary which is not installed: #{req}")
-			end
-		end
-
-		# Do not care for compilation yet
-		return
-
-		# Check for Closure Compiler
-		if !File.exists?(CLOSURE_FILE)
-			run("mkdir -p #{CLOSURE_DIR}")
-			puts "Downloading the Closure Compiler..."
-			download(CLOSURE_URL, CLOSURE_ZIP)
-			extract(CLOSURE_DIR, CLOSURE_ZIP)
-			run("chmod +x #{CLOSURE_FILE}")
-		end
-
-		# Check for Uglify
-		if !File.exists?(UGLIFY_FILE)
-			run("mkdir -p #{UGLIFY_DIR}")
-			puts "Downloading the Uglify Compiler..."
-			download(UGLIFY_URL, UGLIFY_FILE)
-			run("chmod +x #{UGLIFY_FILE}")
-		end
-
-		# Check for YUI Compiler
-		if !File.exists?(YUI_FILE)
-			run("mkdir -p #{YUI_DIR}")
-			puts "Downloading the YUI Compiler..."
-			download(YUI_URL, (YUI_ZIP))
-			extract(YUI_DIR, YUI_ZIP)
-			run("chmod +x #{YUI_FILE}")
-		end
-	end
-
-	# ===========================================================================
-	# Build Helpers
-
-	def compressCss ( in_file, out_file )
-		# Calculate
-		in_file_size = File.size(in_file)
-
-		# Handle
-		if in_file.equal? out_file
-			out_file = out_file.gsub(/\.js$/, '.min.js')
-			compressCssWithYui(in_file,out_file)
-			run("rm #{in_file}")
-			run("mv #{out_file} #{in_file}")
-			out_file = in_file
-		else
-			compressCssWithYui(in_file,out_file)
-			out_file_size = File.size(out_file)
-		end
-
-		# Calculate
-		out_file_size = File.size(out_file)
-		ratio = Float(out_file_size)/Float(in_file_size)
-		reduction = ((1-ratio)*100).round
-
-		# Log
-		puts "Compressed the file [#{in_file}] to [#{out_file}] with a #{reduction}% reduction"
-	end
-
-	def compressJs ( in_file, out_file )
-		# Calculate
-		in_file_size = File.size(in_file)
-
-		# Handle
-		if in_file.equal? out_file
-			out_file = out_file.gsub(/\.js$/, '.min.js')
-			compressJsWithUglify(in_file,out_file)
-			run("rm #{in_file}")
-			run("mv #{out_file} #{in_file}")
-			out_file = in_file
-		else
-			compressJsWithUglify(in_file,out_file)
-			out_file_size = File.size(out_file)
-		end
-
-		# Calculate
-		out_file_size = File.size(out_file)
-		ratio = Float(out_file_size)/Float(in_file_size)
-		reduction = ((1-ratio)*100).round
-
-		# Log
-		puts "Compressed the file [#{in_file}] to [#{out_file}] with a #{reduction}% reduction"
-	end
-
-	# Compress a CSS File with YUI
-	def compressCssWithYui ( in_file, out_file )
-		result = run("java -jar #{YUI_FILE} --type css -o #{out_file} --charset UTF-8 #{in_file}")
-	end
-
-	# Compress a Javascript File with Uglify
-	def compressJsWithUglify ( in_file, out_file )
-		result = run("#{UGLIFY_FILE} -o #{out_file} #{in_file}")
-	end
-
-	# Compress a Javascript file with Closure
-	def compressJsWithClosure ( in_file, out_file )
-		result = run("java -jar #{CLOSURE_FILE} --js_output_file=#{out_file} --js=#{in_file}")
+		check_req(['mkdir','curl','tar','git','rm','mv'])
 	end
 
 	# ===========================================================================
@@ -201,16 +137,17 @@ class App
 
 	# Check if a Branch Exists
 	def branch_exists(branch)
-		branches = run("git branch")
-		regex = Regexp.new('[\\n\\s\\*]+' +	Regexp.escape(branch) + '\\n')
+		branches = run("git branch",false)
+		regex = Regexp.new('[\\n\\s\\*]+' +	Regexp.escape(branch.to_s) + '\\n')
 		result = ((branches =~ regex) ? true : false)
 		return result
 	end
 
 	# Check if a Branch Exists
 	def remote_branch_exists(branch)
-		branches = run("git branch -all")
-		regex = Regexp.new('\\/' +	Regexp.escape(branch) + '\\n')
+		fetch
+		branches = run("git branch -all",false)
+		regex = Regexp.new('\\/' +	Regexp.escape(branch.to_s) + '\\n')
 		result = ((branches =~ regex) ? true : false)
 		return result
 	end
@@ -221,11 +158,27 @@ class App
 			run("git checkout #{branch}")
 		else
 			if remote_branch_exists(branch)
-				run("git checkout -b #{branch} #{REMOTE_ALOHA}/#{branch}")
+				run("git checkout -b #{branch} #{REMOTE_GIT}/#{branch}")
 			else
-				run("git branch #{branch} #{BRANCH_MASTER}")
+				run("git branch #{branch}")
 			end
 		end
+	end
+
+	# Apply multiple commands to submodules
+	def submodule_foreach(command)
+	  # Recursion
+		if command.kind_of?(Array)
+			result = ""
+			command.each do |c|
+				result = result + submodule_foreach(c)
+			end
+			return result
+		end
+
+		result = run("git submodule foreach --recursive '" + command + "'")
+
+		return result
 	end
 
 	# Check if a Remote Exists
@@ -239,13 +192,30 @@ class App
 	# Add a Remote
 	def remote_add(url,name)
 		unless remote_exists(name)
-			run("git remote add #{name} #{url}; git fetch #{name}")
+			run("git remote add #{name} #{url}")
+			fetch(name)
 		end
 	end
 
-	# Merge a Branch In
-	def merge(branch)
-		run("git merge #{branch}")
+	# Fetch a Remote
+	def fetch(remote="")
+		run("git fetch " + remote)
+	end
+
+	# Merge
+	def merge(base,*args)
+		if args.length === 0
+			return run("git merge #{base}")
+		end
+
+		checkout(base)
+
+		args.each do |branch|
+			checkout(branch)
+			merge(base)
+		end
+
+		checkout(base)
 	end
 
 	# Stage Known Files
@@ -254,12 +224,22 @@ class App
 	end
 
 	# Push to Origin
-	def push
+	def push(remote='',branch='')
+		run("git push "+remote+" "+branch)
+	end
+
+	# Pull
+	def pull(remote='',branch='')
+		run("git pull "+remote+" "+branch)
+	end
+
+	# Push to Origin
+	def push_all
 		run("git push origin --all")
 	end
 
 	# Pull From Everywhere
-	def pull
+	def pull_all
 		run("git pull --all")
 	end
 
@@ -298,7 +278,7 @@ class App
 
 	# Initialise Branches
 	def init_branches
-		remote_add(REMOTE_ALOHA_URL,REMOTE_ALOHA)
+		remote_add(REMOTE_GIT_URL,REMOTE_GIT)
 		master
 		version
 		dev
@@ -314,31 +294,129 @@ class App
 	# ---------------------------------------------------------------------------
 	# Submodules
 
+	# Plugin Read Url
+	def plugin_read_url(url)
+		read_url = url.gsub(/^.+?(github.com)./,'http://\\1/')
+		return read_url
+	end
+
+	# Plugin Write Url
+	def plugin_write_url(url)
+		write_url = url.gsub(/^https?\:\/\/github.com\//,'git@github.com:/')
+		return write_url
+	end
+
+	# Add a Plugin
+	def plugin(url,name='')
+		url = plugin_read_url(url)
+
+		if name.empty?
+			name = url.gsub(/^.+?Aloha-Plugin-(\w+)\.git/,'\\1').downcase
+		end
+
+		dir = 'src/plugin/'+name
+
+		run("git submodule add #{url} #{dir}")
+	end
+
 	# Initialise Submodules
 	def init_submodules
-		run("
-			git submodule init;
-			git submodule update;
-			git submodule foreach --recursive 'git reset --hard; git branch -D dev; git checkout -b dev origin/dev; git checkout master; git submodule init; git submodule update --merge';
-			")
+		run([
+			"git submodule init",
+			"git submodule update"
+		])
+
+		submodule_foreach([
+			"git reset --hard",
+			"git remote update",
+			"git fetch origin",
+			"git checkout master",
+			"git submodule init",
+			"git submodule update"
+		])
 	end
 
 	# Update Submodules
 	def update_submodules
-		run("
-			git submodule init;
-			git submodule update --merge;
-			git submodule foreach 'git submodule init; git submodule update --merge';
-			")
+		run([
+			"git submodule init",
+			"git submodule update --merge"
+		])
+
+		submodule_foreach([
+			"git submodule init",
+			"git submodule update --merge"
+		])
+	end
+
+	# Write Submodules
+	def write_submodules
+		submodule_foreach('sed -i "" -E "s/https?\:\/\/github\.com\//git\@github\.com\:/" .git/config')
+	end
+
+	# Read Submodules
+	def read_submodules
+		submodule_foreach('sed -i "" -E "s/git\@github.com\:/http://github.com\//" .git/config')
+	end
+
+	# Add Submodules
+	def add_submodules
+		submodule_foreach([
+			"git add *",
+			"git add -u"
+		])
+	end
+
+	# Commit Submodules
+	def commit_submodules(message)
+		submodule_foreach([
+			"git add *",
+			"git add -u",
+			"git commit -m \"#{message}\" | echo",
+			"git push origin"
+		])
+	end
+
+	# Branch Submodules
+	def branch_submodules(branch)
+		submodule_foreach([
+			"git branch #{branch}",
+			"git checkout #{branch}"
+		])
+	end
+
+	# Checkout Submodules
+	def checkout_submodules(branch)
+		submodule_foreach([
+			"git checkout #{branch}"
+		])
+	end
+
+	# Push Submodules
+	def push_submodules
+		submodule_foreach([
+			"git push --all | echo"
+		])
 	end
 
 	# Upgrade Submodules
 	def upgrade_submodules
-		run("
-			git submodule init;
-			git submodule update --merge;
-			git submodule foreach 'git checkout master; git pull --all';
-			")
+		run([
+			"git submodule init",
+			"git submodule update --merge"
+		])
+
+		submodule_foreach([
+			"git checkout master",
+			"git pull --all"
+		])
+	end
+
+	# Reset Submodules
+	def reset_submodules
+		submodule_foreach([
+			"git reset --hard"
+		])
 	end
 
 	# ---------------------------------------------------------------------------
@@ -348,7 +426,7 @@ class App
 	def birth
 		puts "Welcome to the Aloha Editor CLI.\nWhat is your repository URL? E.g. git@github.com:balupton/Aloha-Editor.git"
 		url = gets.chomp.strip
-		run("git init");
+		run("git init")
 		remote_add(url,"origin")
 		install
 	end
@@ -357,7 +435,6 @@ class App
 	def install
 		init_branches
 		init_submodules
-		update_branches
 	end
 
 	# Update
@@ -372,8 +449,34 @@ class App
 		upgrade_submodules
 	end
 
+	# Build Aloha Editor
+	def build
+		check_req(['node','npm'])
+		run([
+			"npm install buildr",
+			"buildr"
+		])
+	end
+
 	# ---------------------------------------------------------------------------
 	# Deploy
+
+	# Commit
+	def commit(message)
+		run([
+			"git add build src vendor",
+			"git add -u",
+			"git commit -m \"#{message}\"",
+			"git push origin",
+			"git fetch"
+		])
+	end
+
+	# Deploy
+	def deploy(base,*args)
+		merge(base,*args)
+		push
+	end
 
 	# Deploy the Changes From Master to Version + Dev
 	def deploy_from_master
@@ -438,6 +541,7 @@ class Booter
 
 	protected
 
+		# Parse options
 		def parsed_options?
 
 			# Specify options
@@ -470,7 +574,7 @@ class Booter
 		# True if required arguments were provided
 		def arguments_valid?
 			# TO DO - implement your real logic here
-			true if @arguments.length == 1
+			true if @arguments.length >= 1
 		end
 
 		# Setup the arguments
@@ -480,11 +584,19 @@ class Booter
 
 		def output_help
 			output_version
-			RDoc::usage() #exits app
+			if RDOC_INCLUDED
+				RDoc::usage() #exits app
+			else
+				puts "No RDoc"
+			end
 		end
 
 		def output_usage
-			RDoc::usage(:'usage') # gets usage from comments above
+			if RDOC_INCLUDED
+				RDoc::usage(:'usage') # gets usage from comments above
+			else
+				puts "No RDoc"
+			end
 		end
 
 		def output_version
@@ -495,12 +607,21 @@ class Booter
 			# Create Application
 			app = App.new
 
+			# Extract
+			args = @arguments.clone
+			command = args.shift.gsub('-','_')
+
+
 			# Fetch + Execute
-			command = @arguments[0].gsub('-','_')
 			unless app.respond_to?(command)
 				abort("Unknown command: #{command}")
 			end
-			app.send(command)
+
+			if args.length === 0
+				app.send(command)
+			else
+				app.send(command,*args)
+			end
 		end
 
 		def process_standard_input
@@ -513,7 +634,6 @@ class Booter
 			#end
 		end
 end
-
 
 # Create Booter
 booter = Booter.new(ARGV, STDIN)
