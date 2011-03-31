@@ -11,20 +11,14 @@
 		<p>Finally you need to create an administrator account.<br />
 			Please enter the necessary
 			details in the form below:</p>
-		<f:form.errors for="identifier">
-			<p class="validationErrorMessage">{error.message}</p>
-		</f:form.errors>
+		<f:render partial="ValidationResults" arguments="{property: 'identifier'}" />
 		<label for="identifier">Username</label>
 		<f:form.textbox name="identifier"/> <br/>
-		<f:form.errors for="password">
-			<p class="validationErrorMessage">{error.message}</p>
-		</f:form.errors>
+		<f:render partial="ValidationResults" arguments="{property: 'password'}" />
 		<label for="password">Password</label>
 		<f:form.password name="password"/> <br/>
 
-		<f:form.errors for="person.name">
-			<p class="validationErrorMessage">{error.message}</p>
-		</f:form.errors>
+		<f:render partial="ValidationResults" arguments="{property: 'person.name'}" />
 		<label for="person[name][firstName]">Firstname</label>
 			<f:form.textbox name="person[name][firstName]"/> <br/>
 			<label for="person[name][lastName]">Lastname</label>
