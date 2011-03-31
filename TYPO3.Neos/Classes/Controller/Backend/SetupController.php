@@ -112,6 +112,16 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
+	 * Initializes the importAndCreateAdministratorAction
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function initializeImportAndCreateAdministratorAction() {
+		$this->arguments['person']->getPropertyMappingConfiguration()->allowCreationForSubProperty('name');
+	}
+
+	/**
 	 * Imports content and creates user, then redirects to frontend.
 	 *
 	 * @param string $packageKey Specifies the package which contains the site to be imported
@@ -141,7 +151,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->personRepository->removeAll();
 		$this->createAdministrator($identifier, $password, $person);
 		$this->flashMessageContainer->flush();
-		$this->redirect('show', 'Node');
+		$this->redirect('show', 'Node', 'TYPO3\Service\Rest\V1');
 	}
 
 	/**
