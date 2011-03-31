@@ -70,29 +70,3 @@ F3.TYPO3.UserInterface.ModuleDialog = Ext.extend(Ext.Panel, {
 	}
 });
 Ext.reg('F3.TYPO3.UserInterface.ModuleDialog', F3.TYPO3.UserInterface.ModuleDialog);
-
-
-/**
- * @class F3.TYPO3.UserInterface.EmptyDialog
- *
- * An empty dialog for deleting pages
- *
- * @namespace F3.TYPO3.UserInterface
- * @extends F3.TYPO3.UserInterface.ModuleDialog
- */
-F3.TYPO3.UserInterface.EmptyDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleDialog, {
-
-	/**
-	 * Initializer
-	 */
-	initComponent: function() {
-		var config = {
-			height: 1,
-			items: []
-		};
-		Ext.apply(this, config);
-		F3.TYPO3.UserInterface.EmptyDialog.superclass.initComponent.call(this);
-	}
-
-});
-Ext.reg('F3.TYPO3.UserInterface.EmptyDialog', F3.TYPO3.UserInterface.EmptyDialog);

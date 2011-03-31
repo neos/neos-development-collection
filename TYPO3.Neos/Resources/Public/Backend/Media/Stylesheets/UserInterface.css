@@ -107,6 +107,27 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-top: 1px;
 	margin-bottom: 0;
 }
+
+/* Icons for the current selection state in content tab */
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-indicator .iconWrapper {
+	float:left;
+	margin-left:-3px;
+	margin-top:-1px;
+	margin-right:10px;
+	width:16px;
+	height:16px;
+	background-repeat:no-repeat;
+	background-image: url(../Icons/navigation-mode.png);
+}
+
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-select .iconWrapper {
+	background-image: url(../Icons/selection-mode.png);
+}
+
+.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-edit .iconWrapper {
+	background-image: url(../Icons/edit-mode.png);
+}
+
 /* active tab glow end */
 .F3-TYPO3-UserInterface-SectionMenu .F3-TYPO3-UserInterface-SectionMenu-DashboardTab .x-tab-right .x-tab-left .x-tab-strip-text {
 	padding-left: 4px;
@@ -116,8 +137,8 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	float: left;
 }
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-right .x-tab-left .x-tab-strip-text {
-	padding-right: 26px;
-	padding-left: 26px;
+	padding-right: 20px;
+	padding-left: 20px;
 }
 .F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
 	border: 0;

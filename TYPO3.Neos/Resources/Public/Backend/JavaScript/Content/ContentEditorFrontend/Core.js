@@ -308,7 +308,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	_disableEditingMode: function() {
 		Ext.getBody().removeClass('f3-typo3-editing-enabled');
 		this.fireEvent('disableEditingMode');
-		VIE.cleanup();
+		VIE.ContainerManager.cleanup();
 	},
 
 	/**
