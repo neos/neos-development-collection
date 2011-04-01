@@ -136,9 +136,12 @@ VIE.ContainerManager = {
                     // For now we don't deal with multivalued properties in Views
                     return true;
                 }
-
                 if (propertyElement.html() !== model.get(propertyName)) {
-                    propertyElement.html(model.get(propertyName));
+					// TODO: hardcoded placeholder class
+					if (jQuery('.aloha-placeholder', propertyElement).length === 0) {
+						// TODO: This check still needs to be improved!
+						propertyElement.html(model.get(propertyName));
+					}
                 }
             });
             return this;

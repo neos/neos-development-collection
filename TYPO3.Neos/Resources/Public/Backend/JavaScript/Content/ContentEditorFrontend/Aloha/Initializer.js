@@ -53,6 +53,22 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 	initialize: function(core) {
 		core.on('enableEditingMode', this._enableAloha, this);
 		core.on('disableEditingMode', this._disableAloha, this);
+		core.on('loadNewlyCreatedContentElement', this._onNewlyCreatedContentElement, this);
+	},
+
+	/**
+	 * After a new content element has been created, we need to enable
+	 * Aloha.
+	 *
+	 * @private
+	 * @return {void}
+	 */
+	_onNewlyCreatedContentElement: function(newContentElement) {
+		if (this._alohaEnabled) {
+			if(jQuery(newContentElement).is('.f3-typo3-contentelement-aloha')) {
+				jQuery(newContentElement).vieSemanticAloha();
+			}
+		}
 	},
 
 	/**
@@ -87,28 +103,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 					GENTICS.Aloha.Selection.updateSelection();
 				}
 			}, 10);
-
-				// TODO Use "smartContentChanged" event on GENTICS.Aloha, as soon as they work in
-				// Mozilla, see https://github.com/alohaeditor/Aloha-Editor/issues/72
-			this._checkModificationsTask = {
-				run: function() {
-					if (VIE && VIE.ContainerManager && VIE.ContainerManager.instances) {
-						jQuery.each(VIE.ContainerManager.instances, function(index, objectInstance) {
-							if (typeof objectInstance.editables !== 'undefined') {
-								if (VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
-									F3.TYPO3.Content.ContentEditorFrontend.Core.fireEvent('modifiedContent');
-									objectInstance.save();
-									jQuery.each(objectInstance.editables, function() {
-										this.setUnmodified();
-									});
-								}
-							}
-						});
-					}
-				},
-				interval: 5000
-			};
-			Ext.TaskMgr.start(this._checkModificationsTask);
 		}
 	},
 

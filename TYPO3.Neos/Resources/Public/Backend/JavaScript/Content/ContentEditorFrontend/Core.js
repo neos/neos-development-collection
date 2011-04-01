@@ -135,11 +135,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * Thrown when content is changed
 	 */
 
-	/**
-	 * @event shouldSaveContent
-	 *
-	 * Thrown when an explicit content save is triggered.
-	 */
 
 	/**
 	 * Initializer. Called on Ext.onReady().
@@ -332,15 +327,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	},
 
 	/**
-	 * Method to call in case the content should be saved.
-	 *
-	 * @return {void}
-	 * @private
-	 */
-	_shouldSaveContent: function() {
-		this.fireEvent('shouldSaveContent');
-	},
-	/**
 	 * Create a new content element on the page
 	 *
 	 * @param {string} nameOfContentType
@@ -375,7 +361,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 	_loadNewlyCreatedContentElement: function(uri, loadingIndicatorDom) {
 		var scope = this;
-
 		Ext.Ajax.request({
 			url: uri,
 			method: 'GET',

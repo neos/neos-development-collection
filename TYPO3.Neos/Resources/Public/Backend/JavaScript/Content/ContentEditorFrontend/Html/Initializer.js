@@ -40,7 +40,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 	initialize: function(core) {
 		core.on('enableEditingMode', this._registerEventHandlers, this);
 		core.on('disableEditingMode', this._unregisterEventHandlers, this);
-		core.on('loadNewlyCreatedContentElement', this._onNewlyCreatedContentElement);
+		//core.on('loadNewlyCreatedContentElement', this._onNewlyCreatedContentElement);
 	},
 
 	/**

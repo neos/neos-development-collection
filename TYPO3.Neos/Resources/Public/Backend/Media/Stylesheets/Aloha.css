@@ -1,12 +1,4 @@
 /* This style sheet is loaded in the frontend, if aloha is activated. */
-
-.f3-typo3-editing-enabled .f3-typo3-contentelement {
-	-webkit-transition-property: -webkit-box-shadow;
-	-webkit-transition-duration: 0.05s;
-
-	-moz-transition-property: -moz-box-shadow;
-	-moz-transition-duration: 0.05s;
-}
 .f3-typo3-notEditable-visible {
 	background-image: url(../Images/UserInterface/Icons/AlohaNotEditable-Dark-24bit.png) !important;
 	/* TODO: Calculate the background-position, if the position of the overlay is even or odd (horizontally and vertically) */
@@ -20,47 +12,64 @@
 /*********************************
  * SECTION Aloha                 *
  *********************************/
-.f3-typo3-placeholder {
-	display: none;
+.aloha-placeholder {
+	background-color: #cccccc;
+	border-radius: 3px;
+	-moz-border-radius: 3px;
 }
-.f3-typo3-editing-enabled .f3-typo3-placeholder {
-	display: inline;
-	background: #ED7B26;
-	border-radius: 5px 5px 5px 5px;
-	padding: 2px 2px 2px 2px;
+.GENTICS_editable {
+	outline:0px solid transparent;
 }
-.f3-typo3-editing-enabled .f3-typo3-contentelement:hover {
+
+.GENTICS_editable:focus {
+	outline:0px solid transparent;
+}
+
+/*********************************
+ * SECTION Selection Mode        *
+ *********************************/
+.f3-typo3-selection-enabled .f3-typo3-contentelement:hover {
 	-webkit-box-shadow: 1px 1px 6px rgba(255, 135, 0, 0.6);
 	-moz-box-shadow: 4px 2px 0 #FFFFFF, -4px -2px 0 #FFFFFF, 4px -2px 0 #FFFFFF, -4px 2px 0 #FFFFFF, 0 -2px 0 #FFFFFF, 4px 0 0 #FFFFFF, 0 2px 0 #FFFFFF, -4px 0 0 #FFFFFF, 0 0 15px #000000;
 	box-shadow: 0px 0px 6px rgba(255, 135, 0, 0.6);
-}
-.f3-typo3-editing-enabled.f3-typo3-modifier-ctrl .f3-typo3-contentelement:hover {
 	cursor:move;
 }
 .dropzoneOver {
-	background:red;
+	color:red;
 }
 .ddProxy {
 	background-color: #FFFF00;
 }
 .f3-typo3-dropzone {
-	-webkit-transition-property: height;
+	-webkit-transition-property: height, margin-bottom;
 	-webkit-transition-duration:0.3s;
 
-	-moz-transition-property: height;
+	-moz-transition-property: height, margin-bottom;
 	-moz-transition-duration:0.3s;
 
-	transition-property: height;
+	transition-property: height, margin-bottom;
 	transition-duration:0.3s;
 
-	height:0px;
-	display:block;
+	height:5px;
+	display:none;
 	overflow:hidden;
+	margin-bottom:-5px;
+	background-color: black;
+
 }
+
 .f3-typo3-dropzone-visible {
-	height:15px;
-	border: 2px solid red;
+	display:block;
 }
+
+.f3-typo3-dropzone-visible.dropzoneOver {
+	height:50px;
+	margin-bottom:0;
+}
+
+/*********************************
+ * SECTION Aloha                 *
+ *********************************/
 
 /** Hide dropdown icon next to paragraph styles **/
 button.GENTICS_multisplit_toggle_open,

@@ -326,17 +326,7 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	 */
 	getCurrentPagePath: function() {
 		return this._getIframeDocument().body.getAttribute('about');
-	},
-
-	/**
-	 * Trigger save of content inside the content editor frontend
-	 *
-	 * @return {void}
-	 */
-	saveContent: function() {
-		this._getFrontendEditorCore()._shouldSaveContent();
 	}
-
 });
 
 Ext.reg('F3.TYPO3.Content.WebsiteContainer', F3.TYPO3.Content.WebsiteContainer);

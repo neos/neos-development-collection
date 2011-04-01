@@ -52,26 +52,17 @@ class EditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewH
 	 * @param string $context either "inline" or "block"
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function render($property, $context = 'inline') {
-		switch ($context) {
-			case 'inline':
-				$this->tag->setTagName('span');
-			break;
-			case 'block':
-				$this->tag->setTagName('div');
-			break;
-			default:
-				throw new F3\TYPO3\Exception('<t:editable> only supports "inline" and "block" as $context arguments.', 1280307072);
-		}
+	public function render($property, $tag = 'div') {
+		$this->tag->setTagName($tag);
+		$this->tag->forceClosingTag(TRUE);
+		$this->tag->setContent($this->renderChildren());
+
 		if ($this->hasAccessToResource('F3_TYPO3_Backend_BackendController')) {
-			$this->tag->forceClosingTag(TRUE);
-			$this->tag->setContent($this->renderChildren());
 			$this->tag->addAttribute('class', 'f3-typo3-editable');
 			$this->tag->addAttribute('property', 'typo3:' . $property);
-			return $this->tag->render();
-		} else {
-			return $this->renderChildren();
 		}
+
+		return $this->tag->render();
 	}
 
 	/**

@@ -464,6 +464,7 @@ GENTICS.Aloha.FloatingMenu.doLayout = function () {
 	if (GENTICS.Aloha.Log.isDebugEnabled()) {
 		GENTICS.Aloha.Log.debug(this, 'doLayout called for FloatingMenu, scope is ' + this.currentScope);
 	}
+	if (!this.extTabPanel) return;
 	var that = this,
 		firstVisibleTab = false,
 		activeExtTab = this.extTabPanel.getActiveTab(),

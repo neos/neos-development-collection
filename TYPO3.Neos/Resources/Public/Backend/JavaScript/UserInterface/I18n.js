@@ -59,7 +59,6 @@ F3.TYPO3.UserInterface.I18n = {
 				confirm: 'Confirm',
 				'delete': 'Delete', // quoted on the left-side since deleted is reserved
 				deletePage: 'Delete page',
-				dropContentHere: 'Drop content here',
 				edit: 'Edit',
 				editingMode: 'Editing mode',
 				errorOccurred: 'An Error occurred',
