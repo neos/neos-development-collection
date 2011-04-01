@@ -53,6 +53,7 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @skipCsrfProtection
 	 */
 	public function indexAction() {
 		if ($this->preferencesService->getCurrentWorkspaceName() === NULL) {
