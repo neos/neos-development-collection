@@ -47,11 +47,52 @@ GENTICS.Aloha.Editable = function(obj) {
 
 	// delimiters, timer and idle for smartContentChange
 	// smartContentChange triggers -- tab: '\u0009' - space: '\u0020' - enter: 'Enter'
-	this.sccDelimiters = [':', ';', '.', '!', '?', '\u0009', 'Enter'];
-	this.sccIdle = 10000;
-	this.sccDelay = 1000;
+	this.sccDelimiters = [':', ';', '.', '!', '?', ',', '\u0009', '\u0020', 'Enter'];
+	this.sccIdle = 5000;
+	this.sccDelay = 500;
 	this.sccTimerIdle = false;
 	this.sccTimerDelay = false;
+	
+	// see keyset http://www.w3.org/TR/2007/WD-DOM-Level-3-Events-20071221/keyset.html
+	this.keyCodeMap = {
+       93 : "Apps", 		// The Application key
+       18 : "Alt",          // The Alt (Menu) key.
+       20 : "CapsLock",     // The Caps Lock (Capital) key.
+       17 : "Control",      // The Control (Ctrl) key.
+       40 : "Down",         // The Down Arrow key.
+       35 : "End",          // The End key.
+       13 : "Enter",		// The Enter key.
+      112 : "F1",           // The F1 key.
+      113 : "F2",           // The F2 key.
+      114 : "F3",           // The F3 key.
+      115 : "F4",           // The F4 key.
+      116 : "F5",           // The F5 key.
+      117 : "F6",           // The F6 key.
+      118 : "F7",           // The F7 key.
+      119 : "F8",           // The F8 key.
+      120 : "F9",           // The F9 key.
+      121 : "F10",          // The F10 key.
+      122 : "F11",          // The F11 key.
+      123 : "F12",          // The F12 key.
+      // Anybody knows the keycode for F13-F24?
+       36 : "Home",         // The Home key.
+       45 : "Insert",       // The Insert (Ins) key.
+       37 : "Left",         // The Left Arrow key.
+      224 : "Meta",         // The Meta key.
+       34 : "PageDown",     // The Page Down (Next) key.
+       33 : "PageUp",       // The Page Up key.
+       19 : "Pause",        // The Pause key.
+       44 : "PrintScreen",  // The Print Screen (PrintScrn, SnapShot) key.
+       39 : "Right",        // The Right Arrow key.
+      145 : "Scroll",       // The scroll lock key
+       16 : "Shift",        // The Shift key.
+       38 : "Up",           // The Up Arrow key.
+       91 : "Win", 			// The left Windows Logo key.
+       92 : "Win"           // The right Windows Logo key.       
+	};
+
+	// placeholder
+	this.placeholderClass = 'aloha-placeholder';
 
 	// register the editable with Aloha
 	GENTICS.Aloha.registerEditable(this);
@@ -126,9 +167,9 @@ GENTICS.Aloha.Editable.prototype = {
 				var div = jQuery('<div id="'+this.getId()+'-aloha" class="GENTICS_textarea"/>').insertAfter(obj);
 				// Resize the div to the textarea
 				div.height(obj.height())
-				   .width(obj.width())
+					.width(obj.width())
 				// Populate the div with the value of the textarea
-				   .html(obj.val());
+					.html(obj.val());
 				// Hide the textarea
 				obj.hide();
 				// Attach a onsubmit to the form to place the HTML of the div back into the textarea
@@ -197,7 +238,7 @@ GENTICS.Aloha.Editable.prototype = {
 
 			// initialize the object
 			this.obj.addClass('GENTICS_editable')
-				    .contentEditable(true);
+				.contentEditable(true);
 
 			// add focus event to the object to activate
 			this.obj.mousedown(function(e) {
@@ -212,7 +253,15 @@ GENTICS.Aloha.Editable.prototype = {
 			// if it does not handle the keyStroke it returns true and therefore all other
 			// events (incl. browser's) continue
 			this.obj.keydown( function(event) {
+				this.keyCode = event.which;
 				return GENTICS.Aloha.Markup.preProcessKeyStrokes(event);
+			});
+
+			// handle keypress 
+			this.obj.keypress( function(event) {
+				// triggers a smartContentChange to get the right charcode
+				// To test try http://www.w3.org/2002/09/tests/keys.html
+				GENTICS.Aloha.activeEditable.smartContentChange(event);
 			});
 
 			// handle shortcut keys
@@ -221,9 +270,6 @@ GENTICS.Aloha.Editable.prototype = {
 					GENTICS.Aloha.deactivateEditable();
 					return false;
 				}
-
-				// check if this key stroke triggers a smartContentChange
-				GENTICS.Aloha.activeEditable.smartContentChange(event);
 			});
 
 			// register the onSelectionChange Event with the Editable field
@@ -252,9 +298,84 @@ GENTICS.Aloha.Editable.prototype = {
 
 			this.snapshotContent = this.getContents();
 
+			// init placeholder
+			this.initPlaceholder();
+
 			// now the editable is ready
 			this.ready = true;
 		}
+	},
+
+	/**
+	 * Init Placeholder
+	 *
+	 * @return void
+	 */
+	initPlaceholder: function() {
+		if (this.isEmpty() && GENTICS.Aloha.settings.placeholder) {
+			this.addPlaceholder();
+		}
+	},
+
+	/**
+	 * Check if the conteneditable is empty
+	 *
+	 * @return {bool}
+	 */
+	isEmpty: function() {
+		var editableTrimedContent = jQuery.trim(this.getContents()),
+			onlyBrTag = (editableTrimedContent == '<br>') ? true : false;
+
+		if (editableTrimedContent.length == 0 || onlyBrTag) {
+			return true;
+		} else {
+			return false;
+		}
+	},
+
+	/**
+	 * Add placeholder in editable
+	 *
+	 * @return void
+	 */
+	addPlaceholder: function() {
+
+		var div = jQuery('<div />'),
+			span = jQuery('<span />'),
+			el,
+			obj = this.obj;
+
+		if (GENTICS.Utils.Dom.allowsNesting(obj[0], div[0])) {
+			el = div;
+		} else {
+			el = span;
+		}
+
+		jQuery(obj).append(el.addClass(this.placeholderClass));
+		jQuery.each(
+			GENTICS.Aloha.settings.placeholder,
+			function (selector, selectorConfig) {
+				if (obj.is(selector)) {
+					el.html(selectorConfig);
+				}
+			}
+		);
+
+		// remove browser br
+		jQuery('br', obj).remove();
+		delete div, span, el;
+	},
+
+	/**
+	 * remove placeholder from contenteditable
+	 *
+	 * @return void
+	 */
+	removePlaceholder: function(obj) {
+		// remove browser br
+		jQuery('br', obj).remove();
+		// remove placeholder
+		jQuery('.' + this.placeholderClass, obj).remove();
 	},
 
 	/**
@@ -301,11 +422,11 @@ GENTICS.Aloha.Editable.prototype = {
 		// initialize the object
 		this.obj.removeClass('GENTICS_editable')
 		// Disable contentEditable
-			    .contentEditable(false)
+					.contentEditable(false)
 
 		// unbind all events
 		// TODO should only unbind the specific handlers.
-			    .unbind('mousedown focus keydown keyup');
+					.unbind('mousedown focus keydown keyup');
 
 		/* TODO remove this event, it should implemented as bind and unbind
 		// register the onSelectionChange Event with the Editable field
@@ -406,7 +527,7 @@ GENTICS.Aloha.Editable.prototype = {
 		// prevent this situation
 		if (e && e.type == 'focus' && oldActive != null && oldActive.obj.parent().get(0) == e.currentTarget) {
 			return;
-		}uniChar = null
+		}
 
 		// leave immediately if this is already the active editable
 		if (this.isActive || this.isDisabled()) {
@@ -422,6 +543,10 @@ GENTICS.Aloha.Editable.prototype = {
 		if (document.selection && document.selection.createRange) {
 			this.obj.mouseup();
 		}
+
+		// Placeholder handling
+		this.removePlaceholder(this.obj);
+
 
 		// finally mark this object as active
 		this.isActive = true;
@@ -468,6 +593,9 @@ GENTICS.Aloha.Editable.prototype = {
 
 		// disable active status
 		this.isActive = false;
+
+		// placeholder
+		this.initPlaceholder();
 
 		/**
 		 * @event editableDeactivated fires after the editable has been activated by clicking on it.
@@ -521,6 +649,9 @@ GENTICS.Aloha.Editable.prototype = {
 		// do core cleanup
 		clonedObj.find('.GENTICS_cleanme').remove();
 
+		// remove placeholder
+		this.removePlaceholder(clonedObj);
+
 		GENTICS.Aloha.PluginRegistry.makeClean(clonedObj);
 		return clonedObj.html();
 	},
@@ -542,36 +673,37 @@ GENTICS.Aloha.Editable.prototype = {
 		var that = this,
 			uniChar = null;
 
-		clearTimeout(this.sccTimerDelay);
-		clearTimeout(this.sccTimerIdle);
-
-		if (this.snapshotContent == GENTICS.Aloha.activeEditable.getContents()) {
-			return false;
-		}
-
 		// ignore meta keys like crtl+v or crtl+l and so on
 		if (event && (event.metaKey || event.crtlKey || event.altKey)) {
 			return false;
 		}
 
-		// regex unicode
 		if (event && event.originalEvent) {
 
+			// regex to stripp unicode
 			var re = new RegExp("U\\+(\\w{4})"),
 				match = re.exec(event.originalEvent.keyIdentifier);
-			if (match !== null) {
-				uniChar = eval('"\\u' + match[1] + '"');
-			}
-			if (uniChar === null) {
-				uniChar = event.originalEvent.keyIdentifier;
+				
+			// Use keyIdentifier if available
+			if ( event.originalEvent.keyIdentifier && 1 == 2) {
+				if (match !== null) {
+					uniChar = eval('"\\u' + match[1] + '"');
+				}
+				if (uniChar === null) {
+					uniChar = event.originalEvent.keyIdentifier;
+				}
+			// FF & Opera don't support keyIdentifier
+			} else {
+				// Use among browsers reliable which http://api.jquery.com/keypress 
+				uniChar = (this.keyCodeMap[this.keyCode] || String.fromCharCode(event.which) || 'unknown');	
 			}
 		}
-
 		// handle "Enter" -- it's not "U+1234" -- when returned via "event.originalEvent.keyIdentifier"
 		// reference: http://www.w3.org/TR/2007/WD-DOM-Level-3-Events-20071221/keyset.html
 		if (jQuery.inArray(uniChar, this.sccDelimiters) >= 0) {
-
+			
 			clearTimeout(this.sccTimerIdle);
+			clearTimeout(this.sccTimerDelay);
 
 			this.sccTimerDelay = setTimeout(function() {
 
@@ -587,7 +719,7 @@ GENTICS.Aloha.Editable.prototype = {
 				);
 
 				GENTICS.Aloha.Log.debug(this, 'smartContentChanged: event type keypress triggered');
-
+/*
 				var r = GENTICS.Aloha.Selection.rangeObject;
 				if (r.isCollapsed()
 					&& r.startContainer.nodeType == 3) {
@@ -612,15 +744,19 @@ GENTICS.Aloha.Editable.prototype = {
 					);
 
 					r.select();
+
 				}
+*/
 			},this.sccDelay);
 		}
 
 		else if (uniChar != null) {
 
 			this.sccTimerIdle = setTimeout(function() {
+				
 				// in the rare case idle time is lower then delay time
 				clearTimeout(this.sccTimerDelay);
+				
 				GENTICS.Aloha.EventRegistry.trigger(
 					new GENTICS.Aloha.Event('smartContentChanged', GENTICS.Aloha, {
 					'editable' : GENTICS.Aloha.activeEditable,
@@ -633,11 +769,13 @@ GENTICS.Aloha.Editable.prototype = {
 				);
 
 				GENTICS.Aloha.Log.debug(this, 'smartContentChanged: event type timer triggered');
+			
 			},this.sccIdle);
 
 		}
 
 		else if (event && event.type === 'paste') {
+			
 			GENTICS.Aloha.EventRegistry.trigger(
 				new GENTICS.Aloha.Event('smartContentChanged', GENTICS.Aloha, {
 				'editable' : GENTICS.Aloha.activeEditable,
