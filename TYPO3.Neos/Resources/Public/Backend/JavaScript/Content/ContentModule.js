@@ -40,6 +40,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 	configure: function(registry) {
 		registry.append('menu/main', 'content', {
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
+			iconCls: 'f3-typo3-content-mode-indicator',
 			title: F3.TYPO3.UserInterface.I18n.get('TYPO3', 'content'),
 			itemId: 'content',
 			viewFilter: {
@@ -248,22 +249,42 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Content.ContentModule', {
 				}
 			);
 
+			var modeChangeEventListenerAdded = false;
 			userInterfaceModule.on('activate-menu/main/content/children/edit', function(node) {
 				this.getWebsiteContainer().enableSelectionMode();
-					// Show save button in editing mode
-				var moduleDialog = node.getModuleMenu().showModuleDialog(
-					{xtype: 'F3.TYPO3.UserInterface.EmptyDialog'},
-					{xtype: 'F3.TYPO3.Content.Edit.SaveContentContentDialog', websiteContainer: this.getWebsiteContainer()}
-				);
+				if (!modeChangeEventListenerAdded) {
+					this.getWebsiteContainer().on('modeChange', this._onModeChange, this);
+					this._onModeChange();
+					modeChangeEventListenerAdded = true;
+				}
 			}, this);
 			userInterfaceModule.on('deactivate-menu/main/content/children/edit', function(button) {
 				this.getWebsiteContainer().enableNavigationMode();
-				button.getModuleMenu().removeModuleDialog();
 			}, this);
 
 		}, this);
 	},
 
+	/**
+	 * Called on a mode change in the Website Container. Used to change the
+	 * icon in the "Content" tab next to the label.
+	 * @private
+	 */
+	_onModeChange: function() {
+		var viewport = F3.TYPO3.UserInterface.UserInterfaceModule.viewport;
+		var tab = viewport.sectionMenu.getComponent('content');
+		Ext.fly(tab.tabEl).addClass('');
+		if (this.getWebsiteContainer().isSelectionModeEnabled()) {
+			Ext.fly(tab.tabEl).addClass('f3-typo3-content-mode-select');
+			Ext.fly(tab.tabEl).removeClass('f3-typo3-content-mode-edit');
+		} else if (this.getWebsiteContainer().isEditingModeEnabled()) {
+			Ext.fly(tab.tabEl).removeClass('f3-typo3-content-mode-select');
+			Ext.fly(tab.tabEl).addClass('f3-typo3-content-mode-edit');
+		} else {
+			Ext.fly(tab.tabEl).removeClass('f3-typo3-content-mode-select');
+			Ext.fly(tab.tabEl).removeClass('f3-typo3-content-mode-edit');
+		}
+	},
 	/**
 	 * Get the website container
 	 *

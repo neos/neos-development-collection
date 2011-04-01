@@ -37,7 +37,15 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 		var config = {
 			border: false,
 			cls: 'F3-TYPO3-UserInterface-SectionMenu',
-			items: this._getSectionMenuItems()
+			items: this._getSectionMenuItems(),
+			itemTpl: new Ext.XTemplate('<li class="{cls}" id="{id}"><a class="x-tab-strip-close"></a>',
+                 '<a class="x-tab-right" href="#"><em class="x-tab-left">',
+                 '<span class="x-tab-strip-inner"><span class="x-tab-strip-text {iconCls}">',
+				 // Begin Modification, added iconWrapper
+			     '<span class="iconWrapper"></span>',
+				 // End Modification
+				 '{text}</span></span>',
+                 '</em></a></li>')
 		};
 		Ext.apply(this, config);
 		F3.TYPO3.UserInterface.SectionMenu.superclass.initComponent.call(this);
@@ -92,6 +100,7 @@ F3.TYPO3.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 			},
 			itemId: menuItem.itemId,
 			title: menuItem.title,
+			iconCls: menuItem.iconCls,
 			tabCls: menuItem.tabCls,
 			listeners: menuItem.listeners,
 			items: [{
