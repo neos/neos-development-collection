@@ -110,22 +110,30 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 
 /* Icons for the current selection state in content tab */
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-indicator .iconWrapper {
-	float:left;
+	background-image: url(../Icons/content-mode-sprite-24bit.png);
+	background-repeat: no-repeat;
+	width: 17px;
+	height: 17px;
+	display: block;
+	float: left;
 	margin-left:-3px;
 	margin-top:-1px;
 	margin-right:10px;
-	width:16px;
-	height:16px;
-	background-repeat:no-repeat;
-	background-image: url(../Icons/navigation-mode.png);
+
+	-webkit-transition: background-position 0.5s ease-in-out;
+	-moz-transition:    background-position 0.5s ease-in-out;
+	-o-transition:      background-position 0.5s ease-in-out;
+	transition:        background-position 0.5s ease-in-out;
+
+	background-position: 0px -15px;
 }
 
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-select .iconWrapper {
-	background-image: url(../Icons/selection-mode.png);
+	background-position: 0px -32px;
 }
 
 .F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-edit .iconWrapper {
-	background-image: url(../Icons/edit-mode.png);
+	background-position: 0px -48px;
 }
 
 /* active tab glow end */
