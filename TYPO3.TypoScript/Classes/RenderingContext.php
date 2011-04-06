@@ -36,14 +36,14 @@ namespace F3\TypoScript;
 class RenderingContext implements \F3\Fluid\Core\Rendering\RenderingContextInterface {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\ContentContext $contentContext
+	 * @var \F3\TYPO3\Domain\Service\ContentContext
 	 */
 	protected $contentContext;
 
 	/**
 	 * Template Variable Container. Contains all variables available through object accessors in the template
 	 *
-	 * @var F3\Fluid\Core\ViewHelper\TemplateVariableContainer
+	 * @var \F3\Fluid\Core\ViewHelper\TemplateVariableContainer
 	 */
 	protected $templateVariableContainer;
 
@@ -51,21 +51,21 @@ class RenderingContext implements \F3\Fluid\Core\Rendering\RenderingContextInter
 	 * Object manager which is bubbled through. The ViewHelperNode cannot get an ObjectManager injected because
 	 * the whole syntax tree should be cacheable
 	 *
-	 * @var F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Controller context being passed to the ViewHelper
 	 *
-	 * @var F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
 	/**
 	 * ViewHelper Variable Container
 	 *
-	 * @var F3\Fluid\Core\ViewHelpers\ViewHelperVariableContainer
+	 * @var \F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer
 	 */
 	protected $viewHelperVariableContainer;
 

@@ -31,7 +31,7 @@ namespace F3\TypoScript;
 class ProcessorChain {
 
 	/**
-	 * @var An array of
+	 * @var array
 	 */
 	protected $processorInvocations = array();
 

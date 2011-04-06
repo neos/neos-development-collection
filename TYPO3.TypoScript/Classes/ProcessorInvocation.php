@@ -31,12 +31,14 @@ namespace F3\TypoScript;
 class ProcessorInvocation {
 
 	/**
-	 * @var object An instance of the class providing the processor
+	 * An instance of the class providing the processor
+	 * @var object
 	 */
 	protected $processorObject;
 
 	/**
-	 * @var array Arguments to pass to the processor method
+	 * Arguments to pass to the processor method
+	 * @var array
 	 */
 	protected $processorArguments;
 

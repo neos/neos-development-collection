@@ -30,7 +30,8 @@ namespace F3\TypoScript;
 abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContentObject implements \ArrayAccess, \Countable {
 
 	/**
-	 * @var array An array which contains further content objects which can be set and retrieved through numeric indexes
+	 * An array which contains further content objects which can be set and retrieved through numeric indexes
+	 * @var array
 	 */
 	protected $contentArray = array();
 
