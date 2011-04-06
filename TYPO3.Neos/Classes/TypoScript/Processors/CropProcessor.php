@@ -48,7 +48,7 @@ class CropProcessor implements \F3\TypoScript\ProcessorInterface {
 
 	/**
 	 * Any combination of the CROP_ constants as a bitmask
-	 * @var long
+	 * @var integer
 	 */
 	protected $options = 0;
 
