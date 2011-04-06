@@ -6,7 +6,7 @@
 
 resources:
   methods:
-    F3_TYPO3_Backend_BackendController: "method(F3\TYPO3\Controller\Backend\BackendController->.*())"
+    F3_TYPO3_Backend_BackendController: "method(F3\TYPO3\Controller\Backend\BackendController->(!initialize|.*)Action())"
 
 roles:
   Administrator: []
