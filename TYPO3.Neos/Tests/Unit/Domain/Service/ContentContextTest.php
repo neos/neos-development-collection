@@ -39,11 +39,7 @@ class ContentContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockDomainRepository = $this->getMock('F3\TYPO3\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
 		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
-		$locale = new \F3\FLOW3\I18n\Locale('mul-ZZ');
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Locale', 'mul-ZZ')->will($this->returnValue($locale));
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('environment', $mockEnvironment);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
@@ -82,19 +78,16 @@ class ContentContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
 
-		$locale = new \F3\FLOW3\I18n\Locale('mul-ZZ');
+		$locale = new \F3\FLOW3\I18n\Locale('mul_ZZ');
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\I18n\Locale', 'mul-ZZ')->will($this->returnValue($locale));
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('environment', $mockEnvironment);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
 		$contentContext->initializeObject();
 
-		$this->assertSame($locale, $contentContext->getLocale());
+		$this->assertEquals($locale, $contentContext->getLocale());
 	}
 
 	/**

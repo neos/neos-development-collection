@@ -22,6 +22,8 @@ namespace F3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\I18n\Locale;
+
 /**
  * The Content Context
  *
@@ -76,8 +78,7 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		$this->locale = $this->objectManager->create('F3\FLOW3\I18n\Locale', 'mul-ZZ');
-		$this->currentDateTime = new \DateTime();
+		$this->locale = new Locale('mul_ZZ');
 
 		$matchingDomains = $this->domainRepository->findByHost($this->environment->getHTTPHost());
 		if (count ($matchingDomains) > 0) {
@@ -86,33 +87,6 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 		} else {
 			$this->currentSite = $this->siteRepository->findFirst();
 		}
-	}
-
-	/**
-	 * Returns the current date and time in form of a \DateTime
-	 * object.
-	 *
-	 * If you use this method for getting the current date and time
-	 * everywhere in your code, it will be possible to simulate a certain
-	 * time in unit tests or in the actual application (for realizing previews etc).
-	 *
-	 * @return \DateTime The current date and time - or a simulated version of it
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getCurrentDateTime() {
-		return $this->currentDateTime;
-	}
-
-	/**
-	 * Sets the simulated date and time. This time will then always be returned
-	 * by getCurrentDateTime().
-	 *
-	 * @param \DateTime $currentDateTime A date and time to simulate.
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setCurrentDateTime(\DateTime $currentDateTime) {
-		$this->currentDateTime = $currentDateTime;
 	}
 
 	/**

@@ -196,6 +196,9 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	private function buildRecursiveItemsArray(\F3\TYPO3CR\Domain\Model\Node $entryParentNode, $lastParentNode, \F3\TYPO3\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
 		$items = array();
 		foreach ($entryParentNode->getChildNodes('TYPO3:Page') as $currentNode) {
+			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE) {
+				continue;
+			}
 			$item = array(
 				 'label' => $currentNode->getProperty('title'),
 				 'node' => $currentNode,

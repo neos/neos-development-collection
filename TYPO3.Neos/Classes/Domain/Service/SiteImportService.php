@@ -211,6 +211,13 @@ class SiteImportService {
 			if (!$this->contentTypeManager->hasContentType($contentTypeName)) {
 				$this->contentTypeManager->createContentType($contentTypeName);
 			}
+			if ((boolean)$childNodeXml['hidden']) {
+				$childNode->setHidden(TRUE);
+			}
+
+			if ((boolean)$childNodeXml['hiddenInIndex']) {
+				$childNode->setHiddenInIndex(TRUE);
+			}
 
 			$childNode->setContentType($contentTypeName);
 			if ($childNodeXml->properties) {
@@ -218,6 +225,16 @@ class SiteImportService {
 					$childNode->setProperty($childXml->getName(), (string)$childXml);
 				}
 			}
+
+			if ($childNodeXml->accessRoles) {
+				$accessRoles = array();
+				foreach ($childNodeXml->accessRoles->children() as $childXml) {
+					$accessRoles[] = (string)$childXml;
+				}
+				$childNode->setAccessRoles($accessRoles);
+			}
+
+
 			if ($childNodeXml->node) {
 				$this->parseNodes($childNodeXml, $childNode);
 			}
