@@ -108,7 +108,7 @@ class Workspace {
 	 */
 	public function initializeObject($initializationCause) {
 		if ($initializationCause === \F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
-			$this->rootNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', '/', $this);
+			$this->rootNode = new Node('/', $this);
 			$this->nodeRepository->add($this->rootNode);
 		}
 	}

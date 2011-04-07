@@ -41,6 +41,15 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	protected $removedObjects;
 
 	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->addedObjects = new \SplObjectStorage();
+		$this->removedObjects = new \SplObjectStorage();
+		parent::__construct();
+	}
+
+	/**
 	 * Adds an object to the persistence.
 	 *
 	 * @param object $object The object to add
@@ -67,16 +76,6 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 		$this->removedObjects->attach($object);
 		parent::remove($object);
 	}
-
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		$this->addedObjects = new \SplObjectStorage();
-		$this->removedObjects = new \SplObjectStorage();
-		parent::__construct();
-	}
-
 	/**
 	 * Finds a node by its path and workspace.
 	 *

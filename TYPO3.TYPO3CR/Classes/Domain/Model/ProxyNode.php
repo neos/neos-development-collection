@@ -58,12 +58,6 @@ class ProxyNode implements NodeInterface {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @inject
 	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -444,6 +438,16 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Checks if this node has any child nodes.
+	 *
+	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
+	 * @return boolean TRUE if this node has child nodes, otherwise FALSE
+	 */
+	public function hasChildNodes($contentTypeFilter = NULL) {
+		return (isset($this->newNode) ? $this->newNode->hasChildNodes($contentTypeFilter) : $this->originalNode->hasChildNodes($contentTypeFilter));
+	}
+
+	/**
 	 * Removes this node and all its child nodes.
 	 *
 	 * @return void
@@ -454,6 +458,147 @@ class ProxyNode implements NodeInterface {
 			$this->cloneOriginalNode();
 		}
 		$this->newNode->remove();
+	}
+
+	/**
+	 * If this node is a removed node.
+	 *
+	 * @return boolean
+	 */
+	public function isRemoved() {
+		return (isset($this->newNode) ? $this->newNode->isRemoved() : $this->originalNode->isRemoved());
+	}
+
+	/**
+	 * Sets the "hidden" flag for this node.
+	 *
+	 * @param boolean $hidden If TRUE, this Node will be hidden
+	 * @return void
+	 */
+	public function setHidden($hidden) {
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->setHidden($hidden);
+	}
+
+	/**
+	 * Returns the current state of the hidden flag
+	 *
+	 * @return boolean
+	 */
+	public function isHidden() {
+		return (isset($this->newNode) ? $this->newNode->isHidden() : $this->originalNode->isHidden());
+	}
+
+	/**
+	 * Sets the date and time when this node becomes potentially visible.
+	 *
+	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
+	 * @return void
+	 */
+	public function setHiddenBeforeDate(\DateTime $dateTime) {
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->setHiddenBeforeDate($dateTime);
+	}
+
+	/**
+	 * Returns the date and time before which this node will be automatically hidden.
+	 *
+	 * @return \DateTime Date before this node will be hidden
+	 */
+	public function getHiddenBeforeDate() {
+		return (isset($this->newNode) ? $this->newNode->getHiddenBeforeDate() : $this->originalNode->getHiddenBeforeDate());
+	}
+
+	/**
+	 * Sets the date and time when this node should be automatically hidden
+	 *
+	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
+	 * @return void
+	 */
+	public function setHiddenAfterDate(\DateTime $dateTime) {
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->setHiddenAfterDate($dateTime);
+	}
+
+	/**
+	 * Returns the date and time after which this node will be automatically hidden.
+	 *
+	 * @return \DateTime Date after which this node will be hidden
+	 */
+	public function getHiddenAfterDate() {
+		return (isset($this->newNode) ? $this->newNode->getHiddenAfterDate() : $this->originalNode->getHiddenAfterDate());
+	}
+
+	/**
+	 * Sets if this node should be hidden in indexes, such as a site navigation.
+	 *
+	 * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
+	 * @return void
+	 */
+	public function setHiddenInIndex($hidden) {
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->setHiddenInIndex($hidden);
+	}
+
+	/**
+	 * If this node should be hidden in indexes
+	 *
+	 * @return boolean
+	 */
+	public function isHiddenInIndex() {
+		return (isset($this->newNode) ? $this->newNode->isHiddenInIndex() : $this->originalNode->isHiddenInIndex());
+	}
+
+	/**
+	 * Sets the roles which are required to access this node
+	 *
+	 * @param array $accessRoles
+	 * @return void
+	 */
+	public function setAccessRoles(array $accessRoles) {
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->setAccessRoles($accessRoles);
+	}
+
+	/**
+	 * Returns the names of defined access roles
+	 *
+	 * @return array
+	 */
+	public function getAccessRoles() {
+		return (isset($this->newNode) ? $this->newNode->getAccessRoles() : $this->originalNode->getAccessRoles());
+	}
+
+	/**
+	 * Tells if this node is "visible".
+	 *
+	 * For this the "hidden" flag and the "hiddenBeforeDate" and "hiddenAfterDate" dates are
+	 * taken into account.
+	 *
+	 * @return boolean
+	 */
+	public function isVisible() {
+		return (isset($this->newNode) ? $this->newNode->isVisible() : $this->originalNode->isVisible());
+	}
+
+	/**
+	 * Tells if this node may be accessed according to the current security context.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isAccessible() {
+		return (isset($this->newNode) ? $this->newNode->isAccessible() : $this->originalNode->isAccessible());
 	}
 
 	/**
@@ -492,7 +637,7 @@ class ProxyNode implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function cloneOriginalNode() {
-		$this->newNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', $this->originalNode->getPath(), $this->context->getWorkspace(), $this->originalNode->getIdentifier());
+		$this->newNode = new Node($this->originalNode->getPath(), $this->context->getWorkspace(), $this->originalNode->getIdentifier());
 
 		foreach ($this->originalNode->getProperties() as $propertyName => $propertyValue) {
 			$this->newNode->setProperty($propertyName, $propertyValue);

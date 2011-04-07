@@ -22,6 +22,8 @@ namespace F3\TYPO3CR\Tests\Functional\Domain;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\TYPO3\Domain\Service\ContentContext;
+
 /**
  * Functional test case which covers all Node-related behavior of the
  * content repository as long as they reside in the live workspace.
@@ -40,8 +42,9 @@ class NodesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInTheLiveWorkspacesCanBeRetrievedAgainInTheLiveContext() {
-		$context = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$context = new ContentContext('live');
 		$rootNode = $context->getWorkspace()->getRootNode();
+
 		$fooNode = $rootNode->createNode('foo');
 		$this->assertSame($fooNode, $rootNode->getNode('foo'));
 
@@ -55,7 +58,7 @@ class NodesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removedNodesCannotBeRetrievedAnymore() {
-		$context = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$context = new ContentContext('live');
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$rootNode->createNode('quux');

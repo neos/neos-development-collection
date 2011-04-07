@@ -99,7 +99,7 @@ class Node implements NodeInterface {
 	protected $contentObjectProxy;
 
 	/**
-	 * The content type of this node
+	 * The name of the content type of this node
 	 *
 	 * @var string
 	 */
@@ -115,10 +115,52 @@ class Node implements NodeInterface {
 	protected $removed = FALSE;
 
 	/**
+	 * If this node is hidden, it is not shown in a public place.
+	 *
+	 * @var boolean
+	 */
+	protected $hidden = FALSE;
+
+	/**
+	 * Date before which this node is automatically hidden
+	 *
+	 * @var \DateTime
+	 */
+	protected $hiddenBeforeDate;
+
+	/**
+	 * Date after which this node is automatically hidden
+	 *
+	 * @var \DateTime
+	 */
+	protected $hiddenAfterDate;
+
+	/**
+	 * If this node should be hidden in indexes, such as a website navigation
+	 *
+	 * @var boolean
+	 */
+	protected $hiddenInIndex = FALSE;
+
+	/**
+	 * List of role names which are required to access this node at all
+	 *
+	 * @var array<string>
+	 */
+	protected $accessRoles = array();
+
+	/**
 	 * @var \F3\TYPO3CR\Domain\Service\Context
 	 * @transient
 	 */
 	protected $context;
+
+	/**
+	 * @inject
+	 * @var \F3\FLOW3\Security\Context
+	 * @transient
+	 */
+	protected $securityContext;
 
 	/**
 	 * @inject
@@ -131,12 +173,6 @@ class Node implements NodeInterface {
 	 * @var \F3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
-
-	/**
-	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
 
 	/**
 	 * @inject
@@ -564,7 +600,7 @@ class Node implements NodeInterface {
 		}
 		$newIndex = $this->nodeRepository->countByParentAndContentType($this->path, NULL, $currentWorkspace) + 1;
 
-		$newNode = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Node', $newPath, $currentWorkspace);
+		$newNode = new Node($newPath, $currentWorkspace);
 		$newNode->setIndex($newIndex);
 		if ($contentType !== NULL) {
 			$newNode->setContentType($contentType);
@@ -653,6 +689,156 @@ class Node implements NodeInterface {
 	 */
 	public function isRemoved() {
 		return $this->removed;
+	}
+
+	/**
+	 * Sets the "hidden" flag for this node.
+	 *
+	 * @param boolean $hidden If TRUE, this Node will be hidden
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setHidden($hidden) {
+		$this->hidden = (boolean)$hidden;
+	}
+
+	/**
+	 * Returns the current state of the hidden flag
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isHidden() {
+		return $this->hidden;
+	}
+
+	/**
+	 * Sets the date and time when this node becomes potentially visible.
+	 *
+	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setHiddenBeforeDate(\DateTime $dateTime) {
+		$this->hiddenBeforeDate = $dateTime;
+	}
+
+	/**
+	 * Returns the date and time before which this node will be automatically hidden.
+	 *
+	 * @return \DateTime Date before this node will be hidden
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getHiddenBeforeDate() {
+		return $this->hiddenBeforeDate;
+	}
+
+	/**
+	 * Sets the date and time when this node should be automatically hidden
+	 *
+	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setHiddenAfterDate(\DateTime $dateTime) {
+		$this->hiddenAfterDate = $dateTime;
+	}
+
+	/**
+	 * Returns the date and time after which this node will be automatically hidden.
+	 *
+	 * @return \DateTime Date after which this node will be hidden
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getHiddenAfterDate() {
+		return $this->hiddenAfterDate;
+	}
+
+	/**
+	 * Sets if this node should be hidden in indexes, such as a site navigation.
+	 *
+	 * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setHiddenInIndex($hidden) {
+		$this->hiddenInIndex = (boolean) $hidden;
+	}
+
+	/**
+	 * If this node should be hidden in indexes
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isHiddenInIndex() {
+		return $this->hiddenInIndex;
+	}
+
+	/**
+	 * Sets the roles which are required to access this node
+	 *
+	 * @param array $accessRoles
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setAccessRoles(array $accessRoles) {
+		foreach ($accessRoles as $role) {
+			if (!is_string($role)) {
+				throw new \InvalidArgumentException('The role names passed to setAccessRoles() must all be of type string.', 1302172892);
+			}
+		}
+		$this->accessRoles = $accessRoles;
+	}
+
+	/**
+	 * Returns the names of defined access roles
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAccessRoles() {
+		return $this->accessRoles;
+	}
+
+	/**
+	 * Tells if this node is "visible".
+	 *
+	 * For this the "hidden" flag and the "hiddenBeforeDate" and "hiddenAfterDate" dates and access restrictions are
+	 * taken into account.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isVisible() {
+		if ($this->hidden === TRUE) {
+			return FALSE;
+		}
+		$currentDateTime = $this->context->getCurrentDateTime();
+		if ($this->hiddenBeforeDate !== NULL && $this->hiddenBeforeDate > $currentDateTime) {
+			return FALSE;
+		}
+		if ($this->hiddenAfterDate !== NULL && $this->hiddenAfterDate < $currentDateTime) {
+			return FALSE;
+		}
+		return $this->isAccessible();
+	}
+
+	/**
+	 * Tells if this node may be accessed according to the current security context.
+	 *
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isAccessible() {
+		if ($this->accessRoles !== array()) {
+			foreach ($this->accessRoles as $roleName) {
+				if (!$this->securityContext->hasRole($roleName)) {
+					return FALSE;
+				}
+			}
+		}
+		return TRUE;
 	}
 
 	/**

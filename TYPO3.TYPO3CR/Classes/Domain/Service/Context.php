@@ -68,6 +68,7 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	 */
 	public function __construct($workspaceName) {
 		$this->workspaceName = $workspaceName;
+		$this->currentDateTime = new \DateTime();
 	}
 
 	/**
@@ -138,6 +139,33 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	 */
 	public function getCurrentNode() {
 		return $this->currentNode;
+	}
+
+	/**
+	 * Returns the current date and time in form of a \DateTime
+	 * object.
+	 *
+	 * If you use this method for getting the current date and time
+	 * everywhere in your code, it will be possible to simulate a certain
+	 * time in unit tests or in the actual application (for realizing previews etc).
+	 *
+	 * @return \DateTime The current date and time - or a simulated version of it
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getCurrentDateTime() {
+		return $this->currentDateTime;
+	}
+
+	/**
+	 * Sets the simulated date and time. This time will then always be returned
+	 * by getCurrentDateTime().
+	 *
+	 * @param \DateTime $currentDateTime A date and time to simulate.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setCurrentDateTime(\DateTime $currentDateTime) {
+		$this->currentDateTime = $currentDateTime;
 	}
 
 	/**
