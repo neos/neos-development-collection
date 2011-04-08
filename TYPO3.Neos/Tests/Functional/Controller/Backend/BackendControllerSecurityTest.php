@@ -30,13 +30,18 @@ namespace F3\TYPO3\Tests\Functional\Controller\Backend;
 class BackendControllerSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * We need to enable this, so that the database is set up. Otherwise
+	 * there will be an error along the lines of:
+	 *  "Table 'functional_tests.domain' doesn't exist"
+	 *
+	 * @var boolean
 	 */
-	public function setUp() {
-		$this->enableTestableSecurity();
-		parent::setUp();
-	}
+	static protected $testablePersistenceEnabled = TRUE;
+
+	/**
+	 * @var boolean
+	 */
+	protected $testableSecurityEnabled = TRUE;
 
 	/**
 	 * @test
