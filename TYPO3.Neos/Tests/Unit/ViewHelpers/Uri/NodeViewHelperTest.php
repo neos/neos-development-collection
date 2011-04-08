@@ -57,7 +57,7 @@ class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderWithoutNodeGeneratesUriToCurrentNode() {
-		$currentNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$currentNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 
 		$context = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getCurrentNode')->will($this->returnValue($currentNode));
@@ -85,7 +85,7 @@ class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function renderWithNodeGeneratesUriToGivenNode() {
-		$node = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$node = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 
 		$this->uriBuilder->expects($this->once())->method('reset')->will($this->returnValue($this->uriBuilder));
 		$this->uriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(FALSE)->will($this->returnValue($this->uriBuilder));

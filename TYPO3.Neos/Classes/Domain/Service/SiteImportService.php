@@ -196,11 +196,11 @@ class SiteImportService {
 	 * Iterates over the nodes and adds them to the workspace.
 	 *
 	 * @param \SimpleXMLElement $parentXml
-	 * @param \F3\TYPO3CR\Domain\Model\Node $parentNode
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $parentNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function parseNodes(\SimpleXMLElement $parentXml, $parentNode) {
+	protected function parseNodes(\SimpleXMLElement $parentXml, \F3\TYPO3CR\Domain\Model\NodeInterface $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
 			$childNode = $parentNode->getNode((string)$childNodeXml['nodeName']);
 			if ($childNode === NULL) {

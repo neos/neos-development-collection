@@ -100,13 +100,13 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Publishes the given node to the specified targetWorkspace
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @extdirect
 	 */
-	public function publishNodeAction(\F3\TYPO3CR\Domain\Model\Node $node, $targetWorkspaceName) {
+	public function publishNodeAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
 		$sourceWorkspace = $node->getWorkspace();
 		$sourceWorkspace->publishNodes(array($node), $targetWorkspaceName);
 

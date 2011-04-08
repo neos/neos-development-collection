@@ -96,11 +96,11 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	/**
 	 * Dummy method, not used
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function setNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 	}
 
 	/**

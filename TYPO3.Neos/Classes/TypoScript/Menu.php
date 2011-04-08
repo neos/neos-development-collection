@@ -185,15 +185,15 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Recursively called method which builds the actual items array.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $entryParentNode The parent node whose children should be listed as items
-	 * @param \F3\TYPO3CR\Domain\Model\Node $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode The parent node whose children should be listed as items
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $lastParentNode The last parent node whose children should be listed. NULL = no limit defined through lastLevel
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext $contentContext The current content context
 	 * @param integer $currentLevel Level count for the recursion – don't use.
 	 * @return array A nested array of menu item information
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see buildItems()
 	 */
-	private function buildRecursiveItemsArray(\F3\TYPO3CR\Domain\Model\Node $entryParentNode, $lastParentNode, \F3\TYPO3\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
+	private function buildRecursiveItemsArray(\F3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode, $lastParentNode, \F3\TYPO3\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
 		$items = array();
 		foreach ($entryParentNode->getChildNodes('TYPO3:Page') as $currentNode) {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE) {
@@ -224,7 +224,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
 	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
-	 * @return \F3\TYPO3CR\Domain\Model\Node The parent node of the node at the specified level or NULL if none was found
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The parent node of the node at the specified level or NULL if none was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, \F3\TYPO3\Domain\Service\ContentContext $contentContext) {

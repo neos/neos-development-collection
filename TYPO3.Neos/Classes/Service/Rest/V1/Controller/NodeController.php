@@ -58,12 +58,12 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	/**
 	 * Shows the specified node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function showAction(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function showAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		switch ($this->request->getFormat()) {
 			case 'json' :
 				$this->view->setConfiguration(
@@ -82,13 +82,13 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	/**
 	 * Creates a new node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $parentNode
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $parentNode
 	 * @param array $nodeData
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createAction(\F3\TYPO3CR\Domain\Model\Node $parentNode, array $nodeData) {
+	public function createAction(\F3\TYPO3CR\Domain\Model\NodeInterface $parentNode, array $nodeData) {
 		$newNode = $parentNode->createNode($nodeData['nodeName']);
 		$newNode->setContentType($nodeData['contentType']);
 
@@ -101,25 +101,25 @@ class NodeController extends \F3\FLOW3\MVC\Controller\RestController {
 	/**
 	 * Updates the specified node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo the updateAction now implicitly saves the node, as the NodeObjectConverter does not clone the node right now. This is a hack, and needs to be cleaned up.
 	 */
-	public function updateAction(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function updateAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->redirect('show', NULL, NULL, array('node' => $node), 0, 200);
 	}
 
 	/**
 	 * Deletes the specified node and all of its sub nodes
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function deleteAction(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function deleteAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$node->remove();
 		$this->redirect('show', NULL, NULL, array('node' => $node->getParent()));
 	}

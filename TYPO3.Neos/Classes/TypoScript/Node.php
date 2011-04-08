@@ -55,11 +55,11 @@ class Node extends \F3\TypoScript\AbstractContentObject {
 	 * All available properties of the node will be registered as presentation model
 	 * properties.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node the TypoScript object is based on
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function setNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		parent::setNode($node);
 		$this->properties = $node->getProperties();
 

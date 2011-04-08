@@ -34,7 +34,7 @@ namespace F3\TYPO3\Routing;
 class NodeObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	protected $sourceTypes = array('string', 'array');
-	protected $targetType = 'F3\TYPO3CR\Domain\Model\Node';
+	protected $targetType = 'F3\TYPO3CR\Domain\Model\NodeInterface';
 	protected $priority = 1;
 
 	/**

@@ -62,7 +62,7 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		if (!isset($this->variables['value']) || !$this->variables['value'] instanceof \F3\TYPO3CR\Domain\Model\Node) {
+		if (!isset($this->variables['value']) || !$this->variables['value'] instanceof \F3\TYPO3CR\Domain\Model\NodeInterface) {
 			return 'TypoScriptView: A valid node must be assigned to the variable "value" via the TypoScriptView\'s assign() method.';
 		}
 

@@ -45,12 +45,12 @@ class TypoScriptService {
 	 * path to take while searching for TypoScript configuration. The path of the
 	 * start node must be the base path of the end node's path.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $startNode Node marking the starting point
-	 * @param \F3\TYPO3CR\Domain\Model\Node $endNode Node marking the end point
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $startNode Node marking the starting point
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $endNode Node marking the end point
 	 * @return array The merged object tree as of the given node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getMergedTypoScriptObjectTree(\F3\TYPO3CR\Domain\Model\Node $startNode, \F3\TYPO3CR\Domain\Model\Node $endNode) {
+	public function getMergedTypoScriptObjectTree(\F3\TYPO3CR\Domain\Model\NodeInterface $startNode, \F3\TYPO3CR\Domain\Model\NodeInterface $endNode) {
 		$contentContext = $startNode->getContext();
 		$parentNodes = $contentContext->getNodesOnPath($startNode->getPath(), $endNode->getPath());
 		if (!is_array($parentNodes)) {

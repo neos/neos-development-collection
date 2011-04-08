@@ -137,7 +137,7 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the node of the current site.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentSiteNode() {

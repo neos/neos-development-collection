@@ -119,7 +119,7 @@ class NodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof \F3\TYPO3CR\Domain\Model\Node) {
+		if (!$value instanceof \F3\TYPO3CR\Domain\Model\NodeInterface) {
 			return FALSE;
 		}
 		$this->value = substr($value->getPath(), strlen($value->getContext()->getCurrentSiteNode()->getPath()) + 1);

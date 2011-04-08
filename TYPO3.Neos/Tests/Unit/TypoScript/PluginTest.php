@@ -129,7 +129,7 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderSetsControllerActionInformationOnRequestObjectIfItHasBeenDefinedInThePluginProperties() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->will($this->returnValue(NULL));
 
 		$mockPluginRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
@@ -184,7 +184,7 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderSetsControllerActionInformationOnRequestObjectIfItHasBeenDefinedInTheNode() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->at(0))->method('getProperty')->with('package')->will($this->returnValue('PackageDefinedInNode'));
 		$mockNode->expects($this->at(1))->method('getProperty')->with('subpackage')->will($this->returnValue('SubpackageDefinedInNode'));
 		$mockNode->expects($this->at(2))->method('getProperty')->with('controller')->will($this->returnValue('ControllerDefinedInNode'));
@@ -215,7 +215,7 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceReturnsTheNodesValueIfItIsSetThere() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue('someArgumentNamespace'));
 
 		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));
@@ -230,7 +230,7 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceReturnsTheNamespaceSetInThePluginClassIfNoneIsSetInTheNode() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue(NULL));
 
 		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));
@@ -245,7 +245,7 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceCompilesTheNamespaceFromTheClassNameIfNoneIsSetInThePluginClassNorInTheNode() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue(NULL));
 
 		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));

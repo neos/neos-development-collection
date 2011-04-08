@@ -125,7 +125,7 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof \F3\TYPO3CR\Domain\Model\Node) {
+		if (!$value instanceof \F3\TYPO3CR\Domain\Model\NodeInterface) {
 			return FALSE;
 		}
 		$this->value = ltrim($value->getPath(), '/');
