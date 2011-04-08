@@ -33,7 +33,7 @@ class NodesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @var boolean
 	 */
-	protected $testablePersistenceEnabled = TRUE;
+	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
 	 * @test
@@ -58,9 +58,9 @@ class NodesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$context = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
 		$rootNode = $context->getWorkspace()->getRootNode();
 
-		$rootNode->createNode('foo');
-		$rootNode->getNode('foo')->remove();
-		$this->assertNull($rootNode->getNode('foo'));
+		$rootNode->createNode('quux');
+		$rootNode->getNode('quux')->remove();
+		$this->assertNull($rootNode->getNode('quux'));
 
 		$barNode = $rootNode->createNode('bar');
 		$barNode->remove();
@@ -70,6 +70,9 @@ class NodesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 		$rootNode->createNode('baz');
 		$this->persistenceManager->persistAll();
 		$rootNode->getNode('baz')->remove();
-		$this->assertNull($rootNode->getNode('baz'));
+		$bazNode = $rootNode->getNode('baz');
+			// workaround for PHPUnit trying to "render" the result *if* not NULL
+		$bazNodeResult = $bazNode === NULL ? NULL : 'instance-of-' . get_class($bazNode);
+		$this->assertNull($bazNodeResult);
 	}
 }

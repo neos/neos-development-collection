@@ -33,21 +33,38 @@ class WorkspacesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @var boolean
 	 */
-	protected $testablePersistenceEnabled = TRUE;
+	static protected $testablePersistenceEnabled = TRUE;
+
+	/**
+	 * @var \F3\TYPO3\Domain\Service\ContentContext
+	 */
+	protected $personalContext;
+
+	/**
+	 * @var \F3\TYPO3\Domain\Model\Node
+	 */
+	protected $rootNode;
+
+	/**
+	 * @return void
+	 */
+	public function setup() {
+		parent::setup();
+		$this->personalContext = new \F3\TYPO3\Domain\Service\ContentContext('user-robert');
+		$this->rootNode = $this->personalContext->getWorkspace()->getRootNode();
+	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInAPersonalWorkspacesCanBeRetrievedAgainInThePersonalContext() {
-		$context = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'user-robert');
-		$rootNode = $context->getWorkspace()->getRootNode();
-		$fooNode = $rootNode->createNode('foo');
-		$this->assertSame($fooNode, $rootNode->getNode('foo'));
+		$fooNode = $this->rootNode->createNode('foo');
+		$this->assertSame($fooNode, $this->rootNode->getNode('foo'));
 
 		$this->persistenceManager->persistAll();
 
-		$this->assertSame($fooNode, $rootNode->getNode('foo'));
+		$this->assertSame($fooNode, $this->rootNode->getNode('foo'));
 	}
 
 	/**
@@ -55,13 +72,11 @@ class WorkspacesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInAPersonalWorkspacesAreNotVisibleInTheLiveWorkspace() {
-		$personalContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'user-robert');
-		$personalRootNode = $personalContext->getWorkspace()->getRootNode();
-		$personalRootNode->createNode('homepage')->createNode('about');
+		$this->rootNode->createNode('homepage')->createNode('about');
 
 		$this->persistenceManager->persistAll();
 
-		$liveContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$liveContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/about'));
@@ -72,13 +87,11 @@ class WorkspacesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInAPersonalWorkspacesAreNotVisibleInTheLiveWorkspaceEvenWithoutPersistAll() {
-		$personalContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'user-robert');
-		$personalRootNode = $personalContext->getWorkspace()->getRootNode();
-		$personalRootNode->createNode('homepage')->createNode('about');
+		$this->rootNode->getNode('homepage')->createNode('imprint');
 
-		$liveContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$liveContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
 
-		$this->assertNull($liveRootNode->getNode('/homepage/about'));
+		$this->assertNull($liveRootNode->getNode('/homepage/imprint'));
 	}
 }
