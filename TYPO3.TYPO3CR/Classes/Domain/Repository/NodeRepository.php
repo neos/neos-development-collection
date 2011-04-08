@@ -63,9 +63,8 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	public function remove($object) {
 		if ($this->addedObjects->contains($object)) {
 			$this->addedObjects->detach($object);
-		} else {
-			$this->removedObjects->attach($object);
 		}
+		$this->removedObjects->attach($object);
 		parent::remove($object);
 	}
 
