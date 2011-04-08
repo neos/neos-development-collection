@@ -62,8 +62,6 @@ class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$context = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getCurrentNode')->will($this->returnValue($currentNode));
 
-		$this->request->expects($this->once())->method('hasArgument')->with('service')->will($this->returnValue(TRUE));
-		$this->request->expects($this->once())->method('getArgument')->with('service')->will($this->returnValue('REST'));
 		$this->request->expects($this->once())->method('getFormat')->will($this->returnValue('xml.rss'));
 
 		$this->viewHelperVariableContainer->expects($this->once())->method('get')->with('F3\TYPO3', 'contentContext')->will($this->returnValue($context));
@@ -71,7 +69,7 @@ class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->uriBuilder->expects($this->once())->method('reset')->will($this->returnValue($this->uriBuilder));
 		$this->uriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(FALSE)->will($this->returnValue($this->uriBuilder));
 		$this->uriBuilder->expects($this->once())->method('setFormat')->with('xml.rss')->will($this->returnValue($this->uriBuilder));
-		$this->uriBuilder->expects($this->once())->method('uriFor')->with(NULL, array('node' => $currentNode, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1')->will($this->returnValue('http://someuri/path'));
+		$this->uriBuilder->expects($this->once())->method('uriFor')->with(NULL, array('node' => $currentNode))->will($this->returnValue('http://someuri/path'));
 
 		$this->tagBuilder->expects($this->once())->method('addAttribute')->with('href', 'http://someuri/path');
 		$this->tagBuilder->expects($this->once())->method('render')->will($this->returnValue('tag output'));
@@ -92,7 +90,7 @@ class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->uriBuilder->expects($this->once())->method('reset')->will($this->returnValue($this->uriBuilder));
 		$this->uriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(FALSE)->will($this->returnValue($this->uriBuilder));
 		$this->uriBuilder->expects($this->once())->method('setFormat')->with(NULL)->will($this->returnValue($this->uriBuilder));
-		$this->uriBuilder->expects($this->once())->method('uriFor')->with(NULL, array('node' => $node, 'service' => NULL), 'Node', 'TYPO3', 'Service\Rest\V1')->will($this->returnValue('http://someuri/path'));
+		$this->uriBuilder->expects($this->once())->method('uriFor')->with(NULL, array('node' => $node))->will($this->returnValue('http://someuri/path'));
 
 		$this->tagBuilder->expects($this->once())->method('addAttribute')->with('href', 'http://someuri/path');
 		$this->tagBuilder->expects($this->once())->method('render')->will($this->returnValue('tag output'));

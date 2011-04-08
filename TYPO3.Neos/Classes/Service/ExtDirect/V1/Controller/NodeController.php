@@ -130,16 +130,13 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			throw new \F3\TYPO3CR\Exception\NodeException('The position should be one of the following: -1, 0, 1.', 1296132542);
 		}
 
-			// Generate a nodeName if not given
 		if (empty($nodeData['nodeName'])) {
-			$nodeData['nodeName'] = uniqid();
+			$nodeData['nodeName'] = uniqid('node');
 		}
 
 		if ($position === 0) {
-				// Place the new node in the referenceNode
 			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeData['contentType']);
 		} else {
-				// Place the node before or after the reference
 			$parentNode = $referenceNode->getParent();
 			$newNode = $parentNode->createNode($nodeData['nodeName'], $nodeData['contentType']);
 
@@ -164,7 +161,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			->reset()
 			->setFormat('html')
 			->setCreateAbsoluteUri(TRUE)
-			->uriFor('show', array('node' => $newNode, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
+			->uriFor('show', array('node' => $newNode), 'Frontend\Node');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
@@ -177,6 +174,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return void
 	 * @author Aske Ertmann <aske@mocsystems.com>
 	 * @extdirect
+	 * @fixme Find a better solution that passing -1, 0 and 1
 	 */
 	public function moveAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, \F3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $position) {
 		if (!in_array($position, array(-1, 0, 1), TRUE)) {
@@ -200,7 +198,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			->reset()
 			->setFormat('html')
 			->setCreateAbsoluteUri(TRUE)
-			->uriFor('show', array('node' => $node, 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
+			->uriFor('show', array('node' => $node), 'Frontend\Node');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
@@ -275,7 +273,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			->reset()
 			->setFormat('html')
 			->setCreateAbsoluteUri(TRUE)
-			->uriFor('show', array('node' => $node->getParent(), 'service' => 'REST'), 'Node', 'TYPO3', 'Service\Rest\V1');
+			->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 

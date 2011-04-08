@@ -45,7 +45,7 @@
 -
   name:          'REST Service: Node actions with format'
 
-  # Example URL: http://myhost/typo3/service/rest/v1/node/live/sites/phoenixdemotypo3org/homepage.json
+  # Example URL: http://myhost/typo3/service/rest/v1/node/sites/phoenixdemotypo3org/homepage.json
 
   uriPattern:    'typo3/service/rest/v1/node/{node}.{@format}'
   defaults:
@@ -55,12 +55,12 @@
     'service':     'REST'
   routeParts:
     node:
-      handler:    F3\TYPO3\Routing\NodeServiceRoutePartHandler
+      handler:    F3\TYPO3\Routing\RestServiceNodeRoutePartHandler
 
 -
   name:          'REST Service: Node actions without format'
 
-  # Example URL: http://myhost/typo3/service/rest/v1/node/live/sites/phoenixdemotypo3org/homepage
+  # Example URL: http://myhost/typo3/service/rest/v1/node/sites/phoenixdemotypo3org/homepage
 
   uriPattern:    'typo3/service/rest/v1/node/{node}'
   defaults:
@@ -70,7 +70,7 @@
     'service':     'REST'
   routeParts:
     node:
-      handler:    F3\TYPO3\Routing\NodeServiceRoutePartHandler
+      handler:    F3\TYPO3\Routing\RestServiceNodeRoutePartHandler
 
 ##
 # Frontend
@@ -80,42 +80,36 @@
   uriPattern:    '{node}.html/{type}'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Service\Rest\V1'
-    '@controller': 'Node'
+    '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
-    'service':     'Frontend'
   routeParts:
     node:
-      handler:    F3\TYPO3\Routing\NodeRoutePartHandler
+      handler:    F3\TYPO3\Routing\FrontendNodeRoutePartHandler
 
 -
-  name:          'Frontend content with format'
+  name:          'Frontend content with (HTML) format'
   uriPattern:    '{node}.html'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Service\Rest\V1'
-    '@controller': 'Node'
+    '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
-    'service':     'Frontend'
   routeParts:
     node:
-      handler:    F3\TYPO3\Routing\NodeRoutePartHandler
+      handler:    F3\TYPO3\Routing\FrontendNodeRoutePartHandler
 
 -
   name:          'Frontend content without a specified format'
   uriPattern:    '({node})'
   defaults:
     '@package':    'TYPO3'
-    '@subpackage': 'Service\Rest\V1'
-    '@controller': 'Node'
+    '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
-    'service':     'Frontend'
   routeParts:
     node:
-      handler:    F3\TYPO3\Routing\NodeRoutePartHandler
+      handler:    F3\TYPO3\Routing\FrontendNodeRoutePartHandler
 
 -
   name: 'Fallback rule – for when no site has been defined yet'

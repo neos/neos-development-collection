@@ -4,7 +4,11 @@
 	<title>{title}</title>
 	<meta charset="UTF-8" />
 	<script>
-		document.cookie = "TYPO3_lastVisitedNode={node.context.currentNode.path};path=/";
+		document.cookie = "TYPO3_lastVisitedUri=" +
+			window.location.protocol + "//" +
+			window.location.host +
+			(window.location.pathname != "/" ? window.location.pathname : "/{node.name}.html") +
+			";path=/";
 	</script>
 <f:security.ifAccess resource="F3_TYPO3_Backend_BackendController">
 <f:alias map="{liveWorkspaceName: 'live'}"><f:if condition="{node.context.workspace.name} != {liveWorkspaceName}">

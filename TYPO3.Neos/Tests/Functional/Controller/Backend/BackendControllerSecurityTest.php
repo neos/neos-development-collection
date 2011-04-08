@@ -22,12 +22,16 @@ namespace F3\TYPO3\Tests\Functional\Controller\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\TYPO3\Domain\Model\User;
+
 /**
  * Testcase for method security of the backend controller
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class BackendControllerSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+
+
 
 	/**
 	 * We need to enable this, so that the database is set up. Otherwise
@@ -48,7 +52,11 @@ class BackendControllerSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function indexActionIsGrantedForAdministrator() {
-		$this->authenticateRoles(array('Administrator'));
+		$user = new User();
+		$user->getPreferences()->set('context.workspace', 'user-admin');
+
+		$account = $this->authenticateRoles(array('Administrator'));
+		$account->setParty($user);
 		$this->sendWebRequest('Backend\Backend', 'TYPO3', 'index');
 	}
 

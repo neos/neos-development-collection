@@ -44,12 +44,6 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\Party\Domain\Repository\PersonRepository
-	 */
-	protected $personRepository;
-
-	/**
-	 * @inject
 	 * @var \F3\FLOW3\Security\AccountFactory
 	 */
 	protected $accountFactory;
@@ -118,7 +112,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeImportAndCreateAdministratorAction() {
-		$this->arguments['person']->getPropertyMappingConfiguration()->allowCreationForSubProperty('name');
+		$this->arguments['user']->getPropertyMappingConfiguration()->allowCreationForSubProperty('name');
 	}
 
 	/**
@@ -127,13 +121,13 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $packageKey Specifies the package which contains the site to be imported
 	 * @param string $identifier Identifier of the account to be created
 	 * @param string $password The clear text password of the new account
-	 * @param \F3\Party\Domain\Model\Person $person Person containing first and last name. Will be owner of the new account.
+	 * @param \F3\TYPO3\Domain\Model\User $user Person containing first and last name. Will be owner of the new account.
 	 * @return void
 	 * @validate $identifier Label, NotEmpty
 	 * @validate $password NotEmpty
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function importAndCreateAdministratorAction($packageKey, $identifier, $password, \F3\Party\Domain\Model\Person $person) {
+	public function importAndCreateAdministratorAction($packageKey, $identifier, $password, \F3\TYPO3\Domain\Model\User $user) {
 		if($this->siteRepository->countAll() === 1) {
 			$this->forward('alreadyExecuted');
 		}
@@ -148,10 +142,9 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		}
 
 		$this->accountRepository->removeAll();
-		$this->personRepository->removeAll();
-		$this->createAdministrator($identifier, $password, $person);
+		$this->createAdministrator($identifier, $password, $user);
 		$this->flashMessageContainer->flush();
-		$this->redirect('show', 'Node', 'TYPO3\Service\Rest\V1');
+		$this->redirectToUri($this->request->getBaseUri());
 	}
 
 	/**
@@ -176,7 +169,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->siteImportService->updateFromPackage($packageKey);
 
 		$this->flashMessageContainer->flush();
-		$this->redirect('show', 'Node');
+		$this->redirectToUri($this->request->getBaseUri());
 	}
 
 	/**
@@ -184,14 +177,16 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param string $identifier Identifier of the account to be created
 	 * @param string $password The clear text password of the new account
-	 * @param \F3\Party\Domain\Model\Person $person Person containing first and last name. Will be owner of the new account.
+	 * @param \F3\TYPO3\Domain\Model\User $user Person containing first and last name. Will be owner of the new account.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function createAdministrator($identifier, $password, \F3\Party\Domain\Model\Person $person) {
+	protected function createAdministrator($identifier, $password, \F3\TYPO3\Domain\Model\User $user) {
+		$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
+
 		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
-		$account->setParty($person);
+		$account->setParty($user);
 		$this->accountRepository->add($account);
 	}
 

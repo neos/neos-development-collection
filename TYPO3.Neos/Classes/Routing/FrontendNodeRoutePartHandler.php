@@ -22,13 +22,17 @@ namespace F3\TYPO3\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\TYPO3\Domain\Service\ContentContext;
+use \F3\TYPO3CR\Domain\Model\NodeInterface;
+
 /**
- * A route part handler for nodes. Used to fetch nodes in LIVE workspace.
+ * A route part handler for finding nodes specifically in the frontend context.
+ * This handler (currently) only supports the "live" workspace.
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class NodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+class FrontendNodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	const MATCHRESULT_FOUND = TRUE;
 	const MATCHRESULT_NOWORKSPACE = -1;
@@ -39,29 +43,35 @@ class NodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	const MATCHRESULT_INVALIDPATH = -6;
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\TYPO3\Domain\Service\ContentContext
 	 */
 	protected $contentContext;
 
 	/**
-	 * While matching, resolves the requested content
+	 * Matches a frontend URI pointing to a node (for example a page).
+	 * This function assumes that the given node path is relative to the "current site node path".
 	 *
-	 * @param string $value the complete path
+	 * @param string $value Node path (without leading "/"), relative to the site node
 	 * @return mixed One of the MATCHRESULT_* constants
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function matchValue($value) {
-		if ($this->contentContext === NULL) {
-			$this->contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		if ($value !== '') {
+			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
+			if (!isset($matches['NodePath'])) {
+				return self::MATCHRESULT_INVALIDPATH;
+			}
+			$relativeNodePath = $matches['NodePath'];
+		} else {
+			$relativeNodePath = '';
 		}
 
-		$workspace = $this->contentContext->getWorkspace();
+		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
+		if ($this->contentContext === NULL) {
+			$this->contentContext = new ContentContext($workspaceName);
+		}
+
+		$workspace = $this->contentContext->getWorkspace(FALSE);
 		if (!$workspace) {
 			return self::MATCHRESULT_NOWORKSPACE;
 		}
@@ -76,7 +86,7 @@ class NodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 			return self::MATCHRESULT_NOSITENODE;
 		}
 
-		$currentNode = ($value === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($value);
+		$currentNode = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
 		if (!$currentNode) {
 			return self::MATCHRESULT_NOSUCHNODE;
 		}
@@ -111,18 +121,30 @@ class NodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 	}
 
 	/**
-	 * Checks, whether given value can be resolved and if so, sets $this->value to the resolved value.
-	 * If $value is empty, this method checks whether a default value exists.
+	 * Checks, whether given value is a Node object and if so, sets $this->value to the respective node context path.
+	 *
+	 * In order to render a suitable frontend URI, this function strips off the path to the site node and only keeps
+	 * the actual node path relative to that site node. In practice this function would set $this->value as follows:
+	 *
+	 * full node path: /sites/footypo3org/homepage/about
+	 * $this->value:   homepage/about
 	 *
 	 * @param string $value value to resolve
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof \F3\TYPO3CR\Domain\Model\NodeInterface) {
+		if (!$value instanceof NodeInterface) {
 			return FALSE;
 		}
-		$this->value = substr($value->getPath(), strlen($value->getContext()->getCurrentSiteNode()->getPath()) + 1);
+		$siteNodePath = $value->getContext()->getCurrentSiteNode()->getPath();
+		$nodeContextPath = $value->getContextPath();
+
+		if (substr($nodeContextPath, 0, strlen($siteNodePath)) !== $siteNodePath) {
+			return FALSE;
+		}
+
+		$this->value = substr($nodeContextPath, strlen($siteNodePath) + 1);
 		return TRUE;
 	}
 

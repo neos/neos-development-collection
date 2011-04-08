@@ -27,26 +27,24 @@ namespace F3\TYPO3\Tests\Unit\Routing;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class NodeRoutePartHandlerTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FrontendNodeRoutePartHandlerTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchValueReturnsErrorValueIfNoSiteExistsForTheCurrentRequest() {
+		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+
 		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
-		$mockContentContext->expects($this->any())->method('getWorkspace')->will($this->returnValue('WORKSPACE'));
-		$mockContentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue(NULL));
+		$mockContentContext->expects($this->any())->method('getWorkspace')->will($this->returnValue($mockWorkspace));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3\Domain\Service\ContentContext')->will($this->returnValue($mockContentContext));
-
-		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\NodeRoutePartHandler', array('dummy'), array(), '', FALSE);
-		$routePartHandler->_set('objectManager', $mockObjectManager);
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler->_set('contentContext', $mockContentContext);
 
 		$result = $routePartHandler->_call('matchValue', '');
 
-		$this->assertEquals(\F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSITE, $result);
+		$this->assertEquals(\F3\TYPO3\Routing\FrontendNodeRoutePartHandler::MATCHRESULT_NOSITE, $result);
 	}
 
 	/**
@@ -67,10 +65,9 @@ class NodeRoutePartHandlerTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findValueToMatchReturnsTheGivenRequestPathUntilTheFirstDot($requestPath, $valueToMatch) {
-		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\NodeRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$this->assertSame($valueToMatch, $routePartHandler->_call('findValueToMatch', $requestPath));
 	}
-
 }
 
 ?>

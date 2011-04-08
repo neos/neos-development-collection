@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Controller\Backend;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,40 +23,53 @@ namespace F3\TYPO3\Controller\Backend;
  *                                                                        */
 
 /**
- * The TYPO3 Backend controller
+ * A preferences container for a user.
+ *
+ * This is a very naïve, rough and temporary implementation of a User Preferences container.
+ * We'll need a better one which understands which options are available and contains some
+ * information about possible help texts etc.
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope singleton
+ * @entity
+ * @scope prototype
+ * @todo Provide a more capable implementation
  */
-class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
+class UserPreferences {
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\Security\Context
-	 */
-	protected $securityContext;
-
-	/**
-	 * @inject
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
-	 * Default action of the backend controller.
+	 * This ID is only for the ORM.
 	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @skipCsrfProtection
+	 * @var integer
+	 * @Id
+	 * @GeneratedValue
 	 */
-	public function indexAction() {
-		$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($workspaceName);
+	protected $id;
 
-		$this->view->assign('contentContext', $contentContext);
+	/**
+	 * The actual settings
+	 *
+	 * @var array<string>
+	 */
+	protected $preferences = array();
 
-		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
-		$this->view->assign('version', $version);
+	/**
+	 * @param $key
+	 * @param $value
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function set($key, $value) {
+		$this->preferences[$key] = $value;
 	}
+
+	/**
+	 * @param $key
+	 * @return array|null
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function get($key) {
+		return isset($this->preferences[$key]) ? $this->preferences[$key] : NULL;
+	}
+
 }
 ?>

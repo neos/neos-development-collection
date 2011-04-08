@@ -22,14 +22,19 @@ namespace F3\TYPO3\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\TYPO3\Domain\Service\ContentContext;
+use \F3\TYPO3CR\Domain\Model\NodeInterface;
+
 /**
- * A route part handler for the Node Service. This one uses the workspace
- * from the current User Preferences.
+ * A route part handler for the REST Node Service.
+ *
+ * The current workspace can be specified by a GET parameter "workspace". If no workspace was
+ * specified, the live workspace will be used.
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler {
+class RestServiceNodeRoutePartHandler extends \F3\TYPO3\Routing\FrontendNodeRoutePartHandler {
 
 	/**
 	 * @inject
@@ -39,9 +44,9 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Service\PreferencesService
+	 * @var \F3\FLOW3\Security\Context
 	 */
-	protected $preferencesService;
+	protected $securityContext;
 
 	/**
 	 * While matching, resolves the requested content
@@ -51,23 +56,23 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function matchValue($value) {
-		$pathSegments = explode('/', $value);
+		preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
 
-		if (count($pathSegments) < 1) {
+		if (!isset($matches['NodePath'])) {
 			return self::MATCHRESULT_INVALIDPATH;
 		}
 
+		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
 		if ($this->contentContext === NULL) {
-			if ($this->preferencesService->getCurrentWorkspaceName() === NULL) {
-				return self::MATCHRESULT_NOWORKSPACE;
-			}
-			$this->contentContext = new \F3\TYPO3\Domain\Service\ContentContext($this->preferencesService->getCurrentWorkspaceName());
+			$this->contentContext = new ContentContext($workspaceName);
 		}
 
 		$workspace = $this->contentContext->getWorkspace();
 		if (!$workspace) {
 			return self::MATCHRESULT_NOWORKSPACE;
 		}
+
+		$pathSegments = explode('/', $matches['NodePath']);
 
 		if (array_shift($pathSegments) !== 'sites') {
 			return self::MATCHRESULT_INVALIDPATH;
@@ -100,35 +105,18 @@ class NodeServiceRoutePartHandler extends \F3\TYPO3\Routing\NodeRoutePartHandler
 	}
 
 	/**
-	 * Extracts the node path from the request path.
-	 *
-	 * @param string $requestPath The request path to be matched
-	 * @return string value to match, or an empty string if $requestPath is empty or split string was not found
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function findValueToMatch($requestPath) {
-		$lastDotPosition = strrpos($requestPath, '.');
-		$lastSlashPosition = strrpos($requestPath, '/');
-		if ($lastDotPosition === FALSE || $lastSlashPosition === FALSE || $lastSlashPosition > $lastDotPosition) {
-			return $requestPath;
-		} else {
-			return substr($requestPath, 0, $lastDotPosition);
-		}
-	}
-
-	/**
-	 * Checks, whether given value can be resolved and if so, sets $this->value to the resolved value.
-	 * If $value is empty, this method checks whether a default value exists.
+	 * Checks, whether given value is a Node object and if so, sets $this->value to the respective node context path.
+	 * This function load $this->value with the full node path of the given node, but strips off the leading "/".
 	 *
 	 * @param string $value value to resolve
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof \F3\TYPO3CR\Domain\Model\NodeInterface) {
+		if (!$value instanceof NodeInterface) {
 			return FALSE;
 		}
-		$this->value = ltrim($value->getPath(), '/');
+		$this->value = substr($value->getContextPath(), 1);
 		return TRUE;
 	}
 

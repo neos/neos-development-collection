@@ -105,12 +105,11 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	 */
 	initComponent: function() {
 		var uri, config, cookieLastVisited;
-		cookieLastVisited = Ext.util.Cookies.get('TYPO3_lastVisitedNode');
-		uri =
-			F3.TYPO3.Configuration.Application.backendBaseUri +
-			"service/rest/v1/node" +
-			(cookieLastVisited ? cookieLastVisited + ".html" :
-				F3.TYPO3.Configuration.Application.siteNodePath + '/.html');
+		lastVisitedUri = Ext.util.Cookies.get('TYPO3_lastVisitedUri');
+		uri = (lastVisitedUri ? lastVisitedUri : F3.TYPO3.Configuration.Application.frontendBaseUri);
+
+			// Add the current workspace name to the node path, results in sth. like "http://myhost/homepage/about@user-admin.html":
+		uri = uri.replace(/(.+\/[a-z\-]+)(@[a-z\-]+)?(.*)/, '$1@' + F3.TYPO3.Configuration.Application.workspaceName + '$3');
 
 		config = {
 			border: false,

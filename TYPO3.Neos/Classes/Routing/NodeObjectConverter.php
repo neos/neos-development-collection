@@ -22,11 +22,12 @@ namespace F3\TYPO3\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\FLOW3\Error\Error;
+use \F3\TYPO3\Domain\Service\ContentContext;
+
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
  * purposes) as a plugin for the Property Mapper.
- *
- * This converter is registered automatically because it implements ObjectConverterInerface.
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
@@ -39,21 +40,15 @@ class NodeObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeC
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @inject
 	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Service\PreferencesService
+	 * @var \F3\FLOW3\Security\Context
 	 */
-	protected $preferencesService;
+	protected $securityContext;
 
 	/**
 	 * Converts the given string, array or number to a Node, including a matching context
@@ -78,30 +73,31 @@ class NodeObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeC
 		$pathSegments = explode('/', ltrim($source['__nodePath'], '/'));
 
 		if (count($pathSegments) < 2) {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the node path was invalid. The path must have at least two parts: /sites/[pathToNode]', 1285162903);
+			return new Error('Could not convert array to Node object because the node path was invalid. The path must have at least two parts: /sites/[pathToNode]', 1285162903);
 		}
 
 		if (array_shift($pathSegments) !== 'sites') {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the node path was invalid. The first segment was not "sites"', 1285168001);
+			return new Error('Could not convert array to Node object because the node path was invalid. The first segment was not "sites"', 1285168001);
 		}
 
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($this->preferencesService->getCurrentWorkspaceName());
-		$workspace = $contentContext->getWorkspace();
+		$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');
+		$contentContext = new ContentContext($workspaceName);
+		$workspace = $contentContext->getWorkspace(FALSE);
 		if (!$workspace) {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the specified workspace does not exist.', 1285162905);
+			return new Error('Could not convert array to Node object because the specified workspace does not exist.', 1285162905);
 		}
 
 
 		$siteNodeName = array_shift($pathSegments);
 		$site = $this->siteRepository->findOneByNodeName($siteNodeName);
 		if (!$site) {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the specified site does not exist.', 1285162906);
+			return new Error('Could not convert array to Node object because the specified site does not exist.', 1285162906);
 		}
 		$contentContext->setCurrentSite($site);
 
 		$siteNode = $contentContext->getCurrentSiteNode();
 		if (!$siteNode) {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the specified site node does not exist.', 1285162907);
+			return new Error('Could not convert array to Node object because the specified site node does not exist.', 1285162907);
 		}
 
 		if (count($pathSegments) === 0) {
@@ -112,13 +108,13 @@ class NodeObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeC
 
 		$currentNode = ($nodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($nodePath);
 		if (!$currentNode) {
-			return new \F3\FLOW3\Error\Error('Could not convert array to Node object because the specified node path does not exist.', 1285162908);
+			return new Error('Could not convert array to Node object because the specified node path does not exist.', 1285162908);
 		}
 
 		$contentContext->setCurrentNode($currentNode);
 
 		if (isset($source['properties'])) {
-			// TODO Do clone
+				// FIXME Do clone! See also \F3\TYPO3\Service\ExtDirect\V1\Controller\NodeController::updateAction()
 			foreach ($source['properties'] as $propertyName => $propertyValue) {
 				$currentNode->setProperty($propertyName, $propertyValue);
 			}

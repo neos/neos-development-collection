@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Controller\Backend;
+namespace F3\TYPO3\Controller\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -23,40 +23,40 @@ namespace F3\TYPO3\Controller\Backend;
  *                                                                        */
 
 /**
- * The TYPO3 Backend controller
+ * Controller for displaying nodes in the frontend
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
+class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\Security\Context
+	 * @var array
 	 */
-	protected $securityContext;
+	protected $supportedFormats = array('html');
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var array
 	 */
-	protected $packageManager;
+	protected $defaultViewObjectName = 'F3\TYPO3\View\TypoScriptView';
 
 	/**
-	 * Default action of the backend controller.
+	 * Shows the specified node and takes visibility and access restrictions into
+	 * account.
 	 *
-	 * @return string
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @skipCsrfProtection
 	 */
-	public function indexAction() {
-		$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($workspaceName);
-
-		$this->view->assign('contentContext', $contentContext);
-
-		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
-		$this->view->assign('version', $version);
+	public function showAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		if (!$node->isAccessible()) {
+			throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException();
+		}
+		if (!$node->isVisible()) {
+			$this->throwStatus(404);
+		}
+		$this->view->assign('value', $node);
 	}
+
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\TYPO3\Domain\Service;
+namespace F3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -22,35 +22,41 @@ namespace F3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\Party\Domain\Model\Person;
+
 /**
- * User Preferences, should be lateron stored in the database; but stored in
- * the session right now.
+ * Domain Model of a User
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope session
+ * @entity
+ * @scope prototype
  */
-class PreferencesService {
+class User extends Person  {
 
 	/**
-	 * Name of the current workspace.
-	 * @var string
+	 * Preferences of this user
+	 *
+	 * @var \F3\TYPO3\Domain\Model\UserPreferences
+	 * @OneToOne(cascade={"all"})
 	 */
-	protected $currentWorkspaceName;
+	protected $preferences;
 
 	/**
-	 * @return string the current workspace
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * Constructs this User object
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getCurrentWorkspaceName() {
-		return $this->currentWorkspaceName;
+	public function __construct() {
+		parent::__construct();
+		$this->preferences = new UserPreferences();
 	}
 
 	/**
-	 * Set the workspace which should be used.
-	 * @param string $currentWorkspaceName
+	 * @return \F3\TYPO3\Domain\Model\UserPreferences
 	 */
-	public function setCurrentWorkspaceName($currentWorkspaceName) {
-		$this->currentWorkspaceName = $currentWorkspaceName;
+	public function getPreferences() {
+		return $this->preferences;
 	}
+
 }
 ?>

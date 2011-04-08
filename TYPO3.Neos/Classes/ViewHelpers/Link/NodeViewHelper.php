@@ -35,14 +35,6 @@ namespace F3\TYPO3\ViewHelpers\Link;
  * <a href="sites/mysite.com/homepage/about.html">some link</a>
  * (depending on current node, format etc.)
  *
- * <code title="Additional arguments">
- * <typo3:link.node node="{myNode}" format="json" service="rest">some link</typo3:link.node>
- * </code>
- *
- * Output:
- * <a href="typo3/service/rest/v1/node/sites/mysite.com/homepage/about.json">some link</a>
- * (depending on current current node, format etc.)
- *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
@@ -72,12 +64,11 @@ class NodeViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelpe
 	 *
 	 * @param mixed $node A node object or a node path
 	 * @param string $format Format to use for the URL, for example "html" or "json"
-	 * @param string $service If set, an URI using the specified service is rendered. Example: "REST"
 	 * @param boolean $absolute If set, an absolute URI is rendered
 	 * @return string The rendered link
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function render($node = NULL, $format = NULL, $service = NULL, $absolute = FALSE) {
+	public function render($node = NULL, $format = NULL, $absolute = FALSE) {
 		$uriBuilder = $this->controllerContext->getUriBuilder();
 		$request = $this->controllerContext->getRequest();
 
@@ -93,15 +84,11 @@ class NodeViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelpe
 			$format = $request->getFormat();
 		}
 
-		if ($service === NULL && $request->hasArgument('service')) {
-			$service = $request->getArgument('service');
-		}
-
 		$uri = $uriBuilder
 			->reset()
 			->setCreateAbsoluteUri($absolute)
 			->setFormat($format)
-			->uriFor(NULL, array('node' => $node, 'service' => $service), 'Node', 'TYPO3', 'Service\Rest\V1');
+			->uriFor(NULL, array('node' => $node));
 
 		$this->tag->addAttribute('href', $uri);
 		$this->tag->setContent($this->renderChildren());

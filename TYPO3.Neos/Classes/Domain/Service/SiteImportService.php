@@ -33,12 +33,6 @@ class SiteImportService {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
-	 * @inject
 	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -141,7 +135,7 @@ class SiteImportService {
 			throw new \F3\TYPO3\Exception('Error: No content found in package "' . $packageKey . '".');
 		}
 
-		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
 		$siteNode = $contentContext->getCurrentSiteNode();
 		if ($siteNode !== NULL) {
 			$siteNode->remove();
@@ -163,13 +157,13 @@ class SiteImportService {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function importSitesFromPackage($packageKey) {
-		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
 
 		$xml = new \SimpleXMLElement(file_get_contents('resource://' . $packageKey . '/Private/Content/Sites.xml'));
 		foreach ($xml->site as $siteXml) {
 			$site = $this->siteRepository->findOneByName((string)$siteXml['nodeName']);
 			if ($site === NULL) {
-				$site = $this->objectManager->create('F3\TYPO3\Domain\Model\Site', (string)$siteXml['nodeName']);
+				$site = new \F3\TYPO3\Domain\Model\Site((string)$siteXml['nodeName']);
 				$this->siteRepository->add($site);
 			}
 			$site->setName((string)$siteXml->properties->name);

@@ -18,11 +18,11 @@
 		<label for="password">Password</label>
 		<f:form.password name="password"/> <br/>
 
-		<f:render partial="ValidationResults" arguments="{property: 'person.name'}" />
-		<label for="person[name][firstName]">Firstname</label>
-			<f:form.textbox name="person[name][firstName]"/> <br/>
-			<label for="person[name][lastName]">Lastname</label>
-			<f:form.textbox name="person[name][lastName]"/> <br/>
+		<f:render partial="ValidationResults" arguments="{property: 'user.name'}" />
+		<label for="user[name][firstName]">Firstname</label>
+			<f:form.textbox name="user[name][firstName]"/> <br/>
+			<label for="user[name][lastName]">Lastname</label>
+			<f:form.textbox name="user[name][lastName]"/> <br/>
 			<br />
 		<f:form.submit value="Create Site"/>
 	</f:form>

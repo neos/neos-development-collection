@@ -22,6 +22,8 @@ namespace F3\TYPO3\Logging;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \F3\TYPO3\Routing\FrontendNodeRoutePartHandler;
+
 /**
  * An aspect which centralizes the logging of TYPO3's routing functions.
  *
@@ -32,24 +34,21 @@ namespace F3\TYPO3\Logging;
 class RoutingLoggingAspect {
 
 	/**
+	 * @inject
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * Constructor.
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @inject
+	 * @var \F3\FLOW3\Security\Context
 	 */
-	public function __construct(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
+	protected $securityContext;
 
 	/**
-	 * Logs results of the NodeRoutePartHandler's matchValue() methods
+	 * Logs results of the FrontendNodeRoutePartHandler's matchValue() methods
 	 *
-	 * @afterreturning method(F3\TYPO3\Routing\NodeRoutePartHandler->matchValue()) || method(F3\TYPO3\Routing\NodeServiceRoutePartHandler->matchValue())
+	 * @afterreturning method(F3\TYPO3\Routing\FrontendNodeRoutePartHandler->matchValue()) || method(F3\TYPO3\Routing\RestRestServiceNodeRoutePartHandler->matchValue())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -58,23 +57,23 @@ class RoutingLoggingAspect {
 		$path = $joinPoint->getMethodArgument('value');
 		$resultCode = $joinPoint->getResult();
 
-     	switch (TRUE) {
-			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_INVALIDPATH :
+		switch (TRUE) {
+			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_INVALIDPATH :
 				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because the path was not valid.', LOG_INFO);
 				break;
-			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOWORKSPACE :
+			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_NOWORKSPACE :
 				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no workspace was found.', LOG_INFO);
 				break;
-			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSITE :
+			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_NOSITE :
 				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no site was found.', LOG_INFO);
 				break;
-			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSITENODE :
+			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_NOSITENODE :
 				$this->systemLogger->log($joinPoint->getClassName() . ' did not match because no site node was found.', LOG_INFO);
 				break;
-			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_NOSUCHNODE :
+			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_NOSUCHNODE :
 				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no such node was found.', LOG_INFO);
 				break;
-			case $resultCode === \F3\TYPO3\Routing\NodeRoutePartHandler::MATCHRESULT_FOUND :
+			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_FOUND :
 				$node = $joinPoint->getProxy()->FLOW3_AOP_Proxy_getProperty('value');
 				$this->systemLogger->log($joinPoint->getClassName() . ' matched node "' . $node->getPath() . '" of type ' . $node->getContentType() . '.', LOG_INFO);
 				break;
