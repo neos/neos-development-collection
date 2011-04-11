@@ -100,10 +100,10 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	public function assignChildNodes(\F3\TYPO3CR\Domain\Model\Node $node, $contentTypeFilter, $outputStyle = self::LISTSTYLE, $depth = 0) {
 		$contentTypeFilter = ($contentTypeFilter === '' ? NULL : $contentTypeFilter);
 		$metaData = array();
+		$data = array();
 
 		switch ($outputStyle) {
 			case self::TREESTYLE :
-				$data = array();
 				foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
 					$data[] = array(
 						'id' => $childNode->getPath(),
@@ -116,7 +116,6 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 			break;
 
 			case self::LISTSTYLE :
-				$data = array();
 				$propertyNames = array();
 				$this->collectChildNodeData($data, $propertyNames, $node, $contentTypeFilter, $depth);
 				$metaData = array(

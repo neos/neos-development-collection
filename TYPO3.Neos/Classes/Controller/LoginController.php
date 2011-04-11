@@ -188,7 +188,7 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function extErrorAction() {
-		$this->view->assignErrors($this->argumentsMappingResults->getErrors());
+		$this->view->assignErrors($this->arguments->getValidationResults()->getFlattenedErrors());
 	}
 
 }

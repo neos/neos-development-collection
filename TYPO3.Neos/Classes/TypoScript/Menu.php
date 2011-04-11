@@ -128,7 +128,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 * @return integer
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getMaximumLevels($maximumLevels) {
+	public function getMaximumLevels() {
 		return $this->maximumLevels;
 	}
 
