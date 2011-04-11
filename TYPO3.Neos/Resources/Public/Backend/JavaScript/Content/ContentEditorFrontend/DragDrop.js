@@ -60,8 +60,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 	_addDropZones: function() {
 		var elementDefinition = {
 			tag: 'div',
-			cls: 'f3-typo3-dropzone',
-			html: F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'dropContentHere')
+			cls: 'f3-typo3-dropzone'
 		};
 
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
@@ -89,6 +88,7 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 	 */
 	_enableDragDrop: function() {
 		var ddTargets = [];
+
 		var overrides = {
 			startDrag: function() {
 				// Show drop zones
@@ -110,6 +110,16 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 			onDragEnter : function(evtObj, targetElId) {
 				var targetEl = Ext.get(targetElId);
 				targetEl.addClass('dropzoneOver');
+
+				var currentDragDropTarget = Ext.dd.Registry.getHandle(targetElId);
+				//console.log(this);
+				this.DDM.getDDById(targetElId).setPadding(0,0,50,0);
+				/*console.log(this.DDM.getDDById(targetElId));
+				console.log(targetElId);
+				console.log(Ext.dd.Registry);
+				console.log(currentDragDropTarget);
+				console.log(Ext.dd.Registry.getTarget(targetElId));*/
+				//currentDragDropTarget.setPadding(0, 0, 50, 0);
 			},
 			onDragOut : function(evtObj, targetElId) {
 				var targetEl = Ext.get(targetElId);
@@ -152,11 +162,9 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 				}
 
 				Ext.select('.f3-typo3-dropzone').removeClass('f3-typo3-dropzone-visible').removeClass('dropzoneOver');
-				Ext.each(ddTargets, function(ddTarget) {
-					ddTarget.destroy();
-				});
 			}
 		};
+
 		Ext.select('.f3-typo3-contentelement').each(function(el) {
 			var dd = new Ext.dd.DDProxy(el, 'f3-typo3-contentelements', {
 				isTarget: false

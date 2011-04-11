@@ -68,23 +68,6 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 				'floatingMenuTabAction',
 				this._onDeleteButtonClick
 			);
-
-			F3.TYPO3.Content.ContentEditorFrontend.Core.on('shouldSaveContent', function() {
-				VIE.Aloha.saveModified(function() {
-
-				});
-				var that = this;
-					// Save modified editables
-				jQuery.each(VIE.ContainerManager.instances, function() {
-					jQuery.each(this.editables, function() {
-						if (this.isModified()) {
-							that._saveChanges(this);
-						}
-					});
-				});
-			}, this);
-
-			jQuery('.f3-typo3-placeholder').live('click', this._onPlaceholderClick);
 		},
 
 		/**
@@ -96,44 +79,15 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		_subscribeToAlohaEvents: function() {
 			GENTICS.Aloha.EventRegistry.subscribe(
 				GENTICS.Aloha,
-				'editableCreated',
-				this._onEditableCreated.createDelegate(this)
+				'editableDeactivated',
+				this._saveChanges.createDelegate(this)
 			);
 
 			GENTICS.Aloha.EventRegistry.subscribe(
 				GENTICS.Aloha,
-				'editableDeactivated',
-				this._onEditableDeactivated.createDelegate(this)
+				'smartContentChanged',
+				this._saveChanges.createDelegate(this)
 			);
-		},
-
-		/**
-		 * Event handler for aloha event "editable created".
-		 * Adds a placeholder if the element is empty.
-		 *
-		 * @param {Object} event Event object
-		 * @param {GENTICS.Aloha.Editable} editable the created editable
-		 * @return {void}
-		 * @private
-		 */
-		_onEditableCreated: function(event, editable) {
-			this._insertPlaceholderIfEditableIsEmpty(editable);
-		},
-
-		/**
-		 * On Aloha Event: "onEditableDeactivated", saves changes
-		 * if the element has changed.
-		 *
-		 * @param {Object} event Event object
-		 * @param {GENTICS.Aloha.Editable} editable the aloha Editable object which has been deactivated
-		 * @return {void}
-		 * @private
-		 */
-		_onEditableDeactivated: function(event, editable) {
-			if (editable.editable.isModified()) {
-				this._saveChanges(editable.editable);
-				this._insertPlaceholderIfEditableIsEmpty(editable.editable);
-			}
 		},
 
 		/**
@@ -145,45 +99,19 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		 * @private
 		 */
 		_saveChanges: function(editable) {
-			editable.setUnmodified();
-		},
-
-		/**
-		 * Insert Placeholder for editable in case it is empty.
-		 *
-		 * @param {GENTICS.Aloha.Editable} editable if this editable is empty, a placeholder is automatically inserted.
-		 * @return {void}
-		 * @private
-		 */
-		_insertPlaceholderIfEditableIsEmpty: function(editable) {
-			var contents = Ext.util.Format.trim(editable.getContents());
-			if (contents == '' || contents == '&nbsp;' || contents == '<br />' || contents == '<br>') {
-				editable.obj.html('<span class="f3-typo3-placeholder">[' + F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'enterSomeContent') + ']</span>');
+			if (VIE && VIE.ContainerManager && VIE.ContainerManager.instances) {
+				jQuery.each(VIE.ContainerManager.instances, function(index, objectInstance) {
+					if (typeof objectInstance.editables !== 'undefined') {
+						if (VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
+							F3.TYPO3.Content.ContentEditorFrontend.Core.fireEvent('modifiedContent');
+							objectInstance.save();
+							jQuery.each(objectInstance.editables, function() {
+								this.setUnmodified();
+							});
+						}
+					}
+				});
 			}
-		},
-
-		/**
-		 * Event handler, on click of a placeholder. Removes the placeholder, and
-		 * sets the cursor, so the user can directly start typing.
-		 *
-		 * @param {Event} event click event object
-		 * @return {void}
-		 * @private
-		 * @todo should maybe use the Aloha functionality instead of native DOM, so that it also works in Internet Explorer.
-		 */
-		_onPlaceholderClick: function(event) {
-			var parentObject = jQuery(event.target).parent();
-			var range = document.createRange();
-			parentObject.html('&nbsp;');
-
-			range.selectNodeContents(parentObject.get(0));
-
-			if (Ext.isGecko) {
-					// Firefox hack -> Collapse the selection such that the user can start typing right away.
-				range.collapse(true);
-			}
-
-			window.getSelection().addRange(range);
 		},
 
 		/**

@@ -3,14 +3,12 @@
 	<f:base/>
 	<title>{title}</title>
 	<meta charset="UTF-8" />
-	<f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
-	<f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
 	<script>
 		document.cookie = "TYPO3_lastVisitedNode={node.context.currentNode.path};path=/";
 	</script>
 <f:security.ifAccess resource="F3_TYPO3_Backend_BackendController">
 <f:alias map="{liveWorkspaceName: 'live'}"><f:if condition="{node.context.workspace.name} != {liveWorkspaceName}">
-	<ext:include theme="xtheme-gray"/>
+	<ext:include theme="xtheme-gray" includeStylesheets="1" />
 
 <!-- these stylesheets normally come from the css.js file inside aloha core,
  but we include them separately as we already have ExtJS loaded -->
@@ -97,7 +95,16 @@ GENTICS.Aloha.settings = {
 	},
 	ribbon: false,
 	errorhandling: false,
-	logLevels: {error: true}
+	logLevels: {error: true},
+	placeholder: {
+		'*': 'Start typing here',
+		'*[typeof="typo3:TYPO3:Text"] *[property="typo3:headline"]': '[Enter title here]',
+		'*[typeof="typo3:TYPO3:Text"] *[property="typo3:text"]': '[Enter text here]'
+	},
+	smartContentChange: {
+		delimiters: ['.', '!', 'Enter'],
+		sccIdle: 10000
+	}
 };
 ]]>
 GENTICS_Aloha_base = "{f:uri.resource(path:'Backend/Aloha/src/')}";
@@ -105,3 +112,7 @@ GENTICS.Aloha.settings.plugins['F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plu
 </script>
 </f:if></f:alias>
 </f:security.ifAccess>
+
+
+<f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
+<f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
