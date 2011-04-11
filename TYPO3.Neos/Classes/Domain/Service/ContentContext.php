@@ -45,7 +45,7 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\DomainRepository
+	 * @var \F3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
 

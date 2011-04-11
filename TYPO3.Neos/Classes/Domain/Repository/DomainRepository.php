@@ -33,7 +33,7 @@ class DomainRepository extends \F3\FLOW3\Persistence\Repository {
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Service\DomainMatchingStrategy
+	 * @var \F3\TYPO3\Domain\Service\DomainMatchingStrategy
 	 */
 	protected $domainMatchingStrategy;
 

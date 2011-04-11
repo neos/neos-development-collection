@@ -32,7 +32,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var F3\FLOW3\Package\PackageManagerInterface
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -74,7 +74,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\SiteRepository
+	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 

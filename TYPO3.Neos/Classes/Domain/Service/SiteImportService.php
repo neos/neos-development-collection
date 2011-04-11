@@ -33,25 +33,25 @@ class SiteImportService {
 
 	/**
 	 * @inject
-	 * @var F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @inject
-	 * @var F3\FLOW3\Package\PackageManagerInterface
+	 * @var \F3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\SiteRepository
+	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @inject
-	 * @var F3\TYPO3\Domain\Repository\DomainRepository
+	 * @var \F3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
 

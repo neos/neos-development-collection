@@ -32,14 +32,14 @@ namespace F3\TYPO3\ViewHelpers\Aloha;
 class EditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 
 	/**
-	 * @var F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
 	/**
 	 * Injects the access decision manager
 	 *
-	 * @param F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
+	 * @param \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

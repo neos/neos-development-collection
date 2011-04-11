@@ -35,7 +35,7 @@ class AlohaConfigurationViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractVie
 	protected $configuration;
 
 	/**
-	 * @var F3\TYPO3CR\Domain\Repository\ContentTypeRepository
+	 * @var \F3\TYPO3CR\Domain\Repository\ContentTypeRepository
 	 * @inject
 	 */
 	protected $contentTypeRepository;
