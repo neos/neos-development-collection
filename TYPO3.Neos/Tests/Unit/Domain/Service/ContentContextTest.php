@@ -78,16 +78,13 @@ class ContentContextTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$mockSiteRepository = $this->getMock('F3\TYPO3\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
 
-		$locale = new \F3\FLOW3\I18n\Locale('mul_ZZ');
-
-
 		$contentContext = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
 		$contentContext->_set('environment', $mockEnvironment);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
 		$contentContext->initializeObject();
 
-		$this->assertEquals($locale, $contentContext->getLocale());
+		$this->assertEquals('mul_ZZ', (string)$contentContext->getLocale());
 	}
 
 	/**

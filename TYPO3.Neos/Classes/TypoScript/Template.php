@@ -251,8 +251,8 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildParserConfiguration() {
-		$this->resourceInterceptor = $this->objectManager->get('F3\Fluid\Core\Parser\Interceptor\Resource');
-		$parserConfiguration = $this->objectManager->create('F3\Fluid\Core\Parser\Configuration');
+		$this->resourceInterceptor = new \F3\Fluid\Core\Parser\Interceptor\Resource();
+		$parserConfiguration = new \F3\Fluid\Core\Parser\Configuration();
 		$parserConfiguration->addInterceptor($this->resourceInterceptor);
 		return $parserConfiguration;
 	}

@@ -94,7 +94,7 @@ class ErrorController extends \F3\FLOW3\MVC\Controller\ActionController implemen
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveView() {
-		$view = $this->objectManager->create($this->defaultViewObjectName);
+		$view = new $this->defaultViewObjectName();
 		$view->setTemplatePathAndFilename('resource://TYPO3/Private/Templates/Error/Index.html');
 		$view->setControllerContext($this->controllerContext);
 		return $view;

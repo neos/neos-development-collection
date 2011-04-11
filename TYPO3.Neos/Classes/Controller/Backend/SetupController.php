@@ -80,7 +80,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function indexAction() {
-		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
 		$homepageNode  = $contentContext->getWorkspace()->getRootNode()->getNode('/sites/phoenixdemotypo3org/homepage');
 
 		if($homepageNode !== NULL) {

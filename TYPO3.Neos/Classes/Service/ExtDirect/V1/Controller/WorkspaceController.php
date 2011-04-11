@@ -50,7 +50,8 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function getStatusAction($workspaceName) {
-		$workspace = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName)->getWorkspace();
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($workspaceName);
+		$workspace = $contentContext->getWorkspace();
 		$data = array(
 			'name' => $workspace->getName(),
 			'unpublishedNodesCount' => $workspace->getNodeCount() - 1
@@ -67,7 +68,8 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function getUnpublishedNodesAction($workspaceName) {
-		$workspace = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $workspaceName)->getWorkspace();
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($workspaceName);
+		$workspace = $contentContext->getWorkspace();
 		if ($workspace === NULL) {
 			throw new \InvalidArgumentException('Unknown workspace "' . $workspaceName. '".', 1291745692);
 		}
@@ -91,7 +93,8 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @extdirect
 	 */
 	public function publishWorkspaceAction($sourceWorkspaceName, $targetWorkspaceName) {
-		$sourceWorkspace = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', $sourceWorkspaceName)->getWorkspace();
+		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($sourceWorkspaceName);
+		$sourceWorkspace = $contentContext->getWorkspace();
 		$sourceWorkspace->publish($targetWorkspaceName);
 
 		$this->view->assign('value', array('success' => TRUE));
