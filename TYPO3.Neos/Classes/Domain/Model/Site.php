@@ -114,9 +114,11 @@ class Site {
 	/**
 	 * Returns the node name of this site
 	 *
+	 * If you need to fetch the root node for this site, use the content context
+	 * you should have, do not use the NodeRepository!
+	 *
 	 * @return string The node name
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function getNodeName() {
 		return $this->nodeName;
