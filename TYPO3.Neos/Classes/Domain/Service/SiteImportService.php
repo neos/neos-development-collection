@@ -96,9 +96,9 @@ class SiteImportService {
 	 */
 	public function importPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
-			throw new \F3\FLOW3\Exception('Error: Package "' . $packageKey . '" is not active.');
+			throw new \F3\TYPO3\Exception('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
-			throw new \F3\FLOW3\Exception('Error: No content found in package "' . $packageKey . '".');
+			throw new \F3\TYPO3\Exception('Error: No content found in package "' . $packageKey . '".');
 		} else {
 
 				// Remove all content and related data - for now. In the future we
@@ -121,7 +121,7 @@ class SiteImportService {
 			try {
 				$this->importSitesFromPackage($packageKey);
 			} catch (\Exception $exception) {
-				throw new \F3\FLOW3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360480, $exception);
+				throw new \F3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360480, $exception);
 			}
 		}
 	}
@@ -136,9 +136,9 @@ class SiteImportService {
 	 */
 	public function updateFromPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
-			throw new \F3\FLOW3\Exception('Error: Package "' . $packageKey . '" is not active.');
+			throw new \F3\TYPO3\Exception('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
-			throw new \F3\FLOW3\Exception('Error: No content found in package "' . $packageKey . '".');
+			throw new \F3\TYPO3\Exception('Error: No content found in package "' . $packageKey . '".');
 		}
 
 		$contentContext = $this->objectManager->create('F3\TYPO3\Domain\Service\ContentContext', 'live');
@@ -151,7 +151,7 @@ class SiteImportService {
 		try {
 			$this->importSitesFromPackage($packageKey);
 		} catch (\Exception $exception) {
-			throw new \F3\FLOW3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360479, $exception);
+			throw new \F3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360479, $exception);
 		}
 	}
 
