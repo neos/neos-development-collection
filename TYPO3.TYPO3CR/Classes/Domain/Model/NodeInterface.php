@@ -264,9 +264,10 @@ interface NodeInterface {
 	 *
 	 * @param string $name Name of the new node
 	 * @param string $contentType Content type of the new node (optional)
+	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	public function createNode($name, $contentType = NULL);
+	public function createNode($name, $contentType = NULL, $identifier = NULL);
 
 	/**
 	 * Returns a node specified by the given relative path.
