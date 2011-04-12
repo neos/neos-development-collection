@@ -33,12 +33,7 @@ namespace F3\TYPO3CR\Domain\Model;
  * @entity
  * @scope prototype
  */
-class Node {
-
-	const MATCH_PATTERN_PATH = '/^(\/|(?:\/[a-z0-9\-]+)+)$/i';
-	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/i';
-
-	const LABEL_MAXIMUM_CHARACTERS = 30;
+class Node implements NodeInterface {
 
 	/**
 	 * This ID is only for the ORM.
@@ -298,7 +293,7 @@ class Node {
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node The parent node or NULL if this is the root node
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParent() {
@@ -313,12 +308,12 @@ class Node {
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
 	 */
-	public function moveBefore(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
+	public function moveBefore(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if ($this->path === '/') {
 			throw new \F3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
 		}
@@ -351,12 +346,12 @@ class Node {
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
 	 */
-	function moveAfter(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
+	function moveAfter(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if ($this->path === '/') {
 			throw new \F3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
 		}
@@ -568,7 +563,7 @@ class Node {
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \F3\TYPO3CR\Domain\Model\Node The specified node or NULL if no such node exists
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
@@ -582,7 +577,7 @@ class Node {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * content type. For now it is just the first child node.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node The primary child node or NULL if no such node exists
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNode() {
@@ -598,7 +593,7 @@ class Node {
 	 * If a content type is specified, only nodes of that type are returned.
 	 *
 	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
-	 * @return array<\F3\TYPO3CR\Domain\Model\Node> An array of nodes or an empty array if no child nodes matched
+	 * @return array<\F3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodes($contentTypeFilter = NULL) {
@@ -726,10 +721,10 @@ class Node {
 	 * Treats the given node with the current context
 	 *
 	 * @param mixed $node The node to contextize
-	 * @return \F3\TYPO3CR\Domain\Model\Node The same node, but with the context of this node
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The same node, but with the context of this node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function treatNodeWithContext($node) {
+	protected function treatNodeWithContext(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if ($node instanceof \F3\TYPO3CR\Domain\Model\Node) {
 			if ($node->getWorkspace() !== $this->context->getWorkspace()) {
 				$node = $this->proxyNodeFactory->createFromNode($node);

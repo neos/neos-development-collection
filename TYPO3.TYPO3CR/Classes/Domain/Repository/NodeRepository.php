@@ -92,7 +92,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 *
 	 * @param string $path Absolute path of the node
 	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \F3\TYPO3CR\Domain\Model\Node The matching node if found, otherwise NULL
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The matching node if found, otherwise NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findOneByPath($path, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {

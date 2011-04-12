@@ -48,20 +48,14 @@ class WorkspaceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function onInitializationANewlyCreatedWorkspaceCreatesItsOwnRootNode() {
 		$workspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
 
-		$mockRootNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
-
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$mockObjectManager->expects($this->once())->method('create')->with('F3\TYPO3CR\Domain\Model\Node', '/', $this->isInstanceOf(get_class($workspace)))->will($this->returnValue($mockRootNode));
-
 		$mockNodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('add'), array(), '', FALSE);
-		$mockNodeRepository->expects($this->once())->method('add')->with($mockRootNode);
+		$mockNodeRepository->expects($this->once())->method('add');
 
 		$workspace->_set('nodeRepository', $mockNodeRepository);
-		$workspace->_set('objectManager', $mockObjectManager);
 
 		$workspace->initializeObject(\F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED);
 
-		$this->assertSame($mockRootNode, $workspace->getRootNode());
+		$this->assertInstanceOf('F3\TYPO3CR\Domain\Model\Node', $workspace->getRootNode());
 	}
 
 	/**
@@ -71,7 +65,7 @@ class WorkspaceTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function theCurrentContextCanBeAssignedAndRetrievedOfAWorkspace() {
 		$mockContext = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 
-		$mockRootNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$mockRootNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockRootNode->expects($this->once())->method('setContext')->with($mockContext);
 
 		$workspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
@@ -89,7 +83,7 @@ class WorkspaceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockNodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByPath', 'remove', 'add'), array(), '', FALSE);
 
 		$targetWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$existingNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$existingNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 
 		$currentWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
 		$currentWorkspace->_set('nodeRepository', $mockNodeRepository);
@@ -119,7 +113,7 @@ class WorkspaceTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockNodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByPath', 'remove', 'add'), array(), '', FALSE);
 
 		$targetWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
-		$existingNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$existingNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 
 		$currentWorkspace = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Workspace', array('getPublishingTargetWorkspace'), array(), '', FALSE);
 		$currentWorkspace->_set('nodeRepository', $mockNodeRepository);

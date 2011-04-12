@@ -64,7 +64,7 @@ class ProxyNodeFactory {
 	 * @return \F3\TYPO3CR\Domain\Model\ProxyNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createFromNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function createFromNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if ($this->proxyNodes->contains($node) === FALSE) {
 			$this->proxyNodes[$node] = $this->objectManager->create('F3\TYPO3CR\Domain\Model\ProxyNode', $node);
 		}

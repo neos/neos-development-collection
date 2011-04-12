@@ -31,7 +31,7 @@ namespace F3\TYPO3CR\Domain\Model;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
+class ProxyNode implements NodeInterface {
 
 	/**
 	 * This ID is only for the ORM.
@@ -45,13 +45,13 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	/**
 	 * The original node this proxy refers to
 	 *
-	 * @var \F3\TYPO3CR\Domain\Model\Node
+	 * @var \F3\TYPO3CR\Domain\Model\NodeInterface
 	 * @ManyToOne
 	 */
 	protected $originalNode;
 
 	/**
-	 * @var \F3\TYPO3CR\Domain\Model\Node
+	 * @var \F3\TYPO3CR\Domain\Model\NodeInterface
 	 * @ManyToOne
 	 */
 	protected $newNode;
@@ -77,11 +77,11 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	/**
 	 * Constructs this proxy node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $originalNode
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $originalNode
 	 * @autowiring off
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function  __construct(\F3\TYPO3CR\Domain\Model\Node $originalNode) {
+	public function  __construct(\F3\TYPO3CR\Domain\Model\NodeInterface $originalNode) {
 		if ($originalNode instanceof \F3\TYPO3CR\Domain\Model\ProxyNode) {
 			throw new \InvalidArgumentException('The original node must not be a ProxyNode', 1289475179);
 		}
@@ -137,6 +137,40 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	}
 
 	/**
+	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description of this node
+	 *
+	 * @return string
+	 */
+	public function getLabel() {
+		return (isset($this->newNode) ? $this->newNode->getLabel() : $this->originalNode->getLabel());
+	}
+
+	/**
+	 * Returns a short abstract describing / containing summarized content of this node
+	 *
+	 * @return string
+	 */
+	public function getAbstract() {
+		return (isset($this->newNode) ? $this->newNode->getAbstract() : $this->originalNode->getAbstract());
+	}
+
+	/**
+	 * Sets the workspace of this node.
+	 *
+	 * This method is only for internal use by the content repository. Changing
+	 * the workspace of a node manually may lead to unexpected behavior.
+	 *
+	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @return void
+	 */
+	public function setWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+		if (!isset($this->newNode)) {
+			$this->cloneOriginalNode();
+		}
+		$this->newNode->setWorkspace($workspace);
+	}
+
+	/**
 	 * Returns the workspace this node is contained in
 	 *
 	 * @return \F3\TYPO3CR\Domain\Model\Workspace
@@ -186,7 +220,7 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node The parent node or NULL if this is the root node
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParent() {
@@ -196,11 +230,11 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function moveBefore(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
+	public function moveBefore(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
 			$this->cloneOriginalNode();
 		}
@@ -210,11 +244,11 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $referenceNode
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function moveAfter(\F3\TYPO3CR\Domain\Model\Node $referenceNode) {
+	public function moveAfter(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
 			$this->cloneOriginalNode();
 		}
@@ -356,7 +390,7 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	 *
 	 * @param string $name Name of the new node
 	 * @param string $contentType Content type of the new node (optional)
-	 * @return \F3\TYPO3CR\Domain\Model\Node
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createNode($name, $contentType = NULL) {
@@ -367,7 +401,7 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \F3\TYPO3CR\Domain\Model\Node The specified node or NULL if no such node exists
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
@@ -380,7 +414,7 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * content type. For now it is just the first child node.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node The primary child node or NULL if no such node exists
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNode() {
@@ -392,7 +426,7 @@ class ProxyNode extends \F3\TYPO3CR\Domain\Model\Node {
 	 * If a content type is specified, only nodes of that type are returned.
 	 *
 	 * @param string $contentType If specified, only nodes with that content type are considered
-	 * @return array<\F3\TYPO3CR\Domain\Model\Node> An array of nodes or an empty array if no child nodes matched
+	 * @return array<\F3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodes($contentType = NULL) {
