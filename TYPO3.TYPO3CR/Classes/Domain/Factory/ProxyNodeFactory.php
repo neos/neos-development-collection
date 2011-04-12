@@ -29,7 +29,7 @@ namespace F3\TYPO3CR\Domain\Factory;
  * This implementation is a preliminary solution and certainly needs to be refactored
  * into a generic NodeFactory and a streamlined treat-with-context mechanism which
  * fits better into the DDD approach of Factories.
- * 
+ *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
@@ -61,7 +61,7 @@ class ProxyNodeFactory {
 	 * If this factory has previously created a ProxyNode for the given Node, it will
 	 * return the same ProxyNode again.
 	 *
-	 * @return F3\TYPO3CR\Domain\Model\ProxyNode
+	 * @return \F3\TYPO3CR\Domain\Model\ProxyNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createFromNode(\F3\TYPO3CR\Domain\Model\Node $node) {
