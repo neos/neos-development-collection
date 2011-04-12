@@ -38,7 +38,7 @@ class ContentTypeManager {
 
 	/**
 	 * @inject
-	 * @var F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \F3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
