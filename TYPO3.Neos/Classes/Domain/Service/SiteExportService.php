@@ -56,7 +56,7 @@ class SiteExportService {
 			$xmlWriter->startElement('site');
 
 				// site attributes
-			$xmlWriter->writeAttribute('uuid', '');
+			$xmlWriter->writeAttribute('identifier', '');
 			$xmlWriter->writeAttribute('nodeName', $site->getNodeName());
 
 				// site properties
@@ -91,7 +91,7 @@ class SiteExportService {
 		$xmlWriter->startElement('node');
 
 			// node attributes
-		$xmlWriter->writeAttribute('uuid', $node->getIdentifier());
+		$xmlWriter->writeAttribute('identifier', $node->getIdentifier());
 		$xmlWriter->writeAttribute('type', $node->getContentType());
 		$xmlWriter->writeAttribute('nodeName', $node->getName());
 		$xmlWriter->writeAttribute('locale', '');

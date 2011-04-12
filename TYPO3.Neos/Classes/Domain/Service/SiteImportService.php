@@ -198,13 +198,16 @@ class SiteImportService {
 		foreach ($parentXml->node as $childNodeXml) {
 			$childNode = $parentNode->getNode((string)$childNodeXml['nodeName']);
 			if ($childNode === NULL) {
-				$childNode = $parentNode->createNode((string)$childNodeXml['nodeName']);
+				$identifier = (string)$childNodeXml['identifier'] === '' ? NULL : (string)$childNodeXml['identifier'];
+				$childNode = $parentNode->createNode((string)$childNodeXml['nodeName'], NULL, $identifier);
 			}
 
 			$contentTypeName = (string)$childNodeXml['type'];
 			if (!$this->contentTypeManager->hasContentType($contentTypeName)) {
 				$this->contentTypeManager->createContentType($contentTypeName);
 			}
+			$childNode->setContentType($contentTypeName);
+
 			if ((boolean)$childNodeXml['hidden']) {
 				$childNode->setHidden(TRUE);
 			}
@@ -213,7 +216,6 @@ class SiteImportService {
 				$childNode->setHiddenInIndex(TRUE);
 			}
 
-			$childNode->setContentType($contentTypeName);
 			if ($childNodeXml->properties) {
 				foreach ($childNodeXml->properties->children() as $childXml) {
 					$childNode->setProperty($childXml->getName(), (string)$childXml);
