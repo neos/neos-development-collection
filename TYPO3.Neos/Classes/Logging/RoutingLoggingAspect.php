@@ -74,7 +74,8 @@ class RoutingLoggingAspect {
 				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no such node was found.', LOG_INFO);
 				break;
 			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_FOUND :
-				$node = $joinPoint->getProxy()->FLOW3_AOP_Proxy_getProperty('value');
+				$proxy = $joinPoint->getProxy();
+				$node = \F3\FLOW3\Reflection\ObjectAccess::getProperty($proxy, 'value', TRUE);
 				$this->systemLogger->log($joinPoint->getClassName() . ' matched node "' . $node->getPath() . '" of type ' . $node->getContentType() . '.', LOG_INFO);
 				break;
 		}
