@@ -101,13 +101,17 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	/**
 	 * Returns the current workspace.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Workspace
+	 * @param boolean $createWorkspaceIfNecessary If enabled, creates a workspace with the configured name if it doesn't exist already
+	 * @return \F3\TYPO3CR\Domain\Model\Workspace The workspace or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getWorkspace() {
+	public function getWorkspace($createWorkspaceIfNecessary = TRUE) {
 		if ($this->workspace === NULL) {
 			$this->workspace = $this->workspaceRepository->findOneByName($this->workspaceName);
 			if (!$this->workspace) {
+				if ($createWorkspaceIfNecessary === FALSE) {
+					return NULL;
+				}
 				$liveWorkspace = $this->workspaceRepository->findOneByName('live');
 				if (!$liveWorkspace) {
 					$liveWorkspace = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Workspace', 'live');

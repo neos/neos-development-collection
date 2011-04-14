@@ -251,7 +251,6 @@ class Workspace {
 		}
 		return $targetWorkspace;
 	}
-
 }
 
 ?>
