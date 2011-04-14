@@ -37,15 +37,15 @@ interface ObjectInterface {
 	 * as well. If they can be set via TypoScript depends on if a setter
 	 * method exists in the respective TypoScript Object class.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node the TypoScript object is based on
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
 	 * @return void
 	 */
-	public function setNode(\F3\TYPO3CR\Domain\Model\Node $node);
+	public function setNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 	/**
 	 * Returns the node the TypoScript object is based on
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node The node the TypoScript object is based on
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The node the TypoScript object is based on
 	 */
 	public function getNode();
 

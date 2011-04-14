@@ -35,7 +35,7 @@ class ObjectFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createByNodeCreatesANodeTypoScriptObjectIfNoSpecializedTypoScriptObjectExistsForTheContentType($contentType) {
-		$node = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$node = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$node->expects($this->once())->method('getContentType')->will($this->returnValue($contentType));
 
 		$expectedTypoScriptObject = $this->getMock('F3\TypoScript\ObjectInterface');
@@ -72,7 +72,7 @@ class ObjectFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createByNodeCreatesASpecificTypoScriptObjectIfOneExistsForTheContentType() {
-		$node = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE);
+		$node = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$node->expects($this->once())->method('getContentType')->will($this->returnValue('TYPO3:ContensUniversalis'));
 
 		$expectedTypoScriptObject = $this->getMock('F3\TypoScript\ObjectInterface');

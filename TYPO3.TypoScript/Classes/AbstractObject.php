@@ -32,7 +32,7 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	/**
 	 * The node the TypoScript Object is based on
 	 *
-	 * @var \F3\TYPO3CR\Domain\Model\Node
+	 * @var \F3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected $node;
 
@@ -63,19 +63,19 @@ abstract class AbstractObject implements \F3\TypoScript\ObjectInterface {
 	 *
 	 * The default "Node" TypoScript object will expose all available properties.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node the TypoScript object is based on
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Implement check for content type
 	 */
-	public function setNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function setNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->node = $node;
 	}
 
 	/**
 	 * Returns the node the TypoScript object is based on
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node The node the TypoScript object is based on
+	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The node the TypoScript object is based on
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode() {

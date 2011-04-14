@@ -39,11 +39,11 @@ class ObjectFactory {
 	/**
 	 * Creates a new TypoScript object which is supposed to render the given node.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node
 	 * @return mixed Either the TypoScript Object or FALSE if no object could be created for the given node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createByNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function createByNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$typoScriptObjectName = $this->getTypoScriptObjectNameByNode($node);
 
 		$typoScriptObject = $this->objectManager->create($typoScriptObjectName);
@@ -55,11 +55,11 @@ class ObjectFactory {
 	 * Figures out which TypoScript object to use for rendering a given node,
 	 * and returns the class name as string.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node The node
+	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node
 	 * @return string The TypoScript object name with which the current node should be rendered with.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypoScriptObjectNameByNode(\F3\TYPO3CR\Domain\Model\Node $node) {
+	public function getTypoScriptObjectNameByNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$contentType = $node->getContentType();
 		if (strpos($contentType, ':') !== FALSE) {
 			list($packageKey, $typoScriptObjectName) = explode(':', $contentType);
