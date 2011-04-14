@@ -116,6 +116,16 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Returns the path of this node with additional context information (such as the workspace name)
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContextPath() {
+		return (isset($this->newNode) ? $this->newNode->getContextPath() : $this->originalNode->getContextPath());
+	}
+
+	/**
 	 * Returns the level at which this node is located.
 	 * Counting starts with 0 for "/", 1 for "/foo", 2 for "/foo/bar" etc.
 	 *

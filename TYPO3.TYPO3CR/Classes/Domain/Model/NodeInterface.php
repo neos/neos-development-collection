@@ -29,9 +29,25 @@ namespace F3\TYPO3CR\Domain\Model;
  */
 interface NodeInterface {
 
+	/**
+	 * Regex pattern which matches a node path without any context information
+	 */
 	const MATCH_PATTERN_PATH = '/^(\/|(?:\/[a-z0-9\-]+)+)$/i';
+
+	/**
+	 * Regex pattern which matches a Node Name (ie. segment of a node path)
+	 */
 	const MATCH_PATTERN_NAME = '/^[a-z0-9\-]+$/i';
 
+	/**
+	 * Regex pattern which matches a "context path", ie. a node path possibly containing context information such as the
+	 * workspace name. This pattern is used at least in the route part handler.
+	 */
+	const MATCH_PATTERN_CONTEXTPATH = '/^(?P<NodePath>(?:\/?[a-z0-9\-]+)(?:\/[a-z0-9\-]+)*)(?:@(?P<WorkspaceName>[a-z\-]+))?$/';
+
+	/**
+	 * Maximum number of characters to allow / use for a "label" of a Node
+	 */
 	const LABEL_MAXIMUM_CHARACTERS = 30;
 
 	/**
@@ -51,6 +67,13 @@ interface NodeInterface {
 	 * @return string
 	 */
 	public function getPath();
+
+	/**
+	 * Returns the path of this node with additional context information (such as the workspace name)
+	 *
+	 * @return string Node path with context information
+	 */
+	public function getContextPath();
 
 	/**
 	 * Returns the level at which this node is located.

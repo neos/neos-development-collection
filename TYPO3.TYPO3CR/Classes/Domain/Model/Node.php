@@ -187,6 +187,21 @@ class Node implements NodeInterface {
 	}
 
 	/**
+	 * Returns the path of this node with additional context information (such as the workspace name)
+	 *
+	 * @return string Node path with context information
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getContextPath() {
+		$contextPath = $this->path;
+		$workspaceName = $this->context->getWorkspace()->getName();
+		if ($workspaceName !== 'live') {
+			$contextPath .= '@' . $workspaceName;
+		}
+		return $contextPath;
+	}
+
+	/**
 	 * Returns the level at which this node is located.
 	 * Counting starts with 0 for "/", 1 for "/foo", 2 for "/foo/bar" etc.
 	 *
