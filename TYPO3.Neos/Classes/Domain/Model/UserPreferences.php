@@ -37,15 +37,6 @@ namespace F3\TYPO3\Domain\Model;
 class UserPreferences {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	 */
-	protected $id;
-
-	/**
 	 * The actual settings
 	 *
 	 * @var array<string>

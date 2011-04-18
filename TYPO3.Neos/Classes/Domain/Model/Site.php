@@ -33,15 +33,6 @@ namespace F3\TYPO3\Domain\Model;
 class Site {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	*/
-	protected $id;
-
-	/**
 	 * Site statusses
 	 */
 	const STATE_ONLINE = 1;
