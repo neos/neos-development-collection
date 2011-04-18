@@ -36,15 +36,6 @@ namespace F3\TYPO3CR\Domain\Model;
 class Node implements NodeInterface {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	*/
-	protected $id;
-
-	/**
 	 * Absolute path of this node
 	 *
 	 * @var string

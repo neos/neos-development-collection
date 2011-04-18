@@ -34,15 +34,6 @@ namespace F3\TYPO3CR\Domain\Model;
 class ProxyNode implements NodeInterface {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	*/
-	protected $id;
-
-	/**
 	 * The original node this proxy refers to
 	 *
 	 * @var \F3\TYPO3CR\Domain\Model\NodeInterface

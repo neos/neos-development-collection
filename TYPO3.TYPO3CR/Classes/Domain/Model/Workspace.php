@@ -32,15 +32,6 @@ namespace F3\TYPO3CR\Domain\Model;
 class Workspace {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	*/
-	protected $id;
-
-	/**
 	 * @var string
 	 * @identity
 	 * @validate StringLength(minimum = 1, maximum = 200)

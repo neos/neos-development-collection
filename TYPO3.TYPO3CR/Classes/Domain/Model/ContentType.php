@@ -32,15 +32,6 @@ namespace F3\TYPO3CR\Domain\Model;
 class ContentType {
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	*/
-	protected $id;
-
-	/**
 	 * Name of this content type. Example: "TYPO3CR:Folder"
 	 *
 	 * @var string
@@ -53,7 +44,7 @@ class ContentType {
 	 * @var \Doctrine\Common\Collections\ArrayCollection<\F3\TYPO3CR\Domain\Model\ContentType>
 	 * @ManyToMany
 	 * @JoinTable(name="contentTypesDeclaredSuperTypes",
-	 *      joinColumns={@JoinColumn(name="declaredSuperTypeId", referencedColumnName="id")}
+	 *      joinColumns={@JoinColumn(name="declaredSuperTypeId")}
 	 *      )
 	 */
 	protected $declaredSuperTypes;

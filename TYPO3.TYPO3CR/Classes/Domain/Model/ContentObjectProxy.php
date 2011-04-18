@@ -38,15 +38,6 @@ class ContentObjectProxy {
 	protected $persistenceManager;
 
 	/**
-	 * This ID is only for the ORM.
-	 *
-	 * @var integer
-	 * @Id
-	 * @GeneratedValue
-	*/
-	protected $id;
-
-	/**
 	 * Type of the target model
 	 *
 	 * @var string
