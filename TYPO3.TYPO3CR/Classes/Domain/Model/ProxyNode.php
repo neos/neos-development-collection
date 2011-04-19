@@ -394,11 +394,12 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param string $name Name of the new node
 	 * @param string $contentType Content type of the new node (optional)
+	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createNode($name, $contentType = NULL) {
-		return (isset($this->newNode) ? $this->newNode->createNode($name, $contentType) : $this->originalNode->createNode($name, $contentType));
+	public function createNode($name, $contentType = NULL, $identifier = NULL) {
+		return (isset($this->newNode) ? $this->newNode->createNode($name, $contentType, $identifier) : $this->originalNode->createNode($name, $contentType, $identifier));
 	}
 
 	/**

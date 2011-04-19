@@ -584,10 +584,11 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $name Name of the new node
 	 * @param string $contentType Content type of the new node (optional)
+	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \F3\TYPO3CR\Domain\Model\Node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createNode($name, $contentType = NULL) {
+	public function createNode($name, $contentType = NULL, $identifier = NULL) {
 		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
 			throw new \InvalidArgumentException('Invalid node name: A node name must only contain characters, numbers and the "-" sign.', 1292428697);
 		}
@@ -600,7 +601,7 @@ class Node implements NodeInterface {
 		}
 		$newIndex = $this->nodeRepository->countByParentAndContentType($this->path, NULL, $currentWorkspace) + 1;
 
-		$newNode = new Node($newPath, $currentWorkspace);
+		$newNode = new Node($newPath, $currentWorkspace, $identifier);
 		$newNode->setIndex($newIndex);
 		if ($contentType !== NULL) {
 			$newNode->setContentType($contentType);
