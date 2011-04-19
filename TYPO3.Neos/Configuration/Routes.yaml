@@ -40,39 +40,6 @@
     '@format':     'html'
 
 ##
-# REST services
-
--
-  name:          'REST Service: Node actions with format'
-
-  # Example URL: http://myhost/typo3/service/rest/v1/node/sites/phoenixdemotypo3org/homepage.json
-
-  uriPattern:    'typo3/service/rest/v1/node/{node}.{@format}'
-  defaults:
-    '@package':    'TYPO3'
-    '@subpackage': 'Service\Rest\V1'
-    '@controller': 'Node'
-    'service':     'REST'
-  routeParts:
-    node:
-      handler:    F3\TYPO3\Routing\RestServiceNodeRoutePartHandler
-
--
-  name:          'REST Service: Node actions without format'
-
-  # Example URL: http://myhost/typo3/service/rest/v1/node/sites/phoenixdemotypo3org/homepage
-
-  uriPattern:    'typo3/service/rest/v1/node/{node}'
-  defaults:
-    '@package':    'TYPO3'
-    '@subpackage': 'Service\Rest\V1'
-    '@controller': 'Node'
-    'service':     'REST'
-  routeParts:
-    node:
-      handler:    F3\TYPO3\Routing\RestServiceNodeRoutePartHandler
-
-##
 # Frontend
 
 -
