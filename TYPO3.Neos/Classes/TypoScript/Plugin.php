@@ -205,7 +205,7 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 		}
 
 		$parentResponse = $this->renderingContext->getControllerContext()->getResponse();
-		$pluginResponse = $this->objectManager->create('F3\FLOW3\MVC\Web\SubResponse', $parentResponse);
+		$pluginResponse = new \F3\FLOW3\MVC\Web\SubResponse($parentResponse);
 
 		try {
 			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);

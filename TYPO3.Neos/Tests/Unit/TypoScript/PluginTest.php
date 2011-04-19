@@ -106,6 +106,11 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderCreatesAndDispatchesSubRequestAndReturnItsContent() {
+		$this->markTestIncomplete('Needs to have a new check for the actual response');
+#		$mockPluginResponse = $this->getMock('F3\FLOW3\MVC\Web\SubResponse', array(), array(), '', FALSE);
+#		$mockPluginResponse->expects($this->atLeastOnce())->method('getContent')->will($this->returnValue($expectedResult));
+#		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubResponse', $this->mockResponse)->will($this->returnValue($mockPluginResponse));
+
 		$expectedResult = 'pluginResponse content';
 		$mockPluginRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('Foo'));
@@ -113,11 +118,8 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('Baz'));
 		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('quux'));
 
-		$mockPluginResponse = $this->getMock('F3\FLOW3\MVC\Web\SubResponse', array(), array(), '', FALSE);
-		$mockPluginResponse->expects($this->atLeastOnce())->method('getContent')->will($this->returnValue($expectedResult));
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubResponse', $this->mockResponse)->will($this->returnValue($mockPluginResponse));
 		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'f3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
-		$this->mockDispatcher->expects($this->once())->method('dispatch')->with($mockPluginRequest, $mockPluginResponse);
+		$this->mockDispatcher->expects($this->once())->method('dispatch')->with($mockPluginRequest);
 
 		$actualResult = $this->plugin->render();
 		$this->assertEquals($expectedResult, $actualResult);
@@ -138,8 +140,6 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
 		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
 
-		$mockPluginResponse = $this->getMock('F3\FLOW3\MVC\Web\SubResponse', array(), array(), '', FALSE);
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubResponse', $this->mockResponse)->will($this->returnValue($mockPluginResponse));
 		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'f3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
 		$this->plugin->setNode($mockNode);
@@ -169,8 +169,6 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('Baz'));
 		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('quux'));
 
-		$mockPluginResponse = $this->getMock('F3\FLOW3\MVC\Web\SubResponse', array(), array(), '', FALSE);
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubResponse', $this->mockResponse)->will($this->returnValue($mockPluginResponse));
 		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'f3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
 		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('SomePackage'));
@@ -196,8 +194,6 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
 		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
 
-		$mockPluginResponse = $this->getMock('F3\FLOW3\MVC\Web\SubResponse', array(), array(), '', FALSE);
-		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubResponse', $this->mockResponse)->will($this->returnValue($mockPluginResponse));
 		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'f3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
 		$this->plugin->setNode($mockNode);
