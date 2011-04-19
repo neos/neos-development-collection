@@ -126,7 +126,7 @@ class ContentObjectProxy {
 	 */
 	public function getObject() {
 		if ($this->contentObject === NULL) {
-			$this->contentObject = $this->persistenceManager->findByIdentifier($this->targetId, $this->targetType);
+			$this->contentObject = $this->persistenceManager->getObjectByIdentifier($this->targetId, $this->targetType);
 		}
 		return $this->contentObject;
 	}
