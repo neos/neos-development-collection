@@ -125,6 +125,16 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	}
 
 	/**
+	 * Returns the name of the workspace.
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getWorkspaceName() {
+		return $this->workspaceName;
+	}
+
+	/**
 	 * Sets the current node.
 	 *
 	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node

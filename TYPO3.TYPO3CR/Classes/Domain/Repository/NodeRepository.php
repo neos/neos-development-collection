@@ -76,6 +76,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 		$this->removedObjects->attach($object);
 		parent::remove($object);
 	}
+
 	/**
 	 * Finds a node by its path and workspace.
 	 *

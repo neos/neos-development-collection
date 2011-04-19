@@ -223,7 +223,9 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * Returns the path of this node with additional context information (such as the workspace name)
+	 * Returns the absolute path of this node with additional context information (such as the workspace name).
+	 *
+	 * Example: /sites/mysitecom/homepage/about@user-admin
 	 *
 	 * @return string Node path with context information
 	 * @author Robert Lemke <robert@typo3.org>
