@@ -119,7 +119,7 @@ F3.TYPO3.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 		var records = this.contentView.getSelectedRecords(), count = records.length, publishCount = 0;
 		Ext.each(records, function(record) {
 			F3.TYPO3.Workspace.Service.publishNode(
-				{__nodePath: record.data.__nodePath }, // TODO: Refactor once new property mapper is inside.
+				record.data.__contextNodePath,
 				function() {
 				publishCount++;
 					if (publishCount == count) {

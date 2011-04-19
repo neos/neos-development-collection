@@ -65,39 +65,4 @@ describe("Test Utils", function() {
 		});
 	});
 
-	describe('getContextObjectFromNode', function() {
-
-		var testContext;
-		beforeEach(function() {
-			testContext = {
-				nodePath: '/sites/phoenixdemotypo3org/homepage',
-				workspaceName: 'user-admin'
-			};
-		});
-
-		it('getContextObject should return undefined if empty object', function() {
-			expect(F3.TYPO3.Utils.getContextObjectFromNode({})).toBeUndefined();
-		});
-
-		it('getContextObject should return undefined if no __nodePath property in given object', function() {
-			expect(F3.TYPO3.Utils.getContextObjectFromNode({__workspaceName: 'user-admin'})).toBeUndefined();
-		});
-
-		it('getContextObject should return undefined if no __workspaceName property in given object', function() {
-			expect(F3.TYPO3.Utils.getContextObjectFromNode({__nodePath: '/sites/phoenixdemotypo3org/homepage'})).toBeUndefined();
-		});
-
-		it('getContextObject should equal testContext if object is ok', function() {
-			expect(F3.TYPO3.Utils.getContextObjectFromNode({
-				__nodePath: '/sites/phoenixdemotypo3org/homepage',
-				__workspaceName: 'user-admin'
-			})).toEqual(testContext);
-		});
-
-		afterEach(function() {
-			testContext = undefined;
-		});
-
-	});
-
 });

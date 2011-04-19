@@ -35,7 +35,7 @@ F3.TYPO3.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	initComponent: function() {
 		var directFn = function(callback) {
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes({__nodePath: nodePath}, '!TYPO3:Page', 0, callback); // TODO: rewrite {__nodePath:...} after new property mapper has landed.
+				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, '!TYPO3:Page', 0, callback);
 			};
 		directFn.directCfg = {
 			method: {
@@ -53,7 +53,7 @@ F3.TYPO3.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 				header: 'label',
 				dataIndex: '__label'
 			},
-			nodePath = this.nodePath,
+			contextNodePath = this.contextNodePath,
 			config = {
 				store: new Ext.data.DirectStore({
 					directFn: directFn,

@@ -26,8 +26,7 @@ use \F3\TYPO3\Domain\Service\ContentContext;
 use \F3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
- * A route part handler for finding nodes specifically in the frontend context.
- * This handler (currently) only supports the "live" workspace.
+ * A route part handler for finding nodes specifically in the website's frontend.
  *
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
@@ -43,21 +42,23 @@ class FrontendNodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRout
 	const MATCHRESULT_INVALIDPATH = -6;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\ContentContext
-	 */
-	protected $contentContext;
-
-	/**
 	 * Matches a frontend URI pointing to a node (for example a page).
-	 * This function assumes that the given node path is relative to the "current site node path".
 	 *
-	 * @param string $value Node path (without leading "/"), relative to the site node
+	 * This function tries to find a matching node by the given relative context node path. If one was found, its
+	 * absolute context node path is returned in $this->value.
+	 *
+	 * Note that this matcher does not check if access to the resolved workspace or node is allowed because at the point
+	 * in time the route part handler is invoked, the security framework is not yet fully initialized.
+	 *
+	 * @param string $value The relative context node path (without leading "/", relative to the current Site Node)
 	 * @return mixed One of the MATCHRESULT_* constants
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function matchValue($value) {
-		if ($value !== '') {
-			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
+		$relativeContextNodePath = $value;
+
+		if ($relativeContextNodePath !== '') {
+			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $relativeContextNodePath, $matches);
 			if (!isset($matches['NodePath'])) {
 				return self::MATCHRESULT_INVALIDPATH;
 			}
@@ -67,33 +68,29 @@ class FrontendNodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRout
 		}
 
 		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
-		if ($this->contentContext === NULL) {
-			$this->contentContext = new ContentContext($workspaceName);
-		}
+		$contentContext = new ContentContext($workspaceName);
 
-		$workspace = $this->contentContext->getWorkspace(FALSE);
+		$workspace = $contentContext->getWorkspace(FALSE);
 		if (!$workspace) {
 			return self::MATCHRESULT_NOWORKSPACE;
 		}
 
-		$site = $this->contentContext->getCurrentSite();
+		$site = $contentContext->getCurrentSite();
 		if (!$site) {
 			return self::MATCHRESULT_NOSITE;
 		}
 
-		$siteNode = $this->contentContext->getCurrentSiteNode();
+		$siteNode = $contentContext->getCurrentSiteNode();
 		if (!$siteNode) {
 			return self::MATCHRESULT_NOSITENODE;
 		}
 
-		$currentNode = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
-		if (!$currentNode) {
+		$node = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
+		if (!$node) {
 			return self::MATCHRESULT_NOSUCHNODE;
 		}
 
-		$this->contentContext->setCurrentNode($currentNode);
-
-		$this->value = $currentNode;
+		$this->value = $node->getContextPath();
 		return self::MATCHRESULT_FOUND;
 	}
 
@@ -126,20 +123,41 @@ class FrontendNodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRout
 	 * In order to render a suitable frontend URI, this function strips off the path to the site node and only keeps
 	 * the actual node path relative to that site node. In practice this function would set $this->value as follows:
 	 *
-	 * full node path: /sites/footypo3org/homepage/about
-	 * $this->value:   homepage/about
+	 * absolute node path: /sites/footypo3org/homepage/about
+	 * $this->value:       homepage/about
 	 *
-	 * @param string $value value to resolve
+	 * absolute node path: /sites/footypo3org/homepage/about@user-admin
+	 * $this->value:       homepage/about@user-admin
+
+	 *
+	 * @param mixed $value Either a Node object or an absolute context node path
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValue($value) {
-		if (!$value instanceof NodeInterface) {
+		if (!$value instanceof NodeInterface && !is_string($value)) {
 			return FALSE;
 		}
-		$siteNodePath = $value->getContext()->getCurrentSiteNode()->getPath();
-		$nodeContextPath = $value->getContextPath();
 
+		if (is_string($value)) {
+			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $value, $matches);
+			if (!isset($matches['NodePath'])) {
+				return FALSE;
+			}
+			$nodeContextPath = $matches['NodePath'];
+
+			$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
+			$context = new ContentContext($workspaceName);
+			$workspace = $context->getWorkspace(FALSE);
+			if ($workspace === NULL) {
+				return FALSE;
+			}
+		} else {
+			$context = $value->getContext();
+			$nodeContextPath = $value->getContextPath();
+		}
+
+		$siteNodePath = $context->getCurrentSiteNode()->getPath();
 		if (substr($nodeContextPath, 0, strlen($siteNodePath)) !== $siteNodePath) {
 			return FALSE;
 		}

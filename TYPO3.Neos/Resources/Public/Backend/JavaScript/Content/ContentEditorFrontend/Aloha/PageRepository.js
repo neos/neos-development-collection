@@ -50,10 +50,8 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.PageRepository = Ext.apply(
 			if (params.objectTypeFilter && jQuery.inArray('website', params.objectTypeFilter) == -1) {
 				callback.call(this, []);
 			}
-			var context = {
-					'__nodePath': window.parent.F3.TYPO3.Configuration.Application.siteNodePath
-				};
-			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(context, 'TYPO3:Page', 0, function(result) {
+			var contextNodePath = window.parent.F3.TYPO3.Configuration.Application.siteNodePath
+			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3:Page', 0, function(result) {
 				var items = [];
 				Ext.each(result.data, function(item) {
 						// TODO Filter on server side!
@@ -61,12 +59,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.PageRepository = Ext.apply(
 						return;
 					}
 					items.push(new GENTICS.Aloha.Repository.Document ({
-						id: item.__nodePath,
+						id: item.__contextNodePath,
 						name: item.title,
 						repositoryId: this.repositoryId,
 						type: 'website',
 							// TODO Calculate correct URL
-						url: item.__nodePath,
+						url: item.__contextNodePath,
 						weight: this.settings.weight
 					}));
 				}, this);

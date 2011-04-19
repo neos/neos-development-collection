@@ -52,7 +52,7 @@ F3.TYPO3.Management.ManagementNodeView = Ext.extend(Ext.Panel, {
 				border: true,
 				padding: '6px',
 				cls: 'F3-TYPO3-Management-Grid-Element',
-				nodePath: node.attributes.id
+				contextNodePath: node.attributes.id
 			});
 			this.doLayout();
 		}, this);

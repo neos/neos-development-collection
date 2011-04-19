@@ -33,7 +33,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.UserInterface.UserInterfaceModu
 	/**
 	 * @event activate-[FullyQualifiedButtonPath]
 	 * @event deactivate-[FullyQualifiedButtonPath]
-	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenuComponent} -- needs the getNodePath...
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenuComponent} -- needs the getContextNodePath...
 	 */
 
 	/**

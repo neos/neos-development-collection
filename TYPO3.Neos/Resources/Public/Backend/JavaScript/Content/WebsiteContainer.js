@@ -323,7 +323,7 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	 *
 	 * @return {String} current page path
 	 */
-	getCurrentPagePath: function() {
+	getCurrentContextNodePath: function() {
 		return this._getIframeDocument().body.getAttribute('about');
 	}
 });

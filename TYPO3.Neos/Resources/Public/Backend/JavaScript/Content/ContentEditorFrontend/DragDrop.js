@@ -134,22 +134,22 @@ F3.TYPO3.Content.ContentEditorFrontend.DragDrop = {
 
 				if (!window.parent.F3) return;
 
-				var sourceNode = sourceElement.getAttribute('about');
-				var targetNode = targetEl.getAttribute('data-nodepath');
+				var sourceContextNodePath = sourceElement.getAttribute('about');
+				var targetContextNodePath = targetEl.getAttribute('data-contextnodepath');
 
 				var onMoveFinished = function() {
 					window.location.reload();
 				};
 				if (targetEl.getAttribute('data-position') == 'before') {
 					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveBefore(
-						{__nodePath: sourceNode}, // TODO: Refactor after Property Mapper changes
-						{__nodePath: targetNode}, // TODO: Refactor after Property Mapper changes
+						sourceContextNodePath,
+						targetContextNodePath,
 						onMoveFinished
 					);
 				} else {
 					window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveAfter(
-						{__nodePath: sourceNode}, // TODO: Refactor after Property Mapper changes
-						{__nodePath: targetNode}, // TODO: Refactor after Property Mapper changes
+						sourceContextNodePath,
+						targetContextNodePath,
 						onMoveFinished
 					);
 				}

@@ -34,7 +34,7 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 	 * Initializer
 	 */
 	initComponent: function() {
-		var currentPagePath, config = {};
+		var currentContextNodePath, config = {};
 
 		config.items = F3.TYPO3.UserInterface.Form.FormFactory.createForm(
 			'TYPO3:Page',
@@ -42,11 +42,11 @@ F3.TYPO3.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.UserInterface.M
 			{
 				ref: 'form',
 				getLoadIdentifier: function() {
-					currentPagePath = F3.TYPO3.Content.ContentModule.getWebsiteContainer().getCurrentPagePath();
-					return currentPagePath;
+					currentContextNodePath = F3.TYPO3.Content.ContentModule.getWebsiteContainer().getCurrentContextNodePath();
+					return currentContextNodePath;
 				},
 				getSubmitIdentifier: function() {
-					return currentPagePath;
+					return currentContextNodePath;
 				},
 				onSubmitSuccess: this._onPagePropertiesSaved.createDelegate(this)
 			}

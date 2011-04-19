@@ -375,14 +375,14 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	/**
 	 * Save a node
 	 *
-	 * @param {String} nodePath the path of the node which should be saved.
+	 * @param {String} contextNodePath the path of the node which should be saved.
 	 * @param {Object} properties
 	 * @param {Function} callback
 	 * @param {Object} scope
 	 * @private
 	 */
-	saveNode: function(nodePath, properties, callback, scope) {
-		var data = {__nodePath: nodePath };
+	saveNode: function(contextNodePath, properties, callback, scope) {
+		var data = {__contextNodePath: contextNodePath };
 
 		data.properties = properties;
 

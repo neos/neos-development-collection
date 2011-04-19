@@ -50,7 +50,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			dataIndex: 'title'
 		}
 	],
-	nodePath: '',
+	contextNodePath: '',
 	position: 0,
 	listeners: {
 		'viewready': function(scope) {
@@ -87,15 +87,15 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	initComponent: function() {
 		var self = this,
-			nodePath = Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentPagePath();
+			contextNodePath = Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentContextNodePath();
 
 		this.ddText = F3.TYPO3.UserInterface.I18n.get('TYPO3', 'orderSelectDrag');
 
 		var directFn = function(callback) {
 			if(self.move) {
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent({__nodePath: nodePath}, 'TYPO3:Page', 1, callback); // TODO: the {__nodePath:nodePath} can be replaced by "nodePath" once the new property mapper has landed in core.
+				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent(contextNodePath, 'TYPO3:Page', 1, callback);
 			} else {
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes({__nodePath: nodePath}, 'TYPO3:Page', 1, callback); // TODO: same as above
+				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3:Page', 1, callback);
 			}
 		};
 		directFn.directCfg = {
@@ -115,7 +115,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 				'load': function(store) {
 					var dragableId;
 					if(self.move) {
-						dragableId = nodePath;
+						dragableId = contextNodePath;
 					} else {
 						var dragable = new Ext.data.Record({'title': F3.TYPO3.UserInterface.I18n.get('TYPO3', 'orderSelectAddNew')});
 						store.insert(0, dragable);
@@ -158,11 +158,11 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 				node = store.getAt((index - 1));
 				position = 1;
 			}
-			this.nodePath = node.data['__nodePath'];
+			this.contextNodePath = node.data['__contextNodePath'];
 			this.position = position;
 		} else {
 			// Find current context if no siblings are available
-			this.nodePath = Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentPagePath();
+			this.contextNodePath = Ext.getCmp('F3.TYPO3.Content.WebsiteContainer').getCurrentContextNodePath();
 			this.position = 0;
 		}
 	},
@@ -186,8 +186,8 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 	 *
 	 * @return {Object}
 	 */
-	getNodePath: function() {
-		return this.nodePath;
+	getContextNodePath: function() {
+		return this.contextNodePath;
 	},
 
 	/**

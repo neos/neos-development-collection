@@ -165,7 +165,7 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	 */
 	protected function collectNodeData(array &$data, array &$propertyNames, \F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$properties = $node->getProperties();
-		$properties['__nodePath'] = $node->getPath();
+		$properties['__contextNodePath'] = $node->getContextPath();
 		$properties['__workspaceName'] = $node->getWorkspace()->getName();
 		$properties['__nodeName'] = $node->getName();
 		$properties['__contentType'] = $node->getContentType();

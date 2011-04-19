@@ -199,6 +199,7 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 			if ($currentNode->isVisible() === FALSE || $currentNode->isHiddenInIndex() === TRUE) {
 				continue;
 			}
+
 			$item = array(
 				 'label' => $currentNode->getProperty('title'),
 				 'node' => $currentNode,

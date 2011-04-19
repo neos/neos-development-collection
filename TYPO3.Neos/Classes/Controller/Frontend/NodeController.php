@@ -55,6 +55,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if (!$node->isVisible()) {
 			$this->throwStatus(404);
 		}
+		$node->getContext()->setCurrentNode($node);
 		$this->view->assign('value', $node);
 	}
 

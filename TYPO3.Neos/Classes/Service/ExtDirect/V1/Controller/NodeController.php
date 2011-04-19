@@ -36,6 +36,12 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $viewObjectNamePattern = 'F3\TYPO3\Service\ExtDirect\V1\View\NodeView';
 
 	/**
+	 * @inject
+	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Select special error action
 	 *
 	 * @return void
@@ -127,7 +133,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function createAction(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, array $nodeData, $position) {
 		if (!in_array($position, array(-1, 0, 1), TRUE)) {
-			throw new \F3\TYPO3CR\Exception\NodeException('The position should be one of the following: -1, 0, 1.', 1296132542);
+			throw new \InvalidArgumentException('The position should be one of the following: -1, 0, 1.', 1296132542);
 		}
 
 		if (empty($nodeData['nodeName'])) {
@@ -157,11 +163,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$this->createTypeHereTextNode($newNode);
 		}
 
-		$nextUri = $this->uriBuilder
-			->reset()
-			->setFormat('html')
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('show', array('node' => $newNode), 'Frontend\Node');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
@@ -194,11 +196,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 				break;
 		}
 
-		$nextUri = $this->uriBuilder
-			->reset()
-			->setFormat('html')
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('show', array('node' => $node), 'Frontend\Node');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
@@ -253,9 +251,9 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
-	 * @todo the updateAction now implicitly saves the node, as the NodeObjectConverter does not clone the node right now. This is a hack, and needs to be cleaned up.
 	 */
 	public function updateAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		$this->nodeRepository->update($node);
 		$this->view->assign('value', array('data' => '', 'success' => TRUE));
 	}
 
@@ -269,11 +267,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function deleteAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$node->remove();
-		$nextUri = $this->uriBuilder
-			->reset()
-			->setFormat('html')
-			->setCreateAbsoluteUri(TRUE)
-			->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node', 'TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 

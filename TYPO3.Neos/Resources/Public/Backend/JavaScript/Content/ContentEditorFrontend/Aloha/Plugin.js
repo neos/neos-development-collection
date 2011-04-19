@@ -187,7 +187,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin = Ext.apply(
 		},
 
 		_createNodeFromContentElement: function(element) {
-			return {'__nodePath': element.attr('about')}; // TODO: Remove {...} once new property mapper is merged
+			return {'__contextNodePath': element.attr('about')};
 		},
 
 		/**

@@ -49,8 +49,8 @@ F3.TYPO3.Content.Edit.MovePageDialog = Ext.extend(F3.TYPO3.UserInterface.ModuleD
 						doSubmitForm: function() {
 							this.getForm().api.move.call(
 								this,
-								{__nodePath: F3.TYPO3.Content.ContentModule.getWebsiteContainer().getCurrentPagePath()}, // TODO: Refactor once propertymapper is in!
-								{__nodePath: Ext.getCmp('F3.TYPO3.Content.ContentModule.move').getNodePath()},
+								F3.TYPO3.Content.ContentModule.getWebsiteContainer().getCurrentContextNodePath(),
+								Ext.getCmp('F3.TYPO3.Content.ContentModule.move').getContextNodePath(),
 								Ext.getCmp('F3.TYPO3.Content.ContentModule.move').getPosition(),
 								this._onFormSubmitSuccess,
 								this

@@ -53,7 +53,7 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 							data['contentType'] = 'TYPO3:Page';
 							this.getForm().api.create.call(
 								this,
-								{__nodePath: Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getNodePath()}, // TODO: adjust after new property mapper has been merged!
+								Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getContextNodePath(),
 								data,
 								Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getPosition(),
 								this._onFormSubmitSuccess,
