@@ -133,7 +133,7 @@ class SetupController extends \F3\FLOW3\MVC\Controller\ActionController {
 		}
 		if ($packageKey !== '0') {
 			try {
-				$this->siteImportService->importPackage($packageKey);
+				$this->siteImportService->importFromPackage($packageKey);
 				$this->flashMessageContainer->add('Imported website data from "' . $packageKey . '/Resources/Content/Sites.xml"');
 			} catch (\Exception $exception) {
 				$this->flashMessageContainer->add($exception->getMessage());
