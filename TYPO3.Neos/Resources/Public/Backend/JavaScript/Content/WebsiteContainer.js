@@ -104,12 +104,14 @@ F3.TYPO3.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	 * Initialize the frontend editor component
 	 */
 	initComponent: function() {
-		var uri, config, cookieLastVisited;
+		var uri, config, lastVisitedUri;
 		lastVisitedUri = Ext.util.Cookies.get('TYPO3_lastVisitedUri');
-		uri = (lastVisitedUri ? lastVisitedUri : F3.TYPO3.Configuration.Application.frontendBaseUri);
-
 			// Add the current workspace name to the node path, results in sth. like "http://myhost/homepage/about@user-admin.html":
-		uri = uri.replace(/(.+\/[a-z\-]+)(@[a-z\-]+)?(.*)/, '$1@' + F3.TYPO3.Configuration.Application.workspaceName + '$3');
+		if (lastVisitedUri) {
+			uri = lastVisitedUri.replace(/([a-z]+:\/\/[^\/]+)(.*\/[a-z0-9\-]+|[^@]+)(@[a-z0-9\-]+)?(\..+|\?.*|\/)?/i, '$1$2@' + F3.TYPO3.Configuration.Application.workspaceName + '$4');
+		} else {
+			uri = F3.TYPO3.Configuration.Application.frontendBaseUri + '@' + F3.TYPO3.Configuration.Application.workspaceName;
+		}
 
 		config = {
 			border: false,
