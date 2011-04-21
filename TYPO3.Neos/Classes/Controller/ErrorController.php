@@ -31,6 +31,12 @@ namespace F3\TYPO3\Controller;
 class ErrorController extends \F3\FLOW3\MVC\Controller\ActionController implements \F3\FLOW3\MVC\Controller\NotFoundControllerInterface {
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\Cli\Request');
@@ -63,9 +69,18 @@ class ErrorController extends \F3\FLOW3\MVC\Controller\ActionController implemen
 		}
 		switch (get_class($this->request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
+				$pathWithoutFormat = substr($this->request->getRequestUri()->getPath(), 0 , strrpos($this->request->getRequestUri()->getPath(), '.'));
+				preg_match(\F3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $pathWithoutFormat, $matches);
+				if (isset($matches['WorkspaceName'])) {
+					$uri = $this->request->getBaseUri() . '@' . $matches['WorkspaceName'];
+				} elseif ($this->securityContext->getParty() instanceof \F3\TYPO3\Domain\Model\User) {
+					$uri = $this->request->getBaseUri() . '@' . $this->securityContext->getParty()->getPreferences()->get('context.workspace');
+				} else {
+					$uri = $this->request->getBaseUri();
+				}
 				$this->view->assign('pageTitle', '404 Not Found');
 				$this->view->assign('errorTitle', 'Page Not Found');
-				$this->view->assign('errorDescription', 'Sorry, we could not find any page at this URL.<br />Please visit the <a href="/">homepage</a> to get back on the path.');
+				$this->view->assign('errorDescription', 'Sorry, we could not find any page at this URL.<br />Please visit the <a href="' . $uri . '">homepage</a> to get back on the path.');
 				$this->response->setStatus(404);
 				break;
 			default :
