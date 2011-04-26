@@ -75,7 +75,6 @@ class ContentObjectProxy {
 			$this->targetType = get_class($this->contentObject);
 			$this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
 			if ($this->targetId === NULL) {
-					// FIXME The ID is not present at the moment... doctrine fix needed... workaround!
 				$this->persistenceManager->persistAll();
 				$this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
 			}
