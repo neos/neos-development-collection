@@ -88,7 +88,7 @@ class SiteImportService {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
 	 */
-	public function importPackage($packageKey) {
+	public function importFromPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
 			throw new \F3\TYPO3\Exception('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
@@ -113,7 +113,7 @@ class SiteImportService {
 			$pageContentType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($folderContentType)));
 
 			try {
-				$this->importSitesFromPackage($packageKey);
+				$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');
 			} catch (\Exception $exception) {
 				throw new \F3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360480, $exception);
 			}
@@ -143,23 +143,28 @@ class SiteImportService {
 		}
 
 		try {
-			$this->importSitesFromPackage($packageKey);
+			$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');
 		} catch (\Exception $exception) {
 			throw new \F3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360479, $exception);
 		}
 	}
 
 	/**
-	 * Parses the Content.xml in the given package and imports the content into TYPO3.
-	 *
-	 * @param string $packageKey
+	 * @param string $pathAndFilename
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function importSitesFromPackage($packageKey) {
+	public function importSitesFromFile($pathAndFilename) {
 		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
 
-		$xml = new \SimpleXMLElement(file_get_contents('resource://' . $packageKey . '/Private/Content/Sites.xml'));
+			// no file_get_contents here because it does not work on php://stdin
+		$fp = fopen($pathAndFilename, 'rb');
+		$xmlString = '';
+		while (!feof($fp)) {
+			$xmlString .= fread($fp, 4096);
+		}
+		fclose($fp);
+
+		$xml = new \SimpleXMLElement($xmlString);
 		foreach ($xml->site as $siteXml) {
 			$site = $this->siteRepository->findOneByName((string)$siteXml['nodeName']);
 			if ($site === NULL) {
@@ -168,7 +173,7 @@ class SiteImportService {
 			}
 			$site->setName((string)$siteXml->properties->name);
 			$site->setState((integer)$siteXml->properties->state);
-			$site->setSiteResourcesPackageKey($packageKey);
+			$site->setSiteResourcesPackageKey((string)$siteXml->properties->siteResourcesPackageKey);
 
 			$rootNode = $contentContext->getWorkspace()->getRootNode();
 

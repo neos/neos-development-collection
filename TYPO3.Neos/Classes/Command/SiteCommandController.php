@@ -38,12 +38,32 @@ class SiteCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 
 	/**
 	 * @inject
+	 * @var \F3\TYPO3\Domain\Service\SiteImportService
+	 */
+	protected $siteImportService;
+
+	/**
+	 * @inject
 	 * @var \F3\TYPO3\Domain\Service\SiteExportService
 	 */
 	protected $siteExportService;
 
 	/**
-	 * Action for export all sites
+	 * Action to import XML content
+	 *
+	 * @return void
+	 */
+	public function importCommand() {
+		try {
+			$this->siteImportService->importSitesFromFile('php://stdin');
+			$this->response->setContent('Import finished.');
+		} catch (\Exception $exception) {
+			$this->response->setContent('Error: During import an exception occured. ' . $exception->getMessage());
+		}
+	}
+
+	/**
+	 * Action to export all sites
 	 *
 	 * @return void
 	 */
@@ -51,6 +71,7 @@ class SiteCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 		$sites = $this->siteRepository->findAll();
 		$this->response->setContent($this->siteExportService->export($sites->toArray()));
 	}
+
 }
 
 ?>
