@@ -117,7 +117,13 @@ class SiteExportService {
 		if (count($properties) > 0) {
 			$xmlWriter->startElement('properties');
 			foreach ($properties as $propertyName => $propertyValue) {
-				$xmlWriter->writeElement($propertyName, $propertyValue);
+				if (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
+					$xmlWriter->startElement($propertyName);
+					$xmlWriter->writeCdata($propertyValue);
+					$xmlWriter->endElement();
+				} else {
+					$xmlWriter->writeElement($propertyName, $propertyValue);
+				}
 			}
 			$xmlWriter->endElement();
 		}
