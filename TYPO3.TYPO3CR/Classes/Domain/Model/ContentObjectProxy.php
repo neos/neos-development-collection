@@ -68,6 +68,11 @@ class ContentObjectProxy {
 	}
 
 	/**
+	 * Fetches the identifier from the set content object. If that
+	 * is not using automatically introduced UUIDs by FLOW3 it tries
+	 * to call persistAll() and fetch the identifier again. If it still
+	 * fails, an exception is thrown.
+	 *
 	 * @return void
 	 */
 	public function initializeObject() {
@@ -77,6 +82,9 @@ class ContentObjectProxy {
 			if ($this->targetId === NULL) {
 				$this->persistenceManager->persistAll();
 				$this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
+				if ($this->targetId === NULL) {
+					throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('You cannot add an object without an identifier to a ContentObjectProxy. Probably you didn\'t add a valid entity?', 1303859434);
+				}
 			}
 		}
 	}
