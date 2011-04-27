@@ -92,7 +92,7 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 		} else {
 			foreach ($typoScriptObjectTree as $possibleFirstLevelTypoScriptObject) {
 				if (is_a($possibleFirstLevelTypoScriptObject, $expectedTypoScriptObjectName)) {
-					$fristLevelTypoScriptObject = $possibleFirstLevelTypoScriptObject;
+					$firstLevelTypoScriptObject = $possibleFirstLevelTypoScriptObject;
 					break;
 				}
 			}
