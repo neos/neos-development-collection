@@ -173,7 +173,15 @@ class SiteImportService {
 			}
 			$site->setName((string)$siteXml->properties->name);
 			$site->setState((integer)$siteXml->properties->state);
-			$site->setSiteResourcesPackageKey((string)$siteXml->properties->siteResourcesPackageKey);
+
+			$siteResourcesPackageKey = (string)$siteXml->properties->siteResourcesPackageKey;
+			if ($this->packageManager->isPackageAvailable($siteResourcesPackageKey) === FALSE) {
+				throw new \F3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package does not exist.', 1303891443);
+			}
+			if ($this->packageManager->isPackageActive($siteResourcesPackageKey) === FALSE) {
+				throw new \F3\FLOW3\Package\Exception\InvalidPackageStateException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package is not active.', 1303898135);
+			}
+			$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
 			$rootNode = $contentContext->getWorkspace()->getRootNode();
 

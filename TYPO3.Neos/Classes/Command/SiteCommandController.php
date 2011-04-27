@@ -56,9 +56,9 @@ class SiteCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
 	public function importCommand() {
 		try {
 			$this->siteImportService->importSitesFromFile('php://stdin');
-			$this->response->setContent('Import finished.');
+			$this->response->appendContent('Import finished.');
 		} catch (\Exception $exception) {
-			$this->response->setContent('Error: During import an exception occured. ' . $exception->getMessage());
+			$this->response->appendContent('Error: During import an exception occured. ' . $exception->getMessage());
 		}
 	}
 
