@@ -35,51 +35,51 @@ F3.TYPO3.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.UserInterface.Modul
 	 */
 	initComponent: function() {
 		var config = {
-				items: F3.TYPO3.UserInterface.Form.FormFactory.createForm(
-					'TYPO3:Page',
-					'create',
-					{
-						ref: 'form',
-						autoLoad: false,
-						/**
-						 * Validate form and submit
-						 *
-						 * @return {void}
-						 */
-						doSubmitForm: function() {
-							if (!this.getForm().isValid()) return;
-							var data = this.getForm().getValues();
-							data = this._convertFlatPropertiesToNestedData(data);
-							data['contentType'] = 'TYPO3:Page';
-							this.getForm().api.create.call(
-								this,
-								Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getContextNodePath(),
-								data,
-								Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getPosition(),
-								this._onFormSubmitSuccess,
-								this
-							);
-						},
-						/**
-						 * Action when success on button click action
-						 * remove the dialog and load new page in frontend editor
-						 *
-						 * @param {} response
-						 * @return {void}
-						 */
-						_onFormSubmitSuccess: function(response, status) {
-							if (response) {
-								this.ownerCt.moduleMenu.removeModuleDialog();
-								F3.TYPO3.Content.ContentModule.getWebsiteContainer().loadPage(response.data.nextUri);
-							} else if (status.type == 'exception') {
-								Ext.MessageBox.alert(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'errorOccurred'), status.message);
-							} else {
-								Ext.MessageBox.alert(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'unknownErrorOccurred'));
-							}
+			items: F3.TYPO3.UserInterface.Form.FormFactory.createForm(
+				'TYPO3:Page',
+				'create',
+				{
+					ref: 'form',
+					autoLoad: false,
+					/**
+					 * Validate form and submit
+					 *
+					 * @return {void}
+					 */
+					doSubmitForm: function() {
+						if (!this.getForm().isValid()) return;
+						var data = this.getForm().getValues();
+						data = this._convertFlatPropertiesToNestedData(data);
+						data['contentType'] = 'TYPO3:Page';
+						this.getForm().api.create.call(
+							this,
+							Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getContextNodePath(),
+							data,
+							Ext.getCmp('F3.TYPO3.Content.ContentModule.create').getPosition(),
+							this._onFormSubmitSuccess,
+							this
+						);
+					},
+					/**
+					 * Action when success on button click action
+					 * remove the dialog and load new page in frontend editor
+					 *
+					 * @param {} response
+					 * @return {void}
+					 */
+					_onFormSubmitSuccess: function(response, status) {
+						if (response) {
+							this.ownerCt.moduleMenu.removeModuleDialog();
+							F3.TYPO3.Content.ContentModule.getWebsiteContainer().loadPage(response.data.nextUri);
+						} else if (status.type == 'exception') {
+							Ext.MessageBox.alert(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'errorOccurred'), status.message);
+						} else {
+							Ext.MessageBox.alert(F3.TYPO3.UserInterface.I18n.get('TYPO3', 'unknownErrorOccurred'));
 						}
 					}
-				)
-			};
+				}
+			)
+		};
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		F3.TYPO3.Content.Edit.CreatePageDialog.superclass.initComponent.call(this);
 	},

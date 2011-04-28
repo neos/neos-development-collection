@@ -44,7 +44,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 	},
 
 	/**
-	 * Atach the event listeners to an instance of the HTML plugin
+	 * Attach the event listeners to an instance of the HTML plugin
 	 *
 	 * @param {Ext.Element} element
 	 * @return {void}
@@ -62,6 +62,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 		});
 	},
 
+	/**
+	 * Unregister the event listeners on all HTML content elements / placeholders
+	 *
+	 * @return {void}
+	 * @private
+	 */
 	_unregisterEventHandlers: function() {
 		jQuery('.f3-typo3-contentelement-html').die('dblclick');
 		jQuery('.f3-typo3-html-placeholder').remove();
