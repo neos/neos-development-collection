@@ -45,9 +45,9 @@ class ContentObjectProxy {
 	protected $targetType;
 
 	/**
-	 * Artificial Id of the target object
+	 * Technical identifier of the target object
 	 *
-	 * @var integer
+	 * @var string
 	 */
 	protected $targetId;
 
