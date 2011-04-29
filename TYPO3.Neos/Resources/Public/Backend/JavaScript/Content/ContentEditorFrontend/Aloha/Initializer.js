@@ -60,6 +60,7 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 	 * After a new content element has been created, we need to enable
 	 * Aloha.
 	 *
+	 * @param {DOMElement} newContentElement
 	 * @private
 	 * @return {void}
 	 */
@@ -125,4 +126,5 @@ F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer = {
 		}
 	}
 };
+
 F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.Aloha.Initializer);
