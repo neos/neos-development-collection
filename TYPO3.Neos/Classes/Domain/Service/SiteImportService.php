@@ -166,7 +166,7 @@ class SiteImportService {
 
 		$xml = new \SimpleXMLElement($xmlString);
 		foreach ($xml->site as $siteXml) {
-			$site = $this->siteRepository->findOneByName((string)$siteXml['nodeName']);
+			$site = $this->siteRepository->findOneByNodeName((string)$siteXml['nodeName']);
 			if ($site === NULL) {
 				$site = new \F3\TYPO3\Domain\Model\Site((string)$siteXml['nodeName']);
 				$this->siteRepository->add($site);
