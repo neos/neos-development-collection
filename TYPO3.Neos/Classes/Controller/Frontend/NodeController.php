@@ -59,7 +59,6 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$this->view->assign('value', $node);
 
 		$this->response->setHeader('Cache-Control', 'public, s-maxage=600', FALSE);
-		$this->response->setHeader('Pragma', 'public');
 	}
 
 }
