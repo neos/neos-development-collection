@@ -35,8 +35,9 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 	 */
 	const MAXIMUM_LEVELS_LIMIT = 100;
 
+	const STATE_NORMAL = 'normal';
+	const STATE_CURRENT = 'current';
 	const STATE_ACTIVE = 'active';
-	const STATE_INACTIVE = 'inactive';
 
 	/**
 	 * @var string
@@ -201,17 +202,26 @@ class Menu extends \F3\TypoScript\AbstractContentObject {
 			}
 
 			$item = array(
-				 'label' => $currentNode->getProperty('title'),
-				 'node' => $currentNode,
+				'label' => $currentNode->getProperty('title'),
+				'node' => $currentNode,
+				'state' => self::STATE_NORMAL
 			);
 			if ($currentNode === $contentContext->getCurrentNode()) {
-				$item['state'][self::STATE_ACTIVE] = TRUE;
+				$item['state'] = self::STATE_CURRENT;
 			}
 
 			if ($currentLevel < $this->maximumLevels && $entryParentNode !== $lastParentNode) {
 				$subItems = $this->buildRecursiveItemsArray($currentNode, $lastParentNode, $contentContext, $currentLevel + 1);
 				if ($subItems !== array()) {
 					$item['subItems'] = $subItems;
+					if ($item['state'] !== self::STATE_CURRENT) {
+						foreach ($subItems as $subItem) {
+							if ($subItem['state'] === self::STATE_CURRENT || $subItem['state'] === self::STATE_ACTIVE) {
+								$item['state'] = self::STATE_ACTIVE;
+								break;
+							}
+						}
+					}
 				}
 			}
 			$items[] = $item;
