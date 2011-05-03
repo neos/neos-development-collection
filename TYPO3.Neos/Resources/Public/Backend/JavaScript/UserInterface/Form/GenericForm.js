@@ -32,19 +32,6 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	initComponent: function() {
 		var config = {
 			paramsAsHash: true,
-			defaults: {
-				 listeners: {
-					specialkey: {
-						fn: function(field, e){
-							if (e.getKey() == e.ENTER) {
-								this.doSubmitForm();
-							}
-						},
-						scope: this
-					}
-				 }
-			},
-
 			border: false,
 			layoutConfig: {
 				labelSeparator: ''
@@ -52,10 +39,12 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 			header: false,
 			cls: 'F3-TYPO3-UserInterface-Form-GenericForm'
 		};
+
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
 		F3.TYPO3.UserInterface.Form.GenericForm.superclass.initComponent.call(this);
 
-			// add event listener
+			// add event listeners
+		this.on('specialkey', this._specialKeyHandler, this);
 		this.on('beforeaction', this._onFormBeforeAction , this);
 		this.on('actioncomplete', this._onFormActionComplete, this);
 		this.on('actionfailed', this._onFormActionComplete, this);
@@ -78,6 +67,21 @@ F3.TYPO3.UserInterface.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 				success: this._loadValues,
 				scope: this
 			});
+		}
+	},
+
+	/**
+	 * Handle the specialkey event which bubbles from child Ext.form.Field elements
+	 * to parent form.
+	 *
+	 * @param {Ext.form.Field} field
+	 * @param {Event} event
+	 * @return {void}
+	 * @private
+	 */
+	_specialKeyHandler: function(field, event) {
+		if (event.getKey() == event.ENTER) {
+			this.doSubmitForm();
 		}
 	},
 
