@@ -45,8 +45,7 @@ class SetupCommandController extends \F3\FLOW3\MVC\Controller\CommandController 
 	/**
 	 * Create users with the Administrator role.
 	 *
-	 * Input is expected as TSV with the fields
-	 * identifier, password
+	 * The input is expected to be a list of identifiers and passwords, separated by "#" and one line per account.
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -56,11 +55,19 @@ class SetupCommandController extends \F3\FLOW3\MVC\Controller\CommandController 
 		$fp = fopen('php://stdin', 'rb');
 		while (!feof($fp)) {
 			$input = fgets($fp, 4096);
-			if (empty($input)) break;
+			if (empty($input)) {
+				break;
+			}
+			if (strpos($input, "#") === FALSE) {
+				$this->response->appendContent('Invalid input format. Expects at least one account identifier and password separated by a hash sign "#" passed through STDIN.');
+				break;
+			}
 
-			list($identifier, $password) = explode('	', $input);
+			list($identifier, $password) = explode('#', $input, 2);
 			$identifier = trim($identifier);
 			$password = trim($password);
+
+			$this->response->appendContent('Created account "' . $identifier . '".');
 
 			$user = new \F3\TYPO3\Domain\Model\User();
 			$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
