@@ -70,6 +70,19 @@ class FrontendNodeRoutePartHandlerTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
 		$this->assertSame($valueToMatch, $routePartHandler->_call('findValueToMatch', $requestPath));
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function findValueToMatchRespectsSplitString() {
+		$routePartHandler = $this->getAccessibleMock('F3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
+		$routePartHandler->setSplitString('baz');
+
+		$expectedResult = 'foo/bar/';
+		$actualResult = $routePartHandler->_call('findValueToMatch', 'foo/bar/baz');
+		$this->assertSame($expectedResult, $actualResult);
+	}
 }
 
 ?>

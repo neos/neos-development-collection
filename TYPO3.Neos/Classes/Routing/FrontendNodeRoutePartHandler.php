@@ -101,8 +101,15 @@ class FrontendNodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRout
 	 * @return string value to match, or an empty string if $requestPath is empty or split string was not found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function findValueToMatch($requestPath) {
+		if ($this->splitString !== '') {
+			$splitStringPosition = strpos($requestPath, $this->splitString);
+			if ($splitStringPosition !== FALSE) {
+				$requestPath = substr($requestPath, 0, $splitStringPosition);
+			}
+		}
 		if (strpos($requestPath, '.') === FALSE) {
 			return $requestPath;
 		} else {
