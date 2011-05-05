@@ -28,6 +28,7 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Html');
  * @namespace F3.TYPO3.Content.ContentEditorFrontend.Html
  */
 F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = {
+
 	/**
 	 * @var {Ext.Element}
 	 */
@@ -58,8 +59,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = {
 		});
 
 		var htmlSource = null;
-		var containerInstance = VIE.RDFaEntities.getInstance(this._element.dom);
+		var containerInstance = VIE.ContainerManager.getInstanceForContainer(jQuery(this._element.dom));
 		htmlSource = containerInstance.get('typo3:source').replace(/(^\s+|\s+$)/g,'');
+
+		if (F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer.isEmptyHtmlContentElement(this._element.dom)) {
+			htmlSource = '';
+		}
 
 		this._htmlEditorWindow = new Ext.Window({
 			title: F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'htmlEditor'),
@@ -101,10 +106,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin = {
 	 * @return {void}
 	 */
 	_saveHandler: function() {
-		var containerInstance = VIE.RDFaEntities.getInstance(this._element.dom);
+		var containerInstance = VIE.ContainerManager.getInstanceForContainer(jQuery(this._element.dom));
 		containerInstance.set({'typo3:source': this._htmlEditorTextarea.getValue()});
 		containerInstance.save();
 		this._htmlEditorWindow.hide();
+
+		F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer.insertPlaceholderIfElementIsEmpty(this._element.dom);
 	}
 
 };

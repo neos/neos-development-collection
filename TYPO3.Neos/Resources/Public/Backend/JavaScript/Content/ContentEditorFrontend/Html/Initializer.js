@@ -31,6 +31,14 @@ Ext.ns('F3.TYPO3.Content.ContentEditorFrontend.Html');
 F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 
 	/**
+	 * HTML content of the placeholder
+	 *
+	 * @var {string}
+	 * @private
+	 */
+	_placeholderContent: null,
+
+	/**
 	 * Initializer, called on page load. Is used to register event
 	 * listeners on the core.
 	 *
@@ -38,28 +46,38 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 	 * @return {void}
 	 */
 	initialize: function(core) {
+		this._placeholderContent = '<span class="f3-typo3-html-placeholder">[' + core.I18n.get('TYPO3', 'enterSomeContent') + ']</span>';
+
 		core.on('enableEditingMode', this._registerEventHandlers, this);
 		core.on('disableEditingMode', this._unregisterEventHandlers, this);
-		//core.on('loadNewlyCreatedContentElement', this._onNewlyCreatedContentElement);
+		core.on('loadNewlyCreatedContentElement', this._onNewlyCreatedContentElement, this);
 	},
 
 	/**
 	 * Attach the event listeners to an instance of the HTML plugin
 	 *
-	 * @param {Ext.Element} element
 	 * @return {void}
 	 */
 	_registerEventHandlers: function() {
+		var scope = this;
+
 		jQuery('.f3-typo3-contentelement-html').each(function(index, element) {
-			var contents = Ext.util.Format.trim(jQuery(element).html());
-			if (!contents || contents == '' || contents == '&nbsp;' || contents == '<br />' || contents == '<br>') {
-				//jQuery(element).html('<span class="f3-typo3-html-placeholder">[' + F3.TYPO3.Content.ContentEditorFrontend.Core.I18n.get('TYPO3', 'enterSomeContent') + ']</span>');
-				jQuery(element).html('TEST HTML');
-			}
+			scope.insertPlaceholderIfElementIsEmpty(element);
 		});
 		jQuery('.f3-typo3-contentelement-html').live('dblclick', function() {
 			new F3.TYPO3.Content.ContentEditorFrontend.Html.Plugin(Ext.get(this));
 		});
+	},
+
+	/**
+	 * After a new content element has been created, we need to add the placeholder
+	 *
+	 * @param {DOMElement} newContentElement
+	 * @private
+	 * @return {void}
+	 */
+	_onNewlyCreatedContentElement: function(newContentElement) {
+		newContentElement.innerHTML = this._placeholderContent;
 	},
 
 	/**
@@ -71,7 +89,35 @@ F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer = Ext.apply({}, {
 	_unregisterEventHandlers: function() {
 		jQuery('.f3-typo3-contentelement-html').die('dblclick');
 		jQuery('.f3-typo3-html-placeholder').remove();
+	},
+
+	/**
+	 * Fill the content with a placeholder if the element becomes empty.
+	 *
+	 * @param {DOMElement} element
+	 * @return {void}
+	 */
+	insertPlaceholderIfElementIsEmpty: function(element) {
+		if (this.isEmptyHtmlContentElement(element)) {
+			jQuery(element).html(this._placeholderContent);
+		}
+	},
+
+	/**
+	 * Check if a HTML content element is empty
+	 *
+	 * @param {DOMElement} element
+	 * @return {boolean} True if empty
+	 */
+	isEmptyHtmlContentElement: function(element) {
+		var contents = Ext.util.Format.trim(jQuery(element).html());
+		if (!contents || contents == '' || contents == '&nbsp;' ||
+				contents == '<br />' || contents == '<br>' || contents == this._placeholderContent) {
+			return true;
+		}
+		return false;
 	}
+
 });
 
 F3.TYPO3.Content.ContentEditorFrontend.Core.registerModule(F3.TYPO3.Content.ContentEditorFrontend.Html.Initializer);

@@ -142,12 +142,12 @@ F3.TYPO3.Content.ContentEditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * @return {void}
 	 */
 	initialize: function() {
-		Ext.each(this._modules, function(module) {
-			module.initialize(this);
-		}, this);
-
 		if (window.parent !== undefined && window.parent.F3 !== undefined && window.parent.F3.TYPO3.Content.ContentModule !== undefined) {
 			this.I18n = window.parent.F3.TYPO3.UserInterface.I18n;
+
+			Ext.each(this._modules, function(module) {
+				module.initialize(this);
+			}, this);
 
 			this._registerEventListeners();
 			this.fireEvent('afterPageLoad');
