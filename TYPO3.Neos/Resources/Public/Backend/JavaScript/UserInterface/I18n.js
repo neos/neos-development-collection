@@ -106,17 +106,17 @@ F3.TYPO3.UserInterface.I18n = {
 	/**
 	 * Get the localized version of the key if found
 	 *
-	 * @param {string} package the package to which the key belongs
+	 * @param {string} packageKey the package to which the key belongs
 	 * @param {string} key the key which should be translated
 	 * @return {string} the localized string, or the key if no translation found
 	 */
-	get: function(package, key) {
+	get: function(packageKey, key) {
 		if (!this._initialized) {
 			this.initialize();
 		}
 
-		if (this._data[package] && this._data[package][key]) {
-			return this._data[package][key];
+		if (this._data[packageKey] && this._data[packageKey][key]) {
+			return this._data[packageKey][key];
 		}
 
 		return key;
