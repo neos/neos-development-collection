@@ -20,7 +20,17 @@
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/src/plugin/table/src/table.css')}" />
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/src/plugin/link/src/link.css')}" />
 
-<typo3:includeJavaScript include="jquery.*\.js" subpackage="Backend" directory="Aloha/src/dep"/>
+<f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
+<f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
+
+<script type="text/javascript">
+	if (typeof jQuery === 'undefined') {
+		var jQueryUrl = "{f:uri.resource(path:'Backend/Aloha/src/dep/jquery-1.5.1.js')}";
+		document.write('<script type="text/javascript" src="' + jQueryUrl + '"><' + '/script>');
+	}
+</script>
+
+<typo3:includeJavaScript include="jquery\..*\.js" subpackage="Backend" directory="Aloha/src/dep"/>
 <script src="{f:uri.resource(path:'Backend/Aloha/src/core/jquery.aloha.js')}"></script>
 
 <script src="{f:uri.resource(path:'Backend/Aloha/src/util/jquery.js')}"></script>
@@ -79,7 +89,7 @@
 <link rel="stylesheet" href="{f:uri.resource(path: 'Backend/codemirror2/mode/xml/xml.css')}">
 
 
-<script><![CDATA[
+<script type="text/javascript"><![CDATA[
 GENTICS.Aloha.settings = {
 	"i18n": {"current": "en"},
 	"plugins": {
@@ -116,7 +126,3 @@ GENTICS.Aloha.settings.plugins['F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plu
 </script>
 </f:if></f:alias>
 </f:security.ifAccess>
-
-
-<f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
-<f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
