@@ -452,11 +452,42 @@ describe("Test Registry", function() {
 					title: 'Preview',
 					key: 'preview'
 				}, {
+					title: 'Publish',
+					key: 'publish'
+				}, {
 					title: 'Delete',
 					key: 'delete'
+				}]
+			}
+		}));
+	});
+
+	it ("Compile with insert after appends missing keys and insert after unregistered keys.", function() {
+		registry.insertAfter('menu/main/preview', 'publish', {title: 'Publish'});
+		registry.insertAfter('menu/main/missing', 'afterDelete', {title: 'After Delete'});
+		registry.insertAfter('menu/main/edit', 'preview', {title: 'Preview'});
+		registry.append('menu/main', 'edit', {title: 'Edit'});
+		registry.append('menu/main', 'delete', {title: 'Delete'}, 10);
+
+		registry.compile();
+
+		expect(Ext.encode(registry.get())).toEqual(Ext.encode({
+			menu: {
+				main: [{
+					title: 'Edit',
+					key: 'edit'
+				}, {
+					title: 'Preview',
+					key: 'preview'
 				}, {
 					title: 'Publish',
 					key: 'publish'
+				}, {
+					title: 'Delete',
+					key: 'delete'
+				}, {
+					title: 'After Delete',
+					key: 'afterDelete'
 				}]
 			}
 		}));
@@ -477,6 +508,41 @@ describe("Test Registry", function() {
 					title: 'Edit',
 					key: 'edit'
 				}, {
+				title: 'Publish',
+					key: 'publish'
+				}, {
+					title: 'Preview',
+					key: 'preview'
+				}, {
+					title: 'Before Delete',
+					key: 'beforeDelete'
+				}, {
+					title: 'Delete',
+					key: 'delete'
+				}]
+			}
+		}));
+	});
+
+	it ("Compile with insert before appends missing keys and inserts before unregistered keys.", function() {
+		registry.insertBefore('menu/main/preview', 'publish', {title: 'Publish'});
+		registry.insertBefore('menu/main/delete', 'preview', {title: 'Preview'});
+		registry.insertBefore('menu/main/missing', 'afterDelete', {title: 'After Delete'});
+		registry.insertBefore('menu/main/delete', 'beforeDelete', {title: 'Before Delete'}, 20);
+		registry.append('menu/main', 'edit', {title: 'Edit'});
+		registry.append('menu/main', 'delete', {title: 'Delete'}, 10);
+
+		registry.compile();
+
+		expect(Ext.encode(registry.get())).toEqual(Ext.encode({
+			menu: {
+				main: [{
+					title: 'Edit',
+					key: 'edit'
+				}, {
+				title: 'Publish',
+					key: 'publish'
+				}, {
 					title: 'Preview',
 					key: 'preview'
 				}, {
@@ -486,8 +552,8 @@ describe("Test Registry", function() {
 					title: 'Delete',
 					key: 'delete'
 				}, {
-					title: 'Publish',
-					key: 'publish'
+					title: 'After Delete',
+					key: 'afterDelete'
 				}]
 			}
 		}));
