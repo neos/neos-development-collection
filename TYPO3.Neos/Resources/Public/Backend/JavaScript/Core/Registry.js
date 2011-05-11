@@ -81,17 +81,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 	 * @private
 	 */
 	_apply_operations: function(context) {
-		var result,
-			index,
-			findIndexOf = function(array, filter) {
-				var i;
-				for (i = 0; i < array.length; i++) {
-					if (filter(array[i])) {
-						return i;
-					}
-				}
-				return -1;
-			};
+		var result;
 		if (context._operations !== undefined) {
 			if (context._operations.remove !== undefined) {
 				return undefined;
@@ -129,85 +119,77 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 						}
 					});
 				}
-				if (context._operations.insertBefore !== undefined) {
-					context._operations.insertBefore.sort(function(op1, op2) {
-						return (op1.priority - op2.priority);
-					});
 
-					while (context._operations.insertBefore.length > 0) {
-						var operationIterationIndex = 0,
-							insertableOperationFound = false;
-						Ext.each(context._operations.insertBefore, function(operation) {
-							var index = findIndexOf(result, function(entry) {
-								return entry.key === operation.position;
-							});
+					// Process insertAfter and insertBefore operations
+				result = this._processInsertRelativeToPosition(context, 'insertAfter', result, 1);
+				result = this._processInsertRelativeToPosition(context, 'insertBefore', result, -1);
 
-							if (index > -1) {
-								insertableOperationFound = true;
-								context[operation.key]['key'] = operation.key;
-								result = result.slice(0, index).concat([context[operation.key]]).concat(result.slice(index));
-								context._operations.insertBefore.splice(operationIterationIndex, 1);
-
-									// Break iteration
-								return false;
-							}
-							operationIterationIndex ++;
-						});
-
-						if (insertableOperationFound === false) {
-							break;
-						}
-					}
-
-						// Add pending operations to the end
-					Ext.each(context._operations.insertBefore, function(operation) {
-						context[operation.key]['key'] = operation.key;
-						result.push(context[operation.key]);
-					});
-				}
-				if (context._operations.insertAfter !== undefined) {
-					context._operations.insertAfter.sort(function(op1, op2) {
-						return (op2.priority - op1.priority);
-					});
-
-					while (context._operations.insertAfter.length > 0) {
-						var operationIterationIndex = 0,
-							insertableOperationFound = false;
-						Ext.each(context._operations.insertAfter, function(operation) {
-							var index = findIndexOf(result, function(entry) {
-								return entry.key === operation.position;
-							});
-
-							if (index > -1) {
-								insertableOperationFound = true;
-								context[operation.key]['key'] = operation.key;
-								result = result.slice(0, index + 1).concat([context[operation.key]]).concat(result.slice(index + 1));
-								context._operations.insertAfter.splice(operationIterationIndex, 1);
-
-									// Break iteration
-								return false;
-							}
-							operationIterationIndex ++;
-						});
-
-						if (insertableOperationFound === false) {
-							break;
-						}
-					}
-
-						// Add pending operations to the end
-					Ext.each(context._operations.insertAfter, function(operation) {
-						context[operation.key]['key'] = operation.key;
-						result.push(context[operation.key]);
-					});
-
-				}
 				return result;
 			}
 		}
 
 		delete context._operations;
 		return context;
+	},
+
+	/**
+	 * Process a list of operations and apply them to an object. Adds the operations on a position relative
+	 * to another operation (before or after).
+	 *
+	 * @param {Object} context The current object in the registry configuration
+	 * @param {String} operationContextKey The property of context in which the operation array is stored
+	 * @param {Object} result The source object to which all operations will be applied
+	 * @param {Integer} position The position to add the operations. After = 1, Before = -1
+	 * @return {Object} The object with all operations applied
+	 * @private
+	 */
+	_processInsertRelativeToPosition: function(context, operationContextKey, result, position) {
+		if (context._operations[operationContextKey] !== undefined) {
+			context._operations[operationContextKey].sort(function(op1, op2) {
+				if (position > 0) {
+					return (op2.priority - op1.priority);
+				} else {
+					return (op1.priority - op2.priority);
+				}
+			});
+
+			while (context._operations[operationContextKey].length > 0) {
+				var operationIterationIndex = 0,
+					insertableOperationFound = false;
+				Ext.each(context._operations[operationContextKey], function(operation) {
+					var index = F3.TYPO3.Utils.findIndexOf(result, function(entry) {
+						return entry.key === operation.position;
+					});
+
+					if (index > -1) {
+						insertableOperationFound = true;
+						context[operation.key]['key'] = operation.key;
+
+						var newIndex = index + (position > 0 ? 1 : 0);
+						console.log(operationContextKey, newIndex);
+						result = result.slice(0, newIndex).concat([context[operation.key]]).concat(result.slice(newIndex));
+
+						context._operations[operationContextKey].splice(operationIterationIndex, 1);
+
+							// Break iteration
+						return false;
+					}
+					operationIterationIndex ++;
+				});
+
+				if (insertableOperationFound === false) {
+					break;
+				}
+			}
+
+				// Add pending operations to the end
+			Ext.each(context._operations[operationContextKey], function(operation) {
+				context[operation.key]['key'] = operation.key;
+				result.push(context[operation.key]);
+			});
+
+		}
+		return result;
 	},
 
 	/**
