@@ -134,18 +134,35 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 						return (op1.priority - op2.priority);
 					});
 
-					// TODO We should iterate more than once!
-					Ext.each(context._operations.insertBefore, function(operation) {
-						index = findIndexOf(result, function(entry) {
-							return entry.key === operation.position;
+					while (context._operations.insertBefore.length > 0) {
+						var operationIterationIndex = 0,
+							insertableOperationFound = false;
+						Ext.each(context._operations.insertBefore, function(operation) {
+							var index = findIndexOf(result, function(entry) {
+								return entry.key === operation.position;
+							});
+
+							if (index > -1) {
+								insertableOperationFound = true;
+								context[operation.key]['key'] = operation.key;
+								result = result.slice(0, index).concat([context[operation.key]]).concat(result.slice(index));
+								context._operations.insertBefore.splice(operationIterationIndex, 1);
+
+									// Break iteration
+								return false;
+							}
+							operationIterationIndex ++;
 						});
-						context[operation.key]['key'] = operation.key;
-						if (index >= 0) {
-							result = result.slice(0, index).concat([context[operation.key]]).concat(result.slice(index));
-						} else {
-							// Add pending _operations to the end
-							result.push(context[operation.key]);
+
+						if (insertableOperationFound === false) {
+							break;
 						}
+					}
+
+						// Add pending operations to the end
+					Ext.each(context._operations.insertBefore, function(operation) {
+						context[operation.key]['key'] = operation.key;
+						result.push(context[operation.key]);
 					});
 				}
 				if (context._operations.insertAfter !== undefined) {
@@ -153,20 +170,37 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 						return (op2.priority - op1.priority);
 					});
 
-					// TODO We should iterate more than once!
+					while (context._operations.insertAfter.length > 0) {
+						var operationIterationIndex = 0,
+							insertableOperationFound = false;
+						Ext.each(context._operations.insertAfter, function(operation) {
+							var index = findIndexOf(result, function(entry) {
+								return entry.key === operation.position;
+							});
 
-					Ext.each(context._operations.insertAfter, function(operation) {
-						index = findIndexOf(result, function(entry) {
-							return entry.key === operation.position;
+							if (index > -1) {
+								insertableOperationFound = true;
+								context[operation.key]['key'] = operation.key;
+								result = result.slice(0, index + 1).concat([context[operation.key]]).concat(result.slice(index + 1));
+								context._operations.insertAfter.splice(operationIterationIndex, 1);
+
+									// Break iteration
+								return false;
+							}
+							operationIterationIndex ++;
 						});
-						context[operation.key]['key'] = operation.key;
-						if (index >= 0) {
-							result = result.slice(0, index + 1).concat([context[operation.key]]).concat(result.slice(index + 1));
-						} else {
-							// Add pending _operations to the end
-							result.push(context[operation.key]);
+
+						if (insertableOperationFound === false) {
+							break;
 						}
+					}
+
+						// Add pending operations to the end
+					Ext.each(context._operations.insertAfter, function(operation) {
+						context[operation.key]['key'] = operation.key;
+						result.push(context[operation.key]);
 					});
+
 				}
 				return result;
 			}
