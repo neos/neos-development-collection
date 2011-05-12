@@ -124,5 +124,21 @@ F3.TYPO3.Utils = {
 			iterator = iterator[moduleNamePart];
 		});
 		return iterator;
+	},
+
+	/**
+	 * Find the index of a value in an array based on a filter
+	 *
+	 * @param {Boolean} array
+	 * @param {Function} filter
+	 */
+	findIndexOf : function(array, filter) {
+		var i;
+		for (i = 0; i < array.length; i++) {
+			if (filter(array[i])) {
+				return i;
+			}
+		}
+		return -1;
 	}
 };
