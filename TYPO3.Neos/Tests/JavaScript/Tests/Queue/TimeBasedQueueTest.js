@@ -47,29 +47,29 @@ describe('Time based queue', function() {
 	});
 
 	describe ('Test execution of the queue with all delayed executions', function() {
+		var dataArray = [];
+
 		it ('Init queue', function() {
 			queue.reset();
 			expect(queue.count()).toEqual(0);
-			queue.add(function() {}, 10);
-			queue.add(function() {}, 10);
-			queue.add(function() {}, 10);
+			queue.add(function() { dataArray.push(5); }, 10);
+			queue.add(function() { dataArray.push(2); }, 10);
+			queue.add(function() { dataArray.push(8); }, 10);
 			expect(queue.count()).toEqual(3);
 			queue.start();
 		});
 
-		it ('Test if the first item is removed from the queue', function() {
-			expect(queue.count()).toEqual(2);
-			waits(10);
-		});
-
-		it ('Test if the second item is removed from the queue', function() {
-			expect(queue.count()).toEqual(1);
-			waits(10);
+		it ('Delay for 50 ms', function() {
+			waits(50);
 		});
 
 		it ('Test if queue is empty and stopped', function() {
 			expect(queue.count()).toEqual(0);
 			expect(queue.isRunning()).toEqual(false);
+		});
+
+		it ('Test if queue is executed in the right order.', function() {
+			expect([5,2,8]).toEqual(dataArray);
 		});
 	});
 

@@ -299,10 +299,32 @@ describe("Test Registry", function() {
 
 		registry.compile();
 
-		expect(Ext.encode(registry.get())).toEqual(Ext.encode({
+		expect(registry.get()).toEqual({
 			foo: {
 				bar: 'x',
 				x: 'y'
+			}
+		});
+	});
+
+	it ("Compile converts nested set with numeric keys.", function() {
+		/**
+		 * Compared to previous test:
+		 * 	0 = foo
+		 * 	1 = bar
+		 * 	2 = x
+		 * 	3 = baz
+		 * 	4 = y
+		 */
+		registry.set('0/1', '2', 50);
+		registry.set('0', {1: '3', 2: '4'});
+
+		registry.compile();
+
+		expect(Ext.encode(registry.get())).toEqual(Ext.encode({
+			0: {
+				1: '2',
+				2: '4'
 			}
 		}));
 	});
