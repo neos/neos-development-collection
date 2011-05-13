@@ -1,11 +1,11 @@
-Ext.ns("F3.TYPO3.UserInterface.Form");
+Ext.ns("F3.TYPO3.Components.Form");
 
 describe("Test form factory", function() {
 
 	var factory, registry;
 
 	beforeEach(function() {
-		factory = F3.TYPO3.UserInterface.Form.FormFactory;
+		factory = F3.TYPO3.Components.Form.FormFactory;
 		registry = F3.TYPO3.Core.Registry;
 
 		registry._configuration = {
@@ -13,8 +13,8 @@ describe("Test form factory", function() {
 				type: {
 					"typo3:page": {
 						service: {
-							show: 'F3.TYPO3.UserInterface.Form',
-							update: 'F3.TYPO3.UserInterface.Form'
+							show: 'F3.TYPO3.Components.Form',
+							update: 'F3.TYPO3.Components.Form'
 						},
 						properties: {
 							'properties.title': {
@@ -118,8 +118,8 @@ describe("Test form factory", function() {
 	it ("Create form sets API from schema.", function() {
 		var config = factory.createForm('typo3:page', 'pageProperties');
 
-		expect(config.api.load).toEqual(F3.TYPO3.UserInterface.Form);
-		expect(config.api.submit).toEqual(F3.TYPO3.UserInterface.Form);
+		expect(config.api.load).toEqual(F3.TYPO3.Components.Form);
+		expect(config.api.submit).toEqual(F3.TYPO3.Components.Form);
 	});
 
 	it ("Create form with override config.", function() {

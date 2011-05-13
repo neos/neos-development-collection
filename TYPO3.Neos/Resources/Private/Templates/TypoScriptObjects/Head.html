@@ -20,74 +20,73 @@
 
 <!-- these stylesheets normally come from the css.js file inside aloha core,
  but we include them separately as we already have ExtJS loaded -->
-<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/src/css/aloha.css')}" />
-<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/src/plugin/table/src/table.css')}" />
-<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/src/plugin/link/src/link.css')}" />
+<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/Aloha/src/css/aloha.css')}" />
+<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/Aloha/src/plugin/table/src/table.css')}" />
+<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/Aloha/src/plugin/link/src/link.css')}" />
 
 <script type="text/javascript">
 	if (typeof jQuery === 'undefined') {
-		var jQueryUrl = "{f:uri.resource(path:'Backend/Aloha/src/dep/jquery-1.5.1.js')}";
+		var jQueryUrl = "{f:uri.resource(path:'Library/Aloha/src/dep/jquery-1.5.1.js')}";
 		document.write('<script type="text/javascript" src="' + jQueryUrl + '"><' + '/script>');
 	}
 </script>
 
-<typo3:includeJavaScript include="jquery\..*\.js" subpackage="Backend" directory="Aloha/src/dep"/>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/jquery.aloha.js')}"></script>
+<typo3:includeJavaScript include="jquery\..*\.js" subpackage="Library" directory="Aloha/src/dep"/>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/jquery.aloha.js')}"></script>
 
-<script src="{f:uri.resource(path:'Backend/Aloha/src/util/jquery.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/util/lang.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/util/range.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/util/position.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/util/dom.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/util/indexof.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/ext-alohaproxy.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/ext-alohareader.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/ext-alohatreeloader.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/util/jquery.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/util/lang.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/util/range.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/util/position.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/util/dom.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/util/indexof.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/ext-alohaproxy.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/ext-alohareader.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/ext-alohatreeloader.js')}"></script>
 
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/core.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/ui.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/ui-attributefield.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/ui-browser.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/editable.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/event.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/floatingmenu.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/ierange-m2.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/log.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/markup.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/message.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/plugin.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/selection.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/sidebar.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/repositorymanager.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/repository.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/core/repositoryobjects.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/plugin/format/src/format.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/plugin/link/src/link.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/plugin/table/src/table.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/core.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/ui.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/ui-attributefield.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/ui-browser.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/editable.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/event.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/floatingmenu.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/ierange-m2.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/log.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/markup.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/message.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/plugin.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/selection.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/sidebar.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/repositorymanager.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/repository.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/core/repositoryobjects.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/format/src/format.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/link/src/link.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/table/src/table.js')}"></script>
 
-<script src="{f:uri.resource(path:'Backend/Aloha/src/plugin/vie/src/underscore-min.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/plugin/vie/src/backbone-min.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/plugin/vie/src/vie-containermanager.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/plugin/vie/src/vie-collectionmanager.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/Aloha/src/plugin/vie/src/vie-aloha.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/underscore-min.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/backbone-min.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/vie-containermanager.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/vie-collectionmanager.js')}"></script>
+<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/vie-aloha.js')}"></script>
 
-<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Core.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Aloha/Initializer.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Aloha/Plugin.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Html/Initializer.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Html/Plugin.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/Aloha/PageRepository.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/UneditableAreaOverlay.js')}"></script>
-<script src="{f:uri.resource(path:'Backend/JavaScript/Content/ContentEditorFrontend/DragDrop.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Core/I18n.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Core.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Aloha/Initializer.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Aloha/Plugin.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Html/Initializer.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Html/Plugin.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Aloha/PageRepository.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/UneditableAreaOverlay.js')}"></script>
+<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/DragDrop.js')}"></script>
 
-<script src="{f:uri.resource(path:'Backend/JavaScript/UserInterface/I18n.js')}"></script>
+<link rel="stylesheet" href="{f:uri.resource(path:'StyleSheet/Aloha.css')}" />
 
-<link rel="stylesheet" href="{f:uri.resource(path:'Backend/Media/Stylesheets/Aloha.css')}" />
-
-<script type="text/javascript" src="{f:uri.resource(path: 'Backend/codemirror2/lib/codemirror.js')}"></script>
-<link rel="stylesheet" href="{f:uri.resource(path: 'Backend/codemirror2/lib/codemirror.css')}">
-<script type="text/javascript" src="{f:uri.resource(path: 'Backend/codemirror2/mode/xml/xml.js')}"></script>
-<link rel="stylesheet" href="{f:uri.resource(path: 'Backend/codemirror2/mode/xml/xml.css')}">
+<script type="text/javascript" src="{f:uri.resource(path: 'Library/codemirror2/lib/codemirror.js')}"></script>
+<link rel="stylesheet" href="{f:uri.resource(path: 'Library/codemirror2/lib/codemirror.css')}">
+<script type="text/javascript" src="{f:uri.resource(path: 'Library/codemirror2/mode/xml/xml.js')}"></script>
+<link rel="stylesheet" href="{f:uri.resource(path: 'Library/codemirror2/mode/xml/xml.css')}">
 
 
 <script type="text/javascript"><![CDATA[
@@ -106,7 +105,7 @@ GENTICS.Aloha.settings = {
 		}
 	},
 	"repositories": {
-	 	"F3.TYPO3.Content.ContentEditorFrontend.Aloha.PageRepository": {}
+	 	"F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository": {}
 	},
 	ribbon: false,
 	errorhandling: false,
@@ -122,8 +121,8 @@ GENTICS.Aloha.settings = {
 	}
 };
 ]]>
-GENTICS_Aloha_base = "{f:uri.resource(path:'Backend/Aloha/src/')}";
-GENTICS.Aloha.settings.plugins['F3.TYPO3.Content.ContentEditorFrontend.Aloha.Plugin'] = {typo3:aloha.alohaConfiguration()}
+GENTICS_Aloha_base = "{f:uri.resource(path:'Library/Aloha/src/')}";
+GENTICS.Aloha.settings.plugins['F3.TYPO3.Module.Content.EditorFrontend.Aloha.Plugin'] = {typo3:aloha.alohaConfiguration()}
 </script>
 </f:if></f:alias>
 </f:security.ifAccess>
