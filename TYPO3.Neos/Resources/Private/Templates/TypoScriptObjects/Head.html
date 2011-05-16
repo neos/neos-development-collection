@@ -10,6 +10,10 @@
 			(window.location.pathname != "/" ? window.location.pathname : "/{node.name}.html") +
 			";path=/";
 	</script>
+
+<f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
+<f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
+
 <f:security.ifAccess resource="F3_TYPO3_Backend_BackendController">
 <f:alias map="{liveWorkspaceName: 'live'}"><f:if condition="{node.context.workspace.name} != {liveWorkspaceName}">
 	<ext:include theme="xtheme-gray" includeStylesheets="1" />
@@ -19,9 +23,6 @@
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/src/css/aloha.css')}" />
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/src/plugin/table/src/table.css')}" />
 <link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Backend/Aloha/src/plugin/link/src/link.css')}" />
-
-<f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
-<f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
 
 <script type="text/javascript">
 	if (typeof jQuery === 'undefined') {
