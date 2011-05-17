@@ -28,13 +28,16 @@ namespace F3\TYPO3CR\Domain\Model;
  *
  * This is used for realizing a copy-on-write / lazy cloning functionality.
  *
+ * This ProxyNode is only used if there is no materialized node in the current
+ * workspace (at the given path).
+ *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class ProxyNode implements NodeInterface {
 
 	/**
-	 * The original node this proxy refers to
+	 * The original node this proxy refers to (lying in another workspace)
 	 *
 	 * @var \F3\TYPO3CR\Domain\Model\NodeInterface
 	 * @ManyToOne
@@ -42,6 +45,10 @@ class ProxyNode implements NodeInterface {
 	protected $originalNode;
 
 	/**
+	 * The new node this proxy refers to. Is initialized lazily if it is tried
+	 * to write on the proxy. The $newNode is always in the same workspace
+	 * as the this ProxyNode.
+	 *
 	 * @var \F3\TYPO3CR\Domain\Model\NodeInterface
 	 * @ManyToOne
 	 */
@@ -58,6 +65,14 @@ class ProxyNode implements NodeInterface {
 	 * @transient
 	 */
 	protected $context;
+
+	/**
+	 * TRUE if this ProxyNode has been cloned, FALSE otherwise. Is needed for
+	 * correct auto-persistence behavior.
+	 *
+	 * @var boolean
+	 */
+	protected $isClone = FALSE;
 
 	/**
 	 * Constructs this proxy node
@@ -642,7 +657,37 @@ class ProxyNode implements NodeInterface {
 		}
 		$this->newNode->setContext($this->context);
 
-		$this->nodeRepository->add($this->newNode);
+		if (!$this->isClone) {
+				// if this ProxyNode has not been cloned yet, it should
+				// behave as if it still has a connection to the Persistence Layer.
+				// Thus, we need to add the newNode transparently to the Persistence.
+			$this->nodeRepository->add($this->newNode);
+		}
+	}
+
+	/**
+	 * Get the new node created by this ProxyNode. If none has been created,
+	 * returns NULL.
+	 *
+	 * @return \F3\TYPO3CR\Domain\Model\Node the new node, or NULL if it does not exist
+	 */
+	public function getNewNode() {
+		return $this->newNode;
+	}
+
+	/**
+	 * Magic method called directly after cloning this ProxyNode.
+	 *
+	 * @return void
+	 */
+	public function __clone() {
+		$this->isClone = TRUE;
+		if ($this->newNode !== NULL) {
+				// on cloning ProxyNode, it looses its connection to the Persistence Backend,
+				// so all future changes on newNode should *not* be persisted.
+				// Thus, we need to clone newNode as well.
+			$this->newNode = clone $this->newNode;
+		}
 	}
 }
 
