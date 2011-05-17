@@ -88,9 +88,11 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.DashboardModule', {
 		application.afterInitializationOf('F3.TYPO3.Module.LoginModule', function(loginModule) {
 				// Put name of user into dashboard tab
 			loginModule.on('updated', function(party) {
-				var fullName = party.name.fullName,
+				var fullName = (party.name ? party.name.fullName : null),
 					el = F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getTabEl('dashboard');
-				Ext.fly(el).child('.x-tab-strip-text').update(fullName);
+				if (fullName) {
+					Ext.fly(el).child('.x-tab-strip-text').update(fullName);
+				}
 			});
 		});
 		application.afterInitializationOf('F3.TYPO3.Module.WorkspaceModule', function(workspaceModule) {
