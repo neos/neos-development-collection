@@ -38,6 +38,19 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 	 * @return {void}
 	 */
 	configure: function(registry) {
+		this._configureMainMenu(registry);
+		this._configureSchema(registry);
+		this._configureSelectionModeFloatingMenu(registry);
+	},
+
+	/**
+	 * Add items to the Main Menu
+	 *
+	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @return {void}
+	 * @private
+	 */
+	_configureMainMenu: function(registry) {
 		registry.append('menu/main', 'content', {
 			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
 			iconCls: 'f3-typo3-content-mode-indicator',
@@ -58,12 +71,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 			text: F3.TYPO3.Core.I18n.get('TYPO3', 'pageProperties'),
 			iconCls: 'F3-TYPO3-Content-icon-pageProperties'
 		});
+
 		registry.append('menu/main/content[]', 'movePage', {
 			itemId: 'movePage',
 			text: F3.TYPO3.Core.I18n.get('TYPO3', 'movePage'),
 			iconCls: 'F3-TYPO3-Content-icon-movePage'
 		});
-
 		registry.append('menu/main/content[]', 'createPage', {
 			itemId: 'Create',
 			text: F3.TYPO3.Core.I18n.get('TYPO3', 'createPage'),
@@ -89,8 +102,17 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 			cls: 'F3-TYPO3-ContextToolbar-icon-contextLocale',
 			disabled: true
 		});
+	},
 
-			// This will come from the server later on
+	/**
+	 * Configure the Schema to be used for the forms. This will come from
+	 * the server lateron.
+	 *
+	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @return {void}
+	 * @private
+	 */
+	_configureSchema: function(registry) {
 		registry.set('schema/type', {
 			'TYPO3:Page': {
 				service: {
@@ -194,6 +216,53 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 					}]
 				}
 			}
+		});
+	},
+
+	/**
+	 * Add items to the Selection Mode floating menu.
+	 *
+	 * Right now, the content elements displayed here are hard-coded,
+	 * but this has to come from the server side lateron.
+	 *
+	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @return {void}
+	 * @private
+	 */
+	_configureSelectionModeFloatingMenu: function(registry) {
+
+		registry.append('menu/selectionModeFloating[]', 'deleteNode', {
+			itemId: 'Delete',
+			text: 'Delete Node',
+			iconCls: 'F3-TYPO3-Content-icon-deletePage'
+		});
+
+		registry.append('menu/selectionModeFloating[]', 'createNode', {
+			text: 'Create Node',
+			iconCls: 'F3-TYPO3-Content-icon-createPage'
+		});
+
+		registry.append('menu/selectionModeFloating[]/createNode[]', 'text', {
+			text: 'Text',
+			contentType: 'TYPO3:Text',
+			iconCls: 'F3-TYPO3-Icon-ContentType-TYPO3_Text'
+		});
+
+		registry.append('menu/selectionModeFloating[]/createNode[]', 'html', {
+			text: 'HTML',
+			contentType: 'TYPO3:Html',
+			iconCls: 'F3-TYPO3-Icon-ContentType-TYPO3_Html'
+		});
+
+		registry.append('menu/selectionModeFloating[]/createNode[]', 'plugin', {
+			text: 'Plugin',
+			iconCls: 'F3-TYPO3-Icon-ContentType-TYPO3_Plugin'
+		});
+
+		registry.append('menu/selectionModeFloating[]/createNode[]/plugin[]', 'twitter', {
+			text: 'Twitter',
+			contentType: 'Twitter:LatestTweets',
+			iconCls: 'F3-TYPO3-Icon-ContentType-Twitter_LatestTweets'
 		});
 	},
 

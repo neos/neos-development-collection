@@ -70,7 +70,15 @@ F3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 					itemId: this.itemId,
 					ref: '../breadcrumbMenu',
 					basePath: this.basePath,
-					flex: 1
+					flex: 1,
+					listeners: {
+						activate: function(currentlyClickedMenuPath, breadcrumbMenu) {
+							F3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-' + currentlyClickedMenuPath, breadcrumbMenu);
+						},
+						deactivate: function(currentlyClickedMenuPath, breadcrumbMenu) {
+							F3.TYPO3.Module.UserInterfaceModule.fireEvent('deactivate-' + currentlyClickedMenuPath, breadcrumbMenu);
+						}
+					}
 				}, this.specialMenu],
 				flex: 0
 			}, {

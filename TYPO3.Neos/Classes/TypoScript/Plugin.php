@@ -209,7 +209,7 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 
 		try {
 			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
-			return $pluginResponse->getContent();
+			return '<div class="f3-typo3-contentelement" about="' . $this->node->getContextPath() . '">' . $pluginResponse->getContent() . '</div>';
 		} catch (\F3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (\Exception $exception) {

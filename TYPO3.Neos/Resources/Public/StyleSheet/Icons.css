@@ -21,6 +21,13 @@
 	background-image: url('../Images/UserInterface/Icons/ContentMovePage.gif') !important;
 }
 
+.F3-TYPO3-Content-icon-upArrow {
+	background-image: url('../Images/UserInterface/Icons/ContentUpArrow.png') !important;
+}
+.F3-TYPO3-Content-icon-downArrow {
+	background-image: url('../Images/UserInterface/Icons/ContentDownArrow.png') !important;
+}
+
 .F3-TYPO3-Management-ManagementGrid-Icon {
 	display: block;
 	width: 16px;
@@ -30,6 +37,16 @@
 .F3-TYPO3-Icon-ContentType-TYPO3_Text {
 	background-image: url('../Images/UserInterface/Icons/ContentType-TYPO3_Text.png') !important;
 }
+.F3-TYPO3-Icon-ContentType-TYPO3_Html {
+	background-image: url('../Images/UserInterface/Icons/ContentType-TYPO3_Html.png') !important;
+}
 .F3-TYPO3-Icon-ContentType-TYPO3_Section {
 	background-image: url('../Images/UserInterface/Icons/ContentType-TYPO3_Section.png') !important;
+}
+.F3-TYPO3-Icon-ContentType-TYPO3_Plugin {
+	background-image: url('../Images/UserInterface/Icons/ContentType-TYPO3_Plugin.png') !important;
+}
+
+.F3-TYPO3-Icon-ContentType-Twitter_LatestTweets {
+	background-image: url('../Images/UserInterface/Icons/ContentType-Twitter_LatestTweets.png') !important;
 }

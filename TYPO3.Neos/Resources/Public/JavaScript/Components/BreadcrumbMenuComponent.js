@@ -35,8 +35,20 @@ F3.TYPO3.Components.BreadcrumbMenuComponent = function() {
 Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 
 	/**
+	 * @event activate
+	 * @param {String} fully qualified button path which was selected
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenuComponent} The breadcrumb menu component
+	 */
+
+	/**
+	 * @event deactivate
+	 * @param {String} fully qualified button path which was deselected
+	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenuComponent} The breadcrumb menu component
+	 */
+
+	/**
 	 * Base path to an element in the registry for this menu
-	 * @cfg string
+	 * @cfg {String}
 	 */
 	basePath: null,
 
@@ -47,7 +59,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	_animationHandler: null,
 
 	/**
-	 * @var {string]
+	 * @var {String]
 	 * @private
 	 */
 	_activeMenuPath: null,
@@ -56,7 +68,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	/**
 	 * If true, all animations will run a lot slower for better debugging.
 	 *
-	 * @cfg boolean
+	 * @cfg {Boolean}
 	 * @private
 	 */
 	_debugMode: false,
@@ -85,6 +97,18 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 			this._renderLevel(this.basePath);
 			this._animationHandler.start();
 		}, this);
+	},
+
+	/**
+	 * Returns the contents of the next-level menu path.
+	 *
+	 * Can be overridden for custom behavior.
+	 *
+	 * @param {String} menupath the menu path to get the next level for.
+	 * @return {Object} the configuration for the next menu path.
+	 */
+	getNextMenuLevel: function(menupath) {
+		return F3.TYPO3.Core.Registry.get(menupath + '/children');
 	},
 
 	/**
@@ -144,7 +168,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		}.createDelegate(this), 5);
 
 		this._animationHandler.start();
-		F3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-' + currentlyClickedMenuPath, this);
+		this.fireEvent('activate', currentlyClickedMenuPath, this);
 	},
 
 	/**
@@ -165,7 +189,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		this._animationHandler.showSiblings(clickedMenuItem);
 
 		this._animationHandler.start();
-		F3.TYPO3.Module.UserInterfaceModule.fireEvent('deactivate-' + currentlyClickedMenuPath, this);
+		this.fireEvent('deactivate', currentlyClickedMenuPath, this);
 	},
 
 	/**
@@ -188,7 +212,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 			});
 		});
 
-		Ext.each(F3.TYPO3.Core.Registry.get(basePath + '/children'), function(menuItem) {
+		Ext.each(this.getNextMenuLevel(basePath), function(menuItem) {
 			var singleElement;
 			scope._animationHandler.add(function() {
 				singleElement = Ext.DomHelper.append(levelContainer, {
@@ -244,7 +268,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 */
 	_removeSingleLevel: function(singleLevel) {
 		Ext.get(singleLevel).select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
-			F3.TYPO3.Module.UserInterfaceModule.fireEvent('deactivate-' + activeItem.getAttribute('data-menupath'), this);
+			this.fireEvent('deactivate', activeItem.getAttribute('data-menupath'), this);
 		}, this);
 		var elmts = [];
 		var currentElement = Ext.get(singleLevel).first();
@@ -271,7 +295,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 * @private
 	 */
 	_hasChildren: function(menupath) {
-		var childNodes = F3.TYPO3.Core.Registry.get(menupath + '/children');
+		var childNodes = this.getNextMenuLevel(menupath);
 		return (childNodes && childNodes.length > 0);
 	},
 

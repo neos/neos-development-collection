@@ -145,6 +145,10 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 		if (window.parent !== undefined && window.parent.F3 !== undefined && window.parent.F3.TYPO3.Module.ContentModule !== undefined) {
 			this.I18n = window.parent.F3.TYPO3.Core.I18n;
 
+			Ext.ns('F3.TYPO3.Core');
+			F3.TYPO3.Core.Registry = window.parent.F3.TYPO3.Core.Registry;
+			F3.TYPO3.Core.I18n = window.parent.F3.TYPO3.Core.I18n;
+
 			Ext.each(this._modules, function(module) {
 				module.initialize(this);
 			}, this);

@@ -67,6 +67,27 @@
 	margin-bottom:0;
 }
 
+.f3-typo3-selection-enabled .f3-typo3-contentelement {
+	position:relative;
+	min-height:50px;
+}
+
+.f3-typo3-selection-floatingmenu {
+	position:absolute;
+	width:100%;
+	height:47px;
+	top:0;
+	left:0;
+	background: -moz-linear-gradient(center top , #555555, #343434) repeat scroll left top transparent;
+	background: -webkit-gradient(linear, center top, left top, from(#555555), to(#343434)) repeat scroll;
+	cursor:pointer;
+	overflow:hidden;
+}
+
+.f3-typo3-selection-floatingmenu .F3-TYPO3-UserInterface-BreadcrumbMenu {
+	width:1000px;
+}
+
 /*********************************
  * SECTION Aloha                 *
  *********************************/

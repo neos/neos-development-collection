@@ -77,7 +77,9 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer = Ext.apply({}, {
 	 * @return {void}
 	 */
 	_onNewlyCreatedContentElement: function(newContentElement) {
-		newContentElement.innerHTML = this._placeholderContent;
+		if (jQuery(newContentElement).is('.f3-typo3-contentelement-html')) {
+			newContentElement.innerHTML = this._placeholderContent;
+		}
 	},
 
 	/**
