@@ -31,6 +31,12 @@ namespace F3\TYPO3\Controller\Frontend;
 class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
+	 * @inject
+	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 */
+	protected $authenticationManager;
+
+	/**
 	 * @var array
 	 */
 	protected $supportedFormats = array('html');
@@ -50,7 +56,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function showAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if (!$node->isAccessible()) {
-			throw new \F3\FLOW3\Security\Exception\AuthenticationRequiredException();
+			$this->authenticationManager->authenticate();
 		}
 		if (!$node->isVisible()) {
 			$this->throwStatus(404);
