@@ -73,6 +73,7 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
+		$this->mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
 		$this->mockSubRequestBuilder = $this->getMock('F3\FLOW3\MVC\Web\SubRequestBuilder');
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
 		$this->mockDispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array(), array(), '', FALSE);
@@ -86,6 +87,7 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 		$this->plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('getPluginNamespace'));
 		$this->plugin->expects($this->any())->method('getPluginNamespace')->will($this->returnValue('f3_plugin_namespace'));
 		$this->plugin->setRenderingContext($this->mockRenderingContext);
+		$this->plugin->setNode($this->mockNode);
 		$this->plugin->_set('subRequestBuilder', $this->mockSubRequestBuilder);
 		$this->plugin->_set('objectManager', $this->mockObjectManager);
 		$this->plugin->_set('dispatcher', $this->mockDispatcher);
