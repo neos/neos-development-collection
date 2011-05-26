@@ -13,6 +13,6 @@ roles:
   TYPO3CR_Administrator: []
 
 acls:
-  Administrator:
+  TYPO3CR_Administrator:
     entities:
       F3_TYPO3CR_Domain_Model_Node_NotInLiveWorkspace: GRANT
