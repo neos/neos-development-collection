@@ -51,7 +51,7 @@ F3.TYPO3.Core.I18n = {
 			TYPO3: {
 				cancel: 'Cancel',
 				content: 'Content',
-				couldNotExtraBaseURI: 'Base URI could not be extracted',
+				couldNotExtractBaseURI: 'Base URI could not be extracted',
 				currentlyLoading: 'Loading...',
 				currentlySaving: 'Saving...',
 				movePage: 'Move this page',
