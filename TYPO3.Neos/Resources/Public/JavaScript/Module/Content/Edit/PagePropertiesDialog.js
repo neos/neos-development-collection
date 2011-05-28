@@ -43,7 +43,7 @@ F3.TYPO3.Module.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.Componen
 				ref: 'form',
 				getLoadIdentifier: function() {
 					currentContextNodePath = F3.TYPO3.Module.ContentModule.getWebsiteContainer().getCurrentContextNodePath();
-					return currentContextNodePath;
+					return {__contextNodePath: currentContextNodePath};
 				},
 				getSubmitIdentifier: function() {
 					return currentContextNodePath;
