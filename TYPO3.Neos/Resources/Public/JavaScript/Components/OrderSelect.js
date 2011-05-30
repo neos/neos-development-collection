@@ -112,10 +112,15 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			idProperty: 'id',
 			fields: [],
 			listeners: {
-				'load': function(store) {
+				'load': function(store, records) {
 					var dragableId;
 					if(self.move) {
-						dragableId = contextNodePath;
+						Ext.each(records, function(record) {
+							if (contextNodePath == record.get('__contextNodePath')) {
+								dragableId = record.id;
+								return false;
+							}
+						});
 					} else {
 						var dragable = new Ext.data.Record({'title': F3.TYPO3.Core.I18n.get('TYPO3', 'orderSelectAddNew')});
 						store.insert(0, dragable);
