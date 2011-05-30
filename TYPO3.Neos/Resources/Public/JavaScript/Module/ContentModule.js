@@ -132,7 +132,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 						}, {
 							type: 'RegularExpression',
 							options: {
-								regularExpression: '^[a-zA-Z0-9][a-zA-Z0-9\\-\\/][a-zA-Z0-9]{0,254}$'
+								regularExpression: '^[a-z0-9-]{0,254}$'
 							}
 						}]
 					},
