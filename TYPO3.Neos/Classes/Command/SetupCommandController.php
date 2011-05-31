@@ -53,7 +53,7 @@ class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 		$user = new \TYPO3\TYPO3\Domain\Model\User();
 		$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
 
-		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
+		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'), 'Typo3BackendProvider');
 		$account->setParty($user);
 		$this->accountRepository->add($account);
 		$this->response->appendContent('Created account "' . $identifier . '".');
