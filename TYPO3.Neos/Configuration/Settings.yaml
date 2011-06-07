@@ -16,7 +16,7 @@ TYPO3:
           Typo3BackendProvider:
             providerClass: PersistedUsernamePasswordProvider
             requestPatterns:
-            controllerObjectName: F3\TYPO3\Backend\.*
+              controllerObjectName: TYPO3\TYPO3\Controller\Backend\.*
             entryPoint:
               WebRedirect:
                 uri: typo3/login
