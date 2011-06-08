@@ -58,16 +58,30 @@
 	},
 
 	"dependencies": {
-	   "buildr": ">=0.0.1"
+		"express": ">=2.2.2",
+		"buildr": ">=0.2.3"
 	},
 
 	"compiler": "buildr .",
 
 	"buildr": {
-		"compress": {
+		"check": {
 			"js": true,
 			"css": true,
-			"img": false,
+			"jsOptions": {
+				"browser": true,
+				"laxbreak": true,
+				"boss": true,
+				"undef": true,
+				"onevar": true,
+				"strict": true,
+				"noarg": true
+			}
+		},
+		"compress": {
+			"js": false,
+			"css": true,
+			"img": true,
 			"html": false
 		},
 		"bundle": {
@@ -91,18 +105,14 @@
 			"src_bundle_item.js": "src_bundle_item.js",
 			"src_bundle_subpackage.js": "src_bundle_subpackage.js"
 		},
-		"subpackages": [
-			"format",
-			"link",
-			"linkchecker",
-			"table",
-			"cropnresize",
-			"image"
-		],
+		"subpackages": ["format"],
 		"ignore": {
+			"check": [
+				"dep",
+				"util/base.js"
+			],
 			"img": [
-				"dep/ext-3.2.1",
-				"dep/ext-3.3.1"
+				"dep"
 			]
 		},
 		"files": {
@@ -112,6 +122,8 @@
 				"css/aloha.css"
 			],
 			"js": [
+				"util/base.js",
+
 				"dep/ext-3.2.1/adapter/jquery/ext-jquery-adapter.js",
 				"dep/ext-3.2.1/ext-all.js",
 
@@ -120,12 +132,10 @@
 				"dep/jquery.store.js",
 
 				"core/jquery.aloha.js",
-				"util/jquery.js",
 				"util/lang.js",
 				"util/range.js",
 				"util/position.js",
 				"util/dom.js",
-				"util/indexof.js",
 				"core/ext-alohaproxy.js",
 				"core/ext-alohareader.js",
 				"core/ext-alohatreeloader.js",
@@ -134,7 +144,6 @@
 				"core/ui-attributefield.js",
 				"core/ui-browser.js",
 				"core/editable.js",
-				"core/event.js",
 				"core/floatingmenu.js",
 				"core/ierange-m2.js",
 				"core/log.js",
@@ -147,7 +156,7 @@
 				"core/repository.js",
 				"core/repositoryobjects.js"
 			],
-			"img": false
+			"img": true
 		}
 	}
 }

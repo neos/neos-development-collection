@@ -1,36 +1,52 @@
 /*!
-*   This file is part of Aloha Editor
-*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
-*   Licensed unter the terms of http://www.aloha-editor.com/license.html
-*//*
-*	Aloha Editor is free software: you can redistribute it and/or modify
-*   it under the terms of the GNU Affero General Public License as published by
-*   the Free Software Foundation, either version 3 of the License, or
-*   (at your option) any later version.*
-*
-*   Aloha Editor is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU Affero General Public License for more details.
-*
-*   You should have received a copy of the GNU Affero General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * This file is part of Aloha Editor
+ * Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+ * Licensed unter the terms of http://www.aloha-editor.com/license.html
+ */
 (function(window, undefined) {
+	"use strict";
 	var
-		$ = jQuery = window.alohaQuery,
+		jQuery = window.alohaQuery, $ = jQuery,
 		GENTICS = window.GENTICS,
-		Aloha = GENTICS.Aloha;
+		Aloha = window.Aloha,
+		console = window.console||false,
+		Class = window.Class;
 
 /**
  * This is the aloha Log
- * @namespace GENTICS.Aloha
+ * @namespace Aloha
  * @class Log
  * @singleton
  */
-GENTICS.Aloha.Log = function () {};
+Aloha.Log = Class.extend({
+	/**
+	 * Initialize the logging
+	 * @hide
+	 */
+	init: function() {
+		// initialize the logging settings (if not present)
+		if (typeof Aloha.settings.logLevels === 'undefined' || !Aloha.settings.logLevels) {
+			Aloha.settings.logLevels = {'error' : true, 'warn' : true};
+		}
 
-GENTICS.Aloha.Log.prototype = {
+		// initialize the logHistory settings (if not present)
+		if (typeof Aloha.settings.logHistory === 'undefined' || !Aloha.settings.logHistory) {
+			Aloha.settings.logHistory = {};
+		}
+		// set the default values for the loghistory
+		if (!Aloha.settings.logHistory.maxEntries) {
+			Aloha.settings.logHistory.maxEntries = 100;
+		}
+		if (!Aloha.settings.logHistory.highWaterMark) {
+			Aloha.settings.logHistory.highWaterMark = 90;
+		}
+		if (!Aloha.settings.logHistory.levels) {
+			Aloha.settings.logHistory.levels = {'error' : true, 'warn' : true};
+		}
+		this.flushLogHistory();
+		Aloha.trigger('aloha-logger-ready');
+	},
+
 	/**
 	 * Log History as array of Message Objects. Every object has the properties
 	 * 'level', 'component' and 'message'
@@ -48,33 +64,6 @@ GENTICS.Aloha.Log.prototype = {
 	highWaterMarkReached: false,
 
 	/**
-	 * Initialize the logging
-	 * @hide
-	 */
-	init: function() {
-		// initialize the logging settings (if not present)
-		if (typeof GENTICS.Aloha.settings.logLevels === 'undefined' || !GENTICS.Aloha.settings.logLevels) {
-			GENTICS.Aloha.settings.logLevels = {'error' : true, 'warn' : true};
-		}
-
-		// initialize the logHistory settings (if not present)
-		if (typeof GENTICS.Aloha.settings.logHistory === 'undefined' || !GENTICS.Aloha.settings.logHistory) {
-			GENTICS.Aloha.settings.logHistory = {};
-		}
-		// set the default values for the loghistory
-		if (!GENTICS.Aloha.settings.logHistory.maxEntries) {
-			GENTICS.Aloha.settings.logHistory.maxEntries = 100;
-		}
-		if (!GENTICS.Aloha.settings.logHistory.highWaterMark) {
-			GENTICS.Aloha.settings.logHistory.highWaterMark = 90;
-		}
-		if (!GENTICS.Aloha.settings.logHistory.levels) {
-			GENTICS.Aloha.settings.logHistory.levels = {'error' : true, 'warn' : true};
-		}
-		this.flushLogHistory();
-	},
-
-	/**
 	 * Logs a message to the console
 	 * @method
 	 * @param {String} level Level of the log ('error', 'warn' or 'info', 'debug')
@@ -86,9 +75,12 @@ GENTICS.Aloha.Log.prototype = {
 			level = 'error';
 		}
 		level = level.toLowerCase();
-
+		
+		if (typeof Aloha.settings.logLevels === "undefined") {
+			return;
+		}
 		// now check whether the log level is activated
-		if (!GENTICS.Aloha.settings.logLevels[level]) {
+		if (!Aloha.settings.logLevels[level]) {
 			return;
 		}
 
@@ -167,7 +159,7 @@ GENTICS.Aloha.Log.prototype = {
 	 * @return true when log level is enabled, false if not
 	 */
 	isLogLevelEnabled: function(level) {
-		return GENTICS.Aloha.settings && GENTICS.Aloha.settings.logLevels && GENTICS.Aloha.settings.logLevels[level];
+		return Aloha.settings && Aloha.settings.logLevels && Aloha.settings.logLevels[level];
 	},
 
 	/**
@@ -208,12 +200,15 @@ GENTICS.Aloha.Log.prototype = {
 	 * @hide
 	 */
 	addToLogHistory: function(entry) {
+		if ( !Aloha.settings.logHistory ) {
+			this.init();
+		}
 
 		if (
 			// when maxEntries is set to something illegal, we do nothing (log history is disabled)
-			GENTICS.Aloha.settings.logHistory.maxEntries <= 0
+			Aloha.settings.logHistory.maxEntries <= 0
 			// check whether the level is one we like to have logged
-			|| !GENTICS.Aloha.settings.logHistory.levels[entry.level]
+			|| !Aloha.settings.logHistory.levels[entry.level]
 		) {
 			return;
 		}
@@ -223,21 +218,16 @@ GENTICS.Aloha.Log.prototype = {
 
 		// check whether the highWaterMark was reached, if so, fire an event
 		if (!this.highWaterMarkReached) {
-			if (this.logHistory.length >= GENTICS.Aloha.settings.logHistory.maxEntries * GENTICS.Aloha.settings.logHistory.highWaterMark / 100) {
+			if (this.logHistory.length >= Aloha.settings.logHistory.maxEntries * Aloha.settings.logHistory.highWaterMark / 100) {
 				// fire the event
-				GENTICS.Aloha.EventRegistry.trigger(
-					new GENTICS.Aloha.Event(
-						'logFull',
-						GENTICS.Aloha.Log
-					)
-				);
+				Aloha.trigger('aloha-log-full');
 				// set the flag (so we will not fire the event again until the logHistory is flushed)
 				this.highWaterMarkReached = true;
 			}
 		}
 
 		// check whether the log is full and eventually remove the oldest entries
-		while (this.logHistory.length > GENTICS.Aloha.settings.logHistory.maxEntries) {
+		while (this.logHistory.length > Aloha.settings.logHistory.maxEntries) {
 			this.logHistory.shift();
 		}
 	},
@@ -260,12 +250,12 @@ GENTICS.Aloha.Log.prototype = {
 		this.logHistory = [];
 		this.highWaterMarkReached = false;
 	}
-};
+});
 
 /**
  * Create the Log object
  * @hide
  */
-GENTICS.Aloha.Log = new GENTICS.Aloha.Log();
+Aloha.Log = new Aloha.Log();
 
 })(window);

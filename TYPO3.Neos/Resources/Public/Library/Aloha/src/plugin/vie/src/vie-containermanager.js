@@ -9,7 +9,7 @@ VIE.ContainerManager = {
     instanceSingletons: {},
 
     findContainerProperties: function(element, allowPropertiesInProperties) {
-        if (!jQuery(element).attr('typeof')) {
+        if (!element.attr('typeof')) {
             element = element.children('[typeof][about]');
         }
         return jQuery(element).find('[property]').add(jQuery(element).filter('[property]')).filter(function() {
@@ -123,7 +123,7 @@ VIE.ContainerManager = {
             this.model.bind('change', this.render);
         };
         viewProperties.tagName = element.get(0).nodeName;
-        viewProperties.make = function(tagName, attributes, content) {
+        viewProperties.make = function(tagName, attributes, content) { 
             return VIE.ContainerManager.cloneContainer(element);
         };
         viewProperties.render = function() {
@@ -136,12 +136,9 @@ VIE.ContainerManager = {
                     // For now we don't deal with multivalued properties in Views
                     return true;
                 }
+
                 if (propertyElement.html() !== model.get(propertyName)) {
-					// TODO: hardcoded placeholder class
-					if (jQuery('.aloha-placeholder', propertyElement).length === 0) {
-						// TODO: This check still needs to be improved!
-						propertyElement.html(model.get(propertyName));
-					}
+                    propertyElement.html(model.get(propertyName));
                 }
             });
             return this;
@@ -156,7 +153,7 @@ VIE.ContainerManager = {
 
     getModelForContainer: function(element) {
         var type = VIE.ContainerManager._getContainerValue(element, 'typeof');
-
+        
 
         if (typeof VIE.ContainerManager.models[type] !== 'undefined') {
             // We already have a model for this type
@@ -251,7 +248,7 @@ VIE.ContainerManager = {
             || VIE.ContainerManager.instanceSingletons[properties.id] === undefined) {
             var modelInstance = new model(properties);
         }
-        else
+        else 
         {
             var modelInstance = VIE.ContainerManager.instanceSingletons[properties.id];
             modelInstance.set(properties);

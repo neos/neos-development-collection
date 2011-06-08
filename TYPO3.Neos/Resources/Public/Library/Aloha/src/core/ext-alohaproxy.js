@@ -1,21 +1,20 @@
+// Start Closure
+(function(window, undefined) {
+	"use strict";
+	
+	// Prepare
+	var
+		jQuery = window.alohaQuery, $ = jQuery,
+		Ext = window.Ext,
+		GENTICS = window.GENTICS,
+		Aloha = window.Aloha;
+
+
 /*!
-*   This file is part of Aloha Editor
-*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
-*   Licensed unter the terms of http://www.aloha-editor.com/license.html
-*//*
-*	Aloha Editor is free software: you can redistribute it and/or modify
-*   it under the terms of the GNU Affero General Public License as published by
-*   the Free Software Foundation, either version 3 of the License, or
-*   (at your option) any later version.*
-*
-*   Aloha Editor is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU Affero General Public License for more details.
-*
-*   You should have received a copy of the GNU Affero General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * This file is part of Aloha Editor
+ * Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+ * Licensed unter the terms of http://www.aloha-editor.com/license.html
+ */
 Ext.data.AlohaProxy = function( ) {
     // Must define a dummy api with "read" action to satisfy Ext.data.Api#prepare *before* calling super
     var api = {};
@@ -24,15 +23,15 @@ Ext.data.AlohaProxy = function( ) {
         api: api
     });
     this.params = {
-    		queryString: null,
-    		objectTypeFilter: null,
-    		filter: null,
-    		inFolderId: null,
-    		orderBy: null,
-    		maxItems: null,
-    		skipCount: null,
-    		renditionFilter: null,
-    		repositoryId: null
+			queryString: null,
+			objectTypeFilter: null,
+			filter: null,
+			inFolderId: null,
+			orderBy: null,
+			maxItems: null,
+			skipCount: null,
+			renditionFilter: null,
+			repositoryId: null
     };
 };
 
@@ -41,10 +40,10 @@ Ext.extend(Ext.data.AlohaProxy, Ext.data.DataProxy, {
 		var p = this.params;
 		jQuery.extend(p, params);
         try {
-        	GENTICS.Aloha.RepositoryManager.query( p, function( items ) {
-        		var result = reader.readRecords( items );
- 	 	        cb.call(scope, result, arg, true);
-        	});
+					Aloha.RepositoryManager.query( p, function( items ) {
+					var result = reader.readRecords( items );
+						cb.call(scope, result, arg, true);
+					});
         } catch (e) {
             this.fireEvent('loadexception', this, null, arg, e);
             this.fireEvent('exception', this, 'response', action, arg, null, e);
@@ -60,4 +59,6 @@ Ext.extend(Ext.data.AlohaProxy, Ext.data.DataProxy, {
 	setParams : function (p) {
 		jQuery.extend(this.params, p);
 	}
-});	
+});
+
+})(window);

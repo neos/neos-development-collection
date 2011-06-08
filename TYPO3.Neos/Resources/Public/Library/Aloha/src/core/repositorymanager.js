@@ -1,38 +1,25 @@
 /*!
-*   This file is part of Aloha Editor
-*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
-*   Licensed unter the terms of http://www.aloha-editor.com/license.html
-*//*
-*	Aloha Editor is free software: you can redistribute it and/or modify
-*   it under the terms of the GNU Affero General Public License as published by
-*   the Free Software Foundation, either version 3 of the License, or
-*   (at your option) any later version.*
-*
-*   Aloha Editor is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU Affero General Public License for more details.
-*
-*   You should have received a copy of the GNU Affero General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * This file is part of Aloha Editor
+ * Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+ * Licensed unter the terms of http://www.aloha-editor.com/license.html
+ */
 (function(window, undefined) {
+	"use strict";
 	var
-		$ = jQuery = window.alohaQuery,
+		jQuery = window.alohaQuery, $ = jQuery,
 		GENTICS = window.GENTICS,
-		Aloha = GENTICS.Aloha;
+		Aloha = window.Aloha,
+		Class = window.Class;
 
 /**
  * Repository Manager
- * @namespace GENTICS.Aloha.Repository
+ * @namespace Aloha.Repository
  * @class RepositoryManager
  * @singleton
  */
-GENTICS.Aloha.RepositoryManager = function() {
-	this.repositories = [];
-};
+Aloha.RepositoryManager = Class.extend({
+	repositories: [],
 
-GENTICS.Aloha.RepositoryManager.prototype = {
 	openCallbacks: [],
 
 	/**
@@ -41,23 +28,24 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 	 * @hide
 	 */
 	init: function() {
+		var i, repository;
 
 		// get the repository settings
-		if (typeof GENTICS.Aloha.settings.repositories === 'undefined') {
-			GENTICS.Aloha.settings.repositories = {};
+		if (typeof Aloha.settings.repositories === 'undefined') {
+			Aloha.settings.repositories = {};
 		}
 
 		// iterate through all registered repositories
-		for ( var i = 0; i < this.repositories.length; i++) {
-			var repository = this.repositories[i];
+		for ( i = 0; i < this.repositories.length; i++) {
+			repository = this.repositories[i];
 
 			if (typeof repository.settings === 'undefined') {
 				repository.settings = {};
 			}
 
 			// merge the specific settings with the repository default settings
-			if ( GENTICS.Aloha.settings.repositories[repository.repositoryId] ) {
-				jQuery.extend(repository.settings, GENTICS.Aloha.settings.repositories[repository.repositoryId]);
+			if ( Aloha.settings.repositories[repository.repositoryId] ) {
+				jQuery.extend(repository.settings, Aloha.settings.repositories[repository.repositoryId]);
 			}
 
 			repository.init();
@@ -66,18 +54,18 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 
 	/**
 	 * Register a Repository
-	 * @param {GENTICS.Aloha.Repository} repository Repository to register
+	 * @param {Aloha.Repository} repository Repository to register
 	 */
 	register: function(repository) {
 
-		if (repository instanceof GENTICS.Aloha.Repository) {
+		if (repository instanceof Aloha.Repository) {
 			if ( !this.getRepository(repository.repositoryId) ) {
 				this.repositories.push(repository);
 			} else {
-				GENTICS.Aloha.Log.warn(this, 'A repository with name { ' + repository.repositoryId + ' } already registerd. Ignoring this.');
+				Aloha.Log.warn(this, 'A repository with name { ' + repository.repositoryId + ' } already registerd. Ignoring this.');
 			}
 		} else {
-			GENTICS.Aloha.Log.error(this, 'Trying to register a repository which is not an instance of GENTICS.Aloha.Repository.');
+			Aloha.Log.error(this, 'Trying to register a repository which is not an instance of Aloha.Repository.');
 		}
 
 	},
@@ -85,7 +73,7 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 	/**
 	 * Returns a repository object identified by repositoryId.
 	 * @param {String} repositoryId the name of the repository
-	 * @return {GENTICS.Aloha.Repository} a repository or null if name not found
+	 * @return {Aloha.Repository} a repository or null if name not found
 	 */
 	getRepository: function(repositoryId) {
 
@@ -112,7 +100,7 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 				renditionFilter: null,
 				repositoryId: null
 		};
-		GENTICS.Aloha.RepositoryManager.query( params, function( items ) {
+		Aloha.RepositoryManager.query( params, function( items ) {
 			// do something with the result items
 			console.log(items);
 		});
@@ -138,13 +126,37 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 
 		var that = this,
 			allitems = [],
-			repositories = [];
+			repositories = [],
+			timer,
+			i,id,
+			notImplFunc = function (items) {
+				var id, j;
+
+				// remove the repository from the callback stack
+				id = that.openCallbacks.indexOf( this.repositoryId );
+				if (id != -1) {
+					that.openCallbacks.splice(id, 1);
+				}
+
+				// mark with repositoryId if not done by repository plugin
+				if ( items.length && !items[0].repositoryId ) {
+					for ( j = 0; j < items.length; j++) {
+						items[j].repositoryId = this.repositoryId;
+					}
+				}
+
+				// merge new items with the rest
+				jQuery.merge( allitems, items );
+
+				that.queryCallback(callback, allitems, timer);
+			},
+			notImplemented;
 
 		// reset callback queue
 		this.openCallbacks = [];
 
 		// start timer in case a repository does not deliver in time
-		var timer = setTimeout( function() {
+		timer = setTimeout( function() {
 			// reset callback stack
 			that.openCallbacks = [];
 			that.queryCallback(callback, allitems, timer);
@@ -158,42 +170,21 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 		}
 
 		// iterate through all registered repositories
-		for ( var i = 0; i < repositories.length; i++) {
+		for ( i = 0; i < repositories.length; i++) {
 
 			this.openCallbacks.push(repositories[i].repositoryId);
 
 		    try {
-
-				var notImplemented = repositories[i].query( params, function (items) {
-
-					// remove the repository from the callback stack
-					var id = that.openCallbacks.indexOf( this.repositoryId );
-					if (id != -1) {
-						that.openCallbacks.splice(id, 1);
-					}
-
-					// mark with repositoryId if not done by repository plugin
-					if ( !items.length == 0 && !items[0].repositoryId ) {
-						for ( var j = 0; j < items.length; j++) {
-							items[j].repositoryId = this.repositoryId;
-						}
-					}
-
-					// merge new items with the rest
-					jQuery.merge( allitems, items );
-
-					that.queryCallback(callback, allitems, timer);
-				});
-
+					notImplemented = repositories[i].query(params,notImplFunc);
 		    } catch (e) {
-	//          this.fireEvent('exception', this, 'response', action, arg, null, e);
-	//          return false;
-		    	notImplemented = true;
+					// this.fireEvent('exception', this, 'response', action, arg, null, e);
+					// return false;
+					notImplemented = true;
 		    }
 
 			// remove this repository from the callback stack
 			if ( notImplemented ) {
-				var id = that.openCallbacks.indexOf( repositories[i].repositoryId );
+				id = that.openCallbacks.indexOf( repositories[i].repositoryId );
 				if (id != -1) {
 					this.openCallbacks.splice(id, 1);
 					if ( i == repositories.length - 1 ) {
@@ -212,7 +203,7 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 	queryCallback: function (cb, items, timer) {
 
 		// if we all callbacks came back we are done!
-		if (this.openCallbacks.length == 0) {
+		if (this.openCallbacks.length === 0) {
 
 			// unset the timer...
 			clearTimeout(timer);
@@ -222,9 +213,9 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 
 			// prepare result data for the JSON Reader
 			var result =  {
-					results: items.length,
-					items: items
-			 	 };
+				results: items.length,
+				items: items
+			};
 
 			// Give data back.
 			cb.call( this, result);
@@ -251,16 +242,33 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 
 		var that = this,
 			allitems = [],
-			repositories = [];
+			repositories = [],
+			i,
+			timer,
+			repos = [],
+			id,
+			notImplFunc = function (items) {
+				// remove the repository from the callback stack
+				var id = that.openChildrenCallbacks.indexOf( this.repositoryId );
+				if (id != -1) {
+					that.openChildrenCallbacks.splice(id, 1);
+				}
+
+				// merge new items with the rest
+				jQuery.merge( allitems, items );
+
+				that.getChildrenCallback(callback, allitems, timer);
+			},
+			notImplemented;
 
 		// reset callback queue
 		this.openChildrenCallbacks = [];
 
 		// return repositories
 		if ( params.inFolderId == 'aloha' && this.repositories.length > 0 ) {
-			var repos = [];
-			for ( var i = 0; i < this.repositories.length; i++) {
-				repos.push( new GENTICS.Aloha.Repository.Folder ({
+			repos = [];
+			for ( i = 0; i < this.repositories.length; i++) {
+				repos.push( new Aloha.Repository.Folder ({
 					id: this.repositories[i].repositoryId,
 					name: this.repositories[i].repositoryName,
 					repositoryId: this.repositories[i].repositoryId,
@@ -273,7 +281,7 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 		}
 
 		// start timer in case a repository does not deliver in time
-		var timer = setTimeout( function() {
+		timer = setTimeout( function() {
 			// reset callback stack
 			that.openChildrenCallbacks = [];
 			that.getChildrenCallback(callback, allitems, timer);
@@ -287,35 +295,21 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 		}
 
 		// iterate through all registered repositories
-		for ( var i = 0; i < repositories.length; i++) {
+		for ( i = 0; i < repositories.length; i++) {
 
 			this.openChildrenCallbacks.push(repositories[i].repositoryId);
 
 		    try {
-
-				var notImplemented = repositories[i].getChildren( params, function (items) {
-
-					// remove the repository from the callback stack
-					var id = that.openChildrenCallbacks.indexOf( this.repositoryId );
-					if (id != -1) {
-						that.openChildrenCallbacks.splice(id, 1);
-					}
-
-					// merge new items with the rest
-					jQuery.merge( allitems, items );
-
-					that.getChildrenCallback(callback, allitems, timer);
-				});
-
+					notImplemented = repositories[i].getChildren( params, notImplFunc);
 		    } catch (e) {
-	//          this.fireEvent('exception', this, 'response', action, arg, null, e);
-	//          return false;
-		    	notImplemented = true;
+					// this.fireEvent('exception', this, 'response', action, arg, null, e);
+					// return false;
+					notImplemented = true;
 		    }
 
 			// remove this repository from the callback stack
 			if ( notImplemented ) {
-				var id = that.openChildrenCallbacks.indexOf( repositories[i].repositoryId );
+				id = that.openChildrenCallbacks.indexOf( repositories[i].repositoryId );
 				if (id != -1) {
 					this.openChildrenCallbacks.splice(id, 1);
 					if ( i == repositories.length - 1 ) {
@@ -335,7 +329,7 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 	getChildrenCallback: function (cb, items, timer) {
 
 		// if we all callbacks came back we are done!
-		if (this.openChildrenCallbacks.length == 0) {
+		if (this.openChildrenCallbacks.length === 0) {
 
 			// unset the timer...
 			if (timer) clearTimeout(timer);
@@ -361,7 +355,7 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 			for ( var i = 0; i < that.repositories.length; i++) {
 				repository.makeClean(obj);
 			}
-			GENTICS.Aloha.Log.debug(that, 'Passing contents of HTML Element with id { ' + this.attr('id') + ' } for cleaning to repository { ' + repository.repositoryId + ' }');
+			Aloha.Log.debug(that, 'Passing contents of HTML Element with id { ' + this.attr('id') + ' } for cleaning to repository { ' + repository.repositoryId + ' }');
 			repository.makeClean(this);
 		});
 	},
@@ -369,7 +363,7 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 	/**
 	 * Markes an object as repository of this type and with this item.id.
 	 * Objects can be any DOM objects as A, SPAN, ABBR, etc. or
-	 * special objects such as GENTICS_aloha_block elements.
+	 * special objects such as aloha-aloha_block elements.
 	 * This method marks the target obj with two private attributes:
 	 * (see http://dev.w3.org/html5/spec/elements.html#embedding-custom-non-visible-data)
 	 * * data-GENTICS-aloha-repository: stores the repositoryId
@@ -387,7 +381,7 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 			});
 			repository.markObject(obj, item);
 		} else {
-			GENTICS.Aloha.Log.error(this, 'Trying to apply a repository { ' + item.name + ' } to an object, but item has no repositoryId.');
+			Aloha.Log.error(this, 'Trying to apply a repository { ' + item.name + ' } to an object, but item has no repositoryId.');
 		}
 	},
 
@@ -419,19 +413,19 @@ GENTICS.Aloha.RepositoryManager.prototype = {
 			}
 		}
 	}
-};
+});
 
 /**
  * Create the RepositoryManager object
  * @hide
  */
-GENTICS.Aloha.RepositoryManager = new GENTICS.Aloha.RepositoryManager();
+Aloha.RepositoryManager = new Aloha.RepositoryManager();
 
 /**
  * Expose a nice name for the RepositoryManager
  * @hide
  */
-GENTICS.Aloha.RepositoryManager.toString = function() {
+Aloha.RepositoryManager.toString = function() {
 	return 'repositorymanager';
 };
 

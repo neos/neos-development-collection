@@ -1,57 +1,46 @@
 /*!
-*   This file is part of Aloha Editor
-*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
-*   Licensed unter the terms of http://www.aloha-editor.com/license.html
-*//*
-*	Aloha Editor is free software: you can redistribute it and/or modify
-*   it under the terms of the GNU Affero General Public License as published by
-*   the Free Software Foundation, either version 3 of the License, or
-*   (at your option) any later version.*
-*
-*   Aloha Editor is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU Affero General Public License for more details.
-*
-*   You should have received a copy of the GNU Affero General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * This file is part of Aloha Editor
+ * Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+ * Licensed unter the terms of http://www.aloha-editor.com/license.html
+ */
 (function(window, undefined) {
+	"use strict";
 	var
-		$ = jQuery = window.alohaQuery,
+		jQuery = window.alohaQuery, $ = jQuery,
 		GENTICS = window.GENTICS,
-		Aloha = GENTICS.Aloha;
+		Aloha = window.Aloha,
+		Class = window.Class,
+		Ext = window.Ext;
 
 /**
  * Abstract Repository Class. Implement that class for your own repository.
- * @namespace GENTICS.Aloha.Repository
+ * @namespace Aloha.Repository
  * @class Repository
  * @constructor
  * @param {String} repositoryId unique repository identifier
  * @param {String} repositoryName (optional) is the displyed name for this Repository instance
  */
-GENTICS.Aloha.Repository = function(repositoryId, repositoryName) {
-	/**
-	 * @property repositoryId is the unique Id for this Repository instance
-	 */
-	this.repositoryId = repositoryId;
+Aloha.Repository = Class.extend({
+	_constructor: function(repositoryId, repositoryName) {
+		/**
+		 * @property repositoryId is the unique Id for this Repository instance
+		 */
+		this.repositoryId = repositoryId;
 
-	/**
-	 * contains the repository's settings object
-	 * @property settings {Object} the repository's settings stored in an object
-	 */
-	this.settings = {};
+		/**
+		 * contains the repository's settings object
+		 * @property settings {Object} the repository's settings stored in an object
+		 */
+		this.settings = {};
 
-	/**
-	 * @property repositoryName is the name for this Repository instance
-	 */
-	this.repositoryName = (repositoryName) ? repositoryName : repositoryId;
+		/**
+		 * @property repositoryName is the name for this Repository instance
+		 */
+		this.repositoryName = (repositoryName) ? repositoryName : repositoryId;
 
-	GENTICS.Aloha.RepositoryManager.register(this);
+		Aloha.RepositoryManager.register(this);
+	},
 
-};
-
-GENTICS.Aloha.Repository.prototype = {
 	/**
 	 * Init method of the repository. Called from Aloha Core to initialize this repository
 	 * @return void
@@ -65,7 +54,7 @@ GENTICS.Aloha.Repository.prototype = {
 	 *
 	<pre><code>
 	// simple delicious implementation
-	GENTICS.Aloha.Repositories.myRepository.query = function (params, callback) {
+	Aloha.Repositories.myRepository.query = function (params, callback) {
 
 		// make local var of this to use in ajax function
 		var that = this;
@@ -90,7 +79,7 @@ GENTICS.Aloha.Repository.prototype = {
 				// convert data to Aloha objects
 				for (var i = 0; i < data.length; i++) {
 					if (typeof data[i] != 'function' ) {
-						items.push(new GENTICS.Aloha.Repository.Document ({
+						items.push(new Aloha.Repository.Document ({
 							id: data[i].u,
 							name: data[i].d,
 							repositoryId: that.repositoryId,
@@ -144,7 +133,7 @@ GENTICS.Aloha.Repository.prototype = {
 	 * clean. All attributes needed for handling should be removed.
 	 *
 	<pre><code>
-	GENTICS.Aloha.Repositories.myRepository.makeClean = function (obj) {
+	Aloha.Repositories.myRepository.makeClean = function (obj) {
 		obj.removeAttr('data-myRepository-name');
 	};
 	</code></pre>
@@ -158,11 +147,11 @@ GENTICS.Aloha.Repository.prototype = {
 	 * to insert this item in his content.
 	 * Mark or modify an object as needed by that repository for handling, processing or identification.
 	 * Objects can be any DOM object as A, SPAN, ABBR, etc. or
-	 * special objects such as GENTICS_aloha_block elements.
+	 * special objects such as aloha-aloha_block elements.
 	 * (see http://dev.w3.org/html5/spec/elements.html#embedding-custom-non-visible-data)
 	 *
 	<pre><code>
-	GENTICS.Aloha.Repositories.myRepository.markObject = function (obj, resourceItem) {
+	Aloha.Repositories.myRepository.markObject = function (obj, resourceItem) {
 		obj.attr('data-myRepository-name').text(resourceItem.name);
 	};
 	</code></pre>
@@ -210,9 +199,9 @@ GENTICS.Aloha.Repository.prototype = {
 	 * Get the repositoryItem with given id
 	 * @param itemId {String} id of the repository item to fetch
 	 * @param callback {function} callback function
-	 * @return {GENTICS.Aloha.Repository.Object} item with given id
+	 * @return {Aloha.Repository.Object} item with given id
 	 */
 	getObjectById: function ( itemId, callback ) { return true; }
-};
+});
 
 })(window);

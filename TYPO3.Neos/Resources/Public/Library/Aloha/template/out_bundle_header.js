@@ -1,8 +1,21 @@
+// Create jQuery
+window.alohaQuery = window.jQuery;//.sub();
+
 // Ensure Namespace
 window.GENTICS = window.GENTICS || {};
-window.GENTICS.Aloha = window.GENTICS.Aloha || {};
-window.GENTICS.Aloha.settings = window.GENTICS.Aloha.settings || {};
-window.GENTICS.Aloha.ui = window.GENTICS.Aloha.ui || {};
+window.GENTICS.Utils = window.GENTICS.Utils || {};
+window.Aloha = window.Aloha || {};
+window.Aloha.settings = window.Aloha.settings || {};
+window.Aloha.ui = window.Aloha.ui || {};
 window.Aloha_loaded_plugins = window.Aloha_loaded_plugins || [];
-window.GENTICS_Aloha_pluginDir = window.GENTICS_Aloha_pluginDir || false;
-window.GENTICS_Aloha_base = window.GENTICS_Aloha_base || false;
+window.Aloha_pluginDir = window.Aloha_pluginDir || false;
+window.Aloha_base = window.Aloha_base || false;
+
+// Handle
+(function(window,undefined) {
+
+	// Variables
+	var
+		// jQuery
+		jQuery = window.alohaQuery, $ = jQuery;
+	

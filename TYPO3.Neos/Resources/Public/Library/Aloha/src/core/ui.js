@@ -1,66 +1,48 @@
 /*!
-*   This file is part of Aloha Editor
-*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
-*   Licensed unter the terms of http://www.aloha-editor.com/license.html
-*//*
-*	Aloha Editor is free software: you can redistribute it and/or modify
-*   it under the terms of the GNU Affero General Public License as published by
-*   the Free Software Foundation, either version 3 of the License, or
-*   (at your option) any later version.*
-*
-*   Aloha Editor is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU Affero General Public License for more details.
-*
-*   You should have received a copy of the GNU Affero General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-
+ * This file is part of Aloha Editor
+ * Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+ * Licensed unter the terms of http://www.aloha-editor.com/license.html
+ */
 // Closure
 (function(window, undefined) {
+	"use strict";
+
 	var
-		$ = jQuery = window.alohaQuery,
+		jQuery = window.alohaQuery, $ = jQuery,
 		GENTICS = window.GENTICS,
-		Aloha = GENTICS.Aloha;
+		Aloha = window.Aloha,
+		Ext = window.Ext,
+		Class = window.Class;
 
 // Ensure Namespace
-GENTICS.Aloha.ui = GENTICS.Aloha.ui || {};
+Aloha.ui = Aloha.ui || {};
 
 /**
  * Constructor for an Aloha button.
- * @namespace GENTICS.Aloha.ui
+ * @namespace Aloha.ui
  * @class Button
  * @param {Object} properties Properties of the button:
  * - label: Label that is displayed on the button.
  * - onclick: Callback function of the button when activated.
- * - menu: Array of GENTICS.Aloha.ui.Button elements that are displayed as drop-down menu.
+ * - menu: Array of Aloha.ui.Button elements that are displayed as drop-down menu.
  * - iconClass: Icon displayed on the button.
  * - icon: URL to an icon that is displayed on the button.
  * - toggle: Boolean that indicates if the button is a toggle button.
  */
-GENTICS.Aloha.ui.Button = function(properties) {
-	this.init(properties);
-};
-
-/**
- * id counter, for generation of unique id's for the buttons
- * @hide
- */
-GENTICS.Aloha.ui.Button.idCounter = 0;
-
-GENTICS.Aloha.ui.Button.prototype = {
+Aloha.ui.Button = Class.extend({
+	_constructor: function(properties) {
+		this.init(properties);
+	},
 
 	/**
 	 * Init method for an Aloha button.
 	 * This method is necessary due to JS specific initalization.
-	 * @namespace GENTICS.Aloha.ui
+	 * @namespace Aloha.ui
 	 * @class Button
 	 * @param {Object} properties Properties of the button:
 	 * - label: Label that is displayed on the button.
 	 * - onclick: Callback function of the button when activated.
-	 * - menu: Array of GENTICS.Aloha.ui.Button elements that are displayed as drop-down menu.
+	 * - menu: Array of Aloha.ui.Button elements that are displayed as drop-down menu.
 	 * - iconClass: Icon displayed on the button.
 	 * - icon: URL to an icon that is displayed on the button.
 	 * - toggle: Boolean that indicates if the button is a toggle button.
@@ -70,39 +52,39 @@ GENTICS.Aloha.ui.Button.prototype = {
 		 * Label that is displayed on the button
 		 * @hide
 		 */
-		this.label;
+		this.label = false;
 
 		/**
 		 * CSS class for an icon on the button
 		 * @hide
 		 */
-		this.iconClass;
+		this.iconClass = false;
 
 		/**
 		 * URL to an icon to display on the button
 		 * @hide
 		 */
-		this.icon;
+		this.icon = false;
 
 		/**
 		 * Callback function when the button is activated.
 		 * The "this" variable refers to the button inside the callback function.
 		 * @hide
 		 */
-		this.onclick;
+		this.onclick = false;
 
 		/**
 		 * Array of buttons that are displayed in a drop down menu.
 		 * If a menu is provided and no onclick callback then clicking the button also opens the menu
 		 * @hide
 		 */
-		this.menu;
+		this.menu = null;
 
 		/**
 		 * Indicates if the button is a toggle button
 		 * @hide
 		 */
-		this.toggle;
+		this.toggle = false;
 
 		/**
 		 * Property that indicates if the button is in pressed state
@@ -126,13 +108,13 @@ GENTICS.Aloha.ui.Button.prototype = {
 		 * Tooltip text
 		 * @hide
 		 */
-		this.tooltip;
+		this.tooltip = false;
 
 		/**
 		 * holds the ext object of the button
 		 * @hide
 		 */
-		this.extButton;
+		this.extButton = null;
 
 		/**
 		 * holds the listeners of the button
@@ -155,8 +137,8 @@ GENTICS.Aloha.ui.Button.prototype = {
 	 * @hide
 	 */
 	generateId: function () {
-		GENTICS.Aloha.ui.Button.idCounter = GENTICS.Aloha.ui.Button.idCounter + 1;
-		return 'GENTICS_Aloha_ui_Button_' + GENTICS.Aloha.ui.Button.idCounter;
+		Aloha.ui.Button.idCounter = Aloha.ui.Button.idCounter + 1;
+		return 'aloha-button' + Aloha.ui.Button.idCounter;
 	},
 
 	/**
@@ -166,7 +148,7 @@ GENTICS.Aloha.ui.Button.prototype = {
 	setPressed: function(pressed) {
 		if (this.toggle) {
 			this.pressed = pressed;
-			if (typeof this.extButton == 'object' && this.extButton.pressed != pressed) {
+			if (typeof this.extButton === 'object' && this.extButton.pressed != pressed) {
 				this.extButton.toggle(this.pressed);
 			}
 		}
@@ -187,7 +169,7 @@ GENTICS.Aloha.ui.Button.prototype = {
 
 	/**
 	 * Show the button. When this button is added to the FloatingMenu, it is
-	 * necessary to call GENTICS.Aloha.FloatingMenu.doLayout() after the visibility
+	 * necessary to call Aloha.FloatingMenu.doLayout() after the visibility
 	 * of the button is changed
 	 */
 	show: function() {
@@ -196,7 +178,7 @@ GENTICS.Aloha.ui.Button.prototype = {
 
 	/**
 	 * Hide the button. When this button is added to the FloatingMenu, it is
-	 * necessary to call GENTICS.Aloha.FloatingMenu.doLayout() after the visibility
+	 * necessary to call Aloha.FloatingMenu.doLayout() after the visibility
 	 * of the button is changed
 	 */
 	hide: function() {
@@ -245,11 +227,12 @@ GENTICS.Aloha.ui.Button.prototype = {
 	 * @hide
 	 */
 	getExtMenu: function() {
-		if (typeof this.menu === 'object') {
+		var menu, i, entry;
+		if ( this.menu && typeof this.menu === 'object') {
 			// build the drop down menu
-			var menu = new Ext.menu.Menu();
-			for (var i = 0; i < this.menu.length; ++i) {
-				var entry = this.menu[i];
+			menu = new Ext.menu.Menu();
+			for (i = 0; i < this.menu.length; ++i) {
+				entry = this.menu[i];
 				menu.addItem(new Ext.menu.Item(entry.getExtMenuConfigProperties()));
 			}
 		}
@@ -262,7 +245,7 @@ GENTICS.Aloha.ui.Button.prototype = {
 	 * @hide
 	 */
 	getExtMenuConfigProperties: function() {
-		var that = this,
+		var me = this,
 			submenu = this.getExtMenu();
 
 		return {
@@ -270,8 +253,8 @@ GENTICS.Aloha.ui.Button.prototype = {
 			icon: this.icon,
 			iconCls: this.iconClass,
 			handler: function () {
-				if (typeof that.onclick == 'function') {
-					that.onclick();
+				if (typeof me.onclick == 'function') {
+					me.onclick();
 				}
 			},
 			menu: submenu
@@ -284,7 +267,7 @@ GENTICS.Aloha.ui.Button.prototype = {
 	 * @hide
 	 */
 	getExtConfigProperties: function() {
-		var that = this,
+		var me = this,
 			menu = this.getExtMenu(),
 
 		// configuration for the button
@@ -299,10 +282,12 @@ GENTICS.Aloha.ui.Button.prototype = {
 			rowspan : this.rowspan || ((this.size == 'large' || this.size == 'medium') ? 2 : 1),
 			menu : menu,
 			handler : function(element, event) {
-				if (typeof that.onclick === 'function') {
-					that.onclick.apply(that, [element, event]);
+				if (typeof me.onclick === 'function') {
+					me.onclick.apply(me, [element, event]);
 				}
-				that.pressed = !that.pressed;
+				if ( me.toggle ) {
+					me.pressed = !me.pressed;
+				}
 			},
 			xtype : (menu && typeof this.onclick == 'function') ? 'splitbutton' : 'button',
 			tooltipType : 'qtip',
@@ -313,10 +298,16 @@ GENTICS.Aloha.ui.Button.prototype = {
 
 		return buttonConfig;
 	}
-};
+});
 
 /**
- * extJS GENTICS Multi Split Button
+ * id counter, for generation of unique id's for the buttons
+ * @hide
+ */
+Aloha.ui.Button.idCounter = 0;
+
+/**
+ * extJS Multi Split Button
  *
  * Display a Word-like formatting selection button
  * Selection images are typically 52*42 in size
@@ -335,13 +326,13 @@ GENTICS.Aloha.ui.Button.prototype = {
  * http://www.extjs.com/learn/Tutorial:Creating_new_UI_controls
  * @hide
  */
-Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
+Ext.ux.MultiSplitButton = Ext.extend(Ext.Component, {
 	/**
 	 * add a css class to the wrapper-div autogenerated by extjs
 	 * @hide
 	 */
 	autoEl: {
-    	cls: 'GENTICS_multisplit-wrapper'
+		cls: 'aloha-multisplit-wrapper'
 	},
 
 	/**
@@ -374,15 +365,18 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 	 * @hide
 	 */
 	onRender: function() {
-    	Ext.ux.GENTICSMultiSplitButton.superclass.onRender.apply(this, arguments);
+		Ext.ux.MultiSplitButton.superclass.onRender.apply(this, arguments);
 		// create a reference to this elements dom object
-    	this.wrapper = jQuery(this.el.dom);
+		this.wrapper = jQuery(this.el.dom);
 
-    	var item,
-    		html = '<ul class="GENTICS_multisplit">';
+		var
+			me = this,
+			i,
+			item,
+			html = '<ul class="aloha-multisplit">';
 
 		// add a new button to the list for each configured item
-		for (var i=0; i<this.items.length; i++) {
+		for (i=0; i<this.items.length; i++) {
 			item = this.items[i];
 			if (typeof item.visible == 'undefined') {
 				item.visible = true;
@@ -391,54 +385,51 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 			if (item.wide) {
 				continue;
 			}
-        	html += '<li>' +
-        		'<button xmlns:ext="http://www.extjs.com/" class="' + item.iconClass + '" ext:qtip="' + item.tooltip + '" gtxmultisplititem="' + i + '">&#160;</button>' +
-        		'</li>';
-        }
+			html += '<li>' +
+				'<button xmlns:ext="http://www.extjs.com/" class="' + item.iconClass + '" ext:qtip="' + item.tooltip + '" gtxmultisplititem="' + i + '">&#160;</button>' +
+				'</li>';
+		}
 
         // now add the wide buttons at the bottom of the list
-		for (var i=0; i<this.items.length; i++) {
+		for (i=0; i<this.items.length; i++) {
 			item = this.items[i];
 			// now only wide buttons will be rendered
 			if (!item.wide) {
 				continue;
 			}
 
-        	html += '<li>' +
-    		'<button xmlns:ext="http://www.extjs.com/" class="GENTICS_multisplit-wide ' + item.iconClass + '" ext:qtip="' + item.tooltip + '" gtxmultisplititem="' + i + '">' +
-    			item.text + '</button>' +
-    			'</li>';
+			html += '<li>' +
+				'<button xmlns:ext="http://www.extjs.com/" class="aloha-multisplit-wide ' + item.iconClass + '" ext:qtip="' + item.tooltip + '" gtxmultisplititem="' + i + '">' +
+				item.text + '</button>' +
+				'</li>';
+		}
 
-        }
-
-        html += '</ul>';
-
-		var that = this;
+		html += '</ul>';
 
 		// register on move event, which occurs when the panel was dragged
-    	// this should be done within the constructor, but ist not possible there
-    	// since the extTabPanel will not be initialized at this moment
-    	GENTICS.Aloha.FloatingMenu.extTabPanel.on('move', function () {
-    		that.closePanel();
-    	});
-    	GENTICS.Aloha.FloatingMenu.extTabPanel.on('tabchange', function () {
-    		that.closePanel();
-    	});
+		// this should be done within the constructor, but ist not possible there
+		// since the extTabPanel will not be initialized at this moment
+		Aloha.FloatingMenu.extTabPanel.on('move', function () {
+			me.closePanel();
+		});
+		Aloha.FloatingMenu.extTabPanel.on('tabchange', function () {
+			me.closePanel();
+		});
 
 		// add onclick event handler
 		this.ulObj = jQuery(this.el.createChild(html).dom)
 		.click(function (event) {
-			that.onClick(event);
+			me.onClick(event);
 		});
 
 		// add the expand button
 		this.panelButton = jQuery(
-			this.el.createChild('<button class="GENTICS_multisplit_toggle GENTICS_multisplit_toggle_open">&#160;</button>').dom
+			this.el.createChild('<button class="aloha-multisplit-toggle aloha-multisplit-toggle-open">&#160;</button>').dom
 		)
 		.click(function () {
-			that.togglePanel();
+			me.togglePanel();
 		});
-    },
+  },
 
 	/**
 	 * callback if a button has been clicked
@@ -446,7 +437,7 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 	 * @return void
 	 * @hide
 	 */
-    onClick: function(event) {
+  onClick: function(event) {
 		// check if the element has a gtxmultisplititem attribute assigned
 		if (!event.target.attributes.gtxmultisplititem) {
 			return;
@@ -457,13 +448,13 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 		this.closePanel();
 
 		// wide buttons cannot become the active element
-		if (!el.hasClass('GENTICS_multisplit-wide')) {
+		if (!el.hasClass('aloha-multisplit-wide')) {
 			this.setActiveDOMElement(el);
 		}
 
 		// invoke the items function
 		this.items[event.target.attributes.gtxmultisplititem.value].click();
-    },
+  },
 
 	/**
 	 * set the active item specified by its name
@@ -472,6 +463,8 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 	 * @hide
 	 */
 	setActiveItem: function(name) {
+		var i, button;
+
 		// collapse the panel
 		this.closePanel();
 
@@ -480,10 +473,10 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 			return;
 		}
 
-		for (var i=0; i < this.items.length; i++) {
+		for (i=0; i < this.items.length; i++) {
 			if (this.items[i].name == name) {
 				// found the item
-				var button = jQuery(this.ulObj).find('[gtxmultisplititem='+i+']');
+				button = jQuery(this.ulObj).find('[gtxmultisplititem='+i+']');
 				this.setActiveDOMElement(button);
 				this.activeItem = name;
 				return;
@@ -501,28 +494,28 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 	 */
 	setActiveDOMElement: function(el) {
 		// when the component (or one of its owners) is currently hidden, we need to set the active item later
-    	var ct = this;
-    	while (typeof ct !== 'undefined') {
-    		if (ct.hidden) {
-    			this.activeDOMElement = el;
-    			return;
-    		}
-    		ct = ct.ownerCt;
-    	}
-
-		jQuery(this.ulObj).find('.GENTICS_multisplit-activeitem').removeClass('GENTICS_multisplit-activeitem');
-		if(el) {
-			el.parent().addClass('GENTICS_multisplit-activeitem');
+		var ct = this, top;
+		while (typeof ct !== 'undefined') {
+			if (ct.hidden) {
+				this.activeDOMElement = el;
+				return;
+			}
+			ct = ct.ownerCt;
 		}
 
-		if (el == null || el.parent().is(':hidden')) {
+		jQuery(this.ulObj).find('.aloha-multisplit-activeitem').removeClass('aloha-multisplit-activeitem');
+		if(el) {
+			el.parent().addClass('aloha-multisplit-activeitem');
+		}
+
+		if ( !el || el.parent().is(':hidden')) {
 			return;
 		}
 
 		// reposition multisplit contents to the active item
-		if (el && this.ulObj) {
+		if ( el && this.ulObj ) {
 			this.ulObj.css('margin-top', 0);
-			var top = el.position().top;
+			top = el.position().top;
 			this.ulObj.css({
 				'margin-top': - top + 6,
 				'height': 46 + top - 6
@@ -557,29 +550,27 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 
 		var o = this.wrapper.offset();
 
-    	// detach the ul element and reattach it onto the body
+		// detach the ul element and reattach it onto the body
 		this.ulObj
-		.appendTo(jQuery('body'))
-		.addClass('GENTICS_multisplit-expanded')
-		.mousedown(function (e) {
-			e.stopPropagation();
-		})
-
-		// relocate the ul
-		.css({
-			'top': o.top - 1,
-			'left': o.left - 1
-		})
-
-		// display expand animation
-		.animate({
-			height: this.ulObj.attr('scrollHeight')
-		});
+			.appendTo(jQuery('body'))
+			.addClass('aloha-multisplit-expanded')
+			.mousedown(function (e) {
+				e.stopPropagation();
+			})
+			.css({
+				// relocate the ul
+				'top': o.top - 1,
+				'left': o.left - 1
+			})
+			.animate({
+				// display expand animation
+				height: this.ulObj.attr('scrollHeight')
+			});
 
 		// TODO change to css
 		this.panelButton
-			.removeClass('GENTICS_multisplit_toggle_open')
-			.addClass('GENTICS_multisplit_toggle_close');
+			.removeClass('aloha-multisplit-toggle-open')
+			.addClass('aloha-multisplit-toggle-close');
 		this.panelOpened = true;
     },
 
@@ -594,13 +585,13 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 		}
 
 		this.ulObj
-			.removeClass('GENTICS_multisplit-expanded')
+			.removeClass('aloha-multisplit-expanded')
 			.appendTo(this.wrapper);
 
 		// TODO change to css
 		this.panelButton
-			.addClass('GENTICS_multisplit_toggle_open')
-			.removeClass('GENTICS_multisplit_toggle_close');
+			.addClass('aloha-multisplit-toggle-open')
+			.removeClass('aloha-multisplit-toggle-close');
 		this.panelOpened = false;
 	},
 
@@ -636,54 +627,47 @@ Ext.ux.GENTICSMultiSplitButton = Ext.extend(Ext.Component, {
 		}
 	}
 });
-Ext.reg('genticsmultisplitbutton', Ext.ux.GENTICSMultiSplitButton);
+Ext.reg('alohamultisplitbutton', Ext.ux.MultiSplitButton);
 
 /**
  * Aloha MultiSplit Button
- * @namespace GENTICS.Aloha.ui
+ * @namespace Aloha.ui
  * @class MultiSplitButton
  * @param {Object} properties properties object for the new multisplit button
- * 		however you just have to fill out the items property of this object
- * 		items : [{
- *   		'name'  : 'normal', // the buttons name, used to identify it
- *   		'tooltip' : 'Basic Text', // the buttons tooltip, which will be displayed on hover
- *   		'text'	: 'Basic Text', // text to display on wide buttons
- *	 		'icon'  : 'img/icon.jpg', // source for the icon
- *	 		'click' : function() { alert('normal'); } // callback if the button is clicked
- *   		'wide'  : false // whether it's a wide button, which would be dispalyed at the bottom
- * 		}]
+ *		however you just have to fill out the items property of this object
+ *		items : [{
+ *			'name'  : 'normal', // the buttons name, used to identify it
+ *			'tooltip' : 'Basic Text', // the buttons tooltip, which will be displayed on hover
+ *			'text'	: 'Basic Text', // text to display on wide buttons
+ *			'icon'  : 'img/icon.jpg', // source for the icon
+ *			'click' : function() { alert('normal'); } // callback if the button is clicked
+ *			'wide'  : false // whether it's a wide button, which would be dispalyed at the bottom
+ *		}]
  */
-GENTICS.Aloha.ui.MultiSplitButton = function(properties) {
-	/**
-	 * Items in the Multisplit Button
-	 * @hide
-	 */
-	this.items;
+Aloha.ui.MultiSplitButton = Class.extend({
+	_constructor: function(properties) {
+		/**
+		 * Items in the Multisplit Button
+		 * @hide
+		 */
+		this.items = [];
+		GENTICS.Utils.applyProperties(this, properties);
 
-	GENTICS.Utils.applyProperties(this, properties);
+		/**
+		 * unique id for all buttons
+		 * @hide
+		 */
+		this.id = this.generateId();
+	},
 
-	/**
-	 * unique id for all buttons
-	 * @hide
-	 */
-	this.id = this.generateId();
-};
-
-/**
- * id counter, for generation of unique id's for the buttons
- * @hide
- */
-GENTICS.Aloha.ui.MultiSplitButton.idCounter = 0;
-
-GENTICS.Aloha.ui.MultiSplitButton.prototype = {
 	/**
 	 * Generate a unique id for the button
 	 * @return unique id
 	 * @hide
 	 */
 	generateId: function () {
-		GENTICS.Aloha.ui.MultiSplitButton.idCounter = GENTICS.Aloha.ui.MultiSplitButton.idCounter + 1;
-		return 'GENTICS_Aloha_ui_MultiSplitButton_' + GENTICS.Aloha.ui.MultiSplitButton.idCounter;
+		Aloha.ui.MultiSplitButton.idCounter = Aloha.ui.MultiSplitButton.idCounter + 1;
+		return 'aloha-multisplitbutton' + Aloha.ui.MultiSplitButton.idCounter;
 	},
 
 	/**
@@ -693,7 +677,7 @@ GENTICS.Aloha.ui.MultiSplitButton.prototype = {
 	 */
 	getExtConfigProperties: function() {
 		return {
-			'xtype' : 'genticsmultisplitbutton',
+			'xtype' : 'alohamultisplitbutton',
 			'items' : this.items,
 			'id' : this.id
 		};
@@ -739,5 +723,13 @@ GENTICS.Aloha.ui.MultiSplitButton.prototype = {
 	hideItem: function(name) {
 		this.extButton.hideItem(name);
 	}
-};
+});
+
+
+/**
+ * id counter, for generation of unique id's for the buttons
+ * @hide
+ */
+Aloha.ui.MultiSplitButton.idCounter = 0;
+
 })(window);

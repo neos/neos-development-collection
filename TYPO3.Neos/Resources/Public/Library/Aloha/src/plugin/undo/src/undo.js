@@ -4,76 +4,141 @@
 * aloha-sales@gentics.com
 * Licensed unter the terms of http://www.aloha-editor.com/license.html
 */
-/**
- * register the plugin with unique name
- */
-GENTICS.Aloha.Undo = new GENTICS.Aloha.Plugin('undo');
 
-/**
- * Configure the available languages
- */
-GENTICS.Aloha.Undo.languages = ['en', 'de'];
+(function(window, undefined){
+	"use strict";
+	var
+		jQuery = window.alohaQuery, $ = jQuery,
+		GENTICS = window.GENTICS,
+	    Aloha = window.Aloha,
+	    dmp = new diff_match_patch,
+	    resetFlag = false;
 
-/**
- * Initialize the plugin and set initialize flag on true
- */
-GENTICS.Aloha.Undo.init = function () {
-
-	var stack = new Undo.Stack(),
-		EditCommand = Undo.Command.extend({
-			constructor: function(editable, oldValue) {
-				this.editable = editable;
-				this.oldValue = oldValue;
-				this.newValue = editable.getContents();
-			},
-			execute: function() {
-			},
-			undo: function() {
-				this.reset(this.oldValue);
-			},
-
-			redo: function() {
-				this.reset(this.newValue);
-			},
-			reset: function(val) {
-				this.editable.blur();
-				this.editable.obj.html(val);
-				this.editable.activate();
-				// restore selection
+	function reversePatch(patch) {
+		var reversed = dmp.patch_deepCopy(patch);
+		for (var i = 0; i < reversed.length; i++) {
+			for (var j = 0; j < reversed[i].diffs.length; j++) {
+				reversed[i].diffs[j][0] = -(reversed[i].diffs[j][0]);
 			}
-		});
+		}
+		return reversed;
+	}
 
-		stack.changed = function() {
-			// update UI
-		};
+	/**
+	 * register the plugin with unique name
+     */
+	Aloha.Undo = new (Aloha.Plugin.extend({
+		_constructor: function(){
+			this._super('undo');
+		},
 
-		$(document).keydown(function(event) {
-			if (!event.metaKey || event.keyCode != 90) {
-				return;
-			}
-			event.preventDefault();
-			if (event.shiftKey) {
-				stack.canRedo() && stack.redo();
-			} else {
-				stack.canUndo() && stack.undo();
-			}
-		});
+		/**
+		 * Configure the available languages
+		 */
+		languages: ['en', 'de'],
 
+		/**
+		 * Initialize the plugin and set initialize flag on true
+		 */
+		init: function () {
+			var stack = new Undo.Stack(),
+			    EditCommand = Undo.Command.extend({
+					constructor: function(editable, patch) {
+						this.editable = editable;
+						this.patch = patch;
+					},
+					execute: function() {
+						//command object is created after execution.
+					},
+					undo: function() {
+						this.phase(reversePatch(this.patch));
+					},
+					redo: function() {
+						this.phase(this.patch);
+					},
+					phase: function(patch) {
+						var contents = this.editable.getContents(),
+						    applied = dmp.patch_apply(patch, contents),
+						    newValue = applied[0],
+						    didNotApply = applied[1];
+						if (didNotApply.length) {
+							//error
+						}
+						this.reset(newValue);
+					},
+					reset: function(val) {
+						//we have to trigger a smartContentChange event
+						//after doing an undo or redo, but we mustn't
+						//push new commands on the stack, because there
+						//are no new commands, just the old commands on
+						//the stack that are undone or redone.
+						resetFlag = true;
 
-	GENTICS.Aloha.EventRegistry.subscribe(GENTICS.Aloha, 'smartContentChanged', function(jevent, aevent) {
+						var reactivate = null;
+						if (Aloha.getActiveEditable() === this.editable) {
+							Aloha.deactivateEditable();
+							reactivate = this.editable;
+						}
 
-		// workaround because on redo the editable must be blured.
-		if ( aevent.triggerType != 'blur') stack.execute( new EditCommand( aevent.editable, aevent.snapshotContent) );
+						this.editable.obj.html(val);
 
-	});
+						if (null !== reactivate) {
+							reactivate.activate();
+						}
 
+						//TODO: this is a call to an internal
+						//function. There should be an API to generate
+						//new smartContentChangeEvents.
+						this.editable.smartContentChange({type : 'blur'});
 
-};
+						resetFlag = false;
+					}
+				});
 
-/**
-* toString method
-* @return string
-*/
-GENTICS.Aloha.Undo.toString = function () {
-	return 'undo';
-};
+			stack.changed = function() {
+				// update UI
+			};
+
+			$(document).keydown(function(event) {
+				if (!event.metaKey || event.keyCode != 90) {
+					return;
+				}
+				event.preventDefault();
+
+				//Before doing an undo, bring the smartContentChange
+				//event up to date.
+				if ( null !== Aloha.getActiveEditable() ) {
+					Aloha.getActiveEditable().smartContentChange({type : 'blur'});
+				}
+
+				if (event.shiftKey) {
+					stack.canRedo() && stack.redo();
+				} else {
+					stack.canUndo() && stack.undo();
+				}
+			});
+
+			Aloha.bind('alohaSmartContentChanged', function(jevent, aevent) {
+				if (resetFlag) {
+					return;
+				}
+				var oldValue = aevent.snapshotContent,
+				newValue = aevent.editable.getContents(),
+				patch = dmp.patch_make(oldValue, newValue);
+				// only push an EditCommand if something actually changed.
+				if (0 !== patch.length) {
+					stack.execute( new EditCommand( aevent.editable, patch ) );
+				}
+			});
+		},
+
+		/**
+		 * toString method
+		 * @return string
+		 */
+		toString: function () {
+			return 'undo';
+		}
+
+	}))();
+})(window);

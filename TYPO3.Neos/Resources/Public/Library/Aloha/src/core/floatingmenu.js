@@ -1,55 +1,45 @@
 /*!
-*   This file is part of Aloha Editor
-*   Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
-*   Licensed unter the terms of http://www.aloha-editor.com/license.html
-*//*
-*	Aloha Editor is free software: you can redistribute it and/or modify
-*   it under the terms of the GNU Affero General Public License as published by
-*   the Free Software Foundation, either version 3 of the License, or
-*   (at your option) any later version.*
-*
-*   Aloha Editor is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU Affero General Public License for more details.
-*
-*   You should have received a copy of the GNU Affero General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
+ * This file is part of Aloha Editor
+ * Author & Copyright (c) 2010 Gentics Software GmbH, aloha@gentics.com
+ * Licensed unter the terms of http://www.aloha-editor.com/license.html
+ */
 (function(window, undefined) {
+	"use strict";
 	var
-		$ = jQuery = window.alohaQuery,
+		jQuery = window.alohaQuery, $ = jQuery,
 		GENTICS = window.GENTICS,
-		Aloha = GENTICS.Aloha;
+		Aloha = window.Aloha,
+		Ext = window.Ext,
+		console = window.console||false,
+		Class = window.Class;
 
 /**
  * Aloha's Floating Menu
- * @namespace GENTICS.Aloha
+ * @namespace Aloha
  * @class FloatingMenu
  * @singleton
  */
-GENTICS.Aloha.FloatingMenu = {};
+Aloha.FloatingMenu = {};
 
 /**
  * Define the default scopes
  * @property
  * @type Object
  */
-GENTICS.Aloha.FloatingMenu.scopes = {
-	'GENTICS.Aloha.empty' : {
-		'name' : 'GENTICS.Aloha.empty',
+Aloha.FloatingMenu.scopes = {
+	'Aloha.empty' : {
+		'name' : 'Aloha.empty',
 		'extendedScopes' : [],
 		'buttons' : []
 	},
-	'GENTICS.Aloha.global' : {
-		'name' : 'GENTICS.Aloha.global',
-		'extendedScopes' : ['GENTICS.Aloha.empty'],
+	'Aloha.global' : {
+		'name' : 'Aloha.global',
+		'extendedScopes' : ['Aloha.empty'],
 		'buttons' : []
 	},
-	'GENTICS.Aloha.continuoustext' : {
-		'name' : 'GENTICS.Aloha.continuoustext',
-		'extendedScopes' : ['GENTICS.Aloha.global'],
+	'Aloha.continuoustext' : {
+		'name' : 'Aloha.continuoustext',
+		'extendedScopes' : ['Aloha.global'],
 		'buttons' : []
 	}
 };
@@ -58,80 +48,82 @@ GENTICS.Aloha.FloatingMenu.scopes = {
  * Array of tabs within the floatingmenu
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.tabs = [];
+Aloha.FloatingMenu.tabs = [];
 
 /**
  * 'Map' of tabs (for easy access)
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.tabMap = {};
+Aloha.FloatingMenu.tabMap = {};
 
 /**
  * Flag to mark whether the floatingmenu is initialized
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.initialized = false;
+Aloha.FloatingMenu.initialized = false;
 
 /**
  * Array containing all buttons
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.allButtons = [];
+Aloha.FloatingMenu.allButtons = [];
 
 /**
  * top part of the floatingmenu position
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.top = 100;
+Aloha.FloatingMenu.top = 100;
 
 /**
  * left part of the floatingmenu position
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.left = 100;
+Aloha.FloatingMenu.left = 100;
 
 /**
  * store pinned status - true, if the FloatingMenu is pinned
  * @property
  * @type boolean
  */
-GENTICS.Aloha.FloatingMenu.pinned = false;
+Aloha.FloatingMenu.pinned = false;
 
 /**
  * just a reference to the jQuery(window) object, which is used quite often
  */
-GENTICS.Aloha.FloatingMenu.window = jQuery(window);
+Aloha.FloatingMenu.window = jQuery(window);
 
 /**
  * Initialize the floatingmenu
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.init = function() {
+Aloha.FloatingMenu.init = function() {
+	//debugger;
+	//console.log('jQuery.store:', jQuery.store, window.jQuery, window.alohaQuery);
 	jQuery.storage = new jQuery.store();
-	this.currentScope = 'GENTICS.Aloha.global';
+	this.currentScope = 'Aloha.global';
 	var that = this;
 	this.window.unload(function () {
 		// store fm position if the panel is pinned to be able to restore it next time
 		if (that.pinned) {
 			var offset = that.obj.offset();
-			jQuery.storage.set('GENTICS.Aloha.FloatingMenu.pinned', 'true');
-			jQuery.storage.set('GENTICS.Aloha.FloatingMenu.top', offset.top);
-			jQuery.storage.set('GENTICS.Aloha.FloatingMenu.left', offset.left);
-			if (GENTICS.Aloha.Log.isInfoEnabled()) {
-				GENTICS.Aloha.Log.info(this, 'stored FloatingMenu pinned position {' + offset.left
+			jQuery.storage.set('Aloha.FloatingMenu.pinned', 'true');
+			jQuery.storage.set('Aloha.FloatingMenu.top', offset.top);
+			jQuery.storage.set('Aloha.FloatingMenu.left', offset.left);
+			if (Aloha.Log.isInfoEnabled()) {
+				Aloha.Log.info(this, 'stored FloatingMenu pinned position {' + offset.left
 						+ ', ' + offset.top + '}');
 			}
 		} else {
 			// delete old localStorages
-			jQuery.storage.del('GENTICS.Aloha.FloatingMenu.pinned');
-			jQuery.storage.del('GENTICS.Aloha.FloatingMenu.top');
-			jQuery.storage.del('GENTICS.Aloha.FloatingMenu.left');
+			jQuery.storage.del('Aloha.FloatingMenu.pinned');
+			jQuery.storage.del('Aloha.FloatingMenu.top');
+			jQuery.storage.del('Aloha.FloatingMenu.left');
 		}
 		if (that.userActivatedTab) {
-			jQuery.storage.set('GENTICS.Aloha.FloatingMenu.activeTab', that.userActivatedTab);
+			jQuery.storage.set('Aloha.FloatingMenu.activeTab', that.userActivatedTab);
 		}
 	}).resize(function () {
-		var target = that.calcFloatTarget(GENTICS.Aloha.Selection.getRangeObject());
+		var target = that.calcFloatTarget(Aloha.Selection.getRangeObject());
 		if (target) {
 			that.floatTo(target);
 		}
@@ -144,26 +136,27 @@ GENTICS.Aloha.FloatingMenu.init = function() {
  * jQuery reference to the extjs tabpanel
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.obj = null;
+Aloha.FloatingMenu.obj = null;
 
 /**
  * jQuery reference to the shadow obj
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.shadow = null;
+Aloha.FloatingMenu.shadow = null;
 
 /**
  * jQuery reference to the panels body wrap div
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.panelBody = null;
+Aloha.FloatingMenu.panelBody = null;
 
 /**
  * Generate the rendered component for the floatingmenu
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.generateComponent = function () {
-	var that = this;
+Aloha.FloatingMenu.generateComponent = function () {
+	//debugger;
+	var that = this, pinTab;
 
 	// Initialize and configure the tooltips
 	Ext.QuickTips.init();
@@ -174,87 +167,94 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 	if (this.extTabPanel) {
 		// TODO dispose of the ext component
 	}
-
-	// generate the tabpanel object
-	this.extTabPanel = new Ext.TabPanel({
-		activeTab: 0,
-		width: 400, // 336px this fits the multisplit button and 6 small buttons placed in 3 cols
-		plain: false,
-		draggable: {
-			insertProxy: false,
-			onDrag : function(e) {
-				var pel = this.proxy.getEl();
-				this.x = pel.getLeft(true);
-				this.y = pel.getTop(true);
-				GENTICS.Aloha.FloatingMenu.shadow.hide();
+	else {
+		// generate the tabpanel object
+		this.extTabPanel = new Ext.TabPanel({
+			activeTab: 0,
+			width: 400, // 336px this fits the multisplit button and 6 small buttons placed in 3 cols
+			plain: false,
+			draggable: {
+				insertProxy: false,
+				onDrag : function(e) {
+					var pel = this.proxy.getEl();
+					this.x = pel.getLeft(true);
+					this.y = pel.getTop(true);
+					Aloha.FloatingMenu.shadow.hide();
+				},
+				endDrag : function(e) {
+					var top = (Aloha.FloatingMenu.pinned) ? this.y - jQuery(document).scrollTop() : this.y;
+					
+					that.left = this.x;
+					that.top = top;
+					this.panel.setPosition(this.x, top);
+					Aloha.FloatingMenu.refreshShadow();
+					Aloha.FloatingMenu.shadow.show();
+				}
 			},
-			endDrag : function(e) {
-				var top = (GENTICS.Aloha.FloatingMenu.pinned) ? this.y - jQuery(document).scrollTop() : this.y;
-
-				that.left = this.x;
-				that.top = top;
-				this.panel.setPosition(this.x, top);
-				GENTICS.Aloha.FloatingMenu.refreshShadow();
-				GENTICS.Aloha.FloatingMenu.shadow.show();
-			}
-		},
-		floating: true,
-		defaults: {
-			autoScroll: true
-		},
-		layoutOnTabChange : true,
-		shadow: false,
-		cls: 'GENTICS_floatingmenu ext-root',
-		listeners : {
-			'tabchange' : {
-				'fn' : function(tabPanel, tab) {
-					if (tab.title != that.autoActivatedTab) {
-						if (GENTICS.Aloha.Log.isDebugEnabled()) {
-							GENTICS.Aloha.Log.debug(that, 'User selected tab ' + tab.title);
-						}
-						// remember the last user-selected tab
-						that.userActivatedTab = tab.title;
-					} else {
-						if (GENTICS.Aloha.Log.isDebugEnabled()) {
-							GENTICS.Aloha.Log.debug(that, 'Tab ' + tab.title + ' was activated automatically');
-						}
-					}
-					that.autoActivatedTab = undefined;
-
-					// ok, this is kind of a hack: when the tab changes, we check all buttons for multisplitbuttons (which have the method setActiveDOMElement).
-					// if a DOM Element is queued to be set active, we try to do this now.
-					// the reason for this is that the active DOM element can only be set when the multisplit button is currently visible.
-					jQuery.each(that.allButtons, function(index, buttonInfo) {
-						if (typeof buttonInfo.button !== 'undefined'
-							&& typeof buttonInfo.button.extButton !== 'undefined'
-							&& typeof buttonInfo.button.extButton.setActiveDOMElement === 'function') {
-							if (typeof buttonInfo.button.extButton.activeDOMElement !== 'undefined') {
-								buttonInfo.button.extButton.setActiveDOMElement(buttonInfo.button.extButton.activeDOMElement);
+			floating: true,
+			defaults: {
+				autoScroll: true
+			},
+			layoutOnTabChange : true,
+			shadow: false,
+			cls: 'aloha-floatingmenu ext-root',
+			listeners : {
+				'tabchange' : {
+					'fn' : function(tabPanel, tab) {
+						if (tab.title != that.autoActivatedTab) {
+							if (Aloha.Log.isDebugEnabled()) {
+								Aloha.Log.debug(that, 'User selected tab ' + tab.title);
+							}
+							// remember the last user-selected tab
+							that.userActivatedTab = tab.title;
+						} else {
+							if (Aloha.Log.isDebugEnabled()) {
+								Aloha.Log.debug(that, 'Tab ' + tab.title + ' was activated automatically');
 							}
 						}
-					});
-
-					// adapt the shadow
-					GENTICS.Aloha.FloatingMenu.shadow.show();
-					GENTICS.Aloha.FloatingMenu.refreshShadow();
+						that.autoActivatedTab = undefined;
+						
+						// ok, this is kind of a hack: when the tab changes, we check all buttons for multisplitbuttons (which have the method setActiveDOMElement).
+						// if a DOM Element is queued to be set active, we try to do this now.
+						// the reason for this is that the active DOM element can only be set when the multisplit button is currently visible.
+						jQuery.each(that.allButtons, function(index, buttonInfo) {
+							if (typeof buttonInfo.button !== 'undefined'
+								&& typeof buttonInfo.button.extButton !== 'undefined'
+									&& typeof buttonInfo.button.extButton.setActiveDOMElement === 'function') {
+								if (typeof buttonInfo.button.extButton.activeDOMElement !== 'undefined') {
+									buttonInfo.button.extButton.setActiveDOMElement(buttonInfo.button.extButton.activeDOMElement);
+								}
+							}
+						});
+						
+						// adapt the shadow
+						Aloha.FloatingMenu.shadow.show();
+						Aloha.FloatingMenu.refreshShadow();
+					}
 				}
-			}
-		},
-		enableTabScroll : true
-	});
-
+			},
+			enableTabScroll : true
+		});
+		
+		
+	}
 	// add the tabs
 	jQuery.each(this.tabs, function(index, tab) {
 		// let each tab generate its ext component and add them to the panel
-		that.extTabPanel.add(tab.getExtComponent());
+		try {
+			that.extTabPanel.add(tab.getExtComponent());
+		} catch(e) {
+			Aloha.Log.error(that,"Error while inserting tab: " + e);
+			console.log(tab.getExtComponent());
+		}
 	});
 
 	// add the dropshadow
-	this.shadow = jQuery('<div id="GENTICS_floatingmenu_shadow" class="GENTICS_shadow">&#160;</div>');
+	this.shadow = jQuery('<div id="aloha-floatingmenu-shadow" class="aloha-shadow">&#160;</div>');
 	jQuery('body').append(this.shadow);
 
 	// add an empty pin tab item, store reference
-	var pinTab = this.extTabPanel.add({
+	pinTab = this.extTabPanel.add({
 		title : '&#160;'
 	});
 
@@ -263,7 +263,7 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 
 	// finish the pin element after the FM has rendered (before there are noe html contents to be manipulated
 	jQuery(pinTab.tabEl)
-		.addClass('GENTICS_floatingmenu_pin')
+		.addClass('aloha-floatingmenu-pin')
 		.html('&#160;')
 		.mousedown(function (e) {
 			that.togglePin();
@@ -271,7 +271,7 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 		});
 
 	// a reference to the panels body needed for shadow size & position
-	this.panelBody = jQuery('div.GENTICS_floatingmenu div.x-tab-panel-bwrap');
+	this.panelBody = jQuery('div.aloha-floatingmenu div.x-tab-panel-bwrap');
 
 	// do the visibility
 	this.doLayout();
@@ -280,11 +280,11 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 	// this has to be done AFTER the tab panel has been rendered
 	this.obj = jQuery(this.extTabPanel.getEl().dom);
 
-	if (jQuery.storage.get('GENTICS.Aloha.FloatingMenu.pinned') == 'true') {
+	if (jQuery.storage.get('Aloha.FloatingMenu.pinned') == 'true') {
 		this.togglePin();
 
-		this.top = parseInt(jQuery.storage.get('GENTICS.Aloha.FloatingMenu.top'));
-		this.left = parseInt(jQuery.storage.get('GENTICS.Aloha.FloatingMenu.left'));
+		this.top = parseInt(jQuery.storage.get('Aloha.FloatingMenu.top'),10);
+		this.left = parseInt(jQuery.storage.get('Aloha.FloatingMenu.left'),10);
 
 		// do some positioning fixes
 		if (this.top < 30) {
@@ -294,16 +294,16 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 			this.left = 0;
 		}
 
-		if (GENTICS.Aloha.Log.isInfoEnabled()) {
-			GENTICS.Aloha.Log.info(this, 'restored FloatingMenu pinned position {' + this.left + ', ' + this.top + '}');
+		if (Aloha.Log.isInfoEnabled()) {
+			Aloha.Log.info(this, 'restored FloatingMenu pinned position {' + this.left + ', ' + this.top + '}');
 		}
 
 		this.refreshShadow();
 	}
 
 	// set the user activated tab stored in a localStorage
-	if (jQuery.storage.get('GENTICS.Aloha.FloatingMenu.activeTab')) {
-		this.userActivatedTab = jQuery.storage.get('GENTICS.Aloha.FloatingMenu.activeTab');
+	if (jQuery.storage.get('Aloha.FloatingMenu.activeTab')) {
+		this.userActivatedTab = jQuery.storage.get('Aloha.FloatingMenu.activeTab');
 	}
 
 	// for now, position the panel somewhere
@@ -313,20 +313,21 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
 	// a click into the floatingmenu to be a click into nowhere (which would
 	// deactivate the editables)
 	this.obj.mousedown(function (e) {
+		e.originalEvent.stopSelectionUpdate = true;
 		e.stopPropagation();
+//		e.stopSelectionUpdate = true;
 	});
-
+	this.obj.mouseup(function (e) {
+		e.originalEvent.stopSelectionUpdate = true;
+	});
 	// listen to selectionChanged event
-	GENTICS.Aloha.EventRegistry.subscribe(
-		GENTICS.Aloha,
-		'selectionChanged',
-		function(event, rangeObject) {
-			if (!that.pinned) {
-				var pos = that.calcFloatTarget(rangeObject);
-				if (pos) {
-					that.floatTo(pos);
-				}
+	Aloha.bind('aloha-selection-changed',function(event, rangeObject) {
+		if (!that.pinned) {
+			var pos = that.calcFloatTarget(rangeObject);
+			if (pos) {
+				that.floatTo(pos);
 			}
+		}
 	});
 };
 
@@ -336,7 +337,7 @@ GENTICS.Aloha.FloatingMenu.generateComponent = function () {
  * position calculation is based on this.top and this.left coordinates
  * @method
  */
-GENTICS.Aloha.FloatingMenu.refreshShadow = function (resize) {
+Aloha.FloatingMenu.refreshShadow = function (resize) {
 	if (this.panelBody) {
 		var props = {
 			'top': this.top + 24, // 24px top offset to reflect tab bar height
@@ -348,7 +349,7 @@ GENTICS.Aloha.FloatingMenu.refreshShadow = function (resize) {
 			props.height = this.panelBody.height() + 'px';
 		}
 
-		GENTICS.Aloha.FloatingMenu.shadow.css(props);
+		Aloha.FloatingMenu.shadow.css(props);
 	}
 };
 
@@ -356,10 +357,10 @@ GENTICS.Aloha.FloatingMenu.refreshShadow = function (resize) {
  * toggles the pinned status of the floating menu
  * @method
  */
-GENTICS.Aloha.FloatingMenu.togglePin = function() {
-	var el = jQuery('.GENTICS_floatingmenu_pin');
+Aloha.FloatingMenu.togglePin = function() {
+	var el = jQuery('.aloha-floatingmenu-pin');
 	if (this.pinned) {
-		el.removeClass('GENTICS_floatingmenu_pinned');
+		el.removeClass('aloha-floatingmenu-pinned');
 		this.top = this.obj.offset().top;
 
 		this.obj.removeClass('fixed').css({
@@ -371,7 +372,7 @@ GENTICS.Aloha.FloatingMenu.togglePin = function() {
 
 		this.pinned = false;
 	} else {
-		el.addClass('GENTICS_floatingmenu_pinned');
+		el.addClass('aloha-floatingmenu-pinned');
 		this.top = this.obj.offset().top - this.window.scrollTop();
 
 		this.obj.addClass('fixed').css({
@@ -379,7 +380,7 @@ GENTICS.Aloha.FloatingMenu.togglePin = function() {
 		});
 
 		// do the same for the shadow
-		this.shadow.addClass('fixed');props.start
+		this.shadow.addClass('fixed');//props.start
 		this.refreshShadow();
 
 		this.pinned = true;
@@ -394,9 +395,9 @@ GENTICS.Aloha.FloatingMenu.togglePin = function() {
  *            only one scope is extended, or omitted if the scope should extend
  *            the empty scope
  */
-GENTICS.Aloha.FloatingMenu.createScope = function(scope, extendedScopes) {
+Aloha.FloatingMenu.createScope = function(scope, extendedScopes) {
 	if (typeof extendedScopes === 'undefined') {
-		extendedScopes = ['GENTICS.Aloha.empty'];
+		extendedScopes = ['Aloha.empty'];
 	} else if (typeof extendedScopes === 'string') {
 		extendedScopes = [extendedScopes];
 	}
@@ -415,19 +416,22 @@ GENTICS.Aloha.FloatingMenu.createScope = function(scope, extendedScopes) {
  * Adds a button to the floatingmenu
  * @method
  * @param {String} scope the scope for the button, should be generated before (either by core or the plugin)
- * @param {Button} button instance of GENTICS.Aloha.ui.button to add at the floatingmenu
+ * @param {Button} button instance of Aloha.ui.button to add at the floatingmenu
  * @param {String} tab label of the tab to which the button is added
  * @param {int} group index of the button group in the tab, lowest index is left
  */
-GENTICS.Aloha.FloatingMenu.addButton = function(scope, button, tab, group) {
+Aloha.FloatingMenu.addButton = function(scope, button, tab, group) {
 	// check whether the scope exists
-	var scopeObject = this.scopes[scope];
+	var
+		scopeObject = this.scopes[scope],
+		buttonInfo, tabObject, groupObject;
+	
 	if (typeof scopeObject === 'undefined') {
 		// TODO log an error and exit
 	}
 
 	// generate a buttonInfo object
-	var buttonInfo = {'button' : button, 'scopeVisible' : false};
+	buttonInfo = {'button' : button, 'scopeVisible' : false};
 
 	// add the button to the list of all buttons
 	this.allButtons.push(buttonInfo);
@@ -436,16 +440,16 @@ GENTICS.Aloha.FloatingMenu.addButton = function(scope, button, tab, group) {
 	scopeObject.buttons.push(buttonInfo);
 
 	// get the tab object
-	var tabObject = this.tabMap[tab];
+	tabObject = this.tabMap[tab];
 	if (typeof tabObject === 'undefined') {
 		// the tab object does not yet exist, so create a new tab and add it to the list
-		tabObject = new GENTICS.Aloha.FloatingMenu.Tab(tab);
+		tabObject = new Aloha.FloatingMenu.Tab(tab);
 		this.tabs.push(tabObject);
 		this.tabMap[tab] = tabObject;
 	}
 
 	// get the group
-	var groupObject = tabObject.getGroup(group);
+	groupObject = tabObject.getGroup(group);
 
 	// now add the button to the group
 	groupObject.addButton(buttonInfo);
@@ -460,17 +464,18 @@ GENTICS.Aloha.FloatingMenu.addButton = function(scope, button, tab, group) {
  * Recalculate the visibility of tabs, groups and buttons (depending on scope and button hiding)
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.doLayout = function () {
-	if (GENTICS.Aloha.Log.isDebugEnabled()) {
-		GENTICS.Aloha.Log.debug(this, 'doLayout called for FloatingMenu, scope is ' + this.currentScope);
+Aloha.FloatingMenu.doLayout = function () {
+	if (Aloha.Log.isDebugEnabled()) {
+		Aloha.Log.debug(this, 'doLayout called for FloatingMenu, scope is ' + this.currentScope);
 	}
-	if (!this.extTabPanel) return;
+	//debugger;
 	var that = this,
 		firstVisibleTab = false,
 		activeExtTab = this.extTabPanel.getActiveTab(),
 		activeTab = false,
 		floatingMenuVisible = false,
-		showUserActivatedTab = false;
+		showUserActivatedTab = false,
+		pos;
 
 	// let the tabs layout themselves
 	jQuery.each(this.tabs, function(index, tab) {
@@ -489,14 +494,14 @@ GENTICS.Aloha.FloatingMenu.doLayout = function () {
 
 			// make sure the tabstrip is visible
 			if (!tabVisible) {
-				if (GENTICS.Aloha.Log.isDebugEnabled()) {
-					GENTICS.Aloha.Log.debug(that, 'showing tab strip for tab ' + tab.label);
+				if (Aloha.Log.isDebugEnabled()) {
+					Aloha.Log.debug(that, 'showing tab strip for tab ' + tab.label);
 				}
 				that.extTabPanel.unhideTabStripItem(tab.extPanel);
 			}
 
 			// remember the first visible tab
-			if (firstVisibleTab == false) {
+			if (!firstVisibleTab) {
 				// this is the first visible tab (in case we need to switch to it)
 				firstVisibleTab = tab;
 			}
@@ -508,8 +513,8 @@ GENTICS.Aloha.FloatingMenu.doLayout = function () {
 		} else {
 			// make sure the tabstrip is hidden
 			if (tabVisible) {
-				if (GENTICS.Aloha.Log.isDebugEnabled()) {
-					GENTICS.Aloha.Log.debug(that, 'hiding tab strip for tab ' + tab.label);
+				if (Aloha.Log.isDebugEnabled()) {
+					Aloha.Log.debug(that, 'hiding tab strip for tab ' + tab.label);
 				}
 				that.extTabPanel.hideTabStripItem(tab.extPanel);
 			}
@@ -518,15 +523,15 @@ GENTICS.Aloha.FloatingMenu.doLayout = function () {
 
 	// check whether the last tab which was selected by the user is visible and not the active tab
 	if (showUserActivatedTab) {
-		if (GENTICS.Aloha.Log.isDebugEnabled()) {
-			GENTICS.Aloha.Log.debug(this, 'Setting active tab to ' + showUserActivatedTab.label);
+		if (Aloha.Log.isDebugEnabled()) {
+			Aloha.Log.debug(this, 'Setting active tab to ' + showUserActivatedTab.label);
 		}
 		this.extTabPanel.setActiveTab(showUserActivatedTab.extPanel);
 	} else if (typeof activeTab === 'object' && typeof firstVisibleTab === 'object') {
 		// now check the currently visible tab, whether it is visible and enabled
 		if (!activeTab.visible) {
-			if (GENTICS.Aloha.Log.isDebugEnabled()) {
-				GENTICS.Aloha.Log.debug(this, 'Setting active tab to ' + firstVisibleTab.label);
+			if (Aloha.Log.isDebugEnabled()) {
+				Aloha.Log.debug(this, 'Setting active tab to ' + firstVisibleTab.label);
 			}
 			this.autoActivatedTab = firstVisibleTab.extPanel.title;
 			this.extTabPanel.setActiveTab(firstVisibleTab.extPanel);
@@ -542,7 +547,7 @@ GENTICS.Aloha.FloatingMenu.doLayout = function () {
 		this.extTabPanel.setPosition(this.left, this.top);
 	} else if (!floatingMenuVisible && !this.extTabPanel.hidden) {
 		// remember the current position
-		var pos = this.extTabPanel.getPosition(true);
+		pos = this.extTabPanel.getPosition(true);
 		// restore previous position if the fm was pinned
 		this.left = pos[0] < 0 ? 100 : pos[0];
 		this.top = pos[1] < 0 ? 100 : pos[1];
@@ -559,7 +564,7 @@ GENTICS.Aloha.FloatingMenu.doLayout = function () {
  * @method
  * @param {String} scope name of the new current scope
  */
-GENTICS.Aloha.FloatingMenu.setScope = function(scope) {
+Aloha.FloatingMenu.setScope = function(scope) {
 	// get the scope object
 	var scopeObject = this.scopes[scope];
 
@@ -586,7 +591,7 @@ GENTICS.Aloha.FloatingMenu.setScope = function(scope) {
  * @param scopeObject scope object
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.setButtonScopeVisibility = function(scopeObject) {
+Aloha.FloatingMenu.setButtonScopeVisibility = function(scopeObject) {
 	var that = this;
 
 	// set all buttons in the given scope to be visible
@@ -613,7 +618,7 @@ GENTICS.Aloha.FloatingMenu.setButtonScopeVisibility = function(scopeObject) {
  * @return dom object which qualifies as a float target
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.nextFloatTargetObj = function (obj, limitObj) {
+Aloha.FloatingMenu.nextFloatTargetObj = function (obj, limitObj) {
 	// if we've hit the limit object we don't care for it's type
 	if (!obj || obj == limitObj) {
 		return obj;
@@ -634,10 +639,8 @@ GENTICS.Aloha.FloatingMenu.nextFloatTargetObj = function (obj, limitObj) {
 		case 'ul':
 		case 'ol':
 			return obj;
-			break;
 		default:
 			return this.nextFloatTargetObj(obj.parentNode, limitObj);
-			break;
 	}
 };
 
@@ -647,26 +650,30 @@ GENTICS.Aloha.FloatingMenu.nextFloatTargetObj = function (obj, limitObj) {
  * @return object containing x and y coordinates, like { x : 20, y : 43 }
  * @hide
  */
-GENTICS.Aloha.FloatingMenu.calcFloatTarget = function(range) {
+Aloha.FloatingMenu.calcFloatTarget = function(range) {
+	var
+		i, editableLength,
+		targetObj, scrollTop, y;
+
 	// TODO in IE8 somteimes a broken range is handed to this function - investigate this
-	if (!GENTICS.Aloha.activeEditable || typeof range.getCommonAncestorContainer === 'undefined') {
+	if (!Aloha.activeEditable || typeof range.getCommonAncestorContainer === 'undefined') {
 		return false;
 	}
 
 	// check if the designated editable is disabled
-	for (var i = 0, editableLength = GENTICS.Aloha.editables.length; i < editableLength; i++) {
-		if (GENTICS.Aloha.editables[i].obj.get(0) == range.limitObject &&
-				GENTICS.Aloha.editables[i].isDisabled()) {
+	for ( i = 0, editableLength = Aloha.editables.length; i < editableLength; i++) {
+		if (Aloha.editables[i].obj.get(0) == range.limitObject &&
+				Aloha.editables[i].isDisabled()) {
 			return false;
 		}
 	}
 
-	var targetObj = jQuery(this.nextFloatTargetObj(range.getCommonAncestorContainer(), range.limitObject)),
-		scrollTop = GENTICS.Utils.Position.Scroll.top;
+	targetObj = jQuery(this.nextFloatTargetObj(range.getCommonAncestorContainer(), range.limitObject));
+	scrollTop = GENTICS.Utils.Position.Scroll.top;
 	if (!targetObj || !targetObj.offset()) {
 		return false;
 	}
-	var y = targetObj.offset().top - this.obj.height() - 50; // 50px offset above the current obj to have some space above
+	y = targetObj.offset().top - this.obj.height() - 50; // 50px offset above the current obj to have some space above
 
 	// if the floating menu would be placed higher than the top of the screen...
 	if ( y < scrollTop) {
@@ -680,7 +687,7 @@ GENTICS.Aloha.FloatingMenu.calcFloatTarget = function(range) {
 	}
 
 	return {
-		x : GENTICS.Aloha.activeEditable.obj.offset().left,
+		x : Aloha.activeEditable.obj.offset().left,
 		y : y
 	};
 };
@@ -691,7 +698,7 @@ GENTICS.Aloha.FloatingMenu.calcFloatTarget = function(range) {
  * @method
  * @param {Object} object coordinate object which has a x and y property
  */
-GENTICS.Aloha.FloatingMenu.floatTo = function(position) {
+Aloha.FloatingMenu.floatTo = function(position) {
 	// no floating if the panel is pinned
 	if (this.pinned) {
 		return;
@@ -725,19 +732,19 @@ GENTICS.Aloha.FloatingMenu.floatTo = function(position) {
 
 /**
  * Constructor for a floatingmenu tab
- * @namespace GENTICS.Aloha.FloatingMenu
+ * @namespace Aloha.FloatingMenu
  * @class Tab
  * @constructor
  * @param {String} label label of the tab
  */
-GENTICS.Aloha.FloatingMenu.Tab = function(label) {
-	this.label = label;
-	this.groups = [];
-	this.groupMap = {};
-	this.visible = true;
-};
+Aloha.FloatingMenu.Tab = Class.extend({
+	_constructor: function(label) {
+		this.label = label;
+		this.groups = [];
+		this.groupMap = {};
+		this.visible = true;
+	},
 
-GENTICS.Aloha.FloatingMenu.Tab.prototype = {
 	/**
 	 * Get the group with given index. If it does not yet exist, create a new one
 	 * @method
@@ -747,7 +754,7 @@ GENTICS.Aloha.FloatingMenu.Tab.prototype = {
 	getGroup: function(group) {
 		var groupObject = this.groupMap[group];
 		if (typeof groupObject === 'undefined') {
-			groupObject = new GENTICS.Aloha.FloatingMenu.Group();
+			groupObject = new Aloha.FloatingMenu.Group();
 			this.groupMap[group] = groupObject;
 			this.groups.push(groupObject);
 			// TODO resort the groups
@@ -791,8 +798,8 @@ GENTICS.Aloha.FloatingMenu.Tab.prototype = {
 	doLayout: function() {
 		var that = this;
 
-		if (GENTICS.Aloha.Log.isDebugEnabled()) {
-			GENTICS.Aloha.Log.debug(this, 'doLayout called for tab ' + this.label);
+		if (Aloha.Log.isDebugEnabled()) {
+			Aloha.Log.debug(this, 'doLayout called for tab ' + this.label);
 		}
 		this.visible = false;
 
@@ -801,39 +808,44 @@ GENTICS.Aloha.FloatingMenu.Tab.prototype = {
 			that.visible |= group.doLayout();
 		});
 
-		if (GENTICS.Aloha.Log.isDebugEnabled()) {
-			GENTICS.Aloha.Log.debug(this, 'tab ' + this.label + (this.visible ? ' is ' : ' is not ') + 'visible now');
+		if (Aloha.Log.isDebugEnabled()) {
+			Aloha.Log.debug(this, 'tab ' + this.label + (this.visible ? ' is ' : ' is not ') + 'visible now');
 		}
 
 		return this.visible;
 	}
-};
+});
 
 /**
  * Constructor for a floatingmenu group
- * @namespace GENTICS.Aloha.FloatingMenu
+ * @namespace Aloha.FloatingMenu
  * @class Group
  * @constructor
  */
-GENTICS.Aloha.FloatingMenu.Group = function() {
-	this.buttons = [];
-	this.fields = [];
-};
+Aloha.FloatingMenu.Group = Class.extend({
+	_constructor: function() {
+		this.buttons = [];
+		this.fields = [];
+	},
 
-GENTICS.Aloha.FloatingMenu.Group.prototype = {
 	/**
 	 * Add a button to this group
 	 * @param {Button} buttonInfo to add to the group
 	 */
 	addButton: function(buttonInfo) {
-		if (buttonInfo.button instanceof GENTICS.Aloha.ui.AttributeField) {
+		if (buttonInfo.button instanceof Aloha.ui.AttributeField) {
 			if (this.fields.length < 2) {
 				this.fields.push(buttonInfo);
 			} else {
 				throw new Error("Too much fields in this group");
 			}
 		} else {
+			// Every plugin API entryPoint (method) should be securised enough
+			// to avoid Aloha to block at startup even
+			// if a plugin is badly designed
+			if (typeof buttonInfo.button !== "undefined"){
 				this.buttons.push(buttonInfo);
+			}
 		}
 	},
 
@@ -843,13 +855,15 @@ GENTICS.Aloha.FloatingMenu.Group.prototype = {
 	 * @hide
 	 */
 	getExtComponent: function () {
-		var that = this;
+		var that = this, l,
+			items = [],
+			buttonCount = 0,
+			columnCount = 0,
+			len, idx, half;
+
 
 		if (typeof this.extButtonGroup === 'undefined') {
-			var items = [],
-				buttonCount = 0,
-				columnCount = 0;
-
+			
 			if (this.fields.length > 1) {
 				columnCount = 1;
 			}
@@ -860,9 +874,9 @@ GENTICS.Aloha.FloatingMenu.Group.prototype = {
 			});
 			columnCount = columnCount + Math.ceil(buttonCount / 2);
 
-			var len = this.buttons.length,
-				idx = 0,
-				half =  Math.ceil(this.buttons.length / 2) - this.buttons.length % 2 ;
+			len = this.buttons.length;
+			idx = 0;
+			half =  Math.ceil(this.buttons.length / 2) - this.buttons.length % 2 ;
 
 			if (this.fields.length > 0) {
 				that.buttons.push(this.fields[0]);
@@ -895,7 +909,9 @@ GENTICS.Aloha.FloatingMenu.Group.prototype = {
 				// The ui wrapper store the information and here we use it... ugly.
 				// if there are any listeners added before initializing the extButtons
 				if ( buttonInfo.button.listenerQueue && buttonInfo.button.listenerQueue.length > 0 ) {
-					while ( l = buttonInfo.button.listenerQueue.shift() ) {
+					while ( true ) {
+						l = buttonInfo.button.listenerQueue.shift();
+						if ( !l ) {break;}
 						buttonInfo.button.extButton.addListener(l.eventName, l.handler, l.scope, l.options);
 					}
 				}
@@ -927,28 +943,29 @@ GENTICS.Aloha.FloatingMenu.Group.prototype = {
 	doLayout: function () {
 		var groupVisible = false,
 			that = this;
-
 		jQuery.each(this.buttons, function(index, button) {
-			var extButton = that.extButtonGroup.findById(button.button.id),
+			if (typeof button.button !== "undefined") {
+				var extButton = that.extButtonGroup.findById(button.button.id),
 				buttonVisible = button.button.isVisible() && button.scopeVisible;
-
-			if (buttonVisible && extButton.hidden) {
-				extButton.show();
-			} else if (!buttonVisible && !extButton.hidden) {
-				extButton.hide();
+				
+				if (buttonVisible && extButton.hidden) {
+					extButton.show();
+				} else if (!buttonVisible && !extButton.hidden) {
+					extButton.hide();
+				}
+				
+				groupVisible |= buttonVisible;
 			}
-
-			groupVisible |= buttonVisible;
 		});
-
 		if (groupVisible && this.extButtonGroup.hidden) {
 			this.extButtonGroup.show();
 		} else if (!groupVisible && !this.extButtonGroup.hidden) {
 			this.extButtonGroup.hide();
 		}
-
+		
 		return groupVisible;
+
 	}
-};
+});
 
 })(window);
