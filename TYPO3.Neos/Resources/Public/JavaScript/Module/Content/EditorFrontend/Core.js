@@ -177,7 +177,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * @private
 	 */
 	_registerEventListeners: function() {
-		window.addEventListener('dblclick', this._onDblClick.createDelegate(this), false);
+		jQuery(document).dblclick(this._onDblClick.createDelegate(this));
 		window.addEventListener('resize', this._onResize.createDelegate(this), false);
 		window.addEventListener('keydown', this._onKeyDown.createDelegate(this), false);
 		window.addEventListener('keyup', this._onKeyUp.createDelegate(this), false);

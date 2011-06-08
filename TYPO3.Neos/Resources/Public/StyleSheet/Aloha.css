@@ -17,11 +17,11 @@
 	border-radius: 3px;
 	-moz-border-radius: 3px;
 }
-.GENTICS_editable {
+.aloha-editable {
 	outline:0px solid transparent;
 }
 
-.GENTICS_editable:focus {
+.aloha-editable:focus {
 	outline:0px solid transparent;
 }
 
@@ -93,55 +93,55 @@
  *********************************/
 
 /** Hide dropdown icon next to paragraph styles **/
-button.GENTICS_multisplit_toggle_open,
-button.GENTICS_multisplit_toggle_close {
+button.aloha-multisplit-toggle-open,
+button.aloha-multisplit-toggle-close {
 	display: none;
 }
 
 /** Implement Aloha Visual Design **/
-.GENTICS_floatingmenu .x-btn button {
+.aloha-floatingmenu .x-btn button {
 	color: #ffffff;
 }
-.GENTICS_floatingmenu .x-tab-panel-body,
-ul.GENTICS_multisplit-expanded {
+.aloha-floatingmenu .x-tab-panel-body,
+ul.aloha-multisplit-expanded {
 	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(rgba(40, 40, 40, 0.95)), to(rgba(21, 21, 21, 0.95)));
 	background: -moz-linear-gradient(top, rgba(40, 40, 40, 0.95), rgba(21, 21, 21, 0.95));
 	border: 0;
 }
-ul.GENTICS_multisplit {
+ul.aloha-multisplit {
 	width: 226px;
 	padding-left: 1px;
 }
-ul.GENTICS_multisplit-expanded {
+ul.aloha-multisplit-expanded {
 	padding-left: 2px;
 	padding-top: 1px;
 }
-ul.GENTICS_multisplit-expanded {
+ul.aloha-multisplit-expanded {
 	border-radius: 0 0 3px 3px;
 	-moz-border-radius: 0 0 3px 3px;
 	-webkit-border-radius: 0 0 3px 3px;
 }
-.GENTICS_floatingmenu_pin {
+.aloha-floatingmenu-pin {
 	background: url(../Images/UserInterface/AlohaPin.png) left top no-repeat;
 }
-.GENTICS_floatingmenu_pinned {
+.aloha-floatingmenu-pinned {
 	background-position: -24px 0;
 }
-.GENTICS_floatingmenu button.GENTICS_button {
+.aloha-floatingmenu button.aloha-button {
 	background-image: url(../Images/UserInterface/AlohaBase.png) !important;
 }
-.GENTICS_floatingmenu table.x-btn-over button.GENTICS_button {
+.aloha-floatingmenu table.x-btn-over button.aloha-button {
 	background-image: url(../Images/UserInterface/AlohaBaseHover.png) !important;
 }
-.GENTICS_floatingmenu .x-btn-pressed button.GENTICS_button,
-div.GENTICS_floatingmenu .x-btn-click button.GENTICS_button,
-div.GENTICS_floatingmenu .x-btn-pressed.x-btn-over button.GENTICS_button {
+.aloha-floatingmenu .x-btn-pressed button.aloha-button,
+div.aloha-floatingmenu .x-btn-click button.aloha-button,
+div.aloha-floatingmenu .x-btn-pressed.x-btn-over button.aloha-button {
 	background-image: url(../Images/UserInterface/AlohaBaseActive.png) !important;
 }
-div.GENTICS_floatingmenu .x-btn-pressed.x-btn-click button.GENTICS_button {
+div.aloha-floatingmenu .x-btn-pressed.x-btn-click button.aloha-button {
 	background-image: url(../Images/UserInterface/AlohaBaseHover.png) !important;
 }
-ul.GENTICS_multisplit li {
+ul.aloha-multisplit li {
 	border-radius: 3px 3px 3px 3px;
 	-moz-border-radius: 3px 3px 3px 3px;
 	-webkit-border-radius: 3px 3px 3px 3px;
@@ -149,17 +149,17 @@ ul.GENTICS_multisplit li {
 	padding: 0;
 	border: 0;
 }
-.GENTICS_floatingmenu .x-btn-group-bwrap .x-btn-group-ml .x-btn-group-mr {
+.aloha-floatingmenu .x-btn-group-bwrap .x-btn-group-ml .x-btn-group-mr {
 	padding-right: 0;
 }
 .x-toolbar-left .x-toolbar-left-row .x-toolbar-cell .x-btn-group {
 	padding: 1px 0 1px 1px;
 }
-ul.GENTICS_multisplit li.GENTICS_multisplit-activeitem {
+ul.aloha-multisplit li.aloha-multisplit-activeitem {
 	background: -moz-linear-gradient(left, #000000 0%, #000000 5%, #FF8700 50%, #000000 95%, #000000 100%);
 	background: -webkit-gradient(linear, left top, right top, color-stop(0%,#000000), color-stop(5%,#000000), color-stop(50%,#FF8700), color-stop(95%,#000000), color-stop(100%,#000000));
 }
-ul.GENTICS_multisplit button.GENTICS_button {
+ul.aloha-multisplit button.aloha-button {
 	background-image: url(../Images/UserInterface/AlohaBaseMulti.png) !important;
 	margin: 0;
 	border: 1px solid #151515;
@@ -169,11 +169,11 @@ ul.GENTICS_multisplit button.GENTICS_button {
 	-moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset;
 	-webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset;
 }
-ul.GENTICS_multisplit button.GENTICS_button:hover,
-ul.GENTICS_multisplit button.GENTICS_multisplit-wide:hover {
+ul.aloha-multisplit button.aloha-button:hover,
+ul.aloha-multisplit button.aloha-multisplit-wide:hover {
 	background-color: rgba(0, 0, 0, 0.2) !important;
 }
-ul.GENTICS_multisplit .GENTICS_multisplit-activeitem button.GENTICS_button {
+ul.aloha-multisplit .aloha-multisplit-activeitem button.aloha-button {
 	margin-top: 1px;
 	background-color: #3f3f3f !important;
 	border-top: 0px;
@@ -182,7 +182,7 @@ ul.GENTICS_multisplit .GENTICS_multisplit-activeitem button.GENTICS_button {
 	-moz-box-shadow: 0 0 0 transparent;
 	-webkit-box-shadow: 0 0 0 transparent;
 }
-ul.GENTICS_multisplit button.GENTICS_multisplit-wide {
+ul.aloha-multisplit button.aloha-multisplit-wide {
 	border-color: rgba(0, 0, 0, 0.5);
 	width: 222px !important;
 	height: 18px !important;
@@ -192,15 +192,15 @@ ul.GENTICS_multisplit button.GENTICS_multisplit-wide {
 	-webkit-border-radius: 0px;
 	color: rgba(255, 255, 255, 0.6);
 }
-ul.GENTICS_multisplit button.GENTICS_multisplit-wide:hover {
+ul.aloha-multisplit button.aloha-multisplit-wide:hover {
 	border-color: rgba(0, 0, 0, 0.5);
 	color: rgba(255, 255, 255, 0.8);
 }
-ul.GENTICS_multisplit button.GENTICS_button_removeFormat {
+ul.aloha-multisplit button.aloha-button-removeFormat {
 	background-image: url(../Images/UserInterface/AlohaRemoveStyle.png) !important;
 }
-button.GENTICS_multisplit_toggle_open,
-button.GENTICS_multisplit_toggle_close {
+button.aloha-multisplit-toggle-open,
+button.aloha-multisplit-toggle-close {
 	background: rgba(33, 33, 33, 0.95) url("../Images/UserInterface/AlohaBase.png") repeat scroll -353px -1px;
 	border: 1px solid rgba(0, 0, 0, 0.5);
 	border-radius: 3px 3px 3px 3px;
@@ -210,30 +210,30 @@ button.GENTICS_multisplit_toggle_close {
 	width: 16px;
 	margin: 29px 0 0 0;
 }
-button.GENTICS_multisplit_toggle_close {
+button.aloha-multisplit-toggle-close {
 	background-position: -374px -1px;
 }
-button.GENTICS_button_big {
+button.aloha-button-big {
 	background-image: url(../Images/UserInterface/AlohaFolderTree.png) !important;
 }
-.GENTICS_floatingmenu .x-btn-icon .x-btn-large .GENTICS_button_tree {
+.aloha-floatingmenu .x-btn-icon .x-btn-large .aloha-button-tree {
 	height: 16px;
 	width: 16px;
 }
-GENTICS_multisplit button.GENTICS_multisplit-wide {
+aloha-multisplit button.aloha-multisplit-wide {
 	border-color: rgba(0, 0, 0, 0.5);
 }
-ul.GENTICS_multisplit li,
-.GENTICS_floatingmenu .x-tab-panel-header ul li {
+ul.aloha-multisplit li,
+.aloha-floatingmenu .x-tab-panel-header ul li {
 	list-style-type: none;
 }
-.GENTICS_floatingmenu .x-tab-panel-bwrap {
+.aloha-floatingmenu .x-tab-panel-bwrap {
 	box-shadow: 0px 0px 6px #000000;
 	-moz-box-shadow: 0px 0px 6px #000000;
 	-webkit-box-shadow: 0px 0px 6px #000000;
 	border-bottom: 1px solid #000000;
 }
-.GENTICS_floatingmenu ul.x-tab-strip-top {
+.aloha-floatingmenu ul.x-tab-strip-top {
 	border: 0;
 	box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1) inset, 0 -2px 0 #242424 inset, 0 -2px 6px #000000 inset;
 	-moz-box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1) inset, 0 -2px 0 #242424 inset, 0 -2px 6px #000000 inset;
@@ -243,27 +243,27 @@ ul.GENTICS_multisplit li,
 	-webkit-border-radius: 3px 3px 0 0;
 	border-radius: 3px 3px 0 0;
 }
-.GENTICS_floatingmenu .x-tab-panel-body .x-toolbar,
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-right,
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-left,
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-strip-inner {
+.aloha-floatingmenu .x-tab-panel-body .x-toolbar,
+.aloha-floatingmenu .x-tab-strip-top .x-tab-right,
+.aloha-floatingmenu .x-tab-strip-top .x-tab-left,
+.aloha-floatingmenu .x-tab-strip-top .x-tab-strip-inner {
 	background: transparent;
 }
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-right {
+.aloha-floatingmenu .x-tab-strip-top .x-tab-right {
 	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(rgba(45, 45, 45, 0.9)), to(rgba(17, 17, 17, 0.9)));
 	background: -moz-linear-gradient(top, rgba(45, 45, 45, 0.9), rgba(17, 17, 17, 0.9));
 	-moz-border-radius: 4px 4px 0 0;
 	-webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
 }
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-right:hover {
+.aloha-floatingmenu .x-tab-strip-top .x-tab-right:hover {
 	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(rgba(45, 45, 45, 1.0)), to(rgba(17, 17, 17, 1.0)));
 	background: -moz-linear-gradient(top, rgba(45, 45, 45, 1.0), rgba(17, 17, 17, 1.0));
 }
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-right:hover span.x-tab-strip-text {
+.aloha-floatingmenu .x-tab-strip-top .x-tab-right:hover span.x-tab-strip-text {
 	color: rgba(255, 255, 255, 0.8);
 }
-.GENTICS_floatingmenu .x-tab-strip-top li.x-tab-strip-active {
+.aloha-floatingmenu .x-tab-strip-top li.x-tab-strip-active {
 	background: -moz-linear-gradient(left center , rgba(255, 255, 255, 0) 0%, #FF8700 50%, rgba(255, 255, 255, 0)) repeat scroll 0 0 #4c4c4c;
 	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255, 255, 255, 0.0)), color-stop(50%,#FF8700), color-stop(100%,rgba(255, 255, 255, 0.0)));
 	padding-top: 1px;
@@ -272,28 +272,28 @@ ul.GENTICS_multisplit li,
 	border-radius: 4px 4px 0 0;
 	-moz-box-shadow: 0 -2px 3px rgba(0, 0, 0, 0.5);
 }
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-strip-active .x-tab-right {
+.aloha-floatingmenu .x-tab-strip-top .x-tab-strip-active .x-tab-right {
 	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#4c4c4c), to(#33302a));
 	background: -moz-linear-gradient(top, #4c4c4c, #33302a);
 	-moz-border-radius: 4px 4px 0 0;
 	-webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
 }
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-strip-active .x-tab-strip-top .x-tab-right,
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-strip-active .x-tab-strip-top .x-tab-left,
-.GENTICS_floatingmenu .x-tab-strip-top .x-tab-strip-active .x-tab-strip-top .x-tab-strip-inner {
+.aloha-floatingmenu .x-tab-strip-top .x-tab-strip-active .x-tab-strip-top .x-tab-right,
+.aloha-floatingmenu .x-tab-strip-top .x-tab-strip-active .x-tab-strip-top .x-tab-left,
+.aloha-floatingmenu .x-tab-strip-top .x-tab-strip-active .x-tab-strip-top .x-tab-strip-inner {
 	background: transparent;
 }
-.GENTICS_floatingmenu span.x-tab-strip-text {
+.aloha-floatingmenu span.x-tab-strip-text {
 	color: rgba(255, 255, 255, 0.6);
 	text-shadow: -1px -1px 0 #000000;
 }
-.GENTICS_floatingmenu .x-tab-strip-active span.x-tab-strip-text {
+.aloha-floatingmenu .x-tab-strip-active span.x-tab-strip-text {
 	color: #ffffff;
 	text-shadow: 1px 0 6px #FF8700, -1px -1px 0 #000000;
 	font-weight: normal;
 }
-.GENTICS_floatingmenu .x-tab-panel-header {
+.aloha-floatingmenu .x-tab-panel-header {
 	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(rgba(45, 45, 45, 0.5)), to(rgba(17, 17, 17, 0.5)));
 	background: -moz-linear-gradient(top, rgba(45, 45, 45, 0.5), rgba(17, 17, 17, 0.5));
 	-moz-border-radius: 3px 3px 0 0;
@@ -301,60 +301,60 @@ ul.GENTICS_multisplit li,
 	border-radius: 3px 3px 0 0;
 	border: 0;
 }
-.GENTICS_floatingmenu table.x-btn-over {
+.aloha-floatingmenu table.x-btn-over {
 	background: url(../Images/UserInterface/AlohaHoverButton.png) 50% bottom no-repeat;
 }
-.GENTICS_floatingmenu table.x-btn-pressed,
-.GENTICS_floatingmenu table.x-btn-click {
+.aloha-floatingmenu table.x-btn-pressed,
+.aloha-floatingmenu table.x-btn-click {
 	background: url(../Images/UserInterface/AlohaActiveButton.png) 50% bottom no-repeat;
 }
-div.GENTICS_floatingmenu .x-btn-pressed.x-btn-click {
+div.aloha-floatingmenu .x-btn-pressed.x-btn-click {
 	background: url(../Images/UserInterface/AlohaHoverButton.png) 50% bottom no-repeat;
 }
-.GENTICS_floatingmenu table.x-btn-pressed .x-btn-tc {
+.aloha-floatingmenu table.x-btn-pressed .x-btn-tc {
 }
-.GENTICS_floatingmenu .x-table-layout td.x-table-layout-cell {
+.aloha-floatingmenu .x-table-layout td.x-table-layout-cell {
 	padding-right: 6px;
 }
-.GENTICS_floatingmenu .x-btn-tr i,
-.GENTICS_floatingmenu .x-btn-tl i,
-.GENTICS_floatingmenu .x-btn-br i,
-.GENTICS_floatingmenu .x-btn-bl i {
+.aloha-floatingmenu .x-btn-tr i,
+.aloha-floatingmenu .x-btn-tl i,
+.aloha-floatingmenu .x-btn-br i,
+.aloha-floatingmenu .x-btn-bl i {
 	height: 2px;
 	width: 4px;
 }
-.GENTICS_floatingmenu tr, .GENTICS_floatingmenu td {
+.aloha-floatingmenu tr, .aloha-floatingmenu td {
 	height: 5px;
 }
-.GENTICS_floatingmenu .x-toolbar .x-btn-over .x-btn-ml,
-.GENTICS_floatingmenu .x-toolbar .x-btn-over .x-btn-mc,
-.GENTICS_floatingmenu .x-toolbar .x-btn-over .x-btn-mr,
-.GENTICS_floatingmenu .x-toolbar .x-btn-tl,
-.GENTICS_floatingmenu .x-toolbar .x-btn-tr,
-.GENTICS_floatingmenu .x-toolbar .x-btn-tc,
-.GENTICS_floatingmenu .x-toolbar .x-btn-ml,
-.GENTICS_floatingmenu .x-toolbar .x-btn-mr,
-.GENTICS_floatingmenu .x-toolbar .x-btn-mc,
-.GENTICS_floatingmenu .x-toolbar .x-btn-bl,
-.GENTICS_floatingmenu .x-toolbar .x-btn-br,
-.GENTICS_floatingmenu .x-toolbar .x-btn-bc,
-.GENTICS_floatingmenu .x-btn-group-tl,
-.GENTICS_floatingmenu .x-btn-group-tr,
-.GENTICS_floatingmenu .x-btn-group-tc,
-.GENTICS_floatingmenu .x-btn-group-ml,
-.GENTICS_floatingmenu .x-btn-group-mr,
-.GENTICS_floatingmenu .x-btn-group-mc,
-.GENTICS_floatingmenu .x-btn-group-bl,
-.GENTICS_floatingmenu .x-btn-group-br,
-.GENTICS_floatingmenu .x-btn-group-bc {
+.aloha-floatingmenu .x-toolbar .x-btn-over .x-btn-ml,
+.aloha-floatingmenu .x-toolbar .x-btn-over .x-btn-mc,
+.aloha-floatingmenu .x-toolbar .x-btn-over .x-btn-mr,
+.aloha-floatingmenu .x-toolbar .x-btn-tl,
+.aloha-floatingmenu .x-toolbar .x-btn-tr,
+.aloha-floatingmenu .x-toolbar .x-btn-tc,
+.aloha-floatingmenu .x-toolbar .x-btn-ml,
+.aloha-floatingmenu .x-toolbar .x-btn-mr,
+.aloha-floatingmenu .x-toolbar .x-btn-mc,
+.aloha-floatingmenu .x-toolbar .x-btn-bl,
+.aloha-floatingmenu .x-toolbar .x-btn-br,
+.aloha-floatingmenu .x-toolbar .x-btn-bc,
+.aloha-floatingmenu .x-btn-group-tl,
+.aloha-floatingmenu .x-btn-group-tr,
+.aloha-floatingmenu .x-btn-group-tc,
+.aloha-floatingmenu .x-btn-group-ml,
+.aloha-floatingmenu .x-btn-group-mr,
+.aloha-floatingmenu .x-btn-group-mc,
+.aloha-floatingmenu .x-btn-group-bl,
+.aloha-floatingmenu .x-btn-group-br,
+.aloha-floatingmenu .x-btn-group-bc {
 	background: transparent;
 }
-.GENTICS_floatingmenu .x-btn-group {
+.aloha-floatingmenu .x-btn-group {
 	-moz-box-shadow: 1px 0 0 rgba(0, 0, 0, 0.5), 2px 0 0 rgba(255, 255, 255, 0.1);
 	-webkit-box-shadow: 1px 0 0 rgba(0, 0, 0, 0.5), 2px 0 0 rgba(255, 255, 255, 0.1);
 	box-shadow: 1px 0 0 rgba(0, 0, 0, 0.5), 2px 0 0 rgba(255, 255, 255, 0.1);
 }
-.GENTICS_floatingmenu .x-panel-noborder .x-panel-tbar-noborder .x-toolbar {
+.aloha-floatingmenu .x-panel-noborder .x-panel-tbar-noborder .x-toolbar {
 	border: 0;
 }
 .x-toolbar-left .x-toolbar-left-row td.x-toolbar-cell:last-child .x-btn-group {
@@ -390,27 +390,27 @@ div.GENTICS_floatingmenu .x-btn-pressed.x-btn-click {
 	color: #000000;
 }
 /** Tables **/
-.GENTICS_Table_Createdialog {
+.aloha-Table_Createdialog {
 	border-color: rgba(0, 0, 0, 0.6);
 	box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
 	-webkit-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
 	-moz-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
 }
-.GENTICS_Table_Createdialog table {
+.aloha-Table_Createdialog table {
 	background: #464646;
 	border-spacing: 1px;
 	border-collapse: separate;
 }
-.GENTICS_Table_Createdialog table td {
+.aloha-Table_Createdialog table td {
 	border-color: rgba(51, 51, 51, 1.0) rgba(51, 51, 51, 1.0) rgba(131, 131, 131, 1.0);
 	border-width: 1px;
 	border-style: solid;
 	background: #dbdbdb;
 }
-.GENTICS_Table_Createdialog table td.hover {
+.aloha-Table_Createdialog table td.hover {
 	background-color: #FFFAF5;
 }
 /* Quick fix to remove list bullets */
-ul.GENTICS_multisplit li {
+ul.aloha-multisplit li {
 	list-style-type: none;
 }

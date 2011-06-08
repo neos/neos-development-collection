@@ -21,22 +21,18 @@ Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Aloha');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorFrontend.Aloha.Plugin
+ * @class F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository
  *
- * TYPO3 to Aloha connector plugin<br />
- * <br />
- * This plugin tracks content changes by the aloha editor and communicates this
- * information to the TYPO3 backend.
- * This class does NOT run inside the backend, but is included in the Frontend
- * iframe.
+ * This is a Page Repository, which can be used to build links to ther pages.
+ * However, this is currently broken, as we do not support in-text links yet.
  *
  * @namespace F3.TYPO3.Module.Content.EditorFrontend.Aloha
- * @extends GENTICS.Aloha.Plugin
+ * @extends Aloha.Repository
  * @singleton
  * @todo fix this
  */
 F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository = Ext.apply(
-	new GENTICS.Aloha.Repository('F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository'),
+	new Aloha.Repository('F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository'),
 	{
 		settings: {
 			weight: 0.35

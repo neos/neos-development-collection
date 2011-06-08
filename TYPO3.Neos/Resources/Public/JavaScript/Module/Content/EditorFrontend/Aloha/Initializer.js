@@ -38,12 +38,6 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	_alohaEnabled: false,
 
 	/**
-	 * Task which checks for modifications.
-	 * @private
-	 */
-	_checkModificationsTask: null,
-
-	/**
 	 * Initializer, called on page load. Is used to register event
 	 * listeners on the core.
 	 *
@@ -51,9 +45,74 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	 * @return {void}
 	 */
 	initialize: function(core) {
+		var scope = this;
+
 		core.on('enableEditingMode', this._enableAloha, this);
 		core.on('disableEditingMode', this._disableAloha, this);
 		core.on('loadNewlyCreatedContentElement', this._onNewlyCreatedContentElement, this);
+
+		if(jQuery('body').hasClass('alohacoreloaded')) {
+			scope._bindAlohaEventsAndOverrideLocalization();
+		} else {
+			jQuery('body').bind('alohacoreloaded', function() {
+				scope._bindAlohaEventsAndOverrideLocalization();
+			});
+		}
+	},
+
+	/**
+	 * Bind Aloha events and override localization
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_bindAlohaEventsAndOverrideLocalization: function() {
+		Aloha.bind("aloha-editable-deactivated", this._saveChanges.createDelegate(this));
+		Aloha.bind("aloha-smart-content-changed", this._saveChanges.createDelegate(this));
+
+		this._overrideI18nLocalization();
+	},
+
+	/**
+	 * Override the i18n method of Aloha so localization is primarily based
+	 * on the TYPO3 I18n class, and Aloha dictionary files are just used
+	 * as fallback
+	 *
+	 * @return {string} the localized string
+	 * @private
+	 */
+	_overrideI18nLocalization: function() {
+		var alohaI18n = Aloha.i18n;
+		Aloha.i18n = function (component, key, replacements) {
+			var localizedString = F3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3', key);
+			if (localizedString === key) {
+				return alohaI18n.call(this, component, key, replacements);
+			}
+			return localizedString;
+		}
+	},
+
+	/**
+	 * Fires Event which in the scope of the TYPO3 Backend
+	 * with the information which should be persisted by the Backend
+	 *
+	 * @return {void}
+	 * @private
+	 */
+	_saveChanges: function() {
+		if (VIE && VIE.ContainerManager && VIE.ContainerManager.instances) {
+			jQuery.each(VIE.ContainerManager.instances, function(index, objectInstance) {
+				if (typeof objectInstance.editables !== 'undefined') {
+					if (VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
+						F3.TYPO3.Module.Content.EditorFrontend.Core.fireEvent('modifiedContent');
+						objectInstance.save();
+						jQuery.each(objectInstance.editables, function() {
+							this.setUnmodified();
+						});
+					}
+				}
+			});
+		}
 	},
 
 	/**
@@ -75,11 +134,18 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	/**
 	 * Enable aloha
 	 *
-	 * @param {DOMElement} target
+	 * @param {DOMEvent} event
 	 * @return {void}
 	 * @private
 	 */
-	_enableAloha: function(target) {
+	_enableAloha: function(event) {
+		var scope = this;
+		if(!jQuery('body').hasClass('alohacoreloaded')) {
+			jQuery('body').bind('alohacoreloaded', function() {
+				scope._enableAloha(event);
+			});
+			return;
+		}
 		if (!this._alohaEnabled) {
 			this._alohaEnabled = true;
 
@@ -87,23 +153,24 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 			jQuery('.f3-typo3-contentelement-aloha').vieSemanticAloha();
 
 				// Explicitly activate editable for the clicked element (double click selection hack)
-			if (target) {
-				var editableElement = Ext.fly(target).findParent('.f3-typo3-editable');
-				if (editableElement && editableElement.id) {
-					GENTICS.Aloha.getEditableById(editableElement.id).activate();
-				}
-			}
+			if (event && event.target) {
+				window.setTimeout(function() {
+					var editableElement = Ext.fly(event.target).findParent('.f3-typo3-editable');
+					if (editableElement && editableElement.id) {
+						Aloha.getEditableById(editableElement.id).activate();
+						Aloha.Selection.updateSelection(event);
 
-				// Force update of selection after activation
-			window.setTimeout(function() {
-				GENTICS.Aloha.Selection.updateSelection();
-				var range = GENTICS.Aloha.Selection.getRangeObject();
-				if (range.select) {
-					range.endOffset = range.startOffset += Math.floor((range.endOffset - range.startOffset) / 2);
-					range.select();
-					GENTICS.Aloha.Selection.updateSelection();
-				}
-			}, 10);
+						// Now, collapse the range.
+						window.setTimeout(function() {
+							var range = Aloha.Selection.getRangeObject();
+							if (range.select) {
+								range.endOffset = range.startOffset += Math.floor((range.endOffset - range.startOffset) / 2);
+								range.select();
+							}
+						}, 10);
+					}
+				}, 10);
+			}
 		}
 	},
 
@@ -115,12 +182,10 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	 */
 	_disableAloha: function() {
 		if (this._alohaEnabled) {
-			if (this._checkModificationsTask) {
-				Ext.TaskMgr.stop(this._checkModificationsTask);
-			}
+
 			jQuery('.f3-typo3-editable').mahalo();
-			GENTICS.Aloha.FloatingMenu.extTabPanel.hide();
-			GENTICS.Aloha.FloatingMenu.shadow.hide();
+			Aloha.FloatingMenu.extTabPanel.hide();
+			Aloha.FloatingMenu.shadow.hide();
 
 			this._alohaEnabled = false;
 		}
