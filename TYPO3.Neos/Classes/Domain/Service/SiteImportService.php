@@ -221,13 +221,8 @@ class SiteImportService {
 			}
 			$childNode->setContentType($contentTypeName);
 
-			if ((boolean)$childNodeXml['hidden']) {
-				$childNode->setHidden(TRUE);
-			}
-
-			if ((boolean)$childNodeXml['hiddenInIndex']) {
-				$childNode->setHiddenInIndex(TRUE);
-			}
+			$childNode->setHidden((boolean)$childNodeXml['hidden']);
+			$childNode->setHiddenInIndex((boolean)$childNodeXml['hiddenInIndex']);
 
 			if ($childNodeXml->properties) {
 				foreach ($childNodeXml->properties->children() as $childXml) {
@@ -242,7 +237,6 @@ class SiteImportService {
 				}
 				$childNode->setAccessRoles($accessRoles);
 			}
-
 
 			if ($childNodeXml->node) {
 				$this->parseNodes($childNodeXml, $childNode);
