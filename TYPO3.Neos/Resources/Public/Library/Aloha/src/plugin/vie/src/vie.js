@@ -14,7 +14,7 @@ if (typeof VIE === 'undefined') {
     VIE = {};
 }
 
-VIE.AlohaPlugin = new GENTICS.Aloha.Plugin('eu.iksproject.VIE');
+VIE.AlohaPlugin = new Aloha.Plugin('eu.iksproject.VIE');
 
 VIE.AlohaPlugin.init = function () {
 };

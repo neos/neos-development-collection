@@ -421,6 +421,22 @@
 		},
 
 		/**
+		 * A function which should execute as soon as Aloha is fully loaded.
+		 * If Aloha has been loaded already, executes immediately.
+		 *
+		 * Somehow, this should work with Promise Events, but it seems it does not...
+		 *
+		 * @param {Callback}
+		 */
+		executeWhenAlohaFullyLoaded: function(callback) {
+			if (Aloha.stage === 'aloha') {
+				callback();
+			} else {
+				Aloha.bind('aloha', callback);
+			}
+		},
+
+		/**
 		 * Activates editable and deactivates all other Editables
 		 * @param {Editable} editable the Editable to be activated
 		 * @return void

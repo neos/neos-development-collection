@@ -30,7 +30,7 @@
                     return true;
                 }
 
-                containerInstance.editables[propertyName] = new GENTICS.Aloha.Editable(containerProperty);
+                containerInstance.editables[propertyName] = new Aloha.Editable(containerProperty);
                 containerInstance.editables[propertyName].vieContainerInstance = containerInstance;
             });
         })
