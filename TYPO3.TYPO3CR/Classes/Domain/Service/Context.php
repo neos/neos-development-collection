@@ -1,5 +1,4 @@
 <?php
-declare(ENCODING = 'utf-8');
 namespace F3\TYPO3CR\Domain\Service;
 
 /*                                                                        *
