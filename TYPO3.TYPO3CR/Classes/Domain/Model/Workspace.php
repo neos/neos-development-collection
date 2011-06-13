@@ -214,8 +214,7 @@ class Workspace {
 	 * A node count of 1 means that no changes are pending in this workspace
 	 * because a workspace always contains at least its Root Node.
 	 *
-	 * @param boolean $includeBaseWorkspaces If base workspaces should be taken into account
-	 * @return void
+	 * @return integer
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeCount() {
