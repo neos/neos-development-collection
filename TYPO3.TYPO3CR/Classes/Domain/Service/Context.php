@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Service;
+namespace TYPO3\TYPO3CR\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -27,10 +27,10 @@ namespace F3\TYPO3CR\Domain\Service;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
+class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 
 	/**
-	 * @var \F3\TYPO3CR\Domain\Model\Workspace
+	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 */
 	protected $workspace;
 
@@ -40,22 +40,22 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	protected $workspaceName;
 
 	/**
-	 * @var \F3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected $currentNode;
 
 	/**
-	 * @var \F3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -71,29 +71,29 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	}
 
 	/**
-	 * @param \F3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository
+	 * @param \TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectNodeRepository(\F3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository) {
+	public function injectNodeRepository(\TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository) {
 		$this->nodeRepository = $nodeRepository;
 	}
 
 	/**
-	 * @param \F3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository
+	 * @param \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectWorkspaceRepository(\F3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository) {
+	public function injectWorkspaceRepository(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository) {
 		$this->workspaceRepository = $workspaceRepository;
 	}
 
 	/**
-	 * @param \F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -101,7 +101,7 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	 * Returns the current workspace.
 	 *
 	 * @param boolean $createWorkspaceIfNecessary If enabled, creates a workspace with the configured name if it doesn't exist already
-	 * @return \F3\TYPO3CR\Domain\Model\Workspace The workspace or NULL
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The workspace or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWorkspace($createWorkspaceIfNecessary = TRUE) {
@@ -113,10 +113,10 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 				}
 				$liveWorkspace = $this->workspaceRepository->findOneByName('live');
 				if (!$liveWorkspace) {
-					$liveWorkspace = $this->objectManager->create('F3\TYPO3CR\Domain\Model\Workspace', 'live');
+					$liveWorkspace = $this->objectManager->create('TYPO3\TYPO3CR\Domain\Model\Workspace', 'live');
 					$this->workspaceRepository->add($liveWorkspace);
 				}
-				$this->workspace = ($this->workspaceName === 'live') ? $liveWorkspace : $this->objectManager->create('F3\TYPO3CR\Domain\Model\Workspace', $this->workspaceName, $liveWorkspace);
+				$this->workspace = ($this->workspaceName === 'live') ? $liveWorkspace : $this->objectManager->create('TYPO3\TYPO3CR\Domain\Model\Workspace', $this->workspaceName, $liveWorkspace);
 			}
 			$this->workspace->setContext($this);
 		}
@@ -136,18 +136,18 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	/**
 	 * Sets the current node.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setCurrentNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function setCurrentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->currentNode = $node;
 	}
 
 	/**
 	 * Returns the current node
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentNode() {
@@ -185,7 +185,7 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	 * Returns a node specified by the given absolute path.
 	 *
 	 * @param string $path Absolute path specifying the node
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
@@ -201,12 +201,12 @@ class Context implements \F3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
 	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
-	 * @return array<\F3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodesOnPath($startingPoint, $endPoint) {
-		$startingPointPath = ($startingPoint instanceof \F3\TYPO3CR\Domain\Model\NodeInterface) ? $startingPoint->getPath() : $startingPoint;
-		$endPointPath = ($endPoint instanceof \F3\TYPO3CR\Domain\Model\NodeInterface) ? $endPoint->getPath() : $endPoint;
+		$startingPointPath = ($startingPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $startingPoint->getPath() : $startingPoint;
+		$endPointPath = ($endPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $endPoint->getPath() : $endPoint;
 
 		$nodes = $this->nodeRepository->findOnPath($startingPointPath, $endPointPath, $this->workspace);
 		foreach ($nodes as $node) {

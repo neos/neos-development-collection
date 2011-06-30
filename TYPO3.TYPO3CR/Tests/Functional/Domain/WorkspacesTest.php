@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Tests\Functional\Domain;
+namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -27,7 +27,7 @@ namespace F3\TYPO3CR\Tests\Functional\Domain;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class WorkspacesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
@@ -35,12 +35,12 @@ class WorkspacesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\ContentContext
+	 * @var \TYPO3\TYPO3\Domain\Service\ContentContext
 	 */
 	protected $personalContext;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Node
+	 * @var \TYPO3\TYPO3\Domain\Model\Node
 	 */
 	protected $rootNode;
 
@@ -49,7 +49,7 @@ class WorkspacesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setup() {
 		parent::setup();
-		$this->personalContext = new \F3\TYPO3\Domain\Service\ContentContext('user-robert');
+		$this->personalContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('user-robert');
 		$this->rootNode = $this->personalContext->getWorkspace()->getRootNode();
 	}
 
@@ -75,7 +75,7 @@ class WorkspacesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 		$this->persistenceManager->persistAll();
 
-		$liveContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
+		$liveContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/about'));
@@ -88,7 +88,7 @@ class WorkspacesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 	public function nodesCreatedInAPersonalWorkspacesAreNotVisibleInTheLiveWorkspaceEvenWithoutPersistAll() {
 		$this->rootNode->getNode('homepage')->createNode('imprint');
 
-		$liveContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
+		$liveContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/imprint'));

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Exception;
+namespace TYPO3\TYPO3CR\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -26,7 +26,7 @@ namespace F3\TYPO3CR\Exception;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NodeException extends \F3\TYPO3CR\Exception {
+class NodeException extends \TYPO3\TYPO3CR\Exception {
 
 }
 

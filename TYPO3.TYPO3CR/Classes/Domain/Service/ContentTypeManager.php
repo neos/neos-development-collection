@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Service;
+namespace TYPO3\TYPO3CR\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -31,13 +31,13 @@ class ContentTypeManager {
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\ContentTypeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\ContentTypeRepository
 	 */
 	protected $contentTypeRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -51,7 +51,7 @@ class ContentTypeManager {
 	/**
 	 * Returns the speciifed content type
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\ContentType or NULL
+	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentType($name) {
@@ -78,15 +78,15 @@ class ContentTypeManager {
 	/**
 	 * Creates a new content type
 	 *
-	 * @param string $contentTypeName Unique ame of the new content type. Example: "TYPO3:Page"
-	 * @return \F3\TYPO3CR\Domain\Model\ContentType The new content type
+	 * @param string $contentTypeName Unique ame of the new content type. Example: "TYPO3.TYPO3:Page"
+	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType The new content type
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createContentType($contentTypeName) {
 		if ($this->getContentType($contentTypeName) !== NULL) {
-			throw new \F3\TYPO3CR\Exception('The content type ' . $contentTypeName . ' already exists.', 1285519455);
+			throw new \TYPO3\TYPO3CR\Exception('The content type ' . $contentTypeName . ' already exists.', 1285519455);
 		}
-		$contentType = $this->objectManager->create('F3\TYPO3CR\Domain\Model\ContentType', $contentTypeName);
+		$contentType = $this->objectManager->create('TYPO3\TYPO3CR\Domain\Model\ContentType', $contentTypeName);
 		$this->contentTypeRepository->add($contentType);
 		$this->cachedContentTypes[$contentTypeName] = $contentType;
 

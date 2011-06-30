@@ -2,12 +2,10 @@
 # Security policy for the TYPO3CR package                                #
 #                                                                        #
 
-# @package TYPO3CR
-
 resources:
   entities:
-    F3_TYPO3CR_Domain_Model_Node:
-      F3_TYPO3CR_Domain_Model_Node_NotInLiveWorkspace: this.workspace.name != 'live'
+    TYPO3_TYPO3CR_Domain_Model_Node:
+      TYPO3_TYPO3CR_Domain_Model_Node_NotInLiveWorkspace: this.workspace.name != 'live'
 
 roles:
   TYPO3CR_Administrator: []
@@ -15,4 +13,4 @@ roles:
 acls:
   TYPO3CR_Administrator:
     entities:
-      F3_TYPO3CR_Domain_Model_Node_NotInLiveWorkspace: GRANT
+      TYPO3_TYPO3CR_Domain_Model_Node_NotInLiveWorkspace: GRANT

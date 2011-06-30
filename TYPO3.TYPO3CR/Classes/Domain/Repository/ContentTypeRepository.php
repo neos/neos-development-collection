@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Repository;
+namespace TYPO3\TYPO3CR\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -27,7 +27,7 @@ namespace F3\TYPO3CR\Domain\Repository;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class ContentTypeRepository extends \F3\FLOW3\Persistence\Repository {
+class ContentTypeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 }
 ?>

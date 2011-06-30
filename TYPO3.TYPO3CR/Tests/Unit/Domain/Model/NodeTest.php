@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Tests\Unit\Domain\Model;
+namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -26,16 +26,16 @@ namespace F3\TYPO3CR\Tests\Unit\Domain\Model;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
+class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorSetsPathWorkspaceAndIdentifier() {
-		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/foo/bar', $mockWorkspace, '12345abcde');
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/foo/bar', $mockWorkspace, '12345abcde');
 		$this->assertSame('/foo/bar', $node->getPath());
 		$this->assertSame('bar', $node->getName());
 		$this->assertSame($mockWorkspace, $node->getWorkspace());
@@ -47,8 +47,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLabelCropsTheLabelIfNecessary() {
-		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/foo/bar', $mockWorkspace);
+		$mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/foo/bar', $mockWorkspace);
 
 		$this->assertEquals('(unstructured) bar', $node->getLabel());
 
@@ -64,8 +64,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAbstractReturnsAnAbstract() {
-		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/foo/bar', $mockWorkspace);
+		$mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/foo/bar', $mockWorkspace);
 
 		$node->setProperty('title', 'The title of this node');
 		$node->setProperty('text', 'Shall I or <em>shall</em> I not, leak or not leak?');
@@ -80,9 +80,9 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPathThrowsAnExceptionIfAnInvalidPathIsPassed($path) {
-		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $mockWorkspace);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $mockWorkspace);
 		$node->setPath($path);
 	}
 
@@ -108,9 +108,9 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPathAcceptsAValidPath($path) {
-		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $mockWorkspace);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $mockWorkspace);
 		$node->setPath($path);
 	}
 
@@ -135,9 +135,9 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDepthReturnsThePathDepthOfTheNode() {
-		$mockWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$mockWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $mockWorkspace);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $mockWorkspace);
 		$this->assertEquals(0, $node->getDepth());
 
 		$node->setPath('/foo');
@@ -155,10 +155,10 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setWorkspacesAllowsForSettingTheWorkspaceForInternalPurposes() {
-		$originalWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$newWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$originalWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$newWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $originalWorkspace);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $originalWorkspace);
 		$this->assertSame($originalWorkspace, $node->getWorkspace());
 
 		$node->setWorkspace($newWorkspace);
@@ -170,8 +170,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theIndexCanBeSetAndRetrieved() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $workspace);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $workspace);
 
 		$node->setIndex(2);
 		$this->assertEquals(2, $node->getIndex());
@@ -182,8 +182,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentReturnsNullForARootNode() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $workspace);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $workspace);
 		$this->assertNull($node->getParent());
 	}
 
@@ -192,18 +192,18 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentReturnsParentNodeInCurrentNodesContext() {
-		$contextWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$contextWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($contextWorkspace));
 
-		$currentNodeWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$expectedParentNode = new \F3\TYPO3CR\Domain\Model\Node('/foo', $currentNodeWorkspace);
+		$currentNodeWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$expectedParentNode = new \TYPO3\TYPO3CR\Domain\Model\Node('/foo', $currentNodeWorkspace);
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath'), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('findOneByPath')->with('/foo', $contextWorkspace)->will($this->returnValue($expectedParentNode));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext'), array('/foo/bar', $currentNodeWorkspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext'), array('/foo/bar', $currentNodeWorkspace));
 		$currentNode->_set('nodeRepository', $nodeRepository);
 		$currentNode->setContext($context);
 
@@ -218,8 +218,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aContentObjectCanBeSetRetrievedAndUnset() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $workspace);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $workspace);
 
 		$contentObject = new \stdClass();
 
@@ -236,8 +236,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aContentObjectMustBeAnObject() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $workspace);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $workspace);
 		$node->setContentObject('not an object');
 	}
 
@@ -246,8 +246,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertiesCanBeSetAndRetrieved() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $workspace);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $workspace);
 
 		$node->setProperty('title', 'My Title');
 		$node->setProperty('body', 'My Body');
@@ -280,8 +280,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 		');
 		$contentObject = new $className;
 
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $workspace);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $workspace);
 		$node->setContentObject($contentObject);
 
 		$this->assertTrue($node->hasProperty('title'));
@@ -305,7 +305,7 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\TYPO3CR\Exception\NodeException
+	 * @expectedException TYPO3\TYPO3CR\Exception\NodeException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyThrowsAnExceptionIfTheSpecifiedPropertyDoesNotExistInTheContentObject() {
@@ -317,8 +317,8 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 		');
 		$contentObject = new $className;
 
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = new \F3\TYPO3CR\Domain\Model\Node('/', $workspace);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $workspace);
 		$node->setContentObject($contentObject);
 
 		$node->getProperty('foo');
@@ -329,11 +329,11 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theContentTypeCanBeSetAndRetrieved() {
-		$contentTypeManager = $this->getMock('F3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
+		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
 		$contentTypeManager->expects($this->once())->method('hasContentType')->with('typo3:mycontent')->will($this->returnValue(TRUE));
 
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $workspace));
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $workspace));
 		$node->_set('contentTypeManager', $contentTypeManager);
 
 		$this->assertEquals('unstructured', $node->getContentType());
@@ -344,15 +344,15 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\TYPO3CR\Exception\NodeException
+	 * @expectedException TYPO3\TYPO3CR\Exception\NodeException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentTypeThrowsAnExceptionIfTheSpecifiedContentTypeDoesNotExist() {
-		$contentTypeManager = $this->getMock('F3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
+		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
 		$contentTypeManager->expects($this->once())->method('hasContentType')->with('somecontenttype')->will($this->returnValue(FALSE));
 
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$node = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $workspace));
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $workspace));
 		$node->_set('contentTypeManager', $contentTypeManager);
 
 		$node->setContentType('somecontenttype');
@@ -365,23 +365,23 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function createNodeCreatesAChildNodeOfTheCurrentNodeInTheContextWorkspace() {
 		$this->marktestIncomplete('Mocked $newNode needs to be replaced - Node uses new now!');
 
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($workspace));
 
-		$newNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array('/foo', $workspace));
+		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array('/foo', $workspace));
 		$newNode->expects($this->once())->method('setIndex')->with(1);
 		$newNode->expects($this->once())->method('setContentType')->with('mycontenttype');
 
-		$objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$objectManager->expects($this->once())->method('create')->with('F3\TYPO3CR\Domain\Model\Node', '/foo', $workspace)->will($this->returnValue($newNode));
+		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3CR\Domain\Model\Node', '/foo', $workspace)->will($this->returnValue($newNode));
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('countByParentAndContentType', 'add'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('countByParentAndContentType', 'add'), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('countByParentAndContentType')->with('/', NULL, $workspace)->will($this->returnValue(0));
 		$nodeRepository->expects($this->once())->method('add')->with($newNode);
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext', 'getNode'), array('/', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext', 'getNode'), array('/', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->_set('objectManager', $objectManager);
 		$currentNode->_set('nodeRepository', $nodeRepository);
@@ -394,17 +394,17 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException \F3\TYPO3CR\Exception\NodeException
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
 	 */
 	public function createNodeThrowsNodeExceptionIfPathAlreadyExists() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
 
-		$oldNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array(), array('/foo', $workspace));
+		$oldNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array('/foo', $workspace));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('getNode'), array('/', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getNode'), array('/', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->expects($this->once())->method('getNode')->with('/foo')->will($this->returnValue($oldNode));
 
@@ -416,17 +416,17 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeReturnsTheSpecifiedNodeInTheCurrentNodesContext() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($workspace));
 
-		$expectedNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array('/foo/bar', $workspace));
+		$expectedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array('/foo/bar', $workspace));
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath'), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('findOneByPath')->with('/foo/bar', $workspace)->will($this->returnValue($expectedNode));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('normalizePath', 'treatNodeWithContext'), array('/foo/baz', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('normalizePath', 'treatNodeWithContext'), array('/foo/baz', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->_set('nodeRepository', $nodeRepository);
 
@@ -442,15 +442,15 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeReturnsNullIfTheSpecifiedNodeDoesNotExist() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($workspace));
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath'), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('findOneByPath')->with('/foo/quux', $workspace)->will($this->returnValue(NULL));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('normalizePath'), array('/foo/baz', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('normalizePath'), array('/foo/baz', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->_set('nodeRepository', $nodeRepository);
 
@@ -464,18 +464,18 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNodeReturnsTheFirstChildNode() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
 
-		$expectedNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array('/foo/bar', $workspace));
+		$expectedNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array('/foo/bar', $workspace));
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findFirstByParentAndContentType'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findFirstByParentAndContentType'), array(), '', FALSE);
 		$nodeRepository->expects($this->at(0))->method('findFirstByParentAndContentType')->with('/foo', NULL, $workspace)->will($this->returnValue($expectedNode));
 		$nodeRepository->expects($this->at(1))->method('findFirstByParentAndContentType')->with('/foo', NULL, $workspace)->will($this->returnValue(NULL));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext'), array('/foo', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext'), array('/foo', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->_set('nodeRepository', $nodeRepository);
 
@@ -492,19 +492,19 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodesReturnsChildNodesInCurrentContextOptionallyFilteredyByContentType() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($workspace));
 
 		$childNodes = array(
-			$this->getMock('F3\TYPO3CR\Domain\Model\Node', array(), array('/foo/bar', $workspace))
+			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array('/foo/bar', $workspace))
 		);
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('findByParentAndContentType'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByParentAndContentType'), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('findByParentAndContentType')->with('/foo', 'mycontenttype', $workspace)->will($this->returnValue($childNodes));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('treatNodesWithContext'), array('/foo', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('treatNodesWithContext'), array('/foo', $workspace));
 		$currentNode->_set('context', $context);
 		$currentNode->_set('nodeRepository', $nodeRepository);
 
@@ -518,16 +518,16 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasChildNodesChecksForChildNodesOptionallyFilteredyByContentType() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($workspace));
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('countByParentAndContentType'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('countByParentAndContentType'), array(), '', FALSE);
 		$nodeRepository->expects($this->at(0))->method('countByParentAndContentType')->with('/foo', 'TYPO3CR:Folder', $workspace)->will($this->returnValue(3));
 		$nodeRepository->expects($this->at(1))->method('countByParentAndContentType')->with('/foo', 'Foo:Bar', $workspace)->will($this->returnValue(0));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('getPath'), array('/foo', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getPath'), array('/foo', $workspace));
 
 			// we need to use getPath() instead of $this->path because otherwise the Proxy Node would
 			// access $this->path as well - which would be NULL
@@ -545,18 +545,18 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeRemovesAllChildNodesAndTheNodeItself() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(NULL));
 
-		$subNode1 = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('remove'), array('/foo/bar1', $workspace));
+		$subNode1 = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array('/foo/bar1', $workspace));
 		$subNode1->expects($this->once())->method('remove');
 
-		$subNode2 = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('remove'), array('/foo/bar2', $workspace));
+		$subNode2 = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('remove'), array('/foo/bar2', $workspace));
 		$subNode2->expects($this->once())->method('remove');
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('remove'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('remove'), array(), '', FALSE);
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array('/foo', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array('/foo', $workspace));
 		$currentNode->_set('nodeRepository', $nodeRepository);
 		$currentNode->expects($this->once())->method('getChildNodes')->will($this->returnValue(array($subNode1, $subNode2)));
 
@@ -570,14 +570,14 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeOnlyFlagsTheNodeAsRemovedIfItsWorkspaceHasAnotherBaseWorkspace() {
-		$baseWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$baseWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue($baseWorkspace));
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array('remove'), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('remove'), array(), '', FALSE);
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array('/foo', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array('/foo', $workspace));
 		$currentNode->_set('nodeRepository', $nodeRepository);
 		$currentNode->expects($this->once())->method('getChildNodes')->will($this->returnValue(array()));
 
@@ -593,10 +593,10 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theContextCanBeSetAndRetrieved() {
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo', $workspace));
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo', $workspace));
 
 		$currentNode->setContext($context);
 		$this->assertSame($context, $currentNode->getContext());
@@ -608,7 +608,7 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath) {
-		$node = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
 		$node->_set('path', $currentPath);
 		$this->assertSame($normalizedPath, $node->_call('normalizePath', $relativePath));
 	}
@@ -641,7 +641,7 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash() {
-		$node = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
 		$node->_call('normalizePath', 'foo//bar');
 	}
 
@@ -651,11 +651,11 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function treatNodesWithContextWillTreatEachGivenNodeWithContext() {
 		$nodes = array(
-			1 => $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE),
-			2 => $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE),
+			1 => $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE),
+			2 => $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array(), array(), '', FALSE),
 		);
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext'), array(), '', FALSE);
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('treatNodeWithContext'), array(), '', FALSE);
 		$currentNode->expects($this->exactly(2))->method('treatNodeWithContext')->will($this->returnArgument(0));
 
 		$returnedNodes = $currentNode->_call('treatNodesWithContext', $nodes);
@@ -667,16 +667,16 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function treatNodeWithContextWillTreatTheGivenNodeWithContextOfThisNode() {
-		$currentWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$currentWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array('getWorkspace'), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array('getWorkspace'), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
 
-		$subjectNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('getWorkspace', 'setContext'), array(), '', FALSE);
+		$subjectNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getWorkspace', 'setContext'), array(), '', FALSE);
 		$subjectNode->expects($this->once())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
 		$subjectNode->expects($this->once())->method('setContext')->with($context);
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
 		$currentNode->_set('context', $context);
 
 		$returnedNode = $currentNode->_call('treatNodeWithContext', $subjectNode);
@@ -688,22 +688,22 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function treatNodeWithContextReturnsAProxyNodeIfTheWorkspaceOfTheGivenNodeIsDifferentThanTheWorkspaceOfThisNode() {
-		$otherWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$currentWorkspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$otherWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$currentWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array('getWorkspace'), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array('getWorkspace'), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($currentWorkspace));
 
-		$subjectNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('getWorkspace'), array(), '', FALSE);
+		$subjectNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getWorkspace'), array(), '', FALSE);
 		$subjectNode->expects($this->once())->method('getWorkspace')->will($this->returnValue($otherWorkspace));
 
-		$proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
+		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
 		$proxyNode->expects($this->once())->method('setContext')->with($context);
 
-		$proxyNodeFactory = $this->getMock('F3\TYPO3CR\Domain\Factory\ProxyNodeFactory');
+		$proxyNodeFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Factory\ProxyNodeFactory');
 		$proxyNodeFactory->expects($this->once())->method('createFromNode')->with($subjectNode)->will($this->returnValue($proxyNode));
 
-		$currentNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
+		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
 		$currentNode->_set('proxyNodeFactory', $proxyNodeFactory);
 		$currentNode->_set('context', $context);
 
@@ -728,10 +728,10 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function moveBeforeWorks($indexOfElementToMove, $indexOfTargetElement, $expected) {
-		$rootNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array(), '', FALSE);
+		$rootNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array(), '', FALSE);
 		$childNodes = array();
 		for ($i=0; $i<10; $i++) {
-			$childNodes[$i] = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array('getParent'), array(), '', FALSE);
+			$childNodes[$i] = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getParent'), array(), '', FALSE);
 			$childNodes[$i]->setIndex($i);
 			$childNodes[$i]->expects($this->any())->method('getParent')->will($this->returnValue($rootNode));
 		}
@@ -761,10 +761,10 @@ class NodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider dataProviderForMoveAfter
 	 */
 	public function moveAfterWorks($indexOfElementToMove, $indexOfTargetElement, $expected) {
-		$rootNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array(), '', FALSE);
+		$rootNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array(), '', FALSE);
 		$childNodes = array();
 		for ($i=0; $i<10; $i++) {
-			$childNodes[$i] = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array('getParent'), array(), '', FALSE);
+			$childNodes[$i] = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getParent'), array(), '', FALSE);
 			$childNodes[$i]->setIndex($i);
 			$childNodes[$i]->expects($this->any())->method('getParent')->will($this->returnValue($rootNode));
 		}

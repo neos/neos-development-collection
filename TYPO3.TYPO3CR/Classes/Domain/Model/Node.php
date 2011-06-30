@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Model;
+namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -45,7 +45,7 @@ class Node implements NodeInterface {
 	/**
 	 * Workspace this node is contained in
 	 *
-	 * @var \F3\TYPO3CR\Domain\Model\Workspace
+	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 * @ManyToOne(cascade={"persist"})
 	 * @JoinColumn(onDelete="SET NULL")
 	 */
@@ -83,7 +83,7 @@ class Node implements NodeInterface {
 	/**
 	 * An optional object which contains the content of this node
 	 *
-	 * @var \F3\TYPO3CR\Domain\Model\ContentObjectProxy
+	 * @var \TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy
 	 * @ManyToOne(cascade={"all"})
 	 */
 	protected $contentObjectProxy;
@@ -140,33 +140,33 @@ class Node implements NodeInterface {
 	protected $accessRoles = array();
 
 	/**
-	 * @var \F3\TYPO3CR\Domain\Service\Context
+	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
 	 * @transient
 	 */
 	protected $context;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 * @transient
 	 */
 	protected $securityContext;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Factory\ProxyNodeFactory
+	 * @var \TYPO3\TYPO3CR\Domain\Factory\ProxyNodeFactory
 	 */
 	protected $proxyNodeFactory;
 
@@ -174,14 +174,14 @@ class Node implements NodeInterface {
 	 * Constructs this node
 	 *
 	 * @param string $path Absolute path of this node
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
 	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating Corresponding Nodes
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function  __construct($path, \F3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
+	public function  __construct($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
 		$this->setPath($path);
 		$this->workspace = $workspace;
-		$this->identifier = ($identifier === NULL) ? \F3\FLOW3\Utility\Algorithms::generateUUID() : $identifier;
+		$this->identifier = ($identifier === NULL) ? \TYPO3\FLOW3\Utility\Algorithms::generateUUID() : $identifier;
 	}
 
 	/**
@@ -258,7 +258,7 @@ class Node implements NodeInterface {
 	 */
 	public function getLabel() {
 		$label = $this->hasProperty('title') ? strip_tags($this->getProperty('title')) : '(' . $this->getContentType() . ') '. $this->getName();
-		$croppedLabel = \F3\FLOW3\Utility\Unicode\Functions::substr($label, 0, self::LABEL_MAXIMUM_CHARACTERS);
+		$croppedLabel = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($label, 0, self::LABEL_MAXIMUM_CHARACTERS);
 		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
 	}
 
@@ -271,7 +271,7 @@ class Node implements NodeInterface {
 	 */
 	public function getAbstract() {
 		$abstract = strip_tags(implode(' – ', $this->getProperties()));
-		$croppedAbstract = \F3\FLOW3\Utility\Unicode\Functions::substr($abstract, 0, 253);
+		$croppedAbstract = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($abstract, 0, 253);
 		return $croppedAbstract . (strlen($croppedAbstract) < strlen($abstract) ? ' …' : '');
 	}
 
@@ -281,18 +281,18 @@ class Node implements NodeInterface {
 	 * This method is only for internal use by the content repository. Changing
 	 * the workspace of a node manually may lead to unexpected behavior.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function setWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$this->workspace = $workspace;
 	}
 
 	/**
 	 * Returns the workspace this node is contained in
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Workspace
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWorkspace() {
@@ -336,7 +336,7 @@ class Node implements NodeInterface {
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParent() {
@@ -351,19 +351,19 @@ class Node implements NodeInterface {
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
 	 */
-	public function moveBefore(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
+	public function moveBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if ($this->path === '/') {
-			throw new \F3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
 		}
 
 		$referenceNodePath = $referenceNode->getPath();
 		if (substr($this->path, 0, strrpos($this->path, '/')) !== substr($referenceNodePath, 0, strrpos($referenceNodePath, '/'))) {
-			throw new \F3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
 		}
 
 		$moveTo = $referenceNode->getIndex();
@@ -389,19 +389,19 @@ class Node implements NodeInterface {
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christian Müller <christian@kitsunet.de>
 	 */
-	function moveAfter(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
+	function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if ($this->path === '/') {
-			throw new \F3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
 		}
 
 		$referenceNodePath = $referenceNode->getPath();
 		if (substr($this->path, 0, strrpos($this->path, '/')) !== substr($referenceNodePath, 0, strrpos($referenceNodePath, '/'))) {
-			throw new \F3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
 		}
 
 		$moveTo = $referenceNode->getIndex();
@@ -438,9 +438,9 @@ class Node implements NodeInterface {
 	public function setProperty($propertyName, $value) {
 		if (!is_object($this->contentObjectProxy)) {
 			$this->properties[$propertyName] = $value;
-		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
+		} elseif (\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
 			$contentObject = $this->contentObjectProxy->getObject();
-			\F3\FLOW3\Reflection\ObjectAccess::setProperty($contentObject, $propertyName, $value);
+			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($contentObject, $propertyName, $value);
 		}
 	}
 
@@ -456,7 +456,7 @@ class Node implements NodeInterface {
 	 */
 	public function hasProperty($propertyName) {
 		if (is_object($this->contentObjectProxy)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName);
 		} else {
 			return isset($this->properties[$propertyName]);
 		}
@@ -470,16 +470,16 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return mixed value of the property
-	 * @throws \F3\TYPO3CR\Exception\NodeException if the a content object exists but does not contain the specified property
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the a content object exists but does not contain the specified property
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($propertyName) {
 		if (!is_object($this->contentObjectProxy)) {
 			return isset($this->properties[$propertyName]) ? $this->properties[$propertyName] : NULL;
-		} elseif (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
+		} elseif (\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->contentObjectProxy->getObject(), $propertyName)) {
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->contentObjectProxy->getObject(), $propertyName);
 		}
-		throw new \F3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObjectProxy->getObject())), 1291286995);
+		throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Property "%s" does not exist in content object of type %s.', $propertyName, get_class($this->contentObjectProxy->getObject())), 1291286995);
 	}
 
 	/**
@@ -493,7 +493,7 @@ class Node implements NodeInterface {
 	 */
 	public function getProperties() {
 		if (is_object($this->contentObjectProxy)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($this->contentObjectProxy->getObject());
 		} else {
 			return $this->properties;
 		}
@@ -507,7 +507,7 @@ class Node implements NodeInterface {
 	 */
 	public function getPropertyNames() {
 		if (is_object($this->contentObjectProxy)) {
-			return \F3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObjectProxy->getObject());
+			return \TYPO3\FLOW3\Reflection\ObjectAccess::getGettablePropertyNames($this->contentObjectProxy->getObject());
 		} else {
 			return array_keys($this->properties);
 		}
@@ -556,7 +556,7 @@ class Node implements NodeInterface {
 	 */
 	public function setContentType($contentType) {
 		if (!$this->contentTypeManager->hasContentType($contentType)) {
-			throw new \F3\TYPO3CR\Exception\NodeException('Unknown content type "' . $contentType . '".', 1285519999);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('Unknown content type "' . $contentType . '".', 1285519999);
 		}
 		$this->contentType = $contentType;
 	}
@@ -577,7 +577,7 @@ class Node implements NodeInterface {
 	 * @param string $name Name of the new node
 	 * @param string $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @return \F3\TYPO3CR\Domain\Model\Node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createNode($name, $contentType = NULL, $identifier = NULL) {
@@ -589,7 +589,7 @@ class Node implements NodeInterface {
 
 		$newPath = $this->path . ($this->path !== '/' ? '/' : '') . $name;
 		if ($this->getNode($newPath) !== NULL) {
-			throw new \F3\TYPO3CR\Exception\NodeException('Node with path "' . $newPath . '" already exists.', 1292503465);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('Node with path "' . $newPath . '" already exists.', 1292503465);
 		}
 		$newIndex = $this->nodeRepository->countByParentAndContentType($this->path, NULL, $currentWorkspace) + 1;
 
@@ -607,7 +607,7 @@ class Node implements NodeInterface {
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
@@ -621,7 +621,7 @@ class Node implements NodeInterface {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * content type. For now it is just the first child node.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNode() {
@@ -637,7 +637,7 @@ class Node implements NodeInterface {
 	 * If a content type is specified, only nodes of that type are returned.
 	 *
 	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
-	 * @return array<\F3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodes($contentTypeFilter = NULL) {
@@ -840,18 +840,18 @@ class Node implements NodeInterface {
 	 * This will be set by the context or other nodes while retrieving this node.
 	 * This method is only for internal use, don't mess with it.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Service\Context $context
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContext(\F3\TYPO3CR\Domain\Service\Context $context) {
+	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context) {
 		$this->context = $context;
 	}
 
 	/**
 	 * Returns the current context this node operates in.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Service\Context
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContext() {
@@ -915,11 +915,11 @@ class Node implements NodeInterface {
 	 * Treats the given node with the current context
 	 *
 	 * @param mixed $node The node to contextize
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The same node, but with the context of this node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The same node, but with the context of this node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function treatNodeWithContext(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		if ($node instanceof \F3\TYPO3CR\Domain\Model\Node) {
+	protected function treatNodeWithContext(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
 			if ($node->getWorkspace() !== $this->context->getWorkspace()) {
 				$node = $this->proxyNodeFactory->createFromNode($node);
 			}

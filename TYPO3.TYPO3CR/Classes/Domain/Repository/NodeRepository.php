@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Repository;
+namespace TYPO3\TYPO3CR\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -27,7 +27,7 @@ namespace F3\TYPO3CR\Domain\Repository;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
-class NodeRepository extends \F3\FLOW3\Persistence\Repository {
+class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 	/**
 	 * @var \SplObjectStorage
@@ -86,7 +86,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * @return void
 	 */
 	public function update($object) {
-		if ($object instanceof \F3\TYPO3CR\Domain\Model\ProxyNode) {
+		if ($object instanceof \TYPO3\TYPO3CR\Domain\Model\ProxyNode) {
 			 if ($object->getNewNode() !== NULL) {
 					// in this case, a ProxyNode has been returned from persistence,
 					// so there was no materialized node in this workspace.
@@ -117,11 +117,11 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 *		/foo/      first node on second level, below "foo"
 	 *
 	 * @param string $path Absolute path of the node
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The matching node if found, otherwise NULL
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The matching node if found, otherwise NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findOneByPath($path, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findOneByPath($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $path . '" is not a valid path: must start but not end with a slash.', 1284985489);
 		}
@@ -146,7 +146,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 			}
 
 			$query = $this->createQuery();
-			$query->setOrderings(array('index' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
+			$query->setOrderings(array('index' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
 			$query->matching(
 				$query->logicalAnd(
 					$query->equals('workspace', $workspace),
@@ -171,11 +171,11 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 *
 	 * @param string $parentPath Path of the parent node
 	 * @param integer $index Only nodes with an index higher than $index are returned
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace
-	 * @return array<\F3\TYPO3\Domain\Model\Node> The nodes found
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found
 	 * @todo Check for workspace compliance
 	 */
-	public function findByHigherIndex($parentPath, $index, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findByHigherIndex($parentPath, $index, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$query = $this->createQueryForFindByParentAndContentType($parentPath, NULL, $workspace);
 		$query->setOffset($index);
 		return $query->execute()->toArray();
@@ -186,11 +186,11 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 *
 	 * Note: Also counts removed nodes
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return integer The number of nodes found
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function countByWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function countByWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$query = $this->createQuery();
 		return $query->matching($query->equals('workspace', $workspace))->execute()->count();
 	}
@@ -200,13 +200,13 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * content type
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return integer The number of nodes found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Implement a count which also considers to not count removed nodes and does not actually loads nodes
 	 */
-	public function countByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function countByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		return count($this->findByParentAndContentType($parentPath, $contentTypeFilter,$workspace));
 	}
 
@@ -219,12 +219,12 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * only occurs in very rare cases) is the *identifier*.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return array<\F3\TYPO3\Domain\Model\Node> The nodes found on the given path
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found on the given path
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$foundNodes = array();
 
 		while ($workspace !== NULL) {
@@ -267,13 +267,13 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * Finds a single node by its parent and (optionally) by its content type
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \F3\TYPO3\Domain\Model\Node The node found or NULL
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return \TYPO3\TYPO3\Domain\Model\Node The node found or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Check for workspace compliance
 	 */
-	public function findFirstByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findFirstByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		while ($workspace !== NULL) {
 			$query = $this->createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, $workspace);
 			$firstNodeFoundInThisWorkspace = $query->execute()->getFirst();
@@ -294,11 +294,11 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 *
 	 * @param string $pathStartingPoint Absolute path specifying the starting point
 	 * @param string $pathEndPoint Absolute path specifying the end point
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return array<\F3\TYPO3\Domain\Model\Node> The nodes found on the given path
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found on the given path
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findOnPath($pathStartingPoint, $pathEndPoint, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	public function findOnPath($pathStartingPoint, $pathEndPoint, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if ($pathStartingPoint !== substr($pathEndPoint, 0, strlen($pathStartingPoint))) {
 			throw new \InvalidArgumentException('Invalid paths: path of starting point must first part of end point path.', 1284391181);
 		}
@@ -350,12 +350,12 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 	 * the given workspace.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3:Page", "!TYPO3:Page,TYPO3:Text" or NULL)
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \F3\FLOW3\Peristence\QueryInterface The query
+	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return \TYPO3\FLOW3\Peristence\QueryInterface The query
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, \F3\TYPO3CR\Domain\Model\Workspace $workspace) {
+	protected function createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $parentPath . '" is not a valid path: must start but not end with a slash.', 1284985610);
 		}
@@ -388,7 +388,7 @@ class NodeRepository extends \F3\FLOW3\Persistence\Repository {
 		}
 
 		$query->matching($query->logicalAnd($constraints));
-		$query->setOrderings(array('index' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
+		$query->setOrderings(array('index' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
 		return $query;
 	}
 

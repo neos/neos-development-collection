@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Model;
+namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -31,7 +31,7 @@ namespace F3\TYPO3CR\Domain\Model;
 class ContentObjectProxy {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 * @inject
 	 */
 	protected $persistenceManager;
@@ -82,7 +82,7 @@ class ContentObjectProxy {
 				$this->persistenceManager->persistAll();
 				$this->targetId = $this->persistenceManager->getIdentifierByObject($this->contentObject);
 				if ($this->targetId === NULL) {
-					throw new \F3\FLOW3\Persistence\Exception\IllegalObjectTypeException('You cannot add an object without an identifier to a ContentObjectProxy. Probably you didn\'t add a valid entity?', 1303859434);
+					throw new \TYPO3\FLOW3\Persistence\Exception\IllegalObjectTypeException('You cannot add an object without an identifier to a ContentObjectProxy. Probably you didn\'t add a valid entity?', 1303859434);
 				}
 			}
 		}

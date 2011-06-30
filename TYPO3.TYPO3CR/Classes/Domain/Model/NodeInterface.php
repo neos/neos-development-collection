@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Model;
+namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -109,15 +109,15 @@ interface NodeInterface {
 	 * This method is only for internal use by the content repository. Changing
 	 * the workspace of a node manually may lead to unexpected behavior.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $workspace
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return void
 	 */
-	public function setWorkspace(\F3\TYPO3CR\Domain\Model\Workspace $workspace);
+	public function setWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace);
 
 	/**
 	 * Returns the workspace this node is contained in
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Workspace
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 */
 	public function getWorkspace();
 
@@ -149,25 +149,25 @@ interface NodeInterface {
 	/**
 	 * Returns the parent node of this node
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
 	 */
 	public function getParent();
 
 	/**
 	 * Moves this node before the given node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 */
-	public function moveBefore(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
+	public function moveBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
 
 	/**
 	 * Moves this node after the given node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 */
-	function moveAfter(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
+	function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
 
 	/**
 	 * Sets the specified property.
@@ -200,7 +200,7 @@ interface NodeInterface {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return mixed value of the property
-	 * @throws \F3\TYPO3CR\Exception\NodeException if the a content object exists but does not contain the specified property
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the a content object exists but does not contain the specified property
 	 */
 	public function getProperty($propertyName);
 
@@ -264,7 +264,7 @@ interface NodeInterface {
 	 * @param string $name Name of the new node
 	 * @param string $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	public function createNode($name, $contentType = NULL, $identifier = NULL);
 
@@ -272,7 +272,7 @@ interface NodeInterface {
 	 * Returns a node specified by the given relative path.
 	 *
 	 * @param string $path Path specifying the node, relative to this node
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 */
 	public function getNode($path);
 	/**
@@ -281,7 +281,7 @@ interface NodeInterface {
 	 * Which node acts as a primary child node will in the future depend on the
 	 * content type. For now it is just the first child node.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
 	 */
 	public function getPrimaryChildNode();
 
@@ -290,7 +290,7 @@ interface NodeInterface {
 	 * If a content type is specified, only nodes of that type are returned.
 	 *
 	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
-	 * @return array<\F3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
 	 */
 	public function getChildNodes($contentTypeFilter = NULL);
 
@@ -414,15 +414,15 @@ interface NodeInterface {
 	 * This will be set by the context or other nodes while retrieving this node.
 	 * This method is only for internal use, don't mess with it.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Service\Context $context
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @return void
 	 */
-	public function setContext(\F3\TYPO3CR\Domain\Service\Context $context);
+	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context);
 
 	/**
 	 * Returns the current context this node operates in.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Service\Context
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	public function getContext();
 

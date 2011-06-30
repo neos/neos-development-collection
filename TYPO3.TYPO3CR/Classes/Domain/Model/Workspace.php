@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Model;
+namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -43,7 +43,7 @@ class Workspace {
 	 * Content from the base workspace will shine through in this workspace
 	 * as long as they are not modified in this workspace.
 	 *
-	 * @var \F3\TYPO3CR\Domain\Model\Workspace
+	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 * @ManyToOne
 	 */
 	protected $baseWorkspace;
@@ -51,27 +51,27 @@ class Workspace {
 	/**
 	 * Root node of this workspace
 	 *
-	 * @var \F3\TYPO3CR\Domain\Model\Node
+	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @ManyToOne(cascade={"persist"})
 	 * @JoinColumn(referencedColumnName="id")
 	 */
 	protected $rootNode;
 
 	/**
-	 * @var \F3\TYPO3CR\Domain\Service\Context
+	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
 	 * @transient
 	 */
 	protected $context;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
@@ -79,10 +79,10 @@ class Workspace {
 	 * Constructs a new workspace
 	 *
 	 * @param string $name Name of this workspace
-	 * @param \F3\TYPO3CR\Domain\Model\Workspace $baseWorkspace A workspace this workspace is based on (if any)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace A workspace this workspace is based on (if any)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($name, \F3\TYPO3CR\Domain\Model\Workspace $baseWorkspace = NULL) {
+	public function __construct($name, \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace = NULL) {
 		$this->name = $name;
 		$this->baseWorkspace = $baseWorkspace;
 	}
@@ -97,7 +97,7 @@ class Workspace {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject($initializationCause) {
-		if ($initializationCause === \F3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
+		if ($initializationCause === \TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
 			$this->rootNode = new Node('/', $this);
 			$this->nodeRepository->add($this->rootNode);
 		}
@@ -116,7 +116,7 @@ class Workspace {
 	/**
 	 * Returns the base workspace, if any
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Workspace
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseWorkspace() {
@@ -126,7 +126,7 @@ class Workspace {
 	/**
 	 * Returns the root node of this workspace
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRootNode() {
@@ -142,11 +142,11 @@ class Workspace {
 	 *
 	 * This method is only for internal use, don't mess with it.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Service\Context $context
+	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContext(\F3\TYPO3CR\Domain\Service\Context $context) {
+	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context) {
 		$this->context = $context;
 		$this->rootNode->setContext($context);
 	}
@@ -154,7 +154,7 @@ class Workspace {
 	/**
 	 * Returns the current context this workspace operates in.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Service\Context
+	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContext() {
@@ -181,7 +181,7 @@ class Workspace {
 	 *
 	 * The specified workspace must be a base workspace of this workspace.
 	 *
-	 * @param array<\F3\TYPO3\Domain\Model\Node> $nodes
+	 * @param array<\TYPO3\TYPO3\Domain\Model\Node> $nodes
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -226,8 +226,8 @@ class Workspace {
 	 * and if so, returns it.
 	 *
 	 * @param string $targetWorkspaceName Name of the target workspace
-	 * @return \F3\TYPO3CR\Domain\Model\Workspace The target workspace
-	 * @throws \F3\TYPO3CR\Exception\WorkspaceException if the specified workspace is not a base workspace of this workspace
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The target workspace
+	 * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException if the specified workspace is not a base workspace of this workspace
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getPublishingTargetWorkspace($targetWorkspaceName) {
@@ -235,7 +235,7 @@ class Workspace {
 		while ($targetWorkspaceName !== $targetWorkspace->getName()) {
 			$targetWorkspace = $targetWorkspace->getBaseWorkspace();
 			if ($targetWorkspace === NULL) {
-				throw new \F3\TYPO3CR\Exception\WorkspaceException('The specified workspace "' . $targetWorkspaceName . ' is not a base workspace of "' . $this->name . '".', 1289499117);
+				throw new \TYPO3\TYPO3CR\Exception\WorkspaceException('The specified workspace "' . $targetWorkspaceName . ' is not a base workspace of "' . $this->name . '".', 1289499117);
 			}
 		}
 		return $targetWorkspace;

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Factory;
+namespace TYPO3\TYPO3CR\Domain\Factory;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -35,12 +35,6 @@ namespace F3\TYPO3CR\Domain\Factory;
 class ProxyNodeFactory {
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \SplObjectStorage
 	 */
 	protected $proxyNodes;
@@ -60,12 +54,12 @@ class ProxyNodeFactory {
 	 * If this factory has previously created a ProxyNode for the given Node, it will
 	 * return the same ProxyNode again.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\ProxyNode
+	 * @return \TYPO3\TYPO3CR\Domain\Model\ProxyNode
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createFromNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function createFromNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if ($this->proxyNodes->contains($node) === FALSE) {
-			$this->proxyNodes[$node] = $this->objectManager->create('F3\TYPO3CR\Domain\Model\ProxyNode', $node);
+			$this->proxyNodes[$node] = new \TYPO3\TYPO3CR\Domain\Model\ProxyNode($node);
 		}
 		return $this->proxyNodes[$node];
 	}

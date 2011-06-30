@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Service;
+namespace TYPO3\TYPO3CR\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -31,22 +31,22 @@ interface ContextInterface {
 	/**
 	 * Returns the current workspace.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\Workspace
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
 	 */
 	public function getWorkspace();
 
 	/**
 	 * Sets the current node.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	public function setCurrentNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node);
+	public function setCurrentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 	/**
 	 * Returns the current node
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	public function getCurrentNode();
 
@@ -54,7 +54,7 @@ interface ContextInterface {
 	 * Returns a node specified by the given absolute path.
 	 *
 	 * @param string $path Absolute path specifying the node
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 */
 	public function getNode($path);
 
@@ -64,7 +64,7 @@ interface ContextInterface {
 	 *
 	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
 	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
-	 * @return array<\F3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
 	 */
 	public function getNodesOnPath($startingPoint, $endPoint);
 

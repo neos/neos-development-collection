@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Tests\Unit\Domain\Model;
+namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -26,15 +26,15 @@ namespace F3\TYPO3CR\Tests\Unit\Domain\Model;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var F3\TYPO3CR\Domain\Model\ProxyNode
+	 * @var TYPO3\TYPO3CR\Domain\Model\ProxyNode
 	 */
 	protected $proxyNode;
 
 	/**
-	 * @var F3\TYPO3CR\Domain\Model\Node
+	 * @var TYPO3\TYPO3CR\Domain\Model\Node
 	 */
 	protected $newNode;
 
@@ -43,8 +43,8 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aProxyNodeIsRelatedToAnOriginalNode() {
-		$originalNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
-		new \F3\TYPO3CR\Domain\Model\ProxyNode($originalNode);
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		new \TYPO3\TYPO3CR\Domain\Model\ProxyNode($originalNode);
 	}
 
 	/**
@@ -53,8 +53,8 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theOriginalNodeMustNotBeAProxyNode() {
-		$originalNode = $this->getMock('F3\TYPO3CR\Domain\Model\ProxyNode', array(), array(), '', FALSE);
-		new \F3\TYPO3CR\Domain\Model\ProxyNode($originalNode);
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array(), array(), '', FALSE);
+		new \TYPO3\TYPO3CR\Domain\Model\ProxyNode($originalNode);
 	}
 
 	/**
@@ -68,7 +68,7 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode($methodName, $argument1 = NULL, $argument2 = NULL) {
-		$this->newNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
+		$this->newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
 		if ($argument1 === NULL) {
 			$this->newNode->expects($this->at(0))->method($methodName);
@@ -82,7 +82,7 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		}
 
-		$this->proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\ProxyNode', array('cloneOriginalNode'), array(), '', FALSE);
+		$this->proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('cloneOriginalNode'), array(), '', FALSE);
 		$this->proxyNode->expects($this->once())->method('cloneOriginalNode')->will($this->returnCallback(array($this, 'cloneOriginalNodeCallback')));
 
 		call_user_func_array(array($this->proxyNode, $methodName), array($argument1, $argument2));
@@ -93,21 +93,21 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function assertThatOriginalOrNewNodeIsCalled($methodName, $argument1 = NULL) {
-		$originalNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		if ($argument1 === NULL) {
 			$originalNode->expects($this->once())->method($methodName)->will($this->returnValue('originalNodeResult'));
 		} else {
 			$originalNode->expects($this->once())->method($methodName)->with($argument1)->will($this->returnValue('originalNodeResult'));
 		}
 
-		$newNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
+		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		if ($argument1 === NULL) {
 			$newNode->expects($this->once())->method($methodName)->will($this->returnValue('newNodeResult'));
 		} else {
 			$newNode->expects($this->once())->method($methodName)->with($argument1)->will($this->returnValue('newNodeResult'));
 		}
 
-		$proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
+		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
 		$proxyNode->_set('originalNode', $originalNode);
 
 		$this->assertEquals('originalNodeResult', $proxyNode->$methodName($argument1));
@@ -160,10 +160,10 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIdentifierReturnsTheIdentifier() {
-		$originalNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$originalNode->expects($this->once())->method('getIdentifier')->will($this->returnValue('theidentifier'));
 
-		$proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
+		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
 		$proxyNode->_set('originalNode', $originalNode);
 
 		$this->assertEquals('theidentifier', $proxyNode->getIdentifier());
@@ -198,7 +198,7 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBeforeCallsMoveBeforeOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
-		$referenceNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
+		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('moveBefore', $referenceNode);
 	}
 
@@ -207,7 +207,7 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveAfterCallsMoveAfterOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
-		$referenceNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
+		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('moveAfter', $referenceNode);
 	}
 
@@ -345,15 +345,15 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContextSetsTheContextOfTheProxyNodeTheOriginalNodeAndTheNewNode() {
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 
-		$originalNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
 		$originalNode->expects($this->exactly(2))->method('setContext')->with($context);
 
-		$newNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
+		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
 		$newNode->expects($this->once())->method('setContext')->with($context);
 
-		$proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
+		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
 		$proxyNode->_set('originalNode', $originalNode);
 
 		$proxyNode->setContext($context);
@@ -366,10 +366,10 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContextReturnsTheContext() {
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
-		$originalNode = $this->getMock('F3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
 
-		$proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
+		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
 		$proxyNode->_set('originalNode', $originalNode);
 
 		$proxyNode->setContext($context);
@@ -383,26 +383,26 @@ class ProxyNodeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function cloneOriginalNodeCreatesACloneOfTheOriginalNode() {
 		$this->markTestIncomplete('Mocked $newNode needs to be replaced - Node uses new now!');
 
-		$workspace = $this->getMock('F3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
-		$context = $this->getMock('F3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
+		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($workspace));
 
-		$contentTypeManager = $this->getMock('F3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
+		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
 		$contentTypeManager->expects($this->any())->method('hasContentType')->will($this->returnValue(TRUE));
 
-		$originalNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo', $workspace));
+		$originalNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo', $workspace));
 		$originalNode->_set('contentTypeManager', $contentTypeManager);
 
-		$newNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo', $workspace));
+		$newNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/foo', $workspace));
 		$newNode->_set('contentTypeManager', $contentTypeManager);
 
-		$nodeRepository = $this->getMock('F3\TYPO3CR\Domain\Repository\NodeRepository', array(), array(), '', FALSE);
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array(), array(), '', FALSE);
 		$nodeRepository->expects($this->once())->method('add')->with($newNode);
 
-		$objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$objectManager->expects($this->once())->method('create')->with('F3\TYPO3CR\Domain\Model\Node', '/foo', $workspace)->will($this->returnValue($newNode));
+		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3CR\Domain\Model\Node', '/foo', $workspace)->will($this->returnValue($newNode));
 
-		$proxyNode = $this->getAccessibleMock('F3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
+		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
 		$proxyNode->_set('objectManager', $objectManager);
 		$proxyNode->_set('nodeRepository', $nodeRepository);
 		$proxyNode->_set('context', $context);

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Domain\Model;
+namespace TYPO3\TYPO3CR\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -40,7 +40,7 @@ class ContentType {
 	/**
 	 * Content types this content type directly inherits from
 	 *
-	 * @var \Doctrine\Common\Collections\ArrayCollection<\F3\TYPO3CR\Domain\Model\ContentType>
+	 * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\TYPO3CR\Domain\Model\ContentType>
 	 * @ManyToMany
 	 * @JoinTable(name="contentTypesDeclaredSuperTypes",
 	 *      joinColumns={@JoinColumn(name="declaredSuperTypeId")}
@@ -72,13 +72,13 @@ class ContentType {
 	/**
 	 * Declares the super types this content type inherits from.
 	 *
-	 * @param \Doctrine\Common\Collections\ArrayCollection<\F3\TYPO3CR\Domain\Model\ContentType> $types
+	 * @param \Doctrine\Common\Collections\ArrayCollection<\TYPO3\TYPO3CR\Domain\Model\ContentType> $types
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDeclaredSuperTypes(\Doctrine\Common\Collections\ArrayCollection $types) {
 		foreach ($types as $type) {
-			if (!$type instanceof \F3\TYPO3CR\Domain\Model\ContentType) {
+			if (!$type instanceof \TYPO3\TYPO3CR\Domain\Model\ContentType) {
 				throw new \InvalidArgumentException('$types must be an array of ContentType objects', 1291300950);
 			}
 		}
@@ -89,7 +89,7 @@ class ContentType {
 	 * Returns the direct, explicitly declared super types
 	 * of this content type.
 	 *
-	 * @return \Doctrine\Common\Collections\ArrayCollection<\F3\TYPO3CR\Domain\Model\ContentType>
+	 * @return \Doctrine\Common\Collections\ArrayCollection<\TYPO3\TYPO3CR\Domain\Model\ContentType>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaredSuperTypes() {

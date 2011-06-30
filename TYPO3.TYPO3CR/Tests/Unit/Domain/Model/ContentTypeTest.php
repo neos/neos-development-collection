@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Tests\Unit\Domain\Model;
+namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -26,15 +26,15 @@ namespace F3\TYPO3CR\Tests\Unit\Domain\Model;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ContentTypeTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aContentTypeHasAName() {
-		$contentType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3:Text');
-		$this->assertSame('TYPO3:Text', $contentType->getName());
+		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Text');
+		$this->assertSame('TYPO3.TYPO3:Text', $contentType->getName());
 	}
 
 	/**
@@ -43,7 +43,7 @@ class ContentTypeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDeclaredSuperTypesExpectsAnArrayOfContentTypes() {
-		$folderType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Folder');
+		$folderType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Folder');
 		$folderType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array('foo')));
 	}
 
@@ -52,23 +52,23 @@ class ContentTypeTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function contentTypesCanHaveAnyNumberOfSuperTypes() {
-		$baseType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Base');
+		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base');
 
-		$folderType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Folder');
+		$folderType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Folder');
 		$folderType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($baseType)));
 
-		$hideableContentType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3:HideableContent');
-		$pageType = new \F3\TYPO3CR\Domain\Model\ContentType('TYPO3:Page');
+		$hideableContentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:HideableContent');
+		$pageType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Page');
 
 		$pageType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($folderType, $hideableContentType)));
 
 		$this->assertEquals(array($folderType, $hideableContentType), $pageType->getDeclaredSuperTypes()->toArray());
 
-		$this->assertTrue($pageType->isOfType('TYPO3:Page'));
-		$this->assertTrue($pageType->isOfType('TYPO3:HideableContent'));
-		$this->assertTrue($pageType->isOfType('TYPO3CR:Folder'));
-		$this->assertTrue($pageType->isOfType('TYPO3CR:Base'));
-		$this->assertFalse($pageType->isOfType('TYPO3CR:Exotic'));
+		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3:Page'));
+		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3:HideableContent'));
+		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR:Folder'));
+		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3CR:Base'));
+		$this->assertFalse($pageType->isOfType('TYPO3.TYPO3CR:Exotic'));
 	}
 
 

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3CR\Tests\Functional\Domain;
+namespace TYPO3\TYPO3CR\Tests\Functional\Domain;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3CR".                    *
@@ -21,7 +21,7 @@ namespace F3\TYPO3CR\Tests\Functional\Domain;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\TYPO3\Domain\Service\ContentContext;
+use \TYPO3\TYPO3\Domain\Service\ContentContext;
 
 /**
  * Functional test case which covers all Node-related behavior of the
@@ -29,7 +29,7 @@ use \F3\TYPO3\Domain\Service\ContentContext;
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NodesTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @var boolean
