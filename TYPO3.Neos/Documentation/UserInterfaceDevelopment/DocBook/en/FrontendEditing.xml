@@ -19,13 +19,13 @@
 
   <itemizedlist>
     <listitem>
-      <para><classname>F3.TYPO3.Content.ContentModule</classname>: Module
+      <para><classname>TYPO3.TYPO3.Content.ContentModule</classname>: Module
       Descriptor of the <emphasis>Content</emphasis> module, containing API
       methods to enable/disable frontend editing.</para>
     </listitem>
 
     <listitem>
-      <para><classname>F3.TYPO3.Content.WebsiteContainer</classname>: An ExtJS
+      <para><classname>TYPO3.TYPO3.Content.WebsiteContainer</classname>: An ExtJS
       component which contains the <code>iframe</code> containing the
       frontend. This component wraps the code executed in the iframe.</para>
     </listitem>
@@ -33,7 +33,7 @@
 
   <para>In the <emphasis>frontend iframe</emphasis>, the following classes are
   involved, all residing in the
-  <package>F3.TYPO3.Content.ContentEditorFrontend</package>, and all being
+  <package>TYPO3.TYPO3.Content.ContentEditorFrontend</package>, and all being
   Singletons:</para>
 
   <itemizedlist>
@@ -70,7 +70,7 @@
   </itemizedlist>
 
   <note>
-    <para>We do not use <code>F3.TYPO3.Core.Application</code> in the
+    <para>We do not use <code>TYPO3.TYPO3.Core.Application</code> in the
     frontend, as this is too heavy for the frontend editing. That's why an
     extra, more minimal, bootstrap has been created for the Frontend
     Editor.</para>

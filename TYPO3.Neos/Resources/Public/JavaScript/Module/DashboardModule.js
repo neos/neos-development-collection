@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Dashboard');
+Ext.ns('TYPO3.TYPO3.Module.Dashboard');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,45 +21,45 @@ Ext.ns('F3.TYPO3.Module.Dashboard');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.DashboardModule
+ * @class TYPO3.TYPO3.Module.DashboardModule
  *
  * The dashboard module
  *
- * @namespace F3.TYPO3.Module.Dashboard
+ * @namespace TYPO3.TYPO3.Module.Dashboard
  * @extends Ext.util.Observable
  * @singleton
  */
-F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.DashboardModule', {
+TYPO3.TYPO3.Core.Application.createModule('TYPO3.TYPO3.Module.DashboardModule', {
 
 	/**
 	 * Register dashboard section and menu items
 	 *
-	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @param {TYPO3.TYPO3.Core.Registry} registry
 	 * @return {void}
 	 */
 	configure: function(registry) {
 		registry.append('menu/main', 'dashboard', {
-			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-DashboardTab',
-			title: F3.TYPO3.Core.I18n.get('TYPO3', 'welcome'),
+			tabCls: 'TYPO3-TYPO3-UserInterface-SectionMenu-DashboardTab',
+			title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'welcome'),
 			itemId: 'dashboard',
 			listeners: {
 				added: function(tab, tabPanel) {
 					tabPanel.on('render', function(tabPanel) {
 						var el = tabPanel.getTabEl('dashboard');
-						Ext.fly(el).insertHtml('afterBegin', '<div class="F3-TYPO3-Dashboard-PublishedContentCount"></div>');
+						Ext.fly(el).insertHtml('afterBegin', '<div class="TYPO3-TYPO3-Dashboard-PublishedContentCount"></div>');
 					});
 				}
 			},
 			specialMenu: {
 				xtype: 'container',
 				items: {
-					xtype: 'F3.TYPO3.Components.Button',
-					cls: 'F3-TYPO3-Dashboard-Logout',
+					xtype: 'TYPO3.TYPO3.Components.Button',
+					cls: 'TYPO3-TYPO3-Dashboard-Logout',
 					height: 47,
 					width: 47,
-					text: F3.TYPO3.Core.I18n.get('TYPO3', 'logout'),
+					text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'logout'),
 					handler: function() {
-						F3.TYPO3.Module.Login.Service.logout();
+						TYPO3.TYPO3.Module.Login.Service.logout();
 					}
 				},
 				margins: '0 10 0 0'
@@ -67,40 +67,40 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.DashboardModule', {
 		}, 100);
 		registry.append('dashboard/column/left', 'unpublishedContentPortlet', {
 			itemId: 'unpublishedContentPortlet',
-			xtype: 'F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet'
+			xtype: 'TYPO3.TYPO3.Module.Dashboard.UnpublishedContentPortlet'
 		});
 	},
 
 	/**
 	 * Set up event handlers
 	 *
-	 * @param {F3.TYPO3.Core.Application} The Application object
+	 * @param {TYPO3.TYPO3.Core.Application} The Application object
 	 * @return {void}
 	 */
 	initialize: function(application) {
-		application.afterInitializationOf('F3.TYPO3.Module.UserInterfaceModule', function(userInterfaceModule) {
+		application.afterInitializationOf('TYPO3.TYPO3.Module.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('dashboard', 'dashboardView', {
-				xtype: 'F3.TYPO3.Module.Dashboard.DashboardView',
-				id: 'F3-TYPO3-Dashboard-DashboardView'
+				xtype: 'TYPO3.TYPO3.Module.Dashboard.DashboardView',
+				id: 'TYPO3-TYPO3-Dashboard-DashboardView'
 			});
 			userInterfaceModule.contentAreaOn('menu/main/dashboard', 'dashboard', 'dashboardView');
 		});
-		application.afterInitializationOf('F3.TYPO3.Module.LoginModule', function(loginModule) {
+		application.afterInitializationOf('TYPO3.TYPO3.Module.LoginModule', function(loginModule) {
 				// Put name of user into dashboard tab
 			loginModule.on('updated', function(party) {
 				var fullName = (party.name ? party.name.fullName : null),
-					el = F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getTabEl('dashboard');
+					el = TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getTabEl('dashboard');
 				if (fullName) {
 					Ext.fly(el).child('.x-tab-strip-text').update(fullName);
 				}
 			});
 		});
-		application.afterInitializationOf('F3.TYPO3.Module.WorkspaceModule', function(workspaceModule) {
+		application.afterInitializationOf('TYPO3.TYPO3.Module.WorkspaceModule', function(workspaceModule) {
 				// Listen to update workspace status
 			workspaceModule.on('updatedWorkspaceStatus', function(status) {
 				if (status.changed) {
-					var el = F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getTabEl('dashboard'),
-						bubble = Ext.fly(el).child('.F3-TYPO3-Dashboard-PublishedContentCount');
+					var el = TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getTabEl('dashboard'),
+						bubble = Ext.fly(el).child('.TYPO3-TYPO3-Dashboard-PublishedContentCount');
 						// TODO CSS animation if count changed
 
 					if (status.unpublishedNodesCount > 0) {

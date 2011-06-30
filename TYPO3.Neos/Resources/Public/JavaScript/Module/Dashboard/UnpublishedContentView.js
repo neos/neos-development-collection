@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Dashboard');
+Ext.ns('TYPO3.TYPO3.Module.Dashboard');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Dashboard');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Dashboard.UnpublishedContentView
+ * @class TYPO3.TYPO3.Module.Dashboard.UnpublishedContentView
  *
  * Grid component to display unpublished content
  *
- * @namespace F3.TYPO3.Module.Dashboard
+ * @namespace TYPO3.TYPO3.Module.Dashboard
  * @extends Ext.DataView
  */
-F3.TYPO3.Module.Dashboard.UnpublishedContentView = Ext.extend(Ext.DataView, {
+TYPO3.TYPO3.Module.Dashboard.UnpublishedContentView = Ext.extend(Ext.DataView, {
 
 	/**
 	 * Initializer
@@ -38,7 +38,7 @@ F3.TYPO3.Module.Dashboard.UnpublishedContentView = Ext.extend(Ext.DataView, {
 				store: {
 					xtype: 'directstore',
 					directFn: Ext.apply(function(callback) {
-						F3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.getUnpublishedNodes(F3.TYPO3.Configuration.Application.workspaceName, callback);
+						TYPO3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.getUnpublishedNodes(TYPO3.TYPO3.Configuration.Application.workspaceName, callback);
 					}, {directCfg: {method: {len: 0}}}),
 					autoLoad: true,
 					autoDestroy: true,
@@ -48,11 +48,11 @@ F3.TYPO3.Module.Dashboard.UnpublishedContentView = Ext.extend(Ext.DataView, {
 				autoScroll: true,
 				height: 360,
 				multiSelect: true,
-				itemSelector: 'div.F3-Content-Node',
+				itemSelector: 'div.TYPO3-Content-Node',
 				overClass: 'x-view-over',
 				tpl: new Ext.XTemplate(
 					'<tpl for=".">',
-						'<div class="F3-Content-Node">',
+						'<div class="TYPO3-Content-Node">',
 							'<div class="label-wrap"><b>{__contextNodePath}</b></div>',
 							'<div class="abstract-wrap">{__abstract}</div>',
 						'</div>',
@@ -61,7 +61,7 @@ F3.TYPO3.Module.Dashboard.UnpublishedContentView = Ext.extend(Ext.DataView, {
 				)
 			};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Dashboard.UnpublishedContentView.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Dashboard.UnpublishedContentView.superclass.initComponent.call(this);
 	}
 });
-Ext.reg('F3.TYPO3.Module.Dashboard.UnpublishedContentView', F3.TYPO3.Module.Dashboard.UnpublishedContentView);
+Ext.reg('TYPO3.TYPO3.Module.Dashboard.UnpublishedContentView', TYPO3.TYPO3.Module.Dashboard.UnpublishedContentView);

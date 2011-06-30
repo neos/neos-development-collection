@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class IfProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class IfProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\IfProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\IfProcessor
 	 */
 	protected $ifProcessor;
 
@@ -39,7 +39,7 @@ class IfProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->ifProcessor = new \F3\TYPO3\TypoScript\Processors\IfProcessor();
+		$this->ifProcessor = new \TYPO3\TYPO3\TypoScript\Processors\IfProcessor();
 	}
 
 	/**
@@ -80,7 +80,7 @@ class IfProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the if() processor throws an exception on an invalid condition
 	 *
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

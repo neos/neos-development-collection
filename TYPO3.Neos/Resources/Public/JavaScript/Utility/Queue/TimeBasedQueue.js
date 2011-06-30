@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Utility.Queue');
+Ext.ns('TYPO3.TYPO3.Utility.Queue');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,15 +21,15 @@ Ext.ns('F3.TYPO3.Utility.Queue');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Utility.Queue.TimeBasedQueue
+ * @class TYPO3.TYPO3.Utility.Queue.TimeBasedQueue
  *
  * Time based queue. Stores a queue of actions, and triggers them based
  * on an interval set on the registration of the action in the queue
  *
- * @namespace F3.TYPO3.Utility.Queue
+ * @namespace TYPO3.TYPO3.Utility.Queue
  */
 
-F3.TYPO3.Utility.Queue.TimeBasedQueue = Ext.extend(function() {}, {
+TYPO3.TYPO3.Utility.Queue.TimeBasedQueue = Ext.extend(function() {}, {
 
 	/**
 	 * Array with registered actions, queued to be executed

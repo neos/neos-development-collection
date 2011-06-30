@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Dashboard');
+Ext.ns('TYPO3.TYPO3.Module.Dashboard');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Dashboard');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet
+ * @class TYPO3.TYPO3.Module.Dashboard.UnpublishedContentPortlet
  *
  * A dashboard portlet for managing unpublished content
  *
- * @namespace F3.TYPO3.Module.Dashboard
+ * @namespace TYPO3.TYPO3.Module.Dashboard
  * @extends Ext.ux.Portlet
  */
-F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
+TYPO3.TYPO3.Module.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet, {
 
 	/**
 	 * Initializer
@@ -36,49 +36,49 @@ F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet,
 	initComponent: function() {
 		var config = {
 			collapsible: false,
-			title: F3.TYPO3.Core.I18n.get('TYPO3', 'workspaceOverview'),
+			title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'workspaceOverview'),
 			items: {
 				itemId: 'contentView',
-				xtype: 'F3.TYPO3.Module.Dashboard.UnpublishedContentView',
+				xtype: 'TYPO3.TYPO3.Module.Dashboard.UnpublishedContentView',
 				ref: 'contentView',
-				cls: 'F3-TYPO3-Dashboard-DashboardView-ContentView'
+				cls: 'TYPO3-TYPO3-Dashboard-DashboardView-ContentView'
 			},
 			bbar: [{
 				itemId: 'description',
 				xtype: 'panel',
-				html: F3.TYPO3.Core.I18n.get('TYPO3', 'unpublishedContentDescription'),
+				html: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'unpublishedContentDescription'),
 				border: false,
-				cls: 'F3-TYPO3-Dashboard-DashboardView-Description'
+				cls: 'TYPO3-TYPO3-Dashboard-DashboardView-Description'
 			}, {
 				itemId: 'noContent',
 				hidden: true,
 				xtype: 'panel',
-				html: F3.TYPO3.Core.I18n.get('TYPO3', 'workspaceHasNoUnpublishedContent'),
+				html: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'workspaceHasNoUnpublishedContent'),
 				border: false,
-				cls: 'F3-TYPO3-Dashboard-DashboardView-Description'
+				cls: 'TYPO3-TYPO3-Dashboard-DashboardView-Description'
 			}, '->', {
-				xtype: 'F3.TYPO3.Components.Button',
+				xtype: 'TYPO3.TYPO3.Components.Button',
 				itemId: 'publishAll',
-				text: F3.TYPO3.Core.I18n.get('TYPO3', 'publishAll'),
+				text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'publishAll'),
 				handler: this._publishAll,
 				scope: this,
-				cls: 'F3-TYPO3-Components-Button-type-positive F3-TYPO3-Dashboard-DashboardView-PublishButton'
+				cls: 'TYPO3-TYPO3-Components-Button-type-positive TYPO3-TYPO3-Dashboard-DashboardView-PublishButton'
 			}, {
-				xtype: 'F3.TYPO3.Components.Button',
+				xtype: 'TYPO3.TYPO3.Components.Button',
 				hidden: true,
 				itemId: 'publishSelected',
-				text: F3.TYPO3.Core.I18n.get('TYPO3', 'publishSelected'),
+				text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'publishSelected'),
 				handler: this._publishSelected,
 				scope: this,
-				cls: 'F3-TYPO3-Components-Button-type-positive F3-TYPO3-Dashboard-DashboardView-PublishButton'
+				cls: 'TYPO3-TYPO3-Components-Button-type-positive TYPO3-TYPO3-Dashboard-DashboardView-PublishButton'
 			}]
 		};
 
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Dashboard.UnpublishedContentPortlet.superclass.initComponent.call(this);
 
 			// Reload store if workspace status changed
-		F3.TYPO3.Module.WorkspaceModule.on('updatedWorkspaceStatus', function(status) {
+		TYPO3.TYPO3.Module.WorkspaceModule.on('updatedWorkspaceStatus', function(status) {
 			if (status.changed) {
 				this.getComponent('contentView').store.load();
 			}
@@ -107,7 +107,7 @@ F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet,
 
 	_publishAll: function(button) {
 		button.disable();
-		F3.TYPO3.Module.Workspace.Service.publishUserWorkspace(function() {
+		TYPO3.TYPO3.Module.Workspace.Service.publishUserWorkspace(function() {
 			this.getComponent('contentView').store.load({callback: function() {
 				button.enable();
 			}, scope: this});
@@ -118,7 +118,7 @@ F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet,
 		button.disable();
 		var records = this.contentView.getSelectedRecords(), count = records.length, publishCount = 0;
 		Ext.each(records, function(record) {
-			F3.TYPO3.Module.Workspace.Service.publishNode(
+			TYPO3.TYPO3.Module.Workspace.Service.publishNode(
 				record.data.__contextNodePath,
 				function() {
 				publishCount++;
@@ -132,4 +132,4 @@ F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet = Ext.extend(Ext.ux.Portlet,
 	}
 
 });
-Ext.reg('F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet', F3.TYPO3.Module.Dashboard.UnpublishedContentPortlet);
+Ext.reg('TYPO3.TYPO3.Module.Dashboard.UnpublishedContentPortlet', TYPO3.TYPO3.Module.Dashboard.UnpublishedContentPortlet);

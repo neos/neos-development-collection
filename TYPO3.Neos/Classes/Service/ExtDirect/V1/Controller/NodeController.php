@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Service\ExtDirect\V1\Controller;
+namespace TYPO3\TYPO3\Service\ExtDirect\V1\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,16 +27,16 @@ namespace F3\TYPO3\Service\ExtDirect\V1\Controller;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
-class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
+class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @var string
 	 */
-	protected $viewObjectNamePattern = 'F3\TYPO3\Service\ExtDirect\V1\View\NodeView';
+	protected $viewObjectNamePattern = 'TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView';
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
@@ -53,74 +53,74 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Returns the specified node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function showAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->view->assignNode($node);
 	}
 
 	/**
 	 * Returns the primary child node (if any) of the specified node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function getPrimaryChildNodeAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function getPrimaryChildNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->view->assignNode($node->getPrimaryChildNode());
 	}
 
 	/**
 	 * Return child nodes of specified node for usage in a TreeLoader
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node to find child nodes for
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to find child nodes for
 	 * @param string $contentTypeFilter A content type filter
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function getChildNodesForTreeAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter) {
-		$this->view->assignChildNodes($node, $contentTypeFilter, \F3\TYPO3\Service\ExtDirect\V1\View\NodeView::TREESTYLE, 0);
+	public function getChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter) {
+		$this->view->assignChildNodes($node, $contentTypeFilter, \TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView::TREESTYLE, 0);
 	}
 
 	/**
 	 * Return child nodes of specified node with all details and
 	 * metadata.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $contentTypeFilter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function getChildNodesAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
-		$this->view->assignChildNodes($node, $contentTypeFilter, \F3\TYPO3\Service\ExtDirect\V1\View\NodeView::LISTSTYLE, $depth);
+	public function getChildNodesAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
+		$this->view->assignChildNodes($node, $contentTypeFilter, \TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView::LISTSTYLE, $depth);
 	}
 
 	/**
 	 * Return child nodes of specified node with all details and
 	 * metadata.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $contentTypeFilter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function getChildNodesFromParentAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
+	public function getChildNodesFromParentAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
 		$this->getChildNodesAction($node->getParent(), $contentTypeFilter, $depth);
 	}
 
 	/**
 	 * Creates a new node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param array $nodeData
 	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
@@ -130,7 +130,7 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @todo: maybe the actual creation should be put in a helper / service class
 	 * @extdirect
 	 */
-	public function createAction(\F3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, array $nodeData, $position) {
+	public function createAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, array $nodeData, $position) {
 		if (!in_array($position, array(-1, 0, 1), TRUE)) {
 			throw new \InvalidArgumentException('The position should be one of the following: -1, 0, 1.', 1296132542);
 		}
@@ -158,28 +158,28 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 			}
 		}
 
-		if ($nodeData['contentType'] === 'TYPO3:Page') {
+		if ($nodeData['contentType'] === 'TYPO3.TYPO3:Page') {
 			$this->createTypeHereTextNode($newNode);
 		}
 
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3', '');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
 	/**
 	 * Move $node before, into or after $targetNode
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $targetNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
 	 * @author Aske Ertmann <aske@mocsystems.com>
 	 * @extdirect
 	 * @fixme Find a better solution that passing -1, 0 and 1
 	 */
-	public function moveAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, \F3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $position) {
+	public function moveAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $position) {
 		if (!in_array($position, array(-1, 0, 1), TRUE)) {
-			throw new \F3\TYPO3CR\Exception\NodeException('The position should be one of the following: -1, 0, 1.', 1296132542);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: -1, 0, 1.', 1296132542);
 		}
 
 		switch ($position) {
@@ -195,33 +195,33 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 				break;
 		}
 
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3', '');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 
 	/**
 	 * Move $node before $targetNode
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $targetNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @extdirect
 	 */
-	public function moveBeforeAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, \F3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
+	public function moveBeforeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
 		$node->moveBefore($targetNode);
 	}
 
 	/**
 	 * Move $node after $targetNode
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $targetNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @extdirect
 	 */
-	public function moveAfterAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, \F3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
+	public function moveAfterAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
 		$node->moveAfter($targetNode);
 	}
 
@@ -232,26 +232,26 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * in the future. This whole text-element-creation should also be triggered by the Content Type once we have
 	 * support for that.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $pageNode The page node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode The page node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Move section + text node creation to better place (content type triggered)
 	 */
-	protected function createTypeHereTextNode(\F3\TYPO3CR\Domain\Model\NodeInterface $pageNode) {
-		$sectionNode = $pageNode->createNode('main', 'TYPO3:Section');
-		$textNode = $sectionNode->createNode(uniqid(), 'TYPO3:Text');
+	protected function createTypeHereTextNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode) {
+		$sectionNode = $pageNode->createNode('main', 'TYPO3.TYPO3:Section');
+		$textNode = $sectionNode->createNode(uniqid(), 'TYPO3.TYPO3:Text');
 		$textNode->setProperty('text', '<em>[ Start typing here ]</em>');
 	}
 
 	/**
 	 * Updates the specified node
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function updateAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->nodeRepository->update($node);
 		$this->view->assign('value', array('data' => '', 'success' => TRUE));
 	}
@@ -259,14 +259,14 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Deletes the specified node and all of its sub nodes
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string A response string
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
-	public function deleteAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function deleteAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$node->remove();
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node', 'TYPO3', '');
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node', 'TYPO3.TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
 

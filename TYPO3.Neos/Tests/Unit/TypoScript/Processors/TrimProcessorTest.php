@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class TrimProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class TrimProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\TrimProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\TrimProcessor
 	 */
 	protected $trimProcessor;
 
@@ -39,7 +39,7 @@ class TrimProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->trimProcessor = new \F3\TYPO3\TypoScript\Processors\TrimProcessor();
+		$this->trimProcessor = new \TYPO3\TYPO3\TypoScript\Processors\TrimProcessor();
 	}
 
 	/**

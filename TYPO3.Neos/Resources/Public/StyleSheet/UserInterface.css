@@ -8,11 +8,11 @@ body {
 	width: auto;
 	position: relative;
 }
-ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-ContentTab {
+ul.x-tab-strip li.TYPO3-TYPO3-UserInterface-SectionMenu-ContentTab {
 	margin-right: 10px;
 	margin-left: 12px;
 }
-ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
+ul.x-tab-strip li.TYPO3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	position: absolute;
 	right: 20px;
 }
@@ -26,32 +26,32 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	font: 11px helvetica, arial, sans-serif;
 	color: #ffffff;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-bwrap {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-panel-bwrap {
 	-moz-box-shadow: 0px -4px 4px #1d1d1d;
 	-webkit-box-shadow: 0px -4px 4px #1d1d1d;
 }
-.F3-TYPO3-Wallpaper {
+.TYPO3-TYPO3-Wallpaper {
 	background: url(../Images/Backgrounds/Wallpaper.jpg) 50% top repeat;
 }
-.F3-TYPO3-UserInterface-TopBar-Wallpaper,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-body {
+.TYPO3-TYPO3-UserInterface-TopBar-Wallpaper,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-body {
 	background: transparent;
 }
-#F3-TYPO3-Dashboard-DashboardView {
+#TYPO3-TYPO3-Dashboard-DashboardView {
 	background: #4C4C4C;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-right,
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-left,
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-inner {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-right,
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-left,
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-inner {
 	background: transparent;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-active span.x-tab-strip-text {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-active span.x-tab-strip-text {
 	color: #ebebeb;
 }
-.F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
+.TYPO3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
 	background: #666666;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li {
 	-webkit-border-radius: 4px;
 	-webkit-border-bottom-left-radius: 0;
 	-webkit-border-bottom-right-radius: 0;
@@ -72,11 +72,11 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-webkit-transition: opacity 0.5s linear;
 	text-shadow: -1px -1px 0px #000000;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li:hover,
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li:focus {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li:hover,
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li:focus {
 	opacity: 0.7;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li.x-tab-strip-active {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li.x-tab-strip-active {
 	-webkit-border-radius: 4px 4px 0 0;
 	-moz-border-radius: 4px 4px 0 0;
 	border: 0;
@@ -89,19 +89,19 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-bottom: -1px;
 	text-shadow: 1px 0 6px #FF8700, -1px -1px 0px #000000;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-active .x-tab-right {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-active .x-tab-right {
 	margin-bottom: -1px;
 	-moz-border-radius: 4px 4px 0 0;
 }
 /* active tab glow start */
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li.x-tab-strip-active .x-tab-strip-inner {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top li.x-tab-strip-active .x-tab-strip-inner {
 	background: #5b5b5b;
 	background-image: -moz-linear-gradient(left, rgba(255, 255, 255, 0.0) 0%, #FF8700 50%, rgba(255, 255, 255, 0.0));
 	background-image: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255, 255, 255, 0.0)), color-stop(50%,#FF8700), color-stop(100%,rgba(255, 255, 255, 0.0)));
 	margin-bottom: 2px;
 	margin-top: -1px;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-active .x-tab-strip-text  {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .x-tab-strip-active .x-tab-strip-text  {
 	background: -moz-linear-gradient(center top , #373737, #555555) repeat scroll 0 0 transparent;
 	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#373737), to(#555555));
 	margin-top: 1px;
@@ -109,7 +109,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 }
 
 /* Icons for the current selection state in content tab */
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-indicator .iconWrapper {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .typo3-typo3-content-mode-indicator .iconWrapper {
 	background-image: url(../Icons/content-mode-sprite-24bit.png);
 	background-repeat: no-repeat;
 	width: 17px;
@@ -128,116 +128,116 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	background-position: 0px -15px;
 }
 
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-select .iconWrapper {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .typo3-typo3-content-mode-select .iconWrapper {
 	background-position: 0px -32px;
 }
 
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .f3-typo3-content-mode-edit .iconWrapper {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip-top .typo3-typo3-content-mode-edit .iconWrapper {
 	background-position: 0px -48px;
 }
 
 /* active tab glow end */
-.F3-TYPO3-UserInterface-SectionMenu .F3-TYPO3-UserInterface-SectionMenu-DashboardTab .x-tab-right .x-tab-left .x-tab-strip-text {
+.TYPO3-TYPO3-UserInterface-SectionMenu .TYPO3-TYPO3-UserInterface-SectionMenu-DashboardTab .x-tab-right .x-tab-left .x-tab-strip-text {
 	padding-left: 4px;
 	padding-right: 6px;
 }
-.F3-TYPO3-UserInterface-SectionMenu-DashboardTab a {
+.TYPO3-TYPO3-UserInterface-SectionMenu-DashboardTab a {
 	float: left;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-right .x-tab-left .x-tab-strip-text {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-right .x-tab-left .x-tab-strip-text {
 	padding-right: 20px;
 	padding-left: 20px;
 }
-.F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
+.TYPO3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top {
 	border: 0;
 	padding-top: 4px;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header {
 	padding-bottom: 0;
 	background: transparent;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header-noborder {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header-noborder {
 	border: 0;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-strip span.x-tab-strip-text {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-strip span.x-tab-strip-text {
 	font-size: 13px;
 	padding: 6px 0 5px 0;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header,
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-footer,
-.F3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top{
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header,
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-panel-footer,
+.TYPO3-TYPO3-UserInterface-SectionMenu ul.x-tab-strip-top{
 	background: transparent;
 }
-.F3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header ul {
+.TYPO3-TYPO3-UserInterface-SectionMenu .x-tab-panel-header ul {
 	border-bottom: 1px solid #838383;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu-disabled .x-btn-text {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-disabled .x-btn-text {
 	color: #999;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu {
 	padding-left: 12px;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tl,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tr,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tc,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-ml,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-mr,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-mc,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-bl,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-br,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-bc {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tl,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tr,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-tc,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-ml,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-mr,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-mc,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-bl,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-br,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-bc {
 	background-image: none;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tl,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tr,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tc,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-ml,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-mr,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-mc,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-bl,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-br,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-bc {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tl,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tr,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-tc,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-ml,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-mr,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-mc,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-bl,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-br,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-bc {
 	background-image: none;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-text {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-text {
 	color: #ffffff;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu .xtb-text {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .xtb-text {
 	color: #ffffff;
 	font-size: 200%;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-text {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-text {
 	color: #ffffff;
 	text-indent: -999px;
 }
-.F3-TYPO3-UserInterface-BreadcrumbMenu-over .x-btn-text,
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-text {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-over .x-btn-text,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-btn-pressed .x-btn-text {
 	text-indent: 0px;
 }
-.F3-TYPO3-UserInterface-ModuleDialog {
+.TYPO3-TYPO3-UserInterface-ModuleDialog {
 	color: #ffffff;
 }
-.F3-TYPO3-UserInterface-ModuleDialog .x-form-item-label,
-.F3-TYPO3-UserInterface-ModuleDialog .x-form-field {
+.TYPO3-TYPO3-UserInterface-ModuleDialog .x-form-item-label,
+.TYPO3-TYPO3-UserInterface-ModuleDialog .x-form-field {
 	font-size: 14px;
 }
-.F3-TYPO3-UserInterface-ModuleDialog .x-form-item-label {
+.TYPO3-TYPO3-UserInterface-ModuleDialog .x-form-item-label {
 	font-size: 13px;
 	font-weight: bold;
 	line-height: 22px;
 }
-.F3-TYPO3-UserInterface-ModuleDialog .x-form-text,
-.F3-TYPO3-UserInterface-ModuleDialog .ext-ie .x-form-file {
+.TYPO3-TYPO3-UserInterface-ModuleDialog .x-form-text,
+.TYPO3-TYPO3-UserInterface-ModuleDialog .ext-ie .x-form-file {
 	height: 24px;
 }
-/* TODO jensen: check if Prefix with F3-class leads to errors */
-.F3-TYPO3-UserInterface-ContentDialog .x-toolbar-left {
+/* TODO jensen: check if Prefix with TYPO3-class leads to errors */
+.TYPO3-TYPO3-UserInterface-ContentDialog .x-toolbar-left {
 	width: auto;
 }
-.F3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar-ct {
+.TYPO3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar-ct {
 	width: auto;
 }
-.F3-TYPO3-UserInterface-ContentDialog {
+.TYPO3-TYPO3-UserInterface-ContentDialog {
 	background-color: #272727;
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#4a4a4a), to(#272727));
 	background: -moz-linear-gradient(top, #4a4a4a, #272727);
@@ -246,7 +246,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-moz-box-shadow: 0 2px 6px #1F1D1D;
 	-webkit-box-shadow: 0 2px 6px #1F1D1D;
 }
-.F3-TYPO3-UserInterface-ContentDialog-Panel {
+.TYPO3-TYPO3-UserInterface-ContentDialog-Panel {
 	background-color: #272727;
 	-webkit-border-radius: 4px;
 	-webkit-border-top-left-radius: 0;
@@ -260,7 +260,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	top: 21px;
 	left: 10px;
 }
-.F3-TYPO3-UserInterface-ContentDialog-InfoText .x-panel-body{
+.TYPO3-TYPO3-UserInterface-ContentDialog-InfoText .x-panel-body{
 	background: transparent;
 	color: #ffffff;
 	text-align: left;
@@ -270,47 +270,47 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-webkit-box-shadow: 0 0 !important;
 }
 
-.F3-TYPO3-UserInterface-ContentDialog-mode-negative {
+.TYPO3-TYPO3-UserInterface-ContentDialog-mode-negative {
 	background: url(../Images/Backgrounds/DangerZoneBackground.png) right top;
 }
-.F3-TYPO3-UserInterface-ContentDialog-mode-negative .F3-TYPO3-UserInterface-ContentDialog-Panel {
+.TYPO3-TYPO3-UserInterface-ContentDialog-mode-negative .TYPO3-TYPO3-UserInterface-ContentDialog-Panel {
 	background: url(../Images/Backgrounds/DangerZoneBackground.png);
 	background-position: right -16px;
 	left: auto;
 	right: 4px;
 }
 
-.F3-TYPO3-UserInterface-ContentDialog-mode-negative .F3-TYPO3-UserInterface-ContentDialog-InfoText .x-panel-body {
+.TYPO3-TYPO3-UserInterface-ContentDialog-mode-negative .TYPO3-TYPO3-UserInterface-ContentDialog-InfoText .x-panel-body {
 	text-align: right;
 	padding: 3px 5px 0 0;
 }
 
-.F3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar {
+.TYPO3-TYPO3-UserInterface-ContentDialog-Panel .x-toolbar {
 	background: none;
 }
-.F3-TYPO3-UserInterface-ContentDialog-Panel .x-panel-tbar-noborder .x-toolbar {
+.TYPO3-TYPO3-UserInterface-ContentDialog-Panel .x-panel-tbar-noborder .x-toolbar {
 	border: none;
 }
-#F3-TYPO3-TopBar-Logo {
+#TYPO3-TYPO3-TopBar-Logo {
 	background: url(../Images/UserInterface/Typo3Logo.png) right top no-repeat;
 }
-.F3-TYPO3-Version .x-panel-body {
+.TYPO3-TYPO3-Version .x-panel-body {
 	background: transparent;
 	border: 0;
 	color: #ffffff;
 	font-size: 63%;
 	opacity: 0.4;
 }
-#F3-TYPO3-TopBar-StatusText {
+#TYPO3-TYPO3-TopBar-StatusText {
 	color: #ffffff;
 	font-size: 12px;
 	font-family: Arial, sans-serif;
 }
-.F3-TYPO3-UserInterface-Form-GenericForm form {
+.TYPO3-TYPO3-UserInterface-Form-GenericForm form {
 	background:transparent;
 	padding: 10px;
 }
-.F3-TYPO3-UserInterface-SectionMenu .F3-TYPO3-Dashboard-PublishedContentCount {
+.TYPO3-TYPO3-UserInterface-SectionMenu .TYPO3-TYPO3-Dashboard-PublishedContentCount {
 	display: none;
 	position: absolute;
 	top: -7px;
@@ -324,18 +324,18 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	font-family: Arial,sans-serif;
 	font-weight: bold;
 }
-.F3-Content-Node {
+.TYPO3-Content-Node {
 	border: 1px solid gray;
 	min-height: 30px;
 	background: #ebebeb;
 }
-.F3-Content-Node.x-view-over {
+.TYPO3-Content-Node.x-view-over {
 	background: #ffffff;
 }
-.F3-TYPO3-Overflow-Visible{
+.TYPO3-TYPO3-Overflow-Visible{
 	overflow: visible;
 }
-.F3-TYPO3-Dashboard-Logout button {
+.TYPO3-TYPO3-Dashboard-Logout button {
 	display: block;
 	background: url(../Images/UserInterface/Icons/Icon-Logout-24bit.png) 50% 50% no-repeat;
 	width: 46px;
@@ -347,104 +347,104 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-webkit-box-shadow: none;
 	border: 0px none;
 }
-.F3-TYPO3-Dashboard-Logout button:hover {
+.TYPO3-TYPO3-Dashboard-Logout button:hover {
 	background: url(../Images/UserInterface/Icons/Icon-Logout-24bit.png) 50% 50% no-repeat;
 }
-#F3-TYPO3-Dashboard-DashboardView {
+#TYPO3-TYPO3-Dashboard-DashboardView {
 	color: #ffffff;
 }
-#F3-TYPO3-Dashboard-DashboardView .x-panel-tl,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-tr,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-header {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-tl,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-tr,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-header {
 	background-image: -moz-linear-gradient(center top , #373737, #696969);
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#373737), to(#696969));
 	border: 0;
 }
 
-#F3-TYPO3-Dashboard-DashboardView .x-panel-bl,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-br,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-bc,
-#F3-TYPO3-Dashboard-DashboardView .x-toolbar {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-bl,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-br,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-bc,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-toolbar {
 	border: 0;
 }
-#F3-TYPO3-Dashboard-DashboardView .x-panel-header {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-header {
 	color: #ffffff;
 }
-#F3-TYPO3-Dashboard-DashboardView .x-panel-ml,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-mr,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-mc,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-bl,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-br,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-bc,
-#F3-TYPO3-Dashboard-DashboardView .x-toolbar {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-ml,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-mr,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-mc,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-bl,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-br,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-bc,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-toolbar {
 	padding: 0;
 }
 
-#F3-TYPO3-Dashboard-DashboardView .x-portlet,
-#F3-TYPO3-Dashboard-DashboardView .x-toolbar,
-#F3-TYPO3-Dashboard-DashboardView .x-panel-bc {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-portlet,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-toolbar,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-bc {
 	background: #A6A6A6;
 }
 
-.F3-TYPO3-Dashboard-DashboardView-ContentView {
+.TYPO3-TYPO3-Dashboard-DashboardView-ContentView {
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 	border: 1px solid #0D0A07;
 	height: 298px !important;
 }
 
-#F3-TYPO3-Dashboard-DashboardView .x-panel-bwrap {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-bwrap {
 	padding: 6px;
 }
 
-#F3-TYPO3-Dashboard-DashboardView .x-toolbar-ct {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-toolbar-ct {
 	padding: 12px 0 12px 0;
 }
 
-.F3-TYPO3-Dashboard-DashboardView-Description .x-panel-body {
+.TYPO3-TYPO3-Dashboard-DashboardView-Description .x-panel-body {
 	white-space: normal !important;
 }
 
 
-#F3-TYPO3-Dashboard-DashboardView .F3-Content-Node {
+#TYPO3-TYPO3-Dashboard-DashboardView .TYPO3-Content-Node {
 	background: #f6f6f6;
 	border: 0;
 	border-bottom: 1px solid #e9e9e9;
 	padding: 6px;
 	color: rgba(0, 0, 0, 0.8);
 }
-#F3-TYPO3-Dashboard-DashboardView .F3-Content-Node.x-view-over {
+#TYPO3-TYPO3-Dashboard-DashboardView .TYPO3-Content-Node.x-view-over {
 	background: #faf4ed;
 	border-top: 1px solid #f0cda6;
 	border-bottom: 1px solid #f0cda6;
 	margin-top: -1px;
 }
-#F3-TYPO3-Dashboard-DashboardView .F3-Content-Node.x-view-selected {
+#TYPO3-TYPO3-Dashboard-DashboardView .TYPO3-Content-Node.x-view-selected {
 	background: #faf4ed;
 	border-top: 1px solid #f0cda6;
 	border-bottom: 1px solid #f0cda6;
 	margin-top: -1px;
 }
-#F3-TYPO3-Dashboard-DashboardView .x-btn-tl,
-#F3-TYPO3-Dashboard-DashboardView .x-btn-tr,
-#F3-TYPO3-Dashboard-DashboardView .x-btn-tc,
-#F3-TYPO3-Dashboard-DashboardView .x-btn-ml,
-#F3-TYPO3-Dashboard-DashboardView .x-btn-mr,
-#F3-TYPO3-Dashboard-DashboardView .x-btn-mc,
-#F3-TYPO3-Dashboard-DashboardView .x-btn-bl,
-#F3-TYPO3-Dashboard-DashboardView .x-btn-br,
-#F3-TYPO3-Dashboard-DashboardView .x-btn-bc {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-tl,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-tr,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-tc,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-ml,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-mr,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-mc,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-bl,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-br,
+#TYPO3-TYPO3-Dashboard-DashboardView .x-btn-bc {
 	background-image: none;
 }
 
-.F3-TYPO3-Dashboard-DashboardView-PublishButton button{
+.TYPO3-TYPO3-Dashboard-DashboardView-PublishButton button{
 	width: 150px;
 }
 
-#F3-TYPO3-Dashboard-DashboardView .x-panel-nofooter {
+#TYPO3-TYPO3-Dashboard-DashboardView .x-panel-nofooter {
 	height: 0px;
 }
 
-.F3-TYPO3-UserInterface-ModuleMenu {
+.TYPO3-TYPO3-UserInterface-ModuleMenu {
 	background: #555555;
 	background: -moz-linear-gradient(center top, #555555, #343434) left top repeat;
 	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#555555), to(#343434)) left top repeat;
@@ -453,7 +453,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	box-shadow: 0px 1px 3px #000000;
 	z-index: 5;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar {
 	background: transparent;
 	padding: 0;
 	border: 0;
@@ -464,7 +464,7 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	margin-left: 12px;
 	margin-bottom: 2px;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .x-btn {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .x-btn {
 	margin-right: 16px;
 	margin-left: 1px;
 	border: 1px solid transparent;
@@ -473,42 +473,42 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	background-repeat: no-repeat;
 	background-position: 0 4px;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .x-btn-noicon .x-btn-small .x-btn-text {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .x-btn-noicon .x-btn-small .x-btn-text {
 	text-shadow: 0px -1px 0px #000000;
 	opacity: 1;
 	font-size: 100%;
 	letter-spacing: 0.2px;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .x-btn-small .x-btn-text {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .x-btn-small .x-btn-text {
 	color: #ffffff;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .x-item-disabled .x-btn-small .x-btn-text {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .x-item-disabled .x-btn-small .x-btn-text {
 	color: rgba(255, 255, 255, 0.5) !important;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .x-btn {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .x-btn {
 	margin-left: 1px;
 	margin-right: 16px;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-siteName {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-siteName {
 	background-image: url(../Images/UserInterface/Icons/ViewFilter-SiteName.png);
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName {
 	background-image: url(../Images/UserInterface/Icons/ViewFilter-WorkspaceName.png);
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-contextLocale {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-contextLocale {
 	background-image: url(../Images/UserInterface/Icons/ViewFilter-ContextLocale.png);
 	padding-left: 28px !important;
 }
 	/* TODO Use styles for enabled toolbar items */
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName {
 	border: 1px solid transparent;
 	margin-bottom: 1px;
 	margin-left: 1px;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName button {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName button {
 	color: #ffffff;
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName.x-btn-over {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName.x-btn-over {
 	background: -moz-linear-gradient(center top, #3b3b3b, #3c3c3c) left top repeat;
 	background: -webkit-gradient(linear, 0% 0%, 0% 90%, from(#3b3b3b), to(#3c3c3c)) left top repeat;
 	-moz-border-radius: 4px 4px 4px 4px;
@@ -519,14 +519,14 @@ ul.x-tab-strip li.F3-TYPO3-UserInterface-SectionMenu-DashboardTab {
 	-webkit-box-shadow: 0 1px 0 #4a4a4a inset, -1px 0px 0px rgba(66, 66, 66, 0.8), 1px 0px 0px rgba(73, 73, 73, 0.8);
 	box-shadow: 0 1px 0 #4a4a4a inset, -1px 0px 0px rgba(66, 66, 66, 0.8), 1px 0px 0px rgba(73, 73, 73, 0.8);
 }
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-tl,
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-tr,
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-tc,
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-ml,
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-mr,
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-mc,
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-bl,
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-br,
-.F3-TYPO3-UserInterface-ViewFilterToolbar .F3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-bc {
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-tl,
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-tr,
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-tc,
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-ml,
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-mr,
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-mc,
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-bl,
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-br,
+.TYPO3-TYPO3-UserInterface-ViewFilterToolbar .TYPO3-TYPO3-ContextToolbar-icon-workspaceName .x-btn-bc {
 	background: transparent;
 }

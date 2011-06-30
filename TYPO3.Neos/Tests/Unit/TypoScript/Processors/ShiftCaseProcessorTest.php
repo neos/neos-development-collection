@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ShiftCaseProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ShiftCaseProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\ShiftCaseProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\ShiftCaseProcessor
 	 */
 	protected $shiftCaseProcessor;
 
@@ -39,7 +39,7 @@ class ShiftCaseProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->shiftCaseProcessor = new \F3\TYPO3\TypoScript\Processors\ShiftCaseProcessor();
+		$this->shiftCaseProcessor = new \TYPO3\TYPO3\TypoScript\Processors\ShiftCaseProcessor();
 	}
 
 	/**
@@ -94,7 +94,7 @@ class ShiftCaseProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the shiftCase() processor throws an exception on an invalid direction
 	 *
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -108,7 +108,7 @@ class ShiftCaseProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the shiftCase() processor throws an exception if direction has not been specified
 	 *
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function shiftCaseThrowsExceptionIfDirectionHasNotBeenSpecified() {

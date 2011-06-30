@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,15 +27,15 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoScript\ObjectInterface, \F3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
+class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\TypoScript\ObjectInterface, \TYPO3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
 
 	/**
-	 * @var array<\F3\TypoScript\ProcessorChain>
+	 * @var array<\TYPO3\TypoScript\ProcessorChain>
 	 */
 	protected $propertyProcessorChains = array();
 
 	/**
-	 * @var \F3\TypoScript\ObjectFactory
+	 * @var \TYPO3\TypoScript\ObjectFactory
 	 */
 	protected $typoScriptObjectFactory;
 
@@ -56,50 +56,50 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * The rendering context as passed to render()
 	 *
 	 * @transient
-	 * @var \F3\TypoScript\RenderingContext
+	 * @var \TYPO3\TypoScript\RenderingContext
 	 */
 	protected $renderingContext;
 
 	/**
-	 * @var \F3\Fluid\Core\Parser\Interceptor\Resource
+	 * @var \TYPO3\Fluid\Core\Parser\Interceptor\Resource
 	 */
 	protected $resourceInterceptor;
 
 	/**
-	 * @param \F3\TypoScript\ObjectFactory $typoScriptObjectFactory
+	 * @param \TYPO3\TypoScript\ObjectFactory $typoScriptObjectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectTypoScriptObjectFactory(\F3\TypoScript\ObjectFactory $typoScriptObjectFactory) {
+	public function injectTypoScriptObjectFactory(\TYPO3\TypoScript\ObjectFactory $typoScriptObjectFactory) {
 		$this->typoScriptObjectFactory = $typoScriptObjectFactory;
 	}
 
 	/**
 	 * Injects a fresh rendering context
 	 *
-	 * @param \F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRenderingContext(\F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
-		if (!$renderingContext instanceof \F3\TypoScript\RenderingContext) {
+	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
+		if (!$renderingContext instanceof \TYPO3\TypoScript\RenderingContext) {
 			throw new \InvalidArgumentException(__CLASS__ . ' requires a TypoScript Rendering Context to be injected, but got a ' . get_class($renderingContext). '.', 1289556151);
 		}
 
 		$viewHelperVariableContainer = $renderingContext->getViewHelperVariableContainer();
 		$contentContext = $renderingContext->getContentContext();
-		$viewHelperVariableContainer->addOrUpdate('F3\\TYPO3', 'contentContext', $contentContext);
+		$viewHelperVariableContainer->addOrUpdate('TYPO3\\TYPO3', 'contentContext', $contentContext);
 		parent::setRenderingContext($renderingContext);
 	}
 
 	/**
 	 * Dummy method, not used
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function setNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 	}
 
 	/**
@@ -190,7 +190,7 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTemplateSource($actionName = NULL) {
-		if ($this->source instanceof \F3\TypoScript\ContentObjectInterface) {
+		if ($this->source instanceof \TYPO3\TypoScript\ContentObjectInterface) {
 			$this->source->setRenderingContext($this->renderingContext);
 			return $this->source->render();
 		} elseif (is_string($this->source)) {
@@ -227,7 +227,7 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLayoutSource($layoutName = 'default') {
-		throw new \F3\Fluid\View\Exception\InvalidTemplateResourceException('Layouts are not directly supported by the TypoScript Template object', 1277298477);
+		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('Layouts are not directly supported by the TypoScript Template object', 1277298477);
 	}
 
 	/**
@@ -239,19 +239,19 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPartialSource($partialName) {
-		throw new \F3\Fluid\View\Exception\InvalidTemplateResourceException('Partials are not directly supported by the TypoScript Template object', 1277298476);
+		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('Partials are not directly supported by the TypoScript Template object', 1277298476);
 	}
 
 	/**
 	 * Build parser configuration
 	 *
-	 * @return \F3\Fluid\Core\Parser\Configuration
+	 * @return \TYPO3\Fluid\Core\Parser\Configuration
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildParserConfiguration() {
-		$this->resourceInterceptor = new \F3\Fluid\Core\Parser\Interceptor\Resource();
-		$parserConfiguration = new \F3\Fluid\Core\Parser\Configuration();
+		$this->resourceInterceptor = new \TYPO3\Fluid\Core\Parser\Interceptor\Resource();
+		$parserConfiguration = new \TYPO3\Fluid\Core\Parser\Configuration();
 		$parserConfiguration->addInterceptor($this->resourceInterceptor);
 		return $parserConfiguration;
 	}
@@ -260,11 +260,11 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * Sets the property processor chain for a specific property
 	 *
 	 * @param string $propertyName Name of the property to set the chain for
-	 * @param \F3\TypoScript\ProcessorChain $propertyProcessorChain The property processor chain for that property
+	 * @param \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain The property processor chain for that property
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPropertyProcessorChain($propertyName, \F3\TypoScript\ProcessorChain $propertyProcessorChain) {
+	public function setPropertyProcessorChain($propertyName, \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain) {
 		$this->propertyProcessorChains[$propertyName] = $propertyProcessorChain;
 	}
 
@@ -283,12 +283,12 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 	 * Returns the property processor chain for a specific property
 	 *
 	 * @param string $propertyName Name of the property to return the chain of
-	 * @return \F3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
-	 * @throws \F3\TypoScript\Exception\NoProcessorChainFoundException
+	 * @return \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
+	 * @throws \TYPO3\TypoScript\Exception\NoProcessorChainFoundException
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyProcessorChain($propertyName) {
-		if (!isset($this->propertyProcessorChains[$propertyName])) throw new \F3\TypoScript\Exception\NoProcessorChainFoundException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
+		if (!isset($this->propertyProcessorChains[$propertyName])) throw new \TYPO3\TypoScript\Exception\NoProcessorChainFoundException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
 		return $this->propertyProcessorChains[$propertyName];
 	}
 
@@ -322,13 +322,13 @@ class Template extends \F3\Fluid\View\AbstractTemplateView implements \F3\TypoSc
 
 		$propertyValue = $this->$getterMethodName();
 		if ($propertyValue === NULL && $this->model !== NULL) {
-			if (\F3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->model, $propertyName)) {
-				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->model, $propertyName);
+			if (\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertyGettable($this->model, $propertyName)) {
+				$propertyValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($this->model, $propertyName);
 			}
 		}
 
 		$processorChains = isset($this->propertyProcessorChains[$propertyName]) ? $this->propertyProcessorChains[$propertyName] : NULL;
-		return ($processorChains === NULL) ? $propertyValue : new \F3\TypoScript\PropertyProcessingProxy($propertyValue, $processorChains);
+		return ($processorChains === NULL) ? $propertyValue : new \TYPO3\TypoScript\PropertyProcessingProxy($propertyValue, $processorChains);
 	}
 
 	/**

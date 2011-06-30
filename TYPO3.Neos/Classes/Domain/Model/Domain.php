@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Model;
+namespace TYPO3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -37,7 +37,7 @@ class Domain  {
 	protected $hostPattern = '*';
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Site
+	 * @var \TYPO3\TYPO3\Domain\Model\Site
 	 * @ManyToOne
 	 * @validate NotEmpty
 	 */
@@ -69,19 +69,19 @@ class Domain  {
 	/**
 	 * Sets the site this domain is pointing to
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Site $site The site
+	 * @param \TYPO3\TYPO3\Domain\Model\Site $site The site
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function setSite(\F3\TYPO3\Domain\Model\Site $site) {
+	public function setSite(\TYPO3\TYPO3\Domain\Model\Site $site) {
 		$this->site = $site;
 	}
 
 	/**
 	 * Returns the site this domain is pointing to
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Site
+	 * @return \TYPO3\TYPO3\Domain\Model\Site
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\TypoScript;
+namespace TYPO3\TYPO3\Tests\Unit\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,45 +26,45 @@ namespace F3\TYPO3\Tests\Unit\TypoScript;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Plugin
+	 * @var \TYPO3\TYPO3\TypoScript\Plugin
 	 */
 	protected $plugin;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \TYPO3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $mockControllerContext;
 
 	/**
-	 * @var \F3\TypoScript\RenderingContext
+	 * @var \TYPO3\TypoScript\RenderingContext
 	 */
 	protected $mockRenderingContext;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \TYPO3\FLOW3\MVC\Web\Request
 	 */
 	protected $mockRequest;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Response
+	 * @var \TYPO3\FLOW3\MVC\Web\Response
 	 */
 	protected $mockResponse;
 
 	/**
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $mockObjectManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Dispatcher
+	 * @var \TYPO3\FLOW3\MVC\Dispatcher
 	 */
 	protected $mockDispatcher;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\SubRequestBuilder
+	 * @var \TYPO3\FLOW3\MVC\Web\SubRequestBuilder
 	 */
 	protected $mockSubRequestBuilder;
 
@@ -72,19 +72,19 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @return void
 	 */
 	public function setUp() {
-		$this->mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface');
-		$this->mockSubRequestBuilder = $this->getMock('F3\FLOW3\MVC\Web\SubRequestBuilder');
-		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$this->mockDispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array(), array(), '', FALSE);
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$this->mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-		$this->mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
+		$this->mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$this->mockSubRequestBuilder = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequestBuilder');
+		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$this->mockDispatcher = $this->getMock('TYPO3\FLOW3\MVC\Dispatcher', array(), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
+		$this->mockResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\Response');
+		$this->mockControllerContext = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 		$this->mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->mockRequest));
 		$this->mockControllerContext->expects($this->any())->method('getResponse')->will($this->returnValue($this->mockResponse));
-		$this->mockRenderingContext = $this->getMock('F3\TypoScript\RenderingContext');
+		$this->mockRenderingContext = $this->getMock('TYPO3\TypoScript\RenderingContext');
 		$this->mockRenderingContext->expects($this->any())->method('getControllerContext')->will($this->returnValue($this->mockControllerContext));
-		$this->plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('getPluginNamespace'));
-		$this->plugin->expects($this->any())->method('getPluginNamespace')->will($this->returnValue('f3_plugin_namespace'));
+		$this->plugin = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Plugin', array('getPluginNamespace'));
+		$this->plugin->expects($this->any())->method('getPluginNamespace')->will($this->returnValue('typo3_plugin_namespace'));
 		$this->plugin->setRenderingContext($this->mockRenderingContext);
 		$this->plugin->setNode($this->mockNode);
 		$this->plugin->_set('subRequestBuilder', $this->mockSubRequestBuilder);
@@ -98,7 +98,7 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRenderingContextThrowsExceptionIfRenderingContextIsNoTypoScriptRenderingContext() {
-		$mockRenderingContext = $this->getMock('F3\Fluid\Core\Rendering\RenderingContextInterface');
+		$mockRenderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
 		$this->plugin->setRenderingContext($mockRenderingContext);
 	}
 
@@ -108,18 +108,18 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function renderCreatesAndDispatchesSubRequestAndReturnItsContent() {
 		$this->markTestIncomplete('Needs to have a new check for the actual response');
-#		$mockPluginResponse = $this->getMock('F3\FLOW3\MVC\Web\SubResponse', array(), array(), '', FALSE);
+#		$mockPluginResponse = $this->getMock('TYPO3\FLOW3\MVC\Web\SubResponse', array(), array(), '', FALSE);
 #		$mockPluginResponse->expects($this->atLeastOnce())->method('getContent')->will($this->returnValue($expectedResult));
-#		$this->mockObjectManager->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\SubResponse', $this->mockResponse)->will($this->returnValue($mockPluginResponse));
+#		$this->mockObjectManager->expects($this->once())->method('create')->with('TYPO3\FLOW3\MVC\Web\SubResponse', $this->mockResponse)->will($this->returnValue($mockPluginResponse));
 
 		$expectedResult = 'pluginResponse content';
-		$mockPluginRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('Foo'));
 		$mockPluginRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('Bar'));
 		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('Baz'));
 		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('quux'));
 
-		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'f3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
+		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 		$this->mockDispatcher->expects($this->once())->method('dispatch')->with($mockPluginRequest);
 
 		$actualResult = $this->plugin->render();
@@ -132,16 +132,16 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderSetsControllerActionInformationOnRequestObjectIfItHasBeenDefinedInThePluginProperties() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->will($this->returnValue(NULL));
 
-		$mockPluginRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue(NULL));
 		$mockPluginRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue(NULL));
 		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
 		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
 
-		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'f3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
+		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
 		$this->plugin->setNode($mockNode);
 
@@ -164,13 +164,13 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderDoesNotSetRequestPackageKeyIfItIsAlreadySet() {
-		$mockPluginRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('Foo'));
 		$mockPluginRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('Bar'));
 		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('Baz'));
 		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('quux'));
 
-		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'f3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
+		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
 		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('SomePackage'));
 		$mockPluginRequest->expects($this->never())->method('setControllerPackageKey');
@@ -183,19 +183,19 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderSetsControllerActionInformationOnRequestObjectIfItHasBeenDefinedInTheNode() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->at(0))->method('getProperty')->with('package')->will($this->returnValue('PackageDefinedInNode'));
 		$mockNode->expects($this->at(1))->method('getProperty')->with('subpackage')->will($this->returnValue('SubpackageDefinedInNode'));
 		$mockNode->expects($this->at(2))->method('getProperty')->with('controller')->will($this->returnValue('ControllerDefinedInNode'));
 		$mockNode->expects($this->at(3))->method('getProperty')->with('action')->will($this->returnValue('actionDefinedInNode'));
 
-		$mockPluginRequest = $this->getMock('F3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue(NULL));
 		$mockPluginRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue(NULL));
 		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
 		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
 
-		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'f3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
+		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
 		$this->plugin->setNode($mockNode);
 
@@ -212,10 +212,10 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceReturnsTheNodesValueIfItIsSetThere() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue('someArgumentNamespace'));
 
-		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));
+		$plugin = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Plugin', array('dummy'));
 		$plugin->setNode($mockNode);
 		$plugin->setArgumentNamespace('someDefaultArgumentNamespace');
 
@@ -227,10 +227,10 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceReturnsTheNamespaceSetInThePluginClassIfNoneIsSetInTheNode() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue(NULL));
 
-		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));
+		$plugin = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Plugin', array('dummy'));
 		$plugin->setNode($mockNode);
 		$plugin->setArgumentNamespace('someDefaultArgumentNamespace');
 
@@ -242,10 +242,10 @@ class PluginTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceCompilesTheNamespaceFromTheClassNameIfNoneIsSetInThePluginClassNorInTheNode() {
-		$mockNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->with('argumentNamespace')->will($this->returnValue(NULL));
 
-		$plugin = $this->getAccessibleMock('F3\TYPO3\TypoScript\Plugin', array('dummy'));
+		$plugin = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Plugin', array('dummy'));
 		$plugin->setNode($mockNode);
 
 		$this->assertEquals($plugin->_call('getPluginNamespace'), strtolower(str_replace('\\', '_', get_class($plugin))));

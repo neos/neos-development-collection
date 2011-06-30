@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Html');
+Ext.ns('TYPO3.TYPO3.Module.Content.EditorFrontend.Html');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Html');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer
+ * @class TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Initializer
  *
  * Initialize Html editor in the EditorFrontend
  *
- * @namespace F3.TYPO3.Module.Content.EditorFrontend.Html
+ * @namespace TYPO3.TYPO3.Module.Content.EditorFrontend.Html
  * @singleton
  */
-F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer = Ext.apply({}, {
+TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Initializer = Ext.apply({}, {
 
 	/**
 	 * HTML content of the placeholder
@@ -42,11 +42,11 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer = Ext.apply({}, {
 	 * Initializer, called on page load. Is used to register event
 	 * listeners on the core.
 	 *
-	 * @param {F3.TYPO3.Module.Content.EditorFrontend.Core} core
+	 * @param {TYPO3.TYPO3.Module.Content.EditorFrontend.Core} core
 	 * @return {void}
 	 */
 	initialize: function(core) {
-		this._placeholderContent = '<span class="f3-typo3-html-placeholder">[' + core.I18n.get('TYPO3', 'enterSomeContent') + ']</span>';
+		this._placeholderContent = '<span class="typo3-typo3-html-placeholder">[' + core.I18n.get('TYPO3.TYPO3', 'enterSomeContent') + ']</span>';
 
 		core.on('enableEditingMode', this._registerEventHandlers, this);
 		core.on('disableEditingMode', this._unregisterEventHandlers, this);
@@ -61,11 +61,11 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer = Ext.apply({}, {
 	_registerEventHandlers: function() {
 		var scope = this;
 
-		jQuery('.f3-typo3-contentelement-html').each(function(index, element) {
+		jQuery('.typo3-typo3-contentelement-html').each(function(index, element) {
 			scope.insertPlaceholderIfElementIsEmpty(element);
 		});
-		jQuery('.f3-typo3-contentelement-html').live('dblclick', function() {
-			new F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin(Ext.get(this));
+		jQuery('.typo3-typo3-contentelement-html').live('dblclick', function() {
+			new TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Plugin(Ext.get(this));
 		});
 	},
 
@@ -77,7 +77,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer = Ext.apply({}, {
 	 * @return {void}
 	 */
 	_onNewlyCreatedContentElement: function(newContentElement) {
-		if (jQuery(newContentElement).is('.f3-typo3-contentelement-html')) {
+		if (jQuery(newContentElement).is('.typo3-typo3-contentelement-html')) {
 			newContentElement.innerHTML = this._placeholderContent;
 		}
 	},
@@ -89,8 +89,8 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer = Ext.apply({}, {
 	 * @private
 	 */
 	_unregisterEventHandlers: function() {
-		jQuery('.f3-typo3-contentelement-html').die('dblclick');
-		jQuery('.f3-typo3-html-placeholder').remove();
+		jQuery('.typo3-typo3-contentelement-html').die('dblclick');
+		jQuery('.typo3-typo3-html-placeholder').remove();
 	},
 
 	/**
@@ -122,4 +122,4 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer = Ext.apply({}, {
 
 });
 
-F3.TYPO3.Module.Content.EditorFrontend.Core.registerModule(F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer);
+TYPO3.TYPO3.Module.Content.EditorFrontend.Core.registerModule(TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Initializer);

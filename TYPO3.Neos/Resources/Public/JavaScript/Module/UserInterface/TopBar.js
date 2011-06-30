@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.UserInterface');
+Ext.ns('TYPO3.TYPO3.Module.UserInterface');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.UserInterface');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.UserInterface.TopBar
+ * @class TYPO3.TYPO3.Module.UserInterface.TopBar
  *
  * Top bar for the user interface
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.Panel
  */
-F3.TYPO3.Module.UserInterface.TopBar = Ext.extend(Ext.Panel, {
+TYPO3.TYPO3.Module.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 	height: 62,
 
 	initComponent: function() {
@@ -39,7 +39,7 @@ F3.TYPO3.Module.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 				align: 'stretch'
 			},
 			border: false,
-			bodyCssClass: 'F3-TYPO3-UserInterface-TopBar-Wallpaper',
+			bodyCssClass: 'TYPO3-TYPO3-UserInterface-TopBar-Wallpaper',
 			items: [{
 				height: 32,
 				xtype: 'container',
@@ -63,7 +63,7 @@ F3.TYPO3.Module.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 						flex: 1
 					}, {
 						xtype: 'box',
-						id: 'F3-TYPO3-TopBar-Logo',
+						id: 'TYPO3-TYPO3-TopBar-Logo',
 						height: 34,
 						width: 113,
 						flex: 2
@@ -77,16 +77,16 @@ F3.TYPO3.Module.UserInterface.TopBar = Ext.extend(Ext.Panel, {
 						flex: 1
 					}, {
 						xtype: 'panel',
-						cls: 'F3-TYPO3-Version',
+						cls: 'TYPO3-TYPO3-Version',
 						width: 107,
 						height: 12,
-						html: 'Version ' + F3.TYPO3.Configuration.Application.version,
+						html: 'Version ' + TYPO3.TYPO3.Configuration.Application.version,
 						flex: 0
 					}]
 				}]
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.UserInterface.TopBar.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.UserInterface.TopBar.superclass.initComponent.call(this);
 	}
 });
-Ext.reg('F3.TYPO3.Module.UserInterface.TopBar', F3.TYPO3.Module.UserInterface.TopBar);
+Ext.reg('TYPO3.TYPO3.Module.UserInterface.TopBar', TYPO3.TYPO3.Module.UserInterface.TopBar);

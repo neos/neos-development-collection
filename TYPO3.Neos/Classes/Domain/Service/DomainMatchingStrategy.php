@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Service;
+namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -38,7 +38,7 @@ class DomainMatchingStrategy {
 	 * If none really matches an empty array is returned.
 	 *
 	 * @param string $host The host to match against (eg. "localhost" or "www.typo3.org")
-	 * @param array<\F3\TYPO3\Domain\Model\Domain> $domains The domains to check
+	 * @param array<\TYPO3\TYPO3\Domain\Model\Domain> $domains The domains to check
 	 * @return array The matching domains
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

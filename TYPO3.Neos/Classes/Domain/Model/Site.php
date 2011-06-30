@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Model;
+namespace TYPO3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *

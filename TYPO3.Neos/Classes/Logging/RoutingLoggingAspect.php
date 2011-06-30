@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Logging;
+namespace TYPO3\TYPO3\Logging;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,7 +21,7 @@ namespace F3\TYPO3\Logging;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\TYPO3\Routing\FrontendNodeRoutePartHandler;
+use \TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler;
 
 /**
  * An aspect which centralizes the logging of TYPO3's routing functions.
@@ -34,25 +34,25 @@ class RoutingLoggingAspect {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * Logs results of the FrontendNodeRoutePartHandler's matchValue() methods
 	 *
-	 * @afterreturning method(F3\TYPO3\Routing\FrontendNodeRoutePartHandler->matchValue()) || method(F3\TYPO3\Routing\RestRestServiceNodeRoutePartHandler->matchValue())
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @afterreturning method(TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler->matchValue()) || method(TYPO3\TYPO3\Routing\RestRestServiceNodeRoutePartHandler->matchValue())
+	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function logMatchValue(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logMatchValue(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$path = $joinPoint->getMethodArgument('value');
 		$resultCode = $joinPoint->getResult();
 
@@ -73,7 +73,7 @@ class RoutingLoggingAspect {
 				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no such node was found.', LOG_INFO);
 				break;
 			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_FOUND :
-				$contextNodePath = \F3\FLOW3\Reflection\ObjectAccess::getProperty($joinPoint->getProxy(), 'value', TRUE);
+				$contextNodePath = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($joinPoint->getProxy(), 'value', TRUE);
 				$this->systemLogger->log($joinPoint->getClassName() . ' matched node "' . $contextNodePath . '".', LOG_INFO);
 				break;
 		}

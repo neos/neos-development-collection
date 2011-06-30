@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,12 +27,12 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Node extends \F3\TypoScript\AbstractContentObject {
+class Node extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/Node.html';
+	protected $templateSource = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Node.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in
@@ -44,7 +44,7 @@ class Node extends \F3\TypoScript\AbstractContentObject {
 
 	/**
 	 * A copy of the node's properties
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $properties = array();
@@ -54,11 +54,11 @@ class Node extends \F3\TypoScript\AbstractContentObject {
 	 * All available properties of the node will be registered as presentation model
 	 * properties.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function setNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		parent::setNode($node);
 		$this->properties = $node->getProperties();
 
@@ -66,7 +66,7 @@ class Node extends \F3\TypoScript\AbstractContentObject {
 		if (strpos($contentType, ':') !== FALSE) {
 			list($packageKey, $typeName) = explode(':', $node->getContentType());
 		} else {
-			$packageKey = 'TYPO3';
+			$packageKey = 'TYPO3.TYPO3';
 			$typeName = $contentType;
 		}
 

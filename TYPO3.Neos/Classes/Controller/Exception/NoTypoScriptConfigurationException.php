@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Controller\Exception;
+namespace TYPO3\TYPO3\Controller\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\Controller\Exception;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class NoTypoScriptConfigurationException extends \F3\TYPO3\Controller\Exception {
+class NoTypoScriptConfigurationException extends \TYPO3\TYPO3\Controller\Exception {
 
 }
 

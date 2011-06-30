@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3');
+Ext.ns('TYPO3.TYPO3');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Utils
+ * @class TYPO3.TYPO3.Utils
  *
  * Utility functions to use.
  *
- * @namespace F3.TYPO3
+ * @namespace TYPO3.TYPO3
  * @singleton
  */
-F3.TYPO3.Utils = {
+TYPO3.TYPO3.Utils = {
 	/**
 	 * Clone Function
 	 *
@@ -49,7 +49,7 @@ F3.TYPO3.Utils = {
 			if (o.hasOwnProperty(p)) {
 				v = o[p];
 				if (v && 'object' === typeof v) {
-					c[p] = F3.TYPO3.Utils.clone(v);
+					c[p] = TYPO3.TYPO3.Utils.clone(v);
 				} else {
 					c[p] = v;
 				}
@@ -85,7 +85,7 @@ F3.TYPO3.Utils = {
 	 * @return {String} the full backend URI.
 	 */
 	buildBackendUri: function(path) {
-		return F3.TYPO3.Configuration.Application.backendBaseUri + path;
+		return TYPO3.TYPO3.Configuration.Application.backendBaseUri + path;
 	},
 
 	/**
@@ -105,8 +105,8 @@ F3.TYPO3.Utils = {
 	/**
 	 * Returns a reference to a global object, when the string towards
 	 * this object gets passed.
-	 * Example: If you pass in the string "F3.TYPO3.Core.Application", then
-	 * you get back the actual object reference to the F3.TYPO3.Core.Application,
+	 * Example: If you pass in the string "TYPO3.TYPO3.Core.Application", then
+	 * you get back the actual object reference to the TYPO3.TYPO3.Core.Application,
 	 * or undefined if it does not exist.
 	 *
 	 * @param {String} objectPath the object path to be found

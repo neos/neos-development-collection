@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.Edit');
+Ext.ns('TYPO3.TYPO3.Module.Content.Edit');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Content.Edit');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.Edit.PagePropertiesDialog
+ * @class TYPO3.TYPO3.Module.Content.Edit.PagePropertiesDialog
  *
  * The dialog for editing page properties, e.g. title and navigation title
  *
- * @namespace F3.TYPO3.Module.Content.Edit
- * @extends F3.TYPO3.Components.Module.Dialog
+ * @namespace TYPO3.TYPO3.Module.Content.Edit
+ * @extends TYPO3.TYPO3.Components.Module.Dialog
  */
-F3.TYPO3.Module.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.Components.Module.Dialog, {
+TYPO3.TYPO3.Module.Content.Edit.PagePropertiesDialog = Ext.extend(TYPO3.TYPO3.Components.Module.Dialog, {
 
 	/**
 	 * Initializer
@@ -36,13 +36,13 @@ F3.TYPO3.Module.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.Componen
 	initComponent: function() {
 		var currentContextNodePath, config = {};
 
-		config.items = F3.TYPO3.Components.Form.FormFactory.createForm(
-			'TYPO3:Page',
+		config.items = TYPO3.TYPO3.Components.Form.FormFactory.createForm(
+			'TYPO3.TYPO3:Page',
 			'pageProperties',
 			{
 				ref: 'form',
 				getLoadIdentifier: function() {
-					currentContextNodePath = F3.TYPO3.Module.ContentModule.getWebsiteContainer().getCurrentContextNodePath();
+					currentContextNodePath = TYPO3.TYPO3.Module.ContentModule.getWebsiteContainer().getCurrentContextNodePath();
 					return {__contextNodePath: currentContextNodePath};
 				},
 				getSubmitIdentifier: function() {
@@ -53,7 +53,7 @@ F3.TYPO3.Module.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.Componen
 		);
 
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Content.Edit.PagePropertiesDialog.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Content.Edit.PagePropertiesDialog.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -74,7 +74,7 @@ F3.TYPO3.Module.Content.Edit.PagePropertiesDialog = Ext.extend(F3.TYPO3.Componen
 	_onPagePropertiesSaved: function() {
 		this.moduleMenu.removeModuleDialog();
 
-		F3.TYPO3.Module.ContentModule.getWebsiteContainer().reload();
+		TYPO3.TYPO3.Module.ContentModule.getWebsiteContainer().reload();
 	}
 });
-Ext.reg('F3.TYPO3.Module.Content.Edit.PagePropertiesDialog', F3.TYPO3.Module.Content.Edit.PagePropertiesDialog);
+Ext.reg('TYPO3.TYPO3.Module.Content.Edit.PagePropertiesDialog', TYPO3.TYPO3.Module.Content.Edit.PagePropertiesDialog);

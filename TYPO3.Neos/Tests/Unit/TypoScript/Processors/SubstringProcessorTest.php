@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class SubstringProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class SubstringProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\SubstringProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\SubstringProcessor
 	 */
 	protected $substringProcessor;
 
@@ -39,7 +39,7 @@ class SubstringProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->substringProcessor = new \F3\TYPO3\TypoScript\Processors\SubstringProcessor();
+		$this->substringProcessor = new \TYPO3\TYPO3\TypoScript\Processors\SubstringProcessor();
 	}
 
 	/**
@@ -96,7 +96,7 @@ class SubstringProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -107,7 +107,7 @@ class SubstringProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function passingAStringInsteadOfTheLenghtIntoSubstringThrowsAnException() {

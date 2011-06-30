@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components');
+Ext.ns('TYPO3.TYPO3.Components');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Components');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.DummyImage
+ * @class TYPO3.TYPO3.Components.DummyImage
  *
  * A dummy image
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.BoxComponent
  */
-F3.TYPO3.Components.DummyImage = Ext.extend(Ext.BoxComponent, {
+TYPO3.TYPO3.Components.DummyImage = Ext.extend(Ext.BoxComponent, {
 	backgroundImage: null,
 
 	initComponent: function() {
@@ -40,7 +40,7 @@ F3.TYPO3.Components.DummyImage = Ext.extend(Ext.BoxComponent, {
 			}
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Components.DummyImage.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Components.DummyImage.superclass.initComponent.call(this);
 	}
 });
-Ext.reg('F3.TYPO3.Components.DummyImage', F3.TYPO3.Components.DummyImage);
+Ext.reg('TYPO3.TYPO3.Components.DummyImage', TYPO3.TYPO3.Components.DummyImage);

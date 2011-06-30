@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Command;
+namespace TYPO3\TYPO3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,17 +27,17 @@ namespace F3\TYPO3\Command;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
-class SetupCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\AccountRepository
+	 * @var \TYPO3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\AccountFactory
+	 * @var \TYPO3\FLOW3\Security\AccountFactory
 	 */
 	protected $accountFactory;
 
@@ -68,7 +68,7 @@ class SetupCommandController extends \F3\FLOW3\MVC\Controller\CommandController 
 
 			$this->response->appendContent('Created account "' . $identifier . '".');
 
-			$user = new \F3\TYPO3\Domain\Model\User();
+			$user = new \TYPO3\TYPO3\Domain\Model\User();
 			$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
 
 			$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));

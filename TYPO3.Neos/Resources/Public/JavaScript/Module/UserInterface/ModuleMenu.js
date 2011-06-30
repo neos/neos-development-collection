@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.UserInterface');
+Ext.ns('TYPO3.TYPO3.Module.UserInterface');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.UserInterface');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.UserInterface.ModuleMenu
+ * @class TYPO3.TYPO3.Module.UserInterface.ModuleMenu
  *
  * TODO: Description
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.Panel
  */
-F3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
+TYPO3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	basePath: null,
 	viewFilter: {},
 	specialMenu: null,
@@ -36,7 +36,7 @@ F3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	/**
 	 * The instance of the module dialog if it is currently opened.
 	 *
-	 * @var {F3.TYPO3.Components.Module.Dialog}
+	 * @var {TYPO3.TYPO3.Components.Module.Dialog}
 	 * @private
 	 */
 	_moduleDialog: null,
@@ -44,20 +44,20 @@ F3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	/**
 	 * The instance of the content dialog if it is currently opened.
 	 *
-	 * @var {F3.TYPO3.Components.Content.Dialog}
+	 * @var {TYPO3.TYPO3.Components.Content.Dialog}
 	 * @private
 	 */
 	_contentDialog: null,
 
 	initComponent: function() {
 		var config = {
-			cls: 'F3-TYPO3-UserInterface-ModuleMenu',
+			cls: 'TYPO3-TYPO3-UserInterface-ModuleMenu',
 			autoHeight: true,
 			bodyCfg: {
-				cls: 'F3-TYPO3-Overflow-Visible'
+				cls: 'TYPO3-TYPO3-Overflow-Visible'
 			},
 			bwrapCfg: {
-				cls: 'F3-TYPO3-Overflow-Visible'
+				cls: 'TYPO3-TYPO3-Overflow-Visible'
 			},
 			layoutConfig: {
 				align: 'stretch'
@@ -66,17 +66,17 @@ F3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 				xtype: 'container',
 				layout: 'hbox',
 				items: [{
-					xtype: 'F3.TYPO3.Components.BreadcrumbMenuComponent',
+					xtype: 'TYPO3.TYPO3.Components.BreadcrumbMenuComponent',
 					itemId: this.itemId,
 					ref: '../breadcrumbMenu',
 					basePath: this.basePath,
 					flex: 1,
 					listeners: {
 						activate: function(currentlyClickedMenuPath, breadcrumbMenu) {
-							F3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-' + currentlyClickedMenuPath, breadcrumbMenu);
+							TYPO3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-' + currentlyClickedMenuPath, breadcrumbMenu);
 						},
 						deactivate: function(currentlyClickedMenuPath, breadcrumbMenu) {
-							F3.TYPO3.Module.UserInterfaceModule.fireEvent('deactivate-' + currentlyClickedMenuPath, breadcrumbMenu);
+							TYPO3.TYPO3.Module.UserInterfaceModule.fireEvent('deactivate-' + currentlyClickedMenuPath, breadcrumbMenu);
 						}
 					}
 				}, this.specialMenu],
@@ -93,27 +93,27 @@ F3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 			}]
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.UserInterface.ModuleMenu.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.UserInterface.ModuleMenu.superclass.initComponent.call(this);
 	},
 
 	/**
 	 * Show a module dialog inside this module menu.
-	 * The xtype in the config should extend F3.TYPO3.Components.Module.Dialog.
+	 * The xtype in the config should extend TYPO3.TYPO3.Components.Module.Dialog.
 	 *
 	 * Normally, this method does not need to be called explicitely. Instead,
-	 * you will usually call F3.TYPO3.Module.UserInterfaceModule#moduleDialogOn()
+	 * you will usually call TYPO3.TYPO3.Module.UserInterfaceModule#moduleDialogOn()
 	 *
 	 * @param {Object} config The module dialog component config
 	 * @param {Object} contentDialogConfig Configuration for the content dialog
-	 * @return {F3.TYPO3.Components.Module.Dialog} the ModuleDialog instance
+	 * @return {TYPO3.TYPO3.Components.Module.Dialog} the ModuleDialog instance
 	 */
 	showModuleDialog: function(config, contentDialogConfig) {
-		var sectionMenuTab = this.findParentByType('F3.TYPO3.Components.Module.Container');
+		var sectionMenuTab = this.findParentByType('TYPO3.TYPO3.Components.Module.Container');
 
 		this._moduleDialog = this.moduleDialogContainer.add(config);
 		this._moduleDialog.moduleMenu = this;
 
-		F3.TYPO3.Module.UserInterfaceModule.viewport.doLayout();
+		TYPO3.TYPO3.Module.UserInterfaceModule.viewport.doLayout();
 		sectionMenuTab.doLayout();
 
 		if (contentDialogConfig) {
@@ -132,7 +132,7 @@ F3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 	 * @return {void}
 	 */
 	removeModuleDialog: function() {
-		var sectionMenuTab = this.findParentByType('F3.TYPO3.Components.Module.Container');
+		var sectionMenuTab = this.findParentByType('TYPO3.TYPO3.Components.Module.Container');
 		if (this._moduleDialog) {
 			this.moduleDialogContainer.removeAll();
 		}
@@ -141,24 +141,24 @@ F3.TYPO3.Module.UserInterface.ModuleMenu = Ext.extend(Ext.Container, {
 			this._contentDialog = null;
 		}
 
-		F3.TYPO3.Module.UserInterfaceModule.viewport.doLayout();
+		TYPO3.TYPO3.Module.UserInterfaceModule.viewport.doLayout();
 		sectionMenuTab.doLayout();
 
 		this.addedModuleHeight = 0;
 	},
 
 	/**
-	 * @return {F3.TYPO3.Components.Module.Dialog}
+	 * @return {TYPO3.TYPO3.Components.Module.Dialog}
 	 */
 	getModuleDialog: function() {
 		return this._moduleDialog;
 	},
 
 	/**
-	 * @return {F3.TYPO3.Components.Module.Dialog}
+	 * @return {TYPO3.TYPO3.Components.Module.Dialog}
 	 */
 	getContentDialog: function() {
 		return this._contentDialog;
 	}
 });
-Ext.reg('F3.TYPO3.Module.UserInterface.ModuleMenu', F3.TYPO3.Module.UserInterface.ModuleMenu);
+Ext.reg('TYPO3.TYPO3.Module.UserInterface.ModuleMenu', TYPO3.TYPO3.Module.UserInterface.ModuleMenu);

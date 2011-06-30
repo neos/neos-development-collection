@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.Edit');
+Ext.ns('TYPO3.TYPO3.Module.Content.Edit');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Content.Edit');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.Edit.DeletePageDialog
+ * @class TYPO3.TYPO3.Module.Content.Edit.DeletePageDialog
  *
  * An empty dialog for deleting pages
  *
- * @namespace F3.TYPO3.Module.Content.Edit
- * @extends F3.TYPO3.Components.Module.Dialog
+ * @namespace TYPO3.TYPO3.Module.Content.Edit
+ * @extends TYPO3.TYPO3.Components.Module.Dialog
  */
-F3.TYPO3.Module.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.Components.Module.Dialog, {
+TYPO3.TYPO3.Module.Content.Edit.DeletePageDialog = Ext.extend(TYPO3.TYPO3.Components.Module.Dialog, {
 
 	/**
 	 * Initializer
@@ -39,7 +39,7 @@ F3.TYPO3.Module.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.Components.M
 			items: []
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Content.Edit.DeletePageDialog.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Content.Edit.DeletePageDialog.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -48,8 +48,8 @@ F3.TYPO3.Module.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.Components.M
 	 * @return {void}
 	 */
 	onOk: function() {
-		var currentContextNodePath = F3.TYPO3.Module.ContentModule.getWebsiteContainer().getCurrentContextNodePath();
-		F3.TYPO3.Utils.getObjectByString(F3.TYPO3.Core.Registry.get('schema/type/TYPO3:Page/service/delete')).call(this, currentContextNodePath, this._onDeleteSuccess, this);
+		var currentContextNodePath = TYPO3.TYPO3.Module.ContentModule.getWebsiteContainer().getCurrentContextNodePath();
+		TYPO3.TYPO3.Utils.getObjectByString(TYPO3.TYPO3.Core.Registry.get('schema/type/TYPO3.TYPO3:Page/service/delete')).call(this, currentContextNodePath, this._onDeleteSuccess, this);
 	},
 
 	/**
@@ -62,8 +62,8 @@ F3.TYPO3.Module.Content.Edit.DeletePageDialog = Ext.extend(F3.TYPO3.Components.M
 	 */
 	_onDeleteSuccess: function(response) {
 		this.moduleMenu.removeModuleDialog();
-		F3.TYPO3.Module.ContentModule.getWebsiteContainer().loadPage(response.data.nextUri);
+		TYPO3.TYPO3.Module.ContentModule.getWebsiteContainer().loadPage(response.data.nextUri);
 	}
 
 });
-Ext.reg('F3.TYPO3.Module.Content.Edit.DeletePageDialog', F3.TYPO3.Module.Content.Edit.DeletePageDialog);
+Ext.reg('TYPO3.TYPO3.Module.Content.Edit.DeletePageDialog', TYPO3.TYPO3.Module.Content.Edit.DeletePageDialog);

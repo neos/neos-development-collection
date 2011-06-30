@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\Domain\Service;
+namespace TYPO3\TYPO3\Tests\Unit\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\Tests\Unit\Domain\Service;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class TypoScriptServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
+class TypoScriptServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -42,7 +42,7 @@ class TypoScriptServiceTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 		$expectedTypoScript = 'FOUR' . chr(10) . 'TEN' . chr(10) . 'DEFAULT' . chr(10) . 'ROOT' . chr(10);
 
-		$typoScriptService = $this->getAccessibleMock('F3\TYPO3\Domain\Service\TypoScriptService', array('dummy'), array(), '', FALSE);
+		$typoScriptService = $this->getAccessibleMock('TYPO3\TYPO3\Domain\Service\TypoScriptService', array('dummy'), array(), '', FALSE);
 		$this->assertEquals($expectedTypoScript, $typoScriptService->_call('readExternalTypoScriptFiles', 'vfs://SitePackage/'));
 	}
 

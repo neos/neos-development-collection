@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Service;
+namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -32,49 +32,49 @@ class SiteImportService {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
+	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\DomainRepository
+	 * @var \TYPO3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\ContentTypeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\ContentTypeRepository
 	 */
 	protected $contentTypeRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Service\ContentTypeManager
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Persistence\PersistenceManagerInterface
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -89,9 +89,9 @@ class SiteImportService {
 	 */
 	public function importFromPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
-			throw new \F3\TYPO3\Exception('Error: Package "' . $packageKey . '" is not active.');
+			throw new \TYPO3\TYPO3\Exception('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
-			throw new \F3\TYPO3\Exception('Error: No content found in package "' . $packageKey . '".');
+			throw new \TYPO3\TYPO3\Exception('Error: No content found in package "' . $packageKey . '".');
 		} else {
 
 				// Remove all content and related data - for now. In the future we
@@ -106,15 +106,15 @@ class SiteImportService {
 
 			$this->persistenceManager->persistAll();
 
-			$folderContentType = $this->contentTypeManager->createContentType('TYPO3CR:Folder');
+			$folderContentType = $this->contentTypeManager->createContentType('TYPO3.TYPO3CR:Folder');
 
-			$pageContentType = $this->contentTypeManager->createContentType('TYPO3:Page');
+			$pageContentType = $this->contentTypeManager->createContentType('TYPO3.TYPO3:Page');
 			$pageContentType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($folderContentType)));
 
 			try {
 				$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');
 			} catch (\Exception $exception) {
-				throw new \F3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360480, $exception);
+				throw new \TYPO3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360480, $exception);
 			}
 		}
 	}
@@ -129,12 +129,12 @@ class SiteImportService {
 	 */
 	public function updateFromPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
-			throw new \F3\TYPO3\Exception('Error: Package "' . $packageKey . '" is not active.');
+			throw new \TYPO3\TYPO3\Exception('Error: Package "' . $packageKey . '" is not active.');
 		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
-			throw new \F3\TYPO3\Exception('Error: No content found in package "' . $packageKey . '".');
+			throw new \TYPO3\TYPO3\Exception('Error: No content found in package "' . $packageKey . '".');
 		}
 
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
 		$siteNode = $contentContext->getCurrentSiteNode();
 		if ($siteNode !== NULL) {
 			$siteNode->remove();
@@ -144,7 +144,7 @@ class SiteImportService {
 		try {
 			$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');
 		} catch (\Exception $exception) {
-			throw new \F3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360479, $exception);
+			throw new \TYPO3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360479, $exception);
 		}
 	}
 
@@ -153,7 +153,7 @@ class SiteImportService {
 	 * @return void
 	 */
 	public function importSitesFromFile($pathAndFilename) {
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext('live');
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
 
 			// no file_get_contents here because it does not work on php://stdin
 		$fp = fopen($pathAndFilename, 'rb');
@@ -167,7 +167,7 @@ class SiteImportService {
 		foreach ($xml->site as $siteXml) {
 			$site = $this->siteRepository->findOneByNodeName((string)$siteXml['nodeName']);
 			if ($site === NULL) {
-				$site = new \F3\TYPO3\Domain\Model\Site((string)$siteXml['nodeName']);
+				$site = new \TYPO3\TYPO3\Domain\Model\Site((string)$siteXml['nodeName']);
 				$this->siteRepository->add($site);
 			}
 			$site->setName((string)$siteXml->properties->name);
@@ -175,10 +175,10 @@ class SiteImportService {
 
 			$siteResourcesPackageKey = (string)$siteXml->properties->siteResourcesPackageKey;
 			if ($this->packageManager->isPackageAvailable($siteResourcesPackageKey) === FALSE) {
-				throw new \F3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package does not exist.', 1303891443);
+				throw new \TYPO3\FLOW3\Package\Exception\UnknownPackageException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package does not exist.', 1303891443);
 			}
 			if ($this->packageManager->isPackageActive($siteResourcesPackageKey) === FALSE) {
-				throw new \F3\FLOW3\Package\Exception\InvalidPackageStateException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package is not active.', 1303898135);
+				throw new \TYPO3\FLOW3\Package\Exception\InvalidPackageStateException('Package "' . $siteResourcesPackageKey . '" specified in the XML as site resources package is not active.', 1303898135);
 			}
 			$site->setSiteResourcesPackageKey($siteResourcesPackageKey);
 
@@ -202,11 +202,11 @@ class SiteImportService {
 	 * Iterates over the nodes and adds them to the workspace.
 	 *
 	 * @param \SimpleXMLElement $parentXml
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $parentNode
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function parseNodes(\SimpleXMLElement $parentXml, \F3\TYPO3CR\Domain\Model\NodeInterface $parentNode) {
+	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
 			$childNode = $parentNode->getNode((string)$childNodeXml['nodeName']);
 			if ($childNode === NULL) {

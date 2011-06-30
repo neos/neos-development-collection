@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class RoundProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class RoundProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\RoundProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\RoundProcessor
 	 */
 	protected $roundProcessor;
 
@@ -39,7 +39,7 @@ class RoundProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->roundProcessor = new \F3\TYPO3\TypoScript\Processors\RoundProcessor();
+		$this->roundProcessor = new \TYPO3\TYPO3\TypoScript\Processors\RoundProcessor();
 	}
 
 	/**
@@ -111,7 +111,7 @@ class RoundProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 */
 	public function roundThrowsExceptionOnInvalidParameters() {
 		$subject = 'Transition days rock.';
@@ -123,7 +123,7 @@ class RoundProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 */
 	public function roundThrowsExceptionOnInvalidPrecisionParameters() {
 		$subject = 'Transition days rock.';

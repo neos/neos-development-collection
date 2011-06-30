@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class MultiplyProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class MultiplyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\MultiplyProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\MultiplyProcessor
 	 */
 	protected $multiplyProcessor;
 
@@ -39,7 +39,7 @@ class MultiplyProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->multiplyProcessor = new \F3\TYPO3\TypoScript\Processors\MultiplyProcessor();
+		$this->multiplyProcessor = new \TYPO3\TYPO3\TypoScript\Processors\MultiplyProcessor();
 	}
 
 	/**
@@ -60,7 +60,7 @@ class MultiplyProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function multiplyThrowsExceptionIfNonNumericStringPassedAsSubject() {
@@ -70,7 +70,7 @@ class MultiplyProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function multiplyThrowsExceptionIfStringPassedAsFactor() {
@@ -80,7 +80,7 @@ class MultiplyProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function notSettingTheMultiplyFactorThrowsException() {

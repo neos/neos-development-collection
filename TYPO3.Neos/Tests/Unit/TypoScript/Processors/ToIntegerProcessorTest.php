@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -28,10 +28,10 @@ require_once (__DIR__ . '/../../Fixtures/MockTypoScriptObject.php');
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ToIntegerProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ToIntegerProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\ToIntegerProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\ToIntegerProcessor
 	 */
 	protected $toIntegerProcessor;
 
@@ -41,7 +41,7 @@ class ToIntegerProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->toIntegerProcessor = new \F3\TYPO3\TypoScript\Processors\ToIntegerProcessor();
+		$this->toIntegerProcessor = new \TYPO3\TYPO3\TypoScript\Processors\ToIntegerProcessor();
 	}
 
 	/**
@@ -67,7 +67,7 @@ class ToIntegerProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function toIntegerConvertsAnObjectToStringBeforeConvertingItToAnInteger() {
-		$mockObject = new \F3\TYPO3\TypoScript\MockTypoScriptObject();
+		$mockObject = new \TYPO3\TYPO3\TypoScript\MockTypoScriptObject();
 		$mockObject->setValue('25');
 
 		$result = $this->toIntegerProcessor->process($mockObject);

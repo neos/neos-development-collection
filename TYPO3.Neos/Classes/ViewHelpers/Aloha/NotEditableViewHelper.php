@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\ViewHelpers\Aloha;
+namespace TYPO3\TYPO3\ViewHelpers\Aloha;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -28,21 +28,21 @@ namespace F3\TYPO3\ViewHelpers\Aloha;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class NotEditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
+class NotEditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 
 	/**
-	 * @var \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
 
 	/**
 	 * Injects the access decision manager
 	 *
-	 * @param \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
+	 * @param \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectAccessDecisionManager(\F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
+	public function injectAccessDecisionManager(\TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
 		$this->accessDecisionManager = $accessDecisionManager;
 	}
 
@@ -52,9 +52,9 @@ class NotEditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function render() {
-		if ($this->hasAccessToResource('F3_TYPO3_Backend_BackendController')) {
+		if ($this->hasAccessToResource('TYPO3_TYPO3_Backend_BackendController')) {
 			$this->tag->setContent($this->renderChildren());
-			$this->tag->addAttribute('class', 'f3-typo3-notEditable');
+			$this->tag->addAttribute('class', 'typo3-typo3-notEditable');
 			return $this->tag->render();
 		} else {
 			return $this->renderChildren();
@@ -71,7 +71,7 @@ class NotEditableViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 	protected function hasAccessToResource($resource) {
 		try {
 			$this->accessDecisionManager->decideOnResource($resource);
-		} catch (\F3\FLOW3\Security\Exception\AccessDeniedException $e) {
+		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
 			return FALSE;
 		}
 

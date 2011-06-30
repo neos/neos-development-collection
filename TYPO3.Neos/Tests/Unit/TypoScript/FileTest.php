@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\TypoScript;
+namespace TYPO3\TYPO3\Tests\Unit\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\Tests\Unit\TypoScript;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class FileTest extends \F3\FLOW3\Tests\UnitTestCase {
+class FileTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -37,7 +37,7 @@ class FileTest extends \F3\FLOW3\Tests\UnitTestCase {
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('Foo'));
 		file_put_contents('vfs://Foo/Bar.txt', 'expected content');
 
-		$file = new \F3\TYPO3\TypoScript\File();
+		$file = new \TYPO3\TYPO3\TypoScript\File();
 		$file->setPathAndFilename('vfs://Foo/Bar.txt');
 		$this->assertEquals('expected content', $file->render());
 	}
@@ -47,7 +47,7 @@ class FileTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function renderReturnsErrorMessageIfFileDoesNotExist() {
-		$file = new \F3\TYPO3\TypoScript\File();
+		$file = new \TYPO3\TYPO3\TypoScript\File();
 		$file->setPathAndFilename('thisdoesnotexist');
 		$this->assertEquals('WARNING: File "' . $file->getPathAndFilename() . '" not found.', $file->render());
 	}

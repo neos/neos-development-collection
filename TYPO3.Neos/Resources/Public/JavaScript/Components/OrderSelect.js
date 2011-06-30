@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components');
+Ext.ns('TYPO3.TYPO3.Components');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,16 +21,16 @@ Ext.ns('F3.TYPO3.Components');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.OrderSelect
+ * @class TYPO3.TYPO3.Components.OrderSelect
  *
  * An extended Ext.grid.GridPanel Component with clean markup, ready to be styled by CSS3.
  * Used for selecting a position of a node within the parent node's child nodes
  *
- * @namespace F3.TYPO3.Components
+ * @namespace TYPO3.TYPO3.Components
  * @extends Ext.grid.GridPanel
  */
-F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
-	cls: 'F3-TYPO3-Components-OrderSelect',
+TYPO3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
+	cls: 'TYPO3-TYPO3-Components-OrderSelect',
 	enableDragDrop: true,
 	ddGroup: 'orderSelect',
 	// @TODO: Check actual design implementation if a fixed height should be used, keep in mind that it's added because the height of the hBox layout is set before the directFn call so the height isn't defined by how many siblings it has, also maybe add a maxHeight value to make sure a scrollbar is used
@@ -87,15 +87,15 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	initComponent: function() {
 		var self = this,
-			contextNodePath = Ext.getCmp('F3.TYPO3.Module.Content.WebsiteContainer').getCurrentContextNodePath();
+			contextNodePath = Ext.getCmp('TYPO3.TYPO3.Module.Content.WebsiteContainer').getCurrentContextNodePath();
 
-		this.ddText = F3.TYPO3.Core.I18n.get('TYPO3', 'orderSelectDrag');
+		this.ddText = TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'orderSelectDrag');
 
 		var directFn = function(callback) {
 			if(self.move) {
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent(contextNodePath, 'TYPO3:Page', 1, callback);
+				TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent(contextNodePath, 'TYPO3.TYPO3:Page', 1, callback);
 			} else {
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3:Page', 1, callback);
+				TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3.TYPO3:Page', 1, callback);
 			}
 		};
 		directFn.directCfg = {
@@ -122,7 +122,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 							}
 						});
 					} else {
-						var dragable = new Ext.data.Record({'title': F3.TYPO3.Core.I18n.get('TYPO3', 'orderSelectAddNew')});
+						var dragable = new Ext.data.Record({'title': TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'orderSelectAddNew')});
 						store.insert(0, dragable);
 						dragableId = dragable.id;
 					}
@@ -141,7 +141,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			}
 		});
 
-		F3.TYPO3.Components.OrderSelect.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Components.OrderSelect.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -167,7 +167,7 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 			this.position = position;
 		} else {
 			// Find current context if no siblings are available
-			this.contextNodePath = Ext.getCmp('F3.TYPO3.Module.Content.WebsiteContainer').getCurrentContextNodePath();
+			this.contextNodePath = Ext.getCmp('TYPO3.TYPO3.Module.Content.WebsiteContainer').getCurrentContextNodePath();
 			this.position = 0;
 		}
 	},
@@ -204,4 +204,4 @@ F3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 		return this.position;
 	}
 });
-Ext.reg('F3.TYPO3.Components.OrderSelect', F3.TYPO3.Components.OrderSelect);
+Ext.reg('TYPO3.TYPO3.Components.OrderSelect', TYPO3.TYPO3.Components.OrderSelect);

@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components');
+Ext.ns('TYPO3.TYPO3.Components');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -25,19 +25,19 @@ Ext.ns('F3.TYPO3.Components');
  *
  * An extended Ext.Button Component with clean markup, ready to be styled by CSS3.
  *
- * @namespace F3.TYPO3.Components
+ * @namespace TYPO3.TYPO3.Components
  * @extends Ext.Button
  */
-F3.TYPO3.Components.Button = Ext.extend(Ext.Button, {
+TYPO3.TYPO3.Components.Button = Ext.extend(Ext.Button, {
 	buttonSelector: 'button span:first-child',
 	menuClassTarget: 'button span',
 
 	template: new Ext.Template(
-		'<div id="{2}" class="F3-TYPO3-Components-Button"><button type="{0}" class="{1}"><span></span></button></div>'
+		'<div id="{2}" class="TYPO3-TYPO3-Components-Button"><button type="{0}" class="{1}"><span></span></button></div>'
 	).compile(),
 
 	getTemplateArgs: function() {
-        return [this.type, this.cls + ' F3-TYPO3-Components-Button-scale-' + this.scale, this.id];
+        return [this.type, this.cls + ' TYPO3-TYPO3-Components-Button-scale-' + this.scale, this.id];
     }
 });
-Ext.reg('F3.TYPO3.Components.Button', F3.TYPO3.Components.Button);
+Ext.reg('TYPO3.TYPO3.Components.Button', TYPO3.TYPO3.Components.Button);

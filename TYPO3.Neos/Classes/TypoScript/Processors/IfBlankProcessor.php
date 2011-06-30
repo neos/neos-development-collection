@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class IfBlankProcessor implements \F3\TypoScript\ProcessorInterface {
+class IfBlankProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
 	 * The value that overrides the subject
@@ -58,7 +58,7 @@ class IfBlankProcessor implements \F3\TypoScript\ProcessorInterface {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
-		return (!\F3\FLOW3\Utility\Unicode\Functions::strlen((string)$subject)) ? $this->replacement : $subject;
+		return (!\TYPO3\FLOW3\Utility\Unicode\Functions::strlen((string)$subject)) ? $this->replacement : $subject;
 	}
 }
 ?>

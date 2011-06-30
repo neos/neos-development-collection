@@ -1,4 +1,4 @@
-Ext.namespace('F3.TYPO3.Components');
+Ext.namespace('TYPO3.TYPO3.Components');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,29 +21,29 @@ Ext.namespace('F3.TYPO3.Components');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.BreadcrumbMenuComponent
+ * @class TYPO3.TYPO3.Components.BreadcrumbMenuComponent
  *
  * Breadcrumb Menu component, which is used in the top area.
  *
- * @namespace F3.TYPO3.Components
+ * @namespace TYPO3.TYPO3.Components
  * @extends Ext.BoxComponent
  */
-F3.TYPO3.Components.BreadcrumbMenuComponent = function() {
-	F3.TYPO3.Components.BreadcrumbMenuComponent.superclass.constructor.apply(this, arguments);
+TYPO3.TYPO3.Components.BreadcrumbMenuComponent = function() {
+	TYPO3.TYPO3.Components.BreadcrumbMenuComponent.superclass.constructor.apply(this, arguments);
 };
 
-Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
+Ext.extend(TYPO3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 
 	/**
 	 * @event activate
 	 * @param {String} fully qualified button path which was selected
-	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenuComponent} The breadcrumb menu component
+	 * @param {TYPO3.TYPO3.UserInterface.BreadcrumbMenuComponent} The breadcrumb menu component
 	 */
 
 	/**
 	 * @event deactivate
 	 * @param {String} fully qualified button path which was deselected
-	 * @param {F3.TYPO3.UserInterface.BreadcrumbMenuComponent} The breadcrumb menu component
+	 * @param {TYPO3.TYPO3.UserInterface.BreadcrumbMenuComponent} The breadcrumb menu component
 	 */
 
 	/**
@@ -53,7 +53,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	basePath: null,
 
 	/**
-	 * @var F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler
+	 * @var TYPO3.TYPO3.Components.BreadcrumbMenu.AnimationHandler
 	 * @private
 	 */
 	_animationHandler: null,
@@ -79,19 +79,19 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	initComponent: function() {
 
 		var config = {
-			cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu',
+			cls: 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu',
 			height: '47px',
-			_animationHandler: new F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler()
+			_animationHandler: new TYPO3.TYPO3.Components.BreadcrumbMenu.AnimationHandler()
 		};
 
 		if (this._debugMode) {
-			config.cls += ' F3-TYPO3-UserInterface-BreadcrumbMenu-Debug';
+			config.cls += ' TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Debug';
 			config._animationHandler._defaultAnimationDuration = 500;
 		}
 
 		Ext.apply(this, config);
 
-		F3.TYPO3.Components.BreadcrumbMenuComponent.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Components.BreadcrumbMenuComponent.superclass.initComponent.call(this);
 
 		this.on('afterrender', function() {
 			this._renderLevel(this.basePath);
@@ -108,7 +108,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 * @return {Object} the configuration for the next menu path.
 	 */
 	getNextMenuLevel: function(menupath) {
-		return F3.TYPO3.Core.Registry.get(menupath + '/children');
+		return TYPO3.TYPO3.Core.Registry.get(menupath + '/children');
 	},
 
 	/**
@@ -123,7 +123,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		if (this._animationHandler.isRunning()) return;
 
 		var clickedMenuItem = Ext.get(clickedMenuItemDomElement);
-		if (clickedMenuItem.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
+		if (clickedMenuItem.hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
 			this._shouldDeactivateItem(clickedMenuItem);
 		} else {
 			this._shouldActivateItem(clickedMenuItem);
@@ -146,7 +146,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		this._activeMenuPath = currentlyClickedMenuPath;
 
 			// If a sibling of the to-be-activated node is active, deactivate it
-		clickedMenuItem.parent().select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
+		clickedMenuItem.parent().select('.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
 			this._shouldDeactivateItem(activeItem);
 		}, this);
 
@@ -154,7 +154,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 			this._animationHandler.hideSiblings(clickedMenuItem);
 		}
 
-		this._animationHandler.addClass(clickedMenuItem, 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active');
+		this._animationHandler.addClass(clickedMenuItem, 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active');
 
 		this._animationHandler.renderMenuItemLabel(clickedMenuItem);
 
@@ -184,7 +184,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		this._removeLowerLevels(clickedMenuItem);
 		this._animationHandler.removeMenuItemLabel(clickedMenuItem);
 
-		this._animationHandler.removeClass(clickedMenuItem, 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active');
+		this._animationHandler.removeClass(clickedMenuItem, 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active');
 
 		this._animationHandler.showSiblings(clickedMenuItem);
 
@@ -208,7 +208,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		this._animationHandler.add(function() {
 			levelContainer = Ext.DomHelper.append(scope.el, {
 				tag: 'span',
-				cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-SingleLevel'
+				cls: 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-SingleLevel'
 			});
 		});
 
@@ -217,14 +217,14 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 			scope._animationHandler.add(function() {
 				singleElement = Ext.DomHelper.append(levelContainer, {
 					tag: 'span',
-					cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-onRender ' + menuItem.iconCls,
+					cls: 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-onRender ' + menuItem.iconCls,
 					'data-menupath': basePath + '/children/' + menuItem.key,
 					'data-label': menuItem.text
 				});
 			}, 20);
 			scope._animationHandler.add(function() {
-				Ext.fly(singleElement).removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-onRender');
-				Ext.fly(singleElement).addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem');
+				Ext.fly(singleElement).removeClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-onRender');
+				Ext.fly(singleElement).addClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem');
 				Ext.fly(singleElement).on('click', scope._onMenuItemClick, scope);
 			});
 		});
@@ -243,7 +243,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		 */
 		var elmts = [];
 
-		var currentLevel = clickedMenuItem.findParent('.F3-TYPO3-UserInterface-BreadcrumbMenu-SingleLevel', 5, true);
+		var currentLevel = clickedMenuItem.findParent('.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-SingleLevel', 5, true);
 		while (currentLevel.next()) {
 			elmts.push(currentLevel.next());
 			currentLevel = currentLevel.next();
@@ -252,9 +252,9 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 			// Reverse the items so we work from the right to the left
 		elmts.reverse();
 		Ext.each(elmts, function(singleLevel) {
-			if (singleLevel.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-SingleLevel')) {
+			if (singleLevel.hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-SingleLevel')) {
 				this._removeSingleLevel(singleLevel);
-			} else if (singleLevel.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Separator')) {
+			} else if (singleLevel.hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Separator')) {
 				this._animationHandler.removeArrow(singleLevel.dom);
 			}
 		}, this);
@@ -267,7 +267,7 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 * @return {Void}
 	 */
 	_removeSingleLevel: function(singleLevel) {
-		Ext.get(singleLevel).select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
+		Ext.get(singleLevel).select('.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active').each(function(activeItem) {
 			this.fireEvent('deactivate', activeItem.getAttribute('data-menupath'), this);
 		}, this);
 		var elmts = [];
@@ -278,8 +278,8 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 		}
 		elmts.reverse();
 		Ext.each(elmts, function(singleElement) {
-			if (singleElement.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem')) {
-				this._animationHandler.addClass(singleElement, 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
+			if (singleElement.hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem')) {
+				this._animationHandler.addClass(singleElement, 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
 				this._animationHandler.add(function() {
 					singleElement.remove();
 				}, 20);
@@ -304,10 +304,10 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 * activate-* and deactivate-*, to find the ModuleMenu in which the
 	 * breadcrumb menu is embedded
 	 *
-	 * @return {F3.TYPO3.Module.UserInterface.ModuleMenu}
+	 * @return {TYPO3.TYPO3.Module.UserInterface.ModuleMenu}
 	 */
 	getModuleMenu: function() {
-		return this.findParentByType(F3.TYPO3.Module.UserInterface.ModuleMenu);
+		return this.findParentByType(TYPO3.TYPO3.Module.UserInterface.ModuleMenu);
 	},
 
 	/**
@@ -318,8 +318,8 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 */
 	activateItem: function(menupath) {
 		var targetElement;
-		targetElement = this.el.select('*[data-menupath=' + F3.TYPO3.Core.Registry.rewritePath(menupath) + ']').first();
-		if (targetElement.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
+		targetElement = this.el.select('*[data-menupath=' + TYPO3.TYPO3.Core.Registry.rewritePath(menupath) + ']').first();
+		if (targetElement.hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
 			return;
 		}
 		this._shouldActivateItem(targetElement);
@@ -333,12 +333,12 @@ Ext.extend(F3.TYPO3.Components.BreadcrumbMenuComponent, Ext.BoxComponent, {
 	 */
 	deactivateItem: function(menupath) {
 		var targetElement;
-		targetElement = this.el.select('*[data-menupath=' + F3.TYPO3.Core.Registry.rewritePath(menupath) + ']').first();
-		if (!targetElement.hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
+		targetElement = this.el.select('*[data-menupath=' + TYPO3.TYPO3.Core.Registry.rewritePath(menupath) + ']').first();
+		if (!targetElement.hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active')) {
 			return;
 		}
 		this._shouldDeactivateItem(targetElement);
 	}
 });
 
-Ext.reg('F3.TYPO3.Components.BreadcrumbMenuComponent', F3.TYPO3.Components.BreadcrumbMenuComponent);
+Ext.reg('TYPO3.TYPO3.Components.BreadcrumbMenuComponent', TYPO3.TYPO3.Components.BreadcrumbMenuComponent);

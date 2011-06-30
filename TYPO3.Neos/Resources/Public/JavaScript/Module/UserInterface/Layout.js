@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.UserInterface');
+Ext.ns('TYPO3.TYPO3.Module.UserInterface');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.UserInterface');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.UserInterface.Layout
+ * @class TYPO3.TYPO3.Module.UserInterface.Layout
  *
  * The outermost user interface component.
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.Viewport
  */
-F3.TYPO3.Module.UserInterface.Layout = Ext.extend(Ext.Viewport, {
+TYPO3.TYPO3.Module.UserInterface.Layout = Ext.extend(Ext.Viewport, {
 	initComponent: function() {
 		var config = {
 			layout: 'vbox',
@@ -36,17 +36,17 @@ F3.TYPO3.Module.UserInterface.Layout = Ext.extend(Ext.Viewport, {
 				align: 'stretch'
 			},
 			items: [{
-				xtype: 'F3.TYPO3.Module.UserInterface.TopBar',
+				xtype: 'TYPO3.TYPO3.Module.UserInterface.TopBar',
 				ref: 'topBar',
 				flex: 0
 			}, {
-				xtype: 'F3.TYPO3.Module.UserInterface.SectionMenu',
+				xtype: 'TYPO3.TYPO3.Module.UserInterface.SectionMenu',
 				ref: 'sectionMenu',
 				flex: 1
 			}]
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.UserInterface.Layout.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.UserInterface.Layout.superclass.initComponent.call(this);
 		this.on('afterrender', this._addWallpaper, this);
 	},
 
@@ -58,7 +58,7 @@ F3.TYPO3.Module.UserInterface.Layout = Ext.extend(Ext.Viewport, {
 	 */
 	_addWallpaper: function() {
 		if (Ext.isDefined(this.layout.innerCt)) {
-			this.layout.innerCt.addClass('F3-TYPO3-Wallpaper');
+			this.layout.innerCt.addClass('TYPO3-TYPO3-Wallpaper');
 		}
 	}
 });

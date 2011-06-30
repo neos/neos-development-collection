@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.UserInterface');
+Ext.ns('TYPO3.TYPO3.Module.UserInterface');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.UserInterface');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.UserInterface.SectionMenu
+ * @class TYPO3.TYPO3.Module.UserInterface.SectionMenu
  *
  * the section menu
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.TabPanel
  */
-F3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
+TYPO3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 
 	/**
 	 * @return {void}
@@ -36,7 +36,7 @@ F3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 	initComponent: function() {
 		var config = {
 			border: false,
-			cls: 'F3-TYPO3-UserInterface-SectionMenu',
+			cls: 'TYPO3-TYPO3-UserInterface-SectionMenu',
 			items: this._getSectionMenuItems(),
 			itemTpl: new Ext.XTemplate('<li class="{cls}" id="{id}"><a class="x-tab-strip-close"></a>',
                  '<a class="x-tab-right" href="#"><em class="x-tab-left">',
@@ -48,25 +48,25 @@ F3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
                  '</em></a></li>')
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.UserInterface.SectionMenu.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.UserInterface.SectionMenu.superclass.initComponent.call(this);
 
 		this.on('tabchange', function(sectionMenu, tab) {
-			F3.TYPO3.Core.HistoryManager.set('SectionMenu', tab.itemId);
-			F3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-menu/main/' + tab.itemId, tab);
+			TYPO3.TYPO3.Core.HistoryManager.set('SectionMenu', tab.itemId);
+			TYPO3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-menu/main/' + tab.itemId, tab);
 
 		}, this);
 
-		F3.TYPO3.Core.HistoryManager.on('SectionMenu-changed', function(section) {
-			F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab(section);
-			F3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-menu/main/' + section, undefined);
+		TYPO3.TYPO3.Core.HistoryManager.on('SectionMenu-changed', function(section) {
+			TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab(section);
+			TYPO3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-menu/main/' + section, undefined);
 		});
 
-		F3.TYPO3.Core.HistoryManager.on('SectionMenu-added', function(section) {
-			F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab(section);
-			F3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-menu/main/' + section, undefined);
+		TYPO3.TYPO3.Core.HistoryManager.on('SectionMenu-added', function(section) {
+			TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab(section);
+			TYPO3.TYPO3.Module.UserInterfaceModule.fireEvent('activate-menu/main/' + section, undefined);
 		});
 
-		F3.TYPO3.Core.HistoryManager.on('emptyToken', function() {
+		TYPO3.TYPO3.Core.HistoryManager.on('emptyToken', function() {
 			this.setActiveTab('content');
 		}, this);
 	},
@@ -78,7 +78,7 @@ F3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 	_getSectionMenuItems: function() {
 		var modules = [];
 		// TODO unset children properties and use only first level of array
-		var config = F3.TYPO3.Core.Registry.get('menu/main');
+		var config = TYPO3.TYPO3.Core.Registry.get('menu/main');
 		Ext.each(config, function(menuItem) {
 			modules.push(this._getTabComponentForMenuItem(menuItem));
 		}, this);
@@ -93,7 +93,7 @@ F3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 		var viewFilter = menuItem.viewFilter ? menuItem.viewFilter : {xtype: 'container', 'height': 0},
 			specialMenu = menuItem.specialMenu ? menuItem.specialMenu : {xtype: 'box', 'width': 0};
 		return {
-			xtype: 'F3.TYPO3.Components.Module.Container',
+			xtype: 'TYPO3.TYPO3.Components.Module.Container',
 			layout: 'vbox',
 			layoutConfig: {
 				align: 'stretch'
@@ -104,7 +104,7 @@ F3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 			tabCls: menuItem.tabCls,
 			listeners: menuItem.listeners,
 			items: [{
-				xtype: 'F3.TYPO3.Module.UserInterface.ModuleMenu',
+				xtype: 'TYPO3.TYPO3.Module.UserInterface.ModuleMenu',
 				ref: 'moduleMenu',
 				menuId: 'mainMenu',
 				itemId: menuItem.itemId,
@@ -114,7 +114,7 @@ F3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 				specialMenu: specialMenu,
 				flex: 0
 			}, {
-				xtype: 'F3.TYPO3.Components.Content.Area',
+				xtype: 'TYPO3.TYPO3.Components.Content.Area',
 				itemId: menuItem.itemId + '-contentArea',
 				ref: 'contentArea',
 				flex: 1
@@ -122,4 +122,4 @@ F3.TYPO3.Module.UserInterface.SectionMenu = Ext.extend(Ext.TabPanel, {
 		};
 	}
 });
-Ext.reg('F3.TYPO3.Module.UserInterface.SectionMenu', F3.TYPO3.Module.UserInterface.SectionMenu);
+Ext.reg('TYPO3.TYPO3.Module.UserInterface.SectionMenu', TYPO3.TYPO3.Module.UserInterface.SectionMenu);

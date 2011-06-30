@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module');
+Ext.ns('TYPO3.TYPO3.Module');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,20 +21,20 @@ Ext.ns('F3.TYPO3.Module');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.ContentModule
+ * @class TYPO3.TYPO3.Module.Content.ContentModule
  *
  * The Module Descriptor for the Content module
  *
- * @namespace F3.TYPO3.Module.Content
+ * @namespace TYPO3.TYPO3.Module.Content
  * @extends Ext.util.Observable
  * @singleton
  */
-F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
+TYPO3.TYPO3.Core.Application.createModule('TYPO3.TYPO3.Module.ContentModule', {
 
 	/**
 	 * Modify the registry
 	 *
-	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @param {TYPO3.TYPO3.Core.Registry} registry
 	 * @return {void}
 	 */
 	configure: function(registry) {
@@ -46,60 +46,60 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 	/**
 	 * Add items to the Main Menu
 	 *
-	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @param {TYPO3.TYPO3.Core.Registry} registry
 	 * @return {void}
 	 * @private
 	 */
 	_configureMainMenu: function(registry) {
 		registry.append('menu/main', 'content', {
-			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ContentTab',
-			iconCls: 'f3-typo3-content-mode-indicator',
-			title: F3.TYPO3.Core.I18n.get('TYPO3', 'content'),
+			tabCls: 'TYPO3-TYPO3-UserInterface-SectionMenu-ContentTab',
+			iconCls: 'typo3-typo3-content-mode-indicator',
+			title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'content'),
 			itemId: 'content',
 			viewFilter: {
-				xtype: 'F3.TYPO3.Module.UserInterface.ViewFilterToolbar'
+				xtype: 'TYPO3.TYPO3.Module.UserInterface.ViewFilterToolbar'
 			}
 		});
 
 		registry.append('menu/main/content[]', 'edit', {
 			itemId: 'edit',
-			text: F3.TYPO3.Core.I18n.get('TYPO3', 'edit'),
-			iconCls: 'F3-TYPO3-Content-icon-edit'
+			text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'edit'),
+			iconCls: 'TYPO3-TYPO3-Content-icon-edit'
 		});
 		registry.append('menu/main/content[]/edit[]', 'pageProperties', {
 			itemId: 'pageProperties',
-			text: F3.TYPO3.Core.I18n.get('TYPO3', 'pageProperties'),
-			iconCls: 'F3-TYPO3-Content-icon-pageProperties'
+			text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'pageProperties'),
+			iconCls: 'TYPO3-TYPO3-Content-icon-pageProperties'
 		});
 
 		registry.append('menu/main/content[]', 'movePage', {
 			itemId: 'movePage',
-			text: F3.TYPO3.Core.I18n.get('TYPO3', 'movePage'),
-			iconCls: 'F3-TYPO3-Content-icon-movePage'
+			text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'movePage'),
+			iconCls: 'TYPO3-TYPO3-Content-icon-movePage'
 		});
 		registry.append('menu/main/content[]', 'createPage', {
 			itemId: 'Create',
-			text: F3.TYPO3.Core.I18n.get('TYPO3', 'createPage'),
-			iconCls: 'F3-TYPO3-Content-icon-createPage'
+			text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'createPage'),
+			iconCls: 'TYPO3-TYPO3-Content-icon-createPage'
 		});
 		registry.append('menu/main/content[]', 'deletePage', {
 			itemId: 'Delete',
-			text: F3.TYPO3.Core.I18n.get('TYPO3', 'deletePage'),
-			iconCls: 'F3-TYPO3-Content-icon-deletePage'
+			text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'deletePage'),
+			iconCls: 'TYPO3-TYPO3-Content-icon-deletePage'
 		});
 
 		registry.append('menu/viewFilterToolbar', 'workspaceName', {
-			text: F3.TYPO3.Configuration.Application.workspaceName,
-			cls: 'F3-TYPO3-ContextToolbar-icon-workspaceName'
+			text: TYPO3.TYPO3.Configuration.Application.workspaceName,
+			cls: 'TYPO3-TYPO3-ContextToolbar-icon-workspaceName'
 		});
 		registry.append('menu/viewFilterToolbar', 'siteName', {
-			text: F3.TYPO3.Configuration.Application.siteName,
-			cls: 'F3-TYPO3-ContextToolbar-icon-siteName',
+			text: TYPO3.TYPO3.Configuration.Application.siteName,
+			cls: 'TYPO3-TYPO3-ContextToolbar-icon-siteName',
 			disabled: true
 		});
 		registry.append('menu/viewFilterToolbar', 'contextLocale', {
-			text: F3.TYPO3.Configuration.Application.contextLocale,
-			cls: 'F3-TYPO3-ContextToolbar-icon-contextLocale',
+			text: TYPO3.TYPO3.Configuration.Application.contextLocale,
+			cls: 'TYPO3-TYPO3-ContextToolbar-icon-contextLocale',
 			disabled: true
 		});
 	},
@@ -108,21 +108,21 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 	 * Configure the Schema to be used for the forms. This will come from
 	 * the server lateron.
 	 *
-	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @param {TYPO3.TYPO3.Core.Registry} registry
 	 * @return {void}
 	 * @private
 	 */
 	_configureSchema: function(registry) {
 		registry.set('schema/type', {
-			'TYPO3:Page': {
+			'TYPO3.TYPO3:Page': {
 				service: {
-					show: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.show',
-					update: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update',
-					create: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create',
-					move: 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.move',
+					show: 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.show',
+					update: 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update',
+					create: 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create',
+					move: 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.move',
 						// "delete" is a special case because it's a reserved keyword.
 						// Because of this, it needs to be quoted on the left side.
-					'delete': 'F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.delete'
+					'delete': 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.delete'
 				},
 				properties: {
 					'nodeName': {
@@ -148,32 +148,32 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 
 			// Set forms for default types
 		registry.set('form/type', {
-			'TYPO3:Page': {
+			'TYPO3.TYPO3:Page': {
 				standard: {
-					title: F3.TYPO3.Core.I18n.get('TYPO3', 'page'),
+					title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'page'),
 					children: [{
 						key: 'pageProperties',
 						type: 'fieldset',
-						title: F3.TYPO3.Core.I18n.get('TYPO3', 'pageProperties'),
+						title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'pageProperties'),
 						children: [{
 							key: 'title',
 							type: 'field',
 							property: 'properties.title',
-							title: F3.TYPO3.Core.I18n.get('TYPO3', 'pageTitle')
+							title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'pageTitle')
 						}]
 					}]
 				},
 				pageProperties: {
-					title: F3.TYPO3.Core.I18n.get('TYPO3', 'pageProperties'),
+					title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'pageProperties'),
 					children: [{
 						key: 'title',
 						type: 'field',
 						property: 'properties.title',
-						title: F3.TYPO3.Core.I18n.get('TYPO3', 'pageTitle')
+						title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'pageTitle')
 					}]
 				},
 				move: {
-					title: F3.TYPO3.Core.I18n.get('TYPO3', 'movePage'),
+					title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'movePage'),
 					layout: 'hbox',
 					children: [{
 						type: 'custom',
@@ -181,14 +181,14 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 						flex: 1,
 						children: [{
 							type: 'custom',
-							xtype: 'F3.TYPO3.Components.OrderSelect',
-							id: 'F3.TYPO3.Module.ContentModule.move',
+							xtype: 'TYPO3.TYPO3.Components.OrderSelect',
+							id: 'TYPO3.TYPO3.Module.ContentModule.move',
 							move: true
 						}]
 					}]
 				},
 				create: {
-					title: F3.TYPO3.Core.I18n.get('TYPO3', 'createPage'),
+					title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'createPage'),
 					layout: 'hbox',
 					children: [{
 						type: 'custom',
@@ -198,11 +198,11 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 						children: [{
 							key: 'nodeName',
 							property: 'nodeName',
-							title: F3.TYPO3.Core.I18n.get('TYPO3', 'nodeName')
+							title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'nodeName')
 						}, {
 							key: 'title',
 							property: 'properties.title',
-							title: F3.TYPO3.Core.I18n.get('TYPO3', 'pageTitle')
+							title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'pageTitle')
 						}]
 					}, {
 						type: 'custom',
@@ -210,8 +210,8 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 						flex: 1,
 						children: [{
 							type: 'custom',
-							xtype: 'F3.TYPO3.Components.OrderSelect',
-							id: 'F3.TYPO3.Module.ContentModule.create'
+							xtype: 'TYPO3.TYPO3.Components.OrderSelect',
+							id: 'TYPO3.TYPO3.Module.ContentModule.create'
 						}]
 					}]
 				}
@@ -225,7 +225,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 	 * Right now, the content elements displayed here are hard-coded,
 	 * but this has to come from the server side lateron.
 	 *
-	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @param {TYPO3.TYPO3.Core.Registry} registry
 	 * @return {void}
 	 * @private
 	 */
@@ -234,86 +234,86 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 		registry.append('menu/selectionModeFloating[]', 'deleteNode', {
 			itemId: 'Delete',
 			text: 'Delete Node',
-			iconCls: 'F3-TYPO3-Content-icon-deletePage'
+			iconCls: 'TYPO3-TYPO3-Content-icon-deletePage'
 		});
 
 		registry.append('menu/selectionModeFloating[]', 'createNode', {
 			text: 'Create Node',
-			iconCls: 'F3-TYPO3-Content-icon-createPage'
+			iconCls: 'TYPO3-TYPO3-Content-icon-createPage'
 		});
 
 		registry.append('menu/selectionModeFloating[]/createNode[]', 'text', {
 			text: 'Text',
-			contentType: 'TYPO3:Text',
-			iconCls: 'F3-TYPO3-Icon-ContentType-TYPO3_Text'
+			contentType: 'TYPO3.TYPO3:Text',
+			iconCls: 'TYPO3-TYPO3-Icon-ContentType-TYPO3_Text'
 		});
 
 		registry.append('menu/selectionModeFloating[]/createNode[]', 'html', {
 			text: 'HTML',
-			contentType: 'TYPO3:Html',
-			iconCls: 'F3-TYPO3-Icon-ContentType-TYPO3_Html'
+			contentType: 'TYPO3.TYPO3:Html',
+			iconCls: 'TYPO3-TYPO3-Icon-ContentType-TYPO3_Html'
 		});
 
 		registry.append('menu/selectionModeFloating[]/createNode[]', 'plugin', {
 			text: 'Plugin',
-			iconCls: 'F3-TYPO3-Icon-ContentType-TYPO3_Plugin'
+			iconCls: 'TYPO3-TYPO3-Icon-ContentType-TYPO3_Plugin'
 		});
 
 		registry.append('menu/selectionModeFloating[]/createNode[]/plugin[]', 'twitter', {
 			text: 'Twitter',
-			contentType: 'Twitter:LatestTweets',
-			iconCls: 'F3-TYPO3-Icon-ContentType-Twitter_LatestTweets'
+			contentType: 'TYPO3.Twitter:LatestTweets',
+			iconCls: 'TYPO3-TYPO3-Icon-ContentType-Twitter_LatestTweets'
 		});
 	},
 
 	/**
 	 * Set up event handlers
 	 *
-	 * @param {F3.TYPO3.Core.Application} The Application object
+	 * @param {TYPO3.TYPO3.Core.Application} The Application object
 	 * @return {void}
 	 */
 	initialize: function(application) {
-		application.afterInitializationOf('F3.TYPO3.Module.UserInterfaceModule', function(userInterfaceModule) {
+		application.afterInitializationOf('TYPO3.TYPO3.Module.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('content', 'frontendEditor', {
-				xtype: 'F3.TYPO3.Module.Content.WebsiteContainer',
-				id: 'F3.TYPO3.Module.Content.WebsiteContainer'
+				xtype: 'TYPO3.TYPO3.Module.Content.WebsiteContainer',
+				id: 'TYPO3.TYPO3.Module.Content.WebsiteContainer'
 			});
 			userInterfaceModule.contentAreaOn('menu/main/content', 'content', 'frontendEditor');
 
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/edit[]/pageProperties',
-				{xtype: 'F3.TYPO3.Module.Content.Edit.PagePropertiesDialog'},
+				{xtype: 'TYPO3.TYPO3.Module.Content.Edit.PagePropertiesDialog'},
 				{
-					xtype: 'F3.TYPO3.Components.Content.Dialog',
-					okButton: F3.TYPO3.Core.I18n.get('TYPO3', 'updatePage'),
-					cancelButton: F3.TYPO3.Core.I18n.get('TYPO3', 'cancel'),
+					xtype: 'TYPO3.TYPO3.Components.Content.Dialog',
+					okButton: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'updatePage'),
+					cancelButton: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'cancel'),
 					mode: 'positive'
 				}
 			);
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/movePage',
-				{xtype: 'F3.TYPO3.Module.Content.Edit.MovePageDialog'},
+				{xtype: 'TYPO3.TYPO3.Module.Content.Edit.MovePageDialog'},
 				{
-					xtype: 'F3.TYPO3.Components.Content.Dialog',
-					okButton: F3.TYPO3.Core.I18n.get('TYPO3', 'movePage'),
-					cancelButton: F3.TYPO3.Core.I18n.get('TYPO3', 'cancel'),
+					xtype: 'TYPO3.TYPO3.Components.Content.Dialog',
+					okButton: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'movePage'),
+					cancelButton: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'cancel'),
 					mode: 'positive'
 				}
 			);
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/createPage',
-				{xtype: 'F3.TYPO3.Module.Content.Edit.CreatePageDialog'},
+				{xtype: 'TYPO3.TYPO3.Module.Content.Edit.CreatePageDialog'},
 				{
-					xtype: 'F3.TYPO3.Components.Content.Dialog',
-					okButton: F3.TYPO3.Core.I18n.get('TYPO3', 'createPage'),
-					cancelButton: F3.TYPO3.Core.I18n.get('TYPO3', 'cancel'),
+					xtype: 'TYPO3.TYPO3.Components.Content.Dialog',
+					okButton: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'createPage'),
+					cancelButton: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'cancel'),
 					mode: 'positive'
 				}
 			);
 			userInterfaceModule.moduleDialogOn('menu/main/content[]/deletePage',
-				{xtype: 'F3.TYPO3.Module.Content.Edit.DeletePageDialog'},
+				{xtype: 'TYPO3.TYPO3.Module.Content.Edit.DeletePageDialog'},
 				{
-					xtype: 'F3.TYPO3.Components.Content.Dialog',
-					infoText: F3.TYPO3.Core.I18n.get('TYPO3', 'pageDeleteConfirm'),
-					okButton: F3.TYPO3.Core.I18n.get('TYPO3', 'deletePage'),
-					cancelButton: F3.TYPO3.Core.I18n.get('TYPO3', 'cancel'),
+					xtype: 'TYPO3.TYPO3.Components.Content.Dialog',
+					infoText: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'pageDeleteConfirm'),
+					okButton: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'deletePage'),
+					cancelButton: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'cancel'),
 					mode: 'negative'
 				}
 			);
@@ -340,18 +340,18 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 	 * @private
 	 */
 	_onModeChange: function() {
-		var viewport = F3.TYPO3.Module.UserInterfaceModule.viewport;
+		var viewport = TYPO3.TYPO3.Module.UserInterfaceModule.viewport;
 		var tab = viewport.sectionMenu.getComponent('content');
 		Ext.fly(tab.tabEl).addClass('');
 		if (this.getWebsiteContainer().isSelectionModeEnabled()) {
-			Ext.fly(tab.tabEl).addClass('f3-typo3-content-mode-select');
-			Ext.fly(tab.tabEl).removeClass('f3-typo3-content-mode-edit');
+			Ext.fly(tab.tabEl).addClass('typo3-typo3-content-mode-select');
+			Ext.fly(tab.tabEl).removeClass('typo3-typo3-content-mode-edit');
 		} else if (this.getWebsiteContainer().isEditingModeEnabled()) {
-			Ext.fly(tab.tabEl).removeClass('f3-typo3-content-mode-select');
-			Ext.fly(tab.tabEl).addClass('f3-typo3-content-mode-edit');
+			Ext.fly(tab.tabEl).removeClass('typo3-typo3-content-mode-select');
+			Ext.fly(tab.tabEl).addClass('typo3-typo3-content-mode-edit');
 		} else {
-			Ext.fly(tab.tabEl).removeClass('f3-typo3-content-mode-select');
-			Ext.fly(tab.tabEl).removeClass('f3-typo3-content-mode-edit');
+			Ext.fly(tab.tabEl).removeClass('typo3-typo3-content-mode-select');
+			Ext.fly(tab.tabEl).removeClass('typo3-typo3-content-mode-edit');
 		}
 	},
 	/**
@@ -361,7 +361,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ContentModule', {
 	 * @api
 	 */
 	getWebsiteContainer: function() {
-		return Ext.getCmp('F3.TYPO3.Module.Content.WebsiteContainer');
+		return Ext.getCmp('TYPO3.TYPO3.Module.Content.WebsiteContainer');
 	}
 
 });

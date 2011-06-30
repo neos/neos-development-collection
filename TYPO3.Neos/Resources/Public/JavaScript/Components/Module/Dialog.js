@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components.Module');
+Ext.ns('TYPO3.TYPO3.Components.Module');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,21 +21,21 @@ Ext.ns('F3.TYPO3.Components.Module');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.Module.Dialog
+ * @class TYPO3.TYPO3.Components.Module.Dialog
  *
  * A module dialog
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.Panel
  */
-F3.TYPO3.Components.Module.Dialog = Ext.extend(Ext.Panel, {
+TYPO3.TYPO3.Components.Module.Dialog = Ext.extend(Ext.Panel, {
 	bodyStyle: 'background: #656565',
 
 	/**
 	 * The parent module menu, which is automatically set before the ModuleDialog
 	 * is displayed.
 	 *
-	 * @var {F3.TYPO3.Module.UserInterface.ModuleMenu}
+	 * @var {TYPO3.TYPO3.Module.UserInterface.ModuleMenu}
 	 */
 	moduleMenu: null,
 
@@ -43,10 +43,10 @@ F3.TYPO3.Components.Module.Dialog = Ext.extend(Ext.Panel, {
 		var config = {
 			border: false,
 			flex: 0,
-			cls: 'F3-TYPO3-UserInterface-ModuleDialog'
+			cls: 'TYPO3-TYPO3-UserInterface-ModuleDialog'
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Components.Module.Dialog.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Components.Module.Dialog.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -69,4 +69,4 @@ F3.TYPO3.Components.Module.Dialog = Ext.extend(Ext.Panel, {
 		this.moduleMenu.removeModuleDialog();
 	}
 });
-Ext.reg('F3.TYPO3.Components.Module.Dialog', F3.TYPO3.Components.Module.Dialog);
+Ext.reg('TYPO3.TYPO3.Components.Module.Dialog', TYPO3.TYPO3.Components.Module.Dialog);

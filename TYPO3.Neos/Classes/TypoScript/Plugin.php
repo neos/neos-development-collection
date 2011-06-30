@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,23 +27,23 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\ContentObjectInterface {
+class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScript\ContentObjectInterface {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\MVC\Web\SubRequestBuilder
+	 * @var \TYPO3\FLOW3\MVC\Web\SubRequestBuilder
 	 */
 	protected $subRequestBuilder;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\MVC\Dispatcher
+	 * @var \TYPO3\FLOW3\MVC\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -75,7 +75,7 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -83,19 +83,19 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 	 * The rendering context as passed to render()
 	 *
 	 * @transient
-	 * @var \F3\TypoScript\RenderingContext
+	 * @var \TYPO3\TypoScript\RenderingContext
 	 */
 	protected $renderingContext;
 
 	/**
-	 * @param \F3\TypoScript\RenderingContext $renderingContext
+	 * @param \TYPO3\TypoScript\RenderingContext $renderingContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setRenderingContext(\F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
-		if (!$renderingContext instanceof \F3\TypoScript\RenderingContext) {
-			throw new \InvalidArgumentException('Plugin only supports \F3\TypoScript\RenderingContext as a rendering context.', 1292502116);
+	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
+		if (!$renderingContext instanceof \TYPO3\TypoScript\RenderingContext) {
+			throw new \InvalidArgumentException('Plugin only supports \TYPO3\TypoScript\RenderingContext as a rendering context.', 1292502116);
 		}
 		$this->renderingContext = $renderingContext;
 	}
@@ -204,12 +204,12 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 		}
 
 		$parentResponse = $this->renderingContext->getControllerContext()->getResponse();
-		$pluginResponse = new \F3\FLOW3\MVC\Web\SubResponse($parentResponse);
+		$pluginResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($parentResponse);
 
 		try {
 			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
-			return '<div class="f3-typo3-contentelement" about="' . $this->node->getContextPath() . '">' . $pluginResponse->getContent() . '</div>';
-		} catch (\F3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
+			return '<div class="typo3-typo3-contentelement" about="' . $this->node->getContextPath() . '">' . $pluginResponse->getContent() . '</div>';
+		} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException($exception);
@@ -220,7 +220,7 @@ class Plugin extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\Con
 
 	/**
 	 * Returns the plugin namespace that will be prefixed to plugin parameters in URIs.
-	 * By default this is f3_<package>_<subpackage>_<pluginname>
+	 * By default this is typo3_<package>_<subpackage>_<pluginname>
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>

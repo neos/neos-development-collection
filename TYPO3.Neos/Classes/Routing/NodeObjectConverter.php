@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Routing;
+namespace TYPO3\TYPO3\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,9 +21,9 @@ namespace F3\TYPO3\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\Error\Error;
-use \F3\TYPO3\Domain\Service\ContentContext;
-use \F3\TYPO3CR\Domain\Model\NodeInterface;
+use \TYPO3\FLOW3\Error\Error;
+use \TYPO3\TYPO3\Domain\Service\ContentContext;
+use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
@@ -32,21 +32,21 @@ use \F3\TYPO3CR\Domain\Model\NodeInterface;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class NodeObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
+class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
 	protected $sourceTypes = array('string', 'array');
-	protected $targetType = 'F3\TYPO3CR\Domain\Model\NodeInterface';
+	protected $targetType = 'TYPO3\TYPO3CR\Domain\Model\NodeInterface';
 	protected $priority = 1;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
+	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
@@ -65,11 +65,11 @@ class NodeObjectConverter extends \F3\FLOW3\Property\TypeConverter\AbstractTypeC
 	 * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
 	 * @param string $targetType not used
 	 * @param array $subProperties not used
-	 * @param \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration not used
-	 * @return mixed An object or \F3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration not used
+	 * @return mixed An object or \TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function convertFrom($source, $targetType, array $subProperties = array(), \F3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
+	public function convertFrom($source, $targetType, array $subProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {
 			$source = array('__contextNodePath' => $source);
 		}

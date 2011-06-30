@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Core');
+Ext.ns('TYPO3.TYPO3.Core');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,17 +21,17 @@ Ext.ns('F3.TYPO3.Core');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Core.Application
+ * @class TYPO3.TYPO3.Core.Application
  *
  * The main entry point which controls the lifecycle of the application.
  *
  * This is the main event handler of the application.
  *
- * @namespace F3.TYPO3.Core
+ * @namespace TYPO3.TYPO3.Core
  * @extends Ext.util.Observable
  * @singleton
  */
-F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
+TYPO3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	/**
 	 * @event _afterInitializationOf.[ModuleName]
 	 * For each initialized module, one of these events is executed.
@@ -65,35 +65,35 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	bootstrap: function() {
 		this._initializeConfiguration();
 
-		F3.TYPO3.Core.HistoryManager.initialize(this);
-		F3.TYPO3.Core.Registry.initialize();
+		TYPO3.TYPO3.Core.HistoryManager.initialize(this);
+		TYPO3.TYPO3.Core.Registry.initialize();
 
 		this._configureModules();
-		F3.TYPO3.Core.Registry.compile();
+		TYPO3.TYPO3.Core.Registry.compile();
 
 		this._initializeModules();
 		Ext.QuickTips.init();
 
 		this.fireEvent('afterBootstrap');
-		F3.TYPO3.Core.HistoryManager.start();
+		TYPO3.TYPO3.Core.HistoryManager.start();
 	},
 
 	/**
-	 * Initialize the configuration object in F3.TYPO3.Configuration
+	 * Initialize the configuration object in TYPO3.TYPO3.Configuration
 	 *
 	 * @private
 	 */
 	_initializeConfiguration: function() {
 		var baseTag = Ext.query('base')[0];
 		if (typeof baseTag.href == 'string') {
-			F3.TYPO3.Configuration.Application.frontendBaseUri = baseTag.href;
+			TYPO3.TYPO3.Configuration.Application.frontendBaseUri = baseTag.href;
 		} else {
-			F3.TYPO3.Configuration.Application.frontendBaseUri = '/';
+			TYPO3.TYPO3.Configuration.Application.frontendBaseUri = '/';
 			if (window.console) {
-				console.warn(F3.TYPO3.Core.I18n.get('TYPO3', 'couldNotExtractBaseURI'));
+				console.warn(TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'couldNotExtractBaseURI'));
 			}
 		}
-		F3.TYPO3.Configuration.Application.backendBaseUri = F3.TYPO3.Configuration.Application.frontendBaseUri + 'typo3/';
+		TYPO3.TYPO3.Configuration.Application.backendBaseUri = TYPO3.TYPO3.Configuration.Application.frontendBaseUri + 'typo3/';
 	},
 
 	/**
@@ -104,7 +104,7 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	_configureModules: function() {
 		for (var moduleName in this._modules) {
 			if (this._modules[moduleName].configure !== undefined) {
-				this._modules[moduleName].configure(F3.TYPO3.Core.Registry);
+				this._modules[moduleName].configure(TYPO3.TYPO3.Core.Registry);
 			}
 		}
 	},
@@ -120,7 +120,7 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 		var moduleName;
 		for (moduleName in this._modules) {
 			if (this._modules[moduleName].initialize !== undefined) {
-				this._modules[moduleName].initialize(F3.TYPO3.Core.Application);
+				this._modules[moduleName].initialize(TYPO3.TYPO3.Core.Application);
 			}
 		}
 
@@ -166,4 +166,4 @@ F3.TYPO3.Core.Application = Ext.apply(new Ext.util.Observable, {
 	}
 });
 
-Ext.onReady(F3.TYPO3.Core.Application.bootstrap, F3.TYPO3.Core.Application);
+Ext.onReady(TYPO3.TYPO3.Core.Application.bootstrap, TYPO3.TYPO3.Core.Application);

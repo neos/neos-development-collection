@@ -1,6 +1,6 @@
-{namespace t=F3\TYPO3\ViewHelpers}
-<f:security.ifAccess resource="F3_TYPO3_Backend_BackendController"><div typeof="typo3:{node.contentType}" about="{node.contextPath}"></f:security.ifAccess>
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController"><div typeof="typo3:{node.contentType}" about="{node.contextPath}"></f:security.ifAccess>
 <f:for each="{properties}" as="property" key="propertyName">
 <div property="typo3:{propertyName}">{property}</div>
 </f:for>
-<f:security.ifAccess resource="F3_TYPO3_Backend_BackendController"></div></f:security.ifAccess>
+<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController"></div></f:security.ifAccess>

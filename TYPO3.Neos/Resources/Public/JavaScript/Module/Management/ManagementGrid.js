@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Management');
+Ext.ns('TYPO3.TYPO3.Module.Management');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,21 +21,21 @@ Ext.ns('F3.TYPO3.Module.Management');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Management.ManagementGrid
+ * @class TYPO3.TYPO3.Module.Management.ManagementGrid
  *
  * default grid component for the management view
  *
- * @namespace F3.TYPO3.Module.Management
+ * @namespace TYPO3.TYPO3.Module.Management
  * @extends Ext.grid.GridPanel
  */
-F3.TYPO3.Module.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
+TYPO3.TYPO3.Module.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 
 	/**
 	 * Initializer
 	 */
 	initComponent: function() {
 		var directFn = function(callback) {
-				F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, '!TYPO3:Page', 0, callback);
+				TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, '!TYPO3.TYPO3:Page', 0, callback);
 			};
 		directFn.directCfg = {
 			method: {
@@ -45,7 +45,7 @@ F3.TYPO3.Module.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 		var iconColumn = {
 				width: 24,
 				renderer: function(contentType) {
-					return '<span class="F3-TYPO3-Management-ManagementGrid-Icon F3-TYPO3-Icon-ContentType-' + contentType.replace(':', '_') + '"></span>';
+					return '<span class="TYPO3-TYPO3-Management-ManagementGrid-Icon TYPO3-TYPO3-Icon-ContentType-' + contentType.replace(':', '_') + '"></span>';
 				},
 				dataIndex: '__contentType'
 			},
@@ -71,10 +71,10 @@ F3.TYPO3.Module.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 				})
 			};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Management.ManagementGrid.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Management.ManagementGrid.superclass.initComponent.call(this);
 
 		this.on('render', function() {
-			this.body.mask(F3.TYPO3.Core.I18n.get('TYPO3', 'currentlyLoading'));
+			this.body.mask(TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'currentlyLoading'));
 		});
 
 		this.store.on('load', function() {
@@ -93,4 +93,4 @@ F3.TYPO3.Module.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 		}, this);
 	}
 });
-Ext.reg('F3.TYPO3.Module.Management.ManagementGrid', F3.TYPO3.Module.Management.ManagementGrid);
+Ext.reg('TYPO3.TYPO3.Module.Management.ManagementGrid', TYPO3.TYPO3.Module.Management.ManagementGrid);

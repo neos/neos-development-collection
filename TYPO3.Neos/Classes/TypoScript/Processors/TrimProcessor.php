@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class TrimProcessor implements \F3\TypoScript\ProcessorInterface {
+class TrimProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
 	 * Trims the current subject (Removes whitespaces arround the value).

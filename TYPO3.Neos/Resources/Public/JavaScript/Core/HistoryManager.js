@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Core');
+Ext.ns('TYPO3.TYPO3.Core');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,16 +21,16 @@ Ext.ns('F3.TYPO3.Core');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Core.HistoryManager
+ * @class TYPO3.TYPO3.Core.HistoryManager
  *
  * The history manager allows to use the browser back/forth button
  * and offers convenient methods for adding state to the URL.
  *
- * @namespace F3.TYPO3.History
+ * @namespace TYPO3.TYPO3.History
  * @extends Ext.History
  * @singleton
  */
-F3.TYPO3.Core.HistoryManager = Ext.apply(Ext.History, {
+TYPO3.TYPO3.Core.HistoryManager = Ext.apply(Ext.History, {
 
 	/**
 	 * The saved state
@@ -49,7 +49,7 @@ F3.TYPO3.Core.HistoryManager = Ext.apply(Ext.History, {
 	 * listen to the change event for updating the saved
 	 * state.
 	 *
-	 * @param {F3.TYPO3.Core.Application} application the application instance
+	 * @param {TYPO3.TYPO3.Core.Application} application the application instance
 	 */
 	initialize: function(application) {
 		this.init();
@@ -88,7 +88,7 @@ F3.TYPO3.Core.HistoryManager = Ext.apply(Ext.History, {
 	_updateState: function(token) {
 		token = this._decode(token);
 
-		F3.TYPO3.Utils.each(this._state, function(value, key) {
+		TYPO3.TYPO3.Utils.each(this._state, function(value, key) {
 			if (token[key]) {
 				this._state[key] = token[key];
 				this.fireEvent(key + '-changed', token[key]);
@@ -99,7 +99,7 @@ F3.TYPO3.Core.HistoryManager = Ext.apply(Ext.History, {
 			delete(token[key]);
 		}, this);
 
-		F3.TYPO3.Utils.each(token, function(value, key) {
+		TYPO3.TYPO3.Utils.each(token, function(value, key) {
 			this._state[key] = value;
 			this.fireEvent(key + '-added', value);
 		}, this);
@@ -111,10 +111,10 @@ F3.TYPO3.Core.HistoryManager = Ext.apply(Ext.History, {
 	 *
 	 * @param {String} key The key for the state value
 	 * @param {String} value The state value to set
-	 * @return {F3.TYPO3.Core.HistoryManager} A reference to the history manager
+	 * @return {TYPO3.TYPO3.Core.HistoryManager} A reference to the history manager
 	 */
 	set: function(key, value) {
-		var newState = F3.TYPO3.Utils.clone(this._state);
+		var newState = TYPO3.TYPO3.Utils.clone(this._state);
 		newState[key] = value;
 		this.add(this._encode(newState));
 		return this;
@@ -125,10 +125,10 @@ F3.TYPO3.Core.HistoryManager = Ext.apply(Ext.History, {
 	 * fire an event (removed).
 	 *
 	 * @param {String} key The key for the state value to remove
-	 * @return {F3.TYPO3.Core.HistoryManager} A reference to the history manager
+	 * @return {TYPO3.TYPO3.Core.HistoryManager} A reference to the history manager
 	 */
 	remove: function(key) {
-		var newState = F3.TYPO3.Utils.clone(this._state);
+		var newState = TYPO3.TYPO3.Utils.clone(this._state);
 		delete(newState[key]);
 		this.add(this._encode(newState));
 		return this;

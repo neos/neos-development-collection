@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Service\ExtDirect\V1\View;
+namespace TYPO3\TYPO3\Service\ExtDirect\V1\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,7 +27,7 @@ namespace F3\TYPO3\Service\ExtDirect\V1\View;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class NodeView extends \F3\ExtJS\ExtDirect\View {
+class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 
 	const LISTSTYLE = 1;
 	const TREESTYLE = 2;
@@ -35,12 +35,12 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	/**
 	 * Assigns a node to the NodeView.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node to render
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to render
 	 * @param array $propertyNames Optional list of property names to include in the JSON output
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function assignNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node, array $propertyNames = array('name', 'path', 'identifier', 'properties', 'contentType')) {
+	public function assignNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, array $propertyNames = array('name', 'path', 'identifier', 'properties', 'contentType')) {
 		$this->setConfiguration(
 			array(
 				'value' => array(
@@ -57,7 +57,7 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	/**
 	 * Prepares this view to render the specified list of nodes
 	 *
-	 * @param array<\F3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to render
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to render
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -87,7 +87,7 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	/**
 	 * Prepares this view to render a list or tree of child nodes of the given node.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node to fetch child nodes of
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to fetch child nodes of
 	 * @param string $contentTypeFilter Criteria for filtering the child nodes
 	 * @param integer $outputStyle Either TREESTYLE or LISTSTYLE
 	 * @param integer $depth how many levels of childNodes (0 = unlimited)
@@ -96,7 +96,7 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	 * @author Christian Müller <christian@kitsunet.de>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function assignChildNodes(\F3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $outputStyle = self::LISTSTYLE, $depth = 0) {
+	public function assignChildNodes(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $outputStyle = self::LISTSTYLE, $depth = 0) {
 		$contentTypeFilter = ($contentTypeFilter === '' ? NULL : $contentTypeFilter);
 		$metaData = array();
 		$data = array();
@@ -137,14 +137,14 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	 *
 	 * @param array &$data
 	 * @param array &$propertyNames
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $contentTypeFilter
 	 * @param integer $depth levels of child nodes to fetch. 0 = unlimited
 	 * @param integer $recursionPointer current recursion level
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function collectChildNodeData(array &$data, array &$propertyNames, \F3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth = 0, $recursionPointer = 1) {
+	protected function collectChildNodeData(array &$data, array &$propertyNames, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth = 0, $recursionPointer = 1) {
 		foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
 			$this->collectNodeData($data, $propertyNames, $childNode);
 			if ($depth === 0 || ($recursionPointer < $depth)) {
@@ -158,11 +158,11 @@ class NodeView extends \F3\ExtJS\ExtDirect\View {
 	 *
 	 * @param array &$data
 	 * @param array &$propertyNames
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function collectNodeData(array &$data, array &$propertyNames, \F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function collectNodeData(array &$data, array &$propertyNames, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$properties = $node->getProperties();
 		$properties['__contextNodePath'] = $node->getContextPath();
 		$properties['__workspaceName'] = $node->getWorkspace()->getName();

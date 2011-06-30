@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-{namespace ext=F3\ExtJS\ViewHelpers}
-{namespace typo3=F3\TYPO3\ViewHelpers}
+{namespace ext=TYPO3\ExtJS\ViewHelpers}
+{namespace typo3=TYPO3\TYPO3\ViewHelpers}
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -15,11 +15,11 @@
 
 		<typo3:includeJavaScript include="Configuration/.*\.js" />
 		<script type="text/javascript">
-			F3.TYPO3.Configuration.Application.workspaceName = '{contentContext.workspace.name}';
-			F3.TYPO3.Configuration.Application.siteName = '{contentContext.currentSite.name}';
-			F3.TYPO3.Configuration.Application.siteNodePath = '{contentContext.currentSiteNode.path}';
-			F3.TYPO3.Configuration.Application.contextLocale = '{contentContext.locale.language}';
-			F3.TYPO3.Configuration.Application.version = '{version}';
+			TYPO3.TYPO3.Configuration.Application.workspaceName = '{contentContext.workspace.name}';
+			TYPO3.TYPO3.Configuration.Application.siteName = '{contentContext.currentSite.name}';
+			TYPO3.TYPO3.Configuration.Application.siteNodePath = '{contentContext.currentSiteNode.path}';
+			TYPO3.TYPO3.Configuration.Application.contextLocale = '{contentContext.locale.language}';
+			TYPO3.TYPO3.Configuration.Application.version = '{version}';
 		</script>
 
 		<typo3:includeJavaScript include="Utility/.*\.js" />
@@ -29,7 +29,7 @@
 		<typo3:includeJavaScript include="Components/.*\.js" />
 		<typo3:includeJavaScript include="Core/.*\.js" />
 
-		<typo3:includeJavaScript include="UserInterface/.*\.js" subpackage="Backend" />
+		<typo3:includeJavaScript include="UserInterface/.*\.js" subpackage="TYPO3.Backend" />
 		<typo3:includeJavaScript include="Module/.*\.js" exclude="Module/Content/EditorFrontend.*" />
 
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'StyleSheet/Components/Button.css')}" />

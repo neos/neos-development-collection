@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Dummy');
+Ext.ns('TYPO3.TYPO3.Module.Dummy');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,19 +21,19 @@ Ext.ns('F3.TYPO3.Module.Dummy');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.DummyModule
+ * @class TYPO3.TYPO3.Module.DummyModule
  *
  * Module Descriptor for the Dummy module, faking functionality which is not yet there.
  *
- * @namespace F3.TYPO3.Module.Dummy
+ * @namespace TYPO3.TYPO3.Module.Dummy
  * @singleton
  */
-F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.DummyModule', {
+TYPO3.TYPO3.Core.Application.createModule('TYPO3.TYPO3.Module.DummyModule', {
 
 	/**
 	 * Modify the registry
 	 *
-	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @param {TYPO3.TYPO3.Core.Registry} registry
 	 * @return {void}
 	 */
 	configure: function(registry) {
@@ -51,27 +51,27 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.DummyModule', {
 	/**
 	 * Set up event handlers
 	 *
-	 * @param {F3.TYPO3.Core.Application} application
+	 * @param {TYPO3.TYPO3.Core.Application} application
 	 * @return {void}
 	 */
 	initialize: function(application) {
-		application.afterInitializationOf('F3.TYPO3.Module.UserInterfaceModule', function(userInterfaceModule) {
+		application.afterInitializationOf('TYPO3.TYPO3.Module.UserInterfaceModule', function(userInterfaceModule) {
 
 			userInterfaceModule.addContentArea('report', 'dummy', {
-				xtype: 'F3.TYPO3.Module.Dummy.DummyContentArea',
-				name: F3.TYPO3.Core.I18n.get('TYPO3', 'report')
+				xtype: 'TYPO3.TYPO3.Module.Dummy.DummyContentArea',
+				name: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'report')
 			});
 			userInterfaceModule.contentAreaOn('menu[main]/report', 'report', 'dummy');
 
 			userInterfaceModule.addContentArea('layout', 'dummy', {
-				xtype: 'F3.TYPO3.Module.Dummy.DummyContentArea',
-				name: F3.TYPO3.Core.I18n.get('TYPO3', 'layout')
+				xtype: 'TYPO3.TYPO3.Module.Dummy.DummyContentArea',
+				name: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'layout')
 			});
 			userInterfaceModule.contentAreaOn('menu[main]/layout', 'layout', 'dummy');
 
 			userInterfaceModule.addContentArea('system', 'dummy', {
-				xtype: 'F3.TYPO3.Module.Dummy.DummyContentArea',
-				name: F3.TYPO3.Core.I18n.get('TYPO3', 'system')
+				xtype: 'TYPO3.TYPO3.Module.Dummy.DummyContentArea',
+				name: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'system')
 			});
 			userInterfaceModule.contentAreaOn('menu[main]/system', 'system', 'dummy');
 		});

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ShiftCaseProcessor implements \F3\TypoScript\ProcessorInterface {
+class ShiftCaseProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	const SHIFT_CASE_TO_UPPER = 'upper';
 	const SHIFT_CASE_TO_LOWER = 'lower';
@@ -64,16 +64,16 @@ class ShiftCaseProcessor implements \F3\TypoScript\ProcessorInterface {
 	public function process($subject) {
 		switch ($this->direction) {
 			case self::SHIFT_CASE_TO_LOWER :
-				$processedSubject = \F3\FLOW3\Utility\Unicode\Functions::strtolower($subject);
+				$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::strtolower($subject);
 				break;
 			case self::SHIFT_CASE_TO_UPPER :
-				$processedSubject = \F3\FLOW3\Utility\Unicode\Functions::strtoupper($subject);
+				$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::strtoupper($subject);
 				break;
 			case self::SHIFT_CASE_TO_TITLE :
-				$processedSubject = \F3\FLOW3\Utility\Unicode\Functions::strtotitle($subject);
+				$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::strtotitle($subject);
 				break;
 			default:
-				throw new \F3\TypoScript\Exception('Invalid direction specified for case shift. Please use one of the SHIFT_CASE_* constants.', 1179399480);
+				throw new \TYPO3\TypoScript\Exception('Invalid direction specified for case shift. Please use one of the SHIFT_CASE_* constants.', 1179399480);
 		}
 		return $processedSubject;
 	}

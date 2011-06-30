@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module');
+Ext.ns('TYPO3.TYPO3.Module');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,24 +21,24 @@ Ext.ns('F3.TYPO3.Module');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.UserInterfaceModule
+ * @class TYPO3.TYPO3.Module.UserInterfaceModule
  *
  * Module descriptor for the user interface parts..
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @singleton
  */
-F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.UserInterfaceModule', {
+TYPO3.TYPO3.Core.Application.createModule('TYPO3.TYPO3.Module.UserInterfaceModule', {
 
 	/**
 	 * @event activate-[FullyQualifiedButtonPath]
 	 * @event deactivate-[FullyQualifiedButtonPath]
-	 * @param {F3.TYPO3.Components.BreadcrumbMenuComponent} -- needs the getContextNodePath...
+	 * @param {TYPO3.TYPO3.Components.BreadcrumbMenuComponent} -- needs the getContextNodePath...
 	 */
 
 	/**
 	 * @event _ContentArea.initialized
-	 * @param {F3.TYPO3.Components.Content.Area} contentArea the content area which has been initialized
+	 * @param {TYPO3.TYPO3.Components.Content.Area} contentArea the content area which has been initialized
 	 * @private
 	 *
 	 * Fired after a content area has been initialized. Internally used to
@@ -47,13 +47,13 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.UserInterfaceModule', {
 
 	/**
 	 * @event Viewport.initialized
-	 * @param {F3.TYPO3.Module.UserInterface.Layout} the viewport reference
+	 * @param {TYPO3.TYPO3.Module.UserInterface.Layout} the viewport reference
 	 *
 	 * Fired after the viewport has been initialized.
 	 */
 
 	/**
-	 * @var F3.TYPO3.Module.UserInterface.Layout
+	 * @var TYPO3.TYPO3.Module.UserInterface.Layout
 	 * @api
 	 */
 	viewport: null,
@@ -61,7 +61,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.UserInterfaceModule', {
 	/**
 	 * Register default form editors
 	 *
-	 * @param {F3.TYPO3.Core.Registry} The registry
+	 * @param {TYPO3.TYPO3.Core.Registry} The registry
 	 * @return {void}
 	 */
 	configure: function(registry) {
@@ -80,7 +80,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.UserInterfaceModule', {
 	/**
 	 * Initialize the viewport after boostrap
 	 *
-	 * @param {F3.TYPO3.Core.Application} The Application object
+	 * @param {TYPO3.TYPO3.Core.Application} The Application object
 	 * @return {void}
 	 */
 	initialize: function(application) {
@@ -94,7 +94,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.UserInterfaceModule', {
 	 * @private
 	 */
 	_initViewport: function() {
-		this.viewport = new F3.TYPO3.Module.UserInterface.Layout();
+		this.viewport = new TYPO3.TYPO3.Module.UserInterface.Layout();
 	},
 
 	/**
@@ -106,7 +106,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.UserInterfaceModule', {
 	 * @api
 	 */
 	moduleDialogOn: function(path, moduleDialogConfiguration, contentDialogConfiguration) {
-		path = F3.TYPO3.Core.Registry.rewritePath(path);
+		path = TYPO3.TYPO3.Core.Registry.rewritePath(path);
 
 		this.on('activate-' + path, function(node) {
 			var moduleDialog = node.getModuleMenu().showModuleDialog(moduleDialogConfiguration, contentDialogConfiguration);
@@ -151,10 +151,10 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.UserInterfaceModule', {
 	 * @return {void}
 	 */
 	contentAreaOn: function(path, sectionId, itemId) {
-		path = F3.TYPO3.Core.Registry.rewritePath(path);
+		path = TYPO3.TYPO3.Core.Registry.rewritePath(path);
 		// TODO: "path" is not always a reference to a tab, so it might not be safe to go locally from the button to the moduleMenu.
 		this.on('activate-' + path, function() {
-			var viewport = F3.TYPO3.Module.UserInterfaceModule.viewport;
+			var viewport = TYPO3.TYPO3.Module.UserInterfaceModule.viewport;
 			var tab = viewport.sectionMenu.getComponent(sectionId);
 			tab.contentArea.getLayout().setActiveItem(itemId);
 			tab.doLayout();
@@ -162,13 +162,13 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.UserInterfaceModule', {
 	},
 
 	onPath: function(path, callback, scope) {
-		path = F3.TYPO3.Core.Registry.rewritePath(path);
+		path = TYPO3.TYPO3.Core.Registry.rewritePath(path);
 		this.on('activate-' + path, function() {
 			callback.call(scope);
 		});
 	},
 
 	getModuleMenu: function(sectionId) {
-		return F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getComponent(sectionId).moduleMenu;
+		return TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getComponent(sectionId).moduleMenu;
 	}
 });

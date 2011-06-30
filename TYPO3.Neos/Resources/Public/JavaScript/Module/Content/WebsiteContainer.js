@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content');
+Ext.ns('TYPO3.TYPO3.Module.Content');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,7 +21,7 @@ Ext.ns('F3.TYPO3.Module.Content');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.WebsiteContainer
+ * @class TYPO3.TYPO3.Module.Content.WebsiteContainer
  *
  * The main frontend editor widget, which is shown in the lower part of the
  * Backend.
@@ -29,10 +29,10 @@ Ext.ns('F3.TYPO3.Module.Content');
  * You should never directly call any classes of the Frontend Editor loaded on the page,
  * but always use this class as connector.
  *
- * @namespace F3.TYPO3.Module.Content
+ * @namespace TYPO3.TYPO3.Module.Content
  * @extends Ext.Container
  */
-F3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
+TYPO3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 
 	/**
 	 * @event container.modifiedContent
@@ -108,9 +108,9 @@ F3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 		lastVisitedUri = Ext.util.Cookies.get('TYPO3_lastVisitedUri');
 			// Add the current workspace name to the node path, results in sth. like "http://myhost/homepage/about@user-admin.html":
 		if (lastVisitedUri) {
-			uri = lastVisitedUri.replace(/([a-z]+:\/\/[^\/]+)(.*\/[a-z0-9\-]+|[^@]+)(@[a-z0-9\-]+)?(\..+|\?.*|\/)?/i, '$1$2@' + F3.TYPO3.Configuration.Application.workspaceName + '$4');
+			uri = lastVisitedUri.replace(/([a-z]+:\/\/[^\/]+)(.*\/[a-z0-9\-]+|[^@]+)(@[a-z0-9\-]+)?(\..+|\?.*|\/)?/i, '$1$2@' + TYPO3.TYPO3.Configuration.Application.workspaceName + '$4');
 		} else {
-			uri = F3.TYPO3.Configuration.Application.frontendBaseUri + '@' + F3.TYPO3.Configuration.Application.workspaceName;
+			uri = TYPO3.TYPO3.Configuration.Application.frontendBaseUri + '@' + TYPO3.TYPO3.Configuration.Application.workspaceName;
 		}
 
 		config = {
@@ -134,7 +134,7 @@ F3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 			}
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Content.WebsiteContainer.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Content.WebsiteContainer.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -158,8 +158,8 @@ F3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 		this._getFrontendEditorCore()._enableNavigationMode();
 		this.fireEvent('modeChange');
 
-		F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
-		F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.deactivateItem('menu/main/content[]/edit');
+		TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
+		TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.deactivateItem('menu/main/content[]/edit');
 
 		this._modeChangeRunning = false;
 	},
@@ -186,8 +186,8 @@ F3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 		this._getFrontendEditorCore()._enableSelectionMode();
 		this.fireEvent('modeChange');
 
-		F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
-		F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
+		TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
+		TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
 
 		this._modeChangeRunning = false;
 	},
@@ -215,8 +215,8 @@ F3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 		this._getFrontendEditorCore()._enableEditingMode(event);
 		this.fireEvent('modeChange');
 
-		F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
-		F3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
+		TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.setActiveTab('content');
+		TYPO3.TYPO3.Module.UserInterfaceModule.viewport.sectionMenu.getComponent('content').moduleMenu.breadcrumbMenu.activateItem('menu/main/content[]/edit');
 
 		this._modeChangeRunning = false;
 	},
@@ -299,14 +299,14 @@ F3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	 * If the frontend editor core could not be loaded, returns a stub which replaces
 	 * all called methods of the core with empty functions, to prevent syntax errors.
 	 *
-	 * @return {F3.TYPO3.Module.Content.EditorFrontend.Core} the frontend editor core
+	 * @return {TYPO3.TYPO3.Module.Content.EditorFrontend.Core} the frontend editor core
 	 * @private
 	 */
 	_getFrontendEditorCore: function() {
 		var iframeDom;
 		iframeDom = this.getComponent('contentIframe').el.dom;
-		if (iframeDom.contentWindow.F3) {
-			return iframeDom.contentWindow.F3.TYPO3.Module.Content.EditorFrontend.Core;
+		if (iframeDom.contentWindow.TYPO3) {
+			return iframeDom.contentWindow.TYPO3.TYPO3.Module.Content.EditorFrontend.Core;
 		} else {
 			return {
 				_enableNavigationMode: Ext.emptyFn,
@@ -330,4 +330,4 @@ F3.TYPO3.Module.Content.WebsiteContainer = Ext.extend(Ext.Container, {
 	}
 });
 
-Ext.reg('F3.TYPO3.Module.Content.WebsiteContainer', F3.TYPO3.Module.Content.WebsiteContainer);
+Ext.reg('TYPO3.TYPO3.Module.Content.WebsiteContainer', TYPO3.TYPO3.Module.Content.WebsiteContainer);

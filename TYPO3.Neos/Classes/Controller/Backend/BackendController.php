@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Controller\Backend;
+namespace TYPO3\TYPO3\Controller\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,17 +27,17 @@ namespace F3\TYPO3\Controller\Backend;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
-class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
+class BackendController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -50,11 +50,11 @@ class BackendController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function indexAction() {
 		$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');
-		$contentContext = new \F3\TYPO3\Domain\Service\ContentContext($workspaceName);
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext($workspaceName);
 
 		$this->view->assign('contentContext', $contentContext);
 
-		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
+		$version = $this->packageManager->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
 		$this->view->assign('version', $version);
 	}
 }

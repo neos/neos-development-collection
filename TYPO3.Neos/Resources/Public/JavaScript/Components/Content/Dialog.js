@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components.Content');
+Ext.ns('TYPO3.TYPO3.Components.Content');
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
  *                                                                        *
@@ -20,14 +20,14 @@ Ext.ns('F3.TYPO3.Components.Content');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.Content.Dialog
+ * @class TYPO3.TYPO3.Components.Content.Dialog
  *
  * Content dialog; which consists of an OK / cancel button.
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.Container
  */
-F3.TYPO3.Components.Content.Dialog = Ext.extend(Ext.Container, {
+TYPO3.TYPO3.Components.Content.Dialog = Ext.extend(Ext.Container, {
 
 	/**
 	 * Cancel button label, if false no cancel button is displayed.
@@ -80,8 +80,8 @@ F3.TYPO3.Components.Content.Dialog = Ext.extend(Ext.Container, {
 		};
 		if (this.cancelButton != false) {
 			this.toolbarConfig.items.push({
-				xtype: 'F3.TYPO3.Components.Button',
-				cls: 'F3-TYPO3-Components-Button',
+				xtype: 'TYPO3.TYPO3.Components.Button',
+				cls: 'TYPO3-TYPO3-Components-Button',
 				itemId: 'cancelButton',
 				text: this.cancelButton,
 				scale: 'large',
@@ -95,19 +95,19 @@ F3.TYPO3.Components.Content.Dialog = Ext.extend(Ext.Container, {
 				this.toolbarConfig.items.push({xtype: 'tbspacer', width: 20});
 			}
 			this.toolbarConfig.items.push({
-				xtype: 'F3.TYPO3.Components.Button',
+				xtype: 'TYPO3.TYPO3.Components.Button',
 				itemId: 'okButton',
 				text: this.okButton,
 				scale: 'large',
 				handler: this._fireOkEvent,
 				scope: this,
-				cls: 'F3-TYPO3-Components-Button-type-' + this.mode
+				cls: 'TYPO3-TYPO3-Components-Button-type-' + this.mode
 			});
 		}
 		if (this.infoText != false) {
 			itemsConfig.push({
 				xtype: 'panel',
-				cls: 'F3-TYPO3-UserInterface-ContentDialog-InfoText',
+				cls: 'TYPO3-TYPO3-UserInterface-ContentDialog-InfoText',
 				border: false,
 				html: this.infoText,
 				flex: 0
@@ -118,7 +118,7 @@ F3.TYPO3.Components.Content.Dialog = Ext.extend(Ext.Container, {
 
 		itemsConfig.push({
 			xtype: 'panel',
-			cls: 'F3-TYPO3-UserInterface-ContentDialog-Panel',
+			cls: 'TYPO3-TYPO3-UserInterface-ContentDialog-Panel',
 			border: false,
 			tbar: this.toolbarConfig,
 			ref: 'panel'
@@ -128,10 +128,10 @@ F3.TYPO3.Components.Content.Dialog = Ext.extend(Ext.Container, {
 			height: 22,
 			style: 'position: relative; z-index: 500; overflow: show',
 			items: itemsConfig,
-			cls: 'F3-TYPO3-UserInterface-ContentDialog F3-TYPO3-UserInterface-ContentDialog-mode-' + this.mode
+			cls: 'TYPO3-TYPO3-UserInterface-ContentDialog TYPO3-TYPO3-UserInterface-ContentDialog-mode-' + this.mode
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Components.Content.Dialog.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Components.Content.Dialog.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -163,4 +163,4 @@ F3.TYPO3.Components.Content.Dialog = Ext.extend(Ext.Container, {
 		this.fireEvent('_okButtonClick');
 	}
 });
-Ext.reg('F3.TYPO3.Components.Content.Dialog', F3.TYPO3.Components.Content.Dialog);
+Ext.reg('TYPO3.TYPO3.Components.Content.Dialog', TYPO3.TYPO3.Components.Content.Dialog);

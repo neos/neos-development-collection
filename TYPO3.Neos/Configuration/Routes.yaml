@@ -9,7 +9,7 @@
   name: 'Authentication'
   uriPattern: 'typo3/login(/{@action}.{@format})'
   defaults:
-    '@package':    'TYPO3'
+    '@package':    'TYPO3.TYPO3'
     '@controller': 'Login'
     '@action':     'index'
     '@format':     'html'
@@ -17,7 +17,7 @@
   name:  'Logout'
   uriPattern: 'typo3/logout'
   defaults:
-    '@package':    'TYPO3'
+    '@package':    'TYPO3.TYPO3'
     '@controller': 'Login'
     '@action':     'logout'
     '@format':     'html'
@@ -25,7 +25,7 @@
   name:          'Setup'
   uriPattern:    'typo3/setup(/{@action})'
   defaults:
-    '@package':    'TYPO3'
+    '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Setup'
     '@action':     'index'
     '@format':     'html'
@@ -34,7 +34,7 @@
   name:          'Backend Overview'
   uriPattern:    'typo3'
   defaults:
-    '@package':    'TYPO3'
+    '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Backend'
     '@action':     'index'
     '@format':     'html'
@@ -46,43 +46,43 @@
   name:          'Frontend content with format and type'
   uriPattern:    '{node}.html/{type}'
   defaults:
-    '@package':    'TYPO3'
+    '@package':    'TYPO3.TYPO3'
     '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
   routeParts:
     node:
-      handler:    F3\TYPO3\Routing\FrontendNodeRoutePartHandler
+      handler:    TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler
 
 -
   name:          'Frontend content with (HTML) format'
   uriPattern:    '{node}.html'
   defaults:
-    '@package':    'TYPO3'
+    '@package':    'TYPO3.TYPO3'
     '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
   routeParts:
     node:
-      handler:    F3\TYPO3\Routing\FrontendNodeRoutePartHandler
+      handler:    TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler
 
 -
   name:          'Frontend content without a specified format'
   uriPattern:    '({node})'
   defaults:
-    '@package':    'TYPO3'
+    '@package':    'TYPO3.TYPO3'
     '@controller': 'Frontend\Node'
     '@format':     'html'
     '@action':     'show'
   routeParts:
     node:
-      handler:    F3\TYPO3\Routing\FrontendNodeRoutePartHandler
+      handler:    TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler
 
 -
   name: 'Fallback rule – for when no site has been defined yet'
   uriPattern: ''
   defaults:
-    '@package':     'TYPO3'
+    '@package':     'TYPO3.TYPO3'
     '@controller':  'Backend\Setup'
     '@action':      'index'
     '@format':      'html'

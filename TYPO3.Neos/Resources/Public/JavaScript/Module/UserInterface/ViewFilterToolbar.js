@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.UserInterface');
+Ext.ns('TYPO3.TYPO3.Module.UserInterface');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.UserInterface');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.UserInterface.ViewFilterToolbar
+ * @class TYPO3.TYPO3.Module.UserInterface.ViewFilterToolbar
  *
  * context menu
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.Toolbar
  */
-F3.TYPO3.Module.UserInterface.ViewFilterToolbar = Ext.extend(Ext.Toolbar, {
+TYPO3.TYPO3.Module.UserInterface.ViewFilterToolbar = Ext.extend(Ext.Toolbar, {
 
 	/**
 	 * Initializer
@@ -39,11 +39,11 @@ F3.TYPO3.Module.UserInterface.ViewFilterToolbar = Ext.extend(Ext.Toolbar, {
 			border: 0,
 			padding: 0,
 			flex: 0,
-			cls: 'F3-TYPO3-UserInterface-ViewFilterToolbar',
+			cls: 'TYPO3-TYPO3-UserInterface-ViewFilterToolbar',
 			items: this._getToolbarItems()
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.UserInterface.ViewFilterToolbar.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.UserInterface.ViewFilterToolbar.superclass.initComponent.call(this);
 		this.on('render', this._afterRender, this);
 	},
 
@@ -62,7 +62,7 @@ F3.TYPO3.Module.UserInterface.ViewFilterToolbar = Ext.extend(Ext.Toolbar, {
 	 */
 	_getToolbarItems: function() {
 		var items = [];
-		var config = F3.TYPO3.Core.Registry.get('menu/viewFilterToolbar');
+		var config = TYPO3.TYPO3.Core.Registry.get('menu/viewFilterToolbar');
 		Ext.each(config, function(component) {
 			var item = {};
 			Ext.apply(item, component, {});
@@ -76,7 +76,7 @@ F3.TYPO3.Module.UserInterface.ViewFilterToolbar = Ext.extend(Ext.Toolbar, {
 	 * @return void
 	 */
 	_onMouseOver: function(event) {
-		this.removeClass('F3-TYPO3-disabled');
+		this.removeClass('TYPO3-TYPO3-disabled');
 	},
 
 	/**
@@ -84,8 +84,8 @@ F3.TYPO3.Module.UserInterface.ViewFilterToolbar = Ext.extend(Ext.Toolbar, {
 	 * @return void
 	 */
 	_onMouseOut: function(event) {
-		this.addClass('F3-TYPO3-disabled');
+		this.addClass('TYPO3-TYPO3-disabled');
 	}
 
 });
-Ext.reg('F3.TYPO3.Module.UserInterface.ViewFilterToolbar', F3.TYPO3.Module.UserInterface.ViewFilterToolbar);
+Ext.reg('TYPO3.TYPO3.Module.UserInterface.ViewFilterToolbar', TYPO3.TYPO3.Module.UserInterface.ViewFilterToolbar);

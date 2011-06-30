@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Dashboard');
+Ext.ns('TYPO3.TYPO3.Module.Dashboard');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Dashboard');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Dashboard.DashboardView
+ * @class TYPO3.TYPO3.Module.Dashboard.DashboardView
  *
  * The dashboard main view with the portal component
  *
- * @namespace F3.TYPO3.Module.Dashboard
+ * @namespace TYPO3.TYPO3.Module.Dashboard
  * @extends Ext.Container
  */
-F3.TYPO3.Module.Dashboard.DashboardView = Ext.extend(Ext.Panel, {
+TYPO3.TYPO3.Module.Dashboard.DashboardView = Ext.extend(Ext.Panel, {
 
 	/**
 	 * Initializer
@@ -53,7 +53,7 @@ F3.TYPO3.Module.Dashboard.DashboardView = Ext.extend(Ext.Panel, {
 			}]
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Dashboard.DashboardView.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Dashboard.DashboardView.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -62,7 +62,7 @@ F3.TYPO3.Module.Dashboard.DashboardView = Ext.extend(Ext.Panel, {
 	 */
 	_getColumnItems: function(column) {
 		var items = [];
-		var config = F3.TYPO3.Core.Registry.get('dashboard/column/' + column);
+		var config = TYPO3.TYPO3.Core.Registry.get('dashboard/column/' + column);
 		Ext.each(config, function(component) {
 			var item = {};
 			Ext.apply(item, component);
@@ -72,4 +72,4 @@ F3.TYPO3.Module.Dashboard.DashboardView = Ext.extend(Ext.Panel, {
 	}
 
 });
-Ext.reg('F3.TYPO3.Module.Dashboard.DashboardView', F3.TYPO3.Module.Dashboard.DashboardView);
+Ext.reg('TYPO3.TYPO3.Module.Dashboard.DashboardView', TYPO3.TYPO3.Module.Dashboard.DashboardView);

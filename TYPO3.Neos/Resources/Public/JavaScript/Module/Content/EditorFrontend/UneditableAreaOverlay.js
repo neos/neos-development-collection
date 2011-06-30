@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.EditorFrontend');
+Ext.ns('TYPO3.TYPO3.Module.Content.EditorFrontend');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Content.EditorFrontend');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay
+ * @class TYPO3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay
  *
  * This class shows and hides the uneditable area overlays.
  *
- * @namespace F3.TYPO3.Module.Content.EditorFrontend
+ * @namespace TYPO3.TYPO3.Module.Content.EditorFrontend
  * @singleton
  */
-F3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay = {
+TYPO3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay = {
 
 	/**
 	 * @var {boolean}
@@ -40,7 +40,7 @@ F3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay = {
 	 * Initializer, called on page load. Is used to register event
 	 * listeners on the core.
 	 *
-	 * @param {F3.TYPO3.Module.Content.EditorFrontend.Core} core
+	 * @param {TYPO3.TYPO3.Module.Content.EditorFrontend.Core} core
 	 * @return {void}
 	 */
 	initialize: function(core) {
@@ -62,8 +62,8 @@ F3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay = {
 	 */
 	_overlayUneditableAreas: function() {
 		this._enabled = true;
-		Ext.each(Ext.query('.f3-typo3-notEditable'), function(element) {
-			this._createOverlayForElement(element, 'f3-typo3-notEditable-visible');
+		Ext.each(Ext.query('.typo3-typo3-notEditable'), function(element) {
+			this._createOverlayForElement(element, 'typo3-typo3-notEditable-visible');
 		}, this);
 	},
 
@@ -75,7 +75,7 @@ F3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay = {
 	 */
 	_removeUneditableAreas: function() {
 		this._enabled = false;
-		jQuery('.f3-typo3-notEditable-visible').remove();
+		jQuery('.typo3-typo3-notEditable-visible').remove();
 	},
 
 	/**
@@ -98,4 +98,4 @@ F3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay = {
 	}
 };
 
-F3.TYPO3.Module.Content.EditorFrontend.Core.registerModule(F3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay);
+TYPO3.TYPO3.Module.Content.EditorFrontend.Core.registerModule(TYPO3.TYPO3.Module.Content.EditorFrontend.UneditableAreaOverlay);

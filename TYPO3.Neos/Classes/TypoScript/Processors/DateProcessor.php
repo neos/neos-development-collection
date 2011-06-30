@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,7 +27,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class DateProcessor implements \F3\TypoScript\ProcessorInterface {
+class DateProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
 	 * A format string, according to the rules of the php date() function
@@ -66,7 +66,7 @@ class DateProcessor implements \F3\TypoScript\ProcessorInterface {
 
 		$timestamp = is_object($subject) ? (string)$subject : $subject;
 		$format = (string)$this->format;
-		if ($timestamp <= 0) throw new \F3\TypoScript\Exception('The given timestamp value was zero or negative, sorry this is not allowed.', 1185282371);
+		if ($timestamp <= 0) throw new \TYPO3\TypoScript\Exception('The given timestamp value was zero or negative, sorry this is not allowed.', 1185282371);
 
 		return date($format, $timestamp);
 	}

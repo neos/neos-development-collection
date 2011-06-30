@@ -1,11 +1,11 @@
-Ext.ns('F3.TYPO3.Core');
+Ext.ns('TYPO3.TYPO3.Core');
 
 describe("Test Registry", function() {
 
 	var registry;
 
 	beforeEach(function() {
-		registry = F3.TYPO3.Core.Registry;
+		registry = TYPO3.TYPO3.Core.Registry;
 		registry.initialize();
 	});
 
@@ -605,8 +605,8 @@ describe("Test Registry", function() {
 		var data = {
 			'typo3:page': {
 				service: {
-					load: 'F3.TYPO3.NodeService.load',
-					store: 'F3.TYPO3.NodeService.store'
+					load: 'TYPO3.TYPO3.NodeService.load',
+					store: 'TYPO3.TYPO3.NodeService.store'
 				},
 				properties: {
 					'properties.title': {

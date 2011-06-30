@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class DateProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\DateProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\DateProcessor
 	 */
 	protected $dateProcessor;
 
@@ -39,7 +39,7 @@ class DateProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->dateProcessor = new \F3\TYPO3\TypoScript\Processors\DateProcessor();
+		$this->dateProcessor = new \TYPO3\TYPO3\TypoScript\Processors\DateProcessor();
 	}
 
 	/**
@@ -57,10 +57,10 @@ class DateProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * Checks if the date() processor throws an \F3\TypoScript\Exception on an invalid timestamp
+	 * Checks if the date() processor throws an \TYPO3\TypoScript\Exception on an invalid timestamp
 	 *
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -71,10 +71,10 @@ class DateProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * Checks if the date() processor throws an \F3\TypoScript\Exception on a negative timestamp value
+	 * Checks if the date() processor throws an \TYPO3\TypoScript\Exception on a negative timestamp value
 	 *
 	 * @test
-	 * @expectedException \F3\TypoScript\Exception
+	 * @expectedException \TYPO3\TypoScript\Exception
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

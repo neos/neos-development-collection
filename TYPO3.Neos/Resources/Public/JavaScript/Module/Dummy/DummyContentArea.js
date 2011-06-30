@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Dummy');
+Ext.ns('TYPO3.TYPO3.Module.Dummy');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Dummy');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Dummy.DummyContentArea
+ * @class TYPO3.TYPO3.Module.Dummy.DummyContentArea
  *
  * A Dummy content area which just displays the name of the content area.
  *
- * @namespace F3.TYPO3.Module.Dummy
+ * @namespace TYPO3.TYPO3.Module.Dummy
  * @extends Ext.Panel
  */
-F3.TYPO3.Module.Dummy.DummyContentArea = Ext.extend(Ext.Panel, {
+TYPO3.TYPO3.Module.Dummy.DummyContentArea = Ext.extend(Ext.Panel, {
 
 	layout: 'card',
 
@@ -40,7 +40,7 @@ F3.TYPO3.Module.Dummy.DummyContentArea = Ext.extend(Ext.Panel, {
 			html: '<h1 style="font-family:Share-Bold, sans-serif; margin-top:30px; text-align:center;font-size:45px;">' + this.name + '</h1>'
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Dummy.DummyContentArea.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Dummy.DummyContentArea.superclass.initComponent.call(this);
 	}
 });
-Ext.reg('F3.TYPO3.Module.Dummy.DummyContentArea', F3.TYPO3.Module.Dummy.DummyContentArea);
+Ext.reg('TYPO3.TYPO3.Module.Dummy.DummyContentArea', TYPO3.TYPO3.Module.Dummy.DummyContentArea);

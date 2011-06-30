@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <package xmlns="http://typo3.org/ns/2008/flow3/package">
-    <key>TYPO3</key>
+    <key>TYPO3.TYPO3</key>
     <title>TYPO3</title>
     <description>The next generation of the popular open-source CMS.</description>
     <version>5.0.0 Sprint 7</version>
@@ -20,8 +20,8 @@
     </parties>
     <constraints>
         <depends>
-            <package>TypoScript</package>
-            <package>FLOW3</package>
+            <package>TYPO3.TypoScript</package>
+            <package>TYPO3.FLOW3</package>
         </depends>
         <conflicts/>
         <suggests/>

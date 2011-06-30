@@ -1,4 +1,4 @@
-Ext.namespace('F3.TYPO3.Components.BreadcrumbMenu');
+Ext.namespace('TYPO3.TYPO3.Components.BreadcrumbMenu');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,19 +21,19 @@ Ext.namespace('F3.TYPO3.Components.BreadcrumbMenu');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler
+ * @class TYPO3.TYPO3.Components.BreadcrumbMenu.AnimationHandler
  *
  * Animation handler for the BreadcrumbMenuComponent.
  * Queues animations and triggers them in the right order.
  *
- * @namespace F3.TYPO3.Components.BreadcrumbMenu
+ * @namespace TYPO3.TYPO3.Components.BreadcrumbMenu
  */
 
-F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = function() {
-	this._queue = new F3.TYPO3.Utility.Queue.TimeBasedQueue();
+TYPO3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = function() {
+	this._queue = new TYPO3.TYPO3.Utility.Queue.TimeBasedQueue();
 }
 
-F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler, {
+TYPO3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(TYPO3.TYPO3.Components.BreadcrumbMenu.AnimationHandler, {
 
 	/**
 	 * @private
@@ -41,7 +41,7 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 	_defaultAnimationDuration: 50,
 
 	/**
-	 * @var F3.TYPO3.Utility.Queue.TimeBasedQueue
+	 * @var TYPO3.TYPO3.Utility.Queue.TimeBasedQueue
 	 * @private
 	 */
 	_queue: null,
@@ -132,8 +132,8 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 		do {
 			if (    !Ext.isEmpty(menuItem.dom.parentNode.children[i]) &&
 					menuItem.dom.parentNode.children[i] !== menuItem.dom &&
-					Ext.get(menuItem.dom.parentNode.children[i]).hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem')) {
-				this.addClass(Ext.get(menuItem.dom.parentNode.children[i]), 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
+					Ext.get(menuItem.dom.parentNode.children[i]).hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem')) {
+				this.addClass(Ext.get(menuItem.dom.parentNode.children[i]), 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
 			}
 			i --;
 		} while (i >= 0);
@@ -146,8 +146,8 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 	 * @return {Void}
 	 */
 	showSiblings: function (menuItem) {
-		menuItem.parent().select('.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden').each(function(element) {
-			this.removeClass(Ext.get(element.dom), 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
+		menuItem.parent().select('.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden').each(function(element) {
+			this.removeClass(Ext.get(element.dom), 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden');
 		}, this);
 	},
 
@@ -163,7 +163,7 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 		this.add(function() {
 			labelElement = Ext.DomHelper.insertAfter(menuItem, {
 				tag: 'span',
-				cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text',
+				cls: 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text',
 				children: menuItem.getAttribute('data-label')
 			});
 			labelElement = Ext.get(labelElement);
@@ -172,7 +172,7 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 
 		this.addDelay(5);
 		this.add(function() {
-			labelElement.addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text-active');
+			labelElement.addClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text-active');
 		}, 0);
 	},
 
@@ -184,14 +184,14 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 	 */
 	removeMenuItemLabel: function(menuItem) {
 		this.add(function() {
-			if (menuItem.next() && menuItem.next().hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text')) {
-				menuItem.next().removeClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text-active');
+			if (menuItem.next() && menuItem.next().hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text')) {
+				menuItem.next().removeClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text-active');
 				menuItem.next().setWidth(0);
 			}
 		});
 
 		this.add(function() {
-			if (menuItem.next() && menuItem.next().hasClass('F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text')) {
+			if (menuItem.next() && menuItem.next().hasClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text')) {
 				menuItem.next().remove();
 			}
 		});
@@ -209,7 +209,7 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 		this.add(function() {
 			element = Ext.DomHelper.append(container, {
 				tag: 'span',
-				cls: 'F3-TYPO3-UserInterface-BreadcrumbMenu-Separator',
+				cls: 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Separator',
 				style: 'display: inline-block'
 			});
 
@@ -217,7 +217,7 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 		});
 
 		this.add(function() {
-			element.addClass('F3-TYPO3-UserInterface-BreadcrumbMenu-Separator-active');
+			element.addClass('TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Separator-active');
 		});
 	},
 
@@ -229,11 +229,11 @@ F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler = Ext.extend(F3.TYPO3.Compon
 	 */
 	removeArrow: function(element) {
 		element = Ext.get(element);
-		this.removeClass(element, 'F3-TYPO3-UserInterface-BreadcrumbMenu-Separator-active');
+		this.removeClass(element, 'TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Separator-active');
 		this.add(function() {
 			element.remove();
 		});
 	}
 });
 
-Ext.reg('F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler', F3.TYPO3.Components.BreadcrumbMenu.AnimationHandler);
+Ext.reg('TYPO3.TYPO3.Components.BreadcrumbMenu.AnimationHandler', TYPO3.TYPO3.Components.BreadcrumbMenu.AnimationHandler);

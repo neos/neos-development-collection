@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\TypoScript;
+namespace TYPO3\TYPO3\Tests\Unit\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,14 +26,14 @@ namespace F3\TYPO3\Tests\Unit\TypoScript;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ContentTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ContentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetGetInitializesContentOnFirstCall() {
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeSections'));
+		$content = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Content', array('initializeSections'));
 		$content->expects($this->once())->method('initializeSections');
 
 		$content->offsetGet('foo');
@@ -44,7 +44,7 @@ class ContentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetGetReturnsNullForNonExistantOffset() {
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeSections'));
+		$content = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Content', array('initializeSections'));
 
 		$this->assertNull($content->offsetGet('foo'));
 	}
@@ -54,9 +54,9 @@ class ContentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetExistsChecksIfSectionExists() {
-		$mockTypoScriptObject = $this->getMock('F3\TypoScript\ContentObjectInterface');
+		$mockTypoScriptObject = $this->getMock('TYPO3\TypoScript\ContentObjectInterface');
 
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeSections'));
+		$content = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Content', array('initializeSections'));
 		$content['foo'] = $mockTypoScriptObject;
 
 		$this->assertTrue($content->offsetExists('foo'));
@@ -67,10 +67,10 @@ class ContentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetSetInitializesContentOnFirstCall() {
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeSections'));
+		$content = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Content', array('initializeSections'));
 		$content->expects($this->once())->method('initializeSections');
 
-		$content->offsetSet('foo', $this->getMock('F3\TypoScript\ContentObjectInterface'));
+		$content->offsetSet('foo', $this->getMock('TYPO3\TypoScript\ContentObjectInterface'));
 	}
 
 	/**
@@ -79,7 +79,7 @@ class ContentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetSetThrowsExceptionIfInvalidValueIsGiven() {
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeSections'));
+		$content = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Content', array('initializeSections'));
 		$content->expects($this->once())->method('initializeSections');
 
 		$content->offsetSet('foo', 'bar');
@@ -90,8 +90,8 @@ class ContentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function usingArrayAccessASetValueCanBeRetrievedAgain() {
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeSections'));
-		$value = $this->getMock('F3\TypoScript\ContentObjectInterface');
+		$content = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Content', array('initializeSections'));
+		$value = $this->getMock('TYPO3\TypoScript\ContentObjectInterface');
 
 		$content['foo'] = $value;
 		$this->assertSame($value, $content['foo']);
@@ -102,7 +102,7 @@ class ContentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetUnsetInitializesContentOnFirstCall() {
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeSections'));
+		$content = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Content', array('initializeSections'));
 		$content->expects($this->once())->method('initializeSections');
 
 		$content->offsetUnset('foo');
@@ -113,8 +113,8 @@ class ContentTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function offsetUnsetWorks() {
-		$content = $this->getAccessibleMock('F3\TYPO3\TypoScript\Content', array('initializeSections'));
-		$content['foo'] = $this->getMock('F3\TypoScript\ContentObjectInterface');
+		$content = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Content', array('initializeSections'));
+		$content['foo'] = $this->getMock('TYPO3\TypoScript\ContentObjectInterface');
 
 		$content->offsetUnset('foo');
 		$this->assertNull($content['foo']);

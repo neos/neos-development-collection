@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,7 +27,7 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAccess {
+class Content extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayAccess {
 
 	/**
 	 * @var array
@@ -39,7 +39,7 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 	 * exists
 	 *
 	 * @param string $offset Name of the section to return
-	 * @return mixed 
+	 * @return mixed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetGet($offset) {
@@ -66,7 +66,7 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 	 * Sets the specified section
 	 *
 	 * @param string $offset The offset (name of the sectino) of the value to set.
-	 * @param \F3\TypoScript\ContentObjectInterface $value The value
+	 * @param \TYPO3\TypoScript\ContentObjectInterface $value The value
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -74,7 +74,7 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 		if ($this->sections === NULL) {
 			$this->initializeSections();
 		}
-		if (!$value instanceof \F3\TypoScript\ContentObjectInterface) {
+		if (!$value instanceof \TYPO3\TypoScript\ContentObjectInterface) {
 			throw new \InvalidArgumentException('A section must be a valid TypoScript content object.', 1273764535);
 		}
 		$this->sections[$offset] = $value;
@@ -105,13 +105,13 @@ class Content extends \F3\TypoScript\AbstractContentObject implements \ArrayAcce
 
 		$contentContext = $this->renderingContext->getContentContext();
 
-		$sectionNodes = $contentContext->getCurrentNode()->getChildNodes('TYPO3:Section');
+		$sectionNodes = $contentContext->getCurrentNode()->getChildNodes('TYPO3.TYPO3:Section');
 		foreach ($sectionNodes as $sectionNode) {
 			$contentArray = $this->typoScriptObjectFactory->createByName('ContentArray');
 			$i = 0;
 
 			foreach ($sectionNode->getChildNodes() as $sectionChildNode) {
-				if ($sectionChildNode->getContentType() !== 'TYPO3:Page') {
+				if ($sectionChildNode->getContentType() !== 'TYPO3.TYPO3:Page') {
 					$typoScriptObject = $this->typoScriptObjectFactory->createByNode($sectionChildNode);
 					$contentArray[$i] = $typoScriptObject;
 					$i++;

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,12 +27,12 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class JavaScript extends \F3\TypoScript\AbstractContentObject {
+class JavaScript extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/JavaScript.html';
+	protected $templateSource = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/JavaScript.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in

@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components.Content');
+Ext.ns('TYPO3.TYPO3.Components.Content');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Components.Content');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.Content.Area
+ * @class TYPO3.TYPO3.Components.Content.Area
  *
  * The content area
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @extends Ext.Panel
  */
-F3.TYPO3.Components.Content.Area = Ext.extend(Ext.Panel, {
+TYPO3.TYPO3.Components.Content.Area = Ext.extend(Ext.Panel, {
 
 	layout: 'card',
 
@@ -40,10 +40,10 @@ F3.TYPO3.Components.Content.Area = Ext.extend(Ext.Panel, {
 			items: []
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Components.Content.Area.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Components.Content.Area.superclass.initComponent.call(this);
 
-		F3.TYPO3.Module.UserInterfaceModule.fireEvent('_ContentArea.initialized', this);
+		TYPO3.TYPO3.Module.UserInterfaceModule.fireEvent('_ContentArea.initialized', this);
 	}
 });
 
-Ext.reg('F3.TYPO3.Components.Content.Area', F3.TYPO3.Components.Content.Area);
+Ext.reg('TYPO3.TYPO3.Components.Content.Area', TYPO3.TYPO3.Components.Content.Area);

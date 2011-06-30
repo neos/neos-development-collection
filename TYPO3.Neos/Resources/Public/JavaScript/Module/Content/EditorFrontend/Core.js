@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.EditorFrontend');
+Ext.ns('TYPO3.TYPO3.Module.Content.EditorFrontend');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,17 +21,17 @@ Ext.ns('F3.TYPO3.Module.Content.EditorFrontend');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorFrontend.Core
+ * @class TYPO3.TYPO3.Module.Content.EditorFrontend.Core
  *
  * This is the main class loaded in the frontend editor. It has two main purposes:
  * - act as event bridge for the frontend editor components
  * - provide the interface to the TYPO3 backend in the outer frame.
  *
- * @namespace F3.TYPO3.Module.Content.EditorFrontend
+ * @namespace TYPO3.TYPO3.Module.Content.EditorFrontend
  * @extends Ext.util.Observable
  * @singleton
  */
-F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(), {
+TYPO3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(), {
 
 	/**
 	 * The list of modules loaded in the EditorFrontend.
@@ -45,7 +45,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * The Internationalization component, used to get translated strings.
 	 * This is just a shortcut to the localization component in the parent frame.
 	 *
-	 * @var F3.TYPO3.Core.I18n
+	 * @var TYPO3.TYPO3.Core.I18n
 	 */
 	I18n: null,
 
@@ -142,12 +142,12 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * @return {void}
 	 */
 	initialize: function() {
-		if (window.parent !== undefined && window.parent.F3 !== undefined && window.parent.F3.TYPO3.Module.ContentModule !== undefined) {
-			this.I18n = window.parent.F3.TYPO3.Core.I18n;
+		if (window.parent !== undefined && window.parent.TYPO3 !== undefined && window.parent.TYPO3.TYPO3.Module.ContentModule !== undefined) {
+			this.I18n = window.parent.TYPO3.TYPO3.Core.I18n;
 
-			Ext.ns('F3.TYPO3.Core');
-			F3.TYPO3.Core.Registry = window.parent.F3.TYPO3.Core.Registry;
-			F3.TYPO3.Core.I18n = window.parent.F3.TYPO3.Core.I18n;
+			Ext.ns('TYPO3.TYPO3.Core');
+			TYPO3.TYPO3.Core.Registry = window.parent.TYPO3.TYPO3.Core.Registry;
+			TYPO3.TYPO3.Core.I18n = window.parent.TYPO3.TYPO3.Core.I18n;
 
 			Ext.each(this._modules, function(module) {
 				module.initialize(this);
@@ -266,7 +266,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * @private
 	 */
 	_enableSelectionMode: function() {
-		Ext.getBody().addClass('f3-typo3-selection-enabled');
+		Ext.getBody().addClass('typo3-typo3-selection-enabled');
 		this.fireEvent('enableSelectionMode');
 	},
 
@@ -279,7 +279,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * @private
 	 */
 	_disableSelectionMode: function() {
-		Ext.getBody().removeClass('f3-typo3-selection-enabled');
+		Ext.getBody().removeClass('typo3-typo3-selection-enabled');
 		this.fireEvent('disableSelectionMode');
 	},
 
@@ -292,7 +292,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * @private
 	 */
 	_enableEditingMode: function(event) {
-		Ext.getBody().addClass('f3-typo3-editing-enabled');
+		Ext.getBody().addClass('typo3-typo3-editing-enabled');
 		this.fireEvent('enableEditingMode', event);
 	},
 
@@ -305,7 +305,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 * @private
 	 */
 	_disableEditingMode: function() {
-		Ext.getBody().removeClass('f3-typo3-editing-enabled');
+		Ext.getBody().removeClass('typo3-typo3-editing-enabled');
 		this.fireEvent('disableEditingMode');
 		VIE.ContainerManager.cleanup();
 	},
@@ -313,17 +313,17 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	/**
 	 * Access the content module in the parent window.
 	 *
-	 * @return {F3.TYPO3.Module.ContentModule} the parent content module
+	 * @return {TYPO3.TYPO3.Module.ContentModule} the parent content module
 	 * @private
 	 */
 	_getContentModule: function() {
-		return window.parent.F3.TYPO3.Module.ContentModule;
+		return window.parent.TYPO3.TYPO3.Module.ContentModule;
 	},
 
 	/**
 	 * Access the website container in the parent window
 	 *
-	 * @return {F3.TYPO3.Module.Content.WebsiteContainer}
+	 * @return {TYPO3.TYPO3.Module.Content.WebsiteContainer}
 	 * @private
 	 */
 	_getWebsiteContainer: function() {
@@ -341,7 +341,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 	 */
 	createNewContentElement: function(nameOfContentType, referenceNode, referenceDomElement, position) {
 		var position = !position || position == 1 ? 1 : -1;
-		var loadIndicatorContent = '<div>' + this.I18n.get('TYPO3', 'loading') + '</div>';
+		var loadIndicatorContent = '<div>' + this.I18n.get('TYPO3.TYPO3', 'loading') + '</div>';
 
 		if (position == -1) {
 			var loadingIndicatorDom = Ext.DomHelper.insertBefore(referenceDomElement, loadIndicatorContent);
@@ -349,7 +349,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 			var loadingIndicatorDom = Ext.DomHelper.insertAfter(referenceDomElement, loadIndicatorContent);
 		}
 
-		window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(referenceNode, {contentType: nameOfContentType}, position, function(result) {
+		window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(referenceNode, {contentType: nameOfContentType}, position, function(result) {
 			this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
 		}.createDelegate(this));
 	},
@@ -392,7 +392,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observable(
 
 		this.fireEvent('beforeSave');
 		this._getWebsiteContainer().fireEvent('container.beforeSave');
-		window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data, function(result) {
+		window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data, function(result) {
 			this.fireEvent('afterSave');
 			this._getWebsiteContainer().fireEvent('container.afterSave');
 
@@ -478,9 +478,9 @@ Backbone.sync = function(method, model, success, error) {
 			// TODO If TYPO3 supports mapping of fully qualified properties, send with namespace
 		properties[propertyName.split(':', 2)[1]] = value;
 	});
-	F3.TYPO3.Module.Content.EditorFrontend.Core.saveNode(model.id, properties, function() {});
+	TYPO3.TYPO3.Module.Content.EditorFrontend.Core.saveNode(model.id, properties, function() {});
 };
 
 Ext.onReady(function() {
-	F3.TYPO3.Module.Content.EditorFrontend.Core.initialize();
+	TYPO3.TYPO3.Module.Content.EditorFrontend.Core.initialize();
 });

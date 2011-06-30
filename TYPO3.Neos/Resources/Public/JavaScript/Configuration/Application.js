@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Configuration');
+Ext.ns('TYPO3.TYPO3.Configuration');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,23 +21,23 @@ Ext.ns('F3.TYPO3.Configuration');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Configuration.Application
+ * @class TYPO3.TYPO3.Configuration.Application
  *
  * This object contains the configuration for the main TYPO3 application.
  *
- * @namespace F3.TYPO3.Configuration
+ * @namespace TYPO3.TYPO3.Configuration
  * @extends Object
  * @singleton
  */
-F3.TYPO3.Configuration.Application = {
+TYPO3.TYPO3.Configuration.Application = {
 
 	/**
 	 * This setting is extracted from the base-Tag of the
 	 * current page, and a "typo3/" appended to it. This happens in
-	 * {@link F3.TYPO3.Core.Application}.<br />
+	 * {@link TYPO3.TYPO3.Core.Application}.<br />
 	 *
 	 * Instead of using this setting directly, use
-	 * {@link F3.TYPO3.Utils#buildBackendUri}
+	 * {@link TYPO3.TYPO3.Utils#buildBackendUri}
 	 *
 	 * @type {String}
 	 */
@@ -48,7 +48,7 @@ F3.TYPO3.Configuration.Application = {
 	 *
 	 * This setting is extracted from the base-Tag of the
 	 * current page. This happens in
-	 * {@link F3.TYPO3.Core.Application}.
+	 * {@link TYPO3.TYPO3.Core.Application}.
 	 *
 	 * @type {String}
 	 */

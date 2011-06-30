@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,19 +27,19 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Page extends \F3\TypoScript\AbstractContentObject {
+class Page extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * Content type of the node this TS Object is based on.
 	 *
 	 * @var string
 	 */
-	protected $contentType = 'TYPO3:Page';
+	protected $contentType = 'TYPO3.TYPO3:Page';
 
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/Page.html';
+	protected $templateSource = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Page.html';
 
 	/**
 	 * Names of the properties of this TypoScript which should be available in
@@ -68,12 +68,12 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	protected $body;
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Head
+	 * @var \TYPO3\TYPO3\TypoScript\Head
 	 */
 	protected $head;
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Content
+	 * @var \TYPO3\TYPO3\TypoScript\Content
 	 */
 	protected $content;
 
@@ -130,18 +130,18 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Sets head content of this page.
 	 *
-	 * @param \F3\TYPO3\TypoScript\Head $head
+	 * @param \TYPO3\TYPO3\TypoScript\Head $head
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHead(\F3\TYPO3\TypoScript\Head $head) {
+	public function setHead(\TYPO3\TYPO3\TypoScript\Head $head) {
 		$this->head = $head;
 	}
 
 	/**
 	 * Gets head content of this page.
 	 *
-	 * @return \F3\TYPO3\TypoScript\Head
+	 * @return \TYPO3\TYPO3\TypoScript\Head
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHead() {
@@ -174,18 +174,18 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	/**
 	 * Overrides the Content TypoScript Object used on this page.
 	 *
-	 * @param \F3\TYPO3\TypoScript\Content $content
+	 * @param \TYPO3\TYPO3\TypoScript\Content $content
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContent(\F3\TYPO3\TypoScript\Content $content) {
+	public function setContent(\TYPO3\TYPO3\TypoScript\Content $content) {
      	$this->content = $content;
   	}
 
 	/**
 	 * Returns the Content TypoScript Object used on this page.
 	 *
-	 * @return \F3\TYPO3\TypoScript\Content
+	 * @return \TYPO3\TYPO3\TypoScript\Content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContent() {
@@ -218,7 +218,7 @@ class Page extends \F3\TypoScript\AbstractContentObject {
 	 *
 	 *  - currently neccessary for the JSON identity view helper -
 	 *
-	 * @return \F3\TypoScript\RenderingContext
+	 * @return \TYPO3\TypoScript\RenderingContext
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @fixme
 	 */

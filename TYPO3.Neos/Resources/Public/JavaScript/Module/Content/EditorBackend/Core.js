@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.EditorBackend');
+Ext.ns('TYPO3.TYPO3.Module.Content.EditorBackend');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,18 +21,18 @@ Ext.ns('F3.TYPO3.Module.Content.EditorBackend');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorBackend.Core
+ * @class TYPO3.TYPO3.Module.Content.EditorBackend.Core
  *
  * This class is the main API between the EditorFrontend and the TYPO3
  * PHP backend
  *
  * @todo: actually create this API
  *
- * @namespace F3.TYPO3.Module.Content.EditorBackend
+ * @namespace TYPO3.TYPO3.Module.Content.EditorBackend
  * @extends Ext.util.Observable
  * @singleton
  */
-F3.TYPO3.Module.Content.EditorBackend.Core = Ext.apply(new Ext.util.Observable(), {
+TYPO3.TYPO3.Module.Content.EditorBackend.Core = Ext.apply(new Ext.util.Observable(), {
 
 	/**
 	 * Initializer. Called on Ext.onReady().
@@ -45,5 +45,5 @@ F3.TYPO3.Module.Content.EditorBackend.Core = Ext.apply(new Ext.util.Observable()
 });
 
 Ext.onReady(function() {
-	F3.TYPO3.Module.Content.EditorBackend.Core.initialize();
+	TYPO3.TYPO3.Module.Content.EditorBackend.Core.initialize();
 });

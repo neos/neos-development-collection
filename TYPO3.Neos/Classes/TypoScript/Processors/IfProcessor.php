@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,7 +27,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class IfProcessor implements \F3\TypoScript\ProcessorInterface {
+class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
 	 * The condition for the if clause, or simply TRUE/FALSE
@@ -120,10 +120,10 @@ class IfProcessor implements \F3\TypoScript\ProcessorInterface {
 		if (!is_bool($condition)) {
 			if (is_object($condition)) $condition = (string)$condition;
 			if ((is_numeric($condition) && $condition <= 0) || $condition === '') $condition = FALSE;
-			if ($condition === 1 || (is_string($condition) && \F3\FLOW3\Utility\Unicode\Functions::strlen($condition) > 0)) $condition = TRUE;
+			if ($condition === 1 || (is_string($condition) && \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($condition) > 0)) $condition = TRUE;
 		}
 		if (!is_bool($condition)) {
-			throw new \F3\TypoScript\Exception('The condition in the if processor could not be converted to boolean. Got: (' . gettype($condition) . ')' . (string)$condition, 1185355020);
+			throw new \TYPO3\TypoScript\Exception('The condition in the if processor could not be converted to boolean. Got: (' . gettype($condition) . ')' . (string)$condition, 1185355020);
 		}
 		return $condition ? $this->trueValue : $this->falseValue;
 	}

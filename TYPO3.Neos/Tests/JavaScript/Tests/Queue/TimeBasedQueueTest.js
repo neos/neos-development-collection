@@ -1,8 +1,8 @@
-Ext.ns('F3.TYPO3.Queue');
+Ext.ns('TYPO3.TYPO3.Queue');
 
 describe('Time based queue', function() {
 
-	var queue = new F3.TYPO3.Queue.TimeBasedQueue();
+	var queue = new TYPO3.TYPO3.Queue.TimeBasedQueue();
 
 	describe('Basic events', function() {
 		beforeEach(function() {
@@ -123,7 +123,7 @@ describe('Time based queue', function() {
 	it ('2 Queues', function() {
 		queue.reset();
 		queue.add(function() {}, 0);
-		var queue2 = new F3.TYPO3.Queue.TimeBasedQueue();
+		var queue2 = new TYPO3.TYPO3.Queue.TimeBasedQueue();
 		queue2.add(function() {}, 0);
 
 		expect(queue.count()).toEqual(1);

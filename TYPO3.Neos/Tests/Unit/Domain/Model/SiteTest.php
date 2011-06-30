@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\Domain\Model;
+namespace TYPO3\TYPO3\Tests\Unit\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,14 +26,14 @@ namespace F3\TYPO3\Tests\Unit\Domain\Model;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class SiteTest extends \F3\FLOW3\Tests\UnitTestCase {
+class SiteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aNameCanBeSetAndRetrievedFromTheSite() {
-		$site = new \F3\TYPO3\Domain\Model\Site('');
+		$site = new \TYPO3\TYPO3\Domain\Model\Site('');
 		$site->setName('My cool website');
 		$this->assertSame('My cool website', $site->getName());
 	}
@@ -43,8 +43,8 @@ class SiteTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultStateOfASiteIsOnline() {
-		$site = new \F3\TYPO3\Domain\Model\Site('');
-		$this->assertSame(\F3\TYPO3\Domain\Model\Site::STATE_ONLINE, $site->getState());
+		$site = new \TYPO3\TYPO3\Domain\Model\Site('');
+		$this->assertSame(\TYPO3\TYPO3\Domain\Model\Site::STATE_ONLINE, $site->getState());
 	}
 
 	/**
@@ -52,9 +52,9 @@ class SiteTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theStateCanBeSetAndRetrieved() {
-		$site = new \F3\TYPO3\Domain\Model\Site('');
-		$site->setState(\F3\TYPO3\Domain\Model\Site::STATE_OFFLINE);
-		$this->assertSame(\F3\TYPO3\Domain\Model\Site::STATE_OFFLINE, $site->getState());
+		$site = new \TYPO3\TYPO3\Domain\Model\Site('');
+		$site->setState(\TYPO3\TYPO3\Domain\Model\Site::STATE_OFFLINE);
+		$this->assertSame(\TYPO3\TYPO3\Domain\Model\Site::STATE_OFFLINE, $site->getState());
 	}
 
 	/**
@@ -62,7 +62,7 @@ class SiteTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theSiteResourcesPackageKeyCanBeSetAndRetrieved() {
-		$site = new \F3\TYPO3\Domain\Model\Site('');
+		$site = new \TYPO3\TYPO3\Domain\Model\Site('');
 		$site->setSiteResourcesPackageKey('Foo');
 		$this->assertSame('Foo', $site->getSiteResourcesPackageKey());
 	}

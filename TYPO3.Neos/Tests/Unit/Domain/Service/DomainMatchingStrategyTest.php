@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\Domain\Service;
+namespace TYPO3\TYPO3\Tests\Unit\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,18 +26,18 @@ namespace F3\TYPO3\Tests\Unit\Domain\Service;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class DomainMatchingStrategyTest extends \F3\FLOW3\Tests\UnitTestCase {
+class DomainMatchingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly() {
-		$mockDomains = array($this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE));
+		$mockDomains = array($this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE));
 		$mockDomains[0]->expects($this->any())->method('getHostPattern')->will($this->returnValue('www.typo3.org'));
 		$expectedDomains = array($mockDomains[0]);
 
-		$strategy = new \F3\TYPO3\Domain\Service\DomainMatchingStrategy();
+		$strategy = new \TYPO3\TYPO3\Domain\Service\DomainMatchingStrategy();
 		$actualDomains = $strategy->getSortedMatches('www.typo3.org', $mockDomains);
 		$this->assertSame($expectedDomains, $actualDomains);
 	}
@@ -48,10 +48,10 @@ class DomainMatchingStrategyTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function getSortedMatchesFiltersTheGivenDomainsByTheSpecifiedHostAndReturnsThemSortedWithBestMatchesFirst() {
 		$mockDomains = array(
-			$this->getMock('F3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
-			$this->getMock('F3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
-			$this->getMock('F3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
-			$this->getMock('F3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
+			$this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array('dummy'), array(), '', FALSE),
 		);
 
 		$mockDomains[0]->setHostPattern('*.typo3.org');
@@ -65,7 +65,7 @@ class DomainMatchingStrategyTest extends \F3\FLOW3\Tests\UnitTestCase {
 			$mockDomains[2]
 		);
 
-		$strategy = new \F3\TYPO3\Domain\Service\DomainMatchingStrategy();
+		$strategy = new \TYPO3\TYPO3\Domain\Service\DomainMatchingStrategy();
 		$actualDomains = $strategy->getSortedMatches('flow3.typo3.org', $mockDomains);
 		$this->assertSame($expectedDomains, $actualDomains);
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\TypoScript;
+namespace TYPO3\TYPO3\Tests\Unit\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\Tests\Unit\TypoScript;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class MenuTest extends \F3\FLOW3\Tests\UnitTestCase {
+class MenuTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -35,12 +35,12 @@ class MenuTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function getItemsBuildsTheItemsArrayIfItHasNotBeenBuiltAlready() {
 		$mockItems = array('foo' => 'bar');
 
-		$mockContentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array('live'));
+		$mockContentContext = $this->getMock('TYPO3\TYPO3\Domain\Service\ContentContext', array(), array('live'));
 
-		$mockRenderingContext = $this->getMock('F3\TypoScript\RenderingContext');
+		$mockRenderingContext = $this->getMock('TYPO3\TypoScript\RenderingContext');
 		$mockRenderingContext->expects($this->once())->method('getContentContext')->will($this->returnValue($mockContentContext));
-		
-		$menu = $this->getMock('F3\TYPO3\TypoScript\Menu', array('buildItems'));
+
+		$menu = $this->getMock('TYPO3\TYPO3\TypoScript\Menu', array('buildItems'));
 		$menu->setRenderingContext($mockRenderingContext);
 
 		$menu->expects($this->once())->method('buildItems')->will($this->returnValue($mockItems));
@@ -56,8 +56,8 @@ class MenuTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Either finish test implementation or replace by system test
 	 */
-	public function buildItemsCanBuildDifferentKindsOfMenus($entryLevel, $lastLevel, \F3\TYPO3\Domain\Service\ContentContext $contentContext, array $expectedItems) {
-		$menu = $this->getAccessibleMock('F3\TYPO3\TypoScript\Menu', array('dummy'));
+	public function buildItemsCanBuildDifferentKindsOfMenus($entryLevel, $lastLevel, \TYPO3\TYPO3\Domain\Service\ContentContext $contentContext, array $expectedItems) {
+		$menu = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Menu', array('dummy'));
 		$menu->setEntryLevel($entryLevel);
 		$menu->setLastLevel($lastLevel);
 
@@ -67,12 +67,12 @@ class MenuTest extends \F3\FLOW3\Tests\UnitTestCase {
 
 
 	/**
-	 * 
+	 *
 	 */
 	public function buildItemData() {
-		$currentSite = $this->getMock('F3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);
+		$currentSite = $this->getMock('TYPO3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);
 
-		$contentContext = $this->getMock('F3\TYPO3\Domain\Service\ContentContext');
+		$contentContext = $this->getMock('TYPO3\TYPO3\Domain\Service\ContentContext');
 		$contentContext->expects($this->any())->method('getCurrentSite')->will($this->returnValue($currentSite));
 
 		return array(

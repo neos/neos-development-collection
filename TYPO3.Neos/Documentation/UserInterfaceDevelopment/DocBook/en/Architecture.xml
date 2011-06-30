@@ -57,7 +57,7 @@
 
     <itemizedlist>
       <listitem>
-        <para><methodname>configure(F3.TYPO3.Core.Registry)</methodname>: this
+        <para><methodname>configure(TYPO3.TYPO3.Core.Registry)</methodname>: this
         method should do all changes to the central registry (which gets
         passed as argument) inside this method. See the sectioon on the
         Registry for more explanation what it does. Essentially, the registry
@@ -66,7 +66,7 @@
       </listitem>
 
       <listitem>
-        <para><methodname>initialize(F3.TYPO3.Core.Application)</methodname>:
+        <para><methodname>initialize(TYPO3.TYPO3.Core.Application)</methodname>:
         in this method, the module descriptor can register itself to be called
         after another dependent module has been initialized, using the
         <code>application.afterInitializationOf(<replaceable>moduleName</replaceable>,
@@ -90,9 +90,9 @@
     <example>
       <title>Example Module Descriptor</title>
 
-      <programlisting>Ext.ns("F3.TYPO3.Dummy");
+      <programlisting>Ext.ns("Acme.TYPO3.Dummy");
 
-F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
+TYPO3.TYPO3.Core.Application.createModule('Acme.TYPO3.Dummy.DummyModule', {
 
 	configure: function(registry) {
 		registry.append('menu[main]', 'report', {<co
@@ -103,12 +103,12 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
 	},
 
 	initialize: function(application) {
-		application.afterInitializationOf('F3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {<co
+		application.afterInitializationOf('TYPO3.TYPO3.UserInterface.UserInterfaceModule', function(userInterfaceModule) {<co
           xml:id="example-module-descriptor.2" />
 
 			userInterfaceModule.addContentArea('report', 'dummy', {<co
           xml:id="example-module-descriptor.3" />
-				xtype: 'F3.TYPO3.Dummy.DummyContentArea',
+				xtype: 'Acme.TYPO3.Dummy.DummyContentArea',
 				name: 'Report'
 			});
 			userInterfaceModule.contentAreaOn('menu[main]/report', 'report', 'dummy');<co
@@ -165,7 +165,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
     <para>The TYPO3 backend is mainly extensible because of a central
     component which stores how the User Interface is built together: the
     <emphasis>registry</emphasis>. This is a singleton object available inside
-    <classname>F3.TYPO3.Core.Registry</classname>, and is thus accessible in
+    <classname>TYPO3.TYPO3.Core.Registry</classname>, and is thus accessible in
     all components.</para>
 
     <para><emphasis>The Registry is an extensible JSON
@@ -180,7 +180,7 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Dummy.DummyModule', {
 
     <programlisting>// Inside a Module Descriptor
 configure: function(registry) {
-	registry.set('some/path/foo', {title: 'Hello'}); 
+	registry.set('some/path/foo', {title: 'Hello'});
 	// this is the same as:
 	registry.set('some/path/foo/title', 'Hello');
 }
@@ -478,10 +478,10 @@ configure: function(registry) {
     <classname>Ext.util.Observable</classname>:</para>
 
     <programlisting>// Register an event listener
-F3.TYPO3.Core.Application.on('logout', this._onLogout, this);
+TYPO3.TYPO3.Core.Application.on('logout', this._onLogout, this);
 
 // at some other place, the event is fired, which triggers all registered event listeners:
-F3.TYPO3.Core.Application.fireEvent('logout');</programlisting>
+TYPO3.TYPO3.Core.Application.fireEvent('logout');</programlisting>
 
     <para>Some events are only relevant to the internals of the module, and
     should not be exposed to other modules. These events should, by

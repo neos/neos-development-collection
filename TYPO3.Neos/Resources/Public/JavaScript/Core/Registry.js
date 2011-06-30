@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Core');
+Ext.ns('TYPO3.TYPO3.Core');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,15 +21,15 @@ Ext.ns('F3.TYPO3.Core');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Core.Registry
+ * @class TYPO3.TYPO3.Core.Registry
  *
  * The registry provides the structure of all menus used in the application.
  *
- * @namespace F3.TYPO3.Core
+ * @namespace TYPO3.TYPO3.Core
  * @extends Ext.util.Observable
  * @singleton
  */
-F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
+TYPO3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 
 	/**
 	 * Intermediate or final configuration (built after calling compile)
@@ -63,7 +63,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 	 */
 	_compileVisit: function(context) {
 		var child;
-		if (!F3.TYPO3.Utils.isEmptyObject(context._children)) {
+		if (!TYPO3.TYPO3.Utils.isEmptyObject(context._children)) {
 			for (child in context._children) {
 				context[child] = this._compileVisit(context._children[child]);
 			}
@@ -157,7 +157,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 				var operationIterationIndex = 0,
 					insertableOperationFound = false;
 				Ext.each(context._operations[operationContextKey], function(operation) {
-					var index = F3.TYPO3.Utils.findIndexOf(result, function(entry) {
+					var index = TYPO3.TYPO3.Utils.findIndexOf(result, function(entry) {
 						return entry.key === operation.position;
 					});
 
@@ -390,7 +390,7 @@ F3.TYPO3.Core.Registry = new (Ext.extend(Ext.util.Observable, {
 		if (!resultFound) {
 			return null;
 		}
-		return F3.TYPO3.Utils.clone(context);
+		return TYPO3.TYPO3.Utils.clone(context);
 	},
 
 	/**

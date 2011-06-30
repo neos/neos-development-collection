@@ -8,15 +8,16 @@
 # possible configuration options.                                        #
 #                                                                        #
 
-FLOW3:
-  security:
-    authentication:
-      providers:
-        DefaultProvider:
-          providerClass: PersistedUsernamePasswordProvider
-          entryPoint:
-            WebRedirect:
-              uri: typo3/login
-      authenticationStrategy: oneToken
-  mvc:
-    notFoundController: F3\TYPO3\Controller\ErrorController
+TYPO3:
+  FLOW3:
+    security:
+      authentication:
+        providers:
+          DefaultProvider:
+            providerClass: PersistedUsernamePasswordProvider
+            entryPoint:
+              WebRedirect:
+                uri: typo3/login
+        authenticationStrategy: oneToken
+    mvc:
+      notFoundController: TYPO3\TYPO3\Controller\ErrorController

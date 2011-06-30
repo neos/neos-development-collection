@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Controller;
+namespace TYPO3\TYPO3\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,29 +27,29 @@ namespace F3\TYPO3\Controller;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
-class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
+class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\AccountRepository
+	 * @var \TYPO3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Package\PackageManagerInterface
+	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
 
@@ -62,11 +62,11 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected function initializeAction() {
 		switch ($this->request->getFormat()) {
 			case 'extdirect' :
-				$this->defaultViewObjectName = 'F3\ExtJS\ExtDirect\View';
+				$this->defaultViewObjectName = 'TYPO3\ExtJS\ExtDirect\View';
 				$this->errorMethodName = 'extErrorAction';
 				break;
 			case 'json' :
-				$this->defaultViewObjectName = 'F3\FLOW3\MVC\View\JsonView';
+				$this->defaultViewObjectName = 'TYPO3\FLOW3\MVC\View\JsonView';
 				break;
 		}
 	}
@@ -85,7 +85,7 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 		$this->view->assign('username', $username);
 
-		$version = $this->packageManager->getPackage('TYPO3')->getPackageMetaData()->getVersion();
+		$version = $this->packageManager->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
 		$this->view->assign('version', $version);
 	}
 
@@ -96,8 +96,8 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * to the login screen.
 	 *
 	 * Note: You need to send the username and password these two POST parameters:
-	 *       F3[FLOW3][Security][Authentication][Token][UsernamePassword][username]
-	 *   and F3[FLOW3][Security][Authentication][Token][UsernamePassword][password]
+	 *       TYPO3[FLOW3][Security][Authentication][Token][UsernamePassword][username]
+	 *   and TYPO3[FLOW3][Security][Authentication][Token][UsernamePassword][password]
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -107,7 +107,7 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 		try {
 			$this->authenticationManager->authenticate();
 			$authenticated = TRUE;
-		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
+		} catch (\TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException $exception) {
 		}
 
 		if ($authenticated) {

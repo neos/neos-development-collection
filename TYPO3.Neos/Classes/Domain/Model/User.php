@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Model;
+namespace TYPO3\TYPO3\Domain\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,7 +21,7 @@ namespace F3\TYPO3\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\Party\Domain\Model\Person;
+use \TYPO3\Party\Domain\Model\Person;
 
 /**
  * Domain Model of a User
@@ -35,7 +35,7 @@ class User extends Person  {
 	/**
 	 * Preferences of this user
 	 *
-	 * @var \F3\TYPO3\Domain\Model\UserPreferences
+	 * @var \TYPO3\TYPO3\Domain\Model\UserPreferences
 	 * @OneToOne(cascade={"all"})
 	 */
 	protected $preferences;
@@ -51,7 +51,7 @@ class User extends Person  {
 	}
 
 	/**
-	 * @return \F3\TYPO3\Domain\Model\UserPreferences
+	 * @return \TYPO3\TYPO3\Domain\Model\UserPreferences
 	 */
 	public function getPreferences() {
 		return $this->preferences;

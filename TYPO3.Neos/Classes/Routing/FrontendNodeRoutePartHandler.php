@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Routing;
+namespace TYPO3\TYPO3\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,8 +21,8 @@ namespace F3\TYPO3\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\TYPO3\Domain\Service\ContentContext;
-use \F3\TYPO3CR\Domain\Model\NodeInterface;
+use \TYPO3\TYPO3\Domain\Service\ContentContext;
+use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
@@ -30,7 +30,7 @@ use \F3\TYPO3CR\Domain\Model\NodeInterface;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class FrontendNodeRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	const MATCHRESULT_FOUND = TRUE;
 	const MATCHRESULT_NOWORKSPACE = -1;

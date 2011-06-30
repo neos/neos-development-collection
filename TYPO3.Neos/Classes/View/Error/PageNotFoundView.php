@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\View\Error;
+namespace TYPO3\TYPO3\View\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\View\Error;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PageNotFoundView extends \F3\TYPO3\View\Error\ErrorView {
+class PageNotFoundView extends \TYPO3\TYPO3\View\Error\ErrorView {
 
 	/**
 	 * Pre-filled variables for page not found labels

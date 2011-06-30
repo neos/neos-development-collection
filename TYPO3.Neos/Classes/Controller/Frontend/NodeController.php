@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Controller\Frontend;
+namespace TYPO3\TYPO3\Controller\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,11 +27,11 @@ namespace F3\TYPO3\Controller\Frontend;
  * @scope singleton
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
+class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Authentication\AuthenticationManagerInterface
+	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
@@ -43,17 +43,17 @@ class NodeController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * @var array
 	 */
-	protected $defaultViewObjectName = 'F3\TYPO3\View\TypoScriptView';
+	protected $defaultViewObjectName = 'TYPO3\TYPO3\View\TypoScriptView';
 
 	/**
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function showAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if (!$node->isAccessible()) {
 			$this->authenticationManager->authenticate();
 		}

@@ -1,5 +1,5 @@
-{namespace ext=F3\ExtJS\ViewHelpers}
-{namespace typo3=F3\TYPO3\ViewHelpers}
+{namespace ext=TYPO3\ExtJS\ViewHelpers}
+{namespace typo3=TYPO3\TYPO3\ViewHelpers}
 	<f:base/>
 	<title>{title}</title>
 	<meta charset="UTF-8" />
@@ -14,7 +14,7 @@
 <f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
 <f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
 
-<f:security.ifAccess resource="F3_TYPO3_Backend_BackendController">
+<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
 <f:alias map="{liveWorkspaceName: 'live'}"><f:if condition="{node.context.workspace.name} != {liveWorkspaceName}">
 
 <!-- SECTION: ExtJS + jQuery -->
@@ -50,7 +50,7 @@ Aloha.settings = {
 		}
 	},
 	//"repositories": {
-	//	"F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository": {}
+	//	"TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository": {}
 	//},
 	ribbon: false,
 	errorhandling: false,

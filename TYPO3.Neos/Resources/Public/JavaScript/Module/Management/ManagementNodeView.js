@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Management');
+Ext.ns('TYPO3.TYPO3.Module.Management');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Management');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Management.ManagementNodeView
+ * @class TYPO3.TYPO3.Module.Management.ManagementNodeView
  *
  * container for grid component
  *
- * @namespace F3.TYPO3.Module.Management
+ * @namespace TYPO3.TYPO3.Module.Management
  * @extends Ext.Container
  */
-F3.TYPO3.Module.Management.ManagementNodeView = Ext.extend(Ext.Panel, {
+TYPO3.TYPO3.Module.Management.ManagementNodeView = Ext.extend(Ext.Panel, {
 
 	/**
 	 * Initializer
@@ -38,24 +38,24 @@ F3.TYPO3.Module.Management.ManagementNodeView = Ext.extend(Ext.Panel, {
 			border: false,
 			layout: 'fit',
 			tbar: [{
-				text: F3.TYPO3.Core.I18n.get('TYPO3', 'content'),
-				iconCls: 'F3-TYPO3-Management-Content'
+				text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'content'),
+				iconCls: 'TYPO3-TYPO3-Management-Content'
 			}]
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Management.ManagementNodeView.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Management.ManagementNodeView.superclass.initComponent.call(this);
 
-		F3.TYPO3.Module.ManagementModule.on('F3.TYPO3.Module.Management.nodeSelected', function(node) {
+		TYPO3.TYPO3.Module.ManagementModule.on('TYPO3.TYPO3.Module.Management.nodeSelected', function(node) {
 			this.removeAll(true);
 			this.add({
-				xtype: 'F3.TYPO3.Module.Management.ManagementGrid',
+				xtype: 'TYPO3.TYPO3.Module.Management.ManagementGrid',
 				border: true,
 				padding: '6px',
-				cls: 'F3-TYPO3-Management-Grid-Element',
+				cls: 'TYPO3-TYPO3-Management-Grid-Element',
 				contextNodePath: node.attributes.id
 			});
 			this.doLayout();
 		}, this);
 	}
 });
-Ext.reg('F3.TYPO3.Module.Management.ManagementNodeView', F3.TYPO3.Module.Management.ManagementNodeView);
+Ext.reg('TYPO3.TYPO3.Module.Management.ManagementNodeView', TYPO3.TYPO3.Module.Management.ManagementNodeView);

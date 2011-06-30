@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Management');
+Ext.ns('TYPO3.TYPO3.Module.Management');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,34 +21,34 @@ Ext.ns('F3.TYPO3.Module.Management');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.ManagementModule
+ * @class TYPO3.TYPO3.Module.ManagementModule
  *
  * Management Module Component
  *
- * @namespace F3.TYPO3.Module.Management
+ * @namespace TYPO3.TYPO3.Module.Management
  * @singleton
  */
-F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ManagementModule', {
+TYPO3.TYPO3.Core.Application.createModule('TYPO3.TYPO3.Module.ManagementModule', {
 
 	/**
 	 *
-	 * @param {F3.TYPO3.Core.Registry} registry
+	 * @param {TYPO3.TYPO3.Core.Registry} registry
 	 * @return {void}
 	 */
 	configure: function(registry) {
 		registry.append('menu[main]', 'management', {
-			tabCls: 'F3-TYPO3-UserInterface-SectionMenu-ManagementTab',
-			title: F3.TYPO3.Core.I18n.get('TYPO3', 'management'),
+			tabCls: 'TYPO3-TYPO3-UserInterface-SectionMenu-ManagementTab',
+			title: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'management'),
 			itemId: 'management'
 		});
 
 		registry.append('management/components/west', 'defaultTree', {
-			xtype: 'F3.TYPO3.Module.Management.ManagementTree',
+			xtype: 'TYPO3.TYPO3.Module.Management.ManagementTree',
 			itemId: 'managementWestDefaultTree'
 		});
 
 		registry.append('management/components/center', 'defaultGrid', {
-			xtype: 'F3.TYPO3.Module.Management.ManagementNodeView',
+			xtype: 'TYPO3.TYPO3.Module.Management.ManagementNodeView',
 			itemId: 'managementCenterNodeView'
 		});
 
@@ -56,14 +56,14 @@ F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.ManagementModule', {
 
 	/**
 	 *
-	 * @param {F3.TYPO3.Core.Application} application
+	 * @param {TYPO3.TYPO3.Core.Application} application
 	 * @return {void}
 	 */
 	initialize: function(application) {
-		application.afterInitializationOf('F3.TYPO3.Module.UserInterfaceModule', function(userInterfaceModule) {
+		application.afterInitializationOf('TYPO3.TYPO3.Module.UserInterfaceModule', function(userInterfaceModule) {
 			userInterfaceModule.addContentArea('management', 'managementView', {
-				xtype: 'F3.TYPO3.Module.Management.ManagementView',
-				id: 'F3-TYPO3-Management-ManagementView'
+				xtype: 'TYPO3.TYPO3.Module.Management.ManagementView',
+				id: 'TYPO3-TYPO3-Management-ManagementView'
 			});
 			userInterfaceModule.contentAreaOn('menu[main]/management', 'management', 'managementView');
 

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,12 +27,12 @@ namespace F3\TYPO3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
+class BreadcrumbMenu extends \TYPO3\TYPO3\TypoScript\Menu {
 
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html';
+	protected $templateSource = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html';
 
 	/**
 	 * Maximum number of levels which should be rendered in this menu.
@@ -48,7 +48,7 @@ class BreadcrumbMenu extends \F3\TYPO3\TypoScript\Menu {
 	 * @return array An array of menu items and further information
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildItems(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+	protected function buildItems(\TYPO3\TYPO3\Domain\Service\ContentContext $contentContext) {
 
 		$breadcrumbNodes = $contentContext->getNodesOnPath($contentContext->getCurrentSiteNode(), $contentContext->getCurrentNode());
 		$currentSiteLevel = count($breadcrumbNodes) - 1;

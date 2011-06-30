@@ -1,4 +1,4 @@
-.F3-TYPO3-UserInterface-BreadcrumbMenu .x-panel-body {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu .x-panel-body {
 	border: 1px solid #4B4B4B;
 	border-bottom: 0;
 	background-color: #4c4c4c;
@@ -6,10 +6,10 @@
 	background: -moz-linear-gradient(top, #4b4b4b, #767676);
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu {
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu span {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu span {
 	display: inline-block;
 	white-space: nowrap;
 }
@@ -17,9 +17,9 @@
 /**
  * Add the transition settings
  */
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem,
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text,
-.F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
 	-moz-transition-property: width, opacity;
 	-moz-transition-duration: 0.1s, 0.2s;
 	-moz-transition-delay: 0.0s, 0.0s;
@@ -31,9 +31,9 @@
 	-webkit-transition-timing-function: ease-in-out;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-Debug .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem,
-.F3-TYPO3-UserInterface-BreadcrumbMenu-Debug .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text,
-.F3-TYPO3-UserInterface-BreadcrumbMenu-Debug .F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Debug .TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Debug .TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text,
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Debug .TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
 	-moz-transition-duration: .5s, .5s;
 	-moz-transition-delay: 0s, .1s;
 
@@ -42,15 +42,15 @@
 }
 
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
 	-moz-transition-property: all;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-onRender {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-onRender {
 	width: 0px;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem {
 	width: 47px;
 	height: 47px;
 	background-repeat: no-repeat;
@@ -61,22 +61,22 @@
 	opacity: 0.7;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden {
 	width: 0px;
 	opacity: 0;
 }
 
 /* Hack for webkit based browsers, to force the current rendering if
    breadcrumb menu items are expanded. */
-.ext-webkit .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden {
+.ext-webkit .TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-hidden {
 	width: 1px;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active {
 	opacity: 1;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
 	color: #ffffff;
 	font: 13px helvetica, arial, sans-serif;
 	font-weight:bold;
@@ -93,18 +93,18 @@
 	vertical-align:top;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text-active {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text-active {
 	opacity: 1;
 }
 
 
-/*.F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active > .F3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
+/*.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-active > .TYPO3-TYPO3-UserInterface-BreadcrumbMenu-MenuItem-Text {
 	opacity: 1;
 	width: auto;
 	padding-right: 10px;
 }*/
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Separator {
 	background-image: url('../Images/UserInterface/Icons/BreadcrumbMenuFold.png') !important;
 	background-repeat: no-repeat;
 	background-position: left 10px;
@@ -116,7 +116,7 @@
 	opacity: 0;
 }
 
-.F3-TYPO3-UserInterface-BreadcrumbMenu-Separator-active {
+.TYPO3-TYPO3-UserInterface-BreadcrumbMenu-Separator-active {
 	background-size: 25px 25px;
 	width: 35px;
 	opacity: 1;

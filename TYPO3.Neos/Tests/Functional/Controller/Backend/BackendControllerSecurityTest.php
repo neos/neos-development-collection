@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Functional\Controller\Backend;
+namespace TYPO3\TYPO3\Tests\Functional\Controller\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -21,14 +21,14 @@ namespace F3\TYPO3\Tests\Functional\Controller\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\TYPO3\Domain\Model\User;
+use \TYPO3\TYPO3\Domain\Model\User;
 
 /**
  * Testcase for method security of the backend controller
  *
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class BackendControllerSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
+class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 
 
@@ -56,15 +56,17 @@ class BackendControllerSecurityTest extends \F3\FLOW3\Tests\FunctionalTestCase {
 
 		$account = $this->authenticateRoles(array('Administrator'));
 		$account->setParty($user);
-		$this->sendWebRequest('Backend\Backend', 'TYPO3', 'index');
+		$this->sendWebRequest('Backend\Backend', 'TYPO3.TYPO3', 'index');
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException \F3\FLOW3\Security\Exception\AccessDeniedException
+	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 */
 	public function indexActionIsDeniedForEverybody() {
-		$this->sendWebRequest('Backend\Backend', 'TYPO3', 'index');
+		$this->sendWebRequest('Backend\Backend', 'TYPO3.TYPO3', 'index');
 	}
 }
+
+?>

@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.EditorFrontend');
+Ext.ns('TYPO3.TYPO3.Module.Content.EditorFrontend');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,15 +21,15 @@ Ext.ns('F3.TYPO3.Module.Content.EditorFrontend');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu
+ * @class TYPO3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu
  *
  * Class being responsible for implementing the Floating Menu shown when
  * being in Selection Mode. It uses the BreadcrumbMenuComponent internally.
  *
- * @namespace F3.TYPO3.Module.Content.EditorFrontend
+ * @namespace TYPO3.TYPO3.Module.Content.EditorFrontend
  * @singleton
  */
-F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
+TYPO3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 
 	/**
 	 * A reference to the Floating Menu div currently shown.
@@ -42,7 +42,7 @@ F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 	/**
 	 * A reference to the Breadcrumb Menu, if it is currently shown.
 	 *
-	 * @var {F3.TYPO3.Components.BreadcrumbMenuComponent}
+	 * @var {TYPO3.TYPO3.Components.BreadcrumbMenuComponent}
 	 * @private
 	 */
 	_breadcrumbMenu: null,
@@ -51,17 +51,17 @@ F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 	 * Initializer, called on page load. Is used to register event
 	 * listeners on the core.
 	 *
-	 * @param {F3.TYPO3.Module.Content.EditorFrontend.Core} core
+	 * @param {TYPO3.TYPO3.Module.Content.EditorFrontend.Core} core
 	 * @return {void}
 	 */
 	initialize: function(core) {
 		core.on('enableSelectionMode', function() {
-			Ext.select('.f3-typo3-contentelement').addListener('mouseenter', this._onMouseEnter, this);
-			Ext.select('.f3-typo3-contentelement').addListener('mouseleave', this._onMouseLeave, this);
+			Ext.select('.typo3-typo3-contentelement').addListener('mouseenter', this._onMouseEnter, this);
+			Ext.select('.typo3-typo3-contentelement').addListener('mouseleave', this._onMouseLeave, this);
 		}, this);
 		core.on('disableSelectionMode', function() {
-			Ext.select('.f3-typo3-contentelement').removeListener('mouseenter', this._onMouseEnter, this);
-			Ext.select('.f3-typo3-contentelement').removeListener('mouseleave', this._onMouseLeave, this);
+			Ext.select('.typo3-typo3-contentelement').removeListener('mouseenter', this._onMouseEnter, this);
+			Ext.select('.typo3-typo3-contentelement').removeListener('mouseleave', this._onMouseLeave, this);
 			this._removeFloatingMenu();
 		}, this);
 	},
@@ -78,16 +78,16 @@ F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 		var contentElement = this._findEnclosingContentElement(targetElement);
 		if (this._floatingMenu) this._removeFloatingMenu();
 		this._floatingMenu = contentElement.insertFirst({
-			cls: 'f3-typo3-selection-floatingmenu'
+			cls: 'typo3-typo3-selection-floatingmenu'
 		});
 		this._breadcrumbMenu = Ext.create({
-			xtype: 'F3.TYPO3.Components.BreadcrumbMenuComponent',
+			xtype: 'TYPO3.TYPO3.Components.BreadcrumbMenuComponent',
 			basePath: 'menu/selectionModeFloating',
 
 			// If we are under "createNode", and are on a leaf level,
 			// we show an up arrow and a down arrow as last level.
 			getNextMenuLevel: function(menupath) {
-				var childNodes = F3.TYPO3.Core.Registry.get(menupath + '/children');
+				var childNodes = TYPO3.TYPO3.Core.Registry.get(menupath + '/children');
 				if (childNodes !== null) {
 					return childNodes;
 				}
@@ -96,11 +96,11 @@ F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 					return [{
 						key: 'placementBefore',
 						text: 'Before',
-						iconCls: 'F3-TYPO3-Content-icon-upArrow'
+						iconCls: 'TYPO3-TYPO3-Content-icon-upArrow'
 					}, {
 						key: 'placementAfter',
 						text: 'After',
-						iconCls: 'F3-TYPO3-Content-icon-downArrow'
+						iconCls: 'TYPO3-TYPO3-Content-icon-downArrow'
 					}];
 				}
 				return null;
@@ -135,9 +135,9 @@ F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 			position = 1;
 		}
 		if (parentLevelMenuPath !== null) {
-			var parentLevelMenuConfiguration = F3.TYPO3.Core.Registry.get(parentLevelMenuPath);
+			var parentLevelMenuConfiguration = TYPO3.TYPO3.Core.Registry.get(parentLevelMenuPath);
 
-			F3.TYPO3.Module.Content.EditorFrontend.Core.createNewContentElement(
+			TYPO3.TYPO3.Module.Content.EditorFrontend.Core.createNewContentElement(
 				parentLevelMenuConfiguration.contentType,
 				referenceContentElement.getAttribute('about'),
 				referenceContentElement.dom,
@@ -156,7 +156,7 @@ F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 		this._removeFloatingMenu();
 
 			// We have to use call() since delete is a reserved word and will invalidate code validation
-		window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(this, contentElement.getAttribute('about'), function(result) {
+		window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(this, contentElement.getAttribute('about'), function(result) {
 			contentElement.remove();
 		}, this);
 	},
@@ -182,10 +182,10 @@ F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 	 * @private
 	 */
 	_findEnclosingContentElement: function(targetElement) {
-		if (Ext.fly(targetElement).hasClass('f3-typo3-contentelement')) {
+		if (Ext.fly(targetElement).hasClass('typo3-typo3-contentelement')) {
 			return Ext.get(targetElement);
 		} else {
-			return Ext.get(targetElement).parent('.f3-typo3-contentelement');
+			return Ext.get(targetElement).parent('.typo3-typo3-contentelement');
 		}
 	},
 
@@ -200,4 +200,4 @@ F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 		if (this._floatingMenu) this._floatingMenu.remove();
 	}
 };
-F3.TYPO3.Module.Content.EditorFrontend.Core.registerModule(F3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu);
+TYPO3.TYPO3.Module.Content.EditorFrontend.Core.registerModule(TYPO3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu);

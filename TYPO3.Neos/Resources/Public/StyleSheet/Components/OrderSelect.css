@@ -1,7 +1,7 @@
-.F3-TYPO3-Components-OrderSelect {
+.TYPO3-TYPO3-Components-OrderSelect {
 	color: #000000;
 }
 
-.F3-TYPO3-Components-OrderSelect .x-grid3-row-selected {
+.TYPO3-TYPO3-Components-OrderSelect .x-grid3-row-selected {
 	cursor: move;
 }

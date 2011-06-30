@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Core');
+Ext.ns('TYPO3.TYPO3.Core');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,15 +21,15 @@ Ext.ns('F3.TYPO3.Core');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Core.I18n
+ * @class TYPO3.TYPO3.Core.I18n
  *
  * Object used to store and fetch localized strings
  * based on package / key combination
  *
- * @namespace F3.TYPO3.Module.UserInterface
+ * @namespace TYPO3.TYPO3.Module.UserInterface
  * @singleton
  */
-F3.TYPO3.Core.I18n = {
+TYPO3.TYPO3.Core.I18n = {
 
 	/**
 	 * @var {object}
@@ -48,7 +48,7 @@ F3.TYPO3.Core.I18n = {
 	 */
 	initialize: function() {
 		this._data = {
-			TYPO3: {
+			'TYPO3.TYPO3': {
 				cancel: 'Cancel',
 				content: 'Content',
 				couldNotExtractBaseURI: 'Base URI could not be extracted',

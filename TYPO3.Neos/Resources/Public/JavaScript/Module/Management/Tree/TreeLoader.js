@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Management.Tree');
+Ext.ns('TYPO3.TYPO3.Module.Management.Tree');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Management.Tree');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Management.Tree.TreeLoader
+ * @class TYPO3.TYPO3.Module.Management.Tree.TreeLoader
  *
  * this is the tree loader component for the default tree view.
  *
- * @namespace F3.TYPO3.Module.Management.Tree
+ * @namespace TYPO3.TYPO3.Module.Management.Tree
  * @extends Ext.tree.TreeLoader
  */
-F3.TYPO3.Module.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
+TYPO3.TYPO3.Module.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
 	/**
 	 * Wrapper for extDirect call to NodeController which
@@ -39,7 +39,7 @@ F3.TYPO3.Module.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 	 * @return {void}
 	 */
 	directFn: function(contextNodePath, callback) {
-		F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3:Page', callback);
+		TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3.TYPO3:Page', callback);
 	},
 
 	/**
@@ -66,4 +66,4 @@ F3.TYPO3.Module.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
 });
 
-Ext.reg('F3.TYPO3.Module.Management.Tree.TreeLoader', F3.TYPO3.Module.Management.Tree.TreeLoader);
+Ext.reg('TYPO3.TYPO3.Module.Management.Tree.TreeLoader', TYPO3.TYPO3.Module.Management.Tree.TreeLoader);

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Controller;
+namespace TYPO3\TYPO3\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,32 +27,32 @@ namespace F3\TYPO3\Controller;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
-class ErrorController extends \F3\FLOW3\MVC\Controller\ActionController implements \F3\FLOW3\MVC\Controller\NotFoundControllerInterface {
+class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController implements \TYPO3\FLOW3\MVC\Controller\NotFoundControllerInterface {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Security\Context
+	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
 	 * @var array
 	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\Cli\Request');
+	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Web\Request', 'TYPO3\FLOW3\MVC\Cli\Request');
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\Exception
+	 * @var \TYPO3\FLOW3\MVC\Controller\Exception
 	 */
 	protected $exception;
 
 	/**
 	 * Sets the controller exception
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\Exception $exception
+	 * @param \TYPO3\FLOW3\MVC\Controller\Exception $exception
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setException(\F3\FLOW3\MVC\Controller\Exception $exception) {
+	public function setException(\TYPO3\FLOW3\MVC\Controller\Exception $exception) {
 		$this->exception = $exception;
 	}
 
@@ -67,12 +67,12 @@ class ErrorController extends \F3\FLOW3\MVC\Controller\ActionController implemen
 			$this->view->assign('errorMessage', $this->exception->getMessage());
 		}
 		switch (get_class($this->request)) {
-			case 'F3\FLOW3\MVC\Web\Request' :
+			case 'TYPO3\FLOW3\MVC\Web\Request' :
 				$pathWithoutFormat = substr($this->request->getRequestUri()->getPath(), 0 , strrpos($this->request->getRequestUri()->getPath(), '.'));
-				preg_match(\F3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $pathWithoutFormat, $matches);
+				preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $pathWithoutFormat, $matches);
 				if (isset($matches['WorkspaceName'])) {
 					$uri = $this->request->getBaseUri() . '@' . $matches['WorkspaceName'];
-				} elseif ($this->securityContext->getParty() instanceof \F3\TYPO3\Domain\Model\User) {
+				} elseif ($this->securityContext->getParty() instanceof \TYPO3\TYPO3\Domain\Model\User) {
 					$uri = $this->request->getBaseUri() . '@' . $this->securityContext->getParty()->getPreferences()->get('context.workspace');
 				} else {
 					$uri = $this->request->getBaseUri();
@@ -104,12 +104,12 @@ class ErrorController extends \F3\FLOW3\MVC\Controller\ActionController implemen
 	/**
 	 * Prepares a view for the current action and stores it in $this->view.
 	 *
-	 * @return \F3\Fluid\View\ViewInterface the resolved view
+	 * @return \TYPO3\Fluid\View\ViewInterface the resolved view
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveView() {
 		$view = new $this->defaultViewObjectName();
-		$view->setTemplatePathAndFilename('resource://TYPO3/Private/Templates/Error/Index.html');
+		$view->setTemplatePathAndFilename('resource://TYPO3.TYPO3/Private/Templates/Error/Index.html');
 		$view->setControllerContext($this->controllerContext);
 		return $view;
 	}

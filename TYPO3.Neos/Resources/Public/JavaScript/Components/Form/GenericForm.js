@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components.Form');
+Ext.ns('TYPO3.TYPO3.Components.Form');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Components.Form');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.Form.GenericForm
+ * @class TYPO3.TYPO3.Components.Form.GenericForm
  *
  * The generic form is a base for UI forms
  *
- * @namespace F3.TYPO3.Components.Form
+ * @namespace TYPO3.TYPO3.Components.Form
  * @extends Ext.form.FormPanel
  */
-F3.TYPO3.Components.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
+TYPO3.TYPO3.Components.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	initComponent: function() {
 		var config = {
 			paramsAsHash: true,
@@ -37,11 +37,11 @@ F3.TYPO3.Components.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 				labelSeparator: ''
 			},
 			header: false,
-			cls: 'F3-TYPO3-UserInterface-Form-GenericForm'
+			cls: 'TYPO3-TYPO3-UserInterface-Form-GenericForm'
 		};
 
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		F3.TYPO3.Components.Form.GenericForm.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Components.Form.GenericForm.superclass.initComponent.call(this);
 
 			// add event listeners
 		this.on('specialkey', this._specialKeyHandler, this);
@@ -198,10 +198,10 @@ F3.TYPO3.Components.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 	 */
 	_onFormBeforeAction: function(form, action) {
 		if (action.type === 'directload') {
-			this.el.mask(F3.TYPO3.Core.I18n.get('TYPO3', 'currentlyLoading'));
+			this.el.mask(TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'currentlyLoading'));
 		}
 		if (action.type === 'directsubmit') {
-			this.el.mask(F3.TYPO3.Core.I18n.get('TYPO3', 'currentlySaving'));
+			this.el.mask(TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'currentlySaving'));
 		}
 	},
 
@@ -221,4 +221,4 @@ F3.TYPO3.Components.Form.GenericForm = Ext.extend(Ext.form.FormPanel, {
 		}
 	}
 });
-Ext.reg('F3.TYPO3.Components.Form.GenericForm', F3.TYPO3.Components.Form.GenericForm);
+Ext.reg('TYPO3.TYPO3.Components.Form.GenericForm', TYPO3.TYPO3.Components.Form.GenericForm);

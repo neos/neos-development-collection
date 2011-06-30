@@ -1,11 +1,11 @@
-Ext.ns('F3.TYPO3.UserInterface');
+Ext.ns('TYPO3.TYPO3.UserInterface');
 
 describe("Test translation object", function() {
 
 	var proxy;
 
 	beforeEach(function() {
-		proxy = F3.TYPO3.Core.I18n;
+		proxy = TYPO3.TYPO3.Core.I18n;
 		proxy._initialized = true;
 	});
 

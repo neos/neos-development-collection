@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\ViewHelpers;
+namespace TYPO3\TYPO3\Tests\Unit\ViewHelpers;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\Tests\Unit\ViewHelpers;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class IncludeJavaScriptViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
+class IncludeJavaScriptViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper
+	 * @var \TYPO3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper
 	 */
 	protected $viewHelper;
 
@@ -37,13 +37,13 @@ class IncludeJavaScriptViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * Set up common mocks and object under test
 	 */
 	public function setUp() {
-		$this->request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$this->request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
 		$this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('MyPackage'));
-		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
+		$this->controllerContext = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
-		$this->resourcePublisher = $this->getMock('F3\FLOW3\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
+		$this->resourcePublisher = $this->getMock('TYPO3\FLOW3\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
 		$this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
-		$this->viewHelper = $this->getAccessibleMock('F3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
+		$this->viewHelper = $this->getAccessibleMock('TYPO3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
 		$this->viewHelper->setControllerContext($this->controllerContext);
 		$this->viewHelper->_set('resourcePublisher', $this->resourcePublisher);
 	}

@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Html');
+Ext.ns('TYPO3.TYPO3.Module.Content.EditorFrontend.Html');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,13 +21,13 @@ Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Html');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin
+ * @class TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Plugin
  *
  * Initialize Html editor in the EditorFrontend
  *
- * @namespace F3.TYPO3.Module.Content.EditorFrontend.Html
+ * @namespace TYPO3.TYPO3.Module.Content.EditorFrontend.Html
  */
-F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = {
+TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = {
 
 	/**
 	 * @var {Ext.Element}
@@ -51,7 +51,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = {
 	 */
 	init: function() {
 		var confirmButton = new Ext.Button({
-			text: F3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3', 'confirm'),
+			text: TYPO3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3.TYPO3', 'confirm'),
 			disabled: true,
 			handler: function() {
 				this._saveHandler();
@@ -62,12 +62,12 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = {
 		var containerInstance = VIE.ContainerManager.getInstanceForContainer(jQuery(this._element.dom));
 		htmlSource = containerInstance.get('typo3:source').replace(/(^\s+|\s+$)/g,'');
 
-		if (F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer.isEmptyHtmlContentElement(this._element.dom)) {
+		if (TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Initializer.isEmptyHtmlContentElement(this._element.dom)) {
 			htmlSource = '';
 		}
 
 		this._htmlEditorWindow = new Ext.Window({
-			title: F3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3', 'htmlEditor'),
+			title: TYPO3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3.TYPO3', 'htmlEditor'),
 			modal: true,
 			closeAction:'hide',
 			plain: true,
@@ -75,7 +75,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = {
 			width: top.Ext.getBody().getWidth() - 300,// a clean way we can manage the size
 
 			buttons: [confirmButton, {
-				text: F3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3', 'cancel'),
+				text: TYPO3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3.TYPO3', 'cancel'),
 				handler: function() {
 					this._htmlEditorWindow.hide();
 				}.createDelegate(this)
@@ -111,7 +111,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = {
 		containerInstance.save();
 		this._htmlEditorWindow.hide();
 
-		F3.TYPO3.Module.Content.EditorFrontend.Html.Initializer.insertPlaceholderIfElementIsEmpty(this._element.dom);
+		TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Initializer.insertPlaceholderIfElementIsEmpty(this._element.dom);
 	}
 
 };
@@ -119,7 +119,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = {
 /**
  * Constructor method
  */
-F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = Ext.extend(
+TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = Ext.extend(
 	/**
 	 *
 	 * @param {Ext.Element} element
@@ -129,7 +129,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin = Ext.extend(
 		this._element = element;
 		this.init();
 	},
-	F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin
+	TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Plugin
 );
 
-Ext.reg('F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin', F3.TYPO3.Module.Content.EditorFrontend.Html.Plugin);
+Ext.reg('TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Plugin', TYPO3.TYPO3.Module.Content.EditorFrontend.Html.Plugin);

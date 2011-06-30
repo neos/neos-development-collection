@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Service;
+namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -31,26 +31,26 @@ class SiteExportService {
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
 	 * Fetches the site with the given name and exports it into XML.
 	 *
-	 * @param array<\F3\TYPO3\Domain\Model\Site> $sites
+	 * @param array<\TYPO3\TYPO3\Domain\Model\Site> $sites
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function export(array $sites) {
-		$contentContext = new \F3\TYPO3CR\Domain\Service\Context('live');
+		$contentContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
 
 		$xmlWriter = new \XMLWriter();
 		$xmlWriter->openUri('php://output');
 		$xmlWriter->startDocument('1.0', 'UTF-8');
 		$xmlWriter->startElement('root');
 
-		/** @var $site \F3\TYPO3\Domain\Model\Site */
+		/** @var $site \TYPO3\TYPO3\Domain\Model\Site */
 		foreach ($sites as $site) {
 			$xmlWriter->startElement('site');
 
@@ -82,11 +82,11 @@ class SiteExportService {
 	/**
 	 * Export a single node.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\Node $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
 	 * @param \XMLWriter $xmlWriter
 	 * @return void
 	 */
-	protected function exportNode(\F3\TYPO3CR\Domain\Model\Node $node, \XMLWriter $xmlWriter) {
+	protected function exportNode(\TYPO3\TYPO3CR\Domain\Model\Node $node, \XMLWriter $xmlWriter) {
 		$xmlWriter->startElement('node');
 
 			// node attributes

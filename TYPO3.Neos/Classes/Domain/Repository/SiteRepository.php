@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Repository;
+namespace TYPO3\TYPO3\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -28,12 +28,12 @@ namespace F3\TYPO3\Domain\Repository;
  * @scope singleton
  * @api
  */
-class SiteRepository extends \F3\FLOW3\Persistence\Repository {
+class SiteRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 	/**
 	 * Finds the first site
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Site The first site or NULL if none exists
+	 * @return \TYPO3\TYPO3\Domain\Model\Site The first site or NULL if none exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

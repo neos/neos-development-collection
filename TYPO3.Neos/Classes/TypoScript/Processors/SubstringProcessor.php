@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class SubstringProcessor implements \F3\TypoScript\ProcessorInterface {
+class SubstringProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
 	 * The left boundary of the substring
@@ -79,10 +79,10 @@ class SubstringProcessor implements \F3\TypoScript\ProcessorInterface {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
-		if (!is_integer($this->start)) throw new \F3\TypoScript\Exception('Expected an integer as start position, ' . gettype($this->start) . ' given.', 1224003810);
-		if ($this->length !== NULL && !is_integer($this->length)) throw new \F3\TypoScript\Exception('Expected an integer as length, ' . gettype($this->length) . ' given.', 1224003811);
+		if (!is_integer($this->start)) throw new \TYPO3\TypoScript\Exception('Expected an integer as start position, ' . gettype($this->start) . ' given.', 1224003810);
+		if ($this->length !== NULL && !is_integer($this->length)) throw new \TYPO3\TypoScript\Exception('Expected an integer as length, ' . gettype($this->length) . ' given.', 1224003811);
 
-		return \F3\FLOW3\Utility\Unicode\Functions::substr((string)$subject, $this->start, $this->length);
+		return \TYPO3\FLOW3\Utility\Unicode\Functions::substr((string)$subject, $this->start, $this->length);
 	}
 }
 ?>

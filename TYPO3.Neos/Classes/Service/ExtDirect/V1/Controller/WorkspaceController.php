@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Service\ExtDirect\V1\Controller;
+namespace TYPO3\TYPO3\Service\ExtDirect\V1\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,7 +21,7 @@ namespace F3\TYPO3\Service\ExtDirect\V1\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\TYPO3\Domain\Service\ContentContext;
+use \TYPO3\TYPO3\Domain\Service\ContentContext;
 
 /**
  * ExtDirect Controller for managing Workspaces
@@ -29,18 +29,18 @@ use \F3\TYPO3\Domain\Service\ContentContext;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
-class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
+class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
 	 * @var string
 	 */
-	protected $viewObjectNamePattern = 'F3\TYPO3\Service\ExtDirect\V1\View\NodeView';
+	protected $viewObjectNamePattern = 'TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView';
 
 
 	/**
@@ -125,13 +125,13 @@ class WorkspaceController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Publishes the given node to the specified targetWorkspace
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @extdirect
 	 */
-	public function publishNodeAction(\F3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
+	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
 		$sourceWorkspace = $node->getWorkspace();
 		$sourceWorkspace->publishNodes(array($node), $targetWorkspaceName);
 

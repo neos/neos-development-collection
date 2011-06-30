@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class MultiplyProcessor implements \F3\TypoScript\ProcessorInterface {
+class MultiplyProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
 	 * The factor to multiply the subject with
@@ -58,8 +58,8 @@ class MultiplyProcessor implements \F3\TypoScript\ProcessorInterface {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
-		if (!is_numeric($subject)) throw new \F3\TypoScript\Exception('Expected a numeric string as first parameter.', 1224146988);
-		if (!is_float($this->factor) && !is_int($this->factor)) throw new \F3\TypoScript\Exception('Expected a float as second parameter.', 1224146995);
+		if (!is_numeric($subject)) throw new \TYPO3\TypoScript\Exception('Expected a numeric string as first parameter.', 1224146988);
+		if (!is_float($this->factor) && !is_int($this->factor)) throw new \TYPO3\TypoScript\Exception('Expected a float as second parameter.', 1224146995);
 		$subject = floatval($subject);
 		return $subject * $this->factor;
 	}

@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Aloha');
+Ext.ns('TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,18 +21,18 @@ Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Aloha');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository
+ * @class TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository
  *
  * This is a Page Repository, which can be used to build links to ther pages.
  * However, this is currently broken, as we do not support in-text links yet.
  *
- * @namespace F3.TYPO3.Module.Content.EditorFrontend.Aloha
+ * @namespace TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha
  * @extends Aloha.Repository
  * @singleton
  * @todo fix this
  */
-F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository = Ext.apply(
-	new Aloha.Repository('F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository'),
+TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository = Ext.apply(
+	new Aloha.Repository('TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository'),
 	{
 		settings: {
 			weight: 0.35
@@ -46,8 +46,8 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository = Ext.apply(
 			if (params.objectTypeFilter && jQuery.inArray('website', params.objectTypeFilter) == -1) {
 				callback.call(this, []);
 			}
-			var contextNodePath = window.parent.F3.TYPO3.Configuration.Application.siteNodePath
-			window.parent.F3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3:Page', 0, function(result) {
+			var contextNodePath = window.parent.TYPO3.TYPO3.Configuration.Application.siteNodePath
+			window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3.TYPO3:Page', 0, function(result) {
 				var items = [];
 				Ext.each(result.data, function(item) {
 						// TODO Filter on server side!

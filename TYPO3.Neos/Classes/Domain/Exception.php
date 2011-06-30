@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain;
+namespace TYPO3\TYPO3\Domain;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,7 +27,7 @@ namespace F3\TYPO3\Domain;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
-class Exception extends \F3\TYPO3\Exception {
+class Exception extends \TYPO3\TYPO3\Exception {
 
 }
 

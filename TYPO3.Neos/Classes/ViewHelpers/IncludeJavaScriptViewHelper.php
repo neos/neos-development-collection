@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\ViewHelpers;
+namespace TYPO3\TYPO3\ViewHelpers;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,11 +27,11 @@ namespace F3\TYPO3\ViewHelpers;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractViewHelper {
+class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Resource\Publishing\ResourcePublisher
+	 * @var \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher
 	 */
 	protected $resourcePublisher;
 
@@ -62,7 +62,7 @@ class IncludeJavaScriptViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractView
 		$uris = array();
 		foreach ($iterator as $file) {
 			$relativePath = substr($file->getPathname(), strlen($baseDirectory));
-			$relativePath = \F3\FLOW3\Utility\Files::getUnixStylePath($relativePath);
+			$relativePath = \TYPO3\FLOW3\Utility\Files::getUnixStylePath($relativePath);
 
 			if (!$this->patternMatchesPath($exclude, $relativePath) &&
 				$this->patternMatchesPath($include, $relativePath)) {

@@ -211,8 +211,8 @@ arbitary JSON
 	schema: {
 		"typo3:page": {
 			service: {
-				load: F3.TYPO3...NodeService.load,
-				store: F3.TYPO3...NodeService.store
+				load: TYPO3.TYPO3...NodeService.load,
+				store: TYPO3.TYPO3...NodeService.store
 			},
 			properties: {
 				// Flach, da assoc. array
@@ -237,14 +237,14 @@ arbitary JSON
 				}
 			}
 		},
-		'F3...Person': {
+		'TYPO3...Person': {
 			properties: {
 				personName: {
-					type: 'F3...PersonName'
+					type: 'TYPO3...PersonName'
 				}
 			}
 		},
-		'F3...PersonName': {
+		'TYPO3...PersonName': {
 			...
 		}
 	},
@@ -302,7 +302,7 @@ arbitary JSON
 ---->
 
 {
-	xtype: 'F3.TYPO3.Components.Form.GenericForm',
+	xtype: 'TYPO3.TYPO3.Components.Form.GenericForm',
 	type: 'typo3:page',
 	view: 'pageProperties'
 }

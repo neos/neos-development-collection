@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\ViewHelpers\Link;
+namespace TYPO3\TYPO3\ViewHelpers\Link;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -37,7 +37,7 @@ namespace F3\TYPO3\ViewHelpers\Link;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class NodeViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
+class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 
 	/**
 	 * @var string
@@ -72,9 +72,9 @@ class NodeViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelpe
 		$request = $this->controllerContext->getRequest();
 
 		if ($node === NULL) {
-			$contentContext = $this->viewHelperVariableContainer->get('F3\TYPO3', 'contentContext');
-			if (!$contentContext instanceof \F3\TYPO3\Domain\Service\ContentContext) {
-				throw new \F3\TYPO3\Exception(__CLASS__ . ' requires a valid ContentContext delivered through the View Helper Variable Container.', 1289557401);
+			$contentContext = $this->viewHelperVariableContainer->get('TYPO3\TYPO3', 'contentContext');
+			if (!$contentContext instanceof \TYPO3\TYPO3\Domain\Service\ContentContext) {
+				throw new \TYPO3\TYPO3\Exception(__CLASS__ . ' requires a valid ContentContext delivered through the View Helper Variable Container.', 1289557401);
 			}
 			$node = $contentContext->getCurrentNode();
 		}

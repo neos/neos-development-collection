@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components.Module');
+Ext.ns('TYPO3.TYPO3.Components.Module');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,25 +21,25 @@ Ext.ns('F3.TYPO3.Components.Module');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.Module.Container
+ * @class TYPO3.TYPO3.Components.Module.Container
  *
  * default component to include modules into the backend
  *
- * @namespace F3.TYPO3.Components
+ * @namespace TYPO3.TYPO3.Components
  * @extends Ext.Container
  */
-F3.TYPO3.Components.Module.Container = Ext.extend(Ext.Container, {
+TYPO3.TYPO3.Components.Module.Container = Ext.extend(Ext.Container, {
 
 	initComponent: function() {
 		var config = {
-			cls: 'F3-TYPO3-Components-ModuleContainer',
+			cls: 'TYPO3-TYPO3-Components-ModuleContainer',
 			layout: 'vbox',
 			layoutConfig: {
 				align: 'stretch'
 			}
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Components.Module.Container.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Components.Module.Container.superclass.initComponent.call(this);
 	}
 });
-Ext.reg('F3.TYPO3.Components.Module.Container', F3.TYPO3.Components.Module.Container);
+Ext.reg('TYPO3.TYPO3.Components.Module.Container', TYPO3.TYPO3.Components.Module.Container);

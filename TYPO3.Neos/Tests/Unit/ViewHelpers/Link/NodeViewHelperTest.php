@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\ViewHelpers\Link;
+namespace TYPO3\TYPO3\Tests\Unit\ViewHelpers\Link;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\Tests\Unit\ViewHelpers\Link;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
+class NodeViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\ViewHelpers\Link\NodeViewHelper
+	 * @var \TYPO3\TYPO3\ViewHelpers\Link\NodeViewHelper
 	 */
 	protected $viewHelper;
 
@@ -37,15 +37,15 @@ class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * Set up common mocks and object under test
 	 */
 	public function setUp() {
-		$this->request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$this->request = $this->getMock('TYPO3\FLOW3\MVC\Web\Request');
 		$this->request->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('MyPackage'));
-		$this->uriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$this->controllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
+		$this->uriBuilder = $this->getMock('TYPO3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->controllerContext = $this->getMock('TYPO3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 		$this->controllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($this->request));
 		$this->controllerContext->expects($this->any())->method('getUriBuilder')->will($this->returnValue($this->uriBuilder));
-		$this->tagBuilder = $this->getMock('F3\Fluid\Core\ViewHelper\TagBuilder');
-		$this->viewHelperVariableContainer = $this->getMock('F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer', array(), array(), '', FALSE);
-		$this->viewHelper = $this->getAccessibleMock('F3\TYPO3\ViewHelpers\Link\NodeViewHelper', array('renderChildren'));
+		$this->tagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder');
+		$this->viewHelperVariableContainer = $this->getMock('TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer', array(), array(), '', FALSE);
+		$this->viewHelper = $this->getAccessibleMock('TYPO3\TYPO3\ViewHelpers\Link\NodeViewHelper', array('renderChildren'));
 		$this->viewHelper->setControllerContext($this->controllerContext);
 		$this->viewHelper->injectTagBuilder($this->tagBuilder);
 		$this->viewHelper->setViewHelperVariableContainer($this->viewHelperVariableContainer);
@@ -56,14 +56,14 @@ class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderWithoutNodeGeneratesLinkToCurrentNode() {
-		$currentNode = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$currentNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 
-		$context = $this->getMock('F3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
+		$context = $this->getMock('TYPO3\TYPO3\Domain\Service\ContentContext', array(), array(), '', FALSE);
 		$context->expects($this->once())->method('getCurrentNode')->will($this->returnValue($currentNode));
 
 		$this->request->expects($this->once())->method('getFormat')->will($this->returnValue('xml.rss'));
 
-		$this->viewHelperVariableContainer->expects($this->once())->method('get')->with('F3\TYPO3', 'contentContext')->will($this->returnValue($context));
+		$this->viewHelperVariableContainer->expects($this->once())->method('get')->with('TYPO3\TYPO3', 'contentContext')->will($this->returnValue($context));
 
 		$this->uriBuilder->expects($this->once())->method('reset')->will($this->returnValue($this->uriBuilder));
 		$this->uriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(FALSE)->will($this->returnValue($this->uriBuilder));
@@ -84,7 +84,7 @@ class NodeViewHelperTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function renderWithNodeGeneratesLinkToGivenNode() {
-		$node = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 
 		$this->uriBuilder->expects($this->once())->method('reset')->will($this->returnValue($this->uriBuilder));
 		$this->uriBuilder->expects($this->once())->method('setCreateAbsoluteUri')->with(FALSE)->will($this->returnValue($this->uriBuilder));

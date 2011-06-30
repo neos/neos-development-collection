@@ -1,15 +1,15 @@
-Ext.ns('F3.TYPO3.Module.Workspace');
+Ext.ns('TYPO3.TYPO3.Module.Workspace');
 
 /**
- * @class F3.TYPO3.Module.Workspace.WorkspaceService
+ * @class TYPO3.TYPO3.Module.Workspace.WorkspaceService
  *
  * Workspace service for workspace related functions
  *
- * @namespace F3.TYPO3.Module.Workspace
+ * @namespace TYPO3.TYPO3.Module.Workspace
  * @extends Ext.util.Observable
  * @singleton
  */
-F3.TYPO3.Module.Workspace.Service = Ext.apply(new Ext.util.Observable, {
+TYPO3.TYPO3.Module.Workspace.Service = Ext.apply(new Ext.util.Observable, {
 
 	/**
 	 * Publishes the current user workspace
@@ -17,9 +17,9 @@ F3.TYPO3.Module.Workspace.Service = Ext.apply(new Ext.util.Observable, {
 	 * @return {void}
 	 */
 	publishUserWorkspace: function(callback, scope) {
-		F3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishWorkspace(F3.TYPO3.Configuration.Application.workspaceName, 'live', function(result) {
-			F3.TYPO3.Module.Workspace.Service.updateWorkspaceStatus();
-			F3.TYPO3.Module.WorkspaceModule.fireEvent('publishedWorkspace');
+		TYPO3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishWorkspace(TYPO3.TYPO3.Configuration.Application.workspaceName, 'live', function(result) {
+			TYPO3.TYPO3.Module.Workspace.Service.updateWorkspaceStatus();
+			TYPO3.TYPO3.Module.WorkspaceModule.fireEvent('publishedWorkspace');
 			if (Ext.isFunction(callback)) callback.call(scope, result);
 		});
 	},
@@ -30,9 +30,9 @@ F3.TYPO3.Module.Workspace.Service = Ext.apply(new Ext.util.Observable, {
 	 * @return {void}
 	 */
 	publishNode: function(node, callback, scope) {
-		F3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode(node, 'live', function(result) {
-			F3.TYPO3.Module.Workspace.Service.updateWorkspaceStatus();
-			F3.TYPO3.Module.WorkspaceModule.fireEvent('publishedNodes', node);
+		TYPO3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode(node, 'live', function(result) {
+			TYPO3.TYPO3.Module.Workspace.Service.updateWorkspaceStatus();
+			TYPO3.TYPO3.Module.WorkspaceModule.fireEvent('publishedNodes', node);
 			if (Ext.isFunction(callback)) callback.call(scope, result);
 		});
 	},
@@ -43,16 +43,16 @@ F3.TYPO3.Module.Workspace.Service = Ext.apply(new Ext.util.Observable, {
 	 * @return {}
 	 */
 	updateWorkspaceStatus: function(callback, scope) {
-		F3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.getStatus(F3.TYPO3.Configuration.Application.workspaceName, function(result) {
+		TYPO3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.getStatus(TYPO3.TYPO3.Configuration.Application.workspaceName, function(result) {
 			var status = result.data;
 				// TODO Move the saved unpublishedNodesCount to some context
-			if (F3.TYPO3.Module.WorkspaceModule.unpublishedNodesCount !== status.unpublishedNodesCount) {
-				F3.TYPO3.Module.WorkspaceModule.unpublishedNodesCount = status.unpublishedNodesCount;
+			if (TYPO3.TYPO3.Module.WorkspaceModule.unpublishedNodesCount !== status.unpublishedNodesCount) {
+				TYPO3.TYPO3.Module.WorkspaceModule.unpublishedNodesCount = status.unpublishedNodesCount;
 				status.changed = true;
 			} else {
 				status.changed = false;
 			}
-			F3.TYPO3.Module.WorkspaceModule.fireEvent('updatedWorkspaceStatus', status);
+			TYPO3.TYPO3.Module.WorkspaceModule.fireEvent('updatedWorkspaceStatus', status);
 			if (Ext.isFunction(callback)) callback.call(scope, result);
 		});
 	}

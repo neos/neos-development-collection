@@ -1,6 +1,6 @@
-F3\TYPO3\TypoScript\Page:
+TYPO3\TYPO3\TypoScript\Page:
   properties:
     head:
-      object: F3\TYPO3\TypoScript\Head
+      object: TYPO3\TYPO3\TypoScript\Head
     content:
-      object: F3\TYPO3\TypoScript\Content
+      object: TYPO3\TYPO3\TypoScript\Content

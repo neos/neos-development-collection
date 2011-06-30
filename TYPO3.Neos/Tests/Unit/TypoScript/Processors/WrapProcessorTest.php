@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class WrapProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class WrapProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\WrapProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\WrapProcessor
 	 */
 	protected $wrapProcessor;
 
@@ -39,7 +39,7 @@ class WrapProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->wrapProcessor = new \F3\TYPO3\TypoScript\Processors\WrapProcessor();
+		$this->wrapProcessor = new \TYPO3\TYPO3\TypoScript\Processors\WrapProcessor();
 	}
 
 	/**

@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Components.Form');
+Ext.ns('TYPO3.TYPO3.Components.Form');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,18 +21,18 @@ Ext.ns('F3.TYPO3.Components.Form');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Components.Form.FormFactory
+ * @class TYPO3.TYPO3.Components.Form.FormFactory
  *
  * The form factory creates form component configurations from registry
  * information
  *
- * @namespace F3.TYPO3.Components.Form
+ * @namespace TYPO3.TYPO3.Components.Form
  * @extends Ext.util.Observable
  *
  * @singleton
  * @todo: why does the form factory extend OBSERVABLE?
  */
-F3.TYPO3.Components.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
+TYPO3.TYPO3.Components.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 	/**
 	 * Create a form for the given type and optional view or config
 	 *
@@ -42,7 +42,7 @@ F3.TYPO3.Components.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 	 * @return {Object} resulting view configuration
 	 */
 	createForm: function(objectType, view, overrideConfig) {
-		var registry = F3.TYPO3.Core.Registry,
+		var registry = TYPO3.TYPO3.Core.Registry,
 			definition,
 			config;
 
@@ -69,7 +69,7 @@ F3.TYPO3.Components.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 	 * @private
 	 */
 	_processDefinition: function(definition, objectType, defaultType) {
-		var registry = F3.TYPO3.Core.Registry,
+		var registry = TYPO3.TYPO3.Core.Registry,
 			type = definition.type,
 			config, childDefaultType, fieldType, schemaDefinition, schemaPropertyDefinition;
 
@@ -82,16 +82,16 @@ F3.TYPO3.Components.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 		} else if (type === 'form') {
 			schemaDefinition = registry.get('schema/type/' + objectType);
 			config = {
-				xtype: 'F3.TYPO3.Components.Form.GenericForm',
+				xtype: 'TYPO3.TYPO3.Components.Form.GenericForm',
 				type: objectType,
 				title: definition.title,
 				api: {
 					// TODO Evaluate how to define APIs
-					load: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.show),
-					submit: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
-					update: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
-					create: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.create),
-					move: F3.TYPO3.Utils.getObjectByString(schemaDefinition.service.move)
+					load: TYPO3.TYPO3.Utils.getObjectByString(schemaDefinition.service.show),
+					submit: TYPO3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
+					update: TYPO3.TYPO3.Utils.getObjectByString(schemaDefinition.service.update),
+					create: TYPO3.TYPO3.Utils.getObjectByString(schemaDefinition.service.create),
+					move: TYPO3.TYPO3.Utils.getObjectByString(schemaDefinition.service.move)
 				}
 			};
 			if (definition.layout !== undefined) {
@@ -101,7 +101,7 @@ F3.TYPO3.Components.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 		} else if (type === 'field') {
 			schemaPropertyDefinition = registry.get('schema/type/' + objectType + '/properties/' + definition.property);
 			fieldType = schemaPropertyDefinition.type;
-			config = F3.TYPO3.Utils.clone(registry.get('form/editor/' + fieldType));
+			config = TYPO3.TYPO3.Utils.clone(registry.get('form/editor/' + fieldType));
 
 			Ext.apply(config, {
 				name: definition.property,
@@ -117,7 +117,7 @@ F3.TYPO3.Components.Form.FormFactory = new (Ext.extend(Ext.util.Observable, {
 							if (value.match(new RegExp(validation.options.regularExpression))) {
 								return true;
 							} else {
-								return F3.TYPO3.Core.I18n.get('TYPO3', 'valueDoesNotMatchPattern');
+								return TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'valueDoesNotMatchPattern');
 							}
 						};
 					}

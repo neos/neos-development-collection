@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Management');
+Ext.ns('TYPO3.TYPO3.Module.Management');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,40 +21,40 @@ Ext.ns('F3.TYPO3.Module.Management');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Management.ManagementTree
+ * @class TYPO3.TYPO3.Module.Management.ManagementTree
  *
  * the default management tree view component
  *
- * @namespace F3.TYPO3.Module.Management
+ * @namespace TYPO3.TYPO3.Module.Management
  * @extends Ext.tree.TreePanel
  */
-F3.TYPO3.Module.Management.ManagementTree = Ext.extend(Ext.tree.TreePanel, {
+TYPO3.TYPO3.Module.Management.ManagementTree = Ext.extend(Ext.tree.TreePanel, {
 
 	/**
 	 * Initializer
 	 */
 	initComponent: function() {
 		var config = {
-			cls: 'F3-TYPO3-Tree-Container',
+			cls: 'TYPO3-TYPO3-Tree-Container',
 			tbar: [{
-				text: F3.TYPO3.Core.I18n.get('TYPO3', 'pageTree'),
-				iconCls: 'F3-TYPO3-Management-Tree'
+				text: TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'pageTree'),
+				iconCls: 'TYPO3-TYPO3-Management-Tree'
 			}],
 			root: {
 				nodeType: 'async',
-				text: F3.TYPO3.Configuration.Application.siteName,
+				text: TYPO3.TYPO3.Configuration.Application.siteName,
 				draggable: false,
 				autoScroll: true,
-				id: F3.TYPO3.Configuration.Application.siteNodePath
+				id: TYPO3.TYPO3.Configuration.Application.siteNodePath
 			},
-			loader: new F3.TYPO3.Module.Management.Tree.TreeLoader()
+			loader: new TYPO3.TYPO3.Module.Management.Tree.TreeLoader()
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Management.ManagementTree.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Management.ManagementTree.superclass.initComponent.call(this);
 
 		this.on('click', function(node) {
-			F3.TYPO3.Module.ManagementModule.fireEvent('F3.TYPO3.Module.Management.nodeSelected', node);
+			TYPO3.TYPO3.Module.ManagementModule.fireEvent('TYPO3.TYPO3.Module.Management.nodeSelected', node);
 		});
 	}
 });
-Ext.reg('F3.TYPO3.Module.Management.ManagementTree', F3.TYPO3.Module.Management.ManagementTree);
+Ext.reg('TYPO3.TYPO3.Module.Management.ManagementTree', TYPO3.TYPO3.Module.Management.ManagementTree);

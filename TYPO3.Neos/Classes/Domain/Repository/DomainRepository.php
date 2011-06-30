@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Repository;
+namespace TYPO3\TYPO3\Domain\Repository;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -28,11 +28,11 @@ namespace F3\TYPO3\Domain\Repository;
  * @scope singleton
  * @api
  */
-class DomainRepository extends \F3\FLOW3\Persistence\Repository {
+class DomainRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Service\DomainMatchingStrategy
+	 * @var \TYPO3\TYPO3\Domain\Service\DomainMatchingStrategy
 	 */
 	protected $domainMatchingStrategy;
 

@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Management');
+Ext.ns('TYPO3.TYPO3.Module.Management');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,16 +21,16 @@ Ext.ns('F3.TYPO3.Module.Management');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Management.ManagementView
+ * @class TYPO3.TYPO3.Module.Management.ManagementView
  *
  * the main container component that splits the management module
  * into two columns. If you want to have a different split/layout you would
  * need to replace this component.
  *
- * @namespace F3.TYPO3.Module.Management
+ * @namespace TYPO3.TYPO3.Module.Management
  * @extends Ext.Container
  */
-F3.TYPO3.Module.Management.ManagementView = Ext.extend(Ext.Container, {
+TYPO3.TYPO3.Module.Management.ManagementView = Ext.extend(Ext.Container, {
 
 	/**
 	 * Initializer
@@ -58,7 +58,7 @@ F3.TYPO3.Module.Management.ManagementView = Ext.extend(Ext.Container, {
 			}]
 		};
 		Ext.apply(this, config);
-		F3.TYPO3.Module.Management.ManagementView.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Management.ManagementView.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -67,7 +67,7 @@ F3.TYPO3.Module.Management.ManagementView = Ext.extend(Ext.Container, {
 	 */
 	_getRegionItems: function(region) {
 		var items = [];
-		var config = F3.TYPO3.Core.Registry.get('management/components/' + region);
+		var config = TYPO3.TYPO3.Core.Registry.get('management/components/' + region);
 		Ext.each(config, function(component) {
 			var item = {};
 			Ext.apply(item, component, {layout: 'fit'});
@@ -77,4 +77,4 @@ F3.TYPO3.Module.Management.ManagementView = Ext.extend(Ext.Container, {
 	}
 
 });
-Ext.reg('F3.TYPO3.Module.Management.ManagementView', F3.TYPO3.Module.Management.ManagementView);
+Ext.reg('TYPO3.TYPO3.Module.Management.ManagementView', TYPO3.TYPO3.Module.Management.ManagementView);

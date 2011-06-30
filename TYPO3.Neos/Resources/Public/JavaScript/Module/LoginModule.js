@@ -1,32 +1,32 @@
-Ext.ns('F3.TYPO3.Module.Login');
+Ext.ns('TYPO3.TYPO3.Module.Login');
 
 /**
- * @class F3.TYPO3.Module.LoginModule
+ * @class TYPO3.TYPO3.Module.LoginModule
  *
  * Bootstrap for login related stores, data and components
  *
- * @namespace F3.TYPO3.Module.Login
+ * @namespace TYPO3.TYPO3.Module.Login
  * @singleton
  */
-F3.TYPO3.Core.Application.createModule('F3.TYPO3.Module.LoginModule', {
+TYPO3.TYPO3.Core.Application.createModule('TYPO3.TYPO3.Module.LoginModule', {
 
 	/**
 	 * Get login status after boostrap and handle logout event
 	 *
-	 * @param {F3.TYPO3.Core.Application} The Application object
+	 * @param {TYPO3.TYPO3.Core.Application} The Application object
 	 * @return {void}
 	 */
 	initialize: function(application) {
 		application.on('afterBootstrap', function() {
-			F3.TYPO3_Controller_LoginController.show(function(result) {
+			TYPO3.TYPO3_Controller_LoginController.show(function(result) {
 				if (result) {
-					F3.TYPO3.Module.LoginModule.fireEvent('updated', result.data);
+					TYPO3.TYPO3.Module.LoginModule.fireEvent('updated', result.data);
 				}
 			});
 		}, this);
 
 		application.on('logout', function() {
-			window.location.href = F3.TYPO3.Configuration.Application.frontendBaseUri;
+			window.location.href = TYPO3.TYPO3.Configuration.Application.frontendBaseUri;
 		}, this);
 	}
 });

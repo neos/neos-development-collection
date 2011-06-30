@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Aloha');
+Ext.ns('TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,14 +21,14 @@ Ext.ns('F3.TYPO3.Module.Content.EditorFrontend.Aloha');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer
+ * @class TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer
  *
  * Initialize Aloha editor in the EditorFrontend
  *
- * @namespace F3.TYPO3.Module.Content.EditorFrontend.Aloha
+ * @namespace TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha
  * @singleton
  */
-F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
+TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 
 	/**
 	 * Is aloha activated right now?
@@ -41,7 +41,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	 * Initializer, called on page load. Is used to register event
 	 * listeners on the core.
 	 *
-	 * @param {F3.TYPO3.Module.Content.EditorFrontend.Core} core
+	 * @param {TYPO3.TYPO3.Module.Content.EditorFrontend.Core} core
 	 * @return {void}
 	 */
 	initialize: function(core) {
@@ -84,7 +84,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	_overrideI18nLocalization: function() {
 		var alohaI18n = Aloha.i18n;
 		Aloha.i18n = function (component, key, replacements) {
-			var localizedString = F3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3', key);
+			var localizedString = TYPO3.TYPO3.Module.Content.EditorFrontend.Core.I18n.get('TYPO3.TYPO3', key);
 			if (localizedString === key) {
 				return alohaI18n.call(this, component, key, replacements);
 			}
@@ -104,7 +104,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 			jQuery.each(VIE.ContainerManager.instances, function(index, objectInstance) {
 				if (typeof objectInstance.editables !== 'undefined') {
 					if (VIE.AlohaEditable.refreshFromEditables(objectInstance)) {
-						F3.TYPO3.Module.Content.EditorFrontend.Core.fireEvent('modifiedContent');
+						TYPO3.TYPO3.Module.Content.EditorFrontend.Core.fireEvent('modifiedContent');
 						objectInstance.save();
 						jQuery.each(objectInstance.editables, function() {
 							this.setUnmodified();
@@ -125,7 +125,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	 */
 	_onNewlyCreatedContentElement: function(newContentElement) {
 		if (this._alohaEnabled) {
-			if(jQuery(newContentElement).is('.f3-typo3-contentelement-aloha')) {
+			if(jQuery(newContentElement).is('.typo3-typo3-contentelement-aloha')) {
 				jQuery(newContentElement).vieSemanticAloha();
 			}
 		}
@@ -150,12 +150,12 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 			this._alohaEnabled = true;
 
 				// Select all contentelements and build models for that
-			jQuery('.f3-typo3-contentelement-aloha').vieSemanticAloha();
+			jQuery('.typo3-typo3-contentelement-aloha').vieSemanticAloha();
 
 				// Explicitly activate editable for the clicked element (double click selection hack)
 			if (event && event.target) {
 				window.setTimeout(function() {
-					var editableElement = Ext.fly(event.target).findParent('.f3-typo3-editable');
+					var editableElement = Ext.fly(event.target).findParent('.typo3-typo3-editable');
 					if (editableElement && editableElement.id) {
 						Aloha.getEditableById(editableElement.id).activate();
 						Aloha.Selection.updateSelection(event);
@@ -183,7 +183,7 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	_disableAloha: function() {
 		if (this._alohaEnabled) {
 
-			jQuery('.f3-typo3-editable').mahalo();
+			jQuery('.typo3-typo3-editable').mahalo();
 			Aloha.FloatingMenu.extTabPanel.hide();
 			Aloha.FloatingMenu.shadow.hide();
 
@@ -192,4 +192,4 @@ F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer = {
 	}
 };
 
-F3.TYPO3.Module.Content.EditorFrontend.Core.registerModule(F3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer);
+TYPO3.TYPO3.Module.Content.EditorFrontend.Core.registerModule(TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.Initializer);

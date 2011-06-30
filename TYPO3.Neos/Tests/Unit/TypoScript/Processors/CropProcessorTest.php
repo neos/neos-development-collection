@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class CropProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\CropProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\CropProcessor
 	 */
 	protected $cropProcessor;
 
@@ -39,7 +39,7 @@ class CropProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->cropProcessor = new \F3\TYPO3\TypoScript\Processors\CropProcessor();
+		$this->cropProcessor = new \TYPO3\TYPO3\TypoScript\Processors\CropProcessor();
 	}
 
 	/**
@@ -65,7 +65,7 @@ class CropProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function cropWorksWithCropAtWordOption() {
 		$this->cropProcessor->setMaximumCharacters(18);
 		$this->cropProcessor->setPreOrSuffixString('...');
-		$this->cropProcessor->setOptions(\F3\TYPO3\TypoScript\Processors\CropProcessor::CROP_AT_WORD);
+		$this->cropProcessor->setOptions(\TYPO3\TYPO3\TypoScript\Processors\CropProcessor::CROP_AT_WORD);
 		$result = $this->cropProcessor->process('Kasper Skårhøj implemented the original version of the crop function.');
 		$expectedResult = 'Kasper Skårhøj ...';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "crop at word" option.');
@@ -80,7 +80,7 @@ class CropProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function cropWorksWithCropFromBeginningOption() {
 		$this->cropProcessor->setMaximumCharacters(14);
 		$this->cropProcessor->setPreOrSuffixString('...');
-		$this->cropProcessor->setOptions(\F3\TYPO3\TypoScript\Processors\CropProcessor::CROP_FROM_BEGINNING);
+		$this->cropProcessor->setOptions(\TYPO3\TYPO3\TypoScript\Processors\CropProcessor::CROP_FROM_BEGINNING);
 		$result = $this->cropProcessor->process('Kasper Skårhøj implemented the original version of the crop function.');
 		$expectedResult = '... implemented the original version of the crop function.';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "from beginning" option.');
@@ -95,7 +95,7 @@ class CropProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function cropWorksWithCropFromBeginningAtWordOptions() {
 		$this->cropProcessor->setMaximumCharacters(10);
 		$this->cropProcessor->setPreOrSuffixString('...');
-		$this->cropProcessor->setOptions(\F3\TYPO3\TypoScript\Processors\CropProcessor::CROP_FROM_BEGINNING | \F3\TYPO3\TypoScript\Processors\CropProcessor::CROP_AT_WORD);
+		$this->cropProcessor->setOptions(\TYPO3\TYPO3\TypoScript\Processors\CropProcessor::CROP_FROM_BEGINNING | \TYPO3\TYPO3\TypoScript\Processors\CropProcessor::CROP_AT_WORD);
 		$result = $this->cropProcessor->process('Kasper Skårhøj implemented the original version of the crop function.');
 		$expectedResult = '... implemented the original version of the crop function.';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "from beginning" and the "at word" option.');
@@ -110,7 +110,7 @@ class CropProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function cropWorksWithCropAtSentenceOption() {
 		$this->cropProcessor->setMaximumCharacters(80);
 		$this->cropProcessor->setPreOrSuffixString('...');
-		$this->cropProcessor->setOptions(\F3\TYPO3\TypoScript\Processors\CropProcessor::CROP_AT_SENTENCE);
+		$this->cropProcessor->setOptions(\TYPO3\TYPO3\TypoScript\Processors\CropProcessor::CROP_AT_SENTENCE);
 		$result = $this->cropProcessor->process('Kasper Skårhøj implemented the original version of the crop function. But now we are using a TextIterator. Not too bad either.');
 		$expectedResult = 'Kasper Skårhøj implemented the original version of the crop function. ...';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "crop" did not return the expected result while checking the "crop at sentence" option.');

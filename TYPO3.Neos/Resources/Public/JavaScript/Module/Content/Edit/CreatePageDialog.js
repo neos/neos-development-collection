@@ -1,4 +1,4 @@
-Ext.ns('F3.TYPO3.Module.Content.Edit');
+Ext.ns('TYPO3.TYPO3.Module.Content.Edit');
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,22 +21,22 @@ Ext.ns('F3.TYPO3.Module.Content.Edit');
  *                                                                        */
 
 /**
- * @class F3.TYPO3.Module.Content.Edit.CreatePageDialog
+ * @class TYPO3.TYPO3.Module.Content.Edit.CreatePageDialog
  *
  * A dialog for creating pages
  *
- * @namespace F3.TYPO3.Module.Content.Edit
- * @extends F3.TYPO3.Components.Module.Dialog
+ * @namespace TYPO3.TYPO3.Module.Content.Edit
+ * @extends TYPO3.TYPO3.Components.Module.Dialog
  */
-F3.TYPO3.Module.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.Components.Module.Dialog, {
+TYPO3.TYPO3.Module.Content.Edit.CreatePageDialog = Ext.extend(TYPO3.TYPO3.Components.Module.Dialog, {
 
 	/**
 	 * Initializer
 	 */
 	initComponent: function() {
 		var config = {
-			items: F3.TYPO3.Components.Form.FormFactory.createForm(
-				'TYPO3:Page',
+			items: TYPO3.TYPO3.Components.Form.FormFactory.createForm(
+				'TYPO3.TYPO3:Page',
 				'create',
 				{
 					ref: 'form',
@@ -50,12 +50,12 @@ F3.TYPO3.Module.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.Components.M
 						if (!this.getForm().isValid()) return;
 						var data = this.getForm().getValues();
 						data = this._convertFlatPropertiesToNestedData(data);
-						data['contentType'] = 'TYPO3:Page';
+						data['contentType'] = 'TYPO3.TYPO3:Page';
 						this.getForm().api.create.call(
 							this,
-							Ext.getCmp('F3.TYPO3.Module.ContentModule.create').getContextNodePath(),
+							Ext.getCmp('TYPO3.TYPO3.Module.ContentModule.create').getContextNodePath(),
 							data,
-							Ext.getCmp('F3.TYPO3.Module.ContentModule.create').getPosition(),
+							Ext.getCmp('TYPO3.TYPO3.Module.ContentModule.create').getPosition(),
 							this._onFormSubmitSuccess,
 							this
 						);
@@ -70,18 +70,18 @@ F3.TYPO3.Module.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.Components.M
 					_onFormSubmitSuccess: function(response, status) {
 						if (response) {
 							this.ownerCt.moduleMenu.removeModuleDialog();
-							F3.TYPO3.Module.ContentModule.getWebsiteContainer().loadPage(response.data.nextUri);
+							TYPO3.TYPO3.Module.ContentModule.getWebsiteContainer().loadPage(response.data.nextUri);
 						} else if (status.type == 'exception') {
-							Ext.MessageBox.alert(F3.TYPO3.Core.I18n.get('TYPO3', 'errorOccurred'), status.message);
+							Ext.MessageBox.alert(TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'errorOccurred'), status.message);
 						} else {
-							Ext.MessageBox.alert(F3.TYPO3.Core.I18n.get('TYPO3', 'unknownErrorOccurred'));
+							Ext.MessageBox.alert(TYPO3.TYPO3.Core.I18n.get('TYPO3.TYPO3', 'unknownErrorOccurred'));
 						}
 					}
 				}
 			)
 		};
 		Ext.apply(this, Ext.apply(this.initialConfig, config));
-		F3.TYPO3.Module.Content.Edit.CreatePageDialog.superclass.initComponent.call(this);
+		TYPO3.TYPO3.Module.Content.Edit.CreatePageDialog.superclass.initComponent.call(this);
 	},
 
 	/**
@@ -93,4 +93,4 @@ F3.TYPO3.Module.Content.Edit.CreatePageDialog = Ext.extend(F3.TYPO3.Components.M
 		this.form.doSubmitForm();
 	}
 });
-Ext.reg('F3.TYPO3.Module.Content.Edit.CreatePageDialog', F3.TYPO3.Module.Content.Edit.CreatePageDialog);
+Ext.reg('TYPO3.TYPO3.Module.Content.Edit.CreatePageDialog', TYPO3.TYPO3.Module.Content.Edit.CreatePageDialog);

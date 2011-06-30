@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,7 +27,7 @@ namespace F3\TYPO3\TypoScript\Processors;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
-class IfEmptyProcessor implements \F3\TypoScript\ProcessorInterface {
+class IfEmptyProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 
 	/**
 	 * The value that overrides the subject

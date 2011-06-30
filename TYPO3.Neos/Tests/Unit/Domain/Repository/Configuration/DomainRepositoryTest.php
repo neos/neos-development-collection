@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Tests\Unit\Domain\Repository\Configuration;
+namespace TYPO3\TYPO3\Tests\Unit\Domain\Repository\Configuration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,7 +26,7 @@ namespace F3\TYPO3\Tests\Unit\Domain\Repository\Configuration;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class DomainRepositoryTest extends \F3\FLOW3\Tests\UnitTestCase {
+class DomainRepositoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,18 +34,18 @@ class DomainRepositoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function findByHostInvokesTheDomainMatchingStrategyToFindDomainsMatchingTheGivenHost() {
 		$mockDomains = array();
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
-		$mockDomains[] = $this->getMock('F3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
+		$mockDomains[] = $this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE);
 
 		$expectedDomains = array($mockDomains[0], $mockDomains[2]);
 
-		$mockDomainMatchingStrategy = $this->getMock('F3\TYPO3\Domain\Service\DomainMatchingStrategy', array(), array(), '', FALSE);
+		$mockDomainMatchingStrategy = $this->getMock('TYPO3\TYPO3\Domain\Service\DomainMatchingStrategy', array(), array(), '', FALSE);
 		$mockDomainMatchingStrategy->expects($this->any())->method('getSortedMatches')->with('myhost', $mockDomains)->will($this->returnValue($expectedDomains));
 
-		$mockResult = $this->getMock('F3\FLOW3\Persistence\QueryResultInterface');
+		$mockResult = $this->getMock('TYPO3\FLOW3\Persistence\QueryResultInterface');
 		$mockResult->expects($this->once())->method('toArray')->will($this->returnValue($mockDomains));
-		$domainRepository = $this->getMock($this->buildAccessibleProxy('F3\TYPO3\Domain\Repository\DomainRepository'), array('findAll'), array(), '', FALSE);
+		$domainRepository = $this->getMock($this->buildAccessibleProxy('TYPO3\TYPO3\Domain\Repository\DomainRepository'), array('findAll'), array(), '', FALSE);
 		$domainRepository->expects($this->once())->method('findAll')->will($this->returnValue($mockResult));
 		$domainRepository->_set('domainMatchingStrategy', $mockDomainMatchingStrategy);
 

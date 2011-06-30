@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Domain\Service;
+namespace TYPO3\TYPO3\Domain\Service;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -21,7 +21,7 @@ namespace F3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \F3\FLOW3\I18n\Locale;
+use \TYPO3\FLOW3\I18n\Locale;
 
 /**
  * The Content Context
@@ -30,23 +30,23 @@ use \F3\FLOW3\I18n\Locale;
  * @scope prototype
  * @api
  */
-class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
+class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
+	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\DomainRepository
+	 * @var \TYPO3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;
 
@@ -56,17 +56,17 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 	protected $currentDateTime;
 
 	/**
-	 * @var \F3\FLOW3\I18n\Locale
+	 * @var \TYPO3\FLOW3\I18n\Locale
 	 */
 	protected $locale;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Site
+	 * @var \TYPO3\TYPO3\Domain\Model\Site
 	 */
 	protected $currentSite;
 
 	/**
-	 * @var \F3\TYPO3\Domain\Model\Domain
+	 * @var \TYPO3\TYPO3\Domain\Model\Domain
 	 */
 	protected $currentDomain;
 
@@ -91,7 +91,7 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the locale of this context.
 	 *
-	 * @return \F3\FLOW3\I18n\Locale
+	 * @return \TYPO3\FLOW3\I18n\Locale
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLocale() {
@@ -101,7 +101,7 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the current site from this frontend context
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Site The current site
+	 * @return \TYPO3\TYPO3\Domain\Model\Site The current site
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentSite() {
@@ -114,18 +114,18 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 	 * Note that changing the current site after the context has been in use
 	 * already can lead to unexpected behavior.
 	 *
-	 * @param \F3\TYPO3\Domain\Model\Site $site
+	 * @param \TYPO3\TYPO3\Domain\Model\Site $site
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setCurrentSite(\F3\TYPO3\Domain\Model\Site $site) {
+	public function setCurrentSite(\TYPO3\TYPO3\Domain\Model\Site $site) {
 		$this->currentSite = $site;
 	}
 
 	/**
 	 * Returns the current site from this frontend context
 	 *
-	 * @return \F3\TYPO3\Domain\Model\Structure\Domain The current site
+	 * @return \TYPO3\TYPO3\Domain\Model\Structure\Domain The current site
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -136,7 +136,7 @@ class ContentContext extends \F3\TYPO3CR\Domain\Service\Context {
 	/**
 	 * Returns the node of the current site.
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentSiteNode() {

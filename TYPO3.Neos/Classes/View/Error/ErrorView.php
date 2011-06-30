@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\View\Error;
+namespace TYPO3\TYPO3\View\Error;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,7 +27,7 @@ namespace F3\TYPO3\View\Error;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class ErrorView extends \F3\FLOW3\MVC\View\NotFoundView {
+class ErrorView extends \TYPO3\FLOW3\MVC\View\NotFoundView {
 
 	/**
 	 * Variable names and markers for substitution in static template
@@ -47,7 +47,7 @@ class ErrorView extends \F3\FLOW3\MVC\View\NotFoundView {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getTemplatePathAndFilename() {
-		return 'resource://TYPO3/Private/Templates/Frontend/Error/NotFound.html';
+		return 'resource://TYPO3.TYPO3/Private/Templates/Frontend/Error/NotFound.html';
 	}
 }
 

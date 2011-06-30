@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\View;
+namespace TYPO3\TYPO3\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,29 +27,29 @@ namespace F3\TYPO3\View;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
+class TypoScriptView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Service\TypoScriptService
+	 * @var \TYPO3\TYPO3\Domain\Service\TypoScriptService
 	 */
 	protected $typoScriptService;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TypoScript\ObjectFactory
+	 * @var \TYPO3\TypoScript\ObjectFactory
 	 */
 	protected $typoScriptObjectFactory;
 
@@ -61,7 +61,7 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		if (!isset($this->variables['value']) || !$this->variables['value'] instanceof \F3\TYPO3CR\Domain\Model\NodeInterface) {
+		if (!isset($this->variables['value']) || !$this->variables['value'] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
 			return 'TypoScriptView: A valid node must be assigned to the variable "value" via the TypoScriptView\'s assign() method.';
 		}
 
@@ -71,13 +71,13 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 		$type = 'default';
 		$typoScriptObjectTree = $this->typoScriptService->getMergedTypoScriptObjectTree($contentContext->getCurrentSiteNode(), $node);
 		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
-			throw new \F3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current position in the content tree.', 1255513200);
+			throw new \TYPO3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current position in the content tree.', 1255513200);
 		}
 
 		$expectedTypoScriptObjectName = $this->typoScriptObjectFactory->getTypoScriptObjectNameByNode($node);
 
 		$firstLevelTypoScriptObject = NULL;
-		if ($expectedTypoScriptObjectName === 'F3\TYPO3\TypoScript\Page') {
+		if ($expectedTypoScriptObjectName === 'TYPO3\TYPO3\TypoScript\Page') {
 			foreach ($typoScriptObjectTree as $possibleFirstLevelTypoScriptObject) {
 				if (is_a($possibleFirstLevelTypoScriptObject, $expectedTypoScriptObjectName) && $possibleFirstLevelTypoScriptObject->getType() === $type) {
 					$firstLevelTypoScriptObject = $possibleFirstLevelTypoScriptObject;
@@ -86,7 +86,7 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 			}
 
 			if ($firstLevelTypoScriptObject === NULL) {
-				throw new \F3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
+				throw new \TYPO3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
 			}
 		} else {
 			foreach ($typoScriptObjectTree as $possibleFirstLevelTypoScriptObject) {
@@ -103,7 +103,7 @@ class TypoScriptView extends \F3\FLOW3\MVC\View\AbstractView {
 			$firstLevelTypoScriptObject->setNode($node);
 		}
 
-		$renderingContext = new \F3\TypoScript\RenderingContext();
+		$renderingContext = new \TYPO3\TypoScript\RenderingContext();
 		$renderingContext->setControllerContext($this->controllerContext);
 		$renderingContext->setContentContext($contentContext);
 

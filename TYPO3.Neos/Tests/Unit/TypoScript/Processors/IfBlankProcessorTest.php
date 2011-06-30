@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\TypoScript\Processors;
+namespace TYPO3\TYPO3\TypoScript\Processors;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -26,10 +26,10 @@ namespace F3\TYPO3\TypoScript\Processors;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class IfBlankProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
+class IfBlankProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Processors\IfBlankProcessor
+	 * @var \TYPO3\TYPO3\TypoScript\Processors\IfBlankProcessor
 	 */
 	protected $ifBlankProcessor;
 
@@ -39,7 +39,7 @@ class IfBlankProcessorTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->ifBlankProcessor = new \F3\TYPO3\TypoScript\Processors\IfBlankProcessor();
+		$this->ifBlankProcessor = new \TYPO3\TYPO3\TypoScript\Processors\IfBlankProcessor();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TYPO3\Command;
+namespace TYPO3\TYPO3\Command;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -27,23 +27,23 @@ namespace F3\TYPO3\Command;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
-class SiteCommandController extends \F3\FLOW3\MVC\Controller\CommandController {
+class SiteCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Repository\SiteRepository
+	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Service\SiteImportService
+	 * @var \TYPO3\TYPO3\Domain\Service\SiteImportService
 	 */
 	protected $siteImportService;
 
 	/**
 	 * @inject
-	 * @var \F3\TYPO3\Domain\Service\SiteExportService
+	 * @var \TYPO3\TYPO3\Domain\Service\SiteExportService
 	 */
 	protected $siteExportService;
 
