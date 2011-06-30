@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -31,18 +31,18 @@ class ObjectFactory {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Creates a new TypoScript object which is supposed to render the given node.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node
 	 * @return mixed Either the TypoScript Object or FALSE if no object could be created for the given node
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createByNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function createByNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$typoScriptObjectName = $this->getTypoScriptObjectNameByNode($node);
 
 		$typoScriptObject = $this->objectManager->create($typoScriptObjectName);
@@ -54,33 +54,33 @@ class ObjectFactory {
 	 * Figures out which TypoScript object to use for rendering a given node,
 	 * and returns the class name as string.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node
 	 * @return string The TypoScript object name with which the current node should be rendered with.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getTypoScriptObjectNameByNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function getTypoScriptObjectNameByNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$contentType = $node->getContentType();
 		if (strpos($contentType, ':') !== FALSE) {
 			list($packageKey, $typoScriptObjectName) = explode(':', $contentType);
-			$possibleTypoScriptObjectName = 'F3\\'. $packageKey . '\\TypoScript\\' . $typoScriptObjectName;
+			$possibleTypoScriptObjectName = str_replace('.', '\\', $packageKey) . '\\TypoScript\\' . $typoScriptObjectName;
 			if ($this->objectManager->isRegistered($possibleTypoScriptObjectName) === TRUE) {
 				return $possibleTypoScriptObjectName;
 			}
 		}
 
-		return 'F3\TYPO3\TypoScript\Node';
+		return 'TYPO3\TYPO3\TypoScript\Node';
 	}
 
 	/**
 	 * Creates a new TypoScript object by the specified name.
 	 *
 	 * @param string $typoScriptObjectName Short object name
-	 * @return \F3\TypoScript\ObjectInterface The TypoScript Object
+	 * @return \TYPO3\TypoScript\ObjectInterface The TypoScript Object
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Needs some real implementation
 	 */
 	public function createByName($typoScriptObjectName) {
-		return $this->objectManager->create('F3\TYPO3\TypoScript\\' . $typoScriptObjectName);
+		return $this->objectManager->create('TYPO3\TYPO3\TypoScript\\' . $typoScriptObjectName);
 	}
 }
 ?>

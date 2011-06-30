@@ -5,7 +5,7 @@
 //
 // See #7552
 
-namespace: default = F3\TypoScript\Fixtures
+namespace: default = TYPO3\TypoScript\Fixtures
 
 object1 = Text
 object1.value = '

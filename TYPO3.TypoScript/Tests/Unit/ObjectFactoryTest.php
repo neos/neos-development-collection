@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript\Tests\Unit;
+namespace TYPO3\TypoScript\Tests\Unit;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -26,7 +26,7 @@ namespace F3\TypoScript\Tests\Unit;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class ObjectFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
+class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -34,17 +34,17 @@ class ObjectFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createByNodeCreatesANodeTypoScriptObjectIfNoSpecializedTypoScriptObjectExistsForTheContentType($contentType) {
-		$node = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$node->expects($this->once())->method('getContentType')->will($this->returnValue($contentType));
 
-		$expectedTypoScriptObject = $this->getMock('F3\TypoScript\ObjectInterface');
+		$expectedTypoScriptObject = $this->getMock('TYPO3\TypoScript\ObjectInterface');
 		$expectedTypoScriptObject->expects($this->once())->method('setNode')->with($node);
 
-		$objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$objectManager->expects($this->once())->method('create')->with('F3\TYPO3\TypoScript\Node')->will($this->returnValue($expectedTypoScriptObject));
+		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3\TypoScript\Node')->will($this->returnValue($expectedTypoScriptObject));
 		$objectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(FALSE));
 
-		$objectFactory = $this->getAccessibleMock('F3\TypoScript\ObjectFactory', array('dummy'));
+		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('dummy'));
 		$objectFactory->_set('objectManager', $objectManager);
 
 		$actualTypoScriptObject = $objectFactory->createByNode($node);
@@ -59,7 +59,7 @@ class ObjectFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	public function unsupportedContentTypes() {
 		return array(
 			array('unstructured'),
-			array('TYPO3:Googolplex'),
+			array('TYPO3.TYPO3:Googolplex'),
 			array('urks'),
 			array('Drupal:Node'),
 			array('-')
@@ -71,17 +71,17 @@ class ObjectFactoryTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createByNodeCreatesASpecificTypoScriptObjectIfOneExistsForTheContentType() {
-		$node = $this->getMock('F3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
-		$node->expects($this->once())->method('getContentType')->will($this->returnValue('TYPO3:ContensUniversalis'));
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$node->expects($this->once())->method('getContentType')->will($this->returnValue('TYPO3.TYPO3:ContensUniversalis'));
 
-		$expectedTypoScriptObject = $this->getMock('F3\TypoScript\ObjectInterface');
+		$expectedTypoScriptObject = $this->getMock('TYPO3\TypoScript\ObjectInterface');
 		$expectedTypoScriptObject->expects($this->once())->method('setNode')->with($node);
 
-		$objectManager = $this->getMock('F3\FLOW3\Object\ObjectManagerInterface');
-		$objectManager->expects($this->once())->method('create')->with('F3\TYPO3\TypoScript\ContensUniversalis')->will($this->returnValue($expectedTypoScriptObject));
+		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3\TypoScript\ContensUniversalis')->will($this->returnValue($expectedTypoScriptObject));
 		$objectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(TRUE));
 
-		$objectFactory = $this->getAccessibleMock('F3\TypoScript\ObjectFactory', array('dummy'));
+		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('dummy'));
 		$objectFactory->_set('objectManager', $objectManager);
 
 		$actualTypoScriptObject = $objectFactory->createByNode($node);

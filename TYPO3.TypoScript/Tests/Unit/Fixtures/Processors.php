@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript\Fixtures;
+namespace TYPO3\TypoScript\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript"                  *
@@ -27,7 +27,7 @@ namespace F3\TypoScript\Fixtures;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class Processors implements \F3\TypoScript\ProcessorInterface {
+class Processors implements \TYPO3\TypoScript\ProcessorInterface {
 	public function process($subject) {
 		return 'foo';
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -26,7 +26,7 @@ namespace F3\TypoScript;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PropertyProcessingProxy implements \F3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
+class PropertyProcessingProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
 
 	/**
 	 * @var mixed
@@ -34,7 +34,7 @@ class PropertyProcessingProxy implements \F3\Fluid\Core\Parser\SyntaxTree\Render
 	protected $propertyValue;
 
 	/**
-	 * @var \F3\TypoScript\ProcessorChain
+	 * @var \TYPO3\TypoScript\ProcessorChain
 	 */
 	protected $processorChains;
 
@@ -42,10 +42,10 @@ class PropertyProcessingProxy implements \F3\Fluid\Core\Parser\SyntaxTree\Render
 	 * Constructs this proxy
 	 *
 	 * @param mixed $propertyValue
-	 * @param \F3\TypoScript\ProcessorChain $processorChain
+	 * @param \TYPO3\TypoScript\ProcessorChain $processorChain
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($propertyValue, \F3\TypoScript\ProcessorChain $processorChain) {
+	public function __construct($propertyValue, \TYPO3\TypoScript\ProcessorChain $processorChain) {
 		$this->propertyValue = $propertyValue;
 		$this->processorChains = $processorChain;
 	}
@@ -53,11 +53,11 @@ class PropertyProcessingProxy implements \F3\Fluid\Core\Parser\SyntaxTree\Render
 	/**
 	 * Injects the current rendering context.
 	 *
-	 * @param \F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRenderingContext(\F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
+	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
 		$this->renderingContext = $renderingContext;
 	}
 
@@ -69,7 +69,7 @@ class PropertyProcessingProxy implements \F3\Fluid\Core\Parser\SyntaxTree\Render
 	 */
 	public function __toString() {
 		try {
-			if ($this->propertyValue instanceof \F3\TypoScript\ContentObjectInterface) {
+			if ($this->propertyValue instanceof \TYPO3\TypoScript\ContentObjectInterface) {
 				$this->propertyValue = $this->propertyValue->render($this->renderingContext);
 			}
 			return ($this->processorChains === NULL) ? $this->propertyValue : $this->processorChains->process($this->propertyValue);

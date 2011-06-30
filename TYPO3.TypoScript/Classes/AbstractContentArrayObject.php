@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -26,7 +26,7 @@ namespace F3\TypoScript;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContentObject implements \ArrayAccess, \Countable {
+abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayAccess, \Countable {
 
 	/**
 	 * An array which contains further content objects which can be set and retrieved through numeric indexes
@@ -110,7 +110,7 @@ abstract class AbstractContentArrayObject extends \F3\TypoScript\AbstractContent
 	public function render() {
 		$content = '';
 		foreach ($this->contentArray as $contentItem) {
-			if ($contentItem instanceof \F3\TypoScript\ContentObjectInterface) {
+			if ($contentItem instanceof \TYPO3\TypoScript\ContentObjectInterface) {
 				$contentItem->setRenderingContext($this->renderingContext);
 				$content .= $contentItem->render();
 			}

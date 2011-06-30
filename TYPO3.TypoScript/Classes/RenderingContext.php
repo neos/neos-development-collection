@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -32,17 +32,17 @@ namespace F3\TypoScript;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class RenderingContext implements \F3\Fluid\Core\Rendering\RenderingContextInterface {
+class RenderingContext implements \TYPO3\Fluid\Core\Rendering\RenderingContextInterface {
 
 	/**
-	 * @var \F3\TYPO3\Domain\Service\ContentContext
+	 * @var \TYPO3\TYPO3\Domain\Service\ContentContext
 	 */
 	protected $contentContext;
 
 	/**
 	 * Template Variable Container. Contains all variables available through object accessors in the template
 	 *
-	 * @var \F3\Fluid\Core\ViewHelper\TemplateVariableContainer
+	 * @var \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer
 	 */
 	protected $templateVariableContainer;
 
@@ -50,39 +50,39 @@ class RenderingContext implements \F3\Fluid\Core\Rendering\RenderingContextInter
 	 * Object manager which is bubbled through. The ViewHelperNode cannot get an ObjectManager injected because
 	 * the whole syntax tree should be cacheable
 	 *
-	 * @var \F3\FLOW3\Object\ObjectManagerInterface
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Controller context being passed to the ViewHelper
 	 *
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \TYPO3\FLOW3\MVC\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
 	/**
 	 * ViewHelper Variable Container
 	 *
-	 * @var \F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer
+	 * @var \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer
 	 */
 	protected $viewHelperVariableContainer;
 
 	/**
 	 * Sets the content context
 	 *
-	 * @param \F3\TYPO3\Domain\Service\ContentContext $contentContext
+	 * @param \TYPO3\TYPO3\Domain\Service\ContentContext $contentContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContentContext(\F3\TYPO3\Domain\Service\ContentContext $contentContext) {
+	public function setContentContext(\TYPO3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$this->contentContext = $contentContext;
 	}
 
 	/**
 	 * Returns the content context
 	 *
-	 * @return \F3\TYPO3\Domain\Service\ContentContext
+	 * @return \TYPO3\TYPO3\Domain\Service\ContentContext
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentContext() {
@@ -92,17 +92,17 @@ class RenderingContext implements \F3\Fluid\Core\Rendering\RenderingContextInter
 	/**
 	 * Inject the object manager
 	 *
-	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ObjectManagerInterface $objectManager) {
+	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Returns the object manager. Only the ViewHelperNode should do this.
 	 *
-	 * @param F3\FLOW3\Object\ObjectManagerInterface $objectManager
+	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getObjectManager() {
@@ -113,17 +113,17 @@ class RenderingContext implements \F3\Fluid\Core\Rendering\RenderingContextInter
 	 * Injects the template variable container containing all variables available through ObjectAccessors
 	 * in the template
 	 *
-	 * @param F3\Fluid\Core\ViewHelper\TemplateVariableContainer $templateVariableContainer The template variable container to set
+	 * @param \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer $templateVariableContainer The template variable container to set
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function injectTemplateVariableContainer(\F3\Fluid\Core\ViewHelper\TemplateVariableContainer $templateVariableContainer) {
+	public function injectTemplateVariableContainer(\TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer $templateVariableContainer) {
 		$this->templateVariableContainer = $templateVariableContainer;
 	}
 
 	/**
 	 * Get the template variable container
 	 *
-	 * @return F3\Fluid\Core\ViewHelper\TemplateVariableContainer The Template Variable Container
+	 * @return \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer The Template Variable Container
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getTemplateVariableContainer() {
@@ -133,17 +133,17 @@ class RenderingContext implements \F3\Fluid\Core\Rendering\RenderingContextInter
 	/**
 	 * Set the controller context which will be passed to the ViewHelper
 	 *
-	 * @param F3\FLOW3\MVC\Controller\ControllerContext $controllerContext The controller context to set
+	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext The controller context to set
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+	public function setControllerContext(\TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
 	}
 
 	/**
 	 * Get the controller context which will be passed to the ViewHelper
 	 *
-	 * @return F3\FLOW3\MVC\Controller\ControllerContext The controller context to set
+	 * @return \TYPO3\FLOW3\MVC\Controller\ControllerContext The controller context to set
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getControllerContext() {
@@ -153,18 +153,18 @@ class RenderingContext implements \F3\Fluid\Core\Rendering\RenderingContextInter
 	/**
 	 * Set the ViewHelperVariableContainer
 	 *
-	 * @param F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer $viewHelperVariableContainer
+	 * @param \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer $viewHelperVariableContainer
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function injectViewHelperVariableContainer(\F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer $viewHelperVariableContainer) {
+	public function injectViewHelperVariableContainer(\TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer $viewHelperVariableContainer) {
 		$this->viewHelperVariableContainer = $viewHelperVariableContainer;
 	}
 
 	/**
 	 * Get the ViewHelperVariableContainer
 	 *
-	 * @return F3\Fluid\Core\ViewHelper\ViewHelperVariableContainer
+	 * @return \TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getViewHelperVariableContainer() {

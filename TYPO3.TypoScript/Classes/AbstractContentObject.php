@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -26,7 +26,7 @@ namespace F3\TypoScript;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject implements \F3\TypoScript\ContentObjectInterface {
+abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScript\ContentObjectInterface {
 
 	/**
 	 * A valid source for a TypoScript Template object which should be the default
@@ -37,7 +37,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	protected $templateSource;
 
 	/**
-	 * @var \F3\TYPO3\TypoScript\Template
+	 * @var \TYPO3\TYPO3\TypoScript\Template
 	 */
 	protected $template;
 
@@ -50,7 +50,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	protected $presentationModelPropertyNames = array();
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
@@ -58,29 +58,29 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 * The rendering context as passed to render()
 	 *
 	 * @transient
-	 * @var \F3\TypoScript\RenderingContext
+	 * @var \TYPO3\TypoScript\RenderingContext
 	 */
 	protected $renderingContext;
 
 	/**
 	 * Injects the system logger
 	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
 	}
 
 	/**
 	 * Injects a fresh template
 	 *
-	 * @param \F3\TYPO3\TypoScript\Template $template
+	 * @param \TYPO3\TYPO3\TypoScript\Template $template
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectTemplate(\F3\TYPO3\TypoScript\Template $template) {
+	public function injectTemplate(\TYPO3\TYPO3\TypoScript\Template $template) {
 		$this->template = $template;
 		$this->template->setSource($this->templateSource);
 	}
@@ -88,13 +88,13 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	/**
 	 * Sets the rendering context
 	 *
-	 * @param \F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRenderingContext(\F3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
-		if (!$renderingContext instanceof \F3\TypoScript\RenderingContext) {
-			throw new \InvalidArgumentException('AbstractContentObject only supports \F3\TypoScript\RenderingContext as a rendering context.', 1277825291);
+	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
+		if (!$renderingContext instanceof \TYPO3\TypoScript\RenderingContext) {
+			throw new \InvalidArgumentException('AbstractContentObject only supports \TYPO3\TypoScript\RenderingContext as a rendering context.', 1277825291);
 		}
 		$this->renderingContext = $renderingContext;
 	}
@@ -107,18 +107,18 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 	 *       If all you want is a Fluid template, then just set the templateSource
 	 *       instead of setting the template object.
 	 *
-	 * @param \F3\TYPO3\TypoScript\Template $template
+	 * @param \TYPO3\TYPO3\TypoScript\Template $template
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setTemplate(\F3\TYPO3\TypoScript\Template $template) {
+	public function setTemplate(\TYPO3\TYPO3\TypoScript\Template $template) {
 		$this->template = $template;
 	}
 
 	/**
 	 * Returns the page template object
 	 *
-	 * @return \F3\TYPO3\TypoScript\Template
+	 * @return \TYPO3\TYPO3\TypoScript\Template
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTemplate() {
@@ -150,7 +150,7 @@ abstract class AbstractContentObject extends \F3\TypoScript\AbstractObject imple
 				return $this->template->render();
 			}
 		} catch (\Exception $exception) {
-			$this->systemLogger->logException(new \F3\TypoScript\Exception('Exception caught in ' . get_class($this) . '::render()', 1289997632, $exception));
+			$this->systemLogger->logException(new \TYPO3\TypoScript\Exception('Exception caught in ' . get_class($this) . '::render()', 1289997632, $exception));
 			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
 			return ($this->renderingContext->getObjectManager()->getContext() === 'Development') ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
 		}

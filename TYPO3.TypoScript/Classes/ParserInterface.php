@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -35,7 +35,7 @@ interface ParserInterface {
 	 * as the result.
 	 *
 	 * @param string $sourceCode The TypoScript source code to parse
-	 * @return \F3\TypoScript\ObjectTree A TypoScript object tree, generated from the source code
+	 * @return \TYPO3\TypoScript\ObjectTree A TypoScript object tree, generated from the source code
 	 * @api
 	 */
 	public function parse($sourceCode);

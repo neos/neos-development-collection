@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -36,15 +36,15 @@ interface ObjectInterface {
 	 * as well. If they can be set via TypoScript depends on if a setter
 	 * method exists in the respective TypoScript Object class.
 	 *
-	 * @param \F3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
 	 * @return void
 	 */
-	public function setNode(\F3\TYPO3CR\Domain\Model\NodeInterface $node);
+	public function setNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node);
 
 	/**
 	 * Returns the node the TypoScript object is based on
 	 *
-	 * @return \F3\TYPO3CR\Domain\Model\NodeInterface The node the TypoScript object is based on
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The node the TypoScript object is based on
 	 */
 	public function getNode();
 
@@ -52,10 +52,10 @@ interface ObjectInterface {
 	 * Sets the property processor chain for a specific property
 	 *
 	 * @param string $propertyName Name of the property to set the chain for
-	 * @param \F3\TypoScript\ProcessorChain $propertyProcessorChain The property processor chain for that property
+	 * @param \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain The property processor chain for that property
 	 * @return void
 	 */
-	public function setPropertyProcessorChain($propertyName, \F3\TypoScript\ProcessorChain $propertyProcessorChain);
+	public function setPropertyProcessorChain($propertyName, \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain);
 
 	/**
 	 * Unsets the property processor chain for a specific property
@@ -69,8 +69,8 @@ interface ObjectInterface {
 	 * Returns the property processor chain for a specific property
 	 *
 	 * @param string $propertyName Name of the property to return the chain of
-	 * @return \F3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
-	 * @throws \F3\TypoScript\Exception\NoProcessorChainFoundException
+	 * @return \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
+	 * @throws \TYPO3\TypoScript\Exception\NoProcessorChainFoundException
 	 */
 	public function getPropertyProcessorChain($propertyName);
 

@@ -4,8 +4,8 @@
  *  This fixture serves for testing the parsing of content object arrays / cobjects with array capabilities
  *
  */
-namespace: default = F3\TypoScript\Fixtures
- 
+namespace: default = TYPO3\TypoScript\Fixtures
+
 myArrayObject = ContentArray
 
 myArrayObject.10 = Text

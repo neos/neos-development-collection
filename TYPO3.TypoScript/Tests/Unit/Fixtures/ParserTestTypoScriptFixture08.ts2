@@ -5,8 +5,8 @@
  *  objects, variables and properties.
  *
  */
-namespace: default = F3\TypoScript\Fixtures
- 
+namespace: default = TYPO3\TypoScript\Fixtures
+
 object1 = Text
 object1.value = "Hello world!"
 
@@ -15,11 +15,11 @@ object2 < object1
 lib {
 	object3 = Text
 	object3.value = "Another message"
-	
+
 	object4 < .object3
-	
+
 	object5 < lib.object3
-	
+
 	object6 < object1
 }
 

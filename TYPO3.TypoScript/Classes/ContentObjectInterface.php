@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -26,7 +26,7 @@ namespace F3\TypoScript;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-interface ContentObjectInterface extends \F3\TypoScript\ObjectInterface, \F3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
+interface ContentObjectInterface extends \TYPO3\TypoScript\ObjectInterface, \TYPO3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
 
 	/**
 	 * Returns the rendered content of this content object

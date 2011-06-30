@@ -7,7 +7,7 @@
 //  - block comments
 //  - quote escaping in literals
 
-namespace: default = F3\TypoScript\Fixtures
+namespace: default = TYPO3\TypoScript\Fixtures
 
 myObject = Text
 myObject.value = 'Sorry, we\'re closed.'
@@ -24,8 +24,7 @@ anotherObject.value = "And I said: \"Hooray\""
 
  /* This block comment has a leading and a trailing whitespace
     before and after the comment sign.
- */ 
- 
+ */
+
  kaspersObject = Text
  kaspersObject.value = "The end of this line is a backslash\\"
- 

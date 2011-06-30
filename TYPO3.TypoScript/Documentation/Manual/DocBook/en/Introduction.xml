@@ -640,7 +640,7 @@ myObject.value &lt;&lt; 1.if(hasSubPages(), $yesMessage, "No, this page has no s
 
         <programlisting language="TypoScript">myObject = Text
 myObject.value = "Creating processors is easy!"
-myObject.value &lt;&lt; 1.F3_MyPackage_MyProcessors-&gt;translate("spanish")</programlisting>
+myObject.value &lt;&lt; 1.MyPackage_MyProcessors-&gt;translate("spanish")</programlisting>
       </example>
 
       <para>The expected output of this TypoScript object is something like
@@ -652,7 +652,7 @@ myObject.value &lt;&lt; 1.F3_MyPackage_MyProcessors-&gt;translate("spanish")</pr
         <para>The best way to learn how easy it is to create your own
         processors is browsing through the code of the functions provided by
         the <package>CMS</package> package. Just check out the class
-        <classname>F3_CMS_TypoScript_Processors</classname>.</para>
+        <classname>TYPO3_TYPO3_TypoScript_Processors</classname>.</para>
       </tip>
 
       <note>
@@ -663,7 +663,7 @@ myObject.value &lt;&lt; 1.F3_MyPackage_MyProcessors-&gt;translate("spanish")</pr
         an introduction to namespaces in just a few sections). Of course you
         can use namespaces instead of specifying the whole object name
         (<code>1.myNamespace:translate("spanish")</code> instead of
-        <code>1.F3_MyPackage_MyProcessors-&gt;translate("spanish")</code>).</para>
+        <code>1.MyPackage_MyProcessors-&gt;translate("spanish")</code>).</para>
       </note>
     </section>
 
@@ -801,26 +801,26 @@ myObject.value = "$hello&lt;br /&gt;Nice that you\'re here again.&lt;br /&gt;$go
       or <classname>HTML</classname> are mapped to class names (more
       precisely: object names). The Typoscript Object called
       <classname>Text</classname> is represented by a class with the full name
-      <classname>\F3\CMS\TypoScript\Text</classname>.</para>
+      <classname>\TYPO3\TYPO3\TypoScript\Text</classname>.</para>
 
       <para>The reason why this mapping works is that a <emphasis>default
       namespace</emphasis> has been defined for the TypoScript object types.
       In the TYPO3 CMS the default namespace is
-      <classname>\F3\CMS\TypoScript</classname> but it is possible to define
+      <classname>\TYPO3\TYPO3\TypoScript</classname> but it is possible to define
       additional namespaces in order to use TypoScript object types which are
       not available in the <package>CMS</package> package. It is even possible
       to define a different default namespace.</para>
 
-      <para>Consider a package <package>CoolForms</package> which provides a
+      <para>Consider a package <package>Acme.CoolForms</package> which provides a
       new kind of TypoScript object implemented by a class called
-      <classname>\F3\CoolForms\TypoScript\Form</classname>. The following
+      <classname>\Acme\CoolForms\TypoScript\Form</classname>. The following
       TypoScript code would use that new object type by declaring a new
       namespace:</para>
 
       <example>
         <title>Using namespaces</title>
 
-        <programlisting language="TypoScript">namespace: forms = F3\CoolForms\TypoScript
+        <programlisting language="TypoScript">namespace: forms = Acme\CoolForms\TypoScript
 
 
 lib.someTextObject = Text

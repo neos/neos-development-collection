@@ -4,8 +4,8 @@
  *  This fixture serves for testing the object tree capabilities of the TS parser.
  *
  */
-namespace: default = F3\TypoScript\Fixtures
- 
+namespace: default = TYPO3\TypoScript\Fixtures
+
 object1.mySubObject.mySubSubObject = Text
 object1.mySubObject.mySubSubObject.value = "Espresso is a fine beverage."
 

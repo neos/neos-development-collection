@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript\Exception;
+namespace TYPO3\TypoScript\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -26,7 +26,7 @@ namespace F3\TypoScript\Exception;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class InvalidModelException extends \F3\TypoScript\Exception {
+class InvalidModelException extends \TYPO3\TypoScript\Exception {
 
 }
 

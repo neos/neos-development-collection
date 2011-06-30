@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript\Fixtures;
+namespace TYPO3\TypoScript\Fixtures;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript"                  *
@@ -27,7 +27,7 @@ namespace F3\TypoScript\Fixtures;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
-class ContentArray extends \F3\TypoScript\AbstractContentArrayObject {
+class ContentArray extends \TYPO3\TypoScript\AbstractContentArrayObject {
 
 	/**
 	 * @return mixed

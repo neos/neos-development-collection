@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript\Tests\Unit\Parser;
+namespace TYPO3\TypoScript\Tests\Unit\Parser;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -26,7 +26,7 @@ namespace F3\TypoScript\Tests\Unit\Parser;
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class PatternTest extends \F3\FLOW3\Tests\UnitTestCase {
+class PatternTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * Checks the regular expression SCAN_PATTERN_COMMENT
@@ -35,7 +35,7 @@ class PatternTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function testSCAN_PATTERN_COMMENT() {
-		$pattern = \F3\TypoScript\Parser::SCAN_PATTERN_COMMENT;
+		$pattern = \TYPO3\TypoScript\Parser::SCAN_PATTERN_COMMENT;
 		$this->assertEquals(preg_match($pattern, '/* This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a block comment start.');
 		$this->assertEquals(preg_match($pattern, '# This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a hash comment start.');
 		$this->assertEquals(preg_match($pattern, '// This is a comment start ...'), 1, 'The SCAN_PATTERN_COMMENT pattern did not match a double slash comment start.');
@@ -51,7 +51,7 @@ class PatternTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function testSCAN_PATTERN_DECLARATION() {
-		$pattern = \F3\TypoScript\Parser::SCAN_PATTERN_DECLARATION;
+		$pattern = \TYPO3\TypoScript\Parser::SCAN_PATTERN_DECLARATION;
 		$this->assertEquals(preg_match($pattern, 'include : source = "resource"'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an include declaration.');
 		$this->assertEquals(preg_match($pattern, 'include:source = "resource"'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an include declaration without whitespaces.');
 		$this->assertEquals(preg_match($pattern, 'namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration.');
@@ -65,7 +65,7 @@ class PatternTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function testSCAN_PATTERN_OBJECTDEFINITION() {
-		$pattern = \F3\TypoScript\Parser::SCAN_PATTERN_OBJECTDEFINITION;
+		$pattern = \TYPO3\TypoScript\Parser::SCAN_PATTERN_OBJECTDEFINITION;
 		$this->assertEquals(preg_match($pattern, 'myObject = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment.');
 		$this->assertEquals(preg_match($pattern, 'myObject.content = "stuff"'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match a literal assignment of a property.');
 		$this->assertEquals(preg_match($pattern, 'myObject.10 = Text'), 1, 'The SCAN_PATTERN_OBJECTDEFINITION pattern did not match an object type assignment of a content array item.');
@@ -78,7 +78,7 @@ class PatternTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function testSPLIT_PATTERN_VALUEVARIABLE() {
-		$pattern = \F3\TypoScript\Parser::SPLIT_PATTERN_VALUEVARIABLE;
+		$pattern = \TYPO3\TypoScript\Parser::SPLIT_PATTERN_VALUEVARIABLE;
 		$this->assertEquals(preg_match($pattern, '$a'), 1, 'The SPLIT_PATTERN_VALUEVARIABLE pattern did not match a one-letter variable.');
 		$this->assertEquals(preg_match($pattern, '$message'), 1, 'The SPLIT_PATTERN_VALUEVARIABLE pattern did not match the variable $message.');
 		$this->assertEquals(preg_match($pattern, 'message'), 0, 'The SPLIT_PATTERN_VALUEVARIABLE pattern matched a variable without dollar sign.');
@@ -91,7 +91,7 @@ class PatternTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function testSPLIT_PATTERN_VALUENUMBER() {
-		$pattern = \F3\TypoScript\Parser::SPLIT_PATTERN_VALUENUMBER;
+		$pattern = \TYPO3\TypoScript\Parser::SPLIT_PATTERN_VALUENUMBER;
 		$this->assertEquals(preg_match($pattern, ' 1'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a number with a space in front.');
 		$this->assertEquals(preg_match($pattern, '12221'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match the number 12221.');
 		$this->assertEquals(preg_match($pattern, '-12'), 1, 'The SPLIT_PATTERN_VALUENUMBER pattern did not match a negative number.');
@@ -106,7 +106,7 @@ class PatternTest extends \F3\FLOW3\Tests\UnitTestCase {
 	 *
 	 */
 	public function testSPLIT_PATTERN_PROCESSORARGUMENTS() {
-		$pattern = \F3\TypoScript\Parser::SPLIT_PATTERN_PROCESSORARGUMENTS;
+		$pattern = \TYPO3\TypoScript\Parser::SPLIT_PATTERN_PROCESSORARGUMENTS;
 
 		$this->assertEquals(preg_match($pattern, 'foo: " hallo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a double-quoted string.');
 		$this->assertEquals(preg_match($pattern, 'foo:"hallo"'), 1, 'The SPLIT_PATTERN_PROCESSORARGUMENTS pattern did not match a key-value pair without whitespace.');

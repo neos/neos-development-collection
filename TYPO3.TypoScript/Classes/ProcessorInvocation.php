@@ -1,5 +1,5 @@
 <?php
-namespace F3\TypoScript;
+namespace TYPO3\TypoScript;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TypoScript".                 *
@@ -44,16 +44,16 @@ class ProcessorInvocation {
 	/**
 	 * Constructor of the processor invocation.
 	 *
-	 * @param \F3\TypoScript\ProcessorInterface $processorObject An instance of the class containing the processor
+	 * @param \TYPO3\TypoScript\ProcessorInterface $processorObject An instance of the class containing the processor
 	 * @param array $processorArguments associative array of Arguments to pass to the processor method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @throws \F3\TypoScript\Exception\InvalidProcessorException
+	 * @throws \TYPO3\TypoScript\Exception\InvalidProcessorException
 	 */
-	public function __construct(\F3\TypoScript\ProcessorInterface $processorObject, array $processorArguments) {
+	public function __construct(\TYPO3\TypoScript\ProcessorInterface $processorObject, array $processorArguments) {
 		if (!is_object($processorObject)) {
-			throw new \F3\TypoScript\Exception\InvalidProcessorException('The processor object is not an object!', 1179409471);
+			throw new \TYPO3\TypoScript\Exception\InvalidProcessorException('The processor object is not an object!', 1179409471);
 		}
 		$this->processorObject = $processorObject;
 		$this->processorArguments = $processorArguments;
@@ -69,7 +69,7 @@ class ProcessorInvocation {
 	 */
 	public function process($subject) {
 		foreach($this->processorArguments as $argumentName => $argumentValue) {
-			\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->processorObject, $argumentName, $argumentValue);
+			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->processorObject, $argumentName, $argumentValue);
 		}
 		return $this->processorObject->process($subject);
 	}
