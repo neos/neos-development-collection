@@ -44,38 +44,20 @@ class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	/**
 	 * Create users with the Administrator role.
 	 *
-	 * The input is expected to be a list of identifiers and passwords, separated by "#" and one line per account.
-	 *
+	 * @param string $identifier Identifier (username) of the account to be created
+	 * @param string $password Password of the account to be created
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function createAdministratorCommand() {
-			// no file_get_contents here because it does not work on php://stdin
-		$fp = fopen('php://stdin', 'rb');
-		while (!feof($fp)) {
-			$input = fgets($fp, 4096);
-			if (empty($input)) {
-				break;
-			}
-			if (strpos($input, "#") === FALSE) {
-				$this->response->appendContent('Invalid input format. Expects at least one account identifier and password separated by a hash sign "#" passed through STDIN.');
-				break;
-			}
+	protected function createAdministratorCommand($identifier, $password) {
+		$user = new \TYPO3\TYPO3\Domain\Model\User();
+		$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
 
-			list($identifier, $password) = explode('#', $input, 2);
-			$identifier = trim($identifier);
-			$password = trim($password);
-
-			$this->response->appendContent('Created account "' . $identifier . '".');
-
-			$user = new \TYPO3\TYPO3\Domain\Model\User();
-			$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
-
-			$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
-			$account->setParty($user);
-			$this->accountRepository->add($account);
-		}
-		fclose($fp);
+		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'));
+		$account->setParty($user);
+		$this->accountRepository->add($account);
+		$this->response->appendContent('Created account "' . $identifier . '".');
 	}
 
 }
