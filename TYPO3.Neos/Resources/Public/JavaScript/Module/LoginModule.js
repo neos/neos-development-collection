@@ -18,7 +18,7 @@ TYPO3.TYPO3.Core.Application.createModule('TYPO3.TYPO3.Module.LoginModule', {
 	 */
 	initialize: function(application) {
 		application.on('afterBootstrap', function() {
-			TYPO3.TYPO3_Controller_LoginController.show(function(result) {
+			TYPO3_TYPO3_Controller_LoginController.show(function(result) {
 				if (result) {
 					TYPO3.TYPO3.Module.LoginModule.fireEvent('updated', result.data);
 				}

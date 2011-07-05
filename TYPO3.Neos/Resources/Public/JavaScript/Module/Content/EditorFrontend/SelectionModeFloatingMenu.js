@@ -156,7 +156,7 @@ TYPO3.TYPO3.Module.Content.EditorFrontend.SelectionModeFloatingMenu = {
 		this._removeFloatingMenu();
 
 			// We have to use call() since delete is a reserved word and will invalidate code validation
-		window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(this, contentElement.getAttribute('about'), function(result) {
+		window.parent.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(this, contentElement.getAttribute('about'), function(result) {
 			contentElement.remove();
 		}, this);
 	},

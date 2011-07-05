@@ -39,7 +39,7 @@ TYPO3.TYPO3.Module.Management.Tree.TreeLoader = Ext.extend(Ext.tree.TreeLoader, 
 	 * @return {void}
 	 */
 	directFn: function(contextNodePath, callback) {
-		TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3.TYPO3:Page', callback);
+		TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3.TYPO3:Page', callback);
 	},
 
 	/**

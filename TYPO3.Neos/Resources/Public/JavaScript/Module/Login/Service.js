@@ -17,7 +17,7 @@ TYPO3.TYPO3.Module.Login.Service = Ext.apply(new Ext.util.Observable, {
 	 * @return {void}
 	 */
 	logout: function(callback, scope) {
-		TYPO3.TYPO3_Controller_LoginController.logout(function() {
+		TYPO3_TYPO3_Controller_LoginController.logout(function() {
 			TYPO3.TYPO3.Core.Application.fireEvent('logout');
 			if (Ext.isFunction(callback)) callback.call(scope);
 		});

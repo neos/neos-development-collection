@@ -47,7 +47,7 @@ TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository = Ext.apply(
 				callback.call(this, []);
 			}
 			var contextNodePath = window.parent.TYPO3.TYPO3.Configuration.Application.siteNodePath
-			window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3.TYPO3:Page', 0, function(result) {
+			window.parent.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3.TYPO3:Page', 0, function(result) {
 				var items = [];
 				Ext.each(result.data, function(item) {
 						// TODO Filter on server side!

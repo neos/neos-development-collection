@@ -141,13 +141,13 @@ TYPO3.TYPO3.Module.Content.EditorFrontend.DragDrop = {
 					window.location.reload();
 				};
 				if (targetEl.getAttribute('data-position') == 'before') {
-					window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveBefore(
+					window.parent.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveBefore(
 						sourceContextNodePath,
 						targetContextNodePath,
 						onMoveFinished
 					);
 				} else {
-					window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveAfter(
+					window.parent.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.moveAfter(
 						sourceContextNodePath,
 						targetContextNodePath,
 						onMoveFinished

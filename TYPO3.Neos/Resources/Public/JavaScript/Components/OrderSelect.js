@@ -93,9 +93,9 @@ TYPO3.TYPO3.Components.OrderSelect = Ext.extend(Ext.grid.GridPanel, {
 
 		var directFn = function(callback) {
 			if(self.move) {
-				TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent(contextNodePath, 'TYPO3.TYPO3:Page', 1, callback);
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesFromParent(contextNodePath, 'TYPO3.TYPO3:Page', 1, callback);
 			} else {
-				TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3.TYPO3:Page', 1, callback);
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, 'TYPO3.TYPO3:Page', 1, callback);
 			}
 		};
 		directFn.directCfg = {

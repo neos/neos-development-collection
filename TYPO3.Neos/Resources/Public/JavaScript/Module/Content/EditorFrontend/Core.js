@@ -349,7 +349,7 @@ TYPO3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observab
 			var loadingIndicatorDom = Ext.DomHelper.insertAfter(referenceDomElement, loadIndicatorContent);
 		}
 
-		window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(referenceNode, {contentType: nameOfContentType}, position, function(result) {
+		window.parent.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(referenceNode, {contentType: nameOfContentType}, position, function(result) {
 			this._loadNewlyCreatedContentElement(result.data.nextUri, loadingIndicatorDom);
 		}.createDelegate(this));
 	},
@@ -392,7 +392,7 @@ TYPO3.TYPO3.Module.Content.EditorFrontend.Core = Ext.apply(new Ext.util.Observab
 
 		this.fireEvent('beforeSave');
 		this._getWebsiteContainer().fireEvent('container.beforeSave');
-		window.parent.TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data, function(result) {
+		window.parent.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(data, function(result) {
 			this.fireEvent('afterSave');
 			this._getWebsiteContainer().fireEvent('container.afterSave');
 

@@ -35,7 +35,7 @@ TYPO3.TYPO3.Module.Management.ManagementGrid = Ext.extend(Ext.grid.GridPanel, {
 	 */
 	initComponent: function() {
 		var directFn = function(callback) {
-				TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, '!TYPO3.TYPO3:Page', 0, callback);
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodes(contextNodePath, '!TYPO3.TYPO3:Page', 0, callback);
 			};
 		directFn.directCfg = {
 			method: {

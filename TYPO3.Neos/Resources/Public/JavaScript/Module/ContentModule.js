@@ -116,13 +116,13 @@ TYPO3.TYPO3.Core.Application.createModule('TYPO3.TYPO3.Module.ContentModule', {
 		registry.set('schema/type', {
 			'TYPO3.TYPO3:Page': {
 				service: {
-					show: 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.show',
-					update: 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.update',
-					create: 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.create',
-					move: 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.move',
+					show: 'TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.show',
+					update: 'TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update',
+					create: 'TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create',
+					move: 'TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move',
 						// "delete" is a special case because it's a reserved keyword.
 						// Because of this, it needs to be quoted on the left side.
-					'delete': 'TYPO3.TYPO3_Service_ExtDirect_V1_Controller_NodeController.delete'
+					'delete': 'TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.delete'
 				},
 				properties: {
 					'nodeName': {

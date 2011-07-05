@@ -38,7 +38,7 @@ TYPO3.TYPO3.Module.Dashboard.UnpublishedContentView = Ext.extend(Ext.DataView, {
 				store: {
 					xtype: 'directstore',
 					directFn: Ext.apply(function(callback) {
-						TYPO3.TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.getUnpublishedNodes(TYPO3.TYPO3.Configuration.Application.workspaceName, callback);
+						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.getUnpublishedNodes(TYPO3.TYPO3.Configuration.Application.workspaceName, callback);
 					}, {directCfg: {method: {len: 0}}}),
 					autoLoad: true,
 					autoDestroy: true,
