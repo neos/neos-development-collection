@@ -5,8 +5,8 @@
  */
 
 define(
-['phoenix/fixture', 'text!phoenix/common/launcher.html'],
-function(fixture, launcherTemplate) {
+['phoenix/fixture', 'text!phoenix/common/launcher.html', 'text!phoenix/common/launcherpanel.html'],
+function(fixture, launcherTemplate, launcherPanelTemplate) {
 
 	var T3 = window.T3 || {};
 	T3.Common = {};
@@ -91,7 +91,7 @@ function(fixture, launcherTemplate) {
 		isVisible: false,
 		open: false,
 		focussed: false,
-		templateName: 'launcher-panel',
+		template: SC.Handlebars.compile(launcherPanelTemplate),
 		_openDidChange: function() {
 			var that = this;
 			// Delay the execution a bit to give the focus change a chance

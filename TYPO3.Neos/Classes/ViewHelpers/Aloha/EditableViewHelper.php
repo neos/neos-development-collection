@@ -56,10 +56,9 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 		$this->tag->forceClosingTag(TRUE);
 		$this->tag->setContent($this->renderChildren());
 
-		if ($this->hasAccessToResource('TYPO3_TYPO3_Backend_BackendController')) {
-			$this->tag->addAttribute('class', 'typo3-typo3-editable');
-			$this->tag->addAttribute('property', 'typo3:' . $property);
-		}
+		//if ($this->hasAccessToResource('TYPO3_TYPO3_Backend_BackendController')) {
+			$this->tag->addAttribute('data-propertyname', $property);
+		//}
 
 		return $this->tag->render();
 	}

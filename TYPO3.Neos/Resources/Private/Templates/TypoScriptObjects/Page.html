@@ -12,6 +12,19 @@
 		{f:raw(value: head)}
 	</head>
 	<body typeof="typo3:{node.contentType}" about="{node.context.currentNode.contextPath}" {bodyAttributes}>
+
 		{f:raw(value: body)}
+		<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
+			<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
+				<div id="t3-ui-top" class="aloha-block-do-not-deactivate t3-ui">
+					<ul class="t3-topbar">
+						<li class="t3-active">Content</li>
+						<li>Management</li>
+					</ul>
+					<a class="t3-button t3-button-logout t3-icon-logout" href="/typo3/logout"><span>Logout</span></a>
+					<div class="t3-clear"></div>
+				</div>
+			</f:if>
+		</f:security.ifAccess>
 	</body>
 </html>

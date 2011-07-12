@@ -1,104 +1,43 @@
 {namespace ext=TYPO3\ExtJS\ViewHelpers}
 {namespace typo3=TYPO3\TYPO3\ViewHelpers}
-	<f:base/>
-	<title>{title}</title>
-	<meta charset="UTF-8" />
-	<script>
-		document.cookie = "TYPO3_lastVisitedUri=" +
-			window.location.protocol + "//" +
-			window.location.host +
-			(window.location.pathname != "/" ? window.location.pathname : "/{node.name}.html") +
-			";path=/";
-	</script>
+<f:base/>
+<title>{title}</title>
+<meta charset="UTF-8" />
+<script>
+	document.cookie = "TYPO3_lastVisitedUri=" +
+		window.location.protocol + "//" +
+		window.location.host +
+		(window.location.pathname != "/" ? window.location.pathname : "/{node.name}.html") +
+		";path=/";
+</script>
 
 <f:for each="{stylesheets}" as="stylesheet">{stylesheet}</f:for>
 <f:for each="{javaScripts}" as="javaScript">{javaScript}</f:for>
-
 <f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
-<f:alias map="{liveWorkspaceName: 'live'}"><f:if condition="{node.context.workspace.name} != {liveWorkspaceName}">
+	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
+		<script language="javascript">
+		<![CDATA[
+				Aloha = window.Aloha || {};
 
-<!-- SECTION: ExtJS + jQuery -->
-<ext:include theme="xtheme-gray" includeStylesheets="1" />
+				Aloha.settings = {
+					plugins: {
+						block: {
+							sidebarAttributeEditor: false
+						}
+					},
+					bundles: {
+						phoenix: '../../../JavaScript/alohaplugins' // relative to aloha.js base path...
+					},]]>
+					basePath: '{f:uri.resource(path:"Library/Aloha/src/")}'
+				};
+		<![CDATA[
+				var require = { ]]>
+					'baseUrl': '{f:uri.resource(path:"JavaScript/")}'
+				};
+		</script>
+		<script src="{f:uri.resource(path:'JavaScript/require.js')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js')}" id="aloha-script-include" data-plugins="common/block,common/paste,phoenix/phoenixintegration"></script>
 
-<script type="text/javascript">
-	if (typeof jQuery === 'undefined') {
-		var jQueryUrl = "{f:uri.resource(path:'Library/Aloha/src/dep/jquery-1.5.1.js')}";
-		document.write('<script type="text/javascript" src="' + jQueryUrl + '"><' + '/script>');
-	}
-</script>
-
-<!-- SECTION: Backbone.js (needed for backend communication) and VIE aloha Plugin -->
-<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/underscore-min.js')}"></script>
-<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/backbone-min.js')}"></script>
-<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/vie-containermanager.js')}"></script>
-<script src="{f:uri.resource(path:'Library/Aloha/src/plugin/vie/src/vie-aloha.js')}"></script>
-
-<!-- SECTION: Aloha -->
-
-<script type="text/javascript"><![CDATA[
-if (window.Aloha === undefined || window.Aloha === null)
-	Aloha = {};
-Aloha.settings = {
-	"i18n": {"current": "en"},
-	"plugins": {
-		"format": {
-			config : [ 'b', 'i','u','del','sub','sup', 'p', 'title', 'h1', 'h2', 'h3', 'removeFormat'],
-			editables : {
-				title	: [ ], // no formatting allowed
-				teaser 	: [ 'b', 'i', 'u', 'del', 'sub', 'sup'  ] // just basic formattings, no headers, etc.
-			}
-		}
-	},
-	//"repositories": {
-	//	"TYPO3.TYPO3.Module.Content.EditorFrontend.Aloha.PageRepository": {}
-	//},
-	ribbon: false,
-	errorhandling: false,
-	logLevels: {'error': true, 'warn': true, 'info': true, 'debug': false},
-	placeholder: {
-		'*': 'Start typing here',
-		'*[typeof="typo3:TYPO3:Text"] *[property="typo3:headline"]': '[Enter title here]',
-		'*[typeof="typo3:TYPO3:Text"] *[property="typo3:text"]': '[Enter text here]'
-	},
-	smartContentChange: {
-		delimiters: ['.', '!', 'Enter'],
-		sccIdle: 10000
-	}
-};
-]]>
-</script>
-
-<!-- these stylesheets normally come from the css.js file inside aloha core,
- but we include them separately as we already have ExtJS loaded -->
-<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/Aloha/src/css/aloha.css')}" />
-<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/Aloha/src/plugin/table/src/table.css')}" />
-<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/Aloha/src/plugin/link/src/link.css')}" />
-
-<script src="{f:uri.resource(path:'Library/Aloha/src/aloha.js')}" id="aloha-script-include" data-plugins="format,list"></script>
-
-<!-- SECTION: Code Mirror (Text Editor with syntax highlight) -->
-<script type="text/javascript" src="{f:uri.resource(path: 'Library/codemirror2/lib/codemirror.js')}"></script>
-<link rel="stylesheet" href="{f:uri.resource(path: 'Library/codemirror2/lib/codemirror.css')}">
-<script type="text/javascript" src="{f:uri.resource(path: 'Library/codemirror2/mode/xml/xml.js')}"></script>
-<link rel="stylesheet" href="{f:uri.resource(path: 'Library/codemirror2/mode/xml/xml.css')}">
-
-<!-- SECTION: Content Editor Frontend -->
-<script src="{f:uri.resource(path:'JavaScript/Core/I18n.js')}"></script>
-<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Core.js')}"></script>
-<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Aloha/Initializer.js')}"></script>
-<!--<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Aloha/PageRepository.js')}"></script>-->
-<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Html/Initializer.js')}"></script>
-<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/Html/Plugin.js')}"></script>
-<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/UneditableAreaOverlay.js')}"></script>
-<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/DragDrop.js')}"></script>
-<script src="{f:uri.resource(path:'JavaScript/Module/Content/EditorFrontend/SelectionModeFloatingMenu.js')}"></script>
-
-<typo3:includeJavaScript include="Utility/Queue/.*\.js" />
-<typo3:includeJavaScript include="Components/BreadcrumbMenu.*\.js" />
-
-<link rel="stylesheet" href="{f:uri.resource(path:'StyleSheet/Aloha.css')}" />
-<link rel="stylesheet" href="{f:uri.resource(path:'StyleSheet/BreadcrumbMenu.css')}"/>
-<link rel="stylesheet" href="{f:uri.resource(path:'StyleSheet/Icons.css')}" />
-
-</f:if></f:alias>
+		<link rel="stylesheet" href="{f:uri.resource(path:'Library/Aloha/src/aloha.css')}" type="text/css" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/style.css')}" />
+	</f:if>
 </f:security.ifAccess>

@@ -50,12 +50,11 @@ class BackendController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function indexAction() {
 		$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');
-		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext($workspaceName);
-
-		$this->view->assign('contentContext', $contentContext);
-
-		$version = $this->packageManager->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
-		$this->view->assign('version', $version);
+		if (isset($_COOKIE['TYPO3_lastVisitedUri'])) {
+			$this->redirectToUri(str_replace('.html', '@' . $workspaceName . '.html', $_COOKIE['TYPO3_lastVisitedUri']));
+		} else {
+			$this->redirectToUri('/@' . $workspaceName . '.html');
+		}
 	}
 }
 ?>

@@ -208,7 +208,18 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 
 		try {
 			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
-			return '<div class="typo3-typo3-contentelement" about="' . $this->node->getContextPath() . '">' . $pluginResponse->getContent() . '</div>';
+
+			$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
+			$tagBuilder->addAttribute('class', 't3-contentelement t3-plugin');
+			$tagBuilder->addAttribute('about', $this->node->getContextPath());
+
+			$tagBuilder->addAttribute('data-package', $pluginRequest->getControllerPackageKey());
+			$tagBuilder->addAttribute('data-subpackage', $pluginRequest->getControllerSubpackageKey());
+			$tagBuilder->addAttribute('data-controller', $pluginRequest->getControllerName());
+			$tagBuilder->addAttribute('data-action', $pluginRequest->getControllerActionName());
+
+			$tagBuilder->setContent($pluginResponse->getContent());
+			return $tagBuilder->render();
 		} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (\Exception $exception) {

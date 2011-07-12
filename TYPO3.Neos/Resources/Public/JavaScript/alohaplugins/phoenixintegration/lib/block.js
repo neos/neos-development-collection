@@ -34,24 +34,13 @@ function(block) {
 
 		init: function() {
 			this.attr('title', this.element.find('h1').html(), true);
-			this.attr('content', this.element.find('.t3-content').html(), true);
+			this.attr('text', this.element.find('*[data-propertyname="text"]').html(), true);
 		},
 		render: function(element) {
-			return '<h1 class="aloha-editable" data-propertyname="title">' + this.attr('title') + '</h1><div class="t3-content aloha-editable"  data-propertyname="content">' + this.attr('content') + '</div>'; // TODO: use templateable block here
+			return '<h1 class="aloha-editable" data-propertyname="title">' + this.attr('title') + '</h1><div class="aloha-editable"  data-propertyname="text">' + this.attr('text') + '</div>'; // TODO: use templateable block here
 		},
 		getSchema: function() {
-			return [
-				{
-					key: 'Access',
-					properties: [
-						{
-							key: 'visibility',
-							type: 'boolean',
-							label: 'Visibility'
-						}
-					]
-				}
-			];
+			return null;
 		}
 	});
 
@@ -70,16 +59,6 @@ function(block) {
 							key: 'controller',
 							type: 'string',
 							label: 'Controller'
-						}
-					]
-				},
-				{
-					key: 'Access',
-					properties: [
-						{
-							key: 'visibility',
-							type: 'boolean',
-							label: 'Visibility'
 						}
 					]
 				}
