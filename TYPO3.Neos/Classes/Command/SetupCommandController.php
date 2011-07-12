@@ -50,7 +50,7 @@ class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function createAdministratorCommand($identifier, $password) {
+	public function createAdministratorCommand($identifier, $password) {
 		$user = new \TYPO3\TYPO3\Domain\Model\User();
 		$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
 
