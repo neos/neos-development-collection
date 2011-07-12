@@ -1,0 +1,65 @@
+h2. Content Module JavaScript Architecture
+
+After reading this guide, you will be able to:
+
+* Understand the structure and ideas of the Content Module JavaScript architecture.
+
+endprologue.
+
+h3. Overall UI Goals
+
+We have set up the following goals to strive for UI-wise:
+
+* Reliable editing
+* Predictable UI Behavior
+* Immeditate feedback for the user
+* Built with the web - for the web
+
+UI concepts should be evaluated against the above goals.
+
+h3. Technical guidelines / goals
+
+When implementing the user interface, we should follow these guidelines on a technical side:
+
+* Take the pragmatic approach
+* Augument the frontend website
+* No iFrame in the content module
+* Browser support >= IE9; in the prototyping phase focus on Firefox
+* No polling of data from the server!
+
+h3. CSS Guidelines
+
+Overal Goal:
+
+* Be pragmatic! We strive for solutions which work out-of-the-box in 95% of the cases; and tell the integrator
+  how to solve the other 5%. Thus, the integrator has to care to make his CSS work with Phoenix; we do not use a sandbox.
+
+Implementation notes:
+
+* All CSS selectors should be fully lowercase, with @-@ as separator. Example: @t3-ui, t3-breadcrumb-item@
+* We use the +t3-+ prefix
+* The integrator is never allowed to override +t3-+ and +aloha-+
+* The main UI elements have an ID, and a partial reset is used to give us predictable behavior inside them.
+* We use *sass*. To install, use +gem install sass+. Then, before modifying CSS, go to css/ and run
+  +sass --watch style.scss:style.css+. This will update style.css at every modification of style.scss.
+
+h3. Naming of main UI parts
+
+The following image shows the main UI parts and the names we use for them.
+
+!images/content/js_architecture/ui_parts.png!
+
+h3. Main architecture
+
+The following diagram shows how a change of the block selection in Aloha updates
+the UI.
+
+!images/content/js_architecture/internal_structure_ui_updates.png!
+
+When an attribute is modified through the property panel, the following happens:
+
+!images/content/js_architecture/internal_structure_attribute_updates.png!
+
+h3. Changelog
+
+* July 11, 2011: Initial version by "Sebastian Kurfürst":credits.html#skurfuerst

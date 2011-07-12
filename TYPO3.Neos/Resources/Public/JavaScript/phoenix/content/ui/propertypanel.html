@@ -1,0 +1,9 @@
+<form class="t3-propertypanel-form" action="#">
+	{{#collection tagName="fieldset" classNames="t3-propertypanel-section" contentBinding="T3.Content.Model.BlockSelection.selectedBlockSchema"}}
+		<h2>{{content.key}}</h2>
+		{{#collection tagName="div" classNames="t3-propertypanel-field" contentBinding="parentView.content.properties"}}
+			<label for="">{{content.label}}</label>
+			{{propertyEditWidget noMatterWhatITypeHere}}
+		{{/collection}}
+	{{/collection}}
+</form>

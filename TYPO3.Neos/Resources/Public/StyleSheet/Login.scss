@@ -1,0 +1,317 @@
+$dark-white: #f1f1f1;
+$grey: lighten(#000000, 20%);
+$light-grey: #9e9e9e;
+$mid-grey: #434343;
+$dark-grey: #262626;
+$orange: #ff8700;
+$light-orange: #ff9600;
+$dark-orange: #c02f00;
+$clear-px: 0px;
+$font-family: Arial,sans-serif;
+$font-share: Share-Regular, Arial,sans-serif;
+$small-radius: 3px;
+$mid-radius: 5px;
+$button-bg-sprite: url(../Images/Login/ButtonBgSprite.gif);
+
+@mixin centered-element {
+  margin: 0px auto 0;
+}
+
+@mixin transparent-white-bg {
+  background-color: rgba(255,255,255,0.1);
+}
+
+@mixin body-bg {
+  background: #000000 url(../Images/Login/WallpaperRepeater.jpg) 25% top repeat-x;
+}
+
+@mixin label-font {
+  font-size: 93%;
+  font-weight: normal;
+  font-family: $font-family;
+}
+
+@mixin input-txt-font {
+  font-size: 93%;
+  font-weight: bold;
+  font-family: $font-family;
+}
+
+
+@mixin input-txt-default {
+  -moz-box-shadow: 0 0 0 1px #9e9e9e, 0 0 0 2px #131313, 0 1px 0 2px rgba(88,88,88,0.6);
+  -webkit-box-shadow: 0 0 0 1px #9e9e9e, 0 0 0 2px #131313, 0 1px 0 2px rgba(88,88,88,0.6);
+  border: 1px solid #b6b6b6;
+  background: #c5c5c5;
+}
+
+@mixin input-txt-active {
+  -moz-box-shadow: 0 0 1px 1px #c7885b, 0 0 0 2px #131313, 0px 1px 0 2px rgba(88,88,88,0.6);
+  outline: none 0px;
+  -webkit-box-shadow: 0 0 1px 1px #c7885b, 0 0 0 2px #131313, 0px 1px 0 2px rgba(88,88,88,0.6);
+  border: 1px solid #ffd4b6;
+  background: #ffffff;
+}
+
+@mixin input-button-default {
+  -moz-box-shadow: 0px 1px 0px 0px rgba(88,88,88,0.6);
+  -webkit-box-shadow: 0px 1px 0px 0px rgba(88,88,88,0.6);
+  color: #eaeaea;
+  font-weight: bold;
+  font-family: $font-family;
+  font-size: 100%;
+}
+
+@mixin red-shadow {
+  -moz-box-shadow: 0 0 1px 1px #ddadad, 0 0 0 2px #f2dada;
+  -webkit-box-shadow: 0 0 1px 1px #ddadad, 0 0 0 2px #f2dada;
+}
+
+@mixin txt-shadow-black {
+  text-shadow: #000000 0 -1px 0;
+}
+@mixin txt-shadow-grey {
+  text-shadow: $grey 0 -1px 0;
+}
+@mixin txt-shadow-red {
+  text-shadow: #ac6767 0 -1px 0;
+}
+
+@mixin rounded-corners-middle {
+  -moz-border-radius: $mid-radius;
+  -webkit-border-radius: $mid-radius;
+}
+
+@mixin rounded-corners-middle-right {
+  -moz-border-radius: 0 $mid-radius $mid-radius 0;
+  -webkit-border-radius: $mid-radius;
+}
+
+@mixin rounded-corners-small {
+  -moz-border-radius: $small-radius;
+  -webkit-border-radius: $small-radius;
+}
+
+@mixin shadow-black-fuzzy {
+  -moz-box-shadow: 0 0 20px 1px #000000;
+  -webkit-box-shadow: 0 0 20px 1px #000000;
+}
+
+html {
+  height: 100%;
+  overflow: auto;
+  background: none;
+  font-size: 13px;
+}
+body, table, form {
+  font-family: $font-family;
+  font-size: 13px;
+  color: #ffffff;
+  margin: $clear-px;
+  padding: $clear-px;
+  line-height: 1.5em;
+}
+body {
+  @include body-bg;
+  height: 100%;
+}
+#typo3-typo3-login-site {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: url(../Images/Login/FooterBg.png) 50% bottom repeat-x;
+  position: relative;
+}
+#typo3-typo3-login-wallpaper {
+  width: 100%;
+  height: 100%;
+  background: url(../Images/Login/Wallpaper.png) 50% bottom no-repeat;
+  position: absolute;
+  bottom: 256px;
+}
+.typo3-typo3-version-information {
+  font-size: 77%;
+  color: #535353;
+  background: url(../Images/TYPO3ApplicationLogo-50px.png) left top no-repeat;
+  padding: 44px 0 0 10px;
+  font-weight: normal;
+  min-width: 125px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+#typo3-typo3-login-box {
+  width: 391px;
+  max-width: 428px;
+  height: 320px;
+  position: absolute;
+  bottom: -125px;
+  left: 50%;
+  margin-left: -214px;
+  padding: 20px 0 0 37px;
+  background: url(../Images/Login/LoginBoxBg.png) left top no-repeat;
+
+  form {
+    margin: 1px;
+    padding: 17px 55px 17px 17px;
+    float: left;
+
+    .errorMessages {
+        background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconError.png) 9px 50% no-repeat #5D0F0E;
+        position: absolute;
+        right: 55px;
+        top: 43px;
+        padding: 5px 5px 5px 37px;
+        @include rounded-corners-middle;
+        border: 1px solid #000000;
+    }
+
+    a.typo3-typo3-link-help {
+      color: $light-grey;
+      @include txt-shadow-black;
+      font-size: 88%;
+      float: right;
+      margin: -7px 0 10px 0;
+    }
+    .typo3-typo3-login-fields {
+      clear: both;
+      margin: 0 0 10px 0;
+      position: relative;
+
+      label {
+        width: 75px;
+        display: block;
+        float: left;
+        @include label-font;
+        @include txt-shadow-black;
+      }
+
+      input {
+        width: 235px;
+        height: 20px;
+        padding: 0 2px 0 2px;
+        color: #000000;
+        position: relative;
+        @include rounded-corners-small;
+        @include input-txt-default;
+        @include input-txt-font;
+
+        &:active,
+        &:focus {
+          @include input-txt-active;
+        }
+      }
+    }
+    .typo3-typo3-login-actions {
+      clear: both;
+      padding: 45px 0 0 0;
+
+      .typo3-typo3-login-button,
+      .typo3-typo3-openid-button {
+        background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat $orange;
+        @include rounded-corners-middle;
+        height: 30px;
+        display: block;
+        padding-left: 48px;
+        margin-left: 10px;
+        border: 1px solid #000000;
+        display: block;
+        -moz-box-shadow: 0 1px 0 0 rgba(88, 88, 88, 0.6);
+        float: right;
+        text-decoration: none;
+        outline: 0;
+        &:hover {
+          background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconShutdown.png) left 50% no-repeat $light-orange;
+          span {
+            background-color: $light-orange;
+          }
+        }
+        &:focus {
+          background: url(../Images/Login/ButtonBgLeftFocus.png) -1px 50% no-repeat, url(../Images/Login/IconShutdown.png) left top no-repeat $orange;
+          span {
+            background: $orange url(../Images/Login/ButtonBgRightFocus.png) right 50% no-repeat;
+            line-height:32px;
+          }
+        }
+
+        span {
+          color: #ffffff;
+          background: $orange url(../Images/Login/ButtonBgRight.png) right 50% no-repeat;
+          border: 0;
+          padding-right: 14px;
+          @include rounded-corners-middle-right;
+          height: 30px;
+          line-height: 30px;
+          @include input-txt-font;
+          @include txt-shadow-grey;
+          display: block;
+        }
+      }
+      .typo3-typo3-openid-button {
+        background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconOpenId.png) left 50% no-repeat #4f4f4f;
+        opacity: 0.4;
+        &:hover,
+        &:focus {
+          background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconOpenId.png) left 50% no-repeat #4f4f4f;
+          cursor: default;
+          span {
+            background: #4f4f4f url(../Images/Login/ButtonBgRight.png) right 50% no-repeat;
+            opacity: 0.4;
+            line-height: 30px;
+            cursor: default;
+          }
+        }
+
+        span {
+          background: #4f4f4f url(../Images/Login/ButtonBgRight.png) right 50% no-repeat;
+          cursor: default;
+        }
+      }
+    }
+  }
+  h2.typo3-typo3-login-domain {
+    @include txt-shadow-black;
+    margin: 12px 0 12px 15px;
+    font-family: $font-share;
+    font-size: 153.9%;
+    font-weight: normal;
+    strong {
+      font-weight: bold;
+    }
+  }
+}
+.typo3-typo3-login-lock {
+  position: absolute;
+  left: 38px;
+  bottom: 59px;
+  width: 76px;
+  height: 108px;
+  display: block;
+  background: url(../Images/Login/Lock.png) 50% 50% no-repeat;
+}
+#typo3-typo3-login-footer {
+  width: 70%;
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  margin-left: -35%;
+  text-align: center;
+
+  p {
+    font-size: 77%;
+    color: #535353;
+    line-height: 1.3em;
+  }
+  a {
+    color: #535353;
+  }
+}
+.grid {
+    width: 100%;
+    height: 400px;
+    display: block;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    background: url(../Images/Login/PixelGrid.png) left top repeat;
+}

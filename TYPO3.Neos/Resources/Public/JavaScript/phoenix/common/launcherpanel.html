@@ -1,0 +1,20 @@
+<div class="three-columns tc-1-1-1">
+	<div class="c-1">
+		<h2>Modules</h2>
+		{{#collection contentBinding="parentView.modules" tagName="ul" classNames="t3-launcher-panel-modules"}}
+			{{#view tagName="a" attributeBindings="href" hrefBinding="parentView.content.url"}}{{parentView.content.label}}{{/view}}
+		{{/collection}}
+	</div>
+	<div class="c-2">
+		<h2>Data</h2>
+		<ul>
+			<li>...</li>
+		</ul>
+	</div>
+	<div class="c-3">
+		<h2>Last actions</h2>
+		<ul>
+			<li>...</li>
+		</ul>
+	</div>
+</div>

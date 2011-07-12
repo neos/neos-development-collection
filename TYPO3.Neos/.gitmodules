@@ -1,0 +1,3 @@
+[submodule "Resources/Public/Library/Aloha"]
+	path = Resources/Public/Library/Aloha
+	url = git://github.com/alohaeditor/Aloha-Editor.git

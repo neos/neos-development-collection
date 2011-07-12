@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TYPO3 UI Guides: Content Module JavaScript Architecture</title>
+
+  <!-- guides styles -->
+  <link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/strobe.css" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/overrides.style.css" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/overrides.print.css" media="print" />
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <!-- syntax highlighting styles -->
+  <link rel="stylesheet" type="text/css" href="stylesheets/syntaxhighlighter/shCore.css" />
+  <link rel="stylesheet" type="text/css" href="stylesheets/shThemeStrobeGuides.css" />
+</head>
+<body class="guide">
+
+  <header role="banner">
+    <div class="container">
+      <h1 id="logo">
+        <a href="http://typo3.org"><img src="images/header/logo.png" height="50" alt="TYPO3" /></a>
+      </h1>
+    </div>
+  </header>
+
+  <div id="feature">
+    <div class="wrapper">
+      <div class="feature_header">
+        <h2><a href="/">TYPO3 UI Guides</a></h2>
+        <p>These guides explain the concepts behind the Phoenix UI, and are a working tool for the developers to document the current status.</p>
+      </div>
+      <div class="feature_sidebar">
+        <a href="index.html" id="guidesMenu">
+          Guides Index <span id="guidesArrow">&#9656;</span>
+        </a>
+        <div id="guides" class="clearfix" style="display: none;">
+          <a href="index.html" class="guidesMenu">
+            Guides Index <span class="guidesArrow">&#9662;</span>
+          </a>
+          <hr style="clear:both;">
+          <dl class="L">
+    <dt>General</dt>
+      <dd><a href="style_guide.html">JavaScript Style Guide</a></dd>
+      <dd><a href="sproutcore.html">SproutCore tips &amp; tricks</a></dd>
+    <dt>The Content Module</dt>
+      <dd><a href="js_architecture.html">JavaScript Architecture</a></dd>
+</dl>
+<dl class="R">
+</dl>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="container">
+    <div class="wrapper">
+      <div id="mainCol">
+          <div class="headerSection">
+            <h2>Content Module JavaScript Architecture</h2>
+<p>After reading this guide, you will be able to:</p>
+<ul>
+	<li>Understand the structure and ideas of the Content Module JavaScript architecture.</li>
+</ul>
+
+          </div>
+        <h3 id="overall-ui-goals">1 Overall UI Goals</h3>
+<p>We have set up the following goals to strive for UI-wise:</p>
+<ul>
+	<li>Reliable editing</li>
+	<li>Predictable UI Behavior</li>
+	<li>Immeditate feedback for the user</li>
+	<li>Built with the web &#8211; for the web</li>
+</ul>
+<p>UI concepts should be evaluated against the above goals.</p>
+<h3 id="technical-guidelines-goals">2 Technical guidelines / goals</h3>
+<p>When implementing the user interface, we should follow these guidelines on a technical side:</p>
+<ul>
+	<li>Take the pragmatic approach</li>
+	<li>Augument the frontend website</li>
+	<li>No iFrame in the content module</li>
+	<li>Browser support &gt;= IE9; in the prototyping phase focus on Firefox</li>
+	<li>No polling of data from the server!</li>
+</ul>
+<h3 id="css-guidelines">3 <span class="caps">CSS</span> Guidelines</h3>
+<p>Overal Goal:</p>
+<ul>
+	<li>Be pragmatic! We strive for solutions which work out-of-the-box in 95% of the cases; and tell the integrator   how to solve the other 5%. Thus, the integrator has to care to make his <span class="caps">CSS</span> work with Phoenix; we do not use a sandbox.</li>
+</ul>
+<p>Implementation notes:</p>
+<ul>
+	<li>All <span class="caps">CSS</span> selectors should be fully lowercase, with <code>-</code> as separator. Example: <code>t3-ui, t3-breadcrumb-item</code></li>
+	<li>We use the <tt>t3-</tt> prefix</li>
+	<li>The integrator is never allowed to override <tt>t3-</tt> and <tt>aloha-</tt></li>
+	<li>The main UI elements have an ID, and a partial reset is used to give us predictable behavior inside them.</li>
+	<li>We use <strong>sass</strong>. To install, use <tt>gem install sass</tt>. Then, before modifying <span class="caps">CSS</span>, go to css/ and run   <tt>sass --watch style.scss:style.css</tt>. This will update style.css at every modification of style.scss.</li>
+</ul>
+<h3 id="naming-of-main-ui-parts">4 Naming of main UI parts</h3>
+<p>The following image shows the main UI parts and the names we use for them.</p>
+<p><img src="images/content/js_architecture/ui_parts.png" alt="" /></p>
+<h3 id="main-architecture">5 Main architecture</h3>
+<p>The following diagram shows how a change of the block selection in Aloha updates the UI.</p>
+<p><img src="images/content/js_architecture/internal_structure_ui_updates.png" alt="" /></p>
+<p>When an attribute is modified through the property panel, the following happens:</p>
+<p><img src="images/content/js_architecture/internal_structure_attribute_updates.png" alt="" /></p>
+<h3 id="changelog">6 Changelog</h3>
+<ul>
+	<li>July 11, 2011: Initial version by <a href="credits.html#skurfuerst">Sebastian Kurfürst</a></li>
+</ul>
+
+      </div>
+        <div id="subCol">
+          <h3 class="chapter"><img src="images/strobe/chapters.png" alt="" />Chapters</h3>
+          <ol class="chapters">
+            <li><a href="#overall-ui-goals"><p>Overall UI Goals</p>
+</a></li><li><a href="#technical-guidelines-goals"><p>Technical guidelines / goals</p>
+</a></li><li><a href="#css-guidelines"><p><span class="caps">CSS</span> Guidelines</p>
+</a></li><li><a href="#naming-of-main-ui-parts"><p>Naming of main UI parts</p>
+</a></li><li><a href="#main-architecture"><p>Main architecture</p>
+</a></li><li><a href="#changelog"><p>Changelog</p>
+</a></li>
+          </ol>
+        </div>
+    </div>
+  </div>
+
+  <hr class="hide" />
+	  <footer>
+	    <div class="container">
+	      <div class="col">
+	        <p>
+	        	Templates based on <a href="https://github.com/sproutcore/sproutguides">SproutCore guides</a>.
+	        </p>
+	      </div>
+	      <a href="#feature" class="top">Back To Top</a>
+	    </div>
+	  </footer>
+
+  <script src="http://code.jquery.com/jquery-1.6.min.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" src="javascripts/typo3Guides.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shCore.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushRuby.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushJScript.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushCss.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushXml.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushSql.js"></script>
+  <script type="text/javascript" src="javascripts/syntaxhighlighter/shBrushPlain.js"></script>
+  <script type="text/javascript">
+    SyntaxHighlighter.all()
+  </script>
+</body>
+</html>

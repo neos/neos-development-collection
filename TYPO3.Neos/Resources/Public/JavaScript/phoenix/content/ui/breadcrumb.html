@@ -1,0 +1,6 @@
+<div class="t3-breadcrumb-page">
+	{{view T3.Content.UI.BreadcrumbPage}}
+</div>
+{{#collection contentBinding="parentView.content" tagName="ul"}}
+	{{view T3.Content.UI.BreadcrumbItem itemBinding="parentView.content"}}
+{{/collection}}
