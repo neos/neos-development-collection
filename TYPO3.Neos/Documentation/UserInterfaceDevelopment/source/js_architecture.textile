@@ -51,6 +51,8 @@ The following image shows the main UI parts and the names we use for them.
 
 h3. Main architecture
 
+WARNING: TODO: Explain 'block selection'. It's a new term, and not completely clear when you read it for the first time.
+
 The following diagram shows how a change of the block selection in Aloha updates
 the UI.
 
@@ -59,6 +61,12 @@ the UI.
 When an attribute is modified through the property panel, the following happens:
 
 !images/content/js_architecture/internal_structure_attribute_updates.png!
+
+WARNING: TODO: Document what happens when an *editable* is modified
+
+h3. Saving content
+
+WARNING: TODO still needs to be written
 
 h3. Changelog
 

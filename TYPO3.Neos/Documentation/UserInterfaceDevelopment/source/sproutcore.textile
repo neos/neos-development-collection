@@ -78,7 +78,7 @@ var Foo = SC.Object.extend({
 
 Now, every time @name@ changes, the system re-evaluates @greeting@.
 
-NOTE: Forgetting @.cacheable()@ can have severe performance improvements and result
+NOTE: Forgetting @.cacheable()@ can have severe performance penalties and result
       in circular loops, in worst case freezing the browser completely.
 
 h4. Views and Bindings
