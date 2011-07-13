@@ -29,8 +29,9 @@ function(launcherTemplate) {
 		_somePropertyChanged: function(that, propertyName) {
 			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('alohaBlockId'));
 			// Save original property back to Aloha Block
-			alohaBlock.attr(propertyName, this.get(propertyName));
-
+			if (!this._disableAlohaBlockUpdate) {
+				alohaBlock.attr(propertyName, this.get(propertyName));
+			}
 			var hasChanges = false;
 			$.each(this._originalValues, function(key, value) {
 				if (that.get(key) !== value) {
@@ -68,6 +69,14 @@ function(launcherTemplate) {
 			});
 
 			return cleanedAttributes;
+		},
+
+		// HACK for making updates of editables work...
+		_doNotUpdateAlohaBlock: function() {
+			this._disableAlohaBlockUpdate = true;
+		},
+		_enableAlohaBlockUpdateAgain: function() {
+			this._disableAlohaBlockUpdate = false;
 		}
 	});
 
