@@ -34,6 +34,10 @@
 				var require = { ]]>
 					'baseUrl': '{f:uri.resource(path:"JavaScript/")}'
 				};
+
+				var ExtDirectInitialization = function() {
+					<ext:extDirect.provider />;
+				};
 		</script>
 		<script src="{f:uri.resource(path:'JavaScript/require.js')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js')}" id="aloha-script-include" data-plugins="common/block,common/paste,phoenix/phoenixintegration"></script>
 

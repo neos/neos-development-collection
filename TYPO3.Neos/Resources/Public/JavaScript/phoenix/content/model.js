@@ -70,6 +70,12 @@ function(launcherTemplate) {
 
 			return cleanedAttributes;
 		},
+		recordCurrentStateAsOriginal: function() {
+			var that = this;
+			$.each(this._originalValues, function(key) {
+				that._originalValues[key] = that.get(key);
+			});
+		},
 
 		// HACK for making updates of editables work...
 		_doNotUpdateAlohaBlock: function() {
@@ -274,10 +280,26 @@ function(launcherTemplate) {
 			}, this);
 		},
 		save: function() {
-			// TODO: send changes to server side
+			var numberOfUnsavedRecords = this.get('length');
+			var callback = function() {
+				// reload backend, so we get a clean state again
+				// TODO: might be removable lateron
+				numberOfUnsavedRecords--;
+				if (numberOfUnsavedRecords <= 0) {
+					window.document.location.reload();
+				}
+			}
 
-			// TODO: for each block, record current state as "original"
+			this.forEach(function(block) {
+				block.recordCurrentStateAsOriginal();
 
+				var attributes = block.getCleanedUpAttributes();
+				attributes['__contextNodePath'] = attributes['about'];
+				delete attributes['about'];
+				delete attributes['block-type'];
+
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(attributes, callback);
+			});
 			// Flush local changes
 			this.set('[]', []);
 		}

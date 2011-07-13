@@ -19,6 +19,7 @@ function() {
 
 	SC.$(document).ready(function() {
 		T3.ContentModule.bootstrap();
+		ExtDirectInitialization();
 	});
 
 });
