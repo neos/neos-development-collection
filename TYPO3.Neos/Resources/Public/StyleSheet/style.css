@@ -6,7 +6,7 @@
 .t3-ui address, .t3-ui caption, .t3-ui cite, .t3-ui code, .t3-ui dfn, .t3-ui em, .t3-ui strong, .t3-ui th, .t3-ui var {
   font-style: normal;
   font-weight: normal; }
-.t3-ui ol, .t3-ui ul {
+.t3-ui ol, .t3-ui ul, .t3-ui ol li, .t3-ui ul li {
   list-style: none; }
 .t3-ui caption, .t3-ui th {
   text-align: left; }

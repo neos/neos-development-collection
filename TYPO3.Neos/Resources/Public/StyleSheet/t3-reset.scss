@@ -8,7 +8,7 @@
 	address,caption,cite,code,dfn,em,strong,th,var {
 		font-style:normal;font-weight:normal;
 	}
-	ol,ul {
+	ol,ul,ol li, ul li {
 		list-style:none;
 	}
 	caption,th {

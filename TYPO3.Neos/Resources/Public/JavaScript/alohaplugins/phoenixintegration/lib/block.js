@@ -4,7 +4,7 @@ function(block) {
     "use strict";
 	var exports = {};
 
-	exports.AbstractBlock = block.DefaultBlock.extend({
+	exports.AbstractBlock = block.AbstractBlock.extend({
 		renderToolbar: function() {
 			var that = this;
 			var addAboveHandle = $('<span class="t3-add-above-handle">Add above</span>');
@@ -46,6 +46,7 @@ function(block) {
 
 	exports.PluginBlock = exports.AbstractBlock.extend({
 		title: 'Plugin',
+
 		getSchema: function() {
 			return [
 				{
