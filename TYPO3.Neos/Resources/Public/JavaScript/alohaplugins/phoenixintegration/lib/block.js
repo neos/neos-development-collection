@@ -32,15 +32,41 @@ function(block) {
 	exports.TextBlock = exports.AbstractBlock.extend({
 		title: 'Text',
 
+		_alreadyRendered: false,
+
 		init: function() {
 			this.attr('title', this.element.find('h1').html(), true);
 			this.attr('text', this.element.find('*[data-propertyname="text"]').html(), true);
 		},
 		render: function(element) {
-			return '<h1 class="aloha-editable" data-propertyname="title">' + this.attr('title') + '</h1><div class="aloha-editable"  data-propertyname="text">' + this.attr('text') + '</div>'; // TODO: use templateable block here
+			if (this._alreadyRendered) return;
+			return '<h1 class="aloha-editable" data-propertyname="title">' + this.attr('title') + '</h1><div class="aloha-editable"  data-propertyname="text"><p>' + this.attr('text') + '</p></div>'; // TODO: use templateable block here
+		},
+		_renderSurroundingElements: function() {
+			if (this._alreadyRendered) return;
+
+			this.element.empty();
+			this.element.append(this.$innerElement);
+
+			this.createEditables(this.$innerElement);
+
+			this.renderToolbar();
+			this._alreadyRendered = true;
 		},
 		getSchema: function() {
 			return null;
+		},
+		_setAttribute: function(key, value) {
+			if (key === 'about') {
+				this.element.attr('about', value);
+			} else {
+				this.element.attr('data-' + key, value);
+			}
+			if (key === 'title') {
+				this.element.find('h1').html(value);
+			} else if (key === 'text') {
+				this.element.find('*[data-propertyname="text"]').html(value);
+			}
 		}
 	});
 
