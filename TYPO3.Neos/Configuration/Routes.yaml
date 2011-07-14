@@ -38,6 +38,15 @@
     '@controller': 'Backend\Backend'
     '@action':     'index'
     '@format':     'html'
+-
+  name:          'Backend - Content Module'
+  uriPattern:    'typo3/content/{@action}'
+  defaults:
+    '@package':    'TYPO3.TYPO3'
+    '@controller': 'Backend\Content'
+    '@action':     'index'
+    '@format':     'html'
+
 
 ##
 # Frontend

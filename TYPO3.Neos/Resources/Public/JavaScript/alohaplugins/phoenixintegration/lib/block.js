@@ -3,6 +3,7 @@ define(
 function(block) {
     "use strict";
 	var exports = {};
+	var $ = window.alohaQuery || window.jQuery;
 
 	/**
 	 * This is the TYPO3 AbstractBlock, which we use for all TYPO3-related functionality.
@@ -66,22 +67,57 @@ function(block) {
 		 * with the situation that the handles are already created.
 		 */
 		renderHandles: function() {
+
+			// TODO: move to lightbox code
+			var fetchUrl = function(url, data, $resultContainer, returnCallback) {
+				$.get(url, data, function(data) {
+					// TODO: If data is in some special format, return to parent application
+					$resultContainer.html(data);
+
+					$resultContainer.find('a[rel|="typo3"]').each(function() {
+						var command = $(this).attr('rel').substr(6);
+						returnCallback(command, $(this));
+					});
+					$resultContainer.dialog('option', 'title', $resultContainer.find('h1').html());
+					$resultContainer.find('h1').remove();
+					$resultContainer.find('a').click(function() {
+						fetchUrl($(this).attr('href'), {}, $resultContainer, returnCallback);
+						return false;
+					});
+				});
+			}
+
+			var showCreateElementDialog = function(event, position) {
+				$('<div>Loading...</div>').dialog({
+					modal: true,
+					zIndex: 10001,
+					open: function() {
+						fetchUrl('/typo3/content/new', {
+							position: position,
+							referenceNode: $(event.target).parent('.aloha-block').attr('about')
+						}, $(this),
+						function(command, $callbackDomElement) {
+							if (command === 'created-new-content') {
+								window.location.href = $callbackDomElement.attr('data-page');
+							}
+						});
+					}
+				});
+			}
 			if (this.element.find('.t3-add-above-handle').length == 0) {
 				var addAboveHandle = $('<span class="t3-add-above-handle">Add above</span>');
 				this.element.prepend(addAboveHandle);
-				/*addAboveHandle.click(function() {
-					// TODO implement
-					return false;
-				});*/
+				addAboveHandle.click(function(event) {
+					showCreateElementDialog(event, 'above');
+				});
 			}
 
 			if (this.element.find('.t3-add-below-handle').length == 0) {
 				var addBelowHandle = $('<span class="t3-add-below-handle">Add below</span>');
 				this.element.prepend(addBelowHandle);
-				/*addBelowHandle.click(function() {
-					// TODO implement
-					return false;
-				});*/
+				addBelowHandle.click(function(event) {
+					showCreateElementDialog(event, 'below');
+				});
 			}
 
 			this.element.find('.t3-status-indicator').remove();

@@ -443,6 +443,21 @@ div.aloha-block:hover > div.aloha-block-inner {
 	z-index:10000 !important;
 }
 
+.ui-dialog a.t3-content-new {
+    background: -moz-linear-gradient(#CCCCCC, #333333);
+    border-radius: 3px;
+    display: block;
+    font-size: 22px;
+    height: 35px;
+    padding-top: 10px;
+    text-align: center;
+    width: 51px;
+	&:hover {
+		text-decoration:none;
+	}
+}
+
+
 // TODO Move to common CSS
 .three-columns {
 	width: 100%;

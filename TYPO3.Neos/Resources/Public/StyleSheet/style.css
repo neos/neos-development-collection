@@ -398,6 +398,18 @@ div.aloha-block:hover > div.aloha-block-inner {
 .aloha-floatingmenu {
   z-index: 10000 !important; }
 
+.ui-dialog a.t3-content-new {
+  background: -moz-linear-gradient(#cccccc, #333333);
+  border-radius: 3px;
+  display: block;
+  font-size: 22px;
+  height: 35px;
+  padding-top: 10px;
+  text-align: center;
+  width: 51px; }
+  .ui-dialog a.t3-content-new:hover {
+    text-decoration: none; }
+
 .three-columns {
   width: 100%;
   float: left;
