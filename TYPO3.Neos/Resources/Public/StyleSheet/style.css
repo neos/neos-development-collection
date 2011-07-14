@@ -166,6 +166,7 @@ ul.t3-topbar {
   color: #ffffff;
   font-weight: normal; }
 .t3-propertypanel-form input[type=text] {
+  width: 175px;
   height: 20px;
   line-height: 20px;
   border: 1px solid #000000;

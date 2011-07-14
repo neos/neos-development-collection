@@ -28,7 +28,6 @@ function(Plugin, block, BlockManager, require) {
 			var surroundingAlohaBlock = BlockManager.getBlock(surroundingAlohaBlockDomElement);
 			var blockProxy = T3.Content.Model.BlockManager.getBlockProxy(surroundingAlohaBlock);
 
-			// TODO: this only works because the textblock does NOT re-render
 			blockProxy._doNotUpdateAlohaBlock();
 			blockProxy.set(editable.obj.data('propertyname'), editable.getContents());
 			blockProxy._enableAlohaBlockUpdateAgain();
