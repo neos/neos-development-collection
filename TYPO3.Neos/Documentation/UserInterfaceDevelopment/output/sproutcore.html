@@ -131,7 +131,7 @@ var Foo = SC.Object.extend({
 
 });
 </pre></div><p>Now, every time <code>name</code> changes, the system re-evaluates <code>greeting</code>.</p>
-<div class="note"><p>Forgetting <code>.cacheable()</code> can have severe performance improvements and result in circular loops, in worst case freezing the browser completely.</p></div>
+<div class="note"><p>Forgetting <code>.cacheable()</code> can have severe performance penalties and result in circular loops, in worst case freezing the browser completely.</p></div>
 <h4 id="views-and-bindings">2.1 Views and Bindings</h4>
 <div class="warning"><p>Not yet 100% clear yet</p></div>
 <p><span class="caps">TODO</span>: Document the &quot;fooBinding: &quot;&#8230; stuff</p>
