@@ -106,11 +106,13 @@ abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractCont
 	 *
 	 * @return string The assembled content of all Content Objects in the internal content array.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function render() {
 		$content = '';
 		foreach ($this->contentArray as $contentItem) {
-			if ($contentItem instanceof \TYPO3\TypoScript\ContentObjectInterface) {
+			if ($contentItem instanceof \TYPO3\TypoScript\ContentObjectInterface
+				&& $contentItem->getNode()->isAccessible()) {
 				$contentItem->setRenderingContext($this->renderingContext);
 				$content .= $contentItem->render();
 			}

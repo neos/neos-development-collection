@@ -133,6 +133,7 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	 *
 	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function render() {
 		try {
@@ -141,6 +142,9 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 				$this->template->assign($propertyName, $this->getPropertyProcessingProxy($propertyName));
 			}
 			if ($this->node !== NULL) {
+				if (!$this->node->isAccessible()) {
+					return '';
+				}
 				$this->template->assign('node', $this->node);
 			}
 
