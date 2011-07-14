@@ -822,16 +822,18 @@ class Node implements NodeInterface {
 	 *
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function isAccessible() {
-		if ($this->accessRoles !== array()) {
-			foreach ($this->accessRoles as $roleName) {
-				if (!$this->securityContext->hasRole($roleName)) {
-					return FALSE;
-				}
+		if ($this->accessRoles === array()) {
+			return TRUE;
+		}
+		foreach ($this->accessRoles as $roleName) {
+			if ($this->securityContext->hasRole($roleName)) {
+				return TRUE;
 			}
 		}
-		return TRUE;
+		return FALSE;
 	}
 
 	/**

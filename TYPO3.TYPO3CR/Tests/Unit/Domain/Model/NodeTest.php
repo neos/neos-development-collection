@@ -777,4 +777,41 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			$this->assertEquals($index, $childNodes[$nodeId]->getIndex(), 'Error on node ID ' . $nodeId);
 		}
 	}
+
+	/**
+	 * @test
+	 */
+	public function isAccessibleReturnsTrueIfAccessRolesIsNotSet() {
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
+		$this->assertTrue($node->isAccessible());
+	}
+
+	/**
+	 * @test
+	 */
+	public function isAccessibleReturnsFalseIfAccessRolesIsSetAndSecurityContextHasNoRoles() {
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
+
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
+		$mockSecurityContext->expects($this->any())->method('hasRole')->will($this->returnValue(FALSE));
+		$node->_set('securityContext', $mockSecurityContext);
+
+		$node->setAccessRoles(array('SomeRole'));
+		$this->assertFalse($node->isAccessible());
+	}
+
+	/**
+	 * @test
+	 */
+	public function isAccessibleReturnsTrueIfAccessRolesIsSetAndSecurityContextHasOneOfTheRequiredRoles() {
+		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
+
+		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
+		$mockSecurityContext->expects($this->at(0))->method('hasRole')->with('SomeRole')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeOtherRole')->will($this->returnValue(TRUE));
+		$node->_set('securityContext', $mockSecurityContext);
+
+		$node->setAccessRoles(array('SomeRole', 'SomeOtherRole'));
+		$this->assertTrue($node->isAccessible());
+	}
 }
