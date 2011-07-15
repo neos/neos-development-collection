@@ -231,7 +231,7 @@ function(launcherTemplate) {
 
 		noChanges: function() {
 			return this.get('length') == 0;
-		}.property('length'),
+		}.property('length').cacheable(),
 
 		_readFromLocalStore: function() {
 			if (!this._supports_html5_storage()) return;
