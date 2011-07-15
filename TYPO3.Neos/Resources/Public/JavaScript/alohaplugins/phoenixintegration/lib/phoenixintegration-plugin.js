@@ -1,5 +1,5 @@
 define(
-['core/plugin', 'phoenixintegration/block', 'block/blockmanager', 'require'],
+['aloha/plugin', 'phoenixintegration/block', 'block/blockmanager', 'require'],
 function(Plugin, block, BlockManager, require) {
     "use strict";
 
