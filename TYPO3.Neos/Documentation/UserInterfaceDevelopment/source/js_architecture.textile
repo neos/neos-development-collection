@@ -43,6 +43,12 @@ Implementation notes:
 * We use *sass*. To install, use +gem install sass+. Then, before modifying CSS, go to css/ and run
   +sass --watch style.scss:style.css+. This will update style.css at every modification of style.scss.
 
+h4. Z-Indexes
+
+The TYPO3 Phoenix UI uses Z-Indexes starting at *10000*.
+
+WARNING: TODO: Formulate some more about the usage of z-indexes.
+
 h3. Naming of main UI parts
 
 The following image shows the main UI parts and the names we use for them.

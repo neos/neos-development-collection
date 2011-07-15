@@ -438,6 +438,11 @@ div.aloha-block:hover > div.aloha-block-inner {
 	@include box-shadow(0px, 0px, 0px, transparent);
 }
 
+/* Reset Z-Index so that the Floating Menu does not overlap the UI elements. */
+.aloha-floatingmenu {
+	z-index:10000 !important;
+}
+
 // TODO Move to common CSS
 .three-columns {
 	width: 100%;
