@@ -136,10 +136,10 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockNode->expects($this->any())->method('getProperty')->will($this->returnValue(NULL));
 
 		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
-		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue(NULL));
-		$mockPluginRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue(NULL));
-		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
-		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue(NULL));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerSubpackageKey')->will($this->returnValue(NULL));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerName')->will($this->returnValue(NULL));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerActionName')->will($this->returnValue(NULL));
 
 		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
@@ -165,14 +165,14 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function renderDoesNotSetRequestPackageKeyIfItIsAlreadySet() {
 		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
-		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('Foo'));
-		$mockPluginRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('Bar'));
-		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('Baz'));
-		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('quux'));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue('Foo'));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerSubpackageKey')->will($this->returnValue('Bar'));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerName')->will($this->returnValue('Baz'));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerActionName')->will($this->returnValue('quux'));
 
 		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
-		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('SomePackage'));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue('SomePackage'));
 		$mockPluginRequest->expects($this->never())->method('setControllerPackageKey');
 
 		$this->plugin->render();
@@ -190,10 +190,10 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockNode->expects($this->at(3))->method('getProperty')->with('action')->will($this->returnValue('actionDefinedInNode'));
 
 		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
-		$mockPluginRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue(NULL));
-		$mockPluginRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue(NULL));
-		$mockPluginRequest->expects($this->once())->method('getControllerName')->will($this->returnValue(NULL));
-		$mockPluginRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue(NULL));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue(NULL));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerSubpackageKey')->will($this->returnValue(NULL));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerName')->will($this->returnValue(NULL));
+		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerActionName')->will($this->returnValue(NULL));
 
 		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
