@@ -86,7 +86,33 @@ function(block) {
 					});
 				});
 			}
+			if (this.element.find('.t3-delete-handle').length == 0) {
+				var deleteHandle = $('<span class="t3-delete-handle">Delete element</span>');
+				this.element.prepend(deleteHandle);
+				deleteHandle.click(function(event) {
+					$('<div>Are you sure you want to delete this content element?</div>').dialog({
+						modal: true,
+						zIndex: 10001,
+						buttons: {
+							Ok: function() {
+								TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
+									this,
+									$(event.target).parent('.aloha-block').attr('about'),
+									function (result) {
+										if (result.success) {
+											window.location.reload();
+										}
+									}
+								);
+							},
+							Cancel: function() {
+								$(this).dialog( "close" );
+							}
+						}
+					});
 
+				});
+			}
 			var showCreateElementDialog = function(event, position) {
 				$('<div>Loading...</div>').dialog({
 					modal: true,

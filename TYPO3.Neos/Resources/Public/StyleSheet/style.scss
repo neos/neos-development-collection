@@ -350,6 +350,7 @@ button.t3-button {
 	@include box-shadow(-1px, -1px, 3px, rgba(0, 0, 0, 0.4))
 }
 
+.t3-delete-handle,
 .t3-add-below-handle,
 .t3-add-above-handle {
 	position: absolute;
@@ -383,7 +384,13 @@ button.t3-button {
 	border-radius: 0 0 5px 5px;
 	@include box-shadow(0px, 1px, 3px, #909090);
 }
+.t3-delete-handle {
+	right: 25px;
+	background-image: url(../Images/ContentModule/delete.png), -moz-linear-gradient(center top , #eeeeee, #bbbbbb);
+}
 
+.aloha-block-active > .t3-delete-handle,
+.aloha-block:hover > .t3-delete-handle,
 .aloha-block:hover > .t3-add-above-handle,
 .aloha-block-active > .t3-add-above-handle,
 .aloha-block:hover > .t3-add-below-handle,
@@ -392,12 +399,15 @@ button.t3-button {
 	z-index: 10000;
 }
 .t3-contentelement-selected {
+	.aloha-block:hover > .t3-delete-handle,
 	.aloha-block:hover > .t3-add-above-handle,
 	.aloha-block:hover > .t3-add-below-handle {
 		display: none;
 	}
+	.aloha-block-active > .t3-delete-handle,
 	.aloha-block-active > .t3-add-above-handle,
 	.aloha-block-active > .t3-add-below-handle,
+	.aloha-block-active:hover > .t3-delete-handle,
 	.aloha-block-active:hover > .t3-add-above-handle,
 	.aloha-block-active:hover > .t3-add-below-handle {
 		display: block;

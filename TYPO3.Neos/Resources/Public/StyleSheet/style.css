@@ -302,6 +302,7 @@ button.t3-button {
   -moz-box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4);
   -webkit-box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4); }
 
+.t3-delete-handle,
 .t3-add-below-handle,
 .t3-add-above-handle {
   position: absolute;
@@ -325,6 +326,7 @@ button.t3-button {
   -moz-box-shadow: 0px -1px 4px #909090;
   -webkit-box-shadow: 0px -1px 4px #909090;
   cursor: pointer; }
+  .t3-delete-handle:hover,
   .t3-add-below-handle:hover,
   .t3-add-above-handle:hover {
     box-shadow: 0px -1px 4px #aaaaaa;
@@ -341,6 +343,12 @@ button.t3-button {
   -moz-box-shadow: 0px 1px 3px #909090;
   -webkit-box-shadow: 0px 1px 3px #909090; }
 
+.t3-delete-handle {
+  right: 25px;
+  background-image: url(../Images/ContentModule/delete.png), -moz-linear-gradient(center top, #eeeeee, #bbbbbb); }
+
+.aloha-block-active > .t3-delete-handle,
+.aloha-block:hover > .t3-delete-handle,
 .aloha-block:hover > .t3-add-above-handle,
 .aloha-block-active > .t3-add-above-handle,
 .aloha-block:hover > .t3-add-below-handle,
@@ -348,11 +356,14 @@ button.t3-button {
   display: block;
   z-index: 10000; }
 
+.t3-contentelement-selected .aloha-block:hover > .t3-delete-handle,
 .t3-contentelement-selected .aloha-block:hover > .t3-add-above-handle,
 .t3-contentelement-selected .aloha-block:hover > .t3-add-below-handle {
   display: none; }
+.t3-contentelement-selected .aloha-block-active > .t3-delete-handle,
 .t3-contentelement-selected .aloha-block-active > .t3-add-above-handle,
 .t3-contentelement-selected .aloha-block-active > .t3-add-below-handle,
+.t3-contentelement-selected .aloha-block-active:hover > .t3-delete-handle,
 .t3-contentelement-selected .aloha-block-active:hover > .t3-add-above-handle,
 .t3-contentelement-selected .aloha-block-active:hover > .t3-add-below-handle {
   display: block; }
