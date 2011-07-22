@@ -25,6 +25,14 @@ function(launcherTemplate) {
 		_title:null,
 		_originalValues: null,
 
+		/**
+		 * @var {String}
+		 * The TYPO3CR node path of the block
+		 */
+		nodePath: function() {
+			return this.get('about');
+		}.property('about').cacheable(),
+
 		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
 		_somePropertyChanged: function(that, propertyName) {
 			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('alohaBlockId'));
@@ -96,8 +104,10 @@ function(launcherTemplate) {
 	 */
 	var BlockManager = SC.Object.create({
 		_blocks: {},
+		_blocksByNodePath: {},
 		/**
 		 * @param block/block Aloha Block instance
+		 * @return {T3.Content.Model.Block}
 		 */
 		getBlockProxy: function(alohaBlock) {
 			var blockId = alohaBlock.getId();
@@ -131,7 +141,27 @@ function(launcherTemplate) {
 			}));
 
 			this._blocks[blockId] = blockProxy;
+
+			this._blocksByNodePath[blockProxy.get('nodePath')] = blockProxy;
 			return this._blocks[blockId];
+		},
+
+		/**
+		 * Retrieve block instance for a certain TYPO3CR Node Path
+		 *
+		 * @param {String} nodePath
+		 * @return {T3.Content.Model.Block}
+		 */
+		getBlockByNodePath: function(nodePath) {
+			if(this._blocksByNodePath[nodePath]) {
+				return this._blocksByNodePath[nodePath];
+			}
+			var alohaBlock = Aloha.Block.BlockManager.getBlock($('[about="' + nodePath + '"]'));
+
+			if (alohaBlock) {
+				return this.getBlockProxy(alohaBlock);
+			}
+			return undefined;
 		}
 	});
 
@@ -241,9 +271,8 @@ function(launcherTemplate) {
 			if (serializedBlocks) {
 				var blocks = JSON.parse(serializedBlocks);
 				blocks.forEach(function(serializedBlock) {
-					var alohaBlock = Aloha.Block.BlockManager.getBlock($('[about="' + serializedBlock.about + '"]'));
-					if (alohaBlock) {
-						var blockProxy = T3.Content.Model.BlockManager.getBlockProxy(alohaBlock);
+					var blockProxy = T3.Content.Model.BlockManager.getBlockByNodePath(serializedBlock.about);
+					if (blockProxy) {
 						$.each(serializedBlock, function(k, v) {
 							blockProxy.set(k, v);
 						});

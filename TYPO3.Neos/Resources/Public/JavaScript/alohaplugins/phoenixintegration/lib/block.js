@@ -67,90 +67,35 @@ function(block) {
 		 * with the situation that the handles are already created.
 		 */
 		renderHandles: function() {
-
-			// TODO: move to lightbox code
-			var fetchUrl = function(url, data, $resultContainer, returnCallback) {
-				$.get(url, data, function(data) {
-					// TODO: If data is in some special format, return to parent application
-					$resultContainer.html(data);
-
-					$resultContainer.find('a[rel|="typo3"]').each(function() {
-						var command = $(this).attr('rel').substr(6);
-						returnCallback(command, $(this));
-					});
-					$resultContainer.dialog('option', 'title', $resultContainer.find('h1').html());
-					$resultContainer.find('h1').remove();
-					$resultContainer.find('a').click(function() {
-						fetchUrl($(this).attr('href'), {}, $resultContainer, returnCallback);
-						return false;
-					});
-				});
-			}
-			if (this.element.find('.t3-delete-handle').length == 0) {
-				var deleteHandle = $('<span class="t3-delete-handle">Delete element</span>');
-				this.element.prepend(deleteHandle);
-				deleteHandle.click(function(event) {
-					$('<div>Are you sure you want to delete this content element?</div>').dialog({
-						modal: true,
-						zIndex: 10001,
-						buttons: {
-							Ok: function() {
-								TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
-									this,
-									$(event.target).parent('.aloha-block').attr('about'),
-									function (result) {
-										if (result.success) {
-											window.location.reload();
-										}
-									}
-								);
-							},
-							Cancel: function() {
-								$(this).dialog( "close" );
-							}
-						}
-					});
-
-				});
-			}
-			var showCreateElementDialog = function(event, position) {
-				$('<div>Loading...</div>').dialog({
-					modal: true,
-					zIndex: 10001,
-					open: function() {
-						fetchUrl('/typo3/content/new', {
-							position: position,
-							referenceNode: $(event.target).parent('.aloha-block').attr('about')
-						}, $(this),
-						function(command, $callbackDomElement) {
-							if (command === 'created-new-content') {
-								window.location.href = $callbackDomElement.attr('data-page');
-							}
-						});
-					}
-				});
-			}
-			if (this.element.find('.t3-add-above-handle').length == 0) {
-				var addAboveHandle = $('<span class="t3-add-above-handle">Add above</span>');
-				this.element.prepend(addAboveHandle);
-				addAboveHandle.click(function(event) {
-					showCreateElementDialog(event, 'above');
-				});
-			}
-
-			if (this.element.find('.t3-add-below-handle').length == 0) {
-				var addBelowHandle = $('<span class="t3-add-below-handle">Add below</span>');
-				this.element.prepend(addBelowHandle);
-				addBelowHandle.click(function(event) {
-					showCreateElementDialog(event, 'below');
-				});
-			}
+			this._renderHandle('t3-delete-handle', 'Delete element', T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-add-above-handle', 'Add above', T3.Content.Controller.BlockActions.addAbove, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-add-below-handle', 'Add below', T3.Content.Controller.BlockActions.addBelow, T3.Content.Controller.BlockActions);
 
 			this.element.find('.t3-status-indicator').remove();
 			if (this.attr('_status')) {
 				// FIXME: do not output _status directly, but do it using CSS or localization.
 				var statusIndicator = $('<span class="t3-status-indicator t3-status-indicator-' + this.attr('_status')  + '">' + this.attr('_status') + '</span>');
 				this.element.prepend(statusIndicator);
+			}
+		},
+
+		/**
+		 * Helper function which renders a single handle, if it does not exist yet
+		 *
+		 * @param {String} cssClass CSS class for the handle
+		 * @param {String} innerHTML Inner HTML for the handle
+		 * @param {Function} callback the Callback function to be executed when clicking the handle. This function gets the current T3.Content.Model.Block as first parameter.
+		 * @param {Object} scope the scope to use for the callback
+		 */
+		_renderHandle: function(cssClass, innerHtml, callback, scope) {
+			if (this.element.find('.' + cssClass).length == 0) {
+				var handle = $('<span class="' + cssClass + '">' + innerHtml + '</span>');
+				this.element.prepend(handle);
+				handle.click(function(event) {
+					var nodePath = $(event.target).parent('.aloha-block').attr('about');
+					var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+					callback.call(scope, block);
+				});
 			}
 		},
 
