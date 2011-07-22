@@ -17,11 +17,38 @@ function() {
 		$ = window.alohaQuery || window.jQuery;
 	var ContentModule = SC.Application.create({
 
+		/**
+		 * The following setting is set to "true" when unfinished features should be shown.
+		 *
+		 * You can use it in the UI as following:
+		 *
+		 * SC.View.extend({
+		 *    template: SC.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
+		 *    isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
+		 * })
+		 *
+		 * OR
+		 *
+		 * {{view T3.Content.UI.Button label="Inspect" isVisibleBinding="T3.ContentModule.showDevelopmentFeatures"}}
+		 *
+		 * OR
+		 * {{#boundIf T3.ContentModule.showDevelopmentFeatures}}
+		 *   Display only in development mode
+		 * {{/boundif}}
+		 */
+		showDevelopmentFeatures: false,
+
 		bootstrap: function() {
 			this._initializePropertyPanel();
 			this._initializeToolbar();
 			this._initializeFooter();
 			this._initializeLauncher();
+
+			var that = this;
+			window.addEventListener("hashchange", function() {
+				that._enableDevelopmentFeaturesIfNeeded();
+			}, false);
+			this._enableDevelopmentFeaturesIfNeeded();
 
 			// When aloha is loaded, blockify our content.
 			// TODO: Later, we will only have one generic TYPO3-AlohaBlock here
@@ -41,6 +68,18 @@ function() {
 			$('body').addClass('t3-backend');
 		},
 
+		_enableDevelopmentFeaturesIfNeeded: function() {
+			if (window.location.hash === '#dev') {
+				this.set('showDevelopmentFeatures', true);
+				window.localStorage['showDevelopmentFeatures'] = true;
+			} else if (window.location.hash === '#nodev') {
+				this.set('showDevelopmentFeatures', false);
+				delete window.localStorage['showDevelopmentFeatures']
+			} else if(window.localStorage['showDevelopmentFeatures']) {
+				this.set('showDevelopmentFeatures', 'true');
+			}
+		},
+
 		_initializePropertyPanel: function() {
 			var propertyPanel = T3.Content.UI.PropertyPanel.create({
 				elementId: 't3-rightarea',
@@ -56,7 +95,8 @@ function() {
 				classNames: ['t3-ui'],
 				left: [
 					T3.Content.UI.ToggleButton.extend({
-						label: 'Pages'
+						label: 'Pages',
+						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
 					}),
 					T3.Content.UI.ToggleButton.extend({
 						target: 'T3.Content.Controller.Preview',
@@ -66,6 +106,10 @@ function() {
 					})
 				],
 				right: [
+					SC.View.extend({
+						template: SC.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
+						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
+					}),
 					T3.Content.UI.Button.extend({
 						label: 'Revert',
 						disabledBinding: 'T3.Content.Model.Changes.noChanges',
