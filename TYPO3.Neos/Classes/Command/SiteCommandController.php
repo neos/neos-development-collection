@@ -48,13 +48,28 @@ class SiteCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	protected $siteExportService;
 
 	/**
-	 * Action to import XML content
+	 * Import sites content
 	 *
+	 * This command allows for importing one or more sites or partial content from an XML source. The format must
+	 * be identical to that produced by the export command.
+	 *
+	 * If a package key is specified, this command expects a Sites.xml file to be located in the private resources
+	 * directory of the given package:
+	 *
+	 * .../Resources/Private/Content/Sites.xml
+	 *
+	 * Alternatively the XML content may be passed through STDIN in which case the package key argument must be omitted.
+	 *
+	 * @param string $packageKey Package key specifying the package containing the sites content
 	 * @return void
 	 */
-	public function importCommand() {
+	public function importCommand($packageKey = NULL) {
 		try {
-			$this->siteImportService->importSitesFromFile('php://stdin');
+			if ($packageKey !== NULL) {
+				$this->siteImportService->importFromPackage($packageKey);
+			} else {
+				$this->siteImportService->importSitesFromFile('php://stdin');
+			}
 			$this->response->appendContent('Import finished.');
 		} catch (\Exception $exception) {
 			$this->response->appendContent('Error: During import an exception occured. ' . $exception->getMessage());
@@ -62,7 +77,9 @@ class SiteCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	}
 
 	/**
-	 * Action to export all sites
+	 * Export sites content
+	 *
+	 * Export all sites and their content into an XML format.
 	 *
 	 * @return void
 	 */
