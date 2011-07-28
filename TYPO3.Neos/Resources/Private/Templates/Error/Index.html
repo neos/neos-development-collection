@@ -111,7 +111,7 @@
 				<h2>TYPO3</h2>
 				<div class="errorContainer">
 					<h3>{errorTitle}</h3>
-					<p><f:raw>{errorDescription}</f:raw></p>
+					<p>{errorDescription -> f:format.raw()}</p>
 				</div>
 			</div>
 		</div>

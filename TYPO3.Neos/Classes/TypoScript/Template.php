@@ -210,6 +210,14 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	}
 
 	/**
+	 * @param string $actionName
+	 * @return string
+	 */
+	public function getTemplateIdentifier($actionName = NULL) {
+		return 'typo3_template_' . sha1($this->getTemplateSource($actionName));
+	}
+
+	/**
 	 * If a template source is available
 	 *
 	 * @return boolean
@@ -231,6 +239,13 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	}
 
 	/**
+	 * @param string $layoutName
+	 */
+	public function getLayoutIdentifier($layoutName = 'default') {
+		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('Layouts are not directly supported by the TypoScript Template object', 1277298477);
+	}
+
+	/**
 	 * Dummy method to satisfy the TemplateView contract.
 	 * Partials are not supported at this level.
 	 *
@@ -239,6 +254,13 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPartialSource($partialName) {
+		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('Partials are not directly supported by the TypoScript Template object', 1277298476);
+	}
+
+	/**
+	 * @param string $partialName
+	 */
+	public function getPartialIdentifier($partialName) {
 		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('Partials are not directly supported by the TypoScript Template object', 1277298476);
 	}
 

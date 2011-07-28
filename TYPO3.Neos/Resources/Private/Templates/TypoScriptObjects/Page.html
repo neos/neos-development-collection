@@ -9,11 +9,11 @@
 		More information and contribution opportunities at http://typo3.org and http://flow3.typo3.org
 	-->
 	<head>
-		{f:raw(value: head)}
+		{head -> f:format.raw()}
 	</head>
 	<body typeof="typo3:{node.contentType}" about="{node.context.currentNode.contextPath}" {bodyAttributes}>
 
-		{f:raw(value: body)}
+		{body -> f:format.raw()}
 		<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
 			<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 				<div id="t3-ui-top" class="aloha-block-do-not-deactivate t3-ui">
