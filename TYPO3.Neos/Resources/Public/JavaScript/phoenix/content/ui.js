@@ -38,6 +38,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		classNameBindings: ['iconClass'],
 		label: '',
 		disabled: false,
+		visible: true,
 		icon: '',
 		template: SC.Handlebars.compile('{{label}}'),
 		iconClass: function() {
@@ -128,7 +129,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
-		template: SC.Handlebars.compile('{{view T3.Content.UI.Button label="Inspect"}} Page'),
+		template: SC.Handlebars.compile('{{view T3.Content.UI.Button label="Inspect" isVisibleBinding="T3.ContentModule.showDevelopmentFeatures"}} Page'),
 		click: function(event) {
 			T3.Content.Model.BlockSelection.selectPage();
 			event.stopPropagation();
