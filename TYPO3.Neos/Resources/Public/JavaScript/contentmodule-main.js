@@ -4,7 +4,7 @@ require({
 		'util': Aloha.settings.basePath + 'util',
 		'vendor': Aloha.settings.basePath + 'vendor',
 		'dep': Aloha.settings.basePath + 'dep',
-		'Library': Aloha.settings.basePath + '../../../'
+		'Library': '../Library/'
 	}
 },
 [

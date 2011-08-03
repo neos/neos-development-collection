@@ -1,5 +1,6 @@
 {namespace ext=TYPO3\ExtJS\ViewHelpers}
 {namespace typo3=TYPO3\TYPO3\ViewHelpers}
+{namespace aloha=Aloha\ViewHelpers}
 <f:base/>
 <title>{title}</title>
 <meta charset="UTF-8" />
@@ -26,9 +27,9 @@
 						}
 					},
 					bundles: {
-						phoenix: '../../../../JavaScript/alohaplugins' // relative to aloha.js base path...
+						phoenix: '../../../../TYPO3.TYPO3/JavaScript/alohaplugins' // relative to aloha.js base path...
 					},]]>
-					basePath: '{f:uri.resource(path:"Library/Aloha/src/lib/")}'
+					basePath: '{aloha:baseUri()}/src/lib/'
 				};
 		<![CDATA[
 				var require = { ]]>
@@ -41,7 +42,7 @@
 		</script>
 		<script src="{f:uri.resource(path:'JavaScript/require.js')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js')}" id="aloha-script-include" data-plugins="common/format,common/block,common/paste,phoenix/phoenixintegration"></script>
 
-		<link rel="stylesheet" href="{f:uri.resource(path:'Library/Aloha/src/css/aloha.css')}" type="text/css" />
+		<link rel="stylesheet" href="{aloha:baseUri()}/src/css/aloha.css" type="text/css" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/style.css')}" />
 	</f:if>
 </f:security.ifAccess>
