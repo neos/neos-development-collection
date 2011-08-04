@@ -46,9 +46,11 @@ class NodeViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->tagBuilder = $this->getMock('TYPO3\Fluid\Core\ViewHelper\TagBuilder');
 		$this->viewHelperVariableContainer = $this->getMock('TYPO3\Fluid\Core\ViewHelper\ViewHelperVariableContainer', array(), array(), '', FALSE);
 		$this->viewHelper = $this->getAccessibleMock('TYPO3\TYPO3\ViewHelpers\Link\NodeViewHelper', array('renderChildren'));
-		$this->viewHelper->setControllerContext($this->controllerContext);
+		$renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
+		$renderingContext->setControllerContext($this->controllerContext);
+		$renderingContext->injectViewHelperVariableContainer($this->viewHelperVariableContainer);
+		$this->viewHelper->setRenderingContext($renderingContext);
 		$this->viewHelper->injectTagBuilder($this->tagBuilder);
-		$this->viewHelper->setViewHelperVariableContainer($this->viewHelperVariableContainer);
 	}
 
 	/**

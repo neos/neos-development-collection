@@ -44,7 +44,9 @@ class IncludeJavaScriptViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->resourcePublisher = $this->getMock('TYPO3\FLOW3\Resource\Publishing\ResourcePublisher', array(), array(), '', FALSE);
 		$this->resourcePublisher->expects($this->any())->method('getStaticResourcesWebBaseUri')->will($this->returnValue('StaticResourceUri/'));
 		$this->viewHelper = $this->getAccessibleMock('TYPO3\TYPO3\ViewHelpers\IncludeJavaScriptViewHelper', array('iterateDirectoryRecursively'));
-		$this->viewHelper->setControllerContext($this->controllerContext);
+		$renderingContext = new \TYPO3\Fluid\Core\Rendering\RenderingContext();
+		$renderingContext->setControllerContext($this->controllerContext);
+		$this->viewHelper->setRenderingContext($renderingContext);
 		$this->viewHelper->_set('resourcePublisher', $this->resourcePublisher);
 	}
 
