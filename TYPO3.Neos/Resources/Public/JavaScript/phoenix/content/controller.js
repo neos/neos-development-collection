@@ -8,6 +8,7 @@ function() {
 
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
+	var $ = window.alohaQuery || window.jQuery;
 
 	/**
 	 * This controller toggles the preview mode on and off.

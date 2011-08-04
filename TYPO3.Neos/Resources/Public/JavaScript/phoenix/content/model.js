@@ -13,6 +13,7 @@ function(launcherTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	T3.Content.Model = {};
+	var $ = window.alohaQuery || window.jQuery;
 
 	/**
 	 * T3.Content.Model.Block

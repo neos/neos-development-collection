@@ -13,6 +13,7 @@ define(
 function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
+	var $ = window.alohaQuery || window.jQuery;
 
 	/**
 	 * T3.Content.UI.Toolbar

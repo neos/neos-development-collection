@@ -3,6 +3,8 @@ define(
 function(Plugin, block, BlockManager, require) {
     "use strict";
 
+	var $ = window.alohaQuery || window.jQuery;
+
     var PhoenixPlugin = Plugin.create('phoenixintegration', {
     	dependencies: ['block'],
         init: function() {
