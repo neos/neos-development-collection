@@ -25,6 +25,7 @@ function(launcherTemplate) {
 		alohaBlockId: null,
 		_title:null,
 		_originalValues: null,
+		_modified: false,
 
 		/**
 		 * @var {String}
@@ -33,6 +34,40 @@ function(launcherTemplate) {
 		nodePath: function() {
 			return this.get('about');
 		}.property('about').cacheable(),
+
+		/**
+		 * @var {boolean}
+		 * A node is publishable if it is not in the live workspace.
+		 */
+		_publishable: function() {
+			return (this.get('_workspacename') !== 'live');
+		}.property('_workspacename').cacheable(),
+
+		/**
+		 * Triggered each time "publishable" and "modified" properties change.
+		 *
+		 * If something is *publishable* and *modified*, i.e. is already saved
+		 * in the current workspace AND has more local changes, the system
+		 * will NOT publish the not-visible changes.
+		 *
+		 * TODO: does the above make sense?
+		 */
+		_onStateChange: function() {
+			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('alohaBlockId'));
+			if (this.get('_modified')) {
+				alohaBlock.attr('_status', 'modified');
+				Changes.addChange(this);
+				PublishableBlocks.remove(this);
+			} else if (this.get('_publishable')) {
+				alohaBlock.attr('_status', 'publishable');
+				Changes.removeChange(this);
+				PublishableBlocks.add(this);
+			} else {
+				alohaBlock.attr('_status', '');
+				Changes.removeChange(this);
+				PublishableBlocks.remove(this);
+			}
+		}.observes('_publishable', '_modified'),
 
 		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
 		_somePropertyChanged: function(that, propertyName) {
@@ -47,13 +82,7 @@ function(launcherTemplate) {
 					hasChanges = true;
 				}
 			});
-			if (hasChanges) {
-				alohaBlock.attr('_status', 'modified');
-				Changes.addChange(this);
-			} else {
-				alohaBlock.attr('_status', '');
-				Changes.removeChange(this);
-			}
+			this.set('_modified', hasChanges);
 		},
 		schema: function() {
 			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('alohaBlockId'));
@@ -106,6 +135,14 @@ function(launcherTemplate) {
 	var BlockManager = SC.Object.create({
 		_blocks: {},
 		_blocksByNodePath: {},
+
+		initializeBlocks: function() {
+			var scope = this;
+			$('*[about]').each(function() {
+				// Just fetch the block a single time so that it is initialized.
+				scope.getBlockByNodePath($(this).attr('about'));
+			})
+		},
 		/**
 		 * @param block/block Aloha Block instance
 		 * @return {T3.Content.Model.Block}
@@ -116,7 +153,17 @@ function(launcherTemplate) {
 				return this._blocks[blockId];
 			}
 
-			var attributes = alohaBlock.attr();
+
+			var attributes = {};
+			var internalAttributes = {};
+
+			$.each(alohaBlock.attr(), function(key, value) {
+				if (key[0] === '_') {
+					internalAttributes[key] = value;
+				} else {
+					attributes[key] = value;
+				}
+			});
 
 			var blockProxy = Block.create($.extend({}, attributes, {
 				alohaBlockId: blockId,
@@ -128,7 +175,6 @@ function(launcherTemplate) {
 
 					// HACK: Add observer for each element, as we do not know how to add one observer for *all* elements.
 					$.each(attributes, function(key, value) {
-
 						// HACK: This is for supporting more data types, i.e. mostly for boolean values in checkboxes.
 						if (value == "true") {
 							value = true;
@@ -140,6 +186,9 @@ function(launcherTemplate) {
 					});
 				}
 			}));
+			$.each(internalAttributes, function(key, value) {
+				blockProxy.set(key, value);
+			})
 
 			this._blocks[blockId] = blockProxy;
 
@@ -239,6 +288,58 @@ function(launcherTemplate) {
 		}
 	});
 
+
+	var sendAllToServer = function(collection, cleanupFn, extDirectFn, callback) {
+		var numberOfUnsavedRecords = collection.get('length');
+		var responseCallback = function() {
+			numberOfUnsavedRecords--;
+			if (numberOfUnsavedRecords <= 0) {
+				callback();
+			}
+		}
+		collection.forEach(function(element) {
+			var args = cleanupFn(element);
+			args.push(responseCallback);
+			extDirectFn.apply(this, args);
+		})
+	};
+	var PublishableBlocks = SC.ArrayProxy.create({
+
+		content: [],
+
+		noChanges: function() {
+			return this.get('length') == 0;
+		}.property('length').cacheable(),
+
+		add: function(block) {
+			if (!this.contains(block)) {
+				this.pushObject(block);
+			}
+		},
+		remove: function(block) {
+			this.removeObject(block);
+		},
+
+		/**
+		 * Publish all blocks which are unsaved *and* on current page.
+		 */
+		publishAll: function() {
+			sendAllToServer(
+				this,
+				function(block) {
+					return [block.get('nodePath'), 'live'];
+				},
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode,
+				function() {
+					window.document.location.reload();
+				}
+			);
+
+				// Flush local changes so the UI updates
+			this.set('[]', []);
+		}
+	});
+
 	/**
 	 * T3.Content.Model.Changes
 	 *
@@ -310,37 +411,35 @@ function(launcherTemplate) {
 			}, this);
 		},
 		save: function() {
-			var numberOfUnsavedRecords = this.get('length');
-			var callback = function() {
-				// reload backend, so we get a clean state again
-				// TODO: might be removable lateron
-				numberOfUnsavedRecords--;
-				if (numberOfUnsavedRecords <= 0) {
+			sendAllToServer(
+				this,
+				function(block) {
+					block.recordCurrentStateAsOriginal();
+
+					var attributes = block.getCleanedUpAttributes();
+					attributes['__contextNodePath'] = attributes['about'];
+					delete attributes['about'];
+					delete attributes['block-type'];
+
+					return [attributes];
+				},
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update,
+				function() {
 					window.document.location.reload();
 				}
-			}
+			);
 
-			this.forEach(function(block) {
-				block.recordCurrentStateAsOriginal();
-
-				var attributes = block.getCleanedUpAttributes();
-				attributes['__contextNodePath'] = attributes['about'];
-				delete attributes['about'];
-				delete attributes['block-type'];
-
-				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(attributes, callback);
-			});
-			// Flush local changes
+				// Flush local changes
 			this.set('[]', []);
 		}
 	});
-
 
 	T3.Content.Model = {
 		Block: Block,
 		BlockManager: BlockManager,
 		BlockSelection: BlockSelection,
-		Changes: Changes
+		Changes: Changes,
+		PublishableBlocks: PublishableBlocks
 	}
 	window.T3 = T3;
 });

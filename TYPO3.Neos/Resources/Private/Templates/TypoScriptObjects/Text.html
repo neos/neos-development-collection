@@ -2,7 +2,7 @@
 
 <!-- TODO: show the wrapping div only when logged in / when in non-live workspace -->
 
-<div typeof="typo3:{node.contentType}" about="{node.contextPath}" class="t3-contentelement t3-text">
+<div typeof="typo3:{node.contentType}" about="{node.contextPath}" data-_workspacename="{node.workspace.name}" class="t3-contentelement t3-text">
 
 <t:aloha.editable property="headline" tag="h1">{properties.headline}</t:aloha.editable>
 <t:aloha.editable property="text">{properties.text}</t:aloha.editable>

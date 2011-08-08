@@ -61,6 +61,8 @@ function() {
 				$('.t3-text').alohaBlock({
 					'block-type': 'TextBlock'
 				});
+
+				T3.Content.Model.BlockManager.initializeBlocks();
 				T3.Content.Model.Changes._readFromLocalStore();
 			});
 			 // TODO: should be only set when header and property panel is visible
@@ -121,6 +123,12 @@ function() {
 						disabledBinding: 'T3.Content.Model.Changes.noChanges',
 						target: 'T3.Content.Model.Changes',
 						action: 'save'
+					}),
+					T3.Content.UI.Button.extend({
+						label: 'Publish',
+						disabledBinding: 'T3.Content.Model.PublishableBlocks.noChanges',
+						target: 'T3.Content.Model.PublishableBlocks',
+						action: 'publishAll'
 					})
 				]
 			});
