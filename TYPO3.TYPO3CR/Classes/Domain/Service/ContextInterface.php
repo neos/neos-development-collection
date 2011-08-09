@@ -68,5 +68,43 @@ interface ContextInterface {
 	 */
 	public function getNodesOnPath($startingPoint, $endPoint);
 
+	/**
+	 * Sets the showHidden flag. This flag defines if hidden content elements
+	 * should be shown in Node->treatNodeWithContext()
+	 *
+	 * @param boolean $showHidden
+	 * @return void
+	 * @author Rens Admiraal <rens.admiraal@typo3.org>
+	 */
+	public function showHidden($showHidden);
+
+	/**
+	 * Gets the showHidden flag. This flag defines if hidden content elements
+	 * should be shown in Node->treatNodeWithContext()
+	 *
+	 * @return boolean
+	 * @author Rens Admiraal <rens.admiraal@typo3.org>
+	 */
+	public function shouldShowHidden();
+
+	/**
+	 * Sets the showRemoved flag. This flag defines if removed content elements
+	 * should be shown in Node->treatNodeWithContext()
+	 *
+	 * @param boolean $showRemoved
+	 * @return void
+	 * @author Rens Admiraal <rens.admiraal@typo3.org>
+	 */
+	public function showRemoved($showRemoved);
+
+	/**
+	 * Gets the showRemoved flag. This flag defines if removed content elements
+	 * should be shown in Node->treatNodeWithContext()
+	 *
+	 * @return boolean
+	 * @author Rens Admiraal <rens.admiraal@typo3.org>
+	 */
+	public function shouldShowRemoved();
+
 }
 ?>

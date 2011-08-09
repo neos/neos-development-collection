@@ -60,6 +60,22 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	protected $objectManager;
 
 	/**
+	 * If TRUE, hidden content elements will be shown.
+	 *
+	 * @var boolean
+	 */
+	protected $showHidden = FALSE;
+
+	/**
+	 * If TRUE, removed content elements will be shown, even though
+	 * they are removed.
+	 *
+	 * @var boolean
+	 */
+	protected $showRemoved = FALSE;
+
+
+	/**
 	 * Constructs this context.
 	 *
 	 * @param string $workspaceName
@@ -224,5 +240,40 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	public function __toString() {
 		return $this->workspaceName . $this->currentNode->getPath();
 	}
+
+	/**
+	 * @param boolean $showHidden If TRUE, hidden nodes are shown.
+	 * @return void
+	 * @author Rens Admiraal <rens.admiraal@typo3.org>
+	 */
+	public function showHidden($showHidden) {
+		$this->showHidden = $showHidden;
+	}
+
+	/**
+	 * @return boolean
+	 * @author Rens Admiraal <rens.admiraal@typo3.org>
+	 */
+	public function shouldShowHidden() {
+		return $this->showHidden;
+	}
+
+	/**
+	 * @param boolean $showRemoved If TRUE, removed nodes are shown
+	 * @return void
+	 * @author Rens Admiraal <rens.admiraal@typo3.org>
+	 */
+	public function showRemoved($showRemoved) {
+		$this->showRemoved = $showRemoved;
+	}
+
+	/**
+	 * @return boolean
+	 * @author Rens Admiraal <rens.admiraal@typo3.org>
+	 */
+	public function shouldShowRemoved() {
+		return $this->showRemoved;
+	}
+
 }
 ?>

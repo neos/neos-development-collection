@@ -908,7 +908,10 @@ class Node implements NodeInterface {
 	protected function treatNodesWithContext(array $originalNodes) {
 		$proxyNodes = array();
 		foreach ($originalNodes as $index => $node) {
-			$proxyNodes[$index] = $this->treatNodeWithContext($node);
+			$treatedNode = $this->treatNodeWithContext($node);
+			if ($treatedNode !== NULL) {
+				$proxyNodes[$index] = $treatedNode;
+			}
 		}
 		return $proxyNodes;
 	}
@@ -927,6 +930,15 @@ class Node implements NodeInterface {
 			}
 			$node->setContext($this->context);
 		}
+
+		if ($node->isRemoved() && !$this->context->shouldShowRemoved()) {
+			return NULL;
+		}
+
+		if ($node->isHidden() && !$this->context->shouldShowHidden()) {
+			return NULL;
+		}
+
 		return $node;
 	}
 }

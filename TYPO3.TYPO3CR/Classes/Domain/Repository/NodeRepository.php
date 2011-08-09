@@ -157,7 +157,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 			$node = $query->execute()->getFirst();
 			if ($node !== NULL) {
-				return ($node->isRemoved() === FALSE) ? $node : NULL;
+				return $node;
 			}
 			$workspace = $workspace->getBaseWorkspace();
 		}
@@ -244,12 +244,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			}
 		}
 
-		foreach ($foundNodes as $identifier => $node) {
-			if ($node->isRemoved()) {
-				unset($foundNodes[$identifier]);
-			}
-		}
-
 		usort($foundNodes, function($element1, $element2) {
 			if ($element1->getIndex() < $element2->getIndex()) {
 				return -1;
@@ -331,12 +325,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 				}
 			}
 			$workspace = $workspace->getBaseWorkspace();
-		}
-
-		foreach ($foundNodes as $index => $node) {
-			if ($node->isRemoved()) {
-				unset ($foundNodes[$index]);
-			}
 		}
 
 		ksort($foundNodes);
