@@ -11,6 +11,7 @@ define(
 	'text!phoenix/content/ui/propertypanel.html',
 	'Library/jquery-popover/jquery.popover',
 	'css!Library/jquery-popover/jquery.popover.css',
+
 ],
 function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	var T3 = window.T3 || {};
@@ -204,42 +205,45 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	 * - PageTreeLoader
 	 * - PageTreeButton
 	 */
-	var PageTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
-		/**
-		 * Wrapper for extDirect call to NodeController which
-		 * adds the current node path information to the extDirect call
-		 *
-		 * @param {String} contextNodePath the current Context Node Path to get subnodes from
-		 * @param {Function} callback function after request is done
-		 * @return {void}
-		 */
-		directFn: function(contextNodePath, callback) {
-			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3.TYPO3:Page', callback);
-		},
+	var getPageTreeLoader = function() {
+		// We need to wrap the Ext.extend() call in a function which is evaluated lazily,
+		// as ExtJS from Aloha is *not yet loaded* when this file is first included.
+		return Ext.extend(Ext.tree.TreeLoader, {
+			/**
+			 * Wrapper for extDirect call to NodeController which
+			 * adds the current node path information to the extDirect call
+			 *
+			 * @param {String} contextNodePath the current Context Node Path to get subnodes from
+			 * @param {Function} callback function after request is done
+			 * @return {void}
+			 */
+			directFn: function(contextNodePath, callback) {
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3.TYPO3:Page', callback);
+			},
 
-		/**
-		 * Process the response of directFn and give the appropriate data to handleResponse
-		 *
-		 * @param {Object} result the result part from the response of the server request
-		 * @param {Object} response the response object of the server request
-		 * @param {Object} args request arguments passed through
-		 * @return {void}
-		 */
-		processDirectResponse: function(result, response, args) {
-			if (response.status) {
-				this.handleResponse({
-					responseData: Ext.isArray(result.data) ? result.data : null,
-					responseText: result,
-					argument: args
-				});
-			} else {
-				this.handleFailure({
-					argument: args
-				});
+			/**
+			 * Process the response of directFn and give the appropriate data to handleResponse
+			 *
+			 * @param {Object} result the result part from the response of the server request
+			 * @param {Object} response the response object of the server request
+			 * @param {Object} args request arguments passed through
+			 * @return {void}
+			 */
+			processDirectResponse: function(result, response, args) {
+				if (response.status) {
+					this.handleResponse({
+						responseData: Ext.isArray(result.data) ? result.data : null,
+						responseText: result,
+						argument: args
+					});
+				} else {
+					this.handleFailure({
+						argument: args
+					});
+				}
 			}
-		}
-	});
-
+		});
+	};
 
 	var PageTreeButton = PopoverButton.extend({
 		_popoverContent: $('<div class="extjs-container"></div>'),
@@ -247,6 +251,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		_onPopoverOpen: function() {
 			if (this._tree) return;
 
+			var PageTreeLoader = getPageTreeLoader();
 			this._tree = new Ext.tree.TreePanel({
 				width:250,
 				height:350,
