@@ -4,3 +4,7 @@ jQuery UI: version 1.8.14
 - Widgets: all
 - Effects: core, fade, highlight
 Theme: UI Darkness
+
+
+jquery popover from https://github.com/harryhorn/jquery-popover
+Version 0.2.2

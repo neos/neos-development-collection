@@ -9,11 +9,24 @@ define(
 	'text!phoenix/content/ui/toolbar.html',
 	'text!phoenix/content/ui/breadcrumb.html',
 	'text!phoenix/content/ui/propertypanel.html',
+	'Library/jquery-popover/jquery.popover',
+	'css!Library/jquery-popover/jquery.popover.css',
 ],
 function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	var $ = window.alohaQuery || window.jQuery;
+
+
+	/**
+	 * ===========================
+	 * SECTION: SIMPLE UI ELEMENTS
+	 * ===========================
+	 * - Toolbar
+	 * - Button
+	 * - ToggleButton
+	 * - PopoverButton
+	 */
 
 	/**
 	 * T3.Content.UI.Toolbar
@@ -83,6 +96,42 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		}
 	});
 
+	var PopoverButton = ToggleButton.extend({
+		popoverTitle: '',
+		_popoverContent: $('<div></div>'),
+		popoverPosition: 'bottom',
+		_initializePopover: function() {
+			var that = this;
+			this.$().popover({
+				header: $('<div>' + that.get('popoverTitle') + '</div>'),
+				content: that._popoverContent,
+				preventLeft: (that.get('popoverPosition')==='left' ? false : true),
+				preventRight: (that.get('popoverPosition')==='right' ? false : true),
+				preventTop: (that.get('popoverPosition')==='top' ? false : true),
+				preventBottom: (that.get('popoverPosition')==='bottom' ? false : true),
+				closeEvent: function() {
+					that.set('pressed', false);
+				},
+				openEvent: function() {
+					that._onPopoverOpen.call(that)
+				}
+			});
+		}.observes('element'),
+
+		_onPopoverOpen: function() {
+			// template method, to be implemented in subclasses.
+		}
+	});
+
+	/**
+	 * =====================
+	 * SECTION: UI CONTAINRS
+	 * =====================
+	 * - Breadcrumb
+	 * - BreadcrumbItem
+	 * - PropertyPanel
+	 */
+
 	/**
 	 * T3.Content.UI.Breadcrumb
 	 *
@@ -148,11 +197,85 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		return SC.Handlebars.ViewHelper.helper(this, viewClassPath, options);
 	});
 
+	/**
+	 * ==================
+	 * SECTION: PAGE TREE
+	 * ==================
+	 * - PageTreeLoader
+	 * - PageTreeButton
+	 */
+	var PageTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
+		/**
+		 * Wrapper for extDirect call to NodeController which
+		 * adds the current node path information to the extDirect call
+		 *
+		 * @param {String} contextNodePath the current Context Node Path to get subnodes from
+		 * @param {Function} callback function after request is done
+		 * @return {void}
+		 */
+		directFn: function(contextNodePath, callback) {
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3.TYPO3:Page', callback);
+		},
+
+		/**
+		 * Process the response of directFn and give the appropriate data to handleResponse
+		 *
+		 * @param {Object} result the result part from the response of the server request
+		 * @param {Object} response the response object of the server request
+		 * @param {Object} args request arguments passed through
+		 * @return {void}
+		 */
+		processDirectResponse: function(result, response, args) {
+			if (response.status) {
+				this.handleResponse({
+					responseData: Ext.isArray(result.data) ? result.data : null,
+					responseText: result,
+					argument: args
+				});
+			} else {
+				this.handleFailure({
+					argument: args
+				});
+			}
+		}
+	});
+
+
+	var PageTreeButton = PopoverButton.extend({
+		_popoverContent: $('<div class="extjs-container"></div>'),
+		_tree: null,
+		_onPopoverOpen: function() {
+			if (this._tree) return;
+
+			this._tree = new Ext.tree.TreePanel({
+				width:250,
+				height:350,
+				useArrows: true,
+				autoScroll: true,
+				animate: true,
+				enableDD: true,
+				border: false,
+
+				root: {
+					id: $('body').data('_siteroot'), // TODO: This and the following properties might later come from the SproutCore model...
+					text: $('body').data('_sitename'),
+					draggable: false
+				},
+
+				loader: new PageTreeLoader()
+			});
+			this._tree.render(this._popoverContent[0]);
+
+			this._tree.getRootNode().expand();
+		}
+	});
 
 	T3.Content.UI = {
 		Toolbar: Toolbar,
 		Button: Button,
 		ToggleButton: ToggleButton,
+		PopoverButton: PopoverButton,
+		PageTreeButton: PageTreeButton,
 		Breadcrumb: Breadcrumb,
 		BreadcrumbItem: BreadcrumbItem,
 		PropertyPanel: PropertyPanel

@@ -96,8 +96,9 @@ function() {
 				elementId: 't3-toolbar',
 				classNames: ['t3-ui'],
 				left: [
-					T3.Content.UI.ToggleButton.extend({
+					T3.Content.UI.PageTreeButton.extend({
 						label: 'Pages',
+						popoverTitle: 'Page Tree',
 						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
 					}),
 					T3.Content.UI.ToggleButton.extend({
