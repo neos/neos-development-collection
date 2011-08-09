@@ -87,6 +87,11 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 
 		$contentContext = new ContentContext($workspaceName);
 
+		if ($workspaceName !== 'live') {
+			$contentContext->showRemoved(TRUE);
+			$contentContext->showHidden(TRUE);
+		}
+
 		$workspace = $contentContext->getWorkspace(FALSE);
 		if (!$workspace) {
 			return new Error(sprintf('Could not convert %s to Node object because the workspace "%s" as specified in the context node path does not exist.', $source['__contextNodePath'], $workspaceName), 1285162905);

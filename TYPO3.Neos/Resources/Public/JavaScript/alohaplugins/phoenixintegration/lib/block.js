@@ -67,7 +67,9 @@ function(block) {
 		 * with the situation that the handles are already created.
 		 */
 		renderHandles: function() {
-			this._renderHandle('t3-delete-handle', 'Delete element', T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
+			if (this.element.find('.t3-contentelement.t3-contentelement-removed').length === 0) {
+				this._renderHandle('t3-delete-handle', 'Delete element', T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
+			}
 			this._renderHandle('t3-add-above-handle', 'Add above', T3.Content.Controller.BlockActions.addAbove, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-add-below-handle', 'Add below', T3.Content.Controller.BlockActions.addBelow, T3.Content.Controller.BlockActions);
 
