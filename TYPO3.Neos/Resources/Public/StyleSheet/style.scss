@@ -230,20 +230,12 @@ ul.t3-topbar {
 	}
 }
 #t3-footer .t3-toolbar-left {
-	.t3-breadcrumb-page {
-		background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
-		padding: 0 15px 0 12px;
+	button {
 		float: left;
 		z-index: 100030;
-		position: relative;
-		button {
-			margin-right: 20px;
-		}
-		a {
-			color: #ffffff;
-			text-decoration: none;
-		}
+		margin-right: 20px;
 	}
+
 	> li:first-child {
 		padding: 0;
 	}
@@ -255,6 +247,7 @@ ul.t3-topbar {
 		color: #ffffff;
 		background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
 		margin-left: -25px;
+		position:relative;
 		float: left;
 		a {
 			color: #ffffff;

@@ -22,10 +22,16 @@ function(launcherTemplate) {
 	 * extends an Aloha Block for use in SproutCore, so we can use data binding on it.
 	 */
 	var Block = SC.Object.extend({
-		alohaBlockId: null,
+		_alohaBlockId: null,
 		_title:null,
 		_originalValues: null,
 		_modified: false,
+		_publishable: false,
+		_status: '',
+
+		// from aloha
+		_workspacename: null,
+
 
 		/**
 		 * @var {String}
@@ -49,33 +55,31 @@ function(launcherTemplate) {
 		 * If something is *publishable* and *modified*, i.e. is already saved
 		 * in the current workspace AND has more local changes, the system
 		 * will NOT publish the not-visible changes.
-		 *
-		 * TODO: does the above make sense?
 		 */
 		_onStateChange: function() {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('alohaBlockId'));
 			if (this.get('_modified')) {
-				alohaBlock.attr('_status', 'modified');
+				this.set('_status', 'modified');
 				Changes.addChange(this);
 				PublishableBlocks.remove(this);
 			} else if (this.get('_publishable')) {
-				alohaBlock.attr('_status', 'publishable');
+				this.set('_status', 'publishable');
 				Changes.removeChange(this);
 				PublishableBlocks.add(this);
 			} else {
-				alohaBlock.attr('_status', '');
+				this.set('_status', '');
 				Changes.removeChange(this);
 				PublishableBlocks.remove(this);
 			}
 		}.observes('_publishable', '_modified'),
 
+		_onStatusChange: function() {
+			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
+			alohaBlock.attr('_status', this.get('_status'));
+		}.observes('_status'),
+
 		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
 		_somePropertyChanged: function(that, propertyName) {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('alohaBlockId'));
-			// Save original property back to Aloha Block
-			if (!this._disableAlohaBlockUpdate) {
-				alohaBlock.attr(propertyName, this.get(propertyName));
-			}
+			this._updateChangedPropertyInAlohaBlock(propertyName);
 			var hasChanges = false;
 			$.each(this._originalValues, function(key, value) {
 				if (that.get(key) !== value) {
@@ -84,8 +88,15 @@ function(launcherTemplate) {
 			});
 			this.set('_modified', hasChanges);
 		},
+		_updateChangedPropertyInAlohaBlock: function(propertyName) {
+			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
+				// Save original property back to Aloha Block
+				if (!this._disableAlohaBlockUpdate) {
+					alohaBlock.attr(propertyName, this.get(propertyName));
+				}
+		},
 		schema: function() {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('alohaBlockId'));
+			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
 			return alohaBlock.getSchema();
 		}.property().cacheable(),
 
@@ -122,6 +133,36 @@ function(launcherTemplate) {
 		_enableAlohaBlockUpdateAgain: function() {
 			this._disableAlohaBlockUpdate = false;
 		}
+	});
+
+	var PageBlock = Block.extend({
+		_title: 'Page',
+		init: function() {
+			this.set('title', $('body').data('title'));
+			this.set('about', $('body').attr('about'));
+			this.set('_workspacename', $('body').data('_workspacename'));
+			this._originalValues = {
+				title: null,
+				about: null
+			};
+			this.recordCurrentStateAsOriginal();
+			this.addObserver('title', this, this._somePropertyChanged);
+		},
+
+		_updateChangedPropertyInAlohaBlock: function() {},
+		_onStatusChange: function() {},
+		schema: function() {
+			return [{
+				key: 'Main',
+				properties: [
+					{
+						key: 'title',
+						type: 'string',
+						label: 'Title'
+					}
+				]
+			}];
+		}.property().cacheable()
 	});
 
 	/**
@@ -166,7 +207,7 @@ function(launcherTemplate) {
 			});
 
 			var blockProxy = Block.create($.extend({}, attributes, {
-				alohaBlockId: blockId,
+				_alohaBlockId: blockId,
 				_title: alohaBlock.title,
 				_originalValues: null,
 				init: function() {
@@ -225,40 +266,38 @@ function(launcherTemplate) {
 	 */
 	var BlockSelection = SC.Object.create({
 		blocks: [],
+		_pageBlock: null,
 
 		/**
 		 * Update the selection. If we have a block activated, we add the CSS class "t3-contentelement-selected" to the body
 		 * so that we can modify the appearance of the block handles.
 		 */
-		updateSelection: function(blocks) {
+		updateSelection: function(alohaBlocks) {
+			var blocks = [];
 			if (this._updating) {
 				return;
 			}
 			this._updating = true;
 
-			if (blocks === undefined || blocks === null || blocks === [] || blocks.length == 0) {
-				blocks = [];
+			if (alohaBlocks === undefined || alohaBlocks === null || alohaBlocks === [] || alohaBlocks.length == 0) {
+				alohaBlocks = [];
 				$('body').removeClass('t3-contentelement-selected');
 			} else {
 				$('body').addClass('t3-contentelement-selected');
 			}
-			if (blocks.length > 0 && typeof blocks[0].getSchema !== 'undefined') {
-				blocks = $.map(blocks, function(alohaBlock) {
-
-					if (alohaBlock.id === 't3-page') {
-						return alohaBlock; // FIXME: Special case for editing pages
-					} else {
-						return T3.Content.Model.BlockManager.getBlockProxy(alohaBlock);
-					}
+			if (alohaBlocks.length > 0) {
+				blocks = $.map(alohaBlocks, function(alohaBlock) {
+					return T3.Content.Model.BlockManager.getBlockProxy(alohaBlock);
 				});
 			}
+			blocks.unshift(this._pageBlock);
 			this.set('blocks', blocks);
 			this._updating = false;
 		},
 
 		selectedBlock: function() {
 			var blocks = this.get('blocks');
-			return blocks.length > 0 ? blocks[0]: null;
+			return blocks.length > 0 ? blocks[blocks.length-1]: null;
 		}.property('blocks').cacheable(),
 
 		selectedBlockSchema: function() {
@@ -267,27 +306,20 @@ function(launcherTemplate) {
 			return selectedBlock.get('schema');
 		}.property('selectedBlock').cacheable(),
 
-		selectPage: function() {
-			Aloha.Block.BlockManager._deactivateActiveBlocks();
-
-			var blocks = [
-				new T3.Content.UI.BreadcrumbPage()
-			];
-
-			this.updateSelection(blocks);
-		},
-
 		selectItem: function(item) {
-			var block = Aloha.Block.BlockManager.getBlock(item.id);
-			if (block) {
-				// FIXME !!! This is to prevent the event triggering a refresh of the blocks which trigger an event and kill the selection
-				this._updating = true;
-				block.activate();
-				this._updating = false;
+			if (item === this._pageBlock) {
+				this.updateSelection([]);
+			} else {
+				var block = Aloha.Block.BlockManager.getBlock(item.id);
+				if (block) {
+					// FIXME !!! This is to prevent the event triggering a refresh of the blocks which trigger an event and kill the selection
+					this._updating = true;
+					block.activate();
+					this._updating = false;
+				}
 			}
 		}
 	});
-
 
 	var sendAllToServer = function(collection, cleanupFn, extDirectFn, callback) {
 		var numberOfUnsavedRecords = collection.get('length');
@@ -433,6 +465,9 @@ function(launcherTemplate) {
 			this.set('[]', []);
 		}
 	});
+
+	BlockSelection._pageBlock = PageBlock.create();
+	BlockSelection.set('blocks', [BlockSelection._pageBlock]);
 
 	T3.Content.Model = {
 		Block: Block,

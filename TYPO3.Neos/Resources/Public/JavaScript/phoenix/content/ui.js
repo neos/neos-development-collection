@@ -116,42 +116,6 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	});
 
 	/**
-	 * T3.Content.UI.BreadcrumbPage
-	 *
-	 * the leftmost breadcrumb menu item. Should go away in the longer run.
-	 *
-	 * @internal
-	 */
-	var BreadcrumbPage = BreadcrumbItem.extend({
-		id: 't3-page',
-		title: 'test',
-		tagName: 'a',
-		href: '#',
-
-		// TODO Don't need to bind here actually
-		attributeBindings: ['href'],
-		template: SC.Handlebars.compile('{{view T3.Content.UI.Button label="Inspect" isVisibleBinding="T3.ContentModule.showDevelopmentFeatures"}} Page'),
-		click: function(event) {
-			T3.Content.Model.BlockSelection.selectPage();
-			event.stopPropagation();
-			return false;
-		},
-
-		schema: function() {
-			return [{
-						key: 'Main',
-						properties: [
-							{
-								key: 'title',
-								type: 'string',
-								label: 'Package'
-							}
-						]
-					}];
-		}.property().cacheable()
-	});
-
-	/**
 	 * T3.Content.UI.PropertyPanel
 	 *
 	 * The Property Panel displayed on the right side of the page.
@@ -191,7 +155,6 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		ToggleButton: ToggleButton,
 		Breadcrumb: Breadcrumb,
 		BreadcrumbItem: BreadcrumbItem,
-		BreadcrumbPage: BreadcrumbPage,
 		PropertyPanel: PropertyPanel
 	};
 });

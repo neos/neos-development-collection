@@ -11,7 +11,7 @@
 	<head>
 		{head -> f:format.raw()}
 	</head>
-	<body typeof="typo3:{node.contentType}" about="{node.context.currentNode.contextPath}" {bodyAttributes}>
+	<body typeof="typo3:{node.contentType}" about="{node.contextPath}" data-title="{node.properties.title}" data-_workspacename="{node.workspace.name}" {bodyAttributes}>
 
 		{body -> f:format.raw()}
 		<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">

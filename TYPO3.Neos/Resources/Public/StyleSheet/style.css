@@ -208,17 +208,10 @@ ul.t3-topbar {
   .t3-toolbar-right li:first-child {
     padding-left: 12px; }
 
-#t3-footer .t3-toolbar-left .t3-breadcrumb-page {
-  background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
-  padding: 0 15px 0 12px;
+#t3-footer .t3-toolbar-left button {
   float: left;
   z-index: 100030;
-  position: relative; }
-  #t3-footer .t3-toolbar-left .t3-breadcrumb-page button {
-    margin-right: 20px; }
-  #t3-footer .t3-toolbar-left .t3-breadcrumb-page a {
-    color: #ffffff;
-    text-decoration: none; }
+  margin-right: 20px; }
 #t3-footer .t3-toolbar-left > li:first-child {
   padding: 0; }
 #t3-footer .t3-toolbar-left ul {
@@ -228,6 +221,7 @@ ul.t3-topbar {
   color: #ffffff;
   background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
   margin-left: -25px;
+  position: relative;
   float: left; }
   #t3-footer .t3-toolbar-left ul li a {
     color: #ffffff; }
