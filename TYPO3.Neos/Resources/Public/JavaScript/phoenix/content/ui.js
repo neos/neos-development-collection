@@ -266,7 +266,14 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 					text: $('body').data('_sitename'),
 					draggable: false
 				},
-
+				listeners: {
+					click: function(node, event) {
+							// TODO: clean this up, so that clicking the "GOTO" link works without this click hack; or built some different way of handling this case.
+						if ($(event.getTarget()).is('a.t3-gotoPage')) {
+							window.location.href = $(event.getTarget()).attr('href');
+						}
+					}
+				},
 				loader: new PageTreeLoader()
 			});
 			this._tree.render(this._popoverContent[0]);

@@ -477,3 +477,16 @@ div.aloha-block:hover > div.aloha-block-inner {
 .tc-1-1-1 .c-3 {
 	float: right;
 }
+
+// Page Tree Styling
+.popover .x-tree .t3-gotoPage {
+	display:none;
+	position:absolute;
+	right:5px;
+	width:16px;
+	height:16px;
+	background: url(../Images/ContentModule/arrow-bubble.png) no-repeat;
+}
+.popover .x-tree .x-tree-node-over .t3-gotoPage {
+	display:inline;
+}
