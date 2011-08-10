@@ -114,19 +114,19 @@ function() {
 						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
 					}),
 					T3.Content.UI.Button.extend({
-						label: 'Revert',
+						label: 'Cancel',
 						disabledBinding: 'T3.Content.Model.Changes.noChanges',
 						target: 'T3.Content.Model.Changes',
 						action: 'revert'
 					}),
 					T3.Content.UI.Button.extend({
-						label: 'Save',
+						label: 'Save Page',
 						disabledBinding: 'T3.Content.Model.Changes.noChanges',
 						target: 'T3.Content.Model.Changes',
 						action: 'save'
 					}),
 					T3.Content.UI.Button.extend({
-						label: 'Publish',
+						label: 'Publish Page',
 						disabledBinding: 'T3.Content.Model.PublishableBlocks.noChanges',
 						target: 'T3.Content.Model.PublishableBlocks',
 						action: 'publishAll'
