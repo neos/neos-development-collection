@@ -490,3 +490,6 @@ div.aloha-block:hover > div.aloha-block-inner {
 .popover .x-tree .x-tree-node-over .t3-gotoPage {
 	display:inline;
 }
+.popover {
+	position: fixed !important;
+}

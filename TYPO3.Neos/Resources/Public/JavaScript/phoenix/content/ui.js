@@ -114,7 +114,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 					that.set('pressed', false);
 				},
 				openEvent: function() {
-					that._onPopoverOpen.call(that)
+					that._onPopoverOpen.call(that);
 				}
 			});
 		}.observes('element'),
