@@ -1,6 +1,96 @@
 
 (function(exports) {
-// lib/handlebars/parser.js
+// lib/handlebars/base.js
+var Handlebars = {};
+
+window.Handlebars = Handlebars;
+
+Handlebars.VERSION = "1.0.beta.2";
+
+Handlebars.helpers  = {};
+Handlebars.partials = {};
+
+Handlebars.registerHelper = function(name, fn, inverse) {
+  if(inverse) { fn.not = inverse; }
+  this.helpers[name] = fn;
+};
+
+Handlebars.registerPartial = function(name, str) {
+  this.partials[name] = str;
+};
+
+Handlebars.registerHelper('helperMissing', function(arg) {
+  if(arguments.length === 2) {
+    return undefined;
+  } else {
+    throw new Error("Could not find property '" + arg + "'");
+  }
+});
+
+Handlebars.registerHelper('blockHelperMissing', function(context, options) {
+  var inverse = options.inverse || function() {}, fn = options.fn;
+
+
+  var ret = "";
+  var type = Object.prototype.toString.call(context);
+
+  if(type === "[object Function]") {
+    context = context();
+  }
+
+  if(context === true) {
+    return fn(this);
+  } else if(context === false || context == null) {
+    return inverse(this);
+  } else if(type === "[object Array]") {
+    if(context.length > 0) {
+      for(var i=0, j=context.length; i<j; i++) {
+        ret = ret + fn(context[i]);
+      }
+    } else {
+      ret = inverse(this);
+    }
+    return ret;
+  } else {
+    return fn(context);
+  }
+});
+
+Handlebars.registerHelper('each', function(context, options) {
+  var fn = options.fn, inverse = options.inverse;
+  var ret = "";
+
+  if(context && context.length > 0) {
+    for(var i=0, j=context.length; i<j; i++) {
+      ret = ret + fn(context[i]);
+    }
+  } else {
+    ret = inverse(this);
+  }
+  return ret;
+});
+
+Handlebars.registerHelper('if', function(context, options) {
+  if(!context || Handlebars.Utils.isEmpty(context)) {
+    return options.inverse(this);
+  } else {
+    return options.fn(this);
+  }
+});
+
+Handlebars.registerHelper('unless', function(context, options) {
+  var fn = options.fn, inverse = options.inverse;
+  options.fn = inverse;
+  options.inverse = fn;
+
+  return Handlebars.helpers['if'].call(this, context, options);
+});
+
+Handlebars.registerHelper('with', function(context, options) {
+  return options.fn(context);
+});
+;
+// lib/handlebars/compiler/parser.js
 /* Jison generated parser */
 var handlebars = (function(){
 var parser = {trace: function trace() { },
@@ -455,12 +545,26 @@ lexer.conditions = {"mu":{"rules":[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19
 parser.lexer = lexer;
 return parser;
 })();
-
-// lib/handlebars/base.js
-Handlebars = {};
-
-Handlebars.VERSION = "1.0.beta.2";
-
+if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
+exports.parser = handlebars;
+exports.parse = function () { return handlebars.parse.apply(handlebars, arguments); }
+exports.main = function commonjsMain(args) {
+    if (!args[1])
+        throw new Error('Usage: '+args[0]+' FILE');
+    if (typeof process !== 'undefined') {
+        var source = require('fs').readFileSync(require('path').join(process.cwd(), args[1]), "utf8");
+    } else {
+        var cwd = require("file").path(require("file").cwd());
+        var source = cwd.join(args[1]).read({charset: "utf-8"});
+    }
+    return exports.parser.parse(source);
+}
+if (typeof module !== 'undefined' && require.main === module) {
+  exports.main(typeof process !== 'undefined' ? process.argv.slice(1) : require("system").args);
+}
+};
+;
+// lib/handlebars/compiler/base.js
 Handlebars.Parser = handlebars;
 
 Handlebars.parse = function(string) {
@@ -472,89 +576,6 @@ Handlebars.print = function(ast) {
   return new Handlebars.PrintVisitor().accept(ast);
 };
 
-Handlebars.helpers  = {};
-Handlebars.partials = {};
-
-Handlebars.registerHelper = function(name, fn, inverse) {
-  if(inverse) { fn.not = inverse; }
-  this.helpers[name] = fn;
-};
-
-Handlebars.registerPartial = function(name, str) {
-  this.partials[name] = str;
-};
-
-Handlebars.registerHelper('helperMissing', function(arg) {
-  if(arguments.length === 2) {
-    return undefined;
-  } else {
-    throw new Error("Could not find property '" + arg + "'");
-  }
-});
-
-Handlebars.registerHelper('blockHelperMissing', function(context, options) {
-  var inverse = options.inverse || function() {}, fn = options.fn;
-
-
-  var ret = "";
-  var type = Object.prototype.toString.call(context);
-
-  if(type === "[object Function]") {
-    context = context();
-  }
-
-  if(context === true) {
-    return fn(this);
-  } else if(context === false || context == null) {
-    return inverse(this);
-  } else if(type === "[object Array]") {
-    if(context.length > 0) {
-      for(var i=0, j=context.length; i<j; i++) {
-        ret = ret + fn(context[i]);
-      }
-    } else {
-      ret = inverse(this);
-    }
-    return ret;
-  } else {
-    return fn(context);
-  }
-});
-
-Handlebars.registerHelper('each', function(context, options) {
-  var fn = options.fn, inverse = options.inverse;
-  var ret = "";
-
-  if(context && context.length > 0) {
-    for(var i=0, j=context.length; i<j; i++) {
-      ret = ret + fn(context[i]);
-    }
-  } else {
-    ret = inverse(this);
-  }
-  return ret;
-});
-
-Handlebars.registerHelper('if', function(context, options) {
-  if(!context || Handlebars.Utils.isEmpty(context)) {
-    return options.inverse(this);
-  } else {
-    return options.fn(this);
-  }
-});
-
-Handlebars.registerHelper('unless', function(context, options) {
-  var fn = options.fn, inverse = options.inverse;
-  options.fn = inverse;
-  options.inverse = fn;
-
-  return Handlebars.helpers['if'].call(this, context, options);
-});
-
-Handlebars.registerHelper('with', function(context, options) {
-  return options.fn(context);
-});
-
 Handlebars.logger = {
   DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3, level: 3,
 
@@ -564,7 +585,7 @@ Handlebars.logger = {
 
 Handlebars.log = function(level, str) { Handlebars.logger.log(level, str); };
 ;
-// lib/handlebars/ast.js
+// lib/handlebars/compiler/ast.js
 (function() {
 
   Handlebars.AST = {};
@@ -632,7 +653,7 @@ Handlebars.log = function(level, str) { Handlebars.logger.log(level, str); };
       var part = parts[i];
 
       if(part === "..") { depth++; }
-      else if(part === "." || part === "this") { continue; }
+      else if(part === "." || part === "this") { this.isScoped = true; }
       else { dig.push(part); }
     }
 
@@ -663,15 +684,6 @@ Handlebars.log = function(level, str) { Handlebars.logger.log(level, str); };
   };
 
 })();;
-// lib/handlebars/visitor.js
-
-Handlebars.Visitor = function() {};
-
-Handlebars.Visitor.prototype = {
-  accept: function(object) {
-    return this[object.type](object);
-  }
-};;
 // lib/handlebars/utils.js
 Handlebars.Exception = function(message) {
   var tmp = Error.prototype.constructor.apply(this, arguments);
@@ -734,7 +746,7 @@ Handlebars.SafeString.prototype.toString = function() {
     }
   };
 })();;
-// lib/handlebars/compiler.js
+// lib/handlebars/compiler/compiler.js
 Handlebars.Compiler = function() {};
 Handlebars.JavaScriptCompiler = function() {};
 
@@ -760,13 +772,13 @@ Handlebars.JavaScriptCompiler = function() {};
   Compiler.MULTI_PARAM_OPCODES = {
     appendContent: 1,
     getContext: 1,
-    lookupWithHelpers: 1,
+    lookupWithHelpers: 2,
     lookup: 1,
-    invokeMustache: 2,
+    invokeMustache: 3,
     pushString: 1,
     truthyOrFallback: 1,
     functionOrFallback: 1,
-    invokeProgram: 2,
+    invokeProgram: 3,
     invokePartial: 1,
     push: 1,
     assignToHash: 1,
@@ -828,7 +840,24 @@ Handlebars.JavaScriptCompiler = function() {};
     compile: function(program, options) {
       this.children = [];
       this.depths = {list: []};
-      this.options = options || {};
+      this.options = options;
+
+      // These changes will propagate to the other compiler components
+      var knownHelpers = this.options.knownHelpers;
+      this.options.knownHelpers = {
+        'helperMissing': true,
+        'blockHelperMissing': true,
+        'each': true,
+        'if': true,
+        'unless': true,
+        'with': true
+      };
+      if (knownHelpers) {
+        for (var name in knownHelpers) {
+          this.options.knownHelpers[name] = knownHelpers[name];
+        }
+      }
+
       return this.program(program);
     },
 
@@ -844,6 +873,7 @@ Handlebars.JavaScriptCompiler = function() {};
         statement = statements[i];
         this[statement.type](statement);
       }
+      this.isSimple = l === 1;
 
       this.depths.list = this.depths.list.sort(function(a, b) {
         return a - b;
@@ -883,7 +913,7 @@ Handlebars.JavaScriptCompiler = function() {};
         this.declare('inverse', inverseGuid);
       }
 
-      this.opcode('invokeProgram', programGuid, params.length);
+      this.opcode('invokeProgram', programGuid, params.length, !!mustache.hash);
       this.declare('inverse', null);
       this.opcode('append');
     },
@@ -895,7 +925,7 @@ Handlebars.JavaScriptCompiler = function() {};
 
       this.declare('inverse', programGuid);
 
-      this.opcode('invokeProgram', null, params.length);
+      this.opcode('invokeProgram', null, params.length, !!block.mustache.hash);
       this.opcode('append');
     },
 
@@ -920,7 +950,7 @@ Handlebars.JavaScriptCompiler = function() {};
       if(partial.context) {
         this.ID(partial.context);
       } else {
-        this.opcode('push', 'context');
+        this.opcode('push', 'depth0');
       }
 
       this.opcode('invokePartial', id.original);
@@ -934,7 +964,7 @@ Handlebars.JavaScriptCompiler = function() {};
     mustache: function(mustache) {
       var params = this.setupStackForMustache(mustache);
 
-      this.opcode('invokeMustache', params.length, mustache.id.original);
+      this.opcode('invokeMustache', params.length, mustache.id.original, !!mustache.hash);
 
       if(mustache.escaped) {
         this.opcode('appendEscaped');
@@ -948,7 +978,7 @@ Handlebars.JavaScriptCompiler = function() {};
 
       this.opcode('getContext', id.depth);
 
-      this.opcode('lookupWithHelpers', id.parts[0] || null);
+      this.opcode('lookupWithHelpers', id.parts[0] || null, id.isScoped || false);
 
       for(var i=1, l=id.parts.length; i<l; i++) {
         this.opcode('lookup', id.parts[i]);
@@ -989,10 +1019,11 @@ Handlebars.JavaScriptCompiler = function() {};
       }
     },
 
-    opcode: function(name, val1, val2) {
+    opcode: function(name, val1, val2, val3) {
       this.opcodes.push(Compiler.OPCODE_MAP[name]);
       if(val1 !== undefined) { this.opcodes.push(val1); }
       if(val2 !== undefined) { this.opcodes.push(val2); }
+      if(val3 !== undefined) { this.opcodes.push(val3); }
     },
 
     declare: function(name, value) {
@@ -1017,8 +1048,6 @@ Handlebars.JavaScriptCompiler = function() {};
 
       if(mustache.hash) {
         this.hash(mustache.hash);
-      } else {
-        this.opcode('push', '{}');
       }
 
       this.ID(mustache.id);
@@ -1041,7 +1070,11 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     appendToBuffer: function(string) {
-      return "buffer = buffer + " + string + ";";
+      if (this.environment.isSimple) {
+        return "return " + string + ";";
+      } else {
+        return "buffer += " + string + ";";
+      }
     },
 
     initializeBuffer: function() {
@@ -1049,21 +1082,26 @@ Handlebars.JavaScriptCompiler = function() {};
     },
     // END PUBLIC API
 
-    compile: function(environment, options) {
+    compile: function(environment, options, context, asObject) {
       this.environment = environment;
       this.options = options || {};
+
+      this.name = this.environment.name;
+      this.isChild = !!context;
+      this.context = context || {
+        programs: [],
+        aliases: { self: 'this' },
+        registers: {list: []}
+      };
 
       this.preamble();
 
       this.stackSlot = 0;
       this.stackVars = [];
-      this.registers = {list: []};
 
       this.compileChildren(environment, options);
 
-      Handlebars.log(Handlebars.logger.DEBUG, environment.disassemble() + "\n\n");
-
-      var opcodes = environment.opcodes, opcode, name, declareName, declareVal;
+      var opcodes = environment.opcodes, opcode;
 
       this.i = 0;
 
@@ -1079,7 +1117,7 @@ Handlebars.JavaScriptCompiler = function() {};
         }
       }
 
-      return this.createFunction();
+      return this.createFunctionContext(asObject);
     },
 
     nextOpcode: function(n) {
@@ -1110,11 +1148,20 @@ Handlebars.JavaScriptCompiler = function() {};
 
     preamble: function() {
       var out = [];
-      out.push("var buffer = " + this.initializeBuffer() + ", currentContext = context");
 
-      var copies = "helpers = helpers || Handlebars.helpers;";
-      if(this.environment.usePartial) { copies = copies + " partials = partials || Handlebars.partials;"; }
-      out.push(copies);
+      if (!this.isChild) {
+        var copies = "helpers = helpers || Handlebars.helpers;";
+        if(this.environment.usePartial) { copies = copies + " partials = partials || Handlebars.partials;"; }
+        out.push(copies);
+      } else {
+        out.push('');
+      }
+
+      if (!this.environment.isSimple) {
+        out.push(", buffer = " + this.initializeBuffer());
+      } else {
+        out.push("");
+      }
 
       // track the last context pushed into place to allow skipping the
       // getContext opcode when it would be a noop
@@ -1122,38 +1169,38 @@ Handlebars.JavaScriptCompiler = function() {};
       this.source = out;
     },
 
-    createFunction: function() {
-      var container = {
-        escapeExpression: Handlebars.Utils.escapeExpression,
-        invokePartial: Handlebars.VM.invokePartial,
-        programs: [],
-        program: function(i, helpers, partials, data) {
-          var programWrapper = this.programs[i];
-          if(data) {
-            return Handlebars.VM.program(this.children[i], helpers, partials, data);
-          } else if(programWrapper) {
-            return programWrapper;
-          } else {
-            programWrapper = this.programs[i] = Handlebars.VM.program(this.children[i], helpers, partials);
-            return programWrapper;
-          }
-        },
-        programWithDepth: Handlebars.VM.programWithDepth,
-        noop: Handlebars.VM.noop
-      };
-      var locals = this.stackVars.concat(this.registers.list);
-
-      if(locals.length > 0) {
-        this.source[0] = this.source[0] + ", " + locals.join(", ");
+    createFunctionContext: function(asObject) {
+      var locals = this.stackVars;
+      if (!this.isChild) {
+        locals = locals.concat(this.context.registers.list);
       }
 
-      this.source[0] = this.source[0] + ";";
+      if(locals.length > 0) {
+        this.source[1] = this.source[1] + ", " + locals.join(", ");
+      }
 
-      this.source.push("return buffer;");
+      // Generate minimizer alias mappings
+      if (!this.isChild) {
+        var aliases = []
+        for (var alias in this.context.aliases) {
+          this.source[1] = this.source[1] + ', ' + alias + '=' + this.context.aliases[alias];
+        }
+      }
 
-      var params = ["Handlebars", "context", "helpers", "partials"];
+      if (this.source[1]) {
+        this.source[1] = "var " + this.source[1].substring(2) + ";";
+      }
 
-      if(this.options.data) { params.push("data"); }
+      // Merge children
+      if (!this.isChild) {
+        this.source[1] += '\n' + this.context.programs.join('\n') + '\n';
+      }
+
+      if (!this.environment.isSimple) {
+        this.source.push("return buffer;");
+      }
+
+      var params = this.isChild ? ["depth0", "data"] : ["Handlebars", "depth0", "helpers", "partials", "data"];
 
       for(var i=0, l=this.environment.depths.list.length; i<l; i++) {
         params.push("depth" + this.environment.depths.list[i]);
@@ -1161,24 +1208,15 @@ Handlebars.JavaScriptCompiler = function() {};
 
       if(params.length === 4 && !this.environment.usePartial) { params.pop(); }
 
-      params.push(this.source.join("\n"));
+      if (asObject) {
+        params.push(this.source.join("\n  "));
 
-      var fn = Function.apply(this, params);
-      fn.displayName = "Handlebars.js";
-
-      Handlebars.log(Handlebars.logger.DEBUG, fn.toString() + "\n\n");
-
-      container.render = fn;
-
-      container.children = this.environment.children;
-
-      return function(context, options, $depth) {
-        options = options || {};
-        var args = [Handlebars, context, options.helpers, options.partials, options.data];
-        var depth = Array.prototype.slice.call(arguments, 2);
-        args = args.concat(depth);
-        return container.render.apply(container, args);
-      };
+        return Function.apply(this, params);
+      } else {
+        var functionSource = 'function ' + (this.name || '') + '(' + params.join(',') + ') {\n  ' + this.source.join("\n  ") + '}';
+        Handlebars.log(Handlebars.logger.DEBUG, functionSource + "\n\n");
+        return functionSource;
+      }
     },
 
     appendContent: function(content) {
@@ -1188,44 +1226,51 @@ Handlebars.JavaScriptCompiler = function() {};
     append: function() {
       var local = this.popStack();
       this.source.push("if(" + local + " || " + local + " === 0) { " + this.appendToBuffer(local) + " }");
+      if (this.environment.isSimple) {
+        this.source.push("else { " + this.appendToBuffer("''") + " }");
+      }
     },
 
     appendEscaped: function() {
       var opcode = this.nextOpcode(1), extra = "";
+      this.context.aliases.escapeExpression = 'this.escapeExpression';
 
       if(opcode[0] === 'appendContent') {
         extra = " + " + this.quotedString(opcode[1][0]);
         this.eat(opcode);
       }
 
-      this.source.push(this.appendToBuffer("this.escapeExpression(" + this.popStack() + ")" + extra));
+      this.source.push(this.appendToBuffer("escapeExpression(" + this.popStack() + ")" + extra));
     },
 
     getContext: function(depth) {
       if(this.lastContext !== depth) {
         this.lastContext = depth;
-
-        if(depth === 0) {
-          this.source.push("currentContext = context;");
-        } else {
-          this.source.push("currentContext = depth" + depth + ";");
-        }
       }
     },
 
-    lookupWithHelpers: function(name) {
+    lookupWithHelpers: function(name, isScoped) {
       if(name) {
         var topStack = this.nextStack();
 
-        var toPush =  "if('" + name + "' in helpers) { " + topStack +
-                      " = " + this.nameLookup('helpers', name, 'helper') +
-                      "; } else { " + topStack + " = " +
-                      this.nameLookup('currentContext', name, 'context') +
-                      "; }";
+        this.usingKnownHelper = false;
+
+        var toPush;
+        if (!isScoped && this.options.knownHelpers[name]) {
+          toPush = topStack + " = " + this.nameLookup('helpers', name, 'helper');
+          this.usingKnownHelper = true;
+        } else if (isScoped || this.options.knownHelpersOnly) {
+          toPush = topStack + " = " + this.nameLookup('depth' + this.lastContext, name, 'context');
+        } else {
+          toPush =  topStack + " = "
+              + this.nameLookup('helpers', name, 'helper')
+              + " || "
+              + this.nameLookup('depth' + this.lastContext, name, 'context');
+        }
 
         this.source.push(toPush);
       } else {
-        this.pushStack("currentContext");
+        this.pushStack('depth' + this.lastContext);
       }
     },
 
@@ -1235,7 +1280,7 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     pushStringParam: function(string) {
-      this.pushStack("currentContext");
+      this.pushStack('depth' + this.lastContext);
       this.pushString(string);
     },
 
@@ -1247,30 +1292,47 @@ Handlebars.JavaScriptCompiler = function() {};
       this.pushStack(name);
     },
 
-    invokeMustache: function(paramSize, original) {
-      this.populateParams(paramSize, this.quotedString(original), "{}", null, function(nextStack, helperMissingString, id) {
-        this.source.push("else if(" + id + "=== undefined) { " + nextStack + " = helpers.helperMissing.call(" + helperMissingString + "); }");
-        this.source.push("else { " + nextStack + " = " + id + "; }");
+    invokeMustache: function(paramSize, original, hasHash) {
+      this.populateParams(paramSize, this.quotedString(original), "{}", null, hasHash, function(nextStack, helperMissingString, id) {
+        if (!this.usingKnownHelper) {
+          this.context.aliases.helperMissing = 'helpers.helperMissing';
+          this.context.aliases.undef = 'void 0';
+          this.source.push("else if(" + id + "=== undef) { " + nextStack + " = helperMissing.call(" + helperMissingString + "); }");
+          if (nextStack !== id) {
+            this.source.push("else { " + nextStack + " = " + id + "; }");
+          }
+        }
       });
     },
 
-    invokeProgram: function(guid, paramSize) {
+    invokeProgram: function(guid, paramSize, hasHash) {
       var inverse = this.programExpression(this.inverse);
       var mainProgram = this.programExpression(guid);
 
-      this.populateParams(paramSize, null, mainProgram, inverse, function(nextStack, helperMissingString, id) {
-        this.source.push("else { " + nextStack + " = helpers.blockHelperMissing.call(" + helperMissingString + "); }");
+      this.populateParams(paramSize, null, mainProgram, inverse, hasHash, function(nextStack, helperMissingString, id) {
+        if (!this.usingKnownHelper) {
+          this.context.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
+          this.source.push("else { " + nextStack + " = blockHelperMissing.call(" + helperMissingString + "); }");
+        }
       });
     },
 
-    populateParams: function(paramSize, helperId, program, inverse, fn) {
+    populateParams: function(paramSize, helperId, program, inverse, hasHash, fn) {
+      var needsRegister = hasHash || this.options.stringParams || inverse || this.options.data;
       var id = this.popStack(), nextStack;
-      var params = [], param, stringParam;
+      var params = [], param, stringParam, stringOptions;
 
-      var hash = this.popStack();
+      if (needsRegister) {
+        this.register('tmp1', program);
+        stringOptions = 'tmp1';
+      } else {
+        stringOptions = '{ hash: {} }';
+      }
 
-      this.register('tmp1', program);
-      this.source.push('tmp1.hash = ' + hash + ';');
+      if (needsRegister) {
+        var hash = (hasHash ? this.popStack() : '{}');
+        this.source.push('tmp1.hash = ' + hash + ';');
+      }
 
       if(this.options.stringParams) {
         this.source.push('tmp1.contexts = [];');
@@ -1294,23 +1356,29 @@ Handlebars.JavaScriptCompiler = function() {};
         this.source.push('tmp1.data = data;');
       }
 
-      params.push('tmp1');
+      params.push(stringOptions);
 
       this.populateCall(params, id, helperId || id, fn);
     },
 
     populateCall: function(params, id, helperId, fn) {
-      var paramString = ["context"].concat(params).join(", ");
-      var helperMissingString = ["context"].concat(helperId).concat(params).join(", ");
+      var paramString = ["depth0"].concat(params).join(", ");
+      var helperMissingString = ["depth0"].concat(helperId).concat(params).join(", ");
 
-      nextStack = this.nextStack();
+      var nextStack = this.nextStack();
 
-      this.source.push("if(typeof " + id + " === 'function') { " + nextStack + " = " + id + ".call(" + paramString + "); }");
+      if (this.usingKnownHelper) {
+        this.source.push(nextStack + " = " + id + ".call(" + paramString + ");");
+      } else {
+        this.context.aliases.functionType = '"function"';
+        this.source.push("if(typeof " + id + " === functionType) { " + nextStack + " = " + id + ".call(" + paramString + "); }");
+      }
       fn.call(this, nextStack, helperMissingString, id);
+      this.usingKnownHelper = false;
     },
 
     invokePartial: function(context) {
-      this.pushStack("this.invokePartial(" + this.nameLookup('partials', context, 'partial') + ", '" + context + "', " + this.popStack() + ", helpers, partials);");
+      this.pushStack("self.invokePartial(" + this.nameLookup('partials', context, 'partial') + ", '" + context + "', " + this.popStack() + ", helpers, partials);");
     },
 
     assignToHash: function(key) {
@@ -1326,48 +1394,38 @@ Handlebars.JavaScriptCompiler = function() {};
 
     compileChildren: function(environment, options) {
       var children = environment.children, child, compiler;
-      var compiled = [];
 
       for(var i=0, l=children.length; i<l; i++) {
         child = children[i];
         compiler = new this.compiler();
 
-        compiled[i] = compiler.compile(child, options);
+        this.context.programs.push('');     // Placeholder to prevent name conflicts for nested children
+        var index = this.context.programs.length;
+        child.index = index;
+        child.name = 'program' + index;
+        this.context.programs[index] = compiler.compile(child, options, this.context);
       }
-
-      environment.rawChildren = children;
-      environment.children = compiled;
     },
 
     programExpression: function(guid) {
-      if(guid == null) { return "this.noop"; }
+      if(guid == null) { return "self.noop"; }
 
-      var programParams = [guid, "helpers", "partials"];
-
-      var depths = this.environment.rawChildren[guid].depths.list;
-
-      if(this.options.data) { programParams.push("data"); }
+      var child = this.environment.children[guid],
+          depths = child.depths.list;
+      var programParams = [child.index, child.name, "data"];
 
       for(var i=0, l = depths.length; i<l; i++) {
         depth = depths[i];
 
-        if(depth === 1) { programParams.push("context"); }
+        if(depth === 1) { programParams.push("depth0"); }
         else { programParams.push("depth" + (depth - 1)); }
       }
 
-      if(!this.environment.usePartial) {
-        if(programParams[3]) {
-          programParams[2] = "null";
-        } else {
-          programParams.pop();
-        }
-      }
-
       if(depths.length === 0) {
-        return "this.program(" + programParams.join(", ") + ")";
+        return "self.program(" + programParams.join(", ") + ")";
       } else {
-        programParams[0] = "this.children[" + guid + "]";
-        return "this.programWithDepth(" + programParams.join(", ") + ")";
+        programParams.shift();
+        return "self.programWithDepth(" + programParams.join(", ") + ")";
       }
     },
 
@@ -1377,9 +1435,9 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     useRegister: function(name) {
-      if(!this.registers[name]) {
-        this.registers[name] = true;
-        this.registers.list.push(name);
+      if(!this.context.registers[name]) {
+        this.context.registers[name] = true;
+        this.context.registers.list.push(name);
       }
     },
 
@@ -1423,52 +1481,85 @@ Handlebars.JavaScriptCompiler = function() {};
 
 })(Handlebars.Compiler, Handlebars.JavaScriptCompiler);
 
+Handlebars.precompile = function(string, options) {
+  options = options || {};
+
+  var ast = Handlebars.parse(string);
+  var environment = new Handlebars.Compiler().compile(ast, options);
+  return new Handlebars.JavaScriptCompiler().compile(environment, options);
+};
+
+Handlebars.compile = function(string, options) {
+  options = options || {};
+
+  var ast = Handlebars.parse(string);
+  var environment = new Handlebars.Compiler().compile(ast, options);
+  var templateSpec = new Handlebars.JavaScriptCompiler().compile(environment, options, undefined, true);
+  return Handlebars.template(templateSpec);
+};
+;
+// lib/handlebars/vm.js
 Handlebars.VM = {
-  programWithDepth: function(fn, helpers, partials, data, $depth) {
-    var args = Array.prototype.slice.call(arguments, 4);
+  template: function(templateSpec) {
+    // Just add water
+    var container = {
+      escapeExpression: Handlebars.Utils.escapeExpression,
+      invokePartial: Handlebars.VM.invokePartial,
+      programs: [],
+      program: function(i, fn, data) {
+        var programWrapper = this.programs[i];
+        if(data) {
+          return Handlebars.VM.program(fn, data);
+        } else if(programWrapper) {
+          return programWrapper;
+        } else {
+          programWrapper = this.programs[i] = Handlebars.VM.program(fn);
+          return programWrapper;
+        }
+      },
+      programWithDepth: Handlebars.VM.programWithDepth,
+      noop: Handlebars.VM.noop
+    };
 
     return function(context, options) {
       options = options || {};
-
-      options = {
-        helpers: options.helpers || helpers,
-        partials: options.partials || partials,
-        data: options.data || data
-      };
-
-      return fn.apply(this, [context, options].concat(args));
+      return templateSpec.call(container, Handlebars, context, options.helpers, options.partials, options.data);
     };
   },
-  program: function(fn, helpers, partials, data) {
+
+  programWithDepth: function(fn, data, $depth) {
+    var args = Array.prototype.slice.call(arguments, 2);
+
     return function(context, options) {
       options = options || {};
 
-      return fn(context, {
-        helpers: options.helpers || helpers,
-        partials: options.partials || partials,
-        data: options.data || data
-      });
+      return fn.apply(this, [context, options.data || data].concat(args));
+    };
+  },
+  program: function(fn, data) {
+    return function(context, options) {
+      options = options || {};
+
+      return fn(context, options.data || data);
     };
   },
   noop: function() { return ""; },
-  compile: function(string, options) {
-    var ast = Handlebars.parse(string);
-    var environment = new Handlebars.Compiler().compile(ast, options);
-    return new Handlebars.JavaScriptCompiler().compile(environment, options);
-  },
   invokePartial: function(partial, name, context, helpers, partials) {
     if(partial === undefined) {
       throw new Handlebars.Exception("The partial " + name + " could not be found");
     } else if(partial instanceof Function) {
       return partial(context, {helpers: helpers, partials: partials});
+    } else if (!Handlebars.compile) {
+      throw new Handlebars.Exception("The partial " + name + " could not be compiled when running in vm mode");
     } else {
-      partials[name] = Handlebars.VM.compile(partial);
+      partials[name] = Handlebars.compile(partial);
       return partials[name](context, {helpers: helpers, partials: partials});
     }
   }
 };
 
-Handlebars.compile = Handlebars.VM.compile;;
+Handlebars.template = Handlebars.VM.template;
+;
 
 })({});
 
@@ -1530,6 +1621,14 @@ SC.VERSION = '2.0.alpha';
 SC.ENV = 'undefined' === typeof ENV ? {} : ENV;
 
 /**
+  Empty function.  Useful for some operations.
+
+  @returns {Object}
+  @private
+*/
+SC.K = function() { return this; };
+
+/**
   Define an assertion that will throw an exception if the condition is not 
   met.  SproutCore build tools will remove any calls to sc_assert() when 
   doing a production build.
@@ -1565,6 +1664,9 @@ window.sc_assert = function sc_assert(desc, test) {
   if (!test) throw new Error("assertion failed: "+desc);
 };
 
+//if ('undefined' === typeof sc_require) sc_require = SC.K;
+if ('undefined' === typeof require) require = SC.K;
+
 })({});
 
 
@@ -1581,19 +1683,18 @@ window.sc_assert = function sc_assert(desc, test) {
 
   Platform specific methods and feature detectors needed by the framework.
 */
-SC.platform = {} ;
+var platform = SC.platform = {} ;
 
 /**
   Identical to Object.create().  Implements if not available natively.
 */
-SC.platform.create = Object.create;
+platform.create = Object.create;
 
-//@if (legacy)
-if (!SC.platform.create) {
+if (!platform.create) {
   var O_ctor = function() {},
       O_proto = O_ctor.prototype;
 
-  SC.platform.create = function(obj, descs) {
+  platform.create = function(obj, descs) {
     O_ctor.prototype = obj;
     obj = new O_ctor();
     O_ctor.prototype = O_proto;
@@ -1601,16 +1702,83 @@ if (!SC.platform.create) {
     if (descs !== undefined) {
       for(var key in descs) {
         if (!descs.hasOwnProperty(key)) continue;
-        SC.platform.defineProperty(obj, key, descs[key]);
+        platform.defineProperty(obj, key, descs[key]);
       }
     }
 
     return obj;
   };
 
-  SC.platform.create.isSimulated = true;
+  platform.create.isSimulated = true;
 }
-//@endif
+
+var defineProperty = Object.defineProperty, canRedefineProperties, canDefinePropertyOnDOM;
+
+// Catch IE8 where Object.defineProperty exists but only works on DOM elements
+if (defineProperty) {
+  try {
+    defineProperty({}, 'a',{get:function(){}});
+  } catch (e) {
+    defineProperty = null;
+  }
+}
+
+if (defineProperty) {
+  // Detects a bug in Android <3.2 where you cannot redefine a property using
+  // Object.defineProperty once accessors have already been set.
+  canRedefineProperties = (function() {
+    var obj = {};
+
+    defineProperty(obj, 'a', {
+      configurable: true,
+      enumerable: true,
+      get: function() { },
+      set: function() { }
+    });
+
+    defineProperty(obj, 'a', {
+      configurable: true,
+      enumerable: true,
+      writable: true,
+      value: true
+    });
+
+    return obj.a === true;
+  })();
+
+  // This is for Safari 5.0, which supports Object.defineProperty, but not
+  // on DOM nodes.
+
+  canDefinePropertyOnDOM = (function(){
+    try {
+      defineProperty(document.body, 'definePropertyOnDOM', {});
+      return true;
+    } catch(e) { }
+
+    return false;
+  })();
+
+  if (!canRedefineProperties) {
+    defineProperty = null;
+  } else if (!canDefinePropertyOnDOM) {
+    defineProperty = function(obj, keyName, desc){
+      var isNode;
+
+      if (typeof Node === "object") {
+        isNode = obj instanceof Node;
+      } else {
+        isNode = typeof obj === "object" && typeof obj.nodeType === "number" && typeof obj.nodeName === "string";
+      }
+
+      if (isNode) {
+        // TODO: Should we have a warning here?
+        return (obj[keyName] = desc.value);
+      } else {
+        return Object.defineProperty(obj, keyName, desc);
+      }
+    };
+  }
+}
 
 /**
   Identical to Object.defineProperty().  Implements as much functionality
@@ -1621,61 +1789,23 @@ if (!SC.platform.create) {
   @param {Object} desc descriptor hash
   @returns {void}
 */
-SC.platform.defineProperty = Object.defineProperty;
-
-// This is for Safari 5.0, which supports Object.defineProperty, but not
-// on DOM nodes.
-
-SC.platform.definePropertyOnDOM = (function(){
-  if (Object.defineProperty) {
-    try {
-      Object.defineProperty(document.body, 'definePropertyOnDOM', {});
-      return true;
-    } catch(e) {};
-  }
-  return false;
-})();
-
-if (SC.platform.defineProperty && !SC.platform.definePropertyOnDOM) {
-  SC.platform.defineProperty = function(obj, keyName, desc){
-    var isNode;
-
-    if (typeof Node === "object") {
-      isNode = obj instanceof Node;
-    } else {
-      isNode = typeof obj === "object" &&
-        typeof obj.nodeType === "number" &&
-        typeof obj.nodeName === "string"
-    }
-
-    if (isNode) {
-      // TODO: Should we have a warning here?
-      return obj[keyName] = desc.value;
-    } else {
-      return Object.defineProperty(obj, keyName, desc);
-    }
-  };
-}
+platform.defineProperty = defineProperty;
 
 /**
   Set to true if the platform supports native getters and setters.
 */
-SC.platform.hasPropertyAccessors = true;
+platform.hasPropertyAccessors = true;
 
-//@if (legacy)
-if (!SC.platform.defineProperty || !Object.prototype.__defineGetter__) {
-  // IE8: check the __defineGetter__
-  SC.platform.hasPropertyAccessors = !!SC.platform.defineProperty && !!Object.prototype.__defineGetter__;
+if (!platform.defineProperty) {
+  platform.hasPropertyAccessors = false;
 
-  SC.platform.defineProperty = function(obj, keyName, desc) {
+  platform.defineProperty = function(obj, keyName, desc) {
     sc_assert("property descriptor cannot have `get` or `set` on this platform", !desc.get && !desc.set);
     obj[keyName] = desc.value;
   };
 
-  SC.platform.defineProperty.isSimulated = true;
+  platform.defineProperty.isSimulated = true;
 }
-//@endif
-
 
 })({});
 
@@ -1853,6 +1983,9 @@ if (Object.freeze) Object.freeze(EMPTY_META);
   @returns {Hash}
 */
 SC.meta = function meta(obj, writable) {
+  
+  sc_assert("You must pass an object to SC.meta. This was probably called from SproutCore internals, so you probably called a SproutCore method with undefined that was expecting an object", obj != undefined);
+
   var ret = obj[META_KEY];
   if (writable===false) return ret || EMPTY_META;
 
@@ -1880,6 +2013,58 @@ SC.meta = function meta(obj, writable) {
     ret.source   = obj;
   }
   return ret;
+};
+
+/**
+  @private
+
+  In order to store defaults for a class, a prototype may need to create
+  a default meta object, which will be inherited by any objects instantiated
+  from the class's constructor.
+
+  However, the properties of that meta object are only shallow-cloned,
+  so if a property is a hash (like the event system's `listeners` hash),
+  it will by default be shared across all instances of that class.
+
+  This method allows extensions to deeply clone a series of nested hashes or
+  other complex objects. For instance, the event system might pass
+  ['listeners', 'foo:change', 'sc157'] to `prepareMetaPath`, which will
+  walk down the keys provided.
+
+  For each key, if the key does not exist, it is created. If it already
+  exists and it was inherited from its constructor, the constructor's
+  key is cloned.
+
+  You can also pass false for `writable`, which will simply return
+  undefined if `prepareMetaPath` discovers any part of the path that
+  shared or undefined.
+
+  @param {Object} obj The object whose meta we are examining
+  @param {Array} path An array of keys to walk down
+  @param {Boolean} writable whether or not to create a new meta
+    (or meta property) if one does not already exist or if it's
+    shared with its constructor
+*/
+SC.metaPath = function(obj, path, writable) {
+  var meta = SC.meta(obj, writable), keyName, value;
+
+  for (var i=0, l=path.length; i<l; i++) {
+    keyName = path[i];
+    value = meta[keyName];
+
+    if (!value) {
+      if (!writable) { return undefined; }
+      value = meta[keyName] = { __sc_source__: obj };
+    } else if (value.__sc_source__ !== obj) {
+      if (!writable) { return undefined; }
+      value = meta[keyName] = o_create(value);
+      value.__sc_source__ = obj;
+    }
+
+    meta = value;
+  }
+
+  return value;
 };
 
 /**
@@ -2012,11 +2197,12 @@ if (!USE_ACCESSORS) {
   var o_get = get, o_set = set;
   
   get = function(obj, keyName) {
-
     if (keyName === undefined && 'string' === typeof obj) {
       keyName = obj;
       obj = SC;
     }
+
+    sc_assert("You need to provide an object and key to `get`.", !!obj && keyName);
 
     if (!obj) return undefined;
     var desc = meta(obj, false).descs[keyName];
@@ -2025,6 +2211,7 @@ if (!USE_ACCESSORS) {
   };
 
   set = function(obj, keyName, value) {
+    sc_assert("You need to provide an object and key to `set`.", !!obj && keyName !== undefined);
     var desc = meta(obj, false).descs[keyName];
     if (desc) desc.set(obj, keyName, value);
     else o_set(obj, keyName, value);
@@ -2099,8 +2286,7 @@ SC.set = set;
 // 
 
 function normalizePath(path) {
-  sc_assert('must pass non-empty string to normalizePath()', 
-    path && path!=='');
+  sc_assert('must pass non-empty string to normalizePath()', path && path!=='');
     
   if (path==='*') return path; //special case...
   var first = path.charAt(0);
@@ -2124,6 +2310,9 @@ function getPath(target, path) {
     if (next<0) next = len;
     key = path.slice(idx, next);
     target = key==='*' ? target : get(target, key);
+
+    if (target && target.isDestroyed) { return undefined; }
+
     idx = next+1;
   }
   return target ;
@@ -2235,7 +2424,7 @@ SC.getPath = function(root, path) {
   return getPath(root, path);
 };
 
-SC.setPath = function(root, path, value) {
+SC.setPath = function(root, path, value, tolerant) {
   var keyName;
   
   if (arguments.length===2 && 'string' === typeof root) {
@@ -2268,9 +2457,42 @@ SC.setPath = function(root, path, value) {
   if (!keyName || keyName.length===0 || keyName==='*') {
     throw new Error('Invalid Path');
   }
-  
+
+  if (!root) {
+    if (tolerant) { return; }
+    else { throw new Error('Object in path '+path+' could not be found or was destroyed.'); }
+  }
+
   return SC.set(root, keyName, value);
 };
+
+/**
+  Error-tolerant form of SC.setPath. Will not blow up if any part of the
+  chain is undefined, null, or destroyed.
+
+  This is primarily used when syncing bindings, which may try to update after
+  an object has been destroyed.
+*/
+SC.trySetPath = function(root, path, value) {
+  if (arguments.length===2 && 'string' === typeof root) {
+    value = path;
+    path = root;
+    root = null;
+  }
+
+  return SC.setPath(root, path, value, true);
+};
+
+/**
+  Returns true if the provided path is global (e.g., "MyApp.fooController.bar")
+  instead of local ("foo.bar.baz").
+
+  @param {String} path
+  @returns Boolean
+*/
+SC.isGlobalPath = function(path) {
+  return !HAS_THIS.test(path) && IS_GLOBAL.test(path);
+}
 
 
 })({});
@@ -2381,7 +2603,13 @@ var SIMPLE_DESC = {
   
   You generally won't need to create or subclass this directly.
 */
-SC.Descriptor = function() {};
+var Dc = SC.Descriptor = function() {};
+
+var setup = Dc.setup = function(obj, keyName, value) {
+  SIMPLE_DESC.value = value;
+  o_defineProperty(obj, keyName, SIMPLE_DESC);
+  SIMPLE_DESC.value = null;
+};
 
 var Dp = SC.Descriptor.prototype;
 
@@ -2419,7 +2647,7 @@ Dp.set = function(obj, keyName, value) {
   @returns {Object} the current value
 */
 Dp.get = function(obj, keyName) {
-  return obj[keyName];
+  return w_get(obj, keyName, obj);
 };
 
 /**
@@ -2441,11 +2669,7 @@ Dp.get = function(obj, keyName) {
   
   @returns {void}
 */
-Dp.setup = function(obj, keyName, value) {
-  SIMPLE_DESC.value = value;
-  o_defineProperty(obj, keyName, SIMPLE_DESC);
-  SIMPLE_DESC.value = null;
-};
+Dp.setup = setup;
 
 /**
   This is called on the descriptor just before another descriptor takes its
@@ -2480,7 +2704,6 @@ Dp.val = function(obj, keyName) {
 // testing on browsers that do support accessors.  It will throw an exception
 // if you do foo.bar instead of SC.get(foo, 'bar')
 
-//@if (legacy)
 if (!USE_ACCESSORS) {
   SC.Descriptor.MUST_USE_GETTER = function() {
     sc_assert('Must use SC.get() to access this property', false);
@@ -2488,16 +2711,12 @@ if (!USE_ACCESSORS) {
 
   SC.Descriptor.MUST_USE_SETTER = function() {
     if (this.isDestroyed) {
-      // FIXME: Somehow we still mis-use the property mapping,
-      // that's why we need to disable the following assertion for the
-      // property panel to work.
-      //sc_assert('You cannot set observed properties on destroyed objects', false);
+      sc_assert('You cannot set observed properties on destroyed objects', false);
     } else {
       sc_assert('Must use SC.set() to access this property', false);
     }
   };
 }
-//@endif
 
 var WATCHED_DESC = {
   configurable: true,
@@ -2505,9 +2724,15 @@ var WATCHED_DESC = {
   set: SC.Descriptor.MUST_USE_SETTER
 };
 
-function w_get(obj, keyName) {
-  var m = meta(obj, false);
-  return m.values ? m.values[keyName] : undefined;
+function w_get(obj, keyName, values) {
+  values = values || meta(obj, false).values;
+
+  if (values) {
+    var ret = values[keyName];
+    if (ret !== undefined) { return ret; }
+    if (obj.unknownProperty) { return obj.unknownProperty(keyName); }
+  }
+
 }
 
 function w_set(obj, keyName, value) {
@@ -2592,7 +2817,7 @@ if (SC.platform.hasPropertyAccessors) {
   };
   
 }
-  
+
 /**
   The default descriptor for simple properties.  Pass as the third argument
   to SC.defineProperty() along with a value to set a simple value.
@@ -3029,75 +3254,125 @@ SC.computed = function(func) {
 var o_create = SC.platform.create;
 var meta = SC.meta;
 var guidFor = SC.guidFor;
-var a_slice = Array.prototype.slice;
+var array_Slice = Array.prototype.slice;
 
-function objectFor(m, obj, writable) {
-  var len = arguments.length, idx, keyName, ret;
-  
-  for(idx=3; idx<len; idx++) {
-    keyName = arguments[idx];
-    ret = m[keyName];
-    if (writable) {
-      if (!ret) {
-        ret = m[keyName] = { __scproto__: obj };
-      } else if (ret.__scproto__ !== obj) {
-        ret = m[keyName] = o_create(ret);
-        ret.__scproto__ = obj;
+/**
+  The event system uses a series of nested hashes to store listeners on an
+  object. When a listener is registered, or when an event arrives, these
+  hashes are consulted to determine which target and action pair to invoke.
+
+  The hashes are stored in the object's meta hash, and look like this:
+
+      // Object's meta hash
+      {
+        listeners: {               // variable name: `listenerSet`
+          "foo:changed": {         // variable name: `targetSet`
+            [targetGuid]: {        // variable name: `actionSet`
+              [methodGuid]: {      // variable name: `action`
+                target: [Object object],
+                method: [Function function],
+                xform: [Function function]
+              }
+            }
+          }
+        }
       }
-    } else if (!ret || (ret.__scproto__ !== obj)) {
-      return undefined;
-    }
 
-    m = ret;
-  }
+*/
 
-  return ret;
-}
+var metaPath = SC.metaPath;
 
-function listenerSetFor(obj, eventName, target, writable) {
+// Gets the set of all actions, keyed on the guid of each action's
+// method property.
+function actionSetFor(obj, eventName, target, writable) {
   var targetGuid = guidFor(target);
-  return objectFor(meta(obj, writable), obj, writable, 'listeners', eventName, targetGuid);
+  return metaPath(obj, ['listeners', eventName, targetGuid], writable);
 }
 
-var EV_SKIP = { __scproto__: true };
+// Gets the set of all targets, keyed on the guid of each action's
+// target property.
+function targetSetFor(obj, eventName) {
+  var listenerSet = meta(obj, false).listeners;
+  if (!listenerSet) { return false; }
 
-function invokeEvents(targets, params) {
-  var tguid, mguid, methods, info, method, target;
-  for(tguid in targets) {
-    if (EV_SKIP[tguid]) continue;
-    methods = targets[tguid];
-    
-    for(mguid in methods) {
-      if (EV_SKIP[mguid] || !(info=methods[mguid])) continue;
-      method = info.method;
-      target = info.target;
-      if (!target) target = params[0];  // object
-      if ('string' === typeof method) method = target[method];
-      if (info.xform) info.xform(target, method, params);
-      else method.apply(target, params);
+  return listenerSet[eventName] || false;
+}
+
+// TODO: This knowledge should really be a part of the
+// meta system.
+var SKIP_PROPERTIES = { __sc_source__: true };
+
+// For a given target, invokes all of the methods that have
+// been registered as a listener.
+function invokeEvents(targetSet, params) {
+  // Iterate through all elements of the target set
+  for(var targetGuid in targetSet) {
+    if (SKIP_PROPERTIES[targetGuid]) { continue; }
+
+    var actionSet = targetSet[targetGuid];
+
+    // Iterate through the elements of the action set
+    for(var methodGuid in actionSet) {
+      if (SKIP_PROPERTIES[methodGuid]) { continue; }
+
+      var action = actionSet[methodGuid]
+      if (!action) { continue; }
+
+      // Extract target and method for each action
+      var method = action.method;
+      var target = action.target;
+
+      // If there is no target, the target is the object
+      // on which the event was fired.
+      if (!target) { target = params[0]; }
+      if ('string' === typeof method) { method = target[method]; }
+
+      // Listeners can provide an `xform` function, which can perform
+      // arbitrary transformations, such as changing the order of
+      // parameters.
+      //
+      // This is primarily used by sproutcore-runtime's observer system, which
+      // provides a higher level abstraction on top of events, including
+      // dynamically looking up current values and passing them into the
+      // registered listener.
+      var xform = action.xform;
+
+      if (xform) {
+        xform(target, method, params);
+      } else {
+        method.apply(target, params);
+      }
     }
   }
 }
 
+/**
+  The parameters passed to an event listener are not exactly the
+  parameters passed to an observer. if you pass an xform function, it will
+  be invoked and is able to translate event listener parameters into the form
+  that observers are expecting.
+*/
 function addListener(obj, eventName, target, method, xform) {
-  if (!method && 'function'===typeof target) {
+  sc_assert("You must pass at least an object and event name to SC.addListener", !!obj && !!eventName);
+
+  if (!method && 'function' === typeof target) {
     method = target;
     target = null;
   }
 
-  var set  = listenerSetFor(obj, eventName, target, true), 
-      guid = guidFor(method), ret;
+  var actionSet = actionSetFor(obj, eventName, target, true),
+      methodGuid = guidFor(method), ret;
 
-  if (!set[guid]) {
-    set[guid] = { target: target, method: method, xform: xform };
+  if (!actionSet[methodGuid]) {
+    actionSet[methodGuid] = { target: target, method: method, xform: xform };
   } else {
-    set[guid].xform = xform; // used by observers etc to map params
+    actionSet[methodGuid].xform = xform; // used by observers etc to map params
   }
-  
-  if (obj && 'function'===typeof obj.didAddListener) {
+
+  if ('function' === typeof obj.didAddListener) {
     obj.didAddListener(eventName, target, method);
   }
-  
+
   return ret; // return true if this is the first listener.
 }
 
@@ -3106,12 +3381,13 @@ function removeListener(obj, eventName, target, method) {
     method = target;
     target = null;
   }
-  
-  var set = listenerSetFor(obj, eventName, target, true),
-      guid = guidFor(method);
-      
-  // can't delete since it might be inherited
-  if (set && set[guid]) set[guid] = null; 
+
+  var actionSet = actionSetFor(obj, eventName, target, true),
+      methodGuid = guidFor(method);
+
+  // we can't simply delete this parameter, because if we do, we might
+  // re-expose the property from the prototype chain.
+  if (actionSet && actionSet[methodGuid]) { actionSet[methodGuid] = null; }
 
   if (obj && 'function'===typeof obj.didRemoveListener) {
     obj.didRemoveListener(eventName, target, method);
@@ -3120,71 +3396,72 @@ function removeListener(obj, eventName, target, method) {
 
 // returns a list of currently watched events
 function watchedEvents(obj) {
-  var listeners = meta(obj, false).listeners, ret =[];
+  var listeners = meta(obj, false).listeners, ret = [];
+
   if (listeners) {
     for(var eventName in listeners) {
-      if (!EV_SKIP[eventName] && listeners[eventName]) ret.push(eventName);
+      if (!SKIP_PROPERTIES[eventName] && listeners[eventName]) {
+        ret.push(eventName);
+      }
     }
   }
   return ret;
 }
 
 function sendEvent(obj, eventName) {
-  
-  // first give object a change to handle it
-  if (obj && 'function' === typeof obj.sendEvent) {
-    obj.sendEvent.apply(obj, a_slice.call(arguments, 1));
+  sc_assert("You must pass an object and event name to SC.sendEvent", !!obj && !!eventName);
+
+  // first give object a chance to handle it
+  if (obj !== SC && 'function' === typeof obj.sendEvent) {
+    obj.sendEvent.apply(obj, array_Slice.call(arguments, 1));
   }
-  
-  var set = meta(obj, false).listeners;
-  if (set && (set = set[eventName])) {
-    invokeEvents(set, arguments);
-    return true;
-  }
-  
-  return false;
+
+  var targetSet = targetSetFor(obj, eventName);
+  if (!targetSet) { return false; }
+
+  invokeEvents(targetSet, arguments);
+  return true;
 }
 
 function hasListeners(obj, eventName) {
-  var targets = meta(obj, false).listeners;
-  if (targets) targets = targets[eventName];
-  if (!targets) return false;
-  
-  var tguid, mguid, methods;
-  for(tguid in targets) {
-    if (EV_SKIP[tguid] || !targets[tguid]) continue;
-    methods = targets[tguid];
-    for(mguid in methods) {
-      if (EV_SKIP[mguid] || !methods[mguid]) continue;
+  var targetSet = targetSetFor(obj, eventName);
+  if (!targetSet) { return false; }
+
+  for(var targetGuid in targetSet) {
+    if (SKIP_PROPERTIES[targetGuid] || !targetSet[targetGuid]) { continue; }
+
+    var actionSet = targetSet[targetGuid];
+
+    for(var methodGuid in actionSet) {
+      if (SKIP_PROPERTIES[methodGuid] || !actionSet[methodGuid]) { continue; }
       return true; // stop as soon as we find a valid listener
     }
   }
-  
+
   // no listeners!  might as well clean this up so it is faster later.
-  var set = objectFor(meta(obj, true), obj, true, 'listeners');
+  var set = metaPath(obj, ['listeners'], true);
   set[eventName] = null;
-  
+
   return false;
 }
 
 function listenersFor(obj, eventName) {
-  var targets = meta(obj, false).listeners, 
-      ret = [];
+  var targetSet = targetSetFor(obj, eventName), ret = [];
+  if (!targetSet) { return ret; }
 
-  if (targets) targets = targets[eventName];
-  if (!targets) return ret;
+  var info;
+  for(var targetGuid in targetSet) {
+    if (SKIP_PROPERTIES[targetGuid] || !targetSet[targetGuid]) { continue; }
 
-  var tguid, mguid, methods, info;
-  for(tguid in targets) {
-    if (EV_SKIP[tguid] || !targets[tguid]) continue;
-    methods = targets[tguid];
-    for(mguid in methods) {
-      if (EV_SKIP[mguid] || !methods[mguid]) continue;
-      info = methods[mguid];
+    var actionSet = targetSet[targetGuid];
+
+    for(var methodGuid in actionSet) {
+      if (SKIP_PROPERTIES[methodGuid] || !actionSet[methodGuid]) { continue; }
+      info = actionSet[methodGuid];
       ret.push([info.target, info.method]);
     }
   }
-  
+
   return ret;
 }
 
@@ -3215,6 +3492,7 @@ var guidFor = SC.guidFor;
 var normalizePath = SC.normalizePath;
 
 var suspended = 0;
+var array_Slice = Array.prototype.slice;
 
 var ObserverSet = function(iterateable) {
   this.set = {};
@@ -3298,11 +3576,16 @@ function beforeKey(eventName) {
   return eventName.slice(0, -7);
 }
 
-function xformChange(target, method, params) {
-  var obj = params[0], keyName = changeKey(params[1]), val;
-  if (method.length>2) val = SC.getPath(obj, keyName);
-  method.call(target, obj, keyName, val);
+function xformForArgs(args) {
+  return function (target, method, params) {
+    var obj = params[0], keyName = changeKey(params[1]), val;
+    if (method.length>2) val = SC.getPath(obj, keyName);
+    args.unshift(obj, keyName, val);
+    method.apply(target, args);
+  }
 }
+
+var xformChange = xformForArgs([]);
 
 function xformBefore(target, method, params) {
   var obj = params[0], keyName = beforeKey(params[1]), val;
@@ -3312,7 +3595,15 @@ function xformBefore(target, method, params) {
 
 SC.addObserver = function(obj, path, target, method) {
   path = normalizePath(path);
-  SC.addListener(obj, changeEvent(path), target, method, xformChange);
+
+  var xform;
+  if (arguments.length > 4) {
+    var args = array_Slice.call(arguments, 4);
+    xform = xformForArgs(args);
+  } else {
+    xform = xformChange;
+  }
+  SC.addListener(obj, changeEvent(path), target, method, xform);
   SC.watch(obj, path);
   return this;
 };
@@ -3459,7 +3750,7 @@ function addChainWatcher(obj, keyName, node) {
   if (!nodes || nodes.__scproto__ !== obj) {
     nodes = m.chainWatchers = { __scproto__: obj };
   }
-  
+
   if (!nodes[keyName]) nodes[keyName] = {};
   nodes[keyName][guidFor(node)] = node;
   SC.watch(obj, keyName);
@@ -3540,10 +3831,10 @@ Wp.copy = function(obj) {
 // path.
 Wp.add = function(path) {
   var obj, tuple, key, src, separator, paths;
-  
+
   paths = this._paths;
   paths[path] = (paths[path] || 0) + 1 ;
-  
+
   obj = this._value;
   tuple = normalizeTuple(obj, path);
   if (tuple[0] && (tuple[0] === obj)) {
@@ -3556,14 +3847,14 @@ Wp.add = function(path) {
   } else if (!tuple[0]) {
     pendingQueue.push([this, path]);
     return;
-    
+
   } else {
     src  = tuple[0];
     key  = path.slice(0, 0-(tuple[1].length+1));
     separator = path.slice(key.length, key.length+1);
     path = tuple[1];
   }
-  
+
   this.chain(key, path, src, separator);
 };
 
@@ -3581,13 +3872,13 @@ Wp.remove = function(path) {
     path = tuple[1];
     key  = firstKey(path);
     path = path.slice(key.length+1);
-    
+
   } else {
     src  = tuple[0];
     key  = path.slice(0, 0-(tuple[1].length+1));
     path = tuple[1];
   }
-  
+
   this.unchain(key, path);
 };
 
@@ -3642,7 +3933,7 @@ Wp.willChange = function() {
 
 Wp.chainWillChange = function(chain, path, depth) {
   if (this._key) path = this._key+this._separator+path;
-  
+
   if (this._parent) {
     this._parent.chainWillChange(this, path, depth+1);
   } else {
@@ -3763,6 +4054,10 @@ SC.watch = function(obj, keyName) {
     watching[keyName] = (watching[keyName]||0)+1;
   }
   return this;
+};
+
+SC.isWatching = function(obj, keyName) {
+  return !!meta(obj).watching[keyName];
 };
 
 SC.watch.flushPending = flushPendingChains;
@@ -3893,7 +4188,7 @@ SC.propertyDidChange = function(obj, keyName) {
 
 
 var Mixin, MixinDelegate, REQUIRED, Alias;
-var classToString;
+var classToString, superClassString;
 
 var a_map = Array.prototype.map;
 var EMPTY_META = {}; // dummy for non-writable meta
@@ -4275,11 +4570,33 @@ function processNames(paths, root, seen) {
   paths.length = idx; // cut out last item
 }
 
+superClassString = function(mixin) {
+  var superclass = mixin.superclass;
+  if (superclass) {
+    if (superclass[NAME_KEY]) { return superclass[NAME_KEY] }
+    else { return superClassString(superclass); }
+  } else {
+    return;
+  }
+}
+
 classToString = function() {
   if (!this[NAME_KEY] && !classToString.processed) {
     classToString.processed = true;
     processNames([], window, {});
   }
+
+  if (this[NAME_KEY]) {
+    return this[NAME_KEY];
+  } else {
+    var str = superClassString(this);
+    if (str) {
+      return "(subclass of " + str + ")";
+    } else {
+      return "(unknown mixin)";
+    }
+  }
+
   return this[NAME_KEY] || "(unknown mixin)";
 };
 
@@ -4369,767 +4686,6 @@ SC.beforeObserver = function(func) {
 
 
 })({});
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-/*globals ENV sc_assert */
-
-// ........................................
-// GLOBAL CONSTANTS
-//
-
-/**
-  @name YES
-  @static
-  @type Boolean
-  @default true
-  @constant
-*/
-YES = true;
-
-/**
-  @name NO
-  @static
-  @type Boolean
-  @default NO
-  @constant
-*/
-NO = false;
-
-//@if (legacy)
-// ensure no undefined errors in browsers where console doesn't exist
-if (typeof console === 'undefined') {
-  window.console = {};
-  console.log = console.info = console.warn = console.error = function() {};
-}
-//@endif
-
-// ..........................................................
-// BOOTSTRAP
-// 
-
-/**
-  @static
-  @type Boolean
-  @default YES
-  @constant
-  
-  Determines whether SproutCore should enhances some built-in object 
-  prototypes to provide a more friendly API.  If enabled, a few methods 
-  will be added to Function, String, and Array.  Object.prototype will not be
-  enhanced, which is the one that causes most troubles for people.
-  
-  In general we recommend leaving this option set to true since it rarely
-  conflicts with other code.  If you need to turn it off however, you can
-  define an ENV.ENHANCE_PROTOTYPES config to disable it.
-*/  
-SC.EXTEND_PROTOTYPES = (SC.ENV.EXTEND_PROTOTYPES !== false);
-
-// ........................................
-// TYPING & ARRAY MESSAGING
-//
-
-var TYPE_MAP = {};
-var t ="Boolean Number String Function Array Date RegExp Object".split(" ");
-t.forEach(function(name) {
-	TYPE_MAP[ "[object " + name + "]" ] = name.toLowerCase();
-});
-
-var toString = Object.prototype.toString;
-
-/**
-  Returns a consistant type for the passed item.
-
-  Use this instead of the built-in SC.typeOf() to get the type of an item.
-  It will return the same result across all browsers and includes a bit
-  more detail.  Here is what will be returned:
-
-  | Return Value Constant | Meaning |
-  | 'string' | String primitive |
-  | 'number' | Number primitive |
-  | 'boolean' | Boolean primitive |
-  | 'null' | Null value |
-  | 'undefined' | Undefined value |
-  | 'function' | A function |
-  | 'array' | An instance of Array |
-  | 'class' | A SproutCore class (created using SC.Object.extend()) |
-  | 'object' | A SproutCore object instance |
-  | 'error' | An instance of the Error object |
-  | 'hash' | A JavaScript object not inheriting from SC.Object |
-
-  @param item {Object} the item to check
-  @returns {String} the type
-*/
-SC.typeOf = function(item) {
-  var ret;
-  
-  ret = item==null ? String(item) : TYPE_MAP[toString.call(item)]||'object';
-
-  if (ret === 'function') {
-    if (SC.Object && SC.Object.detect(item)) ret = 'class';
-  } else if (ret === 'object') {
-    if (item instanceof Error) ret = 'error';
-    else if (SC.Object && item instanceof SC.Object) ret = 'instance';
-    else ret = 'object';
-  }
-  
-  return ret;
-};
-
-/**
-  Returns YES if the passed value is null or undefined.  This avoids errors
-  from JSLint complaining about use of ==, which can be technically
-  confusing.
-
-  @param {Object} obj Value to test
-  @returns {Boolean}
-*/
-SC.none = function(obj) {
-  return obj === null || obj === undefined;
-};
-
-/**
-  Verifies that a value is either null or an empty string. Return false if
-  the object is not a string.
-
-  @param {Object} obj Value to test
-  @returns {Boolean}
-*/
-SC.empty = function(obj) {
-  return obj === null || obj === undefined || obj === '';
-};
-
-/**
-  SC.isArray defined in sproutcore-metal/lib/utils
-**/
-
-/**
- This will compare two javascript values of possibly different types.
- It will tell you which one is greater than the other by returning:
-
-  - -1 if the first is smaller than the second,
-  - 0 if both are equal,
-  - 1 if the first is greater than the second.
-
- The order is calculated based on SC.ORDER_DEFINITION, if types are different.
- In case they have the same type an appropriate comparison for this type is made.
-
- @param {Object} v First value to compare
- @param {Object} w Second value to compare
- @returns {Number} -1 if v < w, 0 if v = w and 1 if v > w.
-*/
-SC.compare = function (v, w) {
-  if (v === w) { return 0; }
-
-  var type1 = SC.typeOf(v);
-  var type2 = SC.typeOf(w);
-
-  var Comparable = SC.Comparable;
-  if (Comparable) {
-    if (type1==='instance' && Comparable.detect(v.constructor)) {
-      return v.constructor.compare(v, w);
-    }
-    
-    if (type2 === 'instance' && Comparable.detect(w.constructor)) {
-      return 1-w.constructor.compare(w, v);
-    }
-  }
-
-  // If we haven't yet generated a reverse-mapping of SC.ORDER_DEFINITION,
-  // do so now.
-  var mapping = SC.ORDER_DEFINITION_MAPPING;
-  if (!mapping) {
-    var order = SC.ORDER_DEFINITION;
-    mapping = SC.ORDER_DEFINITION_MAPPING = {};
-    var idx, len;
-    for (idx = 0, len = order.length; idx < len;  ++idx) {
-      mapping[order[idx]] = idx;
-    }
-
-    // We no longer need SC.ORDER_DEFINITION.
-    delete SC.ORDER_DEFINITION;
-  }
-
-  var type1Index = mapping[type1];
-  var type2Index = mapping[type2];
-
-  if (type1Index < type2Index) { return -1; }
-  if (type1Index > type2Index) { return 1; }
-
-  // types are equal - so we have to check values now
-  switch (type1) {
-    case 'boolean':
-    case 'number':
-      if (v < w) { return -1; }
-      if (v > w) { return 1; }
-      return 0;
-
-    case 'string':
-      var comp = v.localeCompare(w);
-      if (comp < 0) { return -1; }
-      if (comp > 0) { return 1; }
-      return 0;
-
-    case 'array':
-      var vLen = v.length;
-      var wLen = w.length;
-      var l = Math.min(vLen, wLen);
-      var r = 0;
-      var i = 0;
-      var thisFunc = arguments.callee;
-      while (r === 0 && i < l) {
-        r = thisFunc(v[i],w[i]);
-        i++;
-      }
-      if (r !== 0) { return r; }
-
-      // all elements are equal now
-      // shorter array should be ordered first
-      if (vLen < wLen) { return -1; }
-      if (vLen > wLen) { return 1; }
-      // arrays are equal now
-      return 0;
-
-    case 'instance':
-      if (SC.Comparable && SC.Comparable.detect(v)) { 
-        return v.compare(v, w); 
-      }
-      return 0;
-
-    default:
-      return 0;
-  }
-};
-
-function _copy(obj, deep, seen, copies) {
-  var ret, loc, key;
-
-  // primitive data types are immutable, just return them.
-  if ('object' !== typeof obj) return obj;
-
-  // avoid cyclical loops
-  if (deep && (loc=seen.indexOf(obj))>=0) return copies[loc];
-  
-  sc_assert('Cannot clone an SC.Object that does not implement SC.Copyable', 
-    !(obj instanceof SC.Object) || (SC.Copyable && SC.Copyable.detect(obj)));
-
-  // IMPORTANT: this specific test will detect a native array only.  Any other
-  // object will need to implement Copyable.
-  if (SC.typeOf(obj) === 'array') {
-    ret = obj.slice();
-    if (deep) {
-      loc = ret.length;
-      while(--loc>=0) ret[loc] = _copy(ret[loc], deep, seen, copies);
-    }
-  } else if (SC.Copyable && SC.Copyable.detect(obj)) {
-    ret = obj.copy(deep, seen, copies);
-  } else {
-    ret = {};
-    for(key in obj) {
-      if (!obj.hasOwnProperty(key)) continue;
-      ret[key] = deep ? _copy(obj[key], deep, seen, copies) : obj[key];
-    }
-  }
-  
-  if (deep) {
-    seen.push(obj);
-    copies.push(ret);
-  }
-
-  return ret;
-}
-
-/**
-  Creates a clone of the passed object. This function can take just about
-  any type of object and create a clone of it, including primitive values
-  (which are not actually cloned because they are immutable).
-
-  If the passed object implements the clone() method, then this function
-  will simply call that method and return the result.
-
-  @param {Object} object The object to clone
-  @param {Boolean} deep If true, a deep copy of the object is made
-  @returns {Object} The cloned object
-*/
-SC.copy = function(obj, deep) {
-  // fast paths
-  if ('object' !== typeof obj) return obj; // can't copy primitives
-  if (SC.Copyable && SC.Copyable.detect(obj)) return obj.copy(deep);
-  return _copy(obj, deep, deep ? [] : null, deep ? [] : null);
-};
-
-/**
-  Convenience method to inspect an object. This method will attempt to
-  convert the object into a useful string description.
-
-  @param {Object} obj The object you want to inspec.
-  @returns {String} A description of the object
-*/
-SC.inspect = function(obj) {
-  var v, ret = [];
-  for(var key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      v = obj[key];
-      if (v === 'toString') { continue; } // ignore useless items
-      if (SC.typeOf(v) === SC.T_FUNCTION) { v = "function() { ... }"; }
-      ret.push(key + ": " + v);
-    }
-  }
-  return "{" + ret.join(" , ") + "}";
-};
-
-/**
-  Compares two objects, returning true if they are logically equal.  This is 
-  a deeper comparison than a simple triple equal.  For arrays and enumerables
-  it will compare the internal objects.  For any other object that implements
-  `isEqual()` it will respect that method.
-  
-  @param {Object} a first object to compare
-  @param {Object} b second object to compare
-  @returns {Boolean}
-*/
-SC.isEqual = function(a, b) {
-  if (a && 'function'===typeof a.isEqual) return a.isEqual(b);
-  return a === b;
-};
-
-/**
-  @private
-  Used by SC.compare
-*/
-SC.ORDER_DEFINITION = SC.ENV.ORDER_DEFINITION || [
-  'undefined',
-  'null',
-  'boolean',
-  'number',
-  'string',
-  'array',
-  'object',
-  'instance',
-  'function',
-  'class'
-];
-
-/**
-  Returns all of the keys defined on an object or hash. This is useful
-  when inspecting objects for debugging.  On browsers that support it, this
-  uses the native Object.keys implementation.
-
-  @function
-  @param {Object} obj
-  @returns {Array} Array containing keys of obj
-*/
-SC.keys = Object.keys;
-
-//@if (legacy)
-if (!SC.keys) {
-  SC.keys = function(obj) {
-    var ret = [];
-    for(var key in obj) {
-      if (obj.hasOwnProperty(key)) { ret.push(key); }
-    }
-    return ret;
-  };
-}
-
-/**
-  Empty function.  Useful for some operations.
-
-  @returns {Object}
-  @private
-*/
-SC.K = function() { return this; };
-
-// ..........................................................
-// ERROR
-// 
-
-/**
-  @class
-
-  A subclass of the JavaScript Error object for use in SproutCore.
-*/
-SC.Error = function() {
-  var tmp = Error.prototype.constructor.apply(this, arguments);
-
-  for (var p in tmp) {
-    if (tmp.hasOwnProperty(p)) { this[p] = tmp[p]; }
-  }
-};
-
-SC.Error.prototype = SC.create(Error.prototype);
-
-// ..........................................................
-// LOGGER
-// 
-
-/**
-  @class
-
-  Inside SproutCore-Runtime, simply uses the window.console object.
-  Override this to provide more robust logging functionality.
-*/
-SC.Logger = window.console;
-
-//if ('undefined' === typeof sc_require) sc_require = SC.K;
-if ('undefined' === typeof require) require = SC.K;
-
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2011 Strobe Inc.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-
-
-
-
-/** @private **/
-var STRING_DASHERIZE_REGEXP = (/[ _]/g);
-var STRING_DASHERIZE_CACHE = {};
-var STRING_DECAMELIZE_REGEXP = (/([a-z])([A-Z])/g);
-  
-/**
-  Defines the hash of localized strings for the current language.  Used by 
-  the `SC.String.loc()` helper.  To localize, add string values to this
-  hash.
-  
-  @property {String}
-*/
-SC.STRINGS = {};
-
-/**
-  Defines string helper methods including string formatting and localization.
-  Unless SC.EXTEND_PROTOTYPES = false these methods will also be added to the
-  String.prototype as well.
-  
-  @namespace
-*/
-SC.String = {
-
-  /**
-    Apply formatting options to the string.  This will look for occurrences
-    of %@ in your string and substitute them with the arguments you pass into
-    this method.  If you want to control the specific order of replacement,
-    you can add a number after the key as well to indicate which argument
-    you want to insert.
-
-    Ordered insertions are most useful when building loc strings where values
-    you need to insert may appear in different orders.
-
-    ## Examples
-
-        "Hello %@ %@".fmt('John', 'Doe') => "Hello John Doe"
-        "Hello %@2, %@1".fmt('John', 'Doe') => "Hello Doe, John"
-
-    @param {Object...} [args]
-    @returns {String} formatted string
-  */
-  fmt: function(str, formats) {
-    // first, replace any ORDERED replacements.
-    var idx  = 0; // the current index for non-numerical replacements
-    return str.replace(/%@([0-9]+)?/g, function(s, argIndex) {
-      argIndex = (argIndex) ? parseInt(argIndex,0) - 1 : idx++ ;
-      s = formats[argIndex];
-      return ((s === null) ? '(null)' : (s === undefined) ? '' : s).toString();
-    }) ;
-  },
-
-  /**
-    Formats the passed string, but first looks up the string in the localized
-    strings hash.  This is a convenient way to localize text.  See 
-    `SC.String.fmt()` for more information on formatting.
-    
-    Note that it is traditional but not required to prefix localized string
-    keys with an underscore or other character so you can easily identify
-    localized strings.
-    
-    # Example Usage
-    
-        @javascript@
-        SC.STRINGS = {
-          '_Hello World': 'Bonjour le monde',
-          '_Hello %@ %@': 'Bonjour %@ %@'
-        };
-        
-        SC.String.loc("_Hello World");
-        => 'Bonjour le monde';
-        
-        SC.String.loc("_Hello %@ %@", ["John", "Smith"]);
-        => "Bonjour John Smith";
-        
-        
-        
-    @param {String} str
-      The string to format
-    
-    @param {Array} formats
-      Optional array of parameters to interpolate into string.
-      
-    @returns {String} formatted string
-  */
-  loc: function(str, formats) {
-    str = SC.STRINGS[str] || str;
-    return SC.String.fmt(str, formats) ;
-  },
-
-  /**
-    Splits a string into separate units separated by spaces, eliminating any
-    empty strings in the process.  This is a convenience method for split that
-    is mostly useful when applied to the String.prototype.
-    
-    # Example Usage
-    
-        @javascript@
-        SC.String.w("alpha beta gamma").forEach(function(key) { 
-          console.log(key); 
-        });
-        > alpha
-        > beta
-        > gamma
-
-    @param {String} str
-      The string to split
-      
-    @returns {String} split string
-  */
-  w: function(str) { return str.split(/\s+/); },
-  
-  /**
-    Converts a camelized string into all lower case separated by underscores.
-
-    h2. Examples
-
-    | *Input String* | *Output String* |
-    | my favorite items | my favorite items |
-    | css-class-name | css-class-name |
-    | action_name | action_name |
-    | innerHTML | inner_html |
-
-    @returns {String} the decamelized string.
-  */
-  decamelize: function(str) {
-    return str.replace(STRING_DECAMELIZE_REGEXP, '$1_$2').toLowerCase();
-  },
-
-  /**
-    Converts a camelized string or a string with spaces or underscores into
-    a string with components separated by dashes.
-
-    h2. Examples
-
-    | *Input String* | *Output String* |
-    | my favorite items | my-favorite-items |
-    | css-class-name | css-class-name |
-    | action_name | action-name |
-    | innerHTML | inner-html |
-
-    @returns {String} the dasherized string.
-  */
-  dasherize: function(str) {
-    var cache = STRING_DASHERIZE_CACHE,
-        ret   = cache[str];
-
-    if (ret) {
-      return ret;
-    } else {
-      ret = SC.String.decamelize(str).replace(STRING_DASHERIZE_REGEXP,'-');
-      cache[str] = ret;
-    }
-
-    return ret;
-  }
-};
-
-
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-
-var fmt = SC.String.fmt,
-    w   = SC.String.w,
-    loc = SC.String.loc,
-    decamelize = SC.String.decamelize,
-    dasherize = SC.String.dasherize;
-  
-if (SC.EXTEND_PROTOTYPES) {
-
-  /**
-    @see SC.String.fmt
-  */
-  String.prototype.fmt = function() {
-    return fmt(this, arguments);
-  };
-  
-  /**
-    @see SC.String.w
-  */
-  String.prototype.w = function() {
-    return w(this);
-  };
-  
-  /**
-    @see SC.String.loc
-  */
-  String.prototype.loc = function() {
-    return loc(this, arguments);
-  };
-  
-  /**
-    @see SC.String.decamelize
-  */
-  String.prototype.decamelize = function() {
-    return decamelize(this);
-  };
-  
-  /**
-    @see SC.String.dasherize
-  */
-  String.prototype.dashersize = function() {
-    return dasherize(this);
-  };
-}
-
-
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-if (SC.EXTEND_PROTOTYPES) {
-
-  Function.prototype.property = function() {
-    var ret = SC.computed(this);
-    return ret.property.apply(ret, arguments);
-  };
-
-  Function.prototype.observes = function() {
-    this.__sc_observes__ = Array.prototype.slice.call(arguments);
-    return this;
-  };
-
-  Function.prototype.observesBefore = function() {
-    this.__sc_observesBefore__ = Array.prototype.slice.call(arguments);
-    return this;
-  };
-
-}
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-var IS_BINDING = /^.+Binding$/;
-
-SC._mixinBindings = function(obj, key, value, m) {
-  if (IS_BINDING.test(key)) {
-    if (!(value instanceof SC.Binding)) {
-      value = new SC.Binding(key.slice(0,-7), value); // make binding
-    } else {
-      value.to(key.slice(0, -7));
-    }
-    value.connect(obj);
-
-    // keep a set of bindings in the meta so that when we rewatch we can
-    // resync them...
-    var bindings = m.bindings;
-    if (!bindings) {
-      bindings = m.bindings = { __scproto__: obj };
-    } else if (bindings.__scproto__ !== obj) {
-      bindings = m.bindings = SC.create(m.bindings);
-      bindings.__scproto__ = obj;
-    }
-
-    bindings[key] = true;
-  }
-  
-  return value;
-};
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-
-
-})({});
-
-
-(function(exports) {
-/**
- * @license
- * ==========================================================================
- * SproutCore
- * Copyright ©2006-2011, Strobe Inc. and contributors.
- * Portions copyright ©2008-2011 Apple Inc. All rights reserved.
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a 
- * copy of this software and associated documentation files (the "Software"), 
- * to deal in the Software without restriction, including without limitation 
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
- * and/or sell copies of the Software, and to permit persons to whom the 
- * Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in 
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- * DEALINGS IN THE SOFTWARE.
- * 
- * For more information about SproutCore, visit http://www.sproutcore.com
- * 
- * ==========================================================================
- */
-
-})({});
-
 
 (function(exports) {
 // ==========================================================================
@@ -5736,9 +5292,9 @@ SC.Enumerable = SC.Mixin.create( /** @lends SC.Enumerable */ {
 
     @property {SC.Array}
   */
-  '[]': function(key, value) { 
+  '[]': SC.computed(function(key, value) { 
     return this; 
-  }.property().cacheable(),
+  }).property().cacheable(),
 
   // ..........................................................
   // ENUMERABLE OBSERVERS
@@ -5781,9 +5337,9 @@ SC.Enumerable = SC.Mixin.create( /** @lends SC.Enumerable */ {
     
     @property {Boolean}
   */
-  hasEnumerableObservers: function() {
+  hasEnumerableObservers: SC.computed(function() {
     return SC.hasListeners(this, '@enumerable:change') || SC.hasListeners(this, '@enumerable:before');
-  }.property().cacheable(),
+  }).property().cacheable(),
   
   
   /**
@@ -5890,7 +5446,7 @@ SC.Enumerable = SC.Mixin.create( /** @lends SC.Enumerable */ {
 // HELPERS
 // 
 
-var get = SC.get, set = SC.set;
+var get = SC.get, set = SC.set, meta = SC.meta;
 
 function none(obj) { return obj===null || obj===undefined; }
 
@@ -5975,10 +5531,10 @@ SC.Array = SC.Mixin.create(SC.Enumerable, /** @scope SC.Array.prototype */ {
 
     This property overrides the default property defined in SC.Enumerable.
   */
-  '[]': function(key, value) {
+  '[]': SC.computed(function(key, value) {
     if (value !== undefined) this.replace(0, get(this, 'length'), value) ;
     return this ;
-  }.property().cacheable(),
+  }).property().cacheable(),
 
   /** @private (nodoc) - optimized version from Enumerable */
   contains: function(obj){
@@ -6115,9 +5671,9 @@ SC.Array = SC.Mixin.create(SC.Enumerable, /** @scope SC.Array.prototype */ {
     
     @property {Boolean}
   */
-  hasArrayObservers: function() {
+  hasArrayObservers: SC.computed(function() {
     return SC.hasListeners(this, '@array:change') || SC.hasListeners(this, '@array:before');
-  }.property().cacheable(),
+  }).property().cacheable(),
   
   /**
     If you are implementing an object that supports SC.Array, call this 
@@ -6159,6 +5715,9 @@ SC.Array = SC.Mixin.create(SC.Enumerable, /** @scope SC.Array.prototype */ {
     }
     
     this.enumerableContentWillChange(removing, addAmt);
+
+    // Make sure the @each proxy is set up if anyone is observing @each
+    if (SC.isWatching(this, '@each')) { get(this, '@each'); }
     return this;
   },
   
@@ -6197,230 +5756,14 @@ SC.Array = SC.Mixin.create(SC.Enumerable, /** @scope SC.Array.prototype */ {
     return an enumerable that maps automatically to the named key on the 
     member objects.
   */
-  '@each': function() {
+  '@each': SC.computed(function() {
     if (!this.__each) this.__each = new SC.EachProxy(this);
     return this.__each;
-  }.property().cacheable()
+  }).property().cacheable()
   
   
   
 }) ;
-
-
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/**
-  @namespace
-
-  Implements some standard methods for comparing objects. Add this mixin to
-  any class you create that can compare its instances.
-
-  You should implement the compare() method.
-
-  @since SproutCore 1.0
-*/
-SC.Comparable = SC.Mixin.create( /** @scope SC.Comparable.prototype */{
-
-  /**
-    walk like a duck. Indicates that the object can be compared.
-
-    @type Boolean
-    @default YES
-    @constant
-  */
-  isComparable: true,
-
-  /**
-    Override to return the result of the comparison of the two parameters. The
-    compare method should return:
-
-      - -1 if a < b
-      - 0 if a == b
-      - 1 if a > b
-
-    Default implementation raises an exception.
-
-    @param a {Object} the first object to compare
-    @param b {Object} the second object to compare
-    @returns {Integer} the result of the comparison
-  */
-  compare: SC.required(Function)
-
-});
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2010 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-var get = SC.get, set = SC.set;
-
-/**
-  @namespace
-
-  Implements some standard methods for copying an object.  Add this mixin to
-  any object you create that can create a copy of itself.  This mixin is
-  added automatically to the built-in array.
-
-  You should generally implement the copy() method to return a copy of the
-  receiver.
-
-  Note that frozenCopy() will only work if you also implement SC.Freezable.
-
-  @since SproutCore 1.0
-*/
-SC.Copyable = SC.Mixin.create({
-
-  /**
-    Override to return a copy of the receiver.  Default implementation raises
-    an exception.
-
-    @param deep {Boolean} if true, a deep copy of the object should be made
-    @returns {Object} copy of receiver
-  */
-  copy: SC.required(Function),
-
-  /**
-    If the object implements SC.Freezable, then this will return a new copy
-    if the object is not frozen and the receiver if the object is frozen.
-
-    Raises an exception if you try to call this method on a object that does
-    not support freezing.
-
-    You should use this method whenever you want a copy of a freezable object
-    since a freezable object can simply return itself without actually
-    consuming more memory.
-
-    @returns {Object} copy of receiver or receiver
-  */
-  frozenCopy: function() {
-    if (SC.Freezable && SC.Freezable.detect(this)) {
-      return get(this, 'isFrozen') ? this : this.copy().freeze();
-    } else {
-      throw new Error(SC.String.fmt("%@ does not support freezing",this));
-    }
-  }
-});
-
-
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2010 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-
-
-
-  
-var get = SC.get, set = SC.set;
-
-/**
-  @namespace
-
-  The SC.Freezable mixin implements some basic methods for marking an object
-  as frozen. Once an object is frozen it should be read only. No changes
-  may be made the internal state of the object.
-
-  ## Enforcement
-
-  To fully support freezing in your subclass, you must include this mixin and
-  override any method that might alter any property on the object to instead
-  raise an exception. You can check the state of an object by checking the
-  isFrozen property.
-
-  Although future versions of JavaScript may support language-level freezing
-  object objects, that is not the case today. Even if an object is freezable,
-  it is still technically possible to modify the object, even though it could
-  break other parts of your application that do not expect a frozen object to
-  change. It is, therefore, very important that you always respect the
-  isFrozen property on all freezable objects.
-
-  ## Example Usage
-
-  The example below shows a simple object that implement the SC.Freezable
-  protocol.
-
-        Contact = SC.Object.extend(SC.Freezable, {
-
-          firstName: null,
-
-          lastName: null,
-
-          // swaps the names
-          swapNames: function() {
-            if (this.get('isFrozen')) throw SC.FROZEN_ERROR;
-            var tmp = this.get('firstName');
-            this.set('firstName', this.get('lastName'));
-            this.set('lastName', tmp);
-            return this;
-          }
-
-        });
-
-        c = Context.create({ firstName: "John", lastName: "Doe" });
-        c.swapNames();  => returns c
-        c.freeze();
-        c.swapNames();  => EXCEPTION
-
-  ## Copying
-
-  Usually the SC.Freezable protocol is implemented in cooperation with the
-  SC.Copyable protocol, which defines a frozenCopy() method that will return
-  a frozen object, if the object implements this method as well.
-
-  @since SproutCore 1.0
-*/
-SC.Freezable = SC.Mixin.create({
-
-  /**
-    Set to YES when the object is frozen.  Use this property to detect whether
-    your object is frozen or not.
-
-    @property {Boolean}
-  */
-  isFrozen: false,
-
-  /**
-    Freezes the object.  Once this method has been called the object should
-    no longer allow any properties to be edited.
-
-    @returns {Object} reciever
-  */
-  freeze: function() {
-    if (get(this, 'isFrozen')) return this;
-    set(this, 'isFrozen', true);
-    return this;
-  }
-
-});
-
-SC.FROZEN_ERROR = "Frozen object cannot be modified.";
 
 
 
@@ -7102,23 +6445,6 @@ SC.Observable = SC.Mixin.create(/** @scope SC.Observable.prototype */ {
 
 
 
-
-
-
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-
-
 // NOTE: this object should never be included directly.  Instead use SC.
 // SC.Object.  We only define this separately so that SC.Set can depend on it
 
@@ -7146,7 +6472,11 @@ function makeCtor() {
       rewatch(this); // ålways rewatch just in case
       this.init.apply(this, arguments);
     } else {
-      if (hasChains) { rewatch(this); }
+      if (hasChains) {
+        rewatch(this);
+      } else {
+        this[SC.GUID_KEY] = undefined;
+      }
       if (init===false) { init = this.init; } // cache for later instantiations
       init.apply(this, arguments);
     }
@@ -7184,10 +6514,32 @@ CoreObject.PrototypeMixin = SC.Mixin.create({
 
   isDestroyed: false,
 
+  /**
+    Destroys an object by setting the isDestroyed flag and removing its
+    metadata, which effectively destroys observers and bindings.
+
+    If you try to set a property on a destroyed object, an exception will be
+    raised.
+
+    Note that destruction is scheduled for the end of the run loop and does not
+    happen immediately.
+
+    @returns {SC.Object} receiver
+  */
   destroy: function() {
     set(this, 'isDestroyed', true);
-    this[SC.META_KEY] = null;
+    SC.run.schedule('destroy', this, this._scheduledDestroy);
     return this;
+  },
+
+  /**
+    Invoked by the run loop to actually destroy the object. This is
+    scheduled for execution by the `destroy` method.
+
+    @private
+  */
+  _scheduledDestroy: function() {
+    this[SC.META_KEY] = null;
   },
 
   bind: function(to, from) {
@@ -7289,6 +6641,742 @@ SC.CoreObject = CoreObject;
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
+/*globals ENV sc_assert */
+
+// ........................................
+// GLOBAL CONSTANTS
+//
+
+/**
+  @name YES
+  @static
+  @type Boolean
+  @default true
+  @constant
+*/
+YES = true;
+
+/**
+  @name NO
+  @static
+  @type Boolean
+  @default NO
+  @constant
+*/
+NO = false;
+
+// ensure no undefined errors in browsers where console doesn't exist
+if (typeof console === 'undefined') {
+  window.console = {};
+  console.log = console.info = console.warn = console.error = function() {};
+}
+
+// ..........................................................
+// BOOTSTRAP
+// 
+
+/**
+  @static
+  @type Boolean
+  @default YES
+  @constant
+  
+  Determines whether SproutCore should enhances some built-in object 
+  prototypes to provide a more friendly API.  If enabled, a few methods 
+  will be added to Function, String, and Array.  Object.prototype will not be
+  enhanced, which is the one that causes most troubles for people.
+  
+  In general we recommend leaving this option set to true since it rarely
+  conflicts with other code.  If you need to turn it off however, you can
+  define an ENV.ENHANCE_PROTOTYPES config to disable it.
+*/  
+SC.EXTEND_PROTOTYPES = (SC.ENV.EXTEND_PROTOTYPES !== false);
+
+// ........................................
+// TYPING & ARRAY MESSAGING
+//
+
+var TYPE_MAP = {};
+var t ="Boolean Number String Function Array Date RegExp Object".split(" ");
+t.forEach(function(name) {
+	TYPE_MAP[ "[object " + name + "]" ] = name.toLowerCase();
+});
+
+var toString = Object.prototype.toString;
+
+/**
+  Returns a consistant type for the passed item.
+
+  Use this instead of the built-in SC.typeOf() to get the type of an item.
+  It will return the same result across all browsers and includes a bit
+  more detail.  Here is what will be returned:
+
+  | Return Value Constant | Meaning |
+  | 'string' | String primitive |
+  | 'number' | Number primitive |
+  | 'boolean' | Boolean primitive |
+  | 'null' | Null value |
+  | 'undefined' | Undefined value |
+  | 'function' | A function |
+  | 'array' | An instance of Array |
+  | 'class' | A SproutCore class (created using SC.Object.extend()) |
+  | 'object' | A SproutCore object instance |
+  | 'error' | An instance of the Error object |
+  | 'hash' | A JavaScript object not inheriting from SC.Object |
+
+  @param item {Object} the item to check
+  @returns {String} the type
+*/
+SC.typeOf = function(item) {
+  var ret;
+  
+  ret = item==null ? String(item) : TYPE_MAP[toString.call(item)]||'object';
+
+  if (ret === 'function') {
+    if (SC.Object && SC.Object.detect(item)) ret = 'class';
+  } else if (ret === 'object') {
+    if (item instanceof Error) ret = 'error';
+    else if (SC.Object && item instanceof SC.Object) ret = 'instance';
+    else ret = 'object';
+  }
+  
+  return ret;
+};
+
+/**
+  Returns YES if the passed value is null or undefined.  This avoids errors
+  from JSLint complaining about use of ==, which can be technically
+  confusing.
+
+  @param {Object} obj Value to test
+  @returns {Boolean}
+*/
+SC.none = function(obj) {
+  return obj === null || obj === undefined;
+};
+
+/**
+  Verifies that a value is either null or an empty string. Return false if
+  the object is not a string.
+
+  @param {Object} obj Value to test
+  @returns {Boolean}
+*/
+SC.empty = function(obj) {
+  return obj === null || obj === undefined || obj === '';
+};
+
+/**
+  SC.isArray defined in sproutcore-metal/lib/utils
+**/
+
+/**
+ This will compare two javascript values of possibly different types.
+ It will tell you which one is greater than the other by returning:
+
+  - -1 if the first is smaller than the second,
+  - 0 if both are equal,
+  - 1 if the first is greater than the second.
+
+ The order is calculated based on SC.ORDER_DEFINITION, if types are different.
+ In case they have the same type an appropriate comparison for this type is made.
+
+ @param {Object} v First value to compare
+ @param {Object} w Second value to compare
+ @returns {Number} -1 if v < w, 0 if v = w and 1 if v > w.
+*/
+SC.compare = function (v, w) {
+  if (v === w) { return 0; }
+
+  var type1 = SC.typeOf(v);
+  var type2 = SC.typeOf(w);
+
+  var Comparable = SC.Comparable;
+  if (Comparable) {
+    if (type1==='instance' && Comparable.detect(v.constructor)) {
+      return v.constructor.compare(v, w);
+    }
+    
+    if (type2 === 'instance' && Comparable.detect(w.constructor)) {
+      return 1-w.constructor.compare(w, v);
+    }
+  }
+
+  // If we haven't yet generated a reverse-mapping of SC.ORDER_DEFINITION,
+  // do so now.
+  var mapping = SC.ORDER_DEFINITION_MAPPING;
+  if (!mapping) {
+    var order = SC.ORDER_DEFINITION;
+    mapping = SC.ORDER_DEFINITION_MAPPING = {};
+    var idx, len;
+    for (idx = 0, len = order.length; idx < len;  ++idx) {
+      mapping[order[idx]] = idx;
+    }
+
+    // We no longer need SC.ORDER_DEFINITION.
+    delete SC.ORDER_DEFINITION;
+  }
+
+  var type1Index = mapping[type1];
+  var type2Index = mapping[type2];
+
+  if (type1Index < type2Index) { return -1; }
+  if (type1Index > type2Index) { return 1; }
+
+  // types are equal - so we have to check values now
+  switch (type1) {
+    case 'boolean':
+    case 'number':
+      if (v < w) { return -1; }
+      if (v > w) { return 1; }
+      return 0;
+
+    case 'string':
+      var comp = v.localeCompare(w);
+      if (comp < 0) { return -1; }
+      if (comp > 0) { return 1; }
+      return 0;
+
+    case 'array':
+      var vLen = v.length;
+      var wLen = w.length;
+      var l = Math.min(vLen, wLen);
+      var r = 0;
+      var i = 0;
+      var thisFunc = arguments.callee;
+      while (r === 0 && i < l) {
+        r = thisFunc(v[i],w[i]);
+        i++;
+      }
+      if (r !== 0) { return r; }
+
+      // all elements are equal now
+      // shorter array should be ordered first
+      if (vLen < wLen) { return -1; }
+      if (vLen > wLen) { return 1; }
+      // arrays are equal now
+      return 0;
+
+    case 'instance':
+      if (SC.Comparable && SC.Comparable.detect(v)) { 
+        return v.compare(v, w); 
+      }
+      return 0;
+
+    default:
+      return 0;
+  }
+};
+
+function _copy(obj, deep, seen, copies) {
+  var ret, loc, key;
+
+  // primitive data types are immutable, just return them.
+  if ('object' !== typeof obj || obj===null) return obj;
+
+  // avoid cyclical loops
+  if (deep && (loc=seen.indexOf(obj))>=0) return copies[loc];
+  
+  sc_assert('Cannot clone an SC.Object that does not implement SC.Copyable', !(obj instanceof SC.Object) || (SC.Copyable && SC.Copyable.detect(obj)));
+
+  // IMPORTANT: this specific test will detect a native array only.  Any other
+  // object will need to implement Copyable.
+  if (SC.typeOf(obj) === 'array') {
+    ret = obj.slice();
+    if (deep) {
+      loc = ret.length;
+      while(--loc>=0) ret[loc] = _copy(ret[loc], deep, seen, copies);
+    }
+  } else if (SC.Copyable && SC.Copyable.detect(obj)) {
+    ret = obj.copy(deep, seen, copies);
+  } else {
+    ret = {};
+    for(key in obj) {
+      if (!obj.hasOwnProperty(key)) continue;
+      ret[key] = deep ? _copy(obj[key], deep, seen, copies) : obj[key];
+    }
+  }
+  
+  if (deep) {
+    seen.push(obj);
+    copies.push(ret);
+  }
+
+  return ret;
+}
+
+/**
+  Creates a clone of the passed object. This function can take just about
+  any type of object and create a clone of it, including primitive values
+  (which are not actually cloned because they are immutable).
+
+  If the passed object implements the clone() method, then this function
+  will simply call that method and return the result.
+
+  @param {Object} object The object to clone
+  @param {Boolean} deep If true, a deep copy of the object is made
+  @returns {Object} The cloned object
+*/
+SC.copy = function(obj, deep) {
+  // fast paths
+  if ('object' !== typeof obj || obj===null) return obj; // can't copy primitives
+  if (SC.Copyable && SC.Copyable.detect(obj)) return obj.copy(deep);
+  return _copy(obj, deep, deep ? [] : null, deep ? [] : null);
+};
+
+/**
+  Convenience method to inspect an object. This method will attempt to
+  convert the object into a useful string description.
+
+  @param {Object} obj The object you want to inspec.
+  @returns {String} A description of the object
+*/
+SC.inspect = function(obj) {
+  var v, ret = [];
+  for(var key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      v = obj[key];
+      if (v === 'toString') { continue; } // ignore useless items
+      if (SC.typeOf(v) === SC.T_FUNCTION) { v = "function() { ... }"; }
+      ret.push(key + ": " + v);
+    }
+  }
+  return "{" + ret.join(" , ") + "}";
+};
+
+/**
+  Compares two objects, returning true if they are logically equal.  This is 
+  a deeper comparison than a simple triple equal.  For arrays and enumerables
+  it will compare the internal objects.  For any other object that implements
+  `isEqual()` it will respect that method.
+  
+  @param {Object} a first object to compare
+  @param {Object} b second object to compare
+  @returns {Boolean}
+*/
+SC.isEqual = function(a, b) {
+  if (a && 'function'===typeof a.isEqual) return a.isEqual(b);
+  return a === b;
+};
+
+/**
+  @private
+  Used by SC.compare
+*/
+SC.ORDER_DEFINITION = SC.ENV.ORDER_DEFINITION || [
+  'undefined',
+  'null',
+  'boolean',
+  'number',
+  'string',
+  'array',
+  'object',
+  'instance',
+  'function',
+  'class'
+];
+
+/**
+  Returns all of the keys defined on an object or hash. This is useful
+  when inspecting objects for debugging.  On browsers that support it, this
+  uses the native Object.keys implementation.
+
+  @function
+  @param {Object} obj
+  @returns {Array} Array containing keys of obj
+*/
+SC.keys = Object.keys;
+
+if (!SC.keys) {
+  SC.keys = function(obj) {
+    var ret = [];
+    for(var key in obj) {
+      if (obj.hasOwnProperty(key)) { ret.push(key); }
+    }
+    return ret;
+  };
+}
+
+// ..........................................................
+// ERROR
+// 
+
+/**
+  @class
+
+  A subclass of the JavaScript Error object for use in SproutCore.
+*/
+SC.Error = function() {
+  var tmp = Error.prototype.constructor.apply(this, arguments);
+
+  for (var p in tmp) {
+    if (tmp.hasOwnProperty(p)) { this[p] = tmp[p]; }
+  }
+};
+
+SC.Error.prototype = SC.create(Error.prototype);
+
+// ..........................................................
+// LOGGER
+// 
+
+/**
+  @class
+
+  Inside SproutCore-Runtime, simply uses the window.console object.
+  Override this to provide more robust logging functionality.
+*/
+SC.Logger = window.console;
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2011 Strobe Inc.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+
+
+
+/** @private **/
+var STRING_DASHERIZE_REGEXP = (/[ _]/g);
+var STRING_DASHERIZE_CACHE = {};
+var STRING_DECAMELIZE_REGEXP = (/([a-z])([A-Z])/g);
+  
+/**
+  Defines the hash of localized strings for the current language.  Used by 
+  the `SC.String.loc()` helper.  To localize, add string values to this
+  hash.
+  
+  @property {String}
+*/
+SC.STRINGS = {};
+
+/**
+  Defines string helper methods including string formatting and localization.
+  Unless SC.EXTEND_PROTOTYPES = false these methods will also be added to the
+  String.prototype as well.
+  
+  @namespace
+*/
+SC.String = {
+
+  /**
+    Apply formatting options to the string.  This will look for occurrences
+    of %@ in your string and substitute them with the arguments you pass into
+    this method.  If you want to control the specific order of replacement,
+    you can add a number after the key as well to indicate which argument
+    you want to insert.
+
+    Ordered insertions are most useful when building loc strings where values
+    you need to insert may appear in different orders.
+
+    ## Examples
+
+        "Hello %@ %@".fmt('John', 'Doe') => "Hello John Doe"
+        "Hello %@2, %@1".fmt('John', 'Doe') => "Hello Doe, John"
+
+    @param {Object...} [args]
+    @returns {String} formatted string
+  */
+  fmt: function(str, formats) {
+    // first, replace any ORDERED replacements.
+    var idx  = 0; // the current index for non-numerical replacements
+    return str.replace(/%@([0-9]+)?/g, function(s, argIndex) {
+      argIndex = (argIndex) ? parseInt(argIndex,0) - 1 : idx++ ;
+      s = formats[argIndex];
+      return ((s === null) ? '(null)' : (s === undefined) ? '' : s).toString();
+    }) ;
+  },
+
+  /**
+    Formats the passed string, but first looks up the string in the localized
+    strings hash.  This is a convenient way to localize text.  See 
+    `SC.String.fmt()` for more information on formatting.
+    
+    Note that it is traditional but not required to prefix localized string
+    keys with an underscore or other character so you can easily identify
+    localized strings.
+    
+    # Example Usage
+    
+        @javascript@
+        SC.STRINGS = {
+          '_Hello World': 'Bonjour le monde',
+          '_Hello %@ %@': 'Bonjour %@ %@'
+        };
+        
+        SC.String.loc("_Hello World");
+        => 'Bonjour le monde';
+        
+        SC.String.loc("_Hello %@ %@", ["John", "Smith"]);
+        => "Bonjour John Smith";
+        
+        
+        
+    @param {String} str
+      The string to format
+    
+    @param {Array} formats
+      Optional array of parameters to interpolate into string.
+      
+    @returns {String} formatted string
+  */
+  loc: function(str, formats) {
+    str = SC.STRINGS[str] || str;
+    return SC.String.fmt(str, formats) ;
+  },
+
+  /**
+    Splits a string into separate units separated by spaces, eliminating any
+    empty strings in the process.  This is a convenience method for split that
+    is mostly useful when applied to the String.prototype.
+    
+    # Example Usage
+    
+        @javascript@
+        SC.String.w("alpha beta gamma").forEach(function(key) { 
+          console.log(key); 
+        });
+        > alpha
+        > beta
+        > gamma
+
+    @param {String} str
+      The string to split
+      
+    @returns {String} split string
+  */
+  w: function(str) { return str.split(/\s+/); },
+  
+  /**
+    Converts a camelized string into all lower case separated by underscores.
+
+    h2. Examples
+
+    | *Input String* | *Output String* |
+    | my favorite items | my favorite items |
+    | css-class-name | css-class-name |
+    | action_name | action_name |
+    | innerHTML | inner_html |
+
+    @returns {String} the decamelized string.
+  */
+  decamelize: function(str) {
+    return str.replace(STRING_DECAMELIZE_REGEXP, '$1_$2').toLowerCase();
+  },
+
+  /**
+    Converts a camelized string or a string with spaces or underscores into
+    a string with components separated by dashes.
+
+    h2. Examples
+
+    | *Input String* | *Output String* |
+    | my favorite items | my-favorite-items |
+    | css-class-name | css-class-name |
+    | action_name | action-name |
+    | innerHTML | inner-html |
+
+    @returns {String} the dasherized string.
+  */
+  dasherize: function(str) {
+    var cache = STRING_DASHERIZE_CACHE,
+        ret   = cache[str];
+
+    if (ret) {
+      return ret;
+    } else {
+      ret = SC.String.decamelize(str).replace(STRING_DASHERIZE_REGEXP,'-');
+      cache[str] = ret;
+    }
+
+    return ret;
+  }
+};
+
+
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var get = SC.get, set = SC.set;
+
+/**
+  @namespace
+
+  Implements some standard methods for copying an object.  Add this mixin to
+  any object you create that can create a copy of itself.  This mixin is
+  added automatically to the built-in array.
+
+  You should generally implement the copy() method to return a copy of the
+  receiver.
+
+  Note that frozenCopy() will only work if you also implement SC.Freezable.
+
+  @since SproutCore 1.0
+*/
+SC.Copyable = SC.Mixin.create({
+
+  /**
+    Override to return a copy of the receiver.  Default implementation raises
+    an exception.
+
+    @param deep {Boolean} if true, a deep copy of the object should be made
+    @returns {Object} copy of receiver
+  */
+  copy: SC.required(Function),
+
+  /**
+    If the object implements SC.Freezable, then this will return a new copy
+    if the object is not frozen and the receiver if the object is frozen.
+
+    Raises an exception if you try to call this method on a object that does
+    not support freezing.
+
+    You should use this method whenever you want a copy of a freezable object
+    since a freezable object can simply return itself without actually
+    consuming more memory.
+
+    @returns {Object} copy of receiver or receiver
+  */
+  frozenCopy: function() {
+    if (SC.Freezable && SC.Freezable.detect(this)) {
+      return get(this, 'isFrozen') ? this : this.copy().freeze();
+    } else {
+      throw new Error(SC.String.fmt("%@ does not support freezing",this));
+    }
+  }
+});
+
+
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2010 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+
+
+  
+var get = SC.get, set = SC.set;
+
+/**
+  @namespace
+
+  The SC.Freezable mixin implements some basic methods for marking an object
+  as frozen. Once an object is frozen it should be read only. No changes
+  may be made the internal state of the object.
+
+  ## Enforcement
+
+  To fully support freezing in your subclass, you must include this mixin and
+  override any method that might alter any property on the object to instead
+  raise an exception. You can check the state of an object by checking the
+  isFrozen property.
+
+  Although future versions of JavaScript may support language-level freezing
+  object objects, that is not the case today. Even if an object is freezable,
+  it is still technically possible to modify the object, even though it could
+  break other parts of your application that do not expect a frozen object to
+  change. It is, therefore, very important that you always respect the
+  isFrozen property on all freezable objects.
+
+  ## Example Usage
+
+  The example below shows a simple object that implement the SC.Freezable
+  protocol.
+
+        Contact = SC.Object.extend(SC.Freezable, {
+
+          firstName: null,
+
+          lastName: null,
+
+          // swaps the names
+          swapNames: function() {
+            if (this.get('isFrozen')) throw SC.FROZEN_ERROR;
+            var tmp = this.get('firstName');
+            this.set('firstName', this.get('lastName'));
+            this.set('lastName', tmp);
+            return this;
+          }
+
+        });
+
+        c = Context.create({ firstName: "John", lastName: "Doe" });
+        c.swapNames();  => returns c
+        c.freeze();
+        c.swapNames();  => EXCEPTION
+
+  ## Copying
+
+  Usually the SC.Freezable protocol is implemented in cooperation with the
+  SC.Copyable protocol, which defines a frozenCopy() method that will return
+  a frozen object, if the object implements this method as well.
+
+  @since SproutCore 1.0
+*/
+SC.Freezable = SC.Mixin.create({
+
+  /**
+    Set to YES when the object is frozen.  Use this property to detect whether
+    your object is frozen or not.
+
+    @property {Boolean}
+  */
+  isFrozen: false,
+
+  /**
+    Freezes the object.  Once this method has been called the object should
+    no longer allow any properties to be edited.
+
+    @returns {Object} reciever
+  */
+  freeze: function() {
+    if (get(this, 'isFrozen')) return this;
+    set(this, 'isFrozen', true);
+    return this;
+  }
+
+});
+
+SC.FROZEN_ERROR = "Frozen object cannot be modified.";
+
+
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
 
 
 
@@ -7310,7 +7398,7 @@ var get = SC.get, set = SC.set, guidFor = SC.guidFor, none = SC.none;
   specialized Set Observer API in favor of the more generic Enumerable 
   Observer API - which works on any enumerable object including both Sets and
   Arrays.
-  
+
   ## Creating a Set
 
   You can create a set like you would most objects using 
@@ -7374,20 +7462,20 @@ var get = SC.get, set = SC.set, guidFor = SC.guidFor, none = SC.none;
   sets, as well.
 
   ## Other Methods
-  
+
   `SC.Set` primary implements other mixin APIs.  For a complete reference
   on the methods you will use with `SC.Set`, please consult these mixins.
   The most useful ones will be `SC.Enumerable` and 
   `SC.MutableEnumerable` which implement most of the common iterator 
   methods you are used to on Array.
-  
+
   Note that you can also use the `SC.Copyable` and `SC.Freezable`
   APIs on `SC.Set` as well.  Once a set is frozen it can no longer be 
   modified.  The benefit of this is that when you call frozenCopy() on it,
   SproutCore will avoid making copies of the set.  This allows you to write
   code that can know with certainty when the underlying set data will or 
   will not be modified.
-  
+
   @extends SC.Enumerable
   @extends SC.MutableEnumerable
   @extends SC.Copyable
@@ -7400,8 +7488,8 @@ SC.Set = SC.CoreObject.extend(SC.MutableEnumerable, SC.Copyable, SC.Freezable,
 
   // ..........................................................
   // IMPLEMENT ENUMERABLE APIS
-  // 
-  
+  //
+
   /**
     This property will change as the number of objects in the set changes.
 
@@ -7426,7 +7514,7 @@ SC.Set = SC.CoreObject.extend(SC.MutableEnumerable, SC.Copyable, SC.Freezable,
   },
 
   /**
-    Returns YES if the passed object is also an enumerable that contains the 
+    Returns true if the passed object is also an enumerable that contains the 
     same objects as the receiver.
 
     @param {SC.Set} obj the other object
@@ -7511,33 +7599,33 @@ SC.Set = SC.CoreObject.extend(SC.MutableEnumerable, SC.Copyable, SC.Freezable,
     This is an alias of `SC.MutableEnumerable.removeObjects()`
     @function
   */
-  removeEach: SC.alias('removeObjects'),  
-  
+  removeEach: SC.alias('removeObjects'),
+
   // ..........................................................
   // PRIVATE ENUMERABLE SUPPORT
-  // 
-  
+  //
+
   /** @private */
   init: function(items) {
     this._super();
     if (items) this.addObjects(items);
   },
-  
+
   /** @private (nodoc) - implement SC.Enumerable */
   nextObject: function(idx) {
     return this[idx];
   },
 
   /** @private - more optimized version */
-  firstObject: function() {
+  firstObject: SC.computed(function() {
     return this.length > 0 ? this[0] : undefined;  
-  }.property('[]').cacheable(),
-  
+  }).property('[]').cacheable(),
+
   /** @private - more optimized version */
-  lastObject: function() {
+  lastObject: SC.computed(function() {
     return this.length > 0 ? this[this.length-1] : undefined;
-  }.property('[]').cacheable(),
-  
+  }).property('[]').cacheable(),
+
   /** @private (nodoc) - implements SC.MutableEnumerable */
   addObject: function(obj) {
     if (get(this, 'isFrozen')) throw new Error(SC.FROZEN_ERROR);
@@ -7636,9 +7724,9 @@ SC.Set = SC.CoreObject.extend(SC.MutableEnumerable, SC.Copyable, SC.Freezable,
         isSet = myobject instanceof SC.Set
 
     @type Boolean
-    @default YES
+    @default true
   */
-  isSet: YES
+  isSet: true
     
 });
 
@@ -7646,9 +7734,7 @@ SC.Set = SC.CoreObject.extend(SC.MutableEnumerable, SC.Copyable, SC.Freezable,
 var o_create = SC.Set.create;
 SC.Set.create = function(items) {
   if (items && SC.Enumerable.detect(items)) {
-//@if (debug)
     SC.Logger.warn('Passing an enumerable to SC.Set.create() is deprecated and will be removed in a future version of SproutCore.  Use new SC.Set(items) instead');
-//@endif
     return new SC.Set(items);
   } else {
     return o_create.apply(this, arguments);
@@ -7668,71 +7754,11 @@ SC.Set.create = function(items) {
 // ==========================================================================
 
 
+
 SC.CoreObject.subclasses = new SC.Set();
 SC.Object = SC.CoreObject.extend(SC.Observable);
 
 
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/**
-  @private
-  A Namespace is an object usually used to contain other objects or methods 
-  such as an application or framework.  Create a namespace anytime you want
-  to define one of these new containers.
-  
-  # Example Usage
-  
-      MyFramework = SC.Namespace.create({
-        VERSION: '1.0.0'
-      });
-      
-*/
-SC.Namespace = SC.Object.extend();
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:  SproutCore Runtime
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-/**
-  @private
-
-  Defines a namespace that will contain an executable application.  This is
-  very similar to a normal namespace except that it is expected to include at
-  least a 'ready' function which can be run to initialize the application.
-  
-  Currently SC.Application is very similar to SC.Namespace.  However, this
-  class may be augmented by additional frameworks so it is important to use
-  this instance when building new applications.
-  
-  # Example Usage
-  
-      MyApp = SC.Application.create({
-        VERSION: '1.0.0',
-        store: SC.Store.create().from(SC.fixtures)
-      });
-      
-      MyApp.ready = function() { 
-        //..init code goes here...
-      }
-      
-*/
-SC.Application = SC.Namespace.extend();
 
 
 })({});
@@ -7808,23 +7834,23 @@ SC.ArrayProxy = SC.Object.extend(SC.MutableArray, {
     get(this, 'content').replace(idx, amt, objects);
   },
   
-  contentWillChange: function() {
+  contentWillChange: SC.beforeObserver(function() {
     var content = get(this, 'content'),
         len     = content ? get(content, 'length') : 0;
     this.arrayWillChange(content, 0, len, undefined);
     if (content) content.removeArrayObserver(this);
-  }.observesBefore('content'),
+  }, 'content'),
   
   /**
     Invoked when the content property changes.  Notifies observers that the
     entire array content has changed.
   */
-  contentDidChange: function() {
+  contentDidChange: SC.observer(function() {
     var content = get(this, 'content'),
         len     = content ? get(content, 'length') : 0;
     if (content) content.addArrayObserver(this);
     this.arrayDidChange(content, 0, undefined, len);
-  }.observes('content'),
+  }, 'content'),
   
   /** @private (nodoc) */
   objectAt: function(idx) {
@@ -7832,10 +7858,10 @@ SC.ArrayProxy = SC.Object.extend(SC.MutableArray, {
   },
   
   /** @private (nodoc) */
-  length: function() {
+  length: SC.computed(function() {
     var content = get(this, 'content');
     return content ? get(content, 'length') : 0;
-  }.property('content.length').cacheable(),
+  }).property('content.length').cacheable(),
   
   /** @private (nodoc) */
   replace: function(idx, amt, objects) {
@@ -7863,6 +7889,357 @@ SC.ArrayProxy = SC.Object.extend(SC.MutableArray, {
 });
 
 
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Metal
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+/**
+  @class
+
+  SC.ArrayController provides a way for you to publish an array of objects for
+  SC.CollectionView or other controllers to work with.  To work with an
+  ArrayController, set the content property to the array you want the controller
+  to manage.  Then work directly with the controller object as if it were the
+  array itself.
+
+  For example, imagine you wanted to display a list of items fetched via an XHR
+  request. Create an SC.ArrayController and set its `content` property:
+
+      MyApp.listController = SC.ArrayController.create();
+
+      $.get('people.json', function(data) {
+        MyApp.listController.set('content', data);
+      });
+
+  Then, create a view that binds to your new controller:
+
+    {{collection contentBinding="MyApp.listController"}}
+      {{content.firstName}} {{content.lastName}}
+    {{/collection}}
+
+  The advantage of using an array controller is that you only have to set up
+  your view bindings once; to change what's displayed, simply swap out the
+  `content` property on the controller.
+
+  @extends SC.ArrayProxy
+*/
+
+SC.ArrayController = SC.ArrayProxy.extend();
+
+})({});
+
+
+(function(exports) {
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+var fmt = SC.String.fmt,
+    w   = SC.String.w,
+    loc = SC.String.loc,
+    decamelize = SC.String.decamelize,
+    dasherize = SC.String.dasherize;
+  
+if (SC.EXTEND_PROTOTYPES) {
+
+  /**
+    @see SC.String.fmt
+  */
+  String.prototype.fmt = function() {
+    return fmt(this, arguments);
+  };
+  
+  /**
+    @see SC.String.w
+  */
+  String.prototype.w = function() {
+    return w(this);
+  };
+  
+  /**
+    @see SC.String.loc
+  */
+  String.prototype.loc = function() {
+    return loc(this, arguments);
+  };
+  
+  /**
+    @see SC.String.decamelize
+  */
+  String.prototype.decamelize = function() {
+    return decamelize(this);
+  };
+  
+  /**
+    @see SC.String.dasherize
+  */
+  String.prototype.dashersize = function() {
+    return dasherize(this);
+  };
+}
+
+
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+if (SC.EXTEND_PROTOTYPES) {
+
+  Function.prototype.property = function() {
+    var ret = SC.computed(this);
+    return ret.property.apply(ret, arguments);
+  };
+
+  Function.prototype.observes = function() {
+    this.__sc_observes__ = Array.prototype.slice.call(arguments);
+    return this;
+  };
+
+  Function.prototype.observesBefore = function() {
+    this.__sc_observesBefore__ = Array.prototype.slice.call(arguments);
+    return this;
+  };
+
+}
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var IS_BINDING = SC.IS_BINDING = /^.+Binding$/;
+
+SC._mixinBindings = function(obj, key, value, m) {
+  if (IS_BINDING.test(key)) {
+    if (!(value instanceof SC.Binding)) {
+      value = new SC.Binding(key.slice(0,-7), value); // make binding
+    } else {
+      value.to(key.slice(0, -7));
+    }
+    value.connect(obj);
+
+    // keep a set of bindings in the meta so that when we rewatch we can
+    // resync them...
+    var bindings = m.bindings;
+    if (!bindings) {
+      bindings = m.bindings = { __scproto__: obj };
+    } else if (bindings.__scproto__ !== obj) {
+      bindings = m.bindings = SC.create(m.bindings);
+      bindings.__scproto__ = obj;
+    }
+
+    bindings[key] = true;
+  }
+  
+  return value;
+};
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+
+})({});
+
+
+(function(exports) {
+/**
+ * @license
+ * ==========================================================================
+ * SproutCore
+ * Copyright ©2006-2011, Strobe Inc. and contributors.
+ * Portions copyright ©2008-2011 Apple Inc. All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a 
+ * copy of this software and associated documentation files (the "Software"), 
+ * to deal in the Software without restriction, including without limitation 
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ * and/or sell copies of the Software, and to permit persons to whom the 
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in 
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+ * DEALINGS IN THE SOFTWARE.
+ * 
+ * For more information about SproutCore, visit http://www.sproutcore.com
+ * 
+ * ==========================================================================
+ */
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+/**
+  @namespace
+
+  Implements some standard methods for comparing objects. Add this mixin to
+  any class you create that can compare its instances.
+
+  You should implement the compare() method.
+
+  @since SproutCore 1.0
+*/
+SC.Comparable = SC.Mixin.create( /** @scope SC.Comparable.prototype */{
+
+  /**
+    walk like a duck. Indicates that the object can be compared.
+
+    @type Boolean
+    @default YES
+    @constant
+  */
+  isComparable: true,
+
+  /**
+    Override to return the result of the comparison of the two parameters. The
+    compare method should return:
+
+      - -1 if a < b
+      - 0 if a == b
+      - 1 if a > b
+
+    Default implementation raises an exception.
+
+    @param a {Object} the first object to compare
+    @param b {Object} the second object to compare
+    @returns {Integer} the result of the comparison
+  */
+  compare: SC.required(Function)
+
+});
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+
+
+
+
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+/**
+  @private
+  A Namespace is an object usually used to contain other objects or methods 
+  such as an application or framework.  Create a namespace anytime you want
+  to define one of these new containers.
+  
+  # Example Usage
+  
+      MyFramework = SC.Namespace.create({
+        VERSION: '1.0.0'
+      });
+      
+*/
+SC.Namespace = SC.Object.extend();
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:  SproutCore Runtime
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+/**
+  @private
+
+  Defines a namespace that will contain an executable application.  This is
+  very similar to a normal namespace except that it is expected to include at
+  least a 'ready' function which can be run to initialize the application.
+  
+  Currently SC.Application is very similar to SC.Namespace.  However, this
+  class may be augmented by additional frameworks so it is important to use
+  this instance when building new applications.
+  
+  # Example Usage
+  
+      MyApp = SC.Application.create({
+        VERSION: '1.0.0',
+        store: SC.Store.create().from(SC.fixtures)
+      });
+      
+      MyApp.ready = function() { 
+        //..init code goes here...
+      }
+      
+*/
+SC.Application = SC.Namespace.extend();
 
 
 })({});
@@ -7951,10 +8328,8 @@ var RunLoop = SC.Object.extend({
       while (this._queues && (queue = this._queues[queueName])) {
         this._queues[queueName] = null;
 
-        //@if (debug)
         log = SC.LOG_BINDINGS && queueName==='sync';
         if (log) SC.Logger.log('Begin: Flush Sync Queue');
-        //@endif
 
         // the sync phase is to allow property changes to propogate.  don't
         // invoke observers until that is finished.
@@ -7962,9 +8337,7 @@ var RunLoop = SC.Object.extend({
         queue.forEach(iter);
         if (queueName === 'sync') SC.endPropertyChanges();
 
-        //@if (debug)
         if (log) SC.Logger.log('End: Flush Sync Queue');
-        //@endif
 
       }
 
@@ -7977,18 +8350,14 @@ var RunLoop = SC.Object.extend({
           queueName = queueNames[idx];
           queue = queues[queueName];
 
-          //@if (debug)
           log = SC.LOG_BINDINGS && queueName==='sync';
           if (log) SC.Logger.log('Begin: Flush Sync Queue');
-          //@endif
 
           if (queueName === 'sync') SC.beginPropertyChanges();
           if (queue) queue.forEach(iter);
           if (queueName === 'sync') SC.endPropertyChanges();
 
-          //@if (debug)
           if (log) SC.Logger.log('End: Flush Sync Queue');
-          //@endif
 
         }
 
@@ -8037,7 +8406,7 @@ SC.run = run = function(target, method) {
 
   var ret, loop;
   run.begin();
-  if (target || method) ret = invoke(target, method);
+  if (target || method) ret = invoke(target, method, arguments, 2);
   run.end();
   return ret;
 };
@@ -8073,7 +8442,7 @@ SC.run.end = function() {
 
   @property {String}
 */
-SC.run.queues = ['sync', 'actions', 'timers'];
+SC.run.queues = ['sync', 'actions', 'destroy', 'timers'];
 
 /**
   Adds the passed target/method and any optional arguments to the named
@@ -8126,8 +8495,11 @@ SC.run.autorun = function() {
 
   if (!run.currentRunLoop) {
     run.begin();
+
     // TODO: throw during tests
-    if (!autorunTimer) {
+    if (SC.testing) {
+      run.end();
+    } else if (!autorunTimer) {
       autorunTimer = setTimeout(autorun, 1);
     }
   }
@@ -8273,7 +8645,7 @@ SC.run.once = function(target, method) {
     if (!onceTimers[tguid]) onceTimers[tguid] = {};
     onceTimers[tguid][mguid] = guid; // so it isn't scheduled more than once
 
-    run.schedule('timers', timer, invokeOnceTimer, guid, onceTimers);
+    run.schedule('actions', timer, invokeOnceTimer, guid, onceTimers);
   }
 
   return guid;
@@ -8375,9 +8747,8 @@ SC.RunLoop.end = SC.run.end;
 
 // ..........................................................
 // CONSTANTS
-// 
+//
 
-//@if (debug)
 
 /**
   @static
@@ -8411,7 +8782,6 @@ SC.BENCHMARK_BINDING_NOTIFICATIONS = !!SC.ENV.BENCHMARK_BINDING_NOTIFICATIONS;
 */
 SC.BENCHMARK_BINDING_SETUP = !!SC.ENV.BENCHMARK_BINDING_SETUP;
 
-//@endif
 
 /**
   @static
@@ -8435,15 +8805,18 @@ SC.MULTIPLE_PLACEHOLDER = '@@MULT@@';
 SC.EMPTY_PLACEHOLDER = '@@EMPTY@@';
 
 // ..........................................................
-// HELPERS
-// 
+// TYPE COERCION HELPERS
+//
 
+// Coerces a non-array value into an array.
 function MULTIPLE(val) {
   if (val instanceof Array) return val;
   if (val === undefined || val === null) return [];
   return [val];
 }
 
+// Treats a single-element array as the element. Otherwise
+// returns a placeholder.
 function SINGLE(val, placeholder) {
   if (val instanceof Array) {
     if (val.length>1) return placeholder;
@@ -8452,30 +8825,45 @@ function SINGLE(val, placeholder) {
   return val;
 }
 
-function BOOL(val) {
-  return !!val;
-}
+// Coerces the binding value into a Boolean.
 
-function NOT(val) {
-  return !val;
-}
+var BOOL = {
+  to: function (val) {
+    return !!val;
+  }
+};
 
-var get     = SC.get, 
-    getPath = SC.getPath, 
-    setPath = SC.setPath, 
+// Returns the Boolean inverse of the value.
+var NOT = {
+  to: function NOT(val) {
+    return !val;
+  }
+};
+
+var get     = SC.get,
+    getPath = SC.getPath,
+    setPath = SC.setPath,
     guidFor = SC.guidFor;
 
-function transformedValue(b, val, obj) {
-  // handle multiple/single
-  var forceKind = b._forceKind;
-  if (forceKind) val = forceKind(val, b._placeholder);
+// Applies a binding's transformations against a value.
+function getTransformedValue(binding, val, obj, dir) {
+
+  // First run a type transform, if it exists, that changes the fundamental
+  // type of the value. For example, some transforms convert an array to a
+  // single object.
+
+  var typeTransform = binding._typeTransform;
+  if (typeTransform) { val = typeTransform(val, binding._placeholder); }
 
   // handle transforms
-  var transforms = b._transforms,
+  var transforms = binding._transforms,
       len        = transforms ? transforms.length : 0,
       idx;
 
-  for(idx=0;idx<len;idx++) val = transforms[idx].call(this, val, obj);
+  for(idx=0;idx<len;idx++) {
+    var transform = transforms[idx][dir];
+    if (transform) { val = transform.call(this, val, obj); }
+  }
   return val;
 }
 
@@ -8483,22 +8871,28 @@ function empty(val) {
   return val===undefined || val===null || val==='' || (SC.isArray(val) && get(val, 'length')===0) ;
 }
 
-function fromValue(obj, b) {
-  var logic = b._logic;
-  return logic ? logic(obj, b._from, b._from2) : getPath(obj, b._from);
+function getTransformedFromValue(obj, binding) {
+  var operation = binding._operation;
+  var fromValue = operation ? operation(obj, binding._from, binding._operand) : getPath(obj, binding._from);
+  return getTransformedValue(binding, fromValue, obj, 'to');
 }
 
-var AND_LOGIC = function(obj, left, right) {
+function getTransformedToValue(obj, binding) {
+  var toValue = getPath(obj, binding._to);
+  return getTransformedValue(binding, toValue, obj, 'from');
+}
+
+var AND_OPERATION = function(obj, left, right) {
   return getPath(obj, left) && getPath(obj, right);
 };
 
-var OR_LOGIC = function(obj, left, right) {
+var OR_OPERATION = function(obj, left, right) {
   return getPath(obj, left) || getPath(obj, right);
 };
 
 // ..........................................................
 // BINDING
-// 
+//
 
 /**
   @class
@@ -8595,7 +8989,7 @@ var OR_LOGIC = function(obj, left, right) {
 
         valueBinding: SC.Binding.from("MyApp.someController.value").notLessThan(10)
 
-  Also, remember that helpers are chained so you can use your helper along 
+  Also, remember that helpers are chained so you can use your helper along
   with any other helpers. The example below will create a one way binding that
   does not allow empty values or values less than 10:
 
@@ -8631,15 +9025,15 @@ var OR_LOGIC = function(obj, left, right) {
 
   Note that when you connect a binding you pass the object you want it to be
   connected to.  This object will be used as the root for both the from and
-  to side of the binding when inspecting relative paths.  This allows the 
+  to side of the binding when inspecting relative paths.  This allows the
   binding to be automatically inherited by subclassed objects as well.
-  
+
   Now that the binding is connected, it will observe both the from and to side
   and relay changes.
 
   If you ever needed to do so (you almost never will, but it is useful to
   understand this anyway), you could manually create an active binding by
-  using the SC.bind() helper method. (This is the same method used by 
+  using the SC.bind() helper method. (This is the same method used by
   to setup your bindings on objects):
 
         SC.bind(MyApp.anotherObject, "value", "MyApp.someController.value");
@@ -8668,37 +9062,40 @@ var Binding = SC.Object.extend({
   /** @private */
   init: function(toPath, fromPath) {
     this._from = fromPath;
-    this._to   = toPath; 
+    this._to   = toPath;
   },
-  
+
   // ..........................................................
   // CONFIG
-  // 
-  
+  //
+
   /**
     This will set "from" property path to the specified value. It will not
-    attempt to resolve this property path to an actual object until you 
+    attempt to resolve this property path to an actual object until you
     connect the binding.
 
     The binding will search for the property path starting at the root object
-    you pass when you connect() the binding.  It follows the same rules as 
+    you pass when you connect() the binding.  It follows the same rules as
     `getPath()` - see that method for more information.
 
     @param {String} propertyPath the property path to connect to
     @returns {SC.Binding} receiver
   */
-  from: function(path) {
+  from: function(object, path) {
+    if (!path) { path = object; object = null; }
+
     this._from = path;
+    this._object = object;
     return this;
   },
-  
+
   /**
     This will set the "to" property path to the specified value. It will not
-    attempt to reoslve this property path to an actual object until you 
+    attempt to reoslve this property path to an actual object until you
     connect the binding.
 
     The binding will search for the property path starting at the root object
-    you pass when you connect() the binding.  It follows the same rules as 
+    you pass when you connect() the binding.  It follows the same rules as
     `getPath()` - see that method for more information.
 
     @param {String|Tuple} propertyPath A property path or tuple
@@ -8710,7 +9107,6 @@ var Binding = SC.Object.extend({
     return this;
   },
 
-  
   /**
     Configures the binding as one way. A one-way binding will relay changes
     on the "from" side to the "to" side, but not the other way around. This
@@ -8720,7 +9116,7 @@ var Binding = SC.Object.extend({
     @param {Boolean} flag
       (Optional) passing nothing here will make the binding oneWay.  You can
       instead pass NO to disable oneWay, making the binding two way again.
-      
+
     @returns {SC.Binding} receiver
   */
   oneWay: function(flag) {
@@ -8729,27 +9125,35 @@ var Binding = SC.Object.extend({
   },
 
   /**
-    Adds the specified transform function to the array of transform functions.
+    Adds the specified transform to the array of transform functions.
 
-    The function you pass must have the following signature:
+    A transform is a hash with `to` and `from` properties. Each property
+    should be a function that performs a transformation in either the
+    forward or back direction.
+
+    The functions you pass must have the following signature:
 
           function(value) {};
 
-    It must return the transformed value.
+    They must also return the transformed value.
 
-    Transform functions are called in the order they were added. If you are
+    Transforms are invoked in the order they were added. If you are
     extending a binding and want to reset the transforms, you can call
     `resetTransform()` first.
 
     @param {Function} transformFunc the transform function.
     @returns {SC.Binding} this
   */
-  transform: function(func) {
+  transform: function(transform) {
+    if ('function' === typeof transform) {
+      transform = { to: transform };
+    }
+
     if (!this._transforms) this._transforms = [];
-    this._transforms.push(func);
+    this._transforms.push(transform);
     return this;
   },
-  
+
   /**
     Resets the transforms for the binding. After calling this method the
     binding will no longer transform values. You can then add new transforms
@@ -8759,9 +9163,9 @@ var Binding = SC.Object.extend({
   */
   resetTransforms: function() {
     this._transforms = null;
-    return this;  
+    return this;
   },
-  
+
   /**
     Adds a transform to the chain that will allow only single values to pass.
     This will allow single values and nulls to pass through. If you pass an
@@ -8782,10 +9186,10 @@ var Binding = SC.Object.extend({
     @returns {SC.Binding} this
   */
   single: function(placeholder) {
-    if (placeholder===undefined) placeholder = SC.MULTIPLE_PLACEHOLDER; 
-    this._forceKind = SINGLE;
+    if (placeholder===undefined) placeholder = SC.MULTIPLE_PLACEHOLDER;
+    this._typeTransform = SINGLE;
     this._placeholder = placeholder;
-    return this; 
+    return this;
   },
 
   /**
@@ -8796,14 +9200,14 @@ var Binding = SC.Object.extend({
     @returns {SC.Binding} this
   */
   multiple: function() {
-    this._forceKind = MULTIPLE;
+    this._typeTransform = MULTIPLE;
     this._placeholder = null;
-    return this; 
+    return this;
   },
-  
+
   /**
     Adds a transform to convert the value to a bool value. If the value is
-    an array it will return YES if array is not empty. If the value is a 
+    an array it will return YES if array is not empty. If the value is a
     string it will return YES if the string is not empty.
 
     @returns {SC.Binding} this
@@ -8817,21 +9221,19 @@ var Binding = SC.Object.extend({
     Adds a transform that will return the placeholder value if the value is
     null, undefined, an empty array or an empty string. See also notNull().
 
-    @param {String} fromPath from path or null
     @param {Object} [placeholder] Placeholder value.
     @returns {SC.Binding} this
   */
-  notEmpty: function(placeholder, extra) {
-    // for compatibility...
-    if (extra) {
-      if (placeholder) this.from(placeholder);
-      placeholder = extra;
-    }
-    
-    if (!placeholder) placeholder = SC.EMPTY_PLACEHOLDER;
-    this.transform(function(val) {
-      return empty(val) ? placeholder : val;
+  notEmpty: function(placeholder) {
+    // Display warning for users using the SC 1.x-style API.
+    sc_assert("notEmpty should only take a placeholder as a parameter. You no longer need to pass null as the first parameter.", arguments.length < 2);
+
+    if (!placeholder) { placeholder = SC.EMPTY_PLACEHOLDER; }
+
+    this.transform({
+      to: function(val) { return empty(val) ? placeholder : val; }
     });
+
     return this;
   },
 
@@ -8844,8 +9246,13 @@ var Binding = SC.Object.extend({
     @returns {SC.Binding} this
   */
   notNull: function(placeholder) {
-    // TODO: IMPLEMENT notNull
-    throw new Error('SC.Binding.notNull not yet implemented');
+    if (!placeholder) { placeholder = SC.EMPTY_PLACEHOLDER; }
+
+    this.transform({
+      to: function(val) { return val == null ? placeholder : val; }
+    });
+
+    return this;
   },
 
   /**
@@ -8862,24 +9269,23 @@ var Binding = SC.Object.extend({
   /**
     Adds a transform that will return YES if the value is null or undefined, NO otherwise.
 
-    @param {String} [fromPath]
     @returns {SC.Binding} this
   */
-  isNull: function(fromPath) {
-    // TODO: IMPLEMENT isNull
-    throw new Error('SC.Binding.isNull not yet implemented');
+  isNull: function() {
+    this.transform(function(val) { return val == null; });
+    return this;
   },
-  
+
   /** @private */
   toString: function() {
     var oneWay = this._oneWay ? '[oneWay]' : '';
     return SC.String.fmt("SC.Binding<%@>(%@ -> %@)%@", [guidFor(this), this._from, this._to, oneWay]);
   },
-  
+
   // ..........................................................
   // CONNECT AND SYNC
-  // 
-  
+  //
+
   /**
     Attempts to connect this binding instance so that it can receive and relay
     changes. This method will raise an exception if you have not set the
@@ -8887,18 +9293,33 @@ var Binding = SC.Object.extend({
 
     @param {Object} obj
       The root object for this binding.
-      
+
+    @param {Boolean} preferFromParam
+      private: Normally, `connect` cannot take an object if `from` already set
+      an object. Internally, we would like to be able to provide a default object
+      to be used if no object was provided via `from`, so this parameter turns
+      off the assertion.
+
     @returns {SC.Binding} this
   */
   connect: function(obj) {
     sc_assert('Must pass a valid object to SC.Binding.connect()', !!obj);
-    
-    var oneWay = this._oneWay, from2 = this._from2;
-    SC.addObserver(obj, this._from, this, this.fromDidChange); 
-    if (from2) SC.addObserver(obj, from2, this, this.fromDidChange); 
-    if (!oneWay) SC.addObserver(obj, this._to, this, this.toDidChange);
-    if (SC.meta(obj,false).proto !== obj) this._scheduleSync(obj, 'fwd');
-    this._readyToSync = true; 
+
+    var oneWay = this._oneWay, operand = this._operand;
+
+    // add an observer on the object to be notified when the binding should be updated
+    SC.addObserver(obj, this._from, this, this.fromDidChange);
+
+    // if there is an operand, add an observer onto it as well
+    if (operand) { SC.addObserver(obj, operand, this, this.fromDidChange); }
+
+    // if the binding is a two-way binding, also set up an observer on the target
+    // object.
+    if (!oneWay) { SC.addObserver(obj, this._to, this, this.toDidChange); }
+
+    if (SC.meta(obj,false).proto !== obj) { this._scheduleSync(obj, 'fwd'); }
+
+    this._readyToSync = true;
     return this;
   },
 
@@ -8908,28 +9329,37 @@ var Binding = SC.Object.extend({
 
     @param {Object} obj
       The root object you passed when connecting the binding.
-      
+
     @returns {SC.Binding} this
   */
   disconnect: function(obj) {
     sc_assert('Must pass a valid object to SC.Binding.disconnect()', !!obj);
-    var oneWay = this._oneWay, from2 = this._from2;
+
+    var oneWay = this._oneWay, operand = this._operand;
+
+    // remove an observer on the object so we're no longer notified of
+    // changes that should update bindings.
     SC.removeObserver(obj, this._from, this, this.fromDidChange);
-    if (from2) SC.removeObserver(obj, from2, this, this.fromDidChange);
+
+    // if there is an operand, remove the observer from it as well
+    if (operand) SC.removeObserver(obj, operand, this, this.fromDidChange);
+
+    // if the binding is two-way, remove the observer from the target as well
     if (!oneWay) SC.removeObserver(obj, this._to, this, this.toDidChange);
-    this._readyToSync = false; // disable scheduled syncs... 
+
+    this._readyToSync = false; // disable scheduled syncs...
     return this;
   },
-  
+
   // ..........................................................
   // PRIVATE
-  // 
-  
+  //
+
   /** @private - called when the from side changes */
   fromDidChange: function(target) {
-    this._scheduleSync(target, 'fwd');  
+    this._scheduleSync(target, 'fwd');
   },
-  
+
   /** @private - called when the to side changes */
   toDidChange: function(target) {
     this._scheduleSync(target, 'back');
@@ -8937,47 +9367,54 @@ var Binding = SC.Object.extend({
 
   /** @private */
   _scheduleSync: function(obj, dir) {
-    var guid = guidFor(obj);
-    if (!this[guid]) SC.run.schedule('sync', this, this._sync, obj);
-    this[guid] = (this[guid]==='fwd' || !dir) ? 'fwd' : dir;
+    var guid = guidFor(obj), existingDir = this[guid];
+
+    // if we haven't scheduled the binding yet, schedule it
+    if (!existingDir) {
+      SC.run.schedule('sync', this, this._sync, obj);
+      this[guid] = dir;
+    }
+
+    // If both a 'back' and 'fwd' sync have been scheduled on the same object,
+    // default to a 'fwd' sync so that it remains deterministic.
+    if (existingDir === 'back' && dir === 'fwd') {
+      this[guid] = 'fwd';
+    }
   },
 
   /** @private */
   _sync: function(obj) {
-
-    //@if (debug)
     var log = SC.LOG_BINDINGS;
-    //@endif
-    
-    var guid = guidFor(obj), direction = this[guid], val, tv;
-    if (!this._readyToSync) return; // not connected.
+
+    // don't synchronize destroyed objects or disconnected bindings
+    if (obj.isDestroyed || !this._readyToSync) { return; }
+
+    // get the direction of the binding for the object we are
+    // synchronizing from
+    var guid = guidFor(obj), direction = this[guid], val, transformedValue;
+
+    var fromPath = this._from, toPath = this._to;
 
     delete this[guid];
+
+    // apply any operations to the object, then apply transforms
+    var fromValue = getTransformedFromValue(obj, this);
+    var toValue   = getTransformedToValue(obj, this);
+
+    if (toValue === fromValue) { return; }
+
+    // if we're synchronizing from the remote object...
     if (direction === 'fwd') {
-      val = fromValue(obj, this);
-      tv  = transformedValue(this, val, obj);
+      if (log) { SC.Logger.log(' ', this.toString(), val, '->', fromValue, obj); }
+      SC.trySetPath(obj, toPath, fromValue);
 
-      //@if (debug)
-      if (log) { SC.Logger.log(' ', this.toString(), val, '->', tv, obj); }
-      //@endif
-      
-      // apply changes
-      SC.setPath(obj, this._to, tv);
-
-    } else if (direction === 'back' && !this._oneWay) {
-      val = getPath(obj, this._to);
-      tv  = transformedValue(this, fromValue(obj, this), obj);
-      if (val !== tv) {
-
-        //@if (debug)
-        if (log) { SC.Logger.log(' ', this.toString(), val, '<-', tv, obj); }
-        //@endif
-
-        SC.setPath(obj, this._from, val);
-      }
+    // if we're synchronizing *to* the remote object
+    } else if (direction === 'back') {// && !this._oneWay) {
+      if (log) { SC.Logger.log(' ', this.toString(), val, '<-', fromValue, obj); }
+      SC.trySetPath(obj, fromPath, toValue);
     }
   }
-  
+
 });
 
 Binding.reopenClass(/** @scope SC.Binding */ {
@@ -8989,7 +9426,7 @@ Binding.reopenClass(/** @scope SC.Binding */ {
     var C = this, binding = new C();
     return binding.from.apply(binding, arguments);
   },
-  
+
   /**
     @see SC.Binding.prototype.to
   */
@@ -8997,7 +9434,7 @@ Binding.reopenClass(/** @scope SC.Binding */ {
     var C = this, binding = new C();
     return binding.to.apply(binding, arguments);
   },
-  
+
   /**
     @see SC.Binding.prototype.oneWay
   */
@@ -9005,7 +9442,7 @@ Binding.reopenClass(/** @scope SC.Binding */ {
     var C = this, binding = new C(null, from);
     return binding.oneWay(flag);
   },
-  
+
   /**
     @see SC.Binding.prototype.single
   */
@@ -9056,13 +9493,13 @@ Binding.reopenClass(/** @scope SC.Binding */ {
 
   /**
     Adds a transform that forwards the logical 'AND' of values at 'pathA' and
-    'pathB' whenever either source changes. Note that the transform acts 
+    'pathB' whenever either source changes. Note that the transform acts
     strictly as a one-way binding, working only in the direction
 
         'pathA' AND 'pathB' --> value  (value returned is the result of ('pathA' && 'pathB'))
 
-    Usage example where a delete button's `isEnabled` value is determined by 
-    whether something is selected in a list and whether the current user is 
+    Usage example where a delete button's `isEnabled` value is determined by
+    whether something is selected in a list and whether the current user is
     allowed to delete:
 
         deleteButton: SC.ButtonView.design({
@@ -9074,14 +9511,14 @@ Binding.reopenClass(/** @scope SC.Binding */ {
   */
   and: function(pathA, pathB) {
     var C = this, binding = new C(null, pathA).oneWay();
-    binding._from2 = pathB;
-    binding._logic = AND_LOGIC;
+    binding._operand = pathB;
+    binding._operation = AND_OPERATION;
     return binding;
   },
 
   /**
     Adds a transform that forwards the 'OR' of values at 'pathA' and
-    'pathB' whenever either source changes. Note that the transform acts 
+    'pathB' whenever either source changes. Note that the transform acts
     strictly as a one-way binding, working only in the direction
 
         'pathA' AND 'pathB' --> value  (value returned is the result of ('pathA' || 'pathB'))
@@ -9091,11 +9528,11 @@ Binding.reopenClass(/** @scope SC.Binding */ {
   */
   or: function(pathA, pathB) {
     var C = this, binding = new C(null, pathA).oneWay();
-    binding._from2 = pathB;
-    binding._logic = OR_LOGIC;
+    binding._operand = pathB;
+    binding._operation = OR_OPERATION;
     return binding;
   }
-    
+
 });
 
 SC.Binding = Binding;
@@ -9103,15 +9540,15 @@ SC.Binding = Binding;
 /**
   Global helper method to create a new binding.  Just pass the root object
   along with a to and from path to create and connect the binding.  The new
-  binding object will be returned which you can further configure with 
+  binding object will be returned which you can further configure with
   transforms and other conditions.
-  
+
   @param {Object} obj
     The root object of the transform.
-    
+
   @param {String} to
     The path to the 'to' side of the binding.  Must be relative to obj.
-    
+
   @param {String} from
     The path to the 'from' side of the binding.  Must be relative to obj or
     a global path.
@@ -9122,7 +9559,9 @@ SC.bind = function(obj, to, from) {
   return new SC.Binding(to, from).connect(obj);
 };
 
-
+SC.oneWay = function(obj, to, from) {
+  return new SC.Binding(to, from).oneWay().connect(obj);
+}
 
 })({});
 
@@ -9136,7 +9575,7 @@ SC.bind = function(obj, to, from) {
 
 
 var set = SC.set, get = SC.get, guidFor = SC.guidFor;
-  
+
 var EachArray = SC.Object.extend(SC.Array, {
 
   init: function(content, keyName, owner) {
@@ -9150,12 +9589,12 @@ var EachArray = SC.Object.extend(SC.Array, {
     var item = this._content.objectAt(idx);
     return item && get(item, this._keyName);
   },
-  
+
   length: function() {
     var content = this._content;
     return content ? get(content, 'length') : 0;
   }.property('[]').cacheable()
-  
+
 });
 
 var IS_OBSERVER = /^.+:(before|change)$/;
@@ -9163,13 +9602,13 @@ var IS_OBSERVER = /^.+:(before|change)$/;
 function addObserverForContentKey(content, keyName, proxy, idx, loc) {
   var objects = proxy._objects, guid;
   if (!objects) objects = proxy._objects = {};
-  
+
   while(--loc>=idx) {
     var item = content.objectAt(loc);
     if (item) {
       SC.addBeforeObserver(item, keyName, proxy, 'contentKeyWillChange');
       SC.addObserver(item, keyName, proxy, 'contentKeyDidChange');
-      
+
       // keep track of the indicies each item was found at so we can map
       // it back when the obj changes.
       guid = guidFor(item);
@@ -9183,13 +9622,13 @@ function removeObserverForContentKey(content, keyName, proxy, idx, loc) {
   var objects = proxy._objects;
   if (!objects) objects = proxy._objects = {};
   var indicies, guid;
-  
+
   while(--loc>=idx) {
     var item = content.objectAt(loc);
     if (item) {
       SC.removeBeforeObserver(item, keyName, proxy, 'contentKeyWillChange');
       SC.removeObserver(item, keyName, proxy, 'contentKeyDidChange');
-      
+
       guid = guidFor(item);
       indicies = objects[guid];
       indicies[indicies.indexOf(loc)] = null;
@@ -9202,22 +9641,22 @@ function removeObserverForContentKey(content, keyName, proxy, idx, loc) {
   @class
 
   This is the object instance returned when you get the @each property on an
-  array.  It uses the unknownProperty handler to automatically create 
+  array.  It uses the unknownProperty handler to automatically create
   EachArray instances for property names.
-  
+
   @extends SC.Object
 */
 SC.EachProxy = SC.Object.extend({
-  
+
   init: function(content) {
     this._super();
     this._content = content;
     content.addArrayObserver(this);
 
-    // in case someone is already observing some keys make sure they are 
+    // in case someone is already observing some keys make sure they are
     // added
-    SC.watchedEvents(this).forEach(function(eventName) { 
-      this.didAddListener(eventName); 
+    SC.watchedEvents(this).forEach(function(eventName) {
+      this.didAddListener(eventName);
     }, this);
   },
 
@@ -9225,23 +9664,21 @@ SC.EachProxy = SC.Object.extend({
     You can directly access mapped properties by simply requesting them.
     The unknownProperty handler will generate an EachArray of each item.
   */
-  unknownProperty: function(keyName) {
+  unknownProperty: function(keyName, value) {
     var ret;
     ret = new EachArray(this._content, keyName, this);
-    set(this, keyName, ret); 
+    new SC.Descriptor().setup(this, keyName, ret);
     this.beginObservingContentKey(keyName);
     return ret;
   },
 
   // ..........................................................
   // ARRAY CHANGES
-  // Invokes whenever the content array itself changes.  
-  
+  // Invokes whenever the content array itself changes.
+
   arrayWillChange: function(content, idx, removedCnt, addedCnt) {
     var keys = this._keys, key, array, lim;
-    
-    if (!keys) return ; // nothing to do
-    
+
     lim = removedCnt>0 ? idx+removedCnt : -1;
     SC.beginPropertyChanges(this);
     for(key in keys) {
@@ -9253,13 +9690,13 @@ SC.EachProxy = SC.Object.extend({
       SC.propertyWillChange(this, key);
       if (array) array.arrayContentWillChange(idx, removedCnt, addedCnt);
     }
+
+    SC.propertyWillChange(this._content, '@each');
     SC.endPropertyChanges(this);
   },
-  
+
   arrayDidChange: function(content, idx, removedCnt, addedCnt) {
     var keys = this._keys, key, array, lim;
-    
-    if (!keys) return ; // nothing to do
 
     lim = addedCnt>0 ? idx+addedCnt : -1;
     SC.beginPropertyChanges(this);
@@ -9267,24 +9704,25 @@ SC.EachProxy = SC.Object.extend({
       if (!keys.hasOwnProperty(key)) continue;
 
       if (lim>0) addObserverForContentKey(content, key, this, idx, lim);
-      
+
       array = get(this, key);
       if (array) array.arrayContentDidChange(idx, removedCnt, addedCnt);
       SC.propertyDidChange(this, key);
     }
+    SC.propertyDidChange(this._content, '@each');
     SC.endPropertyChanges(this);
   },
-  
+
   // ..........................................................
   // LISTEN FOR NEW OBSERVERS AND OTHER EVENT LISTENERS
   // Start monitoring keys based on who is listening...
-  
+
   didAddListener: function(eventName) {
     if (IS_OBSERVER.test(eventName)) {
       this.beginObservingContentKey(eventName.slice(0, -7));
     }
   },
-  
+
   didRemoveListener: function(eventName) {
     if (IS_OBSERVER.test(eventName)) {
       this.stopObservingContentKey(eventName.slice(0, -7));
@@ -9294,20 +9732,20 @@ SC.EachProxy = SC.Object.extend({
   // ..........................................................
   // CONTENT KEY OBSERVING
   // Actual watch keys on the source content.
-  
+
   beginObservingContentKey: function(keyName) {
     var keys = this._keys;
     if (!keys) keys = this._keys = {};
     if (!keys[keyName]) {
       keys[keyName] = 1;
-      var content = this._content, 
+      var content = this._content,
           len = get(content, 'length');
       addObserverForContentKey(content, keyName, this, 0, len);
     } else {
       keys[keyName]++;
     }
   },
-  
+
   stopObservingContentKey: function(keyName) {
     var keys = this._keys;
     if (keys && (keys[keyName]>0) && (--keys[keyName]<=0)) {
@@ -9316,32 +9754,31 @@ SC.EachProxy = SC.Object.extend({
       removeObserverForContentKey(content, keyName, this, 0, len);
     }
   },
-  
+
   contentKeyWillChange: function(obj, keyName) {
     // notify array.
-    var indexes = this._objects[guidFor(obj)], 
+    var indexes = this._objects[guidFor(obj)],
         array   = get(this, keyName),
         len = array && indexes ? indexes.length : 0, idx;
-        
+
     for(idx=0;idx<len;idx++) {
       array.arrayContentWillChange(indexes[idx], 1, 1);
     }
   },
-  
+
   contentKeyDidChange: function(obj, keyName) {
     // notify array.
-    var indexes = this._objects[guidFor(obj)], 
+    var indexes = this._objects[guidFor(obj)],
         array   = get(this, keyName),
         len = array && indexes ? indexes.length : 0, idx;
-        
+
     for(idx=0;idx<len;idx++) {
       array.arrayContentDidChange(indexes[idx], 1, 1);
     }
 
     SC.propertyDidChange(this, keyName);
   }
-  
-  
+
 });
 
 
@@ -9516,6 +9953,7 @@ if (SC.EXTEND_PROTOTYPES) SC.NativeArray.activate();
 
 
 
+
 })({});
 
 (function(exports) {
@@ -9581,17 +10019,6 @@ SC._RenderBuffer = SC.Object.extend(
   elementAttributes: null,
 
   /**
-    An array of strings which defines the body of the element.
-
-    You should not maintain this array yourself, rather, you should use
-    the push() method of SC.RenderBuffer.
-
-    @type Array
-    @default []
-  */
-  elementContent: null,
-
-  /**
     The tagname of the element an instance of SC.RenderBuffer represents.
 
     Usually, this gets set as the first parameter to SC.RenderBuffer. For
@@ -9633,7 +10060,6 @@ SC._RenderBuffer = SC.Object.extend(
     set(this ,'elementClasses', []);
     set(this, 'elementAttributes', {});
     set(this, 'elementStyle', {});
-    set(this, 'elementContent', []);
     set(this, 'childBuffers', []);
     set(this, 'elements', {});
   },
@@ -9830,8 +10256,8 @@ SC._RenderBuffer = SC.Object.extend(
         classes = get(this, 'elementClasses'),
         attrs = get(this, 'elementAttributes'),
         style = get(this, 'elementStyle'),
-        content = get(this, 'elementContent'),
         tag = get(this, 'elementTag'),
+        content = '',
         styleBuffer = [], prop;
 
     var openTag = ["<" + tag];
@@ -9857,8 +10283,6 @@ SC._RenderBuffer = SC.Object.extend(
 
     openTag = openTag.join(" ") + '>';
 
-    content = content.join("");
-
     var childBuffers = get(this, 'childBuffers');
 
     childBuffers.forEach(function(buffer) {
@@ -9882,7 +10306,7 @@ SC._RenderBuffer = SC.Object.extend(
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-var get = SC.get, set = SC.set;
+var get = SC.get, set = SC.set, fmt = SC.String.fmt;
 
 /**
   @ignore
@@ -9939,9 +10363,17 @@ SC.EventDispatcher = SC.Object.extend(
 
     jQuery.extend(events, addedEvents || {});
 
+    var rootElement = SC.$(get(this, 'rootElement'));
+
+    sc_assert(fmt('You cannot use the same root element (%@) multiple times in an SC.Application', [rootElement.selector || rootElement[0].tagName]), !rootElement.is('.sc-application'));
+    sc_assert('You cannot make a new SC.Application using a root element that is a descendent of an existing SC.Application', !rootElement.closest('.sc-application').length);
+    sc_assert('You cannot make a new SC.Application using a root element that is an ancestor of an existing SC.Application', !rootElement.find('.sc-application').length);
+
+    rootElement.addClass('sc-application')
+
     for (event in events) {
       if (events.hasOwnProperty(event)) {
-        this.setupHandler(event, events[event]);
+        this.setupHandler(rootElement, event, events[event]);
       }
     }
   },
@@ -9965,34 +10397,78 @@ SC.EventDispatcher = SC.Object.extend(
     @param {String} event the browser-originated event to listen to
     @param {String} eventName the name of the method to call on the view
   */
-  setupHandler: function(event, eventName) {
-    var rootElement = get(this, 'rootElement');
+  setupHandler: function(rootElement, event, eventName) {
+    var self = this;
 
-    SC.$(rootElement).delegate('.sc-view', event + '.sproutcore', function(evt) {
+    rootElement.delegate('.sc-view', event + '.sproutcore', function(evt, triggeringManager) {
+
       var view = SC.View.views[this.id],
-          result = true, handler;
+          result = true, manager = null;
 
-      SC.run(function() {
-        while (result !== false && view) {
-          handler = view[eventName];
-          if (SC.typeOf(handler) === 'function') {
-            result = handler.call(view, evt);
-          }
+      manager = self._findNearestEventManager(view,eventName);
 
-          view = get(view, 'parentView');
-        }
-      });
+      if (manager && manager !== triggeringManager) {
+        result = self._dispatchEvent(manager, evt, eventName, view);
+      } else if (view) {
+        result = self._bubbleEvent(view,evt,eventName);
+      } else {
+        evt.stopPropagation();
+      }
 
-      evt.stopPropagation();
       return result;
     });
   },
 
   /** @private */
+  _findNearestEventManager: function(view, eventName) {
+    var manager = null;
+
+    while (view) {
+      manager = get(view, 'eventManager');
+      if (manager && manager[eventName]) { break; }
+
+      view = get(view, 'parentView');
+    }
+
+    return manager;
+  },
+
+  /** @private */
+  _dispatchEvent: function(object, evt, eventName, view) {
+    var result = true;
+
+    handler = object[eventName];
+    if (SC.typeOf(handler) === 'function') {
+      result = handler.call(object, evt, view);
+      evt.stopPropagation();
+    }
+    else {
+      result = this._bubbleEvent(view, evt, eventName);
+    }
+
+    return result;
+  },
+
+  /** @private */
+  _bubbleEvent: function(view, evt, eventName) {
+    var result = true, handler,
+        self = this;
+
+      SC.run(function() {
+        handler = view[eventName];
+        if (SC.typeOf(handler) === 'function') {
+          result = handler.call(view, evt);
+        }
+      });
+
+    return result;
+  },
+
+  /** @private */
   destroy: function() {
     var rootElement = get(this, 'rootElement');
-
-    SC.$(rootElement).undelegate('.sproutcore');
+    SC.$(rootElement).undelegate('.sproutcore').removeClass('sc-application');
+    return this._super();
   }
 });
 
@@ -10084,6 +10560,7 @@ SC.Application = SC.Namespace.extend(
   /** @private */
   destroy: function() {
     get(this, 'eventDispatcher').destroy();
+    return this._super();
   }
 });
 
@@ -10133,8 +10610,6 @@ queues.insertAt(queues.indexOf('actions')+1, 'render');
 
 var get = SC.get, set = SC.set, addObserver = SC.addObserver;
 var getPath = SC.getPath, meta = SC.meta, fmt = SC.String.fmt;
-
-var destroyedError = "You can't call %@ on a destroyed view";
 
 /**
   @static
@@ -10203,8 +10678,9 @@ SC.View = SC.Object.extend(
   template: function(key, value) {
     if (value !== undefined) { return value; }
 
-    var templateName = get(this, 'templateName'),
-        template = get(get(this, 'templates'), templateName);
+    var templateName = get(this, 'templateName'), template;
+
+    if (templateName) { template = get(get(this, 'templates'), templateName); }
 
     // If there is no template but a templateName has been specified,
     // try to lookup as a spade module
@@ -10265,6 +10741,96 @@ SC.View = SC.Object.extend(
   childViews: [],
 
   /**
+    Return the nearest ancestor that is an instance of the provided
+    class.
+
+    @param {Class} klass Subclass of SC.View (or SC.View itself)
+    @returns SC.View
+  */
+  nearestInstanceOf: function(klass) {
+    var view = this.parentView;
+
+    while (view) {
+      if(view instanceof klass) { return view; }
+      view = view.parentView;
+    }
+  },
+
+  /**
+    Return the nearest ancestor that has a given property.
+
+    @param {String} property A property name
+    @returns SC.View
+  */
+  nearestWithProperty: function(property) {
+    var view = this.parentView;
+
+    while (view) {
+      if (property in view.parentView) { return view; }
+      view = view.parentView;
+    }
+  },
+
+  /**
+    Return the nearest ancestor that is a direct child of a
+    view of.
+
+    @param {Class} klass Subclass of SC.View (or SC.View itself)
+    @returns SC.View
+  */
+  nearestChildOf: function(klass) {
+    var view = this.parentView;
+
+    while (view) {
+      if(view.parentView instanceof klass) { return view; }
+      view = view.parentView;
+    }
+  },
+
+  /**
+    Return the nearest ancestor that is an SC.CollectionView
+
+    @returns SC.CollectionView
+  */
+  collectionView: function() {
+    return this.nearestInstanceOf(SC.CollectionView);
+  }.property().cacheable(),
+
+  /**
+    Return the nearest ancestor that is a direct child of
+    an SC.CollectionView
+
+    @returns SC.View
+  */
+  itemView: function() {
+    return this.nearestChildOf(SC.CollectionView);
+  }.property().cacheable(),
+
+  /**
+    Return the nearest ancestor that has the property
+    `content`.
+
+    @returns SC.View
+  */
+  contentView: function() {
+    return this.nearestWithProperty('content');
+  }.property().cacheable(),
+
+  /**
+    @private
+
+    When the parent view changes, recursively invalidate
+    collectionView, itemView, and contentView
+  */
+  _parentViewDidChange: function() {
+    this.invokeRecursively(function(view) {
+      view.propertyDidChange('collectionView');
+      view.propertyDidChange('itemView');
+      view.propertyDidChange('contentView');
+    });
+  }.observes('parentView'),
+
+  /**
     Called on your view when it should push strings of HTML into a
     SC.RenderBuffer. Most users will want to override the `template`
     or `templateName` properties instead of this method.
@@ -10300,7 +10866,7 @@ SC.View = SC.Object.extend(
     var parent = this, states = parent.states;
 
     while (states) {
-      var stateName = this.state,
+      var stateName = get(this, 'state'),
           state     = states[stateName];
 
       if (state) {
@@ -10334,6 +10900,22 @@ SC.View = SC.Object.extend(
   */
   rerender: function() {
     return this.invokeForState('rerender');
+  },
+
+  clearRenderedChildren: function() {
+    var viewMeta = meta(this)['SC.View'],
+        lengthBefore = viewMeta.lengthBeforeRender,
+        lengthAfter  = viewMeta.lengthAfterRender;
+
+    // If there were child views created during the last call to render(),
+    // remove them under the assumption that they will be re-created when
+    // we re-render.
+
+    // VIEW-TODO: Unit test this path.
+    var childViews = get(this, 'childViews');
+    for (var i=lengthBefore; i<lengthAfter; i++) {
+      childViews[i] && childViews[i].destroy();
+    }
   },
 
   /**
@@ -10496,14 +11078,12 @@ SC.View = SC.Object.extend(
     @type DOMElement
   */
   element: function(key, value) {
-    // If the value of element is being set, just return it. SproutCore
-    // will cache it for further `get` calls.
-    if (value !== undefined) { return value; }
-
-    var parent = get(this, 'parentView');
-    if (parent) { parent = get(parent, 'element'); }
-    if (parent) { return this.findElementInParentElement(parent); }
-  }.property('parentView').cacheable(),
+    if (value !== undefined) {
+      return this.invokeForState('setElement', value);
+    } else {
+      return this.invokeForState('getElement');
+    }
+  }.property('parentView', 'state').cacheable(),
 
   /**
     Returns a jQuery object for this view's element. If you pass in a selector
@@ -10517,20 +11097,7 @@ SC.View = SC.Object.extend(
     @returns {SC.CoreQuery} the CoreQuery object for the DOM node
   */
   $: function(sel) {
-    var elem = get(this, 'element');
-
-    if (!elem) {
-      // if we don't have an element yet, someone calling this.$() is
-      // trying to update an element that isn't in the DOM. Instead,
-      // rerender the view to allow the render method to reflect the
-      // changes.
-      this.rerender();
-      return SC.$();
-    } else if (sel === undefined) {
-      return SC.$(elem);
-    } else {
-      return SC.$(sel, elem);
-    }
+    return this.invokeForState('$', sel);
   },
 
   /** @private */
@@ -10672,7 +11239,7 @@ SC.View = SC.Object.extend(
     @returns {SC.RenderBuffer}
   */
   renderBuffer: function(tagName) {
-    return SC.RenderBuffer(tagName || get(this, 'tagName'));
+    return SC.RenderBuffer(tagName || get(this, 'tagName') || 'div');
   },
 
   /**
@@ -10689,11 +11256,6 @@ SC.View = SC.Object.extend(
 
     var buffer = this.renderToBuffer();
     set(this, 'element', buffer.element());
-
-    this.invokeRecursively(function(view) {
-      meta(view)['SC.View'].buffer = null;
-      view.state = 'inDOM';
-    });
 
     return this;
   },
@@ -10722,6 +11284,15 @@ SC.View = SC.Object.extend(
 
     this.forEachChildView(function(view) {
       view.invokeRecursively(fn);
+    });
+  },
+
+  /**
+    Invalidates the cache for a property on all child views.
+  */
+  invalidateRecursively: function(key) {
+    this.forEachChildView(function(view) {
+      view.propertyDidChange(key);
     });
   },
 
@@ -10851,22 +11422,18 @@ SC.View = SC.Object.extend(
     // provided buffer operation (for example, `insertAfter` will
     // insert a new buffer after the "parent buffer").
     if (parentBuffer) {
-      buffer = parentBuffer[bufferOperation](get(this, 'tagName'));
+      buffer = parentBuffer[bufferOperation](get(this, 'tagName') || 'div');
     } else {
       buffer = this.renderBuffer();
     }
 
     viewMeta.buffer = buffer;
-    this.state = 'inBuffer';
+    this.transitionTo('inBuffer');
 
     viewMeta.lengthBeforeRender = getPath(this, 'childViews.length');
 
-    SC.beginPropertyChanges(this);
-
     this.applyAttributesToBuffer(buffer);
     this.render(buffer);
-
-    SC.endPropertyChanges(this);
 
     viewMeta.lengthAfterRender = getPath(this, 'childViews.length');
 
@@ -10909,10 +11476,15 @@ SC.View = SC.Object.extend(
     an element is first created. If you change the tagName for an element, you
     must destroy and recreate the view element.
 
+    By default, the render buffer will use a `<div>` tag for views.
+
     @type String
-    @default 'div'
+    @default null
   */
-  tagName: 'div',
+
+  // We leave this null by default so we can tell the difference between
+  // the default case and a user-specified tag.
+  tagName: null,
 
   /**
     The WAI-ARIA role of the control represented by this view. For example, a
@@ -11009,7 +11581,7 @@ SC.View = SC.Object.extend(
       dispatch
   */
   init: function() {
-    this.state = 'preRender';
+    set(this, 'state', 'preRender');
 
     var parentView = get(this, 'parentView');
 
@@ -11121,6 +11693,7 @@ SC.View = SC.Object.extend(
     // as removeFromParent will try to remove the element from
     // the DOM again.
     if (parent) { parent.removeChild(this); }
+    SC.Descriptor.setup(this, 'state', 'destroyed');
 
     this._super();
 
@@ -11130,8 +11703,6 @@ SC.View = SC.Object.extend(
 
     // next remove view from global hash
     delete SC.View.views[get(this, 'elementId')];
-
-    this.state = 'destroyed';
 
     return this; // done with cleanup
   },
@@ -11166,7 +11737,23 @@ SC.View = SC.Object.extend(
   */
   _isVisibleDidChange: function() {
     this.$().toggle(get(this, 'isVisible'));
-  }.observes('isVisible')
+  }.observes('isVisible'),
+
+  clearBuffer: function() {
+    this.invokeRecursively(function(view) {
+      meta(view)['SC.View'].buffer = null;
+    });
+  },
+
+  transitionTo: function(state, children) {
+    set(this, 'state', state);
+
+    if (children !== false) {
+      this.forEachChildView(function(view) {
+        view.transitionTo(state);
+      });
+    }
+  }
 
 });
 
@@ -11185,148 +11772,61 @@ SC.View = SC.Object.extend(
     method), it is in this state. No further actions can be invoked
     on a destroyed view.
 */
+
+  // in the destroyed state, everything is illegal
+
+  // before rendering has begun, all legal manipulations are noops.
+
+  // inside the buffer, legal manipulations are done on the buffer
+
+  // once the view has been inserted into the DOM, legal manipulations
+  // are done on the DOM element.
+
+SC.View.reopen({
+  states: SC.View.states
+});
+
+// Create a global view hash.
+SC.View.views = {};
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var get = SC.get, set = SC.set;
+
 SC.View.states = {
   "default": {
     // appendChild is only legal while rendering the buffer.
     appendChild: function() {
       throw "You can't use appendChild outside of the rendering process";
-    }
-  },
-
-  // in the destroyed state, everything is illegal
-  destroyed: {
-    appendChild: function() {
-      throw fmt(destroyedError, ['appendChild']);
-    },
-    rerender: function() {
-      throw fmt(destroyedError, ['rerender']);
-    },
-    destroyElement: function() {
-      throw fmt(destroyedError, ['destroyElement']);
     },
 
-    // Since element insertion is scheduled, don't do anything if
-    // the view has been destroyed between scheduling and execution
-    insertElement: SC.K
-  },
-
-  // before rendering has begun, all legal manipulations are noops.
-  preRender: {
-    // a view leaves the preRender state once its element has been
-    // created (createElement).
-    insertElement: function(view, fn) {
-      // If we don't have an element, guarantee that it exists before
-      // invoking the willInsertElement event.
-      view.createElement();
-
-      view._notifyWillInsertElement();
-      fn.call(view);
-      view._notifyDidInsertElement();
-    }
-  },
-
-  // inside the buffer, legal manipulations are done on the buffer
-  inBuffer: {
-    // when a view is rendered in a buffer, rerendering it simply
-    // replaces the existing buffer with a new one
-    rerender: function(view) {
-      var viewMeta = meta(view)['SC.View'],
-          buffer = viewMeta.buffer;
-
-      view.renderToBuffer(buffer, 'replaceWith');
+    $: function() {
+      return SC.$();
     },
 
-    // when a view is rendered in a buffer, appending a child
-    // view will render that view and append the resulting
-    // buffer into its buffer.
-    appendChild: function(view, childView, options) {
-      var buffer = meta(view)['SC.View'].buffer;
-
-      childView = this.createChildView(childView, options);
-      view.childViews.pushObject(childView);
-      childView.renderToBuffer(buffer);
-      return childView;
+    getElement: function() {
+      return null;
     },
 
-    // when a view is rendered in a buffer, destroying the
-    // element will simply destroy the buffer and put the
-    // state back into the preRender state.
-    destroyElement: function(view) {
-      meta(view)['SC.View'].buffer.remove();
-
-      view.invokeRecursively(function(view) {
-        var viewMeta = meta(view)['SC.View'];
-        viewMeta.buffer = null;
-
-        view.willDestroyElement();
-
-        this.invokeRecursively(function(view) {
-          view.state = 'preRender';
-        });
-      });
-
-      return view;
-    },
-
-    // It should be impossible for a rendered view to be scheduled for
-    // insertion.
-    insertElement: function() {
-      throw "You can't insert an element that has already been rendered";
-    }
-  },
-
-  // once the view has been inserted into the DOM, legal manipulations
-  // are done on the DOM element.
-  inDOM: {
-
-    // once the view has been inserted into the DOM, rerendering is
-    // deferred to allow bindings to synchronize.
-    rerender: function(view) {
-      var viewMeta = meta(this)['SC.View'], element = get(view, 'element');
-
-      set(view, 'element', null);
-      view.state = 'preRender';
-
-      var lengthBefore = viewMeta.lengthBeforeRender,
-          lengthAfter  = viewMeta.lengthAfterRender;
-
-      // If there were child views created during the last call to render(),
-      // remove them under the assumption that they will be re-created when
-      // we re-render.
-
-      // VIEW-TODO: Unit test this path.
-      if (lengthBefore < lengthAfter) {
-        var childViews = get(view, 'childViews');
-        childViews.replace(lengthBefore, lengthAfter - lengthBefore);
+    setElement: function(value) {
+      if (value) {
+        view.clearBuffer();
+        view.transitionTo('inDOM');
+      } else {
+        throw "You can't set an element to null when the view has not yet been inserted into the DOM";
       }
 
-      view._insertElementLater(function() {
-        SC.$(element).replaceWith(get(this, 'element'));
-      });
-    },
-
-    // once the view is already in the DOM, destroying it removes it
-    // from the DOM, nukes its element, and puts it back into the
-    // preRender state.
-    destroyElement: function(view) {
-      var elem = get(this, 'element');
-
-      view.invokeRecursively(function(view) {
-        var elem = get(this, 'element');
-        this.willDestroyElement();
-
-        view.state = 'preRender';
-        set(view, 'element', null);
-      });
-
-      SC.$(elem).remove();
-      return view;
-    },
-
-    // You shouldn't insert an element into the DOM that was already
-    // inserted into the DOM.
-    insertElement: function() {
-      throw "You can't insert an element into the DOM that has already been inserted";
+      return value;
     }
   }
 };
@@ -11335,8 +11835,241 @@ SC.View.reopen({
   states: SC.View.states
 });
 
-// Create a global view hash.
-SC.View.views = {};
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+SC.View.states.preRender = {
+  // a view leaves the preRender state once its element has been
+  // created (createElement).
+  insertElement: function(view, fn) {
+    // If we don't have an element, guarantee that it exists before
+    // invoking the willInsertElement event.
+    view.createElement();
+
+    view._notifyWillInsertElement();
+    fn.call(view);
+    view._notifyDidInsertElement();
+  },
+
+  setElement: function(view, value) {
+    view.beginPropertyChanges();
+    view.invalidateRecursively('element');
+
+    if (value !== null) {
+      view.transitionTo('inDOM');
+    }
+
+    view.endPropertyChanges();
+
+    return value;
+  }
+}
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var get = SC.get, set = SC.set, meta = SC.meta;
+
+SC.View.states.inBuffer = {
+  $: function(view, sel) {
+    // if we don't have an element yet, someone calling this.$() is
+    // trying to update an element that isn't in the DOM. Instead,
+    // rerender the view to allow the render method to reflect the
+    // changes.
+    view.rerender();
+    return SC.$();
+  },
+
+  // when a view is rendered in a buffer, rerendering it simply
+  // replaces the existing buffer with a new one
+  rerender: function(view) {
+    var buffer = meta(view)['SC.View'].buffer;
+
+    view.clearRenderedChildren();
+    view.renderToBuffer(buffer, 'replaceWith');
+  },
+
+  // when a view is rendered in a buffer, appending a child
+  // view will render that view and append the resulting
+  // buffer into its buffer.
+  appendChild: function(view, childView, options) {
+    var buffer = meta(view)['SC.View'].buffer;
+
+    childView = this.createChildView(childView, options);
+    view.childViews.pushObject(childView);
+    childView.renderToBuffer(buffer);
+    return childView;
+  },
+
+  // when a view is rendered in a buffer, destroying the
+  // element will simply destroy the buffer and put the
+  // state back into the preRender state.
+  destroyElement: function(view) {
+    view.clearBuffer();
+    view._notifyWillDestroyElement();
+    view.transitionTo('preRender');
+
+    return view;
+  },
+
+  // It should be impossible for a rendered view to be scheduled for
+  // insertion.
+  insertElement: function() {
+    throw "You can't insert an element that has already been rendered";
+  },
+
+  setElement: function(view, value) {
+    view.invalidateRecursively('element');
+
+    if (value === null) {
+      view.transitionTo('preRender');
+    } else {
+      view.clearBuffer();
+      view.transitionTo('inDOM');
+    }
+
+    return value;
+  }
+};
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var get = SC.get, set = SC.set, meta = SC.meta;
+
+SC.View.states.inDOM = {
+
+  $: function(view, sel) {
+    var elem = get(view, 'element');
+    return sel ? SC.$(sel, elem) : SC.$(elem);
+  },
+
+  getElement: function(view) {
+    var parent = get(view, 'parentView');
+    if (parent) { parent = get(parent, 'element'); }
+    if (parent) { return ret = view.findElementInParentElement(parent); }
+  },
+
+  setElement: function(view, value) {
+
+    if (value === null) {
+      view.invalidateRecursively('element');
+      view.transitionTo('preRender');
+    } else {
+      throw "You cannot set an element to a non-null value when the element is already in the DOM."
+    }
+
+    return value;
+  },
+
+  // once the view has been inserted into the DOM, rerendering is
+  // deferred to allow bindings to synchronize.
+  rerender: function(view) {
+    var element = get(view, 'element');
+
+    view.clearRenderedChildren();
+    set(view, 'element', null);
+
+    view._insertElementLater(function() {
+      SC.$(element).replaceWith(get(view, 'element'));
+    });
+  },
+
+  // once the view is already in the DOM, destroying it removes it
+  // from the DOM, nukes its element, and puts it back into the
+  // preRender state.
+  destroyElement: function(view) {
+    var elem = get(this, 'element');
+
+    view.invokeRecursively(function(view) {
+      this.willDestroyElement();
+    });
+
+    set(view, 'element', null);
+
+    SC.$(elem).remove();
+    return view;
+  },
+
+  // You shouldn't insert an element into the DOM that was already
+  // inserted into the DOM.
+  insertElement: function() {
+    throw "You can't insert an element into the DOM that has already been inserted";
+  }
+};
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+var destroyedError = "You can't call %@ on a destroyed view", fmt = SC.String.fmt;
+
+SC.View.states.destroyed = {
+  appendChild: function() {
+    throw fmt(destroyedError, ['appendChild']);
+  },
+  rerender: function() {
+    throw fmt(destroyedError, ['rerender']);
+  },
+  destroyElement: function() {
+    throw fmt(destroyedError, ['destroyElement']);
+  },
+
+  setElement: function() {
+    throw fmt(destroyedError, ["set('element', ...)"]);
+  },
+
+  // Since element insertion is scheduled, don't do anything if
+  // the view has been destroyed between scheduling and execution
+  insertElement: SC.K
+};
+
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:   SproutCore - JavaScript Application Framework
+// Copyright: ©2006-2011 Strobe Inc. and contributors.
+//            Portions ©2008-2011 Apple Inc. All rights reserved.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+
 
 
 })({});
@@ -11476,7 +12209,7 @@ SC.ContainerView.states = {
   inBuffer: {
     childViewsDidChange: function(parentView, views, start, added) {
       var buffer = meta(parentView)['SC.View'].buffer,
-          startWith, prev, prevBuffer;
+          startWith, prev, prevBuffer, view;
 
       // Determine where to begin inserting the child view(s) in the
       // render buffer.
@@ -11540,7 +12273,8 @@ SC.ContainerView.reopen({
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-var get = SC.get, set = SC.set;
+
+var get = SC.get, set = SC.set, fmt = SC.String.fmt;
 
 /**
   @class
@@ -11582,7 +12316,8 @@ SC.CollectionView = SC.ContainerView.extend(
     var content = this.get('content');
 
     if (content) { content.removeArrayObserver(this); }
-    this.arrayWillChange(content, 0, get(content, 'length'));
+    var len = content ? get(content, 'length') : 0;
+    this.arrayWillChange(content, 0, len);
   }.observesBefore('content'),
 
   /**
@@ -11596,8 +12331,13 @@ SC.CollectionView = SC.ContainerView.extend(
   _contentDidChange: function() {
     var content = get(this, 'content');
 
-    if (content) { content.addArrayObserver(this); }
-    this.arrayDidChange(content, 0, null, get(content, 'length'));
+    if (content) {
+      sc_assert(fmt("an ArrayController's content must implement SC.Array. You passed %@", [content]), content.addArrayObserver != null);
+      content.addArrayObserver(this);
+    }
+
+    var len = content ? get(content, 'length') : 0;
+    this.arrayDidChange(content, 0, null, len);
   }.observes('content'),
 
   destroy: function() {
@@ -11606,8 +12346,6 @@ SC.CollectionView = SC.ContainerView.extend(
 
     this._super();
 
-    // set(this, 'content', null);
-
     return this;
   },
 
@@ -11615,7 +12353,7 @@ SC.CollectionView = SC.ContainerView.extend(
     // If the contents were empty before and this template collection has an
     // empty view remove it now.
     var emptyView = get(this, 'emptyView');
-    if (emptyView && !SC.Object.detect(emptyView)) {
+    if (emptyView && emptyView instanceof SC.View) {
       emptyView.removeFromParent();
     }
 
@@ -11650,7 +12388,9 @@ SC.CollectionView = SC.ContainerView.extend(
   arrayDidChange: function(content, start, removed, added) {
     var itemViewClass = get(this, 'itemViewClass'),
         childViews = get(this, 'childViews'),
-        addedViews = [], view, item, idx, len;
+        addedViews = [], view, item, idx, len, itemTagName;
+
+    sc_assert(fmt("itemViewClass must be a subclass of SC.View, not %@", [itemViewClass]), SC.View.detect(itemViewClass));
 
     len = content ? get(content, 'length') : 0;
     if (len) {
@@ -11664,22 +12404,50 @@ SC.CollectionView = SC.ContainerView.extend(
 
         addedViews.push(view);
       }
-
-      childViews.replace(start, 0, addedViews);
     } else {
       var emptyView = get(this, 'emptyView');
-      if (get(childViews, 'length') === 0 && emptyView) {
-        if (SC.Object.detect(emptyView)) {
-          emptyView = this.createChildView(emptyView);
-        }
+      if (!emptyView) { return; }
 
-        set(this, 'emptyView', emptyView);
-        childViews.replace(0, get(childViews, 'length'), [emptyView]);
-      }
+      emptyView = this.createChildView(emptyView)
+      addedViews.push(emptyView);
+      set(this, 'emptyView', emptyView);
     }
+
+    childViews.replace(start, 0, addedViews);
+  },
+
+  createChildView: function(view, attrs) {
+    var view = this._super(view, attrs);
+
+    var itemTagName = get(view, 'tagName');
+    var tagName = itemTagName || SC.CollectionView.CONTAINER_MAP[get(this, 'tagName')];
+
+    set(view, 'tagName', tagName || null);
+
+    return view;
   }
 });
 
+/**
+  @static
+
+  A map of parent tags to their default child tags. You can add
+  additional parent tags if you want collection views that use
+  a particular parent tag to default to a child tag.
+
+  @type Hash
+  @constant
+*/
+SC.CollectionView.CONTAINER_MAP = {
+  ul: 'li',
+  ol: 'li',
+  table: 'tr',
+  thead: 'tr',
+  tbody: 'tr',
+  tfoot: 'tr',
+  tr: 'td',
+  select: 'option'
+};
 
 })({});
 
@@ -11694,6 +12462,7 @@ SC.CollectionView = SC.ContainerView.extend(
 
 
 
+
 })({});
 
 
@@ -11704,8 +12473,6 @@ SC.CollectionView = SC.ContainerView.extend(
 //            Portions ©2008-2011 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-
-if ('undefined' === typeof jQuery) require('jquery');
 
 SC.$ = jQuery;
 
@@ -11744,7 +12511,6 @@ SC.$ = jQuery;
   Note that you won't usually need to use SC.Handlebars yourself. Instead, use
   SC.View, which takes care of integration into the view layer for you.
 */
-
 
 /**
   @namespace
@@ -11829,10 +12595,11 @@ SC.Handlebars.Compiler.prototype.mustache = function(mustache) {
 */
 SC.Handlebars.compile = function(string) {
   var ast = Handlebars.parse(string);
-  var environment = new SC.Handlebars.Compiler().compile(ast, {data: true, stringParams: true});
-  var compiled = new SC.Handlebars.JavaScriptCompiler().compile(environment, {data: true, stringParams: true});
+  var options = { data: true, stringParams: true };
+  var environment = new SC.Handlebars.Compiler().compile(ast, options);
+  var templateSpec = new SC.Handlebars.JavaScriptCompiler().compile(environment, options, undefined, true);
 
-  return compiled;
+  return Handlebars.template(templateSpec);
 };
 
 /**
@@ -11848,10 +12615,13 @@ SC.Handlebars.compile = function(string) {
   @param {Hash} options
 */
 Handlebars.registerHelper('helperMissing', function(path, options) {
-  var error;
+  var error, view = "";
 
   error = "%@ Handlebars error: Could not find property '%@' on object %@.";
-  throw new SC.Error(SC.String.fmt(error, options.data.view, path, this));
+  if (options.data){
+    view = options.data.view;
+  }
+  throw new SC.Error(SC.String.fmt(error, [view, path, this]));
 });
 
 
@@ -11881,15 +12651,9 @@ SC.Checkbox = SC.View.extend({
 
   defaultTemplate: SC.Handlebars.compile('<label><input type="checkbox" {{bindAttr checked="value"}}>{{title}}</label>'),
 
-  click: function() {
-    if (jQuery.browser.msie) {
-      this.change();
-    }
-  },
-
   change: function() {
     SC.run.once(this, this._updateElementValue);
-    return false;
+    // returning false will cause IE to not change checkbox state
   },
 
   _updateElementValue: function() {
@@ -11956,10 +12720,6 @@ SC.TextField = SC.View.extend(
 
   _elementValueDidChange: function() {
     set(this, 'value', this.$().val());
-  },
-
-  _valueDidChange: function() {
-    SC.run.once(this, this._updateElementValue);
   },
 
   _updateElementValue: function() {
@@ -12078,6 +12838,9 @@ SC.TextArea = SC.View.extend({
   value: "",
   attributeBindings: ['placeholder'],
   placeholder: null,
+
+  insertNewline: SC.K,
+  cancel: SC.K,
   
   focusOut: function(event) {
     this._elementValueDidChange();
@@ -12090,7 +12853,7 @@ SC.TextArea = SC.View.extend({
   },
 
   keyUp: function(event) {
-    this._elementValueDidChange();
+    this.interpretKeyEvents(event);
     return false;
   },
 
@@ -12101,8 +12864,16 @@ SC.TextArea = SC.View.extend({
     this._updateElementValue();
   },
 
+  interpretKeyEvents: function(event) {
+    var map = SC.TextArea.KEY_EVENTS;
+    var method = map[event.keyCode];
+
+    this._elementValueDidChange();
+    if (method) { return this[method](event); }
+  },
+
   _elementValueDidChange: function() {
-    set(this, 'value', this.$().val());
+    set(this, 'value', this.$().val() || null);
   },
 
   _updateElementValue: function() {
@@ -12110,35 +12881,23 @@ SC.TextArea = SC.View.extend({
   }.observes('value')
 });
 
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:   SproutCore Handlebar Views
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-
-
-
-})({});
-
-
-(function(exports) {
-// ==========================================================================
-// Project:   SproutCore Handlebar Views
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-// TODO: should actually compile the template and THEN return that function.
-// This way we won't have to compile templates on the fly.  This version just
-// makes the compile happen when used.
-exports.compileFormat = function(tmpl) {
-  return '\nrequire("sproutcore-handlebars");\nreturn SC.Handlebars.compile('+JSON.stringify(tmpl)+');';
+SC.TextArea.KEY_EVENTS = {
+  13: 'insertNewline',
+  27: 'cancel'
 };
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:   SproutCore Handlebar Views
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
+
+
 
 })({});
 
@@ -12339,7 +13098,8 @@ var get = SC.get, getPath = SC.getPath, fmt = SC.String.fmt;
         inverseTemplate: inverse,
         property: property,
         previousContext: ctx,
-        isEscaped: options.hash.escaped
+        isEscaped: options.hash.escaped,
+	tagName: options.hash.tagName || 'span'
       });
 
       var observer, invoker;
@@ -12706,11 +13466,12 @@ SC.Handlebars.bindClasses = function(context, classBindings, view, id) {
 // TODO: Don't require the entire module
 
 var get = SC.get, set = SC.set;
+var PARENT_VIEW_PATH = /^parentView\./;
 
 /** @private */
 SC.Handlebars.ViewHelper = SC.Object.create({
 
-  viewClassFromHTMLOptions: function(viewClass, options) {
+  viewClassFromHTMLOptions: function(viewClass, options, thisContext) {
     var extensions = {},
         classes = options['class'],
         dup = false;
@@ -12738,6 +13499,36 @@ SC.Handlebars.ViewHelper = SC.Object.create({
       delete options.classBinding;
     }
 
+    // Look for bindings passed to the helper and, if they are
+    // local, make them relative to the current context instead of the
+    // view.
+    var path;
+
+    for (var prop in options) {
+      if (!options.hasOwnProperty(prop)) { continue; }
+
+      // Test if the property ends in "Binding"
+      if (SC.IS_BINDING.test(prop)) {
+        path = options[prop];
+        if (!SC.isGlobalPath(path)) {
+
+          // Deprecation warning for users of beta 2 and lower, where
+          // this facility was not available. The workaround was to bind
+          // to parentViews; since this is no longer necessary, issue
+          // a notice.
+          if (PARENT_VIEW_PATH.test(path)) {
+            SC.Logger.warn("As of SproutCore 2.0 beta 3, it is no longer necessary to bind to parentViews. Instead, please provide binding paths relative to the current Handlebars context.");
+          } else {
+            options[prop] = 'bindingContext.'+path;
+          }
+        }
+      }
+    }
+
+    // Make the current template context available to the view
+    // for the bindings set up above.
+    extensions.bindingContext = thisContext;
+
     return viewClass.extend(options, extensions);
   },
 
@@ -12758,7 +13549,7 @@ SC.Handlebars.ViewHelper = SC.Object.create({
 
     sc_assert(SC.String.fmt('You must pass a view class to the #view helper, not %@ (%@)', [path, newView]), SC.View.detect(newView));
 
-    newView = this.viewClassFromHTMLOptions(newView, hash);
+    newView = this.viewClassFromHTMLOptions(newView, hash, thisContext);
     var currentView = data.view;
     var viewOptions = {};
 
@@ -12807,27 +13598,6 @@ Handlebars.registerHelper('view', function(path, options) {
 var get = SC.get;
 
 /**
-  @static
-
-  A map of parent tags to their default child tags. You can add
-  additional parent tags if you want collection views that use
-  a particular parent tag to default to a child tag.
-
-  @type Hash
-  @constant
-*/
-SC.Handlebars.CONTAINER_MAP = {
-  ul: 'li',
-  ol: 'li',
-  table: 'tr',
-  thead: 'tr',
-  tbody: 'tr',
-  tfoot: 'tr',
-  tr: 'td',
-  select: 'option'
-};
-
-/**
   @name Handlebars.helpers.collection
   @param {String} path
   @param {Hash} options
@@ -12838,6 +13608,9 @@ Handlebars.registerHelper('collection', function(path, options) {
   if (path && path.data && path.data.isRenderData) {
     options = path;
     path = undefined;
+    sc_assert("You cannot pass more than one argument to the collection helper", arguments.length === 1);
+  } else {
+    sc_assert("You cannot pass more than one argument to the collection helper", arguments.length === 2);
   }
 
   var fn = options.fn;
@@ -12847,7 +13620,7 @@ Handlebars.registerHelper('collection', function(path, options) {
   // If passed a path string, convert that into an object.
   // Otherwise, just default to the standard class.
   var collectionClass;
-  collectionClass = path ? SC.getPath(path) : SC.CollectionView;
+  collectionClass = path ? SC.getPath(this, path) : SC.CollectionView;
   sc_assert("%@ #collection: Could not find %@".fmt(data.view, path), !!collectionClass);
 
   var hash = options.hash, itemHash = {}, match;
@@ -12876,21 +13649,16 @@ Handlebars.registerHelper('collection', function(path, options) {
   }
 
   var tagName = hash.tagName || get(collectionClass, 'proto').tagName;
-  var childTag = SC.Handlebars.CONTAINER_MAP[tagName];
-
-  if (childTag) {
-    itemHash.tagName = itemHash.tagName || childTag;
-  }
 
   if (fn) {
     itemHash.template = fn;
     delete options.fn;
   }
 
-  if (inverse !== Handlebars.VM.noop) {
+  if (inverse && inverse !== Handlebars.VM.noop) {
     hash.emptyView = SC.View.extend({
       template: inverse,
-      tagName: itemHash.tagName || childTag
+      tagName: itemHash.tagName
     });
   }
 
@@ -12931,19 +13699,19 @@ Handlebars.registerHelper('each', function(path, options) {
 // ==========================================================================
 /*globals Handlebars */
 
-var get = SC.get, getPath = SC.getPath;
+var getPath = SC.getPath;
 
 /**
-  `raw` allows you to output a property without binding. *Important:* The 
+  `unbound` allows you to output a property without binding. *Important:* The 
   output will not be updated if the property changes. Use with caution.
 
-      <div>{{raw somePropertyThatDoesntChange}}</div>
+      <div>{{unbound somePropertyThatDoesntChange}}</div>
 
-  @name Handlebars.helpers.raw
+  @name Handlebars.helpers.unbound
   @param {String} property
   @returns {String} HTML string
 */
-Handlebars.registerHelper('raw', function(property) {
+Handlebars.registerHelper('unbound', function(property) {
   return getPath(this, property);
 });
 
@@ -12956,6 +13724,46 @@ Handlebars.registerHelper('raw', function(property) {
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
+/*globals Handlebars */
+
+var getPath = SC.getPath;
+
+/**
+  `log` allows you to output the value of a value in the current rendering
+  context.
+
+    {{log myVariable}}
+
+  @name Handlebars.helpers.log
+  @param {String} property
+*/
+Handlebars.registerHelper('log', function(property) {
+  console.log(getPath(this, property));
+});
+
+/**
+  The `debugger` helper executes the `debugger` statement in the current
+  context.
+
+    {{debugger}}
+
+  @name Handlebars.helpers.debugger
+  @param {String} property
+*/
+Handlebars.registerHelper('debugger', function() {
+  debugger;
+});
+
+})({});
+
+
+(function(exports) {
+// ==========================================================================
+// Project:   SproutCore Handlebar Views
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+
 
 
 
@@ -13042,7 +13850,6 @@ SC.$(document).ready(function() {
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-
 
 
 

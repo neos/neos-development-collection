@@ -1,5 +1,5 @@
 {{view T3.Content.UI.Button label="Inspect" isVisibleBinding="T3.ContentModule.showDevelopmentFeatures"}}
 
-{{#collection contentBinding="parentView.content" tagName="ul"}}
-	{{view T3.Content.UI.BreadcrumbItem itemBinding="parentView.content"}}
+{{#collection contentBinding="content" tagName="ul"}}
+	{{view T3.Content.UI.BreadcrumbItem itemBinding="content"}}
 {{/collection}}

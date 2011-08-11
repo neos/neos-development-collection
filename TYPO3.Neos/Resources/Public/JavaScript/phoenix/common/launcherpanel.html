@@ -1,8 +1,8 @@
 <div class="three-columns tc-1-1-1">
 	<div class="c-1">
 		<h2>Modules</h2>
-		{{#collection contentBinding="parentView.modules" tagName="ul" classNames="t3-launcher-panel-modules"}}
-			{{#view tagName="a" attributeBindings="href" hrefBinding="parentView.content.url"}}{{parentView.content.label}}{{/view}}
+		{{#collection contentBinding="modules" tagName="ul" classNames="t3-launcher-panel-modules"}}
+			{{#view tagName="a" attributeBindings="href" hrefBinding="content.url"}}{{itemView.content.label}}{{/view}}
 		{{/collection}}
 	</div>
 	{{#boundIf T3.ContentModule.showDevelopmentFeatures}}

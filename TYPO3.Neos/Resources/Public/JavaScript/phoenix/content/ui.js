@@ -101,7 +101,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		popoverTitle: '',
 		_popoverContent: $('<div></div>'),
 		popoverPosition: 'bottom',
-		_initializePopover: function() {
+		didInsertElement: function() {
 			var that = this;
 			this.$().popover({
 				header: $('<div>' + that.get('popoverTitle') + '</div>'),
@@ -117,7 +117,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 					that._onPopoverOpen.call(that);
 				}
 			});
-		}.observes('element'),
+		},
 
 		_onPopoverOpen: function() {
 			// template method, to be implemented in subclasses.
