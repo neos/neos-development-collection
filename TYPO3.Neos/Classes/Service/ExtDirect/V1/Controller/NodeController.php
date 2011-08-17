@@ -240,7 +240,8 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	protected function createTypeHereTextNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode) {
 		$sectionNode = $pageNode->createNode('main', 'TYPO3.TYPO3:Section');
 		$textNode = $sectionNode->createNode(uniqid(), 'TYPO3.TYPO3:Text');
-		$textNode->setProperty('text', '<em>[ Start typing here ]</em>');
+		$textNode->setProperty('headline', '[Headline]');
+		$textNode->setProperty('text', '[ Start typing here ]');
 	}
 
 	/**

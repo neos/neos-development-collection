@@ -559,3 +559,6 @@ div.aloha-block:hover > div.aloha-block-inner {
 
 .popover {
   position: fixed !important; }
+
+.t3-dd-drag-ghost-pagetree {
+  background: white; }

@@ -97,30 +97,58 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		}
 	});
 
+	/**
+	 * T3.Content.UI.PopoverButton
+	 *
+	 * A button which, when pressed, shows a "popover". You will subclass
+	 * this class and implement onPopoverOpen / popoverTitle / $popoverContent
+	 */
 	var PopoverButton = ToggleButton.extend({
+
+		/**
+		 * @var {String} title of the popover
+		 */
 		popoverTitle: '',
-		_popoverContent: $('<div></div>'),
+
+		/**
+		 * @var {jQuery} content of the popover. to be manipulated in the onPopoverOpen function
+		 */
+		$popoverContent: $('<div></div>'),
+
+		/**
+		 * @var {String} one of "top, bottom, left, right". Specifies the popover position.
+		 */
 		popoverPosition: 'bottom',
+
+		/**
+		 * Lifecycle method by SproutCore, executed as soon as the element has been
+		 * inserted in the DOM and the $() method is executable. We initialize the
+		 * popover at this point.
+		 */
 		didInsertElement: function() {
 			var that = this;
 			this.$().popover({
 				header: $('<div>' + that.get('popoverTitle') + '</div>'),
-				content: that._popoverContent,
+				content: that.$popoverContent,
 				preventLeft: (that.get('popoverPosition')==='left' ? false : true),
 				preventRight: (that.get('popoverPosition')==='right' ? false : true),
 				preventTop: (that.get('popoverPosition')==='top' ? false : true),
 				preventBottom: (that.get('popoverPosition')==='bottom' ? false : true),
+				zindex: 10090,
 				closeEvent: function() {
 					that.set('pressed', false);
 				},
 				openEvent: function() {
-					that._onPopoverOpen.call(that);
+					that.onPopoverOpen.call(that);
 				}
 			});
 		},
 
-		_onPopoverOpen: function() {
-			// template method, to be implemented in subclasses.
+		/**
+		 * Template method, to be implemented in subclasses. Usually,
+		 * you want to manipulate this.$popoverContent in this method.
+		 */
+		onPopoverOpen: function() {
 		}
 	});
 
@@ -205,53 +233,17 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	 * - PageTreeLoader
 	 * - PageTreeButton
 	 */
-	var getPageTreeLoader = function() {
-		// We need to wrap the Ext.extend() call in a function which is evaluated lazily,
-		// as ExtJS from Aloha is *not yet loaded* when this file is first included.
-		return Ext.extend(Ext.tree.TreeLoader, {
-			/**
-			 * Wrapper for extDirect call to NodeController which
-			 * adds the current node path information to the extDirect call
-			 *
-			 * @param {String} contextNodePath the current Context Node Path to get subnodes from
-			 * @param {Function} callback function after request is done
-			 * @return {void}
-			 */
-			directFn: function(contextNodePath, callback) {
-				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3.TYPO3:Page', callback);
-			},
-
-			/**
-			 * Process the response of directFn and give the appropriate data to handleResponse
-			 *
-			 * @param {Object} result the result part from the response of the server request
-			 * @param {Object} response the response object of the server request
-			 * @param {Object} args request arguments passed through
-			 * @return {void}
-			 */
-			processDirectResponse: function(result, response, args) {
-				if (response.status) {
-					this.handleResponse({
-						responseData: Ext.isArray(result.data) ? result.data : null,
-						responseText: result,
-						argument: args
-					});
-				} else {
-					this.handleFailure({
-						argument: args
-					});
-				}
-			}
-		});
-	};
-
 	var PageTreeButton = PopoverButton.extend({
-		_popoverContent: $('<div class="extjs-container"></div>'),
+		$popoverContent: $('<div class="extjs-container"></div>'),
+
+		/**
+		 * @var {Ext.tree.TreePanel} Reference to the ExtJS tree; or null if not yet built.
+		 */
 		_tree: null,
-		_onPopoverOpen: function() {
+
+		onPopoverOpen: function() {
 			if (this._tree) return;
 
-			var PageTreeLoader = getPageTreeLoader();
 			this._tree = new Ext.tree.TreePanel({
 				width:250,
 				height:350,
@@ -260,25 +252,146 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 				animate: true,
 				enableDD: true,
 				border: false,
+				ddGroup: 'pages',
 
 				root: {
 					id: $('body').data('_siteroot'), // TODO: This and the following properties might later come from the SproutCore model...
 					text: $('body').data('_sitename'),
 					draggable: false
 				},
-				listeners: {
-					click: function(node, event) {
-							// TODO: clean this up, so that clicking the "GOTO" link works without this click hack; or built some different way of handling this case.
-						if ($(event.getTarget()).is('a.t3-gotoPage')) {
-							window.location.href = $(event.getTarget()).attr('href');
+
+				loader: new Ext.tree.TreeLoader({
+					/**
+					 * Wrapper for extDirect call to NodeController which
+					 * adds the child node type to the extDirect call as 2nd parameter.
+					 *
+					 * @param {String} contextNodePath the current Context Node Path to get subnodes from
+					 * @param {Function} callback function after request is done
+					 * @return {void}
+					 */
+					directFn: function(contextNodePath, callback) {
+						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, 'TYPO3.TYPO3:Page', callback);
+					},
+
+					/**
+					 * Here, we convert the response back to a format ExtJS understands; namely we use result.data instead of result here.
+					 *
+					 * @param {Object} result the result part from the response of the server request
+					 * @param {Object} response the response object of the server request
+					 * @param {Object} args request arguments passed through
+					 * @return {void}
+					 */
+					processDirectResponse: function(result, response, args) {
+						if (response.status) {
+							this.handleResponse({
+								responseData: Ext.isArray(result.data) ? result.data : null,
+								responseText: result,
+								argument: args
+							});
+						} else {
+							this.handleFailure({
+								argument: args
+							});
 						}
 					}
-				},
-				loader: new PageTreeLoader()
-			});
-			this._tree.render(this._popoverContent[0]);
+				}),
 
+				listeners: {
+					click: this._onTreeNodeClick,
+					movenode: this._onTreeNodeMove,
+					beforenodedrop: this._onTreeNodeDrop
+				}
+			});
+
+			this._initNewPageDraggable();
+
+			var $treeContainer = $('<div />');
+			this.$popoverContent.append($treeContainer);
+
+			this._tree.render($treeContainer[0]);
 			this._tree.getRootNode().expand();
+		},
+
+		/**
+		 * Initializer for the "new page" draggable, creating an element
+		 * and a Drag Zone.
+		 */
+		_initNewPageDraggable: function() {
+			var $newPageDraggable = $('<div>New page</div>');
+			this.$popoverContent.append($newPageDraggable);
+
+			new Ext.dd.DragZone($newPageDraggable[0], {
+				ddGroup: 'pages',
+
+				getDragData: function(event) {
+					this.proxyElement = document.createElement('div');
+
+					return {
+						ddel: this.proxyElement,
+						mode: 'new'
+					}
+				},
+
+				onInitDrag: function() {
+					this.proxyElement.shadow = false;
+					this.proxyElement.innerHTML = '<div class="t3-dd-drag-ghost-pagetree">' +
+						'Insert Page here' +
+					'</div>';
+
+					this.proxy.update(this.proxyElement);
+				}
+			});
+		},
+
+		/**
+		 * Callback which is executed when a TreeNode is clicked.
+		 *
+		 * @param {Ext.tree.TreeNode} node
+		 * @param {Object} event
+		 */
+		_onTreeNodeClick: function(node, event) {
+				// TODO: clean this up, so that clicking the "GOTO" link works without this click hack; or built some different way of handling this case.
+			if ($(event.getTarget()).is('a.t3-gotoPage')) {
+				window.location.href = $(event.getTarget()).attr('href');
+			};
+		},
+
+		/**
+		 * Callback which is executed when a TreeNode is moved to an other TreeNode.
+		 */
+		_onTreeNodeMove: function() {
+			// TODO: implement
+		},
+
+		/**
+		 * Callback, executed when something is dropped on the tree. We insert
+		 * an element in case the newPageDraggable is dropped on the tree.
+		 *
+		 * @param {Object} event
+		 */
+		_onTreeNodeDrop: function(event) {
+			if (event.data.mode === 'new') {
+				var position = 0;
+				if (event.point === 'above') {
+					position = -1;
+				} else if (event.point === 'below') {
+					position = 1;
+				}
+
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(
+					event.target.attributes.id,
+					{
+						contentType: 'TYPO3.TYPO3:Page',
+						properties: {
+							title: '[New Page]'
+						}
+					},
+					position,
+					function() {
+						event.target.parentNode.reload();
+					}
+				);
+			}
 		}
 	});
 
