@@ -23,7 +23,24 @@ $footer-height: 30px;
 	-moz-border-radius: $rounded $rounded $rounded $rounded;
 	-webkit-border-radius: $rounded $rounded $rounded $rounded;
 }
-
+@mixin transition($value, $duration) {
+	transition-property: $value;
+	transition-duration: $duration;
+	-moz-transition-property: $value;
+	-moz-transition-duration: $duration;
+	-webkit-transition-property: $value;
+	-webkit-transition-duration: $duration;
+}
+@mixin gradient-linear($color1, $color2) {
+	background: $color1; // old Browsers //
+	background: -moz-linear-gradient(top, $color1 0%, $color2 100%); // Firefox //
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$color1), color-stop(100%,$color2)); // Chrome,Safari4+ //
+	background: -webkit-linear-gradient(top, $color1 0%,$color2 100%); // Chrome10+,Safari5.1+ //
+	background: -o-linear-gradient(top, $color1 0%,$color2 100%); // Opera11.10+ //
+	background: -ms-linear-gradient(top, $color1 0%,$color2 100%); // IE10+ //
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$color1', endColorstr='$color2',GradientType=0 ); // IE6-9 //
+	background: linear-gradient(top, $color1 0%,$color2 100%); // W3C //
+}
 /** CSS start **/
 body.t3-ui-controls-active {
 	margin-right: $property-panel-width;
@@ -42,7 +59,7 @@ body.t3-ui-controls-active {
 }
 #t3-ui-top {
 	@include box-shadow(0px, 1px, 3px, #000000);
-	background: -moz-linear-gradient(center top , #444444, #2D2D2D) repeat scroll 0 0 transparent;
+	@include gradient-linear(#444444, #2d2d2d);
 	left: 0;
 	top: 0;
 	position: fixed;
@@ -91,12 +108,7 @@ body.t3-ui-controls-active {
 				color: #aaa;
 			}
 			&:focus {
-				transition-property: background;
-				transition-duration: 0.5s;
-				-moz-transition-property: background;
-				-moz-transition-duration: 0.5s;
-				-webkit-transition-property: background;
-				-webkit-transition-duration: 0.5s;
+				@include transition(background, 0.5s);
 				background: #fff;
 			}
 		}
@@ -116,7 +128,7 @@ body.t3-ui-controls-active {
 		top: 25px;
 		right: $property-panel-width + 30px;
 		border-radius: 0 0 10px 10px;
-		background: -moz-linear-gradient(center top , #fff, #FCE4C4) repeat scroll 0 0 transparent;
+		@include gradient-linear(#ffffff, #FCE4C4);
 		padding: 15px;
 		opacity: 0.9;
 	}
@@ -138,7 +150,7 @@ ul.t3-topbar {
 }
 
 .t3-topbar li.t3-active {
-	background: -moz-linear-gradient(center top , #aaaaaa, #555555) repeat scroll 0 0 transparent;
+	@include gradient-linear(#aaaaaa, #555555);
 	text-shadow: 1px 1px 0 #444444;
 	box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
 	-moz-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
@@ -149,7 +161,7 @@ ul.t3-topbar {
 .t3-rightarea {
 	@include box-shadow(-2px, 0px, 3px, rgba(0, 0, 0, 0.5));
 	@include box-sizing;
-	background: -moz-linear-gradient(center top , #2D2D2D, #111111) repeat scroll 0 0 transparent;
+	@include gradient-linear(#2d2d2d, #111111);
 	height: 100%;
 	margin-top: $menu-height + $launcher-height;
 	position: fixed;
@@ -175,7 +187,7 @@ ul.t3-topbar {
 		padding: 0 10px;
 		height: 30px;
 		line-height: 30px;
-		background: -moz-linear-gradient(center top , #555555, #373737) repeat scroll 0 0 transparent;
+		@include gradient-linear(#555555, #373737);
 		color: #ffffff;
 		font-weight: normal;
 	}
@@ -188,11 +200,15 @@ ul.t3-topbar {
 		height: 20px;
 		line-height: 20px;
 		border: 1px solid #000000;
+		box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset;
 		-moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset;
+		-webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset;
 		background: #cacaca;
 		@include rounded-corner(4px);
 		&:focus {
+			box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
 			-moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
+			-webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
 		}
 	}
 }
@@ -200,7 +216,7 @@ ul.t3-topbar {
 /*** Toolbar ***/
 #t3-toolbar {
 	// @include box-shadow(-1px, 2px, 3px, rgba(0, 0, 0, 0.5));
-	background: -moz-linear-gradient(center top , #666, #373737) repeat scroll 0 0 transparent;
+	@include gradient-linear(#666666, #373737);
 	height: $toolbar-height;
 	left: 0;
 	position: fixed;
@@ -288,36 +304,36 @@ ul.t3-topbar {
 	}
 }
 button.t3-button {
-	background: -moz-linear-gradient(center top , #999999, #555555) repeat scroll 0 0 transparent;
+	@include gradient-linear(#999999, #555555);
 	border: 1px solid #272727;
 	@include rounded-corner(4px);
 	color: #e4e4e4;
-	padding: 1px 4px;
+	padding: 0 4px 1px 4px;
+	height: 20px;
 	text-shadow: 0 -1px 0 #444444;
-	transition-property: background;
-	transition-duration: 0.8s;
-	-moz-transition-property: background;
-	-moz-transition-duration: 0.8s;
-	-webkit-transition-property: background;
-	-webkit-transition-duration: 0.8s;
+	@include transition(background, 0.8s);
 	cursor: pointer;
 	&:hover {
-		background: -moz-linear-gradient(center top , #aaaaaa, #666666) repeat scroll 0 0 transparent;
+		@include gradient-linear(#aaaaaa, #666666);
 	}
 	&:focus,
 	&:active {
 		background: -moz-linear-gradient(top, #cccccc 0%, #666666 70%, #888888 100%);
 		box-shadow: 0px 4px 3px #666666 inset;
+		-moz-box-shadow: 0px 4px 3px #666666 inset;
+		-webkit-box-shadow: 0px 4px 3px #666666 inset;
 	}
 	&.pressed {
-		background: -moz-linear-gradient(center top , #f18f0b, #7c4700) repeat scroll 0 0 transparent;
+		@include gradient-linear(#f18f0b, #7c4700);
 		&:hover {
-			background: -moz-linear-gradient(center top , #f69a1e, #925502) repeat scroll 0 0 transparent;
+			@include gradient-linear(#f69a1e, #925502);
 		}
 		&:focus,
 		&:active {
 			background: -moz-linear-gradient(top, #f69a1e 0%, #925502 70%, #a66003 100%);
 			box-shadow: 0px 4px 3px #925502 inset;
+			-moz-box-shadow: 0px 4px 3px #925502 inset;
+			-webkit-box-shadow: 0px 4px 3px #925502 inset;
 		}
 	}
 	&[disabled] {
@@ -327,13 +343,15 @@ button.t3-button {
 		&:hover,
 		&:active,
 		&:focus {
-			background: -moz-linear-gradient(center top , #999999, #555555) repeat scroll 0 0 transparent;
+			@include gradient-linear(#999999, #555555);
 			box-shadow: 0 0 0 transparent;
+			-webkit-box-shadow: 0 0 0 transparent;
+			-moz-box-shadow: 0 0 0 transparent;
 		}
 	}
 }
 #t3-footer {
-	background: -moz-linear-gradient(center top , #2D2D2D, #111111) repeat scroll 0 0 transparent;
+	@include gradient-linear(#2d2d2d, #111111);
 	bottom: 0;
 	left: 0;
 	position: fixed;
@@ -354,7 +372,12 @@ button.t3-button {
 	overflow: hidden;
 	font-size: 9px;
 	display: none;
-	background-image: url(../Images/ContentModule/plus.png), -moz-linear-gradient(center top , #eeeeee, #bbbbbb);
+	background-image: url(../Images/ContentModule/plus.png);
+	background-image: url(../Images/ContentModule/plus.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+	background-image: url(../Images/ContentModule/plus.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bbbbbb));
+	background-image: url(../Images/ContentModule/plus.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Images/ContentModule/plus.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Images/ContentModule/plus.png), linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
 	background-position: 50% 50%, 50% 50%;
 	background-repeat: no-repeat, repeat;
 	background-color: transparent;
@@ -362,6 +385,8 @@ button.t3-button {
 	border-style: solid solid none solid;
 	border-color: #909090;
 	border-radius: 5px 5px 0 0;
+	-moz-border-radius: 5px 5px 0 0;
+	-webkit-border-radius: 5px 5px 0 0;
 	text-indent: -9999px;
 	@include box-shadow(0px, -1px, 4px, #909090);
 	cursor: pointer;
@@ -379,7 +404,12 @@ button.t3-button {
 }
 .t3-delete-handle {
 	right: 25px;
-	background-image: url(../Images/ContentModule/delete.png), -moz-linear-gradient(center top , #eeeeee, #bbbbbb);
+	background-image: url(../Images/ContentModule/delete.png);
+	background-image: url(../Images/ContentModule/delete.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+	background-image: url(../Images/ContentModule/delete.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bbbbbb));
+	background-image: url(../Images/ContentModule/delete.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Images/ContentModule/delete.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Images/ContentModule/delete.png), linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
 }
 
 .aloha-block-active > .t3-delete-handle,
@@ -447,7 +477,7 @@ div.aloha-block:hover > div.aloha-block-inner {
 }
 
 .ui-dialog a.t3-content-new {
-    background: -moz-linear-gradient(#CCCCCC, #333333);
+    @include gradient-linear(#cccccc, #333333);
     border-radius: 3px;
     display: block;
     font-size: 22px;
