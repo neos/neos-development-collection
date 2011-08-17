@@ -1,6 +1,16 @@
 // All CSS changes should be done IN THIS FILE, and then our CSS team (aka Berit)
 // will take the changes from this file, review them and merge them with the other file.
 
+
+// Highlight changed elements in the Property Panel
+.t3-propertypanel-form {
+	input[type=text] {
+		&.modified {
+		   border: 1px solid #54974a;
+		}
+	}
+}
+
 // Page Tree Styling
 .popover .x-tree .t3-gotoPage {
 	display:none;

@@ -218,8 +218,9 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 				view: this
 			},
 			hash: {
-				"class": contextData.key,
-				valueBinding: "T3.Content.Model.BlockSelection.selectedBlock." + contextData.key
+				'class': contextData.key, // we need to escape "class" as it is a reserved keyword in JS
+				classBinding: 'T3.Content.Model.BlockSelection.selectedBlock._valueModified.' + contextData.key,
+				valueBinding: 'T3.Content.Model.BlockSelection.selectedBlock.' + contextData.key
 			}
 		};
 

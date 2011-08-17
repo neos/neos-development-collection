@@ -29,6 +29,16 @@ function(launcherTemplate) {
 		_publishable: false,
 		_status: '',
 
+		/**
+		 * If a property "foo" on the block is modified, then _valueModified.foo
+		 * has value "modified". Else, it is not set or has the empty string value.
+		 *
+		 * This can be used to adjust the UI when a value is modified.
+		 *
+		 * @var {SC.Object}
+		 */
+		_valueModified: null,
+
 		// from aloha
 		_workspacename: null,
 
@@ -81,9 +91,13 @@ function(launcherTemplate) {
 		_somePropertyChanged: function(that, propertyName) {
 			this._updateChangedPropertyInAlohaBlock(propertyName);
 			var hasChanges = false;
+
 			$.each(this._originalValues, function(key, value) {
 				if (that.get(key) !== value) {
+					that._valueModified.set(key, 'modified');
 					hasChanges = true;
+				} else {
+					that._valueModified.set(key, '');
 				}
 			});
 			this.set('_modified', hasChanges);
@@ -137,6 +151,7 @@ function(launcherTemplate) {
 
 	var PageBlock = Block.extend({
 		_title: 'Page',
+		_valueModified: SC.Object.create(),
 		init: function() {
 			this.set('title', $('body').data('title'));
 			this.set('about', $('body').attr('about'));
@@ -213,6 +228,8 @@ function(launcherTemplate) {
 				init: function() {
 					var that = this;
 					this._originalValues = {};
+
+					that._valueModified = SC.Object.create();
 
 					// HACK: Add observer for each element, as we do not know how to add one observer for *all* elements.
 					$.each(attributes, function(key, value) {

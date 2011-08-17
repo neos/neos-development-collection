@@ -546,6 +546,9 @@ div.aloha-block:hover > div.aloha-block-inner {
 .tc-1-1-1 .c-3 {
   float: right; }
 
+.t3-propertypanel-form input[type=text].modified {
+  border: 1px solid #54974a; }
+
 .popover .x-tree .t3-gotoPage {
   display: none;
   position: absolute;
