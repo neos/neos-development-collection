@@ -16,18 +16,27 @@ function() {
 	var Preview = SC.Object.create({
 		previewMode: false,
 
-		togglePreview: function(pressed) {
+		togglePreview: function(isPreviewEnabled) {
 			var i = 0, count = 5, allDone = function() {
 				i++;
 				if (i >= count) {
-					if (pressed) {
+					if (isPreviewEnabled) {
 						$('body').removeClass('t3-ui-controls-active');
+						$('body').addClass('t3-ui-controls-inactive');
+						Aloha.editables.forEach(function(editable) {
+							editable.disable();
+						});
 					} else {
 						$('body').addClass('t3-ui-controls-active');
+						$('body').removeClass('t3-ui-controls-inactive');
+
+						Aloha.editables.forEach(function(editable) {
+							editable.enable();
+						});
 					}
 				}
 			};
-			if (pressed) {
+			if (isPreviewEnabled) {
 				$('body').animate({
 					'margin-top': 30,
 					'margin-right': 0
@@ -67,7 +76,7 @@ function() {
 					'margin-right': 200
 				}, 'fast', allDone);
 			}
-			this.set('previewMode', pressed);
+			this.set('previewMode', isPreviewEnabled);
 		}
 	});
 

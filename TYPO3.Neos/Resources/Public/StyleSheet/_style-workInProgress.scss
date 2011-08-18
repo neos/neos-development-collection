@@ -43,3 +43,38 @@
 	background-image: -o-linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
 	background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
 }
+
+// Revert modifications to the content area where it is possible
+.t3-ui-controls-inactive {
+
+	// Aloha Block highlighting
+	div.aloha-block:hover > .aloha-block-inner {
+		cursor:default;
+	}
+
+	div.aloha-block-inner {
+		outline:none !important;
+		background:none !important;
+	}
+
+
+	// Handles around Aloha Blocks
+	.t3-delete-handle,
+	.t3-add-below-handle,
+	.t3-add-above-handle,
+	.t3-status-indicator {
+		display: none !important;
+	}
+
+	// Aloha Floating Menu
+	#aloha-floatingmenu-shadow,
+	.aloha-floatingmenu,
+	.x-shadow {
+		display:none !important;
+	}
+
+	// Deleted content elements
+	.t3-contentelement-removed {
+		display:none;
+	}
+}
