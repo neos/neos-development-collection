@@ -32,19 +32,19 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	/**
 	 * @var \SplObjectStorage
 	 */
-	protected $addedObjects;
+	protected $addedNodes;
 
 	/**
 	 * @var \SplObjectStorage
 	 */
-	protected $removedObjects;
+	protected $removedNodes;
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->addedObjects = new \SplObjectStorage();
-		$this->removedObjects = new \SplObjectStorage();
+		$this->addedNodes = new \SplObjectStorage();
+		$this->removedNodes = new \SplObjectStorage();
 		parent::__construct();
 	}
 
@@ -56,8 +56,8 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @api
 	 */
 	public function add($object) {
-		$this->addedObjects->attach($object);
-		$this->removedObjects->detach($object);
+		$this->addedNodes->attach($object);
+		$this->removedNodes->detach($object);
 		parent::add($object);
 	}
 
@@ -69,10 +69,10 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @api
 	 */
 	public function remove($object) {
-		if ($this->addedObjects->contains($object)) {
-			$this->addedObjects->detach($object);
+		if ($this->addedNodes->contains($object)) {
+			$this->addedNodes->detach($object);
 		}
-		$this->removedObjects->attach($object);
+		$this->removedNodes->attach($object);
 		parent::remove($object);
 	}
 
@@ -133,13 +133,13 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 		$depth = substr_count($path, '/');
 		while($workspace !== NULL) {
 
-			foreach ($this->addedObjects as $node) {
+			foreach ($this->addedNodes as $node) {
 				if ($node->getPath() === $path && $node->getWorkspace() === $workspace) {
 					return $node;
 				}
 			}
 
-			foreach ($this->removedObjects as $node) {
+			foreach ($this->removedNodes as $node) {
 				if ($node->getPath() === $path && $node->getWorkspace() === $workspace) {
 					return NULL;
 				}
@@ -238,7 +238,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			$workspace = $workspace->getBaseWorkspace();
 		}
 
-		foreach ($this->addedObjects as $addedNode) {
+		foreach ($this->addedNodes as $addedNode) {
 			if (substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
 				$foundNodes[$addedNode->getIdentifier()] = $addedNode;
 			}
@@ -384,7 +384,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * Iterates of the array of objects and removes all those which have recently been removed from the repository,
 	 * but whose removal has not yet been persisted.
 	 *
-	 * Technically this is a check of the given array against $this->removedObjects.
+	 * Technically this is a check of the given array against $this->removedNodes.
 	 *
 	 * @param array &$objects An array of objects to filter, passed by reference.
 	 * @return void
@@ -392,7 +392,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 */
 	protected function filterOutRemovedObjects(array &$objects) {
 		foreach ($objects as $index => $object) {
-			if ($this->removedObjects->contains($object)) {
+			if ($this->removedNodes->contains($object)) {
 				unset($objects[$index]);
 			}
 		}
