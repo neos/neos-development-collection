@@ -92,6 +92,11 @@ function(launcherTemplate) {
 			this._updateChangedPropertyInAlohaBlock(propertyName);
 			var hasChanges = false;
 
+			// We need to register this block as changed even if it is
+			// already inside, so that the local store can be updated
+			// with the new content.
+			Changes.addChange(this);
+
 			$.each(this._originalValues, function(key, value) {
 				if (that.get(key) !== value) {
 					that._valueModified.set(key, 'modified');
@@ -404,6 +409,9 @@ function(launcherTemplate) {
 		addChange: function(block) {
 			if (!this.contains(block)) {
 				this.pushObject(block);
+			} else {
+					// We still need to update the local store, if the block is already recorded as "changed"
+				this._saveToLocalStore();
 			}
 		},
 		removeChange: function(block) {
