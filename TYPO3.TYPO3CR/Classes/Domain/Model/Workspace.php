@@ -52,7 +52,7 @@ class Workspace {
 	 * Root node of this workspace
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
-	 * @ManyToOne(cascade={"persist"})
+	 * @ManyToOne
 	 * @JoinColumn(referencedColumnName="id")
 	 */
 	protected $rootNode;

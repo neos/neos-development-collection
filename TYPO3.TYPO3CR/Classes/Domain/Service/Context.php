@@ -129,10 +129,15 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 				}
 				$liveWorkspace = $this->workspaceRepository->findOneByName('live');
 				if (!$liveWorkspace) {
-					$liveWorkspace = $this->objectManager->create('TYPO3\TYPO3CR\Domain\Model\Workspace', 'live');
+					$liveWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
 					$this->workspaceRepository->add($liveWorkspace);
 				}
-				$this->workspace = ($this->workspaceName === 'live') ? $liveWorkspace : $this->objectManager->create('TYPO3\TYPO3CR\Domain\Model\Workspace', $this->workspaceName, $liveWorkspace);
+				if ($this->workspaceName === 'live') {
+					$this->workspace = $liveWorkspace;
+				} else {
+					$this->workspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace($this->workspaceName, $liveWorkspace);
+					$this->workspaceRepository->add($this->workspace);
+				}
 			}
 			$this->workspace->setContext($this);
 		}

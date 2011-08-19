@@ -77,33 +77,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	}
 
 	/**
-	 * Replaces an existing object with the same identifier by the given object
-	 * after checking the type of the object fits to the repositories type.
-	 *
-	 * Can deal with nodes and with ProxyNodes.
-	 *
-	 * @param object $object
-	 * @return void
-	 */
-	public function update($object) {
-		if ($object instanceof \TYPO3\TYPO3CR\Domain\Model\ProxyNode) {
-			 if ($object->getNewNode() !== NULL) {
-					// in this case, a ProxyNode has been returned from persistence,
-					// so there was no materialized node in this workspace.
-					// As there is now a newNode, the user changed something on the
-					// ProxyNode, leading to the creation of the newNode.
-					// Thus, we need to *add* the newNode.
-				$this->add($object->getNewNode());
-			}
-				// if newNode is NULL, we do not need to do anything, as
-				// this means no changes on the ProxyNode have occured,
-				// so we do not need to save anything.
-		} else {
-			parent::update($object);
-		}
-	}
-
-	/**
 	 * Finds a node by its path and workspace.
 	 *
 	 * If the node does not exist in the specified workspace, this function will

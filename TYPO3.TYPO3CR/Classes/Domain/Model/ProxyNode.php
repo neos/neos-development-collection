@@ -644,6 +644,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	protected function cloneOriginalNode() {
 		$this->newNode = new Node($this->originalNode->getPath(), $this->context->getWorkspace(), $this->originalNode->getIdentifier());
+		$this->nodeRepository->add($this->newNode);
 
 		foreach ($this->originalNode->getProperties() as $propertyName => $propertyValue) {
 			$this->newNode->setProperty($propertyName, $propertyValue);
@@ -655,13 +656,6 @@ class ProxyNode implements NodeInterface {
 			$this->newNode->setContentObject($contentObject);
 		}
 		$this->newNode->setContext($this->context);
-
-		if (!$this->isClone) {
-				// if this ProxyNode has not been cloned yet, it should
-				// behave as if it still has a connection to the Persistence Layer.
-				// Thus, we need to add the newNode transparently to the Persistence.
-			$this->nodeRepository->add($this->newNode);
-		}
 	}
 
 	/**
@@ -674,20 +668,6 @@ class ProxyNode implements NodeInterface {
 		return $this->newNode;
 	}
 
-	/**
-	 * Magic method called directly after cloning this ProxyNode.
-	 *
-	 * @return void
-	 */
-	public function __clone() {
-		$this->isClone = TRUE;
-		if ($this->newNode !== NULL) {
-				// on cloning ProxyNode, it looses its connection to the Persistence Backend,
-				// so all future changes on newNode should *not* be persisted.
-				// Thus, we need to clone newNode as well.
-			$this->newNode = clone $this->newNode;
-		}
-	}
 }
 
 ?>
