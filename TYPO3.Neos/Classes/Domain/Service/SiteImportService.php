@@ -154,6 +154,7 @@ class SiteImportService {
 	 */
 	public function importSitesFromFile($pathAndFilename) {
 		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		$contentContext->showHidden(TRUE);
 
 			// no file_get_contents here because it does not work on php://stdin
 		$fp = fopen($pathAndFilename, 'rb');

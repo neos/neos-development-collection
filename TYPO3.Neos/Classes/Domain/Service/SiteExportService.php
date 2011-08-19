@@ -44,6 +44,7 @@ class SiteExportService {
 	 */
 	public function export(array $sites) {
 		$contentContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
+		$contentContext->showHidden(TRUE);
 
 		$xmlWriter = new \XMLWriter();
 		$xmlWriter->openUri('php://output');
@@ -55,7 +56,6 @@ class SiteExportService {
 			$xmlWriter->startElement('site');
 
 				// site attributes
-			$xmlWriter->writeAttribute('identifier', '');
 			$xmlWriter->writeAttribute('nodeName', $site->getNodeName());
 
 				// site properties
