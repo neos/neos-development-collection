@@ -103,21 +103,12 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 			return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1285162908);
 		}
 
-		$nodeToReturn = $node;
-		$isNodeAlreadyCloned = FALSE;
 		foreach ($source as $nodePropertyKey => $nodePropertyValue) {
-			if (substr($nodePropertyKey, 0, 2) === '__') {
-				continue;
+			if (substr($nodePropertyKey, 0, 2) !== '__') {
+				$node->setProperty($nodePropertyKey, $nodePropertyValue);
 			}
-
-			if (!$isNodeAlreadyCloned) {
-				$nodeToReturn = clone $node;
-				$isNodeAlreadyCloned = TRUE;
-			}
-
-			$nodeToReturn->setProperty($nodePropertyKey, $nodePropertyValue);
 		}
-		return $nodeToReturn;
+		return $node;
 	}
 }
 ?>
