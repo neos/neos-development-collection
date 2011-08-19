@@ -108,6 +108,7 @@ class Content extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayA
 		$sectionNodes = $contentContext->getCurrentNode()->getChildNodes('TYPO3.TYPO3:Section');
 		foreach ($sectionNodes as $sectionNode) {
 			$contentArray = $this->typoScriptObjectFactory->createByName('ContentArray');
+			$contentArray->setNode($sectionNode);
 			$i = 0;
 
 			foreach ($sectionNode->getChildNodes() as $sectionChildNode) {
@@ -118,9 +119,7 @@ class Content extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayA
 				}
 			}
 
-			if ($i > 0) {
-				$this->sections[$sectionNode->getName()] = $contentArray;
-			}
+			$this->sections[$sectionNode->getName()] = $contentArray;
 		}
 	}
 }

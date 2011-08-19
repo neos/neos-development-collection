@@ -82,7 +82,7 @@ function() {
 
 	/**
 	 * The BlockActions is a container for numerous actions which can happen with blocks.
-	 * They are generally triggered when clicking Block UI handles.
+	 * They are normally triggered when clicking Block UI handles.
 	 * Examples include:
 	 * - deletion of content
 	 * - creation of content
@@ -90,6 +90,17 @@ function() {
 	 * @singleton
 	 */
 	var BlockActions = SC.Object.create({
+
+		/**
+		 * Initialization lifecycle method. Here, we connect the create-new-content button
+		 * which is displayed when a ContentArray is empty.
+		 */
+		init: function() {
+			var that = this;
+			$('button.t3-create-new-content').live('click', function() {
+				that.addInside($(this).attr('data-node'));
+			});
+		},
 		deleteBlock: function(block) {
 			T3.Common.Dialog.confirm('Are you sure you want to delete this content element?', function() {
 				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
@@ -105,17 +116,20 @@ function() {
 		},
 
 		addAbove: function(block) {
-			this._add(block, 'above');
+			this._add(block.get('nodePath'), 'above');
 		},
 		addBelow: function(block) {
-			this._add(block, 'below');
+			this._add(block.get('nodePath'), 'below');
 		},
-		_add: function(block, position) {
+		addInside: function(nodePath) {
+			this._add(nodePath, 'inside');
+		},
+		_add: function(nodePath, position) {
 			T3.Common.Dialog.open(
 				'/typo3/content/new',
 				{
 					position: position,
-					referenceNode: block.get('nodePath')
+					referenceNode: nodePath
 				},
 				{
 					'created-new-content': function($callbackDomElement) {

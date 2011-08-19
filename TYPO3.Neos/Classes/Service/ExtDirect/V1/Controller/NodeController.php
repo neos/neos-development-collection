@@ -159,7 +159,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		}
 
 		if ($nodeData['contentType'] === 'TYPO3.TYPO3:Page') {
-			$this->createTypeHereTextNode($newNode);
+			$this->createEmptySectionNode($newNode);
 		}
 
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
@@ -226,22 +226,19 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Create a section + text node for the new page.
+	 * Create a section node for the page, so that the user can then create
+	 * content elements inside there.
 	 *
 	 * The section name is currently hardcoded, but should be determined by the currently selected Fluid template
-	 * in the future. This whole text-element-creation should also be triggered by the Content Type once we have
-	 * support for that.
+	 * in the future.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode The page node
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Move section + text node creation to better place (content type triggered)
 	 */
-	protected function createTypeHereTextNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode) {
+	protected function createEmptySectionNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode) {
 		$sectionNode = $pageNode->createNode('main', 'TYPO3.TYPO3:Section');
-		$textNode = $sectionNode->createNode(uniqid(), 'TYPO3.TYPO3:Text');
-		$textNode->setProperty('headline', '[Headline]');
-		$textNode->setProperty('text', '[ Start typing here ]');
 	}
 
 	/**

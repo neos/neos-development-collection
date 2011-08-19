@@ -576,6 +576,9 @@ div.aloha-block:hover > div.aloha-block-inner {
   background-image: -o-linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
   background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent); }
 
+button.t3-create-new-content {
+  padding: 5px; }
+
 .t3-ui-controls-inactive div.aloha-block:hover > .aloha-block-inner {
   cursor: default; }
 .t3-ui-controls-inactive div.aloha-block-inner {
@@ -590,5 +593,6 @@ div.aloha-block:hover > div.aloha-block-inner {
 .t3-ui-controls-inactive .aloha-floatingmenu,
 .t3-ui-controls-inactive .x-shadow {
   display: none !important; }
-.t3-ui-controls-inactive .t3-contentelement-removed {
+.t3-ui-controls-inactive .t3-contentelement-removed,
+.t3-ui-controls-inactive button.t3-create-new-content {
   display: none; }

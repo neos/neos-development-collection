@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\Controller\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -22,20 +22,12 @@ namespace TYPO3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * A TypoScript Content Array object
+ * A "Node Creation" exception
  *
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
  */
-class ContentArray extends \TYPO3\TypoScript\AbstractContentArrayObject {
+class NodeCreationException extends \TYPO3\TYPO3\Controller\Exception {
 
-	public function render() {
-			// TODO: add check to make sure user is logged in when he accesses that workspace.
-		if ($this->count() === 0 && $this->renderingContext->getContentContext()->getWorkspaceName() !== 'live') {
-			return '<button class="t3-create-new-content" data-node="' . $this->node->getContextPath() . '">Create new content</button>';
-		} else {
-			return parent::render();
-		}
-	}
 }
+
 ?>

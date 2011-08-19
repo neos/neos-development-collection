@@ -21,6 +21,8 @@ namespace TYPO3\TYPO3\Controller\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\TYPO3\Controller\Exception\NodeCreationException;
+
 /**
  * The TYPO3 ContentModule controller
  *
@@ -49,27 +51,34 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @return string
 	 */
 	public function createAction($referenceNode, $position, $type) {
-		if ($position !== 'above' && $position !== 'below') {
-			// TODO: throw exception
+		if (!in_array($position, array('above', 'below', 'inside'))) {
+			throw new NodeCreationException(sprintf('Position "%s" given, but only "above, below, inside" supported', $position), 1313754773);
 		}
+
+		if ($position === 'inside') {
+			$parentNode = $referenceNode;
+		} else {
+			$parentNode = $referenceNode->getParent();
+		}
+
 		// TODO: Write policy which only allows createAction for logged in users!
-		$parentNode = $referenceNode->getParent();
 		// TODO: make it possible for the user to specify the node identifier
 		$newNode = $parentNode->createNode(uniqid(), $type);
-		if ($position === 'before') {
+		if ($position === 'above') {
 			$newNode->moveBefore($referenceNode);
-		} else {
-			// TODO afte
+		} elseif ($position === 'below') {
+			$newNode->moveAfter($referenceNode);
 		}
 		switch($type) {
 			case 'TYPO3.TYPO3:Text':
 				$newNode->setProperty('headline', 'Enter Headline here');
 				$newNode->setProperty('text', '<p>Enter Text here</p>'); // Wrapping into p-tags here because of Aloha
 				break;
-			// TODO: Some more here
+			// TODO: Some more here, depending on Schema
 		}
 
 		$parentFolderNode = $this->findNextParentFolderNode($newNode);
+			// TODO: write Page URI service; it must be easier to retrieve the URI for a node...
 		$pageUri = $this->uriBuilder
 				->reset()
 				->uriFor('show', array('node' => $parentFolderNode), 'Frontend\Node', 'TYPO3.TYPO3');

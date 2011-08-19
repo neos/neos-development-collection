@@ -44,6 +44,12 @@
 	background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
 }
 
+// Create content element button
+button.t3-create-new-content {
+	padding:5px;
+}
+
+
 // Revert modifications to the content area where it is possible
 .t3-ui-controls-inactive {
 
@@ -73,8 +79,8 @@
 		display:none !important;
 	}
 
-	// Deleted content elements
-	.t3-contentelement-removed {
+	.t3-contentelement-removed,
+	button.t3-create-new-content {
 		display:none;
 	}
 }
