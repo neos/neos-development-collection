@@ -1,3 +1,11 @@
+
+// Fine-tune some Aloha-SmartContentChange settings, making the whole system feel more responsive.
+Aloha = window.Aloha || {};
+Aloha.settings = Aloha.settings || {};
+Aloha.settings.smartContentChange = Aloha.settings.smartContentChange || {};
+Aloha.settings.smartContentChange.idle = 500;
+Aloha.settings.smartContentChange.delay = 150;
+
 require({
 	paths: {
 		'aloha': Aloha.settings.basePath + 'aloha',
