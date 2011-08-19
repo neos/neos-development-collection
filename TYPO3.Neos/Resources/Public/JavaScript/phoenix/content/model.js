@@ -28,6 +28,7 @@ function(launcherTemplate) {
 		_modified: false,
 		_publishable: false,
 		_status: '',
+		_titleAndModifcationState: '',
 
 		/**
 		 * If a property "foo" on the block is modified, then _valueModified.foo
@@ -58,6 +59,15 @@ function(launcherTemplate) {
 		_publishable: function() {
 			return (this.get('_workspacename') !== 'live');
 		}.property('_workspacename').cacheable(),
+
+		/**
+		 * @var {String}
+		 * A concatenation of title and status for the breadcrumb menu.
+		 * Triggered each time "_status" and "_title" properties change.
+		 */
+		_titleAndModifcationState: function() {
+			return this.get('_status') === '' ? this.get('_title') : this.get('_title') + ' (' + this.get('_status') + ')';
+		}.property('_status', '_title').cacheable(),
 
 		/**
 		 * Triggered each time "publishable" and "modified" properties change.

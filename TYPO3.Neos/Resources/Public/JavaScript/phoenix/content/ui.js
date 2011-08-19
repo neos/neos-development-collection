@@ -184,7 +184,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
-		template: SC.Handlebars.compile('{{item._title}}'),
+		template: SC.Handlebars.compile('{{item._titleAndModifcationState}}'),
 		click: function(event) {
 			var item = this.get('item');
 			T3.Content.Model.BlockSelection.selectItem(item);
