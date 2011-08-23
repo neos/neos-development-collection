@@ -199,7 +199,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	 * The Property Panel displayed on the right side of the page.
 	 */
 	var PropertyPanel = SC.View.extend({
-				template: SC.Handlebars.compile(propertyPanelTemplate)
+		template: SC.Handlebars.compile(propertyPanelTemplate)
 	});
 
 	var propertyTypeMap = {
@@ -256,8 +256,8 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 				ddGroup: 'pages',
 
 				root: {
-					id: $('body').data('_siteroot'), // TODO: This and the following properties might later come from the SproutCore model...
-					text: $('body').data('_sitename'),
+					id: $('body').data('__siteroot'), // TODO: This and the following properties might later come from the SproutCore model...
+					text: $('body').data('__sitename'),
 					draggable: false
 				},
 

@@ -20,10 +20,17 @@ function(launcherTemplate) {
 	 *
 	 * The most central model class, which represents a single content element, and wraps and
 	 * extends an Aloha Block for use in SproutCore, so we can use data binding on it.
+	 *
+	 * We use the following conventions:
+	 *
+	 * (variable without prefix): TYPO3CR Node::setProperty(...)
+	 * _[varname]: TYPO3CR Node::set[Varname](...)
+	 * __[varname]: Purely internal stuff, like the context node path
 	 */
 	var Block = SC.Object.extend({
 		_alohaBlockId: null,
-		_title:null,
+		_title: null,
+		_hidden: false,
 		_originalValues: null,
 		_modified: false,
 		_publishable: false,
@@ -41,7 +48,7 @@ function(launcherTemplate) {
 		_valueModified: null,
 
 		// from aloha
-		_workspacename: null,
+		__workspacename: null,
 
 
 		/**
@@ -57,8 +64,8 @@ function(launcherTemplate) {
 		 * A node is publishable if it is not in the live workspace.
 		 */
 		_publishable: function() {
-			return (this.get('_workspacename') !== 'live');
-		}.property('_workspacename').cacheable(),
+			return (this.get('__workspacename') !== 'live');
+		}.property('__workspacename').cacheable(),
 
 		/**
 		 * @var {String}
@@ -91,6 +98,15 @@ function(launcherTemplate) {
 				PublishableBlocks.remove(this);
 			}
 		}.observes('_publishable', '_modified'),
+
+		_hiddenChanges: function(that, propertyName) {
+			var contentElementContainer = $('#' + that._alohaBlockId + ' > .t3-contentelement').first();
+			if (this.get('_hidden')) {
+				contentElementContainer.addClass('t3-contentelement-hidden');
+			} else {
+				contentElementContainer.removeClass('t3-contentelement-hidden');
+			}
+		}.observes('_hidden'),
 
 		_onStatusChange: function() {
 			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
@@ -170,7 +186,7 @@ function(launcherTemplate) {
 		init: function() {
 			this.set('title', $('body').data('title'));
 			this.set('about', $('body').attr('about'));
-			this.set('_workspacename', $('body').data('_workspacename'));
+			this.set('__workspacename', $('body').data('__workspacename'));
 			this._originalValues = {
 				title: null,
 				about: null
@@ -214,6 +230,7 @@ function(launcherTemplate) {
 				scope.getBlockByNodePath($(this).attr('about'));
 			})
 		},
+
 		/**
 		 * @param block/block Aloha Block instance
 		 * @return {T3.Content.Model.Block}
@@ -227,9 +244,15 @@ function(launcherTemplate) {
 
 			var attributes = {};
 			var internalAttributes = {};
-
 			$.each(alohaBlock.attr(), function(key, value) {
-				if (key[0] === '_') {
+				// TODO: This simply converts all strings 'false' and 'true' into boolean, see if type checking has to be added
+				if (value === 'false') {
+					value = false;
+				} else if (value === 'true') {
+					value = true;
+				}
+
+				if (key[0] === '_' && key[1] === '_') {
 					internalAttributes[key] = value;
 				} else {
 					attributes[key] = value;
@@ -248,12 +271,6 @@ function(launcherTemplate) {
 
 					// HACK: Add observer for each element, as we do not know how to add one observer for *all* elements.
 					$.each(attributes, function(key, value) {
-						// HACK: This is for supporting more data types, i.e. mostly for boolean values in checkboxes.
-						if (value == "true") {
-							value = true;
-						} else if (value == "false") {
-							value = false;
-						}
 						that._originalValues[key] = value;
 						that.addObserver(key, that, that._somePropertyChanged);
 					});
@@ -364,7 +381,7 @@ function(launcherTemplate) {
 		collection.forEach(function(element) {
 			var args = cleanupFn(element);
 			args.push(responseCallback);
-			extDirectFn.apply(this, args);
+			extDirectFn.apply(window, args);
 		})
 	};
 	var PublishableBlocks = SC.ArrayProxy.create({
