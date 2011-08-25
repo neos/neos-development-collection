@@ -26,11 +26,11 @@
 							<f:flashMessages class="errorMessages" />
 							<div class="typo3-typo3-login-fields">
 								<label class="username">User</label>
-								<input type="text" name="TYPO3[FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" {f:if(condition:'{username}', then: 'tabindex="2"', else:'autofocus="autofocus"')} value="{username}" />
+								<input type="text" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" {f:if(condition:'{username}', then: 'tabindex="2"', else:'autofocus="autofocus"')} value="{username}" />
 							</div>
 							<div class="typo3-typo3-login-fields">
 								<label class="password">Password</label>
-								<input class="active" type="password" name="TYPO3[FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" {f:if(condition:'{username}', then:'autofocus="autofocus"', else: 'tabindex="2"')} />
+								<input class="active" type="password" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" {f:if(condition:'{username}', then:'autofocus="autofocus"', else: 'tabindex="2"')} />
 							</div>
 							<div class="typo3-typo3-login-actions">
 								<a href="#" id="typo3-typo3-login-button" class="typo3-typo3-login-button"><span>Login</span></a>
