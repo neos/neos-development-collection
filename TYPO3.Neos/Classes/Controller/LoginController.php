@@ -113,7 +113,7 @@ class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		if ($authenticated) {
 			$this->redirect('index', 'Backend\Backend');
 		} else {
-			$this->flashMessageContainer->add('Wrong username or password.');
+			$this->flashMessageContainer->add('Wrong username or password.', 'Invalid Credentials', \TYPO3\FLOW3\MVC\Controller\FlashMessage::SEVERITY_ERROR);
 			$this->redirect('index');
 		}
 	}
