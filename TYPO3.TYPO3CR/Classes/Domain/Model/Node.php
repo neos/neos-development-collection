@@ -171,6 +171,12 @@ class Node implements NodeInterface {
 	protected $proxyNodeFactory;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Constructs this node
 	 *
 	 * @param string $path Absolute path of this node
@@ -286,7 +292,10 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$this->workspace = $workspace;
+		if ($this->workspace !== $workspace) {
+			$this->workspace = $workspace;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -319,7 +328,10 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setIndex($index) {
-		$this->index = $index;
+		if ($this->index !== $index) {
+			$this->index = $index;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -437,10 +449,14 @@ class Node implements NodeInterface {
 	 */
 	public function setProperty($propertyName, $value) {
 		if (!is_object($this->contentObjectProxy)) {
-			$this->properties[$propertyName] = $value;
+			if (!array_key_exists($propertyName, $this->properties) || $this->properties[$propertyName] !== $value) {
+				$this->properties[$propertyName] = $value;
+				$this->nodeRepository->update($this);
+			}
 		} elseif (\TYPO3\FLOW3\Reflection\ObjectAccess::isPropertySettable($this->contentObjectProxy->getObject(), $propertyName)) {
 			$contentObject = $this->contentObjectProxy->getObject();
 			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($contentObject, $propertyName, $value);
+			$this->persistenceManager->update($contentObject);
 		}
 	}
 
@@ -524,7 +540,10 @@ class Node implements NodeInterface {
 		if (!is_object($contentObject)) {
 			throw new \InvalidArgumentException('Argument must be an object, ' . \gettype($contentObject) . ' given.', 1283522467);
 		}
-		$this->contentObjectProxy = new ContentObjectProxy($contentObject);
+		if ($this->contentObjectProxy === NULL || $this->contentObjectProxy->getObject() !== $contentObject) {
+			$this->contentObjectProxy = new ContentObjectProxy($contentObject);
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -544,7 +563,10 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetContentObject() {
-		$this->contentObjectProxy = NULL;
+		if ($this->contentObjectProxy !== NULL) {
+			$this->contentObjectProxy = NULL;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -558,7 +580,10 @@ class Node implements NodeInterface {
 		if (!$this->contentTypeManager->hasContentType($contentType)) {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('Unknown content type "' . $contentType . '".', 1285519999);
 		}
-		$this->contentType = $contentType;
+		if ($this->contentType !== $contentType) {
+			$this->contentType = $contentType;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -594,12 +619,13 @@ class Node implements NodeInterface {
 		$newIndex = $this->nodeRepository->countByParentAndContentType($this->path, NULL, $currentWorkspace) + 1;
 
 		$newNode = new Node($newPath, $currentWorkspace, $identifier);
+		$this->nodeRepository->add($newNode);
+
 		$newNode->setIndex($newIndex);
 		if ($contentType !== NULL) {
 			$newNode->setContentType($contentType);
 		}
 
-		$this->nodeRepository->add($newNode);
 		return $this->treatNodeWithContext($newNode);
 	}
 
@@ -692,7 +718,10 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHidden($hidden) {
-		$this->hidden = (boolean)$hidden;
+		if ($this->hidden !== (boolean) $hidden) {
+			$this->hidden = (boolean)$hidden;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -713,7 +742,10 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHiddenBeforeDate(\DateTime $dateTime) {
-		$this->hiddenBeforeDate = $dateTime;
+		if ($this->hiddenBeforeDate != $dateTime) {
+			$this->hiddenBeforeDate = $dateTime;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -734,7 +766,10 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHiddenAfterDate(\DateTime $dateTime) {
-		$this->hiddenAfterDate = $dateTime;
+		if ($this->hiddenAfterDate != $dateTime) {
+			$this->hiddenAfterDate = $dateTime;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -755,7 +790,10 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHiddenInIndex($hidden) {
-		$this->hiddenInIndex = (boolean) $hidden;
+		if ($this->hiddenInIndex !== (boolean) $hidden) {
+			$this->hiddenInIndex = (boolean) $hidden;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
@@ -781,7 +819,10 @@ class Node implements NodeInterface {
 				throw new \InvalidArgumentException('The role names passed to setAccessRoles() must all be of type string.', 1302172892);
 			}
 		}
-		$this->accessRoles = $accessRoles;
+		if ($this->accessRoles !== $accessRoles) {
+			$this->accessRoles = $accessRoles;
+			$this->nodeRepository->update($this);
+		}
 	}
 
 	/**
