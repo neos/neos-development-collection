@@ -46,7 +46,7 @@ class Node implements NodeInterface {
 	 * Workspace this node is contained in
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
-	 * @ManyToOne(cascade={"persist"})
+	 * @ManyToOne
 	 * @JoinColumn(onDelete="SET NULL")
 	 */
 	protected $workspace;
@@ -84,7 +84,7 @@ class Node implements NodeInterface {
 	 * An optional object which contains the content of this node
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy
-	 * @ManyToOne(cascade={"all"})
+	 * @ManyToOne
 	 */
 	protected $contentObjectProxy;
 
