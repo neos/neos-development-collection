@@ -170,6 +170,8 @@ class SiteImportService {
 			if ($site === NULL) {
 				$site = new \TYPO3\TYPO3\Domain\Model\Site((string)$siteXml['nodeName']);
 				$this->siteRepository->add($site);
+			} else {
+				$this->siteRepository->update($site);
 			}
 			$site->setName((string)$siteXml->properties->name);
 			$site->setState((integer)$siteXml->properties->state);

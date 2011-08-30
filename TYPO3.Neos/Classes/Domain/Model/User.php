@@ -36,7 +36,7 @@ class User extends Person  {
 	 * Preferences of this user
 	 *
 	 * @var \TYPO3\TYPO3\Domain\Model\UserPreferences
-	 * @OneToOne(cascade={"all"})
+	 * @OneToOne
 	 */
 	protected $preferences;
 

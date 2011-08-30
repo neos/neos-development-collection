@@ -244,13 +244,14 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Updates the specified node
 	 *
+	 * Note: We do not call $nodeRepository->update() here, as TYPO3CR has a stateful API for now.
+	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @extdirect
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$this->nodeRepository->update($node);
 		$this->view->assign('value', array('data' => '', 'success' => TRUE));
 	}
 
