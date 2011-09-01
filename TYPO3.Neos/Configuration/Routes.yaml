@@ -21,14 +21,6 @@
     '@controller': 'Login'
     '@action':     'logout'
     '@format':     'html'
--
-  name:          'Setup'
-  uriPattern:    'typo3/setup(/{@action})'
-  defaults:
-    '@package':    'TYPO3.TYPO3'
-    '@controller': 'Backend\Setup'
-    '@action':     'index'
-    '@format':     'html'
 
 -
   name:          'Backend Overview'
@@ -86,12 +78,3 @@
   routeParts:
     node:
       handler:    TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler
-
--
-  name: 'Fallback rule – for when no site has been defined yet'
-  uriPattern: ''
-  defaults:
-    '@package':     'TYPO3.TYPO3'
-    '@controller':  'Backend\Setup'
-    '@action':      'index'
-    '@format':      'html'

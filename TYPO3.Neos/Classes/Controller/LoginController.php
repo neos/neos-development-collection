@@ -79,10 +79,6 @@ class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction($username = NULL) {
-		if ($this->accountRepository->countAll() === 0) {
-			$this->forward('index', 'Backend\Setup');
-		}
-
 		$this->view->assign('username', $username);
 
 		$version = $this->packageManager->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
