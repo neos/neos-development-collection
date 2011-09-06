@@ -60,11 +60,11 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	protected $objectManager;
 
 	/**
-	 * If TRUE, hidden content elements will be shown.
+	 * If TRUE, invisible content elements will be shown.
 	 *
 	 * @var boolean
 	 */
-	protected $showHidden = FALSE;
+	protected $invisibleContentShown = FALSE;
 
 	/**
 	 * If TRUE, removed content elements will be shown, even though
@@ -72,7 +72,7 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @var boolean
 	 */
-	protected $showRemoved = FALSE;
+	protected $removedContentShown = FALSE;
 
 
 	/**
@@ -247,37 +247,37 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	}
 
 	/**
-	 * @param boolean $showHidden If TRUE, hidden nodes are shown.
+	 * @param boolean $invisibleContentShown If TRUE, invisible nodes are shown.
 	 * @return void
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
-	public function showHidden($showHidden) {
-		$this->showHidden = $showHidden;
+	public function setInvisibleContentShown($invisibleContentShown) {
+		$this->invisibleContentShown = $invisibleContentShown;
 	}
 
 	/**
 	 * @return boolean
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
-	public function shouldShowHidden() {
-		return $this->showHidden;
+	public function isInvisibleContentShown() {
+		return $this->invisibleContentShown;
 	}
 
 	/**
-	 * @param boolean $showRemoved If TRUE, removed nodes are shown
+	 * @param boolean $removedContentShown If TRUE, removed nodes are shown
 	 * @return void
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
-	public function showRemoved($showRemoved) {
-		$this->showRemoved = $showRemoved;
+	public function setRemovedContentShown($removedContentShown) {
+		$this->removedContentShown = $removedContentShown;
 	}
 
 	/**
 	 * @return boolean
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
-	public function shouldShowRemoved() {
-		return $this->showRemoved;
+	public function isRemovedContentShown() {
+		return $this->removedContentShown;
 	}
 
 }

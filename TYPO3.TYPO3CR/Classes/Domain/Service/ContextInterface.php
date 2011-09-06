@@ -69,42 +69,42 @@ interface ContextInterface {
 	public function getNodesOnPath($startingPoint, $endPoint);
 
 	/**
-	 * Sets the showHidden flag. This flag defines if hidden content elements
+	 * Sets the invisibleContentShown flag. This flag defines if invisible content elements
 	 * should be shown in Node->treatNodeWithContext()
 	 *
-	 * @param boolean $showHidden
+	 * @param boolean $invisibleContentShown
 	 * @return void
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
-	public function showHidden($showHidden);
+	public function setInvisibleContentShown($invisibleContentShown);
 
 	/**
-	 * Gets the showHidden flag. This flag defines if hidden content elements
+	 * Gets the invisibleContentShown flag. This flag defines if invisible content elements
 	 * should be shown in Node->treatNodeWithContext()
 	 *
 	 * @return boolean
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
-	public function shouldShowHidden();
+	public function isInvisibleContentShown();
 
 	/**
-	 * Sets the showRemoved flag. This flag defines if removed content elements
+	 * Sets the removedContentShown flag. This flag defines if removed content elements
 	 * should be shown in Node->treatNodeWithContext()
 	 *
-	 * @param boolean $showRemoved
+	 * @param boolean $removedContentShown
 	 * @return void
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
-	public function showRemoved($showRemoved);
+	public function setRemovedContentShown($removedContentShown);
 
 	/**
-	 * Gets the showRemoved flag. This flag defines if removed content elements
+	 * Gets the removedContentShown flag. This flag defines if removed content elements
 	 * should be shown in Node->treatNodeWithContext()
 	 *
 	 * @return boolean
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
-	public function shouldShowRemoved();
+	public function isRemovedContentShown();
 
 }
 ?>

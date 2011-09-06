@@ -972,11 +972,11 @@ class Node implements NodeInterface {
 			$node->setContext($this->context);
 		}
 
-		if ($node->isRemoved() && !$this->context->shouldShowRemoved()) {
+		if ($node->isRemoved() && !$this->context->isRemovedContentShown()) {
 			return NULL;
 		}
 
-		if ($node->isHidden() && !$this->context->shouldShowHidden()) {
+		if (!$node->isVisible() && !$this->context->isInvisibleContentShown()) {
 			return NULL;
 		}
 
