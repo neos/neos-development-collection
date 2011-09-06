@@ -154,7 +154,7 @@ class SiteImportService {
 	 */
 	public function importSitesFromFile($pathAndFilename) {
 		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
-		$contentContext->showHidden(TRUE);
+		$contentContext->setInvisibleContentShown(TRUE);
 
 			// no file_get_contents here because it does not work on php://stdin
 		$fp = fopen($pathAndFilename, 'rb');
@@ -225,6 +225,12 @@ class SiteImportService {
 
 			$childNode->setHidden((boolean)$childNodeXml['hidden']);
 			$childNode->setHiddenInIndex((boolean)$childNodeXml['hiddenInIndex']);
+			if ($childNodeXml['hiddenBeforeDate'] != '') {
+				$childNode->setHiddenBeforeDate(\DateTime::createFromFormat(\DateTime::W3C, (string)$childNodeXml['hiddenBeforeDate']));
+			}
+			if ($childNodeXml['hiddenAfterDate'] != '') {
+				$childNode->setHiddenAfterDate(\DateTime::createFromFormat(\DateTime::W3C, (string)$childNodeXml['hiddenAfterDate']));
+			}
 
 			if ($childNodeXml->properties) {
 				foreach ($childNodeXml->properties->children() as $childXml) {

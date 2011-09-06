@@ -44,7 +44,7 @@ class SiteExportService {
 	 */
 	public function export(array $sites) {
 		$contentContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
-		$contentContext->showHidden(TRUE);
+		$contentContext->setInvisibleContentShown(TRUE);
 
 		$xmlWriter = new \XMLWriter();
 		$xmlWriter->openUri('php://output');
@@ -94,14 +94,22 @@ class SiteExportService {
 		$xmlWriter->writeAttribute('type', $node->getContentType());
 		$xmlWriter->writeAttribute('nodeName', $node->getName());
 		$xmlWriter->writeAttribute('locale', '');
-		if ($node->isHidden() == TRUE) {
+		if ($node->isHidden() === TRUE) {
 			$xmlWriter->writeAttribute('hidden', 'true');
 		}
-		if ($node->isHiddenInIndex() == TRUE) {
+		if ($node->isHiddenInIndex() === TRUE) {
 			$xmlWriter->writeAttribute('hiddenInIndex', 'true');
 		}
+		$hiddenBeforeDate = $node->getHiddenBeforeDate();
+		if ($hiddenBeforeDate !== NULL) {
+			$xmlWriter->writeAttribute('hiddenBeforeDate', $hiddenBeforeDate->format(\DateTime::W3C));
+		}
+		$hiddenAfterDate = $node->getHiddenAfterDate();
+		if ($hiddenAfterDate !== NULL) {
+			$xmlWriter->writeAttribute('hiddenAfterDate', $hiddenAfterDate->format(\DateTime::W3C));
+		}
 
-		// access roles
+			// access roles
 		$accessRoles = $node->getAccessRoles();
 		if (count($accessRoles) > 0) {
 			$xmlWriter->startElement('accessRoles');
