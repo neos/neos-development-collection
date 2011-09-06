@@ -616,7 +616,8 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array('getWorkspace'), array(), '', FALSE);
 		$context->expects($this->once())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 
-		$subjectNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getWorkspace', 'setContext'), array(), '', FALSE);
+		$subjectNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getWorkspace', 'setContext', 'isvisible'), array(), '', FALSE);
+		$subjectNode->expects($this->once())->method('isVisible')->will($this->returnValue(TRUE));
 		$subjectNode->expects($this->once())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
 		$subjectNode->expects($this->once())->method('setContext')->with($context);
 
@@ -640,7 +641,8 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$subjectNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getWorkspace'), array(), '', FALSE);
 		$subjectNode->expects($this->once())->method('getWorkspace')->will($this->returnValue($otherWorkspace));
 
-		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
+		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext', 'isVisible'), array(), '', FALSE);
+		$proxyNode->expects($this->once())->method('isVisible')->will($this->returnValue(TRUE));
 		$proxyNode->expects($this->once())->method('setContext')->with($context);
 
 		$proxyNodeFactory = $this->getMock('TYPO3\TYPO3CR\Domain\Factory\ProxyNodeFactory');
