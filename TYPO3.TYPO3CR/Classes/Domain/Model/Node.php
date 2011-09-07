@@ -838,11 +838,9 @@ class Node implements NodeInterface {
 	/**
 	 * Tells if this node is "visible".
 	 *
-	 * For this the "hidden" flag and the "hiddenBeforeDate" and "hiddenAfterDate" dates and access restrictions are
-	 * taken into account.
-	 *
-	 * In an early stage, such as when the Node Routepart Handlers are called, the security context is not yet available.
-	 * In these cases isVisible() will return TRUE even though the node might have access restrictions applied.
+	 * For this the "hidden" flag and the "hiddenBeforeDate" and "hiddenAfterDate" dates are taken into account.
+	 * The fact that a node is "visible" does not imply that it can / may be shown to the user. Further modifiers
+	 * such as isAccessible() need to be evaluated.
 	 *
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
@@ -858,12 +856,7 @@ class Node implements NodeInterface {
 		if ($this->hiddenAfterDate !== NULL && $this->hiddenAfterDate < $currentDateTime) {
 			return FALSE;
 		}
-
-		if ($this->securityContext->isInitialized()) {
-			return $this->isAccessible();
-		} else {
-			return TRUE;
-		}
+		return TRUE;
 	}
 
 	/**
@@ -993,6 +986,9 @@ class Node implements NodeInterface {
 			return NULL;
 		}
 
+		if (!$this->isAccessible() && !$this->context->isInaccessibleContentShown()) {
+			return NULL;
+		}
 		return $node;
 	}
 }

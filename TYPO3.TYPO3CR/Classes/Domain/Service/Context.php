@@ -67,13 +67,18 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	protected $invisibleContentShown = FALSE;
 
 	/**
-	 * If TRUE, removed content elements will be shown, even though
-	 * they are removed.
+	 * If TRUE, removed content elements will be shown, even though they are removed.
 	 *
 	 * @var boolean
 	 */
 	protected $removedContentShown = FALSE;
 
+	/**
+	 * If TRUE, even content elements will be shown which are not accessible by the currently logged in account.
+	 *
+	 * @var boolean
+	 */
+	protected $inaccessibleContentShown = FALSE;
 
 	/**
 	 * Constructs this context.
@@ -269,7 +274,7 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function setRemovedContentShown($removedContentShown) {
-		$this->removedContentShown = $removedContentShown;
+		$this->removedContentShown = (boolean)$removedContentShown;
 	}
 
 	/**
@@ -278,6 +283,22 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 */
 	public function isRemovedContentShown() {
 		return $this->removedContentShown;
+	}
+
+	/**
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setInaccessibleContentShown($inaccessibleContentShown) {
+		$this->inaccessibleContentShown = (boolean)$inaccessibleContentShown;
+	}
+
+	/**
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isInaccessibleContentShown() {
+		return $this->inaccessibleContentShown;
 	}
 
 }
