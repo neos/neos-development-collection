@@ -70,9 +70,9 @@ class SiteCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 			} else {
 				$this->siteImportService->importSitesFromFile('php://stdin');
 			}
-			$this->response->appendContent('Import finished.');
+			$this->outputLine('Import finished.');
 		} catch (\Exception $exception) {
-			$this->response->appendContent('Error: During import an exception occured. ' . $exception->getMessage());
+			$this->outputLine('Error: During import an exception occured. ' . $exception->getMessage());
 		}
 	}
 
