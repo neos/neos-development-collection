@@ -626,7 +626,7 @@ class Node implements NodeInterface {
 			$newNode->setContentType($contentType);
 		}
 
-		return $this->treatNodeWithContext($newNode);
+		return $this->treatNodeWithContext($newNode, TRUE);
 	}
 
 	/**
@@ -967,10 +967,12 @@ class Node implements NodeInterface {
 	 * Treats the given node with the current context
 	 *
 	 * @param mixed $node The node to contextize
+	 * @param boolean $disableFilters If set to TRUE, the node will only be treated with context and not filtered
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The same node, but with the context of this node
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @fixme This method does more than the name or description claims
 	 */
-	protected function treatNodeWithContext(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function treatNodeWithContext(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $disableFilters = FALSE) {
 		if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
 			if ($node->getWorkspace() !== $this->context->getWorkspace()) {
 				$node = $this->proxyNodeFactory->createFromNode($node);
@@ -978,16 +980,18 @@ class Node implements NodeInterface {
 			$node->setContext($this->context);
 		}
 
-		if ($node->isRemoved() && !$this->context->isRemovedContentShown()) {
-			return NULL;
-		}
+		if ($disableFilters === FALSE) {
+			if ($node->isRemoved() && !$this->context->isRemovedContentShown()) {
+				return NULL;
+			}
 
-		if (!$node->isVisible() && !$this->context->isInvisibleContentShown()) {
-			return NULL;
-		}
+			if (!$node->isVisible() && !$this->context->isInvisibleContentShown()) {
+				return NULL;
+			}
 
-		if (!$this->isAccessible() && !$this->context->isInaccessibleContentShown()) {
-			return NULL;
+			if (!$this->isAccessible() && !$this->context->isInaccessibleContentShown()) {
+				return NULL;
+			}
 		}
 		return $node;
 	}
