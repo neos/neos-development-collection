@@ -86,7 +86,7 @@ class BreadcrumbMenu extends \TYPO3\TYPO3\TypoScript\Menu {
 		$items = array();
 		for ($i = $normalizedEntryLevel; $i <= $normalizedLastLevel; $i++) {
 			$node = $breadcrumbNodes[$i];
-			if ($node->isVisible() === FALSE || $node->isHiddenInIndex() === TRUE) {
+			if ($node->isVisible() === FALSE || $node->isHiddenInIndex() === TRUE || $node->isAccessible() === FALSE) {
 				continue;
 			}
 
