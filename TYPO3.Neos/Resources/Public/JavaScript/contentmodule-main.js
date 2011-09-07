@@ -15,19 +15,22 @@ require({
 		'Library': '../Library/'
 	}
 },
-[
-	'order!vendor/jquery-1.6.1',
-	'order!Library/jquery-ui/js/jquery-ui-1.8.14.custom.min',
-	'css!Library/jquery-ui/css/ui-darkness/jquery-ui-1.8.14.custom.css',
-	'order!libs/sproutcore-2.0.beta.3',
-	'order!aloha',
-	'order!phoenix/contentmodule'],
+['aloha'],
 function() {
-	var T3 = window.T3;
+	window.jQuery = window.alohaQuery;
 
-	SC.$(document).ready(function() {
-		T3.ContentModule.bootstrap();
-		ExtDirectInitialization();
-	});
+	require([
+		'order!Library/jquery-ui/js/jquery-ui-1.8.14.custom.min',
+		'css!Library/jquery-ui/css/ui-darkness/jquery-ui-1.8.14.custom.css',
+		'order!libs/sproutcore-2.0.beta.3',
+		'order!phoenix/contentmodule'],
+		function() {
+			var T3 = window.T3;
 
+			SC.$(document).ready(function() {
+				T3.ContentModule.bootstrap();
+				ExtDirectInitialization();
+			});
+		}
+	);
 });
