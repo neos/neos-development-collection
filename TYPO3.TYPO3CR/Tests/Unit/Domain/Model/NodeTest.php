@@ -741,6 +741,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function isAccessibleReturnsFalseIfAccessRolesIsSetAndSecurityContextHasNoRoles() {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
+		$mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(TRUE));
 		$mockSecurityContext->expects($this->any())->method('hasRole')->will($this->returnValue(FALSE));
 		$this->node->_set('securityContext', $mockSecurityContext);
 
@@ -753,8 +754,9 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function isAccessibleReturnsTrueIfAccessRolesIsSetAndSecurityContextHasOneOfTheRequiredRoles() {
 		$mockSecurityContext = $this->getMock('TYPO3\FLOW3\Security\Context');
-		$mockSecurityContext->expects($this->at(0))->method('hasRole')->with('SomeRole')->will($this->returnValue(FALSE));
-		$mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeOtherRole')->will($this->returnValue(TRUE));
+		$mockSecurityContext->expects($this->any())->method('isInitialized')->will($this->returnValue(TRUE));
+		$mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeRole')->will($this->returnValue(FALSE));
+		$mockSecurityContext->expects($this->at(2))->method('hasRole')->with('SomeOtherRole')->will($this->returnValue(TRUE));
 		$this->node->_set('securityContext', $mockSecurityContext);
 
 		$this->node->setAccessRoles(array('SomeRole', 'SomeOtherRole'));

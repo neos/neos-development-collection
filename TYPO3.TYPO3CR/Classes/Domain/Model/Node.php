@@ -841,6 +841,9 @@ class Node implements NodeInterface {
 	 * For this the "hidden" flag and the "hiddenBeforeDate" and "hiddenAfterDate" dates and access restrictions are
 	 * taken into account.
 	 *
+	 * In an early stage, such as when the Node Routepart Handlers are called, the security context is not yet available.
+	 * In these cases isVisible() will return TRUE even though the node might have access restrictions applied.
+	 *
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -855,7 +858,12 @@ class Node implements NodeInterface {
 		if ($this->hiddenAfterDate !== NULL && $this->hiddenAfterDate < $currentDateTime) {
 			return FALSE;
 		}
-		return $this->isAccessible();
+
+		if ($this->securityContext->isInitialized()) {
+			return $this->isAccessible();
+		} else {
+			return TRUE;
+		}
 	}
 
 	/**
@@ -869,6 +877,11 @@ class Node implements NodeInterface {
 		if ($this->accessRoles === array()) {
 			return TRUE;
 		}
+
+		if (!$this->securityContext->isInitialized()) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('The security context is not yet intialized, thus the Node "%s" cannot determine if it is accessible. Some code part is calling isAccessible() early than is possible at that initialization stage.', $this->path), 1315383002);
+		}
+
 		foreach ($this->accessRoles as $roleName) {
 			if ($this->securityContext->hasRole($roleName)) {
 				return TRUE;
