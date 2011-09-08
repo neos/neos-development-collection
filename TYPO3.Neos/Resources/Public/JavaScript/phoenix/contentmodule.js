@@ -38,11 +38,14 @@ function() {
 		 */
 		showDevelopmentFeatures: false,
 
+		currentUri: window.location.href,
+
 		bootstrap: function() {
 			this._initializePropertyPanel();
 			this._initializeToolbar();
 			this._initializeFooter();
 			this._initializeLauncher();
+			this._initializeAjaxPageReload();
 
 			var that = this;
 			window.addEventListener("hashchange", function() {
@@ -51,23 +54,33 @@ function() {
 			this._enableDevelopmentFeaturesIfNeeded();
 
 			// When aloha is loaded, blockify our content.
-			// TODO: Later, we will only have one generic TYPO3-AlohaBlock here
-			// instead of multiple ones.
-			Aloha.bind('aloha', function() {
-				$('.t3-plugin').alohaBlock({
-					'block-type': 'PluginBlock'
-				});
+			Aloha.bind('aloha', this._initializeAlohaBlocksAndUpdateUi);
 
-				$('.t3-text').alohaBlock({
-					'block-type': 'TextBlock'
-				});
-
-				T3.Content.Model.BlockManager.initializeBlocks();
-				T3.Content.Model.Changes._readFromLocalStore();
-			});
-			 // TODO: should be only set when header and property panel is visible
 			$('body').addClass('t3-ui-controls-active');
 			$('body').addClass('t3-backend');
+		},
+
+		_initializeAlohaBlocksAndUpdateUi: function() {
+			$('.t3-plugin').alohaBlock({
+				'block-type': 'PluginBlock'
+			});
+
+			$('.t3-text').alohaBlock({
+				'block-type': 'TextBlock'
+			});
+
+			T3.Content.Model.PublishableBlocks.initialize();
+
+			// Now we initialize the BlockManager. This triggers updates to the PublishableBlocks controller
+			T3.Content.Model.BlockManager.initialize();
+
+			// Now the ChangesController can read from local storage, and update the blocks.
+			T3.Content.Model.Changes.initialize();
+
+			// Now we need to initialize all dependencies from the BlockManager.
+			T3.Content.Model.BlockSelection.initialize();
+
+
 		},
 
 		_enableDevelopmentFeaturesIfNeeded: function() {
@@ -158,8 +171,87 @@ function() {
 			footer.appendTo($('body'));
 		},
 
+		/**
+		 * Intercept all links, and instead use AJAX for reloading the page.
+		 */
+		_initializeAjaxPageReload: function() {
+			// TODO: we might need to make this more configurable
+			this._linkInterceptionHandler($('a'));
+		},
+
 		_onBlockSelectionChange: function(blocks) {
 			T3.Content.Model.BlockSelection.updateSelection(blocks);
+		},
+
+		reloadPage: function() {
+			this.loadPage(T3.ContentModule.currentUri);
+		},
+		_linkInterceptionHandler: function($selector) {
+			var that = this;
+			$selector.click(function(e) {
+				e.preventDefault();
+				var $this = $(this);
+				that.loadPage($this.attr('href'));
+			})
+		},
+		loadPage: function(uri) {
+			var that = this;
+
+			var selectorsToReplace = [];
+
+			$('.t3-reloadable-content').each(function() {
+				var id = $(this).attr('id');
+				if (!id) {
+					// TODO: we need cleaner developer error handling
+					throw 'You have marked a DOM element with the CSS class t3-reloadable-content; but this element has no ID.';
+				}
+				selectorsToReplace.push('#' + id);
+			});
+
+			if (selectorsToReplace.length === 0) {
+				// FALLBACK: The user did not configure reloadable content;
+				// so we fall back to classical reload.
+				window.location.href = uri;
+				return;
+			}
+
+			$.get(uri, function(htmlString, status) {
+				if (status === 'success') {
+					var $htmlDom = $(htmlString);
+
+					$.each(selectorsToReplace, function(index, selector) {
+						if ($htmlDom.find(selector).length > 0) {
+							$(selector).replaceWith($htmlDom.find(selector));
+						} else if ($htmlDom.filter(selector).length > 0) {
+							// find only looks inside the *descendants* of the result
+							// set; that's why we might need to use "filter" if a top-
+							// level element has the t3-reloadable-content CSS class applied
+							$(selector).replaceWith($htmlDom.filter(selector));
+						} else {
+							throw 'Target HTML selector not found. Something has gone really wrong';
+						}
+
+						that._linkInterceptionHandler($(selector).find('a'));
+					});
+
+					var $newMetaInformation = $htmlDom.filter('#t3-page-metainformation');
+					if ($newMetaInformation.length === 0) {
+						// FALLBACK: Something went really wrong with the fetching.
+						// so we reload the whole backend.
+						window.location.href = uri;
+					} else {
+						T3.ContentModule.currentUri = uri;
+					}
+					$('#t3-page-metainformation').replaceWith($newMetaInformation);
+					$('title').html($htmlDom.filter('title').html());
+
+					that._initializeAlohaBlocksAndUpdateUi();
+				} else {
+					// FALLBACK: AJAX error occured,
+					// so we reload the whole backend.
+					window.location.href = uri;
+				}
+			});
 		}
 	});
 

@@ -256,8 +256,8 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 				ddGroup: 'pages',
 
 				root: {
-					id: $('body').data('__siteroot'), // TODO: This and the following properties might later come from the SproutCore model...
-					text: $('body').data('__sitename'),
+					id: $('#t3-page-metainformation').data('__siteroot'), // TODO: This and the following properties might later come from the SproutCore model...
+					text: $('#t3-page-metainformation').data('__sitename'),
 					draggable: false
 				},
 
@@ -353,7 +353,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		_onTreeNodeClick: function(node, event) {
 				// TODO: clean this up, so that clicking the "GOTO" link works without this click hack; or built some different way of handling this case.
 			if ($(event.getTarget()).is('a.t3-gotoPage')) {
-				window.location.href = $(event.getTarget()).attr('href');
+				T3.ContentModule.loadPage($(event.getTarget()).attr('href'));
 			};
 		},
 

@@ -11,9 +11,13 @@
 	<head>
 		{head -> f:format.raw()}
 	</head>
-	<!-- TODO: add the properties to the body tag in a more clever way, and only when being in backend... -->
-	<body typeof="typo3:{node.contentType}" about="{node.contextPath}" data-title="{node.properties.title}" data-__workspacename="{node.workspace.name}" data-__siteroot="/sites/{node.context.currentSite.nodeName}@{node.context.workspace.name}" data-__sitename="{node.context.currentSite.name}" {bodyAttributes}>
+	<body {bodyAttributes}>
+
+		<!-- TODO: add the page properties in a more clever way, and only when being in backend... -->
+		<div style="display:none;" id="t3-page-metainformation"  about="{node.contextPath}" data-title="{node.properties.title}" data-__workspacename="{node.workspace.name}" data-__siteroot="/sites/{node.context.currentSite.nodeName}@{node.context.workspace.name}" data-__sitename="{node.context.currentSite.name}"></div>
+
 		{body -> f:format.raw()}
+
 		<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
 			<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 				<div id="t3-ui-top" class="aloha-block-do-not-deactivate t3-ui">

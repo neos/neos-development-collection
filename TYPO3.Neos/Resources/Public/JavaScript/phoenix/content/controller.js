@@ -124,7 +124,7 @@ function() {
 					block.get('nodePath'),
 					function (result) {
 						if (result.success) {
-							window.location.reload();
+							T3.ContentModule.reloadPage();
 						}
 					}
 				);
@@ -149,7 +149,7 @@ function() {
 				},
 				{
 					'created-new-content': function($callbackDomElement) {
-						window.location.href = $callbackDomElement.attr('data-page');
+						T3.ContentModule.reloadPage();
 					}
 				}
 			);

@@ -50,7 +50,6 @@ function(launcherTemplate) {
 		// from aloha
 		__workspacename: null,
 
-
 		/**
 		 * @var {String}
 		 * The TYPO3CR node path of the block
@@ -184,9 +183,10 @@ function(launcherTemplate) {
 		_title: 'Page',
 		_valueModified: SC.Object.create(),
 		init: function() {
-			this.set('title', $('body').data('title'));
-			this.set('about', $('body').attr('about'));
-			this.set('__workspacename', $('body').data('__workspacename'));
+			var $pageMetainformation = $('#t3-page-metainformation');
+			this.set('title', $pageMetainformation.attr('data-title'));
+			this.set('about', $pageMetainformation.attr('about'));
+			this.set('__workspacename', $pageMetainformation.attr('data-__workspacename'));
 			this._originalValues = {
 				title: null,
 				about: null
@@ -223,12 +223,15 @@ function(launcherTemplate) {
 		_blocks: {},
 		_blocksByNodePath: {},
 
-		initializeBlocks: function() {
+		initialize: function() {
+			this._blocks = {};
+			this._blocksByNodePath = {};
+
 			var scope = this;
 			$('*[about]').each(function() {
 				// Just fetch the block a single time so that it is initialized.
 				scope.getBlockByNodePath($(this).attr('about'));
-			})
+			});
 		},
 
 		/**
@@ -317,6 +320,11 @@ function(launcherTemplate) {
 		blocks: [],
 		_pageBlock: null,
 
+		initialize: function() {
+			this._pageBlock = PageBlock.create();
+			this.updateSelection();
+		},
+
 		/**
 		 * Update the selection. If we have a block activated, we add the CSS class "t3-contentelement-selected" to the body
 		 * so that we can modify the appearance of the block handles.
@@ -388,6 +396,10 @@ function(launcherTemplate) {
 
 		content: [],
 
+		initialize: function() {
+			this.set('[]', []);
+		},
+
 		noChanges: function() {
 			return this.get('length') == 0;
 		}.property('length').cacheable(),
@@ -412,7 +424,7 @@ function(launcherTemplate) {
 				},
 				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode,
 				function() {
-					window.document.location.reload();
+					T3.ContentModule.reloadPage();
 				}
 			);
 
@@ -433,6 +445,14 @@ function(launcherTemplate) {
 
 		_loadedFromLocalStore: false,
 
+		initialize: function() {
+			// We first set this._loadedFromLocalStore to FALSE; such that the removal
+			// of all changes does NOT trigger a _saveToLocalStore.
+			this._loadedFromLocalStore = false;
+			this.set('[]', []);
+			this._readFromLocalStore();
+		},
+
 		addChange: function(block) {
 			if (!this.contains(block)) {
 				this.pushObject(block);
@@ -452,10 +472,11 @@ function(launcherTemplate) {
 		_readFromLocalStore: function() {
 			if (!this._supports_html5_storage()) return;
 
-			var serializedBlocks = window.localStorage['page_' + $('body').attr('about')];
+			var serializedBlocks = window.localStorage['page_' + $('#t3-page-metainformation').attr('about')];
 
 			if (serializedBlocks) {
 				var blocks = JSON.parse(serializedBlocks);
+
 				blocks.forEach(function(serializedBlock) {
 					var blockProxy = T3.Content.Model.BlockManager.getBlockByNodePath(serializedBlock.about);
 					if (blockProxy) {
@@ -478,7 +499,7 @@ function(launcherTemplate) {
 				return block.getCleanedUpAttributes();
 			});
 
-			window.localStorage['page_' + $('body').attr('about')] = JSON.stringify(cleanedUpBlocks);
+			window.localStorage['page_' + $('#t3-page-metainformation').attr('about')] = JSON.stringify(cleanedUpBlocks);
 		}.observes('[]'),
 
 		_supports_html5_storage: function() {
@@ -509,7 +530,7 @@ function(launcherTemplate) {
 				},
 				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update,
 				function() {
-					window.document.location.reload();
+					T3.ContentModule.reloadPage();
 				}
 			);
 
@@ -517,9 +538,6 @@ function(launcherTemplate) {
 			this.set('[]', []);
 		}
 	});
-
-	BlockSelection._pageBlock = PageBlock.create();
-	BlockSelection.set('blocks', [BlockSelection._pageBlock]);
 
 	T3.Content.Model = {
 		Block: Block,
