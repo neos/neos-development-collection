@@ -518,12 +518,16 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeOnlyFlagsTheNodeAsRemovedIfItsWorkspaceHasAnotherBaseWorkspace() {
+		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
+
 		$baseWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 
 		$workspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
 		$workspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue($baseWorkspace));
 
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('remove'), array(), '', FALSE);
+		$nodeRepository = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('remove'), array(), '', FALSE);
+		$nodeRepository->_set('entityClassName', 'TYPO3\TYPO3CR\Domain\Model\Node');
+		$nodeRepository->_set('persistenceManager', $mockPersistenceManager);
 
 		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array('/foo', $workspace));
 		$currentNode->_set('nodeRepository', $nodeRepository);

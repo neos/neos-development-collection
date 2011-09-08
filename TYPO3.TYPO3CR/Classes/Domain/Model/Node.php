@@ -696,6 +696,7 @@ class Node implements NodeInterface {
 			$this->nodeRepository->remove($this);
 		} else {
 			$this->removed = TRUE;
+			$this->nodeRepository->update($this);
 		}
 	}
 
