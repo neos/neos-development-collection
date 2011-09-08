@@ -89,6 +89,25 @@ When an attribute is modified through the property panel, the following happens:
 
 WARNING: TODO: Document what happens when an *editable* is modified
 
+
+WARNING: TODO: Document variable naming conventions:
+* $... -> jQuery object
+
+WARNING: TODO: Document Node properties naming conventions a bit further
+
+h5. Node Property Naming Conventions
+
+# Normal properties
+  Those properties contain normal values like a title, date or other value.
+  Serverside setting of the property is done using TYPO3CR Node::setProperty()
+# Visibility / lifecycle properties
+  These properties are prefixed using an underscore, like '_hidden'.
+  Serverside setting of the property is done using TYPO3CR Node::set<UpperCamelCasePropertyname>()
+# TYPO3 internal properties
+  These properties are prefixed with a double underscore, like __workspacename
+
+WARNING: TODO: Document data exchange between server / BE / FE and how BE and FE work together
+
 h4. Saving content
 
 Saving is triggered using @T3.Content.Model.Changes.save()@ and is very straight-forward. For now,

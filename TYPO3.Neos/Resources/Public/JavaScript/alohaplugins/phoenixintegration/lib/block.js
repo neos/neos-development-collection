@@ -123,7 +123,22 @@ function(block) {
 	// TODO: should be generic lateron.
 	exports.TextBlock = exports.AbstractBlock.extend({
 		title: 'Text',
-		editableSubProperties: ['headline', 'text']
+		editableSubProperties: ['headline', 'text'],
+
+		getSchema: function() {
+			return [
+				{
+					key: 'Properties',
+					properties: [
+						{
+							key: '_hidden',
+							type: 'boolean',
+							label: 'Hidden'
+						}
+					]
+				}
+			];
+		}
 	});
 
 	exports.PluginBlock = exports.AbstractBlock.extend({

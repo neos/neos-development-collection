@@ -62,6 +62,14 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 	 * Also note that the context's "current node" is not affected by this object converter, you will need to set it to
 	 * whatever node your "current" node is, if any.
 	 *
+	 * All elements in the source array which start with two underscores (like __contextNodePath) are specially treated
+	 * by this converter.
+	 *
+	 * All elements in the source array which start with a *single underscore (like _hidden) are *directly* set on the Node
+	 * object.
+	 *
+	 * All other elements, not being prefixed with underscore, are properties of the node.
+	 *
 	 * @param string|array $source Either a string or array containing the absolute context node path which identifies the node. For example "/sites/mysitecom/homepage/about@user-admin"
 	 * @param string $targetType not used
 	 * @param array $subProperties not used
@@ -104,7 +112,12 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 		}
 
 		foreach ($source as $nodePropertyKey => $nodePropertyValue) {
-			if (substr($nodePropertyKey, 0, 2) !== '__') {
+			if (substr($nodePropertyKey, 0, 2) === '__') {
+				continue;
+			}
+			if ($nodePropertyKey[0] === '_') {
+				\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($node, substr($nodePropertyKey, 1), $nodePropertyValue);
+			} else {
 				$node->setProperty($nodePropertyKey, $nodePropertyValue);
 			}
 		}

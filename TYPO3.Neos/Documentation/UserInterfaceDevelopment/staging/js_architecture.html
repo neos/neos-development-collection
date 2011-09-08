@@ -101,6 +101,9 @@
 	<li>The main UI elements have an ID, and a partial reset is used to give us predictable behavior inside them.</li>
 	<li>We use <strong>sass</strong>. To install, use <tt>gem install sass</tt>. Then, before modifying <span class="caps">CSS</span>, go to css/ and run   <tt>sass --watch style.scss:style.css</tt>. This will update style.css at every modification of style.scss.</li>
 </ul>
+<h4 id="z-indexes">3.1 Z-Indexes</h4>
+<p>The TYPO3 Phoenix UI uses Z-Indexes starting at <strong>10000</strong>.</p>
+<div class="warning"><p><span class="caps">TODO</span>: Formulate some more about the usage of z-indexes.</p></div>
 <h3 id="naming-of-main-ui-parts">4 Naming of main UI parts</h3>
 <p>The following image shows the main UI parts and the names we use for them.</p>
 <p><img src="images/content/js_architecture/ui_parts.png" alt="" /></p>
@@ -121,6 +124,17 @@
 <p>When an attribute is modified through the property panel, the following happens:</p>
 <p><img src="images/content/js_architecture/internal_structure_attribute_updates.png" alt="" /></p>
 <div class="warning"><p><span class="caps">TODO</span>: Document what happens when an <strong>editable</strong> is modified</p></div>
+
+<div class="warning"><p><span class="caps">TODO</span>: Document variable naming conventions: * $&#8230; &#8594; jQuery object</p></div>
+
+<div class="warning"><p><span class="caps">TODO</span>: Document Node properties naming conventions a bit further</p></div>
+<h5 id="node-property-naming-conventions">5.2.1 Node Property Naming Conventions</h5>
+<ol>
+	<li>Normal properties   Those properties contain normal values like a title, date or other value.   Serverside setting of the property is done using TYPO3CR Node::setProperty()</li>
+	<li>Visibility / lifecycle properties   These properties are prefixed using an underscore, like &#8216;_hidden&#8217;.   Serverside setting of the property is done using TYPO3CR Node::set<UpperCamelCasePropertyname>()</li>
+	<li>TYPO3 internal properties   These properties are prefixed with a double underscore, like __workspacename</li>
+</ol>
+<div class="warning"><p><span class="caps">TODO</span>: Document data exchange between server / BE / FE and how BE and FE work together</p></div>
 <h4 id="saving-content">5.3 Saving content</h4>
 <p>Saving is triggered using <code>T3.Content.Model.Changes.save()</code> and is very straight-forward. For now, we use ExtDirect to send things back to the server.</p>
 <h3 id="displaying-modal-dialogs">6 Displaying Modal Dialogs</h3>
@@ -168,7 +182,8 @@
             <li><a href="#overall-ui-goals"><p>Overall UI Goals</p>
 </a></li><li><a href="#technical-guidelines-goals"><p>Technical guidelines / goals</p>
 </a></li><li><a href="#css-guidelines"><p><span class="caps">CSS</span> Guidelines</p>
-</a></li><li><a href="#naming-of-main-ui-parts"><p>Naming of main UI parts</p>
+</a><ul><li><a href="#z-indexes"><p>Z-Indexes</p>
+</a></li></ul></li><li><a href="#naming-of-main-ui-parts"><p>Naming of main UI parts</p>
 </a></li><li><a href="#main-architecture"><p>Main architecture</p>
 </a><ul><li><a href="#ui-updates-on-selection-change"><p>UI Updates on Selection Change</p>
 </a></li> <li><a href="#ui-updates-on-property-change"><p>UI updates on property change</p>
