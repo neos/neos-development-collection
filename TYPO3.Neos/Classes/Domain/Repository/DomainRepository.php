@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Domain\Repository;
 /**
  * The Site Repository
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  * @api
  */

@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Domain;
 /**
  * A generic TYPO3 Domain exception
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
 class Exception extends \TYPO3\TYPO3\Exception {

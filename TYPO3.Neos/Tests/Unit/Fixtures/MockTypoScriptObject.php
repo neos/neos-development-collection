@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\TypoScript;
 /**
  * A mock for a TypoScript object
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class MockTypoScriptObject {
 

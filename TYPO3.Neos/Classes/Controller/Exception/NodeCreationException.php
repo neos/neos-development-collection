@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Controller\Exception;
 /**
  * A "Node Creation" exception
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class NodeCreationException extends \TYPO3\TYPO3\Controller\Exception {
 

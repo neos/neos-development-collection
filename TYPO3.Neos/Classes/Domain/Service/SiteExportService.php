@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Domain\Service;
 /**
  * The Site Export Service
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class SiteExportService {

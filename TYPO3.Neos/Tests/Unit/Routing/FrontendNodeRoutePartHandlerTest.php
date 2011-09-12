@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Tests\Unit\Routing;
 /**
  * Testcase for the Content Routepart Handler
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class FrontendNodeRoutePartHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

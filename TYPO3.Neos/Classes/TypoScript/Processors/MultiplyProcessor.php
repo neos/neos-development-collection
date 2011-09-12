@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\TypoScript\Processors;
 /**
  * Processor that multiplies a given number or numeric string with the given factor.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class MultiplyProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 

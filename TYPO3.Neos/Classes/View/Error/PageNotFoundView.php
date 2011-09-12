@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\View\Error;
 /**
  * A page not found error view
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class PageNotFoundView extends \TYPO3\TYPO3\View\Error\ErrorView {
 

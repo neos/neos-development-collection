@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Command;
 /**
  * The TYPO3 Setup
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
 class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {

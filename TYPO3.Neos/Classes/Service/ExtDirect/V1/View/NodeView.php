@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Service\ExtDirect\V1\View;
 /**
  * An ExtDirect View specialized on single or multiple Nodes
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class NodeView extends \TYPO3\ExtJS\ExtDirect\View {

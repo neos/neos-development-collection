@@ -34,7 +34,6 @@ namespace TYPO3\TYPO3\ViewHelpers\Link;
  * <a href="sites/mysite.com/homepage/about.html">some link</a>
  * (depending on current node, format etc.)
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {

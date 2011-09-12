@@ -25,7 +25,6 @@ namespace TYPO3\TYPO3\ViewHelpers\Aloha;
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
  * The wrapper contains the property name which should be made editable, and is either a "span" or a "div" tag (depending on the context)
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class NotEditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {

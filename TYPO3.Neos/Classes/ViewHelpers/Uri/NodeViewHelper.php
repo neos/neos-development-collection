@@ -34,7 +34,6 @@ namespace TYPO3\TYPO3\ViewHelpers\Uri;
  * homepage/about.html
  * (depending on current workspace, current node, format etc.)
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {

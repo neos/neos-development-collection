@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Tests\Unit\Domain\Service;
 /**
  * Testcase for the Content Context
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ContentContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

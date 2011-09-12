@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Controller\Exception;
 /**
  * A "No TypoScript Page Object" exception
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class NoTypoScriptPageObjectException extends \TYPO3\TYPO3\Controller\Exception {
 

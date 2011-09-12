@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Controller;
 /**
  * Error Controller
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
 class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController implements \TYPO3\FLOW3\MVC\Controller\NotFoundControllerInterface {

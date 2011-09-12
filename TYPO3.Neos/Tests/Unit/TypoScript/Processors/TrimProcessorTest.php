@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\TypoScript\Processors;
 /**
  * Testcase for the TypoScript TrimProcessor
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class TrimProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

@@ -26,7 +26,6 @@ use \TYPO3\TYPO3\Controller\Exception\NodeCreationException;
 /**
  * The TYPO3 ContentModule controller
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
 class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {

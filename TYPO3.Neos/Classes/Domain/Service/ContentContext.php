@@ -26,7 +26,6 @@ use \TYPO3\FLOW3\I18n\Locale;
 /**
  * The Content Context
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  * @api
  */

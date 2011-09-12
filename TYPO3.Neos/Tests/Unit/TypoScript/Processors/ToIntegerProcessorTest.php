@@ -26,7 +26,6 @@ require_once (__DIR__ . '/../../Fixtures/MockTypoScriptObject.php');
 /**
  * Testcase for the TypoScript ToIntegerProcessor
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ToIntegerProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

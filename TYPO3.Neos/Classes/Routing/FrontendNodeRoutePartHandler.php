@@ -27,7 +27,6 @@ use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 /**
  * A route part handler for finding nodes specifically in the website's frontend.
  *
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
 class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {

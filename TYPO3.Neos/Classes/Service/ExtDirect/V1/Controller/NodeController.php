@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Service\ExtDirect\V1\Controller;
 /**
  * ExtDirect Controller for managing Nodes
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
 class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {

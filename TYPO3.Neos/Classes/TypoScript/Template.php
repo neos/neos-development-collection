@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\TypoScript;
 /**
  * A TypoScript Template object
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\TypoScript\ObjectInterface, \TYPO3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {

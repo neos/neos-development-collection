@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\TypoScript\Processors;
 /**
  * Processor that trims the current subject (Removes whitespaces arround the value).
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class TrimProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 

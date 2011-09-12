@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Tests\Unit\TypoScript;
 /**
  * Testcase for the Content TypoScript object
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ContentTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Tests\Unit\ViewHelpers\Link;
 /**
  * Testcase for the Link Node view helper
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class NodeViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

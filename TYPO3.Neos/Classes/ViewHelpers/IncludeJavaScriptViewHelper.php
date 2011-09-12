@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\ViewHelpers;
 /**
  * A View Helper to include JavaScript files inside Resources/Public/JavaScript of the package.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {

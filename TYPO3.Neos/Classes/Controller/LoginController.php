@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Controller;
 /**
  * A controller which allows for logging into the backend
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
 class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {

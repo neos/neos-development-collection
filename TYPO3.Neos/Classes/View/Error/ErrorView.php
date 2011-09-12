@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\View\Error;
 /**
  * A TYPO3 error view with a static template
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class ErrorView extends \TYPO3\FLOW3\MVC\View\NotFoundView {

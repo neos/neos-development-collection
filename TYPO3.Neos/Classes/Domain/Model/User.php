@@ -26,7 +26,6 @@ use \TYPO3\Party\Domain\Model\Person;
 /**
  * Domain Model of a User
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @entity
  * @scope prototype
  */

@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Tests\Unit\ViewHelpers;
 /**
  * Testcase for the IncludeJavaScript view helper
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class IncludeJavaScriptViewHelperTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

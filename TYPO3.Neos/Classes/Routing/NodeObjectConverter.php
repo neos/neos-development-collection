@@ -29,7 +29,6 @@ use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
  * An Object Converter for Nodes which can be used for routing (but also for other
  * purposes) as a plugin for the Property Mapper.
  *
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
 class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {

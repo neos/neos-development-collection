@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\TypoScript\Processors;
 /**
  * Processor that overrides the current subject with the given value, if the subject (not trimmed) is empty.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class IfBlankProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 

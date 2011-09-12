@@ -25,7 +25,6 @@ namespace TYPO3\TYPO3\TypoScript\Processors;
  * Processor that Returns the trueValue when the condition evaluates to TRUE,
  * otherwise the falseValue is returned.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 

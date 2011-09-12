@@ -25,7 +25,6 @@ namespace TYPO3\TYPO3\Controller\Frontend;
  * Controller for displaying nodes in the frontend
  *
  * @scope singleton
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 

@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\TypoScript;
 /**
  * The TypoScript "JavaScript" object
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class JavaScript extends \TYPO3\TypoScript\AbstractContentObject {

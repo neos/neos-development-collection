@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\View;
 /**
  * A view which renders a node based on a TypoScript template
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class TypoScriptView extends \TYPO3\FLOW3\MVC\View\AbstractView {

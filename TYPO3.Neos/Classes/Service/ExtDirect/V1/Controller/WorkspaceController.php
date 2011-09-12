@@ -26,7 +26,6 @@ use \TYPO3\TYPO3\Domain\Service\ContentContext;
 /**
  * ExtDirect Controller for managing Workspaces
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
 class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {

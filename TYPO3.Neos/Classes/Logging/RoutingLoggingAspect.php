@@ -26,7 +26,6 @@ use \TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler;
 /**
  * An aspect which centralizes the logging of TYPO3's routing functions.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @aspect
  * @scope singleton
  */

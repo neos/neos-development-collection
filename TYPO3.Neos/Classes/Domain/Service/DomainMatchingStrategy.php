@@ -25,7 +25,6 @@ namespace TYPO3\TYPO3\Domain\Service;
  * Strategy for matching domains
  *
  * @scope singleton
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class DomainMatchingStrategy {
 

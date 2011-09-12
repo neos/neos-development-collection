@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\TypoScript\Processors;
 /**
  * Processor that returns a substring of the given subject
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class SubstringProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 

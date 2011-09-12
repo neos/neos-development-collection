@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Controller\Exception;
 /**
  * A "No TypoScript" exception
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class NoTypoScriptConfigurationException extends \TYPO3\TYPO3\Controller\Exception {
 

@@ -28,7 +28,6 @@ namespace TYPO3\TYPO3\Domain\Model;
  * We'll need a better one which understands which options are available and contains some
  * information about possible help texts etc.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @entity
  * @scope prototype
  * @todo Provide a more capable implementation

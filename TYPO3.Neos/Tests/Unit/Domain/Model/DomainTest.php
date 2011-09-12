@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Tests\Unit\Domain\Model;
 /**
  * Testcase for the "Domain" domain model
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class DomainTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3\Tests\Unit\Domain\Service;
 /**
  * Testcase for the TypoScript Service
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class TypoScriptServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
