@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript\Tests\Unit;
 /**
  * Testcase for the TypoScript Object Factory
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

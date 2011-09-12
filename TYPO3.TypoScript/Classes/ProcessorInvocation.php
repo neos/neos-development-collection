@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript;
 /**
  * Represents the invocation of a TypoScript processor
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class ProcessorInvocation {

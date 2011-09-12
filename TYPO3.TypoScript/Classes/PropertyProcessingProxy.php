@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript;
 /**
  * A proxy class which is used for lazy rendering TypoScript object properties.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class PropertyProcessingProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
 

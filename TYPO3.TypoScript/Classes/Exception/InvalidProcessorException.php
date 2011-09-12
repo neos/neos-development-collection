@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript\Exception;
 /**
  * A "Invalid Processor" exception
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class InvalidProcessorException extends \TYPO3\TypoScript\Exception {
 

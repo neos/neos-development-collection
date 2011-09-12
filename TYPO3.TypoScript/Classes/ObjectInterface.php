@@ -25,7 +25,6 @@ namespace TYPO3\TypoScript;
  * Interface of a TypoScript object
  *
  * @author Robert Lemke <robert@typo3.org>
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 interface ObjectInterface {
 

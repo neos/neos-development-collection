@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript;
 /**
  * Common class for TypoScript Content Objects
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScript\ContentObjectInterface {
 

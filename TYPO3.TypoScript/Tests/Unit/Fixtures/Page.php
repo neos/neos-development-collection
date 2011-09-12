@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript\Fixtures;
 /**
  * A TypoScript Page Object fixture
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class Page extends \TYPO3\TypoScript\AbstractContentArrayObject {

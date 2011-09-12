@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript;
 /**
  * An exception thrown by TypoScript processors or generally in the TypoScript context.
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class Exception extends \Exception {
 

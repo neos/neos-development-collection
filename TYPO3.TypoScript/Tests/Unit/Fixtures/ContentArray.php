@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript\Fixtures;
 /**
  * A TypoScript Content Array Object fixture
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class ContentArray extends \TYPO3\TypoScript\AbstractContentArrayObject {

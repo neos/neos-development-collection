@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript;
 /**
  * A factory for TypoScript Objects
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope singleton
  */
 class ObjectFactory {

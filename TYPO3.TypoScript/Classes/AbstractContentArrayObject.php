@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript;
 /**
  * Common class for TypoScript Content Objects with Array capabilities
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayAccess, \Countable {
 

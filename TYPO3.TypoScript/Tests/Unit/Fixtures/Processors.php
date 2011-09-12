@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript\Fixtures;
 /**
  * Processors for use in the Parser tests
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class Processors implements \TYPO3\TypoScript\ProcessorInterface {

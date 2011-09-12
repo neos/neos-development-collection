@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript\Fixtures;
 /**
  * A TypoScript object fixture
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class ObjectWithArrayProperty extends \TYPO3\TypoScript\AbstractContentObject {

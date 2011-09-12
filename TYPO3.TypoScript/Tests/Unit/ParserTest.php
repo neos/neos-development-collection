@@ -30,7 +30,6 @@ require_once('Fixtures/Processors.php');
 /**
  * Testcase for the TypoScript Parser
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 

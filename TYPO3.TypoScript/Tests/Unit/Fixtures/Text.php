@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript\Fixtures;
 /**
  * A TypoScript Text object fixture
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class Text extends \TYPO3\TypoScript\AbstractContentObject {

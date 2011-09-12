@@ -29,7 +29,6 @@ namespace TYPO3\TypoScript;
  * Most importantly that's the Controller Context (which contains the current
  * Request object and further MVC related information).
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @scope prototype
  */
 class RenderingContext implements \TYPO3\Fluid\Core\Rendering\RenderingContextInterface {

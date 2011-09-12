@@ -24,7 +24,6 @@ namespace TYPO3\TypoScript\Exception;
 /**
  * A "No Processor Chain Found" exception
  *
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class NoProcessorChainFoundException extends \TYPO3\TypoScript\Exception {
 

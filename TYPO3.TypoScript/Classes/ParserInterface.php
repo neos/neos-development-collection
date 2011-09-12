@@ -25,7 +25,6 @@ namespace TYPO3\TypoScript;
  * Contract for a TypoScript parser
  *
  * @author Robert Lemke <robert@typo3.org>
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  * @api
  */
 interface ParserInterface {
