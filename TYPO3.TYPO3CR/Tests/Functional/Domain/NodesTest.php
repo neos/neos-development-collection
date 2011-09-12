@@ -27,7 +27,6 @@ use \TYPO3\TYPO3\Domain\Service\ContentContext;
  * Functional test case which covers all Node-related behavior of the
  * content repository as long as they reside in the live workspace.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 

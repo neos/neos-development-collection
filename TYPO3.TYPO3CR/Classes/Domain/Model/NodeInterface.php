@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 /**
  * Interface for a Node inside the Content Repository.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface NodeInterface {
 

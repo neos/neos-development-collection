@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3CR\Exception;
 /**
  * A workspace exception
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class WorkspaceException extends \TYPO3\TYPO3CR\Exception {
 

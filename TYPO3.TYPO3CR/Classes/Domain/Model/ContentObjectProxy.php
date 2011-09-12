@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 /**
  * A Content Object Proxy object to connect domain models to nodes
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
  * @scope prototype
  */

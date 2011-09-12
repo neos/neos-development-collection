@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3CR\Domain\Service;
 /**
  * Context
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {

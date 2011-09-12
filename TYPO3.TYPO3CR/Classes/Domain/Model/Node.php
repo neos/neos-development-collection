@@ -28,7 +28,6 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * Note: If this API is extended, make sure to also implement the additional
  * methods inside ProxyNode!
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
  * @scope prototype
  */

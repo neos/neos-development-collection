@@ -30,7 +30,6 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * This ProxyNode is only used if there is no materialized node in the current
  * workspace (at the given path).
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class ProxyNode implements NodeInterface {

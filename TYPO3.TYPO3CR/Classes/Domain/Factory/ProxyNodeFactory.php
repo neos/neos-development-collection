@@ -29,7 +29,6 @@ namespace TYPO3\TYPO3CR\Domain\Factory;
  * into a generic NodeFactory and a streamlined treat-with-context mechanism which
  * fits better into the DDD approach of Factories.
  *
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope singleton
  */
 class ProxyNodeFactory {
