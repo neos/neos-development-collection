@@ -145,7 +145,15 @@
 		    buttonHeight: button.outerHeight(),
 		    buttonOffset: button.offset()
 			}
-			
+
+			// TYPO3 SPECIFIC FIX START
+
+			// As our content module has position:fixed,
+			// we need to remove the scroll-position again
+			coord.buttonOffset.top -= $(document).scrollTop();
+
+			// TYPO3 SPECIFIC FIX STOP
+
 			// calculate the possible directions based on popover size and button position
 			var possibleDir = calcPopoverDirPossible(button, coord);
 				
