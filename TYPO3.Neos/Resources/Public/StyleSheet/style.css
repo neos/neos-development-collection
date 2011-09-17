@@ -470,6 +470,10 @@ button.t3-button {
   display: block; }
 
 .t3-status-indicator {
+  display: none; }
+
+body.t3-inspect-active .t3-status-indicator {
+  display: block;
   position: absolute;
   left: -1px;
   bottom: -17px;
@@ -488,14 +492,12 @@ button.t3-button {
   box-shadow: 0px 1px 3px #cccccc;
   -moz-box-shadow: 0px 1px 3px #cccccc;
   -webkit-box-shadow: 0px 1px 3px #cccccc; }
-
-.aloha-block:hover > .t3-status-indicator {
+body.t3-inspect-active .aloha-block:hover > .t3-status-indicator {
   box-shadow: 0px 1px 3px #909090;
   -moz-box-shadow: 0px 1px 3px #909090;
   -webkit-box-shadow: 0px 1px 3px #909090;
   border-color: #999; }
-
-div.aloha-block > div.aloha-block-inner {
+body.t3-inspect-active div.aloha-block > div.aloha-block-inner {
   outline: 1px solid #cccccc; }
 
 div.aloha-block:hover > div.aloha-block-inner {
@@ -567,6 +569,10 @@ div.aloha-block:hover > div.aloha-block-inner {
   background: white; }
 
 .t3-contentelement-removed {
+  display: none; }
+
+body.t3-inspect-active .t3-contentelement-removed {
+  display: block;
   opacity: .2;
   background-color: #ff6666;
   background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(0.25, rgba(255, 255, 255, 0.2)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.2)), color-stop(0.75, rgba(255, 255, 255, 0.2)), color-stop(0.75, transparent), to(transparent));
@@ -596,6 +602,5 @@ button.t3-create-new-content {
 .t3-ui-controls-inactive .aloha-floatingmenu,
 .t3-ui-controls-inactive .x-shadow {
   display: none !important; }
-.t3-ui-controls-inactive .t3-contentelement-removed,
 .t3-ui-controls-inactive button.t3-create-new-content {
   display: none; }

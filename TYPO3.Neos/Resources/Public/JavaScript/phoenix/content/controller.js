@@ -81,6 +81,22 @@ function() {
 	});
 
 	/**
+	 * This controller toggles the preview mode on and off.
+	 */
+	var Inspect = SC.Object.create({
+		inspectMode: false,
+
+		toggleInspect: function(isInspectEnabled) {
+			if (isInspectEnabled) {
+				$('body').addClass('t3-inspect-active');
+			} else {
+				$('body').removeClass('t3-inspect-active');
+			}
+			this.set('inspectMode', isInspectEnabled);
+		}
+	});
+
+	/**
 	 * The BlockActions is a container for numerous actions which can happen with blocks.
 	 * They are normally triggered when clicking Block UI handles.
 	 * Examples include:
@@ -142,6 +158,7 @@ function() {
 
 	T3.Content.Controller = {
 		Preview: Preview,
+		Inspect: Inspect,
 		BlockActions: BlockActions
 	}
 	window.T3 = T3;

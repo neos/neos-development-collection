@@ -32,8 +32,14 @@
 	background:white;
 }
 
+
 // Removed content elements styling
 .t3-contentelement-removed {
+	display: none;
+}
+
+body.t3-inspect-active .t3-contentelement-removed {
+	display: block;
 	opacity: .2;
 	background-color: #ff6666;
 	background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent), to(transparent));
@@ -82,7 +88,6 @@ button.t3-create-new-content {
 		display:none !important;
 	}
 
-	.t3-contentelement-removed,
 	button.t3-create-new-content {
 		display:none;
 	}
