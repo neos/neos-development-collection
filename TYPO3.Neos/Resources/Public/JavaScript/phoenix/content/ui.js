@@ -12,7 +12,9 @@ define(
 	'text!phoenix/content/ui/inspector.html',
 	'text!phoenix/content/ui/inspectordialog.html',
 	'Library/jquery-popover/jquery.popover',
-	'css!Library/jquery-popover/jquery.popover.css'
+	'Library/jquery-notice/jquery.notice',
+	'css!Library/jquery-popover/jquery.popover.css',
+	'css!Library/jquery-notice/jquery.notice.css'
 ],
 function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate) {
 	var T3 = window.T3 || {};

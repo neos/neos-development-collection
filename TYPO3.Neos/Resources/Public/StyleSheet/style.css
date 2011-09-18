@@ -674,3 +674,21 @@ button.t3-create-new-content {
   height: 100%;
   top: 0px;
   left: 0px; }
+
+.notice-wrap {
+  top: 90px !important;
+  right: 210px !important; }
+
+.notice-item {
+  background-position: 3px 5px !important;
+  background-repeat: no-repeat !important; }
+  .notice-item p {
+    padding-left: 17px; }
+  .notice-item.typo3-notification-ok {
+    background-image: url("../Icons/FugueIcons/tick.png"); }
+  .notice-item.typo3-notification-info {
+    background-image: url("../Icons/FugueIcons/information.png"); }
+  .notice-item.typo3-notification-warning {
+    background-image: url("../Icons/FugueIcons/exclamation.png"); }
+  .notice-item.typo3-notification-error {
+    background-image: url("../Icons/FugueIcons/exclamation-red.png"); }

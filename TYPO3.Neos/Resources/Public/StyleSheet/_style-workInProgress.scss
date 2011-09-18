@@ -35,3 +35,34 @@ button.t3-create-new-content {
 	top: 0px;
 	left: 0px;
 }
+
+// Notifications
+
+.notice-wrap {
+	top: 90px !important;
+	right: 210px !important;
+}
+
+.notice-item {
+	background-position: 3px 5px !important;
+	background-repeat: no-repeat !important;
+
+	p {
+		padding-left: 17px;
+	}
+
+	&.typo3-notification-ok {
+		background-image: url('../Icons/FugueIcons/tick.png');
+	}
+	&.typo3-notification-info {
+		background-image: url('../Icons/FugueIcons/information.png');
+	}
+	&.typo3-notification-notice {
+	}
+	&.typo3-notification-warning {
+		background-image: url('../Icons/FugueIcons/exclamation.png');
+	}
+	&.typo3-notification-error {
+		background-image: url('../Icons/FugueIcons/exclamation-red.png');
+	}
+}

@@ -8,3 +8,7 @@ Theme: UI Darkness
 
 jquery popover from https://github.com/harryhorn/jquery-popover
 Version 0.2.2
+
+
+jQuery Notice from http://code.google.com/p/jquery-notice/
+Version 1.0

@@ -238,5 +238,55 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 			$(html).dialog(options);
 		}
 	});
+
+
+	/**
+	 * Notification handler
+	 *
+	 * @singleton
+	 */
+	T3.Common.Notification = SC.Object.create({
+
+		ok: function(msg, stay) {
+			jQuery.noticeAdd({
+				text: msg,
+				stay: stay !== undefined ? stay : false,
+				type: 'typo3-notification-ok'
+			});
+		},
+
+		info: function(msg, stay) {
+			jQuery.noticeAdd({
+				text: msg,
+				stay: stay !== undefined ? stay : false,
+				type: 'typo3-notification-info'
+			});
+		},
+
+		notice: function(msg, stay) {
+			jQuery.noticeAdd({
+				text: msg,
+				stay: stay !== undefined ? stay : false,
+				type: 'typo3-notification-notice'
+			});
+		},
+
+		warning: function(msg, stay) {
+			jQuery.noticeAdd({
+				text: msg,
+				stay: stay !== undefined ? stay : true,
+				type: 'typo3-notification-warning'
+			});
+		},
+
+		error: function(msg, stay) {
+			jQuery.noticeAdd({
+				text: msg,
+				stay: stay !== undefined ? stay : true,
+				type: 'typo3-notification-error'
+			});
+		}
+	});
+
 	window.T3 = T3;
 });
