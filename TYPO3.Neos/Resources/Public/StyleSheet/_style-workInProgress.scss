@@ -2,99 +2,27 @@
 // will take the changes from this file, review them and merge them with the other file.
 
 
-// Highlight changed elements in the Property Panel
-.t3-inspector-form {
-	input[type=text] {
-		&.modified {
-		   border: 1px solid #54974a;
-		}
-	}
-}
-
 // Page Tree Styling
 .popover .x-tree .t3-gotoPage {
-	display:none;
-	position:absolute;
-	right:5px;
-	width:16px;
-	height:16px;
+	display: none;
+	position: absolute;
+	right: 5px;
+	width: 16px;
+	height: 16px;
 	background: url(../Images/ContentModule/arrow-bubble.png) no-repeat;
 }
 .popover .x-tree .x-tree-node-over .t3-gotoPage {
-	display:inline;
+	display: inline;
 }
 .popover {
 	position: fixed !important;
 }
 
 .t3-dd-drag-ghost-pagetree {
-	background:white;
+	background: white;
 }
 
 // Create content element button
 button.t3-create-new-content {
-	padding:5px;
-}
-
-.t3-contentelement-hidden {
-	opacity: .2;
-}
-
-// Revert modifications to the content area where it is possible
-.t3-ui-controls-inactive {
-
-	// Aloha Block highlighting
-	div.aloha-block:hover > .aloha-block-inner {
-		cursor:default;
-	}
-
-	div.aloha-block-inner {
-		outline:none !important;
-		background:none !important;
-	}
-
-
-	// Handles around Aloha Blocks
-	.t3-delete-handle,
-	.t3-add-below-handle,
-	.t3-add-above-handle,
-	.t3-status-indicator {
-		display: none !important;
-	}
-
-	// Aloha Floating Menu
-	#aloha-floatingmenu-shadow,
-	.aloha-floatingmenu,
-	.x-shadow {
-		display:none !important;
-	}
-
-	button.t3-create-new-content {
-		display:none;
-	}
-}
-
-// Re-enable previewmode on reload
-.typo3-previewmode-enabled {
-	margin: 30px 0px 0px 0px;
-
-	#t3-footer {
-		display: none;
-	}
-	#t3-toolbar {
-		top: 0px;
-		right: 0px;
-	}
-	#t3-ui-top {
-		display: none;
-	}
-	#t3-inspector {
-		display: none;
-	}
-}
-.typo3-previewmode-enabled.t3-ui-controls-active {
-	margin-right: 0;
-	margin-bottom: 0;
-	margin-top: 30;
-	margin-left: 0;
+	padding: 5px;
 }

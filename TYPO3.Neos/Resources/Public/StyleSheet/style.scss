@@ -177,6 +177,10 @@ ul.t3-topbar {
 		&:focus {
 			@include box-shadow(rgba(255, 255, 255, 0.1) 0 1px 0, #000000 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset);
 		}
+		// Highlight changed elements in the Property Panel
+		&.modified {
+	   		border: 1px solid #54974a;
+		}
 	}
 }
 
@@ -390,6 +394,9 @@ button.t3-button {
 	display:block;
 	z-index: 10000;
 }
+.t3-contentelement-hidden {
+	@include opacity(0.2);
+}
 .t3-contentelement-selected {
 	.aloha-block:hover > .t3-delete-handle,
 	.aloha-block:hover > .t3-add-above-handle,
@@ -471,6 +478,54 @@ div.aloha-block:hover > div.aloha-block-inner {
 	}
 }
 
+// Revert modifications to the content area where it is possible
+.t3-ui-controls-inactive {
+	// Aloha Block highlighting
+	div.aloha-block:hover > .aloha-block-inner {
+		cursor: default;
+	}
+	div.aloha-block-inner {
+		outline:none !important;
+		background:none !important;
+	}
+	// Handles around Aloha Blocks
+	.t3-delete-handle,
+	.t3-add-below-handle,
+	.t3-add-above-handle,
+	.t3-status-indicator {
+		display: none !important;
+	}
+	// Aloha Floating Menu
+	#aloha-floatingmenu-shadow,
+	.aloha-floatingmenu,
+	.x-shadow {
+		display:none !important;
+	}
+	button.t3-create-new-content {
+		display:none;
+	}
+}
+
+// Re-enable previewmode on reload
+.typo3-previewmode-enabled {
+	margin: $toolbar-height 0 0 0;
+	#t3-footer {
+		display: none;
+	}
+	#t3-toolbar {
+		top: 0px;
+		right: 0px;
+	}
+	#t3-ui-top {
+		display: none;
+	}
+	#t3-inspector {
+		display: none;
+	}
+}
+.typo3-previewmode-enabled.t3-ui-controls-active {
+	margin: $toolbar-height 0 0 0;
+}
 
 // TODO Move to common CSS
 .three-columns {

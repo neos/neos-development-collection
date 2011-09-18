@@ -234,6 +234,8 @@ ul.t3-topbar {
     -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset;
     -o-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset;
     box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset; }
+  .t3-inspector-form input[type=text].modified {
+    border: 1px solid #54974a; }
 
 /*** Toolbar ***/
 #t3-toolbar {
@@ -501,6 +503,10 @@ button.t3-button {
   display: block;
   z-index: 10000; }
 
+.t3-contentelement-hidden {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
+  opacity: 0.2; }
+
 .t3-contentelement-selected .aloha-block:hover > .t3-delete-handle,
 .t3-contentelement-selected .aloha-block:hover > .t3-add-above-handle,
 .t3-contentelement-selected .aloha-block:hover > .t3-add-below-handle {
@@ -591,6 +597,38 @@ div.aloha-block:hover > div.aloha-block-inner {
   .ui-dialog a.t3-content-new:hover {
     text-decoration: none; }
 
+.t3-ui-controls-inactive div.aloha-block:hover > .aloha-block-inner {
+  cursor: default; }
+.t3-ui-controls-inactive div.aloha-block-inner {
+  outline: none !important;
+  background: none !important; }
+.t3-ui-controls-inactive .t3-delete-handle,
+.t3-ui-controls-inactive .t3-add-below-handle,
+.t3-ui-controls-inactive .t3-add-above-handle,
+.t3-ui-controls-inactive .t3-status-indicator {
+  display: none !important; }
+.t3-ui-controls-inactive #aloha-floatingmenu-shadow,
+.t3-ui-controls-inactive .aloha-floatingmenu,
+.t3-ui-controls-inactive .x-shadow {
+  display: none !important; }
+.t3-ui-controls-inactive button.t3-create-new-content {
+  display: none; }
+
+.typo3-previewmode-enabled {
+  margin: 30px 0 0 0; }
+  .typo3-previewmode-enabled #t3-footer {
+    display: none; }
+  .typo3-previewmode-enabled #t3-toolbar {
+    top: 0px;
+    right: 0px; }
+  .typo3-previewmode-enabled #t3-ui-top {
+    display: none; }
+  .typo3-previewmode-enabled #t3-inspector {
+    display: none; }
+
+.typo3-previewmode-enabled.t3-ui-controls-active {
+  margin: 30px 0 0 0; }
+
 .three-columns {
   width: 100%;
   float: left;
@@ -608,9 +646,6 @@ div.aloha-block:hover > div.aloha-block-inner {
 
 .tc-1-1-1 .c-3 {
   float: right; }
-
-.t3-inspector-form input[type=text].modified {
-  border: 1px solid #54974a; }
 
 .popover .x-tree .t3-gotoPage {
   display: none;
@@ -631,41 +666,3 @@ div.aloha-block:hover > div.aloha-block-inner {
 
 button.t3-create-new-content {
   padding: 5px; }
-
-.t3-contentelement-hidden {
-  opacity: .2; }
-
-.t3-ui-controls-inactive div.aloha-block:hover > .aloha-block-inner {
-  cursor: default; }
-.t3-ui-controls-inactive div.aloha-block-inner {
-  outline: none !important;
-  background: none !important; }
-.t3-ui-controls-inactive .t3-delete-handle,
-.t3-ui-controls-inactive .t3-add-below-handle,
-.t3-ui-controls-inactive .t3-add-above-handle,
-.t3-ui-controls-inactive .t3-status-indicator {
-  display: none !important; }
-.t3-ui-controls-inactive #aloha-floatingmenu-shadow,
-.t3-ui-controls-inactive .aloha-floatingmenu,
-.t3-ui-controls-inactive .x-shadow {
-  display: none !important; }
-.t3-ui-controls-inactive button.t3-create-new-content {
-  display: none; }
-
-.typo3-previewmode-enabled {
-  margin: 30px 0px 0px 0px; }
-  .typo3-previewmode-enabled #t3-footer {
-    display: none; }
-  .typo3-previewmode-enabled #t3-toolbar {
-    top: 0px;
-    right: 0px; }
-  .typo3-previewmode-enabled #t3-ui-top {
-    display: none; }
-  .typo3-previewmode-enabled #t3-inspector {
-    display: none; }
-
-.typo3-previewmode-enabled.t3-ui-controls-active {
-  margin-right: 0;
-  margin-bottom: 0;
-  margin-top: 30;
-  margin-left: 0; }
