@@ -1,4 +1,5 @@
 @import "t3-reset";
+@import "compass";
 
 //Variables//
 $menu-height: 25px;
@@ -31,16 +32,6 @@ $footer-height: 30px;
 	-webkit-transition-property: $value;
 	-webkit-transition-duration: $duration;
 }
-@mixin gradient-linear($color1, $color2) {
-	background: $color1; // old Browsers //
-	background: -moz-linear-gradient(top, $color1 0%, $color2 100%); // Firefox //
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$color1), color-stop(100%,$color2)); // Chrome,Safari4+ //
-	background: -webkit-linear-gradient(top, $color1 0%,$color2 100%); // Chrome10+,Safari5.1+ //
-	background: -o-linear-gradient(top, $color1 0%,$color2 100%); // Opera11.10+ //
-	background: -ms-linear-gradient(top, $color1 0%,$color2 100%); // IE10+ //
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$color1', endColorstr='$color2',GradientType=0 ); // IE6-9 //
-	background: linear-gradient(top, $color1 0%,$color2 100%); // W3C //
-}
 /** CSS start **/
 body.t3-ui-controls-active {
 	margin-right: $property-panel-width;
@@ -59,7 +50,7 @@ body.t3-ui-controls-active {
 }
 #t3-ui-top {
 	@include box-shadow(0px, 1px, 3px, #000000);
-	@include gradient-linear(#444444, #2d2d2d);
+	@include background-image(linear-gradient(#444444, #2d2d2d));
 	left: 0;
 	top: 0;
 	position: fixed;
@@ -128,7 +119,7 @@ body.t3-ui-controls-active {
 		top: 25px;
 		right: $property-panel-width + 30px;
 		border-radius: 0 0 10px 10px;
-		@include gradient-linear(#ffffff, #FCE4C4);
+		@include background-image(linear-gradient(#ffffff, #FCE4C4));
 		padding: 15px;
 		opacity: 0.9;
 	}
@@ -150,7 +141,7 @@ ul.t3-topbar {
 }
 
 .t3-topbar li.t3-active {
-	@include gradient-linear(#aaaaaa, #555555);
+	@include background-image(linear-gradient(#aaaaaa, #555555));
 	text-shadow: 1px 1px 0 #444444;
 	box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
 	-moz-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
@@ -161,7 +152,8 @@ ul.t3-topbar {
 .t3-inspector {
 	@include box-shadow(-2px, 0px, 3px, rgba(0, 0, 0, 0.5));
 	@include box-sizing;
-	@include gradient-linear(#2d2d2d, #111111);
+	@include background-image(linear-gradient(#2d2d2d, #111111));
+
 	height: 100%;
 	margin-top: $menu-height + $launcher-height;
 	position: fixed;
@@ -187,7 +179,7 @@ ul.t3-topbar {
 		padding: 0 10px;
 		height: 30px;
 		line-height: 30px;
-		@include gradient-linear(#555555, #373737);
+		@include background-image(linear-gradient(#555555, #373737));
 		color: #ffffff;
 		font-weight: normal;
 	}
@@ -216,7 +208,7 @@ ul.t3-topbar {
 /*** Toolbar ***/
 #t3-toolbar {
 	// @include box-shadow(-1px, 2px, 3px, rgba(0, 0, 0, 0.5));
-	@include gradient-linear(#666666, #373737);
+	@include background-image(linear-gradient(#666666, #373737));
 	height: $toolbar-height;
 	left: 0;
 	position: fixed;
@@ -314,7 +306,7 @@ ul.t3-topbar {
 	}
 }
 button.t3-button {
-	@include gradient-linear(#999999, #555555);
+	@include background-image(linear-gradient(#999999, #555555));
 	border: 1px solid #272727;
 	@include rounded-corner(4px);
 	color: #e4e4e4;
@@ -324,7 +316,7 @@ button.t3-button {
 	@include transition(background, 0.8s);
 	cursor: pointer;
 	&:hover {
-		@include gradient-linear(#aaaaaa, #666666);
+		@include background-image(linear-gradient(#aaaaaa, #666666));
 	}
 	&:focus,
 	&:active {
@@ -334,9 +326,9 @@ button.t3-button {
 		-webkit-box-shadow: 0px 4px 3px #666666 inset;
 	}
 	&.pressed {
-		@include gradient-linear(#f18f0b, #7c4700);
+		@include background-image(linear-gradient(#f18f0b, #7c4700));
 		&:hover {
-			@include gradient-linear(#f69a1e, #925502);
+			@include background-image(linear-gradient(#f69a1e, #925502));
 		}
 		&:focus,
 		&:active {
@@ -353,7 +345,7 @@ button.t3-button {
 		&:hover,
 		&:active,
 		&:focus {
-			@include gradient-linear(#999999, #555555);
+			@include background-image(linear-gradient(#999999, #555555));
 			box-shadow: 0 0 0 transparent;
 			-webkit-box-shadow: 0 0 0 transparent;
 			-moz-box-shadow: 0 0 0 transparent;
@@ -361,7 +353,7 @@ button.t3-button {
 	}
 }
 #t3-footer {
-	@include gradient-linear(#2d2d2d, #111111);
+	@include background-image(linear-gradient(#2d2d2d, #111111));
 	bottom: 0;
 	left: 0;
 	position: fixed;
@@ -499,7 +491,7 @@ div.aloha-block:hover > div.aloha-block-inner {
 }
 
 .ui-dialog a.t3-content-new {
-    @include gradient-linear(#cccccc, #333333);
+	@include background-image(linear-gradient(#cccccc, #333333));
     border-radius: 3px;
     display: block;
     font-size: 22px;

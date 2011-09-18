@@ -35,14 +35,12 @@ body.t3-ui-controls-active {
   box-shadow: 0px 1px 3px black;
   -moz-box-shadow: 0px 1px 3px black;
   -webkit-box-shadow: 0px 1px 3px black;
-  background: #444444;
-  background: -moz-linear-gradient(top, #444444 0%, #2d2d2d 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #444444), color-stop(100%, #2d2d2d));
-  background: -webkit-linear-gradient(top, #444444 0%, #2d2d2d 100%);
-  background: -o-linear-gradient(top, #444444 0%, #2d2d2d 100%);
-  background: -ms-linear-gradient(top, #444444 0%, #2d2d2d 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, #444444 0%, #2d2d2d 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #444444), color-stop(100%, #2d2d2d));
+  background-image: -webkit-linear-gradient(#444444, #2d2d2d);
+  background-image: -moz-linear-gradient(#444444, #2d2d2d);
+  background-image: -o-linear-gradient(#444444, #2d2d2d);
+  background-image: -ms-linear-gradient(#444444, #2d2d2d);
+  background-image: linear-gradient(#444444, #2d2d2d);
   left: 0;
   top: 0;
   position: fixed;
@@ -108,14 +106,12 @@ body.t3-ui-controls-active {
     top: 25px;
     right: 230px;
     border-radius: 0 0 10px 10px;
-    background: white;
-    background: -moz-linear-gradient(top, white 0%, #fce4c4 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #fce4c4));
-    background: -webkit-linear-gradient(top, white 0%, #fce4c4 100%);
-    background: -o-linear-gradient(top, white 0%, #fce4c4 100%);
-    background: -ms-linear-gradient(top, white 0%, #fce4c4 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-    background: linear-gradient(top, #ffffff 0%, #fce4c4 100%);
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #fce4c4));
+    background-image: -webkit-linear-gradient(#ffffff, #fce4c4);
+    background-image: -moz-linear-gradient(#ffffff, #fce4c4);
+    background-image: -o-linear-gradient(#ffffff, #fce4c4);
+    background-image: -ms-linear-gradient(#ffffff, #fce4c4);
+    background-image: linear-gradient(#ffffff, #fce4c4);
     padding: 15px;
     opacity: 0.9; }
 
@@ -135,14 +131,12 @@ ul.t3-topbar {
   text-shadow: 0 -1px 0 black; }
 
 .t3-topbar li.t3-active {
-  background: #aaaaaa;
-  background: -moz-linear-gradient(top, #aaaaaa 0%, #555555 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #aaaaaa), color-stop(100%, #555555));
-  background: -webkit-linear-gradient(top, #aaaaaa 0%, #555555 100%);
-  background: -o-linear-gradient(top, #aaaaaa 0%, #555555 100%);
-  background: -ms-linear-gradient(top, #aaaaaa 0%, #555555 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, #aaaaaa 0%, #555555 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #aaaaaa), color-stop(100%, #555555));
+  background-image: -webkit-linear-gradient(#aaaaaa, #555555);
+  background-image: -moz-linear-gradient(#aaaaaa, #555555);
+  background-image: -o-linear-gradient(#aaaaaa, #555555);
+  background-image: -ms-linear-gradient(#aaaaaa, #555555);
+  background-image: linear-gradient(#aaaaaa, #555555);
   text-shadow: 1px 1px 0 #444444;
   box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
   -moz-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
@@ -156,14 +150,12 @@ ul.t3-topbar {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  background: #2d2d2d;
-  background: -moz-linear-gradient(top, #2d2d2d 0%, #111111 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2d2d2d), color-stop(100%, #111111));
-  background: -webkit-linear-gradient(top, #2d2d2d 0%, #111111 100%);
-  background: -o-linear-gradient(top, #2d2d2d 0%, #111111 100%);
-  background: -ms-linear-gradient(top, #2d2d2d 0%, #111111 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, #2d2d2d 0%, #111111 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2d2d2d), color-stop(100%, #111111));
+  background-image: -webkit-linear-gradient(#2d2d2d, #111111);
+  background-image: -moz-linear-gradient(#2d2d2d, #111111);
+  background-image: -o-linear-gradient(#2d2d2d, #111111);
+  background-image: -ms-linear-gradient(#2d2d2d, #111111);
+  background-image: linear-gradient(#2d2d2d, #111111);
   height: 100%;
   margin-top: 50px;
   position: fixed;
@@ -187,14 +179,12 @@ ul.t3-topbar {
   padding: 0 10px;
   height: 30px;
   line-height: 30px;
-  background: #555555;
-  background: -moz-linear-gradient(top, #555555 0%, #373737 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #555555), color-stop(100%, #373737));
-  background: -webkit-linear-gradient(top, #555555 0%, #373737 100%);
-  background: -o-linear-gradient(top, #555555 0%, #373737 100%);
-  background: -ms-linear-gradient(top, #555555 0%, #373737 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, #555555 0%, #373737 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #555555), color-stop(100%, #373737));
+  background-image: -webkit-linear-gradient(#555555, #373737);
+  background-image: -moz-linear-gradient(#555555, #373737);
+  background-image: -o-linear-gradient(#555555, #373737);
+  background-image: -ms-linear-gradient(#555555, #373737);
+  background-image: linear-gradient(#555555, #373737);
   color: #ffffff;
   font-weight: normal; }
 .t3-inspector-form label {
@@ -219,14 +209,12 @@ ul.t3-topbar {
 
 /*** Toolbar ***/
 #t3-toolbar {
-  background: #666666;
-  background: -moz-linear-gradient(top, #666666 0%, #373737 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #666666), color-stop(100%, #373737));
-  background: -webkit-linear-gradient(top, #666666 0%, #373737 100%);
-  background: -o-linear-gradient(top, #666666 0%, #373737 100%);
-  background: -ms-linear-gradient(top, #666666 0%, #373737 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, #666666 0%, #373737 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #373737));
+  background-image: -webkit-linear-gradient(#666666, #373737);
+  background-image: -moz-linear-gradient(#666666, #373737);
+  background-image: -o-linear-gradient(#666666, #373737);
+  background-image: -ms-linear-gradient(#666666, #373737);
+  background-image: linear-gradient(#666666, #373737);
   height: 30px;
   left: 0;
   position: fixed;
@@ -303,14 +291,12 @@ ul.t3-topbar {
     background: url(../Images/ContentModule/breadcrumb-arrow-orange.png) right 50% no-repeat; }
 
 button.t3-button {
-  background: #999999;
-  background: -moz-linear-gradient(top, #999999 0%, #555555 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #999999), color-stop(100%, #555555));
-  background: -webkit-linear-gradient(top, #999999 0%, #555555 100%);
-  background: -o-linear-gradient(top, #999999 0%, #555555 100%);
-  background: -ms-linear-gradient(top, #999999 0%, #555555 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, #999999 0%, #555555 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #555555));
+  background-image: -webkit-linear-gradient(#999999, #555555);
+  background-image: -moz-linear-gradient(#999999, #555555);
+  background-image: -o-linear-gradient(#999999, #555555);
+  background-image: -ms-linear-gradient(#999999, #555555);
+  background-image: linear-gradient(#999999, #555555);
   border: 1px solid #272727;
   border-radius: 4px 4px 4px 4px;
   -moz-border-radius: 4px 4px 4px 4px;
@@ -327,37 +313,31 @@ button.t3-button {
   -webkit-transition-duration: 0.8s;
   cursor: pointer; }
   button.t3-button:hover {
-    background: #aaaaaa;
-    background: -moz-linear-gradient(top, #aaaaaa 0%, #666666 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #aaaaaa), color-stop(100%, #666666));
-    background: -webkit-linear-gradient(top, #aaaaaa 0%, #666666 100%);
-    background: -o-linear-gradient(top, #aaaaaa 0%, #666666 100%);
-    background: -ms-linear-gradient(top, #aaaaaa 0%, #666666 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-    background: linear-gradient(top, #aaaaaa 0%, #666666 100%); }
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #aaaaaa), color-stop(100%, #666666));
+    background-image: -webkit-linear-gradient(#aaaaaa, #666666);
+    background-image: -moz-linear-gradient(#aaaaaa, #666666);
+    background-image: -o-linear-gradient(#aaaaaa, #666666);
+    background-image: -ms-linear-gradient(#aaaaaa, #666666);
+    background-image: linear-gradient(#aaaaaa, #666666); }
   button.t3-button:focus, button.t3-button:active {
     background: -moz-linear-gradient(top, #cccccc 0%, #666666 70%, #888888 100%);
     box-shadow: 0px 4px 3px #666666 inset;
     -moz-box-shadow: 0px 4px 3px #666666 inset;
     -webkit-box-shadow: 0px 4px 3px #666666 inset; }
   button.t3-button.pressed {
-    background: #f18f0b;
-    background: -moz-linear-gradient(top, #f18f0b 0%, #7c4700 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f18f0b), color-stop(100%, #7c4700));
-    background: -webkit-linear-gradient(top, #f18f0b 0%, #7c4700 100%);
-    background: -o-linear-gradient(top, #f18f0b 0%, #7c4700 100%);
-    background: -ms-linear-gradient(top, #f18f0b 0%, #7c4700 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-    background: linear-gradient(top, #f18f0b 0%, #7c4700 100%); }
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f18f0b), color-stop(100%, #7c4700));
+    background-image: -webkit-linear-gradient(#f18f0b, #7c4700);
+    background-image: -moz-linear-gradient(#f18f0b, #7c4700);
+    background-image: -o-linear-gradient(#f18f0b, #7c4700);
+    background-image: -ms-linear-gradient(#f18f0b, #7c4700);
+    background-image: linear-gradient(#f18f0b, #7c4700); }
     button.t3-button.pressed:hover {
-      background: #f69a1e;
-      background: -moz-linear-gradient(top, #f69a1e 0%, #925502 100%);
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f69a1e), color-stop(100%, #925502));
-      background: -webkit-linear-gradient(top, #f69a1e 0%, #925502 100%);
-      background: -o-linear-gradient(top, #f69a1e 0%, #925502 100%);
-      background: -ms-linear-gradient(top, #f69a1e 0%, #925502 100%);
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-      background: linear-gradient(top, #f69a1e 0%, #925502 100%); }
+      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f69a1e), color-stop(100%, #925502));
+      background-image: -webkit-linear-gradient(#f69a1e, #925502);
+      background-image: -moz-linear-gradient(#f69a1e, #925502);
+      background-image: -o-linear-gradient(#f69a1e, #925502);
+      background-image: -ms-linear-gradient(#f69a1e, #925502);
+      background-image: linear-gradient(#f69a1e, #925502); }
     button.t3-button.pressed:focus, button.t3-button.pressed:active {
       background: -moz-linear-gradient(top, #f69a1e 0%, #925502 70%, #a66003 100%);
       box-shadow: 0px 4px 3px #925502 inset;
@@ -368,27 +348,23 @@ button.t3-button {
     cursor: auto;
     color: #bbbbbb; }
     button.t3-button[disabled]:hover, button.t3-button[disabled]:active, button.t3-button[disabled]:focus {
-      background: #999999;
-      background: -moz-linear-gradient(top, #999999 0%, #555555 100%);
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #999999), color-stop(100%, #555555));
-      background: -webkit-linear-gradient(top, #999999 0%, #555555 100%);
-      background: -o-linear-gradient(top, #999999 0%, #555555 100%);
-      background: -ms-linear-gradient(top, #999999 0%, #555555 100%);
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-      background: linear-gradient(top, #999999 0%, #555555 100%);
+      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #555555));
+      background-image: -webkit-linear-gradient(#999999, #555555);
+      background-image: -moz-linear-gradient(#999999, #555555);
+      background-image: -o-linear-gradient(#999999, #555555);
+      background-image: -ms-linear-gradient(#999999, #555555);
+      background-image: linear-gradient(#999999, #555555);
       box-shadow: 0 0 0 transparent;
       -webkit-box-shadow: 0 0 0 transparent;
       -moz-box-shadow: 0 0 0 transparent; }
 
 #t3-footer {
-  background: #2d2d2d;
-  background: -moz-linear-gradient(top, #2d2d2d 0%, #111111 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2d2d2d), color-stop(100%, #111111));
-  background: -webkit-linear-gradient(top, #2d2d2d 0%, #111111 100%);
-  background: -o-linear-gradient(top, #2d2d2d 0%, #111111 100%);
-  background: -ms-linear-gradient(top, #2d2d2d 0%, #111111 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, #2d2d2d 0%, #111111 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2d2d2d), color-stop(100%, #111111));
+  background-image: -webkit-linear-gradient(#2d2d2d, #111111);
+  background-image: -moz-linear-gradient(#2d2d2d, #111111);
+  background-image: -o-linear-gradient(#2d2d2d, #111111);
+  background-image: -ms-linear-gradient(#2d2d2d, #111111);
+  background-image: linear-gradient(#2d2d2d, #111111);
   bottom: 0;
   left: 0;
   position: fixed;
@@ -521,14 +497,12 @@ div.aloha-block:hover > div.aloha-block-inner {
   z-index: 10000 !important; }
 
 .ui-dialog a.t3-content-new {
-  background: #cccccc;
-  background: -moz-linear-gradient(top, #cccccc 0%, #333333 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #cccccc), color-stop(100%, #333333));
-  background: -webkit-linear-gradient(top, #cccccc 0%, #333333 100%);
-  background: -o-linear-gradient(top, #cccccc 0%, #333333 100%);
-  background: -ms-linear-gradient(top, #cccccc 0%, #333333 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, #cccccc 0%, #333333 100%);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #cccccc), color-stop(100%, #333333));
+  background-image: -webkit-linear-gradient(#cccccc, #333333);
+  background-image: -moz-linear-gradient(#cccccc, #333333);
+  background-image: -o-linear-gradient(#cccccc, #333333);
+  background-image: -ms-linear-gradient(#cccccc, #333333);
+  background-image: linear-gradient(#cccccc, #333333);
   border-radius: 3px;
   display: block;
   font-size: 22px;
