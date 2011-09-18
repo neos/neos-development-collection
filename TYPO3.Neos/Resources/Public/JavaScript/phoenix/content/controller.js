@@ -97,7 +97,9 @@ function() {
 	});
 
 	/**
-	 * This controller toggles the preview mode on and off.
+	 * This controller toggles the inspection mode on and off.
+	 *
+	 * @TODO: rename differently, because it is too similar with "Inspector"
 	 */
 	var Inspect = SC.Object.create({
 		inspectMode: false,
@@ -109,6 +111,60 @@ function() {
 				$('body').removeClass('t3-inspect-active');
 			}
 			this.set('inspectMode', isInspectEnabled);
+		}
+	});
+
+	/**
+	 * Controller for the inspector
+	 */
+	var Inspector = SC.Object.create({
+		editMode: false,
+		blockProperties: null,
+
+		selectedBlock: null,
+		cleanProperties: null,
+
+		init: function() {
+			this.set('blockProperties', SC.Object.create());
+		},
+
+		/**
+		 * When the selected block changes in the content model,
+		 * we update this.blockProperties
+		 */
+		onSelectedBlockChange: function() {
+			this.selectedBlock = T3.Content.Model.BlockSelection.get('selectedBlock');
+			this.cleanProperties = this.selectedBlock.getCleanedUpAttributes();
+			this.set('blockProperties', SC.Object.create(this.cleanProperties));
+		}.observes('T3.Content.Model.BlockSelection.selectedBlock'),
+
+		/**
+		 * When the edit button is toggled, we save the modified properties back
+		 */
+		onEditButtonToggle: function(isEditMode) {
+			if (!isEditMode) {
+				this.save();
+			}
+		},
+
+		/**
+		 * Save the edited properties back to the block
+		 */
+		save: function() {
+			var that = this;
+			SC.keys(this.cleanProperties).forEach(function(key) {
+				that.selectedBlock.set(key, that.blockProperties.get(key));
+			});
+			this.set('editMode', false);
+		},
+
+		/**
+		 * Revert all changed properties
+		 */
+		revert: function() {
+			this.cleanProperties = this.selectedBlock.getCleanedUpAttributes();
+			this.set('blockProperties', SC.Object.create(this.cleanProperties));
+			this.set('editMode', false);
 		}
 	});
 
@@ -175,7 +231,8 @@ function() {
 	T3.Content.Controller = {
 		Preview: Preview,
 		Inspect: Inspect,
-		BlockActions: BlockActions
+		BlockActions: BlockActions,
+		Inspector: Inspector
 	}
 	window.T3 = T3;
 });

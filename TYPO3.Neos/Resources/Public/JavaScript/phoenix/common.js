@@ -232,7 +232,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 		_showDialog: function(html, options) {
 			options = $.extend({
 				modal: true,
-				zIndex: 10001
+				zIndex: 11001
 			}, options);
 
 			$(html).dialog(options);

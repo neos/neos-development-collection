@@ -6,13 +6,15 @@
 
 define(
 [
+	'phoenix/fixture',
 	'text!phoenix/content/ui/toolbar.html',
 	'text!phoenix/content/ui/breadcrumb.html',
 	'text!phoenix/content/ui/inspector.html',
+	'text!phoenix/content/ui/inspectordialog.html',
 	'Library/jquery-popover/jquery.popover',
 	'css!Library/jquery-popover/jquery.popover.css'
 ],
-function(toolbarTemplate, breadcrumbTemplate, inspectorTemplate) {
+function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	var $ = window.alohaQuery || window.jQuery;
@@ -192,38 +194,149 @@ function(toolbarTemplate, breadcrumbTemplate, inspectorTemplate) {
 		}
 	});
 
+
+
 	/**
 	 * T3.Content.UI.Inspector
 	 *
-	 * The Property Panel displayed on the right side of the page.
+	 * The Inspector is displayed on the right side of the page.
+	 *
+	 * Furthermore, it contains *Editors* and *Renderers*
 	 */
 	var Inspector = SC.View.extend({
-		template: SC.Handlebars.compile(inspectorTemplate)
+		template: SC.Handlebars.compile(inspectorTemplate),
+
+		/**
+		 * When we are in edit mode, the click protection layer is intercepting
+		 * every click outside the Inspector.
+		 */
+		$clickProtectionLayer: null,
+
+		/**
+		 * When pressing Enter inside a property, we save and leave the edit mode
+		 */
+		keyDown: function(event) {
+			if (event.keyCode === 13) {
+				T3.Content.Controller.Inspector.save();
+				return false;
+			}
+		},
+
+		/**
+		 * When the edit mode is entered or left, we add / remove the click
+		 * protection layer.
+		 */
+		onEditModeChange: function() {
+			var zIndex;
+			if (T3.Content.Controller.Inspector.get('editMode')) {
+				zIndex = this.$().css('z-index') - 1;
+				this.$clickProtectionLayer = $('<div />').addClass('t3-inspector-clickprotection').addClass('aloha-block-do-not-deactivate').css({'z-index': zIndex});
+				this.$clickProtectionLayer.click(this._showUnsavedDialog);
+				$('body').append(this.$clickProtectionLayer);
+			} else {
+				this.$clickProtectionLayer.remove();
+
+			}
+		}.observes('T3.Content.Controller.Inspector.editMode'),
+
+		/**
+		 * When clicking the click protectiom, we show a dialog
+		 */
+		_showUnsavedDialog: function() {
+			var view = SC.View.create({
+				template: SC.Handlebars.compile(inspectordialogTemplate),
+				didInsertElement: function() {
+					var title = this.$().find('h1').remove().html();
+
+					this.$().dialog({
+						modal: true,
+						zIndex: 11001,
+						title: title,
+						close: function() {
+							view.destroy();
+						}
+					});
+				},
+				cancel: function() {
+					this.$().dialog('close');
+				},
+				save: function() {
+					T3.Content.Controller.Inspector.save();
+					this.$().dialog('close');
+				},
+				dontSave: function() {
+					T3.Content.Controller.Inspector.revert();
+					this.$().dialog('close');
+				}
+			});
+			view.append();
+		}
 	});
 
-	var propertyTypeMap = {
-		'boolean': 'SC.Checkbox',
-		'string': 'SC.TextField'
-	};
+	Inspector.PropertyEditor = SC.ContainerView.extend({
+		propertyDefinition: null,
 
-	Handlebars.registerHelper('propertyEditWidget', function(x) {
-		var contextData = this.get('content');
-
-		var viewClassPath = propertyTypeMap[contextData.type];
-
-		// todo: understand all options and clean
-		var options = {
-			data: {
-				view: this
-			},
-			hash: {
-				'class': contextData.key, // we need to escape "class" as it is a reserved keyword in JS
-				classBinding: 'T3.Content.Model.BlockSelection.selectedBlock._valueModified.' + contextData.key,
-				valueBinding: 'T3.Content.Model.BlockSelection.selectedBlock.' + contextData.key
+		render: function() {
+			var typeDefinition = fixture.typeDefaults[this.propertyDefinition.type];
+			if (!typeDefinition) {
+				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
 			}
-		};
 
-		return SC.Handlebars.ViewHelper.helper(this, viewClassPath, options);
+			var editorClass = SC.getPath(typeDefinition.editor['class']);
+			if (!editorClass) {
+				throw 'Editor class "' + typeDefinition.editor['class'] + '" not found';
+			}
+
+			var editor = editorClass.create({
+				// TODO: re-enable!
+				classBinding: 'T3.Content.UI.Inspector.selectedBlock._valueModified.' + this.propertyDefinition.key,
+				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
+			});
+			this.appendChild(editor);
+
+			this._super();
+		}
+	});
+
+	Inspector.PropertyRenderer = SC.ContainerView.extend({
+		propertyDefinition: null,
+
+		render: function() {
+			var typeDefinition = fixture.typeDefaults[this.propertyDefinition.type];
+			if (!typeDefinition) {
+				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
+			}
+
+			var rendererClass = SC.getPath(typeDefinition.renderer['class']);
+			if (!rendererClass) {
+				throw 'Renderer class "' + typeDefinition.renderer['class'] + '" not found';
+			}
+
+			var renderer = rendererClass.create({
+				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
+			});
+			this.appendChild(renderer);
+
+			this._super();
+		}
+	});
+
+	var Editor = {};
+	Editor.TextField = SC.TextField.extend({
+	});
+
+	Editor.Checkbox = SC.Checkbox.extend({
+	});
+
+	var Renderer = {};
+	Renderer.Text = SC.View.extend({
+		value: '',
+		template: SC.Handlebars.compile('<span style="color:white">{{value}}</span>')
+	});
+
+	Renderer.Boolean = SC.View.extend({
+		value: null,
+		template: SC.Handlebars.compile('<span style="color:white">{{#if value}}<span class="t3-boolean-true">Yes</span>{{/if}} {{#unless value}}<span class="t3-boolean-false">No</span>{{/unless}}</span>')
 	});
 
 	/**
@@ -478,7 +591,9 @@ function(toolbarTemplate, breadcrumbTemplate, inspectorTemplate) {
 		InspectButton: InspectButton,
 		Breadcrumb: Breadcrumb,
 		BreadcrumbItem: BreadcrumbItem,
-		Inspector: Inspector
+		Inspector: Inspector,
+		Editor: Editor,
+		Renderer: Renderer
 	};
 });
 

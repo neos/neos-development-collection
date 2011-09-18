@@ -1,9 +1,17 @@
 <form class="t3-inspector-form" action="#">
+	<h2>Edit <span style="float:right">{{view T3.Content.UI.ToggleButton label="Edit" pressedBinding="T3.Content.Controller.Inspector.editMode" target="T3.Content.Controller.Inspector" action="onEditButtonToggle"}}</span></h2>
+
 	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Model.BlockSelection.selectedBlockSchema"}}
 		<h2>{{content.key}}</h2>
 		{{#collection tagName="div" classNames="t3-inspector-field" contentBinding="content.properties"}}
 			<label for="">{{content.label}}</label>
-			{{propertyEditWidget noMatterWhatITypeHere}}
+			{{#if T3.Content.Controller.Inspector.editMode}}
+				{{view T3.Content.UI.Inspector.PropertyEditor propertyDefinitionBinding="content"}}
+			{{/if}}
+
+			{{#unless T3.Content.Controller.Inspector.editMode}}
+				{{view T3.Content.UI.Inspector.PropertyRenderer propertyDefinitionBinding="content"}}
+			{{/unless}}
 		{{/collection}}
 	{{/collection}}
 </form>
