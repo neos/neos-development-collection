@@ -104,14 +104,14 @@ function() {
 	var Inspect = SC.Object.create({
 		inspectMode: false,
 
-		toggleInspect: function(isInspectEnabled) {
+		onInspectModeChange: function() {
+			var isInspectEnabled = this.get('inspectMode');
 			if (isInspectEnabled) {
 				$('body').addClass('t3-inspect-active');
 			} else {
 				$('body').removeClass('t3-inspect-active');
 			}
-			this.set('inspectMode', isInspectEnabled);
-		}
+		}.observes('inspectMode')
 	});
 
 	/**
