@@ -86,6 +86,7 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->plugin->expects($this->any())->method('getPluginNamespace')->will($this->returnValue('typo3_plugin_namespace'));
 		$this->plugin->setRenderingContext($this->mockRenderingContext);
 		$this->plugin->setNode($this->mockNode);
+		$this->plugin->_set('contentElementWrappingService', $this->getMock('TYPO3\TYPO3\Service\ContentElementWrappingService'));
 		$this->plugin->_set('subRequestBuilder', $this->mockSubRequestBuilder);
 		$this->plugin->_set('objectManager', $this->mockObjectManager);
 		$this->plugin->_set('dispatcher', $this->mockDispatcher);
