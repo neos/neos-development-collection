@@ -8,31 +8,12 @@ $toolbar-height: 30px;
 $property-panel-width: 200px;
 $footer-height: 30px;
 
-//Mixins //
-@mixin box-sizing {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-}
-@mixin box-shadow($hor, $vert, $blur, $color) {
-	box-shadow: $hor $vert $blur $color;
-	-moz-box-shadow: $hor $vert $blur $color;
-	-webkit-box-shadow: $hor $vert $blur $color;
-}
-@mixin rounded-corner($rounded) {
-	border-radius: $rounded $rounded $rounded $rounded;
-	-moz-border-radius: $rounded $rounded $rounded $rounded;
-	-webkit-border-radius: $rounded $rounded $rounded $rounded;
-}
-@mixin transition($value, $duration) {
-	transition-property: $value;
-	transition-duration: $duration;
-	-moz-transition-property: $value;
-	-moz-transition-duration: $duration;
-	-webkit-transition-property: $value;
-	-webkit-transition-duration: $duration;
-}
-/** CSS start **/
+// Mixins //
+// Use Compass for CSS3 Mixins!
+
+
+/**** CSS start ****/
+/*******************/
 body.t3-ui-controls-active {
 	margin-right: $property-panel-width;
 	margin-bottom: $footer-height;
@@ -49,14 +30,13 @@ body.t3-ui-controls-active {
 	clear:both;
 }
 #t3-ui-top {
-	@include box-shadow(0px, 1px, 3px, #000000);
+	@include single-box-shadow(#000000, 0px, 1px, 3px);
 	@include background-image(linear-gradient(#444444, #2d2d2d));
 	left: 0;
 	top: 0;
 	position: fixed;
 	width: 100%;
 	height: $menu-height + $launcher-height;
-	// line-height: $menu-height;
 	z-index: 10015;
 	.t3-button-logout {
 		position: absolute;
@@ -93,13 +73,14 @@ body.t3-ui-controls-active {
 			line-height: $launcher-height;
 			padding: 0 6px;
 			background-color: #F7EEE1;
-			box-shadow: 0px 0px 3px #222 inset;
-			@include box-sizing;
+			@include single-box-shadow(#222222, 0, 0, 3px, 0, inset);
+			@include box-sizing(border-box);
 			&.t3-example-text {
 				color: #aaa;
 			}
 			&:focus {
-				@include transition(background, 0.5s);
+				@include transition-property(background);
+				@include transition-duration(0.5s);
 				background: #fff;
 			}
 		}
@@ -118,7 +99,7 @@ body.t3-ui-controls-active {
 		left: 10px;
 		top: 25px;
 		right: $property-panel-width + 30px;
-		border-radius: 0 0 10px 10px;
+		@include border-bottom-radius(10px);
 		@include background-image(linear-gradient(#ffffff, #FCE4C4));
 		padding: 15px;
 		opacity: 0.9;
@@ -137,21 +118,19 @@ ul.t3-topbar {
 	padding-left:20px;
 	padding-right:20px;
 	color: #ffffff;
-	text-shadow: 0 -1px 0 #000000;
+	@include single-text-shadow(#000000, 0, -1px, 0);
 }
 
 .t3-topbar li.t3-active {
 	@include background-image(linear-gradient(#aaaaaa, #555555));
-	text-shadow: 1px 1px 0 #444444;
-	box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
-	-moz-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
-	-webkit-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
+	@include single-text-shadow(#444444, 1px, 1px, 0);
+	@include box-shadow(#222222 1px -4px 3px, #222222 -1px -4px 3px);
 }
 
 /*** Inspector Panel ***/
 .t3-inspector {
-	@include box-shadow(-2px, 0px, 3px, rgba(0, 0, 0, 0.5));
-	@include box-sizing;
+	@include single-box-shadow(rgba(0, 0, 0, 0.5), -2px, 0, 3px);
+	@include box-sizing(border-box);
 	@include background-image(linear-gradient(#2d2d2d, #111111));
 
 	height: 100%;
@@ -175,7 +154,7 @@ ul.t3-topbar {
 	}
 	h2 {
 		width: 100%;
-		@include box-sizing;
+		@include box-sizing(border-box);
 		padding: 0 10px;
 		height: 30px;
 		line-height: 30px;
@@ -192,22 +171,17 @@ ul.t3-topbar {
 		height: 20px;
 		line-height: 20px;
 		border: 1px solid #000000;
-		box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset;
-		-moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset;
-		-webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset;
+		@include box-shadow(rgba(255, 255, 255, 0.1) 0 1px 0, #000000 0 1px 3px 0 inset);
 		background: #cacaca;
-		@include rounded-corner(4px);
+		@include border-radius(4px);
 		&:focus {
-			box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
-			-moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
-			-webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px #000000 inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
+			@include box-shadow(rgba(255, 255, 255, 0.1) 0 1px 0, #000000 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset);
 		}
 	}
 }
 
 /*** Toolbar ***/
 #t3-toolbar {
-	// @include box-shadow(-1px, 2px, 3px, rgba(0, 0, 0, 0.5));
 	@include background-image(linear-gradient(#666666, #373737));
 	height: $toolbar-height;
 	left: 0;
@@ -239,7 +213,7 @@ ul.t3-topbar {
 }
 #t3-footer .t3-toolbar-left {
 	.t3-breadcrumb {
-		height: 30px;
+		height: $footer-height;
 		float: left;
 	}
 	.t3-inspect {
@@ -308,12 +282,13 @@ ul.t3-topbar {
 button.t3-button {
 	@include background-image(linear-gradient(#999999, #555555));
 	border: 1px solid #272727;
-	@include rounded-corner(4px);
+	@include border-radius(4px);
 	color: #e4e4e4;
 	padding: 0 4px 1px 4px;
 	height: 20px;
-	text-shadow: 0 -1px 0 #444444;
-	@include transition(background, 0.8s);
+	@include single-text-shadow(#444444, 0, -1px, 0);
+	@include transition-property(background);
+	@include transition-duration(0.8s);
 	cursor: pointer;
 	&:hover {
 		@include background-image(linear-gradient(#aaaaaa, #666666));
@@ -321,9 +296,7 @@ button.t3-button {
 	&:focus,
 	&:active {
 		background: -moz-linear-gradient(top, #cccccc 0%, #666666 70%, #888888 100%);
-		box-shadow: 0px 4px 3px #666666 inset;
-		-moz-box-shadow: 0px 4px 3px #666666 inset;
-		-webkit-box-shadow: 0px 4px 3px #666666 inset;
+		@include single-box-shadow(#666666, 0, 4px, 3px, 0, inset);
 	}
 	&.pressed {
 		@include background-image(linear-gradient(#f18f0b, #7c4700));
@@ -333,9 +306,7 @@ button.t3-button {
 		&:focus,
 		&:active {
 			background: -moz-linear-gradient(top, #f69a1e 0%, #925502 70%, #a66003 100%);
-			box-shadow: 0px 4px 3px #925502 inset;
-			-moz-box-shadow: 0px 4px 3px #925502 inset;
-			-webkit-box-shadow: 0px 4px 3px #925502 inset;
+			@include single-box-shadow(#925502, 0, 4px, 3px, 0, inset);
 		}
 	}
 	&[disabled] {
@@ -346,9 +317,7 @@ button.t3-button {
 		&:active,
 		&:focus {
 			@include background-image(linear-gradient(#999999, #555555));
-			box-shadow: 0 0 0 transparent;
-			-webkit-box-shadow: 0 0 0 transparent;
-			-moz-box-shadow: 0 0 0 transparent;
+			@include single-box-shadow(transparent, 0, 0, 0);
 		}
 	}
 }
@@ -360,7 +329,7 @@ button.t3-button {
 	height: $footer-height;
 	right: $property-panel-width;
 	z-index: 10012;
-	@include box-shadow(-1px, -1px, 3px, rgba(0, 0, 0, 0.4))
+	@include single-box-shadow(rgba(0, 0, 0, 0.4), -1px, -1px, 3px);
 }
 
 .t3-delete-handle,
@@ -386,14 +355,12 @@ button.t3-button {
 	border-width: 1px 1px 0 1px;
 	border-style: solid solid none solid;
 	border-color: #909090;
-	border-radius: 5px 5px 0 0;
-	-moz-border-radius: 5px 5px 0 0;
-	-webkit-border-radius: 5px 5px 0 0;
+	@include border-top-radius(5px);
 	text-indent: -9999px;
-	@include box-shadow(0px, -1px, 4px, #909090);
+	@include single-box-shadow(#909090, 0, -1px, 4px);
 	cursor: pointer;
 	&:hover {
-		@include box-shadow(0px, -1px, 4px, #aaaaaa);
+		@include single-box-shadow(#aaaaaa, 0px, -1px, 4px);
 	}
 }
 .t3-add-below-handle {
@@ -401,8 +368,8 @@ button.t3-button {
 	bottom: -17px;
 	border-width: 0 1px 1px 1px;
 	border-style: none solid solid solid;
-	border-radius: 0 0 5px 5px;
-	@include box-shadow(0px, 1px, 3px, #909090);
+	@include border-bottom-radius(5px);
+	@include single-box-shadow(#909090, 0, 1px, 3px);
 }
 .t3-delete-handle {
 	right: 25px;
@@ -458,17 +425,17 @@ body.t3-inspect-active {
 		font-size: 9px;
 		border-width: 0 1px 1px 1px;
 		border-style: none solid solid solid;
-		border-radius: 0 0 5px 5px;
+		@include border-bottom-radius(5px);
 		display:block;
 		background: white;
 		z-index: 10000;
 		text-align:center;
 		border-color:#CCC;
-		@include box-shadow(0px, 1px, 3px, #CCC);
+		@include single-box-shadow(#cccccc, 0, 1px, 3px);
 	}
 
 	.aloha-block:hover > .t3-status-indicator {
-		@include box-shadow(0px, 1px, 3px, #909090);
+		@include single-box-shadow(#909090, 0, 1px, 3px);
 		border-color:#999;
 	}
 
@@ -482,17 +449,17 @@ div.aloha-block:hover > div.aloha-block-inner {
 }
 
 .t3-ui-controls-active #t3-ui-top {
-	@include box-shadow(0px, 0px, 0px, transparent);
+	@include single-box-shadow(transparent, 0, 0, 0);
 }
 
-/* Reset Z-Index so that the Floating Menu does not overlap the UI elements. */
+// Reset Z-Index so that the Floating Menu does not overlap the UI elements.
 .aloha-floatingmenu {
 	z-index:10000 !important;
 }
 
 .ui-dialog a.t3-content-new {
 	@include background-image(linear-gradient(#cccccc, #333333));
-    border-radius: 3px;
+	@include border-radius(3px);
     display: block;
     font-size: 22px;
     height: 35px;
@@ -516,7 +483,7 @@ div.aloha-block:hover > div.aloha-block-inner {
 .tc-1-1-1 .c-3 {
 	float: left;
 	width: 33%;
-	@include box-sizing;
+	@include box-sizing(border-box);
 }
 .tc-1-1-1 .c-3 {
 	float: right;

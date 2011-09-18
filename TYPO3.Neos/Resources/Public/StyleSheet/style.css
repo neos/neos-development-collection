@@ -16,7 +16,8 @@
 .t3-ui q:after {
   content: ''; }
 
-/** CSS start **/
+/**** CSS start ****/
+/*******************/
 body.t3-ui-controls-active {
   margin-right: 200px;
   margin-bottom: 30px;
@@ -32,9 +33,10 @@ body.t3-ui-controls-active {
   clear: both; }
 
 #t3-ui-top {
-  box-shadow: 0px 1px 3px black;
   -moz-box-shadow: 0px 1px 3px black;
   -webkit-box-shadow: 0px 1px 3px black;
+  -o-box-shadow: 0px 1px 3px black;
+  box-shadow: 0px 1px 3px black;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #444444), color-stop(100%, #2d2d2d));
   background-image: -webkit-linear-gradient(#444444, #2d2d2d);
   background-image: -moz-linear-gradient(#444444, #2d2d2d);
@@ -78,19 +80,25 @@ body.t3-ui-controls-active {
       line-height: 25px;
       padding: 0 6px;
       background-color: #F7EEE1;
-      box-shadow: 0px 0px 3px #222 inset;
-      box-sizing: border-box;
+      -moz-box-shadow: inset 0 0 3px 0 #222222;
+      -webkit-box-shadow: inset 0 0 3px 0 #222222;
+      -o-box-shadow: inset 0 0 3px 0 #222222;
+      box-shadow: inset 0 0 3px 0 #222222;
       -moz-box-sizing: border-box;
-      -webkit-box-sizing: border-box; }
+      -webkit-box-sizing: border-box;
+      -ms-box-sizing: border-box;
+      box-sizing: border-box; }
       .t3-launcher div.t3-launcher-container input.t3-example-text {
         color: #aaa; }
       .t3-launcher div.t3-launcher-container input:focus {
-        transition-property: background;
-        transition-duration: 0.5s;
         -moz-transition-property: background;
-        -moz-transition-duration: 0.5s;
         -webkit-transition-property: background;
+        -o-transition-property: background;
+        transition-property: background;
+        -moz-transition-duration: 0.5s;
         -webkit-transition-duration: 0.5s;
+        -o-transition-duration: 0.5s;
+        transition-duration: 0.5s;
         background: #fff; }
   .t3-launcher .t3-launcher-logo {
     position: absolute;
@@ -105,7 +113,18 @@ body.t3-ui-controls-active {
     left: 10px;
     top: 25px;
     right: 230px;
-    border-radius: 0 0 10px 10px;
+    -moz-border-radius-bottomleft: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -o-border-bottom-left-radius: 10px;
+    -ms-border-bottom-left-radius: 10px;
+    -khtml-border-bottom-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    -moz-border-radius-bottomright: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -o-border-bottom-right-radius: 10px;
+    -ms-border-bottom-right-radius: 10px;
+    -khtml-border-bottom-right-radius: 10px;
+    border-bottom-right-radius: 10px;
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #fce4c4));
     background-image: -webkit-linear-gradient(#ffffff, #fce4c4);
     background-image: -moz-linear-gradient(#ffffff, #fce4c4);
@@ -128,7 +147,7 @@ ul.t3-topbar {
   padding-left: 20px;
   padding-right: 20px;
   color: #ffffff;
-  text-shadow: 0 -1px 0 black; }
+  text-shadow: black 0 -1px 0; }
 
 .t3-topbar li.t3-active {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #aaaaaa), color-stop(100%, #555555));
@@ -137,19 +156,22 @@ ul.t3-topbar {
   background-image: -o-linear-gradient(#aaaaaa, #555555);
   background-image: -ms-linear-gradient(#aaaaaa, #555555);
   background-image: linear-gradient(#aaaaaa, #555555);
-  text-shadow: 1px 1px 0 #444444;
-  box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
-  -moz-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
-  -webkit-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222; }
+  text-shadow: #444444 1px 1px 0;
+  -moz-box-shadow: #222222 1px -4px 3px, #222222 -1px -4px 3px;
+  -webkit-box-shadow: #222222 1px -4px 3px, #222222 -1px -4px 3px;
+  -o-box-shadow: #222222 1px -4px 3px, #222222 -1px -4px 3px;
+  box-shadow: #222222 1px -4px 3px, #222222 -1px -4px 3px; }
 
 /*** Inspector Panel ***/
 .t3-inspector {
-  box-shadow: -2px 0px 3px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: -2px 0px 3px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: -2px 0px 3px rgba(0, 0, 0, 0.5);
-  box-sizing: border-box;
+  -moz-box-shadow: -2px 0 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: -2px 0 3px rgba(0, 0, 0, 0.5);
+  -o-box-shadow: -2px 0 3px rgba(0, 0, 0, 0.5);
+  box-shadow: -2px 0 3px rgba(0, 0, 0, 0.5);
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2d2d2d), color-stop(100%, #111111));
   background-image: -webkit-linear-gradient(#2d2d2d, #111111);
   background-image: -moz-linear-gradient(#2d2d2d, #111111);
@@ -173,9 +195,10 @@ ul.t3-topbar {
       padding-bottom: 10px; }
 .t3-inspector-form h2 {
   width: 100%;
-  box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box;
   padding: 0 10px;
   height: 30px;
   line-height: 30px;
@@ -195,17 +218,22 @@ ul.t3-topbar {
   height: 20px;
   line-height: 20px;
   border: 1px solid #000000;
-  box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset;
-  -moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset;
-  -webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset;
+  -moz-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset;
+  -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset;
+  -o-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset;
+  box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset;
   background: #cacaca;
-  border-radius: 4px 4px 4px 4px;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px; }
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px; }
   .t3-inspector-form input[type=text]:focus {
-    box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
-    -moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
-    -webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset; }
+    -moz-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset;
+    -o-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset;
+    box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset; }
 
 /*** Toolbar ***/
 #t3-toolbar {
@@ -298,19 +326,24 @@ button.t3-button {
   background-image: -ms-linear-gradient(#999999, #555555);
   background-image: linear-gradient(#999999, #555555);
   border: 1px solid #272727;
-  border-radius: 4px 4px 4px 4px;
-  -moz-border-radius: 4px 4px 4px 4px;
-  -webkit-border-radius: 4px 4px 4px 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
   color: #e4e4e4;
   padding: 0 4px 1px 4px;
   height: 20px;
-  text-shadow: 0 -1px 0 #444444;
-  transition-property: background;
-  transition-duration: 0.8s;
+  text-shadow: #444444 0 -1px 0;
   -moz-transition-property: background;
-  -moz-transition-duration: 0.8s;
   -webkit-transition-property: background;
+  -o-transition-property: background;
+  transition-property: background;
+  -moz-transition-duration: 0.8s;
   -webkit-transition-duration: 0.8s;
+  -o-transition-duration: 0.8s;
+  transition-duration: 0.8s;
   cursor: pointer; }
   button.t3-button:hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #aaaaaa), color-stop(100%, #666666));
@@ -321,9 +354,10 @@ button.t3-button {
     background-image: linear-gradient(#aaaaaa, #666666); }
   button.t3-button:focus, button.t3-button:active {
     background: -moz-linear-gradient(top, #cccccc 0%, #666666 70%, #888888 100%);
-    box-shadow: 0px 4px 3px #666666 inset;
-    -moz-box-shadow: 0px 4px 3px #666666 inset;
-    -webkit-box-shadow: 0px 4px 3px #666666 inset; }
+    -moz-box-shadow: inset 0 4px 3px 0 #666666;
+    -webkit-box-shadow: inset 0 4px 3px 0 #666666;
+    -o-box-shadow: inset 0 4px 3px 0 #666666;
+    box-shadow: inset 0 4px 3px 0 #666666; }
   button.t3-button.pressed {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f18f0b), color-stop(100%, #7c4700));
     background-image: -webkit-linear-gradient(#f18f0b, #7c4700);
@@ -340,9 +374,10 @@ button.t3-button {
       background-image: linear-gradient(#f69a1e, #925502); }
     button.t3-button.pressed:focus, button.t3-button.pressed:active {
       background: -moz-linear-gradient(top, #f69a1e 0%, #925502 70%, #a66003 100%);
-      box-shadow: 0px 4px 3px #925502 inset;
-      -moz-box-shadow: 0px 4px 3px #925502 inset;
-      -webkit-box-shadow: 0px 4px 3px #925502 inset; }
+      -moz-box-shadow: inset 0 4px 3px 0 #925502;
+      -webkit-box-shadow: inset 0 4px 3px 0 #925502;
+      -o-box-shadow: inset 0 4px 3px 0 #925502;
+      box-shadow: inset 0 4px 3px 0 #925502; }
   button.t3-button[disabled] {
     opacity: 0.6;
     cursor: auto;
@@ -354,9 +389,10 @@ button.t3-button {
       background-image: -o-linear-gradient(#999999, #555555);
       background-image: -ms-linear-gradient(#999999, #555555);
       background-image: linear-gradient(#999999, #555555);
-      box-shadow: 0 0 0 transparent;
+      -moz-box-shadow: 0 0 0 transparent;
       -webkit-box-shadow: 0 0 0 transparent;
-      -moz-box-shadow: 0 0 0 transparent; }
+      -o-box-shadow: 0 0 0 transparent;
+      box-shadow: 0 0 0 transparent; }
 
 #t3-footer {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #2d2d2d), color-stop(100%, #111111));
@@ -371,9 +407,10 @@ button.t3-button {
   height: 30px;
   right: 200px;
   z-index: 10012;
-  box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4);
   -moz-box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4);
-  -webkit-box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4); }
+  -webkit-box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4);
+  -o-box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4);
+  box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4); }
 
 .t3-delete-handle,
 .t3-add-below-handle,
@@ -398,30 +435,53 @@ button.t3-button {
   border-width: 1px 1px 0 1px;
   border-style: solid solid none solid;
   border-color: #909090;
-  border-radius: 5px 5px 0 0;
-  -moz-border-radius: 5px 5px 0 0;
-  -webkit-border-radius: 5px 5px 0 0;
+  -moz-border-radius-topleft: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -o-border-top-left-radius: 5px;
+  -ms-border-top-left-radius: 5px;
+  -khtml-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -o-border-top-right-radius: 5px;
+  -ms-border-top-right-radius: 5px;
+  -khtml-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
   text-indent: -9999px;
-  box-shadow: 0px -1px 4px #909090;
-  -moz-box-shadow: 0px -1px 4px #909090;
-  -webkit-box-shadow: 0px -1px 4px #909090;
+  -moz-box-shadow: 0 -1px 4px #909090;
+  -webkit-box-shadow: 0 -1px 4px #909090;
+  -o-box-shadow: 0 -1px 4px #909090;
+  box-shadow: 0 -1px 4px #909090;
   cursor: pointer; }
   .t3-delete-handle:hover,
   .t3-add-below-handle:hover,
   .t3-add-above-handle:hover {
-    box-shadow: 0px -1px 4px #aaaaaa;
     -moz-box-shadow: 0px -1px 4px #aaaaaa;
-    -webkit-box-shadow: 0px -1px 4px #aaaaaa; }
+    -webkit-box-shadow: 0px -1px 4px #aaaaaa;
+    -o-box-shadow: 0px -1px 4px #aaaaaa;
+    box-shadow: 0px -1px 4px #aaaaaa; }
 
 .t3-add-below-handle {
   top: auto;
   bottom: -17px;
   border-width: 0 1px 1px 1px;
   border-style: none solid solid solid;
-  border-radius: 0 0 5px 5px;
-  box-shadow: 0px 1px 3px #909090;
-  -moz-box-shadow: 0px 1px 3px #909090;
-  -webkit-box-shadow: 0px 1px 3px #909090; }
+  -moz-border-radius-bottomleft: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -o-border-bottom-left-radius: 5px;
+  -ms-border-bottom-left-radius: 5px;
+  -khtml-border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -o-border-bottom-right-radius: 5px;
+  -ms-border-bottom-right-radius: 5px;
+  -khtml-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -moz-box-shadow: 0 1px 3px #909090;
+  -webkit-box-shadow: 0 1px 3px #909090;
+  -o-box-shadow: 0 1px 3px #909090;
+  box-shadow: 0 1px 3px #909090; }
 
 .t3-delete-handle {
   right: 25px;
@@ -467,19 +527,32 @@ body.t3-inspect-active .t3-status-indicator {
   font-size: 9px;
   border-width: 0 1px 1px 1px;
   border-style: none solid solid solid;
-  border-radius: 0 0 5px 5px;
+  -moz-border-radius-bottomleft: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -o-border-bottom-left-radius: 5px;
+  -ms-border-bottom-left-radius: 5px;
+  -khtml-border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -o-border-bottom-right-radius: 5px;
+  -ms-border-bottom-right-radius: 5px;
+  -khtml-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
   display: block;
   background: white;
   z-index: 10000;
   text-align: center;
   border-color: #CCC;
-  box-shadow: 0px 1px 3px #cccccc;
-  -moz-box-shadow: 0px 1px 3px #cccccc;
-  -webkit-box-shadow: 0px 1px 3px #cccccc; }
+  -moz-box-shadow: 0 1px 3px #cccccc;
+  -webkit-box-shadow: 0 1px 3px #cccccc;
+  -o-box-shadow: 0 1px 3px #cccccc;
+  box-shadow: 0 1px 3px #cccccc; }
 body.t3-inspect-active .aloha-block:hover > .t3-status-indicator {
-  box-shadow: 0px 1px 3px #909090;
-  -moz-box-shadow: 0px 1px 3px #909090;
-  -webkit-box-shadow: 0px 1px 3px #909090;
+  -moz-box-shadow: 0 1px 3px #909090;
+  -webkit-box-shadow: 0 1px 3px #909090;
+  -o-box-shadow: 0 1px 3px #909090;
+  box-shadow: 0 1px 3px #909090;
   border-color: #999; }
 body.t3-inspect-active div.aloha-block > div.aloha-block-inner {
   outline: 1px solid #cccccc; }
@@ -488,11 +561,11 @@ div.aloha-block:hover > div.aloha-block-inner {
   outline: 1px solid #909090; }
 
 .t3-ui-controls-active #t3-ui-top {
-  box-shadow: 0px 0px 0px transparent;
-  -moz-box-shadow: 0px 0px 0px transparent;
-  -webkit-box-shadow: 0px 0px 0px transparent; }
+  -moz-box-shadow: 0 0 0 transparent;
+  -webkit-box-shadow: 0 0 0 transparent;
+  -o-box-shadow: 0 0 0 transparent;
+  box-shadow: 0 0 0 transparent; }
 
-/* Reset Z-Index so that the Floating Menu does not overlap the UI elements. */
 .aloha-floatingmenu {
   z-index: 10000 !important; }
 
@@ -503,6 +576,11 @@ div.aloha-block:hover > div.aloha-block-inner {
   background-image: -o-linear-gradient(#cccccc, #333333);
   background-image: -ms-linear-gradient(#cccccc, #333333);
   background-image: linear-gradient(#cccccc, #333333);
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -o-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -khtml-border-radius: 3px;
   border-radius: 3px;
   display: block;
   font-size: 22px;
@@ -523,9 +601,10 @@ div.aloha-block:hover > div.aloha-block-inner {
 .tc-1-1-1 .c-3 {
   float: left;
   width: 33%;
-  box-sizing: border-box;
   -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box; }
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box; }
 
 .tc-1-1-1 .c-3 {
   float: right; }
