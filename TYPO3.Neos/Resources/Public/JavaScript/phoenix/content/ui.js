@@ -8,12 +8,12 @@ define(
 [
 	'text!phoenix/content/ui/toolbar.html',
 	'text!phoenix/content/ui/breadcrumb.html',
-	'text!phoenix/content/ui/propertypanel.html',
+	'text!phoenix/content/ui/inspector.html',
 	'Library/jquery-popover/jquery.popover',
 	'css!Library/jquery-popover/jquery.popover.css',
 
 ],
-function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
+function(toolbarTemplate, breadcrumbTemplate, inspectorTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	var $ = window.alohaQuery || window.jQuery;
@@ -158,7 +158,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	 * =====================
 	 * - Breadcrumb
 	 * - BreadcrumbItem
-	 * - PropertyPanel
+	 * - Inspector
 	 */
 
 	/**
@@ -194,12 +194,12 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 	});
 
 	/**
-	 * T3.Content.UI.PropertyPanel
+	 * T3.Content.UI.Inspector
 	 *
 	 * The Property Panel displayed on the right side of the page.
 	 */
-	var PropertyPanel = SC.View.extend({
-		template: SC.Handlebars.compile(propertyPanelTemplate)
+	var Inspector = SC.View.extend({
+		template: SC.Handlebars.compile(inspectorTemplate)
 	});
 
 	var propertyTypeMap = {
@@ -404,7 +404,7 @@ function(toolbarTemplate, breadcrumbTemplate, propertyPanelTemplate) {
 		PageTreeButton: PageTreeButton,
 		Breadcrumb: Breadcrumb,
 		BreadcrumbItem: BreadcrumbItem,
-		PropertyPanel: PropertyPanel
+		Inspector: Inspector
 	};
 });
 

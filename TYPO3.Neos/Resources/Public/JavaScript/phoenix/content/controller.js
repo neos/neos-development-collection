@@ -49,7 +49,7 @@ function() {
 					right: 0
 				}, 'fast', allDone);
 				$('#t3-ui-top').slideUp('fast', allDone);
-				$('#t3-rightarea').animate({
+				$('#t3-inspector').animate({
 					width: 0
 				}, 'fast', allDone);
 				$('body').animate({
@@ -69,7 +69,7 @@ function() {
 					right: 200
 				}, 'fast', allDone);
 				$('#t3-ui-top').slideDown('fast', allDone);
-				$('#t3-rightarea').animate({
+				$('#t3-inspector').animate({
 					width: 200
 				}, 'fast', allDone);
 				$('body').animate({
