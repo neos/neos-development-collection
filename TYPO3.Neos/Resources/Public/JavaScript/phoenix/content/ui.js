@@ -288,8 +288,6 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			}
 
 			var editor = editorClass.create({
-				// TODO: re-enable!
-				classBinding: 'T3.Content.UI.Inspector.selectedBlock._valueModified.' + this.propertyDefinition.key,
 				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
 			});
 			this.appendChild(editor);
