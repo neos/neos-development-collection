@@ -115,8 +115,7 @@ function() {
 						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
 					}),
 					T3.Content.UI.ToggleButton.extend({
-						target: 'T3.Content.Controller.Preview',
-						action: 'togglePreview',
+						pressedBinding: 'T3.Content.Controller.Preview.previewMode',
 						label: 'Preview',
 						icon: 'preview'
 					})

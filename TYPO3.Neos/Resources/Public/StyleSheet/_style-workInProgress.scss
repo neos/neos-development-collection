@@ -92,3 +92,27 @@ button.t3-create-new-content {
 		display:none;
 	}
 }
+
+.typo3-previewmode-enabled {
+	margin: 30px 0px 0px 0px;
+
+	#t3-footer {
+		display: none;
+	}
+	#t3-toolbar {
+		top: 0px;
+		right: 0px;
+	}
+	#t3-ui-top {
+		display: none;
+	}
+	#t3-inspector {
+		display: none;
+	}
+}
+.typo3-previewmode-enabled.t3-ui-controls-active {
+	margin-right: 0;
+	margin-bottom: 0;
+	margin-top: 30;
+	margin-left: 0;
+}

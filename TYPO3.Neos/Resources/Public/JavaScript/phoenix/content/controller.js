@@ -16,7 +16,15 @@ function() {
 	var Preview = SC.Object.create({
 		previewMode: false,
 
-		togglePreview: function(isPreviewEnabled) {
+		init: function() {
+			if (window.localStorage.previewMode == 'true') {
+				$('body').addClass('typo3-previewmode-enabled')
+				this.set('previewMode', true);
+			}
+		},
+
+		togglePreview: function() {
+			var isPreviewEnabled = this.get('previewMode');
 			var i = 0, count = 5, allDone = function() {
 				i++;
 				if (i >= count) {
@@ -56,6 +64,9 @@ function() {
 					'margin-right': 0
 				}, 'fast', allDone);
 			} else {
+				// TODO Cleanup the 'hidden' workaround for previewMode with a CSS transition
+				$('#t3-footer, #t3-ui-top, #t3-inspector').css('display', 'block');
+
 				// TODO Store initial sizes and reuse, to remove concrete values
 				$('body').animate({
 					'margin-top': 55,
@@ -76,8 +87,11 @@ function() {
 					'margin-right': 200
 				}, 'fast', allDone);
 			}
-			this.set('previewMode', isPreviewEnabled);
-		}
+		}.observes('previewMode'),
+
+		onPreviewModeChange: function() {
+			window.localStorage.previewMode = this.get('previewMode') ? 'true' : 'false';
+		}.observes('previewMode')
 	});
 
 	/**

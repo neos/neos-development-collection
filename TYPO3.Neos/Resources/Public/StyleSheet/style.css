@@ -612,3 +612,21 @@ button.t3-create-new-content {
   display: none !important; }
 .t3-ui-controls-inactive button.t3-create-new-content {
   display: none; }
+
+.typo3-previewmode-enabled {
+  margin: 30px 0px 0px 0px; }
+  .typo3-previewmode-enabled #t3-footer {
+    display: none; }
+  .typo3-previewmode-enabled #t3-toolbar {
+    top: 0px;
+    right: 0px; }
+  .typo3-previewmode-enabled #t3-ui-top {
+    display: none; }
+  .typo3-previewmode-enabled #t3-inspector {
+    display: none; }
+
+.typo3-previewmode-enabled.t3-ui-controls-active {
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-top: 30;
+  margin-left: 0; }
