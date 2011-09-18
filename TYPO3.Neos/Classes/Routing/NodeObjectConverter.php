@@ -95,7 +95,6 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 		$contentContext = new ContentContext($workspaceName);
 
 		if ($workspaceName !== 'live') {
-			$contentContext->setRemovedContentShown(TRUE);
 			$contentContext->setInvisibleContentShown(TRUE);
 		}
 

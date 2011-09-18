@@ -64,10 +64,6 @@ class ContentElementWrappingService {
 			$tagBuilder->addAttribute('data-' . $key, $value);
 		}
 
-		if ($node->isRemoved()) {
-			$cssClasses[] = 't3-contentelement-removed';
-		}
-
 		if ($node->isHidden()) {
 			$cssClasses[] = 't3-contentelement-hidden';
 		}
