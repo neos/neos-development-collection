@@ -503,6 +503,18 @@ button.t3-button {
   -ms-border-bottom-right-radius: 5px;
   -khtml-border-bottom-right-radius: 5px;
   border-bottom-right-radius: 5px;
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
+  -o-border-top-left-radius: 0;
+  -ms-border-top-left-radius: 0;
+  -khtml-border-top-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-border-radius-topright: 0;
+  -webkit-border-top-right-radius: 0;
+  -o-border-top-right-radius: 0;
+  -ms-border-top-right-radius: 0;
+  -khtml-border-top-right-radius: 0;
+  border-top-right-radius: 0;
   -moz-box-shadow: 0 1px 3px #909090;
   -webkit-box-shadow: 0 1px 3px #909090;
   -o-box-shadow: 0 1px 3px #909090;
@@ -587,7 +599,12 @@ body.t3-inspect-active div.aloha-block > div.aloha-block-inner {
   outline: 1px solid #cccccc; }
 
 div.aloha-block:hover > div.aloha-block-inner {
-  outline: 1px solid #909090; }
+  outline: 1px solid #909090;
+  background: #efefef; }
+
+div.aloha-block-active > div.aloha-block-inner,
+div.aloha-block-active:hover > div.aloha-block-inner {
+  background: #E3E3E3; }
 
 .t3-ui-controls-active #t3-ui-top {
   -moz-box-shadow: 0 0 0 transparent;
