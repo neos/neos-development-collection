@@ -248,7 +248,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 	T3.Common.Notification = SC.Object.create({
 
 		ok: function(msg, stay) {
-			jQuery.noticeAdd({
+			$.noticeAdd({
 				text: msg,
 				stay: stay !== undefined ? stay : false,
 				type: 'typo3-notification-ok'
@@ -256,7 +256,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 		},
 
 		info: function(msg, stay) {
-			jQuery.noticeAdd({
+			$.noticeAdd({
 				text: msg,
 				stay: stay !== undefined ? stay : false,
 				type: 'typo3-notification-info'
@@ -264,7 +264,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 		},
 
 		notice: function(msg, stay) {
-			jQuery.noticeAdd({
+			$.noticeAdd({
 				text: msg,
 				stay: stay !== undefined ? stay : false,
 				type: 'typo3-notification-notice'
@@ -272,7 +272,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 		},
 
 		warning: function(msg, stay) {
-			jQuery.noticeAdd({
+			$.noticeAdd({
 				text: msg,
 				stay: stay !== undefined ? stay : true,
 				type: 'typo3-notification-warning'
@@ -280,7 +280,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 		},
 
 		error: function(msg, stay) {
-			jQuery.noticeAdd({
+			$.noticeAdd({
 				text: msg,
 				stay: stay !== undefined ? stay : true,
 				type: 'typo3-notification-error'
