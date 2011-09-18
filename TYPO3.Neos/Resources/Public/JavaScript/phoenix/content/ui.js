@@ -430,7 +430,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		 * and a Drag Zone.
 		 */
 		_initNewPageDraggable: function() {
-			var $newPageDraggable = $('<div>New page</div>');
+			var $newPageDraggable = $('<div class="t3-dd-newpage">New page</div>');
 			this.$popoverContent.append($newPageDraggable);
 
 			new Ext.dd.DragZone($newPageDraggable[0], {

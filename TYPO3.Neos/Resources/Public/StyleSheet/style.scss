@@ -215,6 +215,23 @@ ul.t3-topbar {
 		padding-left: 12px;
 	}
 }
+// Add Page Popup
+.extjs-container .t3-dd-newpage {
+	padding: 2px 2px 2px 25px;
+	margin: 5px;
+	background: #e6e6e6 url(../Images/ContentModule/plus-bubble.png) 5px 50% no-repeat;
+	border: 1px dotted #000000;
+	cursor: move;
+}
+.t3-dd-drag-ghost-pagetree {
+	background: #ffffff;
+	padding: 2px 5px;
+	@include border-radius(4px);
+	@include single-box-shadow(rgba(0, 0, 0, 0.4), 0px, 2px, 3px);
+	cursor: move;
+}
+
+/* Footer Toolbar */
 #t3-footer .t3-toolbar-left {
 	.t3-breadcrumb {
 		height: $footer-height;
