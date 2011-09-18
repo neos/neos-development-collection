@@ -80,7 +80,17 @@ function() {
 			// Now we need to initialize all dependencies from the BlockManager.
 			T3.Content.Model.BlockSelection.initialize();
 
+			if (T3.Content.Controller.Preview.get('previewMode')) {
 
+				// HACK around an aloha bug:
+				// somehow, enabling aloha and then *directly* diactivating
+				// editables breaks does not work. That's why we need a timeout.
+				window.setTimeout(function() {
+					Aloha.editables.forEach(function(editable) {
+						editable.disable();
+					});
+				}, 100);
+			}
 		},
 
 		_enableDevelopmentFeaturesIfNeeded: function() {

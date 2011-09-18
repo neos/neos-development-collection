@@ -18,7 +18,9 @@ function() {
 
 		init: function() {
 			if (window.localStorage.previewMode == 'true') {
-				$('body').addClass('typo3-previewmode-enabled')
+				$('body').removeClass('t3-ui-controls-active');
+				$('body').addClass('t3-ui-controls-inactive');
+				$('body').addClass('typo3-previewmode-enabled');
 				this.set('previewMode', true);
 			}
 		},
