@@ -108,7 +108,8 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 					$uriForNode = '/' . $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $childNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
 					$data[] = array(
 						'id' => $childNode->getContextPath(),
-						'text' => $childNode->getProperty('title') . '<a class="t3-gotoPage" href="' . $uriForNode . '"></a>',
+						// TODO Move to JS
+						'text' => $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title') . '<a class="t3-gotoPage" href="' . $uriForNode . '"></a>' : $childNode->getLabel(),
 						'leaf' => $childNode->hasChildNodes() === FALSE,
 						'cls' => 'folder'
 					);

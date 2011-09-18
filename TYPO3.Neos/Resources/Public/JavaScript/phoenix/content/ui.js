@@ -10,8 +10,7 @@ define(
 	'text!phoenix/content/ui/breadcrumb.html',
 	'text!phoenix/content/ui/inspector.html',
 	'Library/jquery-popover/jquery.popover',
-	'css!Library/jquery-popover/jquery.popover.css',
-
+	'css!Library/jquery-popover/jquery.popover.css'
 ],
 function(toolbarTemplate, breadcrumbTemplate, inspectorTemplate) {
 	var T3 = window.T3 || {};
@@ -396,12 +395,87 @@ function(toolbarTemplate, breadcrumbTemplate, inspectorTemplate) {
 		}
 	});
 
+	var InspectButton = PopoverButton.extend({
+		$popoverContent: $('<div class="extjs-container" style="height: 350px"></div>'),
+
+		popoverPosition: 'top',
+
+		/**
+		 * @var {Ext.tree.TreePanel} Reference to the ExtJS tree; or null if not yet built.
+		 */
+		_tree: null,
+
+		onPopoverOpen: function() {
+			if (this._tree) return;
+
+			this._tree = new Ext.tree.TreePanel({
+				width:250,
+				height:350,
+				useArrows: true,
+				autoScroll: true,
+				animate: true,
+				enableDD: true,
+				border: false,
+				ddGroup: 'nodes',
+
+				root: {
+					id: $('#t3-page-metainformation').attr('about'), // TODO: This and the following properties might later come from the SproutCore model...
+					text: $('#t3-page-metainformation').data('title'),
+					draggable: false
+				},
+
+				loader: new Ext.tree.TreeLoader({
+					/**
+					 * Wrapper for extDirect call to NodeController which
+					 * adds the child node type to the extDirect call as 2nd parameter.
+					 *
+					 * @param {String} contextNodePath the current Context Node Path to get subnodes from
+					 * @param {Function} callback function after request is done
+					 * @return {void}
+					 */
+					directFn: function(contextNodePath, callback) {
+						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, '!TYPO3.TYPO3:Page', callback);
+					},
+
+					/**
+					 * Here, we convert the response back to a format ExtJS understands; namely we use result.data instead of result here.
+					 *
+					 * @param {Object} result the result part from the response of the server request
+					 * @param {Object} response the response object of the server request
+					 * @param {Object} args request arguments passed through
+					 * @return {void}
+					 */
+					processDirectResponse: function(result, response, args) {
+						if (response.status) {
+							this.handleResponse({
+								responseData: Ext.isArray(result.data) ? result.data : null,
+								responseText: result,
+								argument: args
+							});
+						} else {
+							this.handleFailure({
+								argument: args
+							});
+						}
+					}
+				})
+			});
+
+			var $treeContainer = $('<div />');
+			this.$popoverContent.append($treeContainer);
+
+			this._tree.render($treeContainer[0]);
+			this._tree.getRootNode().expand();
+		}
+	});
+
 	T3.Content.UI = {
 		Toolbar: Toolbar,
 		Button: Button,
 		ToggleButton: ToggleButton,
 		PopoverButton: PopoverButton,
 		PageTreeButton: PageTreeButton,
+		InspectButton: InspectButton,
 		Breadcrumb: Breadcrumb,
 		BreadcrumbItem: BreadcrumbItem,
 		Inspector: Inspector
