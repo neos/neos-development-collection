@@ -47,6 +47,12 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	protected $dispatcher;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\TYPO3\Service\ContentElementWrappingService
+	 */
+	protected $contentElementWrappingService;
+
+	/**
 	 * @var string
 	 */
 	protected $package = NULL;
@@ -208,17 +214,13 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 		try {
 			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
 
-			$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
-			$tagBuilder->addAttribute('class', 't3-contentelement t3-plugin');
-			$tagBuilder->addAttribute('about', $this->node->getContextPath());
-
-			$tagBuilder->addAttribute('data-package', $pluginRequest->getControllerPackageKey());
-			$tagBuilder->addAttribute('data-subpackage', $pluginRequest->getControllerSubpackageKey());
-			$tagBuilder->addAttribute('data-controller', $pluginRequest->getControllerName());
-			$tagBuilder->addAttribute('data-action', $pluginRequest->getControllerActionName());
-
-			$tagBuilder->setContent($pluginResponse->getContent());
-			return $tagBuilder->render();
+			$pluginParameters = array(
+				'package' => $pluginRequest->getControllerPackageKey(),
+				'subpackage' => $pluginRequest->getControllerSubpackageKey(),
+				'controller' => $pluginRequest->getControllerName(),
+				'action' => $pluginRequest->getControllerActionName(),
+			);
+			return $this->contentElementWrappingService->wrapContentObject($this->node, $pluginResponse->getContent(), $pluginParameters);
 		} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (\Exception $exception) {
