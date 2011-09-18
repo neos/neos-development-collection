@@ -25,7 +25,7 @@ body.t3-ui-controls-active {
 
 #t3-footer,
 #t3-toolbar,
-#t3-ui-rightarea {
+#t3-inspector {
   font-family: Arial, sans-serif; }
 
 .t3-clear {
@@ -148,8 +148,8 @@ ul.t3-topbar {
   -moz-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
   -webkit-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222; }
 
-/*** Property Panel ***/
-.t3-rightarea {
+/*** Inspector Panel ***/
+.t3-inspector {
   box-shadow: -2px 0px 3px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: -2px 0px 3px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: -2px 0px 3px rgba(0, 0, 0, 0.5);
@@ -172,14 +172,14 @@ ul.t3-topbar {
   width: 200px;
   z-index: 10014; }
 
-.t3-propertypanel-form fieldset {
+.t3-inspector-form fieldset {
   border: 0;
   margin-bottom: 10px; }
-  .t3-propertypanel-form fieldset .t3-propertypanel-field {
+  .t3-inspector-form fieldset .t3-inspector-field {
     padding: 10px 10px 0 10px; }
-    .t3-propertypanel-form fieldset .t3-propertypanel-field div {
+    .t3-inspector-form fieldset .t3-inspector-field div {
       padding-bottom: 10px; }
-.t3-propertypanel-form h2 {
+.t3-inspector-form h2 {
   width: 100%;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -197,10 +197,10 @@ ul.t3-topbar {
   background: linear-gradient(top, #555555 0%, #373737 100%);
   color: #ffffff;
   font-weight: normal; }
-.t3-propertypanel-form label {
+.t3-inspector-form label {
   color: #ffffff;
   font-weight: normal; }
-.t3-propertypanel-form input[type=text] {
+.t3-inspector-form input[type=text] {
   width: 175px;
   height: 20px;
   line-height: 20px;
@@ -212,7 +212,7 @@ ul.t3-topbar {
   border-radius: 4px 4px 4px 4px;
   -moz-border-radius: 4px 4px 4px 4px;
   -webkit-border-radius: 4px 4px 4px 4px; }
-  .t3-propertypanel-form input[type=text]:focus {
+  .t3-inspector-form input[type=text]:focus {
     box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
     -moz-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset;
     -webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.1), 0px 1px 3px black inset, 0px 1px 3px rgba(255, 135, 0, 0.6) inset, 0px -1px 2px rgba(255, 135, 0, 0.6) inset, 1px 0px 2px rgba(255, 135, 0, 0.6) inset, -1px 0px 2px rgba(255, 135, 0, 0.6) inset; }
@@ -548,7 +548,7 @@ div.aloha-block:hover > div.aloha-block-inner {
 .tc-1-1-1 .c-3 {
   float: right; }
 
-.t3-propertypanel-form input[type=text].modified {
+.t3-inspector-form input[type=text].modified {
   border: 1px solid #54974a; }
 
 .popover .x-tree .t3-gotoPage {

@@ -51,7 +51,7 @@ body.t3-ui-controls-active {
 
 #t3-footer,
 #t3-toolbar,
-#t3-ui-rightarea {
+#t3-inspector {
 	font-family: Arial, sans-serif;
 }
 .t3-clear {
@@ -157,8 +157,8 @@ ul.t3-topbar {
 	-webkit-box-shadow: 1px -4px 3px #222222, -1px -4px 3px #222222;
 }
 
-/*** Property Panel ***/
-.t3-rightarea {
+/*** Inspector Panel ***/
+.t3-inspector {
 	@include box-shadow(-2px, 0px, 3px, rgba(0, 0, 0, 0.5));
 	@include box-sizing;
 	@include gradient-linear(#2d2d2d, #111111);
@@ -170,11 +170,11 @@ ul.t3-topbar {
 	width: $property-panel-width;
 	z-index: 10014;
 }
-.t3-propertypanel-form {
+.t3-inspector-form {
 	fieldset {
 		border: 0;
 		margin-bottom: 10px;
-		.t3-propertypanel-field {
+		.t3-inspector-field {
 			padding: 10px 10px 0 10px;
 			div {
 				padding-bottom: 10px;

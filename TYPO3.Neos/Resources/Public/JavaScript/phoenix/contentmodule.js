@@ -41,7 +41,7 @@ function() {
 		currentUri: window.location.href,
 
 		bootstrap: function() {
-			this._initializePropertyPanel();
+			this._initializeInspector();
 			this._initializeToolbar();
 			this._initializeFooter();
 			this._initializeLauncher();
@@ -95,13 +95,13 @@ function() {
 			}
 		},
 
-		_initializePropertyPanel: function() {
-			var propertyPanel = T3.Content.UI.PropertyPanel.create({
-				elementId: 't3-rightarea',
-				classNames: ['t3-ui', 't3-rightarea', 'aloha-block-do-not-deactivate']
+		_initializeInspector: function() {
+			var inspector = T3.Content.UI.Inspector.create({
+				elementId: 't3-inspector',
+				classNames: ['t3-ui', 't3-inspector', 'aloha-block-do-not-deactivate']
 			});
 
-			propertyPanel.appendTo($('body'));
+			inspector.appendTo($('body'));
 		},
 
 		_initializeToolbar: function() {
