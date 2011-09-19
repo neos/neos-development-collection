@@ -47,6 +47,17 @@ define([], function() {
 			renderer: {
 				'class': 'T3.Content.UI.Renderer.Boolean'
 			}
+		},
+		'image': {
+			editor: {
+				'class': 'T3.Content.UI.Editor.FileUpload',
+				defaults: {
+					allowedFileTypes: ['jpg', 'png']
+				}
+			},
+			renderer: {
+				'class': 'T3.Content.UI.Renderer.File'
+			}
 		}
 	};
 

@@ -11,12 +11,13 @@ function(Plugin, block, BlockManager, require) {
 			var that = this;
 			BlockManager.registerBlockType('TextBlock', block.TextBlock);
 			BlockManager.registerBlockType('PluginBlock', block.PluginBlock);
+			BlockManager.registerBlockType('TextWithImageBlock', block.TextWithImageBlock);
 
         	require(['phoenix/contentmodule'], function() {
 				BlockManager.bind('block-selection-change', T3.ContentModule._onBlockSelectionChange, T3.ContentModule);
 
-				Aloha.bind("aloha-editable-deactivated", that._onEditableChange);
-				Aloha.bind("aloha-smart-content-changed", that._onEditableChange);
+				Aloha.bind('aloha-editable-deactivated', that._onEditableChange);
+				Aloha.bind('aloha-smart-content-changed', that._onEditableChange);
         	});
         },
 

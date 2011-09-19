@@ -31,25 +31,49 @@ use \TYPO3\TYPO3\Controller\Exception\NodeCreationException;
 class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
+	 * @inject
+	 * @var \TYPO3\TYPO3\Domain\Repository\Media\ImageRepository
+	 */
+	protected $imageRepository;
+
+	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
+	 * Adds the uploaded image to the image repository and returns the
+	 * identifier of the image object.
 	 *
-	 * @param TYPO3\TYPO3CR\Domain\Model\Node $referenceNode
-	 * @param string $position either "above" or "below"
+	 * @param \TYPO3\TYPO3\Domain\Model\Media\Image $image
+	 * @return string
+	 */
+	public function uploadImageAction(\TYPO3\TYPO3\Domain\Model\Media\Image $image) {
+		$this->imageRepository->add($image);
+		return $this->persistenceManager->getIdentifierByObject($image);
+	}
+
+	/**
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $position either "above", "below" or "inside"
 	 * @return string
 	 * @skipCsrfProtection
 	 */
-	public function newAction($referenceNode, $position) {
+	public function newAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $position) {
 		$this->view->assign('referenceNode', $referenceNode);
 		$this->view->assign('position', $position);
 		$this->view->assign('rand', rand());
 	}
 
 	/**
-	 * @param TYPO3\TYPO3CR\Domain\Model\Node $referenceNode
-	 * @param string $position either "above" or "below"
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $position either "above", "below" or "inside"
 	 * @param string $type
 	 * @return string
 	 */
-	public function createAction($referenceNode, $position, $type) {
+	public function createAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $position, $type) {
 		if (!in_array($position, array('above', 'below', 'inside'))) {
 			throw new NodeCreationException(sprintf('Position "%s" given, but only "above, below, inside" supported', $position), 1313754773);
 		}
@@ -73,6 +97,12 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 				$newNode->setProperty('headline', 'Enter Headline here');
 				$newNode->setProperty('text', '<p>Enter Text here</p>'); // Wrapping into p-tags here because of Aloha
 				break;
+			case 'TYPO3.TYPO3:TextWithImage':
+				$newNode->setProperty('headline', 'Enter Headline here');
+				$newNode->setProperty('text', '<p>Enter Text here</p>'); // Wrapping into p-tags here because of Aloha
+				$newNode->setProperty('image', '');
+				break;
+
 			// TODO: Some more here, depending on Schema
 		}
 
@@ -84,7 +114,11 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		return '<a rel="typo3-created-new-content" href="' . $newNode->getContextPath() . '" data-page="' . $pageUri . '">Go to new content element</a>';
 	}
 
-	protected function findNextParentFolderNode($node) {
+	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 */
+	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		while ($node = $node->getParent()) {
 			if ($node->getContentType() === 'TYPO3.TYPO3:Page') {
 				// TODO: Support for other "Folder" types, which are not of type "Page"

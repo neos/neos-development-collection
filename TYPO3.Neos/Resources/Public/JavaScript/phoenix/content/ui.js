@@ -224,6 +224,10 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			}
 		},
 
+		doubleClick: function(event) {
+			T3.Content.Controller.Inspector.set('editMode', true);
+		},
+
 		/**
 		 * When the edit mode is entered or left, we add / remove the click
 		 * protection layer.
@@ -328,6 +332,10 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 	Editor.Checkbox = SC.Checkbox.extend({
 	});
 
+	Editor.FileUpload = SC.View.extend({
+		template: SC.Handlebars.compile('TODO file upload')
+	});
+
 	var Renderer = {};
 	Renderer.Text = SC.View.extend({
 		value: '',
@@ -338,6 +346,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		value: null,
 		template: SC.Handlebars.compile('<span style="color:white">{{#if value}}<span class="t3-boolean-true">Yes</span>{{/if}} {{#unless value}}<span class="t3-boolean-false">No</span>{{/unless}}</span>')
 	});
+
+	Renderer.File = SC.View.extend({
+		template: SC.Handlebars.compile('{{value}}')
+	});
+
 
 	/**
 	 * ==================

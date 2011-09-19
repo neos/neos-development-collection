@@ -69,6 +69,10 @@ function() {
 				'block-type': 'TextBlock'
 			});
 
+			$('.t3-text-with-image').alohaBlock({
+				'block-type': 'TextWithImageBlock'
+			});
+
 			T3.Content.Model.PublishableBlocks.initialize();
 
 			// Now we initialize the BlockManager. This triggers updates to the PublishableBlocks controller

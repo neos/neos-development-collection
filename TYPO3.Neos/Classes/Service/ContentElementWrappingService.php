@@ -55,6 +55,10 @@ class ContentElementWrappingService {
 			case 'TYPO3.TYPO3:Text':
 				$cssClasses[] = 't3-text';
 				break;
+			case 'TYPO3.TYPO3:TextWithImage':
+				$cssClasses[] = 't3-text-with-image';
+				$tagBuilder->addAttribute('data-image', $node->getProperty('image'));
+				break;
 			default: // Plugin
 				$cssClasses[] = 't3-plugin';
 				break;

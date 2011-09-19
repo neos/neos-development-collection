@@ -171,5 +171,34 @@ function(block) {
 			];
 		}
 	});
+
+	exports.TextWithImageBlock = exports.AbstractBlock.extend({
+		title: 'Text with Image',
+		editableSubProperties: ['headline', 'text'],
+
+		getSchema: function() {
+			return [
+				{
+					key: 'Visibility',
+					properties: [
+						{
+							key: '_hidden',
+							type: 'boolean',
+							label: 'Hidden'
+						}
+					]
+				}, {
+					key: 'Image',
+					properties: [
+						{
+							key: 'image',
+							type: 'image',
+							label: 'Image'
+						}
+					]
+				}
+			];
+		}
+	});
 	return exports;
 });
