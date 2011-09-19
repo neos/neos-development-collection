@@ -729,3 +729,6 @@ button.t3-create-new-content {
     background-image: url("../Icons/FugueIcons/exclamation.png"); }
   .notice-item.typo3-notification-error {
     background-image: url("../Icons/FugueIcons/exclamation-red.png"); }
+
+.t3-handle-loading {
+  background-image: url("../Images/ajax-preloader.gif"); }

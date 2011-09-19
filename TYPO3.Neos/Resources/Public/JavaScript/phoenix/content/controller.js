@@ -190,29 +190,29 @@ function() {
 			});
 		},
 		deleteBlock: function(block) {
-			T3.Common.Dialog.confirm('Are you sure you want to delete this content element?', function() {
-				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
-					this,
-					block.get('nodePath'),
-					function (result) {
-						if (result.success) {
-							T3.ContentModule.reloadPage();
-						}
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
+				this,
+				block.get('nodePath'),
+				function (result) {
+					if (result.success) {
+						T3.ContentModule.reloadPage();
 					}
-				);
-			});
+				}
+			);
 		},
 
-		addAbove: function(block) {
-			this._add(block.get('nodePath'), 'above');
+		addAbove: function(nodePath, $handle) {
+			this._add(nodePath, 'above', $handle);
 		},
-		addBelow: function(block) {
-			this._add(block.get('nodePath'), 'below');
+		addBelow: function(nodePath, $handle) {
+			this._add(nodePath, 'below', $handle);
 		},
 		addInside: function(nodePath) {
 			this._add(nodePath, 'inside');
 		},
-		_add: function(nodePath, position) {
+		_add: function(nodePath, position, $handle) {
+			$handle.addClass('t3-handle-loading');
+
 			T3.Common.Dialog.open(
 				'/typo3/content/new',
 				{
@@ -222,8 +222,12 @@ function() {
 				{
 					'created-new-content': function($callbackDomElement) {
 						T3.ContentModule.reloadPage();
+					},
+					'remove-loading-indicator': function() {
+						$handle.removeClass('t3-handle-loading');
 					}
-				}
+				},
+				$handle
 			);
 		}
 	});

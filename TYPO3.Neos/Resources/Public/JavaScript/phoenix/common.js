@@ -122,26 +122,17 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 	 */
 	T3.Common.Dialog = SC.Object.create({
 
-		/**
-		 * Display message in a confirmation dialog (with OK and Cancel button),
-		 * if OK is pressed, the successCallback is executed.
-		 *
-		 * @param {String} message the message to show
-		 * @param {Function} successCallback callback which is executed when "OK" is pressed.
-		 */
-		confirm: function(message, successCallback) {
-			this._showDialog('<div>' + message + '</div>', {
-				buttons: {
-					Ok: function() {
-						successCallback();
-						$(this).dialog("close");
-					},
-					Cancel: function() {
-						$(this).dialog("close");
-					}
-				}
-			});
+		_options: {
+			preventLeft: false,
+			preventRight: false,
+			preventTop: false,
+			preventBottom: false,
+			zIndex: 10090,
+			openEvent: function() {
+			}
 		},
+
+		_handle: null,
 
 		/**
 		 * Render HTML fetched from a certain URL into the dialog / lightbox.
@@ -175,14 +166,23 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 		 * @param {String} url the URL to load data from
 		 * @param {Object} data the GET data to append
 		 * @param {Object} commands Command-Name --> Callback function list
+		 * @param {jQuery} the handle to which the dialog is appended to
 		 */
-		open: function(url, data, commands) {
+		open: function(url, data, commands, handle) {
 			var that = this;
-			this._showDialog('<div>Loading...</div>', {
-				open: function() {
-					that._fetchUrlForDialog(url, data, commands, $(this))
-				}
+			that._handle = handle;
+
+			this._fetchUrlForDialog(url, data, commands, function() {
+				that._showDialog();
 			});
+		},
+
+		/**
+		 * Show the actual dialog based on configured settings
+		 * @return {void}
+		 */
+		_showDialog: function() {
+			this._handle.popover(this._options).trigger('showPopover');
 		},
 
 		/**
@@ -192,17 +192,20 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 		 * @param {String} url the URL to load data from
 		 * @param {Object} data the GET data to append
 		 * @param {Object} commands Command-Name --> Callback function list
-		 * @param {jQuery} $dialog reference to the dialog, into which the fetched page is loaded
+		 * @param {Function} callback function to be called when data is fetched and processed
+		 * @return {void}
 		 */
-		_fetchUrlForDialog: function(url, data, commands, $dialog) {
+		_fetchUrlForDialog: function(url, data, commands, callback) {
 			var that = this;
+
 			$.get(url, data, function(data) {
-				$dialog.html(data);
+				var dialog = $('<div />');
+				dialog.html(data);
 
 				// Check if we find commands in the returned HTML. If yes,
 				// execute them and close the dialog.
 				var commandsExecuted = false;
-				$dialog.find('a[rel|="typo3"]').each(function() {
+				dialog.find('a[rel|="typo3"]').each(function() {
 					var commandName = $(this).attr('rel').substr(6);
 					if (commands[commandName]) {
 						commands[commandName]($(this));
@@ -210,32 +213,25 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 					}
 				});
 				if (commandsExecuted) {
-					$dialog.dialog('close');
-					return;
+					that._handle.trigger('hidePopover')
+					return false;
 				}
 
-				// <h1> is used as dialog title
-				$dialog.dialog('option', 'title', $dialog.find('h1').html());
-				$dialog.find('h1').remove();
-
 				// <a> links get rewritten to use ajax
-				$dialog.find('a').click(function() {
-					that._fetchUrlForDialog($(this).attr('href'), {}, commands, $dialog);
+				dialog.find('a').click(function() {
+					that._fetchUrlForDialog($(this).attr('href'), {}, commands, dialog);
 					return false;
 				});
+
+				// <h1> is used as dialog title
+				that._options.header = dialog.find('h1').html();
+				dialog.find('h1').remove();
+				that._options.content = dialog;
+
+				if (callback) {
+					callback.call(this);
+				}
 			});
-		},
-
-		/**
-		 * Internal helper to show a jQuery UI dialog box.
-		 */
-		_showDialog: function(html, options) {
-			options = $.extend({
-				modal: true,
-				zIndex: 11001
-			}, options);
-
-			$(html).dialog(options);
 		}
 	});
 

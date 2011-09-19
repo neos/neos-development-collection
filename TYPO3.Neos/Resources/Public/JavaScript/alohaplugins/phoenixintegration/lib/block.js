@@ -68,10 +68,10 @@ function(block) {
 		 */
 		renderHandles: function() {
 			if (this.element.find('.t3-contentelement.t3-contentelement-removed').length === 0) {
-				this._renderHandle('t3-delete-handle', 'Delete element', T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
+				this._renderHandle('t3-delete-handle', 'Delete element', null, T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
 			}
-			this._renderHandle('t3-add-above-handle', 'Add above', T3.Content.Controller.BlockActions.addAbove, T3.Content.Controller.BlockActions);
-			this._renderHandle('t3-add-below-handle', 'Add below', T3.Content.Controller.BlockActions.addBelow, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-add-above-handle', 'Add above', T3.Content.Controller.BlockActions.addAbove, null, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-add-below-handle', 'Add below', T3.Content.Controller.BlockActions.addBelow, null, T3.Content.Controller.BlockActions);
 
 			this.element.find('.t3-status-indicator').remove();
 			if (this.attr('_status')) {
@@ -86,18 +86,31 @@ function(block) {
 		 *
 		 * @param {String} cssClass CSS class for the handle
 		 * @param {String} innerHTML Inner HTML for the handle
+		 * @param {Function} clickHandler to listen to the click event of the handle
 		 * @param {Function} callback the Callback function to be executed when clicking the handle. This function gets the current T3.Content.Model.Block as first parameter.
 		 * @param {Object} scope the scope to use for the callback
 		 */
-		_renderHandle: function(cssClass, innerHtml, callback, scope) {
+		_renderHandle: function(cssClass, innerHtml, clickHandler, callback, scope) {
 			if (this.element.find('.' + cssClass).length == 0) {
 				var handle = $('<span class="' + cssClass + '">' + innerHtml + '</span>');
 				this.element.prepend(handle);
-				handle.click(function(event) {
-					var nodePath = $(event.target).parent('.aloha-block').attr('about');
-					var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
-					callback.call(scope, block);
-				});
+
+				var nodePath = handle.parent('.aloha-block').attr('about');
+				var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+
+				// TODO: cleanup, could be one handler
+				if (clickHandler) {
+					handle.click(function(event) {
+						var handlerEvents = handle.data('events');
+						if (!handlerEvents['showPopover']) {
+							clickHandler.call(scope, nodePath, handle);
+						}
+					});
+				} else {
+					handle.click(function(event) {
+						callback.call(scope, block);
+					});
+				}
 			}
 		},
 
