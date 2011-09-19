@@ -32,7 +32,7 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aContentTypeHasAName() {
-		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Text');
+		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Text', array(), array());
 		$this->assertSame('TYPO3.TYPO3:Text', $contentType->getName());
 	}
 
@@ -42,8 +42,7 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDeclaredSuperTypesExpectsAnArrayOfContentTypes() {
-		$folderType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Folder');
-		$folderType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array('foo')));
+		$folderType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Folder', array('foo'), array());
 	}
 
 	/**
@@ -51,17 +50,14 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function contentTypesCanHaveAnyNumberOfSuperTypes() {
-		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base');
+		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array());
 
-		$folderType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Folder');
-		$folderType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($baseType)));
+		$folderType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Folder', array($baseType), array());
 
-		$hideableContentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:HideableContent');
-		$pageType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Page');
+		$hideableContentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:HideableContent', array(), array());
+		$pageType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Page', array($folderType, $hideableContentType), array());
 
-		$pageType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($folderType, $hideableContentType)));
-
-		$this->assertEquals(array($folderType, $hideableContentType), $pageType->getDeclaredSuperTypes()->toArray());
+		$this->assertEquals(array($folderType, $hideableContentType), $pageType->getDeclaredSuperTypes());
 
 		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3:Page'));
 		$this->assertTrue($pageType->isOfType('TYPO3.TYPO3:HideableContent'));
@@ -70,5 +66,43 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertFalse($pageType->isOfType('TYPO3.TYPO3CR:Exotic'));
 	}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function labelIsEmptyStringByDefault() {
+		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array());
+		$this->assertSame('', $baseType->getLabel());
+	}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function propertiesAreEmptyArrayByDefault() {
+		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array());
+		$this->assertSame(array(), $baseType->getProperties());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function configurationCanBeReturnedViaMagicGetter() {
+		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array(
+			'someKey' => 'someValue'
+		));
+		$this->assertTrue($baseType->hasSomeKey());
+		$this->assertSame('someValue', $baseType->getSomeKey());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function magicHasReturnsFalseIfPropertyDoesNotExist() {
+		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array());
+		$this->assertFalse($baseType->hasFooKey());
+	}
 }
+?>
