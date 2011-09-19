@@ -12,3 +12,7 @@ Version 0.2.2
 
 jQuery Notice from http://code.google.com/p/jquery-notice/
 Version 1.0
+
+plupload from http://plupload.com
+Version 1.5b (2011-09-11)
+- deleted "examples" directory

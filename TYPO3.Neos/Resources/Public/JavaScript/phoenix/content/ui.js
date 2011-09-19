@@ -11,12 +11,14 @@ define(
 	'text!phoenix/content/ui/breadcrumb.html',
 	'text!phoenix/content/ui/inspector.html',
 	'text!phoenix/content/ui/inspectordialog.html',
+	'text!phoenix/content/ui/fileupload.html',
 	'Library/jquery-popover/jquery.popover',
 	'Library/jquery-notice/jquery.notice',
 	'css!Library/jquery-popover/jquery.popover.css',
-	'css!Library/jquery-notice/jquery.notice.css'
+	'css!Library/jquery-notice/jquery.notice.css',
+	'Library/plupload/js/plupload.full'
 ],
-function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate) {
+function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate, fileUploadTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	var $ = window.alohaQuery || window.jQuery;
@@ -293,9 +295,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				throw 'Editor class "' + typeDefinition.editor['class'] + '" not found';
 			}
 
-			var editor = editorClass.create({
+			var classOptions = $.extend({
 				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
-			});
+			}, typeDefinition.editor.defaults || {});
+
+			var editor = editorClass.create(classOptions);
 			this.appendChild(editor);
 
 			this._super();
@@ -316,9 +320,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				throw 'Renderer class "' + typeDefinition.renderer['class'] + '" not found';
 			}
 
-			var renderer = rendererClass.create({
+			var classOptions = $.extend({
 				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
-			});
+			}, typeDefinition.renderer.defaults || {});
+
+			var renderer = rendererClass.create(classOptions);
 			this.appendChild(renderer);
 
 			this._super();
@@ -333,7 +339,59 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 	});
 
 	Editor.FileUpload = SC.View.extend({
-		template: SC.Handlebars.compile('TODO file upload')
+
+		value: '',
+
+		// File filters
+		allowedFileTypes: null,
+
+		_uploader: null,
+		_containerId: null,
+		_browseButtonId: null,
+
+		template: SC.Handlebars.compile(fileUploadTemplate),
+
+		init: function() {
+			var id = this.get(SC.GUID_KEY);
+			this._containerId = 'typo3-fileupload' + id;
+			this._browseButtonId = 'typo3-fileupload-browsebutton' + id;
+			this._super();
+		},
+
+		didInsertElement: function() {
+			var that = this;
+
+			this._uploader = new plupload.Uploader({
+				runtimes : 'html5',
+				browse_button : this._browseButtonId,
+				container : this._containerId,
+				max_file_size : '10mb',
+				url : '/typo3/content/uploadImage',
+				multipart_params: {}
+			});
+			if (this.allowedFileTypes) {
+				this._uploader.settings.filters = [{
+					title: 'Allowed files',
+					extensions: this.allowedFileTypes
+				}];
+			}
+
+			this._uploader.bind('BeforeUpload', function(uploader, file) {
+				uploader.settings.multipart_params['image[type]'] = 'plupload';
+				uploader.settings.multipart_params['image[fileName]'] = file.name;
+			});
+
+			this._uploader.bind('FileUploaded', function(uploader, file, response) {
+				T3.Common.Notification.ok('Uploaded file "' + file.name + '".');
+				that.set('value', response.response);
+			});
+
+			this._uploader.init();
+			this._uploader.refresh();
+		},
+		upload: function() {
+			this._uploader.start();
+		}
 	});
 
 	var Renderer = {};

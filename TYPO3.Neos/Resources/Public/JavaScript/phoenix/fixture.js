@@ -52,7 +52,7 @@ define([], function() {
 			editor: {
 				'class': 'T3.Content.UI.Editor.FileUpload',
 				defaults: {
-					allowedFileTypes: ['jpg', 'png']
+					allowedFileTypes: 'jpg,png'
 				}
 			},
 			renderer: {

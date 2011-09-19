@@ -2,6 +2,6 @@
 
 <t:contentElement node="{node}">
 	<t:aloha.editable property="headline" tag="h1">{properties.headline}</t:aloha.editable>
-	<div class="typo3-image">{properties.image}</div>
+	<div class="typo3-image"><img src="{f:uri.resource(resource: properties.image.resource)}" /></div>
 	<t:aloha.editable property="text">{properties.text}</t:aloha.editable>
 </t:contentElement>
