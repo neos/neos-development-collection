@@ -85,7 +85,7 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInAPersonalWorkspacesAreNotVisibleInTheLiveWorkspaceEvenWithoutPersistAll() {
-		$this->rootNode->getNode('homepage')->createNode('imprint');
+		$this->rootNode->createNode('homepage')->createNode('imprint');
 
 		$liveContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
@@ -93,3 +93,5 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertNull($liveRootNode->getNode('/homepage/imprint'));
 	}
 }
+
+?>
