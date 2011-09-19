@@ -214,13 +214,7 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 		try {
 			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
 
-			$pluginParameters = array(
-				'package' => $pluginRequest->getControllerPackageKey(),
-				'subpackage' => $pluginRequest->getControllerSubpackageKey(),
-				'controller' => $pluginRequest->getControllerName(),
-				'action' => $pluginRequest->getControllerActionName(),
-			);
-			return $this->contentElementWrappingService->wrapContentObject($this->node, $pluginResponse->getContent(), $pluginParameters);
+			return $this->contentElementWrappingService->wrapContentObject($this->node, $pluginResponse->getContent());
 		} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (\Exception $exception) {

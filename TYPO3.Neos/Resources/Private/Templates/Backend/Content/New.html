@@ -1,5 +1,5 @@
 <h1>Select the type of the new content element:</h1>
 
-<f:link.action class="t3-content-new" action="create" arguments="{position: position, referenceNode: referenceNode.contextPath, type: 'TYPO3.TYPO3:Text'}">Text</f:link.action>
-
-<f:link.action class="t3-content-new" action="create" arguments="{position: position, referenceNode: referenceNode.contextPath, type: 'TYPO3.TYPO3:TextWithImage'}">Text w Image</f:link.action>
+<f:for each="{contentTypes}" as="contentType">
+	<f:link.action class="t3-content-new" action="create" arguments="{position: position, referenceNode: referenceNode.contextPath, type: contentType.name}">{contentType.label}</f:link.action>
+</f:for>

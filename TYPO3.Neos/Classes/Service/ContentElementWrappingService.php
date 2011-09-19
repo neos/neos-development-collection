@@ -31,43 +31,45 @@ namespace TYPO3\TYPO3\Service;
 class ContentElementWrappingService {
 
 	/**
+	 * @inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
 	 * Wrap the $content identified by $node with the needed markup for
 	 * the backend.
 	 * $parameters can be used to further pass parameters to the content element.
 	 *
 	 * @param TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $content
-	 * @param array $parameters
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $parameters = array()) {
-		// TODO: If not in backend, return content directly
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content) {
+		// TODO: If not in backend, return content directly (needs to be discussed)
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
 		$tagBuilder->addAttribute('about', $node->getContextPath());
-
 		$tagBuilder->addAttribute('data-__workspacename', $node->getWorkspace()->getName());
-		$tagBuilder->addAttribute('data-_hidden', ($node->isHidden() ? 'true' : 'false'));
 
+
+		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
+
+		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
+			if ($propertyName[0] === '_') {
+				$propertyValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($node, substr($propertyName, 1));
+			} else {
+				$propertyValue = $node->getProperty($propertyName);
+			}
+				// Serialize boolean values to String
+			if (isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'boolean') {
+				$propertyValue = ($propertyValue ? 'true' : 'false');
+			}
+			$tagBuilder->addAttribute('data-' . $propertyName, $propertyValue);
+		}
+
+			// add CSS classes
 		$cssClasses = array('t3-contentelement');
-
-			// TODO: This must be received from the schema...
-		switch ($node->getContentType()) {
-			case 'TYPO3.TYPO3:Text':
-				$cssClasses[] = 't3-text';
-				break;
-			case 'TYPO3.TYPO3:TextWithImage':
-				$cssClasses[] = 't3-text-with-image';
-				$tagBuilder->addAttribute('data-image', $node->getProperty('image'));
-				break;
-			default: // Plugin
-				$cssClasses[] = 't3-plugin';
-				break;
-		}
-
-		foreach ($parameters as $key => $value) {
-			$tagBuilder->addAttribute('data-' . $key, $value);
-		}
-
+		$cssClasses[] = str_replace(array(':', '.'), '-', strtolower($contentType->getName()));
 		if ($node->isHidden()) {
 			$cssClasses[] = 't3-contentelement-hidden';
 		}

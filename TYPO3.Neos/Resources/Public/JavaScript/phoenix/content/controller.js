@@ -129,6 +129,47 @@ function() {
 		},
 
 		/**
+		 * This is a computed property which builds up a nested array powering the
+		 * Inspector. It essentially contains two levels: On the first level,
+		 * the groups are displayed, while on the second level, the properties
+		 * belonging to each group are displayed.
+		 *
+		 * Thus, the output looks possibly as follows:
+		 * - Visibility
+		 *   - _hidden (boolean)
+		 *   - _starttime (date)
+		 * - Image Settings
+		 *   - image (file upload)
+		 */
+		sectionsAndViews: function() {
+			var selectedBlockSchema = T3.Content.Model.BlockSelection.get('selectedBlockSchema');
+			if (!selectedBlockSchema || !selectedBlockSchema.propertyGroups || !selectedBlockSchema.properties) return [];
+
+			var sectionsAndViews = [];
+			$.each(selectedBlockSchema.propertyGroups, function(propertyGroupIdentifier, propertyGroupConfiguration) {
+				var properties = [];
+				$.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
+					if (propertyConfiguration.category === propertyGroupIdentifier) {
+						properties.push($.extend({key: propertyName}, propertyConfiguration));
+					}
+				});
+
+				properties.sort(function(a, b) {
+					return (b.priority || 0) - (a.priority || 0);
+				});
+
+				sectionsAndViews.push($.extend({}, propertyGroupConfiguration, {
+					properties: properties
+				}));
+			});
+			sectionsAndViews.sort(function(a, b) {
+				return (b.priority || 0) - (a.priority || 0);
+			})
+
+			return sectionsAndViews;
+		}.property('T3.Content.Model.BlockSelection.selectedBlockSchema').cacheable(),
+
+		/**
 		 * When the selected block changes in the content model,
 		 * we update this.blockProperties
 		 */

@@ -61,16 +61,12 @@ function() {
 		},
 
 		_initializeAlohaBlocksAndUpdateUi: function() {
-			$('.t3-plugin').alohaBlock({
-				'block-type': 'PluginBlock'
-			});
-
-			$('.t3-text').alohaBlock({
-				'block-type': 'TextBlock'
-			});
-
-			$('.t3-text-with-image').alohaBlock({
-				'block-type': 'TextWithImageBlock'
+			$.each(T3.Configuration.Schema, function(key, value) {
+				var cssClassName = key.toLowerCase().replace(/[.:]/g, '-');
+				$('.' + cssClassName).alohaBlock({
+					'block-type': 'TYPO3Block',
+					'__contenttype': key
+				});
 			});
 
 			T3.Content.Model.PublishableBlocks.initialize();

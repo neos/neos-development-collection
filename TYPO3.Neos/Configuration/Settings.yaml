@@ -21,3 +21,26 @@ TYPO3:
         authenticationStrategy: oneToken
     mvc:
       notFoundController: TYPO3\TYPO3\Controller\ErrorController
+
+
+
+TYPO3:
+  TYPO3:
+    userInterface:
+      string:
+        editor:
+          class: T3.Content.UI.Editor.TextField
+        renderer:
+          class: T3.Content.UI.Renderer.Text
+      boolean:
+        editor:
+          class: T3.Content.UI.Editor.Checkbox
+        renderer:
+          class: T3.Content.UI.Renderer.Boolean
+      'TYPO3\TYPO3\Domain\Model\Media\Image':
+        editor:
+          class: T3.Content.UI.Editor.FileUpload
+          options:
+            allowedFileTypes: jpg,png
+        renderer:
+          class: T3.Content.UI.Renderer.File

@@ -285,7 +285,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		propertyDefinition: null,
 
 		render: function() {
-			var typeDefinition = fixture.typeDefaults[this.propertyDefinition.type];
+			var typeDefinition = T3.Configuration.UserInterface[this.propertyDefinition.type];
 			if (!typeDefinition) {
 				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
 			}
@@ -297,7 +297,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			var classOptions = $.extend({
 				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
-			}, typeDefinition.editor.defaults || {});
+			}, typeDefinition.editor.options || {});
 
 			var editor = editorClass.create(classOptions);
 			this.appendChild(editor);
@@ -310,7 +310,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		propertyDefinition: null,
 
 		render: function() {
-			var typeDefinition = fixture.typeDefaults[this.propertyDefinition.type];
+			var typeDefinition = T3.Configuration.UserInterface[this.propertyDefinition.type];
 			if (!typeDefinition) {
 				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
 			}
@@ -322,7 +322,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			var classOptions = $.extend({
 				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
-			}, typeDefinition.renderer.defaults || {});
+			}, typeDefinition.renderer.options || {});
 
 			var renderer = rendererClass.create(classOptions);
 			this.appendChild(renderer);

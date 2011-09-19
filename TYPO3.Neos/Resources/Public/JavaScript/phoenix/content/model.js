@@ -250,7 +250,7 @@ function(launcherTemplate) {
 
 			var blockProxy = Block.create($.extend({}, attributes, {
 				_alohaBlockId: blockId,
-				_title: alohaBlock.title,
+				_title: alohaBlock.getTitle(),
 				_originalValues: null,
 				init: function() {
 					var that = this;

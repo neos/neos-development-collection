@@ -38,6 +38,12 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
+	 * @inject
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
@@ -45,6 +51,18 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Adds the uploaded image to the image repository and returns the
 	 * identifier of the image object.
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
+	 * @param array $settings
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
 	 *
 	 * @param \TYPO3\TYPO3\Domain\Model\Media\Image $image
 	 * @return string
@@ -62,9 +80,19 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @skipCsrfProtection
 	 */
 	public function newAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $position) {
+		$this->view->assign('contentTypes', $this->contentTypeManager->getSubContentTypes('TYPO3.TYPO3:ContentObject'));
 		$this->view->assign('referenceNode', $referenceNode);
 		$this->view->assign('position', $position);
-		$this->view->assign('rand', rand());
+	}
+
+	/**
+	 * This action currently returns the JS configuration we need for the backend.
+	 * That's still quite unclean, but it works for now.
+	 *
+	 * @skipCsrfProtection
+	 */
+	public function javascriptConfigurationAction() {
+		return 'window.T3Configuration = {}; window.T3Configuration.Schema = ' . json_encode($this->contentTypeManager->getFullConfiguration()) . '; window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']);
 	}
 
 	/**
@@ -92,18 +120,12 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		} elseif ($position === 'below') {
 			$newNode->moveAfter($referenceNode);
 		}
-		switch($type) {
-			case 'TYPO3.TYPO3:Text':
-				$newNode->setProperty('headline', 'Enter Headline here');
-				$newNode->setProperty('text', '<p>Enter Text here</p>'); // Wrapping into p-tags here because of Aloha
-				break;
-			case 'TYPO3.TYPO3:TextWithImage':
-				$newNode->setProperty('headline', 'Enter Headline here');
-				$newNode->setProperty('text', '<p>Enter Text here</p>'); // Wrapping into p-tags here because of Aloha
-				$newNode->setProperty('image', '');
-				break;
 
-			// TODO: Some more here, depending on Schema
+		$contentType = $this->contentTypeManager->getContentType($type);
+		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
+			if (isset($propertyConfiguration['placeholder'])) {
+				$newNode->setProperty($propertyName, $propertyConfiguration['placeholder']);
+			}
 		}
 
 		$parentFolderNode = $this->findNextParentFolderNode($newNode);

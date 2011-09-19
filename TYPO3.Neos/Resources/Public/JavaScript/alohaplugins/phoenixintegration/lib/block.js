@@ -6,18 +6,11 @@ function(block) {
 	var $ = window.alohaQuery || window.jQuery;
 
 	/**
-	 * This is the TYPO3 AbstractBlock, which we use for all TYPO3-related functionality.
+	 * This is the TYPO3 Block, which we use for all TYPO3-related functionality.
 	 *
 	 * We only render this block *once*,
 	 */
-	exports.AbstractBlock = block.AbstractBlock.extend({
-
-		/**
-		 * List of editable sub properties
-		 *
-		 * @var Array
-		 */
-		editableSubProperties: null,
+	exports.TYPO3Block = block.AbstractBlock.extend({
 
 		/**
 		 * Already rendered?
@@ -26,26 +19,28 @@ function(block) {
 		 */
 		_alreadyRendered: false,
 
-		/**
-		 * Initialization. Here, we store the original values of all editables
-		 * inside the block.
-		 */
-		init: function() {
-			if (!this.editableSubProperties) return;
-			this.editableSubProperties.forEach(function(propertyName) {
-				this.attr(propertyName, this.$innerElement.find('*[data-propertyname="' + propertyName + '"]').html(), true);
-			}, this);
+		_getContentTypeSchema: function() {
+			return T3.Configuration.Schema[this.attr('__contenttype')];
 		},
 
+		getTitle: function() {
+			return this._getContentTypeSchema().label;
+		},
 		/**
 		 * Rendering. Only called once, aloha-fies the editable sub properties (making them Aloha Editables).
 		 */
 		render: function() {
 			if (this._alreadyRendered) return;
 
-			if (!this.editableSubProperties) return;
+			if (!this._getContentTypeSchema().inlineEditableProperties) return;
+
+			// Store the editable sub properties in the parent element
+			this._getContentTypeSchema().inlineEditableProperties.forEach(function(propertyName) {
+				this.attr(propertyName, this.$innerElement.find('*[data-propertyname="' + propertyName + '"]').html(), true);
+			}, this);
+
 			// Aloha-fy the editable sub elements
-			this.editableSubProperties.forEach(function(propertyName) {
+			this._getContentTypeSchema().inlineEditableProperties.forEach(function(propertyName) {
 				this.$innerElement.find('*[data-propertyname="' + propertyName + '"]').aloha();
 			}, this);
 
@@ -126,92 +121,19 @@ function(block) {
 				this.element.attr('data-' + key, value);
 			}
 
-			if (!this.editableSubProperties) return;
-			if (this.editableSubProperties.indexOf(key) !== -1) {
+			if (!this._getContentTypeSchema() || !this._getContentTypeSchema().inlineEditableProperties) return;
+			if (this._getContentTypeSchema().inlineEditableProperties.indexOf(key) !== -1) {
 				this.$innerElement.find('*[data-propertyname="' + key + '"]').html(value);
 			}
-		}
-	});
+		},
 
-	// TODO: should be generic lateron.
-	exports.TextBlock = exports.AbstractBlock.extend({
-		title: 'Text',
-		editableSubProperties: ['headline', 'text'],
-
+		/**
+		 * get schema returns a representation which is used to fill the *inspector*
+		 */
 		getSchema: function() {
-			return [
-				{
-					key: 'Properties',
-					properties: [
-						{
-							key: '_hidden',
-							type: 'boolean',
-							label: 'Hidden'
-						}
-					]
-				}
-			];
+			return this._getContentTypeSchema();
 		}
 	});
 
-	exports.PluginBlock = exports.AbstractBlock.extend({
-		title: 'Plugin',
-
-		getSchema: function() {
-			return [
-				{
-					key: 'Plugin Settings',
-					properties: [
-						{
-							key: 'package',
-							type: 'string',
-							label: 'Package'
-						}, {
-							key: 'subpackage',
-							type: 'string',
-							label: 'Sub Package'
-						}, {
-							key: 'controller',
-							type: 'string',
-							label: 'Controller'
-						}, {
-							key: 'action',
-							type: 'string',
-							label: 'Action'
-						}
-					]
-				}
-			];
-		}
-	});
-
-	exports.TextWithImageBlock = exports.AbstractBlock.extend({
-		title: 'Text with Image',
-		editableSubProperties: ['headline', 'text'],
-
-		getSchema: function() {
-			return [
-				{
-					key: 'Visibility',
-					properties: [
-						{
-							key: '_hidden',
-							type: 'boolean',
-							label: 'Hidden'
-						}
-					]
-				}, {
-					key: 'Image',
-					properties: [
-						{
-							key: 'image',
-							type: 'image',
-							label: 'Image'
-						}
-					]
-				}
-			];
-		}
-	});
 	return exports;
 });

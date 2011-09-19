@@ -61,12 +61,6 @@ class SiteImportService {
 
 	/**
 	 * @inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\ContentTypeRepository
-	 */
-	protected $contentTypeRepository;
-
-	/**
-	 * @inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
@@ -101,14 +95,8 @@ class SiteImportService {
 			$this->workspaceRepository->removeAll();
 			$this->domainRepository->removeAll();
 			$this->siteRepository->removeAll();
-			$this->contentTypeRepository->removeAll();
 
 			$this->persistenceManager->persistAll();
-
-			$folderContentType = $this->contentTypeManager->createContentType('TYPO3.TYPO3CR:Folder');
-
-			$pageContentType = $this->contentTypeManager->createContentType('TYPO3.TYPO3:Page');
-			$pageContentType->setDeclaredSuperTypes(new \Doctrine\Common\Collections\ArrayCollection(array($folderContentType)));
 
 			try {
 				$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');

@@ -9,9 +9,7 @@ function(Plugin, block, BlockManager, require) {
     	dependencies: ['block'],
         init: function() {
 			var that = this;
-			BlockManager.registerBlockType('TextBlock', block.TextBlock);
-			BlockManager.registerBlockType('PluginBlock', block.PluginBlock);
-			BlockManager.registerBlockType('TextWithImageBlock', block.TextWithImageBlock);
+			BlockManager.registerBlockType('TYPO3Block', block.TYPO3Block);
 
         	require(['phoenix/contentmodule'], function() {
 				BlockManager.bind('block-selection-change', T3.ContentModule._onBlockSelectionChange, T3.ContentModule);

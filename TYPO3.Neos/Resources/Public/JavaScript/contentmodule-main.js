@@ -26,6 +26,8 @@ function() {
 		'order!phoenix/contentmodule'],
 		function() {
 			var T3 = window.T3;
+			T3.Configuration = window.T3Configuration;
+			delete window.T3Configuration;
 
 			SC.$(document).ready(function() {
 				T3.ContentModule.bootstrap();
