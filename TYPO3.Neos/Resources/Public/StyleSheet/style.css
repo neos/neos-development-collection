@@ -437,9 +437,7 @@ button.t3-button {
   -o-box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4);
   box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.4); }
 
-.t3-delete-handle,
-.t3-add-below-handle,
-.t3-add-above-handle {
+.t3-handle {
   position: absolute;
   right: -1px;
   top: -17px;
@@ -448,12 +446,6 @@ button.t3-button {
   overflow: hidden;
   font-size: 9px;
   display: none;
-  background-image: url(../Images/ContentModule/plus.png);
-  background-image: url(../Images/ContentModule/plus.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
-  background-image: url(../Images/ContentModule/plus.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #bbbbbb));
-  background-image: url(../Images/ContentModule/plus.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
-  background-image: url(../Images/ContentModule/plus.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
-  background-image: url(../Images/ContentModule/plus.png), linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
   background-position: 50% 50%, 50% 50%;
   background-repeat: no-repeat, repeat;
   background-color: transparent;
@@ -478,13 +470,20 @@ button.t3-button {
   -o-box-shadow: 0 -1px 4px #909090;
   box-shadow: 0 -1px 4px #909090;
   cursor: pointer; }
-  .t3-delete-handle:hover,
-  .t3-add-below-handle:hover,
-  .t3-add-above-handle:hover {
+  .t3-handle:hover {
     -moz-box-shadow: 0px -1px 4px #aaaaaa;
     -webkit-box-shadow: 0px -1px 4px #aaaaaa;
     -o-box-shadow: 0px -1px 4px #aaaaaa;
     box-shadow: 0px -1px 4px #aaaaaa; }
+
+.t3-add-above-handle,
+.t3-add-below-handle {
+  background-image: url(../Images/ContentModule/plus.png);
+  background-image: url(../Images/ContentModule/plus.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Images/ContentModule/plus.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #bbbbbb));
+  background-image: url(../Images/ContentModule/plus.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Images/ContentModule/plus.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Images/ContentModule/plus.png), linear-gradient(top, #eeeeee 0%, #bbbbbb 100%); }
 
 .t3-add-below-handle {
   top: auto;
@@ -521,7 +520,7 @@ button.t3-button {
   box-shadow: 0 1px 3px #909090; }
 
 .t3-delete-handle {
-  right: 25px;
+  right: 51px;
   background-image: url(../Images/ContentModule/delete.png);
   background-image: url(../Images/ContentModule/delete.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
   background-image: url(../Images/ContentModule/delete.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #bbbbbb));
@@ -529,12 +528,8 @@ button.t3-button {
   background-image: url(../Images/ContentModule/delete.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
   background-image: url(../Images/ContentModule/delete.png), linear-gradient(top, #eeeeee 0%, #bbbbbb 100%); }
 
-.aloha-block-active > .t3-delete-handle,
-.aloha-block:hover > .t3-delete-handle,
-.aloha-block:hover > .t3-add-above-handle,
-.aloha-block-active > .t3-add-above-handle,
-.aloha-block:hover > .t3-add-below-handle,
-.aloha-block-active > .t3-add-below-handle {
+.aloha-block-active > .t3-handle,
+.aloha-block:hover > .t3-handle {
   display: block;
   z-index: 10000; }
 
@@ -542,16 +537,10 @@ button.t3-button {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
   opacity: 0.2; }
 
-.t3-contentelement-selected .aloha-block:hover > .t3-delete-handle,
-.t3-contentelement-selected .aloha-block:hover > .t3-add-above-handle,
-.t3-contentelement-selected .aloha-block:hover > .t3-add-below-handle {
+.t3-contentelement-selected .aloha-block:hover > .t3-handle {
   display: none; }
-.t3-contentelement-selected .aloha-block-active > .t3-delete-handle,
-.t3-contentelement-selected .aloha-block-active > .t3-add-above-handle,
-.t3-contentelement-selected .aloha-block-active > .t3-add-below-handle,
-.t3-contentelement-selected .aloha-block-active:hover > .t3-delete-handle,
-.t3-contentelement-selected .aloha-block-active:hover > .t3-add-above-handle,
-.t3-contentelement-selected .aloha-block-active:hover > .t3-add-below-handle {
+.t3-contentelement-selected .aloha-block-active > .t3-handle,
+.t3-contentelement-selected .aloha-block-active:hover > .t3-handle {
   display: block; }
 
 .t3-status-indicator {
@@ -642,9 +631,7 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 .t3-ui-controls-inactive div.aloha-block-inner {
   outline: none !important;
   background: none !important; }
-.t3-ui-controls-inactive .t3-delete-handle,
-.t3-ui-controls-inactive .t3-add-below-handle,
-.t3-ui-controls-inactive .t3-add-above-handle,
+.t3-ui-controls-inactive .t3-handle,
 .t3-ui-controls-inactive .t3-status-indicator {
   display: none !important; }
 .t3-ui-controls-inactive #aloha-floatingmenu-shadow,
@@ -732,3 +719,77 @@ button.t3-create-new-content {
 
 .t3-handle-loading {
   background-image: url("../Images/ajax-preloader.gif"); }
+
+.t3-copy-handle {
+  right: 101px;
+  background-image: url(../Icons/FugueIcons/reports.png);
+  background-image: url(../Icons/FugueIcons/reports.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/reports.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #bbbbbb));
+  background-image: url(../Icons/FugueIcons/reports.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/reports.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/reports.png), linear-gradient(top, #eeeeee 0%, #bbbbbb 100%); }
+
+.t3-cut-handle {
+  right: 76px;
+  background-image: url(../Icons/FugueIcons/scissors.png);
+  background-image: url(../Icons/FugueIcons/scissors.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/scissors.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #bbbbbb));
+  background-image: url(../Icons/FugueIcons/scissors.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/scissors.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/scissors.png), linear-gradient(top, #eeeeee 0%, #bbbbbb 100%); }
+
+.t3-paste-before-handle {
+  right: 25px;
+  background-image: url(../Icons/FugueIcons/arrow-090-small.png);
+  background-image: url(../Icons/FugueIcons/arrow-090-small.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/arrow-090-small.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #bbbbbb));
+  background-image: url(../Icons/FugueIcons/arrow-090-small.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/arrow-090-small.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/arrow-090-small.png), linear-gradient(top, #eeeeee 0%, #bbbbbb 100%); }
+
+.t3-paste-after-handle {
+  top: auto;
+  bottom: -17px;
+  border-width: 0 1px 1px 1px;
+  border-style: none solid solid solid;
+  -moz-border-radius-bottomleft: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -o-border-bottom-left-radius: 5px;
+  -ms-border-bottom-left-radius: 5px;
+  -khtml-border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -o-border-bottom-right-radius: 5px;
+  -ms-border-bottom-right-radius: 5px;
+  -khtml-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -moz-border-radius-topleft: 0;
+  -webkit-border-top-left-radius: 0;
+  -o-border-top-left-radius: 0;
+  -ms-border-top-left-radius: 0;
+  -khtml-border-top-left-radius: 0;
+  border-top-left-radius: 0;
+  -moz-border-radius-topright: 0;
+  -webkit-border-top-right-radius: 0;
+  -o-border-top-right-radius: 0;
+  -ms-border-top-right-radius: 0;
+  -khtml-border-top-right-radius: 0;
+  border-top-right-radius: 0;
+  -moz-box-shadow: 0 1px 3px #909090;
+  -webkit-box-shadow: 0 1px 3px #909090;
+  -o-box-shadow: 0 1px 3px #909090;
+  box-shadow: 0 1px 3px #909090;
+  right: 25px;
+  background-image: url(../Icons/FugueIcons/arrow-270-small.png);
+  background-image: url(../Icons/FugueIcons/arrow-270-small.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/arrow-270-small.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eeeeee), color-stop(100%, #bbbbbb));
+  background-image: url(../Icons/FugueIcons/arrow-270-small.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/arrow-270-small.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+  background-image: url(../Icons/FugueIcons/arrow-270-small.png), linear-gradient(top, #eeeeee 0%, #bbbbbb 100%); }
+
+.t3-handle-hidden {
+  display: none !important; }
+
+.t3-contentelement-cut {
+  opacity: .50; }
