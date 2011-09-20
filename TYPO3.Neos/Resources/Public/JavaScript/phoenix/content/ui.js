@@ -12,14 +12,17 @@ define(
 	'text!phoenix/content/ui/inspector.html',
 	'text!phoenix/content/ui/inspectordialog.html',
 	'text!phoenix/content/ui/fileupload.html',
+	'text!phoenix/content/ui/imageupload.html',
 	'Library/jquery-popover/jquery.popover',
 	'Library/jquery-notice/jquery.notice',
 	'css!Library/jquery-popover/jquery.popover.css',
 	'css!Library/jquery-notice/jquery.notice.css',
 	'Library/plupload/js/plupload',
-	'Library/plupload/js/plupload.html5'
+	'Library/plupload/js/plupload.html5',
+	'Library/jcrop/js/jquery.Jcrop.min',
+	'css!Library/jcrop/css/jquery.Jcrop.css'
 ],
-function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate, fileUploadTemplate) {
+function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate, fileUploadTemplate, imageUploadTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	var $ = window.alohaQuery || window.jQuery;
@@ -313,7 +316,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		render: function() {
 			var typeDefinition = T3.Configuration.UserInterface[this.propertyDefinition.type];
 			if (!typeDefinition) {
-				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
+				throw 'Type defaults for "' + this.propertyDefinition.type + '" not found';
 			}
 
 			var rendererClass = SC.getPath(typeDefinition.renderer['class']);
@@ -388,6 +391,14 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				}];
 			}
 
+			this._uploader.bind('FilesAdded', function(uploader, files) {
+				if (files.length > 0) {
+					that.$().find('.typo3-fileupload-uploadbutton').show();
+				} else {
+					that.$().find('.typo3-fileupload-uploadbutton').hide();
+				}
+			});
+
 			this._uploader.bind('BeforeUpload', function(uploader, file) {
 				uploader.settings.multipart_params['image[type]'] = 'plupload';
 				uploader.settings.multipart_params['image[fileName]'] = file.name;
@@ -395,14 +406,296 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			this._uploader.bind('FileUploaded', function(uploader, file, response) {
 				T3.Common.Notification.ok('Uploaded file "' + file.name + '".');
-				that.set('value', response.response);
+				that.fileUploaded(response.response);
 			});
 
 			this._uploader.init();
 			this._uploader.refresh();
 		},
+		fileUploaded: function(resourceUuid) {
+			this.set('value', resourceUuid);
+		},
 		upload: function() {
 			this._uploader.start();
+		}
+	});
+
+	/**
+	 * Image editor, enables upload and cropping of images.
+	 */
+	Editor.Image = Editor.FileUpload.extend({
+
+		template: SC.Handlebars.compile(imageUploadTemplate),
+
+		/**
+		 * Size of the image preview.
+		 */
+		imagePreviewMaximumDimensions: {width: 160, height: 160},
+
+		allowedFileTypes: 'jpg,png',
+
+		/**
+		 * UUID of the Image Object; set from the value
+		 */
+		_imageUuid: null,
+
+		// The following three properties are fetched from the server side via AJAX when the image UUID changes
+		_pathToImage: null,
+		_originalImageSize: null,
+		_previewImageSize: null,
+
+		// This is set to TRUE once _pathToImage, _originalImageSize and _previewImageSize are set
+		_previewImageLoaded: false,
+
+		// Transformation options
+		_cropOptions: null,
+		_scaleOptions: null,
+
+		/**
+		 * Lifecycle callback; sets some CSS for the image preview area to sensible defaults.
+		 */
+		didInsertElement: function() {
+			var that = this;
+			this._super();
+
+			this.$().find('.typo3-imagethumbnail').css({
+				width: this.imagePreviewMaximumDimensions.width + 'px',
+				height: this.imagePreviewMaximumDimensions.height + 'px'
+			});
+			this.$().find('.typo3-imagethumbnailcontainer').css({
+				width: this.imagePreviewMaximumDimensions.width + 'px',
+				height: this.imagePreviewMaximumDimensions.height + 'px'
+			});
+		},
+
+		/**
+		 * When the "value" property changes (which is a JSON-formed string of the "ImageVariant" object),
+		 * we deserialize the JSON string and fill _imageUuid, _scaleOptions and _cropOptions
+		 */
+		_onValueChange: function() {
+			var that = this,
+				value = this.get('value');
+
+				// HACK: we need to convert *invalid* JSON to valid one again as
+				// the Chrome browser seems to convert it to an object, and in turn
+				// then serialize it to string again... at least unter some
+				// circumstances... Funny :-)
+			if (value.substr(0, 4) === 'HACK') {
+				value = value.substr(4);
+			}
+
+			var imageVariant = JSON.parse(value);
+
+			if (!imageVariant) return;
+
+			this.set('_imageUuid', imageVariant.image);
+			$.each(imageVariant.processingInstructions, function(index, instruction) {
+				if (instruction.type === 'crop') {
+					that.set('_cropOptions', instruction.options)
+				} else if (instruction.type === 'scale') {
+					that.set('_scaleOptions', instruction.options)
+				}
+			});
+		}.observes('value'),
+
+		/**
+		 * When the image UUID changes, we fetch more metadata for this UUID and update
+		 * _pathToImage, _originalImageSize and _previewImageSize; and in the end
+		 * set _previewImageLoaded
+		 */
+		_onImageUuidChange: function() {
+			var that = this;
+			$.get('/typo3/content/imageWithMetadata/' + this.get('_imageUuid'), function(result) {
+				var metadata = JSON.parse(result);
+				if (!metadata || !metadata.resourceUri || !metadata.originalSize || !metadata.originalSize.width || !metadata.originalSize.height || !metadata.previewSize || !metadata.previewSize.width || !metadata.previewSize.height) {
+					T3.Common.Notification.error('Tried to fetch image metadata: Unexpected result format.');
+					return;
+				}
+
+				that.set('_pathToImage', metadata.resourceUri);
+				that.set('_originalImageSize', metadata.originalSize);
+				that.set('_previewImageSize', metadata.previewSize);
+				that.set('_previewImageLoaded', true);
+			});
+		}.observes('_imageUuid'),
+
+		/**
+		 * When the user uploaded a file, we set the image UUID
+		 */
+		fileUploaded: function(resourceUuid) {
+			this.set('_imageUuid', resourceUuid);
+			this._updateValue();
+		},
+
+		/**
+		 * When the preview image is loaded, we initialize the popover.
+		 */
+		_initializePopover: function() {
+			var that = this;
+			var $popoverContent = $('<div />');
+			var $imageInThumbnail = $('<img />');
+
+			$popoverContent.append($imageInThumbnail);
+
+			var previewImageSize = that.get('_previewImageSize');
+
+			$popoverContent.css({
+				width: previewImageSize.width + 10 + 'px',
+				height: previewImageSize.height + 10 + 'px',
+				'padding-left': '5px',
+				'padding-top': '5px',
+				'background': 'black'
+			});
+
+			this.$().find('.typo3-imagethumbnailcontainer').popover({
+				content: $popoverContent,
+				header: '<span>Crop Image</span>',
+				preventTop: true,
+				preventBottom: true,
+				preventRight: true,
+				openEvent: function() {
+					$imageInThumbnail.attr('src', that.get('_pathToImage'));
+					this.popover$.addClass('aloha-block-do-not-deactivate');
+					var cropOptions = that.get('_cropOptions');
+
+					var settings = {
+							// Triggered when the selection is finished
+						onSelect: function(previewImageCoordinates) {
+							that.set('_cropOptions', that._convertCropOptionsFromPreviewImageCoordinates(previewImageCoordinates));
+							that._updateValue();
+						}
+					};
+
+						// If we have all crop options set, we preselect this in the cropping tool.
+					if (cropOptions && cropOptions.x && cropOptions.y && cropOptions.w && cropOptions.h) {
+						var previewImageCoordinates = that._convertCropOptionsToPreviewImageCoordinates(cropOptions);
+
+						settings.setSelect = [
+							previewImageCoordinates.x,
+							previewImageCoordinates.y,
+							previewImageCoordinates.x + previewImageCoordinates.w,
+							previewImageCoordinates.y + previewImageCoordinates.h,
+						];
+					}
+					$imageInThumbnail.Jcrop(settings);
+				}
+			});
+		}.observes('_previewImageLoaded'),
+
+		/**
+		 * When we destroy the element, we have to remove all popovers; at least
+		 * close them.
+		 */
+		willDestroyElement: function() {
+			this.$().find('.typo3-imagethumbnail').trigger('hidePopover');
+			// TODO: not only hide the popover, but completely remove it from DOM!
+		},
+
+		/**
+		 * Update the preview image when the crop options change or the preview image
+		 * is initially loaded. This includes:
+		 *
+		 * - set the preview bounding box size
+		 * - set the preview bounding box offset such that the image is centered
+		 * - scale the preview image and sete the offsets correctly.
+		 */
+		_updatePreviewImage: function() {
+			if (!this._previewImageLoaded) return;
+
+			var previewCropOptions = this._convertCropOptionsToPreviewImageCoordinates(this.get('_cropOptions'));
+
+			var scalingFactorX = this.imagePreviewMaximumDimensions.width / previewCropOptions.w;
+			var scalingFactorY = this.imagePreviewMaximumDimensions.height / previewCropOptions.h;
+			var overalScalingFactor = Math.min(scalingFactorX, scalingFactorY);
+
+			var previewBoundingBoxSize = {
+				width: Math.floor(previewCropOptions.w * overalScalingFactor),
+				height: Math.floor(previewCropOptions.h * overalScalingFactor)
+			}
+
+				// Update size of preview bounding box
+				// and Center preview image thumbnail
+			this.$().find('.typo3-imagethumbnail').css({
+				width: previewBoundingBoxSize.width + 'px',
+				height: previewBoundingBoxSize.height + 'px',
+				position: 'absolute',
+				left: ((this.imagePreviewMaximumDimensions.width - previewBoundingBoxSize.width) / 2 ) + 'px',
+				top: ((this.imagePreviewMaximumDimensions.height - previewBoundingBoxSize.height) / 2) + 'px'
+			});
+
+				// Scale Preview image and update relative image position
+			this.$().find('.typo3-imagethumbnail img').css({
+				width: Math.floor(this.get('_previewImageSize').width * overalScalingFactor) + 'px',
+				height: 'auto',
+				marginLeft: '-' + (previewCropOptions.x * overalScalingFactor) + 'px',
+				marginTop: '-' + (previewCropOptions.y * overalScalingFactor) + 'px'
+			});
+		}.observes('_cropOptions', '_previewImageLoaded'),
+
+		/**
+		 * This function must be triggered *explicitely* when either:
+		 * _imageUuid, _cropOptions or _scaleOptions are modified, as it
+		 * writes these changes back into a JSON string.
+		 *
+		 * We don't use value observing here, as this might end up with a circular
+		 * dependency.
+		 */
+		_updateValue: function() {
+			this.set('value', JSON.stringify({
+				image: this.get('_imageUuid'),
+				processingInstructions: [{
+					type: 'crop',
+					options: this.get('_cropOptions')
+				},{
+					type: 'scale',
+					options: this.get('_scaleOptions')
+				}]
+			}));
+		},
+
+		/**
+		 * Helper.
+		 *
+		 * Convert the crop options from the *preview image* coordinate system to the
+		 * *master image* coordinate system which is stored persistently.
+		 *
+		 * The inverse function to this method is _convertCropOptionsToPreviewImageCoordinates
+		 */
+		_convertCropOptionsFromPreviewImageCoordinates: function(previewImageCoordinates) {
+			var previewImageSize = this.get('_previewImageSize');
+			var originalImageSize = this.get('_originalImageSize');
+
+			return {
+				x: previewImageCoordinates.x * (originalImageSize.width / previewImageSize.width),
+				y: previewImageCoordinates.y * (originalImageSize.height / previewImageSize.height),
+				w: previewImageCoordinates.w * (originalImageSize.width / previewImageSize.width),
+				h: previewImageCoordinates.h * (originalImageSize.height / previewImageSize.height)
+			};
+		},
+
+		/**
+		 * Helper.
+		 *
+		 * Convert the crop options from the *master image* coordinate system to the
+		 * *preview image* coordinate system. We need this as the *preview image* used as
+		 * basis for cropping might be smaller than the original one.
+		 *
+		 * The inverse function to this method is _convertCropOptionsFromPreviewImageCoordinates
+		 */
+		_convertCropOptionsToPreviewImageCoordinates: function(coordinates) {
+			var previewImageSize = this.get('_previewImageSize');
+			var originalImageSize = this.get('_originalImageSize');
+
+			if (!previewImageSize || !originalImageSize) {
+				return {x: 0, y: 0, w: 1, h: 1};
+			}
+
+			return {
+				x: coordinates.x / (originalImageSize.width / previewImageSize.width),
+				y: coordinates.y / (originalImageSize.height / previewImageSize.height),
+				w: coordinates.w / (originalImageSize.width / previewImageSize.width),
+				h: coordinates.h / (originalImageSize.height / previewImageSize.height)
+			}
 		}
 	});
 
@@ -419,6 +712,31 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 	Renderer.File = SC.View.extend({
 		template: SC.Handlebars.compile('{{value}}')
+	});
+
+	Renderer.Image = SC.View.extend({
+		didInsertElement: function() {
+			var that = this;
+
+			var value = this.get('value');
+			if (value.substr(0, 4) === 'HACK') {
+				value = value.substr(4);
+			}
+
+			var imageVariant = JSON.parse(value);
+
+			if (!imageVariant) return;
+
+			$.get('/typo3/content/imageWithMetadata/' + imageVariant.image, function(result) {
+				result = JSON.parse(result);
+				if (result.resourceUri) {
+
+					var $img = $('<img />', {src: result.resourceUri}).attr('class', 'typo3-image-preview-humbnail');
+					that.$().append($img);
+
+				}
+			});
+		}
 	});
 
 	Renderer.Date = SC.View.extend({

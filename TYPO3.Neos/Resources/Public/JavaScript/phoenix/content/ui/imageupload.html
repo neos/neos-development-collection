@@ -1,6 +1,17 @@
+<div class="typo3-imagethumbnailcontainer" style="position:relative;">
+	<div class="typo3-imagethumbnail">
+		<img {{bindAttr src="_pathToImage"}} />
+	</div>
+	{{#if _previewImageLoaded}}
+	<div class="typo3-imagebadge">
+		Click to crop!
+	</div>
+	{{/if}}
+</div>
+
 <div class="typo3-fileupload" {{bindAttr id="_containerId"}}>
 	<button {{bindAttr id="_browseButtonId"}} class="sc-view sc-button t3-button typo3-fileupload-pickfiles" type="button">
-		<span class="sc-view">Upload file</span>
+		<span class="sc-view">Upload image</span>
 	</button>
 
 	{{view T3.Content.UI.Button target="parentView" action="upload" label="Upload!" classNames="typo3-fileupload-uploadbutton"}}

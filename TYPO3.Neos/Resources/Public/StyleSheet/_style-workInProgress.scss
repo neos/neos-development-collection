@@ -121,4 +121,32 @@ button.t3-create-new-content {
 	opacity: .50;
 }
 
-// Cut copy paste
+// Image thumbnail stuff in inspector
+.t3-inspector-form .typo3-imagethumbnailcontainer {
+	position: relative;
+
+	.typo3-imagethumbnail {
+		overflow: hidden;
+		padding: 0;
+		margin: auto;
+	}
+	.typo3-imagebadge {
+		position: absolute;
+		top: 80px;
+		width: 100%;
+		height: 20px;
+		color: white;
+		background: rgba(0,0,0, 0.7);
+		text-align: center;
+	}
+}
+.t3-inspector {
+	.typo3-image-preview-humbnail {
+		max-width: 180px;
+		max-height: 180px;
+		margin: auto;
+	}
+	.typo3-fileupload-uploadbutton {
+		display: none;
+	}
+}

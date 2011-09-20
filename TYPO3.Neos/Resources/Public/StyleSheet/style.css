@@ -793,3 +793,25 @@ button.t3-create-new-content {
 
 .t3-contentelement-cut {
   opacity: .50; }
+
+.t3-inspector-form .typo3-imagethumbnailcontainer {
+  position: relative; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagethumbnail {
+    overflow: hidden;
+    padding: 0;
+    margin: auto; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagebadge {
+    position: absolute;
+    top: 80px;
+    width: 100%;
+    height: 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    text-align: center; }
+
+.t3-inspector .typo3-image-preview-humbnail {
+  max-width: 180px;
+  max-height: 180px;
+  margin: auto; }
+.t3-inspector .typo3-fileupload-uploadbutton {
+  display: none; }

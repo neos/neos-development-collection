@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3\TypoScript;
+namespace TYPO3\TYPO3\Domain\Model\Media;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3".                      *
@@ -22,62 +22,49 @@ namespace TYPO3\TYPO3\TypoScript;
  *                                                                        */
 
 /**
- * Text with image
+ * Domain Model of an Image variant
  *
+ * @valueobject
  * @scope prototype
  */
-class TextWithImage extends \TYPO3\TypoScript\AbstractContentObject {
+class ImageVariant {
 
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithImage.html';
+	protected $image;
 
 	/**
-	 * Names of the properties of this TypoScript which should be available in
-	 * this TS object's template while rendering it.
-	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('properties');
+	protected $processingInstructions;
 
 	/**
-	 * A copy of the node's properties
-	 *
-	 * @var array
+	 * @param \TYPO3\TYPO3\Domain\Model\Media\Image $image
+	 * @param array $processingInstructions
 	 */
-	protected $properties = array();
-
-	/**
-	 * Sets the node the TypoScript object is based on.
-	 * All available properties of the node will be registered as presentation model
-	 * properties.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		parent::setNode($node);
-		$this->properties = $node->getProperties();
+	public function __construct($image, array $processingInstructions) {
+		if (is_object($image)) {
+			$persistenceManager = \TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'); // HACK!!!
+			$this->image = $persistenceManager->getIdentifierByObject($image);
+		} else {
+			$this->image = $image;
+		}
+		$this->processingInstructions = $processingInstructions;
 	}
 
-	public function getProperties() {
-		return $this->properties;
+	public function getImage() {
+		return $this->image;
 	}
 
-	public function setProperties(array $properties) {
-		$this->properties = $properties;
+	public function getResource() {
+		$persistenceManager = \TYPO3\FLOW3\Core\Bootstrap::$staticObjectManager->get('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'); // HACK!!!
+		$image = $persistenceManager->getObjectByIdentifier($this->image, '\TYPO3\TYPO3\Domain\Model\Media\Image');
+		return $image->getResource();
 	}
 
-	/**
-	 * Returns the rendered content of this content object
-	 *
-	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function render() {
-		return parent::render();
+	public function getProcessingInstructions() {
+		return $this->processingInstructions;
 	}
 }
 ?>

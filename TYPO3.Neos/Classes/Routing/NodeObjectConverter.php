@@ -50,6 +50,24 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 	protected $securityContext;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Property\PropertyMapper
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * Converts the specified node path into a Node.
 	 *
 	 * The node path must be an absolute context node path and can be specified as a string or as an array item with the
@@ -109,6 +127,9 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 			return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1285162908);
 		}
 
+		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
+		$contentTypeProperties = $contentType->getProperties();
+
 		foreach ($source as $nodePropertyKey => $nodePropertyValue) {
 			if (substr($nodePropertyKey, 0, 2) === '__') {
 				continue;
@@ -126,6 +147,24 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 				}
 				\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($node, $propertyName, $nodePropertyValue);
 			} else {
+				if (!isset($contentTypeProperties[$nodePropertyKey])) {
+					throw new \Exception('TODO: content type XY does not have a property YY according to the schema');
+				}
+				if (isset($contentTypeProperties[$nodePropertyKey]['type'])) {
+					$targetType = $contentTypeProperties[$nodePropertyKey]['type'];
+					if ($this->objectManager->isRegistered($targetType)) {
+							// HACK: we need to convert *invalid* JSON to valid one again as
+							// the Chrome browser seems to convert it to an object, and in turn
+							// then serialize it to string again... at least unter some
+							// circumstances... Funny :-)
+							if (substr($nodePropertyValue, 0, 4) === 'HACK') {
+								$nodePropertyValue = substr($nodePropertyValue, 4);
+							}
+
+						$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $targetType);
+					}
+				}
+
 				$node->setProperty($nodePropertyKey, $nodePropertyValue);
 			}
 		}

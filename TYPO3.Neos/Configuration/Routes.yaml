@@ -30,6 +30,14 @@
     '@controller': 'Backend\Backend'
     '@action':     'index'
     '@format':     'html'
+
+-
+  name:          'Backend - Content Module - Images'
+  uriPattern:    'typo3/content/imageWithMetadata/{image}'
+  defaults:
+    '@package':    'TYPO3.TYPO3'
+    '@controller': 'Backend\Content'
+    '@action':     'imageWithMetadata'
 -
   name:          'Backend - Content Module'
   uriPattern:    'typo3/content/{@action}'

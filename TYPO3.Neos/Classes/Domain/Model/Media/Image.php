@@ -27,7 +27,7 @@ namespace TYPO3\TYPO3\Domain\Model\Media;
  * @entity
  * @scope prototype
  */
-class Image  {
+class Image {
 
 	/**
 	 * @var \TYPO3\FLOW3\Resource\Resource

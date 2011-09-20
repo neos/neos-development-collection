@@ -6,16 +6,26 @@ jQuery UI: version 1.8.14
 Theme: UI Darkness
 
 
+
+
+
 jquery popover from https://github.com/harryhorn/jquery-popover
 Version 0.2.2
+- MODIFIED: see "// TYPO3 SPECIFIC FIX" in jquery.popover.js
+
+
 
 
 jQuery Notice from http://code.google.com/p/jquery-notice/
 Version 1.0
 
+
+
+
 plupload from http://plupload.com
 Version 1.5b (2011-09-11)
 - deleted "examples" directory
+
 - forked plupload.html5.js:
 	--- a/Resources/Public/Library/plupload/js/plupload.html5.js
 	+++ b/Resources/Public/Library/plupload/js/plupload.html5.js
@@ -32,3 +42,13 @@ Version 1.5b (2011-09-11)
 									};
 
 									/* Since we have to place input[type=file] on top of the browse_button for some browsers (FF, Opera),
+
+
+
+
+jCrop from http://deepliquid.com/content/Jcrop.html
+Version 0.9.9 from 6/7/11
+- deleted build/
+- deleted demo/
+- deleted index.html
+- deleted js/jquery.min.js

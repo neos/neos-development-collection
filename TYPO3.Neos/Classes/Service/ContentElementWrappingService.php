@@ -37,6 +37,12 @@ class ContentElementWrappingService {
 	protected $contentTypeManager;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
 	 * Wrap the $content identified by $node with the needed markup for
 	 * the backend.
 	 * $parameters can be used to further pass parameters to the content element.
@@ -69,6 +75,15 @@ class ContentElementWrappingService {
 			if ($propertyValue !== NULL && isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'date') {
 				$propertyValue = $propertyValue->format('Y-m-d');
 			}
+
+				// Serialize objects to JSON strings
+				// HACK: we need to produce *invalid* JSON as the Chrome browser seems to
+				// convert it to an object, and in turn then serialize it to string again...
+				// at least unter some circumstances... Funny :-)
+			if ($propertyValue !== NULL && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
+				$propertyValue = 'HACK' .  json_encode(\TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($propertyValue));
+			}
+
 			$tagBuilder->addAttribute('data-' . $propertyName, $propertyValue);
 		}
 

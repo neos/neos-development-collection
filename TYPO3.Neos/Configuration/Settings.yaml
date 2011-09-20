@@ -83,7 +83,7 @@ TYPO3:
         superTypes: ['TYPO3.TYPO3:Text']
         properties:
           image:
-            type: TYPO3\TYPO3\Domain\Model\Media\Image
+            type: TYPO3\TYPO3\Domain\Model\Media\ImageVariant
             label: 'Image'
             category: image
         propertyGroups:
@@ -143,13 +143,13 @@ TYPO3:
           class: T3.Content.UI.Editor.Checkbox
         renderer:
           class: T3.Content.UI.Renderer.Boolean
-      'TYPO3\TYPO3\Domain\Model\Media\Image':
+      'TYPO3\TYPO3\Domain\Model\Media\ImageVariant':
         editor:
-          class: T3.Content.UI.Editor.FileUpload
-          options:
-            allowedFileTypes: jpg,png
+          class: T3.Content.UI.Editor.Image
+#          options:
+#
         renderer:
-          class: T3.Content.UI.Renderer.File
+          class: T3.Content.UI.Renderer.Image
       date:
         editor:
           class: T3.Content.UI.Editor.DateField

@@ -49,6 +49,12 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	protected $persistenceManager;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher
+	 */
+	protected $resourcePublisher;
+
+	/**
 	 * Adds the uploaded image to the image repository and returns the
 	 * identifier of the image object.
 	 * @var array
@@ -70,6 +76,17 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	public function uploadImageAction(\TYPO3\TYPO3\Domain\Model\Media\Image $image) {
 		$this->imageRepository->add($image);
 		return $this->persistenceManager->getIdentifierByObject($image);
+	}
+
+	/**
+	 * @param \TYPO3\TYPO3\Domain\Model\Media\Image $image
+	 */
+	public function imageWithMetadataAction(\TYPO3\TYPO3\Domain\Model\Media\Image $image = NULL) {
+		return json_encode(array(
+			'resourceUri' => $this->resourcePublisher->getPersistentResourceWebUri($image->getResource()),
+			'originalSize' => array('width' => 800, 'height' => 600),
+			'previewSize' => array('width' => 400, 'height' => 300)
+		));
 	}
 
 	/**
