@@ -24,7 +24,6 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 /**
  * A Content Type
  *
- * @entity
  * @scope prototype
  */
 class ContentType {
@@ -37,13 +36,16 @@ class ContentType {
 	protected $name;
 
 	/**
+	 * Configuration for this content type, can be an arbitarily nested array.
+	 *
+	 * @var array
+	 */
+	protected $configuration;
+
+	/**
 	 * Content types this content type directly inherits from
 	 *
-	 * @var \Doctrine\Common\Collections\ArrayCollection<\TYPO3\TYPO3CR\Domain\Model\ContentType>
-	 * @ManyToMany
-	 * @JoinTable(name="contentTypesDeclaredSuperTypes",
-	 *      joinColumns={@JoinColumn(name="declaredSuperTypeId")}
-	 *      )
+	 * @var array<\TYPO3\TYPO3CR\Domain\Model\ContentType>
 	 */
 	protected $declaredSuperTypes;
 
@@ -51,11 +53,21 @@ class ContentType {
 	 * Constructs this content type
 	 *
 	 * @param string $name Name of the content type
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param array<\TYPO3\TYPO3CR\Domain\Model\ContentType> $declaredSuperTypes a list of declared super types
+	 * @param array $configuration the configuration for this content type which is defined in the schema
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function __construct($name) {
+	public function __construct($name, array $declaredSuperTypes, array $configuration) {
 		$this->name = $name;
-		$this->declaredSuperTypes = new \Doctrine\Common\Collections\ArrayCollection();
+
+		foreach ($declaredSuperTypes as $type) {
+			if (!$type instanceof \TYPO3\TYPO3CR\Domain\Model\ContentType) {
+				throw new \InvalidArgumentException('$types must be an array of ContentType objects', 1291300950);
+			}
+		}
+		$this->declaredSuperTypes = $declaredSuperTypes;
+
+		$this->configuration = $configuration;
 	}
 
 	/**
@@ -69,26 +81,10 @@ class ContentType {
 	}
 
 	/**
-	 * Declares the super types this content type inherits from.
-	 *
-	 * @param \Doctrine\Common\Collections\ArrayCollection<\TYPO3\TYPO3CR\Domain\Model\ContentType> $types
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setDeclaredSuperTypes(\Doctrine\Common\Collections\ArrayCollection $types) {
-		foreach ($types as $type) {
-			if (!$type instanceof \TYPO3\TYPO3CR\Domain\Model\ContentType) {
-				throw new \InvalidArgumentException('$types must be an array of ContentType objects', 1291300950);
-			}
-		}
-		$this->declaredSuperTypes = $types;
-	}
-
-	/**
 	 * Returns the direct, explicitly declared super types
 	 * of this content type.
 	 *
-	 * @return \Doctrine\Common\Collections\ArrayCollection<\TYPO3\TYPO3CR\Domain\Model\ContentType>
+	 * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentType>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaredSuperTypes() {
@@ -113,6 +109,58 @@ class ContentType {
 		}
 		return FALSE;
 	}
-}
 
+	/**
+	 * Get the full configuration of the content type. Should only be used internally.
+	 * Instead, use the get* / has* methods which exist for every configuration property.
+	 *
+	 * @return array
+	 */
+	public function getConfiguration() {
+		return $this->configuration;
+	}
+
+	/**
+	 * Get the human-readable label of this content type
+	 *
+	 * @return string
+	 * @api
+	 */
+	public function getLabel() {
+		return (isset($this->configuration['label']) ? $this->configuration['label'] : '');
+	}
+
+	/**
+	 * Return the array with the defined properties. The key is the property name,
+	 * the value the property configuration. There are no guarantees on how the
+	 * property configuration looks like.
+	 *
+	 * @return array
+	 * @api
+	 */
+	public function getProperties() {
+		return (isset($this->configuration['properties']) ? $this->configuration['properties'] : array());
+	}
+
+	/**
+	 * Magic get* and has* method for all properties inside $configuration.
+	 *
+	 * @param string $methodName
+	 * @return mixed
+	 * @api
+	 */
+	public function __call($methodName, $arguments) {
+		if (substr($methodName, 0, 3) === 'get') {
+			$propertyName = lcfirst(substr($methodName, 3));
+			if (isset($this->configuration[$propertyName])) {
+				return $this->configuration[$propertyName];
+			}
+		} elseif (substr($methodName, 0, 3) === 'has') {
+			$propertyName = lcfirst(substr($methodName, 3));
+			return isset($this->configuration[$propertyName]);
+		}
+
+		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);
+	}
+}
 ?>
