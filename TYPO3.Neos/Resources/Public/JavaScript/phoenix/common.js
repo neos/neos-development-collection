@@ -194,8 +194,8 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 			var handlerEvents = handle.data('events');
 			if (!handlerEvents['showPopover']) {
 					// Set popover content
-				this._options.header = (options.title) ? options.title : null;
-				this._options.content = $(options.content === undefined ? '<div />' : options.content);
+				this._options.header = (options.title) ? '<h1>' + options.title + '</h1>': null;
+				this._options.content = $(options.content === undefined ? '<div />' : '<div>' + options.content + '</div>');
 
 				var view = SC.View.create({
 					template: SC.Handlebars.compile(confirmationdialogTemplate),

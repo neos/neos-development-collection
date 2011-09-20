@@ -118,11 +118,10 @@ function(block) {
 		 */
 		_renderHandle: function(cssClass, innerHtml, clickHandler, scope) {
 			if (this.element.find('.' + cssClass).length == 0) {
-				var handle = $('<span class="' + cssClass + '">' + innerHtml + '</span>');
+				var handle = $('<span class="t3-handle ' + cssClass + '">' + innerHtml + '</span>');
 				this.element.prepend(handle);
 
 				var nodePath = handle.parent('.aloha-block').attr('about');
-				var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
 
 				handle.click(function(event) {
 					clickHandler.call(scope, nodePath, handle);
