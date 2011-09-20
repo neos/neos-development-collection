@@ -741,7 +741,7 @@ class Node implements NodeInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHiddenBeforeDate(\DateTime $dateTime) {
+	public function setHiddenBeforeDate(\DateTime $dateTime = NULL) {
 		if ($this->hiddenBeforeDate != $dateTime) {
 			$this->hiddenBeforeDate = $dateTime;
 			$this->nodeRepository->update($this);
@@ -765,7 +765,7 @@ class Node implements NodeInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHiddenAfterDate(\DateTime $dateTime) {
+	public function setHiddenAfterDate(\DateTime $dateTime = NULL) {
 		if ($this->hiddenAfterDate != $dateTime) {
 			$this->hiddenAfterDate = $dateTime;
 			$this->nodeRepository->update($this);
