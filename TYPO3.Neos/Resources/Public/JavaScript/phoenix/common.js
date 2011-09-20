@@ -5,8 +5,13 @@
  */
 
 define(
-['phoenix/fixture', 'text!phoenix/common/launcher.html', 'text!phoenix/common/launcherpanel.html'],
-function(fixture, launcherTemplate, launcherPanelTemplate) {
+[
+	'phoenix/fixture',
+	'text!phoenix/common/launcher.html',
+	'text!phoenix/common/launcherpanel.html',
+	'text!phoenix/common/confirmationdialog.html'
+],
+function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
 
 	var T3 = window.T3 || {};
 	T3.Common = {};
@@ -168,13 +173,60 @@ function(fixture, launcherTemplate, launcherPanelTemplate) {
 		 * @param {Object} commands Command-Name --> Callback function list
 		 * @param {jQuery} the handle to which the dialog is appended to
 		 */
-		open: function(url, data, commands, handle) {
+		openFromUrl: function(url, data, commands, handle) {
 			var that = this;
 			that._handle = handle;
 
-			this._fetchUrlForDialog(url, data, commands, function() {
-				that._showDialog();
-			});
+			var handlerEvents = handle.data('events');
+			if (!handlerEvents['showPopover']) {
+				this._fetchUrlForDialog(url, data, commands, function() {
+					that._showDialog();
+				});
+			} else {
+				handle.trigger('showPopover');
+			}
+		},
+
+		openConfirmPopover: function(options, handle) {
+			var that = this;
+			this._handle = handle;
+
+			var handlerEvents = handle.data('events');
+			if (!handlerEvents['showPopover']) {
+					// Set popover content
+				this._options.header = (options.title) ? options.title : null;
+				this._options.content = $(options.content === undefined ? '<div />' : options.content);
+
+				var view = SC.View.create({
+					template: SC.Handlebars.compile(confirmationdialogTemplate),
+					save: function() {
+						if (options.onOk) {
+							options.onOk.call(that);
+						}
+						handle.trigger('hidePopover');
+					},
+					cancel: function() {
+						if (options.onCancel) {
+							options.onCancel.call(that);
+						}
+						handle.trigger('hidePopover');
+					}
+				});
+
+				this._showDialog();
+
+				view.appendTo(this._options.content);
+				if (options.onDialogOpen) {
+					options.onDialogOpen.call(that);
+				}
+			} else {
+				// TODO: When you click no, and open the delete dialog again it's not correctly shown
+				handle.trigger('showPopover');
+			}
+
+			if (options.onDialogOpen) {
+				options.onDialogOpen.call(this);
+			}
 		},
 
 		/**
