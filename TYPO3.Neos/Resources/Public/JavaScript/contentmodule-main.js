@@ -31,6 +31,11 @@ function() {
 
 			SC.$(document).ready(function() {
 				T3.ContentModule.bootstrap();
+
+				Ext.Direct.on("exception", function(error) {
+					T3.Common.Notification.error('ExtDirect error: ' + error.message);
+				});
+
 				ExtDirectInitialization();
 			});
 		}
