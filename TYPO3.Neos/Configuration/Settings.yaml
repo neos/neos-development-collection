@@ -44,3 +44,8 @@ TYPO3:
             allowedFileTypes: jpg,png
         renderer:
           class: T3.Content.UI.Renderer.File
+      date:
+        editor:
+          class: T3.Content.UI.Editor.DateField
+        renderer:
+          class: T3.Content.UI.Renderer.Date

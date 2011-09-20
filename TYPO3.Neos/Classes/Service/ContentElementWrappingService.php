@@ -64,6 +64,11 @@ class ContentElementWrappingService {
 			if (isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'boolean') {
 				$propertyValue = ($propertyValue ? 'true' : 'false');
 			}
+
+				// Serialize date values to String
+			if ($propertyValue !== NULL && isset($propertyConfiguration['type']) && $propertyConfiguration['type'] === 'date') {
+				$propertyValue = $propertyValue->format('Y-m-d');
+			}
 			$tagBuilder->addAttribute('data-' . $propertyName, $propertyValue);
 		}
 

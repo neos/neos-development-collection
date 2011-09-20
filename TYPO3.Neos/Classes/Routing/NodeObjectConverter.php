@@ -114,7 +114,17 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 				continue;
 			}
 			if ($nodePropertyKey[0] === '_') {
-				\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($node, substr($nodePropertyKey, 1), $nodePropertyValue);
+				$propertyName = substr($nodePropertyKey, 1);
+
+					// TODO: Hack: we need to create DateTime objects for some properties of Node
+				if ($propertyName === 'hiddenBeforeDate' || $propertyName === 'hiddenAfterDate') {
+					if ($nodePropertyValue !== '') {
+						$nodePropertyValue = \DateTime::createFromFormat('!Y-m-d', $nodePropertyValue);
+					} else {
+						$nodePropertyValue = NULL;
+					}
+				}
+				\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($node, $propertyName, $nodePropertyValue);
 			} else {
 				$node->setProperty($nodePropertyKey, $nodePropertyValue);
 			}

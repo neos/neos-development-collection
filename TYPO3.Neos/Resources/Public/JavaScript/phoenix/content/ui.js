@@ -338,6 +338,17 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 	Editor.Checkbox = SC.Checkbox.extend({
 	});
 
+	Editor.DateField = SC.TextField.extend({
+		didInsertElement: function() {
+			this.$().datepicker({
+				dateFormat: $.datepicker.W3C,
+				beforeShow: function(field, datePicker) {
+					$(datePicker.dpDiv).addClass('aloha-block-do-not-deactivate');
+				}
+			});
+		}
+	});
+
 	Editor.FileUpload = SC.View.extend({
 
 		value: '',
@@ -407,6 +418,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 	Renderer.File = SC.View.extend({
 		template: SC.Handlebars.compile('{{value}}')
+	});
+
+	Renderer.Date = SC.View.extend({
+		value: '',
+		template: SC.Handlebars.compile('<span style="color:white">{{value}}</span>')
 	});
 
 
