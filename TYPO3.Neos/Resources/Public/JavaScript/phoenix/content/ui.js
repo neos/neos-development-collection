@@ -393,11 +393,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					'order!Library/codemirror2/lib/codemirror',
 					'order!Library/codemirror2/mode/xml/xml',
 					'order!Library/codemirror2/mode/css/css',
+					'order!Library/codemirror2/mode/javascript/javascript',
 					'order!Library/codemirror2/mode/htmlmixed/htmlmixed',
 
-					'css!Library/codemirror2/lib/codemirror',
-					'css!Library/codemirror2/mode/xml/xml.css',
-					'css!Library/codemirror2/mode/css/css.css',
+					'css!Library/codemirror2/lib/codemirror.css',
+					'css!Library/codemirror2/theme/default.css',
 				], function() {
 					that._editor = CodeMirror.fromTextArea($editorContent.get(0), {
 						mode: 'text/html',

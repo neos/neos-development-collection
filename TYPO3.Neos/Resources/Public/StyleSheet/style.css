@@ -825,4 +825,9 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 
 .t3-htmleditor-window {
   width: 800px;
-  height: 400px; }
+  height: 400px;
+  font-size: 13px; }
+  .t3-htmleditor-window .CodeMirror-scroll {
+    height: 400px; }
+  .t3-htmleditor-window .CodeMirror pre {
+    overflow-y: hidden; }
