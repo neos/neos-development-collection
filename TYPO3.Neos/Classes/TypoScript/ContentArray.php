@@ -31,7 +31,7 @@ class ContentArray extends \TYPO3\TypoScript\AbstractContentArrayObject {
 	public function render() {
 			// TODO: add check to make sure user is logged in when he accesses that workspace.
 		if ($this->count() === 0 && $this->renderingContext->getContentContext()->getWorkspaceName() !== 'live') {
-			return '<button class="t3-create-new-content" data-node="' . $this->node->getContextPath() . '">Create new content</button>';
+			return '<button class="t3-create-new-content t3-button" data-node="' . $this->node->getContextPath() . '"><span>Create new content</span></button>';
 		} else {
 			return parent::render();
 		}

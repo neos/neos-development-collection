@@ -173,17 +173,17 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		 * @param {Object} commands Command-Name --> Callback function list
 		 * @param {jQuery} the handle to which the dialog is appended to
 		 */
-		openFromUrl: function(url, data, commands, handle) {
+		openFromUrl: function(url, data, commands, $handle) {
 			var that = this;
-			that._handle = handle;
+			that._handle = $handle;
 
-			var handlerEvents = handle.data('events');
-			if (!handlerEvents['showPopover']) {
+			var handlerEvents = $handle.data('events');
+			if (!handlerEvents || !handlerEvents['showPopover']) {
 				this._fetchUrlForDialog(url, data, commands, function() {
 					that._showDialog();
 				});
 			} else {
-				handle.trigger('showPopover');
+				$handle.trigger('showPopover');
 			}
 		},
 

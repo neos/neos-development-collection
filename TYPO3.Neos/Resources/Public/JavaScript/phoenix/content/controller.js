@@ -230,7 +230,7 @@ function() {
 		init: function() {
 			var that = this;
 			$('button.t3-create-new-content').live('click', function() {
-				that.addInside($(this).attr('data-node'));
+				that.addInside($(this).attr('data-node'), $(this));
 			});
 
 			if (window.localStorage.clipboard) {
@@ -269,11 +269,13 @@ function() {
 		addBelow: function(nodePath, $handle) {
 			this._add(nodePath, 'below', $handle);
 		},
-		addInside: function(nodePath) {
-			this._add(nodePath, 'inside');
+		addInside: function(nodePath, $handle) {
+			this._add(nodePath, 'inside', $handle);
 		},
 		_add: function(nodePath, position, $handle) {
-			$handle.addClass('t3-handle-loading');
+			if ($handle !== undefined) {
+				$handle.addClass('t3-handle-loading');
+			}
 
 			T3.Common.Dialog.openFromUrl(
 				'/typo3/content/new',
