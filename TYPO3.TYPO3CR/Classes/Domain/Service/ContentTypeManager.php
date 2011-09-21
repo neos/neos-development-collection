@@ -51,17 +51,17 @@ class ContentTypeManager {
 	 * Return all content types which have a certain $superType, without
 	 * the $superType itself.
 	 *
-	 * @param string $superType
+	 * @param string $superTypeName
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentType> all content types registered in the system
 	 */
-	public function getSubContentTypes($superType) {
+	public function getSubContentTypes($superTypeName) {
 		if ($this->cachedContentTypes === array()) {
 			$this->loadContentTypes();
 		}
 
 		$filteredContentTypes = array();
 		foreach ($this->cachedContentTypes as $contentTypeName => $contentType) {
-			if ($contentType->isOfType($superType) && $contentTypeName !== $superType) {
+			if ($contentType->isOfType($superTypeName) && $contentTypeName !== $superTypeName) {
 				$filteredContentTypes[$contentTypeName] = $contentType;
 			}
 		}
@@ -71,28 +71,32 @@ class ContentTypeManager {
 	/**
 	 * Returns the speciifed content type
 	 *
+	 * @param string $contentTypeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getContentType($name) {
+	public function getContentType($contentTypeName) {
 		if ($this->cachedContentTypes === array()) {
 			$this->loadContentTypes();
 		}
-		return isset($this->cachedContentTypes[$name]) ? $this->cachedContentTypes[$name] : NULL;
+		if (!isset($this->cachedContentTypes[$contentTypeName])) {
+			throw new \TYPO3\TYPO3CR\Exception\ContentTypeNotFoundException('The content type "' . $contentTypeName . '" is not available.', 1316598370);
+		}
+		return $this->cachedContentTypes[$contentTypeName];
 	}
 
 	/**
 	 * Checks if the specified content type exists
 	 *
-	 * @param string $name Name of the content type
+	 * @param string $contentTypeName Name of the content type
 	 * @return boolean TRUE if it exists, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function hasContentType($name) {
+	public function hasContentType($contentTypeName) {
 		if ($this->cachedContentTypes === array()) {
 			$this->loadContentTypes();
 		}
-		return isset($this->cachedContentTypes[$name]);
+		return isset($this->cachedContentTypes[$contentTypeName]);
 	}
 
 	/**
