@@ -341,7 +341,11 @@
 					addSelectedFiles(this.files);
 
 					// Clearing the value enables the user to select the same file again if they want to
-					this.value = '';
+/**
+ * TYPO3: We change this line. To be able to process the File objects in a FileReader we need the event to bubble up
+ * with the files still in it's value
+ */
+//					this.value = '';
 				};
 
 				/* Since we have to place input[type=file] on top of the browse_button for some browsers (FF, Opera),
