@@ -4,9 +4,9 @@
     <title>CodeMirror 2: Search/Replace Demo</title>
     <link rel="stylesheet" href="../lib/codemirror.css">
     <script src="../lib/codemirror.js"></script>
-    <link rel="stylesheet" href="../mode/xml/xml.css">
+    <link rel="stylesheet" href="../theme/default.css">
     <script src="../mode/xml/xml.js"></script>
-    <link rel="stylesheet" href="../docs.css">
+    <link rel="stylesheet" href="../css/docs.css">
 
     <style type="text/css">
       .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
@@ -31,13 +31,13 @@
       held, this behaves like the <code>"indent"</code> mode.)</dd>
       <dt><code>"shift"</code></dt>
       <dd>Indent all selected lines by
-      one <a href="search.html#option_indentUnit"><code>indentUnit</code></a>.
+      one <a href="#option_indentUnit"><code>indentUnit</code></a>.
       If shift was held while pressing tab, un-indent all selected
       lines one unit.</dd>
       <dt><code>"indent"</code></dt>
       <dd>Indent the line the 'correctly', based on its syntactic
       context. Only works if the
-      mode <a href="search.html#indent">supports</a> it.</dd>
+      mode <a href="#indent">supports</a> it.</dd>
       <dt><code>"default"</code></dt>
       <dd>Do not capture tab presses, let the browser apply its
       default behaviour (which usually means it skips to the next
@@ -73,7 +73,7 @@ function unmark() {
 }
 
 function search() {
-  unmark();
+  unmark();                     
   var text = document.getElementById("query").value;
   if (!text) return;
   for (var cursor = editor.getSearchCursor(text); cursor.findNext();)
@@ -95,7 +95,7 @@ function replace() {
       replace = document.getElementById("replace").value;
   if (!text) return;
   for (var cursor = editor.getSearchCursor(text); cursor.findNext();)
-    editor.replaceRange(replace, cursor.from(), cursor.to());
+    cursor.replace(replace);
 }
 </script>
 

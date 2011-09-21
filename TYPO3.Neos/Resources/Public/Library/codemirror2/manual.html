@@ -1,52 +1,57 @@
 <!doctype html>
 <html>
   <head>
-    <title>CodeMirror 2 Manual</title>
-    <link rel="stylesheet" href="docs.css">
+    <title>CodeMirror: User Manual</title>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans:bold"/>
+    <link rel="stylesheet" type="text/css" href="css/docs.css"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>dl dl {margin: 0;}</style>
   </head>
   <body>
-    <h1>CodeMirror 2: The provisionary manual</h1>
 
-    <h2>Contents</h2>
+<h1><span class="logo-braces">{ }</span> <a href="http://codemirror.net/">CodeMirror</a></h1>
 
-    <ul>
-      <li><a href="manual.html#overview">Overview</a></li>
-      <li><a href="manual.html#usage">Basic Usage</a></li>
-      <li><a href="manual.html#config">Configuration</a></li>
-      <li><a href="manual.html#styling">Customized Styling</a></li>
-      <li><a href="manual.html#api">Programming API</a></li>
-      <li><a href="manual.html#modeapi">Writing CodeMirror Modes</a></li>
-    </ul>
+<pre class="grey">
+<img src="css/baboon.png" class="logo" alt="logo"/>/* User manual and
+   reference guide */
+</pre>
+
+<div class="clear"><div class="leftbig blk">
 
     <h2 id="overview">Overview</h2>
 
     <p>CodeMirror is a code-editor component that can be embedded in
     Web pages. It provides <em>only</em> the editor component, no
-    accompanying buttons, auto-completion, or other IDE functionality.
-    It does provide a rich API on top of which such functionality can
-    be straightforwardly implemented.</p>
+    accompanying buttons
+    (see <a href="http://www.octolabs.com/javascripts/codemirror-ui/">CodeMirror
+    UI</a> for a drop-in button bar), auto-completion, or other IDE
+    functionality. It does provide a rich API on top of which such
+    functionality can be straightforwardly implemented.</p>
 
     <p>CodeMirror works with language-specific modes. Modes are
     JavaScript programs that help color (and optionally indent) text
     written in a given language. The distribution comes with a few
     modes (see the <code>mode/</code> directory), and it isn't hard
-    to <a href="manual.html#modeapi">write new ones</a> for other languages.</p>
+    to <a href="#modeapi">write new ones</a> for other languages.</p>
 
     <h2 id="usage">Basic Usage</h2>
 
     <p>The easiest way to use CodeMirror is to simply load the script
     and style sheet found under <code>lib/</code> in the distribution,
-    plus the script and style sheet for the mode you want to use. For
+    plus a mode script from one of the <code>mode/</code> directories
+    and a theme stylesheet from <code>theme/</code>. (See
+    also <a href="compress.html">the compresion helper</a>.) For
     example:</p>
 
     <pre>&lt;script src="lib/codemirror.js">&lt;/script>
 &lt;link rel="stylesheet" href="lib/codemirror.css">
 &lt;script src="mode/javascript/javascript.js">&lt;/script>
-&lt;link rel="stylesheet" href="mode/javascript/javascript.css"></pre>
+&lt;link rel="stylesheet" href="theme/default.css"></pre>
 
-    <p>Having done this, an editor instance can be created like
-    this:</p>
+    <p>(If you use a them other than <code>default.css</code>, you
+    also have to specify the
+    <a href="#option_theme"><code>theme</code></a> option.) Having
+    done this, an editor instance can be created like this:</p>
 
     <pre>var myCodeMirror = CodeMirror(document.body);</pre>
 
@@ -63,7 +68,7 @@
     <p>This will initialize the editor with a piece of code already in
     it, and explicitly tell it to use the JavaScript mode (which is
     useful when multiple modes are loaded).
-    See <a href="manual.html#config">below</a> for a full discussion of the
+    See <a href="#config">below</a> for a full discussion of the
     configuration options that CodeMirror accepts.</p>
 
     <p>In cases where you don't want to append the editor to an
@@ -74,7 +79,7 @@
     textarea with a real editor:</p>
 
     <pre>var myCodeMirror = CodeMirror(function(elt) {
-  myTextArea.parentNode.replaceChild(myTextArea, elt);
+  myTextArea.parentNode.replaceChild(elt, myTextArea);
 }, {value: myTextArea.value});</pre>
 
     <p>However, for this use case, which is a common way to use
@@ -85,7 +90,7 @@
 
     <p>This will, among other things, ensure that the textarea's value
     is updated when the form (if it is part of a form) is submitted.
-    See the <a href="manual.html#fromTextArea">API reference</a> for a full
+    See the <a href="#fromTextArea">API reference</a> for a full
     description of this method.</p>
 
     <h2 id="config">Configuration</h2>
@@ -98,8 +103,14 @@
     default options. You can update this object to change the defaults
     on your page.</p>
 
-    <p>Options are not checked in any way, so setting bogus options is
-    bound to lead to odd errors.</p>
+    <p>Options are not checked in any way, so setting bogus option
+    values is bound to lead to odd errors.</p>
+
+    <p><em>Note:</em> CodeMirror
+    2 <a href="internals.html#summary">does not support</a>
+    line-wrapping. I would have very much liked to support it, but it
+    combines extremely poorly with the way the editor is
+    implemented.</p>
 
     <p>These are the supported options:</p>
 
@@ -122,6 +133,13 @@
       the <code>CodeMirror.listModes</code>
       and <code>CodeMirror.listMIMEs</code> functions.</dd>
 
+      <dt id="option_theme"><code>theme (string)</code></dt>
+      <dd>The theme to style the editor with. You must make sure the
+      CSS file defining the corresponding <code>.cm-s-[name]</code>
+      styles is loaded (see
+      the <a href="theme"><code>theme</code></a> directory in the
+      distribution).</dd>
+
       <dt id="option_indentUnit"><code>indentUnit (integer)</code></dt>
       <dd>How many spaces a block (whatever that means in the edited
       language) should be indented. The default is 2.</dd>
@@ -140,13 +158,13 @@
           held, this behaves like the <code>"indent"</code> mode.)</dd>
           <dt><code>"shift"</code></dt>
           <dd>Indent all selected lines by
-          one <a href="manual.html#option_indentUnit"><code>indentUnit</code></a>.
+          one <a href="#option_indentUnit"><code>indentUnit</code></a>.
           If shift was held while pressing tab, un-indent all selected
           lines one unit.</dd>
           <dt><code>"indent"</code></dt>
           <dd>Indent the line the 'correctly', based on its syntactic
           context. Only works if the
-          mode <a href="manual.html#indent">supports</a> it.</dd>
+          mode <a href="#indent">supports</a> it.</dd>
           <dt><code>"default"</code></dt>
           <dd>Do not capture tab presses, let the browser apply its
           default behaviour (which usually means it skips to the next
@@ -172,6 +190,11 @@
       indentation (only works if the mode supports indentation).
       Default is true.</dd>
 
+      <dt id="option_smartHome"><code>smartHome (boolean)</code></dt>
+      <dd>Configures whether the home key takes you to the first
+      non-whitespace character (unless already there) or to the start
+      of the line. On by default.</dd>
+
       <dt id="option_lineNumbers"><code>lineNumbers (boolean)</code></dt>
       <dd>Whether to show line numbers to the left of the editor.</dd>
 
@@ -181,11 +204,13 @@
       <dt id="option_gutter"><code>gutter (boolean)</code></dt>
       <dd>Can be used to force a 'gutter' (empty space on the left of
       the editor) to be shown even when no line numbers are active.
-      This is useful for setting <a href="manual.html#setMarker">markers</a>.</dd>
+      This is useful for setting <a href="#setMarker">markers</a>.</dd>
 
       <dt id="option_readOnly"><code>readOnly (boolean)</code></dt>
       <dd>This disables editing of the editor content by the user.
-      (Changes through API functions will still be possible.)</dd>
+      (Changes through API functions will still be possible.) If you
+      also want to disable the cursor, use <code>"nocursor"</code> as
+      a value for this option, instead of <code>true</code>.</dd>
 
       <dt id="option_onChange"><code>onChange (function)</code></dt>
       <dd>When given, this function will be called every time the
@@ -210,6 +235,11 @@
       <dd>When given, will be called whenever the editor is
       scrolled.</dd>
 
+      <dt id="option_onHighlightComplete"><code>onHighlightComplete (function)</code></dt>
+      <dd>Whenever the editor's content has been fully highlighted,
+      this function (if given) will be called. It'll be given a single
+      argument, the editor instance.</dd>
+
       <dt id="option_matchBrackets"><code>matchBrackets (boolean)</code></dt>
       <dd>Determines whether brackets are matched whenever the cursor
       is moved next to a bracket.</dd>
@@ -230,24 +260,29 @@
       index</a> to assign to the editor. If not given, no tab index
       will be assigned.</dd>
 
+      <dt id="option_document"><code>document (DOM document)</code></dt>
+      <dd>Use this if you want to display the editor in another DOM.
+      By default it will use the global <code>document</code>
+      object.</dd>
+
       <dt id="option_onKeyEvent"><code>onKeyEvent (function)</code></dt>
       <dd>This provides a rather low-level hook into CodeMirror's key
       handling. If provided, this function will be called on
-      every <code>keydown</code> and <code>keypress</code> event that
-      CodeMirror captures. It will be passed two arguments, the editor
-      instance and the key event. This key event is pretty much the
-      raw key event, except that a <code>stop()</code> method is
-      always added to it. You could feed it to, for
-      example, <code>jQuery.Event</code> to further normalize
-      it.<br>This function can inspect the key event, and handle it if
-      it wants to. It may return true to tell CodeMirror to ignore the
-      event. Be wary that, on some browsers, stopping
-      a <code>keydown</code> does not stop the <code>keypress</code>
-      from firing, whereas on others it does. If you respond to an
-      event, you should probably inspect its <code>type</code>
-      property and only do something when it is <code>keydown</code>
-      (or <code>keypress</code> for actions that need character
-      data).</dd>
+      every <code>keydown</code>, <code>keyup</code>,
+      and <code>keypress</code> event that CodeMirror captures. It
+      will be passed two arguments, the editor instance and the key
+      event. This key event is pretty much the raw key event, except
+      that a <code>stop()</code> method is always added to it. You
+      could feed it to, for example, <code>jQuery.Event</code> to
+      further normalize it.<br>This function can inspect the key
+      event, and handle it if it wants to. It may return true to tell
+      CodeMirror to ignore the event. Be wary that, on some browsers,
+      stopping a <code>keydown</code> does not stop
+      the <code>keypress</code> from firing, whereas on others it
+      does. If you respond to an event, you should probably inspect
+      its <code>type</code> property and only do something when it
+      is <code>keydown</code> (or <code>keypress</code> for actions
+      that need character data).</dd>
     </dl>
 
     <h2 id="styling">Customized Styling</h2>
@@ -267,10 +302,16 @@
 
     <dl>
       <dt id="class_CodeMirror"><code>CodeMirror</code></dt>
-      <dd>The outer element of the editor. This determines whether the
-      editor scrolls (<code>overflow: auto</code> + fixed height). Can
-      also be used to set styles that should hold for everything
-      inside the editor, or to set a background.</dd>
+      <dd>The outer element of the editor. This should be used for
+      borders and positioning. Can also be used to set styles that
+      should hold for everything inside the editor (such as font
+      and font size), or to set a background.</dd>
+
+      <dt id="class_CodeMirror_scroll"><code>CodeMirror-scroll</code></dt>
+      <dd>This determines whether the editor scrolls (<code>overflow:
+      auto</code> + fixed height). By default, it does. Giving
+      this <code>height: auto; overflow: visible;</code> will cause
+      the editor to resize to fit its content.</dd>
 
       <dt id="class_CodeMirror_focused"><code>CodeMirror-focused</code></dt>
       <dd>Whenever the editor is focused, the top element gets this
@@ -287,9 +328,10 @@
 
       <dt id="class_CodeMirror_gutter_text"><code>CodeMirror-gutter-text</code></dt>
       <dd>Used to style the actual line numbers. For the numbers to
-      line up, you'll want this style to use exactly the same font and
-      vertical padding as normal edited text, as per
-      the <code>CodeMirror-lines</code> class.</dd>
+      line up, you must make sure that the font in the gutter is the
+      same as the one in the rest of the editor, so you should
+      probably only set font style and size in
+      the <code>CodeMirror</code> class.</dd>
 
       <dt id="class_CodeMirror_lines"><code>CodeMirror-lines</code></dt>
       <dd>The visible lines. If this has vertical
@@ -305,7 +347,7 @@
       with this class.</dd>
 
       <dt id="class_CodeMirror_matchingbracket"><code>CodeMirror-matchingbracket</code>,
-        <code>CodeMirror-matchingbracket</code></dt>
+        <code>CodeMirror-nonmatchingbracket</code></dt>
       <dd>These are used to style matched (or unmatched) brackets.</dd>
     </dl>
 
@@ -354,7 +396,7 @@
 
       <dt id="setOption"><code>setOption(option, value)</code></dt>
       <dd>Change the configuration of the editor. <code>option</code>
-      should the name of an <a href="manual.html#config">option</a>,
+      should the name of an <a href="#config">option</a>,
       and <code>value</code> should be a valid value for that
       option.</dd>
       <dt id="getOption"><code>getOption(option) → value</code></dt>
@@ -385,9 +427,12 @@
       both of which hold integers, indicating the amount of stored
       undo and redo operations.</dd>
 
-      <dt id="indentLine"><code>indentLine(line)</code></dt>
+      <dt id="indentLine"><code>indentLine(line, dir)</code></dt>
       <dd>Reset the given line's indentation to the indentation
-      prescribed by the mode.</dd>
+      prescribed by the mode. If the second argument is given,
+      indentation will be increased (if <code>dir</code> is true) or
+      decreased (if false) by an <a href="#option_indentUnit">indent
+      unit</a> instead.</dd>
 
       <dt id="getSearchCursor"><code>getSearchCursor(query, start, caseFold) → cursor</code></dt>
       <dd>Used to implement search/replace
@@ -411,6 +456,10 @@
           to <code>findNext</code> or <code>findPrevious</code> did
           not return false. They will return <code>{line, ch}</code>
           objects pointing at the start and end of the match.</dd>
+          <dt><code>replace(text)</code></dt>
+          <dd>Replaces the currently found match with the given text
+          and adjusts the cursor position to reflect the
+          replacement.</dd>
         </dl></dd>
 
       <dt id="getTokenAt"><code>getTokenAt(pos) → object</code></dt>
@@ -423,6 +472,7 @@
         <dt><code>string</code></dt><dd>The token's string.</dd>
         <dt><code>className</code></dt><dd>The class the mode assigned
         to the token. (Can be null when no class was assigned.)</dd>
+        <dt><code>state</code></dt><dd>The mode's state at the end of this token.</dd>
       </dl></dd>
 
       <dt id="markText"><code>markText(from, to, className) → function</code></dt>
@@ -535,6 +585,22 @@
       <dt id="getWrapperElement"><code>getWrapperElement() → node</code></dt>
       <dd>Returns the DOM node that represents the editor. Remove this
       from your tree to delete an editor instance.</dd>
+      <dt id="getScrollerElement"><code>getScrollerElement() → node</code></dt>
+      <dd>Returns the DOM node that is responsible for the sizing and
+      the scrolling of the editor. You can change
+      the <code>height</code> and <code>width</code> styles of this
+      element to resize an editor. (You might have to call
+      the <a href="#refresh"><code>refresh</code></a> method
+      afterwards.)</dd>
+      <dt id="getGutterElement"><code>getGutterElement() → node</code></dt>
+      <dd>Fetches the DOM node that represents the editor gutter.</dd>
+
+      <dt id="getStateAfter"><code>getStateAfter(line) → state</code></dt>
+      <dd>Returns the mode's parser state, if any, at the end of the
+      given line number. If no line number is given, the state at the
+      end of the document is returned. This can be useful for storing
+      parsing errors in the state, or getting other kinds of
+      contextual information for a line.</dd>
     </dl>
 
     <p id="fromTextArea">Finally, the <code>CodeMirror</code> object
@@ -554,6 +620,12 @@
       <dd>Remove the editor, and restore the original textarea (with
       the editor's current content).</dd>
     </dl>
+
+    <p id="defineExtension">If you want define extra methods in terms
+    of the CodeMirror API, is it possible to
+    use <code>CodeMirror.defineExtension(name, value)</code>. This
+    will cause the given value (usually a method) to be added to all
+    CodeMirror instances created from then on.</p>
 
     <h2 id="modeapi">Writing CodeMirror Modes</h2>
 
@@ -578,7 +650,7 @@
     second argument should be a function that, given a CodeMirror
     configuration object (the thing passed to
     the <code>CodeMirror</code> function) and a mode configuration
-    object (as in the <a href="manual.html#option_mode"><code>mode</code></a>
+    object (as in the <a href="#option_mode"><code>mode</code></a>
     option), returns a mode object.</p>
 
     <p>Typically, you should use this second argument
@@ -605,8 +677,12 @@
     its <code>token(stream, state)</code> method. All modes must
     define this method. It should read one token from the stream it is
     given as an argument, optionally update its state, and return a
-    CSS class string, or <code>null</code> for tokens that do not have
-    to be styled.<p>
+    style string, or <code>null</code> for tokens that do not have to
+    be styled. For your styles, you can either use the 'standard' ones
+    defined in the themes (without the <code>cm-</code> prefix), or
+    define your own (as the <a href="../mode/diff/index.html">diff</a>
+    mode does) and have people include a custom theme for your
+    mode.<p>
 
     <p id="StringStream">The stream object encapsulates a line of code
     (tokens may never span lines) and our current position in that
@@ -675,6 +751,12 @@
       the current stream position.</dd>
     </dl>
 
+    <p id="blankLine">By default, blank lines are simply skipped when
+    tokenizing a document. For languages that have significant blank
+    lines, you can define a <code>blankLine(state)</code> method on
+    your mode that will get called whenever a blank line is passed
+    over, so that it can update the parser state.</p>
+
     <p id="copyState">Because state object are mutated, and CodeMirror
     needs to keep valid versions of a state around so that it can
     restart a parse at any line, copies must be made of state objects.
@@ -687,9 +769,21 @@
     which is given a state and should return a safe copy of that
     state.</p>
 
+    <p id="compareStates">By default, CodeMirror will stop re-parsing
+    a document as soon as it encounters a few lines that were
+    highlighted the same in the old parse as in the new one. It is
+    possible to provide an explicit way to test whether a state is
+    equivalent to another one, which CodeMirror will use (instead of
+    the unchanged-lines heuristic) to decide when to stop
+    highlighting. You do this by providing
+    a <code>compareStates</code> method on your mode object, which
+    takes two state arguments and returns a boolean indicating whether
+    they are equivalent. See the XML mode, which uses this to provide
+    reliable highlighting of bad closing tags, as an example.</p>
+
     <p id="indent">If you want your mode to provide smart indentation
-    (see <a href="manual.html#option_enterMode"><code>entermode</code></a>
-    and <a href="manual.html#option_tabMode"><code>tabMode</code></a> when they
+    (see <a href="#option_enterMode"><code>entermode</code></a>
+    and <a href="#option_tabMode"><code>tabMode</code></a> when they
     have a value of <code>"indent"</code>), you must define
     an <code>indent(state, textAfter)</code> method on your mode
     object.</p>
@@ -698,14 +792,14 @@
     and optionally the <code>textAfter</code> string, which contains
     the text on the line that is being indented, and return an
     integer, the amount of spaces to indent. It should usually take
-    the <a href="manual.html#option_indentUnit"><code>indentUnit</code></a>
+    the <a href="#option_indentUnit"><code>indentUnit</code></a>
     option into account.</p>
 
     <p id="electricChars">Finally, a mode may define
     an <code>electricChars</code> property, which should hold a string
     containing all the characters that should trigger the behaviour
     described for
-    the <a href="manual.html#option_electricChars"><code>electricChars</code></a>
+    the <a href="#option_electricChars"><code>electricChars</code></a>
     option.</p>
 
     <p>So, to summarize, a mode <em>must</em> provide
@@ -726,7 +820,7 @@
     parserConfig)</code>, where the first argument is a configuration
     object as passed to the mode constructor function, and the second
     argument is a mode specification as in
-    the <a href="manual.html#option_mode"><code>mode</code></a> option. To copy a
+    the <a href="#option_mode"><code>mode</code></a> option. To copy a
     state object, call <code>CodeMirror.copyState(mode, state)</code>,
     where <code>mode</code> is the mode that created the given
     state.</p>
@@ -746,8 +840,25 @@
     with <code>application/json</code>. To do this,
     call <code>CodeMirror.defineMIME(mime, modeSpec)</code>,
     where <code>modeSpec</code> can be a string or object specifying a
-    mode, as in the <a href="manual.html#option_mode"><code>mode</code></a>
+    mode, as in the <a href="#option_mode"><code>mode</code></a>
     option.</p>
+
+</div><div class="rightsmall blk">
+
+    <h2>Contents</h2>
+
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#usage">Basic Usage</a></li>
+      <li><a href="#config">Configuration</a></li>
+      <li><a href="#styling">Customized Styling</a></li>
+      <li><a href="#api">Programming API</a></li>
+      <li><a href="#modeapi">Writing CodeMirror Modes</a></li>
+    </ul>
+
+</div></div>
+
+<div style="height: 2em">&nbsp;</div>
 
   </body>
 </html>
