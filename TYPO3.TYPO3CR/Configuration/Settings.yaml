@@ -12,7 +12,8 @@
 TYPO3:
   TYPO3CR:
     contentTypes:
-
+      'unstructured':
+        label: 'Unstructured'
 
       'TYPO3.TYPO3CR:Folder':
         label: 'Folder'
