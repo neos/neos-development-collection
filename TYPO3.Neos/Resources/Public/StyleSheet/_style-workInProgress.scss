@@ -66,3 +66,59 @@ button.t3-create-new-content {
 .t3-handle-loading {
 	background-image: url('../Images/ajax-preloader.gif');
 }
+
+// Cut copy paste
+
+.t3-copy-handle {
+	right: 101px;
+	background-image: url(../Icons/FugueIcons/reports.png);
+	background-image: url(../Icons/FugueIcons/reports.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/reports.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bbbbbb));
+	background-image: url(../Icons/FugueIcons/reports.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/reports.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/reports.png), linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+}
+.t3-cut-handle {
+	right: 76px;
+	background-image: url(../Icons/FugueIcons/scissors.png);
+	background-image: url(../Icons/FugueIcons/scissors.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/scissors.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bbbbbb));
+	background-image: url(../Icons/FugueIcons/scissors.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/scissors.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/scissors.png), linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+}
+.t3-paste-before-handle {
+	right: 25px;
+	background-image: url(../Icons/FugueIcons/arrow-090-small.png);
+	background-image: url(../Icons/FugueIcons/arrow-090-small.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/arrow-090-small.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bbbbbb));
+	background-image: url(../Icons/FugueIcons/arrow-090-small.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/arrow-090-small.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/arrow-090-small.png), linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+}
+.t3-paste-after-handle {
+	top: auto;
+	bottom: -17px;
+	border-width: 0 1px 1px 1px;
+	border-style: none solid solid solid;
+	@include border-bottom-radius(5px);
+	@include border-top-radius(0);
+	@include single-box-shadow(#909090, 0, 1px, 3px);
+	right: 25px;
+	background-image: url(../Icons/FugueIcons/arrow-270-small.png);
+	background-image: url(../Icons/FugueIcons/arrow-270-small.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/arrow-270-small.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bbbbbb));
+	background-image: url(../Icons/FugueIcons/arrow-270-small.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/arrow-270-small.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/FugueIcons/arrow-270-small.png), linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+}
+
+.t3-handle-hidden {
+	display: none !important;
+}
+
+.t3-contentelement-cut {
+	opacity: .50;
+}
+
+// Cut copy paste

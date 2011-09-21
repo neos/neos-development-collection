@@ -96,6 +96,10 @@ function(block) {
 			if (this.element.find('.t3-contentelement.t3-contentelement-removed').length === 0) {
 				this._renderHandle('t3-delete-handle', 'Delete element', T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
 			}
+			this._renderHandle('t3-cut-handle', 'Cut', T3.Content.Controller.BlockActions.cut, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-paste-before-handle t3-handle-hidden', 'Paste before', T3.Content.Controller.BlockActions.pasteBefore, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-paste-after-handle t3-handle-hidden', 'Paste after', T3.Content.Controller.BlockActions.pasteAfter, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-copy-handle', 'Copy', T3.Content.Controller.BlockActions.copy, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-add-above-handle', 'Add above', T3.Content.Controller.BlockActions.addAbove, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-add-below-handle', 'Add below', T3.Content.Controller.BlockActions.addBelow, T3.Content.Controller.BlockActions);
 

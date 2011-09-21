@@ -209,6 +209,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function moveBeforeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
 		$node->moveBefore($targetNode);
+		$this->view->assign('value', array('success' => TRUE));
 	}
 
 	/**
@@ -222,6 +223,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 */
 	public function moveAfterAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
 		$node->moveAfter($targetNode);
+		$this->view->assign('value', array('success' => TRUE));
 	}
 
 	/**

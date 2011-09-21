@@ -57,6 +57,38 @@ function(launcherTemplate) {
 		}.property('__workspacename').cacheable(),
 
 		/**
+		 * Get the actual content element wrapper as jQuery object
+		 * Note that handles are pretended to the block, and the element itself should
+		 * be wrapped with a div
+		 * @return {jQuery}
+		 */
+		getContentElement: function() {
+			if (this._alohaBlockId) {
+				return $('#' + this._alohaBlockId + ' > div:last');
+			}
+		},
+
+		/**
+		 * Hides a handle of the block if available
+		 * @return {void}
+		 */
+		hideHandle: function(handleIdentifier) {
+			if (this._alohaBlockId) {
+				$('#' + this._alohaBlockId + ' > .t3-' + handleIdentifier + '-handle').addClass('t3-handle-hidden');
+			}
+		},
+
+		/**
+		 * Shows a handle of the block if available
+		 * @return {void}
+		 */
+		showHandle: function(handleIdentifier) {
+			if (this._alohaBlockId) {
+				$('#' + this._alohaBlockId + ' > .t3-' + handleIdentifier + '-handle').removeClass('t3-handle-hidden');
+			}
+		},
+
+		/**
 		 * @var {String}
 		 * A concatenation of title and status for the breadcrumb menu.
 		 * Triggered each time "_status" and "_title" properties change.
