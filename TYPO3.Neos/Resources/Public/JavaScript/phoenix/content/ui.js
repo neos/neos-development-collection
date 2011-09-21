@@ -415,10 +415,12 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		},
 
 		willDestroyElement: function() {
-			this.$().trigger('hidePopover');
-			this._editor.toTextArea();
-			$('#typo3-htmleditor-' + this.get(SC.GUID_KEY)).remove();
-			this._editorInitialized = false;
+			if (this._editorInitialized) {
+				this.$().trigger('hidePopover');
+				this._editor.toTextArea();
+				$('#typo3-htmleditor-' + this.get(SC.GUID_KEY)).remove();
+				this._editorInitialized = false;
+			}
 			// TODO: not only hide the popover, but completely remove it from DOM!
 		}
 
