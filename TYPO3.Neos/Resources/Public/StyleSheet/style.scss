@@ -478,6 +478,18 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	z-index:10000 !important;
 }
 
+/* Quick fix to remove floating menu & pin - here since Aloha.css isn't included anymore */
+.aloha-floatingmenu:hover .aloha-floatingmenu-pin {
+	display: none;
+}
+.aloha-floatingmenu:hover {
+	background: none;
+}
+.aloha-floatingmenu .x-tab-strip-wrap,
+.aloha-floatingmenu .x-tab-panel-header {
+	cursor: default !important;
+}
+
 .ui-dialog a.t3-content-new {
 	@include background-image(linear-gradient(#cccccc, #333333));
 	@include border-radius(3px);
