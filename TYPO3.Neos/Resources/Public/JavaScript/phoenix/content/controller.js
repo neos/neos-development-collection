@@ -286,9 +286,6 @@ function() {
 				{
 					'created-new-content': function($callbackDomElement) {
 						T3.ContentModule.reloadPage();
-					},
-					'remove-loading-indicator': function() {
-						$handle.removeClass('t3-handle-loading');
 					}
 				},
 				$handle
