@@ -23,8 +23,6 @@ TYPO3:
       notFoundController: TYPO3\TYPO3\Controller\ErrorController
 
 
-
-TYPO3:
   TYPO3:
     userInterface:
       string:
