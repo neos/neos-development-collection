@@ -876,7 +876,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 	Renderer.Date = SC.View.extend({
 		value: '',
-		template: SC.Handlebars.compile('<span style="color:white">{{value}}</span>')
+		template: SC.Handlebars.compile('<span style="color:white">{{#if value}}{{value}}{{else}}No date set{{/if}}</span>')
 	});
 
 	Renderer.Html = SC.View.extend({
