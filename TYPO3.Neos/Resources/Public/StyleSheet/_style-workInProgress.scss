@@ -165,7 +165,18 @@ button.t3-create-new-content {
 }
 
 // HTML editor
+
 .t3-htmleditor-window {
 	width: 800px;
 	height: 400px;
+	font-size: 13px;
+
+	.CodeMirror-scroll {
+		height: 400px;
+	}
+	.CodeMirror pre {
+		overflow-y: hidden;
+	}
 }
+
+// HTML editor
