@@ -230,16 +230,30 @@ function() {
 				that.addInside($(this).attr('data-node'));
 			});
 		},
-		deleteBlock: function(block) {
-			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
-				this,
-				block.get('nodePath'),
-				function (result) {
-					if (result.success) {
-						T3.ContentModule.reloadPage();
-					}
+		deleteBlock: function(nodePath, $handle) {
+			var that = this;
+			$handle.addClass('t3-handle-loading');
+
+			T3.Common.Dialog.openConfirmPopover({
+				title: 'Are you sure you want to remove this content element?',
+				content: '<div>If you remove this element you can restore it using undo</div>',
+				onOk: function() {
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
+						that,
+						nodePath,
+						function (result) {
+							if (result.success) {
+								T3.ContentModule.reloadPage();
+							}
+						}
+					);
+				},
+				onDialogOpen: function() {
+					$handle.removeClass('t3-handle-loading');
 				}
-			);
+			}, $handle);
+
+
 		},
 
 		addAbove: function(nodePath, $handle) {
@@ -254,7 +268,7 @@ function() {
 		_add: function(nodePath, position, $handle) {
 			$handle.addClass('t3-handle-loading');
 
-			T3.Common.Dialog.open(
+			T3.Common.Dialog.openFromUrl(
 				'/typo3/content/new',
 				{
 					position: position,
