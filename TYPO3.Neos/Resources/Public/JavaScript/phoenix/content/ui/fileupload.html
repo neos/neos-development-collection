@@ -1,4 +1,7 @@
 <div class="typo3-fileupload" {{bindAttr id="_containerId"}}>
-	<a class="typo3-fileupload-pickfiles" {{bindAttr id="_browseButtonId"}} href="#">[Select files]</a>
+	<button {{bindAttr id="_browseButtonId"}} class="sc-view sc-button t3-button typo3-fileupload-pickfiles" type="button">
+		<span class="sc-view">Select file</span>
+	</button>
+
 	{{view T3.Content.UI.Button target="parentView" action="upload" label="Upload!"}}
 </div>
