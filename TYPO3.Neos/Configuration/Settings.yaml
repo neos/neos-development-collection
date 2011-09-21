@@ -23,6 +23,114 @@ TYPO3:
       notFoundController: TYPO3\TYPO3\Controller\ErrorController
 
 
+  TYPO3CR:
+    contentTypes:
+
+
+      'TYPO3.TYPO3:Page':
+        superTypes: ['TYPO3.TYPO3CR:Folder']
+        label: 'Page'
+
+
+      'TYPO3.TYPO3:Section':
+        label: 'Section'
+
+
+      'TYPO3.TYPO3:ContentObject':
+        label: 'Abstract content object'
+        properties:
+          _hidden:
+            type: boolean
+            label: 'Hidden'
+            # A the "category" groups the properties together in "propertyGroups"
+            category: 'visibility'
+            # The higher the priority, the more important the property is.
+            priority: 1
+          _hiddenBeforeDate:
+            type: date
+            label: 'Hidden before date'
+            category: 'visibility'
+            priority: 10
+          _hiddenAfterDate:
+            type: date
+            label: 'Hidden after date'
+            category: 'visibility'
+            priority: 11
+
+        propertyGroups:
+          visibility:
+            label: 'Visibility'
+            priority: 1
+
+
+      'TYPO3.TYPO3:Text':
+        superTypes: ['TYPO3.TYPO3:ContentObject']
+        label: 'Text'
+
+        properties:
+          headline:
+            label: string
+            placeholder: 'Enter headline here'
+          text:
+            label: string
+            placeholder: '<p>Enter text here</p>'
+
+        inlineEditableProperties: ['headline', 'text']
+
+
+      'TYPO3.TYPO3:TextWithImage':
+        label: 'Text with Image'
+        superTypes: ['TYPO3.TYPO3:Text']
+        properties:
+          image:
+            type: TYPO3\TYPO3\Domain\Model\Media\Image
+            label: 'Image'
+            category: image
+        propertyGroups:
+          image:
+            label: 'Image'
+            priority: 5
+
+
+      'TYPO3.TYPO3:Html':
+        superTypes: ['TYPO3.TYPO3:ContentObject']
+        label: 'HTML'
+        properties:
+          html:
+            type: string
+            label: 'HTML Content'
+            category: HTML
+            userInterface:
+              # TODO: this might not work yet (must be fixed in JS)
+              editor:class: T3.Content.UI.Editor.HtmlEditor
+
+
+      'TYPO3.TYPO3:Plugin':
+        superTypes: ['TYPO3.TYPO3:ContentObject']
+        label: 'Generic plugin'
+
+        properties:
+          package:
+            type: string
+            label: 'Package'
+            category: pluginSettings
+          subpackage:
+            type: string
+            label: 'Subpackage'
+            category: pluginSettings
+          controller:
+            type: string
+            label: 'Controller Name'
+            category: pluginSettings
+          action:
+            type: string
+            label: 'Action'
+            category: pluginSettings
+
+        groups:
+          pluginSettings:
+            label: 'Plugin Settings'
+
   TYPO3:
     userInterface:
       string:
