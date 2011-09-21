@@ -825,3 +825,7 @@ button.t3-create-new-content {
 
 .t3-inspector-form .typo3-fileupload-uploadbutton {
   display: none; }
+
+.t3-htmleditor-window {
+  width: 800px;
+  height: 400px; }

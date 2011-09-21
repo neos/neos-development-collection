@@ -294,7 +294,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
 			}
 
-			var editorClass = SC.getPath(typeDefinition.editor['class']);
+			var editorClassName = typeDefinition.editor['class'];
+			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface.editor['class']) {
+				editorClassName = this.propertyDefinition.userInterface.editor['class'];
+			}
+			var editorClass = SC.getPath(editorClassName);
 			if (!editorClass) {
 				throw 'Editor class "' + typeDefinition.editor['class'] + '" not found';
 			}
@@ -319,7 +323,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				throw 'Type defaults for "' + this.propertyDefinition.type + '" not found';
 			}
 
-			var rendererClass = SC.getPath(typeDefinition.renderer['class']);
+			var rendererClassName = typeDefinition.renderer['class'];
+			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface.renderer['class']) {
+				rendererClassName = this.propertyDefinition.userInterface.renderer['class'];
+			}
+			var rendererClass = SC.getPath(rendererClassName);
 			if (!rendererClass) {
 				throw 'Renderer class "' + typeDefinition.renderer['class'] + '" not found';
 			}
@@ -351,6 +359,69 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				}
 			});
 		}
+	});
+
+	Editor.HtmlEditor = PopoverButton.extend({
+
+		_editorInitialized: false,
+
+		_editor: null,
+
+		// TODO: fix the width / height so it relates to the rest of the UI
+		$popoverContent: $('<div />').attr('class', 'aloha-block-do-not-deactivate t3-htmleditor-window'),
+
+		label: 'HTML Editor',
+
+		popoverTitle: 'HTML Editor',
+
+		popoverPosition: 'left',
+
+		onPopoverOpen: function() {
+			var that = this,
+				id = this.get(SC.GUID_KEY);
+
+				// Initialize CodeMirror editor with a nice html5 canvas demo.
+			if (!this._editorInitialized) {
+
+				var $editorContent = $('<textarea />', {
+					id: 'typo3-htmleditor-' + id
+				}).html(that.get('value'));
+
+				this.$popoverContent.append($editorContent);
+
+				require([
+					'order!Library/codemirror2/lib/codemirror',
+					'order!Library/codemirror2/mode/xml/xml',
+					'order!Library/codemirror2/mode/css/css',
+					'order!Library/codemirror2/mode/htmlmixed/htmlmixed',
+
+					'css!Library/codemirror2/lib/codemirror',
+					'css!Library/codemirror2/mode/xml/xml.css',
+					'css!Library/codemirror2/mode/css/css.css',
+				], function() {
+					that._editor = CodeMirror.fromTextArea($editorContent.get(0), {
+						mode: 'text/html',
+						tabMode: 'indent',
+						onChange: function() {
+							if (that._editor) {
+								that.set('value', that._editor.getValue());
+							}
+						}
+					});
+				});
+
+				this._editorInitialized = true;
+			}
+		},
+
+		willDestroyElement: function() {
+			this.$().trigger('hidePopover');
+			this._editor.toTextArea();
+			$('#typo3-htmleditor-' + this.get(SC.GUID_KEY)).remove();
+			this._editorInitialized = false;
+			// TODO: not only hide the popover, but completely remove it from DOM!
+		}
+
 	});
 
 	Editor.FileUpload = SC.View.extend({
@@ -803,6 +874,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		value: '',
 		template: SC.Handlebars.compile('<span style="color:white">{{value}}</span>')
 	});
+
+	Renderer.Html = SC.View.extend({
+		value: '',
+		template: SC.Handlebars.compile('<span style="color:white">HTML</span>')
+	})
 
 
 	/**

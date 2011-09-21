@@ -96,13 +96,21 @@ TYPO3:
         superTypes: ['TYPO3.TYPO3:ContentObject']
         label: 'HTML'
         properties:
-          html:
+          source:
             type: string
             label: 'HTML Content'
-            category: HTML
+            placeholder: '<p>Enter HTML here</p>'
+            category: html
             userInterface:
-              # TODO: this might not work yet (must be fixed in JS)
-              editor:class: T3.Content.UI.Editor.HtmlEditor
+              editor:
+                class: T3.Content.UI.Editor.HtmlEditor
+              renderer:
+                class: T3.Content.UI.Renderer.Html
+
+        propertyGroups:
+          html:
+            label: 'HTML'
+            priority: 10
 
 
       'TYPO3.TYPO3:Plugin':

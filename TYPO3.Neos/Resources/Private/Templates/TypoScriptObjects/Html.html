@@ -1,9 +1,5 @@
-<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
-	<div typeof="typo3:{node.contentType}" about="{node.contextPath}" property="typo3:source" class="typo3-typo3-contentelement typo3-typo3-contentelement-html">
-</f:security.ifAccess>
+{namespace t=TYPO3\TYPO3\ViewHelpers}
 
-{properties.source}
-
-<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
-	</div>
-</f:security.ifAccess>
+<t:contentElement node="{node}">
+	{properties.source}
+</t:contentElement>
