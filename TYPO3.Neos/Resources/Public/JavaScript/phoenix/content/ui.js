@@ -549,7 +549,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		/**
 		 * Bind onchange listener to the file upload field of the plupload element.
 		 * When a file is added we check if the first file of the file list is an
-		 * image, and if so show the thumnail
+		 * image, and if so show the thumbnail
 		 */
 		_initializeFilePreview: function() {
 			var that = this;
@@ -850,23 +850,25 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			var that = this;
 
 			var value = this.get('value');
-			if (value.substr(0, 4) === 'HACK') {
-				value = value.substr(4);
-			}
-
-			var imageVariant = JSON.parse(value);
-
-			if (!imageVariant) return;
-
-			$.get('/typo3/content/imageWithMetadata/' + imageVariant.image, function(result) {
-				result = JSON.parse(result);
-				if (result.resourceUri) {
-
-					var $img = $('<img />', {src: result.resourceUri}).attr('class', 'typo3-image-preview-humbnail');
-					that.$().append($img);
-
+			if (value && value !== '') {
+				if (value.substr(0, 4) === 'HACK') {
+					value = value.substr(4);
 				}
-			});
+
+				var imageVariant = JSON.parse(value);
+
+				if (!imageVariant) return;
+
+				$.get('/typo3/content/imageWithMetadata/' + imageVariant.image, function(result) {
+					result = JSON.parse(result);
+					if (result.resourceUri) {
+
+						var $img = $('<img />', {src: result.resourceUri}).attr('class', 'typo3-image-preview-humbnail');
+						that.$().append($img);
+
+					}
+				});
+			}
 		}
 	});
 
