@@ -1,12 +1,17 @@
 <div class="typo3-imagethumbnailcontainer" style="position:relative;">
+
 	<div class="typo3-imagethumbnail">
 		<img {{bindAttr src="_pathToImage"}} />
 	</div>
-	{{#if _previewImageLoaded}}
+
+	<div class="typo3-uploadthumbnail"></div>
+
 	<div class="typo3-imagebadge">
-		Click to crop!
+		{{#unless _currentlyDisplayingUploadPreview}}{{#if _previewImageLoaded}}Click to crop!{{/if}}{{/unless}}
+		{{#if _currentlyDisplayingUploadPreview}}Upload Preview{{/if}}
 	</div>
-	{{/if}}
+
+
 </div>
 
 <div class="typo3-fileupload" {{bindAttr id="_containerId"}}>

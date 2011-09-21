@@ -68,7 +68,6 @@ button.t3-create-new-content {
 }
 
 // Cut copy paste
-
 .t3-copy-handle {
 	right: 101px;
 	background-image: url(../Icons/FugueIcons/reports.png);
@@ -124,6 +123,11 @@ button.t3-create-new-content {
 // Image thumbnail stuff in inspector
 .t3-inspector-form .typo3-imagethumbnailcontainer {
 	position: relative;
+	overflow:hidden;
+
+	&.typo3-uploadPreview .typo3-imagethumbnail {
+		display: none;
+	}
 
 	.typo3-imagethumbnail {
 		overflow: hidden;
@@ -139,14 +143,24 @@ button.t3-create-new-content {
 		background: rgba(0,0,0, 0.7);
 		text-align: center;
 	}
-}
-.t3-inspector {
-	.typo3-image-preview-humbnail {
-		max-width: 180px;
-		max-height: 180px;
-		margin: auto;
-	}
-	.typo3-fileupload-uploadbutton {
+
+	.typo3-fileupload-thumbnail {
 		display: none;
 	}
+	&.typo3-uploadPreview .typo3-fileupload-thumbnail {
+		display: block;
+		position:absolute;
+		left: 0;
+		top: 0;
+	}
+	.typo3-fileupload-thumbnail-landscape {
+		width: 160px;
+	}
+
+	.typo3-fileupload-thumbnail-portrait {
+		height: 160px;
+	}
+}
+.t3-inspector-form .typo3-fileupload-uploadbutton {
+	display: none;
 }

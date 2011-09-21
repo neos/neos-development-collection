@@ -795,7 +795,10 @@ button.t3-create-new-content {
   opacity: .50; }
 
 .t3-inspector-form .typo3-imagethumbnailcontainer {
-  position: relative; }
+  position: relative;
+  overflow: hidden; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer.typo3-uploadPreview .typo3-imagethumbnail {
+    display: none; }
   .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagethumbnail {
     overflow: hidden;
     padding: 0;
@@ -808,10 +811,17 @@ button.t3-create-new-content {
     color: white;
     background: rgba(0, 0, 0, 0.7);
     text-align: center; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail {
+    display: none; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer.typo3-uploadPreview .typo3-fileupload-thumbnail {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-landscape {
+    width: 160px; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-portrait {
+    height: 160px; }
 
-.t3-inspector .typo3-image-preview-humbnail {
-  max-width: 180px;
-  max-height: 180px;
-  margin: auto; }
-.t3-inspector .typo3-fileupload-uploadbutton {
+.t3-inspector-form .typo3-fileupload-uploadbutton {
   display: none; }

@@ -434,6 +434,12 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 		allowedFileTypes: 'jpg,png',
 
+
+		/**
+		 * If true, we currently display the upload preview image.
+		 */
+		_currentlyDisplayingUploadPreview: false,
+
 		/**
 		 * UUID of the Image Object; set from the value
 		 */
@@ -455,7 +461,6 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		 * Lifecycle callback; sets some CSS for the image preview area to sensible defaults.
 		 */
 		didInsertElement: function() {
-			var that = this;
 			this._super();
 
 			this.$().find('.typo3-imagethumbnail').css({
@@ -465,6 +470,52 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			this.$().find('.typo3-imagethumbnailcontainer').css({
 				width: this.imagePreviewMaximumDimensions.width + 'px',
 				height: this.imagePreviewMaximumDimensions.height + 'px'
+			});
+
+			this._initializeFilePreview();
+		},
+
+		/**
+		 * Bind onchange listener to the file upload field of the plupload element.
+		 * When a file is added we check if the first file of the file list is an
+		 * image, and if so show the thumnail
+		 */
+		_initializeFilePreview: function() {
+			var that = this;
+			var $thumbnailHolder = this.$().find('.typo3-uploadthumbnail');
+
+			this.$().find('input[type=file][id^="' + this._uploader.id + '"]').change(function(event) {
+				$thumbnailHolder.empty();
+
+				var files = event.target.files;
+				if (files.length > 0) {
+					var image = files[0];
+
+					var reader = new FileReader();
+					reader.onload = function(event) {
+
+						var binaryData = event.target.result;
+						var imageObjForFindingSize = new Image();
+						imageObjForFindingSize.onload = function() {
+							var $image = $('<img />')
+								.addClass('typo3-fileupload-thumbnail')
+								.attr('src', binaryData)
+								.attr('title', image.name);
+
+							if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
+								$image.addClass('typo3-fileupload-thumbnail-landscape');
+							} else {
+								$image.addClass('typo3-fileupload-thumbnail-portrait');
+							}
+
+							$thumbnailHolder.append($image);
+							that.set('_currentlyDisplayingUploadPreview', true);
+						};
+						imageObjForFindingSize.src = binaryData;
+					};
+
+					reader.readAsDataURL(image);
+				}
 			});
 		},
 
@@ -516,6 +567,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				that.set('_originalImageSize', metadata.originalSize);
 				that.set('_previewImageSize', metadata.previewSize);
 				that.set('_previewImageLoaded', true);
+				that.set('_currentlyDisplayingUploadPreview', false);
 			});
 		}.observes('_imageUuid'),
 
@@ -526,6 +578,14 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			this.set('_imageUuid', resourceUuid);
 			this._updateValue();
 		},
+
+		_onUploadPreviewChange: function() {
+			if (this.get('_currentlyDisplayingUploadPreview')) {
+				this.$().find('.typo3-imagethumbnailcontainer').addClass('typo3-uploadPreview')
+			} else {
+				this.$().find('.typo3-imagethumbnailcontainer').removeClass('typo3-uploadPreview')
+			}
+		}.observes('_currentlyDisplayingUploadPreview'),
 
 		/**
 		 * When the preview image is loaded, we initialize the popover.
