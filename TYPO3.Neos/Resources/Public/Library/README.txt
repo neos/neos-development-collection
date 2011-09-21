@@ -44,7 +44,6 @@ Version 0.9.9 from 6/7/11
 - deleted index.html
 - deleted js/jquery.min.js
 
-
 Sproutcore 2.0 beta 3 from http://blog.sproutcore.com/sproutcore-2-0-beta-3-released/
 
 
@@ -53,3 +52,8 @@ CodeMirror 2.13 from http://codemirror.net/
 
 Chosen 0.9.3 from http://harvesthq.github.com/chosen/
 Only the jquery files / needed files are added (skipped coffeescript / prototype / examples)
+
+
+jQuery Lionbars
+http://nikolaydyankov.com/lionbars/ - version 0.2.1
+- cleaned and linted by Aske :-)

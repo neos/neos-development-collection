@@ -101,25 +101,10 @@ body.t3-ui-controls-active {
     background: url("../Images/ContentModule/typo3-logo.png") no-repeat; }
   .t3-launcher .t3-launcher-panel {
     position: absolute;
-    height: 200px;
-    left: 10px;
-    top: 23px;
-    right: 230px;
-    -moz-border-radius-bottomleft: 3px;
-    -webkit-border-bottom-left-radius: 3px;
-    -o-border-bottom-left-radius: 3px;
-    -ms-border-bottom-left-radius: 3px;
-    -khtml-border-bottom-left-radius: 3px;
-    border-bottom-left-radius: 3px;
-    -moz-border-radius-bottomright: 3px;
-    -webkit-border-bottom-right-radius: 3px;
-    -o-border-bottom-right-radius: 3px;
-    -ms-border-bottom-right-radius: 3px;
-    -khtml-border-bottom-right-radius: 3px;
-    border-bottom-right-radius: 3px;
-    background: #eeeeee;
-    padding: 15px;
-    opacity: 0.9; }
+    height: 220px;
+    left: 0px;
+    top: 25px;
+    right: 0px; }
 
 ul.t3-topbar {
   line-height: 26px;
@@ -631,11 +616,26 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 .three-columns {
   width: 100%;
   float: left;
-  clear: both; }
+  clear: both;
+  height: 100%; }
 
 .tc-1-1-1 .c-1,
 .tc-1-1-1 .c-2,
 .tc-1-1-1 .c-3 {
+  height: 100%;
+  overflow: hidden;
+  background: white;
+  background: -moz-linear-gradient(top, white 0%, #e8e8e8 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #e8e8e8));
+  background: -webkit-linear-gradient(top, white 0%, #e8e8e8 100%);
+  background: -o-linear-gradient(top, white 0%, #e8e8e8 100%);
+  background: -ms-linear-gradient(top, white 0%, #e8e8e8 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
+  background: linear-gradient(top, #ffffff 0%, #e8e8e8 100%);
+  /*opacity: 0.9;*/
+  padding: 15px;
+  float: left;
+  width: 33%;
   float: left;
   width: 33%;
   -moz-box-sizing: border-box;
@@ -643,8 +643,64 @@ div.aloha-block-active:hover > div.aloha-block-inner {
   -ms-box-sizing: border-box;
   box-sizing: border-box; }
 
-.tc-1-1-1 .c-3 {
-  float: right; }
+.tc-1-1-1 .c-2 {
+  width: 34%;
+  border-left: 1px solid #cfcfcf;
+  border-right: 1px solid #cfcfcf;
+  background: -moz-linear-gradient(top, white 0%, #cfcfcf 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #cfcfcf));
+  background: -webkit-linear-gradient(top, white 0%, #cfcfcf 100%);
+  background: -o-linear-gradient(top, white 0%, #cfcfcf 100%);
+  background: -ms-linear-gradient(top, white 0%, #cfcfcf 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
+  background: linear-gradient(top, #ffffff 0%, #e0e0e0 100%); }
+
+.tc-1-1-1 h2 {
+  font-size: 110%; }
+
+.c-1 .scroll-content {
+  height: 100%;
+  width: 100%; }
+
+.t3-ui div.t3-launcher-split {
+  border-top: 1px solid #CFCFCF;
+  margin: 5px 0 5px 0;
+  clear: both; }
+
+.tc-1-1-1 ul.horizontal li {
+  width: 80px;
+  height: 65px;
+  padding: 10px 0 10px 0;
+  float: left;
+  text-align: center;
+  cursor: pointer; }
+
+.tc-1-1-1 ul.vertical {
+  overflow: hidden;
+  width: 100%; }
+
+.tc-1-1-1 ul.vertical li {
+  height: 24px;
+  width: 50%;
+  min-width: 200px;
+  cursor: pointer;
+  float: left;
+  padding-top: 5px; }
+
+.tc-1-1-1 ul.vertical.t3-launcher-panel-lastactions {
+  height: 87px; }
+
+.tc-1-1-1 ul.vertical.t3-launcher-panel-mostused {
+  height: 58px; }
+
+.tc-1-1-1 ul.vertical.t3-launcher-panel-searchitems {
+  height: 174px; }
+
+.tc-1-1-1 ul.vertical li div {
+  float: left; }
+
+.tc-1-1-1 ul.vertical li div.image {
+  padding-right: 10px; }
 
 .popover .x-tree .t3-gotoPage {
   display: none;
@@ -809,3 +865,51 @@ div.aloha-block-active:hover > div.aloha-block-inner {
     height: 400px; }
   .t3-htmleditor-window .CodeMirror pre {
     overflow-y: hidden; }
+
+.scrollbar {
+  position: absolute;
+  content: '';
+  display: block;
+  border-radius: 100px;
+  opacity: 0;
+  z-index: 100; }
+
+.vertical {
+  width: 7px;
+  right: 2px;
+  top: 2px; }
+
+.horizontal {
+  height: 7px;
+  bottom: 2px;
+  left: 2px; }
+
+.scrollbar_bg {
+  position: absolute;
+  content: '';
+  display: block;
+  border-radius: 100px;
+  opacity: 0;
+  z-index: 99; }
+
+.scrollbar_bg.horizontal {
+  width: 100%; }
+
+.scrollbar_bg.vertical {
+  height: 100%; }
+
+.scrollbar.light {
+  background: rgba(255, 255, 255, 0.5); }
+
+.scrollbar_bg.light {
+  background: rgba(255, 255, 255, 0.1); }
+
+.scrollbar.dark {
+  background: rgba(0, 0, 0, 0.3); }
+
+.scrollbar_bg.dark {
+  background: rgba(0, 0, 0, 0.1); }
+
+.nWrap {
+  overflow: auto;
+  display: inline-block; }

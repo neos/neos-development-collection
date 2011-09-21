@@ -18,31 +18,31 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	var $ = window.alohaQuery || window.jQuery;
 
 	/**
-	 * T3.Common.ModulesController
+	 * T3.Common.SearchController
 	 *
-	 * Contains a list of available modules
+	 * Contains a list of available search items
 	 */
-	T3.Common.ModulesController = SC.Object.create({
-		availableModules: [],
+	T3.Common.SearchController = SC.Object.create({
+		availableSearchItems: [],
 		filterValue: null,
-		filteredModules: [],
+		filteredSearchItems: [],
 		init: function() {
-			this.setAvailableModules(fixture.availableModules);
+			this.setAvailableSearchItems(fixture.availableSearchItems);
 		},
-		setAvailableModules: function(modules) {
-			var wrappedModules = modules.map(function(module) {
-				return SC.Object.create(module);
+		setAvailableSearchItems: function(searchItems) {
+			var wrappedSearchItems = searchItems.map(function(searchItem) {
+				return SC.Object.create(searchItem);
 			});
-			this.set('availableModules', wrappedModules);
-			this.set('filteredModules', wrappedModules);
+			this.set('availableSearchItems', wrappedSearchItems);
+			this.set('filteredSearchItems', wrappedSearchItems);
 		},
 		_filterValueChange: function() {
 			var lcFilterValue = this.get('filterValue').toLowerCase();
 			if (lcFilterValue === '') {
-				this.set('filteredModules', this.get('availableModules'));
+				this.set('filteredSearchItems', this.get('availableSearchItems'));
 			} else {
-				this.set('filteredModules', this.get('availableModules').filter(function(module) {
-					return module.get('label').toLowerCase().indexOf(lcFilterValue) >= 0;
+				this.set('filteredSearchItems', this.get('availableSearchItems').filter(function(searchItem) {
+					return searchItem.get('label').toLowerCase().indexOf(lcFilterValue) >= 0;
 				}, this));
 			}
 		}.observes('filterValue')
@@ -81,7 +81,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		keyDown: function(event) {
 			// TODO Move to controller
 			if (event.keyCode === 9) {
-				this.$().closest('.t3-launcher').find('.t3-launcher-panel-modules li:first-child a').first().focus();
+				this.$().closest('.t3-launcher').find('.t3-launcher-panel-searchitems li:first-child a').first().focus();
 				return false;
 			}
 		}
@@ -97,6 +97,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		isVisible: false,
 		open: false,
 		focussed: false,
+		scrollingInitialized: false,
 		template: SC.Handlebars.compile(launcherPanelTemplate),
 		_openDidChange: function() {
 			var that = this;
@@ -104,7 +105,12 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 			setTimeout(function() {
 				var open = that.get('open');
 				if (open) {
-					that.$().slideDown('fast');
+					that.$().slideDown('fast', function() {
+						if (!that.scrollingInitialized) {
+							jQuery('.c-1 .scroll-content').lionbars('dark', false, true, false);
+							that.scrollingInitialized = true;
+						}
+					});
 				} else {
 					if (that.get('focussed')) return;
 					that.$().slideUp('fast');

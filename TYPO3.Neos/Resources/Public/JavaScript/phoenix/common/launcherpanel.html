@@ -1,22 +1,150 @@
 <div class="three-columns tc-1-1-1">
 	<div class="c-1">
-		<h2>Modules</h2>
-		{{#collection contentBinding="modules" tagName="ul" classNames="t3-launcher-panel-modules"}}
-			{{#view tagName="a" attributeBindings="href" hrefBinding="content.url"}}{{itemView.content.label}}{{/view}}
-		{{/collection}}
+		<div class="scroll-content">
+			<h2>Shortcuts #1</h2>
+			<ul class="horizontal">
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Add.png" alt="" /></div>
+					<div class="text">New Item</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Email.png" alt="" /></div>
+					<div class="text">New Email</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Comment.png" alt="" /></div>
+					<div class="text">New Comment</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Picture.png" alt="" /></div>
+					<div class="text">New Picture</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Profile.png" alt="" /></div>
+					<div class="text">New User</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Info.png" alt="" /></div>
+					<div class="text">New Information</div>
+				</li>
+			</ul>
+			<div class="t3-launcher-split"></div>
+			<h2>Shortcuts #2</h2>
+			<ul class="horizontal">
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Bar Chart.png" alt="" /></div>
+					<div class="text">New Pie Chart</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Pie Chart.png" alt="" /></div>
+					<div class="text">New Bar Chart</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Search.png" alt="" /></div>
+					<div class="text">New Search</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Save.png" alt="" /></div>
+					<div class="text">New Download</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Line Chart.png" alt="" /></div>
+					<div class="text">New Line Chart</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Warning.png" alt="" /></div>
+					<div class="text">New Alert</div>
+				</li>
+			</ul>
+			<div class="t3-launcher-split"></div>
+			<h2>Shortcuts #3</h2>
+			<ul class="horizontal">
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Bar Chart.png" alt="" /></div>
+					<div class="text">New Pie Chart</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Pie Chart.png" alt="" /></div>
+					<div class="text">New Bar Chart</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Search.png" alt="" /></div>
+					<div class="text">New Search</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Save.png" alt="" /></div>
+					<div class="text">New Download</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Line Chart.png" alt="" /></div>
+					<div class="text">New Line Chart</div>
+				</li>
+				<li>
+					<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-32/Warning.png" alt="" /></div>
+					<div class="text">New Alert</div>
+				</li>
+			</ul>
+		</div>
+		<div class="t3-clear"></div>
 	</div>
 	{{#boundIf T3.ContentModule.showDevelopmentFeatures}}
 	<div class="c-2">
-		<h2>Data</h2>
-		<ul>
-			<li>...</li>
+		<h2>Last actions</h2>
+		<ul class="vertical t3-launcher-panel-lastactions">
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Picture.png" alt="" /></div>
+				<div class="text">Create new picture</div>
+			</li>
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Add.png" alt="" /></div>
+				<div class="text">Create new item</div>
+			</li>
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Comment.png" alt="" /></div>
+				<div class="text">Create new comment</div>
+			</li>
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Email.png" alt="" /></div>
+				<div class="text">Create new email</div>
+			</li>
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Profile.png" alt="" /></div>
+				<div class="text">Create new user</div>
+			</li>
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Pie Chart.png" alt="" /></div>
+				<div class="text">Create new pie chart</div>
+			</li>
 		</ul>
+		<div class="t3-clear"></div>
+		<br />
+		<h2>Most used</h2>
+		<ul class="vertical t3-launcher-panel-mostused">
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Bar Chart.png" alt="" /></div>
+				<div class="text">Create new bar chart</div>
+			</li>
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Search.png" alt="" /></div>
+				<div class="text">Create new search</div>
+			</li>
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Save.png" alt="" /></div>
+				<div class="text">Create new download</div>
+			</li>
+			<li>
+				<div class="image"><img src="/_Resources/Static/Packages/TYPO3.TYPO3/Images/Icons/PNG-24/Line Chart.png" alt="" /></div>
+				<div class="text">Create new line chart</div>
+			</li>
+		</ul>
+		<div class="t3-clear"></div>
 	</div>
 	<div class="c-3">
-		<h2>Last actions</h2>
-		<ul>
-			<li>...</li>
-		</ul>
+		<h2>Results</h2>
+		{{#collection contentBinding="searchItems" tagName="ul" classNames="vertical t3-launcher-panel-searchitems"}}
+			<div class="image"><img {{bindAttr src="content.image"}} alt="" /></div>
+			<div class="text">{{content.label}}</div>
+		{{/collection}}
 	</div>
 	{{/boundIf}}
 </div>

@@ -166,8 +166,8 @@ function() {
 
 		_initializeLauncher: function() {
 			var launcher = T3.Common.Launcher.create({
-				modulesBinding: 'T3.Common.ModulesController.filteredModules',
-				valueBinding: 'T3.Common.ModulesController.filterValue'
+				searchItemsBinding: 'T3.Common.SearchController.filteredSearchItems',
+				valueBinding: 'T3.Common.SearchController.filterValue'
 			});
 			launcher.appendTo($('#t3-launcher'));
 		},

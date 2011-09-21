@@ -97,14 +97,10 @@ body.t3-ui-controls-active {
 	}
 	.t3-launcher-panel {
 		position: absolute;
-		height: 200px;
-		left: 10px;
-		top: 23px;
-		right: $property-panel-width + 30px;
-		@include border-bottom-radius(3px);
-		background: #eeeeee;
-		padding: 15px;
-		opacity: 0.9;
+		height: 220px;
+		left: 0px;
+		top: 25px;
+		right: 0px;
 	}
 }
 ul.t3-topbar {
@@ -563,21 +559,7 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	margin: $toolbar-height 0 0 0;
 }
 
-// TODO Move to common CSS
-.three-columns {
-	width: 100%;
-	float: left;
-	clear: both;
-}
-.tc-1-1-1 .c-1,
-.tc-1-1-1 .c-2,
-.tc-1-1-1 .c-3 {
-	float: left;
-	width: 33%;
-	@include box-sizing(border-box);
-}
-.tc-1-1-1 .c-3 {
-	float: right;
-}
+
+@import "style-launchbar";
 
 @import "style-workInProgress";
