@@ -71,6 +71,15 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		}.property('icon').cacheable()
 	});
 
+	var Image = SC.View.extend({
+		attributeBindings: ['src'],
+		src: '',
+		_srcGiven: function() {
+			return this.src && this.src !== '';
+		}.property('src').cacheable(),
+		template: SC.Handlebars.compile('{{#if _srcGiven}}<img {{bindAttr src="src"}} />{{/if}}')
+	});
+
 	/**
 	 * T3.Content.UI.ToggleButton
 	 *
@@ -562,32 +571,36 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 				var files = event.target.files;
 				if (files.length > 0) {
+
+
 					var image = files[0];
 
-					var reader = new FileReader();
-					reader.onload = function(event) {
+					if (window['FileReader']) {
+						var reader = new FileReader();
+						reader.onload = function(event) {
 
-						var binaryData = event.target.result;
-						var imageObjForFindingSize = new Image();
-						imageObjForFindingSize.onload = function() {
-							var $image = $('<img />')
-								.addClass('typo3-fileupload-thumbnail')
-								.attr('src', binaryData)
-								.attr('title', image.name);
+							var binaryData = event.target.result;
+							var imageObjForFindingSize = new Image();
+							imageObjForFindingSize.onload = function() {
+								var $image = $('<img />')
+									.addClass('typo3-fileupload-thumbnail')
+									.attr('src', binaryData)
+									.attr('title', image.name);
 
-							if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
-								$image.addClass('typo3-fileupload-thumbnail-landscape');
-							} else {
-								$image.addClass('typo3-fileupload-thumbnail-portrait');
-							}
+								if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
+									$image.addClass('typo3-fileupload-thumbnail-landscape');
+								} else {
+									$image.addClass('typo3-fileupload-thumbnail-portrait');
+								}
 
-							$thumbnailHolder.append($image);
-							that.set('_currentlyDisplayingUploadPreview', true);
+								$thumbnailHolder.append($image);
+								that.set('_currentlyDisplayingUploadPreview', true);
+							};
+							imageObjForFindingSize.src = binaryData;
 						};
-						imageObjForFindingSize.src = binaryData;
-					};
 
-					reader.readAsDataURL(image);
+						reader.readAsDataURL(image);
+					}
 				}
 			});
 		},
@@ -600,26 +613,28 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			var that = this,
 				value = this.get('value');
 
-				// HACK: we need to convert *invalid* JSON to valid one again as
-				// the Chrome browser seems to convert it to an object, and in turn
-				// then serialize it to string again... at least unter some
-				// circumstances... Funny :-)
-			if (value.substr(0, 4) === 'HACK') {
-				value = value.substr(4);
-			}
-
-			var imageVariant = JSON.parse(value);
-
-			if (!imageVariant) return;
-
-			this.set('_imageUuid', imageVariant.image);
-			$.each(imageVariant.processingInstructions, function(index, instruction) {
-				if (instruction.type === 'crop') {
-					that.set('_cropOptions', instruction.options)
-				} else if (instruction.type === 'scale') {
-					that.set('_scaleOptions', instruction.options)
+			if (value && value !== '') {
+					// HACK: we need to convert *invalid* JSON to valid one again as
+					// the Chrome browser seems to convert it to an object, and in turn
+					// then serialize it to string again... at least unter some
+					// circumstances... Funny :-)
+				if (value.substr(0, 4) === 'HACK') {
+					value = value.substr(4);
 				}
-			});
+
+				var imageVariant = JSON.parse(value);
+
+				if (!imageVariant) return;
+
+				this.set('_imageUuid', imageVariant.image);
+				$.each(imageVariant.processingInstructions, function(index, instruction) {
+					if (instruction.type === 'crop') {
+						that.set('_cropOptions', instruction.options)
+					} else if (instruction.type === 'scale') {
+						that.set('_scaleOptions', instruction.options)
+					}
+				});
+			}
 		}.observes('value'),
 
 		/**
@@ -628,20 +643,24 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		 * set _previewImageLoaded
 		 */
 		_onImageUuidChange: function() {
-			var that = this;
-			$.get('/typo3/content/imageWithMetadata/' + this.get('_imageUuid'), function(result) {
-				var metadata = JSON.parse(result);
-				if (!metadata || !metadata.resourceUri || !metadata.originalSize || !metadata.originalSize.width || !metadata.originalSize.height || !metadata.previewSize || !metadata.previewSize.width || !metadata.previewSize.height) {
-					T3.Common.Notification.error('Tried to fetch image metadata: Unexpected result format.');
-					return;
-				}
+			var that = this,
+				value = this.get('value');
 
-				that.set('_pathToImage', metadata.resourceUri);
-				that.set('_originalImageSize', metadata.originalSize);
-				that.set('_previewImageSize', metadata.previewSize);
-				that.set('_previewImageLoaded', true);
-				that.set('_currentlyDisplayingUploadPreview', false);
-			});
+			if (value && value !== '') {
+				$.get('/typo3/content/imageWithMetadata/' + this.get('_imageUuid'), function(result) {
+					var metadata = JSON.parse(result);
+					if (!metadata || !metadata.resourceUri || !metadata.originalSize || !metadata.originalSize.width || !metadata.originalSize.height || !metadata.previewSize || !metadata.previewSize.width || !metadata.previewSize.height) {
+						T3.Common.Notification.error('Tried to fetch image metadata: Unexpected result format.');
+						return;
+					}
+
+					that.set('_pathToImage', metadata.resourceUri);
+					that.set('_originalImageSize', metadata.originalSize);
+					that.set('_previewImageSize', metadata.previewSize);
+					that.set('_previewImageLoaded', true);
+					that.set('_currentlyDisplayingUploadPreview', false);
+				});
+			}
 		}.observes('_imageUuid'),
 
 		/**
@@ -823,11 +842,15 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				return {x: 0, y: 0, w: 1, h: 1};
 			}
 
-			return {
-				x: coordinates.x / (originalImageSize.width / previewImageSize.width),
-				y: coordinates.y / (originalImageSize.height / previewImageSize.height),
-				w: coordinates.w / (originalImageSize.width / previewImageSize.width),
-				h: coordinates.h / (originalImageSize.height / previewImageSize.height)
+			if (coordinates) {
+				return {
+					x: coordinates.x / (originalImageSize.width / previewImageSize.width),
+					y: coordinates.y / (originalImageSize.height / previewImageSize.height),
+					w: coordinates.w / (originalImageSize.width / previewImageSize.width),
+					h: coordinates.h / (originalImageSize.height / previewImageSize.height)
+				}
+			} else {
+				return {x:0,y:0,w:0,h:0};
 			}
 		}
 	});
@@ -865,7 +888,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					result = JSON.parse(result);
 					if (result.resourceUri) {
 
-						var $img = $('<img />', {src: result.resourceUri}).attr('class', 'typo3-image-preview-humbnail');
+						var $img = $('<img />', {src: result.resourceUri}).attr('class', 'typo3-image-preview-thumbnail');
 						that.$().append($img);
 
 					}
@@ -1139,7 +1162,8 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		BreadcrumbItem: BreadcrumbItem,
 		Inspector: Inspector,
 		Editor: Editor,
-		Renderer: Renderer
+		Renderer: Renderer,
+		Image: Image
 	};
 });
 

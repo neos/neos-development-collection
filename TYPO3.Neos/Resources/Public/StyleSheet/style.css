@@ -831,6 +831,10 @@ div.aloha-block-active:hover > div.aloha-block-inner {
   .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-portrait {
     height: 160px; }
 
+.t3-inspector .typo3-image-preview-thumbnail {
+  max-width: 160px;
+  max-height: 160px; }
+
 .t3-inspector-form .typo3-fileupload-uploadbutton {
   display: none; }
 
