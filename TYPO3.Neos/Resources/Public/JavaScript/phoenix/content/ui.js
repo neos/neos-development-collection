@@ -16,7 +16,8 @@ define(
 	'Library/jquery-notice/jquery.notice',
 	'css!Library/jquery-popover/jquery.popover.css',
 	'css!Library/jquery-notice/jquery.notice.css',
-	'Library/plupload/js/plupload.full'
+	'Library/plupload/js/plupload',
+	'Library/plupload/js/plupload.html5'
 ],
 function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate, fileUploadTemplate) {
 	var T3 = window.T3 || {};
