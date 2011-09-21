@@ -103,5 +103,16 @@ class ContentTypeManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 		$this->assertSame($expectedProperties, $contentType->getProperties());
 	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\ContentTypeNotFoundException
+	 */
+	public function getContentTypeThrowsExceptionForUnknownContentType() {
+		$contentTypeManager = new \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager();
+		$contentTypeManager->injectSettings($this->settingsFixture);
+
+		$contentTypeManager->getContentType('TYPO3.TYPO3:TextFooBarNotHere');
+	}
 }
 ?>
