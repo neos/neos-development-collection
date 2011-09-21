@@ -184,8 +184,7 @@ function() {
 		 * Intercept all links, and instead use AJAX for reloading the page.
 		 */
 		_initializeAjaxPageReload: function() {
-			// TODO: we might need to make this more configurable
-			this._linkInterceptionHandler($('a'));
+			this._linkInterceptionHandler($('a').not('.t3-ui a'));
 		},
 
 		_onBlockSelectionChange: function(blocks) {
