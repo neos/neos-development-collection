@@ -151,6 +151,7 @@ function(launcherTemplate) {
 			});
 			this.set('_modified', hasChanges);
 		},
+
 		_updateChangedPropertyInAlohaBlock: function(propertyName) {
 			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
 				// Save original property back to Aloha Block
@@ -158,6 +159,7 @@ function(launcherTemplate) {
 					alohaBlock.attr(propertyName, this.get(propertyName));
 				}
 		},
+
 		schema: function() {
 			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
 			return alohaBlock.getSchema();
@@ -359,7 +361,7 @@ function(launcherTemplate) {
 				$('body').addClass('t3-contentelement-selected');
 			}
 			if (alohaBlocks.length > 0) {
-				blocks = $.map(alohaBlocks, function(alohaBlock) {
+				blocks = $.map(alohaBlocks.reverse(), function(alohaBlock) {
 					return T3.Content.Model.BlockManager.getBlockProxy(alohaBlock);
 				});
 			}
@@ -370,7 +372,7 @@ function(launcherTemplate) {
 
 		selectedBlock: function() {
 			var blocks = this.get('blocks');
-			return blocks.length > 0 ? blocks[blocks.length-1]: null;
+			return blocks.length > 0 ? blocks[blocks.length - 1]: null;
 		}.property('blocks').cacheable(),
 
 		selectedBlockSchema: function() {
@@ -383,12 +385,11 @@ function(launcherTemplate) {
 			if (item === this._pageBlock) {
 				this.updateSelection([]);
 			} else {
-				var block = Aloha.Block.BlockManager.getBlock(item.id);
+				var block = Aloha.Block.BlockManager.getBlock(item.get('_alohaBlockId'));
 				if (block) {
-					// FIXME !!! This is to prevent the event triggering a refresh of the blocks which trigger an event and kill the selection
-					this._updating = true;
-					block.activate();
-					this._updating = false;
+					window.setTimeout(function() {
+						block.activate();
+					}, 10);
 				}
 			}
 		}
