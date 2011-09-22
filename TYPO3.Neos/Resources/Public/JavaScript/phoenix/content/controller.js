@@ -118,7 +118,11 @@ function() {
 	 * Controller for the inspector
 	 */
 	var Inspector = SC.Object.create({
-		editMode: false,
+		_modified: false,
+		_unmodified: function() {
+			return !this.get('_modified');
+		}.property('_modified').cacheable(),
+
 		blockProperties: null,
 
 		selectedBlock: null,
@@ -179,24 +183,69 @@ function() {
 			this.set('blockProperties', SC.Object.create(this.cleanProperties));
 		}.observes('T3.Content.Model.BlockSelection.selectedBlock'),
 
+
 		/**
-		 * When the edit button is toggled, we save the modified properties back
+		 * We'd like to monitor *every* property change, that's why we have
+		 * to look through the list of properties...
 		 */
-		onEditButtonToggle: function(isEditMode) {
-			if (!isEditMode) {
-				this.save();
+		onBlockPropertiesChange: function() {
+			var that = this,
+				selectedBlock = this.get('selectedBlock');
+			if (selectedBlock) {
+				var selectedBlockSchema = T3.Content.Model.BlockSelection.get('selectedBlockSchema'),
+					editableProperties = [],
+					blockProperties = this.get('blockProperties');
+				if (selectedBlockSchema.properties) {
+					$.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
+						if (selectedBlockSchema.inlineEditableProperties) {
+							if ($.inArray(propertyName, selectedBlockSchema.inlineEditableProperties) === -1) {
+								editableProperties.push(propertyName);
+							}
+						} else {
+							editableProperties.push(propertyName);
+						}
+					});
+				}
+				if (editableProperties.length > 0) {
+					$.each(editableProperties, function(key, propertyName) {
+						blockProperties.addObserver(propertyName, null, function(property, propertyName, value) {
+							that._somePropertyChanged();
+						});
+					});
+				}
+			}
+		}.observes('blockProperties'),
+
+		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
+		_somePropertyChanged: function() {
+			var that = this,
+				hasChanges = false;
+			$.each(this.selectedBlock.getCleanedUpAttributes(), function(key, value) {
+				if (that.get('blockProperties').get(key) !== value) {
+					hasChanges = true;
+				}
+			});
+			this.set('_modified', hasChanges);
+		},
+
+		/**
+		 * When the edit button is toggled, we apply the modified properties back
+		 */
+		onApplyButtonToggle: function(isModified) {
+			if (isModified) {
+				this.apply();
 			}
 		},
 
 		/**
-		 * Save the edited properties back to the block
+		 * Apply the edited properties back to the block
 		 */
-		save: function() {
+		apply: function() {
 			var that = this;
 			SC.keys(this.cleanProperties).forEach(function(key) {
 				that.selectedBlock.set(key, that.blockProperties.get(key));
 			});
-			this.set('editMode', false);
+			this.set('_modified', false);
 		},
 
 		/**
@@ -205,7 +254,7 @@ function() {
 		revert: function() {
 			this.cleanProperties = this.selectedBlock.getCleanedUpAttributes();
 			this.set('blockProperties', SC.Object.create(this.cleanProperties));
-			this.set('editMode', false);
+			this.set('_modified', false);
 		}
 	});
 

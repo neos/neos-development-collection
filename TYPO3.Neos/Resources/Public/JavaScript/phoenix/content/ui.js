@@ -216,7 +216,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 	 *
 	 * The Inspector is displayed on the right side of the page.
 	 *
-	 * Furthermore, it contains *Editors* and *Renderers*
+	 * Furthermore, it contains *Editors*
 	 */
 	var Inspector = SC.View.extend({
 		template: SC.Handlebars.compile(inspectorTemplate),
@@ -228,40 +228,35 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		$clickProtectionLayer: null,
 
 		/**
-		 * When pressing Enter inside a property, we save and leave the edit mode
+		 * When pressing Enter inside a property, we apply and leave the edit mode
 		 */
 		keyDown: function(event) {
 			if (event.keyCode === 13) {
-				T3.Content.Controller.Inspector.save();
+				T3.Content.Controller.Inspector.apply();
 				return false;
 			}
 		},
 
-		doubleClick: function(event) {
-			T3.Content.Controller.Inspector.set('editMode', true);
-		},
-
 		/**
-		 * When the edit mode is entered or left, we add / remove the click
+		 * When the editors have been modified, we add / remove the click
 		 * protection layer.
 		 */
-		onEditModeChange: function() {
+		_onModifiedChange: function() {
 			var zIndex;
-			if (T3.Content.Controller.Inspector.get('editMode')) {
+			if (T3.Content.Controller.Inspector.get('_modified')) {
 				zIndex = this.$().css('z-index') - 1;
 				this.$clickProtectionLayer = $('<div />').addClass('t3-inspector-clickprotection').addClass('aloha-block-do-not-deactivate').css({'z-index': zIndex});
-				this.$clickProtectionLayer.click(this._showUnsavedDialog);
+				this.$clickProtectionLayer.click(this._showUnappliedDialog);
 				$('body').append(this.$clickProtectionLayer);
 			} else {
 				this.$clickProtectionLayer.remove();
-
 			}
-		}.observes('T3.Content.Controller.Inspector.editMode'),
+		}.observes('T3.Content.Controller.Inspector._modified'),
 
 		/**
-		 * When clicking the click protectiom, we show a dialog
+		 * When clicking the click protection, we show a dialog
 		 */
-		_showUnsavedDialog: function() {
+		_showUnappliedDialog: function() {
 			var view = SC.View.create({
 				template: SC.Handlebars.compile(inspectordialogTemplate),
 				didInsertElement: function() {
@@ -279,11 +274,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				cancel: function() {
 					this.$().dialog('close');
 				},
-				save: function() {
-					T3.Content.Controller.Inspector.save();
+				apply: function() {
+					T3.Content.Controller.Inspector.apply();
 					this.$().dialog('close');
 				},
-				dontSave: function() {
+				dontApply: function() {
 					T3.Content.Controller.Inspector.revert();
 					this.$().dialog('close');
 				}
@@ -316,36 +311,6 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			var editor = editorClass.create(classOptions);
 			this.appendChild(editor);
-
-			this._super();
-		}
-	});
-
-	Inspector.PropertyRenderer = SC.ContainerView.extend({
-		propertyDefinition: null,
-
-		render: function() {
-			var typeDefinition = T3.Configuration.UserInterface[this.propertyDefinition.type];
-			if (!typeDefinition) {
-				throw 'Type defaults for "' + this.propertyDefinition.type + '" not found';
-			}
-
-			var rendererClassName = typeDefinition.renderer['class'];
-			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface.renderer['class']) {
-				rendererClassName = this.propertyDefinition.userInterface.renderer['class'];
-			}
-			var rendererClass = SC.getPath(rendererClassName);
-			if (!rendererClass) {
-				throw 'Renderer class "' + typeDefinition.renderer['class'] + '" not found';
-			}
-
-			var classOptions = $.extend({
-				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
-			}, typeDefinition.renderer.options || {});
-
-			var renderer = rendererClass.create(classOptions);
-			this.appendChild(renderer);
-
 			this._super();
 		}
 	});
@@ -359,6 +324,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 	Editor.DateField = SC.TextField.extend({
 		didInsertElement: function() {
+			this.$().attr('placeholder', 'No date set');
 			this.$().datepicker({
 				dateFormat: $.datepicker.W3C,
 				beforeShow: function(field, datePicker) {
@@ -876,61 +842,6 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		}
 	});
 
-	var Renderer = {};
-	Renderer.Text = SC.View.extend({
-		value: '',
-		template: SC.Handlebars.compile('<span style="color:white">{{value}}</span>')
-	});
-
-	Renderer.Boolean = SC.View.extend({
-		value: null,
-		template: SC.Handlebars.compile('<span style="color:white">{{#if value}}<span class="t3-boolean-true">Yes</span>{{/if}} {{#unless value}}<span class="t3-boolean-false">No</span>{{/unless}}</span>')
-	});
-
-	Renderer.File = SC.View.extend({
-		template: SC.Handlebars.compile('{{value}}')
-	});
-
-	Renderer.Image = SC.View.extend({
-		didInsertElement: function() {
-			var imageVariant, that = this;
-
-			var value = this.get('value');
-			if (value && value !== '') {
-				if (value.substr(0, 4) === 'HACK') {
-					value = value.substr(4);
-				}
-
-				if (T3.Common.Util.isValidJsonString(value)) {
-					imageVariant = JSON.parse(value);
-				}
-
-				if (!imageVariant) return;
-
-				$.get('/typo3/content/imageWithMetadata/' + imageVariant.image, function(result) {
-					result = JSON.parse(result);
-					if (result.resourceUri) {
-
-						var $img = $('<img />', {src: result.resourceUri}).attr('class', 'typo3-image-preview-thumbnail');
-						that.$().append($img);
-
-					}
-				});
-			}
-		}
-	});
-
-	Renderer.Date = SC.View.extend({
-		value: '',
-		template: SC.Handlebars.compile('<span style="color:white">{{#if value}}{{value}}{{else}}No date set{{/if}}</span>')
-	});
-
-	Renderer.Html = SC.View.extend({
-		value: '',
-		template: SC.Handlebars.compile('<span style="color:white">HTML</span>')
-	})
-
-
 	/**
 	 * ==================
 	 * SECTION: PAGE TREE
@@ -1185,7 +1096,6 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		BreadcrumbItem: BreadcrumbItem,
 		Inspector: Inspector,
 		Editor: Editor,
-		Renderer: Renderer,
 		Image: Image
 	};
 });
