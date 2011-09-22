@@ -52,6 +52,8 @@ TYPO3:
       'TYPO3.TYPO3:TwoColumn':
         superTypes: ['TYPO3.TYPO3:ContentObject']
         label: 'Two column content'
+        group: 'Structure'
+        icon: 'Icons/FugueIcons/edit-column.png'
 
         # TODO: think about name; as the structure is ONLY created on the beginning...
         structure:
@@ -112,6 +114,8 @@ TYPO3:
 
       'TYPO3.TYPO3:Text':
         superTypes: ['TYPO3.TYPO3:ContentObject']
+        group: 'General'
+        icon: 'Icons/FugueIcons/document-text.png'
         label: 'Text'
 
         properties:
@@ -128,6 +132,8 @@ TYPO3:
       'TYPO3.TYPO3:TextWithImage':
         label: 'Text with Image'
         superTypes: ['TYPO3.TYPO3:Text']
+        group: 'General'
+        icon: 'Icons/FugueIcons/document-text-image.png'
         properties:
           image:
             type: TYPO3\TYPO3\Domain\Model\Media\ImageVariant
@@ -149,6 +155,8 @@ TYPO3:
 
       'TYPO3.TYPO3:Html':
         superTypes: ['TYPO3.TYPO3:ContentObject']
+        group: 'General'
+        icon: 'Icons/FugueIcons/document-code.png'
         label: 'HTML'
         properties:
           source:
@@ -167,6 +175,8 @@ TYPO3:
 
       'TYPO3.TYPO3:Plugin':
         superTypes: ['TYPO3.TYPO3:ContentObject']
+        group: 'Plugins'
+        icon: 'Icons/FugueIcons/application-icon.png'
         label: 'Generic plugin'
 
         properties:
@@ -194,6 +204,8 @@ TYPO3:
 
 
   TYPO3:
+    contentTypeGroups: ['General', 'Structure', 'Plugins']
+
     userInterface:
       string:
         class: T3.Content.UI.Editor.TextField

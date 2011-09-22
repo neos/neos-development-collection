@@ -319,6 +319,26 @@ function() {
 		_add: function(nodePath, position, $handle) {
 			if ($handle !== undefined) {
 				$handle.addClass('t3-handle-loading');
+
+
+				$handle.bind('showPopover', function() {
+					$('.contentTypeSelectorTabs.notInitialized').each(function(index) {
+						var newDate = new Date();
+						var uniqueId = 't3-content-tabs-' + Math.random() * Math.pow(10, 17) + '-' + newDate.getTime();
+						$(this).attr('id', uniqueId);
+
+						$(this).children('ul').find('li a').each(function (index) {
+							$(this).attr("href", '#' + uniqueId + '-' + index.toString());
+						});
+
+						$(this).children('div').each(function (index) {
+							$(this).attr("id", uniqueId + '-' + index.toString());
+						})
+						$(this).tabs();
+						$(this).removeClass('notInitialized');
+					});
+					$('.t3-handle-loading').removeClass('t3-handle-loading');
+				});
 			}
 
 			T3.Common.Dialog.openFromUrl(
@@ -337,6 +357,7 @@ function() {
 					positioning: 'absolute'
 				}
 			);
+
 		},
 
 		/**

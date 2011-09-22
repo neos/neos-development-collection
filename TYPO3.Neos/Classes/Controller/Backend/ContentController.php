@@ -97,6 +97,29 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @skipCsrfProtection
 	 */
 	public function newAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $position) {
+		$allContentTypes = $this->contentTypeManager->getSubContentTypes('TYPO3.TYPO3:ContentObject');
+		$contentTypeGroups = $this->settings['contentTypeGroups'];
+		$groupedContentTypes = array();
+		foreach ($contentTypeGroups as $contentTypeGroup) {
+			$groupedContentTypes[] = array(
+				'label' => $contentTypeGroup,
+				'contentTypes' => array()
+			);
+		}
+		foreach ($allContentTypes as $groupKey => $contentType) {
+			if (!in_array($contentType->getGroup(), $contentTypeGroups)) {
+				$contentTypeGroups[] = $contentType->getGroup();
+				$groupKey = array_search($contentType->getGroup(), $contentTypeGroups);
+				$groupedContentTypes[$groupKey] = array (
+					'label' => $contentType->getGroup(),
+					'contentTypes' => array()
+				);
+			} else {
+				$groupKey = array_search($contentType->getGroup(), $contentTypeGroups);
+			}
+			$groupedContentTypes[$groupKey]['contentTypes'][] = $contentType;
+		}
+		$this->view->assign('groupedContentTypes', $groupedContentTypes);
 		$this->view->assign('contentTypes', $this->contentTypeManager->getSubContentTypes('TYPO3.TYPO3:ContentObject'));
 		$this->view->assign('referenceNode', $referenceNode);
 		$this->view->assign('position', $position);

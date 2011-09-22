@@ -179,15 +179,9 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 			that._handle = $handle;
 			that._overrideOptions(overrideOptions);
 
-			var handlerEvents = $handle.data('events');
-			if (!handlerEvents || !handlerEvents['showPopover']) {
-				this._fetchUrlForDialog(url, data, commands, function() {
-					that._showDialog();
-				});
-			} else {
-				$handle.trigger('showPopover');
-
-			}
+			this._fetchUrlForDialog(url, data, commands, function() {
+				that._showDialog();
+			});
 		},
 
 		openConfirmPopover: function(options, $handle) {
@@ -273,14 +267,14 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 				}
 
 				// <a> links get rewritten to use ajax
-				dialog.find('a').click(function() {
+				dialog.find('a.t3-ajax-link').click(function() {
 					that._fetchUrlForDialog($(this).attr('href'), {}, commands, dialog);
 					return false;
 				});
 
 				// <h1> is used as dialog title
-				that._options.header = dialog.find('h1').html();
-				dialog.find('h1').remove();
+				that._options.header = dialog.find('h1').first();
+				dialog.find('h1').first().remove();
 				that._options.content = dialog;
 
 				if (callback) {
