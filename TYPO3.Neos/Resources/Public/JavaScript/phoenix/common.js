@@ -184,14 +184,15 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 				});
 			} else {
 				$handle.trigger('showPopover');
+
 			}
 		},
 
-		openConfirmPopover: function(options, handle) {
+		openConfirmPopover: function(options, $handle) {
 			var that = this;
-			this._handle = handle;
+			this._handle = $handle;
 
-			var handlerEvents = handle.data('events');
+			var handlerEvents = $handle.data('events');
 			if (!handlerEvents['showPopover']) {
 					// Set popover content
 				this._options.header = (options.title) ? '<h1>' + options.title + '</h1>': null;
@@ -203,13 +204,13 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 						if (options.onOk) {
 							options.onOk.call(that);
 						}
-						handle.trigger('hidePopover');
+						$handle.trigger('hidePopover');
 					},
 					cancel: function() {
 						if (options.onCancel) {
 							options.onCancel.call(that);
 						}
-						handle.trigger('hidePopover');
+						$handle.trigger('hidePopover');
 					}
 				});
 
@@ -221,7 +222,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 				}
 			} else {
 				// TODO: When you click no, and open the delete dialog again it's not correctly shown
-				handle.trigger('showPopover');
+				$handle.trigger('showPopover');
 			}
 
 			if (options.onDialogOpen) {
@@ -234,7 +235,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		 * @return {void}
 		 */
 		_showDialog: function() {
-			this._handle.popover(this._options).trigger('showPopover');
+			this._handle.popover(this._options).trigger('showPopover').removeClass('t3-handle-loading');
 		},
 
 		/**
