@@ -2,11 +2,11 @@
 @import "compass";
 
 //Variables//
-$menu-height: 25px;
-$launcher-height: 25px;
-$toolbar-height: 30px;
+$menu-height: 26px;
+$launcher-height: 30px;
+$toolbar-height: 36px;
 $property-panel-width: 200px;
-$footer-height: 30px;
+$footer-height: 26px;
 
 // Mixins //
 // Use Compass for CSS3 Mixins!
@@ -30,8 +30,8 @@ body.t3-ui-controls-active {
 	clear:both;
 }
 #t3-ui-top {
-	@include single-box-shadow(#000000, 0px, 1px, 3px);
-	@include background-image(linear-gradient(#444444, #2d2d2d));
+	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
+	background: #2d2d2d;
 	left: 0;
 	top: 0;
 	position: fixed;
@@ -42,7 +42,7 @@ body.t3-ui-controls-active {
 		position: absolute;
 		right: 10px;
 		line-height: $menu-height;
-		top: -2px;
+		top: 27px;
 		color: #cccccc;
 		text-decoration: underline;
 		font-size: 10px;
@@ -53,42 +53,42 @@ body.t3-ui-controls-active {
 		}
 	}
 }
+#t3-launcher {
+	height: $launcher-height;
+}
 .t3-launcher {
 	position: relative;
 	width: 100%;
 	height: $launcher-height;
 	div.t3-launcher-container {
 		height: $launcher-height;
-		border: 0;
+		border-color: #2d2d2d;
+		border-style: solid;
+		border-width: 3px 0 3px 2px;
 		position: absolute;
 		display: block;
-		left: 0;
+		left: 3px;
 		right: 35px;
+		@include box-sizing(border-box);
 		input {
 			border: 0;
 			background: transparent;
 			font-size: 16px;
 			width: 100%;
 			height: 100%;
-			line-height: $launcher-height;
-			padding: 0 6px;
-			background-color: #F7EEE1;
-			@include single-box-shadow(#222222, 0, 0, 3px, 0, inset);
+			// line-height: $launcher-height;
+			padding: 3px 6px 0 6px;
+			background-color: #eeeeee;
 			@include box-sizing(border-box);
 			&.t3-example-text {
 				color: #aaa;
-			}
-			&:focus {
-				@include transition-property(background);
-				@include transition-duration(0.5s);
-				background: #fff;
 			}
 		}
 	}
 	.t3-launcher-logo {
 		position: absolute;
-		top: 0;
-		right: 5px;
+		top: 4px;
+		right: 3px;
 		width: 25px;
 		height: 25px;
 		background: url('../Images/ContentModule/typo3-logo.png') no-repeat;
@@ -97,10 +97,10 @@ body.t3-ui-controls-active {
 		position: absolute;
 		height: 200px;
 		left: 10px;
-		top: 25px;
+		top: 23px;
 		right: $property-panel-width + 30px;
-		@include border-bottom-radius(10px);
-		@include background-image(linear-gradient(#ffffff, #FCE4C4));
+		@include border-bottom-radius(3px);
+		background: #eeeeee;
 		padding: 15px;
 		opacity: 0.9;
 	}
@@ -117,21 +117,19 @@ ul.t3-topbar {
 	height:100%;
 	padding-left:20px;
 	padding-right:20px;
-	color: #ffffff;
-	@include single-text-shadow(#000000, 0, -1px, 0);
+	color: #aaaaaa;
 }
 
 .t3-topbar li.t3-active {
-	@include background-image(linear-gradient(#aaaaaa, #555555));
-	@include single-text-shadow(#444444, 1px, 1px, 0);
-	@include box-shadow(#222222 1px -4px 3px, #222222 -1px -4px 3px);
+	background: #444444;
+	color: #ffffff;
 }
 
 /*** Inspector Panel ***/
 .t3-inspector {
-	@include single-box-shadow(rgba(0, 0, 0, 0.5), -2px, 0, 3px);
+	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
 	@include box-sizing(border-box);
-	@include background-image(linear-gradient(#2d2d2d, #111111));
+	background: #2D2D2D;
 
 	height: 100%;
 	margin-top: $menu-height + $launcher-height;
@@ -156,9 +154,9 @@ ul.t3-topbar {
 		width: 100%;
 		@include box-sizing(border-box);
 		padding: 0 10px;
-		height: 30px;
-		line-height: 30px;
-		@include background-image(linear-gradient(#555555, #373737));
+		height: $toolbar-height;
+		line-height: $toolbar-height;
+		background: #444444;
 		color: #ffffff;
 		font-weight: normal;
 	}
@@ -189,13 +187,14 @@ ul.t3-topbar {
 
 /*** Toolbar ***/
 #t3-toolbar {
-	@include background-image(linear-gradient(#666666, #373737));
+	background: #444444;
 	height: $toolbar-height;
 	left: 0;
 	position: fixed;
 	right: $property-panel-width;
 	top: $menu-height + $launcher-height;
 	z-index: 10012;
+	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
 }
 .t3-toolbar-left {
 	float: left;
@@ -235,92 +234,111 @@ ul.t3-topbar {
 }
 
 /* Footer Toolbar */
-#t3-footer .t3-toolbar-left {
-	.t3-breadcrumb {
+#t3-footer  {
+	background: #2D2D2D;
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	height: $footer-height;
+	line-height: $footer-height;
+	right: $property-panel-width;
+	z-index: 10012;
+	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
+	.t3-toolbar-left {
 		height: $footer-height;
-		float: left;
-	}
-	.t3-inspect {
-		height: 100%;
-		float: left;
-		background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
-		z-index: 100030;
-		position: relative;
-	}
-	button {
-		float: left;
-		margin: 5px 30px 0px 10px;
-	}
+		line-height: $footer-height;
+		.t3-breadcrumb {
+			height: $footer-height;
+			line-height: $footer-height;
+			float: left;
+		}
+		.t3-inspect {
+			height: 100%;
+			float: left;
+			background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
+			z-index: 100030;
+			position: relative;
+		}
+		button {
+			float: left;
+			margin: 3px 30px 0px 10px;
+		}
 
-	> li:first-child {
-		padding: 0;
-	}
-	ul {
-		float: left;
-	}
-	ul li {
-		padding: 0 15px 0 30px;
-		color: #ffffff;
-		background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
-		margin-left: -25px;
-		position:relative;
-		float: left;
-		a {
+		> li:first-child {
+			padding: 0;
+		}
+		ul {
+			float: left;
+		}
+		ul li {
+			padding: 0;
 			color: #ffffff;
-		}
-		&:nth-child(10) {
-			z-index: 10020;
-		}
-		&:nth-child(9) {
-			z-index: 10021;
-		}
-		&:nth-child(8) {
-			z-index: 10022;
-		}
-		&:nth-child(7) {
-			z-index: 10023;
-		}
-		&:nth-child(6) {
-			z-index: 10024;
-		}
-		&:nth-child(5) {
-			z-index: 10025;
-		}
-		&:nth-child(4) {
-			z-index: 10026;
-		}
-		&:nth-child(3) {
-			z-index: 10027;
-		}
-		&:nth-child(2) {
-			z-index: 10028;
-		}
-		&:first-child {
-			z-index: 10029;
-		}
-		&:last-child {
-			background: url(../Images/ContentModule/breadcrumb-arrow-orange.png) right 50% no-repeat;
+			background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
+			margin-left: -25px;
+			position:relative;
+			float: left;
+			a {
+				color: #ffffff;
+				padding: 0 15px 0 30px;
+				width: 100%;
+				height: 100%;
+				display: block;
+				text-decoration: none;
+				@include box-sizing(border-box);
+			}
+			&:nth-child(10) {
+				z-index: 10020;
+			}
+			&:nth-child(9) {
+				z-index: 10021;
+			}
+			&:nth-child(8) {
+				z-index: 10022;
+			}
+			&:nth-child(7) {
+				z-index: 10023;
+			}
+			&:nth-child(6) {
+				z-index: 10024;
+			}
+			&:nth-child(5) {
+				z-index: 10025;
+			}
+			&:nth-child(4) {
+				z-index: 10026;
+			}
+			&:nth-child(3) {
+				z-index: 10027;
+			}
+			&:nth-child(2) {
+				z-index: 10028;
+			}
+			&:first-child {
+				z-index: 10029;
+			}
+			&:last-child {
+				background: url(../Images/ContentModule/breadcrumb-arrow-orange.png) right 50% no-repeat;
+			}
 		}
 	}
 }
 button.t3-button {
-	@include background-image(linear-gradient(#999999, #555555));
-	border: 1px solid #272727;
-	@include border-radius(4px);
+	background: #888888;
+	border: 0;
+	@include border-radius(3px);
 	color: #e4e4e4;
-	padding: 0 4px 1px 4px;
+	padding: 0 4px 0px 4px;
 	height: 20px;
-	@include single-text-shadow(#444444, 0, -1px, 0);
+	line-height: 20px;
 	@include transition-property(background);
 	@include transition-duration(0.8s);
 	cursor: pointer;
 	&:hover {
-		@include background-image(linear-gradient(#aaaaaa, #666666));
+		background: #777777;
 	}
 	&:focus,
 	&:active {
-		background: -moz-linear-gradient(top, #cccccc 0%, #666666 70%, #888888 100%);
-		@include single-box-shadow(#666666, 0, 4px, 3px, 0, inset);
+		background: #666666;
 	}
 	&.pressed {
 		@include background-image(linear-gradient(#f18f0b, #7c4700));
@@ -345,17 +363,6 @@ button.t3-button {
 		}
 	}
 }
-#t3-footer {
-	@include background-image(linear-gradient(#2d2d2d, #111111));
-	bottom: 0;
-	left: 0;
-	position: fixed;
-	height: $footer-height;
-	right: $property-panel-width;
-	z-index: 10012;
-	@include single-box-shadow(rgba(0, 0, 0, 0.4), -1px, -1px, 3px);
-}
-
 .t3-handle {
 	position: absolute;
 	right: -1px;
@@ -481,7 +488,7 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	z-index:10000 !important;
 }
 
-/* Quick fix to remove floating menu & pin - here since Aloha.css isn't included anymore */
+// Quick fix to remove floating menu & pin - here since Aloha.css isn't included anymore
 .aloha-floatingmenu:hover .aloha-floatingmenu-pin {
 	display: none;
 }
