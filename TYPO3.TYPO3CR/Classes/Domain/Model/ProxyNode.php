@@ -502,7 +502,7 @@ class ProxyNode implements NodeInterface {
 	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
 	 * @return void
 	 */
-	public function setHiddenBeforeDate(\DateTime $dateTime) {
+	public function setHiddenBeforeDate(\DateTime $dateTime = NULL) {
 		if (!isset($this->newNode)) {
 			$this->cloneOriginalNode();
 		}
@@ -524,7 +524,7 @@ class ProxyNode implements NodeInterface {
 	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
 	 * @return void
 	 */
-	public function setHiddenAfterDate(\DateTime $dateTime) {
+	public function setHiddenAfterDate(\DateTime $dateTime = NULL) {
 		if (!isset($this->newNode)) {
 			$this->cloneOriginalNode();
 		}
