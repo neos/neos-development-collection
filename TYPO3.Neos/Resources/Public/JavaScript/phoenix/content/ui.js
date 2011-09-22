@@ -17,8 +17,6 @@ define(
 	'Library/jquery-notice/jquery.notice',
 	'css!Library/jquery-popover/jquery.popover.css',
 	'css!Library/jquery-notice/jquery.notice.css',
-	'Library/plupload/js/plupload',
-	'Library/plupload/js/plupload.html5',
 	'Library/jcrop/js/jquery.Jcrop.min',
 	'css!Library/jcrop/css/jquery.Jcrop.css'
 ],
@@ -458,6 +456,16 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		didInsertElement: function() {
 			var that = this;
 
+			require([
+				'order!Library/plupload/js/plupload',
+				'order!Library/plupload/js/plupload.html5'],
+				function() {
+					that._initializeUploader();
+				});
+		},
+
+		_initializeUploader: function() {
+			var that = this;
 			this._uploader = new plupload.Uploader({
 				runtimes : 'html5',
 				browse_button : this._browseButtonId,
@@ -493,6 +501,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			this._uploader.init();
 			this._uploader.refresh();
+
+			this._uploaderInitialized();
+		},
+		_uploaderInitialized: function() {
+
 		},
 		fileUploaded: function(resourceUuid) {
 			this.set('value', resourceUuid);
@@ -553,7 +566,9 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				width: this.imagePreviewMaximumDimensions.width + 'px',
 				height: this.imagePreviewMaximumDimensions.height + 'px'
 			});
+		},
 
+		_uploaderInitialized: function() {
 			this._initializeFilePreview();
 		},
 
@@ -565,6 +580,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		_initializeFilePreview: function() {
 			var that = this;
 			var $thumbnailHolder = this.$().find('.typo3-uploadthumbnail');
+			if (!this._uploader) return;
 
 			this.$().find('input[type=file][id^="' + this._uploader.id + '"]').change(function(event) {
 				$thumbnailHolder.empty();
@@ -580,7 +596,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 						reader.onload = function(event) {
 
 							var binaryData = event.target.result;
-							var imageObjForFindingSize = new Image();
+							var imageObjForFindingSize = new window.Image();
 							imageObjForFindingSize.onload = function() {
 								var $image = $('<img />')
 									.addClass('typo3-fileupload-thumbnail')

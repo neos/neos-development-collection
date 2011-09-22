@@ -37,6 +37,11 @@ function() {
 					T3.Common.Notification.error('ExtDirect error: ' + error.message);
 				});
 
+				// Because our ExtJS styles work only locally and not globally,
+				// this breaks the extjs quicktip styling. Thus, we disable them
+				// (affects Aloha)
+				Ext.QuickTips.disable();
+
 				ExtDirectInitialization();
 			});
 		}
