@@ -610,7 +610,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		 * we deserialize the JSON string and fill _imageUuid, _scaleOptions and _cropOptions
 		 */
 		_onValueChange: function() {
-			var that = this,
+			var imageVariant, that = this,
 				value = this.get('value');
 
 			if (value && value !== '') {
@@ -622,7 +622,9 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					value = value.substr(4);
 				}
 
-				var imageVariant = JSON.parse(value);
+				if (T3.Common.Util.isValidJsonString(value)) {
+					imageVariant = JSON.parse(value);
+				}
 
 				if (!imageVariant) return;
 
@@ -648,7 +650,10 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			if (value && value !== '') {
 				$.get('/typo3/content/imageWithMetadata/' + this.get('_imageUuid'), function(result) {
-					var metadata = JSON.parse(result);
+
+					if (T3.Common.Util.isValidJsonString(result)) {
+						var metadata = JSON.parse(result);
+					}
 					if (!metadata || !metadata.resourceUri || !metadata.originalSize || !metadata.originalSize.width || !metadata.originalSize.height || !metadata.previewSize || !metadata.previewSize.width || !metadata.previewSize.height) {
 						T3.Common.Notification.error('Tried to fetch image metadata: Unexpected result format.');
 						return;
@@ -872,7 +877,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 	Renderer.Image = SC.View.extend({
 		didInsertElement: function() {
-			var that = this;
+			var imageVariant, that = this;
 
 			var value = this.get('value');
 			if (value && value !== '') {
@@ -880,7 +885,9 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					value = value.substr(4);
 				}
 
-				var imageVariant = JSON.parse(value);
+				if (T3.Common.Util.isValidJsonString(value)) {
+					imageVariant = JSON.parse(value);
+				}
 
 				if (!imageVariant) return;
 
