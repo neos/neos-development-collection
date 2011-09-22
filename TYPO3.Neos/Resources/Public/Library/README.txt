@@ -49,3 +49,7 @@ Sproutcore 2.0 beta 3 from http://blog.sproutcore.com/sproutcore-2-0-beta-3-rele
 
 
 CodeMirror 2.13 from http://codemirror.net/
+
+
+Chosen 0.9.3 from http://harvesthq.github.com/chosen/
+Only the jquery files / needed files are added (skipped coffeescript / prototype / examples)
