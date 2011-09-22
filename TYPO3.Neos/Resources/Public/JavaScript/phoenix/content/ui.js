@@ -336,6 +336,42 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		}
 	});
 
+	Editor.Selectbox = SC.View.extend({
+		classNames: ['typo3-form-selectbox'],
+		tagName: 'select',
+		attributeBindings: ['disabled', 'size', 'value', 'values'],
+		type: 'text',
+		value: '',
+		values: {},
+		allowEmpty: false,
+		placeholder: '',
+
+		didInsertElement: function() {
+			var that = this;
+
+			if (this.allowEmpty) {
+				this.$().append($('<option />').attr('value', '').text(this.placeholder));
+			} else if (this.placeholder) {
+				this.$().attr('data-placeholder', this.placeholder);
+			}
+
+			for (var optionKey in this.values) {
+				this.$().append($('<option />').attr('value', optionKey).text(this.values[optionKey]));
+			}
+			this.$().val(this.get('value'));
+
+			require([
+					'Library/chosen/chosen/chosen.jquery.min',
+					'css!Library/chosen/chosen/chosen.css'
+				], function() {
+					that.$().addClass('chzn-select').chosen().change(function() {
+						that.set('value', that.$().val());
+					});
+				}
+			);
+		}
+	});
+
 	Editor.HtmlEditor = PopoverButton.extend({
 
 		_editorInitialized: false,

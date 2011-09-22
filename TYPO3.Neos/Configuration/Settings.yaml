@@ -198,3 +198,8 @@ TYPO3:
           class: T3.Content.UI.Editor.DateField
         renderer:
           class: T3.Content.UI.Renderer.Date
+      enum:
+        editor:
+          class: T3.Content.UI.Editor.Selectbox
+        renderer:
+          class: T3.Content.UI.Renderer.Text
