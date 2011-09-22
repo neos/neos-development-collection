@@ -169,7 +169,7 @@ function() {
 				modulesBinding: 'T3.Common.ModulesController.filteredModules',
 				valueBinding: 'T3.Common.ModulesController.filterValue'
 			});
-			launcher.appendTo($('#t3-ui-top'));
+			launcher.appendTo($('#t3-launcher'));
 		},
 
 		_initializeFooter: function() {
