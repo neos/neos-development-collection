@@ -1,3 +1,4 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
 <!DOCTYPE html>
 <html version="HTML+RDFa 1.1" xmlns:typo3="http://www.typo3.org/ns/2011/FLOW3/Packages/TYPO3/Content/">
 	<!--
@@ -14,7 +15,7 @@
 	<body {bodyAttributes}>
 
 		<!-- TODO: add the page properties in a more clever way, and only when being in backend... -->
-		<div style="display:none;" id="t3-page-metainformation"  about="{node.contextPath}" data-title="{node.properties.title}" data-__workspacename="{node.workspace.name}" data-__siteroot="/sites/{node.context.currentSite.nodeName}@{node.context.workspace.name}" data-__sitename="{node.context.currentSite.name}"></div>
+		<t:contentElement node="{node}" page="1" />
 
 		{body -> f:format.raw()}
 

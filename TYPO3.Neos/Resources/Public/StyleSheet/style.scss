@@ -20,7 +20,9 @@ body.t3-ui-controls-active {
 	margin-top: $menu-height + $launcher-height + $toolbar-height;
 	margin-left: 0;
 }
-
+#t3-page-metainformation {
+	display: none;
+}
 #t3-footer,
 #t3-toolbar,
 #t3-inspector {
@@ -577,6 +579,5 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 .tc-1-1-1 .c-3 {
 	float: right;
 }
-
 
 @import "style-workInProgress";

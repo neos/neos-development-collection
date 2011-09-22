@@ -16,6 +16,120 @@ function(launcherTemplate) {
 	var $ = window.alohaQuery || window.jQuery;
 
 	/**
+	 * T3.Content.Model.AbstractBlock
+	 */
+	var AbstractBlock = SC.Object.extend({
+		_hidden: false,
+		__title: null,
+		__originalValues: null,
+		__modified: false,
+		__publishable: false,
+		__status: '',
+		__titleAndModifcationState: '',
+		__nodePath: null,
+		__workspacename: null,
+			// If false we don't fire any change notifications
+		__valuesInitialized: false,
+
+		/**
+		 * @var {boolean}
+		 * A node is publishable if it is not in the live workspace.
+		 */
+		__publishable: function() {
+			return (this.get('__workspacename') !== 'live');
+		}.property('__workspacename').cacheable(),
+
+		/**
+		 * @var {String}
+		 * A concatenation of title and status for the breadcrumb menu.
+		 * Triggered each time "__status" and "__title" properties change.
+		 */
+		__titleAndModifcationState: function() {
+			return this.get('__status') === '' ? this.get('__title') : this.get('__title') + ' (' + this.get('__status') + ')';
+		}.property('__status', '__title').cacheable(),
+
+		_initializePropertiesFromSchema: function(schema) {
+			var that = this;
+			this.__originalValues = {};
+			// HACK: Add observer for each element, as we do not know how to add one observer for *all* elements.
+			$.each(schema.properties, function(key) {
+				that.__originalValues[key] = null;
+				that.addObserver(key, that, that._somePropertyChanged);
+			});
+		},
+
+		/**
+		 * Triggered each time "publishable" and "modified" properties change.
+		 *
+		 * If something is *publishable* and *modified*, i.e. is already saved
+		 * in the current workspace AND has more local changes, the system
+		 * will NOT publish the not-visible changes.
+		 */
+		_onStateChange: function() {
+			if (this.get('__modified')) {
+				this.set('__status', 'modified');
+				Changes.addChange(this);
+				PublishableBlocks.remove(this);
+			} else if (this.get('__publishable')) {
+				this.set('__status', 'publishable');
+				Changes.removeChange(this);
+				PublishableBlocks.add(this);
+			} else {
+				this.set('__status', '');
+				Changes.removeChange(this);
+				PublishableBlocks.remove(this);
+			}
+		}.observes('__publishable', '__modified'),
+
+		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
+		_somePropertyChanged: function(that, propertyName) {
+			if (!this.__valuesInitialized) {
+				return;
+			}
+			var hasChanges = false;
+
+			// We need to register this block as changed even if it is
+			// already inside, so that the local store can be updated
+			// with the new content.
+			Changes.addChange(this);
+
+			$.each(this.__originalValues, function(key, value) {
+				if (that.get(key) !== value) {
+					hasChanges = true;
+				}
+			});
+			this.set('__modified', hasChanges);
+		},
+
+		revertChanges: function() {
+			var that = this;
+			$.each(this.__originalValues, function(key, oldValue) {
+				that.set(key, oldValue);
+			});
+		},
+
+		/**
+		 * Returns a simple JSON object containing the simple and cleaned
+		 * attributes for the block
+		 */
+		getCleanedUpAttributes: function() {
+			var that = this, cleanedAttributes = {};
+			$.each(this.__originalValues, function(key) {
+				cleanedAttributes[key] = that.get(key);
+			});
+			return cleanedAttributes;
+		},
+
+		recordCurrentStateAsOriginal: function() {
+			var that = this;
+			$.each(this.__originalValues, function(key) {
+				that.__originalValues[key] = that.get(key);
+			});
+			this.__valuesInitialized = true;
+		}
+	});
+
+	/**
 	 * T3.Content.Model.Block
 	 *
 	 * The most central model class, which represents a single content element, and wraps and
@@ -27,34 +141,20 @@ function(launcherTemplate) {
 	 * _[varname]: TYPO3CR Node::set[Varname](...)
 	 * __[varname]: Purely internal stuff, like the context node path
 	 */
-	var Block = SC.Object.extend({
-		_alohaBlockId: null,
-		_title: null,
-		_hidden: false,
-		_originalValues: null,
-		_modified: false,
-		_publishable: false,
-		_status: '',
-		_titleAndModifcationState: '',
+	var Block = AbstractBlock.extend({
+		__alohaBlockId: null,
 
-		// from aloha
-		__workspacename: null,
+			// As the DOM is all lowercase the data attribute is all lowercase and we need it in camel case,
+			// that's why we use the below hack
+		__nodepath: null,
+		_setProperCamelCaseNodePath: function() {
+			this.set('__nodePath', this.get('__nodepath'));
+		}.observes('__nodepath'),
 
-		/**
-		 * @var {String}
-		 * The TYPO3CR node path of the block
-		 */
-		nodePath: function() {
-			return this.get('about');
-		}.property('about').cacheable(),
-
-		/**
-		 * @var {boolean}
-		 * A node is publishable if it is not in the live workspace.
-		 */
-		_publishable: function() {
-			return (this.get('__workspacename') !== 'live');
-		}.property('__workspacename').cacheable(),
+		schema: function() {
+			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('__alohaBlockId'));
+			return alohaBlock.getSchema();
+		}.property().cacheable(),
 
 		/**
 		 * Get the actual content element wrapper as jQuery object
@@ -63,9 +163,37 @@ function(launcherTemplate) {
 		 * @return {jQuery}
 		 */
 		getContentElement: function() {
-			if (this._alohaBlockId) {
-				return $('#' + this._alohaBlockId + ' > div:last');
+			if (this.__alohaBlockId) {
+				return $('#' + this.__alohaBlockId + ' > div:last');
 			}
+		},
+
+		_onStatusChange: function() {
+			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('__alohaBlockId'));
+			alohaBlock.attr('__status', this.get('__status'));
+		}.observes('__status'),
+
+		_onHiddenChange: function(that, propertyName) {
+			var contentElementContainer = $('#' + that.__alohaBlockId + ' > .t3-contentelement').first();
+			if (this.get('_hidden')) {
+				contentElementContainer.addClass('t3-contentelement-hidden');
+			} else {
+				contentElementContainer.removeClass('t3-contentelement-hidden');
+			}
+		}.observes('_hidden'),
+
+		_updateChangedPropertyInAlohaBlock: function(propertyName) {
+			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('__alohaBlockId'));
+				// Save original property back to Aloha Block
+				if (!this._disableAlohaBlockUpdate) {
+					alohaBlock.attr(propertyName, this.get(propertyName));
+				}
+		},
+
+		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
+		_somePropertyChanged: function(that, propertyName) {
+			this._updateChangedPropertyInAlohaBlock(propertyName);
+			this._super(that, propertyName);
 		},
 
 		/**
@@ -73,8 +201,8 @@ function(launcherTemplate) {
 		 * @return {void}
 		 */
 		hideHandle: function(handleIdentifier) {
-			if (this._alohaBlockId) {
-				$('#' + this._alohaBlockId + ' > .t3-' + handleIdentifier + '-handle').addClass('t3-handle-hidden');
+			if (this.__alohaBlockId) {
+				$('#' + this.__alohaBlockId + ' > .t3-' + handleIdentifier + '-handle').addClass('t3-handle-hidden');
 			}
 		},
 
@@ -83,152 +211,40 @@ function(launcherTemplate) {
 		 * @return {void}
 		 */
 		showHandle: function(handleIdentifier) {
-			if (this._alohaBlockId) {
-				$('#' + this._alohaBlockId + ' > .t3-' + handleIdentifier + '-handle').removeClass('t3-handle-hidden');
+			if (this.__alohaBlockId) {
+				$('#' + this.__alohaBlockId + ' > .t3-' + handleIdentifier + '-handle').removeClass('t3-handle-hidden');
 			}
-		},
-
-		/**
-		 * @var {String}
-		 * A concatenation of title and status for the breadcrumb menu.
-		 * Triggered each time "_status" and "_title" properties change.
-		 */
-		_titleAndModifcationState: function() {
-			return this.get('_status') === '' ? this.get('_title') : this.get('_title') + ' (' + this.get('_status') + ')';
-		}.property('_status', '_title').cacheable(),
-
-		/**
-		 * Triggered each time "publishable" and "modified" properties change.
-		 *
-		 * If something is *publishable* and *modified*, i.e. is already saved
-		 * in the current workspace AND has more local changes, the system
-		 * will NOT publish the not-visible changes.
-		 */
-		_onStateChange: function() {
-			if (this.get('_modified')) {
-				this.set('_status', 'modified');
-				Changes.addChange(this);
-				PublishableBlocks.remove(this);
-			} else if (this.get('_publishable')) {
-				this.set('_status', 'publishable');
-				Changes.removeChange(this);
-				PublishableBlocks.add(this);
-			} else {
-				this.set('_status', '');
-				Changes.removeChange(this);
-				PublishableBlocks.remove(this);
-			}
-		}.observes('_publishable', '_modified'),
-
-		_hiddenChanges: function(that, propertyName) {
-			var contentElementContainer = $('#' + that._alohaBlockId + ' > .t3-contentelement').first();
-			if (this.get('_hidden')) {
-				contentElementContainer.addClass('t3-contentelement-hidden');
-			} else {
-				contentElementContainer.removeClass('t3-contentelement-hidden');
-			}
-		}.observes('_hidden'),
-
-		_onStatusChange: function() {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
-			alohaBlock.attr('_status', this.get('_status'));
-		}.observes('_status'),
-
-		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
-		_somePropertyChanged: function(that, propertyName) {
-			this._updateChangedPropertyInAlohaBlock(propertyName);
-			var hasChanges = false;
-
-			// We need to register this block as changed even if it is
-			// already inside, so that the local store can be updated
-			// with the new content.
-			Changes.addChange(this);
-
-			$.each(this._originalValues, function(key, value) {
-				if (that.get(key) !== value) {
-					hasChanges = true;
-				}
-			});
-			this.set('_modified', hasChanges);
-		},
-
-		_updateChangedPropertyInAlohaBlock: function(propertyName) {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
-				// Save original property back to Aloha Block
-				if (!this._disableAlohaBlockUpdate) {
-					alohaBlock.attr(propertyName, this.get(propertyName));
-				}
-		},
-
-		schema: function() {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('_alohaBlockId'));
-			return alohaBlock.getSchema();
-		}.property().cacheable(),
-
-		revertChanges: function() {
-			var that = this;
-			$.each(this._originalValues, function(key, oldValue) {
-				that.set(key, oldValue);
-			});
-		},
-
-		/**
-		 * Returns a simple JSON object containing the simple and cleaned
-		 * attributes for the block
-		 */
-		getCleanedUpAttributes: function() {
-			var that = this, cleanedAttributes = {};
-			$.each(this._originalValues, function(key) {
-				cleanedAttributes[key] = that.get(key);
-			});
-
-			return cleanedAttributes;
-		},
-		recordCurrentStateAsOriginal: function() {
-			var that = this;
-			$.each(this._originalValues, function(key) {
-				that._originalValues[key] = that.get(key);
-			});
 		},
 
 		// HACK for making updates of editables work...
 		_doNotUpdateAlohaBlock: function() {
 			this._disableAlohaBlockUpdate = true;
 		},
+
 		_enableAlohaBlockUpdateAgain: function() {
 			this._disableAlohaBlockUpdate = false;
 		}
 	});
 
-	var PageBlock = Block.extend({
-		_title: 'Page',
-		init: function() {
-			var $pageMetainformation = $('#t3-page-metainformation');
-			this.set('title', $pageMetainformation.attr('data-title'));
-			this.set('about', $pageMetainformation.attr('about'));
-			this.set('__workspacename', $pageMetainformation.attr('data-__workspacename'));
-			this._originalValues = {
-				title: null,
-				about: null
-			};
-			this.recordCurrentStateAsOriginal();
-			this.addObserver('title', this, this._somePropertyChanged);
-		},
+	var PageBlock = AbstractBlock.extend({
+		__title: 'Page',
 
-		_updateChangedPropertyInAlohaBlock: function() {},
-		_onStatusChange: function() {},
 		schema: function() {
-			return [{
-				key: 'Main',
-				properties: [
-					{
-						key: 'title',
-						type: 'string',
-						label: 'Title'
-					}
-				]
-			}];
-		}.property().cacheable()
+			return T3.Configuration.Schema['TYPO3.TYPO3:Page'];
+		}.property().cacheable(),
+
+		init: function() {
+			var that = this,
+				$pageMetainformation = $('#t3-page-metainformation');
+
+			this._initializePropertiesFromSchema(this.get('schema'));
+			$.each(this.get('schema').properties, function(key) {
+				that.set(key, $pageMetainformation.data(key.toLowerCase()));
+			});
+			this.set('__nodePath', $pageMetainformation.attr('data-__nodepath'));
+			this.set('__workspacename', $pageMetainformation.attr('data-__workspacename'));
+			this.recordCurrentStateAsOriginal();
+		}
 	});
 
 	/**
@@ -242,15 +258,17 @@ function(launcherTemplate) {
 	var BlockManager = SC.Object.create({
 		_blocks: {},
 		_blocksByNodePath: {},
+		_pageBlock: null,
 
 		initialize: function() {
 			this._blocks = {};
 			this._blocksByNodePath = {};
+			this._pageBlock = PageBlock.create();
 
 			var scope = this;
-			$('*[about]').each(function() {
+			$('*[data-__nodepath]').each(function() {
 				// Just fetch the block a single time so that it is initialized.
-				scope.getBlockByNodePath($(this).attr('about'));
+				scope.getBlockByNodePath($(this).attr('data-__nodepath'));
 			});
 		},
 
@@ -283,18 +301,11 @@ function(launcherTemplate) {
 			});
 
 			var blockProxy = Block.create($.extend({}, attributes, {
-				_alohaBlockId: blockId,
-				_title: alohaBlock.getTitle(),
-				_originalValues: null,
+				__alohaBlockId: blockId,
+				__title: alohaBlock.getTitle(),
 				init: function() {
-					var that = this;
-					this._originalValues = {};
-
-					// HACK: Add observer for each element, as we do not know how to add one observer for *all* elements.
-					$.each(attributes, function(key, value) {
-						that._originalValues[key] = value;
-						that.addObserver(key, that, that._somePropertyChanged);
-					});
+					this._initializePropertiesFromSchema(alohaBlock.getSchema());
+					this.recordCurrentStateAsOriginal();
 				}
 			}));
 			$.each(internalAttributes, function(key, value) {
@@ -303,7 +314,7 @@ function(launcherTemplate) {
 
 			this._blocks[blockId] = blockProxy;
 
-			this._blocksByNodePath[blockProxy.get('nodePath')] = blockProxy;
+			this._blocksByNodePath[blockProxy.get('__nodePath')] = blockProxy;
 			return this._blocks[blockId];
 		},
 
@@ -317,7 +328,7 @@ function(launcherTemplate) {
 			if(this._blocksByNodePath[nodePath]) {
 				return this._blocksByNodePath[nodePath];
 			}
-			var alohaBlock = Aloha.Block.BlockManager.getBlock($('[about="' + nodePath + '"]'));
+			var alohaBlock = Aloha.Block.BlockManager.getBlock($('[data-__nodepath="' + nodePath + '"]'));
 
 			if (alohaBlock) {
 				return this.getBlockProxy(alohaBlock);
@@ -336,10 +347,8 @@ function(launcherTemplate) {
 	 */
 	var BlockSelection = SC.Object.create({
 		blocks: [],
-		_pageBlock: null,
 
 		initialize: function() {
-			this._pageBlock = PageBlock.create();
 			this.updateSelection();
 		},
 
@@ -365,7 +374,7 @@ function(launcherTemplate) {
 					return T3.Content.Model.BlockManager.getBlockProxy(alohaBlock);
 				});
 			}
-			blocks.unshift(this._pageBlock);
+			blocks.unshift(BlockManager.get('_pageBlock'));
 			this.set('blocks', blocks);
 			this._updating = false;
 		},
@@ -382,10 +391,10 @@ function(launcherTemplate) {
 		}.property('selectedBlock').cacheable(),
 
 		selectItem: function(item) {
-			if (item === this._pageBlock) {
+			if (item === BlockManager.get('_pageBlock')) {
 				this.updateSelection([]);
 			} else {
-				var block = Aloha.Block.BlockManager.getBlock(item.get('_alohaBlockId'));
+				var block = Aloha.Block.BlockManager.getBlock(item.get('__alohaBlockId'));
 				if (block) {
 					window.setTimeout(function() {
 						block.activate();
@@ -409,6 +418,7 @@ function(launcherTemplate) {
 			extDirectFn.apply(window, args);
 		})
 	};
+
 	var PublishableBlocks = SC.ArrayProxy.create({
 
 		content: [],
@@ -437,7 +447,7 @@ function(launcherTemplate) {
 			sendAllToServer(
 				this,
 				function(block) {
-					return [block.get('nodePath'), 'live'];
+					return [block.get('__nodePath'), 'live'];
 				},
 				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode,
 				function() {
@@ -489,19 +499,27 @@ function(launcherTemplate) {
 		_readFromLocalStore: function() {
 			if (!this._supports_html5_storage()) return;
 
-			var serializedBlocks = window.localStorage['page_' + $('#t3-page-metainformation').attr('about')];
+			var serializedBlocks = window.localStorage['page_' + $('#t3-page-metainformation').attr('data-__nodepath')];
 
 			if (serializedBlocks) {
 				var blocks = JSON.parse(serializedBlocks);
 
 				blocks.forEach(function(serializedBlock) {
-					var blockProxy = T3.Content.Model.BlockManager.getBlockByNodePath(serializedBlock.about);
-					if (blockProxy) {
+					if (serializedBlock.__nodePath === $('#t3-page-metainformation').attr('data-__nodepath')) {
+							// Serialized block is the page block
+						var pageBlock = BlockManager.get('_pageBlock');
 						$.each(serializedBlock, function(k, v) {
-							blockProxy.set(k, v);
+							pageBlock.set(k, v);
 						});
 					} else {
-						// TODO: warning: Somehow the block was not found on the page anymore
+						var blockProxy = T3.Content.Model.BlockManager.getBlockByNodePath(serializedBlock.__nodePath);
+						if (blockProxy) {
+							$.each(serializedBlock, function(k, v) {
+								blockProxy.set(k, v);
+							});
+						} else {
+							// TODO: warning: Somehow the block was not found on the page anymore
+						}
 					}
 				});
 			}
@@ -513,10 +531,13 @@ function(launcherTemplate) {
 			if (!this._loadedFromLocalStore) return;
 
 			var cleanedUpBlocks = this.get('[]').map(function(block) {
-				return block.getCleanedUpAttributes();
+				return $.extend(
+					block.getCleanedUpAttributes(),
+					{__nodePath: block.get('__nodePath')}
+				);
 			});
 
-			window.localStorage['page_' + $('#t3-page-metainformation').attr('about')] = JSON.stringify(cleanedUpBlocks);
+			window.localStorage['page_' + $('#t3-page-metainformation').attr('data-__nodepath')] = JSON.stringify(cleanedUpBlocks);
 		}.observes('[]'),
 
 		_supports_html5_storage: function() {
@@ -539,8 +560,7 @@ function(launcherTemplate) {
 					block.recordCurrentStateAsOriginal();
 
 					var attributes = block.getCleanedUpAttributes();
-					attributes['__contextNodePath'] = attributes['about'];
-					delete attributes['about'];
+					attributes['__contextNodePath'] = block.get('__nodePath');
 					delete attributes['block-type'];
 
 					return [attributes];

@@ -25,19 +25,7 @@ TYPO3:
 
   TYPO3CR:
     contentTypes:
-
-
-      'TYPO3.TYPO3:Page':
-        superTypes: ['TYPO3.TYPO3CR:Folder']
-        label: 'Page'
-
-
-      'TYPO3.TYPO3:Section':
-        label: 'Section'
-
-
-      'TYPO3.TYPO3:ContentObject':
-        label: 'Abstract content object'
+      'TYPO3.TYPO3:AbstractNode':
         properties:
           _hidden:
             type: boolean
@@ -56,7 +44,6 @@ TYPO3:
             label: 'Hidden after date'
             category: 'visibility'
             priority: 11
-
         propertyGroups:
           visibility:
             label: 'Visibility'
@@ -100,6 +87,29 @@ TYPO3:
             priority: 10
 
 
+      'TYPO3.TYPO3:Page':
+        superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.TYPO3:AbstractNode']
+        label: 'Page'
+        properties:
+          title:
+            type: string
+            label: 'Page title'
+            category: 'page'
+        propertyGroups:
+          page:
+            label: 'Page options'
+            priority: 10
+
+
+      'TYPO3.TYPO3:Section':
+        label: 'Section'
+
+
+      'TYPO3.TYPO3:ContentObject':
+        superTypes: ['TYPO3.TYPO3:AbstractNode']
+        label: 'Abstract content object'
+
+
       'TYPO3.TYPO3:Text':
         superTypes: ['TYPO3.TYPO3:ContentObject']
         label: 'Text'
@@ -139,7 +149,7 @@ TYPO3:
 
       'TYPO3.TYPO3:Html':
         superTypes: ['TYPO3.TYPO3:ContentObject']
-        label: 'HTML foo'
+        label: 'HTML'
         properties:
           source:
             type: string
@@ -147,10 +157,7 @@ TYPO3:
             placeholder: '<p>Enter HTML here</p>'
             category: html
             userInterface:
-              editor:
-                class: T3.Content.UI.Editor.HtmlEditor
-              renderer:
-                class: T3.Content.UI.Renderer.Html
+              class: T3.Content.UI.Editor.HtmlEditor
 
         propertyGroups:
           html:
@@ -189,27 +196,12 @@ TYPO3:
   TYPO3:
     userInterface:
       string:
-        editor:
-          class: T3.Content.UI.Editor.TextField
-        renderer:
-          class: T3.Content.UI.Renderer.Text
+        class: T3.Content.UI.Editor.TextField
       boolean:
-        editor:
-          class: T3.Content.UI.Editor.Checkbox
-        renderer:
-          class: T3.Content.UI.Renderer.Boolean
+        class: T3.Content.UI.Editor.Checkbox
       'TYPO3\TYPO3\Domain\Model\Media\ImageVariant':
-        editor:
-          class: T3.Content.UI.Editor.Image
-        renderer:
-          class: T3.Content.UI.Renderer.Image
+        class: T3.Content.UI.Editor.Image
       date:
-        editor:
-          class: T3.Content.UI.Editor.DateField
-        renderer:
-          class: T3.Content.UI.Renderer.Date
+        class: T3.Content.UI.Editor.DateField
       enum:
-        editor:
-          class: T3.Content.UI.Editor.Selectbox
-        renderer:
-          class: T3.Content.UI.Renderer.Text
+        class: T3.Content.UI.Editor.Selectbox

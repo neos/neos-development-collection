@@ -49,14 +49,15 @@ class ContentElementWrappingService {
 	 *
 	 * @param TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $content
+	 * @param boolean $isPage
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content) {
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $isPage) {
 		// TODO: If not in backend, return content directly (needs to be discussed)
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
-		$tagBuilder->addAttribute('about', $node->getContextPath());
+		$tagBuilder->forceClosingTag(TRUE);
+		$tagBuilder->addAttribute('data-__nodepath', $node->getContextPath());
 		$tagBuilder->addAttribute('data-__workspacename', $node->getWorkspace()->getName());
-
 
 		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
 
@@ -87,14 +88,24 @@ class ContentElementWrappingService {
 			$tagBuilder->addAttribute('data-' . $propertyName, $propertyValue);
 		}
 
-			// add CSS classes
-		$cssClasses = array('t3-contentelement');
-		$cssClasses[] = str_replace(array(':', '.'), '-', strtolower($contentType->getName()));
-		if ($node->isHidden()) {
-			$cssClasses[] = 't3-contentelement-hidden';
-		}
+		if (!$isPage) {
+				// add CSS classes
+			$cssClasses = array('t3-contentelement');
+			$cssClasses[] = str_replace(array(':', '.'), '-', strtolower($contentType->getName()));
+			if ($node->isHidden()) {
+				$cssClasses[] = 't3-contentelement-hidden';
+			}
 
-		$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
+			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
+		} else {
+			$tagBuilder->addAttribute('id', 't3-page-metainformation');
+			$tagBuilder->addAttribute('data-__sitename', $node->getContext()->getCurrentSite()->getName());
+			$tagBuilder->addAttribute('data-__siteroot', sprintf(
+				'/sites/%s@%s',
+				$node->getContext()->getCurrentSite()->getNodeName(),
+				$node->getContext()->getWorkspace()->getName()
+			));
+		}
 
 		$tagBuilder->setContent($content);
 		return $tagBuilder->render();

@@ -200,7 +200,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
-		template: SC.Handlebars.compile('{{item._titleAndModifcationState}}'),
+		template: SC.Handlebars.compile('{{item.__titleAndModifcationState}}'),
 		click: function(event) {
 			var item = this.get('item');
 			T3.Content.Model.BlockSelection.selectItem(item);
@@ -296,20 +296,21 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
 			}
 
-			var editorConfigurationDefinition = typeDefinition.editor;
-			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface.editor) {
-				editorConfigurationDefinition = $.extend(editorConfigurationDefinition, this.propertyDefinition.userInterface.editor);
+			var editorConfigurationDefinition = typeDefinition;
+			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface) {
+				editorConfigurationDefinition = $.extend(editorConfigurationDefinition, this.propertyDefinition.userInterface);
 			}
 
 			var editorClass = SC.getPath(editorConfigurationDefinition['class']);
 			if (!editorClass) {
-				throw 'Editor class "' + typeDefinition.editor['class'] + '" not found';
+				throw 'Editor class "' + typeDefinition['class'] + '" not found';
 			}
 
 			var classOptions = $.extend({
 				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
+
 			}, this.propertyDefinition.options || {});
-			classOptions = $.extend(classOptions, typeDefinition.editor.options || {});
+			classOptions = $.extend(classOptions, typeDefinition.options || {});
 
 			var editor = editorClass.create(classOptions);
 			this.appendChild(editor);
@@ -1096,7 +1097,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				ddGroup: 'nodes',
 
 				root: {
-					id: $('#t3-page-metainformation').attr('about'), // TODO: This and the following properties might later come from the SproutCore model...
+					id: $('#t3-page-metainformation').attr('data-__nodepath'), // TODO: This and the following properties might later come from the SproutCore model...
 					text: $('#t3-page-metainformation').data('title'),
 					draggable: false
 				},
@@ -1160,4 +1161,3 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		Image: Image
 	};
 });
-

@@ -24,6 +24,9 @@ body.t3-ui-controls-active {
   margin-top: 92px;
   margin-left: 0; }
 
+#t3-page-metainformation {
+  display: none; }
+
 #t3-footer,
 #t3-toolbar,
 #t3-inspector {

@@ -72,11 +72,11 @@ class TwoColumnTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 		$xml = $this->renderNode($twoColumnNode);
 
-		$this->assertSelectCount('div[about="/sites/testSite/quux@user-foo"] div[about="/sites/testSite/quux/left/sadasdasd@user-foo"]', 1, $xml, 'Content element should render left column');
-		$this->assertSelectCount('div[about="/sites/testSite/quux@user-foo"] div[about="/sites/testSite/quux/right/sadasdasd@user-foo"]', 1, $xml, 'Content element should render right column');
+		$this->assertSelectCount('div[data-__nodepath="/sites/testSite/quux@user-foo"] div[data-__nodepath="/sites/testSite/quux/left/sadasdasd@user-foo"]', 1, $xml, 'Content element should render left column');
+		$this->assertSelectCount('div[data-__nodepath="/sites/testSite/quux@user-foo"] div[data-__nodepath="/sites/testSite/quux/right/sadasdasd@user-foo"]', 1, $xml, 'Content element should render right column');
 
-		$this->assertSelectRegExp('div[about="/sites/testSite/quux/left/sadasdasd@user-foo"] h1', '/My headline left column/', 1, $xml, 'Content element should render nested content in left column');
-		$this->assertSelectRegExp('div[about="/sites/testSite/quux/right/sadasdasd@user-foo"] h1', '/My headline right column/', 1, $xml, 'Content element should render nested content in right column');
+		$this->assertSelectRegExp('div[data-__nodepath="/sites/testSite/quux/left/sadasdasd@user-foo"] h1', '/My headline left column/', 1, $xml, 'Content element should render nested content in left column');
+		$this->assertSelectRegExp('div[data-__nodepath="/sites/testSite/quux/right/sadasdasd@user-foo"] h1', '/My headline right column/', 1, $xml, 'Content element should render nested content in right column');
 	}
 
 	/**
@@ -96,9 +96,9 @@ class TwoColumnTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 		$xml = $this->renderNode($twoColumnNode);
 
-		$this->assertSelectCount('div[about="/sites/testSite/quux@user-foo"] div[about="/sites/testSite/quux/left/sadasdasd@user-foo"]', 1, $xml, 'Content element should render left column');
+		$this->assertSelectCount('div[data-__nodepath="/sites/testSite/quux@user-foo"] div[data-__nodepath="/sites/testSite/quux/left/sadasdasd@user-foo"]', 1, $xml, 'Content element should render left column');
 
-		$this->assertSelectRegExp('div[about="/sites/testSite/quux/left/sadasdasd@user-foo"] h1', '/My headline left column/', 1, $xml, 'Section should render nested content in left column');
+		$this->assertSelectRegExp('div[data-__nodepath="/sites/testSite/quux/left/sadasdasd@user-foo"] h1', '/My headline left column/', 1, $xml, 'Section should render nested content in left column');
 		$this->assertSelectCount('.t3-two-column-right .t3-create-new-content', 1, $xml, 'Section should render button in right column');
 	}
 
