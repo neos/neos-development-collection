@@ -838,6 +838,11 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 .t3-inspector-form .typo3-fileupload-uploadbutton {
   display: none; }
 
+.typo3-image.typo3-image-position-left {
+  float: left; }
+.typo3-image.typo3-image-position-right {
+  float: right; }
+
 .t3-htmleditor-window {
   width: 800px;
   height: 400px;

@@ -170,6 +170,18 @@ button.t3-create-new-content {
 	display: none;
 }
 
+// Image position //
+.typo3-image {
+	&.typo3-image-position-left {
+		float: left;
+	}
+	&.typo3-image-position-right {
+		float: right;
+	}
+}
+
+// Image position //
+
 // HTML editor
 
 .t3-htmleditor-window {
