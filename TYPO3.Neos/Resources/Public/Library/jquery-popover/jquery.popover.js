@@ -30,6 +30,13 @@
 	        + '<div class="content"></div>'
 	        + '</div>').appendTo('body');
 	  $('.header', settings.popover$).append($(settings.header).detach());
+
+	  // TYPO3 SPECIFIC FIX START
+	  if ($('.header', settings.popover$).html() === '') {
+		  $('.header', settings.popover$).detach();
+	  }
+	  // TYPO3 SPECIFIC FIX STOP
+
 	  $('.content', settings.popover$).append($(settings.content).detach());
 
 	  settings.triangle$ = $('.triangle', settings.popover$);
