@@ -87,13 +87,11 @@ TYPO3:
               '75-25': '75% / 25%'
               '25-75': '25% / 75%'
 
-				# TODO: rename "propertyGroups" to "categories" or "groups"?
+        # TODO: rename "propertyGroups" to "categories" or "groups"?
         propertyGroups:
           column:
             label: 'Columns'
             priority: 10
-
-
 
 
       'TYPO3.TYPO3:Text':
@@ -197,8 +195,6 @@ TYPO3:
       'TYPO3\TYPO3\Domain\Model\Media\ImageVariant':
         editor:
           class: T3.Content.UI.Editor.Image
-#          options:
-#
         renderer:
           class: T3.Content.UI.Renderer.Image
       date:
