@@ -46,7 +46,7 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @var array
 	 */
-	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'content', 'parts', 'renderingContext');
+	protected $presentationModelPropertyNames = array('title', 'head', 'body', 'content', 'parts');
 
 	/**
 	 * The type is used to distinguish between different TypoScript Page objects.
@@ -210,19 +210,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 */
 	public function getParts() {
 		return $this->parts;
-	}
-
-	/**
-	 * Returns the rendering context
-	 *
-	 *  - currently neccessary for the JSON identity view helper -
-	 *
-	 * @return \TYPO3\TypoScript\RenderingContext
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @fixme
-	 */
-	public function getRenderingContext() {
-		return $this->renderingContext;
 	}
 
 	/**

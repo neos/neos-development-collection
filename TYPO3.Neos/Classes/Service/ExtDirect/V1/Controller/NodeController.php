@@ -158,6 +158,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		}
 
 		if ($nodeData['contentType'] === 'TYPO3.TYPO3:Page') {
+			// TODO: Remove that and fix it!
 			$this->createEmptySectionNode($newNode);
 		}
 

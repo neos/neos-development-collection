@@ -1,0 +1,13 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+
+<t:contentElement node="{node}">
+	<div class="t3-two-column" style="float:left;width:100%">
+		<div class="t3-two-column-left" style="float:left;width:49%">
+			<t:renderNode node="{node}" path="left" />
+		</div>
+		<div class="t3-two-column-right" style="float:left;width:49%">
+			<t:renderNode node="{node}" path="right" />
+		</div>
+	</div>
+	<div style="clear:both"></div>
+</t:contentElement>

@@ -80,6 +80,12 @@ function() {
 			// Now we need to initialize all dependencies from the BlockManager.
 			T3.Content.Model.BlockSelection.initialize();
 
+			// Initialize "Add Block" buttons
+			// TODO: find a clean place where to put this...
+			$('button.t3-create-new-content').click(function() {
+				T3.Content.Controller.BlockActions.addInside($(this).attr('data-node'), $(this));
+			});
+
 			if (T3.Content.Controller.Preview.get('previewMode')) {
 
 				// HACK around an aloha bug:

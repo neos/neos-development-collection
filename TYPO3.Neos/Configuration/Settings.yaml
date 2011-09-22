@@ -62,6 +62,39 @@ TYPO3:
             label: 'Visibility'
             priority: 1
 
+      'TYPO3.TYPO3:TwoColumn':
+        superTypes: ['TYPO3.TYPO3:ContentObject']
+        label: 'Two column content'
+
+        # TODO: think about name; as the structure is ONLY created on the beginning...
+        structure:
+          left:
+            type: 'TYPO3.TYPO3:Section'
+          right:
+            type: 'TYPO3.TYPO3:Section'
+
+
+        properties:
+          layout:
+            type: string
+            label: 'Layout'
+            # TODO: maybe rename to "group"?
+            category: column
+            # TODO: maybe rename "placeholder" to "defaultContent" or "default"??
+            placeholder: '50-50'
+            options:
+              '50-50': '50% / 50%'
+              '75-25': '75% / 25%'
+              '25-75': '25% / 75%'
+
+				# TODO: rename "propertyGroups" to "categories" or "groups"?
+        propertyGroups:
+          column:
+            label: 'Columns'
+            priority: 10
+
+
+
 
       'TYPO3.TYPO3:Text':
         superTypes: ['TYPO3.TYPO3:ContentObject']
@@ -94,7 +127,7 @@ TYPO3:
 
       'TYPO3.TYPO3:Html':
         superTypes: ['TYPO3.TYPO3:ContentObject']
-        label: 'HTML'
+        label: 'HTML foo'
         properties:
           source:
             type: string
@@ -135,9 +168,11 @@ TYPO3:
             label: 'Action'
             category: pluginSettings
 
-        groups:
+        propertyGroups:
           pluginSettings:
             label: 'Plugin Settings'
+
+
 
   TYPO3:
     userInterface:

@@ -85,6 +85,11 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 			throw new \InvalidArgumentException(__CLASS__ . ' requires a TypoScript Rendering Context to be injected, but got a ' . get_class($renderingContext). '.', 1289556151);
 		}
 
+		$variables = $renderingContext->getTemplateVariableContainer()->getAll();
+
+		$renderingContext = clone $renderingContext;
+		$renderingContext->injectTemplateVariableContainer(new \TYPO3\Fluid\Core\ViewHelper\TemplateVariableContainer($variables));
+
 		$viewHelperVariableContainer = $renderingContext->getViewHelperVariableContainer();
 		$contentContext = $renderingContext->getContentContext();
 		$viewHelperVariableContainer->addOrUpdate('TYPO3\\TYPO3', 'contentContext', $contentContext);
@@ -174,7 +179,9 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 			$this->templateParser->setConfiguration($this->buildParserConfiguration());
 			$parsedTemplate = $this->templateParser->parse($this->getTemplateSource($actionName));
 			$this->startRendering(self::RENDERING_TEMPLATE, $parsedTemplate, $this->baseRenderingContext);
-			return $this->renderSection($this->sectionName, $this->baseRenderingContext->getTemplateVariableContainer()->getAll());
+			$renderedSection = $this->renderSection($this->sectionName, $this->baseRenderingContext->getTemplateVariableContainer()->getAll());
+			$this->stopRendering();
+			return $renderedSection;
 		}
 		return parent::render($actionName);
 	}

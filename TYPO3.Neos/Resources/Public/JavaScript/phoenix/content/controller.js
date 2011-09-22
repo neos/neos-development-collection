@@ -277,11 +277,6 @@ function() {
 		 * which is displayed when a ContentArray is empty.
 		 */
 		init: function() {
-			var that = this;
-			$('button.t3-create-new-content').live('click', function() {
-				that.addInside($(this).attr('data-node'), $(this));
-			});
-
 			if (window.localStorage.clipboard) {
 				this.set('_clipboard', JSON.parse(window.localStorage.clipboard));
 			}

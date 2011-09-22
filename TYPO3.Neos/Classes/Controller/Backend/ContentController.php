@@ -138,12 +138,7 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 			$newNode->moveAfter($referenceNode);
 		}
 
-		$contentType = $this->contentTypeManager->getContentType($type);
-		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
-			if (isset($propertyConfiguration['placeholder'])) {
-				$newNode->setProperty($propertyName, $propertyConfiguration['placeholder']);
-			}
-		}
+		$this->populateNode($newNode);
 
 		$parentFolderNode = $this->findNextParentFolderNode($newNode);
 			// TODO: write Page URI service; it must be easier to retrieve the URI for a node...
@@ -152,6 +147,39 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 				->uriFor('show', array('node' => $parentFolderNode), 'Frontend\Node', 'TYPO3.TYPO3');
 		return '<a rel="typo3-created-new-content" href="' . $newNode->getContextPath() . '" data-page="' . $pageUri . '">Go to new content element</a>';
 	}
+
+	/**
+	 * Populate a given node
+	 *
+	 * Inserts the defined structure for a content type.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @return void
+	 */
+	protected function populateNode(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
+		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
+
+			// Fill Placeholder
+		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
+			if (isset($propertyConfiguration['placeholder'])) {
+				$node->setProperty($propertyName, $propertyConfiguration['placeholder']);
+			}
+		}
+
+		if ($contentType->hasStructure()) {
+			foreach ($contentType->getStructure() as $nodeName => $nodeConfiguration) {
+				if (!isset($nodeConfiguration['type'])) {
+					throw new \Exception('TODO fix exception');
+				}
+
+				$node->createNode($nodeName, $nodeConfiguration['type']);
+
+				// TODO: recurse into nested structure definition
+			}
+		}
+	}
+
+	// TODO: TEAR APART THE CONTENT CONTROLLER!!!
 
 	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
