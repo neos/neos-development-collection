@@ -336,34 +336,57 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		}
 	});
 
-	Editor.Selectbox = SC.View.extend({
+	Editor.SelectboxOption = SC.View.extend({
+		tagName: 'option',
+		attributeBindings: ['value', 'selected'],
+		valueBinding: 'content.value',
+		selectedBinding: 'content.selected',
+
+		template: SC.Handlebars.compile('{{content.label}}')
+	});
+	Editor.Selectbox = SC.CollectionView.extend({
 		classNames: ['typo3-form-selectbox'],
+
 		tagName: 'select',
-		attributeBindings: ['disabled', 'size', 'value', 'values'],
-		type: 'text',
+		contentBinding: 'options',
+		itemViewClass: Editor.SelectboxOption,
+
 		value: '',
-		values: {},
 		allowEmpty: false,
 		placeholder: '',
+
+		attributeBindings: ['size', 'disabled'],
+
+		items: [],
+
+		options: function() {
+			var options = [], currentValue = this.get('value');
+			if (this.get('allowEmpty')) {
+				options.push(SC.Object.create({value: '', label: this.get('placeholder')}));
+			}
+			$.each(this.get('items'), function() {
+				options.push(SC.Object.create($.extend({selected: this.value === currentValue}, this)));
+			});
+			return options;
+		}.property('items', 'value', 'placeholder', 'allowEmpty').cacheable(),
+
+		onItemsChange: function() {
+			// Special event for chosen
+			this.$().trigger("liszt:updated");
+		}.observes('items'),
 
 		didInsertElement: function() {
 			var that = this;
 
-			if (this.allowEmpty) {
-				this.$().append($('<option />').attr('value', '').text(this.placeholder));
-			} else if (this.placeholder) {
-				this.$().attr('data-placeholder', this.placeholder);
+			if (this.get('placeholder')) {
+				this.$().attr('data-placeholder', this.get('placeholder'));
 			}
-
-			for (var optionKey in this.values) {
-				this.$().append($('<option />').attr('value', optionKey).text(this.values[optionKey]));
-			}
-			this.$().val(this.get('value'));
 
 			require([
 					'Library/chosen/chosen/chosen.jquery.min',
 					'css!Library/chosen/chosen/chosen.css'
 				], function() {
+					// TODO Check value binding
 					that.$().addClass('chzn-select').chosen().change(function() {
 						that.set('value', that.$().val());
 					});

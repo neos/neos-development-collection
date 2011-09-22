@@ -2,10 +2,10 @@
 
 <t:contentElement node="{node}">
 	<div class="t3-two-column" style="float:left;width:100%">
-		<div class="t3-two-column-left" style="float:left;width:49%">
+		<div class="t3-two-column-left" style="float:left;width:<f:if condition="{0:node.properties.layout}=={0:'75-25'}">75%</f:if><f:if condition="{0:node.properties.layout}=={0:'25-75'}">25%</f:if><f:if condition="{0:node.properties.layout}=={0:'50-50'}">50%</f:if>">
 			<t:renderNode node="{node}" path="left" />
 		</div>
-		<div class="t3-two-column-right" style="float:left;width:49%">
+		<div class="t3-two-column-right" style="float:left;width:<f:if condition="{0:node.properties.layout}=={0:'75-25'}">25%</f:if><f:if condition="{0:node.properties.layout}=={0:'25-75'}">25%</f:if><f:if condition="{0:node.properties.layout}=={0:'50-50'}">50%</f:if>">
 			<t:renderNode node="{node}" path="right" />
 		</div>
 	</div>

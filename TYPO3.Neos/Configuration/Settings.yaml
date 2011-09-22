@@ -76,16 +76,22 @@ TYPO3:
 
         properties:
           layout:
-            type: string
+            type: enum
             label: 'Layout'
             # TODO: maybe rename to "group"?
             category: column
-            # TODO: maybe rename "placeholder" to "defaultContent" or "default"??
-            placeholder: '50-50'
             options:
-              '50-50': '50% / 50%'
-              '75-25': '75% / 25%'
-              '25-75': '25% / 75%'
+              placeholder: 'Select layout'
+              items:
+                -
+                  value: '50-50'
+                  label: '50% / 50%'
+                -
+                  value: '75-25'
+                  label: '75% / 25%'
+                -
+                  value: '25-75'
+                  label: '25% / 75%'
 
         # TODO: rename "propertyGroups" to "categories" or "groups"?
         propertyGroups:

@@ -236,6 +236,8 @@ ul.t3-topbar {
     box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset; }
   .t3-inspector-form input[type=text].modified {
     border: 1px solid #54974a; }
+.t3-inspector-form select {
+  width: 175px; }
 
 /*** Toolbar ***/
 #t3-toolbar {
