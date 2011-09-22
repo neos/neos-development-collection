@@ -336,7 +336,7 @@ interface NodeInterface {
 	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
 	 * @return void
 	 */
-	public function setHiddenBeforeDate(\DateTime $dateTime);
+	public function setHiddenBeforeDate(\DateTime $dateTime = NULL);
 
 	/**
 	 * Returns the date and time before which this node will be automatically hidden.
@@ -351,7 +351,7 @@ interface NodeInterface {
 	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
 	 * @return void
 	 */
-	public function setHiddenAfterDate(\DateTime $dateTime);
+	public function setHiddenAfterDate(\DateTime $dateTime = NULL);
 
 	/**
 	 * Returns the date and time after which this node will be automatically hidden.
