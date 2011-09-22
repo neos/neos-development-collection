@@ -80,7 +80,7 @@ class ContentElementWrappingService {
 				// HACK: we need to produce *invalid* JSON as the Chrome browser seems to
 				// convert it to an object, and in turn then serialize it to string again...
 				// at least unter some circumstances... Funny :-)
-			if ($propertyValue !== NULL && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
+			if (is_object($propertyValue) && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
 				$propertyValue = 'HACK' .  json_encode(\TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($propertyValue));
 			}
 
