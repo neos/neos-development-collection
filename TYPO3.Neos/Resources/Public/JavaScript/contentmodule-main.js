@@ -13,7 +13,8 @@ require({
 		'vendor': Aloha.settings.basePath + 'vendor',
 		'dep': Aloha.settings.basePath + 'dep',
 		'Library': '../Library/'
-	}
+	},
+	locale: 'en'
 },
 ['aloha'],
 function() {
