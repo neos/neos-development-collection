@@ -172,10 +172,12 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		 * @param {Object} data the GET data to append
 		 * @param {Object} commands Command-Name --> Callback function list
 		 * @param {jQuery} the handle to which the dialog is appended to
+		 * @param {Object} options to be overriden for the popover
 		 */
-		openFromUrl: function(url, data, commands, $handle) {
+		openFromUrl: function(url, data, commands, $handle, overrideOptions) {
 			var that = this;
 			that._handle = $handle;
+			that._overrideOptions(overrideOptions);
 
 			var handlerEvents = $handle.data('events');
 			if (!handlerEvents || !handlerEvents['showPopover']) {
@@ -285,6 +287,16 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 					callback.call(this);
 				}
 			});
+		},
+
+		/**
+		 * Internal helper to merge override options with defaults
+		 *
+		 * @param {Object} overrideOptions
+		 * @return void
+		 */
+		_overrideOptions: function(overrideOptions) {
+			this._options = $.extend(this._options, overrideOptions || {});
 		}
 	});
 

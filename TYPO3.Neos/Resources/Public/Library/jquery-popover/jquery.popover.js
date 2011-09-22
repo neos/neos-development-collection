@@ -17,7 +17,10 @@
 			preventLeft: false,		// pass true to prevent left popover
 			preventRight: false,	// pass true to prevent right popover
 			preventTop: false,		// pass true to prevent top popover
-			preventBottom: false	// pass true to prevent bottom popover
+			preventBottom: false,	// pass true to prevent bottom popover
+		 	// TYPO3 SPECIFIC FIX START
+		 	positioning: 'fixed'
+		 	// TYPO3 SPECIFIC FIX STOP
 	  }, options || {});
 
 	  // HTML popover
@@ -150,8 +153,10 @@
 
 			// As our content module has position:fixed,
 			// we need to remove the scroll-position again
-			coord.buttonOffset.top -= $(document).scrollTop();
 
+			if (settings.positioning === 'fixed') {
+				coord.buttonOffset.top -= $(document).scrollTop();
+			}
 			// TYPO3 SPECIFIC FIX STOP
 
 			// calculate the possible directions based on popover size and button position
@@ -227,6 +232,10 @@
 	      top: coord.popoverY - coord.deltaY + settings.offsetY,
 	      left: coord.popoverX - coord.deltaX + settings.offsetX
 	    });
+
+			// TYPO3 SPECIFIC FIX START
+			settings.popover$.css('position', settings.positioning);
+			// TYPO3 SPECIFIC FIX STOP
 	
 			// set popover css and show it
 	    settings.popover$.css('z-index', settings.zindex).show();

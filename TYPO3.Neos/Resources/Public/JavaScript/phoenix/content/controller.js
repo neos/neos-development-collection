@@ -332,7 +332,10 @@ function() {
 						T3.ContentModule.reloadPage();
 					}
 				},
-				$handle
+				$handle,
+				{
+					positioning: 'absolute'
+				}
 			);
 		},
 
