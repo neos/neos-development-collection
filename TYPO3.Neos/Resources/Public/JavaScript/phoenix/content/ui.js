@@ -296,18 +296,20 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
 			}
 
-			var editorClassName = typeDefinition.editor['class'];
-			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface.editor['class']) {
-				editorClassName = this.propertyDefinition.userInterface.editor['class'];
+			var editorConfigurationDefinition = typeDefinition.editor;
+			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface.editor) {
+				editorConfigurationDefinition = $.extend(editorConfigurationDefinition, this.propertyDefinition.userInterface.editor);
 			}
-			var editorClass = SC.getPath(editorClassName);
+
+			var editorClass = SC.getPath(editorConfigurationDefinition['class']);
 			if (!editorClass) {
 				throw 'Editor class "' + typeDefinition.editor['class'] + '" not found';
 			}
 
 			var classOptions = $.extend({
 				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
-			}, typeDefinition.editor.options || {});
+			}, this.propertyDefinition.options || {});
+			classOptions = $.extend(classOptions, typeDefinition.editor.options || {});
 
 			var editor = editorClass.create(classOptions);
 			this.appendChild(editor);
