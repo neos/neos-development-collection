@@ -67,6 +67,7 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicR
 
 		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
 		$contentContext = new ContentContext($workspaceName);
+		$contentContext->setInvisibleContentShown(TRUE);
 
 		$workspace = $contentContext->getWorkspace(FALSE);
 		if (!$workspace) {

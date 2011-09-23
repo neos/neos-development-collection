@@ -56,10 +56,10 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		if (!$node->isAccessible()) {
 			$this->authenticationManager->authenticate();
 		}
-		if (!$node->isAccessible()) {
+		if (!$node->isAccessible() && !$node->getContext()->isInaccessibleContentShown()) {
 			$this->throwStatus(403);
 		}
-		if (!$node->isVisible()) {
+		if (!$node->isVisible() && !$node->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
 		$node->getContext()->setCurrentNode($node);
