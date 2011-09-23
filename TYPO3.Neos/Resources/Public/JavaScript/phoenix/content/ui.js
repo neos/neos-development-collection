@@ -298,7 +298,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			var editorConfigurationDefinition = typeDefinition;
 			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface) {
-				editorConfigurationDefinition = $.extend(editorConfigurationDefinition, this.propertyDefinition.userInterface);
+				editorConfigurationDefinition = $.extend({}, editorConfigurationDefinition, this.propertyDefinition.userInterface);
 			}
 
 			var editorClass = SC.getPath(editorConfigurationDefinition['class']);
@@ -345,6 +345,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 		template: SC.Handlebars.compile('{{content.label}}')
 	});
+
 	Editor.Selectbox = SC.CollectionView.extend({
 		classNames: ['typo3-form-selectbox'],
 
