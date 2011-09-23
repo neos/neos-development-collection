@@ -1,0 +1,79 @@
+// Image thumbnail stuff in inspector
+.t3-inspector-form .typo3-imagethumbnailcontainer {
+	position: relative;
+	overflow:hidden;
+
+	&.typo3-uploadPreview .typo3-imagethumbnail {
+		display: none;
+	}
+
+	.typo3-imagethumbnail {
+		overflow: hidden;
+		padding: 0;
+		margin: auto;
+	}
+	.typo3-imagebadge {
+		position: absolute;
+		top: 80px;
+		width: 100%;
+		height: 20px;
+		color: white;
+		background: rgba(0,0,0, 0.7);
+		text-align: center;
+	}
+
+	.typo3-fileupload-thumbnail {
+		display: none;
+	}
+	&.typo3-uploadPreview .typo3-fileupload-thumbnail {
+		display: block;
+		position:absolute;
+		left: 0;
+		top: 0;
+	}
+	.typo3-fileupload-thumbnail-landscape {
+		width: $max-image-width;
+	}
+
+	.typo3-fileupload-thumbnail-portrait {
+		height: $max-image-height;
+	}
+}
+.t3-inspector {
+	.typo3-image-preview-thumbnail {
+		max-width: $max-image-width;
+		max-height: $max-image-height;
+	}
+}
+.t3-inspector-form .typo3-fileupload-uploadbutton {
+	display: none;
+}
+
+// Image position - start
+.typo3-image {
+	&.typo3-image-position-left {
+		float: left;
+	}
+	&.typo3-image-position-right {
+		float: right;
+	}
+}
+
+// Image position - end
+
+// HTML editor - start
+
+.t3-htmleditor-window {
+	width: 800px;
+	height: 400px;
+	font-size: 13px;
+
+	.CodeMirror-scroll {
+		height: 400px;
+	}
+	.CodeMirror pre {
+		overflow-y: hidden;
+	}
+}
+
+// HTML editor - end
