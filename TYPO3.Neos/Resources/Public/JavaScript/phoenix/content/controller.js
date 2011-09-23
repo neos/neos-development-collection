@@ -47,6 +47,27 @@ function() {
 				}
 			};
 			if (isPreviewEnabled) {
+				if(!window.localStorage.previewModeStore) {
+					var stylesToSave = {
+						'body': {
+							'margin-top': $('body').css('margin-top'),
+							'margin-right': $('body').css('margin-right')
+						},
+						't3-footer': {
+							'height': $('#t3-footer').css('height')
+						},
+						't3-toolbar': {
+							'top': $('#t3-toolbar').css('top'),
+							'right': $('#t3-toolbar').css('right')
+						},
+						't3-inspector': {
+							'width': $('#t3-inspector').css('width')
+						}
+					};
+					window.localStorage.previewModeStore = JSON.stringify(stylesToSave);
+				}
+
+				$('.t3-contentelement-hidden').hide('fast');
 				$('body').animate({
 					'margin-top': 30,
 					'margin-right': 0
@@ -62,31 +83,28 @@ function() {
 				$('#t3-inspector').animate({
 					width: 0
 				}, 'fast', allDone);
-				$('body').animate({
-					'margin-right': 0
-				}, 'fast', allDone);
 			} else {
+				var stylesToUse = jQuery.parseJSON(window.localStorage.previewModeStore);
+
 				// TODO Cleanup the 'hidden' workaround for previewMode with a CSS transition
 				$('#t3-footer, #t3-ui-top, #t3-inspector').css('display', 'block');
 
-				// TODO Store initial sizes and reuse, to remove concrete values
+				$('.t3-contentelement-hidden').show('fast');
+
 				$('body').animate({
-					'margin-top': 55,
-					'margin-right': 200
+					'margin-top': stylesToUse['body']['margin-top'],
+					'margin-right': stylesToUse['body']['margin-right']
 				}, 'fast', allDone);
 				$('#t3-footer').animate({
-					height: 30
+					height: stylesToUse['t3-footer']['height']
 				}, 'fast', allDone);
 				$('#t3-toolbar').animate({
-					top: 50,
-					right: 200
+					top: stylesToUse['t3-toolbar']['top'],
+					right: stylesToUse['t3-toolbar']['right']
 				}, 'fast', allDone);
 				$('#t3-ui-top').slideDown('fast', allDone);
 				$('#t3-inspector').animate({
-					width: 200
-				}, 'fast', allDone);
-				$('body').animate({
-					'margin-right': 200
+					width: stylesToUse['t3-inspector']['width']
 				}, 'fast', allDone);
 			}
 		}.observes('previewMode'),
@@ -332,11 +350,11 @@ function() {
 						$(this).attr('id', uniqueId);
 
 						$(this).children('ul').find('li a').each(function (index) {
-							$(this).attr("href", '#' + uniqueId + '-' + index.toString());
+							$(this).attr('href', '#' + uniqueId + '-' + index.toString());
 						});
 
 						$(this).children('div').each(function (index) {
-							$(this).attr("id", uniqueId + '-' + index.toString());
+							$(this).attr('id', uniqueId + '-' + index.toString());
 						})
 						$(this).tabs();
 						$(this).removeClass('notInitialized');
@@ -423,7 +441,7 @@ function() {
 				return;
 			}
 			if (clipboard.nodePath === nodePath) {
-				T3.Common.Notification.notice("It's not possible to paste a node " + position + " itself");
+				T3.Common.Notification.notice('It is not possible to paste a node "' + position + '" at itself');
 				return;
 			}
 
