@@ -907,3 +907,11 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 .nWrap {
   overflow: auto;
   display: inline-block; }
+
+.aloha-block.aloha-block-TYPO3Block ::selection {
+  background: #2F7ECC;
+  color: #ffffff; }
+
+.aloha-block.aloha-block-TYPO3Block ::-moz-selection {
+  background: #2F7ECC;
+  color: #ffffff; }

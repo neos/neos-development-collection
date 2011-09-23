@@ -187,4 +187,10 @@ button.t3-create-new-content {
 	display: inline-block;
 }
 
+
+// Selection background in Aloha blocks
+.aloha-block.aloha-block-TYPO3Block ::selection { background: #2F7ECC; color: #ffffff; }
+.aloha-block.aloha-block-TYPO3Block ::-moz-selection { background: #2F7ECC; color: #ffffff; }
+
+
 // Launcher
