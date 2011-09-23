@@ -228,6 +228,8 @@ function() {
 				return;
 			}
 
+			this._showPageLoader();
+
 			$.get(uri, function(htmlString, status) {
 				if (status === 'success') {
 					var $htmlDom = $(htmlString);
@@ -264,6 +266,33 @@ function() {
 					// so we reload the whole backend.
 					window.location.href = uri;
 				}
+
+				$('.t3-pageloader-wrapper').remove();
+			});
+		},
+
+		_showPageLoader: function() {
+			require([
+				'Library/canvas-indicator/canvas.indicator'
+			], function() {
+				var body = $('body'),
+					loader = $('<canvas class="t3-pageloader" />'),
+					offset = $('#t3-toolbar').height() + $('#t3-toolbar').offset().top,
+					width = body.outerWidth(),
+					height = $(document).height() - offset,
+					indicator;
+				if (T3.Content.Controller.Preview.previewMode) {
+					height = height - $('#t3-footer').height();
+				}
+				body.append($('<div />').css({width: width, height: height, top: offset}).attr('class', 't3-pageloader-wrapper').append(loader));
+
+				indicator = new CanvasIndicator(loader.get(0), {
+					bars: 12,
+					innerRadius: 8,
+					size: [3, 15],
+					rgb: [0, 0, 0],
+					fps: 15
+				});
 			});
 		}
 	});

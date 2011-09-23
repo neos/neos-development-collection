@@ -210,3 +210,20 @@ button.t3-create-new-content {
 		margin: 0;
 	}
 }
+
+// Load indicator
+
+.t3-pageloader-wrapper {
+	position: fixed;
+	background-color: #fff;
+	opacity: 0.8;
+	z-index: 9999;
+	.t3-pageloader {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		margin: -60px 0 0 -60px;
+	}
+}
+
+// Load indicator

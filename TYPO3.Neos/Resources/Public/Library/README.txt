@@ -58,3 +58,6 @@ Only the jquery files / needed files are added (skipped coffeescript / prototype
 jQuery Lionbars
 http://nikolaydyankov.com/lionbars/ - version 0.2.1
 - cleaned and linted by Aske :-)
+
+Canvas Indicator
+http://toydestroyer.com/ - version 1.0
