@@ -245,6 +245,8 @@
 			if (settings.positioning === 'absolute') {
 				settings.zindex = 10001;
 			}
+
+			settings.popover$.addClass('t3-popover-' + settings.positioning);
 			// TYPO3 SPECIFIC FIX STOP
 	
 			// set popover css and show it
