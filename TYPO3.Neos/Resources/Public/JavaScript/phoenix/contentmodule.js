@@ -9,7 +9,8 @@ define(
 	'phoenix/common',
 	'phoenix/content/model',
 	'phoenix/content/ui',
-	'phoenix/content/controller'
+	'phoenix/content/controller',
+	'Library/jquery-hotkeys/jquery.hotkeys'
 ],
 function() {
 
@@ -40,6 +41,8 @@ function() {
 
 		currentUri: window.location.href,
 
+		_launcher: null,
+
 		bootstrap: function() {
 			this._initializeInspector();
 			this._initializeToolbar();
@@ -58,6 +61,19 @@ function() {
 
 			$('body').addClass('t3-ui-controls-active');
 			$('body').addClass('t3-backend');
+
+			this._initializeShortcuts();
+		},
+
+		_initializeShortcuts: function() {
+			var that = this;
+			$(document).bind('keydown', 'alt+p', function() {
+				T3.Content.Controller.Preview.togglePreview();
+				return false;
+			}).bind('keydown', 'alt+l', function() {
+				that._launcher.activate();
+				return false;
+			});
 		},
 
 		_initializeAlohaBlocksAndUpdateUi: function() {
@@ -164,11 +180,11 @@ function() {
 		},
 
 		_initializeLauncher: function() {
-			var launcher = T3.Common.Launcher.create({
+			this._launcher = T3.Common.Launcher.create({
 				searchItemsBinding: 'T3.Common.SearchController.filteredSearchItems',
 				valueBinding: 'T3.Common.SearchController.filterValue'
 			});
-			launcher.appendTo($('#t3-launcher'));
+			this._launcher.appendTo($('#t3-launcher'));
 		},
 
 		_initializeFooter: function() {

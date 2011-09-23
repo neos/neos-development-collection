@@ -61,3 +61,8 @@ http://nikolaydyankov.com/lionbars/ - version 0.2.1
 
 Canvas Indicator
 http://toydestroyer.com/ - version 1.0
+
+
+jQuery Hotkeys
+https://github.com/jeresig/jquery.hotkeys - version 0.8
+- Modularized by Christopher

@@ -59,7 +59,11 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		classNames: ['t3-launcher'],
 		value: '',
 		open: false,
-		template: SC.Handlebars.compile(launcherTemplate)
+		template: SC.Handlebars.compile(launcherTemplate),
+
+		activate: function() {
+			this.$().find('.t3-launcher-container input').focus();
+		}
 	});
 
 	/**

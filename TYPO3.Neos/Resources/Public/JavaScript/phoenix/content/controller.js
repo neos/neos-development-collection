@@ -26,6 +26,10 @@ function() {
 		},
 
 		togglePreview: function() {
+			this.set('previewMode', !this.get('previewMode'));
+		},
+
+		onTogglePreviewMode: function() {
 			var isPreviewEnabled = this.get('previewMode');
 			var i = 0, count = 5, allDone = function() {
 				i++;
@@ -121,6 +125,7 @@ function() {
 	 * This controller toggles the inspection mode on and off.
 	 *
 	 * @TODO: rename differently, because it is too similar with "Inspector"
+	 * @TODO: Toggling inspectMode does not show popover
 	 */
 	var Inspect = SC.Object.create({
 		inspectMode: false,
