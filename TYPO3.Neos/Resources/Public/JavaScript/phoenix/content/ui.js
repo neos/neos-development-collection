@@ -17,7 +17,9 @@ define(
 	'Library/jquery-notice/jquery.notice',
 	'css!Library/jquery-notice/jquery.notice.css',
 	'Library/jcrop/js/jquery.Jcrop.min',
-	'css!Library/jcrop/css/jquery.Jcrop.css'
+	'css!Library/jcrop/css/jquery.Jcrop.css',
+	'order!Library/plupload/js/plupload',
+	'order!Library/plupload/js/plupload.html5'
 ],
 function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate, fileUploadTemplate, imageUploadTemplate) {
 	var T3 = window.T3 || {};
@@ -69,12 +71,8 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 	});
 
 	var Image = SC.View.extend({
-		attributeBindings: ['src'],
-		src: '',
-		_srcGiven: function() {
-			return this.src && this.src !== '';
-		}.property('src').cacheable(),
-		template: SC.Handlebars.compile('{{#if _srcGiven}}<img {{bindAttr src="src"}} />{{/if}}')
+		tagName: 'img',
+		attributeBindings: ['src']
 	});
 
 	/**
@@ -465,12 +463,20 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 		value: '',
 
+		/**
+		 * Label of the file chooser button
+		 */
+		fileChooserLabel: 'Choose file',
+
+		uploaderLabel: 'Upload!',
+
 		// File filters
 		allowedFileTypes: null,
 
 		_uploader: null,
 		_containerId: null,
 		_browseButtonId: null,
+		_uploadButtonShown: false,
 
 		template: SC.Handlebars.compile(fileUploadTemplate),
 
@@ -478,18 +484,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			var id = this.get(SC.GUID_KEY);
 			this._containerId = 'typo3-fileupload' + id;
 			this._browseButtonId = 'typo3-fileupload-browsebutton' + id;
-			this._super();
+			return this._super();
 		},
 
 		didInsertElement: function() {
-			var that = this;
-
-			require([
-				'order!Library/plupload/js/plupload',
-				'order!Library/plupload/js/plupload.html5'],
-				function() {
-					that._initializeUploader();
-				});
+			this._initializeUploader();
 		},
 
 		_initializeUploader: function() {
@@ -511,9 +510,9 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			this._uploader.bind('FilesAdded', function(uploader, files) {
 				if (files.length > 0) {
-					that.$().find('.typo3-fileupload-uploadbutton').show();
+					that.set('_uploadButtonShown', true);
 				} else {
-					that.$().find('.typo3-fileupload-uploadbutton').hide();
+					that.set('_uploadButtonShown', false);
 				}
 			});
 
@@ -528,15 +527,20 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			});
 
 			this._uploader.init();
-			this._uploader.refresh();
-
 			this._uploaderInitialized();
 		},
 		_uploaderInitialized: function() {
-
+			var that = this;
+			this.$().find('input[type=file][id^="' + this._uploader.id + '"]').change(function(event) {
+				that.filesScheduledForUpload(event.target.files);
+			});
 		},
-		fileUploaded: function(resourceUuid) {
-			this.set('value', resourceUuid);
+		// The "files" is taken from the DOM event when a file changes
+		filesScheduledForUpload: function(files) {
+			// Template method
+		},
+		fileUploaded: function(response) {
+			this.set('_uploadButtonShown', false);
 		},
 		upload: function() {
 			this._uploader.start();
@@ -544,49 +548,65 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 	});
 
 	/**
-	 * Image editor, enables upload and cropping of images.
+	 * The Image has to extend from fileUpload; as plupload just breaks with very weird
+	 * error messages otherwise.
 	 */
 	Editor.Image = Editor.FileUpload.extend({
 
-		template: SC.Handlebars.compile(imageUploadTemplate),
+		fileChooserLabel: 'Choose Image',
+
+		uploaderLabel: 'Upload!',
 
 		/**
-		 * Size of the image preview.
+		 * Size of the image preview. Public configuration.
 		 */
 		imagePreviewMaximumDimensions: {width: 160, height: 160},
 
+		/**
+		 * Comma-separated list of allowed file types.
+		 * Public configuration.
+		 */
 		allowedFileTypes: 'jpg,png',
 
+		template: SC.Handlebars.compile(imageUploadTemplate),
 
-		/**
-		 * If true, we currently display the upload preview image.
-		 */
-		_currentlyDisplayingUploadPreview: false,
+		// Upload Preview
+		_uploadPreviewShown: true,
+		_uploadPreviewNotShown: function() {
+			return !this.get('_uploadPreviewShown');
+		}.property('_uploadPreviewShown'),
 
-		/**
-		 * UUID of the Image Object; set from the value
-		 */
-		_imageUuid: null,
+		_uploadPreviewImageSource: '/_Resources/Static/Packages/TYPO3.TYPO3/Images/dummy-image.jpg', // TODO: we need a way to fetch the static resources base URI
 
-		// The following three properties are fetched from the server side via AJAX when the image UUID changes
-		_pathToImage: null,
+		// Cropping
 		_originalImageSize: null,
 		_previewImageSize: null,
+		_previewImageUri: null,
 
-		// This is set to TRUE once _pathToImage, _originalImageSize and _previewImageSize are set
-		_previewImageLoaded: false,
+		_imageUuid: null,
 
 		// Transformation options
 		_cropOptions: null,
-		_scaleOptions: null,
+
+		// Image Badge
+		_imageBadge: null,
+
+		_imageBadgeChange: function() {
+			if (this.get('_imageBadge')) {
+				this.$().find('.typo3-imagebadge').addClass('typo3-imagebadge-visible');
+			} else {
+				this.$().find('.typo3-imagebadge').removeClass('typo3-imagebadge-visible');
+			}
+		}.observes('_imageBadge'),
 
 		/**
 		 * Lifecycle callback; sets some CSS for the image preview area to sensible defaults.
 		 */
 		didInsertElement: function() {
+			var that = this;
 			this._super();
 
-			this.$().find('.typo3-imagethumbnail').css({
+			this.$().find('.typo3-imagethumbnail-inner').css({
 				width: this.imagePreviewMaximumDimensions.width + 'px',
 				height: this.imagePreviewMaximumDimensions.height + 'px'
 			});
@@ -594,149 +614,86 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				width: this.imagePreviewMaximumDimensions.width + 'px',
 				height: this.imagePreviewMaximumDimensions.height + 'px'
 			});
-		},
 
-		_uploaderInitialized: function() {
-			this._initializeFilePreview();
-		},
-
-		/**
-		 * Bind onchange listener to the file upload field of the plupload element.
-		 * When a file is added we check if the first file of the file list is an
-		 * image, and if so show the thumbnail
-		 */
-		_initializeFilePreview: function() {
-			var that = this;
-			var $thumbnailHolder = this.$().find('.typo3-uploadthumbnail');
-			if (!this._uploader) return;
-
-			this.$().find('input[type=file][id^="' + this._uploader.id + '"]').change(function(event) {
-				$thumbnailHolder.empty();
-
-				var files = event.target.files;
-				if (files.length > 0) {
-
-
-					var image = files[0];
-
-					if (window['FileReader']) {
-						var reader = new FileReader();
-						reader.onload = function(event) {
-
-							var binaryData = event.target.result;
-							var imageObjForFindingSize = new window.Image();
-							imageObjForFindingSize.onload = function() {
-								var $image = $('<img />')
-									.addClass('typo3-fileupload-thumbnail')
-									.attr('src', binaryData)
-									.attr('title', image.name);
-
-								if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
-									$image.addClass('typo3-fileupload-thumbnail-landscape');
-								} else {
-									$image.addClass('typo3-fileupload-thumbnail-portrait');
-								}
-
-								$thumbnailHolder.append($image);
-								that.set('_currentlyDisplayingUploadPreview', true);
-							};
-							imageObjForFindingSize.src = binaryData;
-						};
-
-						reader.readAsDataURL(image);
-					}
-				}
-			});
-		},
-
-		/**
-		 * When the "value" property changes (which is a JSON-formed string of the "ImageVariant" object),
-		 * we deserialize the JSON string and fill _imageUuid, _scaleOptions and _cropOptions
-		 */
-		_onValueChange: function() {
-			var imageVariant, that = this,
-				value = this.get('value');
-
-			if (value && value !== '') {
-					// HACK: we need to convert *invalid* JSON to valid one again as
-					// the Chrome browser seems to convert it to an object, and in turn
-					// then serialize it to string again... at least unter some
-					// circumstances... Funny :-)
-				if (value.substr(0, 4) === 'HACK') {
-					value = value.substr(4);
-				}
-
-				if (T3.Common.Util.isValidJsonString(value)) {
-					imageVariant = JSON.parse(value);
-				}
-
-				if (!imageVariant) return;
-
-					// The following changes should be applied atomically
-				this.beginPropertyChanges();
-
-				this.set('_imageUuid', imageVariant.image);
-				$.each(imageVariant.processingInstructions, function(index, instruction) {
-					if (instruction.type === 'crop') {
-						that.set('_cropOptions', instruction.options)
-					} else if (instruction.type === 'scale') {
-						that.set('_scaleOptions', instruction.options)
-					}
-				});
-
-				this.endPropertyChanges();
-			}
-		}.observes('value'),
-
-		/**
-		 * When the image UUID changes, we fetch more metadata for this UUID and update
-		 * _pathToImage, _originalImageSize and _previewImageSize; and in the end
-		 * set _previewImageLoaded
-		 */
-		_onImageUuidChange: function() {
-			var that = this,
-				value = this.get('value');
-
-			if (value && value !== '') {
+			this._readAndDeserializeValue();
+			if (this.get('_imageUuid')) {
+				// Image already preselected
+				this.set('_uploadPreviewImageSource', ' ');
 				$.get('/typo3/content/imageWithMetadata/' + this.get('_imageUuid'), function(result) {
 
 					if (T3.Common.Util.isValidJsonString(result)) {
 						var metadata = JSON.parse(result);
 					}
-					if (!metadata || !metadata.resourceUri || !metadata.originalSize || !metadata.originalSize.width || !metadata.originalSize.height || !metadata.previewSize || !metadata.previewSize.width || !metadata.previewSize.height) {
-						T3.Common.Notification.error('Tried to fetch image metadata: Unexpected result format.');
-						return;
-					}
-
-					// The following changes should be applied atomically
-					that.beginPropertyChanges();
-
-					that.set('_pathToImage', metadata.resourceUri);
-					that.set('_originalImageSize', metadata.originalSize);
-					that.set('_previewImageSize', metadata.previewSize);
-					that.set('_previewImageLoaded', true);
-					that.set('_currentlyDisplayingUploadPreview', false);
-
-					that.endPropertyChanges();
+					that._setPreviewImage(metadata);
+					that._updateCropPreviewImage();
 				});
 			}
-		}.observes('_imageUuid'),
+		},
 
 		/**
-		 * When the user uploaded a file, we set the image UUID
+		 * Display Image preview
 		 */
-		fileUploaded: function(resourceUuid) {
-			this.set('_imageUuid', resourceUuid);
+		filesScheduledForUpload: function(files) {
+			var that = this;
+
+			if (files.length > 0) {
+				var image = files[0];
+
+				if (window['FileReader']) {
+					var reader = new FileReader();
+					reader.onload = function(event) {
+						var binaryData = event.target.result;
+						that.set('_uploadPreviewImageSource', binaryData);
+
+						var imageObjForFindingSize = new window.Image();
+						imageObjForFindingSize.onload = function() {
+							if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
+								that.$().find('.typo3-uploadthumbnail img').addClass('typo3-fileupload-thumbnail-landscape');
+								that.$().find('.typo3-uploadthumbnail img').removeClass('typo3-fileupload-thumbnail-portrait');
+							} else {
+								that.$().find('.typo3-uploadthumbnail img').removeClass('typo3-fileupload-thumbnail-landscape');
+								that.$().find('.typo3-uploadthumbnail img').addClass('typo3-fileupload-thumbnail-portrait');
+							}
+							that.set('_uploadPreviewShown', true);
+							that.set('_imageBadge', null);
+						};
+						imageObjForFindingSize.src = binaryData;
+					};
+
+					reader.readAsDataURL(image);
+				}
+			}
+		},
+		fileUploaded: function(response) {
+			if (!T3.Common.Util.isValidJsonString(response)) {
+				T3.Common.Notification.error('Tried to fetch image metadata: Unexpected result format.');
+				return;
+			}
+			this._super();
+			var responseJson = JSON.parse(response);
+
+			this.set('_imageUuid', responseJson.imageUuid);
+			this.set('_cropOptions', {
+				x:0,
+				y:0,
+				w:responseJson.originalSize.width,
+				h:responseJson.originalSize.height
+			})
+			this._setPreviewImage(responseJson);
 			this._updateValue();
 		},
 
-		_onUploadPreviewChange: function() {
-			if (this.get('_currentlyDisplayingUploadPreview')) {
-				this.$().find('.typo3-imagethumbnailcontainer').addClass('typo3-uploadPreview')
-			} else {
-				this.$().find('.typo3-imagethumbnailcontainer').removeClass('typo3-uploadPreview')
-			}
-		}.observes('_currentlyDisplayingUploadPreview'),
+		_setPreviewImage: function(responseJson) {
+			SC.beginPropertyChanges();
+
+			this.set('_originalImageSize', responseJson.originalSize);
+			this.set('_previewImageSize', responseJson.previewSize);
+			this.set('_previewImageUri', responseJson.previewImageResourceUri);
+			this.set('_uploadPreviewShown', false);
+			this.set('_imageBadge', 'Click to Crop');
+
+			SC.endPropertyChanges();
+		},
 
 		/**
 		 * When the preview image is loaded, we initialize the popover.
@@ -745,7 +702,6 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			var that = this;
 			var $popoverContent = $('<div />');
 			var $imageInThumbnail = $('<img />');
-
 			$popoverContent.append($imageInThumbnail);
 
 			var previewImageSize = that.get('_previewImageSize');
@@ -758,14 +714,14 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				'background': 'black'
 			});
 
-			this.$().find('.typo3-imagethumbnailcontainer').popover({
+			this.$().find('.typo3-imagethumbnail').popover({
 				content: $popoverContent,
 				header: '<span>Crop Image</span>',
 				preventTop: true,
 				preventBottom: true,
 				preventRight: true,
 				openEvent: function() {
-					$imageInThumbnail.attr('src', that.get('_pathToImage'));
+					$imageInThumbnail.attr('src', that.get('_previewImageUri'));
 					this.popover$.addClass('aloha-block-do-not-deactivate');
 					var cropOptions = that.get('_cropOptions');
 
@@ -778,7 +734,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					};
 
 						// If we have all crop options set, we preselect this in the cropping tool.
-					if (cropOptions && cropOptions.x && cropOptions.y && cropOptions.w && cropOptions.h) {
+					if (cropOptions) {
 						var previewImageCoordinates = that._convertCropOptionsToPreviewImageCoordinates(cropOptions);
 
 						settings.setSelect = [
@@ -791,27 +747,18 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					$imageInThumbnail.Jcrop(settings);
 				}
 			});
-		}.observes('_previewImageLoaded'),
+		}.observes('_previewImageUri'),
 
 		/**
-		 * When we destroy the element, we have to remove all popovers; at least
-		 * close them.
-		 */
-		willDestroyElement: function() {
-			this.$().find('.typo3-imagethumbnail').trigger('hidePopover');
-			// TODO: not only hide the popover, but completely remove it from DOM!
-		},
-
-		/**
-		 * Update the preview image when the crop options change or the preview image
+		 *  Update the preview image when the crop options change or the preview image
 		 * is initially loaded. This includes:
 		 *
 		 * - set the preview bounding box size
 		 * - set the preview bounding box offset such that the image is centered
 		 * - scale the preview image and sete the offsets correctly.
 		 */
-		_updatePreviewImage: function() {
-			if (!this._previewImageLoaded) return;
+		_updateCropPreviewImage: function() {
+			if (!this._previewImageUri) return;
 
 			var previewCropOptions = this._convertCropOptionsToPreviewImageCoordinates(this.get('_cropOptions'));
 
@@ -826,7 +773,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 				// Update size of preview bounding box
 				// and Center preview image thumbnail
-			this.$().find('.typo3-imagethumbnail').css({
+			this.$().find('.typo3-imagethumbnail-inner').css({
 				width: previewBoundingBoxSize.width + 'px',
 				height: previewBoundingBoxSize.height + 'px',
 				position: 'absolute',
@@ -835,34 +782,13 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			});
 
 				// Scale Preview image and update relative image position
-			this.$().find('.typo3-imagethumbnail img').css({
+			this.$().find('.typo3-imagethumbnail-inner img').css({
 				width: Math.floor(this.get('_previewImageSize').width * overalScalingFactor) + 'px',
 				height: 'auto',
 				marginLeft: '-' + (previewCropOptions.x * overalScalingFactor) + 'px',
 				marginTop: '-' + (previewCropOptions.y * overalScalingFactor) + 'px'
 			});
-		}.observes('_cropOptions', '_previewImageLoaded'),
-
-		/**
-		 * This function must be triggered *explicitely* when either:
-		 * _imageUuid, _cropOptions or _scaleOptions are modified, as it
-		 * writes these changes back into a JSON string.
-		 *
-		 * We don't use value observing here, as this might end up with a circular
-		 * dependency.
-		 */
-		_updateValue: function() {
-			this.set('value', JSON.stringify({
-				image: this.get('_imageUuid'),
-				processingInstructions: [{
-					type: 'crop',
-					options: this.get('_cropOptions')
-				},{
-					type: 'scale',
-					options: this.get('_scaleOptions')
-				}]
-			}));
-		},
+		}.observes('_cropOptions', '_previewImageUri'),
 
 		/**
 		 * Helper.
@@ -911,7 +837,84 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			} else {
 				return {x:0,y:0,w:0,h:0};
 			}
-		}
+		},
+		/**
+		 * This function must be triggered *explicitely* when either:
+		 * _imageUuid, _cropOptions or _scaleOptions are modified, as it
+		 * writes these changes back into a JSON string.
+		 *
+		 * We don't use value observing here, as this might end up with a circular
+		 * dependency.
+		 */
+		_updateValue: function() {
+			var cropOptions = this.get('_cropOptions');
+
+			this.set('value', JSON.stringify({
+				originalImage: this.get('_imageUuid'),
+
+				processingInstructions: [{
+					command: 'crop',
+					options: {
+						start: {
+							x: cropOptions.x,
+							y: cropOptions.y
+						},
+						size: {
+							width: cropOptions.w,
+							height: cropOptions.h
+						}
+					}
+				}/*,{
+					command: 'resize',
+					options: this.get('_scaleOptions')
+				}*/] // TODO: Implement resizing
+			}));
+		},
+
+		/**
+		 * On startup, we deserialize the JSON string and fill _imageUuid, _scaleOptions and _cropOptions
+		 */
+		_readAndDeserializeValue: function() {
+			var imageVariant, that = this,
+				value = this.get('value');
+
+			if (value && value !== '') {
+					// HACK: we need to convert *invalid* JSON to valid one again as
+					// the Chrome browser seems to convert it to an object, and in turn
+					// then serialize it to string again... at least unter some
+					// circumstances... Funny :-)
+				if (value.substr(0, 4) === 'HACK') {
+					value = value.substr(4);
+				}
+
+				if (T3.Common.Util.isValidJsonString(value)) {
+					imageVariant = JSON.parse(value);
+				}
+
+				if (!imageVariant) return;
+
+					// The following changes should be applied atomically
+				this.beginPropertyChanges();
+
+				this.set('_imageUuid', imageVariant.originalImage);
+				$.each(imageVariant.processingInstructions, function(index, instruction) {
+					if (instruction.command === 'crop') {
+						var cropOptions = {
+							x: SC.getPath(instruction, 'options.start.x'),
+							y: SC.getPath(instruction, 'options.start.y'),
+							w: SC.getPath(instruction, 'options.size.width'),
+							h: SC.getPath(instruction, 'options.size.height')
+						};
+						that.set('_cropOptions', cropOptions)
+					} else if (instruction.command === 'resize') {
+						that.set('_scaleOptions', instruction.options)
+					}
+				});
+
+				this.endPropertyChanges();
+			}
+		}.observes('value')
+
 	});
 
 	/**

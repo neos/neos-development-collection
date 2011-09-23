@@ -1,23 +1,23 @@
-<div class="typo3-imagethumbnailcontainer" style="position:relative;">
-
+<div class="typo3-imagethumbnailcontainer">
 	<div class="typo3-imagethumbnail">
-		{{view T3.Content.UI.Image srcBinding="_pathToImage" }}
+		<div class="typo3-imagethumbnail-inner">
+			{{view T3.Content.UI.Image srcBinding="_previewImageUri" isVisibleBinding="_uploadPreviewNotShown"}}
+		</div>
+		<div class="typo3-imagebadge">
+			{{_imageBadge}}
+		</div>
+
 	</div>
 
-	<div class="typo3-uploadthumbnail"></div>
-
-	<div class="typo3-imagebadge">
-		{{#unless _currentlyDisplayingUploadPreview}}{{#if _previewImageLoaded}}Click to crop!{{/if}}{{/unless}}
-		{{#if _currentlyDisplayingUploadPreview}}Upload Preview{{/if}}
+	<div class="typo3-uploadthumbnail">
+		{{view T3.Content.UI.Image isVisibleBinding="_uploadPreviewShown" srcBinding="_uploadPreviewImageSource"}}
 	</div>
-
-
 </div>
 
-<div class="typo3-fileupload" {{bindAttr id="_containerId"}}>
-	<button {{bindAttr id="_browseButtonId"}} class="sc-view sc-button t3-button typo3-fileupload-pickfiles" type="button">
-		<span class="sc-view">Upload image</span>
+<div class="typo3-fileupload" id="{{unbound _containerId}}">
+	<button id="{{unbound _browseButtonId}}" class="t3-button typo3-fileupload-pickfiles" type="button">
+		{{fileChooserLabel}}
 	</button>
 
-	{{view T3.Content.UI.Button target="parentView" action="upload" label="Upload!" classNames="typo3-fileupload-uploadbutton"}}
+	{{view T3.Content.UI.Button isVisibleBinding="_uploadButtonShown" target="parentView" action="upload" labelBinding="uploaderLabel" allowedFileTypesBinding="allowedFileTypes"}}
 </div>

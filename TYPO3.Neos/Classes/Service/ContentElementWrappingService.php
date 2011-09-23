@@ -43,6 +43,12 @@ class ContentElementWrappingService {
 	protected $objectManager;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Wrap the $content identified by $node with the needed markup for
 	 * the backend.
 	 * $parameters can be used to further pass parameters to the content element.
@@ -82,7 +88,18 @@ class ContentElementWrappingService {
 				// convert it to an object, and in turn then serialize it to string again...
 				// at least unter some circumstances... Funny :-)
 			if (is_object($propertyValue) && $propertyValue !== NULL && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
-				$propertyValue = 'HACK' .  json_encode(\TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($propertyValue));
+				$gettableProperties = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($propertyValue);
+				$convertedProperties = array();
+				foreach ($gettableProperties as $key => $value) {
+					if (is_object($value)) {
+						$entityIdentifier = $this->persistenceManager->getIdentifierByObject($value);
+						if ($entityIdentifier !== NULL) {
+							$value = $entityIdentifier;
+						}
+					}
+					$convertedProperties[$key] = $value;
+				}
+				$propertyValue = 'HACK' .  json_encode($convertedProperties);
 			}
 
 			$tagBuilder->addAttribute('data-' . $propertyName, $propertyValue);

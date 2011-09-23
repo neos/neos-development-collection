@@ -32,7 +32,7 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @inject
-	 * @var \TYPO3\TYPO3\Domain\Repository\Media\ImageRepository
+	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
 	 */
 	protected $imageRepository;
 
@@ -70,22 +70,25 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 *
-	 * @param \TYPO3\TYPO3\Domain\Model\Media\Image $image
+	 * @param \TYPO3\Media\Domain\Model\Image $image
 	 * @return string
 	 */
-	public function uploadImageAction(\TYPO3\TYPO3\Domain\Model\Media\Image $image) {
+	public function uploadImageAction(\TYPO3\Media\Domain\Model\Image $image) {
 		$this->imageRepository->add($image);
-		return $this->persistenceManager->getIdentifierByObject($image);
+		return $this->imageWithMetadataAction($image);
 	}
 
 	/**
-	 * @param \TYPO3\TYPO3\Domain\Model\Media\Image $image
+	 * @param \TYPO3\Media\Domain\Model\Image $image
 	 */
-	public function imageWithMetadataAction(\TYPO3\TYPO3\Domain\Model\Media\Image $image = NULL) {
+	public function imageWithMetadataAction(\TYPO3\Media\Domain\Model\Image $image) {
+		$thumbnail = $image->getThumbnail(500, 500);
+
 		return json_encode(array(
-			'resourceUri' => $this->resourcePublisher->getPersistentResourceWebUri($image->getResource()),
-			'originalSize' => array('width' => 800, 'height' => 600),
-			'previewSize' => array('width' => 400, 'height' => 300)
+			'imageUuid' => $this->persistenceManager->getIdentifierByObject($image),
+			'previewImageResourceUri' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnail->getResource()),
+			'originalSize' => array('width' => $image->getWidth(), 'height' => $image->getHeight()),
+			'previewSize' => array('width' => $thumbnail->getWidth(), 'height' => $thumbnail->getHeight())
 		));
 	}
 

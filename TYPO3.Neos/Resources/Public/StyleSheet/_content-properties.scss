@@ -3,11 +3,7 @@
 	position: relative;
 	overflow:hidden;
 
-	&.typo3-uploadPreview .typo3-imagethumbnail {
-		display: none;
-	}
-
-	.typo3-imagethumbnail {
+	.typo3-imagethumbnail-inner {
 		overflow: hidden;
 		padding: 0;
 		margin: auto;
@@ -20,12 +16,14 @@
 		color: white;
 		background: rgba(0,0,0, 0.7);
 		text-align: center;
+		display:none;
+
+		&.typo3-imagebadge-visible {
+			display:block;
+		}
 	}
 
-	.typo3-fileupload-thumbnail {
-		display: none;
-	}
-	&.typo3-uploadPreview .typo3-fileupload-thumbnail {
+	.typo3-uploadthumbnail {
 		display: block;
 		position:absolute;
 		left: 0;
@@ -44,9 +42,6 @@
 		max-width: $max-image-width;
 		max-height: $max-image-height;
 	}
-}
-.t3-inspector-form .typo3-fileupload-uploadbutton {
-	display: none;
 }
 
 // Image position - start

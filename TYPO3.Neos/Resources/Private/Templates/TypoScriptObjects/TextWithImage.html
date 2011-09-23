@@ -2,8 +2,15 @@
 
 <t:contentElement node="{node}">
 	<t:aloha.editable property="headline" tag="h1">{properties.headline}</t:aloha.editable>
-	<div class="typo3-image<f:if condition='{properties.position}'> typo3-image-position-{properties.position}</f:if>">
-		<img src="{f:uri.resource(resource: properties.image.resource)}" />
+	<div class="typo3-image{f:if(condition:properties.position, then: ' typo3-image-position-{properties-position}')}">
+		<f:if condition="{properties.image.resource}">
+			<f:then>
+				<img src="{f:uri.resource(resource: properties.image.resource)}" />
+			</f:then>
+			<f:else>
+				<img src="{f:uri.resource(package:'TYPO3.TYPO3', path:'Images/dummy-image.jpg')}" title="Dummy Image" />
+			</f:else>
+		</f:if>
 	</div>
 	<t:aloha.editable property="text">{properties.text}</t:aloha.editable>
 </t:contentElement>

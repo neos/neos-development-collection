@@ -36,7 +36,7 @@ class ImageTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTyp
 	/**
 	 * @var string
 	 */
-	protected $targetType = 'TYPO3\TYPO3\Domain\Model\Media\Image';
+	protected $targetType = 'TYPO3\Media\Domain\Model\Image';
 
 	/**
 	 * @var integer
@@ -78,9 +78,8 @@ class ImageTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTyp
 		if ($resource === FALSE) {
 			throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('Resource could not be converted.', 1316428994);
 		}
-		$image = new \TYPO3\TYPO3\Domain\Model\Media\Image();
-
-		$image->setResource($resource);
+		$image = new \TYPO3\Media\Domain\Model\Image($resource);
+		$image->setTitle(''); // TODO: this should maybe be settable
 		return $image;
 	}
 }

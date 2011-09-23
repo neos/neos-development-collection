@@ -140,7 +140,7 @@ TYPO3:
         icon: 'Images/Icons/White/doc_picture_icon-16.png'
         properties:
           image:
-            type: TYPO3\TYPO3\Domain\Model\Media\ImageVariant
+            type: TYPO3\Media\Domain\Model\ImageVariant
             label: 'Image'
             category: image
             reloadOnChange: true
@@ -236,7 +236,7 @@ TYPO3:
         class: T3.Content.UI.Editor.TextField
       boolean:
         class: T3.Content.UI.Editor.Checkbox
-      'TYPO3\TYPO3\Domain\Model\Media\ImageVariant':
+      'TYPO3\Media\Domain\Model\ImageVariant':
         class: T3.Content.UI.Editor.Image
       date:
         class: T3.Content.UI.Editor.DateField
