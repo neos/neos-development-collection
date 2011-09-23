@@ -44,7 +44,8 @@ Version 0.9.9 from 6/7/11
 - deleted index.html
 - deleted js/jquery.min.js
 
-Sproutcore 2.0 beta 3 from http://blog.sproutcore.com/sproutcore-2-0-beta-3-released/
+Sproutcore 2.0 from Github repository https://github.com/sproutcore/sproutcore20
+Commit: d7b29372f128b22d8a962dfa48c96499154e2160
 
 
 CodeMirror 2.13 from http://codemirror.net/

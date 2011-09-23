@@ -23,7 +23,7 @@ function() {
 	require([
 		'order!Library/jquery-ui/js/jquery-ui-1.8.14.custom.min',
 		'css!Library/jquery-ui/css/ui-darkness/jquery-ui-1.8.14.custom.css',
-		'order!Library/sproutcore/sproutcore-2.0.beta.3',
+		'order!Library/sproutcore/sproutcore',
 		'order!Library/jquery-lionbars/jQuery.lionbars.0.2.1',
 		'order!phoenix/contentmodule'],
 		function() {

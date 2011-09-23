@@ -1575,7 +1575,7 @@ if ('undefined' === typeof SC) {
 /**
   @namespace
   @name SC
-  @version 2.0.alpha
+  @version 2.0.beta.3
 
   All SproutCore methods and functions are defined inside of this namespace.
   You generally should not add new properties to this namespace as it may be
@@ -1604,10 +1604,10 @@ if ('undefined' !== typeof window) {
 /**
   @static
   @type String
-  @default '2.0.alpha'
+  @default '2.0.beta.3'
   @constant
 */
-SC.VERSION = '2.0.alpha';
+SC.VERSION = '2.0.beta.3';
 
 /**
   @static
@@ -3579,9 +3579,10 @@ function beforeKey(eventName) {
 function xformForArgs(args) {
   return function (target, method, params) {
     var obj = params[0], keyName = changeKey(params[1]), val;
+    var copy_args = args.slice();
     if (method.length>2) val = SC.getPath(obj, keyName);
-    args.unshift(obj, keyName, val);
-    method.apply(target, args);
+    copy_args.unshift(obj, keyName, val);
+    method.apply(target, copy_args);
   }
 }
 
@@ -4781,7 +4782,7 @@ SC.Enumerable = SC.Mixin.create( /** @lends SC.Enumerable */ {
     to nextObject for the current iteration.  This is a useful way to
     manage iteration if you are tracing a linked list, for example.
 
-    Finally the context paramter will always contain a hash you can use as
+    Finally the context parameter will always contain a hash you can use as
     a "scratchpad" to maintain any other state you need in order to iterate
     properly.  The context object is reused and is not reset between
     iterations so make sure you setup the context with a fresh state whenever
@@ -7990,7 +7991,7 @@ if (SC.EXTEND_PROTOTYPES) {
   /**
     @see SC.String.dasherize
   */
-  String.prototype.dashersize = function() {
+  String.prototype.dasherize = function() {
     return dasherize(this);
   };
 }
@@ -9228,7 +9229,7 @@ var Binding = SC.Object.extend({
     // Display warning for users using the SC 1.x-style API.
     sc_assert("notEmpty should only take a placeholder as a parameter. You no longer need to pass null as the first parameter.", arguments.length < 2);
 
-    if (!placeholder) { placeholder = SC.EMPTY_PLACEHOLDER; }
+    if (placeholder == undefined) { placeholder = SC.EMPTY_PLACEHOLDER; }
 
     this.transform({
       to: function(val) { return empty(val) ? placeholder : val; }
@@ -9246,7 +9247,7 @@ var Binding = SC.Object.extend({
     @returns {SC.Binding} this
   */
   notNull: function(placeholder) {
-    if (!placeholder) { placeholder = SC.EMPTY_PLACEHOLDER; }
+    if (placeholder == undefined) { placeholder = SC.EMPTY_PLACEHOLDER; }
 
     this.transform({
       to: function(val) { return val == null ? placeholder : val; }
@@ -10766,7 +10767,7 @@ SC.View = SC.Object.extend(
     var view = this.parentView;
 
     while (view) {
-      if (property in view.parentView) { return view; }
+      if (property in view) { return view; }
       view = view.parentView;
     }
   },
@@ -10913,7 +10914,7 @@ SC.View = SC.Object.extend(
 
     // VIEW-TODO: Unit test this path.
     var childViews = get(this, 'childViews');
-    for (var i=lengthBefore; i<lengthAfter; i++) {
+    for (var i=lengthAfter-1; i>=lengthBefore; i--) {
       childViews[i] && childViews[i].destroy();
     }
   },
@@ -10936,18 +10937,18 @@ SC.View = SC.Object.extend(
     // Loop through all of the configured bindings. These will be either
     // property names ('isUrgent') or property paths relative to the view
     // ('content.isUrgent')
-    classBindings.forEach(function(property) {
+    classBindings.forEach(function(binding) {
 
       // Variable in which the old class value is saved. The observer function
       // closes over this variable, so it knows which string to remove when
       // the property changes.
-      var oldClass;
+      var oldClass, property;
 
       // Set up an observer on the context. If the property changes, toggle the
       // class name.
       var observer = function() {
         // Get the current value of the property
-        newClass = this._classStringForProperty(property);
+        newClass = this._classStringForProperty(binding);
         elem = this.$();
 
         // If we had previously added a class to the element, remove it.
@@ -10965,10 +10966,8 @@ SC.View = SC.Object.extend(
         }
       };
 
-      addObserver(this, property, observer);
-
       // Get the class name for the property at its current value
-      dasherizedClass = this._classStringForProperty(property);
+      dasherizedClass = this._classStringForProperty(binding);
 
       if (dasherizedClass) {
         // Ensure that it gets into the classNames array
@@ -10980,6 +10979,10 @@ SC.View = SC.Object.extend(
         // been closed over by the observer.
         oldClass = dasherizedClass;
       }
+
+      // Extract just the property name from bindings like 'foo:bar'
+      property = binding.split(':')[0];
+      addObserver(this, property, observer);
     }, this);
   },
 
@@ -11599,9 +11602,10 @@ SC.View = SC.Object.extend(
       var view;
 
       if ('string' === typeof viewName) {
-        view = this[viewName];
+        view = get(this, viewName);
         view = this.createChildView(view);
-        childViews[idx] = this[viewName] = view;
+        childViews[idx] = view;
+        set(this, viewName, view);
       } else if (viewName.isClass) {
         view = this.createChildView(viewName);
         childViews[idx] = view;
@@ -13780,9 +13784,9 @@ Handlebars.registerHelper('debugger', function() {
 /*globals Handlebars */
 
 // Find templates stored in the head tag as script tags and make them available
-// to SC.CoreView in the global SC.TEMPLATES object.
-
-SC.$(document).ready(function() {
+// to SC.CoreView in the global SC.TEMPLATES object. This will be run as as
+// jQuery DOM-ready callback.
+SC.Handlebars.bootstrap = function() {
   SC.$('script[type="text/html"], script[type="text/x-handlebars"]')
     .each(function() {
     // Get a reference to the script tag
@@ -13829,7 +13833,9 @@ SC.$(document).ready(function() {
       });
     }
   });
-});
+};
+
+SC.$(document).ready(SC.Handlebars.bootstrap);
 
 })({});
 
