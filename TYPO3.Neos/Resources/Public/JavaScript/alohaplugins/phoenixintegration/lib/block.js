@@ -104,9 +104,9 @@ function(block) {
 			this._renderHandle('t3-add-below-handle', 'Add below', T3.Content.Controller.BlockActions.addBelow, T3.Content.Controller.BlockActions);
 
 			this.element.find('.t3-status-indicator').remove();
-			if (this.attr('_status')) {
+			if (this.attr('__status')) {
 				// FIXME: do not output _status directly, but do it using CSS or localization.
-				var statusIndicator = $('<span class="t3-status-indicator t3-status-indicator-' + this.attr('_status')  + '">' + this.attr('_status') + '</span>');
+				var statusIndicator = $('<span class="t3-status-indicator t3-status-indicator-' + this.attr('__status')  + '">' + this.attr('__status') + '</span>');
 				this.element.prepend(statusIndicator);
 			}
 		},
