@@ -1,0 +1,175 @@
+<?php
+namespace TYPO3\Media\Domain\Model;
+
+/*                                                                        *
+ * This script belongs to the FLOW3 package "Media".                      *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+/**
+ * An image variant that has a relation to the original image
+ * Note: This is neither an entity nor a value object, ImageVariants won't be persisted.
+ */
+class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
+
+	/**
+	 * @var \TYPO3\Media\Domain\Service\ImageService
+	 * @inject
+	 */
+	protected $imageService;
+
+	/**
+	 * @var \TYPO3\Media\Domain\Model\Image
+	 */
+	protected $originalImage;
+
+	/**
+	 * @var array
+	 */
+	protected $processingInstructions = array();
+
+	/**
+	 * @var \TYPO3\FLOW3\Resource\Resource
+	 */
+	protected $resource;
+
+	/**
+	 * @var integer
+	 */
+	protected $width;
+
+	/**
+	 * @var integer
+	 */
+	protected $height;
+
+	/**
+	 * @param \TYPO3\Media\Domain\Model\Image $originalImage
+	 * @param array $processingInstructions
+	 */
+	public function __construct(\TYPO3\Media\Domain\Model\Image $originalImage, array $processingInstructions) {
+		$this->originalImage = $originalImage;
+		$this->processingInstructions = $processingInstructions;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function initializeObject() {
+		$this->resource = $this->imageService->transformImage($this->originalImage, $this->processingInstructions);
+		$imageSize = getimagesize('resource://' . $this->resource->getResourcePointer()->getHash());
+		$this->width = (integer)$imageSize[0];
+		$this->height = (integer)$imageSize[1];
+		$this->type = (integer)$imageSize[2];
+	}
+
+	/**
+	 * @return \TYPO3\Media\Domain\Model\ImageInterface
+	 */
+	public function getOriginalImage() {
+		return $this->originalImage;
+	}
+
+	/**
+	 * Resource of the original file of this variant
+	 *
+	 * @return \TYPO3\FLOW3\Resource\Resource
+	 */
+	public function getResource() {
+		return $this->resource;
+	}
+
+	/**
+	 * Width of the image in pixels
+	 *
+	 * @return integer
+	 */
+	public function getWidth() {
+		return $this->width;
+	}
+
+	/**
+	 * Height of the image in pixels
+	 *
+	 * @return integer
+	 */
+	public function getHeight() {
+		return $this->height;
+	}
+
+	/**
+	 * One of PHPs IMAGETYPE_* constants that reflects the image type
+	 * This will return the type of the original image as this should not be different in image variants
+	 *
+	 * @see http://php.net/manual/image.constants.php
+	 * @return integer
+	 */
+	public function getType() {
+		return $this->originalImage->getType();
+	}
+
+	/**
+	 * File extension of the image without leading dot.
+	 * This will return the file extension of the original image as this should not be different in image variants
+	 *
+	 * @return string
+	 */
+	public function getFileExtension() {
+		return $this->originalImage->getFileExtension();
+	}
+
+	/**
+	 * Returns the title of the original image
+	 *
+	 * @return string
+	 */
+	public function getTitle() {
+		return $this->originalImage->getTitle();
+	}
+
+	/**
+	 * Returns the processing instructions that were used to create this image variant.
+	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
+	 *
+	 * @return string
+	 */
+	public function getProcessingInstructions() {
+		return $this->processingInstructions;
+	}
+
+	/**
+	 * Creates a thumbnail of the original image
+	 * @see \TYPO3\Media\Domain\Model\Image::getThumbnail
+	 *
+	 * @param integer $maximumWidth
+	 * @param integer $maximumHeight
+	 * @return \TYPO3\Media\Domain\Model\ImageVariant
+	 */
+	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL) {
+		return $this->originalImage->getThumbnail($maximumWidth, $maximumHeight);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function __sleep() {
+		return array('originalImage', 'processingInstructions');
+	}
+}
+
+?>
