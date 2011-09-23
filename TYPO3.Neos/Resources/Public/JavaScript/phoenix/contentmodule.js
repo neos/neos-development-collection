@@ -127,8 +127,7 @@ function() {
 				left: [
 					T3.Content.UI.PageTreeButton.extend({
 						label: 'Pages',
-						popoverTitle: 'Page Tree',
-						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
+						popoverTitle: 'Page Tree'
 					}),
 					T3.Content.UI.ToggleButton.extend({
 						pressedBinding: 'T3.Content.Controller.Preview.previewMode',
