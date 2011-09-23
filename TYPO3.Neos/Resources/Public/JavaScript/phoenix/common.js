@@ -66,18 +66,25 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	 * @internal
 	 */
 	T3.Common.Launcher.TextField = SC.TextField.extend({
+		classNameBindings: ['notEmpty'],
+		notEmpty: function() {
+			return this.get('value') !== null && this.get('value') !== '';
+		}.property('value').cacheable(),
+
 		cancel: function() {
 			this.set('value', '');
 			this.$().blur();
 		},
+
 		focusIn: function() {
-			this.set('value', '');
 			this.set('open', true);
 		},
+
 		focusOut: function() {
 			this.set('open', false);
 			this._super();
 		},
+
 		keyDown: function(event) {
 			// TODO Move to controller
 			if (event.keyCode === 9) {
@@ -93,7 +100,6 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	T3.Common.Launcher.Panel = SC.View.extend({
 		tagName: 'div',
 		classNames: ['t3-launcher-panel'],
-		classNameBindings: ['open'],
 		isVisible: false,
 		open: false,
 		focussed: false,
@@ -104,16 +110,25 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 			// Delay the execution a bit to give the focus change a chance
 			setTimeout(function() {
 				var open = that.get('open');
+				// TODO: Move position calculations to css transitions (sass)
 				if (open) {
+					that.$().parent('.t3-launcher').addClass('t3-open');
 					that.$().slideDown('fast', function() {
 						if (!that.scrollingInitialized) {
-							jQuery('.c-1 .scroll-content').lionbars('dark', false, true, false);
+							$('.c-1 .scroll-content').lionbars('dark', false, true, false);
 							that.scrollingInitialized = true;
 						}
 					});
+					$('body').animate({'marginTop': $('body').offset().top + 200}, 250);
+					$('#t3-toolbar').animate({'marginTop': 200}, 250);
+					$('#t3-inspector').animate({'marginTop': 26 + 200}, 250);
 				} else {
 					if (that.get('focussed')) return;
+					that.$().parent('.t3-launcher').removeClass('t3-open');
 					that.$().slideUp('fast');
+					$('body').animate({'marginTop': $('body').offset().top - 200}, 250);
+					$('#t3-toolbar').animate({'marginTop': 0}, 250);
+					$('#t3-inspector').animate({'marginTop': 56}, 250);
 				}
 			}, 50);
 		}.observes('open'),
@@ -231,7 +246,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 					options.onDialogOpen.call(that);
 				}
 			}
-			
+
 			if (options.onDialogOpen) {
 				options.onDialogOpen.call(this);
 			}

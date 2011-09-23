@@ -28,13 +28,12 @@ body.t3-ui-controls-active {
 	top: 0;
 	position: fixed;
 	width: 100%;
-	height: $menu-height + $launcher-height;
+//	height: $menu-height + $launcher-height;
 	z-index: 10015;
 	.t3-button-logout {
-		position: absolute;
-		right: 10px;
+		float: right;
+		margin-right: 10px;
 		line-height: $menu-height;
-		top: 27px;
 		color: #cccccc;
 		text-decoration: underline;
 		font-size: 10px;
@@ -46,34 +45,47 @@ body.t3-ui-controls-active {
 	}
 }
 #t3-launcher {
-	height: $launcher-height;
+//	height: $launcher-height;
 }
 .t3-launcher {
 	position: relative;
 	width: 100%;
-	height: $launcher-height;
+	background-color: #e8e8e8;
 	div.t3-launcher-container {
 		height: $launcher-height;
-		border-color: #2d2d2d;
-		border-style: solid;
-		border-width: 3px 0 3px 2px;
-		position: absolute;
 		display: block;
-		left: 3px;
-		right: 35px;
 		@include box-sizing(border-box);
 		input {
 			border: 0;
-			background: transparent;
+			-webkit-box-shadow: #666666 0px 1px 6px inset;
+			-moz-box-shadow: #b3b3b3 0px 1px 6px inset;
+			box-shadow: #b3b3b3 0px 1px 6px inset;
+			background: #efefef url('../Images/ContentModule/launchbar-arrow.png') no-repeat 6px 7px;
 			font-size: 16px;
 			width: 100%;
 			height: 100%;
-			// line-height: $launcher-height;
+			line-height: $launcher-height;
 			padding: 3px 6px 0 6px;
-			background-color: #eeeeee;
 			@include box-sizing(border-box);
-			&.t3-example-text {
-				color: #aaa;
+			&.not-empty {
+				background: #efefef;
+			}
+			&.not-empty:hover {
+				background: #f2f2f2;
+			}
+			&:hover {
+				border: 1px solid #444444;
+				background: #f2f2f2 url('../Images/ContentModule/launchbar-arrow.png') no-repeat 5px 6px;
+				padding: 3px 5px 0 5px;
+			}
+			&:focus {
+				border: 1px solid #FF8700;
+				background: #fff;
+				padding: 3px 5px 0 5px;
+				outline: none;
+			}
+			&:hover:focus {
+				background: #fff;
 			}
 		}
 	}
@@ -86,11 +98,7 @@ body.t3-ui-controls-active {
 		background: url('../Images/ContentModule/typo3-logo.png') no-repeat;
 	}
 	.t3-launcher-panel {
-		position: absolute;
-		height: 220px;
-		left: 0px;
-		top: 25px;
-		right: 0px;
+		height: 200px;
 	}
 }
 ul.t3-topbar {

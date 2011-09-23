@@ -9,38 +9,27 @@
 .tc-1-1-1 .c-1,
 .tc-1-1-1 .c-2,
 .tc-1-1-1 .c-3 {
-  height: 100%;
-  overflow: hidden;
-  background: white;
-  background: -moz-linear-gradient(top, white 0%, #e8e8e8 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #e8e8e8));
-  background: -webkit-linear-gradient(top, white 0%, #e8e8e8 100%);
-  background: -o-linear-gradient(top, white 0%, #e8e8e8 100%);
-  background: -ms-linear-gradient(top, white 0%, #e8e8e8 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, white 0%, #e8e8e8 100%);
-  /*opacity: 0.9;*/
-  padding: 15px;
-  float: left;
-  width: 33%;
+	border-top: 1px solid #cfcfcf;
+	border-bottom: 1px solid #cfcfcf;
+	height: 100%;
+	overflow: hidden;
+	background-color: #e8e8e8;
+	padding: 10px 15px;
+	float: left;
+	width: 33%;
 	float: left;
 	width: 33%;
 	@include box-sizing(border-box);
 }
 .tc-1-1-1 .c-2 {
-  width: 34%;
-  border-left: 1px solid #cfcfcf;
-  border-right: 1px solid #cfcfcf;
-  background: -moz-linear-gradient(top, white 0%, #cfcfcf 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #cfcfcf));
-  background: -webkit-linear-gradient(top, white 0%, #cfcfcf 100%);
-  background: -o-linear-gradient(top, white 0%, #cfcfcf 100%);
-  background: -ms-linear-gradient(top, white 0%, #cfcfcf 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$color1', endColorstr='$color2',GradientType=0 );
-  background: linear-gradient(top, white 0%, #e0e0e0 100%);
+	width: 34%;
+	border-left: 1px solid #cfcfcf;
+	border-right: 1px solid #cfcfcf;
+	background-color: #e0e0e0;
 }
 .tc-1-1-1 h2 {
-	font-size: 110%;
+	font-weight: bold;
+	line-height: 30px;
 }
 .c-1 .scroll-content {
 	height: 100%;
@@ -58,31 +47,39 @@
 	float: left;
 	text-align: center;
 	cursor: pointer;
+	.text {
+		padding: 0 5px;
+	}
 }
 .tc-1-1-1 ul.vertical {
 	overflow: hidden;
 	width: 100%;
 }
 .tc-1-1-1 ul.vertical li {
-	height: 24px;
+	height: 30px;
 	width: 50%;
 	min-width: 200px;
 	cursor: pointer;
 	float: left;
-	padding-top: 5px;
+	line-height: 30px;
+	vertical-align: middle;
 }
 .tc-1-1-1 ul.vertical.t3-launcher-panel-lastactions {
-	height: 87px;
+	height: 60px;
 }
 .tc-1-1-1 ul.vertical.t3-launcher-panel-mostused {
-	height: 58px;
+	height: 60px;
 }
 .tc-1-1-1 ul.vertical.t3-launcher-panel-searchitems {
-	height: 174px;
+	height: 180px;
 }
 .tc-1-1-1 ul.vertical li div {
 	float: left;
 }
 .tc-1-1-1 ul.vertical li div.image {
-	padding-right: 10px;
+	width: 50px;
+}
+.tc-1-1-1 ul.vertical li div.text {
+	line-height: 30px;
+	vertical-align: middle;
 }
