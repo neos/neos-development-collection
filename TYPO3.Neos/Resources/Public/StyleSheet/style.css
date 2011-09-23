@@ -141,7 +141,9 @@ ul.t3-topbar {
   right: 0;
   top: 0;
   width: 200px;
-  z-index: 10014; }
+  z-index: 10014;
+  overflow: auto;
+  padding-bottom: 20px; }
 
 .t3-inspector-form fieldset {
   border: 0;
@@ -167,9 +169,10 @@ ul.t3-topbar {
   font-weight: normal; }
 .t3-inspector-form input[type=text] {
   width: 175px;
-  height: 20px;
-  line-height: 20px;
+  height: 23px;
+  padding: 1px 5px 0px 5px;
   border: 1px solid #000000;
+  display: block;
   -moz-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset;
   -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset;
   -o-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset;
@@ -180,7 +183,11 @@ ul.t3-topbar {
   -o-border-radius: 4px;
   -ms-border-radius: 4px;
   -khtml-border-radius: 4px;
-  border-radius: 4px; }
+  border-radius: 4px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box; }
   .t3-inspector-form input[type=text]:focus {
     -moz-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset;
     -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset;
@@ -188,6 +195,11 @@ ul.t3-topbar {
     box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, black 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset; }
   .t3-inspector-form input[type=text].modified {
     border: 1px solid #54974a; }
+.t3-inspector-form input[placeholder],
+.t3-inspector-form input::-webkit-input-placeholder,
+.t3-inspector-form input:-moz-placeholder {
+  height: 20px;
+  line-height: 20px; }
 .t3-inspector-form select {
   width: 175px; }
 
@@ -349,40 +361,17 @@ button.t3-button {
   button.t3-button:focus, button.t3-button:active {
     background: #666666; }
   button.t3-button.pressed {
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f18f0b), color-stop(100%, #7c4700));
-    background-image: -webkit-linear-gradient(#f18f0b, #7c4700);
-    background-image: -moz-linear-gradient(#f18f0b, #7c4700);
-    background-image: -o-linear-gradient(#f18f0b, #7c4700);
-    background-image: -ms-linear-gradient(#f18f0b, #7c4700);
-    background-image: linear-gradient(#f18f0b, #7c4700); }
+    background: #ff8700; }
     button.t3-button.pressed:hover {
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f69a1e), color-stop(100%, #925502));
-      background-image: -webkit-linear-gradient(#f69a1e, #925502);
-      background-image: -moz-linear-gradient(#f69a1e, #925502);
-      background-image: -o-linear-gradient(#f69a1e, #925502);
-      background-image: -ms-linear-gradient(#f69a1e, #925502);
-      background-image: linear-gradient(#f69a1e, #925502); }
+      background: #ea7c01; }
     button.t3-button.pressed:focus, button.t3-button.pressed:active {
-      background: -moz-linear-gradient(top, #f69a1e 0%, #925502 70%, #a66003 100%);
-      -moz-box-shadow: inset 0 4px 3px 0 #925502;
-      -webkit-box-shadow: inset 0 4px 3px 0 #925502;
-      -o-box-shadow: inset 0 4px 3px 0 #925502;
-      box-shadow: inset 0 4px 3px 0 #925502; }
+      background: #d06e00; }
   button.t3-button[disabled] {
     opacity: 0.6;
     cursor: auto;
     color: #bbbbbb; }
-    button.t3-button[disabled]:hover, button.t3-button[disabled]:active, button.t3-button[disabled]:focus {
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #555555));
-      background-image: -webkit-linear-gradient(#999999, #555555);
-      background-image: -moz-linear-gradient(#999999, #555555);
-      background-image: -o-linear-gradient(#999999, #555555);
-      background-image: -ms-linear-gradient(#999999, #555555);
-      background-image: linear-gradient(#999999, #555555);
-      -moz-box-shadow: 0 0 0 transparent;
-      -webkit-box-shadow: 0 0 0 transparent;
-      -o-box-shadow: 0 0 0 transparent;
-      box-shadow: 0 0 0 transparent; }
+    button.t3-button[disabled]:hover, button.t3-button[disabled]:focus, button.t3-button[disabled]:active {
+      background: #888888; }
 
 .t3-handle {
   position: absolute;
@@ -702,6 +691,56 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 .tc-1-1-1 ul.vertical li div.image {
   padding-right: 10px; }
 
+.t3-inspector-form .typo3-imagethumbnailcontainer {
+  position: relative;
+  overflow: hidden; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer.typo3-uploadPreview .typo3-imagethumbnail {
+    display: none; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagethumbnail {
+    overflow: hidden;
+    padding: 0;
+    margin: auto; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagebadge {
+    position: absolute;
+    top: 80px;
+    width: 100%;
+    height: 20px;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    text-align: center; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail {
+    display: none; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer.typo3-uploadPreview .typo3-fileupload-thumbnail {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-landscape {
+    width: 160px; }
+  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-portrait {
+    height: 160px; }
+
+.t3-inspector .typo3-image-preview-thumbnail {
+  max-width: 160px;
+  max-height: 160px; }
+
+.t3-inspector-form .typo3-fileupload-uploadbutton {
+  display: none; }
+
+.typo3-image.typo3-image-position-left {
+  float: left; }
+.typo3-image.typo3-image-position-right {
+  float: right; }
+
+.t3-htmleditor-window {
+  width: 800px;
+  height: 400px;
+  font-size: 13px; }
+  .t3-htmleditor-window .CodeMirror-scroll {
+    height: 400px; }
+  .t3-htmleditor-window .CodeMirror pre {
+    overflow-y: hidden; }
+
 .popover .x-tree .t3-gotoPage {
   display: none;
   position: absolute;
@@ -815,56 +854,6 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 
 .t3-contentelement-cut {
   opacity: .50; }
-
-.t3-inspector-form .typo3-imagethumbnailcontainer {
-  position: relative;
-  overflow: hidden; }
-  .t3-inspector-form .typo3-imagethumbnailcontainer.typo3-uploadPreview .typo3-imagethumbnail {
-    display: none; }
-  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagethumbnail {
-    overflow: hidden;
-    padding: 0;
-    margin: auto; }
-  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagebadge {
-    position: absolute;
-    top: 80px;
-    width: 100%;
-    height: 20px;
-    color: white;
-    background: rgba(0, 0, 0, 0.7);
-    text-align: center; }
-  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail {
-    display: none; }
-  .t3-inspector-form .typo3-imagethumbnailcontainer.typo3-uploadPreview .typo3-fileupload-thumbnail {
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 0; }
-  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-landscape {
-    width: 160px; }
-  .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-fileupload-thumbnail-portrait {
-    height: 160px; }
-
-.t3-inspector .typo3-image-preview-thumbnail {
-  max-width: 160px;
-  max-height: 160px; }
-
-.t3-inspector-form .typo3-fileupload-uploadbutton {
-  display: none; }
-
-.typo3-image.typo3-image-position-left {
-  float: left; }
-.typo3-image.typo3-image-position-right {
-  float: right; }
-
-.t3-htmleditor-window {
-  width: 800px;
-  height: 400px;
-  font-size: 13px; }
-  .t3-htmleditor-window .CodeMirror-scroll {
-    height: 400px; }
-  .t3-htmleditor-window .CodeMirror pre {
-    overflow-y: hidden; }
 
 .scrollbar {
   position: absolute;

@@ -1,16 +1,6 @@
 @import "t3-reset";
 @import "compass";
-
-//Variables//
-$menu-height: 26px;
-$launcher-height: 30px;
-$toolbar-height: 36px;
-$property-panel-width: 200px;
-$footer-height: 26px;
-
-// Mixins //
-// Use Compass for CSS3 Mixins!
-
+@import "constants";
 
 /**** CSS start ****/
 /*******************/
@@ -128,7 +118,6 @@ ul.t3-topbar {
 	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
 	@include box-sizing(border-box);
 	background: #2D2D2D;
-
 	height: 100%;
 	margin-top: $menu-height + $launcher-height;
 	position: fixed;
@@ -136,6 +125,8 @@ ul.t3-topbar {
 	top: 0;
 	width: $property-panel-width;
 	z-index: 10014;
+	overflow: auto;
+	padding-bottom: 20px;
 }
 .t3-inspector-form {
 	fieldset {
@@ -164,12 +155,14 @@ ul.t3-topbar {
 	}
 	input[type=text] {
 		width:175px;
-		height: 20px;
-		line-height: 20px;
+		height: 23px;
+		padding: 1px 5px 0px 5px;
 		border: 1px solid #000000;
+		display: block;
 		@include box-shadow(rgba(255, 255, 255, 0.1) 0 1px 0, #000000 0 1px 3px 0 inset);
 		background: #cacaca;
 		@include border-radius(4px);
+		@include box-sizing(border-box);
 		&:focus {
 			@include box-shadow(rgba(255, 255, 255, 0.1) 0 1px 0, #000000 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset);
 		}
@@ -177,6 +170,12 @@ ul.t3-topbar {
 		&.modified {
 	   		border: 1px solid #54974a;
 		}
+	}
+	input[placeholder],
+	input::-webkit-input-placeholder,
+	input:-moz-placeholder {
+		height: 20px;
+		line-height: 20px;
 	}
 	select {
 		width: 175px;
@@ -339,14 +338,13 @@ button.t3-button {
 		background: #666666;
 	}
 	&.pressed {
-		@include background-image(linear-gradient(#f18f0b, #7c4700));
+		background: #ff8700;
 		&:hover {
-			@include background-image(linear-gradient(#f69a1e, #925502));
+			background: #ea7c01;
 		}
 		&:focus,
 		&:active {
-			background: -moz-linear-gradient(top, #f69a1e 0%, #925502 70%, #a66003 100%);
-			@include single-box-shadow(#925502, 0, 4px, 3px, 0, inset);
+			background: #d06e00;
 		}
 	}
 	&[disabled] {
@@ -354,10 +352,9 @@ button.t3-button {
 		cursor: auto;
 		color: #bbbbbb;
 		&:hover,
-		&:active,
-		&:focus {
-			@include background-image(linear-gradient(#999999, #555555));
-			@include single-box-shadow(transparent, 0, 0, 0);
+		&:focus,
+		&:active {
+			background: #888888
 		}
 	}
 }
@@ -561,5 +558,5 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 
 
 @import "style-launchbar";
-
+@import "content-properties";
 @import "style-workInProgress";
