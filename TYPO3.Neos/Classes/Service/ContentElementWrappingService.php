@@ -51,7 +51,7 @@ class ContentElementWrappingService {
 	 * @param string $content
 	 * @param boolean $isPage
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $isPage) {
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $isPage = FALSE) {
 		// TODO: If not in backend, return content directly (needs to be discussed)
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
