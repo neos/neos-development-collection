@@ -369,52 +369,37 @@ button.t3-button {
 .t3-handle {
 	position: absolute;
 	right: -1px;
-	top: -17px;
-	width: 20px;
-	height: 16px;
+	top: -19px;
+	width: 19px;
+	height: 18px;
 	overflow: hidden;
 	font-size: 9px;
 	display: none;
-	background-position: 50% 50%, 50% 50%;
-	background-repeat: no-repeat, repeat;
-	background-color: transparent;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-color: #ffffff;
 	border-width: 1px 1px 0 1px;
 	border-style: solid solid none solid;
-	border-color: #909090;
-	@include border-top-radius(5px);
+	border-color: #373737;
 	text-indent: -9999px;
-	@include single-box-shadow(#909090, 0, -1px, 4px);
 	cursor: pointer;
-	&:hover {
-		@include single-box-shadow(#aaaaaa, 0px, -1px, 4px);
-	}
 }
 .t3-add-above-handle,
 .t3-add-below-handle {
-	background-image: url(../Images/ContentModule/plus.png);
-	background-image: url(../Images/ContentModule/plus.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
-	background-image: url(../Images/ContentModule/plus.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bbbbbb));
-	background-image: url(../Images/ContentModule/plus.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
-	background-image: url(../Images/ContentModule/plus.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
-	background-image: url(../Images/ContentModule/plus.png), linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	background-image: url(../Icons/add.png);
+	right: 49%;
+	border-width: 0;
+	border-style: none;
+	top: -29px;
 }
 .t3-add-below-handle {
 	top: auto;
-	bottom: -17px;
-	border-width: 0 1px 1px 1px;
-	border-style: none solid solid solid;
-	@include border-bottom-radius(5px);
-	@include border-top-radius(0);
-	@include single-box-shadow(#909090, 0, 1px, 3px);
+	bottom: -29px;
 }
 .t3-delete-handle {
-	right: 51px;
-	background-image: url(../Images/ContentModule/delete.png);
-	background-image: url(../Images/ContentModule/delete.png), -moz-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
-	background-image: url(../Images/ContentModule/delete.png), -webkit-gradient(linear, left top, left bottom, color-stop(0%,#eeeeee), color-stop(100%,#bbbbbb));
-	background-image: url(../Images/ContentModule/delete.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
-	background-image: url(../Images/ContentModule/delete.png), -webkit-linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
-	background-image: url(../Images/ContentModule/delete.png), linear-gradient(top, #eeeeee 0%,#bbbbbb 100%);
+	right: -1px;
+	top: -19px;
+	background-image: url(../Icons/delete.png);
 }
 
 .aloha-block-active-top > .t3-handle,
@@ -568,3 +553,4 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 @import "style-launchbar";
 @import "content-properties";
 @import "style-workInProgress";
+@import "js-ui";

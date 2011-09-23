@@ -15,7 +15,6 @@ define(
 	'text!phoenix/content/ui/imageupload.html',
 	'Library/jquery-popover/jquery.popover',
 	'Library/jquery-notice/jquery.notice',
-	'css!Library/jquery-popover/jquery.popover.css',
 	'css!Library/jquery-notice/jquery.notice.css',
 	'Library/jcrop/js/jquery.Jcrop.min',
 	'css!Library/jcrop/css/jquery.Jcrop.css'

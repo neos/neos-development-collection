@@ -21,8 +21,8 @@ function() {
 	window.jQuery = window.alohaQuery;
 
 	require([
-		'order!Library/jquery-ui/js/jquery-ui-1.8.14.custom.min',
-		'css!Library/jquery-ui/css/ui-darkness/jquery-ui-1.8.14.custom.css',
+		'order!Library/jquery-ui/js/jquery-ui-1.8.16.custom.min',
+		'css!Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css',
 		'order!Library/sproutcore/sproutcore',
 		'order!Library/jquery-lionbars/jQuery.lionbars.0.2.1',
 		'order!phoenix/contentmodule'],

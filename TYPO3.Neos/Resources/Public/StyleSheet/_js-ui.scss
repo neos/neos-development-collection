@@ -1,0 +1,66 @@
+.popover {
+  	position: absolute;
+	display: none;
+	opacity: 0;
+	cursor: auto;
+	color: black;
+	background-color: white;
+	@include single-box-shadow(rgba(0, 0, 0, 0.3), 0px, 0px, 5px);
+	@include transition-property(opacity);
+	@include transition-duration(0.25s);
+	@include transition-timing-function(linear);
+}
+.t3-popover-fixed {
+	border-style: solid;
+	border-color: #373737;
+	border-width: 0 3px 3px 3px;
+}
+.popover.active {
+  opacity: 1;
+}
+.popover > .triangle {
+  position: absolute;
+  width: 0px;
+  border-bottom: 20px solid transparent;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 20px solid transparent;
+}
+.popover > .triangle.top {
+  bottom: -40px;
+  border-top: 20px solid #373737;
+}
+.popover > .triangle.bottom {
+  top: -40px;
+  border-bottom: 20px solid #373737;
+}
+.popover > .triangle.left {
+  right: -40px;
+  border-left: 20px solid #373737;
+}
+.popover > .triangle.right {
+  left: -40px;
+  border-right: 20px solid #373737;
+}
+.popover > .header {
+	margin: 0;
+	padding: 3px 5px 3px 5px;
+	height: auto;
+	color: white;
+	background-color: #373737;
+	text-align: left;
+	@include box-sizing(border-box);
+}
+.popover > .content {
+  min-width: 15em;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+// Our own styles for the jQuery UI stuff
+.popover .ui-tabs {
+	padding: 0;
+}
+.popover .ui-tabs .ui-tabs-nav {
+	padding: 0;
+}

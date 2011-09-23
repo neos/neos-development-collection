@@ -235,22 +235,22 @@
 			}
 
 			// position popover
-	    settings.popover$.offset({
-	      top: coord.popoverY - coord.deltaY + settings.offsetY,
-	      left: coord.popoverX - coord.deltaX + settings.offsetX
-	    });
+	   	settings.popover$.offset({
+				top: coord.popoverY - coord.deltaY + settings.offsetY,
+				left: coord.popoverX - coord.deltaX + settings.offsetX
+	   	});
 
 			// TYPO3 SPECIFIC FIX START
 			settings.popover$.css('position', settings.positioning);
 			if (settings.positioning === 'absolute') {
 				settings.zindex = 10001;
 			}
-
+			
 			settings.popover$.addClass('t3-popover-' + settings.positioning);
 			// TYPO3 SPECIFIC FIX STOP
-	
+
 			// set popover css and show it
-	    settings.popover$.css('z-index', settings.zindex).show();
+			settings.popover$.css('z-index', settings.zindex).show();
 		}
 
 	  function showPopover(button) {
