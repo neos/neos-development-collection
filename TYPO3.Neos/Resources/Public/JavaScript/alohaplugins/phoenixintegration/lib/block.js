@@ -84,6 +84,14 @@ function(block) {
 		 * want to touch them).
 		 */
 		_renderSurroundingElements: function() {
+			this.element.mouseenter(function(event) {
+				$(this).parents('.t3-aloha-block-over').removeClass('t3-aloha-block-over');
+				$(this).addClass('t3-aloha-block-over');
+				event.stopPropagation();
+			}).mouseleave(function() {
+				$(this).removeClass('t3-aloha-block-over');
+			});
+
 			this.renderHandles();
 		},
 

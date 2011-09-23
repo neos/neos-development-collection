@@ -370,8 +370,8 @@ function(launcherTemplate) {
 				$('body').addClass('t3-contentelement-selected');
 			}
 			if (alohaBlocks.length > 0) {
-				blocks = $.map(alohaBlocks.reverse(), function(alohaBlock) {
-					return T3.Content.Model.BlockManager.getBlockProxy(alohaBlock);
+				$.each(alohaBlocks, function() {
+					blocks.unshift(T3.Content.Model.BlockManager.getBlockProxy(this));
 				});
 			}
 			blocks.unshift(BlockManager.get('_pageBlock'));

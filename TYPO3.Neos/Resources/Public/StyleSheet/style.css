@@ -468,8 +468,8 @@ button.t3-button {
   background-image: url(../Images/ContentModule/delete.png), -webkit-linear-gradient(top, #eeeeee 0%, #bbbbbb 100%);
   background-image: url(../Images/ContentModule/delete.png), linear-gradient(top, #eeeeee 0%, #bbbbbb 100%); }
 
-.aloha-block-active > .t3-handle,
-.aloha-block:hover > .t3-handle {
+.aloha-block-active-top > .t3-handle,
+.t3-aloha-block-over > .t3-handle {
   display: block;
   z-index: 10000; }
 
@@ -477,10 +477,10 @@ button.t3-button {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
   opacity: 0.2; }
 
-.t3-contentelement-selected .aloha-block:hover > .t3-handle {
+.t3-contentelement-selected .t3-aloha-block-over > .t3-handle {
   display: none; }
-.t3-contentelement-selected .aloha-block-active > .t3-handle,
-.t3-contentelement-selected .aloha-block-active:hover > .t3-handle {
+.t3-contentelement-selected .aloha-block-active-top > .t3-handle,
+.t3-contentelement-selected .aloha-block-active-top:hover > .t3-handle {
   display: block; }
 
 .t3-status-indicator {

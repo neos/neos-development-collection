@@ -210,6 +210,14 @@ function() {
 
 		_onBlockSelectionChange: function(blocks) {
 			T3.Content.Model.BlockSelection.updateSelection(blocks);
+			this._markTopmostSelectedBlock(blocks);
+		},
+
+		_markTopmostSelectedBlock: function(blocks) {
+			$('.aloha-block-active-top').removeClass('aloha-block-active-top');
+			if (blocks.length > 0) {
+				blocks[0].element.addClass('aloha-block-active-top');
+			}
 		},
 
 		reloadPage: function() {
