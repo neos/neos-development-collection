@@ -47,6 +47,7 @@ function() {
 				}
 			};
 			if (isPreviewEnabled) {
+				$('body').addClass('t3-ui-previewmode-activating');
 				if(!window.localStorage.previewModeStore) {
 					var stylesToSave = {
 						'body': {
@@ -84,8 +85,10 @@ function() {
 					width: 0
 				}, 'fast', allDone);
 			} else {
+
 				var stylesToUse = jQuery.parseJSON(window.localStorage.previewModeStore);
 
+				$('body').removeClass('t3-ui-previewmode-activating');
 				// TODO Cleanup the 'hidden' workaround for previewMode with a CSS transition
 				$('#t3-footer, #t3-ui-top, #t3-inspector').css('display', 'block');
 
