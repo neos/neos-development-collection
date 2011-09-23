@@ -855,6 +855,11 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 .t3-contentelement-cut {
   opacity: .50; }
 
+.popover {
+  display: none; }
+  .popover.active {
+    display: block; }
+
 .scrollbar {
   position: absolute;
   content: '';

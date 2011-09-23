@@ -288,6 +288,7 @@ function() {
 			T3.Common.Dialog.openConfirmPopover({
 				title: 'Are you sure you want to remove this content element?',
 				content: 'If you remove this element you can restore it using undo',
+				positioning: 'absolute',
 				onOk: function() {
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
 						that,

@@ -117,6 +117,14 @@ button.t3-create-new-content {
 }
 
 
+.popover {
+	display: none;
+
+	&.active {
+		display: block;
+	}
+}
+
 // Launcher
 
 .scrollbar {

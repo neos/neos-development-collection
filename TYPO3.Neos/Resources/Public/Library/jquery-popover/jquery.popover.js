@@ -216,7 +216,7 @@
 				coord.triangleX = 0;
 				coord.triangleY = coord.popoverHeight/2 - coord.triangleSize + coord.deltaY;				
 			}
-	
+			settings.popover$.css('display', '');
 			return coord;
 		}
 		
@@ -242,6 +242,9 @@
 
 			// TYPO3 SPECIFIC FIX START
 			settings.popover$.css('position', settings.positioning);
+			if (settings.positioning === 'absolute') {
+				settings.zindex = 10001;
+			}
 			// TYPO3 SPECIFIC FIX STOP
 	
 			// set popover css and show it
@@ -249,7 +252,7 @@
 		}
 
 	  function showPopover(button) {
-		
+
 	    // Already open?
 	    if ($.fn.popover.openedPopup === button) {
 	      $.fn.popover.openedPopup.trigger('hidePopover');
@@ -291,18 +294,20 @@
 				showPopover(button);
 				return false;
 			});
-	    button.bind('showPopover', function() { 
+	    button.bind('showPopover', function() {
 				showPopover(button);
+
 				return false;
 			});
 	    button.bind('hidePopover', function() {
 	      button.removeClass('popover-on');
-				$(document).trigger('popoverClosed');
-	      settings.popover$.removeClass("active").attr("style", "").hide();
+			settings.popover$.removeClass('active');
+			settings.popover$.attr("style", "");
+			$.fn.popover.openedPopup = null;
+			$(document).trigger('popoverClosed');
 	      if ($.isFunction(settings.closeEvent)) {
 	        settings.closeEvent();
 	      }
-	      $.fn.popover.openedPopup = null;
 	      return false;
 	    });
 	  });

@@ -190,15 +190,20 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 			});
 		},
 
+		/**
+		 *
+		 * @param {Object} options
+		 * @param {jQuery} $handle
+		 */
 		openConfirmPopover: function(options, $handle) {
 			var that = this;
-			this._handle = $handle;
+			that._handle = $handle;
 
 			var handlerEvents = $handle.data('events');
 			if (!handlerEvents['showPopover']) {
 					// Set popover content
-				this._options.header = (options.title) ? '<h1>' + options.title + '</h1>': null;
-				this._options.content = $(options.content === undefined ? '<div />' : '<div>' + options.content + '</div>');
+				that._options.header = (options.title) ? '<h1>' + options.title + '</h1>': null;
+				that._options.content = $(options.content === undefined ? '<div />' : '<div>' + options.content + '</div>');
 
 				var view = SC.View.create({
 					template: SC.Handlebars.compile(confirmationdialogTemplate),
@@ -215,18 +220,18 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 						$handle.trigger('hidePopover');
 					}
 				});
+				if (options.positioning) {
+					that._options.positioning = options.positioning;
+				}
 
-				this._showDialog();
+				that._showDialog();
 
-				view.appendTo(this._options.content);
+				view.appendTo(that._options.content);
 				if (options.onDialogOpen) {
 					options.onDialogOpen.call(that);
 				}
-			} else {
-				// TODO: When you click no, and open the delete dialog again it's not correctly shown
-				$handle.trigger('showPopover');
 			}
-
+			
 			if (options.onDialogOpen) {
 				options.onDialogOpen.call(this);
 			}
