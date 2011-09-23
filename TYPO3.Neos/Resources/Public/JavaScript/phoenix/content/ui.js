@@ -673,6 +673,9 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 				if (!imageVariant) return;
 
+					// The following changes should be applied atomically
+				this.beginPropertyChanges();
+
 				this.set('_imageUuid', imageVariant.image);
 				$.each(imageVariant.processingInstructions, function(index, instruction) {
 					if (instruction.type === 'crop') {
@@ -681,6 +684,8 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 						that.set('_scaleOptions', instruction.options)
 					}
 				});
+
+				this.endPropertyChanges();
 			}
 		}.observes('value'),
 
@@ -704,11 +709,16 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 						return;
 					}
 
+					// The following changes should be applied atomically
+					that.beginPropertyChanges();
+
 					that.set('_pathToImage', metadata.resourceUri);
 					that.set('_originalImageSize', metadata.originalSize);
 					that.set('_previewImageSize', metadata.previewSize);
 					that.set('_previewImageLoaded', true);
 					that.set('_currentlyDisplayingUploadPreview', false);
+
+					that.endPropertyChanges();
 				});
 			}
 		}.observes('_imageUuid'),

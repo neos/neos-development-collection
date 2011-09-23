@@ -242,10 +242,13 @@ function() {
 		 */
 		apply: function() {
 			var that = this;
+			SC.beginPropertyChanges();
 			SC.keys(this.cleanProperties).forEach(function(key) {
 				that.selectedBlock.set(key, that.blockProperties.get(key));
 			});
+
 			this.set('_modified', false);
+			SC.endPropertyChanges();
 		},
 
 		/**
