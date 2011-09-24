@@ -107,6 +107,9 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 			);
 		}
 		foreach ($allContentTypes as $groupKey => $contentType) {
+			if (!$contentType->hasGroup()) {
+				continue;
+			}
 			if (!in_array($contentType->getGroup(), $contentTypeGroups)) {
 				$contentTypeGroups[] = $contentType->getGroup();
 				$groupKey = array_search($contentType->getGroup(), $contentTypeGroups);
@@ -182,17 +185,18 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	protected function populateNode(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
 		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
 
-			// Fill Placeholder
+			// Set default values
 		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
-			if (isset($propertyConfiguration['placeholder'])) {
-				$node->setProperty($propertyName, $propertyConfiguration['placeholder']);
+			if (isset($propertyConfiguration['default'])) {
+				$node->setProperty($propertyName, $propertyConfiguration['default']);
 			}
 		}
 
+			// Populate structure
 		if ($contentType->hasStructure()) {
 			foreach ($contentType->getStructure() as $nodeName => $nodeConfiguration) {
 				if (!isset($nodeConfiguration['type'])) {
-					throw new \Exception('TODO fix exception');
+					throw new \TYPO3\TYPO3\Exception('Type for node in structure has to be configured', 1316881909);
 				}
 
 				$node->createNode($nodeName, $nodeConfiguration['type']);

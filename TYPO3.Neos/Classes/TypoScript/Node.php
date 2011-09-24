@@ -76,10 +76,17 @@ class Node extends \TYPO3\TypoScript\AbstractContentObject {
 		}
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getProperties() {
 		return $this->properties;
 	}
 
+	/**
+	 * @param array $properties
+	 * @return void
+	 */
 	public function setProperties(array $properties) {
 		$this->properties = $properties;
 	}
