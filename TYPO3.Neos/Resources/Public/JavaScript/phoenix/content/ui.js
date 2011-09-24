@@ -1058,8 +1058,29 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		/**
 		 * Callback which is executed when a TreeNode is moved to an other TreeNode.
 		 */
-		_onTreeNodeMove: function() {
-			// TODO: implement
+		_onTreeNodeMove: function(tree, node, oldParent, newParent, index) {
+			var beforeNode = newParent.childNodes[index - 1],
+				afterNode = newParent.childNodes[index + 1],
+				targetNodeId, position;
+			if (beforeNode) {
+				targetNodeId = beforeNode.id;
+				position = 1;
+			} else if (afterNode) {
+				targetNodeId = afterNode.id;
+				position = -1;
+			} else {
+				targetNodeId = newParent.id;
+				position = 0;
+			}
+
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
+				node.id,
+				targetNodeId,
+				position,
+				function() {
+					newParent.reload();
+				}
+			);
 		},
 
 		/**
@@ -1157,7 +1178,11 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 							});
 						}
 					}
-				})
+				}),
+
+				listeners: {
+					movenode: this._onTreeNodeMove
+				}
 			});
 
 			var $treeContainer = $('<div />');
@@ -1165,6 +1190,36 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 
 			this._tree.render($treeContainer[0]);
 			this._tree.getRootNode().expand();
+		},
+
+		/**
+		 * Callback which is executed when a TreeNode is moved to an other TreeNode.
+		 *
+		 * TODO: Refactor later to common tree component
+		 */
+		_onTreeNodeMove: function(tree, node, oldParent, newParent, index) {
+			var beforeNode = newParent.childNodes[index - 1],
+				afterNode = newParent.childNodes[index + 1],
+				targetNodeId, position;
+			if (beforeNode) {
+				targetNodeId = beforeNode.id;
+				position = 1;
+			} else if (afterNode) {
+				targetNodeId = afterNode.id;
+				position = -1;
+			} else {
+				targetNodeId = newParent.id;
+				position = 0;
+			}
+
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
+				node.id,
+				targetNodeId,
+				position,
+				function() {
+					newParent.reload();
+				}
+			);
 		}
 	});
 
