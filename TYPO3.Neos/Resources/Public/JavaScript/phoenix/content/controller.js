@@ -398,6 +398,9 @@ function() {
 		 * @return {void}
 		 */
 		cut: function(nodePath, $handle) {
+			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+			block.hideHandle('remove-from-copy');
+			block.showHandle('copy');
 			this.set('_clipboard', {
 				type: 'cut',
 				nodePath: nodePath
@@ -409,6 +412,9 @@ function() {
 		 * @return {void}
 		 */
 		copy: function(nodePath, $handle) {
+			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+			block.hideHandle('remove-from-cut');
+			block.showHandle('cut');
 			this.set('_clipboard', {
 				type: 'copy',
 				nodePath: nodePath
@@ -470,6 +476,29 @@ function() {
 		},
 
 		/**
+		 * Paste the current node on the clipboard after another node
+		 * @param {String} nodePath the nodePath of the target node
+		 * @param {jQuery} handle the clicked handle
+		 * @return {void}
+		 */
+		removeFromClipboard: function(nodePath, $handle) {
+			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+
+			var clipboard = this.get('_clipboard');
+			if (clipboard.nodePath === nodePath) {
+				this.set('_clipboard', {});
+			}
+
+			block.hideHandle('remove-from-cut');
+			block.hideHandle('remove-from-copy');
+			$('.t3-paste-before-handle, .t3-paste-after-handle').addClass('t3-handle-hidden');
+			block.showHandle('cut');
+			block.showHandle('copy');
+			block.showHandle('add-above');
+			block.showHandle('add-below');
+		},
+
+		/**
 		 * Observes the _clipboard property and processes changes
 		 * @return {void}
 		 */
@@ -489,12 +518,15 @@ function() {
 					// Handle cut
 					block.getContentElement().addClass('t3-contentelement-cut');
 					block.hideHandle('cut');
+					block.showHandle('remove-from-cut');
 				} else if (clipboard.type === 'copy') {
 					// Handle copy
 					block.hideHandle('copy');
+					block.showHandle('remove-from-copy');
 				}
-
 				$('.t3-paste-before-handle, .t3-paste-after-handle').removeClass('t3-handle-hidden');
+				block.hideHandle('add-above');
+				block.hideHandle('add-below');
 			} catch (error) {
 				// TODO: HACK! Somehow this is a DOMWindow on first load of the page
 				setTimeout(this.onClipboardChange, 500);

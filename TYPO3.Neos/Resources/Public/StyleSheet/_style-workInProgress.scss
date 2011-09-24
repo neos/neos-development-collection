@@ -63,40 +63,6 @@ button.t3-create-new-content {
 	background-image: url('../Images/ajax-preloader.gif');
 }
 
-// Cut copy paste
-.t3-copy-handle {
-	right: 39px;
-	background-image: url(../Images/Icons/Black/clipboard_copy_icon-16.png);
-}
-.t3-cut-handle {
-	right: 19px;
-	background-image: url(../Images/Icons/Black/clipboard_cut_icon-16.png);
-}
-.t3-paste-before-handle {
-	right: 49%;
-	top: -29px;
-	background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
-	border-width: 0;
-	border-style: none;
-}
-.t3-paste-after-handle {
-	top: auto;
-	bottom: -29px;
-	border-width: 0;
-	border-style: none;
-	right: 49%;
-	background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
-}
-
-.t3-handle-hidden {
-	display: none !important;
-}
-
-.t3-contentelement-cut {
-	opacity: .50;
-}
-
-
 .popover {
 	display: none;
 

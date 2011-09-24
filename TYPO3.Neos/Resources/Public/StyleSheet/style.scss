@@ -400,43 +400,109 @@ button.t3-button {
 .t3-handle {
 	position: absolute;
 	right: -1px;
-	top: -19px;
-	width: 19px;
-	height: 18px;
+	top: -21px;
+	width: 22px;
+	height: 20px;
 	overflow: hidden;
 	font-size: 9px;
 	display: none;
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	background-color: #ffffff;
 	border-width: 1px 1px 0 1px;
 	border-style: solid solid none solid;
 	border-color: #373737;
 	text-indent: -9999px;
 	cursor: pointer;
+	background: #ffffff;
+	span {
+		width: 100%;
+		height: 100%;
+		background-position: 50% 50%;
+		background-repeat: no-repeat;
+		background-color: #ffffff;
+		overflow: hidden;
+		@include opacity(1.0);
+		@include transition-property(opacity);
+		@include transition-duration(0.25s);
+	}
 }
 .t3-add-above-handle,
 .t3-add-below-handle {
-	background-image: url(../Images/Icons/Black/plus.png);
 	right: 49%;
 	border-width: 0;
 	border-style: none;
-	top: -29px;
+	top: -31px;
+	padding: 6px;
+	background: transparent;
+	span {
+		background-color: #ffffff;
+		background-image: url(../Images/Icons/Black/plus.png);
+	}
 }
 .t3-add-below-handle {
 	top: auto;
-	bottom: -29px;
+	bottom: -31px;
 }
 .t3-delete-handle {
 	right: -1px;
-	top: -19px;
-	background-image: url(../Images/Icons/Black/trash_icon-16.png);
+	top: -21px;
+	span {
+		background-image: url(../Images/Icons/Black/trash_icon-16.png);
+	}
 }
-
+.t3-copy-handle,
+.t3-remove-from-copy-handle {
+	right: 43px;
+	span {
+		background-image: url(../Images/Icons/Black/clipboard_copy_icon-16.png);
+	}
+}
+.t3-cut-handle,
+.t3-remove-from-cut-handle {
+	right: 21px;
+	span {
+		background-image: url(../Images/Icons/Black/clipboard_cut_icon-16.png);
+	}
+}
+.t3-paste-before-handle,
+.t3-paste-after-handle {
+	right: 49%;
+	top: -31px;
+	border-width: 0;
+	border-style: none;
+	padding: 6px;
+	background: transparent;
+	span {
+		background: #ffffff;
+		background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
+		background-repeat: no-repeat;
+	}
+}
+.t3-paste-after-handle {
+	top: auto;
+	bottom: -31px;
+}
+.t3-remove-from-cut-handle span,
+.t3-remove-from-copy-handle span {
+	@include opacity(0.3);
+}
+.t3-handle span {
+	&:hover,
+	&:focus,
+	&:active {
+		@include opacity(0.7);
+	}
+}
+.t3-handle-hidden {
+	display: none !important;
+}
+// Aloha Blocks
 .aloha-block-active-top > .t3-handle,
 .t3-aloha-block-over > .t3-handle {
 	display:block;
 	z-index: 10000;
+	span {
+		display:block;
+		z-index: 10000;
+	}
 }
 .t3-contentelement-hidden {
 	@include opacity(0.2);

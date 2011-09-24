@@ -110,6 +110,8 @@ function(block) {
 			this._renderHandle('t3-copy-handle', 'Copy', T3.Content.Controller.BlockActions.copy, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-add-above-handle', 'Add above', T3.Content.Controller.BlockActions.addAbove, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-add-below-handle', 'Add below', T3.Content.Controller.BlockActions.addBelow, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-remove-from-copy-handle t3-handle-hidden', 'Remove from Clipboard', T3.Content.Controller.BlockActions.removeFromClipboard, T3.Content.Controller.BlockActions);
+			this._renderHandle('t3-remove-from-cut-handle t3-handle-hidden', 'Remove from Clipboard', T3.Content.Controller.BlockActions.removeFromClipboard, T3.Content.Controller.BlockActions);
 
 			this.element.find('.t3-status-indicator').remove();
 			if (this.attr('__status')) {
@@ -130,7 +132,7 @@ function(block) {
 		 */
 		_renderHandle: function(cssClass, innerHtml, clickHandler, scope) {
 			if (this.element.find('.' + cssClass).length == 0) {
-				var handle = $('<span class="t3-handle ' + cssClass + '">' + innerHtml + '</span>');
+				var handle = $('<span class="t3-handle ' + cssClass + '"><span>' + innerHtml + '</span></span>');
 				this.element.prepend(handle);
 
 				var nodePath = handle.parent('.aloha-block').attr('data-__nodepath');
