@@ -226,7 +226,7 @@ ul.t3-topbar {
 .extjs-container .t3-dd-newpage {
 	padding: 2px 2px 2px 25px;
 	margin: 5px;
-	background: #e6e6e6 url(../Images/ContentModule/plus-bubble.png) 5px 50% no-repeat;
+	background: #e6e6e6 url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
 	border: 1px dotted #000000;
 	cursor: move;
 }
@@ -386,7 +386,7 @@ button.t3-button {
 }
 .t3-add-above-handle,
 .t3-add-below-handle {
-	background-image: url(../Icons/add.png);
+	background-image: url(../Images/Icons/Black/plus.png);
 	right: 49%;
 	border-width: 0;
 	border-style: none;
@@ -399,7 +399,7 @@ button.t3-button {
 .t3-delete-handle {
 	right: -1px;
 	top: -19px;
-	background-image: url(../Icons/delete.png);
+	background-image: url(../Images/Icons/Black/trash_icon-16.png);
 }
 
 .aloha-block-active-top > .t3-handle,

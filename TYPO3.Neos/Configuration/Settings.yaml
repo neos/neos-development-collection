@@ -55,7 +55,7 @@ TYPO3:
         superTypes: ['TYPO3.TYPO3:ContentObject']
         label: 'Two column content'
         group: 'Structure'
-        icon: 'Icons/FugueIcons/edit-column.png'
+        icon: 'Images/Icons/White/columns_icon-16.png'
 
         # TODO: think about name; as the structure is ONLY created on the beginning...
         structure:
@@ -117,7 +117,7 @@ TYPO3:
       'TYPO3.TYPO3:Text':
         superTypes: ['TYPO3.TYPO3:ContentObject']
         group: 'General'
-        icon: 'Icons/FugueIcons/document-text.png'
+        icon: 'Images/Icons/White/doc_lines_stright_icon-16.png'
         label: 'Text'
 
         properties:
@@ -135,7 +135,7 @@ TYPO3:
         label: 'Text with Image'
         superTypes: ['TYPO3.TYPO3:Text']
         group: 'General'
-        icon: 'Icons/FugueIcons/document-text-image.png'
+        icon: 'Images/Icons/White/doc_picture_icon-16.png'
         properties:
           image:
             type: TYPO3\TYPO3\Domain\Model\Media\ImageVariant
@@ -158,7 +158,7 @@ TYPO3:
       'TYPO3.TYPO3:Html':
         superTypes: ['TYPO3.TYPO3:ContentObject']
         group: 'General'
-        icon: 'Icons/FugueIcons/document-code.png'
+        icon: 'Images/Icons/White/brackets_icon-16.png'
         label: 'HTML'
         properties:
           source:
@@ -178,7 +178,7 @@ TYPO3:
       'TYPO3.TYPO3:Plugin':
         superTypes: ['TYPO3.TYPO3:ContentObject']
         group: 'Plugins'
-        icon: 'Icons/FugueIcons/application-icon.png'
+        icon: 'Images/Icons/White/app_window_shell_icon-16.png'
         label: 'Generic plugin'
 
         properties:

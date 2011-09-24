@@ -9,7 +9,7 @@
 	right: 5px;
 	width: 16px;
 	height: 16px;
-	background: url(../Images/ContentModule/arrow-bubble.png) no-repeat;
+	background: url(../Images/Icons/Black/rnd_br_next_icon-16.png) no-repeat;
 }
 .popover .x-tree .x-tree-node-over .t3-gotoPage {
 	display: inline;
@@ -66,16 +66,16 @@ button.t3-create-new-content {
 // Cut copy paste
 .t3-copy-handle {
 	right: 39px;
-	background-image: url(../Icons/copy.png);
+	background-image: url(../Images/Icons/Black/clipboard_copy_icon-16.png);
 }
 .t3-cut-handle {
 	right: 19px;
-	background-image: url(../Icons/cut.png);
+	background-image: url(../Images/Icons/Black/clipboard_cut_icon-16.png);
 }
 .t3-paste-before-handle {
 	right: 49%;
 	top: -29px;
-	background-image: url(../Icons/clipboard.png);
+	background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
 	border-width: 0;
 	border-style: none;
 }
@@ -85,7 +85,7 @@ button.t3-create-new-content {
 	border-width: 0;
 	border-style: none;
 	right: 49%;
-	background-image: url(../Icons/clipboard.png);
+	background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
 }
 
 .t3-handle-hidden {
