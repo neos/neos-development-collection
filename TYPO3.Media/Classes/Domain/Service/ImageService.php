@@ -66,7 +66,7 @@ class ImageService {
 	 * @return \Imagine\Image\ImageInterface
 	 */
 	protected function applyProcessingInstructions(\Imagine\Image\ImageInterface $image, array $processingInstructions) {
-		foreach($processingInstructions as $processingInstruction) {
+		foreach ($processingInstructions as $processingInstruction) {
 			$commandName = $processingInstruction['command'];
 			$commandMethodName = sprintf('%sCommand', $commandName);
 			if (!is_callable(array($this, $commandMethodName))) {

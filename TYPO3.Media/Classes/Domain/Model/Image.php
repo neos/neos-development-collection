@@ -175,14 +175,17 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 
 	/**
 	 * Returns a thumbnail of this image.
-	 * If maximum width/height is not specified or exceed the original images size, width/height of the original image is used
-	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
+	 *
+	 * If maximum width/height is not specified or exceed the original images size,
+	 * width/height of the original image is used
+	 *
 	 * Note: The image variant that will be created is intentionally not added to the imageVariants collection of this image
 	 * If you want to create a persisted image variant, use createImageVariant() instead.
 	 *
 	 * @param integer $maximumWidth
 	 * @param integer $maximumHeight
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
+	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
 	 */
 	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL) {
 		if ($maximumWidth === NULL) {
@@ -206,6 +209,8 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	}
 
 	/**
+	 * Set all variants of this image.
+	 *
 	 * @param array $imageVariants
 	 * @return void
 	 */
@@ -214,6 +219,8 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	}
 
 	/**
+	 * Return all variants of this image.
+	 *
 	 * @return array
 	 */
 	public function getImageVariants() {
@@ -221,6 +228,10 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	}
 
 	/**
+	 * Create a variant of this image using the given processing instructions.
+	 *
+	 * The variant is attached to the image for later (re-)use.
+	 *
 	 * @param array $processingInstructions
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
 	 */
@@ -234,7 +245,9 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	}
 
 	/**
-	 * @param ImageVariant $imageVariant
+	 * Remove the given variant from this image.
+	 *
+	 * @param \TYPO3\Media\Domain\Model\ImageVariant $imageVariant
 	 * @return void
 	 */
 	public function removeImageVariant(\TYPO3\Media\Domain\Model\ImageVariant $imageVariant) {

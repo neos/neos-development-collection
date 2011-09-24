@@ -23,7 +23,8 @@ namespace TYPO3\Media\Domain\Model;
 
 /**
  * An image variant that has a relation to the original image
- * Note: This is neither an entity nor a value object, ImageVariants won't be persisted.
+ *
+ * Note: This is neither an entity nor a value object, ImageVariants won't be persisted on their own.
  */
 class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 
@@ -57,6 +58,13 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * @var integer
 	 */
 	protected $height;
+
+	/**
+	 * one of PHPs IMAGETYPE_* constants
+	 *
+	 * @var integer
+	 */
+	protected $type;
 
 	/**
 	 * @param \TYPO3\Media\Domain\Model\Image $originalImage
@@ -144,9 +152,9 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 
 	/**
 	 * Returns the processing instructions that were used to create this image variant.
-	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
 	 *
 	 * @return string
+	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
 	 */
 	public function getProcessingInstructions() {
 		return $this->processingInstructions;
@@ -154,11 +162,11 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 
 	/**
 	 * Creates a thumbnail of the original image
-	 * @see \TYPO3\Media\Domain\Model\Image::getThumbnail
 	 *
 	 * @param integer $maximumWidth
 	 * @param integer $maximumHeight
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
+	 * @see \TYPO3\Media\Domain\Model\Image::getThumbnail
 	 */
 	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL) {
 		return $this->originalImage->getThumbnail($maximumWidth, $maximumHeight);
