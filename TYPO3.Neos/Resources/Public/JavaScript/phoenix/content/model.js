@@ -422,38 +422,12 @@ function(launcherTemplate) {
 		}
 	});
 
-	var sendAllToServer = function(collection, transformFn, extDirectFn, callback, elementCallback) {
-		var numberOfUnsavedRecords = collection.get('length');
-		var responseCallback = function(element) {
-			return function() {
-				if (elementCallback) {
-					elementCallback(element);
-				}
-				numberOfUnsavedRecords--;
-				if (numberOfUnsavedRecords <= 0) {
-					callback();
-				}
-			};
-		};
-		collection.forEach(function(element) {
-			// Force copy of array
-			var args = transformFn(element).slice();
-			args.push(responseCallback(element));
-			extDirectFn.apply(window, args);
-		})
-	};
-
 	var PublishableBlocks = SC.ArrayProxy.create({
-
 		content: [],
 
-		initialize: function() {
-			this.set('[]', []);
-		},
-
 		noChanges: function() {
-			return this.get('length') == 0;
-		}.property('length').cacheable(),
+			return this.get('length') === 0;
+		}.property('length'),
 
 		add: function(block) {
 			if (!this.contains(block)) {
@@ -500,7 +474,7 @@ function(launcherTemplate) {
 			// We first set this._loadedFromLocalStore to FALSE; such that the removal
 			// of all changes does NOT trigger a _saveToLocalStore.
 			this._loadedFromLocalStore = false;
-			this.set('content', []);
+			this.set('[]', []);
 			this._readFromLocalStore();
 		},
 
@@ -550,9 +524,16 @@ function(launcherTemplate) {
 			this._loadedFromLocalStore = true;
 		},
 
+		// TODO This doesn't work as a second observer on [] somehow
+		_saveContentOnChange: function() {
+			if (window.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController) {
+				this.save();
+			}
+		},
+
 		_saveToLocalStore: function() {
-			if (!this._supports_html5_storage()) return;
-			if (!this._loadedFromLocalStore) return;
+			if (!this._supports_html5_storage()) return true;
+			if (!this._loadedFromLocalStore) return true;
 
 			var cleanedUpBlocks = this.get('[]').map(function(block) {
 				return $.extend(
@@ -562,7 +543,9 @@ function(launcherTemplate) {
 			});
 
 			window.localStorage['page_' + $('#t3-page-metainformation').attr('data-__nodepath')] = JSON.stringify(cleanedUpBlocks);
-		}.observes('content'),
+
+			this._saveContentOnChange();
+		}.observes('[]'),
 
 		_supports_html5_storage: function() {
 			try {
@@ -578,24 +561,15 @@ function(launcherTemplate) {
 			}, this);
 		},
 
-		save: function(callback) {
-			// Check if page needs to be reloaded after success
-			// TODO Move to function
-			var reloadPage = false;
-			this.get('content').forEach(function(change) {
-				$.each(change.__originalValues, function(key, value) {
-					if (change.get(key) !== value) {
-						var schema = change.get('schema'),
-							changedPropertyDefinition = schema.properties[key];
-						if (changedPropertyDefinition && changedPropertyDefinition.reloadOnChange) {
-							reloadPage = true;
-						}
-					}
-				});
-			});
+		save: function(callback, reloadPage) {
+			if (T3.Content.Controller.ServerConnection.get('_saveRunning')) {
+				T3.Content.Controller.ServerConnection.set('_pendingSave', true);
+				return;
+			}
+			reloadPage = reloadPage || this.checkIfReloadNeededAfterSave();
 
 			var savedAttributes = {};
-			sendAllToServer(
+			T3.Content.Controller.ServerConnection.sendAllToServer(
 				this,
 				// Get attributes to be updated from block
 				function(block) {
@@ -619,6 +593,12 @@ function(launcherTemplate) {
 					if (callback) {
 						callback();
 					}
+
+					if (T3.Content.Controller.ServerConnection.get('_pendingSave')) {
+						T3.Content.Controller.ServerConnection.set('_pendingSave', false);
+						T3.Content.Model.Changes.save();
+					}
+
 					// Check if a changed property in the schema needs
 					// a server-side reload
 					if (reloadPage) {
@@ -633,6 +613,22 @@ function(launcherTemplate) {
 					}
 				}
 			);
+		},
+
+		checkIfReloadNeededAfterSave: function() {
+			var reloadPage = false;
+			this.get('[]').forEach(function(change) {
+				$.each(change.__originalValues, function(key, value) {
+					if (change.get(key) !== value) {
+						var schema = change.get('schema'),
+							changedPropertyDefinition = schema.properties[key];
+						if (changedPropertyDefinition && changedPropertyDefinition.reloadOnChange) {
+							reloadPage = true;
+						}
+					}
+				});
+			});
+			return reloadPage;
 		}
 	});
 

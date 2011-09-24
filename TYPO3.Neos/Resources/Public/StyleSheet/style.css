@@ -914,6 +914,9 @@ div.aloha-block-active:hover > div.aloha-block-inner {
     top: 50%;
     margin: -60px 0 0 -60px; }
 
+button.t3-button.t3-connection-status-down {
+  border: 1px solid #c02f00; }
+
 .popover {
   position: absolute;
   display: none;

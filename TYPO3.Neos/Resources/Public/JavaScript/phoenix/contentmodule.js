@@ -85,8 +85,6 @@ function() {
 				});
 			});
 
-			T3.Content.Model.PublishableBlocks.initialize();
-
 			// Now we initialize the BlockManager. This triggers updates to the PublishableBlocks controller
 			T3.Content.Model.BlockManager.initialize();
 
@@ -164,9 +162,18 @@ function() {
 					}),
 					T3.Content.UI.Button.extend({
 						label: 'Publish Page',
-						disabledBinding: 'T3.Content.Model.PublishableBlocks.noChanges',
+						disabledBinding: SC.Binding.or('_noChanges', '_connectionFailed'),
 						target: 'T3.Content.Model.PublishableBlocks',
-						action: 'publishAll'
+						action: 'publishAll',
+						_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
+						_noChangesBinding: 'T3.Content.Model.PublishableBlocks.noChanges',
+						classNameBindings: ['connectionStatusClass'],
+
+						connectionStatusClass: function() {
+							var className = 't3-connection-status-';
+							className += this.get('_connectionFailed') ? 'down' : 'up';
+							return className;
+						}.property('_connectionFailed')
 					})
 				]
 			});

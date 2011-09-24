@@ -275,8 +275,6 @@ function() {
 
 			this.set('_modified', false);
 			SC.endPropertyChanges();
-
-			T3.Content.Model.Changes.save();
 		},
 
 		/**
@@ -449,8 +447,8 @@ function() {
 		 * @return {void}
 		 */
 		_paste: function(nodePath, $handle, position) {
-			var that = this;
-			var clipboard = this.get('_clipboard');
+			var that = this,
+				clipboard = this.get('_clipboard');
 
 			if (!clipboard.nodePath) {
 				T3.Common.Notification.notice('No node found on the clipboard');
@@ -482,9 +480,9 @@ function() {
 		 * @return {void}
 		 */
 		removeFromClipboard: function(nodePath, $handle) {
-			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath),
+				clipboard = this.get('_clipboard');
 
-			var clipboard = this.get('_clipboard');
 			if (clipboard.nodePath === nodePath) {
 				this.set('_clipboard', {});
 			}
@@ -534,11 +532,60 @@ function() {
 		}.observes('_clipboard')
 	});
 
+
+	var ServerConnection = SC.Object.create({
+
+		_lastSuccessfulTransfer: null,
+		_failedRequest: false,
+		_pendingSave: false,
+		_saveRunning: false,
+
+		sendAllToServer: function(collection, transformFn, extDirectFn, callback, elementCallback) {
+			var that = this,
+				numberOfUnsavedRecords = collection.get('length'),
+				responseCallback = function(element) {
+					return function(provider, response) {
+						if (response.status === false) {
+							that.set('_failedRequest', true);
+							that.set('_saveRunning', false);
+							return;
+						} else {
+							that.set('_failedRequest', false);
+							that.set('_lastSuccessfulTransfer', new Date());
+						}
+
+						if (elementCallback) {
+							elementCallback(element);
+						}
+						numberOfUnsavedRecords--;
+						if (numberOfUnsavedRecords <= 0) {
+							that.set('_saveRunning', false);
+							callback();
+						}
+					};
+				};
+			collection.forEach(function(element) {
+				// Force copy of array
+				var args = transformFn(element).slice();
+				args.push(responseCallback(element));
+				that.set('_saveRunning', true);
+				extDirectFn.apply(window, args);
+			})
+		},
+
+		statusClass: function() {
+			var className = 't3-connection-status-';
+			className += this.get('_failedRequest') ? 'down' : 'up';
+		}.observes('_failedRequest')
+
+	});
+
 	T3.Content.Controller = {
 		Preview: Preview,
 		Inspect: Inspect,
 		BlockActions: BlockActions,
-		Inspector: Inspector
+		Inspector: Inspector,
+		ServerConnection: ServerConnection
 	}
 	window.T3 = T3;
 });
