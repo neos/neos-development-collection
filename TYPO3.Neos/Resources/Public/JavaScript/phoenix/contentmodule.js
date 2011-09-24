@@ -175,8 +175,7 @@ function() {
 
 		_initializeLauncher: function() {
 			this._launcher = T3.Common.Launcher.create({
-				searchItemsBinding: 'T3.Common.SearchController.filteredSearchItems',
-				valueBinding: 'T3.Common.SearchController.filterValue'
+				searchItemsBinding: 'T3.Common.Launcher.SearchController.searchItems'
 			});
 			this._launcher.appendTo($('#t3-launcher'));
 		},

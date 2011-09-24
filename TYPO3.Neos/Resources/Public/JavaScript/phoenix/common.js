@@ -18,37 +18,6 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	var $ = window.alohaQuery || window.jQuery;
 
 	/**
-	 * T3.Common.SearchController
-	 *
-	 * Contains a list of available search items
-	 */
-	T3.Common.SearchController = SC.Object.create({
-		availableSearchItems: [],
-		filterValue: null,
-		filteredSearchItems: [],
-		init: function() {
-			this.setAvailableSearchItems(fixture.availableSearchItems);
-		},
-		setAvailableSearchItems: function(searchItems) {
-			var wrappedSearchItems = searchItems.map(function(searchItem) {
-				return SC.Object.create(searchItem);
-			});
-			this.set('availableSearchItems', wrappedSearchItems);
-			this.set('filteredSearchItems', wrappedSearchItems);
-		},
-		_filterValueChange: function() {
-			var lcFilterValue = this.get('filterValue').toLowerCase();
-			if (lcFilterValue === '') {
-				this.set('filteredSearchItems', this.get('availableSearchItems'));
-			} else {
-				this.set('filteredSearchItems', this.get('availableSearchItems').filter(function(searchItem) {
-					return searchItem.get('label').toLowerCase().indexOf(lcFilterValue) >= 0;
-				}, this));
-			}
-		}.observes('filterValue')
-	});
-
-	/**
 	 * T3.Common.Launcher
 	 *
 	 * Implements the quicksilver-like launch bar. Consists of a textfield
@@ -67,13 +36,126 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	});
 
 	/**
+	 * T3.Common.SearchController
+	 *
+	 * Contains a list of available search items
+	 */
+	T3.Common.Launcher.SearchController = SC.Object.create({
+		_launcherTextField: null,
+		_requestIndex: 0,
+		_value: '',
+		_searching: null,
+		_delay: 300,
+		_minLength: 1,
+		searchItems: [],
+
+		keyHandler: function(event) {
+			suppressKeyPress = false;
+			var keyCode = $.ui.keyCode;
+			switch (event.keyCode) {
+				case keyCode.UP:
+					suppressKeyPress = true;
+					this._move('previous', event);
+					// prevent moving cursor to beginning of text field in some browsers
+					event.preventDefault();
+					break;
+				case keyCode.DOWN:
+					suppressKeyPress = true;
+					this._move('next', event);
+					// prevent moving cursor to end of text field in some browsers
+					event.preventDefault();
+					break;
+				case keyCode.ENTER:
+				case keyCode.NUMPAD_ENTER:
+					suppressKeyPress = true;
+					event.preventDefault();
+					break;
+				case keyCode.TAB:
+					this._nextGroup();
+					break;
+				case keyCode.ESCAPE:
+					this.get('_launcherTextField').cancel();
+					break;
+				default:
+					// search timeout should be triggered before the input value is changed
+					this._searchTimeout(event);
+					break;
+			}
+		},
+
+		_searchTimeout: function(event) {
+			var that = this;
+			this._searching = setTimeout(function() {
+				// only search if the value has changed
+				var value = that.get('_launcherTextField').get('value');
+				if (that._value !== value) {
+					that.set('_value', value);
+					that._search(event, value);
+				}
+			}, this._delay);
+		},
+
+		_search: function(event, value) {
+			var that = this;
+
+			if (value.length < this._minLength) {
+				this._clear();
+				return;
+			}
+
+			var requestIndex = ++this._requestIndex;
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_LauncherController.search(
+				value,
+				requestIndex,
+				function(result) {
+					var data = result.data;
+					if (that._requestIndex === data.requestIndex) {
+						if (result.success) {
+							that._response(data);
+						} else {
+							this._clear();
+						}
+					}
+				}
+			);
+		},
+
+		_response: function(data) {
+			var results = [];
+			$.each(data.results, function(key, group) {
+				group = SC.Object.create(group);
+				var wrappedSearchItems = group.get('items').map(function(searchItem) {
+					return SC.Object.create(searchItem);
+				});
+				group.set('items', wrappedSearchItems);
+				results.push(group);
+			});
+			this.set('searchItems', results);
+		},
+
+		_clear: function() {
+			this.set('searchItems', []);
+		}
+	});
+
+	/**
 	 * @internal
 	 */
 	T3.Common.Launcher.TextField = SC.TextField.extend({
-		classNameBindings: ['notEmpty'],
-		notEmpty: function() {
-			return this.get('value') !== null && this.get('value') !== '';
-		}.property('value').cacheable(),
+		_notEmpty: function() {
+			var parent = this.$().parent(),
+				notEmptyClass = 'not-empty';
+			if (this.get('value') !== null && this.get('value') !== '') {
+				parent.addClass(notEmptyClass);
+			} else {
+				parent.removeClass(notEmptyClass);
+			}
+		}.observes('value'),
+
+		init: function() {
+			T3.Common.Launcher.SearchController.set('_launcherTextField', this);
+			this._super();
+		},
 
 		cancel: function() {
 			this.set('value', '');
@@ -90,11 +172,14 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		},
 
 		keyDown: function(event) {
-			// TODO Move to controller
-			if (event.keyCode === 9) {
-				this.$().closest('.t3-launcher').find('.t3-launcher-panel-searchitems li:first-child a').first().focus();
-				return false;
-			}
+			T3.Common.Launcher.SearchController.keyHandler(event);
+		},
+
+		didInsertElement: function() {
+			var that = this;
+			this.$().parent().find('.t3-launcher-clear').click(function() {
+				that.cancel();
+			});
 		}
 	});
 
@@ -104,7 +189,6 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	T3.Common.Launcher.Panel = SC.View.extend({
 		tagName: 'div',
 		classNames: ['t3-launcher-panel'],
-		isVisible: false,
 		open: false,
 		focussed: false,
 		scrollingInitialized: false,
@@ -116,23 +200,16 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 				var open = that.get('open');
 				// TODO: Move position calculations to css transitions (sass)
 				if (open) {
-					that.$().parent('.t3-launcher').addClass('t3-open');
-					that.$().slideDown('fast', function() {
-						if (!that.scrollingInitialized) {
-							$('.c-1 .scroll-content').lionbars('dark', false, true, false);
-							that.scrollingInitialized = true;
-						}
-					});
-					$('body').animate({'marginTop': $('body').offset().top + 200}, 250);
-					$('#t3-toolbar').animate({'marginTop': 200}, 250);
-					$('#t3-inspector').animate({'marginTop': 26 + 200}, 250);
+					$('body').addClass('t3-launcher-open');
+					if (!that.scrollingInitialized) {
+						$('.c-1 .scroll-content').lionbars('dark', false, true, false);
+						that.scrollingInitialized = true;
+					}
 				} else {
-					if (that.get('focussed')) return;
-					that.$().parent('.t3-launcher').removeClass('t3-open');
-					that.$().slideUp('fast');
-					$('body').animate({'marginTop': $('body').offset().top - 200}, 250);
-					$('#t3-toolbar').animate({'marginTop': 0}, 250);
-					$('#t3-inspector').animate({'marginTop': 56}, 250);
+					if (that.get('focussed')) {
+						return;
+					}
+					$('body').removeClass('t3-launcher-open');
 				}
 			}, 50);
 		}.observes('open'),

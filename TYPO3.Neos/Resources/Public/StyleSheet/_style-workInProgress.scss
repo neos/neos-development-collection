@@ -44,18 +44,18 @@ button.t3-create-new-content {
 	}
 
 	&.typo3-notification-ok {
-		background-image: url('../Icons/FugueIcons/tick.png');
+		background-image: url('../Images/Icons/White/checkmark_icon-16.png');
 	}
 	&.typo3-notification-info {
-		background-image: url('../Icons/FugueIcons/information.png');
+		background-image: url('../Images/Icons/White/info_icon-16.png');
 	}
 	&.typo3-notification-notice {
 	}
 	&.typo3-notification-warning {
-		background-image: url('../Icons/FugueIcons/exclamation.png');
+		background-image: url('../Images/Icons/White/message_attention_icon-16.png');
 	}
 	&.typo3-notification-error {
-		background-image: url('../Icons/FugueIcons/exclamation-red.png');
+		background-image: url('../Images/Icons/White/attention_icon-16.png');
 	}
 }
 
@@ -123,11 +123,11 @@ button.t3-create-new-content {
 
 
 .scrollbar.dark {
-	background: red;
+	background: rgba(0,0,0,0.3);
 }
 
 .scrollbar_bg.dark {
-	background: blue;
+	background: rgba(0,0,0,0.10);
 }
 
 .nWrap {

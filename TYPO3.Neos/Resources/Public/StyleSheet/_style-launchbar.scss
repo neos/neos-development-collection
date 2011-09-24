@@ -1,4 +1,17 @@
-
+.t3-launcher-open {
+	&.t3-ui-controls-active {
+		margin-top: $menu-height + $launcher-height-open + $toolbar-height;
+	}
+	#t3-toolbar {
+		top: $menu-height + $launcher-height-open;
+	}
+	.t3-inspector {
+		margin-top: $menu-height + $launcher-height-open;
+	}
+	#t3-launcher, .t3-launcher {
+		height: $launcher-height-open;
+	}
+}
 // TODO Move to common CSS
 .three-columns {
 	width: 100%;
@@ -21,6 +34,30 @@
 	width: 33%;
 	@include box-sizing(border-box);
 }
+.tc-1-1-1 .c-1 {
+	padding: 0;
+}
+.tc-1-1-1 .t3-launcher-alternating-row {
+	padding: 10px 15px 0px 15px;
+	&.t3-odd {
+		background-color: #f2f2f2;
+	}
+}
+ul.t3-launcher-horizontal {
+	margin: 0 -10px;
+	li {
+		width: 80px;
+		height:	53px;
+		padding: 5px 0 5px 0;
+		float: left;
+		text-align: center;
+		cursor: pointer;
+		.text {
+			padding: 0 5px;
+			line-height: 1em;
+		}
+	}
+}
 .tc-1-1-1 .c-2 {
 	width: 34%;
 	border-left: 1px solid #cfcfcf;
@@ -29,7 +66,7 @@
 }
 .tc-1-1-1 h2 {
 	font-weight: bold;
-	line-height: 30px;
+	line-height: 20px;
 }
 .c-1 .scroll-content {
 	height: 100%;
@@ -37,38 +74,26 @@
 }
 .t3-ui div.t3-launcher-split {
 	border-top: 1px solid #CFCFCF;
-	margin: 5px 0 5px 0;
 	clear: both;
-}
-.tc-1-1-1 ul.horizontal li {
-	width: 80px;
-	height:	65px;
-	padding: 10px 0 10px 0;
-	float: left;
-	text-align: center;
-	cursor: pointer;
-	.text {
-		padding: 0 5px;
-	}
 }
 .tc-1-1-1 ul.vertical {
 	overflow: hidden;
 	width: 100%;
 }
 .tc-1-1-1 ul.vertical li {
-	height: 30px;
+	height: 20px;
 	width: 50%;
 	min-width: 200px;
 	cursor: pointer;
 	float: left;
-	line-height: 30px;
+	line-height: 20px;
 	vertical-align: middle;
 }
 .tc-1-1-1 ul.vertical.t3-launcher-panel-lastactions {
-	height: 60px;
+	height: 80px;
 }
 .tc-1-1-1 ul.vertical.t3-launcher-panel-mostused {
-	height: 60px;
+	height: 80px;
 }
 .tc-1-1-1 ul.vertical.t3-launcher-panel-searchitems {
 	height: 180px;
@@ -77,9 +102,42 @@
 	float: left;
 }
 .tc-1-1-1 ul.vertical li div.image {
-	width: 50px;
+	width: 26px;
 }
 .tc-1-1-1 ul.vertical li div.text {
-	line-height: 30px;
+	line-height: 20px;
 	vertical-align: middle;
+}
+.t3-launcher-panel-search {
+    height: 158px;
+	overflow: auto;
+	li {
+		.t3-launcher-search-group-label {
+			width: 105px;
+			float: left;
+			color: #888;
+			text-align: right;
+			span {
+				padding-right: 5px;
+			}
+		}
+		.t3-launcher-search-group-results {
+			float: left;
+			li {
+			    height: 20px;
+				a {
+					color: #000;
+					text-decoration: none;
+				}
+				.t3-launcher-search-group-results-image {
+					width: 26px;
+					float: left;
+				}
+				.t3-launcher-search-group-results-text {
+					float: left;
+					line-height: 16px;
+				}
+			}
+		}
+	}
 }

@@ -9,6 +9,8 @@ body.t3-ui-controls-active {
 	margin-bottom: $footer-height;
 	margin-top: $menu-height + $launcher-height + $toolbar-height;
 	margin-left: 0;
+	@include transition-property(margin);
+	@include transition-duration(0.3s);
 }
 #t3-page-metainformation {
 	display: none;
@@ -56,60 +58,66 @@ body.t3-ui-controls-active {
 	}
 }
 #t3-launcher {
-//	height: $launcher-height;
+	height: $launcher-height;
+	overflow: hidden;
+	@include transition-property(height);
+	@include transition-duration(0.3s);
 }
 .t3-launcher {
 	position: relative;
 	width: 100%;
 	background-color: #e8e8e8;
+	@include transition-property(height);
+	@include transition-duration(0.3s);
 	div.t3-launcher-container {
 		height: $launcher-height;
 		display: block;
 		@include box-sizing(border-box);
 		input {
-			border: 0;
+			border: 1px solid #888;
 			-webkit-box-shadow: #666666 0px 1px 6px inset;
 			-moz-box-shadow: #b3b3b3 0px 1px 6px inset;
 			box-shadow: #b3b3b3 0px 1px 6px inset;
-			background: #efefef url('../Images/ContentModule/launchbar-arrow.png') no-repeat 6px 7px;
+			background: #efefef url('../Images/ContentModule/typo3-logo.png') no-repeat 8px 6px;
+			color: #bbb;
 			font-size: 16px;
 			width: 100%;
 			height: 100%;
 			line-height: $launcher-height;
-			padding: 3px 6px 0 6px;
+			padding: 3px 6px 0 32px;
 			@include box-sizing(border-box);
-			&.not-empty {
-				background: #efefef;
-			}
-			&.not-empty:hover {
-				background: #f2f2f2;
-			}
 			&:hover {
-				border: 1px solid #444444;
-				background: #f2f2f2 url('../Images/ContentModule/launchbar-arrow.png') no-repeat 5px 6px;
-				padding: 3px 5px 0 5px;
+				border: 1px solid #444;
+				background: #f2f2f2 url('../Images/ContentModule/typo3-logo.png') no-repeat 8px 6px;
 			}
 			&:focus {
 				border: 1px solid #FF8700;
-				background: #fff;
-				padding: 3px 5px 0 5px;
+				background: #fff url('../Images/Icons/Black/zoom_icon-16.png') no-repeat 8px 6px;
 				outline: none;
+				color: #000;
 			}
 			&:hover:focus {
-				background: #fff;
+				background: #fff url('../Images/Icons/Black/zoom_icon-16.png') no-repeat 8px 6px;
+			}
+			&::-webkit-input-placeholder,
+			&::-moz-placeholder {
+				font-size: 12px;
+			}
+		}
+		&.not-empty {
+			.t3-launcher-clear {
+				position: absolute;
+				top: 8px;
+				right: 0;
+				width: 25px;
+				height: 25px;
+				cursor: pointer;
+				background: url('../Images/ContentModule/delete.png') no-repeat;
 			}
 		}
 	}
-	.t3-launcher-logo {
-		position: absolute;
-		top: 4px;
-		right: 3px;
-		width: 25px;
-		height: 25px;
-		background: url('../Images/ContentModule/typo3-logo.png') no-repeat;
-	}
 	.t3-launcher-panel {
-		height: 200px;
+		height: $launcher-height-open - $launcher-height
 	}
 }
 ul.t3-topbar {
@@ -168,6 +176,8 @@ ul.t3-topbar {
 	overflow: auto;
 	padding-bottom: 20px;
 	border-top: 1px solid $green;
+	@include transition-property(margin);
+	@include transition-duration(0.3s);
 }
 .t3-inspector-form {
 	fieldset {
@@ -232,6 +242,8 @@ ul.t3-topbar {
 	right: $property-panel-width;
 	top: $menu-height + $launcher-height + $topbar-offset;
 	z-index: 10012;
+	@include transition-property(top);
+	@include transition-duration(0.3s);
 	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
 }
 .t3-toolbar-left {

@@ -95,6 +95,8 @@ TYPO3:
       'TYPO3.TYPO3:Page':
         superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.TYPO3:AbstractNode']
         label: 'Page'
+        search: 'Pages'
+        icon: 'Images/Icons/White/doc_empty_icon-16.png'
         properties:
           title:
             type: string
@@ -113,7 +115,8 @@ TYPO3:
 
       'TYPO3.TYPO3:ContentObject':
         superTypes: ['TYPO3.TYPO3:AbstractNode']
-        label: 'Abstract content object'
+        label: 'Abstract content object',
+        search: 'Content'
 
 
       'TYPO3.TYPO3:Text':
@@ -137,7 +140,7 @@ TYPO3:
         label: 'Text with Image'
         superTypes: ['TYPO3.TYPO3:Text']
         group: 'General'
-        icon: 'Images/Icons/White/doc_picture_icon-16.png'
+        icon: 'Images/Icons/White/picture_icon-16.png'
         properties:
           image:
             type: TYPO3\Media\Domain\Model\ImageVariant
