@@ -177,32 +177,41 @@ TYPO3:
 
       'TYPO3.TYPO3:Plugin':
         superTypes: ['TYPO3.TYPO3:ContentObject']
-        group: 'Plugins'
         icon: 'Images/Icons/White/app_window_shell_icon-16.png'
-        label: 'Generic plugin'
+        label: 'Abstract plugin'
 
         properties:
           package:
             type: string
             label: 'Package'
-            category: pluginSettings
           subpackage:
             type: string
             label: 'Subpackage'
-            category: pluginSettings
           controller:
             type: string
             label: 'Controller Name'
-            category: pluginSettings
           action:
             type: string
             label: 'Action'
-            category: pluginSettings
 
         propertyGroups:
           pluginSettings:
             label: 'Plugin Settings'
 
+      'TYPO3.TYPO3:GenericPlugin':
+        superTypes: ['TYPO3.TYPO3:Plugin']
+        group: 'Plugins'
+        label: 'Generic plugin'
+
+        properties:
+          package:
+            category: pluginSettings
+          subpackage:
+            category: pluginSettings
+          controller:
+            category: pluginSettings
+          action:
+            category: pluginSettings
 
 
   TYPO3:
@@ -210,6 +219,8 @@ TYPO3:
 
     userInterface:
       string:
+        class: T3.Content.UI.Editor.TextField
+      integer:
         class: T3.Content.UI.Editor.TextField
       boolean:
         class: T3.Content.UI.Editor.Checkbox

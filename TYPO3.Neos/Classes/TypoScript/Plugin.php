@@ -208,6 +208,15 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 			$pluginRequest->setControllerActionName($this->node->getProperty('action') ?: $this->action);
 		}
 
+		// TODO Check if we want to use all properties as arguments
+		//      This enables us to configure plugin controller arguments via
+		//      content type definitions for now.
+		foreach ($this->node->getProperties() as $propertyName => $propertyValue) {
+			if (!$pluginRequest->hasArgument($propertyName)) {
+				$pluginRequest->setArgument($propertyName, $propertyValue);
+			}
+		}
+
 		$parentResponse = $this->renderingContext->getControllerContext()->getResponse();
 		$pluginResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($parentResponse);
 
