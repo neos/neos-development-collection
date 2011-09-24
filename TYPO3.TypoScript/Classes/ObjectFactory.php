@@ -27,6 +27,12 @@ class ObjectFactory {
 	protected $objectManager;
 
 	/**
+	 * @inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
 	 * Creates a new TypoScript object which is supposed to render the given node.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node
@@ -48,18 +54,46 @@ class ObjectFactory {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node
 	 * @return string The TypoScript object name with which the current node should be rendered with.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getTypoScriptObjectNameByNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$contentType = $node->getContentType();
-		if (strpos($contentType, ':') !== FALSE) {
-			list($packageKey, $typoScriptObjectName) = explode(':', $contentType);
+		$contentTypeName = $node->getContentType();
+		$contentType = $this->contentTypeManager->getContentType($contentTypeName);
+		$possibleObjectName = $this->getObjectNameByContentType($contentType);
+		if ($possibleObjectName !== NULL) {
+			return $possibleObjectName;
+		}
+
+		return 'TYPO3\TYPO3\TypoScript\Node';
+	}
+
+	/**
+	 * Tries to find a matching object name for the content type given.
+	 *
+	 * It does so by traversing the type hierarchy upwards until a match is found,
+	 * but if no match is found, NULL is returned.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType
+	 * @return string Object name if a TypoScript object was found or NULL if none was found
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function getObjectNameByContentType(\TYPO3\TYPO3CR\Domain\Model\ContentType $contentType) {
+		$contentTypeName = $contentType->getName();
+		if (strpos($contentTypeName, ':') !== FALSE) {
+			list($packageKey, $typoScriptObjectName) = explode(':', $contentTypeName);
 			$possibleTypoScriptObjectName = str_replace('.', '\\', $packageKey) . '\\TypoScript\\' . $typoScriptObjectName;
 			if ($this->objectManager->isRegistered($possibleTypoScriptObjectName) === TRUE) {
 				return $possibleTypoScriptObjectName;
 			}
 		}
-
-		return 'TYPO3\TYPO3\TypoScript\Node';
+		foreach ($contentType->getDeclaredSuperTypes() as $superType) {
+			$possibleObjectName = $this->getObjectNameByContentType($superType);
+			if ($possibleObjectName !== NULL) {
+				return $possibleObjectName;
+			}
+		}
+		return NULL;
 	}
 
 	/**

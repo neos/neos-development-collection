@@ -19,26 +19,59 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @dataProvider unsupportedContentTypes
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createByNodeCreatesANodeTypoScriptObjectIfNoSpecializedTypoScriptObjectExistsForTheContentType($contentType) {
-		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
-		$node->expects($this->once())->method('getContentType')->will($this->returnValue($contentType));
+	public function createByNameCreatesANodeTypoScriptObject() {
+		$expectedTypoScriptObject = $this->getMock('TYPO3\TypoScript\ObjectInterface');
+
+		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3\TypoScript\Node')->will($this->returnValue($expectedTypoScriptObject));
+
+		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('dummy'));
+		$objectFactory->_set('objectManager', $objectManager);
+
+		$this->assertSame($expectedTypoScriptObject, $objectFactory->createByName('Node'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createByNodeCreatesANodeTypoScriptObjectAndSetsTheNodeOnIt() {
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
 
 		$expectedTypoScriptObject = $this->getMock('TYPO3\TypoScript\ObjectInterface');
 		$expectedTypoScriptObject->expects($this->once())->method('setNode')->with($node);
 
 		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
 		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3\TypoScript\Node')->will($this->returnValue($expectedTypoScriptObject));
-		$objectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(FALSE));
 
-		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('dummy'));
+		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('getTypoScriptObjectNameByNode'));
+		$objectFactory->expects($this->once())->method('getTypoScriptObjectNameByNode')->with($node)->will($this->returnValue('TYPO3\TYPO3\TypoScript\Node'));
 		$objectFactory->_set('objectManager', $objectManager);
 
-		$actualTypoScriptObject = $objectFactory->createByNode($node);
+		$this->assertSame($expectedTypoScriptObject, $objectFactory->createByNode($node));
+	}
 
-		$this->assertSame($expectedTypoScriptObject, $actualTypoScriptObject);
+	/**
+	 * @test
+	 * @dataProvider unsupportedContentTypes
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTypoScriptObjectNameByNodeReturnsNodeAsTypoScriptObjectNameIfNoSpecializedTypoScriptObjectExistsForTheContentType($contentTypeName) {
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$node->expects($this->once())->method('getContentType')->will($this->returnValue($contentTypeName));
+
+		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType($contentTypeName, array(), array());
+
+		$mockContentTypeManager  = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
+		$mockContentTypeManager->expects($this->any())->method('getContentType')->with($contentTypeName)->will($this->returnValue($contentType));
+
+		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('getObjectNameByContentType'));
+		$objectFactory->expects($this->once())->method('getObjectNameByContentType')->with($contentType)->will($this->returnValue(NULL));
+		$objectFactory->_set('contentTypeManager', $mockContentTypeManager);
+
+		$this->assertEquals('TYPO3\TYPO3\TypoScript\Node', $objectFactory->getTypoScriptObjectNameByNode($node));
 	}
 
 	/**
@@ -59,24 +92,69 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createByNodeCreatesASpecificTypoScriptObjectIfOneExistsForTheContentType() {
-		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
-		$node->expects($this->once())->method('getContentType')->will($this->returnValue('TYPO3.TYPO3:ContensUniversalis'));
+	public function getTypoScriptObjectNameByNodeReturnsASpecializedTypoScriptObjectNameIfASpecializedTypoScriptObjectExistsForTheContentType() {
+		$contentTypeName = 'TYPO3.TYPO3:ContensUniversalis';
 
-		$expectedTypoScriptObject = $this->getMock('TYPO3\TypoScript\ObjectInterface');
-		$expectedTypoScriptObject->expects($this->once())->method('setNode')->with($node);
+		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
+		$node->expects($this->once())->method('getContentType')->will($this->returnValue($contentTypeName));
+
+		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType($contentTypeName, array(), array());
+
+		$mockContentTypeManager  = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
+		$mockContentTypeManager->expects($this->any())->method('getContentType')->with($contentTypeName)->will($this->returnValue($contentType));
+
+		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('getObjectNameByContentType'));
+		$objectFactory->expects($this->once())->method('getObjectNameByContentType')->with($contentType)->will($this->returnValue('TYPO3\TYPO3\TypoScript\ContensUniversalis'));
+		$objectFactory->_set('contentTypeManager', $mockContentTypeManager);
+
+		$this->assertEquals('TYPO3\TYPO3\TypoScript\ContensUniversalis', $objectFactory->getTypoScriptObjectNameByNode($node));
+	}
+
+	/**
+	 * @return array
+	 */
+	public function contentTypeHierarchy() {
+		return array(
+			array('foo:quark', FALSE, NULL, array()),
+			array('TYPO3.TYPO3:Page', TRUE, 'TYPO3\TYPO3\TypoScript\Page', array()),
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider contentTypeHierarchy
+	 */
+	public function getObjectNameByContentTypeReturnsTheExpectedContentType($contentTypeName, $possibleObjectNameIsRegistered, $expectedObjectName) {
+		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType($contentTypeName, array(), array());
 
 		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3\TypoScript\ContensUniversalis')->will($this->returnValue($expectedTypoScriptObject));
-		$objectManager->expects($this->any())->method('isRegistered')->will($this->returnValue(TRUE));
+		$objectManager->expects($this->any())->method('isRegistered')->will($this->returnValue($possibleObjectNameIsRegistered));
 
 		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('dummy'));
 		$objectFactory->_set('objectManager', $objectManager);
 
-		$actualTypoScriptObject = $objectFactory->createByNode($node);
-
-		$this->assertSame($expectedTypoScriptObject, $actualTypoScriptObject);
+		$this->assertEquals($expectedObjectName, $objectFactory->_call('getObjectNameByContentType', $contentType));
 	}
+
+	/**
+	 * @test
+	 */
+	public function getObjectNameByContentTypeReturnsTheExpectedContentTypeHierarchy() {
+		$contentTypeName = 'TYPO3.TYPO3:SubPage';
+		$expectedObjectName = 'TYPO3\TYPO3\TypoScript\Page';
+
+		$superType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Page', array(), array());
+		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType($contentTypeName, array($superType), array());
+
+		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
+		$objectManager->expects($this->exactly(2))->method('isRegistered')->will($this->onConsecutiveCalls(FALSE, TRUE));
+
+		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('dummy'));
+		$objectFactory->_set('objectManager', $objectManager);
+
+		$this->assertEquals($expectedObjectName, $objectFactory->_call('getObjectNameByContentType', $contentType));
+	}
+
 }
 
 ?>
