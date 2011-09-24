@@ -582,6 +582,17 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 .typo3-previewmode-enabled.t3-ui-controls-active {
   margin: 36px 0 0 0; }
 
+.ui-widget-content table.t3-content-new td {
+  vertical-align: top; }
+  .ui-widget-content table.t3-content-new td:first-child {
+    padding-right: 10px; }
+.ui-widget-content table.t3-content-new a {
+  margin-left: 20px;
+  display: block; }
+.ui-widget-content table.t3-content-new .t3-content-new-icon {
+  float: left;
+  margin-left: 0; }
+
 .three-columns {
   width: 100%;
   float: left;
@@ -950,4 +961,9 @@ div.aloha-block-active:hover > div.aloha-block-inner {
   padding: 0; }
 
 .popover .ui-tabs .ui-tabs-nav {
-  padding: 0; }
+  padding: 0 0 0 3px; }
+
+.ui-tabs .ui-tabs-nav li.ui-state-hover {
+  border-top: 1px solid #ffffff; }
+.ui-tabs .ui-tabs-nav li.ui-state-active {
+  border-top: 1px solid #ff8700; }

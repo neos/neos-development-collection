@@ -1,3 +1,4 @@
+// General Popover styles - start
 .popover {
   	position: absolute;
 	display: none;
@@ -56,11 +57,20 @@
   overflow-x: hidden;
   overflow-y: auto;
 }
-
-// Our own styles for the jQuery UI stuff
+// General Popover styles - end
+// Our own styles for the jQuery UI stuff - start
 .popover .ui-tabs {
 	padding: 0;
 }
 .popover .ui-tabs .ui-tabs-nav {
-	padding: 0;
+	padding: 0 0 0 3px;
 }
+.ui-tabs .ui-tabs-nav li {
+	&.ui-state-hover {
+		border-top: 1px solid #ffffff;
+	}
+	&.ui-state-active {
+		border-top: 1px solid #ff8700;
+	}
+}
+// Our own styles for the jQuery UI stuff - end

@@ -580,6 +580,25 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	margin: $toolbar-height 0 0 0;
 }
 
+// New Content Flyout - start
+.ui-widget-content table.t3-content-new {
+	td {
+		vertical-align: top;
+		&:first-child {
+			padding-right: 10px;
+		}
+	}
+	a {
+		margin-left: 20px;
+		display: block;
+	}
+	.t3-content-new-icon {
+		float: left;
+		margin-left: 0;
+	}
+}
+// New Content Flyout - end
+
 
 @import "style-launchbar";
 @import "content-properties";
