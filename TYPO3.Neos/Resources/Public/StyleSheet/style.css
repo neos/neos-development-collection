@@ -53,11 +53,27 @@ body.t3-ui-controls-active {
     float: right;
     margin-right: 10px;
     line-height: 26px;
+    height: 26px;
+    width: 16px;
     color: #cccccc;
-    text-decoration: underline;
-    font-size: 10px; }
+    text-decoration: none;
+    font-size: 10px;
+    z-index: -9999px;
+    background: url(../Images/Icons/White/on-off_icon-16.png) left 50% no-repeat;
+    opacity: 1.0;
+    -moz-transition-property: opacity;
+    -webkit-transition-property: opacity;
+    -o-transition-property: opacity;
+    transition-property: opacity;
+    -moz-transition-duration: 0.25s;
+    -webkit-transition-duration: 0.25s;
+    -o-transition-duration: 0.25s;
+    transition-duration: 0.25s; }
     #t3-ui-top .t3-button-logout:hover, #t3-ui-top .t3-button-logout:active, #t3-ui-top .t3-button-logout:focus {
-      text-decoration: none; }
+      opacity: 0.8; }
+    #t3-ui-top .t3-button-logout span {
+      float: left;
+      text-indent: -9999px; }
 
 .t3-launcher {
   position: relative;
@@ -122,11 +138,17 @@ ul.t3-topbar {
   height: 100%;
   padding-left: 20px;
   padding-right: 20px;
-  color: #aaaaaa; }
+  color: #aaaaaa;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+  box-sizing: border-box; }
 
 .t3-topbar li.t3-active {
   background: #444444;
-  color: #ffffff; }
+  color: #ffffff;
+  margin-top: 2px;
+  border-top: 1px solid #ff8700; }
 
 /*** Inspector Panel ***/
 .t3-inspector {
@@ -348,7 +370,7 @@ button.t3-button {
   -khtml-border-radius: 3px;
   border-radius: 3px;
   color: #e4e4e4;
-  padding: 0 4px 0px 4px;
+  padding: 0 6px 0px 6px;
   height: 20px;
   line-height: 20px;
   -moz-transition-property: background;

@@ -34,13 +34,24 @@ body.t3-ui-controls-active {
 		float: right;
 		margin-right: 10px;
 		line-height: $menu-height;
+		height: $menu-height;
+		width: 16px;
 		color: #cccccc;
-		text-decoration: underline;
+		text-decoration: none;
 		font-size: 10px;
+		z-index: -9999px;
+		background: url(../Images/Icons/White/on-off_icon-16.png) left 50% no-repeat;
+		opacity: 1.0;
+		@include transition-property(opacity);
+		@include transition-duration(0.25s);
 		&:hover,
 		&:active,
 		&:focus {
-			text-decoration: none;
+			opacity: 0.8;
+		}
+		span {
+			float: left;
+			text-indent: -9999px;
 		}
 	}
 }
@@ -108,17 +119,20 @@ ul.t3-topbar {
 	padding: 0;
 }
 .t3-topbar li {
-	float:left;
-	list-style-type:none;
-	height:100%;
-	padding-left:20px;
-	padding-right:20px;
+	float: left;
+	list-style-type: none;
+	height: 100%;
+	padding-left: 20px;
+	padding-right: 20px;
 	color: #aaaaaa;
+	@include box-sizing(border-box);
 }
 
 .t3-topbar li.t3-active {
 	background: #444444;
 	color: #ffffff;
+	margin-top: 2px;
+	border-top: 1px solid #ff8700;
 }
 
 /*** Inspector Panel ***/
@@ -332,7 +346,7 @@ button.t3-button {
 	border: 0;
 	@include border-radius(3px);
 	color: #e4e4e4;
-	padding: 0 4px 0px 4px;
+	padding: 0 6px 0px 6px;
 	height: 20px;
 	line-height: 20px;
 	@include transition-property(background);
