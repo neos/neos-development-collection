@@ -163,12 +163,6 @@ function() {
 						action: 'revert'
 					}),
 					T3.Content.UI.Button.extend({
-						label: 'Save Page',
-						disabledBinding: 'T3.Content.Model.Changes.noChanges',
-						target: 'T3.Content.Model.Changes',
-						action: 'save'
-					}),
-					T3.Content.UI.Button.extend({
 						label: 'Publish Page',
 						disabledBinding: 'T3.Content.Model.PublishableBlocks.noChanges',
 						target: 'T3.Content.Model.PublishableBlocks',
@@ -301,7 +295,7 @@ function() {
 			], function() {
 				var body = $('body'),
 					loader = $('<canvas class="t3-pageloader" />'),
-					offset = $('#t3-toolbar').height() + $('#t3-toolbar').offset().top,
+					offset = $('#t3-toolbar').height(),
 					width = body.outerWidth(),
 					height = $(document).height() - offset,
 					indicator;

@@ -275,6 +275,8 @@ function() {
 
 			this.set('_modified', false);
 			SC.endPropertyChanges();
+
+			T3.Content.Model.Changes.save();
 		},
 
 		/**

@@ -83,6 +83,7 @@ TYPO3:
                 -
                   value: '25-75'
                   label: '25% / 75%'
+            reloadOnChange: true
 
         # TODO: rename "propertyGroups" to "categories" or "groups"?
         propertyGroups:
@@ -99,6 +100,7 @@ TYPO3:
             type: string
             label: 'Page title'
             category: 'page'
+            reloadOnChange: true
         propertyGroups:
           page:
             label: 'Page options'
@@ -184,15 +186,23 @@ TYPO3:
           package:
             type: string
             label: 'Package'
+            category: pluginSettings
+            reloadOnChange: true
           subpackage:
             type: string
             label: 'Subpackage'
+            category: pluginSettings
+            reloadOnChange: true
           controller:
             type: string
             label: 'Controller Name'
+            category: pluginSettings
+            reloadOnChange: true
           action:
             type: string
             label: 'Action'
+            category: pluginSettings
+            reloadOnChange: true
 
         propertyGroups:
           pluginSettings:

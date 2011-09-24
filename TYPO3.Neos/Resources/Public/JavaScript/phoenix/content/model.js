@@ -126,6 +126,24 @@ function(launcherTemplate) {
 				that.__originalValues[key] = that.get(key);
 			});
 			this.__valuesInitialized = true;
+		},
+
+		setOriginalValues: function(properties) {
+			var that = this;
+			$.each(properties, function(key, value) {
+				that.__originalValues[key] = value;
+			});
+			this._checkForDirtyProperties();
+		},
+
+		_checkForDirtyProperties: function() {
+			var that = this, modified = false;
+			$.each(this.__originalValues, function(key, value) {
+				if (value !== that.get(key)) {
+					modified = true;
+				}
+			});
+			this.set('__modified', modified);
 		}
 	});
 
@@ -404,17 +422,23 @@ function(launcherTemplate) {
 		}
 	});
 
-	var sendAllToServer = function(collection, cleanupFn, extDirectFn, callback) {
+	var sendAllToServer = function(collection, transformFn, extDirectFn, callback, elementCallback) {
 		var numberOfUnsavedRecords = collection.get('length');
-		var responseCallback = function() {
-			numberOfUnsavedRecords--;
-			if (numberOfUnsavedRecords <= 0) {
-				callback();
-			}
-		}
+		var responseCallback = function(element) {
+			return function() {
+				if (elementCallback) {
+					elementCallback(element);
+				}
+				numberOfUnsavedRecords--;
+				if (numberOfUnsavedRecords <= 0) {
+					callback();
+				}
+			};
+		};
 		collection.forEach(function(element) {
-			var args = cleanupFn(element);
-			args.push(responseCallback);
+			// Force copy of array
+			var args = transformFn(element).slice();
+			args.push(responseCallback(element));
 			extDirectFn.apply(window, args);
 		})
 	};
@@ -476,7 +500,7 @@ function(launcherTemplate) {
 			// We first set this._loadedFromLocalStore to FALSE; such that the removal
 			// of all changes does NOT trigger a _saveToLocalStore.
 			this._loadedFromLocalStore = false;
-			this.set('[]', []);
+			this.set('content', []);
 			this._readFromLocalStore();
 		},
 
@@ -538,7 +562,7 @@ function(launcherTemplate) {
 			});
 
 			window.localStorage['page_' + $('#t3-page-metainformation').attr('data-__nodepath')] = JSON.stringify(cleanedUpBlocks);
-		}.observes('[]'),
+		}.observes('content'),
 
 		_supports_html5_storage: function() {
 			try {
@@ -553,26 +577,62 @@ function(launcherTemplate) {
 				block.revertChanges();
 			}, this);
 		},
-		save: function() {
+
+		save: function(callback) {
+			// Check if page needs to be reloaded after success
+			// TODO Move to function
+			var reloadPage = false;
+			this.get('content').forEach(function(change) {
+				$.each(change.__originalValues, function(key, value) {
+					if (change.get(key) !== value) {
+						var schema = change.get('schema'),
+							changedPropertyDefinition = schema.properties[key];
+						if (changedPropertyDefinition && changedPropertyDefinition.reloadOnChange) {
+							reloadPage = true;
+						}
+					}
+				});
+			});
+
+			var savedAttributes = {};
 			sendAllToServer(
 				this,
+				// Get attributes to be updated from block
 				function(block) {
-					block.recordCurrentStateAsOriginal();
+					var nodePath = block.get('__nodePath');
+					// block.recordCurrentStateAsOriginal();
 
 					var attributes = block.getCleanedUpAttributes();
-					attributes['__contextNodePath'] = block.get('__nodePath');
 					delete attributes['block-type'];
+
+					savedAttributes[nodePath] = $.extend({}, attributes);
+
+					attributes['__contextNodePath'] = nodePath;
 
 					return [attributes];
 				},
 				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update,
+				// Callback on success after all changes were saved
 				function() {
-					T3.ContentModule.reloadPage();
+					// Remove changesToBeRemoved
+
+					if (callback) {
+						callback();
+					}
+					// Check if a changed property in the schema needs
+					// a server-side reload
+					if (reloadPage) {
+						T3.ContentModule.reloadPage();
+					}
+				},
+				// Callback on success per block
+				function(block) {
+					var nodePath = block.get('__nodePath');
+					if (savedAttributes[nodePath]) {
+						block.setOriginalValues(savedAttributes[nodePath]);
+					}
 				}
 			);
-
-				// Flush local changes
-			this.set('[]', []);
 		}
 	});
 
