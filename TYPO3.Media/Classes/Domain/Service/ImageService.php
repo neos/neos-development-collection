@@ -47,12 +47,12 @@ class ImageService {
 	 */
 	public function transformImage(\TYPO3\Media\Domain\Model\Image $image, array $processingInstructions) {
 		$uniqueHash = sha1($image->getResource()->getResourcePointer()->getHash() . '|' . serialize($processingInstructions));
-		//if (!file_exists('resource://' . $uniqueHash)) {
+		if (!file_exists('resource://' . $uniqueHash)) {
 			$imagine = $this->objectManager->get('Imagine\Image\ImagineInterface');
 			$imagineImage = $imagine->open('resource://' . $image->getResource()->getResourcePointer()->getHash());
 			$imagineImage = $this->applyProcessingInstructions($imagineImage, $processingInstructions);
 			file_put_contents('resource://' . $uniqueHash, $imagineImage->get($image->getFileExtension()));
-		//}
+		}
 		$resource = new \TYPO3\FLOW3\Resource\Resource();
 		$resource->setFilename(sprintf('%s.%s', $uniqueHash, $image->getFileExtension()));
 		$resource->setResourcePointer(new \TYPO3\FLOW3\Resource\ResourcePointer($uniqueHash));

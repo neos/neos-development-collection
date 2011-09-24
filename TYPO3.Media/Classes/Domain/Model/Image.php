@@ -38,8 +38,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 
 	/**
 	 * @var string
-	 * @validate StringLength(maximum = 100)
-	 * @Column(length="100")
+	 * @validate StringLength(maximum = 255)
 	 */
 	protected $title;
 
@@ -188,19 +187,13 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
 	 */
 	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL) {
-		if ($maximumWidth === NULL) {
-			$maximumWidth = $this->width;
-		}
-		if ($maximumHeight === NULL) {
-			$maximumHeight = $this->height;
-		}
 		$processingInstructions = array(
 			array(
 				'command' => 'thumbnail',
 				'options' => array(
 					'size' => array(
-						'width' => $maximumWidth,
-						'height' => $maximumHeight
+						'width' => $maximumWidth ?: $this->width,
+						'height' => $maximumHeight ?: $this->height
 					),
 				),
 			),
