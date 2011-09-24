@@ -125,14 +125,31 @@ ul.t3-topbar {
 	padding-left: 20px;
 	padding-right: 20px;
 	color: #aaaaaa;
+	margin-top: 3px;
+	margin-left: 1px;
+	border-top: 1px solid #2d2d2d;
 	@include box-sizing(border-box);
+	&:first-child {
+		margin-left: 4px;
+	}
+	&:hover,
+	&:focus,
+	&:active {
+		background: #373737;
+		border-color: #ffffff;
+		cursor: pointer;
+	}
 }
 
 .t3-topbar li.t3-active {
 	background: #444444;
 	color: #ffffff;
-	margin-top: 2px;
 	border-top: 1px solid #ff8700;
+	&:hover,
+	&:focus,
+	&:active {
+		cursor: default;
+	}
 }
 
 /*** Inspector Panel ***/
