@@ -33,8 +33,8 @@ body.t3-ui-controls-active {
 	.t3-button-logout {
 		float: right;
 		margin-right: 10px;
-		line-height: $menu-height;
-		height: $menu-height;
+		line-height: $menu-height + $topbar-offset;
+		height: $menu-height + $topbar-offset;
 		width: 16px;
 		color: #cccccc;
 		text-decoration: none;
@@ -113,6 +113,7 @@ body.t3-ui-controls-active {
 	}
 }
 ul.t3-topbar {
+	height: $menu-height + $topbar-offset;
 	line-height: $menu-height;
 	float: left;
 	margin: 0;
@@ -121,7 +122,7 @@ ul.t3-topbar {
 .t3-topbar li {
 	float: left;
 	list-style-type: none;
-	height: 100%;
+	height: $menu-height -1px;
 	padding-left: 20px;
 	padding-right: 20px;
 	color: #aaaaaa;
@@ -158,7 +159,7 @@ ul.t3-topbar {
 	@include box-sizing(border-box);
 	background: #2D2D2D;
 	height: 100%;
-	margin-top: $menu-height + $launcher-height;
+	margin-top: $menu-height + $launcher-height + $topbar-offset;
 	position: fixed;
 	right: 0;
 	top: 0;
@@ -166,6 +167,7 @@ ul.t3-topbar {
 	z-index: 10014;
 	overflow: auto;
 	padding-bottom: 20px;
+	border-top: 1px solid $green;
 }
 .t3-inspector-form {
 	fieldset {
@@ -228,7 +230,7 @@ ul.t3-topbar {
 	left: 0;
 	position: fixed;
 	right: $property-panel-width;
-	top: $menu-height + $launcher-height;
+	top: $menu-height + $launcher-height + $topbar-offset;
 	z-index: 10012;
 	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
 }
@@ -474,6 +476,7 @@ button.t3-button {
 		background: #ffffff;
 		background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
 		background-repeat: no-repeat;
+		background-position: 50% 50%;
 	}
 }
 .t3-paste-after-handle {
@@ -536,32 +539,31 @@ body.t3-inspect-active {
 		font-size: 9px;
 		border-width: 0 1px 1px 1px;
 		border-style: none solid solid solid;
-		@include border-bottom-radius(5px);
 		display:block;
 		background: white;
 		z-index: 10000;
 		text-align:center;
-		border-color:#CCC;
-		@include single-box-shadow(#cccccc, 0, 1px, 3px);
+		border-color: #373737;
 	}
 
 	.aloha-block:hover > .t3-status-indicator {
 		@include single-box-shadow(#909090, 0, 1px, 3px);
-		border-color:#999;
+		border-color: #373737;
 	}
 
 	div.aloha-block > div.aloha-block-inner {
-		outline: 1px solid #cccccc;
+		outline: 1px solid #373737;
 	}
 }
 
 div.aloha-block:hover > div.aloha-block-inner {
-	outline: 1px solid #909090;
+	outline: 1px solid #373737;
 	background: #efefef;
 }
 div.aloha-block-active > div.aloha-block-inner,
 div.aloha-block-active:hover > div.aloha-block-inner {
-	background: #E3E3E3;
+	outline: 1px solid #373737;
+	background: #e3e3e3;
 }
 
 .t3-ui-controls-active #t3-ui-top {

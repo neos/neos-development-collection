@@ -59,8 +59,10 @@ button.t3-create-new-content {
 	}
 }
 
-.t3-handle-loading {
+.t3-handle-loading span {
 	background-image: url('../Images/ajax-preloader.gif');
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
 }
 
 .popover {

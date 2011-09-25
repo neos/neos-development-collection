@@ -52,8 +52,8 @@ body.t3-ui-controls-active {
   #t3-ui-top .t3-button-logout {
     float: right;
     margin-right: 10px;
-    line-height: 26px;
-    height: 26px;
+    line-height: 30px;
+    height: 30px;
     width: 16px;
     color: #cccccc;
     text-decoration: none;
@@ -127,6 +127,7 @@ body.t3-ui-controls-active {
     height: 200px; }
 
 ul.t3-topbar {
+  height: 30px;
   line-height: 26px;
   float: left;
   margin: 0;
@@ -135,7 +136,7 @@ ul.t3-topbar {
 .t3-topbar li {
   float: left;
   list-style-type: none;
-  height: 100%;
+  height: 26px -1px;
   padding-left: 20px;
   padding-right: 20px;
   color: #aaaaaa;
@@ -172,14 +173,15 @@ ul.t3-topbar {
   box-sizing: border-box;
   background: #2D2D2D;
   height: 100%;
-  margin-top: 56px;
+  margin-top: 60px;
   position: fixed;
   right: 0;
   top: 0;
   width: 200px;
   z-index: 10014;
   overflow: auto;
-  padding-bottom: 20px; }
+  padding-bottom: 20px;
+  border-top: 1px solid #69a550; }
 
 .t3-inspector-form fieldset {
   border: 0;
@@ -246,7 +248,7 @@ ul.t3-topbar {
   left: 0;
   position: fixed;
   right: 200px;
-  top: 56px;
+  top: 60px;
   z-index: 10012;
   -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
@@ -491,7 +493,8 @@ button.t3-button {
   .t3-paste-after-handle span {
     background: #ffffff;
     background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
-    background-repeat: no-repeat; }
+    background-repeat: no-repeat;
+    background-position: 50% 50%; }
 
 .t3-paste-after-handle {
   top: auto;
@@ -542,43 +545,28 @@ body.t3-inspect-active .t3-status-indicator {
   font-size: 9px;
   border-width: 0 1px 1px 1px;
   border-style: none solid solid solid;
-  -moz-border-radius-bottomleft: 5px;
-  -webkit-border-bottom-left-radius: 5px;
-  -o-border-bottom-left-radius: 5px;
-  -ms-border-bottom-left-radius: 5px;
-  -khtml-border-bottom-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  -moz-border-radius-bottomright: 5px;
-  -webkit-border-bottom-right-radius: 5px;
-  -o-border-bottom-right-radius: 5px;
-  -ms-border-bottom-right-radius: 5px;
-  -khtml-border-bottom-right-radius: 5px;
-  border-bottom-right-radius: 5px;
   display: block;
   background: white;
   z-index: 10000;
   text-align: center;
-  border-color: #CCC;
-  -moz-box-shadow: 0 1px 3px #cccccc;
-  -webkit-box-shadow: 0 1px 3px #cccccc;
-  -o-box-shadow: 0 1px 3px #cccccc;
-  box-shadow: 0 1px 3px #cccccc; }
+  border-color: #373737; }
 body.t3-inspect-active .aloha-block:hover > .t3-status-indicator {
   -moz-box-shadow: 0 1px 3px #909090;
   -webkit-box-shadow: 0 1px 3px #909090;
   -o-box-shadow: 0 1px 3px #909090;
   box-shadow: 0 1px 3px #909090;
-  border-color: #999; }
+  border-color: #373737; }
 body.t3-inspect-active div.aloha-block > div.aloha-block-inner {
-  outline: 1px solid #cccccc; }
+  outline: 1px solid #373737; }
 
 div.aloha-block:hover > div.aloha-block-inner {
-  outline: 1px solid #909090;
+  outline: 1px solid #373737;
   background: #efefef; }
 
 div.aloha-block-active > div.aloha-block-inner,
 div.aloha-block-active:hover > div.aloha-block-inner {
-  background: #E3E3E3; }
+  outline: 1px solid #373737;
+  background: #e3e3e3; }
 
 .t3-ui-controls-active #t3-ui-top {
   -moz-box-shadow: 0 0 0 transparent;
@@ -834,8 +822,10 @@ div.aloha-block-active:hover > div.aloha-block-inner {
   .notice-item.typo3-notification-error {
     background-image: url("../Icons/FugueIcons/exclamation-red.png"); }
 
-.t3-handle-loading {
-  background-image: url("../Images/ajax-preloader.gif"); }
+.t3-handle-loading span {
+  background-image: url("../Images/ajax-preloader.gif");
+  background-repeat: no-repeat;
+  background-position: 50% 50%; }
 
 .popover {
   display: none; }
