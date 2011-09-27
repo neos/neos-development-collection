@@ -442,7 +442,7 @@ function(launcherTemplate) {
 		 * Publish all blocks which are unsaved *and* on current page.
 		 */
 		publishAll: function() {
-			sendAllToServer(
+			T3.Content.Controller.ServerConnection.sendAllToServer(
 				this,
 				function(block) {
 					return [block.get('__nodePath'), 'live'];
