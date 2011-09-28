@@ -156,7 +156,7 @@ interface NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 */
-	function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
+	public function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
 
 	/**
 	 * Sets the specified property.
