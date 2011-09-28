@@ -91,7 +91,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setPath($path) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setPath($path);
 	}
@@ -166,7 +166,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setWorkspace($workspace);
 	}
@@ -202,7 +202,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setIndex($index) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setIndex($index);
 	}
@@ -237,7 +237,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function moveBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->moveBefore($referenceNode);
 	}
@@ -251,7 +251,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->moveAfter($referenceNode);
 	}
@@ -269,7 +269,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setProperty($propertyName, $value) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setProperty($propertyName, $value);
 	}
@@ -334,7 +334,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setContentObject($contentObject) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setContentObject($contentObject);
 	}
@@ -357,7 +357,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function unsetContentObject() {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->unsetContentObject();
 	}
@@ -371,7 +371,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setContentType($contentType) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setContentType($contentType);
 	}
@@ -453,7 +453,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function remove() {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->remove();
 	}
@@ -475,7 +475,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setHidden($hidden) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setHidden($hidden);
 	}
@@ -497,7 +497,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setHiddenBeforeDate(\DateTime $dateTime = NULL) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setHiddenBeforeDate($dateTime);
 	}
@@ -519,7 +519,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setHiddenAfterDate(\DateTime $dateTime = NULL) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setHiddenAfterDate($dateTime);
 	}
@@ -541,7 +541,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setHiddenInIndex($hidden) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setHiddenInIndex($hidden);
 	}
@@ -563,7 +563,7 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function setAccessRoles(array $accessRoles) {
 		if (!isset($this->newNode)) {
-			$this->cloneOriginalNode();
+			$this->materializeOriginalNode();
 		}
 		$this->newNode->setAccessRoles($accessRoles);
 	}
@@ -634,19 +634,11 @@ class ProxyNode implements NodeInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function cloneOriginalNode() {
+	protected function materializeOriginalNode() {
 		$this->newNode = new Node($this->originalNode->getPath(), $this->context->getWorkspace(), $this->originalNode->getIdentifier());
 		$this->nodeRepository->add($this->newNode);
 
-		foreach ($this->originalNode->getProperties() as $propertyName => $propertyValue) {
-			$this->newNode->setProperty($propertyName, $propertyValue);
-		}
-		$this->newNode->setIndex($this->originalNode->getIndex());
-		$this->newNode->setContentType($this->originalNode->getContentType());
-		$contentObject = $this->originalNode->getContentObject();
-		if ($contentObject !== NULL) {
-			$this->newNode->setContentObject($contentObject);
-		}
+		$this->newNode->similarize($this->originalNode);
 		$this->newNode->setContext($this->context);
 	}
 

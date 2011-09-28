@@ -71,8 +71,8 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		}
 
-		$this->proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('cloneOriginalNode'), array(), '', FALSE);
-		$this->proxyNode->expects($this->once())->method('cloneOriginalNode')->will($this->returnCallback(array($this, 'cloneOriginalNodeCallback')));
+		$this->proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('materializeOriginalNode'), array(), '', FALSE);
+		$this->proxyNode->expects($this->once())->method('materializeOriginalNode')->will($this->returnCallback(array($this, 'cloneOriginalNodeCallback')));
 
 		call_user_func_array(array($this->proxyNode, $methodName), array($argument1, $argument2));
 		call_user_func_array(array($this->proxyNode, $methodName), array($argument1, $argument2));
@@ -410,7 +410,7 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$originalNode->setProperty('title', 'Foo');
 		$originalNode->setProperty('body', 'Bar');
 
-		$proxyNode->_call('cloneOriginalNode');
+		$proxyNode->_call('materializeOriginalNode');
 
 		$this->assertEquals($newNode->getProperties(), $originalNode->getProperties());
 		$this->assertEquals($newNode->getIndex(), $originalNode->getIndex());

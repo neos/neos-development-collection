@@ -895,6 +895,29 @@ class Node implements NodeInterface {
 	}
 
 	/**
+	 * Make the node "similar" to the given source node. That means,
+	 *  - all properties
+	 *  - index
+	 *  - content type
+	 *  - content object
+	 * will be set to the same values as in the source node.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $sourceNode
+	 * @return void
+	 */
+	public function similarize(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $sourceNode) {
+		foreach ($sourceNode->getProperties() as $propertyName => $propertyValue) {
+			$this->setProperty($propertyName, $propertyValue);
+		}
+		$this->setIndex($sourceNode->getIndex());
+		$this->setContentType($sourceNode->getContentType());
+		$contentObject = $sourceNode->getContentObject();
+		if ($contentObject !== NULL) {
+			$this->setContentObject($contentObject);
+		}
+	}
+
+	/**
 	 * Normalizes the given path and returns an absolute path
 	 *
 	 * @param string $path The unnormalized path
@@ -982,6 +1005,7 @@ class Node implements NodeInterface {
 		}
 		return $node;
 	}
+
 }
 
 ?>
