@@ -159,6 +159,36 @@ interface NodeInterface {
 	public function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
 
 	/**
+	 * Copies this node before the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName);
+
+	/**
+	 * Copies this node after the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName);
+
+	/**
+	 * Copies this node into the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName);
+
+	/**
 	 * Sets the specified property.
 	 *
 	 * If the node has a content object attached, the property will be set there

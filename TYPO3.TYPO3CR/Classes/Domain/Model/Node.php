@@ -406,6 +406,60 @@ class Node implements NodeInterface {
 	}
 
 	/**
+	 * Copies this node after the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+		$copiedNode = $referenceNode->getParent()->createNode($nodeName);
+		$copiedNode->similarize($this);
+		foreach ($this->getChildNodes() as $childNode) {
+			$childNode->copyInto($copiedNode, $childNode->getName());
+		}
+		$copiedNode->moveBefore($referenceNode);
+
+		return $copiedNode;
+	}
+
+	/**
+	 * Copies this node after the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+		$copiedNode = $referenceNode->getParent()->createNode($nodeName);
+		$copiedNode->similarize($this);
+		foreach ($this->getChildNodes() as $childNode) {
+			$childNode->copyInto($copiedNode, $childNode->getName());
+		}
+		$copiedNode->moveAfter($referenceNode);
+
+		return $copiedNode;
+	}
+
+	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+		$copiedNode = $referenceNode->createNode($nodeName);
+		$copiedNode->similarize($this);
+		foreach ($this->getChildNodes() as $childNode) {
+			$childNode->copyInto($copiedNode, $childNode->getName());
+		}
+
+		return $copiedNode;
+	}
+
+	/**
 	 * Sets the specified property.
 	 *
 	 * If the node has a content object attached, the property will be set there
@@ -581,7 +635,7 @@ class Node implements NodeInterface {
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @throws \InvalidArgumentException if the node name is not accepted.
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if a node with this path already exists.
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException if a node with this path already exists.
 	 */
 	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
 		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
@@ -590,7 +644,7 @@ class Node implements NodeInterface {
 
 		$newPath = $this->path . ($this->path === '/' ? '' : '/') . $name;
 		if ($this->getNode($newPath) !== NULL) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('Node with path "' . $newPath . '" already exists.', 1292503465);
+			throw new \TYPO3\TYPO3CR\Exception\NodeExistsException('Node with path "' . $newPath . '" already exists.', 1292503465);
 		}
 
 		$newNode = new Node($newPath, $this->nodeRepository->getContext()->getWorkspace(), $identifier);

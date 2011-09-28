@@ -239,6 +239,54 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Copies this node before the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+		if (isset($this->newNode)) {
+			return $this->newNode->copyBefore($referenceNode, $nodeName);
+		} else {
+			return $this->originalNode->copyBefore($referenceNode, $nodeName);
+		}
+	}
+
+	/**
+	 * Copies this node after the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+		if (isset($this->newNode)) {
+			return $this->newNode->copyAfter($referenceNode, $nodeName);
+		} else {
+			return $this->originalNode->copyAfter($referenceNode, $nodeName);
+		}
+	}
+
+	/**
+	 * Copies this node into the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $nodeName
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $nodeName) {
+		if (isset($this->newNode)) {
+			return $this->newNode->copyInto($referenceNode, $nodeName);
+		} else {
+			return $this->originalNode->copyInto($referenceNode, $nodeName);
+		}
+	}
+
+	/**
 	 * Sets the specified property.
 	 *
 	 * If the node has a content object attached, the property will be set there

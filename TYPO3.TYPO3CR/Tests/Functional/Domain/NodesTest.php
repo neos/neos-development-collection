@@ -568,5 +568,152 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$node->setProperty('title', 'A better title');
 		$this->assertEquals('A better title', $node->getLabel());
 	}
+
+	/**
+	 * @test
+	 */
+	public function nodesCanBeCopiedAfterAndBeforeAndKeepProperties() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$bazNode = $rootNode->createNode('baz');
+		$fluxNode = $rootNode->createNode('flux');
+		$fluxNode->setProperty('someProperty', 42);
+
+		$bachNode = $fluxNode->copyBefore($bazNode, 'bach');
+		$flussNode = $fluxNode->copyAfter($bazNode, 'fluss');
+		$this->assertNotSame($fluxNode, $flussNode);
+		$this->assertNotSame($fluxNode, $bachNode);
+		$this->assertEquals($fluxNode->getProperties(), $bachNode->getProperties());
+		$this->assertEquals($fluxNode->getProperties(), $flussNode->getProperties());
+		$this->persistenceManager->persistAll();
+
+		$this->assertSame($bachNode, $rootNode->getNode('bach'));
+		$this->assertSame($flussNode, $rootNode->getNode('fluss'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodesCanBeCopiedBefore() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$bazNode = $rootNode->createNode('baz');
+		$fluxNode = $rootNode->createNode('flux');
+
+		$fluxNode->copyBefore($bazNode, 'fluss');
+
+		$childNodes = $rootNode->getChildNodes();
+		$names = new \stdClass();
+		$names->names = array();
+		array_walk($childNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+		$this->assertSame(array('fluss', 'baz', 'flux'), $names->names);
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodesCanBeCopiedAfter() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$bazNode = $rootNode->createNode('baz');
+		$fluxNode = $rootNode->createNode('flux');
+
+		$fluxNode->copyAfter($bazNode, 'fluss');
+
+		$childNodes = $rootNode->getChildNodes();
+		$names = new \stdClass();
+		$names->names = array();
+		array_walk($childNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+		$this->assertSame(array('baz', 'fluss', 'flux'), $names->names);
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodesAreCopiedBeforeRecursively() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$bazNode = $rootNode->createNode('baz');
+		$fluxNode = $rootNode->createNode('flux');
+		$fluxNode->createNode('capacitor');
+		$fluxNode->createNode('second');
+		$fluxNode->createNode('third');
+
+		$copiedChildNodes = $fluxNode->copyBefore($bazNode, 'fluss')->getChildNodes();
+
+		$names = new \stdClass();
+		$names->names = array();
+		array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+		$this->assertSame(array('capacitor', 'second', 'third'), $names->names);
+	}
+
+	/**
+	 * @test
+	 */
+	public function nodesAreCopiedAfterRecursively() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$bazNode = $rootNode->createNode('baz');
+		$fluxNode = $rootNode->createNode('flux');
+		$fluxNode->createNode('capacitor');
+		$fluxNode->createNode('second');
+		$fluxNode->createNode('third');
+
+		$copiedChildNodes = $fluxNode->copyAfter($bazNode, 'fluss')->getChildNodes();
+
+		$names = new \stdClass();
+		$names->names = array();
+		array_walk($copiedChildNodes, function ($value, $key, &$names) {$names->names[] = $value->getName();}, $names);
+		$this->assertSame(array('capacitor', 'second', 'third'), $names->names);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyBeforeThrowsExceptionIfTargetExists() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$rootNode->createNode('exists');
+		$bazNode = $rootNode->createNode('baz');
+		$fluxNode = $rootNode->createNode('flux');
+
+		$fluxNode->copyBefore($bazNode, 'exists');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeExistsException
+	 */
+	public function copyAfterThrowsExceptionIfTargetExists() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$rootNode->createNode('exists');
+		$bazNode = $rootNode->createNode('baz');
+		$fluxNode = $rootNode->createNode('flux');
+
+		$fluxNode->copyAfter($bazNode, 'exists');
+	}
 }
 ?>
