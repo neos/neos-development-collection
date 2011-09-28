@@ -153,8 +153,10 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 				return $this->template->render();
 			}
 		} catch (\Exception $exception) {
-			$this->systemLogger->logException(new \TYPO3\TypoScript\Exception('Exception caught in ' . get_class($this) . '::render()', 1289997632, $exception));
-			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
+			$referenceCode = ($exception instanceof \TYPO3\FLOW3\Exception) ? 'Reference code #' . $exception->getReferenceCode() . ' ' : '';
+			$nodeInformation = ($this->node !== NULL) ? ' for node ' . $this->node->getPath() . '.' : '';
+			$this->systemLogger->logException(new \TYPO3\TypoScript\Exception('Exception caught in ' . get_class($this) . '::render()' . $nodeInformation, 1289997632, $exception));
+			$message = 'An exception occurred. ' . $referenceCode . 'See log for more details.';
 			return ($this->renderingContext->getObjectManager()->getContext() === 'Development') ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
 		}
 	}
