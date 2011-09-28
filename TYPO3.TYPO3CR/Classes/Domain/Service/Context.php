@@ -44,11 +44,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	protected $nodeRepository;
 
 	/**
-	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * If TRUE, invisible content elements will be shown.
 	 *
 	 * @var boolean
@@ -96,15 +91,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 */
 	public function injectWorkspaceRepository(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository) {
 		$this->workspaceRepository = $workspaceRepository;
-	}
-
-	/**
-	 * @param \TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectObjectManager(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
 	}
 
 	/**

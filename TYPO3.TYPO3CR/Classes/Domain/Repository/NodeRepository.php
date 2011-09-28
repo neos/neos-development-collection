@@ -11,12 +11,26 @@ namespace TYPO3\TYPO3CR\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \Doctrine\ORM\Query;
+
 /**
  * The repository for nodes
  *
  * @scope singleton
  */
 class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
+
+	/**
+	 * Constants for setNewIndex()
+	 */
+	const POSITION_BEFORE = 1;
+	const POSITION_AFTER = 2;
+	const POSITION_LAST = 3;
+
+	/**
+	 * Maximum possible index
+	 */
+	const INDEX_MAXIMUM = 2147483647;
 
 	/**
 	 * @var \SplObjectStorage
@@ -29,6 +43,28 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	protected $removedNodes;
 
 	/**
+	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
+	 * interface ...
+	 *
+	 * @inject
+	 * @var \Doctrine\Common\Persistence\ObjectManager
+	 */
+	protected $entityManager;
+
+	/**
+	 * @inject
+	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
+	 * @var array
+	 */
+	protected $defaultOrderings = array(
+		'index' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING
+	);
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -38,7 +74,10 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	}
 
 	/**
-	 * Adds an object to the persistence.
+	 * Adds a Node to this repository.
+	 *
+	 * This repository keeps track of added and removed nodes (additionally to the
+	 * other Unit of Work) in order to find in-memory nodes.
 	 *
 	 * @param object $object The object to add
 	 * @return void
@@ -52,6 +91,9 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 	/**
 	 * Removes an object to the persistence.
+	 *
+	 * This repository keeps track of added and removed nodes (additionally to the
+	 * other Unit of Work) in order to find in-memory nodes.
 	 *
 	 * @param object $object The object to remove
 	 * @return void
@@ -73,10 +115,10 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 *
 	 * Examples for valid paths:
 	 *
-	 *		/          the root node
-	 *		/foo       node "foo" on the first level
-	 *		/foo/bar   node "bar" on the second level
-	 *		/foo/      first node on second level, below "foo"
+	 * /          the root node
+	 * /foo       node "foo" on the first level
+	 * /foo/bar   node "bar" on the second level
+	 * /foo/      first node on second level, below "foo"
 	 *
 	 * @param string $path Absolute path of the node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
@@ -92,7 +134,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			return $workspace->getRootNode();
 		}
 
-		$depth = substr_count($path, '/');
 		while($workspace !== NULL) {
 
 			foreach ($this->addedNodes as $node) {
@@ -107,17 +148,11 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 				}
 			}
 
-			$query = $this->createQuery();
-			$query->setOrderings(array('index' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
-			$query->matching(
-				$query->logicalAnd(
-					$query->equals('workspace', $workspace),
-					$query->equals('depth', $depth),
-					$query->like('path', $path)
-				)
-			);
+			$query = $this->entityManager->createQuery('SELECT n FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.path = :path AND n.workspace = :workspace');
+			$query->setParameter('path', $path);
+			$query->setParameter('workspace', $workspace);
 
-			$node = $query->execute()->getFirst();
+			$node = $query->getOneOrNullResult();
 			if ($node !== NULL) {
 				return $node;
 			}
@@ -128,48 +163,74 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	}
 
 	/**
-	 * Finds nodes with an index higher than the one specified, below the node defined
-	 * by the parent path.
+	 * Assigns an index to the given node which reflects the specified position.
+	 * If the position is "before" or "after", an index will be chosen which makes
+	 * the given node the previous or next node of the given reference node.
+	 * If the position "last" is specified, an index higher than any existing index
+	 * will be chosen.
 	 *
-	 * @param string $parentPath Path of the parent node
-	 * @param integer $index Only nodes with an index higher than $index are returned
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
-	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found
-	 * @todo Check for workspace compliance
-	 */
-	public function findByHigherIndex($parentPath, $index, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$query = $this->createQueryForFindByParentAndContentType($parentPath, NULL, $workspace);
-		$query->setOffset($index);
-		return $query->execute()->toArray();
-	}
-
-	/**
-	 * Counts the number of nodes within the specified workspace
+	 * If no free index is available between two nodes (for "before" and "after"),
+	 * the whole index of the current node level will be renumbered.
 	 *
-	 * Note: Also counts removed nodes
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return integer The number of nodes found
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to set the new index for
+	 * @param integer $position The position the new index should reflect, must be one of the POSITION_* constants
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function countByWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$query = $this->createQuery();
-		return $query->matching($query->equals('workspace', $workspace))->execute()->count();
-	}
+	public function setNewIndex($node, $position, $referenceNode = NULL) {
+		$parentPath = $node->getParentPath();
 
-	/**
-	 * Counts the number of nodes specified by its parent and (optionally) by its
-	 * content type
-	 *
-	 * @param string $parentPath Absolute path of the parent node
-	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return integer The number of nodes found
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Implement a count which also considers to not count removed nodes and does not actually loads nodes
-	 */
-	public function countByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		return count($this->findByParentAndContentType($parentPath, $contentTypeFilter,$workspace));
+		switch ($position) {
+			case self::POSITION_BEFORE:
+				if ($referenceNode === NULL) {
+					throw new \InvalidArgumentException('The reference node must be specified for POSITION_BEFORE.', 1317198857);
+				}
+				$referenceIndex = $referenceNode->getIndex();
+				$nextLowerIndex = $this->findNextLowerIndex($parentPath, $referenceIndex);
+				if ($nextLowerIndex === NULL) {
+					$newIndex = (integer)round($referenceIndex / 2);
+				} elseif ($nextLowerIndex < ($referenceIndex - 1)) {
+					$newIndex = (integer)round($nextLowerIndex + (($referenceIndex - $nextLowerIndex) / 2));
+				} else {
+					$this->renumberIndexesInLevel($parentPath);
+					$referenceIndex = $referenceNode->getIndex();
+					$nextLowerIndex = $this->findNextLowerIndex($parentPath, $referenceIndex);
+					if ($nextLowerIndex === NULL) {
+						$newIndex = (integer)round($referenceIndex / 2);
+					} else {
+						$newIndex = (integer)round($nextLowerIndex + (($referenceIndex - $nextLowerIndex) / 2));
+					}
+				}
+			break;
+			case self::POSITION_AFTER:
+				if ($referenceNode === NULL) {
+					throw new \InvalidArgumentException('The reference node must be specified for POSITION_AFTER.', 1317198858);
+				}
+				$referenceIndex = $referenceNode->getIndex();
+				$nextHigherIndex = $this->findNextHigherIndex($parentPath, $referenceIndex);
+				if ($nextHigherIndex === NULL) {
+					$newIndex = $referenceIndex + 100;
+				} elseif ($nextHigherIndex > ($referenceIndex + 1)) {
+					$newIndex = (integer)round($referenceIndex + (($nextHigherIndex - $referenceIndex) / 2));
+				} else {
+					$this->renumberIndexesInLevel($parentPath);
+					$referenceIndex = $referenceNode->getIndex();
+					$nextHigherIndex = $this->findNextHigherIndex($parentPath, $referenceIndex);
+					if ($nextHigherIndex === NULL) {
+						$newIndex = $referenceIndex + 100;
+					} else {
+						$newIndex = (integer)round($referenceIndex + (($nextHigherIndex - $referenceIndex) / 2));
+					}
+				}
+			break;
+			case self::POSITION_LAST:
+				$highestIndex = $this->findHighestIndexInLevel($parentPath);
+				$newIndex = $highestIndex + 100;
+			break;
+		}
+
+		$node->setIndex($newIndex);
 	}
 
 	/**
@@ -185,6 +246,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found on the given path
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Improve implementation by using DQL
 	 */
 	public function findByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$foundNodes = array();
@@ -200,23 +262,186 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			$workspace = $workspace->getBaseWorkspace();
 		}
 
-		foreach ($this->addedNodes as $addedNode) {
-			if (substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
-				$foundNodes[$addedNode->getIdentifier()] = $addedNode;
+		if ($parentPath === '/') {
+			foreach ($this->addedNodes as $addedNode) {
+				if ($addedNode->getDepth() === 1) {
+					$foundNodes[$addedNode->getIdentifier()] = $addedNode;
+				}
+			}
+		} else {
+			$childNodeDepth = substr_count($parentPath, '/') + 1;
+			foreach ($this->addedNodes as $addedNode) {
+				if ($addedNode->getDepth() === $childNodeDepth && substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
+					$foundNodes[$addedNode->getIdentifier()] = $addedNode;
+				}
 			}
 		}
 
-		usort($foundNodes, function($element1, $element2) {
-			if ($element1->getIndex() < $element2->getIndex()) {
-				return -1;
-			} elseif ($element1->getIndex() > $element2->getIndex()) {
-				return 1;
-			} else {
-				return strcmp($element1->getIdentifier(), $element2->getIdentifier());
-			}
-		});
+		return $this->sortNodesByIndex($foundNodes);
+	}
 
-		return $foundNodes;
+	/**
+	 * Renumbers the indexes of all nodes directly below the node specified by the
+	 * given path.
+	 *
+	 * Note that renumbering must happen in-memory and can't be optimized by a clever
+	 * query executed directly by the database because sorting indexes of new or
+	 * modified nodes need to be considered.
+	 *
+	 * @param $parentPath Path to the parent node
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function renumberIndexesInLevel($parentPath) {
+		$this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
+
+		$query = $this->entityManager->createQuery('SELECT n FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath ORDER BY n.index ASC');
+		$query->setParameter('parentPath', $parentPath);
+
+		$nodesOnLevel = array();
+		foreach ($query->getResult() as $node) {
+			$nodesOnLevel[$node->getIndex()] = $node;
+		}
+
+		foreach ($this->addedNodes as $node) {
+			if ($node->getParentPath() === $parentPath) {
+				$index = $node->getIndex();
+				if (isset($nodesOnLevel[$index])) {
+					throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Index conflict for nodes %s and %s: both have index %s', $nodesOnLevel[$index]->getPath(), $node->getPath(), $index), 1317140401);
+				}
+				$nodesOnLevel[$index] = $node;
+			}
+		}
+
+		$newIndex = 100;
+		foreach ($nodesOnLevel as $node) {
+			if ($newIndex > self::INDEX_MAXIMUM) {
+				throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('Reached maximum node index of %s while setting index of node %s.', $newIndex, $node->getPath()), 1317140402);
+			}
+			$node->setIndex($newIndex);
+			$newIndex += 100;
+		}
+	}
+
+	/**
+	 * Finds the currently highest index in the level below the given parent path
+	 * across all workspaces.
+	 *
+	 * @param string $parentPath Path of the parent node specifying the level in the node tree
+	 * @return integer The currently highest index
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function findHighestIndexInLevel($parentPath) {
+		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath');
+		$query->setParameter('parentPath', $parentPath);
+		$highestIndex = $query->getSingleScalarResult() ?: 0;
+
+		foreach ($this->addedNodes as $node) {
+			if ($node->getParentPath() === $parentPath && $node->getIndex() > $highestIndex) {
+				$highestIndex = $node->getIndex();
+			}
+		}
+		return $highestIndex;
+	}
+
+	/**
+	 * Returns the next-lower-index seen from the given reference index in the
+	 * level below the specified parent path. If no node with a lower than the
+	 * given index exists at that level, the reference index is returned.
+	 *
+	 * The result is determined workspace-agnostic.
+	 *
+	 * @param string $parentPath Path of the parent node specifying the level in the node tree
+	 * @param integer $referenceIndex Index of a known node
+	 * @return integer The currently next lower index
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function findNextLowerIndex($parentPath, $referenceIndex) {
+		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath AND n.index < :referenceIndex');
+		$query->setParameter('parentPath', $parentPath);
+		$query->setParameter('referenceIndex', $referenceIndex);
+		$nextLowerIndex = $query->getSingleScalarResult() ?: $referenceIndex;
+
+		foreach ($this->addedNodes as $node) {
+			$otherIndex = $node->getIndex();
+			if ($node->getParentPath() === $parentPath && $otherIndex > $nextLowerIndex && $otherIndex < $referenceIndex) {
+				$nextLowerIndex = $otherIndex;
+			}
+		}
+
+		return $nextLowerIndex;
+	}
+
+	/**
+	 * Returns the next-higher-index seen from the given reference index in the
+	 * level below the specified parent path. If no node with a higher than the
+	 * given index exists at that level, the reference index is returned.
+	 *
+	 * The result is determined workspace-agnostic.
+	 *
+	 * @param string $parentPath Path of the parent node specifying the level in the node tree
+	 * @param integer $referenceIndex Index of a known node
+	 * @return integer The currently next higher index
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function findNextHigherIndex($parentPath, $referenceIndex) {
+		$query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath AND n.index > :referenceIndex');
+		$query->setMaxResults(1);
+		$query->setParameter('parentPath', $parentPath);
+		$query->setParameter('referenceIndex', $referenceIndex);
+		$nextHigherIndex = $query->getSingleScalarResult() ?: NULL;
+
+		foreach ($this->addedNodes as $node) {
+			$otherIndex = $node->getIndex();
+			if ($node->getParentPath() === $parentPath && ($nextHigherIndex === NULL || $otherIndex < $nextHigherIndex) && $otherIndex > $referenceIndex) {
+				$nextHigherIndex = $otherIndex;
+			}
+		}
+
+		return $nextHigherIndex;
+	}
+
+	/**
+	 * Counts the number of nodes within the specified workspace
+	 *
+	 * Note: Also counts removed nodes
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return integer The number of nodes found
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function countByWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+		$query = $this->createQuery();
+		$nodesInDatabase = $query->matching($query->equals('workspace', $workspace))->execute()->count();
+
+		$nodesInMemory = 0;
+		foreach ($this->addedNodes as $node) {
+			if ($node->getWorkspace() === $workspace) {
+				$nodesInMemory ++;
+			}
+		}
+
+		return $nodesInDatabase + $nodesInMemory;
+	}
+
+	/**
+	 * Sorts the given nodes by their index
+	 *
+	 * @param array $nodes Nodes
+	 * @return array Nodes sorted by index
+	 */
+	protected function sortNodesByIndex(array $nodes)	{
+		usort($nodes, function($element1, $element2)
+			{
+				if ($element1->getIndex() < $element2->getIndex()) {
+					return -1;
+				} elseif ($element1->getIndex() > $element2->getIndex()) {
+					return 1;
+				} else {
+					return strcmp($element1->getIdentifier(), $element2->getIdentifier());
+				}
+			});
+		return $nodes;
 	}
 
 	/**
@@ -294,6 +519,50 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	}
 
 	/**
+	 * Flushes the addedNodes and removedNodes registry.
+	 *
+	 * This method is (and should only be) used as a slot to the allObjectsPersisted
+	 * signal.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushNodeRegistry() {
+		$this->addedNodes = new \SplObjectStorage();
+		$this->removedNodes = new \SplObjectStorage();
+	}
+
+	/**
+	 * @param $contentTypeFilter
+	 * @return string
+	 * @fixme implement
+	 */
+	protected function getDqlContentTypeFilterConstraints($contentTypeFilter) {
+		if ($contentTypeFilter === NULL) {
+			return '';
+		}
+
+		return '';
+
+		$constraints = '';
+		$includeContentTypeConstraints = array();
+		$excludeContentTypeConstraints = array();
+
+		$contentTypeFilterParts = explode(',', $contentTypeFilter);
+		foreach ($contentTypeFilterParts as $contentTypeFilterPart) {
+			if (strpos($contentTypeFilterPart, '!') === 0) {
+				$excludeContentTypeConstraints[] = "NOT n.contentType = '" . substr($contentTypeFilterPart, 1) . "'";
+			} else {
+				$includeContentTypeConstraints[] = "n.contentType = '" . substr($contentTypeFilterPart, 1) . "'";
+			}
+		}
+		if (count($excludeContentTypeConstraints) > 0) {
+		}
+		if (count($includeContentTypeConstraints) > 0) {
+		}
+	}
+
+	/**
 	 * Creates a query for findinnodes by its parent and (optionally) by its content type.
 	 *
 	 * Does not traverse base workspaces, returns ary query only matching nodes of
@@ -309,14 +578,16 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
 			throw new \InvalidArgumentException('"' . $parentPath . '" is not a valid path: must start but not end with a slash.', 1284985610);
 		}
-		$depth = ($parentPath === '/' ? 0 : substr_count($parentPath, '/')) + 1;
 
 		$query = $this->createQuery();
 		$constraints = array(
 			$query->equals('workspace', $workspace),
-			$query->equals('depth', $depth),
-			$query->like('path', $parentPath . '/%'),
+			$query->equals('parentPath', $parentPath),
 		);
+
+		if ($parentPath !== '/') {
+			$constraints[] = $query->like('path', $parentPath . '/%');
+		}
 
 		if ($contentTypeFilter !== NULL) {
 			$includeContentTypeConstraints = array();
@@ -338,7 +609,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 		}
 
 		$query->matching($query->logicalAnd($constraints));
-		$query->setOrderings(array('index' => \TYPO3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING));
 		return $query;
 	}
 

@@ -11,6 +11,8 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use \TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
+
 /**
  * A Node inside the Content Repository. This is the main API for storing and
  * retrieving content in the system.
@@ -24,12 +26,26 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 class Node implements NodeInterface {
 
 	/**
+	 * @version
+	 * @var integer
+	 */
+	protected $version;
+
+	/**
 	 * Absolute path of this node
 	 *
 	 * @var string
 	 * @validate StringLength(minimum = 1, maximum = 255)
 	 */
 	protected $path;
+
+	/**
+	 * Absolute path of the parent path
+	 *
+	 * @var string
+	 * @validate StringLength(maximum = 255)
+	 */
+	protected $parentPath;
 
 	/**
 	 * Workspace this node is contained in
@@ -48,17 +64,10 @@ class Node implements NodeInterface {
 	protected $identifier;
 
 	/**
-	 * Depth at which this node is located
-	 *
-	 * @var integer
-	 */
-	protected $depth;
-
-	/**
 	 * Index within the nodes with the same parent
 	 *
 	 * @var integer
-	 * @Column(name="sorting_index",nullable=true)
+	 * @Column(name="sortingindex",nullable=true)
 	 */
 	protected $index;
 
@@ -170,7 +179,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $path Absolute path of this node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
-	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating Corresponding Nodes
+	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating corresponding nodes
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function  __construct($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
@@ -183,7 +192,7 @@ class Node implements NodeInterface {
 	 * Sets the absolute path of this node.
 	 *
 	 * This method is only for internal use by the content repository. Changing
-	 * the path of a node manually may lead to unexpected behavior.
+	 * the path of a node manually may lead to unexpected behavior and bad breath.
 	 *
 	 * @param string $path
 	 * @return void
@@ -194,7 +203,13 @@ class Node implements NodeInterface {
 			throw new \InvalidArgumentException('Invalid path: A path must be a valid string, be absolute (starting with a slash) and contain only the allowed characters.', 1284369857);
 		}
 		$this->path = $path;
-		$this->depth = ($path === '/') ? 0 : substr_count($path, '/');
+		if ($path === '/') {
+			$this->parentPath = '';
+		} elseif (substr_count($path, '/') === 1) {
+			$this->parentPath = '/';
+		} else {
+			$this->parentPath = substr($path, 0, strrpos($path, '/'));
+		}
 	}
 
 	/**
@@ -232,7 +247,7 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDepth() {
-		return $this->depth;
+		return ($this->path === '/') ? 0 : substr_count($this->path, '/');
 	}
 
 	/**
@@ -246,10 +261,12 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description of this node
+	 * Returns an up to LABEL_MAXIMUM_LENGTH characters long plain text description
+	 * of this node.
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Use a property specified by the content type once it supports it.
 	 */
 	public function getLabel() {
 		$label = $this->hasProperty('title') ? strip_tags($this->getProperty('title')) : '(' . $this->getContentType() . ') '. $this->getName();
@@ -262,7 +279,7 @@ class Node implements NodeInterface {
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Implement real abstract rendering ...
+	 * @todo Implement real abstract rendering and use a property specified in the content type
 	 */
 	public function getAbstract() {
 		$abstract = strip_tags(implode(' – ', $this->getProperties()));
@@ -344,9 +361,18 @@ class Node implements NodeInterface {
 		if ($this->path === '/') {
 			return NULL;
 		}
-		$parentNodePath = substr($this->path, 0, strrpos($this->path, '/'));
-		$parentNode = $this->nodeRepository->findOneByPath($parentNodePath, $this->context->getWorkspace());
+		$parentNode = $this->nodeRepository->findOneByPath($this->parentPath, $this->context->getWorkspace());
 		return $this->treatNodeWithContext($parentNode);
+	}
+
+	/**
+	 * Returns the parent node path
+	 *
+	 * @return string Absolute node path of the parent node
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getParentPath() {
+		return $this->parentPath;
 	}
 
 	/**
@@ -355,9 +381,12 @@ class Node implements NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian@kitsunet.de>
 	 */
-	public function moveBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
+	public function moveBefore(NodeInterface $referenceNode) {
+		if ($referenceNode === $this) {
+			return;
+		}
+
 		if ($this->path === '/') {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
 		}
@@ -367,24 +396,7 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
 		}
 
-		$moveTo = $referenceNode->getIndex();
-		$moveFrom = $this->getIndex();
-		if (($referenceNode === $this) || ($moveFrom === ($moveTo-1))) {
-			return;
-		}
-		if($moveTo > $moveFrom) {
-			$moveTo -= 1;
-		}
-
-		$siblingsAndSelf = $this->getParent()->getChildNodes();
-		foreach ($siblingsAndSelf as $currentIndex => $currentNode) {
-			if ($currentIndex >= $moveTo && $currentIndex < $moveFrom) {
-				$currentNode->setIndex($currentNode->getIndex()+1);
-			} elseif ($currentIndex > $moveFrom && $currentIndex <= $moveTo) {
-				$currentNode->setIndex($currentNode->getIndex()-1);
-			}
-		}
-		$this->setIndex($moveTo);
+		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_BEFORE, $referenceNode);
 	}
 
 	/**
@@ -393,36 +405,22 @@ class Node implements NodeInterface {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian@kitsunet.de>
 	 */
-	function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
+	public function moveAfter(NodeInterface $referenceNode) {
+		if ($referenceNode === $this) {
+			return;
+		}
+
 		if ($this->path === '/') {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1316361483);
 		}
 
 		$referenceNodePath = $referenceNode->getPath();
 		if (substr($this->path, 0, strrpos($this->path, '/')) !== substr($referenceNodePath, 0, strrpos($referenceNodePath, '/'))) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1316361485);
 		}
 
-		$moveTo = $referenceNode->getIndex();
-		$moveFrom = $this->getIndex();
-		if (($referenceNode === $this) || ($moveFrom === ($moveTo+1))) {
-			return;
-		}
-		if($moveTo < $moveFrom) {
-			$moveTo += 1;
-		}
-
-		$siblingsAndSelf = $this->getParent()->getChildNodes();
-		foreach ($siblingsAndSelf as $currentIndex => $currentNode) {
-			if ($currentIndex >= $moveTo && $currentIndex < $moveFrom) {
-				$currentNode->setIndex($currentNode->getIndex()+1);
-			} elseif ($currentIndex > $moveFrom && $currentIndex <= $moveTo) {
-				$currentNode->setIndex($currentNode->getIndex()-1);
-			}
-		}
-		$this->setIndex($moveTo);
+		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_AFTER, $referenceNode);
 	}
 
 	/**
@@ -599,18 +597,16 @@ class Node implements NodeInterface {
 			throw new \InvalidArgumentException('Invalid node name: A node name must only contain characters, numbers and the "-" sign.', 1292428697);
 		}
 
-		$currentWorkspace = $this->context->getWorkspace();
-
-		$newPath = $this->path . ($this->path !== '/' ? '/' : '') . $name;
+		$newPath = $this->path . ($this->path === '/' ? '' : '/') . $name;
 		if ($this->getNode($newPath) !== NULL) {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('Node with path "' . $newPath . '" already exists.', 1292503465);
 		}
-		$newIndex = $this->nodeRepository->countByParentAndContentType($this->path, NULL, $currentWorkspace) + 1;
 
-		$newNode = new Node($newPath, $currentWorkspace, $identifier);
+		$newNode = new Node($newPath, $this->context->getWorkspace(), $identifier);
 		$this->nodeRepository->add($newNode);
+		$this->nodeRepository->setNewIndex($newNode, NodeRepository::POSITION_LAST);
 
-		$newNode->setIndex($newIndex);
+
 		if ($contentType !== NULL) {
 			$newNode->setContentType($contentType);
 		}
@@ -641,10 +637,7 @@ class Node implements NodeInterface {
 	 */
 	public function getPrimaryChildNode() {
 		$node = $this->nodeRepository->findFirstByParentAndContentType($this->path, NULL, $this->context->getWorkspace());
-		if (!$node) {
-			return NULL;
-		}
-		return $this->treatNodeWithContext($node);
+		return ($node !== NULL) ? $this->treatNodeWithContext($node) : NULL;
 	}
 
 	/**
@@ -666,9 +659,10 @@ class Node implements NodeInterface {
 	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
 	 * @return boolean TRUE if this node has child nodes, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Needs proper implementation in NodeRepository which only counts nodes (considering workspaces, removed nodes etc.)
 	 */
 	public function hasChildNodes($contentTypeFilter = NULL) {
-		return $this->nodeRepository->countByParentAndContentType($this->getPath(), $contentTypeFilter, $this->context->getWorkspace()) > 0;
+		return ($this->getChildNodes() !== array());
 	}
 
 	/**
@@ -962,7 +956,7 @@ class Node implements NodeInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @fixme This method does more than the name or description claims
 	 */
-	protected function treatNodeWithContext(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $disableFilters = FALSE) {
+	protected function treatNodeWithContext(NodeInterface $node, $disableFilters = FALSE) {
 		if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
 			if ($node->getWorkspace() !== $this->context->getWorkspace()) {
 				$node = $this->proxyNodeFactory->createFromNode($node);

@@ -36,8 +36,8 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @return void
 	 */
-	public function setup() {
-		parent::setup();
+	public function setUp() {
+		parent::setUp();
 		$this->personalContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('user-robert');
 		$this->rootNode = $this->personalContext->getWorkspace()->getRootNode();
 	}

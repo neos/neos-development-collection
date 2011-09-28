@@ -458,31 +458,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function hasChildNodesChecksForChildNodesOptionallyFilteredyByContentType() {
-		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
-		$context->expects($this->any())->method('getWorkspace')->will($this->returnValue($this->mockWorkspace));
-
-		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('countByParentAndContentType'), array(), '', FALSE);
-		$nodeRepository->expects($this->at(0))->method('countByParentAndContentType')->with('/foo', 'TYPO3CR:Folder', $this->mockWorkspace)->will($this->returnValue(3));
-		$nodeRepository->expects($this->at(1))->method('countByParentAndContentType')->with('/foo', 'Foo:Bar', $this->mockWorkspace)->will($this->returnValue(0));
-
-		$currentNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getPath'), array('/foo', $this->mockWorkspace));
-
-			// we need to use getPath() instead of $this->path because otherwise the Proxy Node would
-			// access $this->path as well - which would be NULL
-		$currentNode->expects($this->exactly(2))->method('getPath')->will($this->returnValue('/foo'));
-
-		$currentNode->_set('context', $context);
-		$currentNode->_set('nodeRepository', $nodeRepository);
-
-		$this->assertTrue($currentNode->hasChildNodes('TYPO3CR:Folder'));
-		$this->assertFalse($currentNode->hasChildNodes('Foo:Bar'));
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function removeRemovesAllChildNodesAndTheNodeItself() {
 		$this->mockWorkspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(NULL));
 
@@ -647,79 +622,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$returnedNode = $currentNode->_call('treatNodeWithContext', $subjectNode);
 		$this->assertEquals($proxyNode, $returnedNode);
-	}
-
-	/**
-	 * Data provider for "moveBeforeWorks"
-	 */
-	public function dataProviderForMoveBefore() {
-		return array(
-			array(7, 5, array(0, 1, 2, 3, 4, 7, 5, 6, 8, 9)), // Move element 7 before element 5
-			array(2, 8, array(0, 1, 3, 4, 5, 6, 7, 2, 8, 9)), // Move element 2 before element 8
-			array(4, 0, array(4, 0, 1, 2, 3, 5, 6, 7, 8, 9)), // Move element 4 before element 0
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider dataProviderForMoveBefore
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function moveBeforeWorks($indexOfElementToMove, $indexOfTargetElement, $expected) {
-		$mockNodeRepository = $this->getMock('TYPO3\FLOW3\Persistence\RepositoryInterface');
-		$rootNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array(), '', FALSE);
-		$rootNode->_set('nodeRepository', $mockNodeRepository);
-		$childNodes = array();
-		for ($i=0; $i<10; $i++) {
-			$childNodes[$i] = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getParent'), array(), '', FALSE);
-			$childNodes[$i]->_set('nodeRepository', $mockNodeRepository);
-			$childNodes[$i]->setIndex($i);
-			$childNodes[$i]->expects($this->any())->method('getParent')->will($this->returnValue($rootNode));
-		}
-
-		$rootNode->expects($this->any())->method('getChildNodes')->will($this->returnValue($childNodes));
-
-		$childNodes[$indexOfElementToMove]->moveBefore($childNodes[$indexOfTargetElement]);
-
-		foreach ($expected as $index => $nodeId) {
-			$this->assertEquals($index, $childNodes[$nodeId]->getIndex(), 'Error on node ID ' . $nodeId);
-		}
-	}
-
-	/**
-	 * Data provider for "moveAfterWorks"
-	 */
-	public function dataProviderForMoveAfter() {
-		return array(
-			array(7, 5, array(0, 1, 2, 3, 4, 5, 7, 6, 8, 9)), // Move element 7 after element 5
-			array(2, 6, array(0, 1, 3, 4, 5, 6, 2, 7, 8, 9)), // Move element 2 after element 6
-			array(7, 9, array(0, 1, 2, 3, 4, 5, 6, 8, 9, 7)), // Move element 7 after element 9
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider dataProviderForMoveAfter
-	 */
-	public function moveAfterWorks($indexOfElementToMove, $indexOfTargetElement, $expected) {
-		$mockNodeRepository = $this->getMock('TYPO3\FLOW3\Persistence\RepositoryInterface');
-		$rootNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getChildNodes'), array(), '', FALSE);
-		$rootNode->_set('nodeRepository', $mockNodeRepository);
-		$childNodes = array();
-		for ($i=0; $i<10; $i++) {
-			$childNodes[$i] = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('getParent'), array(), '', FALSE);
-			$childNodes[$i]->_set('nodeRepository', $mockNodeRepository);
-			$childNodes[$i]->setIndex($i);
-			$childNodes[$i]->expects($this->any())->method('getParent')->will($this->returnValue($rootNode));
-		}
-
-		$rootNode->expects($this->any())->method('getChildNodes')->will($this->returnValue($childNodes));
-
-		$childNodes[$indexOfElementToMove]->moveAfter($childNodes[$indexOfTargetElement]);
-
-		foreach ($expected as $index => $nodeId) {
-			$this->assertEquals($index, $childNodes[$nodeId]->getIndex(), 'Error on node ID ' . $nodeId);
-		}
 	}
 
 	/**
