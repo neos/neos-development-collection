@@ -143,6 +143,7 @@ TYPO3:
             type: TYPO3\TYPO3\Domain\Model\Media\ImageVariant
             label: 'Image'
             category: image
+            reloadOnChange: true
           position:
             type: enum
             label: 'Image position'
@@ -151,6 +152,7 @@ TYPO3:
               values:
                 left: 'Left'
                 right: 'Right'
+            reloadOnChange: true
         propertyGroups:
           image:
             label: 'Image'
