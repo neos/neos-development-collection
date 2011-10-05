@@ -26,6 +26,12 @@ class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 
 	/**
 	 * @inject
+	 * @var \TYPO3\Party\Domain\Repository\PartyRepository
+	 */
+	protected $partyRepository;
+
+	/**
+	 * @inject
 	 * @var \TYPO3\FLOW3\Security\AccountFactory
 	 */
 	protected $accountFactory;
@@ -42,6 +48,7 @@ class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	public function createAdministratorCommand($identifier, $password) {
 		$user = new \TYPO3\TYPO3\Domain\Model\User();
 		$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
+		$this->partyRepository->add($user);
 
 		$account = $this->accountFactory->createAccountWithPassword($identifier, $password, array('Administrator'), 'Typo3BackendProvider');
 		$account->setParty($user);
