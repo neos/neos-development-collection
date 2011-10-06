@@ -221,7 +221,11 @@ function() {
 			$selector.click(function(e) {
 				e.preventDefault();
 				var $this = $(this);
-				that.loadPage($this.attr('href'));
+
+				if (!$this.attr('href').match(/[a-z]*:\/\//)) {
+						// We only load the page if the link is a non-external link.
+					that.loadPage($this.attr('href'));
+				}
 			})
 		},
 		loadPage: function(uri) {
