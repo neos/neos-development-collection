@@ -435,12 +435,20 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					that._editor = CodeMirror.fromTextArea($editorContent.get(0), {
 						mode: 'text/html',
 						tabMode: 'indent',
+						lineNumbers: true,
 						onChange: function() {
 							if (that._editor) {
 								that.set('value', that._editor.getValue());
 							}
 						}
 					});
+
+						// We trigger an automatic indentation, which removes all the
+						// automatic whitespaces etc...
+					var lineCount = that._editor.lineCount();
+					for(var i=0; i<lineCount; i++) {
+						that._editor.indentLine(i);
+					}
 				});
 
 				this._editorInitialized = true;
