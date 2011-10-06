@@ -432,12 +432,14 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					'css!Library/codemirror2/lib/codemirror.css',
 					'css!Library/codemirror2/theme/default.css',
 				], function() {
+					var editorFullyPopulated = false;
+
 					that._editor = CodeMirror.fromTextArea($editorContent.get(0), {
 						mode: 'text/html',
 						tabMode: 'indent',
 						lineNumbers: true,
 						onChange: function() {
-							if (that._editor) {
+							if (that._editor && editorFullyPopulated) {
 								that.set('value', that._editor.getValue());
 							}
 						}
@@ -449,6 +451,8 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					for(var i=0; i<lineCount; i++) {
 						that._editor.indentLine(i);
 					}
+
+					editorFullyPopulated = true;
 				});
 
 				this._editorInitialized = true;
