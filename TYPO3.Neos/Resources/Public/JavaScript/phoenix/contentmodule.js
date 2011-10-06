@@ -155,12 +155,6 @@ function() {
 						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
 					}),
 					T3.Content.UI.Button.extend({
-						label: 'Cancel',
-						disabledBinding: 'T3.Content.Model.Changes.noChanges',
-						target: 'T3.Content.Model.Changes',
-						action: 'revert'
-					}),
-					T3.Content.UI.Button.extend({
 						label: 'Publish Page',
 						disabledBinding: SC.Binding.or('_noChanges', '_connectionFailed'),
 						target: 'T3.Content.Model.PublishableBlocks',

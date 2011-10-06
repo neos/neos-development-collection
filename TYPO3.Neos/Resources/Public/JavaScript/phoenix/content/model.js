@@ -101,13 +101,6 @@ function(launcherTemplate) {
 			this.set('__modified', hasChanges);
 		},
 
-		revertChanges: function() {
-			var that = this;
-			$.each(this.__originalValues, function(key, oldValue) {
-				that.set(key, oldValue);
-			});
-		},
-
 		/**
 		 * Returns a simple JSON object containing the simple and cleaned
 		 * attributes for the block
@@ -553,12 +546,6 @@ function(launcherTemplate) {
 			} catch (e) {
 				return false;
 			}
-		},
-
-		revert: function() {
-			this.forEach(function(block) {
-				block.revertChanges();
-			}, this);
 		},
 
 		save: function(callback, reloadPage) {
