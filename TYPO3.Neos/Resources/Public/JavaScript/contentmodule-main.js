@@ -56,9 +56,10 @@ require(
 				T3.ContentModule.bootstrap();
 			});
 
-			Ext.Direct.on('exception', function(error) {
-				T3.Common.Notification.error('ExtDirect error: ' + error.message);
-			});
+				Ext.Direct.on('exception', function(error) {
+					T3.Content.Controller.ServerConnection.set('_failedRequest', true);
+					T3.Common.Notification.error('ExtDirect error: ' + error.message);
+				});
 
 			// Because our ExtJS styles work only locally and not globally,
 			// this breaks the extjs quicktip styling. Thus, we disable them

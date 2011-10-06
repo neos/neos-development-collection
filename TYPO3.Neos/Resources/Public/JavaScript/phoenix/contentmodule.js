@@ -179,10 +179,11 @@ function(jQuery) {
 					}),
 					T3.Content.UI.Button.extend({
 						label: 'Publish Page',
-						disabledBinding: Ember.Binding.or('_noChanges', '_connectionFailed'),
+						disabledBinding: Ember.Binding.or('_noChanges', '_saveRunning'),
 						target: 'T3.Content.Model.PublishableBlocks',
 						action: 'publishAll',
 						_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',
+						_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
 						_noChangesBinding: 'T3.Content.Model.PublishableBlocks.noChanges',
 						classNameBindings: ['connectionStatusClass'],
 

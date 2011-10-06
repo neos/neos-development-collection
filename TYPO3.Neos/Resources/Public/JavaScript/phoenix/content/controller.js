@@ -168,7 +168,7 @@ function(jQuery) {
 			}
 		}.observes('blockProperties'),
 
-		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
+			// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
 		_somePropertyChanged: function() {
 			var that = this,
 				hasChanges = false;
@@ -424,25 +424,25 @@ function(jQuery) {
 				var block = T3.Content.Model.BlockManager.getBlockByNodePath(clipboard.nodePath);
 
 				if (clipboard.type === 'cut') {
-					// TODO: Make a sproutcore binding to andle this
+						// TODO: Make a sproutcore binding to andle this
 					jQuery('.t3-contentelement-cut').each(function() {
 						jQuery(this).removeClass('t3-contentelement-cut');
 						jQuery(this).parent().find('.t3-cut-handle').removeClass('t3-handle-hidden');
 					});
 
-					// Handle cut
+						// Handle cut
 					block.getContentElement().addClass('t3-contentelement-cut');
 					block.hideHandle('cut');
 					block.showHandle('remove-from-cut');
 				} else if (clipboard.type === 'copy') {
-					// Handle copy
+						// Handle copy
 					block.hideHandle('copy');
 					block.showHandle('remove-from-copy');
 				}
 				jQuery('.t3-paste-before-handle, .t3-paste-after-handle').removeClass('t3-handle-hidden');
 				jQuery('.t3-add-above-handle, .t3-add-below-handle').addClass('t3-handle-hidden');
 			} catch (error) {
-				// TODO: HACK! Somehow this is a DOMWindow on first load of the page
+					// TODO: HACK! Somehow this is a DOMWindow on first load of the page
 				setTimeout(this.onClipboardChange, 500);
 			}
 		}.observes('_clipboard')
@@ -461,9 +461,10 @@ function(jQuery) {
 				numberOfUnsavedRecords = collection.get('length'),
 				responseCallback = function(element) {
 					return function(provider, response) {
-						if (response.status === false) {
+						if (response.result === null || response.result.success !== true) {
+								// TODO: Find a way to avoid this notice
+							T3.Common.Notification.error('Server communication error, reload the page to return to a safe state if another publish does not work');
 							that.set('_failedRequest', true);
-							that.set('_saveRunning', false);
 							return;
 						} else {
 							that.set('_failedRequest', false);
@@ -481,7 +482,7 @@ function(jQuery) {
 					};
 				};
 			collection.forEach(function(element) {
-				// Force copy of array
+					// Force copy of array
 				var args = transformFn(element).slice();
 				args.push(responseCallback(element));
 				that.set('_saveRunning', true);
@@ -490,8 +491,8 @@ function(jQuery) {
 		},
 
 		statusClass: function() {
-			var className = 't3-connection-status-';
-			className += this.get('_failedRequest') ? 'down' : 'up';
+			this.set('_saveRunning', false);
+			return 't3-connection-status-' + this.get('_failedRequest') ? 'down' : 'up';
 		}.observes('_failedRequest')
 
 	});

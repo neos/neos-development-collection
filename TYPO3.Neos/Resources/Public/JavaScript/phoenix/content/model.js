@@ -51,7 +51,7 @@ function(jQuery, launcherTemplate) {
 		_initializePropertiesFromSchema: function(schema) {
 			var that = this;
 			this.__originalValues = {};
-			// HACK: Add observer for each element, as we do not know how to add one observer for *all* elements.
+				// HACK: Add observer for each element, as we do not know how to add one observer for *all* elements.
 			$.each(schema.properties, function(key) {
 				that.__originalValues[key] = null;
 				that.addObserver(key, that, that._somePropertyChanged);
@@ -81,16 +81,16 @@ function(jQuery, launcherTemplate) {
 			}
 		}.observes('__publishable', '__modified'),
 
-		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
+			// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
 		_somePropertyChanged: function(that, propertyName) {
 			if (!this.__valuesInitialized) {
 				return;
 			}
 			var hasChanges = false;
 
-			// We need to register this block as changed even if it is
-			// already inside, so that the local store can be updated
-			// with the new content.
+				// We need to register this block as changed even if it is
+				// already inside, so that the local store can be updated
+				// with the new content.
 			Changes.addChange(this);
 
 			$.each(this.__originalValues, function(key, value) {
@@ -201,7 +201,7 @@ function(jQuery, launcherTemplate) {
 				}
 		},
 
-		// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
+			// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
 		_somePropertyChanged: function(that, propertyName) {
 			this._updateChangedPropertyInAlohaBlock(propertyName);
 			this._super(that, propertyName);
@@ -227,7 +227,7 @@ function(jQuery, launcherTemplate) {
 			}
 		},
 
-		// HACK for making updates of editables work...
+			// HACK for making updates of editables work...
 		_doNotUpdateAlohaBlock: function() {
 			this._disableAlohaBlockUpdate = true;
 		},
@@ -278,7 +278,7 @@ function(jQuery, launcherTemplate) {
 
 			var scope = this;
 			$('*[data-__nodepath]').each(function() {
-				// Just fetch the block a single time so that it is initialized.
+					// Just fetch the block a single time so that it is initialized.
 				scope.getBlockByNodePath($(this).attr('data-__nodepath'));
 			});
 		},
@@ -297,7 +297,7 @@ function(jQuery, launcherTemplate) {
 			var attributes = {};
 			var internalAttributes = {};
 			$.each(alohaBlock.attr(), function(key, value) {
-				// TODO: This simply converts all strings 'false' and 'true' into boolean, see if type checking has to be added
+					// TODO: This simply converts all strings 'false' and 'true' into boolean, see if type checking has to be added
 				if (value === 'false') {
 					value = false;
 				} else if (value === 'true') {
@@ -427,6 +427,7 @@ function(jQuery, launcherTemplate) {
 				this.pushObject(block);
 			}
 		},
+
 		remove: function(block) {
 			this.removeObject(block);
 		},
@@ -435,6 +436,7 @@ function(jQuery, launcherTemplate) {
 		 * Publish all blocks which are unsaved *and* on current page.
 		 */
 		publishAll: function() {
+			var that = this;
 			T3.Content.Controller.ServerConnection.sendAllToServer(
 				this,
 				function(block) {
@@ -442,12 +444,11 @@ function(jQuery, launcherTemplate) {
 				},
 				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode,
 				function() {
+						// Flush local changes so the UI updates
+					that.set('[]', []);
 					T3.ContentModule.reloadPage();
 				}
 			);
-
-				// Flush local changes so the UI updates
-			this.set('[]', []);
 		}
 	});
 
@@ -464,8 +465,8 @@ function(jQuery, launcherTemplate) {
 		_loadedFromLocalStore: false,
 
 		initialize: function() {
-			// We first set this._loadedFromLocalStore to FALSE; such that the removal
-			// of all changes does NOT trigger a _saveToLocalStore.
+				// We first set this._loadedFromLocalStore to FALSE; such that the removal
+				// of all changes does NOT trigger a _saveToLocalStore.
 			this._loadedFromLocalStore = false;
 			this.set('[]', []);
 			this._readFromLocalStore();
@@ -513,7 +514,7 @@ function(jQuery, launcherTemplate) {
 			this._loadedFromLocalStore = true;
 		},
 
-		// TODO This doesn't work as a second observer on [] somehow
+			// TODO This doesn't work as a second observer on [] somehow
 		_saveContentOnChange: function() {
 			if (window.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController) {
 				this.save();
@@ -546,7 +547,7 @@ function(jQuery, launcherTemplate) {
 			var savedAttributes = {};
 			T3.Content.Controller.ServerConnection.sendAllToServer(
 				this,
-				// Get attributes to be updated from block
+					// Get attributes to be updated from block
 				function(block) {
 					var nodePath = block.get('__nodePath');
 					// block.recordCurrentStateAsOriginal();
@@ -561,10 +562,9 @@ function(jQuery, launcherTemplate) {
 					return [attributes];
 				},
 				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update,
-				// Callback on success after all changes were saved
+					// Callback on success after all changes were saved
 				function() {
-					// Remove changesToBeRemoved
-
+						// Remove changesToBeRemoved
 					if (callback) {
 						callback();
 					}
@@ -574,19 +574,19 @@ function(jQuery, launcherTemplate) {
 						T3.Content.Model.Changes.save();
 					}
 
-					// Check if a changed property in the schema needs
-					// a server-side reload
+						// Check if a changed property in the schema needs
+						// a server-side reload
 					if (reloadPage) {
 						T3.ContentModule.reloadPage();
 					}
 				},
-				// Callback on success per block
+					// Callback on success per block
 				function(block, response) {
-					// when we save a node, it could be the case that it was in
-					// live workspace beforehand, but because of some modifications,
-					// is now copied into the user's workspace.
-					// That's why we need to update the (possibly changed) workspace
-					// name in the block.
+						// when we save a node, it could be the case that it was in
+						// live workspace beforehand, but because of some modifications,
+						// is now copied into the user's workspace.
+						// That's why we need to update the (possibly changed) workspace
+						// name in the block.
 					block.set('__workspacename', response.result.data.workspaceNameOfNode);
 					var nodePath = block.get('__nodePath');
 					if (savedAttributes[nodePath]) {
