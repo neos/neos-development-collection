@@ -1185,7 +1185,8 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 				}),
 
 				listeners: {
-					movenode: this._onTreeNodeMove
+					movenode: this._onTreeNodeMove,
+					click: this._onTreeNodeClick
 				}
 			});
 
@@ -1224,6 +1225,23 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					newParent.reload();
 				}
 			);
+		},
+
+		/**
+		 * Callback which is executed when a TreeNode is clicked.
+		 * We activate this element in the UI and slide it into view.
+		 */
+		_onTreeNodeClick: function(node) {
+			var nodePath = node.id, offsetFromTop = 150;
+			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+			if (!block) return;
+
+			T3.Content.Model.BlockSelection.selectItem(block);
+			var $blockDomElement = block.getContentElement();
+
+			$('html,body').animate({
+				scrollTop: $blockDomElement.offset().top - offsetFromTop
+			}, 500);
 		}
 	});
 
