@@ -140,8 +140,7 @@ function() {
 				classNames: ['t3-ui'],
 				left: [
 					T3.Content.UI.PageTreeButton.extend({
-						label: 'Pages',
-						popoverTitle: 'Page Tree'
+						label: 'Pages'
 					}),
 					T3.Content.UI.ToggleButton.extend({
 						pressedBinding: 'T3.Content.Controller.Preview.previewMode',

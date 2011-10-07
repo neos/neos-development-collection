@@ -937,6 +937,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 	 * - PageTreeButton
 	 */
 	var PageTreeButton = PopoverButton.extend({
+		popoverTitle: 'Page Tree',
 		$popoverContent: $('<div class="extjs-container"></div>'),
 
 		/**
@@ -1120,8 +1121,8 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 	});
 
 	var InspectButton = PopoverButton.extend({
+		popoverTitle: 'Content Structure',
 		$popoverContent: $('<div class="extjs-container" style="height: 350px"></div>'),
-
 		popoverPosition: 'top',
 
 		/**
