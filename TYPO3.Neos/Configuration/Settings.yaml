@@ -72,7 +72,7 @@ TYPO3:
             # TODO: maybe rename to "group"?
             category: column
             options:
-              placeholder: 'Select layout'
+              default: 'Select layout'
               items:
                 -
                   value: '50-50'
@@ -115,7 +115,7 @@ TYPO3:
 
       'TYPO3.TYPO3:ContentObject':
         superTypes: ['TYPO3.TYPO3:AbstractNode']
-        label: 'Abstract content object',
+        label: 'Abstract content object'
         search: 'Content'
 
 
@@ -128,10 +128,10 @@ TYPO3:
         properties:
           headline:
             label: string
-            placeholder: 'Enter headline here'
+            default: 'Enter headline here'
           text:
             label: string
-            placeholder: '<p>Enter text here</p>'
+            default: '<p>Enter text here</p>'
 
         inlineEditableProperties: ['headline', 'text']
 
@@ -171,7 +171,7 @@ TYPO3:
           source:
             type: string
             label: 'HTML Content'
-            placeholder: '<p>Enter HTML here</p>'
+            default: '<p>Enter HTML here</p>'
             category: html
             userInterface:
               class: T3.Content.UI.Editor.HtmlEditor
