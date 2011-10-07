@@ -130,7 +130,9 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @FLOW3\SkipCsrfProtection
 	 */
 	public function javascriptConfigurationAction() {
-		return 'window.T3Configuration = {}; window.T3Configuration.Schema = ' . json_encode($this->contentTypeManager->getFullConfiguration()) . '; window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']);
+		$this->response->setHeader('Content-Type', 'text/javascript');
+		$this->response->setContent('window.T3Configuration = {}; window.T3Configuration.Schema = ' . json_encode($this->contentTypeManager->getFullConfiguration()) . '; window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']));
+		return '';
 	}
 
 	/**
