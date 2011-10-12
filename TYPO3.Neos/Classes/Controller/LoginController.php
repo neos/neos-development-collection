@@ -98,7 +98,7 @@ class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 		if ($authenticated) {
 			$this->redirect('index', 'Backend\Backend');
 		} else {
-			$this->flashMessageContainer->add('Wrong username or password.', 'Invalid Credentials', \TYPO3\FLOW3\MVC\Controller\FlashMessage::SEVERITY_ERROR);
+			$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Error('Wrong username or password.'));
 			$this->redirect('index');
 		}
 	}
@@ -158,7 +158,7 @@ class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 				);
 				break;
 			default :
-				$this->flashMessageContainer->add('Successfully logged out.');
+				$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Notice('Successfully logged out.', 1318421560));
 				$this->redirect('index');
 		}
 	}

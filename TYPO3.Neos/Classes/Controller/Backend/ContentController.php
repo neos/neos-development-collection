@@ -83,7 +83,7 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 *
+	 * Output a grouped list of possible (new) content elements to select from
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $position either "above", "below" or "inside"
 	 * @return string
