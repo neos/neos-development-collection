@@ -11,6 +11,8 @@ namespace TYPO3\Media\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An image variant that has a relation to the original image
  *
@@ -20,7 +22,7 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 
 	/**
 	 * @var \TYPO3\Media\Domain\Service\ImageService
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $imageService;
 

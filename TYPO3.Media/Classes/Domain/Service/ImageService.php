@@ -11,22 +11,24 @@ namespace TYPO3\Media\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An image service that acts as abstraction for the Imagine library
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ImageService {
 
 	/**
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $objectManager;
 
 	/**
 	 * @var \TYPO3\FLOW3\Resource\ResourceManager
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $resourceManager;
 

@@ -11,10 +11,13 @@ namespace TYPO3\Media\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An image
  *
- * @entity
+ * @FLOW3\Entity
  */
 class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 
@@ -22,32 +25,32 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * The image repository is injected so that the image can persist itself when new ImageVariant is added
 	 *
 	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $imageRepository;
 
 	/**
 	 * @var string
-	 * @validate StringLength(maximum = 255)
+	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
 	protected $title;
 
 	/**
 	 * @var \TYPO3\FLOW3\Resource\Resource
-	 * @ManyToOne
-	 * @validate NotEmpty
+	 * @ORM\ManyToOne
+	 * @FLOW3\Validate(type="NotEmpty")
 	 */
 	protected $resource;
 
 	/**
 	 * @var integer
-	 * @validate NotEmpty
+	 * @FLOW3\Validate(type="NotEmpty")
 	 */
 	protected $width;
 
 	/**
 	 * @var integer
-	 * @validate NotEmpty
+	 * @FLOW3\Validate(type="NotEmpty")
 	 */
 	protected $height;
 
@@ -55,7 +58,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * one of PHPs IMAGETYPE_* constants
 	 *
 	 * @var integer
-	 * @validate NotEmpty
+	 * @FLOW3\Validate(type="NotEmpty")
 	 */
 	protected $type;
 
