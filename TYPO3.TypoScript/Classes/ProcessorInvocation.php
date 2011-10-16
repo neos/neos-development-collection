@@ -11,10 +11,12 @@ namespace TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Represents the invocation of a TypoScript processor
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class ProcessorInvocation {
 

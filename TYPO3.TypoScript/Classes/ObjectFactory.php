@@ -11,15 +11,17 @@ namespace TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A factory for TypoScript Objects
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ObjectFactory {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;

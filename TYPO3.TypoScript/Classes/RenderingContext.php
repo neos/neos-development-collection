@@ -11,6 +11,8 @@ namespace TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The TypoScript Rendering Context
  *
@@ -19,7 +21,7 @@ namespace TYPO3\TypoScript;
  * Most importantly that's the Controller Context (which contains the current
  * Request object and further MVC related information).
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class RenderingContext implements \TYPO3\Fluid\Core\Rendering\RenderingContextInterface {
 

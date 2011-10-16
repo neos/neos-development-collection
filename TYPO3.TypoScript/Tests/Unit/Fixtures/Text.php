@@ -11,10 +11,12 @@ namespace TYPO3\TypoScript\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A TypoScript Text object fixture
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Text extends \TYPO3\TypoScript\AbstractContentObject {
 

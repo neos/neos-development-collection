@@ -11,10 +11,12 @@ namespace TYPO3\TypoScript\Fixtures;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Processors for use in the Parser tests
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Processors implements \TYPO3\TypoScript\ProcessorInterface {
 	public function process($subject) {

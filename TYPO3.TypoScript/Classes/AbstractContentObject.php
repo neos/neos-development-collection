@@ -11,6 +11,8 @@ namespace TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Common class for TypoScript Content Objects
  *
@@ -46,7 +48,7 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	/**
 	 * The rendering context as passed to render()
 	 *
-	 * @transient
+	 * @FLOW3\Transient
 	 * @var \TYPO3\TypoScript\RenderingContext
 	 */
 	protected $renderingContext;

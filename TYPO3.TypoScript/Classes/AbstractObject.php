@@ -11,6 +11,8 @@ namespace TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Common class for TypoScript objects
  *
@@ -37,7 +39,7 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	protected $propertyProcessorChains = array();
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TypoScript\ObjectFactory
 	 */
 	protected $typoScriptObjectFactory;
@@ -125,7 +127,7 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	 * - coming from the TS sourcecode - is used (overriding the value in the model).
 	 *
 	 * @param string $propertyName Name of the property to process
-	 * @result mixed A proxy which can process the specified property or the actual value if no processors exist
+	 * @return mixed A proxy which can process the specified property or the actual value if no processors exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getPropertyProcessingProxy($propertyName) {

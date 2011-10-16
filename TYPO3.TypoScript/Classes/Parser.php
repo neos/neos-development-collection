@@ -11,10 +11,12 @@ namespace TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The TypoScript Parser
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class Parser implements \TYPO3\TypoScript\ParserInterface {
