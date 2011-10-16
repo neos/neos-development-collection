@@ -11,18 +11,21 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A Workspace
  *
- * @entity
- * @scope prototype
+ * @FLOW3\Entity
+ * @FLOW3\Scope("prototype")
  */
 class Workspace {
 
 	/**
 	 * @var string
-	 * @identity
-	 * @validate StringLength(minimum = 1, maximum = 200)
+	 * @FLOW3\Identity
+	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=200 })
 	 */
 	protected $name;
 
@@ -33,7 +36,7 @@ class Workspace {
 	 * as long as they are not modified in this workspace.
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
-	 * @ManyToOne
+	 * @ORM\ManyToOne
 	 */
 	protected $baseWorkspace;
 
@@ -41,25 +44,25 @@ class Workspace {
 	 * Root node of this workspace
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
-	 * @ManyToOne
-	 * @JoinColumn(referencedColumnName="id")
+	 * @ORM\ManyToOne
+	 * @ORM\JoinColumn(referencedColumnName="id")
 	 */
 	protected $rootNode;
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $context;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;

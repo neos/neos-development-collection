@@ -11,6 +11,9 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A Proxy Node which behaves like a real Node but acts as a placeholder for nodes
  * of other workspaces than the current workspace.
@@ -20,7 +23,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * This ProxyNode is only used if there is no materialized node in the current
  * workspace (at the given path).
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class ProxyNode implements NodeInterface {
 
@@ -28,7 +31,7 @@ class ProxyNode implements NodeInterface {
 	 * The original node this proxy refers to (lying in another workspace)
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @ManyToOne
+	 * @ORM\ManyToOne
 	 */
 	protected $originalNode;
 
@@ -38,19 +41,19 @@ class ProxyNode implements NodeInterface {
 	 * as the this ProxyNode.
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @ManyToOne
+	 * @ORM\ManyToOne
 	 */
 	protected $newNode;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $context;
 
@@ -66,7 +69,7 @@ class ProxyNode implements NodeInterface {
 	 * Constructs this proxy node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode
-	 * @autowiring off
+	 * @FLOW3\Autowiring(false)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function  __construct(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode) {

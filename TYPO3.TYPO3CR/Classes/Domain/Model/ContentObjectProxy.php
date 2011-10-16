@@ -11,17 +11,19 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A Content Object Proxy object to connect domain models to nodes
  *
- * @entity
- * @scope prototype
+ * @FLOW3\Entity
+ * @FLOW3\Scope("prototype")
  */
 class ContentObjectProxy {
 
 	/**
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
-	 * @inject
+	 * @FLOW3\Inject
 	 */
 	protected $persistenceManager;
 
@@ -41,7 +43,7 @@ class ContentObjectProxy {
 
 	/**
 	 * @var object
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $contentObject = NULL;
 

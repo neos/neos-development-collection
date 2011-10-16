@@ -11,6 +11,8 @@ namespace TYPO3\TYPO3CR\Domain\Factory;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * This factory creates proxy nodes based on "real" nodes. Its main purpose is
  * to assure that proxy nodes created for a certain node are unique in memory.
@@ -19,7 +21,7 @@ namespace TYPO3\TYPO3CR\Domain\Factory;
  * into a generic NodeFactory and a streamlined treat-with-context mechanism which
  * fits better into the DDD approach of Factories.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ProxyNodeFactory {
 

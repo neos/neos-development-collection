@@ -13,6 +13,9 @@ namespace TYPO3\TYPO3CR\Domain\Model;
 
 use \TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A Node inside the Content Repository. This is the main API for storing and
  * retrieving content in the system.
@@ -20,8 +23,8 @@ use \TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
  * Note: If this API is extended, make sure to also implement the additional
  * methods inside ProxyNode!
  *
- * @entity
- * @scope prototype
+ * @FLOW3\Entity
+ * @FLOW3\Scope("prototype")
  */
 class Node implements NodeInterface {
 
@@ -35,7 +38,7 @@ class Node implements NodeInterface {
 	 * Absolute path of this node
 	 *
 	 * @var string
-	 * @validate StringLength(minimum = 1, maximum = 255)
+	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=255 })
 	 */
 	protected $path;
 
@@ -43,7 +46,7 @@ class Node implements NodeInterface {
 	 * Absolute path of the parent path
 	 *
 	 * @var string
-	 * @validate StringLength(maximum = 255)
+	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
 	protected $parentPath;
 
@@ -51,8 +54,8 @@ class Node implements NodeInterface {
 	 * Workspace this node is contained in
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\Workspace
-	 * @ManyToOne
-	 * @JoinColumn(onDelete="SET NULL")
+	 * @ORM\ManyToOne
+	 * @ORM\JoinColumn(onDelete="SET NULL")
 	 */
 	protected $workspace;
 
@@ -67,7 +70,7 @@ class Node implements NodeInterface {
 	 * Index within the nodes with the same parent
 	 *
 	 * @var integer
-	 * @Column(name="sortingindex",nullable=true)
+	 * @ORM\Column(name="sortingindex",nullable=true)
 	 */
 	protected $index;
 
@@ -82,7 +85,7 @@ class Node implements NodeInterface {
 	 * An optional object which contains the content of this node
 	 *
 	 * @var \TYPO3\TYPO3CR\Domain\Model\ContentObjectProxy
-	 * @ManyToOne
+	 * @ORM\ManyToOne
 	 */
 	protected $contentObjectProxy;
 
@@ -139,37 +142,37 @@ class Node implements NodeInterface {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $context;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
-	 * @transient
+	 * @FLOW3\Transient
 	 */
 	protected $securityContext;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Factory\ProxyNodeFactory
 	 */
 	protected $proxyNodeFactory;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;

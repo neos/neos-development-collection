@@ -13,10 +13,12 @@ namespace TYPO3\TYPO3CR\Domain\Repository;
 
 use \Doctrine\ORM\Query;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The repository for nodes
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
@@ -46,13 +48,13 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * Doctrine's Entity Manager. Note that "ObjectManager" is the name of the related
 	 * interface ...
 	 *
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \Doctrine\Common\Persistence\ObjectManager
 	 */
 	protected $entityManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
