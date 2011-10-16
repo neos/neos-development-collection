@@ -11,27 +11,29 @@ namespace TYPO3\TYPO3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The TYPO3 Setup
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\Party\Domain\Repository\PartyRepository
 	 */
 	protected $partyRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\AccountFactory
 	 */
 	protected $accountFactory;

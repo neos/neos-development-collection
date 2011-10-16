@@ -11,15 +11,17 @@ namespace TYPO3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The Site Export Service
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class SiteExportService {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;

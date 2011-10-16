@@ -11,16 +11,18 @@ namespace TYPO3\TYPO3\ViewHelpers;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * ViewHelper which wraps all content elements, and adds an additional div wrapper
  * if we are in backend mode.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Service\ContentElementWrappingService
 	 */
 	protected $contentElementWrappingService;

@@ -11,15 +11,17 @@ namespace TYPO3\TYPO3\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Error Controller
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController implements \TYPO3\FLOW3\MVC\Controller\NotFoundControllerInterface {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;

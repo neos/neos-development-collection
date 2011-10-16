@@ -11,10 +11,12 @@ namespace TYPO3\TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The TypoScript "Head" object
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Head extends \TYPO3\TypoScript\AbstractContentObject {
 

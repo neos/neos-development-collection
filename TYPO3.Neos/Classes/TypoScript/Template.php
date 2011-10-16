@@ -11,10 +11,12 @@ namespace TYPO3\TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A TypoScript Template object
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\TypoScript\ObjectInterface, \TYPO3\Fluid\Core\Parser\SyntaxTree\RenderingContextAwareInterface {
 
@@ -44,7 +46,7 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	/**
 	 * The rendering context as passed to render()
 	 *
-	 * @transient
+	 * @FLOW3\Transient
 	 * @var \TYPO3\TypoScript\RenderingContext
 	 */
 	protected $renderingContext;
@@ -329,7 +331,7 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * - coming from the TS sourcecode - is used (overriding the value in the model).
 	 *
 	 * @param string $propertyName Name of the property to process
-	 * @result mixed A proxy which can process the specified property or the actual value if no processors exist
+	 * @return mixed A proxy which can process the specified property or the actual value if no processors exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getPropertyProcessingProxy($propertyName) {

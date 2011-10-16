@@ -11,29 +11,31 @@ namespace TYPO3\TYPO3\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The content element wrapping service adds the necessary markup around
  * a content element such that it can be edited using the Content Module
  * of the TYPO3 Backend.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ContentElementWrappingService {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;

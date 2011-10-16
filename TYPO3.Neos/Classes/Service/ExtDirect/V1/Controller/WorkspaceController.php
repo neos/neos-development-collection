@@ -13,15 +13,18 @@ namespace TYPO3\TYPO3\Service\ExtDirect\V1\Controller;
 
 use \TYPO3\TYPO3\Domain\Service\ContentContext;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\ExtJS\Annotations\ExtDirect;
+
 /**
  * ExtDirect Controller for managing Workspaces
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -48,7 +51,7 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $workspaceName Name of the workspace
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function getStatusAction($workspaceName) {
 		$context = new ContentContext($workspaceName);
@@ -70,7 +73,7 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $workspaceName Name of the workspace containing the nodes
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function getUnpublishedNodesAction($workspaceName) {
 		$context = new ContentContext($workspaceName);
@@ -97,7 +100,7 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function publishWorkspaceAction($sourceWorkspaceName, $targetWorkspaceName) {
 		$context = new ContentContext($sourceWorkspaceName);
@@ -118,7 +121,7 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $targetWorkspaceName
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
 		$sourceWorkspace = $node->getWorkspace();

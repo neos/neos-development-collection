@@ -11,33 +11,36 @@ namespace TYPO3\TYPO3\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\ExtJS\Annotations\ExtDirect;
+
 /**
  * A controller which allows for logging into the backend
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\AccountRepository
 	 */
 	protected $accountRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -109,7 +112,7 @@ class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function showAction() {
 		$person = $this->securityContext->getParty();
@@ -143,7 +146,7 @@ class LoginController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function logoutAction() {
 		$this->authenticationManager->logout();

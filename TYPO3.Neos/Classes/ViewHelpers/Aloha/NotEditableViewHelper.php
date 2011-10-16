@@ -11,11 +11,13 @@ namespace TYPO3\TYPO3\ViewHelpers\Aloha;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Renders a wrapper around the inner contents of the tag to enable frontend editing.
  * The wrapper contains the property name which should be made editable, and is either a "span" or a "div" tag (depending on the context)
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class NotEditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 

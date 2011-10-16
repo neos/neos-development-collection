@@ -13,33 +13,35 @@ namespace TYPO3\TYPO3\Controller\Backend;
 
 use \TYPO3\TYPO3\Controller\Exception\NodeCreationException;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The TYPO3 ContentModule controller
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
 	 */
 	protected $imageRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Persistence\PersistenceManagerInterface
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher
 	 */
 	protected $resourcePublisher;
@@ -87,7 +89,7 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $position either "above", "below" or "inside"
 	 * @return string
-	 * @skipCsrfProtection
+	 * @FLOW3\SkipCsrfProtection
 	 */
 	public function newAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $position) {
 		$allContentTypes = $this->contentTypeManager->getSubContentTypes('TYPO3.TYPO3:ContentObject');
@@ -125,7 +127,7 @@ class ContentController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * This action currently returns the JS configuration we need for the backend.
 	 * That's still quite unclean, but it works for now.
 	 *
-	 * @skipCsrfProtection
+	 * @FLOW3\SkipCsrfProtection
 	 */
 	public function javascriptConfigurationAction() {
 		return 'window.T3Configuration = {}; window.T3Configuration.Schema = ' . json_encode($this->contentTypeManager->getFullConfiguration()) . '; window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']);

@@ -11,16 +11,18 @@ namespace TYPO3\TYPO3\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The Site Repository
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class DomainRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\DomainMatchingStrategy
 	 */
 	protected $domainMatchingStrategy;

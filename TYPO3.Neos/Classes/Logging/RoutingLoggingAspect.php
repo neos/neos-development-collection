@@ -13,22 +13,24 @@ namespace TYPO3\TYPO3\Logging;
 
 use \TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An aspect which centralizes the logging of TYPO3's routing functions.
  *
- * @aspect
- * @scope singleton
+ * @FLOW3\Aspect
+ * @FLOW3\Scope("singleton")
  */
 class RoutingLoggingAspect {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
@@ -36,7 +38,7 @@ class RoutingLoggingAspect {
 	/**
 	 * Logs results of the FrontendNodeRoutePartHandler's matchValue() methods
 	 *
-	 * @afterreturning method(TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler->matchValue()) || method(TYPO3\TYPO3\Routing\RestRestServiceNodeRoutePartHandler->matchValue())
+	 * @FLOW3\AfterReturning("method(TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler->matchValue()) || method(TYPO3\TYPO3\Routing\RestRestServiceNodeRoutePartHandler->matchValue())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

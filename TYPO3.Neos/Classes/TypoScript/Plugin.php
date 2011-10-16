@@ -11,33 +11,35 @@ namespace TYPO3\TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A TypoScript Plugin object
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScript\ContentObjectInterface {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\MVC\Web\SubRequestBuilder
 	 */
 	protected $subRequestBuilder;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\MVC\Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Service\ContentElementWrappingService
 	 */
 	protected $contentElementWrappingService;
@@ -69,7 +71,7 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -77,7 +79,7 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	/**
 	 * The rendering context as passed to render()
 	 *
-	 * @transient
+	 * @FLOW3\Transient
 	 * @var \TYPO3\TypoScript\RenderingContext
 	 */
 	protected $renderingContext;

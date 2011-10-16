@@ -11,6 +11,8 @@ namespace TYPO3\TYPO3\ViewHelpers\Link;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A view helper for creating links to nodes.
  *
@@ -24,7 +26,7 @@ namespace TYPO3\TYPO3\ViewHelpers\Link;
  * <a href="sites/mysite.com/homepage/about.html">some link</a>
  * (depending on current node, format etc.)
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 

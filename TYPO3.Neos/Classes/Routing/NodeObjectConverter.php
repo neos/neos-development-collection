@@ -15,11 +15,13 @@ use \TYPO3\FLOW3\Error\Error;
 use \TYPO3\TYPO3\Domain\Service\ContentContext;
 use \TYPO3\TYPO3CR\Domain\Model\NodeInterface;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An Object Converter for Nodes which can be used for routing (but also for other
  * purposes) as a plugin for the Property Mapper.
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
@@ -28,31 +30,31 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 	protected $priority = 1;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Property\PropertyMapper
 	 */
 	protected $propertyMapper;

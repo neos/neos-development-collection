@@ -11,33 +11,35 @@ namespace TYPO3\TYPO3\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A view which renders a node based on a TypoScript template
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class TypoScriptView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\TypoScriptService
 	 */
 	protected $typoScriptService;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
 	 */
 	protected $workspaceRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TypoScript\ObjectFactory
 	 */
 	protected $typoScriptObjectFactory;

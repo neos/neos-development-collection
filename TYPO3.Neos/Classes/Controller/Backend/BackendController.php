@@ -11,21 +11,23 @@ namespace TYPO3\TYPO3\Controller\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The TYPO3 Backend controller
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class BackendController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Package\PackageManagerInterface
 	 */
 	protected $packageManager;
@@ -35,7 +37,7 @@ class BackendController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @skipCsrfProtection
+	 * @FLOW3\SkipCsrfProtection
 	 */
 	public function indexAction() {
 		$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');

@@ -11,11 +11,13 @@ namespace TYPO3\TYPO3\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Domain model of a site
  *
- * @scope prototype
- * @entity
+ * @FLOW3\Scope("prototype")
+ * @FLOW3\Entity
  * @api
  */
 class Site {
@@ -30,7 +32,8 @@ class Site {
 	 * Name of the site
 	 *
 	 * @var string
-	 * @validate Label, StringLength(minimum = 1, maximum = 250)
+	 * @FLOW3\Validate(type="Label")
+	 * @FLOW3\Validate(type="StringLength", options={ "minimum"=1, "maximum"=250 })
 	 */
 	protected $name = 'Untitled Site';
 
@@ -41,14 +44,14 @@ class Site {
 	 * "/Sites/MySite/" where "MySite" is the nodeName.
 	 *
 	 * @var string
-	 * @identity
+	 * @FLOW3\Identity
 	 */
 	protected $nodeName;
 
 	/**
 	 * The site's state
 	 * @var integer
-	 * @validate NumberRange(minimum = 1, maximum = 2)
+	 * @FLOW3\Validate(type="NumberRange", options={ "minimum"=1, "maximum"=2 })
 	 */
 	protected $state = self::STATE_ONLINE;
 

@@ -13,28 +13,30 @@ namespace TYPO3\TYPO3\Domain\Service;
 
 use \TYPO3\FLOW3\I18n\Locale;
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The Content Context
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  * @api
  */
 class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\DomainRepository
 	 */
 	protected $domainRepository;

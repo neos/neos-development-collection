@@ -11,10 +11,13 @@ namespace TYPO3\TYPO3\Service\ExtDirect\V1\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\ExtJS\Annotations\ExtDirect;
+
 /**
  * ExtDirect Controller for managing Nodes
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
@@ -24,7 +27,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	protected $viewObjectNamePattern = 'TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView';
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -45,7 +48,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->view->assignNode($node);
@@ -57,7 +60,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function getPrimaryChildNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->view->assignNode($node->getPrimaryChildNode());
@@ -70,7 +73,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $contentTypeFilter A content type filter
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function getChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter) {
 		$this->view->assignChildNodes($node, $contentTypeFilter, \TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView::TREESTYLE, 0);
@@ -85,7 +88,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function getChildNodesAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
 		$this->view->assignChildNodes($node, $contentTypeFilter, \TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView::LISTSTYLE, $depth);
@@ -100,7 +103,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function getChildNodesFromParentAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
 		$this->getChildNodesAction($node->getParent(), $contentTypeFilter, $depth);
@@ -116,8 +119,8 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Rens Admiraal <rens@rensnel.nl>
-	 * @todo: maybe the actual creation should be put in a helper / service class
-	 * @extdirect
+	 * @todo maybe the actual creation should be put in a helper / service class
+	 * @ExtDirect
 	 */
 	public function createAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, array $nodeData, $position) {
 		if (!in_array($position, array(-1, 0, 1), TRUE)) {
@@ -164,7 +167,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
 	 * @author Aske Ertmann <aske@mocsystems.com>
-	 * @extdirect
+	 * @ExtDirect
 	 * @fixme Find a better solution that passing -1, 0 and 1
 	 */
 	public function moveAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $position) {
@@ -196,7 +199,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function moveBeforeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
 		$node->moveBefore($targetNode);
@@ -210,7 +213,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function moveAfterAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
 		$node->moveAfter($targetNode);
@@ -241,7 +244,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->view->assign('value', array('data' => '', 'success' => TRUE));
@@ -253,7 +256,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string A response string
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @extdirect
+	 * @ExtDirect
 	 */
 	public function deleteAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$node->remove();

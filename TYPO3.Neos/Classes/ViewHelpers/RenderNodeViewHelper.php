@@ -11,15 +11,17 @@ namespace TYPO3\TYPO3\ViewHelpers;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Render node ViewHelper
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class RenderNodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TypoScript\ObjectFactory
 	 */
 	protected $typoScriptObjectFactory;

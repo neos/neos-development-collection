@@ -11,10 +11,12 @@ namespace TYPO3\TYPO3\TypeConverter;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An type converter for Image objects; which are uploaded using plupload
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class ImageTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
@@ -34,7 +36,7 @@ class ImageTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTyp
 	protected $priority = 1;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Resource\ResourceManager
 	 */
 	protected $resourceManager;

@@ -11,17 +11,19 @@ namespace TYPO3\TYPO3\Domain\Service;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The TypoScript Service
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  * @api
  */
 class TypoScriptService {
 
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TypoScript\Parser
 	 */
 	protected $typoScriptParser;

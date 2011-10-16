@@ -11,10 +11,12 @@ namespace TYPO3\TYPO3\TypoScript;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A TypoScript Page object
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class Page extends \TYPO3\TypoScript\AbstractContentObject {
 

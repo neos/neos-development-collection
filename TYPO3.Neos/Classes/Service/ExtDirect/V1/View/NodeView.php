@@ -11,10 +11,12 @@ namespace TYPO3\TYPO3\Service\ExtDirect\V1\View;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * An ExtDirect View specialized on single or multiple Nodes
  *
- * @scope prototype
+ * @FLOW3\Scope("prototype")
  */
 class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 

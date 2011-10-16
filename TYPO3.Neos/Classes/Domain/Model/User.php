@@ -13,11 +13,14 @@ namespace TYPO3\TYPO3\Domain\Model;
 
 use \TYPO3\Party\Domain\Model\Person;
 
+use Doctrine\ORM\Mapping as ORM;
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Domain Model of a User
  *
- * @entity
- * @scope prototype
+ * @FLOW3\Entity
+ * @FLOW3\Scope("prototype")
  */
 class User extends Person  {
 
@@ -25,7 +28,7 @@ class User extends Person  {
 	 * Preferences of this user
 	 *
 	 * @var \TYPO3\TYPO3\Domain\Model\UserPreferences
-	 * @OneToOne
+	 * @ORM\OneToOne
 	 */
 	protected $preferences;
 

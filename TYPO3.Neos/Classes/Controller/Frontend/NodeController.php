@@ -11,15 +11,17 @@ namespace TYPO3\TYPO3\Controller\Frontend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * Controller for displaying nodes in the frontend
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Authentication\AuthenticationManagerInterface
 	 */
 	protected $authenticationManager;

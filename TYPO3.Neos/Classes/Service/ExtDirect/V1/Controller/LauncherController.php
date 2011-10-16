@@ -21,10 +21,13 @@ namespace TYPO3\TYPO3\Service\ExtDirect\V1\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\ExtJS\Annotations\ExtDirect;
+
 /**
  * ExtDirect Controller for launcher search
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class LauncherController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
@@ -34,19 +37,19 @@ class LauncherController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	protected $viewObjectNamePattern = 'TYPO3\ExtJS\ExtDirect\View';
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
 	 */
 	protected $contentTypeManager;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Resource\Publishing\ResourcePublisher
 	 */
 	protected $resourcePublisher;
@@ -68,8 +71,8 @@ class LauncherController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param integer $requestIndex
 	 * @return void
 	 * @author Aske Ertmann <aertmann@gmail.com>
-	 * @extdirect
-	 * @TODO: Improve this WIP search implementation
+	 * @ExtDirect
+	 * @todo Improve this WIP search implementation
 	 */
 	public function searchAction($term, $requestIndex) {
 		$searchContentGroups = array();

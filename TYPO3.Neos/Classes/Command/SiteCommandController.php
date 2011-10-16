@@ -11,27 +11,29 @@ namespace TYPO3\TYPO3\Command;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * The Site Command Controller Service
  *
- * @scope singleton
+ * @FLOW3\Scope("singleton")
  */
 class SiteCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandController {
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\SiteImportService
 	 */
 	protected $siteImportService;
 
 	/**
-	 * @inject
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\SiteExportService
 	 */
 	protected $siteExportService;

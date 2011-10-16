@@ -11,6 +11,8 @@ namespace TYPO3\TYPO3\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A preferences container for a user.
  *
@@ -18,8 +20,8 @@ namespace TYPO3\TYPO3\Domain\Model;
  * We'll need a better one which understands which options are available and contains some
  * information about possible help texts etc.
  *
- * @entity
- * @scope prototype
+ * @FLOW3\Entity
+ * @FLOW3\Scope("prototype")
  * @todo Provide a more capable implementation
  */
 class UserPreferences {
