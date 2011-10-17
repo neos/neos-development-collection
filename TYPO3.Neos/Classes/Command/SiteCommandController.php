@@ -44,27 +44,36 @@ class SiteCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	 * This command allows for importing one or more sites or partial content from an XML source. The format must
 	 * be identical to that produced by the export command.
 	 *
+	 * If a filename is specified, this command expects the corresponding file to contain the XML structure
+	 *
 	 * If a package key is specified, this command expects a Sites.xml file to be located in the private resources
 	 * directory of the given package:
-	 *
 	 * .../Resources/Private/Content/Sites.xml
 	 *
-	 * Alternatively the XML content may be passed through STDIN in which case the package key argument must be omitted.
-	 *
 	 * @param string $packageKey Package key specifying the package containing the sites content
+	 * @param string $filename relative path and filename to the XML file containing the sites content
 	 * @return void
 	 */
-	public function importCommand($packageKey = NULL) {
-		try {
-			if ($packageKey !== NULL) {
-				$this->siteImportService->importFromPackage($packageKey);
-			} else {
-				$this->siteImportService->importSitesFromFile('php://stdin');
+	public function importCommand($packageKey = NULL, $filename = NULL) {
+		if ($filename !== NULL) {
+			try {
+				$this->siteImportService->importSitesFromFile($filename);
+			} catch (\Exception $exception) {
+				$this->outputLine('Error: During the import of the file "%s" an exception occurred: %s', array($filename, $exception->getMessage()));
+				$this->quit(1);
 			}
-			$this->outputLine('Import finished.');
-		} catch (\Exception $exception) {
-			$this->outputLine('Error: During import an exception occured. ' . $exception->getMessage());
+		} else if ($packageKey !== NULL) {
+			try {
+				$this->siteImportService->importFromPackage($packageKey);
+			} catch (\Exception $exception) {
+				$this->outputLine('Error: During the import of the "Sites.xml" from the package "%s" an exception occurred: %s', array($packageKey, $exception->getMessage()));
+				$this->quit(1);
+			}
+		} else {
+			$this->outputLine('You have to specify either "--package-key" or "--filename"');
+			$this->quit(1);
 		}
+		$this->outputLine('Import finished.');
 	}
 
 	/**
