@@ -86,3 +86,4 @@
   routeParts:
     node:
       handler:    TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler
+  appendExceedingArguments: true
