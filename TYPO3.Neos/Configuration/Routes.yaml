@@ -13,6 +13,7 @@
     '@controller': 'Login'
     '@action':     'index'
     '@format':     'html'
+
 -
   name:  'Logout'
   uriPattern: 'typo3/logout'
@@ -38,6 +39,7 @@
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Backend\Content'
     '@action':     'imageWithMetadata'
+
 -
   name:          'Backend - Content Module'
   uriPattern:    'typo3/content/{@action}'
@@ -46,7 +48,7 @@
     '@controller': 'Backend\Content'
     '@action':     'index'
     '@format':     'html'
-
+  appendExceedingArguments: true
 
 ##
 # Frontend
