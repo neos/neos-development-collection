@@ -34,7 +34,7 @@ class Section extends ContentArray {
 		parent::setNode($node);
 
 		foreach ($node->getChildNodes() as $childNode) {
-			$this[] = $this->objectFactory->createByNode($childNode);
+			$this->contentArray[] = $this->objectFactory->createByNode($childNode);
 		}
 	}
 
