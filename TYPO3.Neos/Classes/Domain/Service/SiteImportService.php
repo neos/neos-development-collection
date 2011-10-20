@@ -82,14 +82,14 @@ class SiteImportService {
 				// Remove all content and related data - for now. In the future we
 				// need some more sophisticated cleanup and don't delete everything
 				// without asking ...
-
+/*
 			$this->nodeRepository->removeAll();
 			$this->workspaceRepository->removeAll();
 			$this->domainRepository->removeAll();
 			$this->siteRepository->removeAll();
 
 			$this->persistenceManager->persistAll();
-
+*/
 			try {
 				$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');
 			} catch (\Exception $exception) {
@@ -116,8 +116,10 @@ class SiteImportService {
 		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
 		$siteNode = $contentContext->getCurrentSiteNode();
 		if ($siteNode !== NULL) {
+/*
 			$siteNode->remove();
 			$this->persistenceManager->persistAll();
+*/
 		}
 
 		try {
