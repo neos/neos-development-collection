@@ -13,7 +13,6 @@ define(
 	'Library/jquery-hotkeys/jquery.hotkeys'
 ],
 function() {
-
 	var T3 = window.T3 || {},
 		$ = window.alohaQuery || window.jQuery;
 	var ContentModule = SC.Application.create({
