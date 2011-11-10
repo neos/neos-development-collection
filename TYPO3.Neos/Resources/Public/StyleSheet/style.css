@@ -322,13 +322,25 @@ ul.t3-topbar {
 .extjs-container .t3-dd-newpage {
   padding: 2px 2px 2px 25px;
   margin: 5px;
-  background: #e6e6e6 url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
+  background: #eeeeee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
   border: 1px dotted #000000;
   cursor: move; }
 
+.extjs-container .t3-dd-deletionzone {
+  padding: 2px 2px 2px 25px;
+  margin: 5px;
+  background: #eeeeee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+  border: 1px dotted #000000;
+  cursor: default;
+  display: none; }
+  .extjs-container .t3-dd-deletionzone.t3-dd-deletionzone-over {
+    background: #dddddd url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat; }
+  .extjs-container .t3-dd-deletionzone.t3-dd-deletionzone-active {
+    background: #eeeeee url(../Images/ajax-preloader-dddddd.gif) 5px 50% no-repeat; }
+
 .t3-dd-drag-ghost-pagetree {
-  background: #ffffff;
-  padding: 2px 5px;
+  background: #fff;
+  padding: 2px 5px 2px 25px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   -o-border-radius: 4px;
@@ -340,6 +352,21 @@ ul.t3-topbar {
   -o-box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
   cursor: move; }
+  .t3-dd-drag-ghost-pagetree a {
+    color: black;
+    text-decoration: none; }
+
+.x-dd-drop-nodrop .t3-dd-drag-ghost-pagetree {
+  background: white url(../Images/Icons/Black/round_delete_icon-16.png) 5px 50% no-repeat; }
+
+.x-tree-drop-ok-above .t3-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-between .t3-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-append .t3-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-below .t3-dd-drag-ghost-pagetree {
+  background: white url(../Images/Icons/Black/round_checkmark_icon-16.png) 5px 50% no-repeat; }
+
+.x-tree-drop-delete .t3-dd-drag-ghost-pagetree {
+  background: white url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat; }
 
 /* Footer Toolbar */
 #t3-footer {

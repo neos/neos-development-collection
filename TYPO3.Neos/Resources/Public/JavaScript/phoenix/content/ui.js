@@ -10,9 +10,10 @@ define(
 	'text!phoenix/content/ui/toolbar.html',
 	'text!phoenix/content/ui/breadcrumb.html',
 	'text!phoenix/content/ui/inspector.html',
-	'text!phoenix/content/ui/inspectordialog.html',
-	'text!phoenix/content/ui/fileupload.html',
-	'text!phoenix/content/ui/imageupload.html',
+	'text!phoenix/content/ui/inspectorDialog.html',
+	'text!phoenix/content/ui/fileUpload.html',
+	'text!phoenix/content/ui/imageUpload.html',
+	'text!phoenix/content/ui/recursivePageDeletionDialog.html',
 	'Library/jquery-popover/jquery.popover',
 	'Library/jquery-notice/jquery.notice',
 	'css!Library/jquery-notice/jquery.notice.css',
@@ -21,7 +22,7 @@ define(
 	'order!Library/plupload/js/plupload',
 	'order!Library/plupload/js/plupload.html5'
 ],
-function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectordialogTemplate, fileUploadTemplate, imageUploadTemplate) {
+function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, fileUploadTemplate, imageUploadTemplate, recursivePageDeletionDialogTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	var $ = window.alohaQuery || window.jQuery;
@@ -255,7 +256,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 		 */
 		_showUnappliedDialog: function() {
 			var view = SC.View.create({
-				template: SC.Handlebars.compile(inspectordialogTemplate),
+				template: SC.Handlebars.compile(inspectorDialogTemplate),
 				didInsertElement: function() {
 					var title = this.$().find('h1').remove().html();
 
@@ -949,14 +950,15 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			if (this._tree) return;
 
 			this._tree = new Ext.tree.TreePanel({
-				width:250,
-				height:350,
+				width: 250,
+				height: 350,
 				useArrows: true,
 				autoScroll: true,
 				animate: true,
 				enableDD: true,
 				border: false,
 				ddGroup: 'pages',
+				_deletionDropZoneId: 't3-dd-pages-deletionzone',
 
 				root: {
 					id: $('#t3-page-metainformation').data('__siteroot'), // TODO: This and the following properties might later come from the SproutCore model...
@@ -1000,10 +1002,26 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					}
 				}),
 
+				deleteNode: function(node) {
+					var deletionZone = $('.t3-dd-deletionzone');
+					deletionZone.text('Deleting page').addClass('t3-dd-deletionzone-active');
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.delete(
+						node.id,
+						function(response) {
+							deletionZone.removeClass('t3-dd-deletionzone-active').text('Drop here to delete').hide();
+							if (response.success === true) {
+								node.remove();
+							}
+						}
+					);
+				},
+
 				listeners: {
 					click: this._onTreeNodeClick,
 					movenode: this._onTreeNodeMove,
-					beforenodedrop: this._onTreeNodeDrop
+					beforenodedrop: this._onTreeNodeDrop,
+					startdrag: this._onTreeNodeStartDrag,
+					enddrag: this._onTreeNodeEndDrag
 				}
 			});
 
@@ -1012,8 +1030,25 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			var $treeContainer = $('<div />');
 			this.$popoverContent.append($treeContainer);
 
-			this._tree.render($treeContainer[0]);
+			this._initDeletionDropZone();
+
+			this._tree.render($treeContainer.get(0));
 			this._tree.getRootNode().expand();
+		},
+
+		_onTreeNodeStartDrag: function(tree, node) {
+			$('.t3-dd-deletionzone').show();
+
+				// Refresh DD zones after displaying drop zone
+			var groups = {};
+			groups[tree.ddGroup] = true;
+			Ext.dd.DDM.refreshCache(groups);
+
+			tree.dragZone.proxy.getGhost().addClass('t3-dd-drag-ghost-pagetree');
+		},
+
+		_onTreeNodeEndDrag: function(tree, node) {
+			$('.t3-dd-deletionzone:not(.t3-dd-deletionzone-active,.t3-dd-deletionzone-pending)').hide();
 		},
 
 		/**
@@ -1024,8 +1059,8 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			var $newPageDraggable = $('<div class="t3-dd-newpage">New page</div>');
 			this.$popoverContent.append($newPageDraggable);
 
-			new Ext.dd.DragZone($newPageDraggable[0], {
-				ddGroup: 'pages',
+			new Ext.dd.DragZone($newPageDraggable.get(0), {
+				ddGroup: this._tree.ddGroup,
 
 				getDragData: function(event) {
 					this.proxyElement = document.createElement('div');
@@ -1043,6 +1078,74 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 					'</div>';
 
 					this.proxy.update(this.proxyElement);
+				}
+			});
+		},
+
+		/**
+		 * Initializer for the "drop zone", deleting a page.
+		 */
+		_initDeletionDropZone: function() {
+			var $deletionDropZone = $('<div />')
+				.addClass('t3-dd-deletionzone')
+				.text('Drop here to delete');
+			this.$popoverContent.append($deletionDropZone);
+
+			new Ext.dd.DropZone($deletionDropZone.get(0), {
+				ddGroup: this._tree.ddGroup,
+
+				notifyEnter: function(source, e, data) {
+					$deletionDropZone.addClass('t3-dd-deletionzone-over');
+					source.proxy.el.addClass('x-tree-drop-delete');
+					return this;
+				},
+
+				notifyOut: function(source, e, data) {
+					$deletionDropZone.removeClass('t3-dd-deletionzone-over');
+					return this;
+				},
+
+				notifyDrop: function(source, e, data) {
+					var node = data.node;
+					if (!node) {
+						return;
+					}
+
+					source.proxy.el.setVisible(false);
+
+					var tree = node.ownerTree;
+
+					if (node.hasChildNodes() || node.isExpandable()) {
+						$deletionDropZone.addClass('t3-dd-deletionzone-pending');
+
+						var view = SC.View.create({
+							template: SC.Handlebars.compile(recursivePageDeletionDialogTemplate),
+							didInsertElement: function() {
+								var title = this.$().find('h1').remove().html();
+
+								this.$().dialog({
+									modal: true,
+									zIndex: 11001,
+									title: title,
+									close: function() {
+										$deletionDropZone.removeClass('t3-dd-deletionzone-pending').hide();
+										view.destroy();
+									}
+								});
+							},
+							cancel: function() {
+								this.$().dialog('close');
+							},
+							delete: function() {
+								$deletionDropZone.removeClass('t3-dd-deletionzone-pending');
+								view.destroy();
+								tree.deleteNode(node, tree);
+							}
+						});
+						view.append();
+					} else {
+						tree.deleteNode(node, tree);
+					}
 				}
 			});
 		},
@@ -1194,7 +1297,7 @@ function(fixture, toolbarTemplate, breadcrumbTemplate, inspectorTemplate, inspec
 			var $treeContainer = $('<div />');
 			this.$popoverContent.append($treeContainer);
 
-			this._tree.render($treeContainer[0]);
+			this._tree.render($treeContainer.get(0));
 			this._tree.getRootNode().expand();
 		},
 

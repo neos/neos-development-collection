@@ -271,16 +271,46 @@ ul.t3-topbar {
 .extjs-container .t3-dd-newpage {
 	padding: 2px 2px 2px 25px;
 	margin: 5px;
-	background: #e6e6e6 url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
+	background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
 	border: 1px dotted #000000;
 	cursor: move;
 }
+.extjs-container .t3-dd-deletionzone {
+	padding: 2px 2px 2px 25px;
+	margin: 5px;
+	background: #eee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+	border: 1px dotted #000000;
+	cursor: default;
+	display: none;
+	&.t3-dd-deletionzone-over {
+		background: #ddd url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+	}
+	&.t3-dd-deletionzone-active {
+		background: #eee url(../Images/ajax-preloader-dddddd.gif) 5px 50% no-repeat;
+	}
+}
 .t3-dd-drag-ghost-pagetree {
-	background: #ffffff;
-	padding: 2px 5px;
+	background: #fff;
+	padding: 2px 5px 2px 25px;
 	@include border-radius(4px);
 	@include single-box-shadow(rgba(0, 0, 0, 0.4), 0px, 2px, 3px);
 	cursor: move;
+	a {
+		color: black;
+		text-decoration: none;
+	}
+}
+.x-dd-drop-nodrop .t3-dd-drag-ghost-pagetree {
+	background: #fff url(../Images/Icons/Black/round_delete_icon-16.png) 5px 50% no-repeat;
+}
+.x-tree-drop-ok-above .t3-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-between .t3-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-append .t3-dd-drag-ghost-pagetree,
+.x-tree-drop-ok-below .t3-dd-drag-ghost-pagetree {
+	background: #fff url(../Images/Icons/Black/round_checkmark_icon-16.png) 5px 50% no-repeat;
+}
+.x-tree-drop-delete .t3-dd-drag-ghost-pagetree {
+	background: #fff url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
 }
 
 /* Footer Toolbar */
