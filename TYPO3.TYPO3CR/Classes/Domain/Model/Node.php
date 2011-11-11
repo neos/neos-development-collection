@@ -665,7 +665,7 @@ class Node implements NodeInterface {
 	 * @todo Needs proper implementation in NodeRepository which only counts nodes (considering workspaces, removed nodes etc.)
 	 */
 	public function hasChildNodes($contentTypeFilter = NULL) {
-		return ($this->getChildNodes() !== array());
+		return ($this->getChildNodes($contentTypeFilter) !== array());
 	}
 
 	/**
