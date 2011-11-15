@@ -249,5 +249,40 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals($plugin->_call('getPluginNamespace'), strtolower(str_replace('\\', '_', get_class($plugin))));
 	}
 
+	/**
+	 * @test
+	 */
+	public function renderSetsControllerActionInformationOnRequestObjectIfThePluginHasNoNode() {
+		$plugin = $this->getAccessibleMock('TYPO3\TYPO3\TypoScript\Plugin', array('getPluginNamespace'));
+		$plugin->expects($this->any())->method('getPluginNamespace')->will($this->returnValue('typo3_plugin_namespace'));
+		$plugin->setRenderingContext($this->mockRenderingContext);
+		$plugin->_set('subRequestBuilder', $this->mockSubRequestBuilder);
+		$plugin->_set('objectManager', $this->mockObjectManager);
+		$plugin->_set('dispatcher', $this->mockDispatcher);
+
+		$plugin->setPackage('SomePackageKey');
+		$plugin->setSubpackage('SomeSubpackageKey');
+		$plugin->setController('SomeController');
+		$plugin->setAction('someAction');
+
+		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
+		$mockPluginRequest->expects($this->any())->method('getControllerPackageKey')->will($this->returnValue('SomePackageKey'));
+		$mockPluginRequest->expects($this->any())->method('getControllerSubpackageKey')->will($this->returnValue('SomeSubpackageKey'));
+		$mockPluginRequest->expects($this->any())->method('getControllerName')->will($this->returnValue('SomeController'));
+		$mockPluginRequest->expects($this->any())->method('getControllerActionName')->will($this->returnValue('someAction'));
+
+		// TODO: Change this to expects($this->once()) for optimization
+		$this->mockSubRequestBuilder->expects($this->any())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
+
+		$pluginRequest = $plugin->_call('buildPluginRequest');
+
+		$this->assertEquals('SomePackageKey', $pluginRequest->getControllerPackageKey());
+		$this->assertEquals('SomeSubpackageKey', $pluginRequest->getControllerSubpackageKey());
+		$this->assertEquals('SomeController', $pluginRequest->getControllerName());
+		$this->assertEquals('someAction', $pluginRequest->getControllerActionName());
+
+		$plugin->render();
+	}
+
 }
 ?>

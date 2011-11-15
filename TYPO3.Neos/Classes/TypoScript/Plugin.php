@@ -173,6 +173,51 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	}
 
 	/**
+	 * Build the pluginRequest object
+	 *
+	 * @return \TYPO3\FLOW3\MVC\Web\SubRequest
+	 */
+	protected function buildPluginRequest() {
+		$parentRequest = $this->renderingContext->getControllerContext()->getRequest();
+		$argumentNamespace = $this->getPluginNamespace();
+		$pluginRequest = $this->subRequestBuilder->build($parentRequest, $argumentNamespace);
+
+		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+			if ($pluginRequest->getControllerPackageKey() === NULL) {
+				$pluginRequest->setControllerPackageKey($this->node->getProperty('package') ?: $this->package);
+			}
+			if ($pluginRequest->getControllerSubpackageKey() === NULL) {
+				$pluginRequest->setControllerSubpackageKey($this->node->getProperty('subpackage') ?: $this->subpackage);
+			}
+			if ($pluginRequest->getControllerName() === NULL) {
+				$pluginRequest->setControllerName($this->node->getProperty('controller') ?: $this->controller);
+			}
+			if ($this->action === NULL) {
+				$this->action = 'index';
+			}
+			if ($pluginRequest->getControllerActionName() === NULL) {
+				$pluginRequest->setControllerActionName($this->node->getProperty('action') ?: $this->action);
+			}
+
+			// TODO Check if we want to use all properties as arguments
+			//      This enables us to configure plugin controller arguments via
+			//      content type definitions for now.
+			foreach ($this->node->getProperties() as $propertyName => $propertyValue) {
+				if (!$pluginRequest->hasArgument($propertyName)) {
+					$pluginRequest->setArgument($propertyName, $propertyValue);
+				}
+			}
+		} else {
+			$pluginRequest->setControllerPackageKey($this->getPackage());
+			$pluginRequest->setControllerSubpackageKey($this->getSubpackage());
+			$pluginRequest->setControllerName($this->getController());
+			$pluginRequest->setControllerActionName($this->getAction());
+		}
+
+		return $pluginRequest;
+	}
+
+	/**
 	 * Returns the rendered content of this plugin
 	 *
 	 * @return string The rendered content as a string
@@ -180,42 +225,17 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function render() {
-		$parentRequest = $this->renderingContext->getControllerContext()->getRequest();
-		$argumentNamespace = $this->getPluginNamespace();
-		$pluginRequest = $this->subRequestBuilder->build($parentRequest, $argumentNamespace);
-
-		if ($pluginRequest->getControllerPackageKey() === NULL) {
-			$pluginRequest->setControllerPackageKey($this->node->getProperty('package') ?: $this->package);
-		}
-		if ($pluginRequest->getControllerSubpackageKey() === NULL) {
-			$pluginRequest->setControllerSubpackageKey($this->node->getProperty('subpackage') ?: $this->subpackage);
-		}
-		if ($pluginRequest->getControllerName() === NULL) {
-			$pluginRequest->setControllerName($this->node->getProperty('controller') ?: $this->controller);
-		}
-		if ($this->action === NULL) {
-			$this->action = 'index';
-		}
-		if ($pluginRequest->getControllerActionName() === NULL) {
-			$pluginRequest->setControllerActionName($this->node->getProperty('action') ?: $this->action);
-		}
-
-		// TODO Check if we want to use all properties as arguments
-		//      This enables us to configure plugin controller arguments via
-		//      content type definitions for now.
-		foreach ($this->node->getProperties() as $propertyName => $propertyValue) {
-			if (!$pluginRequest->hasArgument($propertyName)) {
-				$pluginRequest->setArgument($propertyName, $propertyValue);
-			}
-		}
-
 		$parentResponse = $this->renderingContext->getControllerContext()->getResponse();
 		$pluginResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($parentResponse);
 
 		try {
-			$this->dispatcher->dispatch($pluginRequest, $pluginResponse);
+			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
-			return $this->contentElementWrappingService->wrapContentObject($this->node, $pluginResponse->getContent());
+			if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+				return $this->contentElementWrappingService->wrapContentObject($this->node, $pluginResponse->getContent());
+			} else {
+				return $pluginResponse->getContent();
+			}
 		} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (\Exception $exception) {
@@ -234,12 +254,17 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	 * @todo make this configurable
 	 */
 	protected function getPluginNamespace() {
-		$nodeArgumentNamespace = $this->node->getProperty('argumentNamespace');
-		if ($nodeArgumentNamespace !== NULL) {
-			return $nodeArgumentNamespace;
-		} elseif ($this->argumentNamespace !== NULL) {
+		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+			$nodeArgumentNamespace = $this->node->getProperty('argumentNamespace');
+			if ($nodeArgumentNamespace !== NULL) {
+				return $nodeArgumentNamespace;
+			}
+		}
+
+		if ($this->argumentNamespace !== NULL) {
 			return $this->argumentNamespace;
 		}
+
 		return strtolower(str_replace('\\', '_', get_class($this)));
 	}
 
