@@ -7,9 +7,9 @@
 define(
 [
 	'phoenix/fixture',
-	'text!phoenix/common/launcher.html',
-	'text!phoenix/common/launcherpanel.html',
-	'text!phoenix/common/confirmationdialog.html'
+	'text!phoenix/templates/common/launcher.html',
+	'text!phoenix/templates/common/launcherpanel.html',
+	'text!phoenix/templates/common/confirmationDialog.html'
 ],
 function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
 
