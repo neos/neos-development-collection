@@ -14,7 +14,8 @@ require({
 		'dep': Aloha.settings.basePath + 'dep',
 		'Library': '../Library/'
 	},
-	locale: 'en'
+	locale: 'en',
+	urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : ''
 },
 ['aloha'],
 function() {
