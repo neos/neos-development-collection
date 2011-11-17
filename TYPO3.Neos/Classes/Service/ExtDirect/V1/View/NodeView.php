@@ -102,7 +102,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 						'id' => $childNode->getContextPath(),
 						// TODO Move to JS
 						'text' => $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title') . '<a class="t3-gotoPage" href="' . $uriForNode . '"></a>' : $childNode->getLabel(),
-						'leaf' => $childNode->hasChildNodes() === FALSE,
+						'leaf' => $childNode->hasChildNodes($childNode->getContentType()) === FALSE,
 						'cls' => 'folder'
 					);
 				}
