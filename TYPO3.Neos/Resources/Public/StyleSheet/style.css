@@ -4290,6 +4290,21 @@ div.dynatree-container {
     top: 50%;
     margin: -60px 0 0 -60px; }
 
+.t3-inspector .typo3-fileupload-image-size {
+  color: white;
+  overflow: hidden; }
+  .t3-inspector .typo3-fileupload-image-size div {
+    overflow: hidden; }
+  .t3-inspector .typo3-fileupload-image-size label,
+  .t3-inspector .typo3-fileupload-image-size span {
+    float: left; }
+  .t3-inspector .typo3-fileupload-image-size label {
+    width: 60px; }
+  .t3-inspector .typo3-fileupload-image-size input {
+    float: left;
+    width: 50px;
+    margin: 0px 5px; }
+
 button.t3-button.t3-connection-status-down {
   border: 1px solid #c02f00; }
 

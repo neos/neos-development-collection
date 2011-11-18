@@ -3,7 +3,7 @@
 <t:contentElement node="{context}">
 	<t:aloha.editable property="headline" tag="h1">{headline}</t:aloha.editable>
 	<div class="typo3-image{f:if(condition:position, then: ' typo3-image-position-{position}')}">
-		<f:if condition="{properties.image.resource}">
+		<f:if condition="{image.resource}">
 			<f:then>
 				<img src="{f:uri.resource(resource: image.resource)}" />
 			</f:then>

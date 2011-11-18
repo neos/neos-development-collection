@@ -248,6 +248,30 @@ button.t3-create-new-content {
 
 // Load indicator
 
+// Image size //
+.t3-inspector {
+	.typo3-fileupload-image-size {
+		color: white;
+		overflow: hidden;
+		div {
+			overflow: hidden;
+		}
+		label,
+		span {
+			float: left;
+		}
+		label {
+			width: 60px;
+		}
+		input {
+			float: left;
+			width: 50px;
+			margin: 0px 5px;
+		}
+	}
+}
+// Image size //
+
 // connection status indication
 
 button.t3-button.t3-connection-status-up {
@@ -290,6 +314,7 @@ button.t3-button.t3-connection-status-down {
 .typo3-typo3-html .t3-contentelement-overlay-icon {
 	background-image: url('../Images/Icons/White/brackets_icon-16.png');
 }
+
 
 .t3-ui .widget {
 	overflow: auto;

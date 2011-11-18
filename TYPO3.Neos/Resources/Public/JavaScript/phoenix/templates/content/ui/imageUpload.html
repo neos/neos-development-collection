@@ -3,8 +3,9 @@
 		<div class="typo3-imagethumbnail-inner">
 			{{view T3.Content.UI.Image srcBinding="_previewImageUri" isVisibleBinding="_uploadPreviewNotShown"}}
 		</div>
-		<div class="typo3-imagebadge">
-			{{_imageBadge}}
+
+		<div {{bindAttr class="_imageBadgeClass"}}>
+			Click to Crop
 		</div>
 
 	</div>
@@ -20,4 +21,17 @@
 	</button>
 
 	{{view T3.Content.UI.Button isVisibleBinding="_uploadButtonShown" target="parentView" action="upload" labelBinding="uploaderLabel" allowedFileTypesBinding="allowedFileTypes"}}
+</div>
+
+<div class="typo3-fileupload-image-size">
+	<div>
+		<label>Width:</label>
+		{{view Ember.TextField class="typo3-fileupload-image-size-width" valueBinding="_imageWidth" }}
+		<span>px</span>
+	</div>
+	<div>
+		<label>Height:</label>
+		{{view Ember.TextField class="typo3-fileupload-image-size-height" valueBinding="_imageHeight" }}
+		<span>px</span>
+	</div>
 </div>
