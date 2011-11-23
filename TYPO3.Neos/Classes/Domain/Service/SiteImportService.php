@@ -64,7 +64,7 @@ class SiteImportService {
 	protected $persistenceManager;
 
 	/**
-	 * Checks for the presence of Content.xml in the given package and imports
+	 * Checks for the presence of Sites.xml in the given package and imports
 	 * it if found.
 	 *
 	 * @param string $packageKey
