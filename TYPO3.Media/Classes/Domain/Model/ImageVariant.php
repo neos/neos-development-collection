@@ -16,6 +16,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * An image variant that has a relation to the original image
  *
+ * TODO: Remove duplicate code at Image and ImageVariant, either via underlying Abstract Class or once Mixins/Traits are available
  * Note: This is neither an entity nor a value object, ImageVariants won't be persisted on their own.
  */
 class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
@@ -110,6 +111,66 @@ class ImageVariant implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 */
 	public function getHeight() {
 		return $this->height;
+	}
+
+	/**
+	 * Edge / aspect ratio of the image
+	 *
+	 * @param boolean $respectOrientation If false (the default), orientation is disregarded and always a value >= 1 is returned (like usual in "4 / 3" or "16 / 9")
+	 * @return float
+	 */
+	public function getAspectRatio($respectOrientation = FALSE) {
+		$aspectRatio = $this->getWidth() / $this->getHeight();
+		if ($respectOrientation === FALSE && $aspectRatio < 1) {
+			$aspectRatio = 1 / $aspectRatio;
+		}
+
+		return $aspectRatio;
+	}
+
+	/**
+	 * Orientation of this image, i.e. portrait, landscape or square
+	 *
+	 * @return string One of this interface's ORIENTATION_* constants.
+	 */
+	public function getOrientation() {
+		$aspectRatio = $this->getAspectRatio(TRUE);
+		if ($aspectRatio > 1) {
+			return ImageInterface::ORIENTATION_LANDSCAPE;
+		}
+		elseif ($aspectRatio < 1) {
+			return ImageInterface::ORIENTATION_PORTRAIT;
+		}
+		else {
+			return ImageInterface::ORIENTATION_SQUARE;
+		}
+	}
+
+	/**
+	 * Whether this image is square aspect ratio and therefore has a square orientation
+	 *
+	 * @return boolean
+	 */
+	public function isOrientationSquare() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_SQUARE;
+	}
+
+	/**
+	 * Whether this image is in landscape orientation
+	 *
+	 * @return boolean
+	 */
+	public function isOrientationLandscape() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_LANDSCAPE;
+	}
+
+	/**
+	 * Whether this image is in portrait orientation
+	 *
+	 * @return boolean
+	 */
+	public function isOrientationPortrait() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_PORTRAIT;
 	}
 
 	/**

@@ -79,7 +79,7 @@ class ImageService {
 
 		}
 		$dimensions = $this->parseBox($commandOptions['size']);
-		if (isset($commandOptions['mode']) && $commandOptions['mode'] === \Imagine\Image\ManipulatorInterface::THUMBNAIL_OUTBOUND) {
+		if (isset($commandOptions['mode']) && $commandOptions['mode'] === \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_OUTBOUND) {
 			$mode = \Imagine\Image\ManipulatorInterface::THUMBNAIL_OUTBOUND;
 		} else {
 			$mode = \Imagine\Image\ManipulatorInterface::THUMBNAIL_INSET;

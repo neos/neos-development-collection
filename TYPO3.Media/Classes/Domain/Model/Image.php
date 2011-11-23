@@ -17,6 +17,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * An image
  *
+ * TODO: Remove duplicate code in Image and ImageVariant, by introducing a common base class or through Mixins/Traits (once they are available)
  * @FLOW3\Entity
  */
 class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
@@ -146,6 +147,66 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	}
 
 	/**
+	 * Edge / aspect ratio of the image
+	 *
+	 * @param boolean $respectOrientation If false (the default), orientation is disregarded and always a value >= 1 is returned (like usual in "4 / 3" or "16 / 9")
+	 * @return float
+	 */
+	public function getAspectRatio($respectOrientation = FALSE) {
+		$aspectRatio = $this->getWidth() / $this->getHeight();
+		if ($respectOrientation === FALSE && $aspectRatio < 1) {
+			$aspectRatio = 1 / $aspectRatio;
+		}
+
+		return $aspectRatio;
+	}
+
+	/**
+	 * Orientation of this image, i.e. portrait, landscape or square
+	 *
+	 * @return string One of this interface's ORIENTATION_* constants.
+	 */
+	public function getOrientation() {
+		$aspectRatio = $this->getAspectRatio(TRUE);
+		if ($aspectRatio > 1) {
+			return ImageInterface::ORIENTATION_LANDSCAPE;
+		}
+		elseif ($aspectRatio < 1) {
+			return ImageInterface::ORIENTATION_PORTRAIT;
+		}
+		else {
+			return ImageInterface::ORIENTATION_SQUARE;
+		}
+	}
+
+	/**
+	 * Whether this image is square aspect ratio and therefore has a square orientation
+	 *
+	 * @return boolean
+	 */
+	public function isOrientationSquare() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_SQUARE;
+	}
+
+	/**
+	 * Whether this image is in landscape orientation
+	 *
+	 * @return boolean
+	 */
+	public function isOrientationLandscape() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_LANDSCAPE;
+	}
+
+	/**
+	 * Whether this image is in portrait orientation
+	 *
+	 * @return boolean
+	 */
+	public function isOrientationPortrait() {
+		return $this->getOrientation() === ImageInterface::ORIENTATION_PORTRAIT;
+	}
+
+	/**
 	 * One of PHPs IMAGETYPE_* constants that reflects the image type
 	 *
 	 * @see http://php.net/manual/image.constants.php
@@ -176,10 +237,11 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 *
 	 * @param integer $maximumWidth
 	 * @param integer $maximumHeight
+	 * @param $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio.
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
 	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
 	 */
-	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL) {
+	public function getThumbnail($maximumWidth = NULL, $maximumHeight = NULL, $ratioMode = \TYPO3\Media\Domain\Model\ImageInterface::RATIOMODE_INSET) {
 		$processingInstructions = array(
 			array(
 				'command' => 'thumbnail',
@@ -188,6 +250,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 						'width' => $maximumWidth ?: $this->width,
 						'height' => $maximumHeight ?: $this->height
 					),
+					'mode' => $ratioMode
 				),
 			),
 		);
