@@ -1,0 +1,14 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<f:layout name="BackendModule" />
+
+<f:section name="content">
+	<f:if condition="{moduleConfiguration.submodules}">
+		<ul>
+			<f:for each="{moduleConfiguration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
+				<li>
+					<t:link.module path="{moduleConfiguration.path}/{submoduleIdentifier}">{submoduleConfiguration.label}</t:link.module>
+				</li>
+			</f:for>
+		</ul>
+	</f:if>
+</f:section>

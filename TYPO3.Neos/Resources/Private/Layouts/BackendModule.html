@@ -1,0 +1,23 @@
+<h1>{moduleConfiguration.label}</h1>
+
+<f:render section="subtitle" optional="1" />
+
+<f:flashMessages as="flashMessages">
+	<f:for each="{flashMessages}" as="flashMessage">
+		<div class="alert-message {flashMessage.severity}">
+			<p>{flashMessage}</p>
+		</div>
+	</f:for>
+</f:flashMessages>
+
+<f:form.validationResults>
+	<f:if condition="{validationResults.flattenedErrors}">
+		<ul class="error">
+			<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
+				<li>{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></li>
+			</f:for>
+		</ul>
+	</f:if>
+</f:form.validationResults>
+
+<f:render section="content" />

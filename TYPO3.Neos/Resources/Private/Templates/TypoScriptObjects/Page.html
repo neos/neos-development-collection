@@ -26,10 +26,11 @@
 					<div id="t3-launcher"></div>
 					<ul class="t3-topbar">
 						<li class="t3-active">Content</li>
-						<li>Management</li>
-						<li>Report</li>
-						<li>Layout</li>
-						<li>System</li>
+						<!-- TODO: use {settings.modules} to render this menu instead of hardcoded links -->
+						<li><t:link.module path="management">Management</t:link.module></li>
+						<li><t:link.module path="report">Report</t:link.module></li>
+						<li><t:link.module path="layout">Layout</t:link.module></li>
+						<li><t:link.module path="system">System</t:link.module></li>
 					</ul>
 					<a class="t3-button t3-button-logout t3-icon-logout" href="/typo3/logout"><span>Logout</span></a>
 					<div class="t3-clear"></div>

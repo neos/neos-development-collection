@@ -1,0 +1,15 @@
+<f:layout name="BackendModule" />
+
+<f:section name="subtitle">
+	<h2>Edit account "{account.accountIdentifier}"</h2>
+</f:section>
+<f:section name="content">
+	<f:form action="update" name="account" object="{account}" class="form-horizontal">
+		<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
+
+		<div class="form-actions">
+			<f:form.submit value="Save" class="btn primary" />
+			<f:link.action class="btn">Back</f:link.action>
+		</div>
+	</f:form>
+</f:section>

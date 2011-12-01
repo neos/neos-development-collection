@@ -1,0 +1,13 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<f:layout name="BackendModule" />
+
+<f:section name="content">
+	<f:form action="update" name="account" object="{account}" class="form-horizontal">
+		<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
+
+		<div class="form-actions">
+			<f:form.submit value="Save" class="btn primary" />
+			<t:link.module path="management" class="btn">Back</t:link.module>
+		</div>
+	</f:form>
+</f:section>

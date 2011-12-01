@@ -247,3 +247,28 @@ TYPO3:
         class: T3.Content.UI.Editor.DateField
       enum:
         class: T3.Content.UI.Editor.Selectbox
+
+    modules:
+      management:
+        label: 'Management'
+        submodules:
+          usersettings:
+            label: 'User Settings'
+            controller: '\TYPO3\TYPO3\Controller\Module\Management\UserSettingsController'
+          package:
+            label: 'Package Management'
+            submodules:
+              manage:
+                label: 'Manage'
+              import:
+                label: 'Import'
+      report:
+        label: 'Report'
+      layout:
+        label: 'Layout'
+      system:
+        label: 'System'
+        submodules:
+          useradmin:
+            label: 'User Management'
+            controller: '\TYPO3\TYPO3\Controller\Module\System\UserAdminController'

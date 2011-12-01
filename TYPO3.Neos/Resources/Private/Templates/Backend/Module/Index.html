@@ -1,0 +1,43 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{title}</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'Library/twitter-bootstrap/css/bootstrap.min.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'StyleSheet/style.css')}" />
+		<f:base />
+	</head>
+	<body class="t3 t3-module">
+
+		<div class="t3-content container">
+			<f:if condition="{moduleContents}">
+				{moduleContents -> f:format.raw()}
+			</f:if>
+		</div>
+		<div id="t3-ui-top" class="aloha-block-do-not-deactivate t3-ui">
+			<div id="t3-launcher"></div>
+			<ul class="t3-topbar">
+				<li>
+					<f:link.action controller="Backend\Backend" action="index">Content</f:link.action>
+				</li>
+				<f:for each="{settings.modules}" key="module" as="moduleConfiguration">
+					<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
+						<t:link.module path="{module}">{moduleConfiguration.label}</t:link.module>
+					</li>
+				</f:for>
+			</ul>
+			<a class="t3-button t3-button-logout t3-icon-logout" href="/typo3/logout"><span>Logout</span></a>
+			<div class="t3-clear"></div>
+		</div>
+		<div id="t3-toolbar" class="t3-toolbar t3-ui t3-breadcrumb">
+			<ul>
+				<f:for each="{breadcrumb}" key="path" as="name">
+					<li>
+						<t:link.module path="{path}">{name}</t:link.module>
+					</li>
+				</f:for>
+			</ul>
+		</div>
+	</body>
+</html>

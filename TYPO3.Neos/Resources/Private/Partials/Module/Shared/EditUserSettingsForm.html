@@ -1,0 +1,63 @@
+<fieldset>
+	<legend>Account</legend>
+
+	<div class="control-group">
+		<label class="control-label">Username</label>
+		<div class="controls">
+			<f:form.textbox property="accountIdentifier" />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label">Password</label>
+		<div class="controls">
+			<f:form.password property="password[0]" />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label">Repeat password</label>
+		<div class="controls">
+			<f:form.password property="password[1]" />
+		</div>
+	</div>
+</fieldset>
+
+<fieldset>
+	<legend>Personal Data</legend>
+
+	<div class="control-group">
+		<label class="control-label">Title</label>
+		<div class="controls">
+			<f:form.textbox property="party.name.title" />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label">Name</label>
+		<div class="controls">
+			<f:form.textbox class="span2" property="party.name.firstName" placeholder="First Name" />
+			<f:form.textbox class="span1" property="party.name.middleName" placeholder="Middle Name" />
+			<f:form.textbox class="span2" property="party.name.lastName" placeholder="Last Name"/>
+			<f:form.textbox class="span1" property="party.name.otherName" placeholder="Other Name" />
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label">Alias</label>
+		<div class="controls">
+			<f:form.textbox property="party.name.alias" />
+		</div>
+	</div>
+
+	<f:if condition="{account.party.electronicAddresses}">
+		<div class="control-group">
+			<label class="control-label">Electronic addresses:</label>
+			<ul class="inputs-list">
+				<f:for each="{account.party.electronicAddresses}" as="electronicAddress">
+					<li>{electronicAddress.identifier} ({electronicAddress.type})</li>
+				</f:for>
+			</ul>
+		</div>
+	</f:if>
+</fieldset>

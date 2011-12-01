@@ -14,7 +14,6 @@ Version 0.2.2
 jQuery Notice from http://code.google.com/p/jquery-notice/
 Version 1.0
 
-
 plupload from http://plupload.com
 Version 1.5b (2011-09-11)
 - deleted "examples" directory
@@ -59,6 +58,7 @@ jQuery Lionbars
 http://nikolaydyankov.com/lionbars/ - version 0.2.1
 - cleaned and linted by Aske :-)
 
+
 Canvas Indicator
 http://toydestroyer.com/ - version 1.0
 
@@ -66,3 +66,7 @@ http://toydestroyer.com/ - version 1.0
 jQuery Hotkeys
 https://github.com/jeresig/jquery.hotkeys - version 0.8
 - Modularized by Christopher
+
+
+Bootstrap CSS - from twitter
+http://markdotto.com/bs2/docs/index.html (https://github.com/twitter/bootstrap/) - Version 2.0 (WIP)

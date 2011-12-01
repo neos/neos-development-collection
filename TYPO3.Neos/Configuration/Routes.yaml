@@ -50,6 +50,34 @@
     '@format':     'html'
   appendExceedingArguments: true
 
+-
+  name: 'Backend - Modules'
+  uriPattern: 'typo3/{module}'
+  defaults:
+    '@package':    'TYPO3.TYPO3'
+    '@controller': 'Backend\Module'
+    '@action':     'index'
+    '@format':     'html'
+  routeParts:
+    module:
+      handler: TYPO3\TYPO3\Routing\BackendModuleRoutePartHandler
+
+-
+  name: 'Backend - Modules & arguments'
+  uriPattern: 'typo3/{module}/{moduleArguments}'
+  defaults:
+    '@package':    'TYPO3.TYPO3'
+    '@controller': 'Backend\Module'
+    '@action':     'index'
+    '@format':     'html'
+  routeParts:
+    module:
+      handler: TYPO3\TYPO3\Routing\BackendModuleRoutePartHandler
+    moduleArguments:
+      handler: TYPO3\TYPO3\Routing\BackendModuleArgumentsRoutePartHandler
+  toLowerCase: 0
+  appendExceedingArguments: true
+
 ##
 # Frontend
 
