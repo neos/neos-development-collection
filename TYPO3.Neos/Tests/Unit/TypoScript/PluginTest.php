@@ -124,6 +124,7 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function renderSetsControllerActionInformationOnRequestObjectIfItHasBeenDefinedInThePluginProperties() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
 		$mockNode->expects($this->any())->method('getProperty')->will($this->returnValue(NULL));
+		$mockNode->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 
 		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue(NULL));
@@ -160,6 +161,12 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerName')->will($this->returnValue('Baz'));
 		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerActionName')->will($this->returnValue('quux'));
 
+		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
+		$mockNode->expects($this->any())->method('getProperty')->will($this->returnValue(NULL));
+		$mockNode->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
+
+		$this->plugin->setNode($mockNode);
+
 		$this->mockSubRequestBuilder->expects($this->once())->method('build')->with($this->mockRequest, 'typo3_plugin_namespace')->will($this->returnValue($mockPluginRequest));
 
 		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue('SomePackage'));
@@ -178,6 +185,7 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockNode->expects($this->at(1))->method('getProperty')->with('subpackage')->will($this->returnValue('SubpackageDefinedInNode'));
 		$mockNode->expects($this->at(2))->method('getProperty')->with('controller')->will($this->returnValue('ControllerDefinedInNode'));
 		$mockNode->expects($this->at(3))->method('getProperty')->with('action')->will($this->returnValue('actionDefinedInNode'));
+		$mockNode->expects($this->any())->method('getProperties')->will($this->returnValue(array()));
 
 		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
 		$mockPluginRequest->expects($this->atLeastOnce())->method('getControllerPackageKey')->will($this->returnValue(NULL));
