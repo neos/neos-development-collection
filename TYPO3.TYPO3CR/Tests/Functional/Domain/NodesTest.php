@@ -417,7 +417,7 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org°
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodeRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailable() {
 		$liveContext = new ContentContext('live');
@@ -451,6 +451,10 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @return void
 	 */
 	protected function assertSameOrder(array $expectedNodes, array $actualNodes) {
+		if (count($expectedNodes) !== count($actualNodes)) {
+			$this->fail(sprintf('Number of nodes did not match: got %s expected and %s actual nodes.', count($expectedNodes), count($actualNodes)));
+		}
+
 		reset($expectedNodes);
 		foreach ($actualNodes as $actualNode) {
 			$expectedNode = current($expectedNodes);

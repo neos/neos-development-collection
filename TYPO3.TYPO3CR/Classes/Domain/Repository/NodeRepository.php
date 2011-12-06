@@ -362,7 +362,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath AND n.index < :referenceIndex');
 		$query->setParameter('parentPath', $parentPath);
 		$query->setParameter('referenceIndex', $referenceIndex);
-		$nextLowerIndex = $query->getSingleScalarResult() ?: $referenceIndex;
+		$nextLowerIndex = $query->getSingleScalarResult() ?: 0;
 
 		foreach ($this->addedNodes as $node) {
 			$otherIndex = $node->getIndex();
