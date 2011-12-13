@@ -43,12 +43,14 @@ class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 *
 	 * @param string $identifier Identifier (username) of the account to be created
 	 * @param string $password Password of the account to be created
+	 * @param string $firstName First name of the user to be created
+	 * @param string $lastName Last name of the user to be created
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function createAdministratorCommand($identifier, $password) {
+	public function createAdministratorCommand($identifier, $password, $firstName, $lastName) {
 		$user = new \TYPO3\TYPO3\Domain\Model\User();
+		$name = new \TYPO3\Party\Domain\Model\PersonName('', $firstName, '', $lastName, '', $identifier);
+		$user->setName($name);
 		$user->getPreferences()->set('context.workspace', 'user-' . $identifier);
 		$this->partyRepository->add($user);
 
