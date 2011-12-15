@@ -31,21 +31,21 @@ TYPO3:
         properties:
           _hidden:
             type: boolean
-            label: 'Hidden'
+            label: 'Hide'
             # A the "category" groups the properties together in "propertyGroups"
             category: 'visibility'
             # The higher the priority, the more important the property is.
             priority: 1
           _hiddenBeforeDate:
             type: date
-            label: 'Hidden before date'
-            category: 'visibility'
-            priority: 10
-          _hiddenAfterDate:
-            type: date
-            label: 'Hidden after date'
+            label: 'Hide before date'
             category: 'visibility'
             priority: 11
+          _hiddenAfterDate:
+            type: date
+            label: 'Hide after date'
+            category: 'visibility'
+            priority: 10
         propertyGroups:
           visibility:
             label: 'Visibility'
