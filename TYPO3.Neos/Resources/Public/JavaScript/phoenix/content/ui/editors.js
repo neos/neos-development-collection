@@ -595,14 +595,6 @@ function(fileUploadTemplate, imageUploadTemplate) {
 				value = this.get('value');
 
 			if (value && value !== '') {
-					// HACK: we need to convert *invalid* JSON to valid one again as
-					// the Chrome browser seems to convert it to an object, and in turn
-					// then serialize it to string again... at least unter some
-					// circumstances... Funny :-)
-				if (value.substr(0, 4) === 'HACK') {
-					value = value.substr(4);
-				}
-
 				if (T3.Common.Util.isValidJsonString(value)) {
 					imageVariant = JSON.parse(value);
 				}

@@ -76,9 +76,6 @@ class ContentElementWrappingService {
 			}
 
 				// Serialize objects to JSON strings
-				// HACK: we need to produce *invalid* JSON as the Chrome browser seems to
-				// convert it to an object, and in turn then serialize it to string again...
-				// at least unter some circumstances... Funny :-)
 			if (is_object($propertyValue) && $propertyValue !== NULL && isset($propertyConfiguration['type']) && $this->objectManager->isRegistered($propertyConfiguration['type'])) {
 				$gettableProperties = \TYPO3\FLOW3\Reflection\ObjectAccess::getGettableProperties($propertyValue);
 				$convertedProperties = array();
@@ -91,7 +88,7 @@ class ContentElementWrappingService {
 					}
 					$convertedProperties[$key] = $value;
 				}
-				$propertyValue = 'HACK' .  json_encode($convertedProperties);
+				$propertyValue = json_encode($convertedProperties);
 			}
 
 			$tagBuilder->addAttribute('data-' . $propertyName, $propertyValue);

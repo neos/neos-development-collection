@@ -145,14 +145,6 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 				if (isset($contentTypeProperties[$nodePropertyKey]['type'])) {
 					$targetType = $contentTypeProperties[$nodePropertyKey]['type'];
 					if ($this->objectManager->isRegistered($targetType)) {
-							// HACK: we need to convert *invalid* JSON to valid one again as
-							// the Chrome browser seems to convert it to an object, and in turn
-							// then serialize it to string again... at least unter some
-							// circumstances... Funny :-)
-							if (substr($nodePropertyValue, 0, 4) === 'HACK') {
-								$nodePropertyValue = substr($nodePropertyValue, 4);
-							}
-
 						$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $targetType);
 					}
 				}
