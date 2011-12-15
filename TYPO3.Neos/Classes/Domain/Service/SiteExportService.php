@@ -91,13 +91,13 @@ class SiteExportService {
 		if ($node->isHiddenInIndex() === TRUE) {
 			$xmlWriter->writeAttribute('hiddenInIndex', 'true');
 		}
-		$hiddenBeforeDate = $node->getHiddenBeforeDate();
-		if ($hiddenBeforeDate !== NULL) {
-			$xmlWriter->writeAttribute('hiddenBeforeDate', $hiddenBeforeDate->format(\DateTime::W3C));
+		$hiddenBeforeDateTime = $node->getHiddenBeforeDateTime();
+		if ($hiddenBeforeDateTime !== NULL) {
+			$xmlWriter->writeAttribute('hiddenBeforeDateTime', $hiddenBeforeDateTime->format(\DateTime::W3C));
 		}
-		$hiddenAfterDate = $node->getHiddenAfterDate();
-		if ($hiddenAfterDate !== NULL) {
-			$xmlWriter->writeAttribute('hiddenAfterDate', $hiddenAfterDate->format(\DateTime::W3C));
+		$hiddenAfterDateTime = $node->getHiddenAfterDateTime();
+		if ($hiddenAfterDateTime !== NULL) {
+			$xmlWriter->writeAttribute('hiddenAfterDateTime', $hiddenAfterDateTime->format(\DateTime::W3C));
 		}
 
 			// access roles

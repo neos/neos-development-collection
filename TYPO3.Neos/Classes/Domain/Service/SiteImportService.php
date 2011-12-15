@@ -206,11 +206,11 @@ class SiteImportService {
 
 			$childNode->setHidden((boolean)$childNodeXml['hidden']);
 			$childNode->setHiddenInIndex((boolean)$childNodeXml['hiddenInIndex']);
-			if ($childNodeXml['hiddenBeforeDate'] != '') {
-				$childNode->setHiddenBeforeDate(\DateTime::createFromFormat(\DateTime::W3C, (string)$childNodeXml['hiddenBeforeDate']));
+			if ($childNodeXml['hiddenBeforeDateTime'] != '') {
+				$childNode->setHiddenBeforeDateTime(\DateTime::createFromFormat(\DateTime::W3C, (string)$childNodeXml['hiddenBeforeDateTime']));
 			}
-			if ($childNodeXml['hiddenAfterDate'] != '') {
-				$childNode->setHiddenAfterDate(\DateTime::createFromFormat(\DateTime::W3C, (string)$childNodeXml['hiddenAfterDate']));
+			if ($childNodeXml['hiddenAfterDateTime'] != '') {
+				$childNode->setHiddenAfterDateTime(\DateTime::createFromFormat(\DateTime::W3C, (string)$childNodeXml['hiddenAfterDateTime']));
 			}
 
 			if ($childNodeXml->properties) {

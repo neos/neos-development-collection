@@ -36,12 +36,12 @@ TYPO3:
             category: 'visibility'
             # The higher the priority, the more important the property is.
             priority: 1
-          _hiddenBeforeDate:
+          _hiddenBeforeDateTime:
             type: date
             label: 'Hide before date'
             category: 'visibility'
             priority: 11
-          _hiddenAfterDate:
+          _hiddenAfterDateTime:
             type: date
             label: 'Hide after date'
             category: 'visibility'
