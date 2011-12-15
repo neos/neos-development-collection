@@ -326,14 +326,14 @@ interface NodeInterface {
 	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
 	 * @return void
 	 */
-	public function setHiddenBeforeDate(\DateTime $dateTime = NULL);
+	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL);
 
 	/**
 	 * Returns the date and time before which this node will be automatically hidden.
 	 *
 	 * @return \DateTime Date before this node will be hidden
 	 */
-	public function getHiddenBeforeDate();
+	public function getHiddenBeforeDateTime();
 
 	/**
 	 * Sets the date and time when this node should be automatically hidden
@@ -341,14 +341,14 @@ interface NodeInterface {
 	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
 	 * @return void
 	 */
-	public function setHiddenAfterDate(\DateTime $dateTime = NULL);
+	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL);
 
 	/**
 	 * Returns the date and time after which this node will be automatically hidden.
 	 *
 	 * @return \DateTime Date after which this node will be hidden
 	 */
-	public function getHiddenAfterDate();
+	public function getHiddenAfterDateTime();
 
 	/**
 	 * Sets if this node should be hidden in indexes, such as a site navigation.
@@ -383,7 +383,7 @@ interface NodeInterface {
 	/**
 	 * Tells if this node is "visible".
 	 *
-	 * For this the "hidden" flag and the "hiddenBeforeDate" and "hiddenAfterDate" dates are
+	 * For this the "hidden" flag and the "hiddenBeforeDateTime" and "hiddenAfterDateTime" dates are
 	 * taken into account.
 	 *
 	 * @return boolean

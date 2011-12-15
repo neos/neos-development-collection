@@ -495,11 +495,11 @@ class ProxyNode implements NodeInterface {
 	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
 	 * @return void
 	 */
-	public function setHiddenBeforeDate(\DateTime $dateTime = NULL) {
+	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
 		if (!isset($this->newNode)) {
 			$this->materializeOriginalNode();
 		}
-		$this->newNode->setHiddenBeforeDate($dateTime);
+		$this->newNode->setHiddenBeforeDateTime($dateTime);
 	}
 
 	/**
@@ -507,8 +507,8 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @return \DateTime Date before this node will be hidden
 	 */
-	public function getHiddenBeforeDate() {
-		return (isset($this->newNode) ? $this->newNode->getHiddenBeforeDate() : $this->originalNode->getHiddenBeforeDate());
+	public function getHiddenBeforeDateTime() {
+		return (isset($this->newNode) ? $this->newNode->getHiddenBeforeDateTime() : $this->originalNode->getHiddenBeforeDateTime());
 	}
 
 	/**
@@ -517,11 +517,11 @@ class ProxyNode implements NodeInterface {
 	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
 	 * @return void
 	 */
-	public function setHiddenAfterDate(\DateTime $dateTime = NULL) {
+	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
 		if (!isset($this->newNode)) {
 			$this->materializeOriginalNode();
 		}
-		$this->newNode->setHiddenAfterDate($dateTime);
+		$this->newNode->setHiddenAfterDateTime($dateTime);
 	}
 
 	/**
@@ -529,8 +529,8 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @return \DateTime Date after which this node will be hidden
 	 */
-	public function getHiddenAfterDate() {
-		return (isset($this->newNode) ? $this->newNode->getHiddenAfterDate() : $this->originalNode->getHiddenAfterDate());
+	public function getHiddenAfterDateTime() {
+		return (isset($this->newNode) ? $this->newNode->getHiddenAfterDateTime() : $this->originalNode->getHiddenAfterDateTime());
 	}
 
 	/**
@@ -580,7 +580,7 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Tells if this node is "visible".
 	 *
-	 * For this the "hidden" flag and the "hiddenBeforeDate" and "hiddenAfterDate" dates are
+	 * For this the "hidden" flag and the "hiddenBeforeDateTime" and "hiddenAfterDateTime" dates are
 	 * taken into account.
 	 *
 	 * @return boolean

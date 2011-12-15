@@ -117,14 +117,14 @@ class Node implements NodeInterface {
 	 *
 	 * @var \DateTime
 	 */
-	protected $hiddenBeforeDate;
+	protected $hiddenBeforeDateTime;
 
 	/**
 	 * Date after which this node is automatically hidden
 	 *
 	 * @var \DateTime
 	 */
-	protected $hiddenAfterDate;
+	protected $hiddenAfterDateTime;
 
 	/**
 	 * If this node should be hidden in indexes, such as a website navigation
@@ -728,9 +728,9 @@ class Node implements NodeInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHiddenBeforeDate(\DateTime $dateTime = NULL) {
-		if ($this->hiddenBeforeDate != $dateTime) {
-			$this->hiddenBeforeDate = $dateTime;
+	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
+		if ($this->hiddenBeforeDateTime != $dateTime) {
+			$this->hiddenBeforeDateTime = $dateTime;
 			$this->nodeRepository->update($this);
 		}
 	}
@@ -741,8 +741,8 @@ class Node implements NodeInterface {
 	 * @return \DateTime Date before this node will be hidden
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getHiddenBeforeDate() {
-		return $this->hiddenBeforeDate;
+	public function getHiddenBeforeDateTime() {
+		return $this->hiddenBeforeDateTime;
 	}
 
 	/**
@@ -752,9 +752,9 @@ class Node implements NodeInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setHiddenAfterDate(\DateTime $dateTime = NULL) {
-		if ($this->hiddenAfterDate != $dateTime) {
-			$this->hiddenAfterDate = $dateTime;
+	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
+		if ($this->hiddenAfterDateTime != $dateTime) {
+			$this->hiddenAfterDateTime = $dateTime;
 			$this->nodeRepository->update($this);
 		}
 	}
@@ -765,8 +765,8 @@ class Node implements NodeInterface {
 	 * @return \DateTime Date after which this node will be hidden
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getHiddenAfterDate() {
-		return $this->hiddenAfterDate;
+	public function getHiddenAfterDateTime() {
+		return $this->hiddenAfterDateTime;
 	}
 
 	/**
@@ -825,7 +825,7 @@ class Node implements NodeInterface {
 	/**
 	 * Tells if this node is "visible".
 	 *
-	 * For this the "hidden" flag and the "hiddenBeforeDate" and "hiddenAfterDate" dates are taken into account.
+	 * For this the "hidden" flag and the "hiddenBeforeDateTime" and "hiddenAfterDateTime" dates are taken into account.
 	 * The fact that a node is "visible" does not imply that it can / may be shown to the user. Further modifiers
 	 * such as isAccessible() need to be evaluated.
 	 *
@@ -837,10 +837,10 @@ class Node implements NodeInterface {
 			return FALSE;
 		}
 		$currentDateTime = $this->context->getCurrentDateTime();
-		if ($this->hiddenBeforeDate !== NULL && $this->hiddenBeforeDate > $currentDateTime) {
+		if ($this->hiddenBeforeDateTime !== NULL && $this->hiddenBeforeDateTime > $currentDateTime) {
 			return FALSE;
 		}
-		if ($this->hiddenAfterDate !== NULL && $this->hiddenAfterDate < $currentDateTime) {
+		if ($this->hiddenAfterDateTime !== NULL && $this->hiddenAfterDateTime < $currentDateTime) {
 			return FALSE;
 		}
 		return TRUE;
