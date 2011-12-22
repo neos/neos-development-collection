@@ -488,13 +488,9 @@ function(launcherTemplate) {
 		}.property('length').cacheable(),
 
 		_readFromLocalStore: function() {
-			if (!this._supports_html5_storage()) return;
+			var blocks = T3.Common.LocalStorage.getItem('page_' + $('#t3-page-metainformation').attr('data-__nodepath'));
 
-			var serializedBlocks = window.localStorage['page_' + $('#t3-page-metainformation').attr('data-__nodepath')];
-
-			if (serializedBlocks) {
-				var blocks = JSON.parse(serializedBlocks);
-
+			if (blocks instanceof Array && blocks.length > 0) {
 				blocks.forEach(function(serializedBlock) {
 					if (serializedBlock.__nodePath === $('#t3-page-metainformation').attr('data-__nodepath')) {
 							// Serialized block is the page block
@@ -525,7 +521,6 @@ function(launcherTemplate) {
 		},
 
 		_saveToLocalStore: function() {
-			if (!this._supports_html5_storage()) return true;
 			if (!this._loadedFromLocalStore) return true;
 
 			var cleanedUpBlocks = this.get('[]').map(function(block) {
@@ -535,18 +530,11 @@ function(launcherTemplate) {
 				);
 			});
 
-			window.localStorage['page_' + $('#t3-page-metainformation').attr('data-__nodepath')] = JSON.stringify(cleanedUpBlocks);
+			T3.Common.LocalStorage.setItem('page_' + $('#t3-page-metainformation').attr('data-__nodepath'), cleanedUpBlocks);
 
 			this._saveContentOnChange();
 		}.observes('[]'),
 
-		_supports_html5_storage: function() {
-			try {
-				return 'localStorage' in window && window['localStorage'] !== null;
-			} catch (e) {
-				return false;
-			}
-		},
 
 		save: function(callback, reloadPage) {
 			if (T3.Content.Controller.ServerConnection.get('_saveRunning')) {

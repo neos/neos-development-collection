@@ -454,7 +454,54 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		isValidJsonString: function(jsonString) {
 			// The following regular expression comes from http://tools.ietf.org/html/rfc4627 and checks if the JSON is valid
 			return !/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(jsonString.replace(/"(\\.|[^"\\])*"/g, ''));
+		}
+	});
 
+	/**
+	 * Wrapper class for the localStorage, supporting storage of objects and arrays.
+	 * Internally, all values are JSON encoded and decoded automatically.
+	 */
+	T3.Common.LocalStorage = SC.Object.create({
+
+		/**
+		* Get an item from localStorage
+		*
+		* @param {string} key Name of the value to get
+		* @return {mixed} Depends on the stored value
+		*/
+		getItem: function (key) {
+			if (!this._supportsLocalStorage()) return undefined;
+			return JSON.parse(window.localStorage.getItem(key));
+		},
+
+		/**
+		* Set a value into localStorage
+		*
+		* @param {string} key
+		* @param {mixed} value
+		* @return {void}
+		*/
+		setItem: function (key, value) {
+			if (!this._supportsLocalStorage()) return;
+			window.localStorage.setItem(key, JSON.stringify(value));
+		},
+
+		/**
+		* Remove a value form localStorage
+		* @param {string} key
+		* @return {void}
+		*/
+		removeItem: function (key) {
+			if (!this._supportsLocalStorage()) return;
+			window.localStorage.removeItem(key);
+		},
+
+		_supportsLocalStorage: function() {
+			try {
+				return 'localStorage' in window && window['localStorage'] !== null;
+			} catch (e) {
+				return false;
+			}
 		}
 	});
 

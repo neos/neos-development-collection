@@ -22,7 +22,9 @@ define(
 ],
 function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate) {
 	var T3 = window.T3 || {};
-	T3.Content = T3.Content || {};
+	if (typeof T3.Content === 'undefined') {
+		T3.Content = {};
+	}
 	T3.Content.UI = T3.Content.UI || {};
 	var $ = window.alohaQuery || window.jQuery;
 

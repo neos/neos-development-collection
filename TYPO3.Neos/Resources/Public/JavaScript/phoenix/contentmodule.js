@@ -115,12 +115,12 @@ function() {
 		_enableDevelopmentFeaturesIfNeeded: function() {
 			if (window.location.hash === '#dev') {
 				this.set('showDevelopmentFeatures', true);
-				window.localStorage['showDevelopmentFeatures'] = true;
+				T3.Common.LocalStorage.setItem('showDevelopmentFeatures', true);
 			} else if (window.location.hash === '#nodev') {
 				this.set('showDevelopmentFeatures', false);
-				delete window.localStorage['showDevelopmentFeatures']
-			} else if(window.localStorage['showDevelopmentFeatures']) {
-				this.set('showDevelopmentFeatures', 'true');
+				T3.Common.LocalStorage.removeItem('showDevelopmentFeatures');
+			} else if(T3.Common.LocalStorage.getItem('showDevelopmentFeatures')) {
+				this.set('showDevelopmentFeatures', true);
 			}
 		},
 

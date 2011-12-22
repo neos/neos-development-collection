@@ -3,7 +3,7 @@
  */
 
 define(
-[],
+['phoenix/common'],
 function() {
 
 	var T3 = window.T3 || {};
@@ -17,7 +17,7 @@ function() {
 		previewMode: false,
 
 		init: function() {
-			if (window.localStorage.previewMode == 'true') {
+			if (T3.Common.LocalStorage.getItem('previewMode') === true) {
 				$('body').removeClass('t3-ui-controls-active');
 				$('body').addClass('t3-ui-controls-inactive');
 				$('body').addClass('typo3-previewmode-enabled');
@@ -52,7 +52,7 @@ function() {
 			};
 			if (isPreviewEnabled) {
 				$('body').addClass('t3-ui-previewmode-activating');
-				if(!window.localStorage.previewModeStore) {
+				if(!T3.Common.LocalStorage.getItem('previewModeStore')) {
 					var stylesToSave = {
 						'body': {
 							'margin-top': $('body').css('margin-top'),
@@ -69,7 +69,7 @@ function() {
 							'width': $('#t3-inspector').css('width')
 						}
 					};
-					window.localStorage.previewModeStore = JSON.stringify(stylesToSave);
+					T3.Common.LocalStorage.setItem('previewModeStore', stylesToSave);
 				}
 
 				$('.t3-contentelement-hidden').hide('fast');
@@ -90,7 +90,7 @@ function() {
 				}, 'fast', allDone);
 			} else {
 
-				var stylesToUse = jQuery.parseJSON(window.localStorage.previewModeStore);
+				var stylesToUse = T3.Common.LocalStorage.getItem('previewModeStore');
 
 				$('body').removeClass('t3-ui-previewmode-activating');
 				// TODO Cleanup the 'hidden' workaround for previewMode with a CSS transition
@@ -117,7 +117,7 @@ function() {
 		}.observes('previewMode'),
 
 		onPreviewModeChange: function() {
-			window.localStorage.previewMode = this.get('previewMode') ? 'true' : 'false';
+			T3.Common.LocalStorage.setItem('previewMode', this.get('previewMode'));
 		}.observes('previewMode')
 	});
 
@@ -306,8 +306,8 @@ function() {
 		 * which is displayed when a ContentArray is empty.
 		 */
 		init: function() {
-			if (window.localStorage.clipboard) {
-				this.set('_clipboard', JSON.parse(window.localStorage.clipboard));
+			if (T3.Common.LocalStorage.getItem('clipboard')) {
+				this.set('_clipboard', T3.Common.LocalStorage.getItem('clipboard'));
 			}
 		},
 		deleteBlock: function(nodePath, $handle) {
@@ -466,7 +466,7 @@ function() {
 				nodePath,
 				function (result) {
 					if (result.success) {
-						delete window.localStorage.clipboard;
+						T3.Common.LocalStorage.removeItem('clipboard');
 						T3.ContentModule.reloadPage();
 					}
 				}
@@ -503,7 +503,7 @@ function() {
 		onClipboardChange: function() {
 			try {
 				var clipboard = this.get('_clipboard');
-				window.localStorage.clipboard = JSON.stringify(clipboard);
+				T3.Common.LocalStorage.setItem('_clipboard', clipboard);
 				var block = T3.Content.Model.BlockManager.getBlockByNodePath(clipboard.nodePath);
 
 				if (clipboard.type === 'cut') {
