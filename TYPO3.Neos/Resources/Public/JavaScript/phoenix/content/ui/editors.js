@@ -56,23 +56,27 @@ function(fileUploadTemplate, imageUploadTemplate) {
 
 		attributeBindings: ['size', 'disabled'],
 
-		items: [],
+		values: [],
 
 		options: function() {
 			var options = [], currentValue = this.get('value');
+
 			if (this.get('allowEmpty')) {
 				options.push(SC.Object.create({value: '', label: this.get('placeholder')}));
 			}
-			$.each(this.get('items'), function() {
-				options.push(SC.Object.create($.extend({selected: this.value === currentValue}, this)));
+			$.each(this.get('values'), function(value) {
+				options.push(SC.Object.create($.extend({
+					selected: value === currentValue,
+					value: value
+				}, this)));
 			});
 			return options;
-		}.property('items', 'value', 'placeholder', 'allowEmpty').cacheable(),
+		}.property('values', 'value', 'placeholder', 'allowEmpty').cacheable(),
 
 		onItemsChange: function() {
 			// Special event for chosen
 			this.$().trigger("liszt:updated");
-		}.observes('items'),
+		}.observes('values'),
 
 		didInsertElement: function() {
 			var that = this;

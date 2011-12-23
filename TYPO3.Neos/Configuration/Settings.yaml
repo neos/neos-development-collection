@@ -153,8 +153,10 @@ TYPO3:
             category: 'image'
             options:
               values:
-                left: 'Left'
-                right: 'Right'
+                left:
+                  label: 'Left'
+                right:
+                  label: 'Right'
             reloadOnChange: true
         propertyGroups:
           image:
