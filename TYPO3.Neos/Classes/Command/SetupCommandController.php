@@ -48,6 +48,12 @@ class SetupCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControll
 	 * @return void
 	 */
 	public function createAdministratorCommand($identifier, $password, $firstName, $lastName) {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($identifier, 'Typo3BackendProvider');
+		if ($account instanceof \TYPO3\FLOW3\Security\Account) {
+			$this->outputLine('User "%s" already exists.', array($identifier));
+			return;
+		}
+
 		$user = new \TYPO3\TYPO3\Domain\Model\User();
 		$name = new \TYPO3\Party\Domain\Model\PersonName('', $firstName, '', $lastName, '', $identifier);
 		$user->setName($name);
