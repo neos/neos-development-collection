@@ -13,7 +13,7 @@ function(launcherTemplate) {
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	T3.Content.Model = {};
-	var $ = window.alohaQuery || window.jQuery;
+	var $ = window.Aloha.jQuery || window.jQuery;
 
 	/**
 	 * T3.Content.Model.AbstractBlock
@@ -175,7 +175,7 @@ function(launcherTemplate) {
 		 */
 		getContentElement: function() {
 			if (this.__alohaBlockId) {
-				return $('#' + this.__alohaBlockId + ' > div:last');
+				return $('#' + this.__alohaBlockId);
 			}
 		},
 
@@ -185,7 +185,7 @@ function(launcherTemplate) {
 		}.observes('__status'),
 
 		_onHiddenChange: function(that, propertyName) {
-			var contentElementContainer = $('#' + that.__alohaBlockId + ' > .t3-contentelement').first();
+			var contentElementContainer = $('#' + that.__alohaBlockId).first();
 			if (this.get('_hidden')) {
 				contentElementContainer.addClass('t3-contentelement-hidden');
 			} else {

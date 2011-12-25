@@ -103,6 +103,7 @@ class ContentElementWrappingService {
 			}
 
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
+			$tagBuilder->addAttribute('data-__contenttype', $contentType->getName());
 		} else {
 			$tagBuilder->addAttribute('id', 't3-page-metainformation');
 			$tagBuilder->addAttribute('data-__sitename', $node->getContext()->getCurrentSite()->getName());

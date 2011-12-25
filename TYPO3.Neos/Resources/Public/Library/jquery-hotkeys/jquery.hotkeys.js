@@ -14,7 +14,7 @@ define(
 [],
 function() {
 	var T3 = window.T3 || {},
-		jQuery = window.alohaQuery || window.jQuery,
+		jQuery = window.Aloha.jQuery || window.jQuery,
 		$ = jQuery;
 
 	jQuery.hotkeys = {

@@ -3,7 +3,7 @@ define(
 function(block) {
     "use strict";
 	var exports = {};
-	var $ = window.alohaQuery || window.jQuery;
+	var $ = window.Aloha.jQuery || window.jQuery;
 
 	/**
 	 * This is the TYPO3 Block, which we use for all TYPO3-related functionality.
@@ -12,12 +12,6 @@ function(block) {
 	 */
 	exports.TYPO3Block = block.AbstractBlock.extend({
 
-		/**
-		 * Already rendered?
-		 *
-		 * @var Boolean
-		 */
-		_alreadyRendered: false,
 
 		/**
 		 * Cached content type schema
@@ -38,7 +32,7 @@ function(block) {
 		_getContentTypeSchema: function() {
 			if (!this._cachedContentTypeSchema) {
 				this._cachedContentTypeSchema = T3.Configuration.Schema[this.attr('__contenttype')];
-				if (!this._cachedContentTypeSchema || !this._cachedContentTypeSchema.properties) return this._cachedContentTypeSchema;
+				if (!this._cachedContentTypeSchema || !this._cachedContentTypeSchema.properties) return null;
 
 				var caseSensitivePropertyNameCache = {};
 				$.each(this._cachedContentTypeSchema.properties, function(key) {
@@ -60,22 +54,27 @@ function(block) {
 		/**
 		 * Rendering. Only called once, aloha-fies the editable sub properties (making them Aloha Editables).
 		 */
-		render: function() {
-			if (this._alreadyRendered) return;
-
-			if (!this._getContentTypeSchema() || !this._getContentTypeSchema().inlineEditableProperties) return;
-
+		init: function($element, postProcessFn) {
+			if (!this._getContentTypeSchema()) {
+				throw 'It should not happen that content type schema was not found.';
+				postProcessFn();
+				return;
+			}
+			if (!this._getContentTypeSchema().inlineEditableProperties) {
+				// No inline editables which need to be aloha-fied...
+				postProcessFn();
+				return;
+			}
 			// Store the editable sub properties in the parent element
 			this._getContentTypeSchema().inlineEditableProperties.forEach(function(propertyName) {
-				this.attr(propertyName, this.$innerElement.find('*[data-propertyname="' + propertyName + '"]').html(), true);
+				this.attr(propertyName, this.$element.find('*[data-propertyname="' + propertyName + '"]').html(), true);
 			}, this);
 
 			// Aloha-fy the editable sub elements
 			this._getContentTypeSchema().inlineEditableProperties.forEach(function(propertyName) {
-				this.$innerElement.find('*[data-propertyname="' + propertyName + '"]').aloha();
+				this.$element.find('*[data-propertyname="' + propertyName + '"]').aloha();
 			}, this);
-
-			this._alreadyRendered = true;
+			postProcessFn();
 		},
 
 		/**
@@ -83,8 +82,8 @@ function(block) {
 		 * and not the inner contents (as they are pre-rendered from the server and we do not
 		 * want to touch them).
 		 */
-		_renderSurroundingElements: function() {
-			this.element.mouseenter(function(event) {
+		renderBlockHandlesIfNeeded: function() {
+			this.$element.mouseenter(function(event) {
 				$(this).parents('.t3-aloha-block-over').removeClass('t3-aloha-block-over');
 				$(this).addClass('t3-aloha-block-over');
 				event.stopPropagation();
@@ -101,7 +100,7 @@ function(block) {
 		 * with the situation that the handles are already created.
 		 */
 		renderHandles: function() {
-			if (this.element.find('.t3-contentelement.t3-contentelement-removed').length === 0) {
+			if (this.$element.find('.t3-contentelement.t3-contentelement-removed').length === 0) {
 				this._renderHandle('t3-delete-handle', 'Delete element', T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
 			}
 			this._renderHandle('t3-cut-handle', 'Cut', T3.Content.Controller.BlockActions.cut, T3.Content.Controller.BlockActions);
@@ -113,11 +112,11 @@ function(block) {
 			this._renderHandle('t3-remove-from-copy-handle t3-handle-hidden', 'Remove from Clipboard', T3.Content.Controller.BlockActions.removeFromClipboard, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-remove-from-cut-handle t3-handle-hidden', 'Remove from Clipboard', T3.Content.Controller.BlockActions.removeFromClipboard, T3.Content.Controller.BlockActions);
 
-			this.element.find('.t3-status-indicator').remove();
+			this.$element.find('.t3-status-indicator').remove();
 			if (this.attr('__status')) {
 				// FIXME: do not output _status directly, but do it using CSS or localization.
 				var statusIndicator = $('<span class="t3-status-indicator t3-status-indicator-' + this.attr('__status')  + '">' + this.attr('__status') + '</span>');
-				this.element.prepend(statusIndicator);
+				this.$element.prepend(statusIndicator);
 			}
 		},
 
@@ -131,9 +130,9 @@ function(block) {
 		 * @param {Object} scope the scope to use for the callback
 		 */
 		_renderHandle: function(cssClass, innerHtml, clickHandler, scope) {
-			if (this.element.find('.' + cssClass).length == 0) {
+			if (this.$element.find('.' + cssClass).length == 0) {
 				var handle = $('<span class="t3-handle ' + cssClass + '"><span>' + innerHtml + '</span></span>');
-				this.element.prepend(handle);
+				this.$element.prepend(handle);
 
 				var nodePath = handle.parent('.aloha-block').attr('data-__nodepath');
 
@@ -153,7 +152,7 @@ function(block) {
 
 			if (!this._getContentTypeSchema() || !this._getContentTypeSchema().inlineEditableProperties) return;
 			if (this._getContentTypeSchema().inlineEditableProperties.indexOf(key) !== -1) {
-				this.$innerElement.find('*[data-propertyname="' + key + '"]').html(value);
+				this.$element.find('*[data-propertyname="' + key + '"]').html(value);
 			}
 		},
 
@@ -164,7 +163,7 @@ function(block) {
 		 */
 		_getAttribute: function(key) {
 			if (key === '__contenttype') {
-				return this.element.attr('data-__contenttype');
+				return this.$element.attr('data-__contenttype');
 			} else {
 				return this._super(key);
 			}

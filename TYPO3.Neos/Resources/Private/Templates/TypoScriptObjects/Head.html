@@ -22,26 +22,33 @@
 				Aloha = window.Aloha || {};
 
 				Aloha.settings = {
+					logLevels: {'error': true, 'warn': true, 'info': false, 'debug': false},
+					errorhandling : false,
+
 					plugins: {
 						block: {
 							sidebarAttributeEditor: false
 						}
 					},
+						// Fine-tune some Aloha-SmartContentChange settings, making the whole system feel more responsive.
+					smartContentChange: {
+						idle: 500,
+						delay: 150
+					},
 					bundles: {
-						phoenix: '../../../../TYPO3.TYPO3/JavaScript/alohaplugins' // relative to aloha.js base path...
+						// Path for custom bundle relative from require.js path
+						phoenixAloha: '../../../../TYPO3.TYPO3/JavaScript/alohaplugins',
 					},]]>
 					basePath: '{aloha:baseUri()}/src/lib/'
 				};
-		<![CDATA[
-				var require = { ]]>
-					'baseUrl': '{f:uri.resource(path:"JavaScript/")}'
-				};
+				var phoenixJavascriptBasePath = '{f:uri.resource(path:"JavaScript/")}';
 
 				var ExtDirectInitialization = function() {
 					<ext:extDirect.provider />;
 				};
 		</script>
-		<script src="{f:uri.resource(path:'JavaScript/require.js')}" data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js')}" id="aloha-script-include" data-aloha-plugins="common/format,common/block,common/paste,phoenix/phoenixintegration"></script>
+		<script src="{aloha:baseUri()}/src/lib/aloha.js" data-aloha-plugins="common/format,common/paste,common/block,common/table,phoenixAloha/phoenixintegration"></script>
+		<script src="{f:uri.resource(path:'JavaScript/contentmodule-main.js')}"></script>
 
 		<link rel="stylesheet" href="{aloha:baseUri()}/src/css/aloha.css" type="text/css" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/style.css')}" />

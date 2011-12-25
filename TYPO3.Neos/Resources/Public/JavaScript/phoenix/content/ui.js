@@ -26,7 +26,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 		T3.Content = {};
 	}
 	T3.Content.UI = T3.Content.UI || {};
-	var $ = window.alohaQuery || window.jQuery;
+	var $ = window.Aloha.jQuery || window.jQuery;
 
 	/**
 	 * =====================

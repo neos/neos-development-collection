@@ -14,7 +14,7 @@ define(
 ],
 function() {
 	var T3 = window.T3 || {},
-		$ = window.alohaQuery || window.jQuery;
+		$ = window.Aloha.jQuery || window.jQuery;
 	var ContentModule = SC.Application.create({
 
 		/**
@@ -55,8 +55,9 @@ function() {
 			}, false);
 			this._enableDevelopmentFeaturesIfNeeded();
 
-			// When aloha is loaded, blockify our content.
-			Aloha.bind('aloha', this._initializeAlohaBlocksAndUpdateUi);
+			// Aloha is already loaded, so we can directly blockify our content
+			window.PhoenixAlohaPlugin.start();
+			this._initializeAlohaBlocksAndUpdateUi();
 
 			$('body').addClass('t3-ui-controls-active');
 			$('body').addClass('t3-backend');
@@ -76,12 +77,8 @@ function() {
 		},
 
 		_initializeAlohaBlocksAndUpdateUi: function() {
-			$.each(T3.Configuration.Schema, function(key, value) {
-				var cssClassName = key.toLowerCase().replace(/[.:]/g, '-');
-				$('.' + cssClassName).alohaBlock({
-					'block-type': 'TYPO3Block',
-					'__contenttype': key
-				});
+			$('.t3-contentelement').alohaBlock({
+				'aloha-block-type': 'TYPO3Block'
 			});
 
 			// Now we initialize the BlockManager. This triggers updates to the PublishableBlocks controller
@@ -197,7 +194,7 @@ function() {
 		 * Intercept all links, and instead use AJAX for reloading the page.
 		 */
 		_initializeAjaxPageReload: function() {
-			this._linkInterceptionHandler($('a').not('.t3-ui a'));
+			this._linkInterceptionHandler($('a').not('.t3-ui a, .aloha-floatingmenu a'));
 		},
 
 		_onBlockSelectionChange: function(blocks) {
@@ -208,7 +205,7 @@ function() {
 		_markTopmostSelectedBlock: function(blocks) {
 			$('.aloha-block-active-top').removeClass('aloha-block-active-top');
 			if (blocks.length > 0) {
-				blocks[0].element.addClass('aloha-block-active-top');
+				blocks[0].$element.addClass('aloha-block-active-top');
 			}
 		},
 

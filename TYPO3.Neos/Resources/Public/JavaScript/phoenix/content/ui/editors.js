@@ -16,7 +16,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 	}
 	T3.Content.UI = T3.Content.UI || {};
 	T3.Content.UI.Editor = T3.Content.UI.Editor || {};
-	var $ = window.alohaQuery || window.jQuery;
+	var $ = window.Aloha.jQuery || window.jQuery;
 
 	T3.Content.UI.Editor.TextField = SC.TextField.extend({
 	});

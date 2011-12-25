@@ -15,7 +15,7 @@ function(toolbarTemplate) {
 	}
 
 	T3.Content.UI = T3.Content.UI || {};
-	var $ = window.alohaQuery || window.jQuery;
+	var $ = window.Aloha.jQuery || window.jQuery;
 
 	/**
 	 * T3.Content.UI.Toolbar

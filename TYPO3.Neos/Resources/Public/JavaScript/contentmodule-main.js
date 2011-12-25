@@ -1,27 +1,15 @@
+Aloha.ready(function() {
+	window.jQuery = Aloha.jQuery;
 
-// Fine-tune some Aloha-SmartContentChange settings, making the whole system feel more responsive.
-Aloha = window.Aloha || {};
-Aloha.settings = Aloha.settings || {};
-Aloha.settings.smartContentChange = Aloha.settings.smartContentChange || {};
-Aloha.settings.smartContentChange.idle = 500;
-Aloha.settings.smartContentChange.delay = 150;
-
-require({
-	paths: {
-		'aloha': Aloha.settings.basePath + 'aloha',
-		'util': Aloha.settings.basePath + 'util',
-		'vendor': Aloha.settings.basePath + 'vendor',
-		'dep': Aloha.settings.basePath + 'dep',
-		'Library': '../Library/'
-	},
-	locale: 'en',
-	urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : ''
-},
-['aloha'],
-function() {
-	window.jQuery = window.alohaQuery;
-
-	require([
+	require({
+			baseUrl: window.phoenixJavascriptBasePath,
+			urlArgs: window.localStorage.showDevelopmentFeatures ? 'bust=' +  (new Date()).getTime() : '',
+			paths: {
+				'Library': '../Library/'
+			},
+			locale: 'en'
+		},
+		[
 		'order!Library/jquery-ui/js/jquery-ui-1.8.16.custom.min',
 		'css!Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css',
 		'order!Library/sproutcore/sproutcore',

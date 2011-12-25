@@ -3,21 +3,25 @@ define(
 function(Plugin, block, BlockManager, require) {
     "use strict";
 
-	var $ = window.alohaQuery || window.jQuery;
-
     var PhoenixPlugin = Plugin.create('phoenixintegration', {
     	dependencies: ['block'],
+
+		/**
+		 * Aloha Plugin Lifecycle method
+		 */
         init: function() {
-			var that = this;
 			BlockManager.registerBlockType('TYPO3Block', block.TYPO3Block);
-
-        	require(['phoenix/contentmodule'], function() {
-				BlockManager.bind('block-selection-change', T3.ContentModule._onBlockSelectionChange, T3.ContentModule);
-
-				Aloha.bind('aloha-editable-deactivated', that._onEditableChange);
-				Aloha.bind('aloha-smart-content-changed', that._onEditableChange);
-        	});
         },
+
+		/**
+		 * Starter -- called *after* content module is initialized (and T3.ContentModule._onBlockSelectionChange is available)
+		 */
+		start: function() {
+			BlockManager.bind('block-selection-change', T3.ContentModule._onBlockSelectionChange, T3.ContentModule);
+
+			Aloha.bind('aloha-editable-deactivated', this._onEditableChange);
+			Aloha.bind('aloha-smart-content-changed', this._onEditableChange);
+		},
 
 		_onEditableChange: function(event, data) {
 			var editable = data.editable;
@@ -36,5 +40,8 @@ function(Plugin, block, BlockManager, require) {
 		destroy: function() {
         }
     });
+	// We need a global reference here to call the start() method on the phoenix plugin
+	// from the contentmodule bootstrap
+	window.PhoenixAlohaPlugin = PhoenixPlugin;
 	return PhoenixPlugin;
 });

@@ -15,7 +15,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 
 	var T3 = window.T3 || {};
 	T3.Common = {};
-	var $ = window.alohaQuery || window.jQuery;
+	var $ = window.Aloha.jQuery || window.jQuery;
 
 	/**
 	 * T3.Common.Launcher
