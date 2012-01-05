@@ -854,12 +854,8 @@ class Node implements NodeInterface {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function isAccessible() {
-		if ($this->accessRoles === array()) {
+		if ($this->hasAccessRestrictions() === FALSE) {
 			return TRUE;
-		}
-
-		if (!$this->securityContext->isInitialized()) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException(sprintf('The security context is not yet intialized, thus the Node "%s" cannot determine if it is accessible. Some code part is calling isAccessible() early than is possible at that initialization stage.', $this->path), 1315383002);
 		}
 
 		foreach ($this->accessRoles as $roleName) {
@@ -868,6 +864,23 @@ class Node implements NodeInterface {
 			}
 		}
 		return FALSE;
+	}
+
+	/**
+	 * Tells if a node has access restrictions
+	 *
+	 * @return boolean
+	 */
+	public function hasAccessRestrictions() {
+		if (!is_array($this->accessRoles) || empty($this->accessRoles)) {
+			return FALSE;
+		}
+
+		if (count($this->accessRoles) === 1 && in_array('Everybody', $this->accessRoles)) {
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 
 	/**
