@@ -136,7 +136,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 					'order!Library/codemirror2/mode/htmlmixed/htmlmixed',
 
 					'css!Library/codemirror2/lib/codemirror.css',
-					'css!Library/codemirror2/theme/default.css',
+					'css!Library/codemirror2/theme/default.css'
 				], function() {
 					var editorFullyPopulated = false;
 
@@ -459,7 +459,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 							previewImageCoordinates.x,
 							previewImageCoordinates.y,
 							previewImageCoordinates.x + previewImageCoordinates.w,
-							previewImageCoordinates.y + previewImageCoordinates.h,
+							previewImageCoordinates.y + previewImageCoordinates.h
 						];
 					}
 					$imageInThumbnail.Jcrop(settings);

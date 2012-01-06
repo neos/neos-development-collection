@@ -118,7 +118,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Rens Admiraal <rens@rensnel.nl>
 	 * @todo maybe the actual creation should be put in a helper / service class
 	 * @ExtDirect
 	 */
