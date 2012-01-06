@@ -471,7 +471,12 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		*/
 		getItem: function (key) {
 			if (!this._supportsLocalStorage()) return undefined;
-			return JSON.parse(window.localStorage.getItem(key));
+
+			try {
+				return JSON.parse(window.localStorage.getItem(key));
+			} catch (e) {
+				return undefined;
+			}
 		},
 
 		/**
