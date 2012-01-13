@@ -34,6 +34,24 @@ class SiteCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 
 	/**
 	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3\Domain\Repository\DomainRepository
+	 */
+	protected $domainRepository;
+
+	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
+	 */
+	protected $workspaceRepository;
+
+	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\SiteExportService
 	 */
 	protected $siteExportService;
@@ -86,6 +104,29 @@ class SiteCommandController extends \TYPO3\FLOW3\MVC\Controller\CommandControlle
 	public function exportCommand() {
 		$sites = $this->siteRepository->findAll();
 		$this->response->setContent($this->siteExportService->export($sites->toArray()));
+	}
+
+	/**
+	 * Remove all content and related data - for now. In the future we need some more sophisticated cleanup.
+	 *
+	 * @param boolean $confirmation
+	 * @return void
+	 */
+	public function pruneCommand($confirmation = FALSE) {
+		if ($confirmation === FALSE) {
+			$this->outputLine('Please confirm that you really want to remove all sites and content from the database.');
+			$this->outputLine('');
+			$this->outputLine('Syntax:');
+			$this->outputLine('  ./flow3 site:prune --confirmation TRUE');
+			return;
+		}
+
+		$this->nodeRepository->removeAll();
+		$this->workspaceRepository->removeAll();
+		$this->domainRepository->removeAll();
+		$this->siteRepository->removeAll();
+
+		$this->outputLine('All sites and content have been removed.');
 	}
 
 }
