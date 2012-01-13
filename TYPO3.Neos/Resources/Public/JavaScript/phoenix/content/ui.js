@@ -42,10 +42,10 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 	 *
 	 * The breadcrumb menu
 	 */
-	T3.Content.UI.Breadcrumb = SC.View.extend({
+	T3.Content.UI.Breadcrumb = Ember.View.extend({
 		tagName: 'div',
 		classNames: ['t3-breadcrumb'],
-		template: SC.Handlebars.compile(breadcrumbTemplate)
+		template: Ember.Handlebars.compile(breadcrumbTemplate)
 	});
 
 	/**
@@ -54,13 +54,13 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 	 * view for a single breadcrumb item
 	 * @internal
 	 */
-	T3.Content.UI.BreadcrumbItem = SC.View.extend({
+	T3.Content.UI.BreadcrumbItem = Ember.View.extend({
 		tagName: 'a',
 		href: '#',
 
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
-		template: SC.Handlebars.compile('{{item.__titleAndModifcationState}}'),
+		template: Ember.Handlebars.compile('{{item.__titleAndModifcationState}}'),
 		click: function(event) {
 			var item = this.get('item');
 			T3.Content.Model.BlockSelection.selectItem(item);
@@ -78,8 +78,8 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 	 *
 	 * Furthermore, it contains *Editors*
 	 */
-	T3.Content.UI.Inspector = SC.View.extend({
-		template: SC.Handlebars.compile(inspectorTemplate),
+	T3.Content.UI.Inspector = Ember.View.extend({
+		template: Ember.Handlebars.compile(inspectorTemplate),
 
 		/**
 		 * When we are in edit mode, the click protection layer is intercepting
@@ -117,8 +117,8 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 		 * When clicking the click protection, we show a dialog
 		 */
 		_showUnappliedDialog: function() {
-			var view = SC.View.create({
-				template: SC.Handlebars.compile(inspectorDialogTemplate),
+			var view = Ember.View.create({
+				template: Ember.Handlebars.compile(inspectorDialogTemplate),
 				didInsertElement: function() {
 					var title = this.$().find('h1').remove().html();
 
@@ -147,7 +147,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 		}
 	});
 
-	T3.Content.UI.Inspector.PropertyEditor = SC.ContainerView.extend({
+	T3.Content.UI.Inspector.PropertyEditor = Ember.ContainerView.extend({
 		propertyDefinition: null,
 
 		render: function() {
@@ -161,7 +161,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 				editorConfigurationDefinition = $.extend({}, editorConfigurationDefinition, this.propertyDefinition.userInterface);
 			}
 
-			var editorClass = SC.getPath(editorConfigurationDefinition['class']);
+			var editorClass = Ember.getPath(editorConfigurationDefinition['class']);
 			if (!editorClass) {
 				throw 'Editor class "' + typeDefinition['class'] + '" not found';
 			}
@@ -366,8 +366,8 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 					if (node.hasChildNodes() || node.isExpandable()) {
 						$deletionDropZone.addClass('t3-dd-deletionzone-pending');
 
-						var view = SC.View.create({
-							template: SC.Handlebars.compile(recursivePageDeletionDialogTemplate),
+						var view = Ember.View.create({
+							template: Ember.Handlebars.compile(recursivePageDeletionDialogTemplate),
 							didInsertElement: function() {
 								var title = this.$().find('h1').remove().html();
 

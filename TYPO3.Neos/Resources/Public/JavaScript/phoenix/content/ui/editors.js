@@ -18,13 +18,13 @@ function(fileUploadTemplate, imageUploadTemplate) {
 	T3.Content.UI.Editor = T3.Content.UI.Editor || {};
 	var $ = window.Aloha.jQuery || window.jQuery;
 
-	T3.Content.UI.Editor.TextField = SC.TextField.extend({
+	T3.Content.UI.Editor.TextField = Ember.TextField.extend({
 	});
 
-	T3.Content.UI.Editor.Checkbox = SC.Checkbox.extend({
+	T3.Content.UI.Editor.Checkbox = Ember.Checkbox.extend({
 	});
 
-	T3.Content.UI.Editor.DateField = SC.TextField.extend({
+	T3.Content.UI.Editor.DateField = Ember.TextField.extend({
 		didInsertElement: function() {
 			this.$().attr('placeholder', 'No date set');
 			this.$().datepicker({
@@ -36,16 +36,16 @@ function(fileUploadTemplate, imageUploadTemplate) {
 		}
 	});
 
-	T3.Content.UI.Editor.SelectboxOption = SC.View.extend({
+	T3.Content.UI.Editor.SelectboxOption = Ember.View.extend({
 		tagName: 'option',
 		attributeBindings: ['value', 'selected'],
 		valueBinding: 'content.value',
 		selectedBinding: 'content.selected',
 
-		template: SC.Handlebars.compile('{{content.label}}')
+		template: Ember.Handlebars.compile('{{content.label}}')
 	});
 
-	T3.Content.UI.Editor.Selectbox = SC.CollectionView.extend({
+	T3.Content.UI.Editor.Selectbox = Ember.CollectionView.extend({
 		classNames: ['typo3-form-selectbox'],
 
 		tagName: 'select',
@@ -64,10 +64,10 @@ function(fileUploadTemplate, imageUploadTemplate) {
 			var options = [], currentValue = this.get('value');
 
 			if (this.get('allowEmpty')) {
-				options.push(SC.Object.create({value: '', label: this.get('placeholder')}));
+				options.push(Ember.Object.create({value: '', label: this.get('placeholder')}));
 			}
 			$.each(this.get('values'), function(value) {
-				options.push(SC.Object.create($.extend({
+				options.push(Ember.Object.create($.extend({
 					selected: value === currentValue,
 					value: value
 				}, this)));
@@ -117,7 +117,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 
 		onPopoverOpen: function() {
 			var that = this,
-				id = this.get(SC.GUID_KEY);
+				id = this.get(Ember.GUID_KEY);
 
 				// Initialize CodeMirror editor with a nice html5 canvas demo.
 			if (!this._editorInitialized) {
@@ -169,7 +169,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 			if (this._editorInitialized) {
 				this.$().trigger('hidePopover');
 				this._editor.toTextArea();
-				$('#typo3-htmleditor-' + this.get(SC.GUID_KEY)).remove();
+				$('#typo3-htmleditor-' + this.get(Ember.GUID_KEY)).remove();
 				this._editorInitialized = false;
 			}
 			// TODO: not only hide the popover, but completely remove it from DOM!
@@ -177,7 +177,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 
 	});
 
-	T3.Content.UI.Editor.FileUpload = SC.View.extend({
+	T3.Content.UI.Editor.FileUpload = Ember.View.extend({
 
 		value: '',
 
@@ -196,10 +196,10 @@ function(fileUploadTemplate, imageUploadTemplate) {
 		_browseButtonId: null,
 		_uploadButtonShown: false,
 
-		template: SC.Handlebars.compile(fileUploadTemplate),
+		template: Ember.Handlebars.compile(fileUploadTemplate),
 
 		init: function() {
-			var id = this.get(SC.GUID_KEY);
+			var id = this.get(Ember.GUID_KEY);
 			this._containerId = 'typo3-fileupload' + id;
 			this._browseButtonId = 'typo3-fileupload-browsebutton' + id;
 			return this._super();
@@ -286,7 +286,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 		 */
 		allowedFileTypes: 'jpg,png',
 
-		template: SC.Handlebars.compile(imageUploadTemplate),
+		template: Ember.Handlebars.compile(imageUploadTemplate),
 
 		// Upload Preview
 		_uploadPreviewShown: true,
@@ -402,7 +402,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 		},
 
 		_setPreviewImage: function(responseJson) {
-			SC.beginPropertyChanges();
+			Ember.beginPropertyChanges();
 
 			this.set('_originalImageSize', responseJson.originalSize);
 			this.set('_previewImageSize', responseJson.previewSize);
@@ -410,7 +410,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 			this.set('_uploadPreviewShown', false);
 			this.set('_imageBadge', 'Click to Crop');
 
-			SC.endPropertyChanges();
+			Ember.endPropertyChanges();
 		},
 
 		/**
@@ -610,10 +610,10 @@ function(fileUploadTemplate, imageUploadTemplate) {
 				$.each(imageVariant.processingInstructions, function(index, instruction) {
 					if (instruction.command === 'crop') {
 						var cropOptions = {
-							x: SC.getPath(instruction, 'options.start.x'),
-							y: SC.getPath(instruction, 'options.start.y'),
-							w: SC.getPath(instruction, 'options.size.width'),
-							h: SC.getPath(instruction, 'options.size.height')
+							x: Ember.getPath(instruction, 'options.start.x'),
+							y: Ember.getPath(instruction, 'options.start.y'),
+							w: Ember.getPath(instruction, 'options.size.width'),
+							h: Ember.getPath(instruction, 'options.size.height')
 						};
 						that.set('_cropOptions', cropOptions)
 					} else if (instruction.command === 'resize') {

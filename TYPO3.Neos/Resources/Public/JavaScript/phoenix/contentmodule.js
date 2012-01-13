@@ -15,15 +15,15 @@ define(
 function() {
 	var T3 = window.T3 || {},
 		$ = window.Aloha.jQuery || window.jQuery;
-	var ContentModule = SC.Application.create({
+	var ContentModule = Ember.Application.create({
 
 		/**
 		 * The following setting is set to "true" when unfinished features should be shown.
 		 *
 		 * You can use it in the UI as following:
 		 *
-		 * SC.View.extend({
-		 *    template: SC.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
+		 * Ember.View.extend({
+		 *    template: Ember.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
 		 *    isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
 		 * })
 		 *
@@ -145,13 +145,13 @@ function() {
 					})
 				],
 				right: [
-					SC.View.extend({
-						template: SC.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
+					Ember.View.extend({
+						template: Ember.Handlebars.compile('<span style="color:white">!!! Development mode !!!</span>'),
 						isVisibleBinding: 'T3.ContentModule.showDevelopmentFeatures'
 					}),
 					T3.Content.UI.Button.extend({
 						label: 'Publish Page',
-						disabledBinding: SC.Binding.or('_noChanges', '_connectionFailed'),
+						disabledBinding: Ember.Binding.or('_noChanges', '_connectionFailed'),
 						target: 'T3.Content.Model.PublishableBlocks',
 						action: 'publishAll',
 						_connectionFailedBinding: 'T3.Content.Controller.ServerConnection._failedRequest',

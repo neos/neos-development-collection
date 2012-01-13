@@ -12,7 +12,7 @@ Aloha.ready(function() {
 		[
 		'order!Library/jquery-ui/js/jquery-ui-1.8.16.custom.min',
 		'css!Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css',
-		'order!Library/sproutcore/sproutcore',
+		'order!Library/emberjs/ember',
 		'order!Library/jquery-lionbars/jQuery.lionbars.0.2.1',
 		'order!phoenix/contentmodule'],
 		function() {
@@ -20,7 +20,7 @@ Aloha.ready(function() {
 			T3.Configuration = window.T3Configuration;
 			delete window.T3Configuration;
 
-			SC.$(document).ready(function() {
+			Ember.$(document).ready(function() {
 				T3.ContentModule.bootstrap();
 
 				Ext.Direct.on("exception", function(error) {

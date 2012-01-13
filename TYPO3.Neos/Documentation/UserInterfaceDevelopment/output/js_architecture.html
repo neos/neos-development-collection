@@ -46,7 +46,7 @@
           <dl class="L">
     <dt>General</dt>
       <dd><a href="style_guide.html">JavaScript Style Guide</a></dd>
-      <dd><a href="sproutcore.html">SproutCore tips &amp; tricks</a></dd>
+      <dd><a href="ember.html">Ember.js tips &amp; tricks</a></dd>
     <dt>The Content Module</dt>
       <dd><a href="js_architecture.html">JavaScript Architecture</a></dd>
 </dl>
@@ -113,8 +113,8 @@
 <p><img src="images/content/js_architecture/internal_structure_ui_updates.png" alt="" /></p>
 <ol>
 	<li>The phoenixintegration Aloha Plugin (located in <code>alohaplugins/phoenixintegration/lib/phoenixintegration-plugin.js</code>) hooks   into the Aloha event which is triggered whenever the block selection changes. Whenever this event is triggered,   it calls <tt>T3.Content.Model.BlockSelection.updateSelection()</tt>.</li>
-	<li>We need to wrap each Aloha Block with a <strong>SproutCore Block</strong> (later only called Block),   so we can attach event listeners to it. This wrapping is done by the <code>BlockManager</code></li>
-	<li>The <code>BlockManager</code> either returns existing SproutCore Blocks (if the given Aloha Block has already been wrapped),   or creates a new one.</li>
+	<li>We need to wrap each Aloha Block with a <strong>Ember.js Block</strong> (later only called Block),   so we can attach event listeners to it. This wrapping is done by the <code>BlockManager</code></li>
+	<li>The <code>BlockManager</code> either returns existing Ember.js Blocks (if the given Aloha Block has already been wrapped),   or creates a new one.</li>
 	<li>Then, the <code>BlockSelection</code> sets its <code>content</code> property, which the UI is bound to. Thus,   all UI elements which depend on the current block selection are refreshed.</li>
 </ol>
 <h4 id="ui-updates-on-property-change">5.2 UI updates on property change</h4>

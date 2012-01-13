@@ -13,7 +13,7 @@ function() {
 	/**
 	 * This controller toggles the preview mode on and off.
 	 */
-	var Preview = SC.Object.create({
+	var Preview = Ember.Object.create({
 		previewMode: false,
 
 		init: function() {
@@ -127,7 +127,7 @@ function() {
 	 * @TODO: rename differently, because it is too similar with "Inspector"
 	 * @TODO: Toggling inspectMode does not show popover
 	 */
-	var Inspect = SC.Object.create({
+	var Inspect = Ember.Object.create({
 		inspectMode: false,
 
 		onInspectModeChange: function() {
@@ -143,7 +143,7 @@ function() {
 	/**
 	 * Controller for the inspector
 	 */
-	var Inspector = SC.Object.create({
+	var Inspector = Ember.Object.create({
 		_modified: false,
 		_unmodified: function() {
 			return !this.get('_modified');
@@ -155,7 +155,7 @@ function() {
 		cleanProperties: null,
 
 		init: function() {
-			this.set('blockProperties', SC.Object.create());
+			this.set('blockProperties', Ember.Object.create());
 		},
 
 		/**
@@ -206,7 +206,7 @@ function() {
 		onSelectedBlockChange: function() {
 			this.selectedBlock = T3.Content.Model.BlockSelection.get('selectedBlock');
 			this.cleanProperties = this.selectedBlock.getCleanedUpAttributes();
-			this.set('blockProperties', SC.Object.create(this.cleanProperties));
+			this.set('blockProperties', Ember.Object.create(this.cleanProperties));
 		}.observes('T3.Content.Model.BlockSelection.selectedBlock'),
 
 
@@ -268,13 +268,13 @@ function() {
 		 */
 		apply: function() {
 			var that = this;
-			SC.beginPropertyChanges();
-			SC.keys(this.cleanProperties).forEach(function(key) {
+			Ember.beginPropertyChanges();
+			Ember.keys(this.cleanProperties).forEach(function(key) {
 				that.selectedBlock.set(key, that.blockProperties.get(key));
 			});
 
 			this.set('_modified', false);
-			SC.endPropertyChanges();
+			Ember.endPropertyChanges();
 		},
 
 		/**
@@ -282,7 +282,7 @@ function() {
 		 */
 		revert: function() {
 			this.cleanProperties = this.selectedBlock.getCleanedUpAttributes();
-			this.set('blockProperties', SC.Object.create(this.cleanProperties));
+			this.set('blockProperties', Ember.Object.create(this.cleanProperties));
 			this.set('_modified', false);
 		}
 	});
@@ -296,7 +296,7 @@ function() {
 	 *
 	 * @singleton
 	 */
-	var BlockActions = SC.Object.create({
+	var BlockActions = Ember.Object.create({
 
 		// TODO: Move this to a separete controller
 		_clipboard: null,
@@ -533,7 +533,7 @@ function() {
 	});
 
 
-	var ServerConnection = SC.Object.create({
+	var ServerConnection = Ember.Object.create({
 
 		_lastSuccessfulTransfer: null,
 		_failedRequest: false,

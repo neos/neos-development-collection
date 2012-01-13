@@ -1,15 +1,15 @@
-h2. SproutCore Tips and Tricks
+h2. Ember.js Tips and Tricks
 
 After reading this guide, you will be able to:
 
-* Gain a better understanding of SproutCore.
+* Gain a better understanding of Ember.js.
 
 endprologue.
 
 h3. Dealing with classes and objects
 
-* Always extend from +SC.Object+ (or a subclass)
-* Extension is done using +SC.Object.extend({...})+
+* Always extend from +Ember.Object+ (or a subclass)
+* Extension is done using +Ember.Object.extend({...})+
 * Never use @new@ to instanciate new objects. Instead, use +TheObject.create(...)+
 * All objects have generic +set(key, value)+ and +get(key)+ methods, *which should be used
   under all circumstances*!
@@ -17,7 +17,7 @@ h3. Dealing with classes and objects
 The following example shows this:
 
 <javascript>
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	someValue: 'hello',
 	myMethod: function() {
 		alert(this.get('someValue'));
@@ -35,7 +35,7 @@ method call (in fact the function is wrapped to create this special @_super@ met
 of the superclass can be done without specifying the superclass and method name.
 
 <javascript>
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	greet: function(name) {
 		return 'Hello, ' + name;
 	}
@@ -54,7 +54,7 @@ h3. Data Binding tips and tricks
 To create a *computed property*, implement it as function and append +.property()+:
 
 <javascript>
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	someComputedValue: function() {
 		return "myMethod";
 	}.property()
@@ -67,7 +67,7 @@ parameters to @property()@. If the computed property is deterministic and depend
 dependant values, it should be marked further with @.cacheable()@.
 
 <javascript>
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	name: 'world',
 	greeting: function() {
 		return "Hello " + this.attr('name');
@@ -89,11 +89,11 @@ TODO: Document the "fooBinding: "... stuff
 
 h4. Observe changes
 
-To react on changes of properties in models or views (or any other class extending @SC.Observable@), a method marked as an observer can be used. Call
+To react on changes of properties in models or views (or any other class extending @Ember.Observable@), a method marked as an observer can be used. Call
 @.observes('propertyName')@ on a private method to be notified whenever a property changes.
 
 <javascript>
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	name: 'world',
 	_nameDidChange: function() {
 		console.log('name changed to', this.get('name'));
@@ -105,3 +105,4 @@ h3. Changelog
 
 * July 11, 2011: Initial version by "Sebastian Kurfürst":credits.html#skurfuerst
 * July 11, 2011: Some more insight from "Christopher Hlubek":credits.html#hlubek
+* January 13, 2012: Sproutcore is now Ember by "Christian Müller":credits.html#kitsunet

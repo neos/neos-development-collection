@@ -74,9 +74,9 @@ The following diagram shows how the UI is changing when the block selection chan
 # The phoenixintegration Aloha Plugin (located in @alohaplugins/phoenixintegration/lib/phoenixintegration-plugin.js@) hooks
   into the Aloha event which is triggered whenever the block selection changes. Whenever this event is triggered,
   it calls +T3.Content.Model.BlockSelection.updateSelection()+.
-# We need to wrap each Aloha Block with a *SproutCore Block* (later only called Block),
+# We need to wrap each Aloha Block with a *Ember.js Block* (later only called Block),
   so we can attach event listeners to it. This wrapping is done by the @BlockManager@
-# The @BlockManager@ either returns existing SproutCore Blocks (if the given Aloha Block has already been wrapped),
+# The @BlockManager@ either returns existing Ember.js Blocks (if the given Aloha Block has already been wrapped),
   or creates a new one.
 # Then, the @BlockSelection@ sets its @content@ property, which the UI is bound to. Thus,
   all UI elements which depend on the current block selection are refreshed.

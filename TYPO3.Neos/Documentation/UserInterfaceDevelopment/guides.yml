@@ -21,6 +21,6 @@ index:
     - title: "JavaScript Style Guide"
       url: style_guide
       text: "Style Guide"
-    - title: "SproutCore tips & tricks"
-      url: sproutcore
-      text: "Tips and tricks for using sproutcore."
+    - title: "Ember.js tips & tricks"
+      url: ember
+      text: "Tips and tricks for using ember.js."

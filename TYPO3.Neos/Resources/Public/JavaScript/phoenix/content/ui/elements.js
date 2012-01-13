@@ -22,10 +22,10 @@ function(toolbarTemplate) {
 	 *
 	 * Toolbar which can contain other views. Has two areas, left and right.
 	 */
-	T3.Content.UI.Toolbar = SC.View.extend({
+	T3.Content.UI.Toolbar = Ember.View.extend({
 		tagName: 'div',
 		classNames: ['t3-toolbar', 'aloha-block-do-not-deactivate'],
-		template: SC.Handlebars.compile(toolbarTemplate)
+		template: Ember.Handlebars.compile(toolbarTemplate)
 	});
 
 	/**
@@ -35,7 +35,7 @@ function(toolbarTemplate) {
 	 *
 	 * TODO: should be moved to T3.Common.UI.Button?
 	 */
-	T3.Content.UI.Button = SC.Button.extend({
+	T3.Content.UI.Button = Ember.Button.extend({
 		classNames: ['t3-button'],
 		attributeBindings: ['disabled'],
 		classNameBindings: ['iconClass'],
@@ -43,14 +43,14 @@ function(toolbarTemplate) {
 		disabled: false,
 		visible: true,
 		icon: '',
-		template: SC.Handlebars.compile('{{label}}'),
+		template: Ember.Handlebars.compile('{{label}}'),
 		iconClass: function() {
 			var icon = this.get('icon');
 			return icon !== '' ? 't3-icon-' + icon : '';
 		}.property('icon').cacheable()
 	});
 
-	T3.Content.UI.Image = SC.View.extend({
+	T3.Content.UI.Image = Ember.View.extend({
 		tagName: 'img',
 		attributeBindings: ['src']
 	});

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>TYPO3 UI Guides: SproutCore Tips and Tricks</title>
+  <title>TYPO3 UI Guides: Ember.js Tips and Tricks</title>
 
   <!-- guides styles -->
   <link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
@@ -46,7 +46,7 @@
           <dl class="L">
     <dt>General</dt>
       <dd><a href="style_guide.html">JavaScript Style Guide</a></dd>
-      <dd><a href="sproutcore.html">SproutCore tips &amp; tricks</a></dd>
+      <dd><a href="ember.html">Ember.js tips &amp; tricks</a></dd>
     <dt>The Content Module</dt>
       <dd><a href="js_architecture.html">JavaScript Architecture</a></dd>
 </dl>
@@ -63,17 +63,17 @@
     <div class="wrapper">
       <div id="mainCol">
           <div class="headerSection">
-            <h2>SproutCore Tips and Tricks</h2>
+            <h2>Ember.js Tips and Tricks</h2>
 <p>After reading this guide, you will be able to:</p>
 <ul>
-	<li>Gain a better understanding of SproutCore.</li>
+	<li>Gain a better understanding of Ember.js.</li>
 </ul>
 
           </div>
         <h3 id="dealing-with-classes-and-objects">1 Dealing with classes and objects</h3>
 <ul>
-	<li>Always extend from <tt>SC.Object</tt> (or a subclass)</li>
-	<li>Extension is done using <tt>SC.Object.extend({...})</tt></li>
+	<li>Always extend from <tt>Ember.Object</tt> (or a subclass)</li>
+	<li>Extension is done using <tt>Ember.Object.extend({...})</tt></li>
 	<li>Never use <code>new</code> to instanciate new objects. Instead, use <tt>TheObject.create(...)</tt></li>
 	<li>All objects have generic <tt>set(key, value)</tt> and <tt>get(key)</tt> methods, <strong>which should be used   under all circumstances</strong>!</li>
 </ul>
@@ -81,7 +81,7 @@
 <div class="code_container">
 <pre class="brush: javascript; gutter: false; toolbar: false">
 
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	someValue: 'hello',
 	myMethod: function() {
 		alert(this.get('someValue'));
@@ -96,7 +96,7 @@ fooInstance.myMethod(); // outputs &quot;world&quot;
 <div class="code_container">
 <pre class="brush: javascript; gutter: false; toolbar: false">
 
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	greet: function(name) {
 		return 'Hello, ' + name;
 	}
@@ -113,7 +113,7 @@ Bar.create().greet('Phoenix'); // outputs &quot;Aloha and Hello, Phoenix&quot;
 <div class="code_container">
 <pre class="brush: javascript; gutter: false; toolbar: false">
 
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	someComputedValue: function() {
 		return &quot;myMethod&quot;;
 	}.property()
@@ -123,7 +123,7 @@ var Foo = SC.Object.extend({
 <div class="code_container">
 <pre class="brush: javascript; gutter: false; toolbar: false">
 
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	name: 'world',
 	greeting: function() {
 		return &quot;Hello &quot; + this.attr('name');
@@ -136,11 +136,11 @@ var Foo = SC.Object.extend({
 <div class="warning"><p>Not yet 100% clear yet</p></div>
 <p><span class="caps">TODO</span>: Document the &quot;fooBinding: &quot;&#8230; stuff</p>
 <h4 id="observe-changes">2.2 Observe changes</h4>
-<p>To react on changes of properties in models or views (or any other class extending <code>SC.Observable</code>), a method marked as an observer can be used. Call <code>.observes('propertyName')</code> on a private method to be notified whenever a property changes.</p>
+<p>To react on changes of properties in models or views (or any other class extending <code>Ember.Observable</code>), a method marked as an observer can be used. Call <code>.observes('propertyName')</code> on a private method to be notified whenever a property changes.</p>
 <div class="code_container">
 <pre class="brush: javascript; gutter: false; toolbar: false">
 
-var Foo = SC.Object.extend({
+var Foo = Ember.Object.extend({
 	name: 'world',
 	_nameDidChange: function() {
 		console.log('name changed to', this.get('name'));

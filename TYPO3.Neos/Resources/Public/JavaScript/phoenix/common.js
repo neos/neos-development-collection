@@ -23,12 +23,12 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	 * Implements the quicksilver-like launch bar. Consists of a textfield
 	 * and a panel which is opened when the textfield is focussed.
 	 */
-	T3.Common.Launcher = SC.View.extend({
+	T3.Common.Launcher = Ember.View.extend({
 		tagName: 'div',
 		classNames: ['t3-launcher'],
 		value: '',
 		open: false,
-		template: SC.Handlebars.compile(launcherTemplate),
+		template: Ember.Handlebars.compile(launcherTemplate),
 
 		activate: function() {
 			this.$().find('.t3-launcher-container input').focus();
@@ -40,7 +40,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	 *
 	 * Contains a list of available search items
 	 */
-	T3.Common.Launcher.SearchController = SC.Object.create({
+	T3.Common.Launcher.SearchController = Ember.Object.create({
 		_launcherTextField: null,
 		_requestIndex: 0,
 		_value: '',
@@ -123,9 +123,9 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		_response: function(data) {
 			var results = [];
 			$.each(data.results, function(key, group) {
-				group = SC.Object.create(group);
+				group = Ember.Object.create(group);
 				var wrappedSearchItems = group.get('items').map(function(searchItem) {
-					return SC.Object.create(searchItem);
+					return Ember.Object.create(searchItem);
 				});
 				group.set('items', wrappedSearchItems);
 				results.push(group);
@@ -141,7 +141,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	/**
 	 * @internal
 	 */
-	T3.Common.Launcher.TextField = SC.TextField.extend({
+	T3.Common.Launcher.TextField = Ember.TextField.extend({
 		_notEmpty: function() {
 			var parent = this.$().parent(),
 				notEmptyClass = 'not-empty';
@@ -186,13 +186,13 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	/**
 	 * @internal
 	 */
-	T3.Common.Launcher.Panel = SC.View.extend({
+	T3.Common.Launcher.Panel = Ember.View.extend({
 		tagName: 'div',
 		classNames: ['t3-launcher-panel'],
 		open: false,
 		focussed: false,
 		scrollingInitialized: false,
-		template: SC.Handlebars.compile(launcherPanelTemplate),
+		template: Ember.Handlebars.compile(launcherPanelTemplate),
 		_openDidChange: function() {
 			var that = this;
 			// Delay the execution a bit to give the focus change a chance
@@ -227,7 +227,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	 *
 	 * @singleton
 	 */
-	T3.Common.Dialog = SC.Object.create({
+	T3.Common.Dialog = Ember.Object.create({
 
 		_options: {
 			preventLeft: false,
@@ -301,8 +301,8 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 				that._options.header = (options.title) ? '<h1>' + options.title + '</h1>': null;
 				that._options.content = $(options.content === undefined ? '<div />' : '<div>' + options.content + '</div>');
 
-				var view = SC.View.create({
-					template: SC.Handlebars.compile(confirmationdialogTemplate),
+				var view = Ember.View.create({
+					template: Ember.Handlebars.compile(confirmationdialogTemplate),
 					save: function() {
 						if (options.onOk) {
 							options.onOk.call(that);
@@ -407,7 +407,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	 *
 	 * @singleton
 	 */
-	T3.Common.Notification = SC.Object.create({
+	T3.Common.Notification = Ember.Object.create({
 
 		ok: function(msg, stay) {
 			$.noticeAdd({
@@ -450,7 +450,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 		}
 	});
 
-	T3.Common.Util = SC.Object.create({
+	T3.Common.Util = Ember.Object.create({
 		isValidJsonString: function(jsonString) {
 			// The following regular expression comes from http://tools.ietf.org/html/rfc4627 and checks if the JSON is valid
 			return !/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(jsonString.replace(/"(\\.|[^"\\])*"/g, ''));
@@ -461,7 +461,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 	 * Wrapper class for the localStorage, supporting storage of objects and arrays.
 	 * Internally, all values are JSON encoded and decoded automatically.
 	 */
-	T3.Common.LocalStorage = SC.Object.create({
+	T3.Common.LocalStorage = Ember.Object.create({
 
 		/**
 		* Get an item from localStorage

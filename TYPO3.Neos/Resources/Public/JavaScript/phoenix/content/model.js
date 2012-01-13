@@ -18,7 +18,7 @@ function(launcherTemplate) {
 	/**
 	 * T3.Content.Model.AbstractBlock
 	 */
-	var AbstractBlock = SC.Object.extend({
+	var AbstractBlock = Ember.Object.extend({
 		_hidden: false,
 		__title: null,
 		__originalValues: null,
@@ -266,7 +266,7 @@ function(launcherTemplate) {
 	 *
 	 * @internal
 	 */
-	var BlockManager = SC.Object.create({
+	var BlockManager = Ember.Object.create({
 		_blocks: {},
 		_blocksByNodePath: {},
 		_pageBlock: null,
@@ -356,7 +356,7 @@ function(launcherTemplate) {
 	 * This model is the one most listened to, as when the block selection changes, the UI
 	 * is responding to that.
 	 */
-	var BlockSelection = SC.Object.create({
+	var BlockSelection = Ember.Object.create({
 		blocks: [],
 
 		initialize: function() {
@@ -415,7 +415,7 @@ function(launcherTemplate) {
 		}
 	});
 
-	var PublishableBlocks = SC.ArrayProxy.create({
+	var PublishableBlocks = Ember.ArrayProxy.create({
 		content: [],
 
 		noChanges: function() {
@@ -458,7 +458,7 @@ function(launcherTemplate) {
 	 *
 	 * TODO: On saving, should empty local storage!
 	 */
-	var Changes = SC.ArrayProxy.create({
+	var Changes = Ember.ArrayProxy.create({
 		content: [],
 
 		_loadedFromLocalStore: false,
