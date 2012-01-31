@@ -11,9 +11,12 @@ namespace TYPO3\Media\Domain\Repository;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+use TYPO3\FLOW3\Annotations as FLOW3;
+
 /**
  * A repository for Images
  *
+ * @FLOW3\Scope("singleton")
  */
 class ImageRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
