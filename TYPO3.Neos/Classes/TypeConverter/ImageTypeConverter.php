@@ -33,7 +33,7 @@ class ImageTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTyp
 	/**
 	 * @var integer
 	 */
-	protected $priority = 1;
+	protected $priority = 2;
 
 	/**
 	 * @FLOW3\Inject
