@@ -158,9 +158,13 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			$query->setParameter('path', $path);
 			$query->setParameter('workspace', $workspace);
 
-			$node = $query->getOneOrNullResult();
-			if ($node !== NULL) {
-				return $node;
+			try {
+				$node = $query->getOneOrNullResult();
+				if ($node !== NULL) {
+					return $node;
+				}
+			} catch (\Doctrine\ORM\NonUniqueResultException $exception) {
+				throw new \TYPO3\TYPO3CR\Exception(sprintf('Non-unique result found for path "%s"', $path), 1328018972, $exception);
 			}
 			$workspace = $workspace->getBaseWorkspace();
 		}
