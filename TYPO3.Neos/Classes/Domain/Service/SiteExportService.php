@@ -36,6 +36,7 @@ class SiteExportService {
 	public function export(array $sites) {
 		$contentContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
 		$contentContext->setInvisibleContentShown(TRUE);
+		$contentContext->setInaccessibleContentShown(TRUE);
 
 		$xmlWriter = new \XMLWriter();
 		$xmlWriter->openUri('php://output');
