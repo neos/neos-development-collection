@@ -170,8 +170,8 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContent(\TYPO3\TYPO3\TypoScript\Content $content) {
-     	$this->content = $content;
-  	}
+		$this->content = $content;
+	}
 
 	/**
 	 * Returns the Content TypoScript Object used on this page.
@@ -180,8 +180,8 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContent() {
-     	return $this->content;
-  	}
+		return $this->content;
+	}
 
 	/**
 	 * Sets the parts array for this page

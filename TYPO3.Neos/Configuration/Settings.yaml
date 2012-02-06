@@ -92,6 +92,10 @@ TYPO3:
             priority: 10
 
 
+      'TYPO3.TYPO3:Shortcut':
+        superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.TYPO3:AbstractNode']
+        label: 'Shortcut'
+
       'TYPO3.TYPO3:Page':
         superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.TYPO3:AbstractNode']
         label: 'Page'

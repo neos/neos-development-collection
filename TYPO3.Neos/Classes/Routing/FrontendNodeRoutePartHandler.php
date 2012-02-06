@@ -142,20 +142,27 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicR
 			if (!isset($matches['NodePath'])) {
 				return FALSE;
 			}
-			$nodeContextPath = $matches['NodePath'];
 
 			$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
-			$context = new ContentContext($workspaceName);
-			$workspace = $context->getWorkspace(FALSE);
-			if ($workspace === NULL) {
+			$contentContext = new ContentContext($workspaceName);
+			if ($contentContext->getWorkspace(FALSE) === NULL) {
 				return FALSE;
 			}
+
+			$node = $contentContext->getCurrentSiteNode()->getNode($value);
 		} else {
-			$context = $value->getContext();
-			$nodeContextPath = $value->getContextPath();
+			$node = $value;
+			$contentContext = $node->getContext();
 		}
 
-		$siteNodePath = $context->getCurrentSiteNode()->getPath();
+		while ($node->getContentType() === 'TYPO3.TYPO3:Shortcut') {
+			$childNodes = $node->getChildNodes('TYPO3.TYPO3:Page,TYPO3.TYPO3:Shortcut');
+			$node = current($childNodes);
+		}
+
+		$nodeContextPath = $node->getContextPath();
+		$siteNodePath = $contentContext->getCurrentSiteNode()->getPath();
+
 		if (substr($nodeContextPath, 0, strlen($siteNodePath)) !== $siteNodePath) {
 			return FALSE;
 		}
