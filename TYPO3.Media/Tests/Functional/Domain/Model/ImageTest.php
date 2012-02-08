@@ -60,6 +60,7 @@ class ImageTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @return void
 	 */
 	public function tearDown() {
+		parent::tearDown();
 		$reflectedProperty = new \ReflectionProperty('TYPO3\FLOW3\Resource\ResourceManager', 'persistentResourcesStorageBaseUri');
 		$reflectedProperty->setAccessible(TRUE);
 		$reflectedProperty->setValue($this->resourceManager, $this->oldPersistentResourcesStorageBaseUri);
