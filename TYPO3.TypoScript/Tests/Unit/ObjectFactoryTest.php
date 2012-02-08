@@ -25,7 +25,7 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$expectedTypoScriptObject = $this->getMock('TYPO3\TypoScript\ObjectInterface');
 
 		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3\TypoScript\Node')->will($this->returnValue($expectedTypoScriptObject));
+		$objectManager->expects($this->once())->method('get')->with('TYPO3\TYPO3\TypoScript\Node')->will($this->returnValue($expectedTypoScriptObject));
 
 		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('dummy'));
 		$objectFactory->_set('objectManager', $objectManager);
@@ -44,7 +44,7 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$expectedTypoScriptObject->expects($this->once())->method('setNode')->with($node);
 
 		$objectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface');
-		$objectManager->expects($this->once())->method('create')->with('TYPO3\TYPO3\TypoScript\Node')->will($this->returnValue($expectedTypoScriptObject));
+		$objectManager->expects($this->once())->method('get')->with('TYPO3\TYPO3\TypoScript\Node')->will($this->returnValue($expectedTypoScriptObject));
 
 		$objectFactory = $this->getAccessibleMock('TYPO3\TypoScript\ObjectFactory', array('getTypoScriptObjectNameByNode'));
 		$objectFactory->expects($this->once())->method('getTypoScriptObjectNameByNode')->with($node)->will($this->returnValue('TYPO3\TYPO3\TypoScript\Node'));

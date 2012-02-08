@@ -406,7 +406,7 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 		if (preg_match(self::SPLIT_PATTERN_INDEXANDPROCESSORCALL, $indexAndMethodCall, $matches) > 0) {
 			$objectPropertyPathArray = $this->getParsedObjectPath($objectPropertyPath);
 			$objectPathArray = array_slice($objectPropertyPathArray, 0, -1);
-			$propertyName = implode(array_slice($objectPropertyPathArray, -1, 1));
+			$propertyName = implode('', array_slice($objectPropertyPathArray, -1, 1));
 			$typoScriptObject = $this->getValueFromObjectTree($objectPathArray);
 
 			if (!method_exists($typoScriptObject, 'set' . ucfirst($propertyName))) throw new \TYPO3\TypoScript\Exception('Tried to process the value of a non-existing property "' . $propertyName . '" of a TypoScript object of type "' . get_class($typoScriptObject) . '".', 1181830570);
@@ -419,7 +419,7 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 				}
 			}
 
-			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->objectManager->create('TYPO3\TypoScript\ProcessorChain');
+			$processorChain = $typoScriptObject->propertyHasProcessorChain($propertyName) ? $typoScriptObject->getPropertyProcessorChain($propertyName) : $this->objectManager->get('TYPO3\TypoScript\ProcessorChain');
 			$processorInvocation = $this->getProcessorInvocation($matches['ProcessorSignature'], $processorArguments);
 			$processorChain->setProcessorInvocation((integer)$matches['Index'], $processorInvocation);
 
@@ -480,7 +480,7 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 				throw new \TYPO3\TypoScript\Exception('Can\'t set paramenter "' . $argumentName .'" for processor "' . $processorObjectName . '"', 1181903857);
 			}
 		}
-		return $this->objectManager->create('TYPO3\TypoScript\ProcessorInvocation', $processor, $processorArguments);
+		return $this->objectManager->get('TYPO3\TypoScript\ProcessorInvocation', $processor, $processorArguments);
 	}
 
 	/**
@@ -548,7 +548,7 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 			if (!$this->objectManager->isRegistered($typoScriptObjectName)) {
 				throw new \TYPO3\TypoScript\Exception('Referring to unknown TypoScript Object Type "' . $typoScriptObjectName . '" in object type assignment.', 1180605250);
 			}
-			$processedValue = $this->objectManager->create($typoScriptObjectName);
+			$processedValue = $this->objectManager->get($typoScriptObjectName);
 		} else {
 			throw new \TYPO3\TypoScript\Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);
 		}

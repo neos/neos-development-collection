@@ -42,7 +42,7 @@ class ObjectFactory {
 	public function createByNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$typoScriptObjectName = $this->getTypoScriptObjectNameByNode($node);
 
-		$typoScriptObject = $this->objectManager->create($typoScriptObjectName);
+		$typoScriptObject = $this->objectManager->get($typoScriptObjectName);
 		$typoScriptObject->setNode($node);
 		return $typoScriptObject;
 	}
@@ -105,7 +105,7 @@ class ObjectFactory {
 	 * @todo Needs some real implementation
 	 */
 	public function createByName($typoScriptObjectName) {
-		return $this->objectManager->create('TYPO3\TYPO3\TypoScript\\' . $typoScriptObjectName);
+		return $this->objectManager->get('TYPO3\TYPO3\TypoScript\\' . $typoScriptObjectName);
 	}
 }
 ?>
