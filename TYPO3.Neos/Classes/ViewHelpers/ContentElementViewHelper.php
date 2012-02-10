@@ -16,8 +16,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * ViewHelper which wraps all content elements, and adds an additional div wrapper
  * if we are in backend mode.
- *
- * @FLOW3\Scope("singleton")
  */
 class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
