@@ -27,7 +27,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInTheLiveWorkspacesCanBeRetrievedAgainInTheLiveContext() {
 		$context = new ContentContext('live');
@@ -43,7 +42,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removedNodesCannotBeRetrievedAnymore() {
 		$context = new ContentContext('live');
@@ -69,7 +67,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removedNodesAreNotCountedAsChildNodes() {
 		$context = new ContentContext('live');
@@ -96,7 +93,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function creatingAChildNodeAndRetrievingItAfterPersistAllWorks() {
 		$context = new ContentContext('live');
@@ -114,7 +110,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function threeCreatedNodesCanBeRetrievedInSameOrder() {
 		$context = new ContentContext('live');
@@ -138,7 +133,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function threeChildNodesOfTheRootNodeCanBeRetrievedInSameOrder() {
 		$context = new ContentContext('live');
@@ -161,7 +155,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBeforeMovesNodesBeforeOthersWithoutPersistAll() {
 		$context = new ContentContext('live');
@@ -186,7 +179,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBeforeNodesWithLowerIndexMovesNodesBeforeOthersWithPersistAll() {
 		$context = new ContentContext('live');
@@ -216,7 +208,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBeforeNodesWithHigherIndexMovesNodesBeforeOthersWithPersistAll() {
 		$context = new ContentContext('live');
@@ -246,7 +237,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBeforeNodesWithHigherIndexMovesNodesBeforeOthersWithoutPersistAll() {
 		$context = new ContentContext('live');
@@ -272,7 +262,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveAfterNodesWithLowerIndexMovesNodesAfterOthersWithoutPersistAll() {
 		$context = new ContentContext('live');
@@ -298,7 +287,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveAfterNodesWithLowerIndexMovesNodesAfterOthersWithPersistAll() {
 		$context = new ContentContext('live');
@@ -328,7 +316,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveAfterNodesWithHigherIndexMovesNodesAfterOthersWithPersistAll() {
 		$context = new ContentContext('live');
@@ -358,7 +345,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveAfterNodesWithHigherIndexMovesNodesAfterOthersWithoutPersistAll() {
 		$context = new ContentContext('live');
@@ -383,7 +369,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBeforeInASeparateWorkspaceLeadsToCorrectSortingAcrossWorkspaces() {
 		$liveContext = new ContentContext('live');
@@ -417,7 +402,6 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodeRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailable() {
 		$liveContext = new ContentContext('live');

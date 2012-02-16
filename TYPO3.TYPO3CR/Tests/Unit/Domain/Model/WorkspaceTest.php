@@ -19,7 +19,6 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aWorkspaceCanBeBasedOnAnotherWorkspace() {
 		$baseWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('BaseWorkspace');
@@ -31,7 +30,6 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function onInitializationANewlyCreatedWorkspaceCreatesItsOwnRootNode() {
 		$workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
@@ -48,7 +46,6 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theCurrentContextCanBeAssignedAndRetrievedOfAWorkspace() {
 		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -65,7 +62,6 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishWillReplaceExistingNodesInBaseWorkspaceByNodeInWorkspaceToBePubslished() {
 		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByPath', 'remove', 'add'), array(), '', FALSE);
@@ -95,7 +91,6 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function publishWillRemoveNodesInTargetWorkspaceIfTheyHaveBeenMarkedAsRemovedInSourceWorkspace() {
 		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByPath', 'remove', 'add'), array(), '', FALSE);
@@ -125,7 +120,6 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeCountCallsRepositoryFunction() {
 		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('countByWorkspace'), array(), '', FALSE);
@@ -140,7 +134,6 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPublishingTargetWorkspaceReturnsSpecifiedWorkspaceIfItIsABaseWorkspace() {
 		$lowesWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
@@ -163,7 +156,6 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\TYPO3CR\Exception\WorkspaceException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPublishingTargetWorkspaceThrowsAnExceptionIfWorkspaceIsNotBasedOnTheSpecifiedWorkspace() {
 		$someBaseWorkspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');

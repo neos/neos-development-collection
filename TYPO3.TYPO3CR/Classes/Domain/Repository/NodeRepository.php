@@ -125,7 +125,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $path Absolute path of the node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The matching node if found, otherwise NULL
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findOneByPath($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
@@ -176,11 +175,10 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to set the new index for
 	 * @param integer $position The position the new index should reflect, must be one of the POSITION_* constants
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNewIndex($node, $position, $referenceNode = NULL) {
+	public function setNewIndex(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $position, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode = NULL) {
 		$parentPath = $node->getParentPath();
 
 		switch ($position) {
@@ -247,7 +245,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found on the given path
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Improve implementation by using DQL
 	 */
 	public function findByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -290,9 +287,8 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * query executed directly by the database because sorting indexes of new or
 	 * modified nodes need to be considered.
 	 *
-	 * @param $parentPath Path to the parent node
+	 * @param string $parentPath Path to the parent node
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function renumberIndexesInLevel($parentPath) {
 		$this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
@@ -331,7 +327,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 *
 	 * @param string $parentPath Path of the parent node specifying the level in the node tree
 	 * @return integer The currently highest index
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function findHighestIndexInLevel($parentPath) {
 		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath');
@@ -356,7 +351,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $parentPath Path of the parent node specifying the level in the node tree
 	 * @param integer $referenceIndex Index of a known node
 	 * @return integer The currently next lower index
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function findNextLowerIndex($parentPath, $referenceIndex) {
 		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath AND n.index < :referenceIndex');
@@ -384,7 +378,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $parentPath Path of the parent node specifying the level in the node tree
 	 * @param integer $referenceIndex Index of a known node
 	 * @return integer The currently next higher index
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function findNextHigherIndex($parentPath, $referenceIndex) {
 		$query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath AND n.index > :referenceIndex');
@@ -410,7 +403,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return integer The number of nodes found
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function countByWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		$query = $this->createQuery();
@@ -453,7 +445,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \TYPO3\TYPO3\Domain\Model\Node The node found or NULL
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Check for workspace compliance
 	 */
 	public function findFirstByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -479,7 +470,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $pathEndPoint Absolute path specifying the end point
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found on the given path
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findOnPath($pathStartingPoint, $pathEndPoint, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if ($pathStartingPoint !== substr($pathEndPoint, 0, strlen($pathStartingPoint))) {
@@ -527,7 +517,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * signal.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushNodeRegistry() {
 		$this->addedNodes = new \SplObjectStorage();
@@ -535,7 +524,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	}
 
 	/**
-	 * @param $contentTypeFilter
+	 * @param string $contentTypeFilter
 	 * @return string
 	 * @fixme implement
 	 */
@@ -574,7 +563,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \TYPO3\FLOW3\Peristence\QueryInterface The query
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
@@ -622,7 +610,6 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 *
 	 * @param array &$objects An array of objects to filter, passed by reference.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function filterOutRemovedObjects(array &$objects) {
 		foreach ($objects as $index => $object) {

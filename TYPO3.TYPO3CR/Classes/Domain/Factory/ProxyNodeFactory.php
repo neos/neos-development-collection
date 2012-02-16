@@ -33,7 +33,6 @@ class ProxyNodeFactory {
 	/**
 	 * Constructs this factory.
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
 		$this->proxyNodes = new \SplObjectStorage;
@@ -45,8 +44,8 @@ class ProxyNodeFactory {
 	 * If this factory has previously created a ProxyNode for the given Node, it will
 	 * return the same ProxyNode again.
 	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\ProxyNode
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createFromNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if ($this->proxyNodes->contains($node) === FALSE) {

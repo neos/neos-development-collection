@@ -70,7 +70,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode
 	 * @FLOW3\Autowiring(false)
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function  __construct(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode) {
 		if ($originalNode instanceof \TYPO3\TYPO3CR\Domain\Model\ProxyNode) {
@@ -87,7 +86,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param string $path
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPath($path) {
 		if (!isset($this->newNode)) {
@@ -100,7 +98,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the path of this node
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPath() {
 		return (isset($this->newNode) ? $this->newNode->getPath() : $this->originalNode->getPath());
@@ -110,7 +107,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the path of this node with additional context information (such as the workspace name)
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContextPath() {
 		return (isset($this->newNode) ? $this->newNode->getContextPath() : $this->originalNode->getContextPath());
@@ -121,7 +117,6 @@ class ProxyNode implements NodeInterface {
 	 * Counting starts with 0 for "/", 1 for "/foo", 2 for "/foo/bar" etc.
 	 *
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDepth() {
 		return (isset($this->newNode) ? $this->newNode->getDepth() : $this->originalNode->getDepth());
@@ -131,7 +126,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the name of this node
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getName() {
 		return (isset($this->newNode) ? $this->newNode->getName() : $this->originalNode->getName());
@@ -175,7 +169,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the workspace this node is contained in
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWorkspace() {
 		return (isset($this->newNode) ? $this->newNode->getWorkspace() : $this->originalNode->getWorkspace());
@@ -185,7 +178,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the identifier of this node
 	 *
 	 * @return string the node's UUID (unique within the workspace)
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIdentifier() {
 		return $this->originalNode->getIdentifier();
@@ -198,7 +190,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param integer $index The new index
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setIndex($index) {
 		if (!isset($this->newNode)) {
@@ -212,7 +203,6 @@ class ProxyNode implements NodeInterface {
 	 * with the same parent node.
 	 *
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIndex() {
 		return (isset($this->newNode) ? $this->newNode->getIndex() : $this->originalNode->getIndex());
@@ -222,7 +212,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the parent node of this node
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParent() {
 		return (isset($this->newNode) ? $this->newNode->getParent() : $this->originalNode->getParent());
@@ -233,7 +222,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBefore(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
@@ -247,7 +235,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
 		if (!isset($this->newNode)) {
@@ -265,7 +252,6 @@ class ProxyNode implements NodeInterface {
 	 * @param string $propertyName Name of the property
 	 * @param mixed $value Value of the property
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperty($propertyName, $value) {
 		if (!isset($this->newNode)) {
@@ -282,7 +268,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param string $propertyName
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasProperty($propertyName) {
 		return (isset($this->newNode) ? $this->newNode->hasProperty($propertyName) : $this->originalNode->hasProperty($propertyName));
@@ -296,7 +281,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return mixed value of the property
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($propertyName) {
 		return (isset($this->newNode) ? $this->newNode->getProperty($propertyName) : $this->originalNode->getProperty($propertyName));
@@ -309,7 +293,6 @@ class ProxyNode implements NodeInterface {
 	 * there.
 	 *
 	 * @return array Property values, indexed by their name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties() {
 		return (isset($this->newNode) ? $this->newNode->getProperties() : $this->originalNode->getProperties());
@@ -319,7 +302,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the names of all properties of this node.
 	 *
 	 * @return array Property names
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyNames() {
 		return (isset($this->newNode) ? $this->newNode->getPropertyNames() : $this->originalNode->getPropertyNames());
@@ -330,7 +312,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param object $contentObject The content object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentObject($contentObject) {
 		if (!isset($this->newNode)) {
@@ -343,7 +324,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the content object of this node (if any).
 	 *
 	 * @return object
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentObject() {
 		return (isset($this->newNode) ? $this->newNode->getContentObject() : $this->originalNode->getContentObject());
@@ -353,7 +333,6 @@ class ProxyNode implements NodeInterface {
 	 * Unsets the content object of this node.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetContentObject() {
 		if (!isset($this->newNode)) {
@@ -367,7 +346,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param string $contentType
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentType($contentType) {
 		if (!isset($this->newNode)) {
@@ -380,7 +358,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the content type of this node.
 	 *
 	 * @return string $contentType
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentType() {
 		return (isset($this->newNode) ? $this->newNode->getContentType() : $this->originalNode->getContentType());
@@ -393,7 +370,6 @@ class ProxyNode implements NodeInterface {
 	 * @param string $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createNode($name, $contentType = NULL, $identifier = NULL) {
 		return (isset($this->newNode) ? $this->newNode->createNode($name, $contentType, $identifier) : $this->originalNode->createNode($name, $contentType, $identifier));
@@ -404,7 +380,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param string $path Path specifying the node, relative to this node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
 		return (isset($this->newNode) ? $this->newNode->getNode($path) : $this->originalNode->getNode($path));
@@ -417,7 +392,6 @@ class ProxyNode implements NodeInterface {
 	 * content type. For now it is just the first child node.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNode() {
 		return (isset($this->newNode) ? $this->newNode->getPrimaryChildNode() : $this->originalNode->getPrimaryChildNode());
@@ -429,7 +403,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param string $contentType If specified, only nodes with that content type are considered
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodes($contentType = NULL) {
 		return (isset($this->newNode) ? $this->newNode->getChildNodes($contentType) : $this->originalNode->getChildNodes($contentType));
@@ -449,7 +422,6 @@ class ProxyNode implements NodeInterface {
 	 * Removes this node and all its child nodes.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function remove() {
 		if (!isset($this->newNode)) {
@@ -492,7 +464,7 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Sets the date and time when this node becomes potentially visible.
 	 *
-	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
+	 * @param \DateTime $dateTime Date before this node should be hidden
 	 * @return void
 	 */
 	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
@@ -514,7 +486,7 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Sets the date and time when this node should be automatically hidden
 	 *
-	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
+	 * @param \DateTime $dateTime Date after which this node should be hidden
 	 * @return void
 	 */
 	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
@@ -593,7 +565,6 @@ class ProxyNode implements NodeInterface {
 	 * Tells if this node may be accessed according to the current security context.
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isAccessible() {
 		return (isset($this->newNode) ? $this->newNode->isAccessible() : $this->originalNode->isAccessible());
@@ -607,7 +578,6 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context) {
 		$this->context = $context;
@@ -621,7 +591,6 @@ class ProxyNode implements NodeInterface {
 	 * Returns the current context this proxy node operates in.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContext() {
 		return $this->context;
@@ -632,7 +601,6 @@ class ProxyNode implements NodeInterface {
 	 * workspace.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function materializeOriginalNode() {
 		$this->newNode = new Node($this->originalNode->getPath(), $this->context->getWorkspace(), $this->originalNode->getIdentifier());

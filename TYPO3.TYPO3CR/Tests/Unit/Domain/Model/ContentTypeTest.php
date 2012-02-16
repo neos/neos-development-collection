@@ -19,7 +19,6 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aContentTypeHasAName() {
 		$contentType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3:Text', array(), array());
@@ -29,7 +28,6 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDeclaredSuperTypesExpectsAnArrayOfContentTypes() {
 		$folderType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3CR:Folder', array('foo'), array());
@@ -37,7 +35,6 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function contentTypesCanHaveAnyNumberOfSuperTypes() {
 		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array());
@@ -58,7 +55,6 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function labelIsEmptyStringByDefault() {
 		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array());
@@ -67,7 +63,6 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function propertiesAreEmptyArrayByDefault() {
 		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array());
@@ -76,7 +71,6 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function configurationCanBeReturnedViaMagicGetter() {
 		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array(
@@ -88,7 +82,6 @@ class ContentTypeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function magicHasReturnsFalseIfPropertyDoesNotExist() {
 		$baseType = new \TYPO3\TYPO3CR\Domain\Model\ContentType('TYPO3.TYPO3CR:Base', array(), array());

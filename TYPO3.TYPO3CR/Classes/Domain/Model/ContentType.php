@@ -47,7 +47,6 @@ class ContentType {
 	 * @param string $name Name of the content type
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\ContentType> $declaredSuperTypes a list of declared super types
 	 * @param array $configuration the configuration for this content type which is defined in the schema
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function __construct($name, array $declaredSuperTypes, array $configuration) {
 		$this->name = $name;
@@ -66,7 +65,6 @@ class ContentType {
 	 * Returns the name of this content type
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getName() {
 		return $this->name;
@@ -77,7 +75,6 @@ class ContentType {
 	 * of this content type.
 	 *
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\ContentType>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaredSuperTypes() {
 		return $this->declaredSuperTypes;
@@ -138,10 +135,11 @@ class ContentType {
 	 * Magic get* and has* method for all properties inside $configuration.
 	 *
 	 * @param string $methodName
+	 * @param array $arguments
 	 * @return mixed
 	 * @api
 	 */
-	public function __call($methodName, $arguments) {
+	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 3) === 'get') {
 			$propertyName = lcfirst(substr($methodName, 3));
 			if (isset($this->configuration[$propertyName])) {

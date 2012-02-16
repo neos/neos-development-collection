@@ -66,7 +66,6 @@ class ContentTypeManagerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function contentTypeConfigurationIsMergedTogether() {
 		$contentTypeManager = new \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager();

@@ -63,7 +63,6 @@ interface ContextInterface {
 	 *
 	 * @param boolean $invisibleContentShown
 	 * @return void
-	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function setInvisibleContentShown($invisibleContentShown);
 
@@ -72,7 +71,6 @@ interface ContextInterface {
 	 * should be shown in Node->treatNodeWithContext()
 	 *
 	 * @return boolean
-	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function isInvisibleContentShown();
 
@@ -82,7 +80,6 @@ interface ContextInterface {
 	 *
 	 * @param boolean $removedContentShown
 	 * @return void
-	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function setRemovedContentShown($removedContentShown);
 
@@ -91,7 +88,6 @@ interface ContextInterface {
 	 * should be shown in Node->treatNodeWithContext()
 	 *
 	 * @return boolean
-	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function isRemovedContentShown();
 

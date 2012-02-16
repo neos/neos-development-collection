@@ -44,7 +44,6 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInAPersonalWorkspacesCanBeRetrievedAgainInThePersonalContext() {
 		$fooNode = $this->rootNode->createNode('foo');
@@ -57,7 +56,6 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInAPersonalWorkspacesAreNotVisibleInTheLiveWorkspace() {
 		$this->rootNode->createNode('homepage')->createNode('about');
@@ -72,7 +70,6 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function nodesCreatedInAPersonalWorkspacesAreNotVisibleInTheLiveWorkspaceEvenWithoutPersistAll() {
 		$this->rootNode->createNode('homepage')->createNode('imprint');

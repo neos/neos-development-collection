@@ -51,7 +51,6 @@ class ContentObjectProxy {
 	 * Constructs this content type
 	 *
 	 * @param object $contentObject The content object that should be represented by this proxy
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct($contentObject) {
 		$this->contentObject = $contentObject;

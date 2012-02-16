@@ -72,7 +72,6 @@ class Workspace {
 	 *
 	 * @param string $name Name of this workspace
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace A workspace this workspace is based on (if any)
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($name, \TYPO3\TYPO3CR\Domain\Model\Workspace $baseWorkspace = NULL) {
 		$this->name = $name;
@@ -86,7 +85,6 @@ class Workspace {
 	 *
 	 * @param integer $initializationCause
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject($initializationCause) {
 		if ($initializationCause === \TYPO3\FLOW3\Object\ObjectManagerInterface::INITIALIZATIONCAUSE_CREATED) {
@@ -99,7 +97,6 @@ class Workspace {
 	 * Returns the name of this workspace
 	 *
 	 * @return string Name of this workspace
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getName() {
 		return $this->name;
@@ -109,7 +106,6 @@ class Workspace {
 	 * Returns the base workspace, if any
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseWorkspace() {
 		return $this->baseWorkspace;
@@ -119,7 +115,6 @@ class Workspace {
 	 * Returns the root node of this workspace
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRootNode() {
 		return $this->rootNode;
@@ -136,7 +131,6 @@ class Workspace {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context) {
 		$this->context = $context;
@@ -147,7 +141,6 @@ class Workspace {
 	 * Returns the current context this workspace operates in.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContext() {
 		return $this->context;
@@ -160,8 +153,6 @@ class Workspace {
 	 *
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function publish($targetWorkspaceName) {
 		$sourceNodes = $this->nodeRepository->findByWorkspace($this);
@@ -176,8 +167,6 @@ class Workspace {
 	 * @param array<\TYPO3\TYPO3\Domain\Model\Node> $nodes
 	 * @param string $targetWorkspaceName Name of the workspace to publish to
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function publishNodes(array $nodes, $targetWorkspaceName) {
 		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
@@ -207,7 +196,6 @@ class Workspace {
 	 * because a workspace always contains at least its Root Node.
 	 *
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeCount() {
 		return $this->nodeRepository->countByWorkspace($this);
@@ -220,7 +208,6 @@ class Workspace {
 	 * @param string $targetWorkspaceName Name of the target workspace
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The target workspace
 	 * @throws \TYPO3\TYPO3CR\Exception\WorkspaceException if the specified workspace is not a base workspace of this workspace
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getPublishingTargetWorkspace($targetWorkspaceName) {
 		$targetWorkspace = $this->baseWorkspace;

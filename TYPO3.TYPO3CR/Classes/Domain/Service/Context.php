@@ -70,7 +70,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * Constructs this context.
 	 *
 	 * @param string $workspaceName
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($workspaceName) {
 		$this->workspaceName = $workspaceName;
@@ -80,7 +79,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectNodeRepository(\TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository) {
 		$this->nodeRepository = $nodeRepository;
@@ -89,7 +87,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectWorkspaceRepository(\TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository $workspaceRepository) {
 		$this->workspaceRepository = $workspaceRepository;
@@ -100,7 +97,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @param boolean $createWorkspaceIfNecessary If enabled, creates a workspace with the configured name if it doesn't exist already
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace The workspace or NULL
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWorkspace($createWorkspaceIfNecessary = TRUE) {
 		if ($this->workspace === NULL) {
@@ -130,7 +126,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * Returns the name of the workspace.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWorkspaceName() {
 		return $this->workspaceName;
@@ -141,7 +136,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCurrentNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$this->currentNode = $node;
@@ -151,7 +145,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * Returns the current node
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentNode() {
 		return $this->currentNode;
@@ -166,7 +159,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * time in unit tests or in the actual application (for realizing previews etc).
 	 *
 	 * @return \DateTime The current date and time - or a simulated version of it
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentDateTime() {
 		return $this->currentDateTime;
@@ -178,7 +170,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @param \DateTime $currentDateTime A date and time to simulate.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCurrentDateTime(\DateTime $currentDateTime) {
 		$this->currentDateTime = $currentDateTime;
@@ -189,7 +180,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 *
 	 * @param string $path Absolute path specifying the node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
 		if (!is_string($path) || $path[0] !== '/') {
@@ -205,7 +195,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * @param mixed $startingPoint Either an absolute path or an actual node specifying the starting point, for example /sites/mysite.com/
 	 * @param mixed $endPoint Either an absolute path or an actual node specifying the end point, for example /sites/mysite.com/homepage/subpage
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> The nodes found between and including the given paths or an empty array of none were found
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodesOnPath($startingPoint, $endPoint) {
 		$startingPointPath = ($startingPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $startingPoint->getPath() : $startingPoint;
@@ -222,7 +211,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	 * Returns this context as a "context path"
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __toString() {
 		return $this->workspaceName . $this->currentNode->getPath();
@@ -231,7 +219,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	/**
 	 * @param boolean $invisibleContentShown If TRUE, invisible nodes are shown.
 	 * @return void
-	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function setInvisibleContentShown($invisibleContentShown) {
 		$this->invisibleContentShown = $invisibleContentShown;
@@ -239,7 +226,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 
 	/**
 	 * @return boolean
-	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function isInvisibleContentShown() {
 		return $this->invisibleContentShown;
@@ -248,7 +234,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 	/**
 	 * @param boolean $removedContentShown If TRUE, removed nodes are shown
 	 * @return void
-	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function setRemovedContentShown($removedContentShown) {
 		$this->removedContentShown = (boolean)$removedContentShown;
@@ -256,15 +241,14 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 
 	/**
 	 * @return boolean
-	 * @author Rens Admiraal <rens.admiraal@typo3.org>
 	 */
 	public function isRemovedContentShown() {
 		return $this->removedContentShown;
 	}
 
 	/**
+	 * @param boolean $inaccessibleContentShown
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setInaccessibleContentShown($inaccessibleContentShown) {
 		$this->inaccessibleContentShown = (boolean)$inaccessibleContentShown;
@@ -272,7 +256,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 
 	/**
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isInaccessibleContentShown() {
 		return $this->inaccessibleContentShown;

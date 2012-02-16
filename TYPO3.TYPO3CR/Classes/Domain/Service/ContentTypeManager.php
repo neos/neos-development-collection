@@ -65,7 +65,6 @@ class ContentTypeManager {
 	 *
 	 * @param string $contentTypeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType or NULL
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentType($contentTypeName) {
 		if ($this->cachedContentTypes === array()) {
@@ -82,7 +81,6 @@ class ContentTypeManager {
 	 *
 	 * @param string $contentTypeName Name of the content type
 	 * @return boolean TRUE if it exists, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasContentType($contentTypeName) {
 		if ($this->cachedContentTypes === array()) {
@@ -95,7 +93,6 @@ class ContentTypeManager {
 	 * Creates a new content type
 	 *
 	 * @param string $contentTypeName Unique name of the new content type. Example: "TYPO3.TYPO3:Page"
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function createContentType($contentTypeName) {
 		throw new \TYPO3\TYPO3CR\Exception('Creation of content types not supported so far; tried to create "' . $contentTypeName . '".', 1316449432);
@@ -122,7 +119,6 @@ class ContentTypeManager {
 	 * Loads all content types into memory.
 	 *
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function loadContentTypes() {
 		foreach (array_keys($this->settings['contentTypes']) as $contentTypeName) {

@@ -11,7 +11,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use \TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
+use TYPO3\TYPO3CR\Domain\Repository\NodeRepository;
 
 use Doctrine\ORM\Mapping as ORM;
 use TYPO3\FLOW3\Annotations as FLOW3;
@@ -183,7 +183,6 @@ class Node implements NodeInterface {
 	 * @param string $path Absolute path of this node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The workspace this node will be contained in
 	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating corresponding nodes
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function  __construct($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
 		$this->setPath($path);
@@ -199,7 +198,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $path
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPath($path) {
 		if (!is_string($path) || preg_match(self::MATCH_PATTERN_PATH, $path) !== 1) {
@@ -219,7 +217,6 @@ class Node implements NodeInterface {
 	 * Returns the path of this node
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPath() {
 		return $this->path;
@@ -231,7 +228,6 @@ class Node implements NodeInterface {
 	 * Example: /sites/mysitecom/homepage/about@user-admin
 	 *
 	 * @return string Node path with context information
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContextPath() {
 		$contextPath = $this->path;
@@ -247,7 +243,6 @@ class Node implements NodeInterface {
 	 * Counting starts with 0 for "/", 1 for "/foo", 2 for "/foo/bar" etc.
 	 *
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDepth() {
 		return ($this->path === '/') ? 0 : substr_count($this->path, '/');
@@ -257,7 +252,6 @@ class Node implements NodeInterface {
 	 * Returns the name of this node
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getName() {
 		return ($this->path === '/') ? '' : substr($this->path, strrpos($this->path, '/') + 1);
@@ -268,7 +262,6 @@ class Node implements NodeInterface {
 	 * of this node.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Use a property specified by the content type once it supports it.
 	 */
 	public function getLabel() {
@@ -281,7 +274,6 @@ class Node implements NodeInterface {
 	 * Returns a short abstract describing / containing summarized content of this node
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Implement real abstract rendering and use a property specified in the content type
 	 */
 	public function getAbstract() {
@@ -298,7 +290,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setWorkspace(\TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if ($this->workspace !== $workspace) {
@@ -311,7 +302,6 @@ class Node implements NodeInterface {
 	 * Returns the workspace this node is contained in
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Workspace
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWorkspace() {
 		return $this->workspace;
@@ -321,7 +311,6 @@ class Node implements NodeInterface {
 	 * Returns the identifier of this node
 	 *
 	 * @return string the node's UUID (unique within the workspace)
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIdentifier() {
 		return $this->identifier;
@@ -334,7 +323,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param integer $index The new index
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setIndex($index) {
 		if ($this->index !== $index) {
@@ -348,7 +336,6 @@ class Node implements NodeInterface {
 	 * with the same parent node.
 	 *
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIndex() {
 		return $this->index;
@@ -358,7 +345,6 @@ class Node implements NodeInterface {
 	 * Returns the parent node of this node
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node or NULL if this is the root node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParent() {
 		if ($this->path === '/') {
@@ -372,7 +358,6 @@ class Node implements NodeInterface {
 	 * Returns the parent node path
 	 *
 	 * @return string Absolute node path of the parent node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentPath() {
 		return $this->parentPath;
@@ -383,7 +368,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBefore(NodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
@@ -407,7 +391,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveAfter(NodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
@@ -435,7 +418,6 @@ class Node implements NodeInterface {
 	 * @param string $propertyName Name of the property
 	 * @param mixed $value Value of the property
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperty($propertyName, $value) {
 		if (!is_object($this->contentObjectProxy)) {
@@ -458,7 +440,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $propertyName
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasProperty($propertyName) {
 		if (is_object($this->contentObjectProxy)) {
@@ -477,7 +458,6 @@ class Node implements NodeInterface {
 	 * @param string $propertyName Name of the property
 	 * @return mixed value of the property
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the a content object exists but does not contain the specified property
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($propertyName) {
 		if (!is_object($this->contentObjectProxy)) {
@@ -495,7 +475,6 @@ class Node implements NodeInterface {
 	 * there.
 	 *
 	 * @return array Property values, indexed by their name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties() {
 		if (is_object($this->contentObjectProxy)) {
@@ -509,7 +488,6 @@ class Node implements NodeInterface {
 	 * Returns the names of all properties of this node.
 	 *
 	 * @return array Property names
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyNames() {
 		if (is_object($this->contentObjectProxy)) {
@@ -524,7 +502,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param object $contentObject The content object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentObject($contentObject) {
 		if (!is_object($contentObject)) {
@@ -540,7 +517,6 @@ class Node implements NodeInterface {
 	 * Returns the content object of this node (if any).
 	 *
 	 * @return object
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentObject() {
 		return ($this->contentObjectProxy !== NULL ? $this->contentObjectProxy->getObject(): NULL);
@@ -550,7 +526,6 @@ class Node implements NodeInterface {
 	 * Unsets the content object of this node.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetContentObject() {
 		if ($this->contentObjectProxy !== NULL) {
@@ -564,7 +539,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $contentType
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentType($contentType) {
 		if (!$this->contentTypeManager->hasContentType($contentType)) {
@@ -580,7 +554,6 @@ class Node implements NodeInterface {
 	 * Returns the content type of this node.
 	 *
 	 * @return string $contentType
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentType() {
 		return $this->contentType;
@@ -593,7 +566,6 @@ class Node implements NodeInterface {
 	 * @param string $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createNode($name, $contentType = NULL, $identifier = NULL) {
 		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
@@ -622,7 +594,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $path Path specifying the node, relative to this node
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode($path) {
 		$node = $this->nodeRepository->findOneByPath($this->normalizePath($path), $this->context->getWorkspace());
@@ -636,7 +607,6 @@ class Node implements NodeInterface {
 	 * content type. For now it is just the first child node.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNode() {
 		$node = $this->nodeRepository->findFirstByParentAndContentType($this->path, NULL, $this->context->getWorkspace());
@@ -649,7 +619,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodes($contentTypeFilter = NULL) {
 		$nodes = $this->nodeRepository->findByParentAndContentType($this->path, $contentTypeFilter, $this->context->getWorkspace());
@@ -661,7 +630,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $contentTypeFilter If specified, only nodes with that content type are considered
 	 * @return boolean TRUE if this node has child nodes, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Needs proper implementation in NodeRepository which only counts nodes (considering workspaces, removed nodes etc.)
 	 */
 	public function hasChildNodes($contentTypeFilter = NULL) {
@@ -672,7 +640,6 @@ class Node implements NodeInterface {
 	 * Removes this node and all its child nodes.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function remove() {
 		foreach ($this->getChildNodes() as $childNode) {
@@ -691,7 +658,6 @@ class Node implements NodeInterface {
 	 * If this node is a removed node.
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isRemoved() {
 		return $this->removed;
@@ -702,7 +668,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param boolean $hidden If TRUE, this Node will be hidden
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHidden($hidden) {
 		if ($this->hidden !== (boolean) $hidden) {
@@ -715,7 +680,6 @@ class Node implements NodeInterface {
 	 * Returns the current state of the hidden flag
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isHidden() {
 		return $this->hidden;
@@ -726,7 +690,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
 		if ($this->hiddenBeforeDateTime != $dateTime) {
@@ -739,7 +702,6 @@ class Node implements NodeInterface {
 	 * Returns the date and time before which this node will be automatically hidden.
 	 *
 	 * @return \DateTime Date before this node will be hidden
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHiddenBeforeDateTime() {
 		return $this->hiddenBeforeDateTime;
@@ -750,7 +712,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {
 		if ($this->hiddenAfterDateTime != $dateTime) {
@@ -763,7 +724,6 @@ class Node implements NodeInterface {
 	 * Returns the date and time after which this node will be automatically hidden.
 	 *
 	 * @return \DateTime Date after which this node will be hidden
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHiddenAfterDateTime() {
 		return $this->hiddenAfterDateTime;
@@ -774,7 +734,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param boolean $hidden TRUE if it should be hidden, otherwise FALSE
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHiddenInIndex($hidden) {
 		if ($this->hiddenInIndex !== (boolean) $hidden) {
@@ -787,7 +746,6 @@ class Node implements NodeInterface {
 	 * If this node should be hidden in indexes
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isHiddenInIndex() {
 		return $this->hiddenInIndex;
@@ -798,7 +756,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param array $accessRoles
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setAccessRoles(array $accessRoles) {
 		foreach ($accessRoles as $role) {
@@ -816,7 +773,6 @@ class Node implements NodeInterface {
 	 * Returns the names of defined access roles
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAccessRoles() {
 		return $this->accessRoles;
@@ -830,7 +786,6 @@ class Node implements NodeInterface {
 	 * such as isAccessible() need to be evaluated.
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isVisible() {
 		if ($this->hidden === TRUE) {
@@ -850,8 +805,6 @@ class Node implements NodeInterface {
 	 * Tells if this node may be accessed according to the current security context.
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function isAccessible() {
 		if ($this->hasAccessRestrictions() === FALSE) {
@@ -891,7 +844,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context) {
 		$this->context = $context;
@@ -901,7 +853,6 @@ class Node implements NodeInterface {
 	 * Returns the current context this node operates in.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContext() {
 		return $this->context;
@@ -935,7 +886,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $path The unnormalized path
 	 * @return string The normalized absolute path
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function normalizePath($path) {
 		if ($path === '.') {
@@ -973,7 +923,6 @@ class Node implements NodeInterface {
 	 *
 	 * @param array $originalNodes The nodes to contextize
 	 * @return array The same node objects, but with the context of this node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function treatNodesWithContext(array $originalNodes) {
 		$proxyNodes = array();
@@ -992,7 +941,6 @@ class Node implements NodeInterface {
 	 * @param mixed $node The node to contextize
 	 * @param boolean $disableFilters If set to TRUE, the node will only be treated with context and not filtered
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The same node, but with the context of this node
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @fixme This method does more than the name or description claims
 	 */
 	protected function treatNodeWithContext(NodeInterface $node, $disableFilters = FALSE) {

@@ -29,7 +29,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aProxyNodeIsRelatedToAnOriginalNode() {
 		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -39,7 +38,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theOriginalNodeMustNotBeAProxyNode() {
 		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array(), array(), '', FALSE);
@@ -47,14 +45,12 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneOriginalNodeCallback() {
 		$this->proxyNode->_set('newNode', $this->newNode);
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode($methodName, $argument1 = NULL, $argument2 = NULL) {
 		$this->newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -79,7 +75,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function assertThatOriginalOrNewNodeIsCalled($methodName, $argument1 = NULL) {
 		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -106,7 +101,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPathSetsThePathOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setPath', '/foo/bar');
@@ -114,7 +108,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathRetrievesThePathFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getPath');
@@ -122,7 +115,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDepthRetrievesTheDepthFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getDepth');
@@ -130,7 +122,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNameRetrievesTheNameFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getName');
@@ -138,7 +129,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getWorkspaceRetrievesTheWorkspaceFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getWorkspace');
@@ -146,7 +136,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIdentifierReturnsTheIdentifier() {
 		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -160,7 +149,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setIndexSetsTheIndexOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setIndex', 5);
@@ -168,7 +156,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIndexRetrievesTheIndexFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getIndex');
@@ -176,7 +163,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentRetrievesTheParentNodeFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getParent');
@@ -184,7 +170,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveBeforeCallsMoveBeforeOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -193,7 +178,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function moveAfterCallsMoveAfterOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$referenceNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -202,7 +186,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPropertySetsThePropertyOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setProperty', 'propertyName', 'value');
@@ -210,7 +193,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasPropertyCallsHasPropertyOnTheParentNodeFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('hasProperty', 'myProperty');
@@ -218,7 +200,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyCallsGetPropertyOnTheParentNodeFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getProperty', 'myProperty');
@@ -226,7 +207,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertiesCallsGetPropertiesOnTheParentNodeFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getProperties');
@@ -234,7 +214,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyNamesCallsGetPropertyNamesOnTheParentNodeFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getPropertyNames');
@@ -242,7 +221,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentObjectSetsTheContentObjectOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$contentObject = new \stdClass();
@@ -251,7 +229,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentObjectCallsGetContentObjectOnTheParentNodeFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getContentObject');
@@ -259,7 +236,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetContentObjectUnsetsTheContentObjectOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('unsetContentObject');
@@ -267,7 +243,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentTypeSetsTheContentTypeOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setContentType');
@@ -275,7 +250,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContentTypeCallsGetContentTypeOnTheParentNodeFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getContentType');
@@ -283,7 +257,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createNodeCallsCreateNodeOnTheNewNodeOrTheOriginalNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('createNode', 'nodename', 'MyContentType');
@@ -291,7 +264,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeCallsGetNodeOnTheNewNodeOrTheOriginalNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getNode', '/foo/bar');
@@ -299,7 +271,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNodeCallsGetPrimaryChildNodeOnTheNewNodeOrTheOriginalNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getPrimaryChildNode');
@@ -307,7 +278,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodesCallsGetChildNodesOnTheNewNodeOrTheOriginalNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getChildNodes', 'MyContentType');
@@ -315,7 +285,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeCallsRemoveOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
 		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('remove');
@@ -323,7 +292,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLabelCallsGetLabelOnTheNewNodeOrTheOriginalNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getLabel');
@@ -331,7 +299,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContextSetsTheContextOfTheProxyNodeTheOriginalNodeAndTheNewNode() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -352,7 +319,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContextReturnsTheContext() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -367,7 +333,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneOriginalNodeCreatesACloneOfTheOriginalNode() {
 		$this->markTestIncomplete('Mocked $newNode needs to be replaced - Node uses new now!');

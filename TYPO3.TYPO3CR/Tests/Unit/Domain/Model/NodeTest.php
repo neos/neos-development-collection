@@ -28,7 +28,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorSetsPathWorkspaceAndIdentifier() {
 		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/foo/bar', $this->mockWorkspace, '12345abcde');
@@ -40,7 +39,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLabelCropsTheLabelIfNecessary() {
 		$this->assertEquals('(unstructured) bar', $this->node->getLabel());
@@ -54,7 +52,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAbstractReturnsAnAbstract() {
 		$this->node->setProperty('title', 'The title of this node');
@@ -67,14 +64,12 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 * @expectedException InvalidArgumentException
 	 * @dataProvider invalidPaths()
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPathThrowsAnExceptionIfAnInvalidPathIsPassed($path) {
 		$this->node->setPath($path);
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidPaths() {
 		return array(
@@ -91,14 +86,12 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider validPaths()
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPathAcceptsAValidPath($path) {
 		$this->node->setPath($path);
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validPaths() {
 		return array(
@@ -115,7 +108,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDepthReturnsThePathDepthOfTheNode() {
 		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $this->mockWorkspace);
@@ -133,7 +125,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setWorkspacesAllowsForSettingTheWorkspaceForInternalPurposes() {
 		$newWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
@@ -146,7 +137,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theIndexCanBeSetAndRetrieved() {
 		$this->node->setIndex(2);
@@ -155,7 +145,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentReturnsNullForARootNode() {
 		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/', $this->mockWorkspace);
@@ -164,7 +153,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentReturnsParentNodeInCurrentNodesContext() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -188,7 +176,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aContentObjectCanBeSetRetrievedAndUnset() {
 		$contentObject = new \stdClass();
@@ -203,7 +190,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aContentObjectMustBeAnObject() {
 		$this->node->setContentObject('not an object');
@@ -211,7 +197,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertiesCanBeSetAndRetrieved() {
 		$this->node->setProperty('title', 'My Title');
@@ -233,7 +218,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertyFunctionsUseAContentObjectIfOneHasBeenDefined() {
 		$this->node->_set('persistenceManager', $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'));
@@ -271,7 +255,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\TYPO3CR\Exception\NodeException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyThrowsAnExceptionIfTheSpecifiedPropertyDoesNotExistInTheContentObject() {
 		$className = uniqid('Test');
@@ -288,7 +271,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theContentTypeCanBeSetAndRetrieved() {
 		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
@@ -305,7 +287,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException TYPO3\TYPO3CR\Exception\NodeException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContentTypeThrowsAnExceptionIfTheSpecifiedContentTypeDoesNotExist() {
 		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
@@ -318,7 +299,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createNodeCreatesAChildNodeOfTheCurrentNodeInTheContextWorkspace() {
 		$this->marktestIncomplete('The $newNode lacks some setter injections...');
@@ -344,7 +324,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
 	 */
 	public function createNodeThrowsNodeExceptionIfPathAlreadyExists() {
@@ -362,7 +341,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeReturnsTheSpecifiedNodeInTheCurrentNodesContext() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -386,7 +364,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeReturnsNullIfTheSpecifiedNodeDoesNotExist() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -406,7 +383,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPrimaryChildNodeReturnsTheFirstChildNode() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -432,7 +408,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildNodesReturnsChildNodesInCurrentContextOptionallyFilteredyByContentType() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -456,7 +431,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeRemovesAllChildNodesAndTheNodeItself() {
 		$this->mockWorkspace->expects($this->once())->method('getBaseWorkspace')->will($this->returnValue(NULL));
@@ -480,7 +454,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeOnlyFlagsTheNodeAsRemovedIfItsWorkspaceHasAnotherBaseWorkspace() {
 		$mockPersistenceManager = $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface');
@@ -507,7 +480,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theContextCanBeSetAndRetrieved() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
@@ -519,7 +491,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider abnormalPaths
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function normalizePathReturnsANormalizedAbsolutePath($currentPath, $relativePath, $normalizedPath) {
 		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
@@ -528,7 +499,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function abnormalPaths() {
 		return array(
@@ -552,7 +522,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function normalizePathThrowsInvalidArgumentExceptionOnPathContainingDoubleSlash() {
 		$node = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array(), '', FALSE);
@@ -561,7 +530,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function treatNodesWithContextWillTreatEachGivenNodeWithContext() {
 		$nodes = array(
@@ -578,7 +546,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function treatNodeWithContextWillTreatTheGivenNodeWithContextOfThisNode() {
 		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array('getWorkspace'), array(), '', FALSE);
@@ -598,7 +565,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function treatNodeWithContextReturnsAProxyNodeIfTheWorkspaceOfTheGivenNodeIsDifferentThanTheWorkspaceOfThisNode() {
 		$otherWorkspace = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array(), array(), '', FALSE);
