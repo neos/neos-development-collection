@@ -38,7 +38,6 @@ class TypoScriptService {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode Node marking the starting point
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $endNode Node marking the end point
 	 * @return array The merged object tree as of the given node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMergedTypoScriptObjectTree(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $endNode) {
 		$contentContext = $startNode->getContext();
@@ -70,7 +69,6 @@ class TypoScriptService {
 	 *
 	 * @param string $path Path to the directory to read the files from
 	 * @return string The merged content of the .ts2 files found
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function readExternalTypoScriptFiles($path) {
 		$mergedTypoScriptCode = '';

@@ -51,7 +51,6 @@ class Stylesheet extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 *
 	 * @return string The source
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getSource() {
 		return $this->source;
@@ -60,7 +59,6 @@ class Stylesheet extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 * @param string $source The Stylesheet source as an URL
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setSource($source) {
 		$this->source = $source;
@@ -68,7 +66,6 @@ class Stylesheet extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @return string The inline Stylesheet content
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getInline() {
 		return $this->inline;
@@ -77,7 +74,6 @@ class Stylesheet extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 * @param string $inline The inline Stylesheet content
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setInline($inline) {
 		$this->inline = $inline;
@@ -85,7 +81,6 @@ class Stylesheet extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @return string The stylesheet media type
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getMedia() {
 		return $this->media;
@@ -94,7 +89,6 @@ class Stylesheet extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 * @param string $media The stylesheet media type
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setMedia($media) {
 		$this->media = $media;

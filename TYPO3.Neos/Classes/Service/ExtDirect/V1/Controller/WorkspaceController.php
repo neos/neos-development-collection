@@ -39,7 +39,6 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Select special error action
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeAction() {
 		$this->errorMethodName = 'extErrorAction';
@@ -50,7 +49,6 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param string $workspaceName Name of the workspace
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function getStatusAction($workspaceName) {
@@ -72,7 +70,6 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param string $workspaceName Name of the workspace containing the nodes
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function getUnpublishedNodesAction($workspaceName) {
@@ -99,7 +96,6 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $sourceWorkspaceName
 	 * @param string $targetWorkspaceName
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function publishWorkspaceAction($sourceWorkspaceName, $targetWorkspaceName) {
@@ -120,7 +116,6 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $targetWorkspaceName
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @ExtDirect
 	 */
 	public function publishNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName) {
@@ -136,7 +131,6 @@ class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * converting them.
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function extErrorAction() {
 		$this->view->assignErrors($this->arguments->getValidationResults());

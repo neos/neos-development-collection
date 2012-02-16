@@ -35,7 +35,6 @@ class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->cropProcessor = new \TYPO3\TYPO3\TypoScript\Processors\CropProcessor();
@@ -45,7 +44,6 @@ class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the crop() processor works with standard options
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cropWorksWithStandardOptions() {
 		$this->cropProcessor->setMaximumCharacters(18);
@@ -59,7 +57,6 @@ class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the crop() processor works with option "crop at word"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cropWorksWithCropAtWordOption() {
 		$this->cropProcessor->setMaximumCharacters(18);
@@ -74,7 +71,6 @@ class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the crop() processor works with option "from beginning"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cropWorksWithCropFromBeginningOption() {
 		$this->cropProcessor->setMaximumCharacters(14);
@@ -89,7 +85,6 @@ class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the crop() processor works with option "from beginning" and "crop at space"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cropWorksWithCropFromBeginningAtWordOptions() {
 		$this->cropProcessor->setMaximumCharacters(10);
@@ -104,7 +99,6 @@ class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the crop() processor works with option "crop at sentence"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cropWorksWithCropAtSentenceOption() {
 		$this->cropProcessor->setMaximumCharacters(80);
@@ -119,7 +113,6 @@ class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the crop() processor allows to change the prefix/suffix
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function preOrSuffixStringCanBeChanged() {
 		$this->cropProcessor->setMaximumCharacters(15);
@@ -133,7 +126,6 @@ class CropProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the crop() processor does not modify the subject string if no options have been specified
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function cropDoesNotModifySubjectIfNoOptionsAreSpecified() {
 		$result = $this->cropProcessor->process('Kasper Skårhøj implemented the original version of the crop function.');

@@ -35,7 +35,6 @@ class RoundProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->roundProcessor = new \TYPO3\TYPO3\TypoScript\Processors\RoundProcessor();
@@ -45,7 +44,6 @@ class RoundProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the round function works as expected when having regular input
 	 *
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function roundWorksForFloatParameters() {
 		$subject = 5.3;
@@ -83,7 +81,6 @@ class RoundProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the round function works as expected when having an additional precision parameter
 	 *
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function roundWorksWithPrecisionParameter() {
 		$subject = 5.31;
@@ -109,7 +106,6 @@ class RoundProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the round function fails if passed a string
 	 *
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException \TYPO3\TypoScript\Exception
 	 */
 	public function roundThrowsExceptionOnInvalidParameters() {
@@ -121,7 +117,6 @@ class RoundProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the round function fails if precision is a string
 	 *
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException \TYPO3\TypoScript\Exception
 	 */
 	public function roundThrowsExceptionOnInvalidPrecisionParameters() {

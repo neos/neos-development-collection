@@ -37,7 +37,6 @@ class BreadcrumbMenu extends \TYPO3\TYPO3\TypoScript\Menu {
 	 * configuration set for this Breadcrumbmenu object.
 	 *
 	 * @return array An array of menu items and further information
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildItems(\TYPO3\TYPO3\Domain\Service\ContentContext $contentContext) {
 

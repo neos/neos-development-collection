@@ -37,7 +37,6 @@ class ToIntegerProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->toIntegerProcessor = new \TYPO3\TYPO3\TypoScript\Processors\ToIntegerProcessor();
@@ -45,7 +44,6 @@ class ToIntegerProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function toIntegerConvertsTheNumberFivePassedAsAStringIntoAnInteger() {
 		$result = $this->toIntegerProcessor->process('5');
@@ -54,7 +52,6 @@ class ToIntegerProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function toIntegerConvertsTheNumberFourtyThreePassedAsAStringIntoAnInteger() {
 		$result = $this->toIntegerProcessor->process('43');
@@ -63,7 +60,6 @@ class ToIntegerProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function toIntegerConvertsAnObjectToStringBeforeConvertingItToAnInteger() {
 		$mockObject = new \TYPO3\TYPO3\TypoScript\MockTypoScriptObject();

@@ -85,7 +85,6 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \InvalidArgumentException
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRenderingContextThrowsExceptionIfRenderingContextIsNoTypoScriptRenderingContext() {
 		$mockRenderingContext = $this->getMock('TYPO3\Fluid\Core\Rendering\RenderingContextInterface');
@@ -94,7 +93,6 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderCreatesAndDispatchesSubRequestAndReturnItsContent() {
 		$this->markTestIncomplete('Needs to have a new check for the actual response');
@@ -118,8 +116,6 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderSetsControllerActionInformationOnRequestObjectIfItHasBeenDefinedInThePluginProperties() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
@@ -151,8 +147,6 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderDoesNotSetRequestPackageKeyIfItIsAlreadySet() {
 		$mockPluginRequest = $this->getMock('TYPO3\FLOW3\MVC\Web\SubRequest', array(), array(), '', FALSE);
@@ -177,7 +171,6 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function renderSetsControllerActionInformationOnRequestObjectIfItHasBeenDefinedInTheNode() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
@@ -207,7 +200,6 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceReturnsTheNodesValueIfItIsSetThere() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
@@ -222,7 +214,6 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceReturnsTheNamespaceSetInThePluginClassIfNoneIsSetInTheNode() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
@@ -237,7 +228,6 @@ class PluginTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPluginNamespaceCompilesTheNamespaceFromTheClassNameIfNoneIsSetInThePluginClassNorInTheNode() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);

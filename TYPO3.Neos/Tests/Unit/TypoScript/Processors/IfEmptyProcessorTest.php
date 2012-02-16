@@ -35,7 +35,6 @@ class IfEmptyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->ifEmptyProcessor = new \TYPO3\TYPO3\TypoScript\Processors\IfEmptyProcessor();
@@ -45,7 +44,6 @@ class IfEmptyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifEmpty() processor basically works
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifEmptyBasicallyWorks() {
 		$subject = '';
@@ -59,7 +57,6 @@ class IfEmptyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifEmpty() processor returns the original subject if the subject is not empty
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifEmptyReturnsSubjectItSubjectIsNotEmpty() {
 		$subject = 'Not to be killed!';
@@ -73,7 +70,6 @@ class IfEmptyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifEmpty() processor returns the override value for an 0 value of the subject
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifEmptyReturnsSubjectOnZeroOverrideValue() {
 		$subject = 0;
@@ -87,7 +83,6 @@ class IfEmptyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifEmpty() processor returns the override value for an not trimmed 0 value of the subject
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifEmptyReturnsSubjectOnNotTrimmedZeroOverrideValue() {
 		$subject = '   0   ';
@@ -101,7 +96,6 @@ class IfEmptyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifEmpty() processor returns an empty string if replacement has not been set
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function replacementStringIsEmptyByDefault() {
 		$subject = '';

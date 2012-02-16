@@ -19,7 +19,6 @@ class DomainTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHostPatternAllowsForSettingTheHostPatternOfTheDomain() {
 		$domain = new \TYPO3\TYPO3\Domain\Model\Domain();
@@ -29,7 +28,6 @@ class DomainTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setSiteSetsTheSiteTheDomainIsPointingTo() {
 		$mockSite = $this->getMock('TYPO3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);

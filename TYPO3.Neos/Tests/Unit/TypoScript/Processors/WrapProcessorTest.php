@@ -35,7 +35,6 @@ class WrapProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->wrapProcessor = new \TYPO3\TYPO3\TypoScript\Processors\WrapProcessor();
@@ -45,7 +44,6 @@ class WrapProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the wrap() processor basically works
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function wrapBasicallyWorks() {
 		$subject = 'Kasper Skårhøj';
@@ -61,7 +59,6 @@ class WrapProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * prefixString and suffixString are not set
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function prefixAndSuffixAreEmptyByDefault() {
 		$subject = 'Kasper Skårhøj';

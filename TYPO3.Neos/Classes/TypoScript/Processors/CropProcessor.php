@@ -95,8 +95,6 @@ class CropProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject The string to be cropped
 	 * @return string The processed string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
 		$processedSubject = $subject;

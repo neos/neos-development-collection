@@ -53,8 +53,6 @@ class TwoColumnTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function renderingTwoColumnNodesWithContent() {
 		$this->setUpContextAndSite('user-foo');
@@ -81,7 +79,6 @@ class TwoColumnTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function renderingTwoColumnNodesWithNoContentInRightColumn() {
 		$this->setUpContextAndSite('user-foo');
@@ -124,8 +121,6 @@ class TwoColumnTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
 	 * @return string
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function renderNode(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
 		$this->contentContext->setCurrentNode($node);

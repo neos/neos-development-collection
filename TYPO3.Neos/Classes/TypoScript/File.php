@@ -31,7 +31,6 @@ class File extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param string $pathAndFilename
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPathAndFilename($pathAndFilename) {
 		$this->pathAndFilename = $pathAndFilename;
@@ -39,7 +38,6 @@ class File extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathAndFilename() {
 		return $this->pathAndFilename;
@@ -49,7 +47,6 @@ class File extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the rendered content of this content object
 	 *
 	 * @return string The rendered content as a string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		if (file_exists($this->pathAndFilename)) {

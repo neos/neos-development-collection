@@ -65,7 +65,6 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * Initializes the context after all dependencies have been injected.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
 		$this->locale = new Locale('mul_ZZ');
@@ -83,7 +82,6 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * Returns the locale of this context.
 	 *
 	 * @return \TYPO3\FLOW3\I18n\Locale
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLocale() {
 		return $this->locale;
@@ -93,7 +91,6 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * Returns the current site from this frontend context
 	 *
 	 * @return \TYPO3\TYPO3\Domain\Model\Site The current site
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentSite() {
 		return $this->currentSite;
@@ -107,7 +104,6 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 *
 	 * @param \TYPO3\TYPO3\Domain\Model\Site $site
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCurrentSite(\TYPO3\TYPO3\Domain\Model\Site $site) {
 		$this->currentSite = $site;
@@ -117,7 +113,6 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * Returns the current site from this frontend context
 	 *
 	 * @return \TYPO3\TYPO3\Domain\Model\Structure\Domain The current site
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getCurrentDomain() {
@@ -128,7 +123,6 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	 * Returns the node of the current site.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCurrentSiteNode() {
 		return ($this->currentSite === NULL) ? NULL : $this->getNode('/sites/' . $this->currentSite->getNodeName());

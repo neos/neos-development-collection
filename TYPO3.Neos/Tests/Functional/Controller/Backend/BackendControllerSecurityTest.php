@@ -37,7 +37,6 @@ class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function indexActionIsGrantedForAdministrator() {
 		$user = new User();
@@ -50,7 +49,6 @@ class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCas
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 */
 	public function indexActionIsDeniedForEverybody() {

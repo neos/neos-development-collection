@@ -81,7 +81,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param string $type
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setType($type) {
 		$this->type = $type;
@@ -91,7 +90,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the type of this page.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getType() {
 		return $this->type;
@@ -102,7 +100,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param string $title
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setTitle($title) {
 		$this->title = $title;
@@ -112,7 +109,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the overridden title of this page.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTitle() {
 		return $this->title;
@@ -123,7 +119,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param \TYPO3\TYPO3\TypoScript\Head $head
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHead(\TYPO3\TYPO3\TypoScript\Head $head) {
 		$this->head = $head;
@@ -133,7 +128,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Gets head content of this page.
 	 *
 	 * @return \TYPO3\TYPO3\TypoScript\Head
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHead() {
 		return $this->head;
@@ -144,7 +138,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param mixed $body Either a plain string or a TypoScript Content Object
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setBody($body) {
 		$this->body = $body;
@@ -156,7 +149,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Either a plain string or a TypoScript Content Object
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBody() {
 		return $this->body;
@@ -167,7 +159,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param \TYPO3\TYPO3\TypoScript\Content $content
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContent(\TYPO3\TYPO3\TypoScript\Content $content) {
 		$this->content = $content;
@@ -177,7 +168,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the Content TypoScript Object used on this page.
 	 *
 	 * @return \TYPO3\TYPO3\TypoScript\Content
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContent() {
 		return $this->content;
@@ -188,7 +178,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param array $parts
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setParts(array $parts) {
 		$this->parts = $parts;
@@ -198,7 +187,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the parts array of this page
 	 *
 	 * @return array An array of TypoScript objects if any have been defined
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParts() {
 		return $this->parts;
@@ -208,7 +196,6 @@ class Page extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the rendered content of this Page TypoScript Object
 	 *
 	 * @return string The rendered content as a string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		$this->node = $this->renderingContext->getContentContext()->getCurrentNode();

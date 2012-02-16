@@ -35,7 +35,6 @@ class MultiplyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->multiplyProcessor = new \TYPO3\TYPO3\TypoScript\Processors\MultiplyProcessor();
@@ -43,7 +42,6 @@ class MultiplyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function multiplyReturnsTheCorrectNumbers() {
 		$subject = '1';
@@ -60,7 +58,6 @@ class MultiplyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function multiplyThrowsExceptionIfNonNumericStringPassedAsSubject() {
 		$this->multiplyProcessor->setFactor(1);
@@ -70,7 +67,6 @@ class MultiplyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function multiplyThrowsExceptionIfStringPassedAsFactor() {
 		$this->multiplyProcessor->setFactor('some String');
@@ -80,7 +76,6 @@ class MultiplyProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function notSettingTheMultiplyFactorThrowsException() {
 		$this->multiplyProcessor->process(123);

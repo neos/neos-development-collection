@@ -64,7 +64,6 @@ class Site {
 	 * Constructs this Site object
 	 *
 	 * @param string $nodeName Node name of this site in the content repository
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($nodeName) {
 		$this->nodeName = $nodeName;
@@ -75,7 +74,6 @@ class Site {
 	 *
 	 * @param string $name The site name
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setName($name) {
@@ -86,7 +84,6 @@ class Site {
 	 * Returns the name of this site
 	 *
 	 * @return string The name
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getName() {
@@ -100,7 +97,6 @@ class Site {
 	 * context, do not use the NodeRepository!
 	 *
 	 * @return string The node name
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNodeName() {
 		return $this->nodeName;
@@ -111,7 +107,6 @@ class Site {
 	 *
 	 * @param integer $state The site's state, must be one of the STATUS_* constants
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setState($state) {
@@ -122,7 +117,6 @@ class Site {
 	 * Returns the state of this site
 	 *
 	 * @return integer The state - one of the STATUS_* constant's values
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getState() {
@@ -134,7 +128,6 @@ class Site {
 	 *
 	 * @param string $packageKey The package key
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setSiteResourcesPackageKey($packageKey) {
@@ -145,7 +138,6 @@ class Site {
 	 * Returns the key of a package containing the static resources for this site.
 	 *
 	 * @return string The package key
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getSiteResourcesPackageKey() {

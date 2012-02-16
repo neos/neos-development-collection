@@ -59,7 +59,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	/**
 	 * @param \TYPO3\TypoScript\ObjectFactory $typoScriptObjectFactory
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectTypoScriptObjectFactory(\TYPO3\TypoScript\ObjectFactory $typoScriptObjectFactory) {
 		$this->typoScriptObjectFactory = $typoScriptObjectFactory;
@@ -70,7 +69,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
 		if (!$renderingContext instanceof \TYPO3\TypoScript\RenderingContext) {
@@ -93,7 +91,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 	}
@@ -102,7 +99,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * Dummy method, not used
 	 *
 	 * @return NULL
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode() {
 	}
@@ -110,7 +106,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	/**
 	 * @param string $sectionName
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setSectionName($sectionName) {
@@ -119,7 +114,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 
 	/**
 	 * @return mixed
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getSectionName() {
@@ -138,7 +132,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param mixed $source The Fluid template source
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setSource($source) {
 		$this->source = $source;
@@ -148,7 +141,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * Returns the Fluid template source.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSource() {
 		return $this->source;
@@ -163,7 +155,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param string $actionName Not used in this context
 	 * @return string Rendered Template
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function render($actionName = NULL) {
@@ -184,8 +175,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param string $actionName Not used in this implementation
 	 * @return string The template source
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTemplateSource($actionName = NULL) {
 		if ($this->source instanceof \TYPO3\TypoScript\ContentObjectInterface) {
@@ -219,7 +208,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * If a template source is available
 	 *
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasTemplate() {
 		return $this->source !== NULL;
@@ -229,8 +217,8 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * Dummy method to satisfy the TemplateView contract.
 	 * Layouts are not supported at this level.
 	 *
+	 * @param string $layoutName
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLayoutSource($layoutName = 'default') {
 		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('Layouts are not directly supported by the TypoScript Template object', 1277298477);
@@ -249,7 +237,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param string $partialName
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPartialSource($partialName) {
 		throw new \TYPO3\Fluid\View\Exception\InvalidTemplateResourceException('Partials are not directly supported by the TypoScript Template object', 1277298476);
@@ -266,8 +253,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * Build parser configuration
 	 *
 	 * @return \TYPO3\Fluid\Core\Parser\Configuration
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildParserConfiguration() {
 		$this->resourceInterceptor = new \TYPO3\Fluid\Core\Parser\Interceptor\Resource();
@@ -282,7 +267,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * @param string $propertyName Name of the property to set the chain for
 	 * @param \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain The property processor chain for that property
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPropertyProcessorChain($propertyName, \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain) {
 		$this->propertyProcessorChains[$propertyName] = $propertyProcessorChain;
@@ -293,7 +277,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param string $propertyName Name of the property to unset the chain for
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetPropertyProcessorChain($propertyName) {
 		unset($this->propertyProcessorChains[$propertyName]);
@@ -305,7 +288,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * @param string $propertyName Name of the property to return the chain of
 	 * @return \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
 	 * @throws \TYPO3\TypoScript\Exception\NoProcessorChainFoundException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyProcessorChain($propertyName) {
 		if (!isset($this->propertyProcessorChains[$propertyName])) throw new \TYPO3\TypoScript\Exception\NoProcessorChainFoundException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
@@ -317,7 +299,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param string $propertyName Name of the property to check for
 	 * @return boolean TRUE if a property chain exists, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertyHasProcessorChain($propertyName) {
 		return isset($this->propertyProcessorChains[$propertyName]);
@@ -332,7 +313,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 *
 	 * @param string $propertyName Name of the property to process
 	 * @return mixed A proxy which can process the specified property or the actual value if no processors exist
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getPropertyProcessingProxy($propertyName) {
 		$getterMethodName = 'get' . ucfirst($propertyName);
@@ -355,7 +335,6 @@ class Template extends \TYPO3\Fluid\View\AbstractTemplateView implements \TYPO3\
 	 * Casts this TypoScript Object to a string by invoking the render() method.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __toString() {
 		try {

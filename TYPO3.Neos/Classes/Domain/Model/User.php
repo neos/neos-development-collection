@@ -35,7 +35,6 @@ class User extends Person  {
 	/**
 	 * Constructs this User object
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
 		parent::__construct();

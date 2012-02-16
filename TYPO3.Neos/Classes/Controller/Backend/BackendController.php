@@ -36,7 +36,6 @@ class BackendController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Default action of the backend controller.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @FLOW3\SkipCsrfProtection
 	 */
 	public function indexAction() {

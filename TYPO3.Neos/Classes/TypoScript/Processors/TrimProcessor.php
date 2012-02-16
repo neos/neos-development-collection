@@ -22,8 +22,6 @@ class TrimProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject The string to be processed
 	 * @return string The processed string
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
 		return trim((string)$subject);

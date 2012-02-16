@@ -31,7 +31,6 @@ class Content extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayA
 	 *
 	 * @param string $offset Name of the section to return
 	 * @return mixed
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetGet($offset) {
 		if ($this->sections === NULL) {
@@ -44,7 +43,6 @@ class Content extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayA
 	 * Tells if a section with the given name exists.
 	 *
 	 * @return boolean TRUE if the section exists, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetExists($offset) {
 		if ($this->sections === NULL) {
@@ -59,7 +57,6 @@ class Content extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayA
 	 * @param string $offset The offset (name of the sectino) of the value to set.
 	 * @param \TYPO3\TypoScript\ContentObjectInterface $value The value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetSet($offset, $value) {
 		if ($this->sections === NULL) {
@@ -76,7 +73,6 @@ class Content extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayA
 	 *
 	 * @param string $offset The offset (section name) of the value to unset.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetUnset($offset) {
 		if ($this->sections === NULL) {
@@ -89,7 +85,6 @@ class Content extends \TYPO3\TypoScript\AbstractContentObject implements \ArrayA
 	 * Initializes the internal sections array.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeSections() {
 		$this->sections = array();

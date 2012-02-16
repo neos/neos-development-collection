@@ -89,7 +89,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 * @param integer $entryLevel
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setEntryLevel($entryLevel) {
 		$this->entryLevel = $entryLevel;
@@ -97,7 +96,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getEntryLevel() {
 		return $this->entryLevel;
@@ -106,7 +104,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 * @param integer $maximumLevels
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setMaximumLevels($maximumLevels) {
 		if ($maximumLevels > self::MAXIMUM_LEVELS_LIMIT) {
@@ -117,7 +114,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMaximumLevels() {
 		return $this->maximumLevels;
@@ -125,7 +121,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @param integer $lastLevel
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setLastLevel($lastLevel) {
 		if ($lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
@@ -136,7 +131,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getLastLevel() {
 		return $this->lastLevel;
@@ -146,7 +140,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the menu items according to the defined settings.
 	 *
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getItems() {
 		if ($this->items === NULL) {
@@ -161,7 +154,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param \TYPO3\TYPO3\Domain\Service\ContentContext $contentContext
 	 * @return array An array of menu items and further information
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildItems(\TYPO3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->entryLevel, $contentContext);
@@ -181,7 +173,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	 * @param \TYPO3\TYPO3\Domain\Service\ContentContext $contentContext $contentContext The current content context
 	 * @param integer $currentLevel Level count for the recursion – don't use.
 	 * @return array A nested array of menu item information
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see buildItems()
 	 */
 	private function buildRecursiveItemsArray(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $entryParentNode, $lastParentNode, \TYPO3\TYPO3\Domain\Service\ContentContext $contentContext, $currentLevel = 1) {
@@ -226,7 +217,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	 * @param integer $givenSiteLevel The site level child nodes of the to be found parent node should have. See $this->entryLevel for possible values.
 	 * @param \TYPO3\TYPO3\Domain\Service\ContentContext $contentContext
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The parent node of the node at the specified level or NULL if none was found
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	private function findParentNodeInBreadcrumbPathByLevel($givenSiteLevel, \TYPO3\TYPO3\Domain\Service\ContentContext $contentContext) {
 		$parentNode = NULL;

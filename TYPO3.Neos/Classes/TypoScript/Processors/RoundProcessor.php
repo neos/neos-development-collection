@@ -44,8 +44,6 @@ class RoundProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param float/string $subject The subject to round.
 	 * @return float Rounded value
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
 		if (!is_numeric($subject)) throw new \TYPO3\TypoScript\Exception('Expected an integer or float passed, ' . gettype($subject) . ' given.', 1224053300);

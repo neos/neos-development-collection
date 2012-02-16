@@ -53,7 +53,6 @@ class Head extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param string $title
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setTitle($title) {
 		$this->title = $title;
@@ -63,7 +62,6 @@ class Head extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the overriden title of this page.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTitle() {
 		return $this->title;

@@ -47,8 +47,6 @@ class ShiftCaseProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject the string to be processed
 	 * @return string The processed string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
 		switch ($this->direction) {

@@ -35,7 +35,6 @@ class TrimProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->trimProcessor = new \TYPO3\TYPO3\TypoScript\Processors\TrimProcessor();
@@ -45,7 +44,6 @@ class TrimProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the trim() processor basically works
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function trimBasicallyWorks() {
 		$subject = '  I am not trimmed     ';
@@ -58,7 +56,6 @@ class TrimProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the trim() processor works with integers
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function trimWorksWithIntegers() {
 		$subject = 123;

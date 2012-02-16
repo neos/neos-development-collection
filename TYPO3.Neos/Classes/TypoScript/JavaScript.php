@@ -46,7 +46,6 @@ class JavaScript extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 *
 	 * @return string The source
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getSource() {
 		return $this->source;
@@ -55,7 +54,6 @@ class JavaScript extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 * @param string $source The JavaScript source as an URL
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setSource($source) {
 		$this->source = $source;
@@ -63,7 +61,6 @@ class JavaScript extends \TYPO3\TypoScript\AbstractContentObject {
 
 	/**
 	 * @return string The inline JavaScript content
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getInline() {
 		return $this->inline;
@@ -72,7 +69,6 @@ class JavaScript extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 * @param string $inline The inline JavaScript content
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setInline($inline) {
 		$this->inline = $inline;

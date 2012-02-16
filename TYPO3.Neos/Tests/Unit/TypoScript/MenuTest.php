@@ -19,7 +19,6 @@ class MenuTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getItemsBuildsTheItemsArrayIfItHasNotBeenBuiltAlready() {
 		$mockItems = array('foo' => 'bar');
@@ -42,7 +41,6 @@ class MenuTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * test
 	 * @dataProvider buildItemData
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Either finish test implementation or replace by system test
 	 */
 	public function buildItemsCanBuildDifferentKindsOfMenus($entryLevel, $lastLevel, \TYPO3\TYPO3\Domain\Service\ContentContext $contentContext, array $expectedItems) {

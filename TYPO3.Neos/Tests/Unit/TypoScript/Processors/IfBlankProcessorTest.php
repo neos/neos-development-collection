@@ -35,7 +35,6 @@ class IfBlankProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->ifBlankProcessor = new \TYPO3\TYPO3\TypoScript\Processors\IfBlankProcessor();
@@ -45,7 +44,6 @@ class IfBlankProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifBlank() processor basically works
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifBlankBasicallyWorks() {
 		$subject = '';
@@ -59,7 +57,6 @@ class IfBlankProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifBlank() processor returns the original subject if the subject is not empty
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifBlankReturnsSubjectIfSubjectIsNotEmpty() {
 		$subject = 'Not to be killed!';
@@ -73,7 +70,6 @@ class IfBlankProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifBlank() processor returns the subject for an 0 value of the subject
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifBlankReturnsSubjectOnZeroOverrideValue() {
 		$subject = 0;
@@ -87,7 +83,6 @@ class IfBlankProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifBlank() processor returns the subject for an not trimmed 0 value of the subject
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifBlankReturnsSubjectOnNotTrimmedZeroOverrideValue() {
 		$subject = '   0   ';
@@ -101,7 +96,6 @@ class IfBlankProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifBlank() processor returns the subject for a subject with one space character
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifBlankReturnsSubjectForSubjectOfOneSpaceCharacter() {
 		$subject = ' ';
@@ -115,7 +109,6 @@ class IfBlankProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the ifBlank() processor returns an empty string if replacement has not been set
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function replacementStringIsEmptyByDefault() {
 		$subject = '';

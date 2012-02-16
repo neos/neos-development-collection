@@ -35,7 +35,6 @@ class ShiftCaseProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->shiftCaseProcessor = new \TYPO3\TYPO3\TypoScript\Processors\ShiftCaseProcessor();
@@ -45,7 +44,6 @@ class ShiftCaseProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the shiftCase() processor works with direction "to upper"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shiftCaseToUpperWorks() {
 		$subject = 'Kasper Skårhøj';
@@ -65,7 +63,6 @@ class ShiftCaseProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the shiftCase() processor works with direction "to lower"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shiftCaseToLowerWorks() {
 		$subject = 'Kasper SKÅRHØJ';
@@ -79,7 +76,6 @@ class ShiftCaseProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the shiftCase() processor works with direction "to title"
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function shiftCaseToTitleWorks() {
 		$subject = 'kasper skårhøj';
@@ -94,8 +90,6 @@ class ShiftCaseProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function shiftCaseThrowsExceptionOnInvalidDirection() {
 		$subject = 'Kasper Skårhøj';
@@ -108,7 +102,6 @@ class ShiftCaseProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function shiftCaseThrowsExceptionIfDirectionHasNotBeenSpecified() {
 		$subject = 'Kasper Skårhøj';

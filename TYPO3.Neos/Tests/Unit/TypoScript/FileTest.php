@@ -19,7 +19,6 @@ class FileTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function renderReturnsFileContent() {
 		\vfsStreamWrapper::register();
@@ -33,7 +32,6 @@ class FileTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function renderReturnsErrorMessageIfFileDoesNotExist() {
 		$file = new \TYPO3\TYPO3\TypoScript\File();

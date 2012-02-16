@@ -35,7 +35,6 @@ class IfProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->ifProcessor = new \TYPO3\TYPO3\TypoScript\Processors\IfProcessor();
@@ -45,7 +44,6 @@ class IfProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the if() processor basically works for satisfied conditions
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifBasicallyWorksForSatisfiedConditions() {
 		$subject = 'not needed here';
@@ -62,7 +60,6 @@ class IfProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the if() processor basically works for unsatisfied conditions
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifBasicallyWorksForUnatisfiedConditions() {
 		$subject = 'not needed here';
@@ -80,8 +77,6 @@ class IfProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function ifThrowsExceptionOnInvalidCondition() {
 		$subject = 'not needed here';
@@ -96,7 +91,6 @@ class IfProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the if() processor returns an empty string by default for satisfied conditions
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function trueValueIsEmptyByDefault() {
 		$subject = 'not needed here';
@@ -111,7 +105,6 @@ class IfProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the if() processor returns an empty string by default for unsatisfied conditions
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function falseValueIsEmptyByDefault() {
 		$subject = 'not needed here';

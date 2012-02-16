@@ -42,7 +42,6 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicR
 	 *
 	 * @param string $value The relative context node path (without leading "/", relative to the current Site Node)
 	 * @return mixed One of the MATCHRESULT_* constants
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function matchValue($value) {
 		$relativeContextNodePath = $value;
@@ -90,9 +89,6 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicR
 	 *
 	 * @param string $requestPath The request path to be matched
 	 * @return string value to match, or an empty string if $requestPath is empty or split string was not found
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function findValueToMatch($requestPath) {
 		if ($this->splitString !== '') {
@@ -130,7 +126,6 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicR
 	 *
 	 * @param mixed $value Either a Node object or an absolute context node path
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveValue($value) {
 		if (!$value instanceof NodeInterface && !is_string($value)) {

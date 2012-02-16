@@ -19,7 +19,6 @@ class TypoScriptServiceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function readExternalTypoScriptFilesReturnsTypoScriptFilesSortedInNaturalOrder() {
 		\vfsStreamWrapper::register();

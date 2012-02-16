@@ -35,7 +35,6 @@ class OverrideProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->overrideProcessor = new \TYPO3\TYPO3\TypoScript\Processors\OverrideProcessor();
@@ -45,7 +44,6 @@ class OverrideProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the override() processor basically works
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function overrideBasicallyWorks() {
 		$subject = 'To be killed!';
@@ -59,7 +57,6 @@ class OverrideProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the override() processor returns the original subject on an empty override value
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function overrideReturnsSubjectOnEmptyOverrideValue() {
 		$subject = 'Not to be killed!';
@@ -73,7 +70,6 @@ class OverrideProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the override() processor returns the original subject on a 0 value
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function overrideReturnsSubjectOnZeroOverrideValue() {
 		$subject = 'Not to be killed!';
@@ -87,7 +83,6 @@ class OverrideProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the override() processor returns the original subject on a not trimmed 0 value
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function overrideReturnsSubjectOnNotTrimmedZeroOverrideValue() {
 		$subject = 'Not to be killed!';
@@ -101,7 +96,6 @@ class OverrideProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the override() processor returns the original subject if replacement has not been specified
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function overrideReturnsSubjectIfReplacementHasNotBeenSpecified() {
 		$subject = 'Not to be killed!';

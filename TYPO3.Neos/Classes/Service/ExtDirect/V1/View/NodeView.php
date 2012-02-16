@@ -29,7 +29,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to render
 	 * @param array $propertyNames Optional list of property names to include in the JSON output
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function assignNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, array $propertyNames = array('name', 'path', 'identifier', 'properties', 'contentType')) {
 		$this->setConfiguration(
@@ -50,7 +49,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 *
 	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to render
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function assignNodes(array $nodes) {
 		$data = array();
@@ -83,9 +81,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @param integer $outputStyle Either TREESTYLE or LISTSTYLE
 	 * @param integer $depth how many levels of childNodes (0 = unlimited)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Christian Müller <christian@kitsunet.de>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function assignChildNodes(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $outputStyle = self::LISTSTYLE, $depth = 0) {
 		$contentTypeFilter = ($contentTypeFilter === '' ? NULL : $contentTypeFilter);
@@ -136,7 +131,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @param integer $depth levels of child nodes to fetch. 0 = unlimited
 	 * @param integer $recursionPointer current recursion level
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function collectChildNodeData(array &$data, array &$propertyNames, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth = 0, $recursionPointer = 1) {
 		foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
@@ -154,7 +148,6 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	 * @param array &$propertyNames
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function collectNodeData(array &$data, array &$propertyNames, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$properties = $node->getProperties();

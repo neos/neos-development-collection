@@ -25,7 +25,6 @@ class SiteRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * Finds the first site
 	 *
 	 * @return \TYPO3\TYPO3\Domain\Model\Site The first site or NULL if none exists
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function findFirst() {

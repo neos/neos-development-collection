@@ -41,7 +41,6 @@ class RoutingLoggingAspect {
 	 * @FLOW3\AfterReturning("method(TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler->matchValue()) || method(TYPO3\TYPO3\Routing\RestRestServiceNodeRoutePartHandler->matchValue())")
 	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logMatchValue(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$path = $joinPoint->getMethodArgument('value');

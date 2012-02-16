@@ -31,7 +31,6 @@ class SiteExportService {
 	 *
 	 * @param array<\TYPO3\TYPO3\Domain\Model\Site> $sites
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function export(array $sites) {
 		$contentContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');

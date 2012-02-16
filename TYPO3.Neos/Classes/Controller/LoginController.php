@@ -25,7 +25,6 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 	 * Select special views according to format
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function initializeAction() {
 		switch ($this->request->getFormat()) {
@@ -44,7 +43,6 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 	 *
 	 * @param string $username Optional: A username to prefill into the username field
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction($username = NULL) {
 		$this->view->assign('username', $username);
@@ -68,7 +66,6 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 	 * Shows some information about the currently logged in account
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @ExtDirect
 	 */
 	public function showAction() {
@@ -102,7 +99,6 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 	 * Logs out a - possibly - currently logged in account.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function logoutAction() {
@@ -129,7 +125,6 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 	 * converting them.
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function extErrorAction() {
 		$this->view->assignErrors($this->arguments->getValidationResults()->getFlattenedErrors());

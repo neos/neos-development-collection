@@ -40,7 +40,6 @@ class Domain  {
 	 *
 	 * @param string $hostPattern Pattern for the host
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setHostPattern($hostPattern) {
@@ -51,7 +50,6 @@ class Domain  {
 	 * Returns the host pattern for this domain
 	 *
 	 * @return string The host pattern
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getHostPattern() {
@@ -63,7 +61,6 @@ class Domain  {
 	 *
 	 * @param \TYPO3\TYPO3\Domain\Model\Site $site The site
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setSite(\TYPO3\TYPO3\Domain\Model\Site $site) {
@@ -74,7 +71,6 @@ class Domain  {
 	 * Returns the site this domain is pointing to
 	 *
 	 * @return \TYPO3\TYPO3\Domain\Model\Site
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function getSite() {

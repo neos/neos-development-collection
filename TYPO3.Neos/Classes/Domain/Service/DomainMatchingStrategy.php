@@ -31,7 +31,6 @@ class DomainMatchingStrategy {
 	 * @param string $host The host to match against (eg. "localhost" or "www.typo3.org")
 	 * @param array<\TYPO3\TYPO3\Domain\Model\Domain> $domains The domains to check
 	 * @return array The matching domains
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSortedMatches($host, array $domains) {
 		$matchingDomains = array();

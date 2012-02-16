@@ -34,19 +34,17 @@ class UserPreferences {
 	protected $preferences = array();
 
 	/**
-	 * @param $key
-	 * @param $value
+	 * @param mixed $key
+	 * @param mixed $value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($key, $value) {
 		$this->preferences[$key] = $value;
 	}
 
 	/**
-	 * @param $key
+	 * @param mixed $key
 	 * @return array|null
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function get($key) {
 		return isset($this->preferences[$key]) ? $this->preferences[$key] : NULL;

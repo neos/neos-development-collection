@@ -36,7 +36,6 @@ class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
 	 * @param string $subpackage The subpackage key of the resources to include or current controller subpackage if NULL
 	 * @param string $directory The directory inside the current subpackage. By default, the "JavaScript" directory will be used.
 	 * @return string
-	 * @author Christopher Hlubek
 	 */
 	public function render($include, $exclude = NULL, $package = NULL, $subpackage = NULL, $directory = 'JavaScript') {
 		$packageKey = $package === NULL ? $this->controllerContext->getRequest()->getControllerPackageKey() : $package;
@@ -79,7 +78,6 @@ class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
 	 *
 	 * @param string $directory The directory to iterate over
 	 * @return \RecursiveIteratorIterator
-	 * @author Christopher Hlubek
 	 */
 	protected function iterateDirectoryRecursively($directory) {
 		if (!is_dir($directory)) {
@@ -96,7 +94,6 @@ class IncludeJavaScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractV
 	 * @param string $pattern The partial regular expression pattern
 	 * @param string $path The path to test
 	 * @return boolean True if the pattern matches the path
-	 * @author Christopher Hlubek
 	 */
 	protected function patternMatchesPath($pattern, $path) {
 		return $pattern !== NULL && preg_match('/^' . str_replace('/', '\/', $pattern) . '$/', $path);

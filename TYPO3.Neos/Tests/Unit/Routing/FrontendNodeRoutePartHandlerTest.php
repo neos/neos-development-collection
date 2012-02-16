@@ -19,7 +19,6 @@ class FrontendNodeRoutePartHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchValueReturnsErrorValueIfNoSiteExistsForTheCurrentRequest() {
 		$this->markTestIncomplete('Needs a new way to check, mock object not used because of new keyword!');
@@ -52,7 +51,6 @@ class FrontendNodeRoutePartHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider requestPaths
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findValueToMatchReturnsTheGivenRequestPathUntilTheFirstDot($requestPath, $valueToMatch) {
 		$routePartHandler = $this->getAccessibleMock('TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);
@@ -61,7 +59,6 @@ class FrontendNodeRoutePartHandlerTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function findValueToMatchRespectsSplitString() {
 		$routePartHandler = $this->getAccessibleMock('TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler', array('dummy'), array(), '', FALSE);

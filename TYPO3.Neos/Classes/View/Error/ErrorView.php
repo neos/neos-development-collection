@@ -35,7 +35,6 @@ class ErrorView extends \TYPO3\FLOW3\MVC\View\NotFoundView {
 	 * Get the template path and filename for the page not found template
 	 *
 	 * @return string path and filename of the not-found-template
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getTemplatePathAndFilename() {
 		return 'resource://TYPO3.TYPO3/Private/Templates/Frontend/Error/NotFound.html';

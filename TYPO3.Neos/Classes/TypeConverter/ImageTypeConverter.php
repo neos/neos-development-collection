@@ -61,9 +61,10 @@ class ImageTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTyp
 	 * resource manager.
 	 *
 	 * @param array $source The upload info (expected keys: error, name, tmp_name)
-	 * @return object An object or an instance of TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param string $targetType
+	 * @param array $convertedChildProperties
+	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
+	 * @return \TYPO3\Media\Domain\Model\Image An object or an instance of TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$resource = $this->resourceManager->importUploadedResource($_FILES['file']);

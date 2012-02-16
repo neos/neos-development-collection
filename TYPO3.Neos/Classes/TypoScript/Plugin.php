@@ -87,8 +87,6 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	/**
 	 * @param \TYPO3\TypoScript\RenderingContext $renderingContext
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
 		if (!$renderingContext instanceof \TYPO3\TypoScript\RenderingContext) {
@@ -113,7 +111,7 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	}
 
 	/**
-	 * @param string $package
+	 * @param string $subpackage
 	 * @return void
 	 */
 	public function setSubpackage($subpackage) {
@@ -221,8 +219,6 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	 * Returns the rendered content of this plugin
 	 *
 	 * @return string The rendered content as a string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function render() {
 		$parentResponse = $this->renderingContext->getControllerContext()->getResponse();
@@ -250,7 +246,6 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	 * By default this is typo3_<package>_<subpackage>_<pluginname>
 	 *
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @todo make this configurable
 	 */
 	protected function getPluginNamespace() {

@@ -49,7 +49,6 @@ class TypoScriptView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	 * which applies to the current content context.
 	 *
 	 * @return string Rendered node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		if (!isset($this->variables['value']) || !$this->variables['value'] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {

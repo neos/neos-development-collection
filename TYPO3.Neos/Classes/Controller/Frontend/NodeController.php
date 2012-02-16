@@ -42,7 +42,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if (!$node->isAccessible()) {

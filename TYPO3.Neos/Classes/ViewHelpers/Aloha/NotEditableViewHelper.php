@@ -31,7 +31,6 @@ class NotEditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBase
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectAccessDecisionManager(\TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
 		$this->accessDecisionManager = $accessDecisionManager;
@@ -40,7 +39,6 @@ class NotEditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBase
 	/**
 	 * @param string $property the property to render
 	 * @param string $context either "inline" or "block"
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function render() {
 		if ($this->hasAccessToResource('TYPO3_TYPO3_Backend_BackendController')) {
@@ -57,7 +55,6 @@ class NotEditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBase
 	 *
 	 * @param string $resource The resource to check
 	 * @return boolean TRUE if we currently have access to the given resource
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function hasAccessToResource($resource) {
 		try {

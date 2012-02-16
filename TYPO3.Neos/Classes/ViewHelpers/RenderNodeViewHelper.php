@@ -32,8 +32,6 @@ class RenderNodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelp
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to render or the base node for rendering a child node
 	 * @param string $path The child node path
 	 * @return string The rendered node
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $path = NULL) {
 		if ($path !== NULL) {

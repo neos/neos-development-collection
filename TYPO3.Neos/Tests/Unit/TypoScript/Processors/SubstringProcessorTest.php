@@ -35,7 +35,6 @@ class SubstringProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->substringProcessor = new \TYPO3\TYPO3\TypoScript\Processors\SubstringProcessor();
@@ -43,7 +42,6 @@ class SubstringProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function substringWorksIfStartAndLengthHaveBeenSpecified() {
 		$subject = 'Kasper Skårhøj\'s name is good to test String functions';
@@ -57,7 +55,6 @@ class SubstringProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function subjectIsNotModifiedIfNoOptionsHaveBeenSet() {
 		$subject = 'Kasper Skårhøj\'s name is good to test String functions';
@@ -69,7 +66,6 @@ class SubstringProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function substringWorksIfLengthHasNotBeenSpecified() {
 		$subject = 'Kasper Skårhøj\'s name is good to test String functions';
@@ -82,7 +78,6 @@ class SubstringProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function substringWorksIfStartHasNotBeenSpecified() {
 		$subject = 'Kasper Skårhøj\'s name is good to test String functions';
@@ -96,8 +91,6 @@ class SubstringProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function passingAStringInsteadOfTheStartPositionIntoSubstringThrowsAnException() {
 		$this->substringProcessor->setStart('a string');
@@ -107,7 +100,6 @@ class SubstringProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function passingAStringInsteadOfTheLenghtIntoSubstringThrowsAnException() {
 		$this->substringProcessor->setLength('a string');

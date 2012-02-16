@@ -35,7 +35,6 @@ class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->dateProcessor = new \TYPO3\TYPO3\TypoScript\Processors\DateProcessor();
@@ -45,7 +44,6 @@ class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the date() processor basically works.
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function dateBasicallyWorks() {
 		$subject = 1185279917;
@@ -60,8 +58,6 @@ class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dateThrowsExceptionOnInvalidTimestamp() {
 		$subject = 'This is no valid timestamp';
@@ -74,8 +70,6 @@ class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dateThrowsExceptionOnNegativeTimestamp() {
 		$subject = -1254324643;
@@ -87,7 +81,6 @@ class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the date() processor returns an empty string on an empty format string
 	 *
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function dateReturnsEmptyStringOnEmptyFormat() {
 		$subject = 1254324643;
@@ -101,7 +94,6 @@ class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the date() processor returns an empty string if date format is not specified
 	 *
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dateReturnsEmptyStringIfFormatIsNotSpecified() {
 		$subject = 1254324643;

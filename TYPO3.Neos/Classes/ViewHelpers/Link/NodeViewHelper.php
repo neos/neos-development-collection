@@ -39,7 +39,6 @@ class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHe
 	 * Initialize arguments
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeArguments() {
 		$this->registerUniversalTagAttributes();
@@ -56,7 +55,6 @@ class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHe
 	 * @param string $format Format to use for the URL, for example "html" or "json"
 	 * @param boolean $absolute If set, an absolute URI is rendered
 	 * @return string The rendered link
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render($node = NULL, $format = NULL, $absolute = FALSE) {
 		$uriBuilder = $this->controllerContext->getUriBuilder();

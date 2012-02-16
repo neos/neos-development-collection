@@ -47,17 +47,23 @@ class TextWithImage extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		parent::setNode($node);
 		$this->properties = $node->getProperties();
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getProperties() {
 		return $this->properties;
 	}
 
+	/**
+	 * @param array $properties
+	 * @return void
+	 */
 	public function setProperties(array $properties) {
 		$this->properties = $properties;
 	}
@@ -66,7 +72,6 @@ class TextWithImage extends \TYPO3\TypoScript\AbstractContentObject {
 	 * Returns the rendered content of this content object
 	 *
 	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
 		return parent::render();

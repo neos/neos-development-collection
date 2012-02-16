@@ -22,7 +22,6 @@ class ToIntegerProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject The string to be processed
 	 * @return integer The casted integer value
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function process($subject) {
 		return intval((string)$subject);

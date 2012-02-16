@@ -69,8 +69,6 @@ class SiteImportService {
 	 *
 	 * @param string $packageKey
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Christian Müller <christian@kitsunet.de>
 	 */
 	public function importFromPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
@@ -92,7 +90,6 @@ class SiteImportService {
 	 *
 	 * @param string $packageKey
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function updateFromPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
@@ -171,7 +168,6 @@ class SiteImportService {
 	 * @param \SimpleXMLElement $parentXml
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {

@@ -64,8 +64,6 @@ class WrapProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject the string to be wrapped
 	 * @return string The processed string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
 		return $this->prefix . $subject . $this->suffix;

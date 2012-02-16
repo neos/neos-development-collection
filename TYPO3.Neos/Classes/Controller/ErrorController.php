@@ -41,7 +41,6 @@ class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController imple
 	 *
 	 * @param \TYPO3\FLOW3\MVC\Controller\Exception $exception
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setException(\TYPO3\FLOW3\MVC\Controller\Exception $exception) {
 		$this->exception = $exception;
@@ -51,7 +50,6 @@ class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController imple
 	 * Default action of this controller.
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function indexAction() {
 		if ($this->exception !== NULL) {
@@ -83,7 +81,6 @@ class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController imple
 	 *
 	 * @param string $methodName Original method name
 	 * @param array $arguments Arguments
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __call($methodName, array $arguments) {
 		if (substr($methodName, -6, 6) !== 'Action') {
@@ -96,7 +93,6 @@ class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController imple
 	 * Prepares a view for the current action and stores it in $this->view.
 	 *
 	 * @return \TYPO3\Fluid\View\ViewInterface the resolved view
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveView() {
 		$view = new $this->defaultViewObjectName();

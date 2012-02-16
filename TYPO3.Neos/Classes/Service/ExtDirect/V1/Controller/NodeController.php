@@ -36,7 +36,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Select special error action
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeAction() {
 		$this->errorMethodName = 'extErrorAction';
@@ -47,7 +46,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -59,7 +57,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function getPrimaryChildNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -72,7 +69,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to find child nodes for
 	 * @param string $contentTypeFilter A content type filter
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function getChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter) {
@@ -87,7 +83,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $contentTypeFilter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function getChildNodesAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
@@ -102,7 +97,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $contentTypeFilter
 	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function getChildNodesFromParentAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
@@ -116,8 +110,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param array $nodeData
 	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo maybe the actual creation should be put in a helper / service class
 	 * @ExtDirect
 	 */
@@ -165,7 +157,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
-	 * @author Aske Ertmann <aske@mocsystems.com>
 	 * @ExtDirect
 	 * @fixme Find a better solution that passing -1, 0 and 1
 	 */
@@ -197,7 +188,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @ExtDirect
 	 */
 	public function moveBeforeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
@@ -211,7 +201,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @ExtDirect
 	 */
 	public function moveAfterAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
@@ -228,7 +217,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode The page node
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Move section + text node creation to better place (content type triggered)
 	 */
 	protected function createEmptySectionNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode) {
@@ -242,7 +230,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string View output for the specified node
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -254,7 +241,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string A response string
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @ExtDirect
 	 */
 	public function deleteAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -269,7 +255,6 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * converting them.
 	 *
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function extErrorAction() {
 		$this->view->assignErrors($this->arguments->getValidationResults());

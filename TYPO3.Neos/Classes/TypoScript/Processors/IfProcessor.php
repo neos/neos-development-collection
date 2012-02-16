@@ -101,8 +101,6 @@ class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject Not used in this processor
 	 * @return string The calculated return value. Either $this->trueValue or $this->falseValue
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
 		$condition = $this->condition;

@@ -19,7 +19,6 @@ class SiteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aNameCanBeSetAndRetrievedFromTheSite() {
 		$site = new \TYPO3\TYPO3\Domain\Model\Site('');
@@ -29,7 +28,6 @@ class SiteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultStateOfASiteIsOnline() {
 		$site = new \TYPO3\TYPO3\Domain\Model\Site('');
@@ -38,7 +36,6 @@ class SiteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theStateCanBeSetAndRetrieved() {
 		$site = new \TYPO3\TYPO3\Domain\Model\Site('');
@@ -48,7 +45,6 @@ class SiteTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theSiteResourcesPackageKeyCanBeSetAndRetrieved() {
 		$site = new \TYPO3\TYPO3\Domain\Model\Site('');

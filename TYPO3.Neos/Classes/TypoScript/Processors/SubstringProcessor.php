@@ -64,8 +64,6 @@ class SubstringProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject The string to be processed
 	 * @return string The processed string
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
 		if (!is_integer($this->start)) throw new \TYPO3\TypoScript\Exception('Expected an integer as start position, ' . gettype($this->start) . ' given.', 1224003810);

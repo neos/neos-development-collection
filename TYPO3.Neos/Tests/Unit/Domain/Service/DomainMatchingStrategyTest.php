@@ -19,7 +19,6 @@ class DomainMatchingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSortedMatchesReturnsOneGivenDomainIfItMatchesExactly() {
 		$mockDomains = array($this->getMock('TYPO3\TYPO3\Domain\Model\Domain', array(), array(), '', FALSE));
@@ -33,7 +32,6 @@ class DomainMatchingStrategyTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSortedMatchesFiltersTheGivenDomainsByTheSpecifiedHostAndReturnsThemSortedWithBestMatchesFirst() {
 		$mockDomains = array(

@@ -31,7 +31,6 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 	 *
 	 * @param \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectAccessDecisionManager(\TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
 		$this->accessDecisionManager = $accessDecisionManager;
@@ -39,8 +38,7 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 
 	/**
 	 * @param string $property the property to render
-	 * @param string $context either "inline" or "block"
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @param string $tag
 	 */
 	public function render($property, $tag = 'div') {
 		$this->tag->setTagName($tag);
@@ -59,7 +57,6 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 	 *
 	 * @param string $resource The resource to check
 	 * @return boolean TRUE if we currently have access to the given resource
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function hasAccessToResource($resource) {
 		try {
