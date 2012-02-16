@@ -237,7 +237,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 *
 	 * @param integer $maximumWidth
 	 * @param integer $maximumHeight
-	 * @param $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio.
+	 * @param string $ratioMode Whether the resulting image should be cropped if both edge's sizes are supplied that would hurt the aspect ratio.
 	 * @return \TYPO3\Media\Domain\Model\ImageVariant
 	 * @see \TYPO3\Media\Domain\Service\ImageService::transformImage()
 	 */

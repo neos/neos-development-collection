@@ -13,7 +13,7 @@ namespace TYPO3\Media\Validator;
 
 use TYPO3\FLOW3\Annotations as FLOW3;
 
-/**+
+/**
  * Validator that checks the orientation (square, portrait, landscape) of a given image
  * Supported validator options are (array)allowedOrientations with one or two out of 'square', 'landcape' or 'portrait'.
  * Example:
