@@ -1,0 +1,31 @@
+/**
+ *  TypoScript Fixture 05
+ *
+ *  This fixture serves for testing confinements
+ *
+ */
+
+firstObject = Text
+firstObject {
+	value = "Go outside. The graphics are AMAZING!"
+}
+
+secondObject {
+	subObject = Text
+	subObject.value = "27°C and a blue sky."
+}
+
+thirdObject {
+	subObject {
+		subSubObject {
+			someMessage = Text
+			someMessage.value = "Fully or hard tail?"
+		}
+	}
+}
+
+thirdObject {
+	subObject.subSubObject {
+		someMessage.value2 = "I don't know."
+	}
+}
