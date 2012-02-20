@@ -1,0 +1,11 @@
+# setting up implementation class names
+
+prototype(TYPO3.TypoScript:TypoScriptArrayRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
+prototype(TYPO3.TypoScript:FluidRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
+prototype(TYPO3.TypoScript:CollectionRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionRenderer'
+prototype(TYPO3.TypoScript:Case).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
+
+
+# TODO: rename the implementation class following to "PluginRenderer"
+prototype(TYPO3.TYPO3:PluginRenderer).implementationClassName = 'TYPO3\\TYPO3\\TypoScript\\Plugin'
+prototype(TYPO3.TYPO3:MenuRenderer).implementationClassName = 'TYPO3\\TYPO3\\TypoScript\\MenuRenderer'

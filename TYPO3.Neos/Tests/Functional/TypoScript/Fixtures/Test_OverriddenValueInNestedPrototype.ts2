@@ -1,0 +1,5 @@
+#
+# This example modifies the rendering pf all texts inside the three column element, setting the headline to a static value
+#
+
+prototype(TYPO3.TypoScript:ThreeColumn).prototype(TYPO3.TypoScript:TextWithHeadline).headline = 'Static Headline'

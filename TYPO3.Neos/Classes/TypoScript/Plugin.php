@@ -14,11 +14,11 @@ namespace TYPO3\TYPO3\TypoScript;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * A TypoScript Plugin object
+ * A TypoScript Plugin object. TODO REFACTOR!!
  *
  * @FLOW3\Scope("prototype")
  */
-class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScript\ContentObjectInterface {
+class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 
 	/**
 	 * @FLOW3\Inject
@@ -75,25 +75,6 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
-
-	/**
-	 * The rendering context as passed to render()
-	 *
-	 * @FLOW3\Transient
-	 * @var \TYPO3\TypoScript\RenderingContext
-	 */
-	protected $renderingContext;
-
-	/**
-	 * @param \TYPO3\TypoScript\RenderingContext $renderingContext
-	 * @return void
-	 */
-	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
-		if (!$renderingContext instanceof \TYPO3\TypoScript\RenderingContext) {
-			throw new \InvalidArgumentException('Plugin only supports \TYPO3\TypoScript\RenderingContext as a rendering context.', 1292502116);
-		}
-		$this->renderingContext = $renderingContext;
-	}
 
 	/**
 	 * @param string $package
@@ -176,7 +157,7 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	 * @return \TYPO3\FLOW3\MVC\Web\SubRequest
 	 */
 	protected function buildPluginRequest() {
-		$parentRequest = $this->renderingContext->getControllerContext()->getRequest();
+		$parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
 		$argumentNamespace = $this->getPluginNamespace();
 		$pluginRequest = $this->subRequestBuilder->build($parentRequest, $argumentNamespace);
 
@@ -220,8 +201,9 @@ class Plugin extends \TYPO3\TypoScript\AbstractObject implements \TYPO3\TypoScri
 	 *
 	 * @return string The rendered content as a string
 	 */
-	public function render() {
-		$parentResponse = $this->renderingContext->getControllerContext()->getResponse();
+	public function evaluate($currentContext) {
+		$this->node = $currentContext;
+		$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
 		$pluginResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($parentResponse);
 
 		try {

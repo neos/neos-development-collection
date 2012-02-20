@@ -1,0 +1,57 @@
+# setting up additional Prototype configuration
+prototype(TYPO3.TypoScript:CollectionRenderer) {
+	collection = ${context.children()}
+	itemRenderer = TYPO3.TypoScript:Case
+}
+
+prototype(TYPO3.TYPO3:Section) < prototype(TYPO3.TypoScript:CollectionRenderer)
+prototype(TYPO3.TYPO3:Section) {
+	implementationClassName = 'TYPO3\\TYPO3\\TypoScript\\Section'
+
+	collection = ${context.children(this.getNodePath()).children()}
+}
+
+# Catch-all condition for the default case
+prototype(TYPO3.TypoScript:Case).matchers.999999999999 {
+	condition = ${true}
+	type = ${context.property('_contentType')}
+}
+
+
+# HTML TS Object
+prototype(TYPO3.TYPO3:Html) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:Html) {
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/HtmlTemplate.html'
+	source = ${context.property('source')}
+}
+
+
+# Page TS Object
+prototype(TYPO3.TYPO3:Page) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:Page) {
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/PageTemplate.html'
+	body = TYPO3.TypoScript:FluidRenderer
+	body.title = ${context.property('title')}
+	body.nodePath = ${context.property('_path')}
+	headerData = TYPO3.TypoScript:TypoScriptArrayRenderer
+
+	backendHeader = TYPO3.TypoScript:FluidRenderer
+	backendHeader.templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Header.html'
+	htmlAttributes = ''
+}
+
+# TextWithHeadline TS Object
+prototype(TYPO3.TYPO3:Text) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:Text) {
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithHeadlineTemplate.html'
+	headline = ${context.property('headline')}
+	text = ${context.property('text')}
+}
+
+# TextWithImage TS Object
+prototype(TYPO3.TYPO3:TextWithImage) < prototype(TYPO3.TYPO3:Text)
+prototype(TYPO3.TYPO3:TextWithImage) {
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithImage.html'
+	image = ${context.property('image')}
+	position = ${context.property('position')}
+}

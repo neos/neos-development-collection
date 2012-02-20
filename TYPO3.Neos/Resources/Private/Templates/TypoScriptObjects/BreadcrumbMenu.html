@@ -1,8 +1,0 @@
-{namespace typo3=TYPO3\TYPO3\ViewHelpers}
-<f:if condition="{items}">
-	<typo3:aloha.notEditable>
-	<f:for each="{items}" as="item">
-		&gt; <typo3:link.node node="{item.node}">{item.label}</typo3:link.node>
-	</f:for>
-	</typo3:aloha.notEditable>
-</f:if>

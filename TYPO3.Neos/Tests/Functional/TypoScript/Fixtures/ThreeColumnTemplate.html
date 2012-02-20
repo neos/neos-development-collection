@@ -1,0 +1,14 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+{namespace ts=TYPO3\TypoScript\ViewHelpers}
+
+<t:contentElement node="{context}">
+	<div class="left">
+		<ts:renderTypoScript path="left" />
+	</div>
+	<div class="center">
+		<ts:renderTypoScript path="center" />
+	</div>
+	<div class="right">
+		<ts:renderTypoScript path="right" />
+	</div>
+</t:contentElement>

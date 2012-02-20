@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("prototype")
  */
-class Menu extends \TYPO3\TypoScript\AbstractContentObject {
+class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 
 	/**
 	 * Hard limit for the maximum number of levels supported by this menu
@@ -32,15 +32,7 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	/**
 	 * @var string
 	 */
-	protected $templateSource = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Menu.html';
-
-	/**
-	 * Names of the properties of this TypoScript which should be available in
-	 * this TS object's template while rendering it.
-	 *
-	 * @var array
-	 */
-	protected $presentationModelPropertyNames = array('items');
+	protected $templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Menu.html';
 
 	/**
 	 * The first navigation level which should be rendered.
@@ -95,13 +87,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	}
 
 	/**
-	 * @return integer
-	 */
-	public function getEntryLevel() {
-		return $this->entryLevel;
-	}
-
-	/**
 	 * @param integer $maximumLevels
 	 * @return void
 	 */
@@ -110,13 +95,6 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 			$maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
 		}
 		$this->maximumLevels = $maximumLevels;
-	}
-
-	/**
-	 * @return integer
-	 */
-	public function getMaximumLevels() {
-		return $this->maximumLevels;
 	}
 
 	/**
@@ -130,10 +108,14 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	}
 
 	/**
-	 * @return integer
+	 * {@inheritdoc}
+	 *
+	 * @param mixed $context
+	 * @return string
 	 */
-	public function getLastLevel() {
-		return $this->lastLevel;
+	public function evaluate($context) {
+		$this['items'] = $this->getItems($context);
+		return parent::evaluate($context);
 	}
 
 	/**
@@ -141,11 +123,11 @@ class Menu extends \TYPO3\TypoScript\AbstractContentObject {
 	 *
 	 * @return array
 	 */
-	public function getItems() {
+	public function getItems(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if ($this->items === NULL) {
-			$this->items = $this->buildItems($this->renderingContext->getContentContext());
+			$this->items = $this->buildItems($node->getContext());
 		}
-     return $this->items;
+		return $this->items;
    }
 
 	/**

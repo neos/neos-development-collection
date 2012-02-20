@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\TypoScript;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ * This script belongs to the FLOW3 package "TypoScript".                 *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
@@ -14,29 +14,47 @@ namespace TYPO3\TYPO3\TypoScript;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * A TypoScript Section object
- *
- * @FLOW3\Scope("prototype")
+ * Renderer for specific sections, which also renders a "create-new-content" button
+ * when not being in live workspace.
  */
-class Section extends ContentArray {
+class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\TypoScript\ObjectFactory
-	 */
-	protected $objectFactory;
-
-	/**
+	 * The identifier of the section Node which shall be rendered.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @var string
 	 */
-	public function setNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		parent::setNode($node);
+	protected $nodePath;
 
-		foreach ($node->getChildNodes() as $childNode) {
-			$this->contentArray[] = $this->objectFactory->createByNode($childNode);
-		}
+	/**
+	 * @return string the identifier of the section node which shall be rendered
+	 */
+	public function getNodePath() {
+		return $this->tsValue('nodePath');
 	}
 
+	/**
+	 * @param string $nodePath the identifier of the section node which shall be rendered
+	 */
+	public function setNodePath($nodePath) {
+		$this->nodePath = $nodePath;
+	}
+
+	/**
+	 * Render the list of nodes, and if there are none and we are not inside the live
+	 * workspace, render a button to create new content.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return string
+	 */
+	public function evaluate($node) {
+		$output = parent::evaluate($node);
+
+		if ($this->numberOfRenderedNodes === 0 && $node->getContext()->getWorkspaceName() !== 'live') {
+			$sectionNode = $node->getNode($this->nodePath);
+			$output = '<button class="t3-create-new-content t3-button" data-node="' . $sectionNode->getContextPath() . '"><span>Create new content</span></button>';
+		}
+		return $output;
+	}
 }
 ?>

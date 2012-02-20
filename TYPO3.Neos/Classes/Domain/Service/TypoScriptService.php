@@ -24,7 +24,7 @@ class TypoScriptService {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\TypoScript\Parser
+	 * @var \TYPO3\TypoScript\Core\Parser
 	 */
 	protected $typoScriptParser;
 

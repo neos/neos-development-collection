@@ -1,0 +1,37 @@
+#####################
+# BASIC TYPOSCRIPT FOR THE TEST CASE
+#####################
+
+
+# Definition of custom TypoScript types
+prototype(TYPO3.TypoScript:ThreeColumn) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TypoScript:ThreeColumn) {
+	templatePath = 'FIXTURE_DIRECTORY/ThreeColumnTemplate.html'
+	left = TYPO3.TypoScript:CollectionRenderer
+	left.collection = ${context.children("left").children()}
+	center = TYPO3.TypoScript:CollectionRenderer
+	center.collection = ${context.children("center").children()}
+	right = TYPO3.TypoScript:CollectionRenderer
+	right.collection = ${context.children("right").children()}
+}
+
+prototype(TYPO3.TypoScript:Case).matchers.4242 {
+	condition = ${context.is('[instanceof TYPO3.TYPO3:ThreeColumn]')}
+	type = 'TYPO3.TypoScript:ThreeColumn'
+}
+
+
+# MAIN PAGE TEMPLATE
+
+page1 = TYPO3.TypoScript:Page
+page1.body.templatePath = 'FIXTURE_DIRECTORY/WebsiteTemplate.html'
+page1.body.sections {
+	teaser = TYPO3.TypoScript:CollectionRenderer
+	teaser.collection = ${context.children('teaser').children()}
+
+	main = TYPO3.TypoScript:CollectionRenderer
+	main.collection = ${context.children('main').children()}
+
+	sidebar = TYPO3.TypoScript:CollectionRenderer
+	sidebar.collection = ${context.children('sidebar').children()}
+}

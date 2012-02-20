@@ -1,6 +1,7 @@
 {namespace t=TYPO3\TYPO3\ViewHelpers}
+{namespace ts=TYPO3\TypoScript\ViewHelpers}
 <!DOCTYPE html>
-<html version="HTML+RDFa 1.1" xmlns:typo3="http://www.typo3.org/ns/2011/FLOW3/Packages/TYPO3/Content/">
+<html version="HTML+RDFa 1.1" xmlns:typo3="http://www.typo3.org/ns/2011/FLOW3/Packages/TYPO3/Content/" {htmlAttributes -> f:format.raw()}>
 	<!--
 		This website is powered by TYPO3 5.0 alpha, a free Open Source Enterprise Content Management System
 		licensed under the GNU/GPL.
@@ -10,15 +11,18 @@
 		More information and contribution opportunities at http://typo3.org and http://flow3.typo3.org
 	-->
 	<head>
-		{head -> f:format.raw()}
+		<f:base />
+		<meta charset="UTF-8" />
+		<ts:renderTypoScript path="headerData" />
+
+		<ts:renderTypoScript path="backendHeader" />
 	</head>
-	<body {bodyAttributes}>
+	<body {bodyAttributes -> f:format.raw()}>
 
 		<!-- TODO: add the page properties in a more clever way, and only when being in backend... -->
-		<t:contentElement node="{node}" page="1" />
+		<t:contentElement node="{context}" page="1" />
 
-		{body -> f:format.raw()}
-
-		<t:backend.container node="{node}"/>
+		<ts:renderTypoScript path="body" />
+		<t:backend.container node="{context}"/>
 	</body>
 </html>

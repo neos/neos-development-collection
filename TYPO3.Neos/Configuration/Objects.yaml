@@ -1,6 +1,0 @@
-TYPO3\TYPO3\TypoScript\Page:
-  properties:
-    head:
-      object: TYPO3\TYPO3\TypoScript\Head
-    content:
-      object: TYPO3\TYPO3\TypoScript\Content

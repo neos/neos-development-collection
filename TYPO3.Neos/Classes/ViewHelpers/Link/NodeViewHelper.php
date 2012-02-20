@@ -76,7 +76,7 @@ class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHe
 			->reset()
 			->setCreateAbsoluteUri($absolute)
 			->setFormat($format)
-			->uriFor(NULL, array('node' => $node));
+			->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3');
 
 		$this->tag->addAttribute('href', $uri);
 		$this->tag->setContent($this->renderChildren());

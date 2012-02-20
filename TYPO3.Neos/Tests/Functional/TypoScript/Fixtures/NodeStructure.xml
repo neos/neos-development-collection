@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<site nodeName="example">
+		<properties>
+			<name>example.org</name>
+			<state>1</state>
+			<siteResourcesPackageKey>TYPO3.TypoScript</siteResourcesPackageKey>
+		</properties>
+		<node type="TYPO3.TYPO3:Page" nodeName="home" locale="">
+			<properties>
+				<title>Home</title>
+			</properties>
+			<node nodeName="teaser" type="TYPO3.TYPO3:Section">
+				<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
+					<properties>
+						<headline>Welcome to this example</headline>
+						<text>This is our exemplary rendering test. Check it out and play around!</text>
+					</properties>
+				</node>
+			</node>
+			<node nodeName="main" type="TYPO3.TYPO3:Section">
+				<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
+					<properties>
+						<headline>Do you love FLOW3?</headline>
+						<text>If you do, make sure to post your opinion about it on Twitter!</text>
+					</properties>
+				</node>
+				<node nodeName="dummy43" type="TYPO3.TYPO3:Html">
+					<properties>
+						<source>[TWITTER WIDGET]</source>
+					</properties>
+				</node>
+				<node nodeName="dummy44" type="TYPO3.TYPO3:ThreeColumn">
+					<node nodeName="left" type="TYPO3.TYPO3:Section">
+						<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
+							<properties>
+								<headline>Documentation</headline>
+								<text>We're still improving our docs, but check them out nevertheless! Our presentations are also worth a visit</text>
+							</properties>
+						</node>
+						<node nodeName="dummy43" type="TYPO3.TYPO3:Html">
+							<properties>
+								<source>[SLIDESHARE]</source>
+							</properties>
+						</node>
+					</node>
+					<node nodeName="center" type="TYPO3.TYPO3:Section">
+						<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
+							<properties>
+								<headline>Development Process</headline>
+								<text>We're spending lots of thought into our infrastructure, you can profit from that, too!</text>
+							</properties>
+						</node>
+					</node>
+					<node nodeName="right" type="TYPO3.TYPO3:Section">
+					</node>
+				</node>
+			</node>
+			<node nodeName="sidebar" type="TYPO3.TYPO3:Section">
+				<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
+					<properties>
+						<headline>Last Commits</headline>
+						<text>Below, you'll see the most recent activity</text>
+					</properties>
+				</node>
+				<node nodeName="dummy43" type="TYPO3.TYPO3:Html">
+					<properties>
+						<source>[COMMIT WIDGET]</source>
+					</properties>
+				</node>
+			</node>
+		</node>
+	</site>
+</root>

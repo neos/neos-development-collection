@@ -1,0 +1,8 @@
+#
+# Here, we test that the processor 1 is evaluated FIRST, and then processor 2
+#
+
+namespace: default = TYPO3\TYPO3\TypoScript
+
+page1.body.sections.sidebar.prototype(TYPO3.TypoScript:TextWithHeadline).headline << 1.wrap(prefix: 'BEFORE', suffix: 'AFTER')
+prototype(TYPO3.TypoScript:TextWithHeadline).headline << 2.wrap(prefix: '-b-', suffix: '-a-')

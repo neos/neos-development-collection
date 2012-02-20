@@ -1,0 +1,48 @@
+#######################
+# PREDEFINED TYPOSCRIPT
+#######################
+
+# setting up implementation class names
+prototype(TYPO3.TypoScript:TypoScriptArrayRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
+prototype(TYPO3.TypoScript:FluidRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
+prototype(TYPO3.TypoScript:CollectionRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionRenderer'
+prototype(TYPO3.TypoScript:Case).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
+
+# setting up additional Prototype configuration
+prototype(TYPO3.TypoScript:CollectionRenderer) {
+	collection = ${context.children()}
+	itemRenderer = TYPO3.TypoScript:Case
+}
+
+# HTML TS Object
+prototype(TYPO3.TypoScript:Html) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TypoScript:Html) {
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/HtmlTemplate.html'
+	source = ${context.property('source')}
+}
+prototype(TYPO3.TypoScript:Case).matchers.100100 {
+	condition = ${context.is('[instanceof TYPO3.TYPO3:Html]')}
+	type = 'TYPO3.TypoScript:Html'
+}
+
+# Page TS Object
+prototype(TYPO3.TypoScript:Page) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TypoScript:Page) {
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/PageTemplate.html'
+	body = TYPO3.TypoScript:FluidRenderer
+	body.title = ${context.property('title')}
+	body.nodePath = ${context.property('_path')}
+	head = TYPO3.TypoScript:TypoScriptArrayRenderer
+}
+
+# TextWithHeadline TS Object
+prototype(TYPO3.TypoScript:TextWithHeadline) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TypoScript:TextWithHeadline) {
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithHeadlineTemplate.html'
+	headline = ${context.property('headline')}
+	text = ${context.property('text')}
+}
+prototype(TYPO3.TypoScript:Case).matchers.100200 {
+	condition = ${context.is('[instanceof TYPO3.TYPO3:TextWithHeadline]')}
+	type = 'TYPO3.TypoScript:TextWithHeadline'
+}

@@ -1,0 +1,7 @@
+#
+# This example modifies the rendering inside the sidebar section, wrapping the title of the text
+#
+
+namespace: default = TYPO3\TYPO3\TypoScript
+
+page1.body.sections.sidebar.prototype(TYPO3.TypoScript:TextWithHeadline).headline << 1.wrap(prefix: 'BEFORE', suffix: 'AFTER')

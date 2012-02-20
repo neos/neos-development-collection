@@ -1,0 +1,12 @@
+#
+# completely replace the rendering for TextWithHeadline inside the right column
+#
+
+namespace: default = TYPO3\TYPO3\TypoScript
+
+page1.body.sections.sidebar.prototype(TYPO3.TypoScript:Case).matchers.20 {
+	condition = ${context.is('[instanceof TYPO3.TYPO3:TextWithHeadline]')}
+	type = 'TYPO3.TypoScript:TextWithSmallHeadline'
+}
+prototype(TYPO3.TypoScript:TextWithSmallHeadline) < prototype(TYPO3.TypoScript:TextWithHeadline)
+prototype(TYPO3.TypoScript:TextWithSmallHeadline).templatePath = 'FIXTURE_DIRECTORY/TextWithSmallHeadlineTemplate.html'

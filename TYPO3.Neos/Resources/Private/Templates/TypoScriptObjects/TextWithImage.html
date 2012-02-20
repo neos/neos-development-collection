@@ -1,16 +1,16 @@
 {namespace t=TYPO3\TYPO3\ViewHelpers}
 
-<t:contentElement node="{node}">
-	<t:aloha.editable property="headline" tag="h1">{properties.headline}</t:aloha.editable>
-	<div class="typo3-image{f:if(condition:properties.position, then: ' typo3-image-position-{properties-position}')}">
+<t:contentElement node="{context}">
+	<t:aloha.editable property="headline" tag="h1">{headline}</t:aloha.editable>
+	<div class="typo3-image{f:if(condition:position, then: ' typo3-image-position-{position}')}">
 		<f:if condition="{properties.image.resource}">
 			<f:then>
-				<img src="{f:uri.resource(resource: properties.image.resource)}" />
+				<img src="{f:uri.resource(resource: image.resource)}" />
 			</f:then>
 			<f:else>
 				<img src="{f:uri.resource(package:'TYPO3.TYPO3', path:'Images/dummy-image.jpg')}" title="Dummy Image" />
 			</f:else>
 		</f:if>
 	</div>
-	<t:aloha.editable property="text">{properties.text}</t:aloha.editable>
+	<t:aloha.editable property="text">{text -> f:format->raw()}</t:aloha.editable>
 </t:contentElement>

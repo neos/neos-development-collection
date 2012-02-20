@@ -14,9 +14,8 @@ namespace TYPO3\TYPO3\View;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * A view which renders a node based on a TypoScript template
+ * Controller for displaying nodes in the frontend
  *
- * @FLOW3\Scope("prototype")
  */
 class TypoScriptView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 
@@ -27,78 +26,31 @@ class TypoScriptView extends \TYPO3\FLOW3\MVC\View\AbstractView {
 	protected $typoScriptService;
 
 	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
-	 */
-	protected $nodeRepository;
-
-	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\WorkspaceRepository
-	 */
-	protected $workspaceRepository;
-
-	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\TypoScript\ObjectFactory
-	 */
-	protected $typoScriptObjectFactory;
-
-	/**
-	 * Renders the node assigned to this view, based on the TypoScript configuration
-	 * which applies to the current content context.
+	 * Renders the view
 	 *
-	 * @return string Rendered node
+	 * @return string The rendered view
+	 * @api
 	 */
 	public function render() {
-		if (!isset($this->variables['value']) || !$this->variables['value'] instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
-			return 'TypoScriptView: A valid node must be assigned to the variable "value" via the TypoScriptView\'s assign() method.';
+		$currentNode = $this->variables['value'];
+		if (!isset($currentNode) || !$currentNode instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+			throw new TYPO3\TYPO3\Exception('TypoScriptView needs a node as argument.', 1329736456);
 		}
 
-		$node = $this->variables['value'];
-		$contentContext = $node->getContext();
+		$currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
 
-		$type = 'default';
-		$typoScriptObjectTree = $this->typoScriptService->getMergedTypoScriptObjectTree($contentContext->getCurrentSiteNode(), $node);
-		if ($typoScriptObjectTree === NULL || count($typoScriptObjectTree) === 0) {
-			throw new \TYPO3\TYPO3\Controller\Exception\NoTypoScriptConfigurationException('No TypoScript template was found for the current position in the content tree.', 1255513200);
-		}
+			// TODO: find closest folder node from this node...
+		$closestFolderNode = $currentNode;
+		$typoScriptConfiguration = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
 
-		$expectedTypoScriptObjectName = $this->typoScriptObjectFactory->getTypoScriptObjectNameByNode($node);
+			// TODO: make TypoScriptPath overridable
+		$typoScriptPath = 'page';
 
-		$firstLevelTypoScriptObject = NULL;
-		if ($expectedTypoScriptObjectName === 'TYPO3\TYPO3\TypoScript\Page') {
-			foreach ($typoScriptObjectTree as $possibleFirstLevelTypoScriptObject) {
-				if (is_a($possibleFirstLevelTypoScriptObject, $expectedTypoScriptObjectName) && $possibleFirstLevelTypoScriptObject->getType() === $type) {
-					$firstLevelTypoScriptObject = $possibleFirstLevelTypoScriptObject;
-					break;
-				}
-			}
-
-			if ($firstLevelTypoScriptObject === NULL) {
-				throw new \TYPO3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No TypoScript Page object with type "' . $type . '" was found in the current TypoScript configuration.', 1255513201);
-			}
-		} else {
-			foreach ($typoScriptObjectTree as $possibleFirstLevelTypoScriptObject) {
-				if (is_a($possibleFirstLevelTypoScriptObject, $expectedTypoScriptObjectName)) {
-					$firstLevelTypoScriptObject = $possibleFirstLevelTypoScriptObject;
-					break;
-				}
-			}
-
-			if ($firstLevelTypoScriptObject === NULL) {
-					// No configured TS Object found, so we use a default one
-				$firstLevelTypoScriptObject = new $expectedTypoScriptObjectName();
-			}
-			$firstLevelTypoScriptObject->setNode($node);
-		}
-
-		$renderingContext = new \TYPO3\TypoScript\RenderingContext();
-		$renderingContext->setControllerContext($this->controllerContext);
-		$renderingContext->setContentContext($contentContext);
-
-		$firstLevelTypoScriptObject->setRenderingContext($renderingContext);
-		return $firstLevelTypoScriptObject->render();
+		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $this->controllerContext);
+		$typoScriptRuntime->pushContext($currentNode);
+		$output = $typoScriptRuntime->render($typoScriptPath);
+		$typoScriptRuntime->popContext();
+		return $output;
 	}
 }
 ?>
