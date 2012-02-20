@@ -240,6 +240,8 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 				$highestIndex = $this->findHighestIndexInLevel($parentPath);
 				$newIndex = $highestIndex + 100;
 			break;
+			default:
+				throw new \InvalidArgumentException('Invalid position for new node index given.', 1329729088);
 		}
 
 		$node->setIndex($newIndex);
