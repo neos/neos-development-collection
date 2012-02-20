@@ -19,7 +19,6 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createByNameCreatesANodeTypoScriptObject() {
 		$expectedTypoScriptObject = $this->getMock('TYPO3\TypoScript\ObjectInterface');
@@ -35,7 +34,6 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createByNodeCreatesANodeTypoScriptObjectAndSetsTheNodeOnIt() {
 		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -56,7 +54,6 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 * @dataProvider unsupportedContentTypes
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTypoScriptObjectNameByNodeReturnsNodeAsTypoScriptObjectNameIfNoSpecializedTypoScriptObjectExistsForTheContentType($contentTypeName) {
 		$node = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -76,7 +73,6 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsupportedContentTypes() {
 		return array(
@@ -90,7 +86,6 @@ class ObjectFactoryTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTypoScriptObjectNameByNodeReturnsASpecializedTypoScriptObjectNameIfASpecializedTypoScriptObjectExistsForTheContentType() {
 		$contentTypeName = 'TYPO3.TYPO3:ContensUniversalis';

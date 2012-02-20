@@ -38,8 +38,6 @@ class ProcessorInvocation {
 	 * @param \TYPO3\TypoScript\ProcessorInterface $processorObject An instance of the class containing the processor
 	 * @param array $processorArguments associative array of Arguments to pass to the processor method
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @throws \TYPO3\TypoScript\Exception\InvalidProcessorException
 	 */
 	public function __construct(\TYPO3\TypoScript\ProcessorInterface $processorObject, array $processorArguments) {
@@ -55,8 +53,6 @@ class ProcessorInvocation {
 	 *
 	 * @param mixed $subject The subject (mostly a string) to process
 	 * @return mixed The processed value
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function process($subject) {
 		foreach($this->processorArguments as $argumentName => $argumentValue) {

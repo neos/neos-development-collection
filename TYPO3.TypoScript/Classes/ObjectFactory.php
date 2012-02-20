@@ -37,7 +37,6 @@ class ObjectFactory {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node
 	 * @return mixed Either the TypoScript Object or FALSE if no object could be created for the given node
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createByNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$typoScriptObjectName = $this->getTypoScriptObjectNameByNode($node);
@@ -53,8 +52,6 @@ class ObjectFactory {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node
 	 * @return string The TypoScript object name with which the current node should be rendered with.
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getTypoScriptObjectNameByNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$contentTypeName = $node->getContentType();
@@ -75,8 +72,6 @@ class ObjectFactory {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType
 	 * @return string Object name if a TypoScript object was found or NULL if none was found
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function getObjectNameByContentType(\TYPO3\TYPO3CR\Domain\Model\ContentType $contentType) {
 		$contentTypeName = $contentType->getName();
@@ -101,7 +96,6 @@ class ObjectFactory {
 	 *
 	 * @param string $typoScriptObjectName Short object name
 	 * @return \TYPO3\TypoScript\ObjectInterface The TypoScript Object
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Needs some real implementation
 	 */
 	public function createByName($typoScriptObjectName) {

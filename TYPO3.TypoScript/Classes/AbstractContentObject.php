@@ -58,7 +58,6 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	 *
 	 * @param \TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function injectSystemLogger(\TYPO3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -69,7 +68,6 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	 *
 	 * @param \TYPO3\TYPO3\TypoScript\Template $template
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectTemplate(\TYPO3\TYPO3\TypoScript\Template $template) {
 		$this->template = $template;
@@ -81,7 +79,6 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	 *
 	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
 		if (!$renderingContext instanceof \TYPO3\TypoScript\RenderingContext) {
@@ -100,7 +97,6 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	 *
 	 * @param \TYPO3\TYPO3\TypoScript\Template $template
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setTemplate(\TYPO3\TYPO3\TypoScript\Template $template) {
 		$this->template = $template;
@@ -110,7 +106,6 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	 * Returns the page template object
 	 *
 	 * @return \TYPO3\TYPO3\TypoScript\Template
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTemplate() {
 		return $this->template;
@@ -123,8 +118,6 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	 * logged and returned as an HTML comment.
 	 *
 	 * @return string The rendered content as a string - usually (X)HTML, XML or just plain text
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function render() {
 		try {
@@ -157,7 +150,6 @@ abstract class AbstractContentObject extends \TYPO3\TypoScript\AbstractObject im
 	 * Casts this TypoScript Object to a string by invoking the render() method.
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __toString() {
 		return $this->render();

@@ -28,7 +28,6 @@ abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractCont
 	 *
 	 * @param mixed $offset The offset to check
 	 * @return boolean TRUE if the offset exists, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetExists($offset) {
 		return isset($this->contentArray[$offset]);
@@ -43,7 +42,6 @@ abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractCont
 	 *
 	 * @param mixed $offset The offset (index) of the value to return
 	 * @return mixed The value of the content object array with the specified offset
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetGet($offset) {
 		if (!isset($this->contentArray[$offset])) {
@@ -58,7 +56,6 @@ abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractCont
 	 * @param integer $offset The offset (index) of the value to set.
 	 * @param mixed $value The value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException
 	 */
 	public function offsetSet($offset, $value) {
@@ -71,7 +68,6 @@ abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractCont
 	 * @param integer $offset The offset (index) of the value to unset.
 	 * @param mixed $value The value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException
 	 */
 	public function offsetUnset($offset) {
@@ -82,7 +78,6 @@ abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractCont
 	 * Returns the number of elements in this content array
 	 *
 	 * @return integer
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function count() {
 		return count($this->contentArray);
@@ -94,8 +89,6 @@ abstract class AbstractContentArrayObject extends \TYPO3\TypoScript\AbstractCont
 	 * array offsets.
 	 *
 	 * @return string The assembled content of all Content Objects in the internal content array.
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function render() {
 		$content = '';

@@ -14,7 +14,6 @@ namespace TYPO3\TypoScript;
 /**
  * Interface of a TypoScript object
  *
- * @author Robert Lemke <robert@typo3.org>
  */
 interface ObjectInterface {
 

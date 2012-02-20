@@ -104,7 +104,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * Constructs the parser
 	 *
 	 * @param \TYPO3\FLOW3\ObjectManagerInterface $objectManager A reference to the object manager
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(\TYPO3\FLOW3\Object\ObjectManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -116,7 +115,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $sourceCode The TypoScript source code to parse
 	 * @return \TYPO3\TypoScript\ObjectTree A TypoScript object tree, generated from the source code
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function parse($sourceCode) {
@@ -134,7 +132,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing \
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
 	public function setDefaultNamespace($objectNamePrefix) {
@@ -146,7 +143,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * Initializes the TypoScript parser
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initialize() {
 		$this->currentLineNumber = 1;
@@ -163,7 +159,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param string $name
 	 * @param mixed $value
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setGlobalObjectVariable($name, $value) {
 		$this->globalObjectVariables[$name] = $value;
@@ -173,7 +168,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * Get the next, unparsed line of TypoScript from this->currentSourceCodeLines and increase the pointer
 	 *
 	 * @return string next line of typoscript to parse
-	 * @author Tobias Liebig <mail@etobi.de>
 	 */
 	protected function getNextTypoScriptline() {
 		$typoScriptLine = current($this->currentSourceCodeLines);
@@ -187,7 +181,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $typoScriptLine One line of TypoScript code
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseTypoScriptLine($typoScriptLine) {
 		$typoScriptLine = trim($typoScriptLine);
@@ -218,7 +211,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $typoScriptLine One line of TypoScript code
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseComment($typoScriptLine) {
 		if (preg_match(self::SPLIT_PATTERN_COMMENTTYPE, $typoScriptLine, $matches, PREG_OFFSET_CAPTURE) === 1) {
@@ -247,7 +239,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param string $typoScriptLine One line of TypoScript code
 	 * @param boolean $isOpeningConfinement Set to TRUE, if an opening confinement is to be parsed and FALSE if it's a closing confinement.
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseConfinementBlock($typoScriptLine, $isOpeningConfinement) {
 		if ($isOpeningConfinement) {
@@ -265,7 +256,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $typoScriptLine One line of TypoScript code
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseDeclaration($typoScriptLine) {
 		$result = preg_match(self::SPLIT_PATTERN_DECLARATION, $typoScriptLine, $matches);
@@ -285,7 +275,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $typoScriptLine One line of TypoScript code
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseObjectDefinition($typoScriptLine) {
 		$result = preg_match(self::SPLIT_PATTERN_OBJECTDEFINITION, $typoScriptLine, $matches);
@@ -317,7 +306,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param string $objectPath The object path as a string
 	 * @param string $value The unparsed value as a string
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseValueAssignment($objectPath, $value) {
 		$objectPathArray = $this->getParsedObjectPath($objectPath);
@@ -335,7 +323,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $objectPath The object path as a string
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseValueUnAssignment($objectPath) {
 		$objectPathArray = $this->getParsedObjectPath($objectPath);
@@ -353,7 +340,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param string $sourceObjectPath Specifies the location in the object tree from where the object or value will be taken
 	 * @param string $targetObjectPath Specifies the location in the object tree where the copy will be stored
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseValueCopy($sourceObjectPath, $targetObjectPath) {
 		$sourceObjectPathArray = $this->getParsedObjectPath($sourceObjectPath);
@@ -376,7 +362,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param string $sourceObjectPath Specifies the location in the object tree from where the object or value will be taken
 	 * @param string $targetObjectPath Specifies the location in the object tree where the reference will be stored
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseValueReference($sourceObjectPath, $targetObjectPath) {
 		$sourceObjectPathArray = $this->getParsedObjectPath($sourceObjectPath);
@@ -399,8 +384,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param string $indexAndMethodCall The raw string defining the index within the processor chain and the method call. Eg. 3.wrap("<em>", "</em">)
 	 * @param string $objectPropertyPath Specifies the object path of the property to process
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function parseValueProcessing($indexAndMethodCall, $objectPropertyPath) {
 		if (preg_match(self::SPLIT_PATTERN_INDEXANDPROCESSORCALL, $indexAndMethodCall, $matches) > 0) {
@@ -434,7 +417,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $namespaceDeclaration The namespace declaration, for example "cms = TYPO3\TYPO3\TypoScript"
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseNamespaceDeclaration($namespaceDeclaration) {
 		$result = preg_match(self::SPLIT_PATTERN_NAMESPACEDECLARATION, $namespaceDeclaration, $matches);
@@ -452,8 +434,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param string $processorSignature Either just a method name (then the default namespace is used) or a full object/method name as in "TYPO3\Package\Object->methodName"
 	 * @param array $processorArguments An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
 	 * @return \TYPO3\TypoScript\ProcessorInvocation The prepared processor invocation object
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function getProcessorInvocation($processorSignature, array $processorArguments) {
 		preg_match(self::SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME, $processorSignature, $matchedObjectAndMethodName);
@@ -488,7 +468,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 *
 	 * @param string $objectPath The object path to parse
 	 * @return array An object path array
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getParsedObjectPath($objectPath) {
 		if (preg_match(self::SCAN_PATTERN_OBJECTPATH, $objectPath) === 1) {
@@ -509,7 +488,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param array $objectPathArray The object path specifying the location of the value in the object tree
 	 * @param string $unparsedValue The unparsed value
 	 * @return mixed The processed value
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getProcessedValue(array $objectPathArray, $unparsedValue) {
 		if (preg_match(self::SPLIT_PATTERN_VALUENUMBER, $unparsedValue, $matches) === 1) {
@@ -562,7 +540,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param string $subject The string to analyze
 	 * @param array $objectPathArray The current object path, used as a prefix to the variable name
 	 * @return string The original string but with variables replaced by their values
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getValueWithEvaluatedVariables($subject, $objectPathArray) {
 		if (preg_match_all(self::SPLIT_PATTERN_VALUEVARIABLES, $subject, $matchedVariables) > 0) {
@@ -591,7 +568,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param array $objectPathArray The object path, specifying the node and variable name to set
 	 * @param mixed $value The value to assign
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setObjectVariable(array $objectPathArray, $value) {
 		$this->objectVariables[implode('.', $objectPathArray)] = $value;
@@ -604,7 +580,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param mixed $value The value to assign
 	 * @param array $objectTree The current (sub-) tree, used internally - don't specify!
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setValueInObjectTree(array $objectPathArray, $value, $objectTree = NULL) {
 		if ($objectTree === NULL) {
@@ -662,7 +637,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param array $objectPathArray The object path, specifying the node to retrieve the value of
 	 * @param array $objectTree The current (sub-) tree, used internally - don't specify!
 	 * @return mixed The value
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getValueFromObjectTree(array $objectPathArray, $objectTree = NULL) {
 		if (is_null($objectTree)) $objectTree = &$this->objectTree;
@@ -693,7 +667,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * @param mixed &$objectTree An object tree or sub part of the object tree which contains the child node
 	 * @param string $childNodeKey Key in the objectTree which identifies the child node
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @see setValueInObjectTree()
 	 */
 	protected function setChildNodeToEmptyArrayIfNeccessary(&$objectTree, $childNodeKey) {
@@ -707,7 +680,6 @@ class Parser implements \TYPO3\TypoScript\ParserInterface {
 	 * which can be used to prefix a relative object path.
 	 *
 	 * @return string A part of an object path, ready to use as a prefix
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getCurrentObjectPathPrefix() {
 		return (count($this->currentObjectPathStack) > 0) ? $this->currentObjectPathStack[count($this->currentObjectPathStack) - 1] . '.' : '';

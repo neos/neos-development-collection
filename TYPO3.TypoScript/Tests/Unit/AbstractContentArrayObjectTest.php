@@ -28,7 +28,6 @@ class AbstractContentArrayObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $mockRenderingContext;
 
 	/**
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->abstractContentArrayObject = $this->getMock('TYPO3\TypoScript\AbstractContentArrayObject', array('dummy'));
@@ -38,7 +37,6 @@ class AbstractContentArrayObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsAnEmptyStringIfContentArrayIsEmpty() {
 		$this->assertEmpty($this->abstractContentArrayObject->render());
@@ -46,7 +44,6 @@ class AbstractContentArrayObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderIteratesThroughContentArrayAndRendersTheirOutput() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -70,7 +67,6 @@ class AbstractContentArrayObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderSkipsInaccessibleContentItems() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');

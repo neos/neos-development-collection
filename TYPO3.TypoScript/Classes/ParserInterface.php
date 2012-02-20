@@ -14,7 +14,6 @@ namespace TYPO3\TypoScript;
 /**
  * Contract for a TypoScript parser
  *
- * @author Robert Lemke <robert@typo3.org>
  * @api
  */
 interface ParserInterface {

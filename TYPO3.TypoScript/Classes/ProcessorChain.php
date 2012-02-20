@@ -32,7 +32,6 @@ class ProcessorChain {
 	 * @param integer $index A numeric index expressing the order of the processor in the overall chain
 	 * @param \TYPO3\TypoScript\ProcessorInvocation $processorInvocation The processor invocation
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException
 	 */
 	public function setProcessorInvocation($index, \TYPO3\TypoScript\ProcessorInvocation $processorInvocation) {
@@ -46,7 +45,6 @@ class ProcessorChain {
 	 *
 	 * @param string $subject The string to process by the processor chain
 	 * @return string The result of the processing
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function process($subject) {
 		foreach ($this->processorInvocations as $processorInvocation) {

@@ -33,7 +33,6 @@ class AbstractContentObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	protected $mockRenderingContext;
 
 	/**
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
 		$this->abstractContentObject = $this->getMock('TYPO3\TypoScript\AbstractContentObject', array('count'));
@@ -45,7 +44,6 @@ class AbstractContentObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderSetsTemplateRenderingContext() {
 		$this->mockTemplate->expects($this->once())->method('setRenderingContext')->with($this->mockRenderingContext);
@@ -54,7 +52,6 @@ class AbstractContentObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderAssignsNodeToTemplate() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -67,7 +64,6 @@ class AbstractContentObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsRenderedTemplateIfNodeIsAccessible() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');
@@ -83,7 +79,6 @@ class AbstractContentObjectTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function renderReturnsEmptyStringIfNodeIsNotAccessible() {
 		$mockNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface');

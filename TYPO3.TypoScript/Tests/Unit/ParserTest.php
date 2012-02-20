@@ -36,7 +36,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
 		$this->mockObjectManager = $this->getMock('TYPO3\FLOW3\Object\ObjectManagerInterface', array(), array(), '', FALSE);
@@ -48,7 +47,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * call back for mocking the object factory
 	 * @return fixture objects ...
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function objectManagerCallback() {
 		$arguments = array_merge(func_get_args(), array($this->mockObjectManager));
@@ -61,7 +59,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * Call back for mocking the object manager's isRegistered() method
 	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function objectManagerIsRegisteredCallback() {
 		$arguments = array_merge(func_get_args(), array($this->mockObjectManager));
@@ -85,7 +82,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * Checks if the TypoScript parser returns an object tree
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserReturnsObjectTreeArray() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -98,7 +94,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 01
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture01() {
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture01.ts2', FILE_TEXT);
@@ -123,8 +118,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function parserThrowsTypoScriptExceptionIfNamespaceDeclarationIsInvalid() {
 		$sourceCode = "namespace: cms=\-notvalid-\TypoScript\Fixtures";
@@ -136,7 +129,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 * @expectedException \TYPO3\TypoScript\Exception
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function parserThrowsTypoScriptExceptionWhenReferringToUnknownNamespaceReferenceInProcessorCall() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -150,7 +142,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 02
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture02() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -172,7 +163,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 03
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture03() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -197,7 +187,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 04
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture04() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -224,7 +213,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 05
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture05() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -245,7 +233,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 06
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture06() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -268,7 +255,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 07
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture07() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -288,7 +274,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @todo Implement lazy rendering support for variable substitutions
 	 * test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture08() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -316,7 +301,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @todo Implement lazy rendering support for variable substitutions
 	 * test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture09() {
 		$this->mockObjectManager->expects($this->any())->method('get')->will($this->returnCallback(array($this, 'objectManagerCallback')));
@@ -337,7 +321,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 10
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture10() {
 		$mockWrapProcessor = $this->getMock('TYPO3\TypoScript\Fixtures\Processors', array('setPrefix', 'setSuffix'));
@@ -401,7 +384,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 11
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture11() {
 		$mockSubstringProcessor = $this->getMock('TYPO3\TypoScript\Fixtures\Processors', array('setStart', 'setLength'));
@@ -441,7 +423,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 12
 	 *
 	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture12() {
 		$mockMultiplyProcessor = $this->getMock('TYPO3\TypoScript\Fixtures\Processors', array('setFactor'));
@@ -478,7 +459,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 13
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture13() {
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture13.ts2', FILE_TEXT);
@@ -507,7 +487,6 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * checks if the object tree returned by the TypoScript parser reflects source code fixture 14
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function parserCorrectlyParsesFixture14() {
 		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture14.ts2', FILE_TEXT);

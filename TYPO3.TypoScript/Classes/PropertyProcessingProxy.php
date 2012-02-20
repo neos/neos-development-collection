@@ -32,7 +32,6 @@ class PropertyProcessingProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Ren
 	 *
 	 * @param mixed $propertyValue
 	 * @param \TYPO3\TypoScript\ProcessorChain $processorChain
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($propertyValue, \TYPO3\TypoScript\ProcessorChain $processorChain) {
 		$this->propertyValue = $propertyValue;
@@ -44,7 +43,6 @@ class PropertyProcessingProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Ren
 	 *
 	 * @param \TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setRenderingContext(\TYPO3\Fluid\Core\Rendering\RenderingContextInterface $renderingContext) {
 		$this->renderingContext = $renderingContext;
@@ -54,7 +52,6 @@ class PropertyProcessingProxy implements \TYPO3\Fluid\Core\Parser\SyntaxTree\Ren
 	 * Converts this proxy into a string
 	 *
 	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __toString() {
 		try {

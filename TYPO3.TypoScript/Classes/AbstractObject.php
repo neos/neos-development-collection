@@ -55,7 +55,6 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node the TypoScript object is based on
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Implement check for content type
 	 */
 	public function setNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -66,7 +65,6 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	 * Returns the node the TypoScript object is based on
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The node the TypoScript object is based on
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getNode() {
 		return $this->node;
@@ -78,7 +76,6 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	 * @param string $propertyName Name of the property to set the chain for
 	 * @param \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain The property processor chain for that property
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setPropertyProcessorChain($propertyName, \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain) {
 		$this->propertyProcessorChains[$propertyName] = $propertyProcessorChain;
@@ -89,7 +86,6 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	 *
 	 * @param string $propertyName Name of the property to unset the chain for
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetPropertyProcessorChain($propertyName) {
 		unset($this->propertyProcessorChains[$propertyName]);
@@ -101,7 +97,6 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	 * @param string $propertyName Name of the property to return the chain of
 	 * @return \TYPO3\TypoScript\ProcessorChain $propertyProcessorChain: The property processor chain of that property
 	 * @throws \TYPO3\TypoScript\Exception\NoProcessorChainFoundException
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyProcessorChain($propertyName) {
 		if (!isset($this->propertyProcessorChains[$propertyName])) throw new \TYPO3\TypoScript\Exception\NoProcessorChainFoundException('Tried to retrieve the property processor chain for property "' . $propertyName . '" but no processor chain exists for that property.', 1179407935);
@@ -113,7 +108,6 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	 *
 	 * @param string $propertyName Name of the property to check for
 	 * @return boolean TRUE if a property chain exists, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertyHasProcessorChain($propertyName) {
 		return isset($this->propertyProcessorChains[$propertyName]);
@@ -128,7 +122,6 @@ abstract class AbstractObject implements \TYPO3\TypoScript\ObjectInterface {
 	 *
 	 * @param string $propertyName Name of the property to process
 	 * @return mixed A proxy which can process the specified property or the actual value if no processors exist
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getPropertyProcessingProxy($propertyName) {
 		$getterMethodName = 'get' . ucfirst($propertyName);
