@@ -620,6 +620,13 @@ class ProxyNode implements NodeInterface {
 		return $this->newNode;
 	}
 
+	/**
+	 * For debugging purposes, the node can be converted to a string.
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return 'ProxyNode ' . $this->getContextPath() . '[' . $this->getContentType() . ']';
+	}
 }
-
 ?>

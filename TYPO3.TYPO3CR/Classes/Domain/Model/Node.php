@@ -967,6 +967,13 @@ class Node implements NodeInterface {
 		return $node;
 	}
 
+	/**
+	 * For debugging purposes, the node can be converted to a string.
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return 'Node ' . $this->getContextPath() . '[' . $this->contentType . ']';
+	}
 }
-
 ?>
