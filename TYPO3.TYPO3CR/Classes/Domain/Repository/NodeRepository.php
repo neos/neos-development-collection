@@ -189,10 +189,14 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 				$referenceIndex = $referenceNode->getIndex();
 				$nextLowerIndex = $this->findNextLowerIndex($parentPath, $referenceIndex);
 				if ($nextLowerIndex === NULL) {
+						// FIXME: $nextLowerIndex returns 0 and not NULL in case no lower index is found. So this case seems to be
+						// never executed. We need to check that again!
 					$newIndex = (integer)round($referenceIndex / 2);
 				} elseif ($nextLowerIndex < ($referenceIndex - 1)) {
+						// there is free space left between $referenceNode and preceeding sibling.
 					$newIndex = (integer)round($nextLowerIndex + (($referenceIndex - $nextLowerIndex) / 2));
 				} else {
+						// there is no free space left between $referenceNode and following sibling -> we need to re-number!
 					$this->renumberIndexesInLevel($parentPath);
 					$referenceIndex = $referenceNode->getIndex();
 					$nextLowerIndex = $this->findNextLowerIndex($parentPath, $referenceIndex);
@@ -210,10 +214,13 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 				$referenceIndex = $referenceNode->getIndex();
 				$nextHigherIndex = $this->findNextHigherIndex($parentPath, $referenceIndex);
 				if ($nextHigherIndex === NULL) {
+						// $referenceNode is last node, so we can safely add an index at the end by incrementing the reference index.
 					$newIndex = $referenceIndex + 100;
 				} elseif ($nextHigherIndex > ($referenceIndex + 1)) {
+						// $referenceNode is not last node, but there is free space left between $referenceNode and following sibling.
 					$newIndex = (integer)round($referenceIndex + (($nextHigherIndex - $referenceIndex) / 2));
 				} else {
+						// $referenceNode is not last node, and no free space is left -> we need to re-number!
 					$this->renumberIndexesInLevel($parentPath);
 					$referenceIndex = $referenceNode->getIndex();
 					$nextHigherIndex = $this->findNextHigherIndex($parentPath, $referenceIndex);
@@ -310,6 +317,10 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 				$nodesOnLevel[$index] = $node;
 			}
 		}
+
+			// We need to sort the nodes now, to take unpersisted node orderings into account.
+			// This fixes bug #34291
+		ksort($nodesOnLevel);
 
 		$newIndex = 100;
 		foreach ($nodesOnLevel as $node) {

@@ -401,6 +401,55 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	}
 
 	/**
+	 * Testcase for bug #34291 (TYPO3CR reordering does not take unpersisted
+	 * node order changes into account)
+	 *
+	 * The error can be reproduced in the following way:
+	 *
+	 * - First, create some nodes, and persist.
+	 * - Then, move a node after another one, filling the LAST free sorting index between the nodes. Do NOT persist after that.
+	 * - After that, try to *again* move a node to this spot. In this case, we need to *renumber*
+	 *   the node indices, and the system needs to take the before-moved node into account as well.
+	 *
+	 * The bug tested by this testcase led to wrong orderings on the flow3org website in
+	 * the documentation part under some circumstances.
+	 *
+	 * @test
+	 */
+	public function renumberingTakesUnpersistedNodeOrderChangesIntoAccount() {
+		$liveContext = new ContentContext('live');
+		$rootNode = $liveContext->getWorkspace()->getRootNode();
+
+		$liveParentNode = $rootNode->createNode('parentNode');
+		$nodes = array();
+		$nodes[1] = $liveParentNode->createNode('node001');
+		$nodes[1]->setIndex(1);
+		$nodes[2] = $liveParentNode->createNode('node002');
+		$nodes[2]->setIndex(2);
+		$nodes[3] = $liveParentNode->createNode('node003');
+		$nodes[3]->setIndex(4);
+		$nodes[4] = $liveParentNode->createNode('node004');
+		$nodes[4]->setIndex(5);
+
+		$this->persistenceManager->persistAll();
+
+		$nodes[1]->moveAfter($nodes[2]);
+		$nodes[3]->moveAfter($nodes[2]);
+
+		$this->persistenceManager->persistAll();
+
+		$actualChildNodes = $liveParentNode->getChildNodes();
+
+		$newNodeOrder = array(
+			$nodes[2],
+			$nodes[3],
+			$nodes[1],
+			$nodes[4]
+		);
+		$this->assertSameOrder($newNodeOrder, $actualChildNodes);
+	}
+
+	/**
 	 * @test
 	 */
 	public function nodeRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailable() {
