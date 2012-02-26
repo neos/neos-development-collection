@@ -94,11 +94,12 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 						// TODO: setCreateAbsoluteUri() does not seem to have any effect in an ExtDirect / AJAX context
 					$uriForNode = '/' . $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $childNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
 					$data[] = array(
-						'id' => $childNode->getContextPath(),
+						'key' => $childNode->getContextPath(),
 						// TODO Move to JS
-						'text' => $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title') . '<a class="t3-gotoPage" href="' . $uriForNode . '"></a>' : $childNode->getLabel(),
-						'leaf' => $childNode->hasChildNodes($childNode->getContentType()) === FALSE,
-						'cls' => 'folder'
+						'title' => $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title'): $childNode->getLabel(),
+						'href' => $uriForNode,
+						'isFolder' => $childNode->hasChildNodes($childNode->getContentType()) === TRUE,
+						'isLazy' => $childNode->hasChildNodes($childNode->getContentType()) === TRUE
 					);
 				}
 			break;
@@ -118,6 +119,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		if ($metaData !== array()) {
 			$value['metaData'] = $metaData;
 		}
+
 		$this->assign('value', $value);
 	}
 

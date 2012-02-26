@@ -42,6 +42,9 @@
 	  settings.triangle$ = $('.triangle', settings.popover$);
 
 	  // document click closes active popover
+		//because of dynatree not longer necessary
+		//the popover element should only be active closed
+	  /*
 	  $.fn.popover.openedPopup = null;
 	  $(document).bind("click", function(event) {
 	    if ($.fn.popover.openedPopup != null
@@ -50,7 +53,7 @@
 	      $.fn.popover.openedPopup.trigger('hidePopover');
 	    }
 	  });
-	
+	  */
 		// document hidePopover causes active popover to close
 		$(document).bind("hidePopover", function(event) {
 			if ($.fn.popover.openedPopup != null)

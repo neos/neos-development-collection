@@ -335,6 +335,26 @@ ul.t3-topbar {
   border: 1px dotted #000000;
   cursor: move; }
 
+.extjs-container #t3-dd-pagetree{
+	height: 270px;
+	padding-bottom: 7px;
+	width: 250px;
+	/*overflow: auto;*/
+}
+.extjs-container #t3-dd-pagetree span.dynatree-drop-target{
+	margin: 3px 0;
+	display: block;
+}
+.extjs-container ul.dynatree-container {
+	background-color: white;
+	border:none;
+	height: 100%;
+	margin: 0;
+	padding: 3px;
+	overflow: auto;
+	white-space: nowrap;
+}
+
 .extjs-container .t3-dd-deletionzone {
   padding: 2px 2px 2px 25px;
   margin: 5px;
