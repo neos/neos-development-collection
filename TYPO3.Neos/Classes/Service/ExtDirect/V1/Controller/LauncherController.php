@@ -28,9 +28,9 @@ class LauncherController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3\Domain\Service\NodeSearchService
 	 */
-	protected $nodeRepository;
+	protected $nodeSearchService;
 
 	/**
 	 * @FLOW3\Inject
@@ -78,13 +78,7 @@ class LauncherController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 			}
 		}
 
-			// TODO: Implement a better search when FLOW3 offer the possibility
-		$query = $this->nodeRepository->createQuery();
-		$constraints = array(
-			$query->like('properties', '%' . $term . '%'),
-			$query->in('contentType', $searchContentTypes)
-		);
-		$results = $query->matching($query->logicalAnd($constraints))->execute();
+		$results = $this->nodeSearchService->findByProperties($term, $searchContentTypes);
 
 		$staticWebBaseUri = $this->resourcePublisher->getStaticResourcesWebBaseUri() . 'Packages/TYPO3.TYPO3/';
 

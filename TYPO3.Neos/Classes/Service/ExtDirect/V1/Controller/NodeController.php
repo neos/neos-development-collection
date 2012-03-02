@@ -33,6 +33,12 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	protected $nodeRepository;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3\Domain\Service\NodeSearchService
+	 */
+	protected $nodeSearchService;
+
+	/**
 	 * Select special error action
 	 *
 	 * @return void
@@ -45,7 +51,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Returns the specified node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return string View output for the specified node
+	 * @return void
 	 * @ExtDirect
 	 */
 	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -56,7 +62,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Returns the primary child node (if any) of the specified node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return string View output for the specified node
+	 * @return void
 	 * @ExtDirect
 	 */
 	public function getPrimaryChildNodeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -220,7 +226,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @todo Move section + text node creation to better place (content type triggered)
 	 */
 	protected function createEmptySectionNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode) {
-		$sectionNode = $pageNode->createNode('main', 'TYPO3.TYPO3:Section');
+		$pageNode->createNode('main', 'TYPO3.TYPO3:Section');
 	}
 
 	/**
@@ -229,7 +235,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Note: We do not call $nodeRepository->update() here, as TYPO3CR has a stateful API for now.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return string View output for the specified node
+	 * @return void
 	 * @ExtDirect
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -240,13 +246,63 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * Deletes the specified node and all of its sub nodes
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return string A response string
+	 * @return void
 	 * @ExtDirect
 	 */
 	public function deleteAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$node->remove();
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node->getParent()), 'Frontend\Node', 'TYPO3.TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
+	}
+
+	/**
+	 * Search a page, needed for internal links.
+	 *
+	 * @param string $query
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function searchPageAction($query) {
+		$nodes = $this->nodeSearchService->findByProperties($query, array('TYPO3.TYPO3:Page'));
+
+		$searchResult = array();
+
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		foreach ($nodes as $uninitializedNode) {
+			$node = $contentContext->getNode($uninitializedNode->getPath());
+			$searchResult[] = $this->processNodeForAlohaRepository($node);
+		}
+
+		$this->view->assign('value', array('searchResult' => $searchResult, 'success' => TRUE));
+	}
+
+	/**
+	 * Get the page by the node path, needed for internal links.
+	 *
+	 * @param string $nodePath
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function getPageByNodePathAction($nodePath) {
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		$node = $contentContext->getNode($nodePath);
+		$this->view->assign('value', array('node' => $this->processNodeForAlohaRepository($node), 'success' => TRUE));
+	}
+
+	/**
+	 * Returns an array with the data needed by the Aloha link browser to represent the passed
+	 * NodeInterface instance.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return array
+	 */
+	protected function processNodeForAlohaRepository(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		return array(
+			'id' => $node->getPath(),
+			'name' => $node->getLabel(),
+			'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', ''),
+			'type' => 'phoenix/internal-link'
+		);
 	}
 
 	/**
