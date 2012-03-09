@@ -25,7 +25,7 @@ class PasswordValidator extends \TYPO3\FLOW3\Validation\Validator\AbstractValida
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return void
-	 * @throws TYPO3\FLOW3\Validation\Exception\InvalidSubjectException
+	 * @throws \TYPO3\FLOW3\Validation\Exception\InvalidSubjectException
 	 */
 	protected function isValid($value) {
 		if (!is_array($value)) {

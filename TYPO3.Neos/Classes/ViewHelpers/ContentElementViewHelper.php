@@ -29,7 +29,7 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	 * Include all JavaScript files matching the include regular expression
 	 * and not matching the exclude regular expression.
 	 *
-	 * @param TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param boolean $page
 	 */
 	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE) {

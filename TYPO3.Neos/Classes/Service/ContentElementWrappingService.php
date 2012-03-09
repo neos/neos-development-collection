@@ -45,7 +45,7 @@ class ContentElementWrappingService {
 	 * the backend.
 	 * $parameters can be used to further pass parameters to the content element.
 	 *
-	 * @param TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $content
 	 * @param boolean $isPage
 	 */
