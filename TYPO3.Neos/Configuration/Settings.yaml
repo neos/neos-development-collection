@@ -266,12 +266,12 @@ TYPO3:
                 label: 'Manage'
               import:
                 label: 'Import'
-      report:
-        label: 'Report'
-      layout:
-        label: 'Layout'
-      system:
-        label: 'System'
+      reporting:
+        label: 'Reporting'
+      site:
+        label: 'Site'
+      administration:
+        label: 'Administration'
         submodules:
           useradmin:
             label: 'User Management'
