@@ -66,3 +66,10 @@ Installation of TYPO3 Phoenix
 	The TYPO3 Phoenix start page
 
 .. _TYPO3 Phoenix Download: http://phoenix.typo3.org/download
+
+Creating an administrator user
+------------------------------
+
+To create a backend administrator you use the following command: ::
+
+	./flow3 user:create --username 'your@email.address' --password 'secret' --first-name 'Your' --last-name 'Name' --roles='Administrator'

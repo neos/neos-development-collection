@@ -1,0 +1,129 @@
+<?php
+namespace TYPO3\TYPO3\Command;
+
+/*                                                                        *
+ * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU General Public License, either version 3 of the   *
+ * License, or (at your option) any later version.                        *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */
+
+use TYPO3\FLOW3\Annotations as FLOW3;
+
+/**
+ * The User Command Controller Service
+ *
+ * @FLOW3\Scope("singleton")
+ */
+class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
+
+	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\AccountRepository
+	 */
+	protected $accountRepository;
+
+	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\Party\Domain\Repository\PartyRepository
+	 */
+	protected $partyRepository;
+
+	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\AccountFactory
+	 */
+	protected $accountFactory;
+
+	/**
+	 * Create a new Typo3BackendProvider user
+	 *
+	 * @param string $username Email address of the user to be created
+	 * @param string $password Password of the user to be created
+	 * @param string $firstName First name of the user to be created
+	 * @param string $lastName Last name of the user to be created
+	 * @param string $roles A comma separated list of roles to assign
+	 * @FLOW3\Validate(argumentName="username", type="EmailAddress")
+	 * @return void
+	 */
+	public function createCommand($username, $password, $firstName, $lastName, $roles = NULL) {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		if ($account instanceof \TYPO3\FLOW3\Security\Account) {
+			$this->outputLine('User "%s" already exists.', array($username));
+			$this->quit(1);
+		}
+
+		$user = new \TYPO3\TYPO3\Domain\Model\User();
+		$name = new \TYPO3\Party\Domain\Model\PersonName('', $firstName, '', $lastName, '', $username);
+		$user->setName($name);
+
+		$workspaceName = 'user-' . preg_replace('/[^a-z0-9]/i', '', $username);
+		$user->getPreferences()->set('context.workspace', $workspaceName);
+		$this->partyRepository->add($user);
+
+		$roles = empty($roles) ? array('Editor') : explode(',', $roles);
+
+		$account = $this->accountFactory->createAccountWithPassword($username, $password, $roles, 'Typo3BackendProvider');
+		$account->setParty($user);
+		$this->accountRepository->add($account);
+		$this->outputLine('Created account "%s".', array($username));
+	}
+
+	/**
+	 * Add a role to a user
+	 *
+	 * @param string $username Email address of the user
+	 * @param string $role Role ot be added to the user
+	 * @return void
+	 */
+	public function addRoleCommand($username, $role) {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		if (!$account instanceof \TYPO3\FLOW3\Security\Account) {
+			$this->outputLine('User "%s" does not exists.', array($username));
+			$this->quit(1);
+		}
+
+		$role = new \TYPO3\FLOW3\Security\Policy\Role($role);
+
+		if ($account->hasRole($role)) {
+			$this->outputLine('User "%s" allready has the role "%s" assigned.', array($username, $role));
+			$this->quit(1);
+		}
+
+		$account->addRole($role);
+		$this->accountRepository->update($account);
+		$this->outputLine('Added role "%s" to user "%s".', array($role, $username));
+	}
+
+	/**
+	 * Remove a role from a user
+	 *
+	 * @param string $username Email address of the user
+	 * @param string $role Role ot be removed from the user
+	 * @return void
+	 */
+	public function removeRoleCommand($username, $role) {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		if (!$account instanceof \TYPO3\FLOW3\Security\Account) {
+			$this->outputLine('User "%s" does not exists.', array($username));
+			$this->quit(1);
+		}
+
+		$role = new \TYPO3\FLOW3\Security\Policy\Role($role);
+
+		if (!$account->hasRole($role)) {
+			$this->outputLine('User "%s" does not have the role "%s" assigned.', array($username, $role));
+			$this->quit(1);
+		}
+
+		$account->removeRole($role);
+		$this->accountRepository->update($account);
+		$this->outputLine('Removed role "%s" from user "%s".', array($role, $username));
+	}
+
+}
+
+?>
