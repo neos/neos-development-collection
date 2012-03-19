@@ -273,6 +273,9 @@ TYPO3:
           useradmin:
             label: 'User Management'
             controller: '\TYPO3\TYPO3\Controller\Module\Administration\UserAdminController'
+          package:
+            label: 'Package Management'
+            controller: '\TYPO3\TYPO3\Controller\Module\Administration\PackageController'
 
   Setup:
     stepOrder: ['database', 'administrator', 'siteimport', 'final']
