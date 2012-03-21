@@ -1,0 +1,21 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
+	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
+		<!-- TODO: remove this from HTML as it should not be shown in preview mode for example, this causes 'flickering' -->
+		<div id="t3-ui-top" class="aloha-block-do-not-deactivate t3-ui">
+			<div id="t3-launcher"></div>
+			<ul class="t3-topbar">
+				<li class="t3-active">Content</li>
+
+				<f:for each="{modules}" as="module" key="path">
+					<li>
+						<t:link.module path="{path}">{module.label}</t:link.module>
+					</li>
+				</f:for>
+			</ul>
+			<a class="t3-button t3-button-logout t3-icon-logout" href="/typo3/logout"><span>Logout</span></a>
+
+			<div class="t3-clear"></div>
+		</div>
+	</f:if>
+</f:security.ifAccess>
