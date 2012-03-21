@@ -110,9 +110,9 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	}
 
 	/**
-	 * Returns the current site from this frontend context
+	 * Returns the current domain from this frontend context
 	 *
-	 * @return \TYPO3\TYPO3\Domain\Model\Structure\Domain The current site
+	 * @return \TYPO3\TYPO3\Domain\Model\Domain The current domain
 	 * @api
 	 */
 	public function getCurrentDomain() {
