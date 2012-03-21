@@ -29,7 +29,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class Node implements NodeInterface {
 
 	/**
-	 * @version
+	 * @ORM\Version
 	 * @var integer
 	 */
 	protected $version;
@@ -70,7 +70,7 @@ class Node implements NodeInterface {
 	 * Index within the nodes with the same parent
 	 *
 	 * @var integer
-	 * @ORM\Column(name="sortingindex",nullable=true)
+	 * @ORM\Column(name="sortingindex", nullable=true)
 	 */
 	protected $index;
 
@@ -116,6 +116,7 @@ class Node implements NodeInterface {
 	 * Date before which this node is automatically hidden
 	 *
 	 * @var \DateTime
+	 * @ORM\Column(nullable=true)
 	 */
 	protected $hiddenBeforeDateTime;
 
@@ -123,6 +124,7 @@ class Node implements NodeInterface {
 	 * Date after which this node is automatically hidden
 	 *
 	 * @var \DateTime
+	 * @ORM\Column(nullable=true)
 	 */
 	protected $hiddenAfterDateTime;
 
@@ -142,14 +144,12 @@ class Node implements NodeInterface {
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @FLOW3\Transient
 	 */
 	protected $context;
 
 	/**
 	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
-	 * @FLOW3\Transient
 	 */
 	protected $securityContext;
 
@@ -688,7 +688,7 @@ class Node implements NodeInterface {
 	/**
 	 * Sets the date and time when this node becomes potentially visible.
 	 *
-	 * @param \DateTime $hideBeforeDate Date before this node should be hidden
+	 * @param \DateTime $dateTime Date before this node should be hidden
 	 * @return void
 	 */
 	public function setHiddenBeforeDateTime(\DateTime $dateTime = NULL) {
@@ -710,7 +710,7 @@ class Node implements NodeInterface {
 	/**
 	 * Sets the date and time when this node should be automatically hidden
 	 *
-	 * @param \DateTime $hideAfterDate Date after which this node should be hidden
+	 * @param \DateTime $dateTime Date after which this node should be hidden
 	 * @return void
 	 */
 	public function setHiddenAfterDateTime(\DateTime $dateTime = NULL) {

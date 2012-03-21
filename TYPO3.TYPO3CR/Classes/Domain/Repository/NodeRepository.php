@@ -455,7 +455,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\TYPO3\Domain\Model\Node The node found or NULL
+	 * @return \TYPO3\TYPO3CR\Domain\Model\Node The node found or NULL
 	 * @todo Check for workspace compliance
 	 */
 	public function findFirstByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
@@ -573,7 +573,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $parentPath Absolute path of the parent node
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
-	 * @return \TYPO3\FLOW3\Peristence\QueryInterface The query
+	 * @return \TYPO3\FLOW3\Persistence\QueryInterface The query
 	 */
 	protected function createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
