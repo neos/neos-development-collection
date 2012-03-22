@@ -118,7 +118,7 @@ class SiteCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 			$this->outputLine('');
 			$this->outputLine('Syntax:');
 			$this->outputLine('  ./flow3 site:prune --confirmation TRUE');
-			return;
+			$this->quit(1);
 		}
 
 		$this->nodeRepository->removeAll();
@@ -129,6 +129,49 @@ class SiteCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		$this->outputLine('All sites and content have been removed.');
 	}
 
-}
+	/**
+	 * Display a list of available sites
+	 *
+	 * @return void
+	 */
+	public function listCommand() {
+		$sites = $this->siteRepository->findAll();
 
+		if ($sites->count() === 0) {
+			$this->outputLine('No sites available');
+			$this->quit(1);
+		}
+
+		$longestSiteName = 4;
+		$longestNodeName = 9;
+		$longestSiteResource = 17;
+		$availableSites = array();
+
+		foreach ($sites as $site) {
+			array_push($availableSites, array(
+				'name' => $site->getName(),
+				'nodeName' => $site->getNodeName(),
+				'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey()
+			));
+			if (strlen($site->getName()) > $longestSiteName) {
+				$longestSiteName = strlen($site->getName());
+			}
+			if (strlen($site->getNodeName()) > $longestNodeName) {
+				$longestNodeName = strlen($site->getNodeName());
+			}
+			if (strlen($site->getSiteResourcesPackageKey()) > $longestSiteResource) {
+				$longestSiteResource = strlen($site->getSiteResourcesPackageKey());
+			}
+		}
+
+		$this->outputLine();
+		$this->outputLine(' ' . str_pad('Name', $longestSiteName + 15) . str_pad('Node name', $longestNodeName + 15) . 'Resources package');
+		$this->outputLine(str_repeat('-', $longestSiteName + $longestNodeName + $longestSiteResource + 15 + 15 + 2));
+		foreach ($availableSites as $site) {
+			$this->outputLine(' ' . str_pad($site['name'], $longestSiteName + 15) . str_pad($site['nodeName'], $longestNodeName + 15) . $site['siteResourcesPackageKey']);
+		}
+		$this->outputLine();
+	}
+
+}
 ?>
