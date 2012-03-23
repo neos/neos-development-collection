@@ -266,10 +266,6 @@ TYPO3:
                 label: 'Manage'
               import:
                 label: 'Import'
-      reporting:
-        label: 'Reporting'
-      site:
-        label: 'Site'
       administration:
         label: 'Administration'
         submodules:
