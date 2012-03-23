@@ -2,7 +2,7 @@
 namespace TYPO3\TYPO3\Controller\Module;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "TYPO3".                      *
+ * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License, either version 3 of the   *
