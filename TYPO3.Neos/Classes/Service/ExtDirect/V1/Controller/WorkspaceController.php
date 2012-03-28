@@ -21,7 +21,7 @@ use TYPO3\ExtJS\Annotations\ExtDirect;
  *
  * @FLOW3\Scope("singleton")
  */
-class WorkspaceController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @FLOW3\Inject

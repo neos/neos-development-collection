@@ -33,7 +33,7 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 				$this->errorMethodName = 'extErrorAction';
 				break;
 			case 'json' :
-				$this->defaultViewObjectName = 'TYPO3\FLOW3\MVC\View\JsonView';
+				$this->defaultViewObjectName = 'TYPO3\FLOW3\Mvc\View\JsonView';
 				break;
 		}
 	}

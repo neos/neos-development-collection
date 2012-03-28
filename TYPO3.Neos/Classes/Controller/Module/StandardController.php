@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @var array
@@ -33,10 +33,10 @@ class StandardController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * @param \TYPO3\FLOW3\MVC\View\ViewInterface $view
+	 * @param \TYPO3\FLOW3\Mvc\View\ViewInterface $view
 	 * @return void
 	 */
-	protected function initializeView(\TYPO3\FLOW3\MVC\View\ViewInterface $view) {
+	protected function initializeView(\TYPO3\FLOW3\Mvc\View\ViewInterface $view) {
 		$view->assign('moduleConfiguration', $this->moduleConfiguration);
 	}
 

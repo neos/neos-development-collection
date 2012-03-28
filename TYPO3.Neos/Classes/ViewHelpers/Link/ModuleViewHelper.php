@@ -63,12 +63,10 @@ class ModuleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedView
 	 * @return string The rendered link
 	 */
 	public function render($path, $action = NULL, $arguments = array(), $section = '', $format = '', array $additionalParams = array(), $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
-		$rootRequest = $this->controllerContext->getRequest();
-		if ($rootRequest instanceof \TYPO3\FLOW3\MVC\Web\SubRequest) {
-			$rootRequest = $rootRequest->getRootRequest();
-		}
-		$uriBuilder = new \TYPO3\FLOW3\MVC\Web\Routing\UriBuilder();
-		$uriBuilder->setRequest($rootRequest);
+		$mainRequest = $this->controllerContext->getRequest()->getMainRequest();
+
+		$uriBuilder = new \TYPO3\FLOW3\Mvc\Routing\UriBuilder();
+		$uriBuilder->setRequest($mainRequest);
 		$modifiedArguments = array('module' => $path);
 		if ($arguments !== array()) {
 			$modifiedArguments['moduleArguments'] = $arguments;

@@ -14,12 +14,13 @@ TYPO3:
       authentication:
         providers:
           Typo3BackendProvider:
-            providerClass: PersistedUsernamePasswordProvider
-            requestPatterns:
-              controllerObjectName: "TYPO3\TYPO3\Controller\.*|TYPO3\TYPO3\Service\.*"
-            entryPoint:
-              WebRedirect:
-                uri: typo3/login
+            provider: 'PersistedUsernamePasswordProvider'
+            providerOptions:
+              requestPatterns:
+                controllerObjectName: "TYPO3\TYPO3\Controller\.*|TYPO3\TYPO3\Service\.*"
+            entryPoint: 'WebRedirect'
+            entryPointOptions:
+              uri: typo3/login
         authenticationStrategy: oneToken
     mvc:
       notFoundController: TYPO3\TYPO3\Controller\ErrorController

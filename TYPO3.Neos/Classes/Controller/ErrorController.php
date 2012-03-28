@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController implements \TYPO3\FLOW3\MVC\Controller\NotFoundControllerInterface {
+class ErrorController extends \TYPO3\FLOW3\Mvc\Controller\ActionController implements \TYPO3\FLOW3\Mvc\Controller\NotFoundControllerInterface {
 
 	/**
 	 * @FLOW3\Inject
@@ -27,22 +27,17 @@ class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController imple
 	protected $securityContext;
 
 	/**
-	 * @var array
-	 */
-	protected $supportedRequestTypes = array('TYPO3\FLOW3\MVC\Web\Request', 'TYPO3\FLOW3\MVC\Cli\Request');
-
-	/**
-	 * @var \TYPO3\FLOW3\MVC\Controller\Exception
+	 * @var \TYPO3\FLOW3\Mvc\Controller\Exception
 	 */
 	protected $exception;
 
 	/**
 	 * Sets the controller exception
 	 *
-	 * @param \TYPO3\FLOW3\MVC\Controller\Exception $exception
+	 * @param \TYPO3\FLOW3\Mvc\Controller\Exception $exception
 	 * @return void
 	 */
-	public function setException(\TYPO3\FLOW3\MVC\Controller\Exception $exception) {
+	public function setException(\TYPO3\FLOW3\Mvc\Controller\Exception $exception) {
 		$this->exception = $exception;
 	}
 
@@ -55,25 +50,22 @@ class ErrorController extends \TYPO3\FLOW3\MVC\Controller\ActionController imple
 		if ($this->exception !== NULL) {
 			$this->view->assign('errorMessage', $this->exception->getMessage());
 		}
-		switch (get_class($this->request)) {
-			case 'TYPO3\FLOW3\MVC\Web\Request' :
-				$pathWithoutFormat = substr($this->request->getRequestUri()->getPath(), 0 , strrpos($this->request->getRequestUri()->getPath(), '.'));
-				preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $pathWithoutFormat, $matches);
-				if (isset($matches['WorkspaceName'])) {
-					$uri = $this->request->getBaseUri() . '@' . $matches['WorkspaceName'];
-				} elseif ($this->securityContext->getParty() instanceof \TYPO3\TYPO3\Domain\Model\User) {
-					$uri = $this->request->getBaseUri() . '@' . $this->securityContext->getParty()->getPreferences()->get('context.workspace');
-				} else {
-					$uri = $this->request->getBaseUri();
-				}
-				$this->view->assign('pageTitle', '404 Not Found');
-				$this->view->assign('errorTitle', 'Page Not Found');
-				$this->view->assign('errorDescription', 'Sorry, we could not find any page at this URL.<br />Please visit the <a href="' . $uri . '">homepage</a> to get back on the path.');
-				$this->response->setStatus(404);
-				break;
-			default :
-				return "\n404 Not Found\n\nNo controller could be resolved which would match your request.\n";
+		$httpRequest = $this->request->getHttpRequest();
+		$uriPath = $httpRequest->getUri()->getPath();
+		$uriPathWithoutFormat = substr($uriPath, 0 , strrpos($uriPath, '.'));
+
+		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $uriPathWithoutFormat, $matches);
+		if (isset($matches['WorkspaceName'])) {
+			$uri = $httpRequest->getBaseUri() . '@' . $matches['WorkspaceName'];
+		} elseif ($this->securityContext->getParty() instanceof \TYPO3\TYPO3\Domain\Model\User) {
+			$uri = $httpRequest->getBaseUri() . '@' . $this->securityContext->getParty()->getPreferences()->get('context.workspace');
+		} else {
+			$uri = $httpRequest->getBaseUri();
 		}
+		$this->view->assign('pageTitle', '404 Not Found');
+		$this->view->assign('errorTitle', 'Page Not Found');
+		$this->view->assign('errorDescription', 'Sorry, we could not find any page at this URL.<br />Please visit the <a href="' . $uri . '">homepage</a> to get back on the path.');
+		$this->response->setStatus(404);
 	}
 
 	/**

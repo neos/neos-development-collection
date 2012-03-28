@@ -91,8 +91,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		switch ($outputStyle) {
 			case self::TREESTYLE :
 				foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
-						// TODO: setCreateAbsoluteUri() does not seem to have any effect in an ExtDirect / AJAX context
-					$uriForNode = '/' . $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $childNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
+					$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $childNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
 					$data[] = array(
 						'key' => $childNode->getContextPath(),
 						// TODO Move to JS

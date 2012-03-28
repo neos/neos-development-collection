@@ -17,7 +17,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * Controller for displaying nodes in the frontend
  *
  */
-class TypoScriptView extends \TYPO3\FLOW3\MVC\View\AbstractView {
+class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 
 	/**
 	 * @FLOW3\Inject

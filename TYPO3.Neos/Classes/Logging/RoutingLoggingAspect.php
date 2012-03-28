@@ -39,10 +39,10 @@ class RoutingLoggingAspect {
 	 * Logs results of the FrontendNodeRoutePartHandler's matchValue() methods
 	 *
 	 * @FLOW3\AfterReturning("method(TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler->matchValue()) || method(TYPO3\TYPO3\Routing\RestRestServiceNodeRoutePartHandler->matchValue())")
-	 * @param \TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 */
-	public function logMatchValue(\TYPO3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function logMatchValue(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
 		$path = $joinPoint->getMethodArgument('value');
 		$resultCode = $joinPoint->getResult();
 

@@ -198,12 +198,12 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$typoScriptConfiguration = $parser->parse($typoScript);
 
 
-		$controllerContext = new \TYPO3\FLOW3\MVC\Controller\ControllerContext(
-			$this->getMock('TYPO3\FLOW3\MVC\Web\Request'),
-			$this->getMock('TYPO3\FLOW3\MVC\ResponseInterface'),
-			$this->getMock('TYPO3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE),
-			$this->getMock('TYPO3\FLOW3\MVC\Web\Routing\UriBuilder'),
-			$this->getMock('TYPO3\FLOW3\MVC\FlashMessageContainer')
+		$controllerContext = new \TYPO3\FLOW3\Mvc\Controller\ControllerContext(
+			$this->getMock('TYPO3\FLOW3\Mvc\ActionRequest'),
+			$this->getMock('TYPO3\FLOW3\Mvc\ResponseInterface'),
+			$this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array(), array(), '', FALSE),
+			$this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder'),
+			$this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer')
 		);
 		return new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $controllerContext);
 	}

@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class BackendModuleRoutePartHandler extends \TYPO3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+class BackendModuleRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 
 	const MATCHRESULT_FOUND = TRUE;
 	const MATCHRESULT_NOSUCHMODULE = -1;

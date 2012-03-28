@@ -12,23 +12,19 @@ namespace TYPO3\TYPO3\Controller\Backend;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\FLOW3\Http\Response;
 
 /**
  * The TYPO3 Module
  *
  * @FLOW3\Scope("singleton")
  */
-class ModuleController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
+class ModuleController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\MVC\Web\SubRequestBuilder
-	 */
-	protected $subRequestBuilder;
-
-	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\MVC\Dispatcher
+	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -38,7 +34,8 @@ class ModuleController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @todo Security
 	 */
 	public function indexAction(array $module) {
-		$moduleRequest = $this->subRequestBuilder->build($this->request, 'moduleArguments');
+		$moduleRequest = new ActionRequest($this->request);
+		$moduleRequest->setArgumentNamespace('moduleArguments');
 		$moduleRequest->setControllerObjectName($module['controller']);
 		$moduleRequest->setControllerActionName($module['action']);
 
@@ -47,7 +44,7 @@ class ModuleController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 
 		$moduleRequest->setArgument('__moduleConfiguration', $moduleConfiguration);
 
-		$moduleResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($this->response);
+		$moduleResponse = new Response($this->response);
 
 		$this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 

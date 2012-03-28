@@ -12,6 +12,8 @@ namespace TYPO3\TYPO3\TypoScript;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Mvc\ActionRequest;
+use TYPO3\FLOW3\Http\Response;
 
 /**
  * A TypoScript Plugin object. TODO REFACTOR!!
@@ -22,19 +24,13 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\MVC\Web\SubRequestBuilder
-	 */
-	protected $subRequestBuilder;
-
-	/**
-	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\MVC\Dispatcher
+	 * @var \TYPO3\FLOW3\Mvc\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -154,12 +150,12 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 	/**
 	 * Build the pluginRequest object
 	 *
-	 * @return \TYPO3\FLOW3\MVC\Web\SubRequest
+	 * @return \TYPO3\FLOW3\Mvc\ActionRequest
 	 */
 	protected function buildPluginRequest() {
 		$parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
-		$argumentNamespace = $this->getPluginNamespace();
-		$pluginRequest = $this->subRequestBuilder->build($parentRequest, $argumentNamespace);
+		$pluginRequest = new ActionRequest($parentRequest);
+		$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
 
 		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
 			if ($pluginRequest->getControllerPackageKey() === NULL) {
@@ -182,7 +178,8 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 			//      This enables us to configure plugin controller arguments via
 			//      content type definitions for now.
 			foreach ($this->node->getProperties() as $propertyName => $propertyValue) {
-				if (!$pluginRequest->hasArgument($propertyName)) {
+				$propertyName = '--' . $propertyName;
+				if (!in_array($propertyName, array('--package', '--subpackage', '--controller', '--action', '--format')) && !$pluginRequest->hasArgument($propertyName)) {
 					$pluginRequest->setArgument($propertyName, $propertyValue);
 				}
 			}
@@ -192,7 +189,6 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 			$pluginRequest->setControllerName($this->getController());
 			$pluginRequest->setControllerActionName($this->getAction());
 		}
-
 		return $pluginRequest;
 	}
 
@@ -204,7 +200,7 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 	public function evaluate($currentContext) {
 		$this->node = $currentContext;
 		$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
-		$pluginResponse = new \TYPO3\FLOW3\MVC\Web\SubResponse($parentResponse);
+		$pluginResponse = new Response($parentResponse);
 
 		try {
 			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
@@ -214,7 +210,7 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 			} else {
 				return $pluginResponse->getContent();
 			}
-		} catch (\TYPO3\FLOW3\MVC\Exception\StopActionException $stopActionException) {
+		} catch (\TYPO3\FLOW3\Mvc\Exception\StopActionException $stopActionException) {
 			throw $stopActionException;
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException($exception);
@@ -225,7 +221,7 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 
 	/**
 	 * Returns the plugin namespace that will be prefixed to plugin parameters in URIs.
-	 * By default this is typo3_<package>_<subpackage>_<pluginname>
+	 * By default this is <plugin_class_name>
 	 *
 	 * @return void
 	 * @todo make this configurable
@@ -243,6 +239,21 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 		}
 
 		return strtolower(str_replace('\\', '_', get_class($this)));
+	}
+
+	/**
+	 * Pass the arguments which were addressed to the plugin to its own request
+	 *
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $pluginRequest The plugin request
+	 * @return void
+	 */
+	protected function passArgumentsToPluginRequest(ActionRequest $pluginRequest) {
+		$arguments = $pluginRequest->getMainRequest()->getPluginArguments();
+		$pluginNamespace = $this->getPluginNamespace();
+
+		if (isset($arguments[$pluginNamespace])) {
+			$pluginRequest->setArguments($arguments[$pluginNamespace]);
+		}
 	}
 
 	/**
