@@ -18,12 +18,12 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
-	 * @var TYPO3\TYPO3CR\Domain\Model\ProxyNode
+	 * @var \TYPO3\TYPO3CR\Domain\Model\ProxyNode
 	 */
 	protected $proxyNode;
 
 	/**
-	 * @var TYPO3\TYPO3CR\Domain\Model\Node
+	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
 	protected $newNode;
 
