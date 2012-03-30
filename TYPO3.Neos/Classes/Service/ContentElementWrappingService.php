@@ -41,6 +41,12 @@ class ContentElementWrappingService {
 	protected $persistenceManager;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 */
+	protected $accessDecisionManager;
+
+	/**
 	 * Wrap the $content identified by $node with the needed markup for
 	 * the backend.
 	 * $parameters can be used to further pass parameters to the content element.
@@ -50,7 +56,11 @@ class ContentElementWrappingService {
 	 * @param boolean $isPage
 	 */
 	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $isPage = FALSE) {
-		// TODO: If not in backend, return content directly (needs to be discussed)
+		try {
+			$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
+		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
+			return $content;
+		}
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
 		$tagBuilder->forceClosingTag(TRUE);
