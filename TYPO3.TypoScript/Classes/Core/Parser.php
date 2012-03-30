@@ -451,7 +451,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 			$objectPropertyPathArray = $this->getParsedObjectPath($objectPropertyPath);
 
 			$typoScriptObject = &$this->getValueFromObjectTree($objectPropertyPathArray);
-			if (isset($typoScriptObject['__objectType'])) {
+			if (is_array($typoScriptObject) && isset($typoScriptObject['__objectType'])) {
 				$propertyName = '__all';
 			} else {
 				$objectPathArray = array_slice($objectPropertyPathArray, 0, -1);
