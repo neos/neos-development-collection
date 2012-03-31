@@ -61,11 +61,8 @@ class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHe
 		$request = $this->controllerContext->getRequest();
 
 		if ($node === NULL) {
-			$contentContext = $this->viewHelperVariableContainer->get('TYPO3\TYPO3', 'contentContext');
-			if (!$contentContext instanceof \TYPO3\TYPO3\Domain\Service\ContentContext) {
-				throw new \TYPO3\TYPO3\Exception(__CLASS__ . ' requires a valid ContentContext delivered through the View Helper Variable Container.', 1289557401);
-			}
-			$node = $contentContext->getCurrentNode();
+			$currentlyRenderedNode = $this->templateVariableContainer->get('context');
+			$node = $currentlyRenderedNode->getContext()->getCurrentNode();
 		}
 
 		if ($format === NULL) {
