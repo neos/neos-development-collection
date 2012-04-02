@@ -55,3 +55,10 @@ prototype(TYPO3.TYPO3:TextWithImage) {
 	image = ${context.property('image')}
 	position = ${context.property('position')}
 }
+
+# Breadcrumb TS Object
+prototype(TYPO3.TYPO3:Breadcrumb) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:Breadcrumb) {
+		templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
+		items = ${context.parents().add(context)}
+	}
