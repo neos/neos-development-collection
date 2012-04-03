@@ -239,7 +239,7 @@ class NodeController extends \TYPO3\FLOW3\MVC\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$this->view->assign('value', array('data' => '', 'success' => TRUE));
+		$this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName()), 'success' => TRUE));
 	}
 
 	/**
