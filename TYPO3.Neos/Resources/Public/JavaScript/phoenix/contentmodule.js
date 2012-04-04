@@ -63,6 +63,7 @@ function() {
 			$('body').addClass('t3-backend');
 
 			this._initializeShortcuts();
+			this._initializeHistoryManagement();
 		},
 
 		_initializeShortcuts: function() {
@@ -73,6 +74,18 @@ function() {
 			}).bind('keydown', 'alt+l', function() {
 				that._launcher.activate();
 				return false;
+			});
+		},
+
+		_initializeHistoryManagement: function() {
+			var that = this;
+			if (window.history) {
+				window.history.replaceState({uri: window.location.href}, document.title, window.location.href);
+			}
+			window.addEventListener('popstate', function(event) {
+				if (event.state) {
+					that.loadPage(event.state.uri, true);
+				}
 			});
 		},
 
@@ -224,7 +237,7 @@ function() {
 				}
 			})
 		},
-		loadPage: function(uri) {
+		loadPage: function(uri, ignorePushToHistory) {
 			var that = this;
 
 			var selectorsToReplace = [];
@@ -246,6 +259,10 @@ function() {
 			}
 
 			this._showPageLoader();
+
+			if (window.history && !ignorePushToHistory) {
+				window.history.pushState({uri: uri}, document.title, uri);
+			}
 
 			$.get(uri, function(htmlString, status) {
 				if (status === 'success') {
