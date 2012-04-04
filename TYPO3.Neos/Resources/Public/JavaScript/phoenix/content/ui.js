@@ -190,19 +190,15 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 
 	T3.Content.UI.PageTreeButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Page Tree',
-		$popoverContent: $('<div class="extjs-container" id="t3-pagetree-container"><div id="t3-drag-newpage" class="t3-dd-newpage">New page</div><div id="t3-dd-pagetree"></div><div class="t3-dd-deletionzone" id="t3-drop-deletionzone">Drop here to delete</div></div>'),
+		$popoverContent: $('<div class="dynatree-container" id="t3-pagetree-container"><div id="t3-drag-newpage" class="t3-dd-newpage">New page</div><div id="t3-dd-pagetree"></div><div class="t3-dd-deletionzone" id="t3-drop-deletionzone">Drop here to delete</div></div>'),
 
 		tree: null,
 		onPopoverOpen: function() {
 			if (this.tree) return;
 
 			var siteRootNodePath = $('#t3-page-metainformation').attr('data-__siteroot');
-			var isMac = /Mac/.test(navigator.platform);
 
-			var $newPage = $('#t3-drag-newpage');
-			var $deletePage = $('#t3-drop-deletionzone');
-
-			this.tree = $("#t3-dd-pagetree").dynatree({
+			this.tree = $('#t3-dd-pagetree').dynatree({
 				initialize: function(parent, tree, data) {
 					this.parent = parent;
 					this.tree = tree;
@@ -215,8 +211,8 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 				clickFolderMode: 1,
 				debugLevel: 0, // 0:quiet, 1:normal, 2:debug
 				strings: {
-					loading: "Loading…",
-					loadError: "Load error!"
+					loading: 'Loading…',
+					loadError: 'Load error!'
 				},
 				children: [
 					{
@@ -230,7 +226,6 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 						unselectable: true
 					}
 				],
-
 				/**
 				 * The following callback is executed if an lazy-loading node
 				 * has not yet been loaded.
@@ -300,7 +295,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 							position = 0;
 							if (hitMode === 'before') {
 								position = -1;
-							} else if(hitMode === 'after') {
+							} else if (hitMode === 'after') {
 								position = 1;
 							}
 							TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(
@@ -342,7 +337,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 									node.data.key,
 									position,
 									function(result) {
-										if(result.success == true){
+										if (result.success == true) {
 											//var parentNode = sourceNode.getParent();
 											//parentNode.reloadChildren();
 											T3.ContentModule.loadPage(node.data.href);
@@ -363,18 +358,16 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 						}
 					}
 				},
-
-				onClick: function(node, event){
-					//only if the node title was clicked
+				onClick: function(node, event) {
+					// only if the node title was clicked
 					// and it was not active at this time
 					// it should be navigated to the target node
-					if (node.isActive() === false && node.data.key != siteRootNodePath && (node.getEventTargetType(event) == "title" || node.getEventTargetType(event) == "icon")){
+					if (node.isActive() === false && node.data.key != siteRootNodePath && (node.getEventTargetType(event) == 'title' || node.getEventTargetType(event) == 'icon')) {
 						T3.ContentModule.loadPage(node.data.href);
 					}
 				},
-
 				onDblClick: function(node, event) {
-					if (node.getEventTargetType(event) == "title" && node.getLevel() !== 1){
+					if (node.getEventTargetType(event) == 'title' && node.getLevel() !== 1) {
 						editNode(node);
 						return false;
 					}
@@ -385,23 +378,21 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 							editNode(node);
 							return false;
 						case 13: // [enter]
-							if( isMac ){
-								editNode(node);
-								return false;
-							}
+							editNode(node);
+							return false;
 					}
 				}
 			});
 
-			$newPage = $("#t3-drag-newpage").draggable({
+			$newPage = $('#t3-drag-newpage').draggable({
 				revert: true,
 				connectToDynatree: true,
-				helper: "clone",
+				helper: 'clone',
 				containment: '#t3-newpage-container'
 			});
 			//adding a new page by clicking on the newPage container, if a page is active
-			$newPage.click(function(){
-				var activeNode = $("#t3-dd-pagetree").dynatree("getActiveNode");
+			$newPage.click(function() {
+				var activeNode = $('#t3-dd-pagetree').dynatree('getActiveNode');
 				if (activeNode !== null) {
 					var position = 0;
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(
@@ -413,7 +404,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 							}
 						},
 						position,
-						function(result){
+						function(result) {
 							if (result.success == true) {
 								//reload the parent node with its childrens
 								//if the parentnode has no children left the fathernode of the parenNode should be reloaded
@@ -427,18 +418,17 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 					T3.Common.Notification.notice('You have to select a page');
 				}
 			});
-
-			$deletePage.droppable({
+			$deletePage = $('#t3-drop-deletionzone').droppable({
 				over: function(event, ui) {
-					$(this).addClass("ui-state-highlight");
+					$(this).addClass('ui-state-highlight');
 				},
 				out: function() {
-					$(this).removeClass("ui-state-highlight")
+					$(this).removeClass('ui-state-highlight')
 				},
 				drop: function(event, ui) {
 					$deletePage.data('currently-deleting', 'true');
-					var node = ui.helper.data("dtSourceNode") || ui.draggable;
-					$(this).addClass("ui-state-highlight").find("p").html("Dropped " + node);
+					var node = ui.helper.data('dtSourceNode') || ui.draggable;
+					$(this).addClass('ui-state-highlight').find('p').html('Dropped ' + node);
 
 					//nodes could only be deleted if they have no children
 					//and they are not root
@@ -473,16 +463,14 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 			function editNode(node) {
 				var prevTitle = node.data.title,
 				tree = node.tree;
-				// Disable dynatree mouse- and key handling
 				tree.$widget.unbind();
-				// Replace node with <input>
-				$(".dynatree-title", node.span).html("<input id='editNode' value='" + prevTitle + "'>");
+				$('.dynatree-title', node.span).html('<input id="editNode" value="' + prevTitle + '">');
 				// Focus <input> and bind keyboard handler
-				$("input#editNode").focus().keydown(function(event){
-					switch( event.which ) {
+				$('input#editNode').focus().keydown(function(event) {
+					switch (event.which) {
 						case 27: // [esc]
 						// discard changes on [esc]
-						$("input#editNode").val(prevTitle);
+						$('input#editNode').val(prevTitle);
 						$(this).blur();
 						break;
 					case 13: // [enter]
@@ -490,17 +478,17 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 						$(this).blur();
 						break;
 					}
-				}).blur(function(event){
+				}).blur(function(event) {
 					// Accept new value, when user leaves <input>
-					var title = $("input#editNode").val();
+					var title = $('input#editNode').val();
 					node.setTitle(title);
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(
 						{
 							__contextNodePath: node.data.key,
 							title: title
 						},
-						function(result){
-							if(result.success == true){
+						function(result) {
+							if (result.success == true) {
 								var parentNode = node.getParent();
 								parentNode.reloadChildren();
 								T3.ContentModule.loadPage(node.data.href);
@@ -518,7 +506,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 
 	T3.Content.UI.InspectButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Content Structure',
-		$popoverContent: $('<div class="extjs-container" style="height: 350px"></div>'),
+		$popoverContent: $('<div class="dynatree-container" style="height: 350px"></div>'),
 		popoverPosition: 'top',
 
 		/**

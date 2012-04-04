@@ -287,26 +287,26 @@ ul.t3-topbar {
 	}
 }
 // Add Page Popup
-.extjs-container .t3-dd-newpage {
+.dynatree-container .t3-dd-newpage {
 	padding: 2px 2px 2px 25px;
 	margin: 5px;
 	background: lighten($light-grey, 10%) url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
 	border: 1px dotted $darkest;
 	cursor: move;
 }
-.extjs-container #t3-dd-pagetree{
+
+.dynatree-container #t3-dd-pagetree {
 	height: 270px;
 	padding-bottom: 7px;
 	width: 250px;
 	/*overflow: auto;*/
 }
 
-.extjs-container #t3-dd-pagetree span.dynatree-drop-target{
+.dynatree-container #t3-dd-pagetree span.dynatree-drop-target {
 	margin: 3px 0;
 	display: block;
 }
-
-.extjs-container ul.dynatree-container {
+.dynatree-container ul.dynatree-container {
 	background-color: white;
 	border:none;
 	height: 100%;
@@ -316,14 +316,15 @@ ul.t3-topbar {
 	white-space: nowrap;
 }
 
-.extjs-container .t3-dd-newpage {
+.dynatree-container .t3-dd-newpage {
 	padding: 2px 2px 2px 25px;
 	margin: 5px;
 	background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
 	border: 1px dotted #000000;
 	cursor: move;
 }
-.extjs-container .t3-dd-deletionzone {
+
+.dynatree-container .t3-dd-deletionzone {
 	padding: 2px 2px 2px 25px;
 	margin: 5px;
 	background: lighten($light-grey, 10%) url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
