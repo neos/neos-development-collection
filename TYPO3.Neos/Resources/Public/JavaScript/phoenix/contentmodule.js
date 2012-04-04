@@ -64,6 +64,10 @@ function() {
 
 			this._initializeShortcuts();
 			this._initializeHistoryManagement();
+
+			// Remove the Aloha sidebar completely from DOM, as there is
+			// currently no other way to deactivate it.
+			Aloha.jQuery('.aloha-sidebar-bar').remove();
 		},
 
 		_initializeShortcuts: function() {
