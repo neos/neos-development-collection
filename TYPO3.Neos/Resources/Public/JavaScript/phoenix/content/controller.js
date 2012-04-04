@@ -555,7 +555,7 @@ function() {
 						}
 
 						if (elementCallback) {
-							elementCallback(element);
+							elementCallback(element, response);
 						}
 						numberOfUnsavedRecords--;
 						if (numberOfUnsavedRecords <= 0) {

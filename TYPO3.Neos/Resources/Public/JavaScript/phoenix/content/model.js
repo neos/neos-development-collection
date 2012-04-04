@@ -581,7 +581,13 @@ function(launcherTemplate) {
 					}
 				},
 				// Callback on success per block
-				function(block) {
+				function(block, response) {
+					// when we save a node, it could be the case that it was in
+					// live workspace beforehand, but because of some modifications,
+					// is now copied into the user's workspace.
+					// That's why we need to update the (possibly changed) workspace
+					// name in the block.
+					block.set('__workspacename', response.result.data.workspaceNameOfNode);
 					var nodePath = block.get('__nodePath');
 					if (savedAttributes[nodePath]) {
 						block.setOriginalValues(savedAttributes[nodePath]);
