@@ -49,7 +49,7 @@ class Runtime {
 	protected $typoScriptConfiguration;
 
 	/**
-	 * @var \TYPO3\FLOW3\MVC\Controller\ControllerContext
+	 * @var \TYPO3\FLOW3\Mvc\Controller\ControllerContext
 	 */
 	protected $controllerContext;
 
@@ -61,9 +61,9 @@ class Runtime {
 	/**
 	 * Constructor for the TypoScript Runtime
 	 * @param array $typoScriptConfiguration
-	 * @param \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @param \TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext
 	 */
-	public function __construct(array $typoScriptConfiguration, \TYPO3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
+	public function __construct(array $typoScriptConfiguration, \TYPO3\FLOW3\Mvc\Controller\ControllerContext $controllerContext) {
 		$this->typoScriptConfiguration = $typoScriptConfiguration;
 		$this->controllerContext = $controllerContext;
 	}
@@ -265,7 +265,7 @@ class Runtime {
 	}
 
 	/**
-	 * @return \TYPO3\FLOW3\MVC\Controller\ControllerContext
+	 * @return \TYPO3\FLOW3\Mvc\Controller\ControllerContext
 	 */
 	public function getControllerContext() {
 		return $this->controllerContext;
