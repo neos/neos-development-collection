@@ -2,9 +2,12 @@
 @import "compass";
 @import "constants";
 
+// Bootstrap Include
+@import "../Library/twitter-bootstrap/scss/bootstrap.scss";
+
 .t3-ui {
 	a:link, a:visited {
-		color: white;
+		color: $lightest;
 		text-decoration: none;
 	}
 	a:hover {
@@ -12,8 +15,8 @@
 	}
 }
 
-/**** CSS start ****/
-/*******************/
+// **** CSS start ****/
+// *******************/
 body.t3-ui-controls-active {
 	margin-right: $property-panel-width;
 	margin-bottom: $footer-height;
@@ -34,13 +37,12 @@ body.t3-ui-controls-active {
 	clear:both;
 }
 #t3-ui-top {
-	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
-	background: #2d2d2d;
+	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
+	background: $dark-grey;
 	left: 0;
 	top: 0;
 	position: fixed;
 	width: 100%;
-//	height: $menu-height + $launcher-height;
 	z-index: 10015;
 	.t3-button-logout {
 		float: right;
@@ -48,7 +50,7 @@ body.t3-ui-controls-active {
 		line-height: $menu-height + $topbar-offset;
 		height: $menu-height + $topbar-offset;
 		width: 16px;
-		color: #cccccc;
+		color: $light-grey2;
 		text-decoration: none;
 		font-size: 10px;
 		z-index: -9999px;
@@ -76,7 +78,7 @@ body.t3-ui-controls-active {
 .t3-launcher {
 	position: relative;
 	width: 100%;
-	background-color: #e8e8e8;
+	background-color: $light-grey;
 	@include transition-property(height);
 	@include transition-duration(0.3s);
 	div.t3-launcher-container {
@@ -84,12 +86,12 @@ body.t3-ui-controls-active {
 		display: block;
 		@include box-sizing(border-box);
 		input {
-			border: 1px solid #888;
-			-webkit-box-shadow: #666666 0px 1px 6px inset;
-			-moz-box-shadow: #b3b3b3 0px 1px 6px inset;
-			box-shadow: #b3b3b3 0px 1px 6px inset;
-			background: #efefef url('../Images/ContentModule/typo3-logo.png') no-repeat 8px 6px;
-			color: #bbb;
+			border: 1px solid $light-grey3;
+			-webkit-box-shadow: $light-grey4 0px 1px 6px inset;
+			-moz-box-shadow: darken($light-grey2, 20%) 0px 1px 6px inset;
+			box-shadow: darken($light-grey2, 20%) 0px 1px 6px inset;
+			background: lighten($light-grey2, 10%) url('../Images/ContentModule/typo3-logo.png') no-repeat 8px 6px;
+			color: darken($light-grey2, 10%);
 			font-size: 16px;
 			width: 100%;
 			height: 100%;
@@ -97,17 +99,17 @@ body.t3-ui-controls-active {
 			padding: 3px 6px 0 32px;
 			@include box-sizing(border-box);
 			&:hover {
-				border: 1px solid #444;
-				background: #f2f2f2 url('../Images/ContentModule/typo3-logo.png') no-repeat 8px 6px;
+				border: 1px solid lighten($dark-grey, 20%);
+				background: lighten($light-grey, 10%) url('../Images/ContentModule/typo3-logo.png') no-repeat 8px 6px;
 			}
 			&:focus {
-				border: 1px solid #FF8700;
-				background: #fff url('../Images/Icons/Black/zoom_icon-16.png') no-repeat 8px 6px;
+				border: 1px solid $light-orange;
+				background: $lightest url('../Images/Icons/Black/zoom_icon-16.png') no-repeat 8px 6px;
 				outline: none;
-				color: #000;
+				color: $darkest;
 			}
 			&:hover:focus {
-				background: #fff url('../Images/Icons/Black/zoom_icon-16.png') no-repeat 8px 6px;
+				background: $lightest url('../Images/Icons/Black/zoom_icon-16.png') no-repeat 8px 6px;
 			}
 			&::-webkit-input-placeholder,
 			&::-moz-placeholder {
@@ -127,7 +129,10 @@ body.t3-ui-controls-active {
 		}
 	}
 	.t3-launcher-panel {
-		height: $launcher-height-open - $launcher-height
+		height: $launcher-height-open - $launcher-height;
+	}
+	h2 {
+		font-size: 100%;
 	}
 }
 ul.t3-topbar {
@@ -141,17 +146,19 @@ ul.t3-topbar {
 	float: left;
 	list-style-type: none;
 	height: $menu-height;
+	line-height: $menu-height - 2px;
 	padding-left: 20px;
 	padding-right: 20px;
+	color: darken($light-grey2, 20%);
 
 	a {
-		color: #aaaaaa !important;
+		color: darken($light-grey2, 20%) !important;
 		text-decoration:none !important;
 	}
 
 	margin-top: $topbar-offset + 1px;
 	margin-left: 1px;
-	border-top: 1px solid #2d2d2d;
+	border-top: 1px solid $dark-grey;
 	@include box-sizing(border-box);
 	&:first-child {
 		margin-left: 4px;
@@ -159,31 +166,31 @@ ul.t3-topbar {
 	&:hover,
 	&:focus,
 	&:active {
-		background: #373737;
-		border-color: #ffffff;
+		background: $dark-grey3;
+		border-color: $lightest;
 		cursor: pointer;
 	}
 
 	&.t3-active {
-		background: #444444;
-		color: #ffffff;
-		border-top: 1px solid #ff8700;
+		background: $dark-grey2;
+		color: $lightest;
+		border-top: 1px solid $light-orange;
 		&:hover,
 		&:focus,
 		&:active {
 			cursor: default;
 		}
 		a {
-			color: #ffffff !important;
+			color: $lightest !important;
 		}
 	}
 }
 
 /*** Inspector Panel ***/
 .t3-inspector {
-	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
+	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	@include box-sizing(border-box);
-	background: #2D2D2D;
+	background: $dark-grey;
 	height: 100%;
 	margin-top: $menu-height + $launcher-height + $topbar-offset;
 	position: fixed;
@@ -206,6 +213,9 @@ ul.t3-topbar {
 			div {
 				padding-bottom: 10px;
 			}
+			input {
+				padding: 1px 4px 1px 4px;
+			}
 		}
 	}
 	h2 {
@@ -214,30 +224,21 @@ ul.t3-topbar {
 		padding: 0 10px;
 		height: $toolbar-height;
 		line-height: $toolbar-height;
-		background: #444444;
-		color: #ffffff;
+		background: $dark-grey2;
+		color: $lightest;
 		font-weight: normal;
+		font-size: 100%;
 	}
 	label {
-		color: #ffffff;
+		color: $lightest;
 		font-weight: normal;
 	}
 	input[type=text] {
 		width:175px;
-		height: 23px;
-		padding: 1px 5px 0px 5px;
-		border: 1px solid #000000;
 		display: block;
-		@include box-shadow(rgba(255, 255, 255, 0.1) 0 1px 0, #000000 0 1px 3px 0 inset);
-		background: #cacaca;
-		@include border-radius(4px);
-		@include box-sizing(border-box);
-		&:focus {
-			@include box-shadow(rgba(255, 255, 255, 0.1) 0 1px 0, #000000 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 1px 3px 0 inset, rgba(255, 135, 0, 0.6) 0 -1px 2px 0 inset, rgba(255, 135, 0, 0.6) 1px 0 2px 0 inset, rgba(255, 135, 0, 0.6) -1px 0px 2px 0 inset);
-		}
 		// Highlight changed elements in the Property Panel
 		&.modified {
-	   		border: 1px solid #54974a;
+	   		border: 1px solid $light-green;
 		}
 	}
 	input[placeholder],
@@ -253,7 +254,7 @@ ul.t3-topbar {
 
 /*** Toolbar ***/
 #t3-toolbar {
-	background: #444444;
+	background: $dark-grey2;
 	height: $toolbar-height;
 	left: 0;
 	position: fixed;
@@ -262,7 +263,10 @@ ul.t3-topbar {
 	z-index: 10012;
 	@include transition-property(top);
 	@include transition-duration(0.3s);
-	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
+	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
+	ul {
+		margin: 0px;
+	}
 }
 .t3-toolbar-left {
 	float: left;
@@ -277,20 +281,23 @@ ul.t3-topbar {
 		margin-right: 10px;
 	}
 }
-.t3-toolbar-left li,
-.t3-toolbar-right li {
-	float: left;
-	padding-left: 10px;
-	&:first-child {
-		padding-left: 12px;
+.t3-toolbar-left,
+.t3-toolbar-right {
+	li {
+		float: left;
+		padding-left: 10px;
+		line-height: $toolbar-height;
+		&:first-child {
+			padding-left: 12px;
+		}
 	}
 }
 // Add Page Popup
 .extjs-container .t3-dd-newpage {
 	padding: 2px 2px 2px 25px;
 	margin: 5px;
-	background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
-	border: 1px dotted #000000;
+	background: lighten($light-grey, 10%) url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
+	border: 1px dotted $darkest;
 	cursor: move;
 }
 .extjs-container #t3-dd-pagetree{
@@ -325,44 +332,44 @@ ul.t3-topbar {
 .extjs-container .t3-dd-deletionzone {
 	padding: 2px 2px 2px 25px;
 	margin: 5px;
-	background: #eee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
-	border: 1px dotted #000000;
+	background: lighten($light-grey, 10%) url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+	border: 1px dotted $darkest;
 	cursor: default;
 	display: none;
 	&.t3-dd-deletionzone-over {
-		background: #ddd url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+		background: darken($light-grey, 10%) url url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
 	}
 	&.t3-dd-deletionzone-active {
-		background: #eee url(../Images/ajax-preloader-dddddd.gif) 5px 50% no-repeat;
+		background: lighten($light-grey, 10%) url(../Images/ajax-preloader-dddddd.gif) 5px 50% no-repeat;
 	}
 }
 
 .t3-dd-drag-ghost-pagetree {
-	background: #fff;
+	background: $lightest;
 	padding: 2px 5px 2px 25px;
 	@include border-radius(4px);
-	@include single-box-shadow(rgba(0, 0, 0, 0.4), 0px, 2px, 3px);
+	@include single-box-shadow(rgba($darkest, 0.4), 0px, 2px, 3px);
 	cursor: move;
 	a {
-		color: black;
+		color: $darkest;
 		text-decoration: none;
 	}
 }
 .x-dd-drop-nodrop .t3-dd-drag-ghost-pagetree {
-	background: #fff url(../Images/Icons/Black/round_delete_icon-16.png) 5px 50% no-repeat;
+	background: $lightest url(../Images/Icons/Black/round_delete_icon-16.png) 5px 50% no-repeat;
 }
 .x-tree-drop-ok-above .t3-dd-drag-ghost-pagetree,
 .x-tree-drop-ok-between .t3-dd-drag-ghost-pagetree,
 .x-tree-drop-ok-append .t3-dd-drag-ghost-pagetree,
 .x-tree-drop-ok-below .t3-dd-drag-ghost-pagetree {
-	background: #fff url(../Images/Icons/Black/round_checkmark_icon-16.png) 5px 50% no-repeat;
+	background: $lightest url(../Images/Icons/Black/round_checkmark_icon-16.png) 5px 50% no-repeat;
 }
 .x-tree-drop-delete .t3-dd-drag-ghost-pagetree {
-	background: #fff url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+	background: $lightest url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
 }
 /* Footer Toolbar */
 #t3-footer  {
-	background: #2D2D2D;
+	background: $dark-grey;
 	bottom: 0;
 	left: 0;
 	position: fixed;
@@ -370,7 +377,7 @@ ul.t3-topbar {
 	line-height: $footer-height;
 	right: $property-panel-width;
 	z-index: 10012;
-	@include single-box-shadow(rgba(0, 0, 0, 0.5), 0px, 0px, 5px);
+	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	.t3-toolbar-left {
 		height: $footer-height;
 		line-height: $footer-height;
@@ -390,6 +397,13 @@ ul.t3-topbar {
 		> li:first-child {
 			padding: 0;
 		}
+		li {
+			height: $footer-height;
+			line-height: $footer-height;
+		}
+	}
+	ul {
+		margin: 0px;
 	}
 }
 
@@ -404,14 +418,14 @@ ul.t3-topbar {
 	}
 	li {
 		padding: 0;
-		color: #ffffff;
+		color: $lightest;
 		background: url(../Images/ContentModule/breadcrumb-arrow-grey.png) right 50% no-repeat;
 		margin-left: -25px;
 		position:relative;
 		height: 100%;
 		float: left;
 		a {
-			color: #ffffff !important;
+			color: $lightest !important;
 			padding: 0 15px 0 30px;
 			width: 100%;
 			height: 100%;
@@ -458,42 +472,34 @@ ul.t3-topbar {
 
 button.t3-button,
 .t3 a.t3-button {
-	background: #888888;
-	border: 0;
-	@include border-radius(3px);
-	color: #e4e4e4;
-	padding: 0 6px 0px 6px;
-	height: 20px;
-	line-height: 20px;
-	@include transition-property(background);
-	@include transition-duration(0.8s);
-	cursor: pointer;
-	text-decoration: none;
-	&:hover {
-		background: #777777;
-	}
-	&:focus,
-	&:active {
-		background: #666666;
+	&:hover,
+	&:active,
+	&:focus {
+
 	}
 	&.pressed {
-		background: #ff8700;
-		&:hover {
-			background: #ea7c01;
-		}
+		@include buttonBackground(lighten($orange, 5%), $orange);
+		border: 1px solid darken($orange, 5%);
+		border-bottom-color: darken($orange, 10%);
+		$shadow: inset 0 1px 0 rgba($lightest, 0.1), 0 1px 2px rgba($darkest, 0.05);
+		@include box-shadow($shadow);
+		&:hover,
 		&:focus,
 		&:active {
-			background: #d06e00;
+			@include buttonBackground($orange, darken($orange,2%));
+			border: 1px solid darken($orange, 10%);
+			border-bottom-color: darken($orange, 20%);
 		}
 	}
 	&[disabled] {
 		opacity: 0.6;
 		cursor: auto;
-		color: #bbbbbb;
-	&:hover,
+		color: $light-grey2;
+		&:hover,
 		&:focus,
 		&:active {
-			background: #888888
+			background: lighten($light-grey, 10%);
+			color: $light-grey2;
 		}
 	}
 }
@@ -511,16 +517,16 @@ button.t3-button,
 	display: none;
 	border-width: 1px 1px 0 1px;
 	border-style: solid solid none solid;
-	border-color: #373737;
+	border-color: $dark-grey3;
 	text-indent: -9999px;
 	cursor: pointer;
-	background: #ffffff;
+	background: $lightest;
 	span {
 		width: 100%;
 		height: 100%;
 		background-position: 50% 50%;
 		background-repeat: no-repeat;
-		background-color: #ffffff;
+		background-color: $lightest;
 		overflow: hidden;
 		@include opacity(1.0);
 		@include transition-property(opacity);
@@ -536,7 +542,7 @@ button.t3-button,
 	padding: 6px;
 	background: transparent;
 	span {
-		background-color: #ffffff;
+		background-color: $lightest;
 		background-image: url(../Images/Icons/Black/plus.png);
 	}
 }
@@ -574,7 +580,7 @@ button.t3-button,
 	padding: 6px;
 	background: transparent;
 	span {
-		background: #ffffff;
+		background: $lightest;
 		background-image: url(../Images/Icons/Black/clipboard_past_icon-16.png);
 		background-repeat: no-repeat;
 		background-position: 50% 50%;
@@ -644,27 +650,27 @@ body.t3-inspect-active {
 		background: white;
 		z-index: 10000;
 		text-align:center;
-		border-color: #373737;
+		border-color: $dark-grey3;
 	}
 
 	.aloha-block:hover > .t3-status-indicator {
-		@include single-box-shadow(#909090, 0, 1px, 3px);
-		border-color: #373737;
+		@include single-box-shadow($light-grey3, 0, 1px, 3px);
+		border-color: $dark-grey3;
 	}
 
 	div.aloha-block > div.aloha-block-inner {
-		outline: 1px solid #373737;
+		outline: 1px solid $dark-grey3;
 	}
 }
 
 div.aloha-block:hover > div.aloha-block-inner {
-	outline: 1px solid #373737;
-	background: #efefef;
+	outline: 1px solid $dark-grey3;
+	background: lighten($light-grey, 20%);
 }
 div.aloha-block-active > div.aloha-block-inner,
 div.aloha-block-active:hover > div.aloha-block-inner {
-	outline: 1px solid #373737;
-	background: #e3e3e3;
+	outline: 1px solid $dark-grey3;
+	background: lighten($light-grey, 10%);
 }
 
 .t3-ui-controls-active #t3-ui-top {
@@ -689,7 +695,7 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 }
 
 .ui-dialog a.t3-content-new {
-	@include background-image(linear-gradient(#cccccc, #333333));
+	@include background-image(linear-gradient($light-grey2, lighten($dark-grey, 5%)));
 	@include border-radius(3px);
     display: block;
     font-size: 22px;
@@ -746,7 +752,7 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	}
 }
 .typo3-previewmode-enabled.t3-ui-controls-active {
-	margin: $toolbar-height 0 0 0;
+	margin: $toolbar-height 0px 0px 0px;
 }
 
 // New Content Flyout - start
@@ -763,7 +769,7 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	}
 	.t3-content-new-icon {
 		float: left;
-		margin-left: 0;
+		margin-left: 0px;
 	}
 }
 // New Content Flyout - end
@@ -773,45 +779,4 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 @import "content-properties";
 @import "style-workInProgress";
 @import "js-ui";
-
-.t3-module {
-	margin: 104px 8px 8px 8px;
-	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	h1, h2, h3, h4, h5, h6 {
-		margin-bottom: 0.5em;
-	}
-	a {
-		color: #0088cc;
-		text-decoration: none;
-	}
-	a:hover {
-		color: #005580;
-		text-decoration: underline;
-	}
-	#t3-ui-top {
-		@include single-box-shadow(transparent, 0, 0, 0);
-	}
-	#t3-toolbar {
-		left: 0;
-		right: 0;
-		padding: 0 8px;
-		a {
-			line-height: 36px;
-			vertical-align: middle;
-		}
-	}
-
-	.alert-message.Error {
-		background:#C43C35;
-		color:white;
-	}
-}
-
-a.btn {
-	color: #333;
-	text-decoration: none;
-	&:hover {
-		color: #333;
-		text-decoration: none;
-	}
-}
+@import "management-base";

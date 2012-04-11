@@ -36,7 +36,7 @@ function(toolbarTemplate) {
 	 * TODO: should be moved to T3.Common.UI.Button?
 	 */
 	T3.Content.UI.Button = Ember.Button.extend({
-		classNames: ['t3-button'],
+		classNames: ['t3-button','btn','btn-mini'],
 		attributeBindings: ['disabled'],
 		classNameBindings: ['iconClass'],
 		label: '',

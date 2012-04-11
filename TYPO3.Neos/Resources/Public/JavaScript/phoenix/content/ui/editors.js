@@ -19,12 +19,14 @@ function(fileUploadTemplate, imageUploadTemplate) {
 	var $ = window.Aloha.jQuery || window.jQuery;
 
 	T3.Content.UI.Editor.TextField = Ember.TextField.extend({
+		classNames: ['input-small']
 	});
 
 	T3.Content.UI.Editor.Checkbox = Ember.Checkbox.extend({
 	});
 
 	T3.Content.UI.Editor.DateField = Ember.TextField.extend({
+		classNames: ['input-small'],
 		didInsertElement: function() {
 			this.$().attr('placeholder', 'No date set');
 			this.$().datepicker({
