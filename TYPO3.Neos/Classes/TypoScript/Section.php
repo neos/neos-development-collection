@@ -27,6 +27,12 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 	protected $nodePath;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * @return string the identifier of the section node which shall be rendered
 	 */
 	public function getNodePath() {
@@ -50,7 +56,7 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 	public function evaluate($node) {
 		$output = parent::evaluate($node);
 
-		if ($this->numberOfRenderedNodes === 0 && $node->getContext()->getWorkspaceName() !== 'live') {
+		if ($this->numberOfRenderedNodes === 0 && $this->nodeRepository->getContext()->getWorkspaceName() !== 'live') {
 			$sectionNode = $node->getNode($this->nodePath);
 			$output = '<button class="t3-create-new-content t3-button" data-node="' . $sectionNode->getContextPath() . '"><span>Create new content</span></button>';
 		}

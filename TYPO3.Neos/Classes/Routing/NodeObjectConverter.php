@@ -60,6 +60,12 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 	protected $propertyMapper;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Converts the specified node path into a Node.
 	 *
 	 * The node path must be an absolute context node path and can be specified as a string or as an array item with the
@@ -99,9 +105,15 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 			return new Error('Could not convert array to Node object because the node path was invalid.', 1285162903);
 		}
 		$nodePath = $matches['NodePath'];
-		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
 
-		$contentContext = new ContentContext($workspaceName);
+		if ($this->nodeRepository->getContext() === NULL) {
+			$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
+			$contentContext = new ContentContext($workspaceName);
+			$this->nodeRepository->setContext($contentContext);
+		} else {
+			$contentContext = $this->nodeRepository->getContext();
+			$workspaceName = $contentContext->getWorkspace()->getName();
+		}
 
 		if ($workspaceName !== 'live') {
 			$contentContext->setInvisibleContentShown(TRUE);

@@ -30,6 +30,12 @@ class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 	const STATE_ACTIVE = 'active';
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * @var string
 	 */
 	protected $templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Menu.html';
@@ -125,7 +131,7 @@ class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 	 */
 	public function getItems(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if ($this->items === NULL) {
-			$this->items = $this->buildItems($node->getContext());
+			$this->items = $this->buildItems($this->nodeRepository->getContext());
 		}
 		return $this->items;
    }

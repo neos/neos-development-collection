@@ -37,6 +37,12 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected $defaultViewObjectName = 'TYPO3\TYPO3\View\TypoScriptView';
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
@@ -47,10 +53,10 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		if (!$node->isAccessible()) {
 			$this->authenticationManager->authenticate();
 		}
-		if (!$node->isAccessible() && !$node->getContext()->isInaccessibleContentShown()) {
+		if (!$node->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
 			$this->throwStatus(403);
 		}
-		if (!$node->isVisible() && !$node->getContext()->isInvisibleContentShown()) {
+		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
 		if ($node->getContentType() === 'TYPO3.TYPO3:Shortcut') {
@@ -61,7 +67,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 			$this->redirect('show', NULL, NULL, array('node' => $node));
 		}
 
-		$node->getContext()->setCurrentNode($node);
+		$this->nodeRepository->getContext()->setCurrentNode($node);
 		$this->view->assign('value', $node);
 
 		$this->response->setHeader('Cache-Control', 'public, s-maxage=600', FALSE);

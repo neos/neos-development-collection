@@ -47,6 +47,12 @@ class ContentElementWrappingService {
 	protected $accessDecisionManager;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Wrap the $content identified by $node with the needed markup for
 	 * the backend.
 	 * $parameters can be used to further pass parameters to the content element.
@@ -122,11 +128,11 @@ class ContentElementWrappingService {
 			$tagBuilder->addAttribute('data-__contenttype', $contentType->getName());
 		} else {
 			$tagBuilder->addAttribute('id', 't3-page-metainformation');
-			$tagBuilder->addAttribute('data-__sitename', $node->getContext()->getCurrentSite()->getName());
+			$tagBuilder->addAttribute('data-__sitename', $this->nodeRepository->getContext()->getCurrentSite()->getName());
 			$tagBuilder->addAttribute('data-__siteroot', sprintf(
 				'/sites/%s@%s',
-				$node->getContext()->getCurrentSite()->getNodeName(),
-				$node->getContext()->getWorkspace()->getName()
+				$this->nodeRepository->getContext()->getCurrentSite()->getNodeName(),
+				$this->nodeRepository->getContext()->getWorkspace()->getName()
 			));
 		}
 

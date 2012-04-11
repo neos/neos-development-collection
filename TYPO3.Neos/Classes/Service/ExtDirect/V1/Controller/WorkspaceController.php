@@ -74,6 +74,7 @@ class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	public function getUnpublishedNodesAction($workspaceName) {
 		$context = new ContentContext($workspaceName);
+		$this->nodeRepository->setContext($context);
 		$workspace = $context->getWorkspace(FALSE);
 		if ($workspace === NULL) {
 			throw new \InvalidArgumentException('Unknown workspace "' . $workspaceName. '".', 1303153725);
@@ -100,6 +101,7 @@ class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	public function publishWorkspaceAction($sourceWorkspaceName, $targetWorkspaceName) {
 		$context = new ContentContext($sourceWorkspaceName);
+		$this->nodeRepository->setContext($context);
 		$sourceWorkspace = $context->getWorkspace(FALSE);
 		if ($sourceWorkspace === NULL) {
 			throw new \InvalidArgumentException('Unknown source workspace "' . $sourceWorkspaceName. '".', 1303153726);
