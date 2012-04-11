@@ -275,9 +275,13 @@ TYPO3:
             controller: '\TYPO3\TYPO3\Controller\Module\Administration\UserAdminController'
 
   Setup:
-    stepOrder: ['database', 'administrator', 'final']
+    stepOrder: ['database', 'administrator', 'siteimport', 'final']
     steps:
       administrator:
         className: 'TYPO3\TYPO3\Setup\Step\AdministratorStep'
+        requiredConditions:
+          - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
+      siteimport:
+        className: 'TYPO3\TYPO3\Setup\Step\SiteImportStep'
         requiredConditions:
           - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
