@@ -1,0 +1,3 @@
+TYPO3:
+  TypoScript:
+    catchRuntimeExceptions: false
