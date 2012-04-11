@@ -3,17 +3,10 @@
 @import "constants";
 
 // Bootstrap Include
+// Bootstrap files to be manually adjusted before upgrading to a newer version:
+// * bootstrap.scss - add t3-ui-class-prefix
+// * _variables.scss - adjust the sprite-image-path
 @import "../Library/twitter-bootstrap/scss/bootstrap.scss";
-
-.t3-ui {
-	a:link, a:visited {
-		color: $lightest;
-		text-decoration: none;
-	}
-	a:hover {
-		text-decoration: underline;
-	}
-}
 
 // **** CSS start ****/
 // *******************/
