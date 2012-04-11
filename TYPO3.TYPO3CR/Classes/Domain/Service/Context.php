@@ -117,7 +117,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 					$this->workspaceRepository->add($this->workspace);
 				}
 			}
-			$this->workspace->setContext($this);
 		}
 		return $this->workspace;
 	}
@@ -201,9 +200,6 @@ class Context implements \TYPO3\TYPO3CR\Domain\Service\ContextInterface {
 		$endPointPath = ($endPoint instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) ? $endPoint->getPath() : $endPoint;
 
 		$nodes = $this->nodeRepository->findOnPath($startingPointPath, $endPointPath, $this->workspace);
-		foreach ($nodes as $node) {
-			$node->setContext($this);
-		}
 		return $nodes;
 	}
 

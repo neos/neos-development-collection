@@ -26,13 +26,29 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
+	 * @return void
+	 */
+	public function setUp() {
+		parent::setUp();
+		$this->nodeRepository = new \TYPO3\TYPO3CR\Domain\Repository\NodeRepository();
+	}
+
+	/**
 	 * @test
 	 */
 	public function nodesCreatedInTheLiveWorkspacesCanBeRetrievedAgainInTheLiveContext() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$fooNode = $rootNode->createNode('foo');
+
 		$this->assertSame($fooNode, $rootNode->getNode('foo'));
 
 		$this->persistenceManager->persistAll();
@@ -45,6 +61,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function removedNodesCannotBeRetrievedAnymore() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$rootNode->createNode('quux');
@@ -70,6 +88,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function removedNodesAreNotCountedAsChildNodes() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$rootNode->createNode('foo');
@@ -96,6 +116,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function creatingAChildNodeAndRetrievingItAfterPersistAllWorks() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$firstLevelNode = $rootNode->createNode('firstlevel');
@@ -113,6 +135,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function threeCreatedNodesCanBeRetrievedInSameOrder() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parent');
@@ -136,6 +160,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function threeChildNodesOfTheRootNodeCanBeRetrievedInSameOrder() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$node1 = $rootNode->createNode('node1');
@@ -158,6 +184,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moveBeforeMovesNodesBeforeOthersWithoutPersistAll() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parentNode');
@@ -182,6 +210,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moveBeforeNodesWithLowerIndexMovesNodesBeforeOthersWithPersistAll() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parentNode');
@@ -211,6 +241,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moveBeforeNodesWithHigherIndexMovesNodesBeforeOthersWithPersistAll() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parentNode');
@@ -240,6 +272,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moveBeforeNodesWithHigherIndexMovesNodesBeforeOthersWithoutPersistAll() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parentNode');
@@ -265,6 +299,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moveAfterNodesWithLowerIndexMovesNodesAfterOthersWithoutPersistAll() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parentNode');
@@ -290,6 +326,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moveAfterNodesWithLowerIndexMovesNodesAfterOthersWithPersistAll() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parentNode');
@@ -319,6 +357,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moveAfterNodesWithHigherIndexMovesNodesAfterOthersWithPersistAll() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parentNode');
@@ -348,6 +388,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function moveAfterNodesWithHigherIndexMovesNodesAfterOthersWithoutPersistAll() {
 		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
 		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$parentNode = $rootNode->createNode('parentNode');
@@ -371,8 +413,10 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function moveBeforeInASeparateWorkspaceLeadsToCorrectSortingAcrossWorkspaces() {
-		$liveContext = new ContentContext('live');
-		$rootNode = $liveContext->getWorkspace()->getRootNode();
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$liveParentNode = $rootNode->createNode('parentNode');
 		$childNodeA = $liveParentNode->createNode('childNodeA');
@@ -417,8 +461,10 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function renumberingTakesUnpersistedNodeOrderChangesIntoAccount() {
-		$liveContext = new ContentContext('live');
-		$rootNode = $liveContext->getWorkspace()->getRootNode();
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$liveParentNode = $rootNode->createNode('parentNode');
 		$nodes = array();
@@ -453,8 +499,10 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 * @test
 	 */
 	public function nodeRepositoryRenumbersNodesIfNoFreeSortingIndexesAreAvailable() {
-		$liveContext = new ContentContext('live');
-		$rootNode = $liveContext->getWorkspace()->getRootNode();
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
 
 		$liveParentNode = $rootNode->createNode('parentNode');
 		$nodes = array();

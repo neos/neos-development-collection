@@ -397,24 +397,6 @@ interface NodeInterface {
 	 */
 	public function isAccessible();
 
-	/**
-	 * Sets the context from which this node was acquired.
-	 *
-	 * This will be set by the context or other nodes while retrieving this node.
-	 * This method is only for internal use, don't mess with it.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
-	 * @return void
-	 */
-	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context);
-
-	/**
-	 * Returns the current context this node operates in.
-	 *
-	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
-	 */
-	public function getContext();
-
 }
 
 ?>

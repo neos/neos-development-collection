@@ -50,13 +50,16 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function theCurrentContextCanBeAssignedAndRetrievedOfAWorkspace() {
 		$mockContext = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
 
+		$nodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findOneByPath', 'getContext'), array(), '', FALSE);
+		$nodeRepository->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
+
 		$mockRootNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
-		$mockRootNode->expects($this->once())->method('setContext')->with($mockContext);
 
 		$workspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
+		$workspace->_set('nodeRepository', $nodeRepository);
 		$workspace->_set('rootNode', $mockRootNode);
+		$workspace->expects($this->any())->method('getContext')->will($this->returnValue($mockContext));
 
-		$workspace->setContext($mockContext);
 		$this->assertSame($mockContext, $workspace->getContext());
 	}
 

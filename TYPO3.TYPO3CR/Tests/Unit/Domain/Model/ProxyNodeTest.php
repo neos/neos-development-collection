@@ -300,40 +300,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setContextSetsTheContextOfTheProxyNodeTheOriginalNodeAndTheNewNode() {
-		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
-
-		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
-		$originalNode->expects($this->exactly(2))->method('setContext')->with($context);
-
-		$newNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
-		$newNode->expects($this->once())->method('setContext')->with($context);
-
-		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
-		$proxyNode->_set('originalNode', $originalNode);
-
-		$proxyNode->setContext($context);
-		$proxyNode->_set('newNode', $newNode);
-		$proxyNode->setContext($context);
-	}
-
-	/**
-	 * @test
-	 */
-	public function getContextReturnsTheContext() {
-		$context = $this->getMock('TYPO3\TYPO3CR\Domain\Service\Context', array(), array(), '', FALSE);
-		$originalNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('setContext'), array(), '', FALSE);
-
-		$proxyNode = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\ProxyNode', array('dummy'), array(), '', FALSE);
-		$proxyNode->_set('originalNode', $originalNode);
-
-		$proxyNode->setContext($context);
-		$this->assertSame($context, $proxyNode->getContext());
-	}
-
-	/**
-	 * @test
-	 */
 	public function cloneOriginalNodeCreatesACloneOfTheOriginalNode() {
 		$this->markTestIncomplete('Mocked $newNode needs to be replaced - Node uses new now!');
 

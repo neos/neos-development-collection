@@ -143,11 +143,6 @@ class Node implements NodeInterface {
 	protected $accessRoles = array();
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 */
-	protected $context;
-
-	/**
 	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Context
 	 */
@@ -198,6 +193,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $path
 	 * @return void
+	 * @throws \InvalidArgumentException if the given node path is invalid.
 	 */
 	public function setPath($path) {
 		if (!is_string($path) || preg_match(self::MATCH_PATTERN_PATH, $path) !== 1) {
@@ -231,7 +227,7 @@ class Node implements NodeInterface {
 	 */
 	public function getContextPath() {
 		$contextPath = $this->path;
-		$workspaceName = $this->context->getWorkspace()->getName();
+		$workspaceName = $this->getContext()->getWorkspace()->getName();
 		if ($workspaceName !== 'live') {
 			$contextPath .= '@' . $workspaceName;
 		}
@@ -350,8 +346,9 @@ class Node implements NodeInterface {
 		if ($this->path === '/') {
 			return NULL;
 		}
-		$parentNode = $this->nodeRepository->findOneByPath($this->parentPath, $this->context->getWorkspace());
-		return $this->treatNodeWithContext($parentNode);
+		$parentNode = $this->nodeRepository->findOneByPath($this->parentPath, $this->getContext()->getWorkspace());
+		$parentNode = $this->createProxyForContextIfNeeded($parentNode);
+		return $this->filterNodeByContext($parentNode);
 	}
 
 	/**
@@ -368,6 +365,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node or move to different level.
 	 */
 	public function moveBefore(NodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
@@ -391,6 +389,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node or move to different level.
 	 */
 	public function moveAfter(NodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
@@ -457,7 +456,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return mixed value of the property
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the a content object exists but does not contain the specified property
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the content object exists but does not contain the specified property.
 	 */
 	public function getProperty($propertyName) {
 		if (!is_object($this->contentObjectProxy)) {
@@ -502,6 +501,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param object $contentObject The content object
 	 * @return void
+	 * @throws \InvalidArgumentException if the given contentObject is no object.
 	 */
 	public function setContentObject($contentObject) {
 		if (!is_object($contentObject)) {
@@ -539,6 +539,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $contentType
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you give an unknown content type.
 	 */
 	public function setContentType($contentType) {
 		if (!$this->contentTypeManager->hasContentType($contentType)) {
@@ -566,6 +567,8 @@ class Node implements NodeInterface {
 	 * @param string $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
+	 * @throws \InvalidArgumentException if the node name is not accepted.
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if a node with this path already exists.
 	 */
 	public function createNode($name, $contentType = NULL, $identifier = NULL) {
 		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
@@ -577,16 +580,15 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('Node with path "' . $newPath . '" already exists.', 1292503465);
 		}
 
-		$newNode = new Node($newPath, $this->context->getWorkspace(), $identifier);
+		$newNode = new Node($newPath, $this->nodeRepository->getContext()->getWorkspace(), $identifier);
 		$this->nodeRepository->add($newNode);
 		$this->nodeRepository->setNewIndex($newNode, NodeRepository::POSITION_LAST);
-
 
 		if ($contentType !== NULL) {
 			$newNode->setContentType($contentType);
 		}
 
-		return $this->treatNodeWithContext($newNode, TRUE);
+		return $this->createProxyForContextIfNeeded($newNode, TRUE);
 	}
 
 	/**
@@ -596,8 +598,13 @@ class Node implements NodeInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The specified node or NULL if no such node exists
 	 */
 	public function getNode($path) {
-		$node = $this->nodeRepository->findOneByPath($this->normalizePath($path), $this->context->getWorkspace());
-		return ($node !== NULL) ? $this->treatNodeWithContext($node) : NULL;
+		$node = $this->nodeRepository->findOneByPath($this->normalizePath($path), $this->getContext()->getWorkspace());
+		if ($node === NULL) {
+			return NULL;
+		} else {
+			$node = $this->createProxyForContextIfNeeded($node);
+			return $this->filterNodeByContext($node);
+		}
 	}
 
 	/**
@@ -609,8 +616,13 @@ class Node implements NodeInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The primary child node or NULL if no such node exists
 	 */
 	public function getPrimaryChildNode() {
-		$node = $this->nodeRepository->findFirstByParentAndContentType($this->path, NULL, $this->context->getWorkspace());
-		return ($node !== NULL) ? $this->treatNodeWithContext($node) : NULL;
+		$node = $this->nodeRepository->findFirstByParentAndContentType($this->path, NULL, $this->getContext()->getWorkspace());
+		if ($node === NULL) {
+			return NULL;
+		} else {
+			$node = $this->createProxyForContextIfNeeded($node);
+			return $this->filterNodeByContext($node);
+		}
 	}
 
 	/**
@@ -621,8 +633,8 @@ class Node implements NodeInterface {
 	 * @return array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> An array of nodes or an empty array if no child nodes matched
 	 */
 	public function getChildNodes($contentTypeFilter = NULL) {
-		$nodes = $this->nodeRepository->findByParentAndContentType($this->path, $contentTypeFilter, $this->context->getWorkspace());
-		return $this->treatNodesWithContext($nodes);
+		$nodes = $this->nodeRepository->findByParentAndContentType($this->path, $contentTypeFilter, $this->getContext()->getWorkspace());
+		return $this->proxyAndFilterNodesForContext($nodes);
 	}
 
 	/**
@@ -756,6 +768,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param array $accessRoles
 	 * @return void
+	 * @throws \InvalidArgumentException if the array of roles contains something else than strings.
 	 */
 	public function setAccessRoles(array $accessRoles) {
 		foreach ($accessRoles as $role) {
@@ -791,7 +804,7 @@ class Node implements NodeInterface {
 		if ($this->hidden === TRUE) {
 			return FALSE;
 		}
-		$currentDateTime = $this->context->getCurrentDateTime();
+		$currentDateTime = $this->getContext()->getCurrentDateTime();
 		if ($this->hiddenBeforeDateTime !== NULL && $this->hiddenBeforeDateTime > $currentDateTime) {
 			return FALSE;
 		}
@@ -837,25 +850,14 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * Sets the context from which this node was acquired.
-	 *
-	 * This will be set by the context or other nodes while retrieving this node.
-	 * This method is only for internal use, don't mess with it.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
-	 * @return void
-	 */
-	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context) {
-		$this->context = $context;
-	}
-
-	/**
 	 * Returns the current context this node operates in.
+	 *
+	 * This is for internal use only.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	public function getContext() {
-		return $this->context;
+		return $this->nodeRepository->getContext();
 	}
 
 	/**
@@ -886,6 +888,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param string $path The unnormalized path
 	 * @return string The normalized absolute path
+	 * @throws \InvalidArgumentException if your node path contains two consecutive slashes.
 	 */
 	protected function normalizePath($path) {
 		if ($path === '.') {
@@ -919,15 +922,18 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * Treats the given nodes with the current context
+	 * Proxy nodes for current context if needed and filter with current context.
+	 * @see createProxyForContextIfNeeded
+	 * @see filterNodeByContext
 	 *
-	 * @param array $originalNodes The nodes to contextize
-	 * @return array The same node objects, but with the context of this node
+	 * @param array $originalNodes The nodes to proxy and filter
+	 * @return array nodes filtered and proxied as needed for current context
 	 */
-	protected function treatNodesWithContext(array $originalNodes) {
+	protected function proxyAndFilterNodesForContext(array $originalNodes) {
 		$proxyNodes = array();
 		foreach ($originalNodes as $index => $node) {
-			$treatedNode = $this->treatNodeWithContext($node);
+			$treatedNode = $this->createProxyForContextIfNeeded($node);
+			$treatedNode = $this->filterNodeByContext($treatedNode);
 			if ($treatedNode !== NULL) {
 				$proxyNodes[$index] = $treatedNode;
 			}
@@ -936,33 +942,38 @@ class Node implements NodeInterface {
 	}
 
 	/**
-	 * Treats the given node with the current context
+	 * Will either return the same node or a proxy for current context.
 	 *
-	 * @param mixed $node The node to contextize
-	 * @param boolean $disableFilters If set to TRUE, the node will only be treated with context and not filtered
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The same node, but with the context of this node
-	 * @fixme This method does more than the name or description claims
+	 * @param mixed $node The node to proxy
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The same node or a proxy in current context.
 	 */
-	protected function treatNodeWithContext(NodeInterface $node, $disableFilters = FALSE) {
+	protected function createProxyForContextIfNeeded(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if ($node instanceof \TYPO3\TYPO3CR\Domain\Model\Node) {
-			if ($node->getWorkspace() !== $this->context->getWorkspace()) {
+			if ($node->getWorkspace() !== $this->nodeRepository->getContext()->getWorkspace()) {
 				$node = $this->proxyNodeFactory->createFromNode($node);
 			}
-			$node->setContext($this->context);
+		}
+		return $node;
+	}
+
+	/**
+	 * Filter a node by the current context.
+	 * Will either return the node or NULL if it is not permitted in current context.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 */
+	protected function filterNodeByContext(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		if ($node->isRemoved() && !$this->nodeRepository->getContext()->isRemovedContentShown()) {
+			return NULL;
 		}
 
-		if ($disableFilters === FALSE) {
-			if ($node->isRemoved() && !$this->context->isRemovedContentShown()) {
-				return NULL;
-			}
+		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
+			return NULL;
+		}
 
-			if (!$node->isVisible() && !$this->context->isInvisibleContentShown()) {
-				return NULL;
-			}
-
-			if (!$this->isAccessible() && !$this->context->isInaccessibleContentShown()) {
-				return NULL;
-			}
+		if (!$this->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
+			return NULL;
 		}
 		return $node;
 	}

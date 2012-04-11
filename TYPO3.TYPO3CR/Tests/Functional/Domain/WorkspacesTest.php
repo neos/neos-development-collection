@@ -29,7 +29,12 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected $personalContext;
 
 	/**
-	 * @var \TYPO3\TYPO3\Domain\Model\Node
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
 	 */
 	protected $rootNode;
 
@@ -38,7 +43,10 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->personalContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('user-robert');
+		$this->personalContext = new \TYPO3\TYPO3CR\Domain\Service\Context('user-robert');
+		$this->objectManager->forgetInstance('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
+		$this->nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
+		$this->nodeRepository->setContext($this->personalContext);
 		$this->rootNode = $this->personalContext->getWorkspace()->getRootNode();
 	}
 
@@ -57,12 +65,12 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function nodesCreatedInAPersonalWorkspacesAreNotVisibleInTheLiveWorkspace() {
+	public function nodesCreatedInAPersonalWorkspaceAreNotVisibleInTheLiveWorkspace() {
 		$this->rootNode->createNode('homepage')->createNode('about');
-
 		$this->persistenceManager->persistAll();
 
-		$liveContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		$liveContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $liveContext, TRUE);
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/about'));
@@ -71,10 +79,11 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
-	public function nodesCreatedInAPersonalWorkspacesAreNotVisibleInTheLiveWorkspaceEvenWithoutPersistAll() {
+	public function evenWithoutPersistAllNodesCreatedInAPersonalWorkspaceAreNotVisibleInTheLiveWorkspace() {
 		$this->rootNode->createNode('homepage')->createNode('imprint');
 
-		$liveContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		$liveContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $liveContext, TRUE);
 		$liveRootNode = $liveContext->getWorkspace()->getRootNode();
 
 		$this->assertNull($liveRootNode->getNode('/homepage/imprint'));

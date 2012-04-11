@@ -52,12 +52,6 @@ class ProxyNode implements NodeInterface {
 	protected $nodeRepository;
 
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Service\Context
-	 * @FLOW3\Transient
-	 */
-	protected $context;
-
-	/**
 	 * TRUE if this ProxyNode has been cloned, FALSE otherwise. Is needed for
 	 * correct auto-persistence behavior.
 	 *
@@ -70,6 +64,7 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode
 	 * @FLOW3\Autowiring(false)
+	 * @throws \InvalidArgumentException if you give a ProxyNode as originalNode.
 	 */
 	public function  __construct(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $originalNode) {
 		if ($originalNode instanceof \TYPO3\TYPO3CR\Domain\Model\ProxyNode) {
@@ -571,29 +566,12 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
-	 * Sets the context from which this proxy node was acquired.
-	 *
-	 * This will be set by the context or other nodes while retrieving this node.
-	 * This method is only for internal use, don't mess with it.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
-	 * @return void
-	 */
-	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context) {
-		$this->context = $context;
-		$this->originalNode->setContext($context);
-		if (isset($this->newNode)) {
-			$this->newNode->setContext($context);
-		}
-	}
-
-	/**
 	 * Returns the current context this proxy node operates in.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
-	public function getContext() {
-		return $this->context;
+	protected function getContext() {
+		return $this->nodeRepository->getContext();
 	}
 
 	/**
@@ -603,11 +581,10 @@ class ProxyNode implements NodeInterface {
 	 * @return void
 	 */
 	protected function materializeOriginalNode() {
-		$this->newNode = new Node($this->originalNode->getPath(), $this->context->getWorkspace(), $this->originalNode->getIdentifier());
+		$this->newNode = new Node($this->originalNode->getPath(), $this->getContext()->getWorkspace(), $this->originalNode->getIdentifier());
 		$this->nodeRepository->add($this->newNode);
 
 		$this->newNode->similarize($this->originalNode);
-		$this->newNode->setContext($this->context);
 	}
 
 	/**

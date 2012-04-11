@@ -59,7 +59,7 @@ interface ContextInterface {
 
 	/**
 	 * Sets the invisibleContentShown flag. This flag defines if invisible content elements
-	 * should be shown in Node->treatNodeWithContext()
+	 * should be shown in Node->filterNodeByContext()
 	 *
 	 * @param boolean $invisibleContentShown
 	 * @return void
@@ -68,7 +68,7 @@ interface ContextInterface {
 
 	/**
 	 * Gets the invisibleContentShown flag. This flag defines if invisible content elements
-	 * should be shown in Node->treatNodeWithContext()
+	 * should be shown in Node->filterNodeByContext()
 	 *
 	 * @return boolean
 	 */
@@ -76,7 +76,7 @@ interface ContextInterface {
 
 	/**
 	 * Sets the removedContentShown flag. This flag defines if removed content elements
-	 * should be shown in Node->treatNodeWithContext()
+	 * should be shown in Node->filterNodeByContext()
 	 *
 	 * @param boolean $removedContentShown
 	 * @return void
@@ -85,7 +85,7 @@ interface ContextInterface {
 
 	/**
 	 * Gets the removedContentShown flag. This flag defines if removed content elements
-	 * should be shown in Node->treatNodeWithContext()
+	 * should be shown in Node->filterNodeByContext()
 	 *
 	 * @return boolean
 	 */

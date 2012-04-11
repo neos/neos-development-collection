@@ -60,6 +60,11 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	protected $systemLogger;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 */
+	protected $context;
+
+	/**
 	 * @var array
 	 */
 	protected $defaultOrderings = array(
@@ -628,6 +633,28 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 				unset($objects[$index]);
 			}
 		}
+	}
+
+	/**
+	 * This should be called only once in a request to set the current render context for nodes.
+	 * This method is only for internal use.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Service\ContextInterface $contentContext
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\ContentContextException
+	 */
+	public function setContext($contentContext) {
+		if ($this->context !== NULL) {
+			throw new \TYPO3\TYPO3CR\Exception\ContentContextException('You tried to set the content context which was already set.', 1334152022);
+		}
+		$this->context = $contentContext;
+	}
+
+	/**
+	 * @return \TYPO3\TYPO3CR\Domain\Service\ContextInterface
+	 */
+	public function getContext() {
+		return $this->context;
 	}
 }
 ?>

@@ -121,29 +121,12 @@ class Workspace {
 	}
 
 	/**
-	 * Sets the context from which this workspace was acquired.
-	 *
-	 * This will be set by the context itself while retrieving the workspace via the
-	 * context's getWorkspace() method. The context is transient and therefore needs to be
-	 * set on every script run again.
-	 *
-	 * This method is only for internal use, don't mess with it.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Service\Context $context
-	 * @return void
-	 */
-	public function setContext(\TYPO3\TYPO3CR\Domain\Service\Context $context) {
-		$this->context = $context;
-		$this->rootNode->setContext($context);
-	}
-
-	/**
 	 * Returns the current context this workspace operates in.
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
 	public function getContext() {
-		return $this->context;
+		return $this->nodeRepository->getContext();
 	}
 
 	/**
