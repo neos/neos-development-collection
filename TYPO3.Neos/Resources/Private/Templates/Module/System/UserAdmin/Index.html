@@ -2,7 +2,7 @@
 
 <f:section name="content">
 	<f:link.action action="new" class="btn">
-		<i class="icon user"></i>
+		<i class="icon-user"></i>
 		New account
 	</f:link.action><br /><br />
 
@@ -11,8 +11,8 @@
 			<tr>
 				<td><f:link.action action="edit" arguments="{account: account}">{account.accountIdentifier}</f:link.action></td>
 				<td>{account.party.name}</td>
-				<td><f:link.action action="delete" arguments="{account: account}" class="btn danger">
-					<i class="icon white trash"></i>
+				<td><f:link.action action="delete" arguments="{account: account}" class="btn btn-danger">
+					<i class="icon-white icon-trash"></i>
 					Delete
 				</f:link.action></td>
 			</tr>
