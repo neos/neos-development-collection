@@ -53,6 +53,14 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		if (!$node->isVisible() && !$node->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
+		if ($node->getContentType() === 'TYPO3.TYPO3:Shortcut') {
+			while ($node->getContentType() === 'TYPO3.TYPO3:Shortcut') {
+				$childNodes = $node->getChildNodes('TYPO3.TYPO3:Page,TYPO3.TYPO3:Shortcut');
+				$node = current($childNodes);
+			}
+			$this->redirect('show', NULL, NULL, array('node' => $node));
+		}
+
 		$node->getContext()->setCurrentNode($node);
 		$this->view->assign('value', $node);
 
