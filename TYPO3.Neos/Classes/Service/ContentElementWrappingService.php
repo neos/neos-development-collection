@@ -56,18 +56,30 @@ class ContentElementWrappingService {
 	 * @param boolean $isPage
 	 */
 	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $isPage = FALSE) {
-		try {
-			$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
-		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
-			return $content;
-		}
+		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
 		$tagBuilder->forceClosingTag(TRUE);
+		$tagBuilder->setContent($content);
+
+		if (!$isPage) {
+			$cssClasses = array('t3-contentelement');
+			$cssClasses[] = str_replace(array(':', '.'), '-', strtolower($contentType->getName()));
+			if ($node->isHidden()) {
+				$cssClasses[] = 't3-contentelement-hidden';
+			}
+
+			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
+		}
+
+		try {
+			$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
+		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
+			return $tagBuilder->render();
+		}
+
 		$tagBuilder->addAttribute('data-__nodepath', $node->getContextPath());
 		$tagBuilder->addAttribute('data-__workspacename', $node->getWorkspace()->getName());
-
-		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
 
 		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
 			if ($propertyName[0] === '_') {
@@ -106,13 +118,7 @@ class ContentElementWrappingService {
 
 		if (!$isPage) {
 				// add CSS classes
-			$cssClasses = array('t3-contentelement');
-			$cssClasses[] = str_replace(array(':', '.'), '-', strtolower($contentType->getName()));
-			if ($node->isHidden()) {
-				$cssClasses[] = 't3-contentelement-hidden';
-			}
 
-			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
 			$tagBuilder->addAttribute('data-__contenttype', $contentType->getName());
 		} else {
 			$tagBuilder->addAttribute('id', 't3-page-metainformation');
@@ -124,7 +130,7 @@ class ContentElementWrappingService {
 			));
 		}
 
-		$tagBuilder->setContent($content);
+
 		return $tagBuilder->render();
 	}
 }
