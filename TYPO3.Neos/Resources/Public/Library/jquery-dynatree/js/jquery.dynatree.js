@@ -2549,7 +2549,8 @@ TODO: better?
 //		this.$dndMarker.attr("class", hitMode);
 		if(hitMode === "after" || hitMode === "before" || hitMode === "over"){
 //			$source && $source.addClass("dynatree-drag-source");
-			var pos = $target.offset();
+
+			var pos = $target.position();
 
 //			$target.addClass("dynatree-drop-target");
 
@@ -2583,11 +2584,9 @@ TODO: better?
 
 			this.$dndMarker //.offset({left: pos.left, top: pos.top})
 				.css({
-					//"left": pos.left,
-					//"top": pos.top,
 					"left": pos.left,
 					//was edited to adjust the marker to the fixed position of the pagetree container
-					"top": pos.top - 107,
+					top: pos.top,
 					"z-index": 1000
 				})
 				.show();

@@ -2,6 +2,75 @@
 // will take the changes from this file, review them and merge them with the other files.
 
 
+/*Dynatree start*/
+div.dynatree-container {
+	position: relative;
+}
+
+/*Inspect Button start*/
+.dynatree-container #t3-dd-inspecttree {
+	height: 270px;
+	padding-bottom: 7px;
+	width: 250px;
+}
+
+/*Inspect Button end*/
+
+/* Pagetree start */
+.dynatree-container .t3-dd-newpage {
+	padding: 2px 2px 2px 25px;
+	margin: 5px;
+	background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
+	border: 1px dotted #000000;
+	cursor: move;
+}
+
+.dynatree-container #t3-dd-pagetree {
+	height: 270px;
+	padding-bottom: 7px;
+	width: 250px;
+}
+
+.dynatree-container #t3-dd-pagetree span.dynatree-drop-target {
+	margin: 3px 0;
+	display: block;
+}
+
+.dynatree-container ul.dynatree-container {
+	background-color: white;
+	border:none;
+	height: 100%;
+	margin: 0;
+	padding: 3px;
+	overflow: auto;
+	white-space: nowrap;
+}
+
+.dynatree-container .t3-dd-newpage {
+	padding: 2px 2px 2px 25px;
+	margin: 5px;
+	background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
+	border: 1px dotted #000000;
+	cursor: move;
+}
+
+.dynatree-container .t3-dd-deletionzone {
+	padding: 2px 2px 2px 25px;
+	margin: 5px;
+	background: #eee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+	border: 1px dotted #000000;
+	cursor: default;
+	display: none;
+	&.t3-dd-deletionzone-over {
+		background: #ddd url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+	}
+	&.t3-dd-deletionzone-active {
+		background: #eee url(../Images/ajax-preloader-dddddd.gif) 5px 50% no-repeat;
+	}
+}
+/*Pagetree end*/
+
+
 // Page Tree Styling
 .popover .x-tree .t3-gotoPage {
 	display: none;

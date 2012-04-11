@@ -11,6 +11,14 @@ Version 0.2.2
 - MODIFIED: see "// TYPO3 SPECIFIC FIX" in jquery.popover.js
 
 
+jquery.dynatree.js
+jquery.dynatree.min.js
+https://review.typo3.org/#/c/11452/3/Resources/Public/Library/jquery-dynatree/js/jquery.dynatree.js
+_setDndStatus: function(){
+	--- var pos = $target.offset();
+	+++ var pos = $target.position();
+}
+
 jQuery Notice from http://code.google.com/p/jquery-notice/
 Version 1.0
 

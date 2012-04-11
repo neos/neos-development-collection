@@ -40,6 +40,8 @@ function() {
 
 		currentUri: window.location.href,
 
+		_isLoadingPage : null,
+
 		_launcher: null,
 
 		bootstrap: function() {
@@ -270,6 +272,7 @@ function() {
 			}
 
 			this._showPageLoader();
+			this.set('_isLoadingPage', true);
 
 			if (window.history && !ignorePushToHistory) {
 				window.history.pushState({uri: uri}, document.title, uri);
@@ -311,7 +314,7 @@ function() {
 					// so we reload the whole backend.
 					window.location.href = uri;
 				}
-
+				that.set('_isLoadingPage', false);
 				$('.t3-pageloader-wrapper').remove();
 			});
 		},

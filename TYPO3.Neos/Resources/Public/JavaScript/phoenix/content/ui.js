@@ -504,129 +504,181 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 	});
 
 
+	/**
+	 * =====================
+	 * SECTION: INSPECT TREE
+	 * =====================
+	 * - Inspect TreeButton
+	 */
+
 	T3.Content.UI.InspectButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Content Structure',
-		$popoverContent: $('<div class="dynatree-container" style="height: 350px"></div>'),
+		$popoverContent: $('<div class="dynatree-container" id="t3-inspecttree-container"><div id="t3-dd-inspecttree"></div></div>'),
 		popoverPosition: 'top',
+		_ignoreCloseOnPageLoad: false,
 
-		/**
-		 * @var {Ext.tree.TreePanel} Reference to the ExtJS tree; or null if not yet built.
-		 */
-		_tree: null,
+		inspectTree: null,
+		isLoadingLayerActive: function() {
+			if (T3.ContentModule.get('_isLoadingPage')) {
+				if (that.get('_ignoreCloseOnPageLoad')) {
+					that.set('_ignoreCloseOnPageLoad', false);
+					return;
+				}
+				$('.t3-inspect > button.pressed').click();
+				if(this.inspectTree != null) {
+					$('#t3-dd-inspecttree').dynatree('destroy');
+					this.inspectTree = null;
+				}
+			}
+		}.observes('T3.ContentModule._isLoadingPage'),
 
 		onPopoverOpen: function() {
-			if (this._tree) return;
+			var attr = $('#t3-page-metainformation').attr('data-__nodepath');
+			var dataNodeTitle = $('#t3-page-metainformation').data('title');
+			var dataNodePath = $('#t3-page-metainformation').attr('data-__nodepath');
 
-			this._tree = new Ext.tree.TreePanel({
-				width:250,
-				height:350,
-				useArrows: true,
-				autoScroll: true,
-				animate: true,
-				enableDD: true,
-				border: false,
-				ddGroup: 'nodes',
-
-				root: {
-					id: $('#t3-page-metainformation').attr('data-__nodepath'), // TODO: This and the following properties might later come from the SproutCore model...
-					text: $('#t3-page-metainformation').data('title'),
-					draggable: false
-				},
-
-				loader: new Ext.tree.TreeLoader({
-					/**
-					 * Wrapper for extDirect call to NodeController which
-					 * adds the child node type to the extDirect call as 2nd parameter.
-					 *
-					 * @param {String} contextNodePath the current Context Node Path to get subnodes from
-					 * @param {Function} callback function after request is done
-					 * @return {void}
-					 */
-					directFn: function(contextNodePath, callback) {
-						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(contextNodePath, '!TYPO3.TYPO3:Page', callback);
-					},
-
-					/**
-					 * Here, we convert the response back to a format ExtJS understands; namely we use result.data instead of result here.
-					 *
-					 * @param {Object} result the result part from the response of the server request
-					 * @param {Object} response the response object of the server request
-					 * @param {Object} args request arguments passed through
-					 * @return {void}
-					 */
-					processDirectResponse: function(result, response, args) {
-						if (response.status) {
-							this.handleResponse({
-								responseData: Ext.isArray(result.data) ? result.data : null,
-								responseText: result,
-								argument: args
-							});
-						} else {
-							this.handleFailure({
-								argument: args
-							});
-						}
-					}
-				}),
-
-				listeners: {
-					movenode: this._onTreeNodeMove,
-					click: this._onTreeNodeClick
+				// if there is a tree and the rootnode key of the tree is different from the actual page, the tree should be reinitialised
+			if (this.inspectTree) {
+				var tree = $("#t3-dd-inspecttree").dynatree('getTree');
+				var rootNode = tree.getRoot();
+				if (dataNodePath != rootNode.childList[0].data.key) {
+					$('#t3-dd-inspecttree').dynatree('destroy');
 				}
-			});
-
-			var $treeContainer = $('<div />');
-			this.$popoverContent.append($treeContainer);
-
-			this._tree.render($treeContainer.get(0));
-			this._tree.getRootNode().expand();
-		},
-
-		/**
-		 * Callback which is executed when a TreeNode is moved to an other TreeNode.
-		 *
-		 * TODO: Refactor later to common tree component
-		 */
-		_onTreeNodeMove: function(tree, node, oldParent, newParent, index) {
-			var beforeNode = newParent.childNodes[index - 1],
-				afterNode = newParent.childNodes[index + 1],
-				targetNodeId, position;
-			if (beforeNode) {
-				targetNodeId = beforeNode.id;
-				position = 1;
-			} else if (afterNode) {
-				targetNodeId = afterNode.id;
-				position = -1;
-			} else {
-				targetNodeId = newParent.id;
-				position = 0;
 			}
 
-			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
-				node.id,
-				targetNodeId,
-				position,
-				function() {
-					newParent.reload();
+			this.inspectTree = $('#t3-dd-inspecttree').dynatree({
+				debugLevel: 0, // 0:quiet, 1:normal, 2:debug,
+				cookieId: null,
+				persist: false,
+				onPostInit: function (isReloading, isError, tree, node) {
+					dataNodeTitle = $('#t3-page-metainformation').data('title');
+					dataNodePath = $('#t3-page-metainformation').attr('data-__nodepath');
+				},
+				children: [
+					{
+						title: dataNodeTitle ,
+						key: dataNodePath,
+						isFolder: true,
+						expand: false,
+						isLazy: true,
+						autoFocus: true,
+						select: false,
+						active: false,
+						unselectable: true
+					}
+				],
+				/**
+				 * The following callback is executed if an lazy-loading node
+				 * has not yet been loaded.
+				 *
+				 * It might be executed multiple times in rapid succession,
+				 * and needs to take care itself that it only fires one
+				 * ExtDirect request per node at a time. This is implemented
+				 * using node._currentlySendingExtDirectAjaxRequest.
+				 */
+				onLazyRead: function(node) {
+					if (node._currentlySendingExtDirectAjaxRequest) {
+						return;
+					}
+					node._currentlySendingExtDirectAjaxRequest = true;
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(node.data.key, '!TYPO3.TYPO3:Page', function(result) {
+						node._currentlySendingExtDirectAjaxRequest = false;
+						if (result.success == true) {
+							node.setLazyNodeStatus(DTNodeStatus_Ok);
+						} else {
+							T3.Common.Notification.error('Page Tree loading error.');
+						}
+						node.addChild(result.data);
+					});
+				},
+				dnd: {
+					/**
+					 * Executed on beginning of drag.
+					 * Returns false to cancel dragging of node.
+					 */
+					onDragStart: function(node) {
+					},
+					autoExpandMS: 1000,
+					preventVoidMoves: true, // Prevent dropping nodes 'before self', etc.
+
+					/** sourceNode may be null for non-dynatree droppables.
+					 *  Return false to disallow dropping on node. In this case
+					 *  onDragOver and onDragLeave are not called.
+					 *  Return 'over', 'before, or 'after' to force a hitMode.
+					 *  Return ['before', 'after'] to restrict available hitModes.
+					 *  Any other return value will calc the hitMode from the cursor position.
+					 */
+					onDragEnter: function(node, sourceNode) {
+						//it is only posssible to move nodes into nodes of the contentType:Section
+						if(node.data.contentType === 'TYPO3.TYPO3:Section') {
+							T3.Common.Notification.error('moving nodes inside other nodes is not possible right now');
+							return ['before', 'after','over'];
+						}
+						else{
+							return ['before', 'after'];
+						}
+					},
+					onDragOver: function(node, sourceNode, hitMode) {
+						if (node.isDescendantOf(sourceNode)) {
+							return false;
+						}
+					},
+					/** This function MUST be defined to enable dropping of items on
+					 * the tree.
+					 *
+					 * hitmode over, after and before
+					 */
+					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
+						var position;
+
+						// it is an existing node which was moved on the tree
+						var sourceNodeLevel = sourceNode.getLevel();
+						var nodeLevel = node.getLevel();
+						var nodeLevelDiff = nodeLevel - sourceNodeLevel;
+						var targetNodeContentType = node.data.contentType;
+
+						if (hitMode === 'before') {
+							position = -1;
+						} else if (hitMode === 'after') {
+							position = 1;
+						} else {
+							position = 0;
+						}
+						if (position === 0 && nodeLevelDiff !== 0) {
+							T3.Common.Notification.error('moving nodes inside other nodes is not possible right now');
+						} else {
+							sourceNode.move(node, hitMode);
+							TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
+								sourceNode.data.key,
+								node.data.key,
+								position,
+								function(result) {
+									if(result.success == true) {
+										that.set('_ignoreCloseOnPageLoad', true);
+										T3.ContentModule.reloadPage();
+									}
+								}
+							);
+						}
+					},
+					onDragStop: function() {
+					}
+				},
+				onClick: function(node, event) {
+					if (node.getEventTargetType === 'title') {
+						var nodePath = node.data.key, offsetFromTop = 150;
+						var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+						if (!block) return;
+
+						T3.Content.Model.BlockSelection.selectItem(block);
+						var $blockDomElement = block.getContentElement();
+
+						$('html,body').animate({
+							scrollTop: $blockDomElement.offset().top - offsetFromTop
+						}, 500);
+					}
 				}
-			);
-		},
-
-		/**
-		 * Callback which is executed when a TreeNode is clicked.
-		 * We activate this element in the UI and slide it into view.
-		 */
-		_onTreeNodeClick: function(node) {
-			var nodePath = node.id, offsetFromTop = 150;
-			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
-			if (!block) return;
-
-			T3.Content.Model.BlockSelection.selectItem(block);
-			var $blockDomElement = block.getContentElement();
-
-			$('html,body').animate({
-				scrollTop: $blockDomElement.offset().top - offsetFromTop
-			}, 500);
+			});
 		}
 	});
 });

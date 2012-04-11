@@ -92,13 +92,16 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 			case self::TREESTYLE :
 				foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
 					$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $childNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
+					$hasChildNodes = $childNode->hasChildNodes($contentTypeFilter);
+
 					$data[] = array(
 						'key' => $childNode->getContextPath(),
 						// TODO Move to JS
 						'title' => $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title'): $childNode->getLabel(),
 						'href' => $uriForNode,
-						'isFolder' => $childNode->hasChildNodes($childNode->getContentType()) === TRUE,
-						'isLazy' => $childNode->hasChildNodes($childNode->getContentType()) === TRUE
+						'isFolder' => $hasChildNodes,
+						'isLazy' => $hasChildNodes,
+						'contentType' => $childNode->getContentType()
 					);
 				}
 			break;
