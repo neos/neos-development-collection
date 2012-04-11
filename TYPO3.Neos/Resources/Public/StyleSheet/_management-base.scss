@@ -1,0 +1,45 @@
+// Management View
+
+.t3-module {
+	margin: 104px 8px 8px 8px;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	h1, h2, h3, h4, h5, h6 {
+		margin-bottom: 0.5em;
+	}
+	a {
+		color: #0088cc;
+		text-decoration: none;
+		&:hover,
+		&:focus,
+		&:active {
+			color: #005580;
+			text-decoration: underline;
+		}
+	}
+	#t3-ui-top {
+		@include single-box-shadow(transparent, 0, 0, 0);
+	}
+	#t3-toolbar {
+		left: 0px;
+		right: 0px;
+		padding: 0px 8px;
+		a {
+			line-height: 36px;
+			vertical-align: middle;
+		}
+	}
+
+	.alert-message.Error {
+		background:#C43C35;
+		color: $lightest;
+	}
+}
+
+a.btn {
+	color: darken($dark-grey, 10%);
+	text-decoration: none;
+	&:hover {
+		color: darken($dark-grey, 10%);
+		text-decoration: none;
+	}
+}
