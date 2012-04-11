@@ -156,6 +156,7 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 		$parentRequest = $this->tsRuntime->getControllerContext()->getRequest();
 		$pluginRequest = new ActionRequest($parentRequest);
 		$pluginRequest->setArgumentNamespace('--' . $this->getPluginNamespace());
+		$this->passArgumentsToPluginRequest($pluginRequest);
 
 		if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
 			if ($pluginRequest->getControllerPackageKey() === NULL) {

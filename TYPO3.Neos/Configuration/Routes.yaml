@@ -13,6 +13,7 @@
     '@controller': 'Login'
     '@action':     'index'
     '@format':     'html'
+  appendExceedingArguments: true
 
 -
   name:  'Logout'
