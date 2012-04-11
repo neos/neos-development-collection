@@ -14,6 +14,8 @@ namespace TYPO3\TYPO3\Tests\Functional\TypoScript;
 
 /**
  * Functional test case which tests the rendering
+ *
+ * @group large
  */
 class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
@@ -22,6 +24,13 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	static protected $testablePersistenceEnabled = TRUE;
 
+	/**
+	 *
+	 * @var boolean
+	 */
+	protected $testableHttpEnabled = TRUE;
+
+	protected $testableSecurityEnabled = TRUE;
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
@@ -59,7 +68,7 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertTeaserConformsToBasicRendering($output);
 		$this->assertMainContentConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > h2', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > h1', 'Static Headline', TRUE, $output);
 		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
 		$this->assertSelectEquals('.sidebar', '[COMMIT WIDGET]', TRUE, $output);
 	}
@@ -73,7 +82,7 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertMainContentConformsToBasicRendering($output);
 		$this->assertSidebarConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > h2', 'BEFORELast CommitsAFTER', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > h1', 'BEFORELast CommitsAFTER', TRUE, $output);
 	}
 
 	/**
@@ -85,11 +94,11 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertMainContentConformsToBasicRendering($output);
 		$this->assertSidebarConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.teaser > .typo3-typo3-textwithheadline > h2', '-b-Welcome to this example-a-', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h2', '-b-Documentation-a-', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > h2', '-b-Development Process-a-', TRUE, $output);
+		$this->assertSelectEquals('.teaser > .typo3-typo3-textwithheadline > h1', '-b-Welcome to this example-a-', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h1', '-b-Documentation-a-', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > h1', '-b-Development Process-a-', TRUE, $output);
 
-		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > h2', '-b-BEFORELast CommitsAFTER-a-', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > h1', '-b-BEFORELast CommitsAFTER-a-', TRUE, $output);
 	}
 
 	/**
@@ -114,7 +123,7 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertMainContentConformsToBasicRendering($output);
 		$this->assertSidebarConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h2', 'DOCS: Documentation', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h1', 'DOCS: Documentation', TRUE, $output);
 	}
 
 	/**
@@ -124,8 +133,8 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype.ts2');
 		$this->assertTeaserConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h2', 'Static Headline', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > h2', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h1', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > h1', 'Static Headline', TRUE, $output);
 
 		$this->assertSidebarConformsToBasicRendering($output);
 	}
@@ -137,8 +146,8 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$output = $this->simulateRendering('Test_OverriddenValueInNestedPrototype2.ts2');
 		$this->assertTeaserConformsToBasicRendering($output);
 
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h2', 'Static Headline', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > h2', 'Development Process', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h1', 'Static Headline', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > h1', 'Development Process', TRUE, $output);
 
 		$this->assertSidebarConformsToBasicRendering($output);
 	}
@@ -147,25 +156,25 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected function assertTeaserConformsToBasicRendering($output) {
 		$this->assertContains('TYPO3 is based on FLOW3, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
 		$this->assertSelectEquals('h1', 'Home', TRUE, $output);
-		$this->assertSelectEquals('.teaser > .typo3-typo3-textwithheadline > h2', 'Welcome to this example', TRUE, $output);
+		$this->assertSelectEquals('.teaser > .typo3-typo3-textwithheadline > h1', 'Welcome to this example', TRUE, $output);
 		$this->assertSelectEquals('.teaser > .typo3-typo3-textwithheadline > div', 'This is our exemplary rendering test.', TRUE, $output);
 	}
 
 	protected function assertMainContentConformsToBasicRendering($output) {
-		$this->assertSelectEquals('.main > .typo3-typo3-textwithheadline > h2', 'Do you love FLOW3?', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-textwithheadline > h1', 'Do you love FLOW3?', TRUE, $output);
 		$this->assertSelectEquals('.main > .typo3-typo3-textwithheadline > div', 'If you do, make sure to post your opinion about it on Twitter!', TRUE, $output);
 
 		$this->assertSelectEquals('.main', '[TWITTER WIDGET]', TRUE, $output);
 
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h2', 'Documentation', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > h1', 'Documentation', TRUE, $output);
 		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left > .typo3-typo3-textwithheadline > div', 'We\'re still improving our docs, but check them out nevertheless!', TRUE, $output);
 		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .left', '[SLIDESHARE]', TRUE, $output);
-		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > h2', 'Development Process', TRUE, $output);
+		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > h1', 'Development Process', TRUE, $output);
 		$this->assertSelectEquals('.main > .typo3-typo3-threecolumn > .center > .typo3-typo3-textwithheadline > div', 'We\'re spending lots of thought into our infrastructure, you can profit from that, too!', TRUE, $output);
 	}
 
 	protected function assertSidebarConformsToBasicRendering($output) {
-		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > h2', 'Last Commits', TRUE, $output);
+		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > h1', 'Last Commits', TRUE, $output);
 		$this->assertSelectEquals('.sidebar > .typo3-typo3-textwithheadline > div', 'Below, you\'ll see the most recent activity', TRUE, $output);
 		$this->assertSelectEquals('.sidebar', '[COMMIT WIDGET]', TRUE, $output);
 	}
@@ -182,6 +191,7 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$typoScriptRuntime->pushContext($this->node);
 		$output = $typoScriptRuntime->render('page1');
 		$typoScriptRuntime->popContext();
+
 		return $output;
 	}
 
@@ -198,9 +208,14 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$typoScriptConfiguration = $parser->parse($typoScript);
 
 
+		$httpRequest = \TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://foo.bar/bazfoo'));
+		$request = $httpRequest->createActionRequest();
+		$response = new \TYPO3\FLOW3\Http\Response();
+
+
 		$controllerContext = new \TYPO3\FLOW3\Mvc\Controller\ControllerContext(
-			$this->getMock('TYPO3\FLOW3\Mvc\ActionRequest'),
-			$this->getMock('TYPO3\FLOW3\Mvc\ResponseInterface'),
+			$request,
+			$response,
 			$this->getMock('TYPO3\FLOW3\Mvc\Controller\Arguments', array(), array(), '', FALSE),
 			$this->getMock('TYPO3\FLOW3\Mvc\Routing\UriBuilder'),
 			$this->getMock('TYPO3\FLOW3\Mvc\FlashMessageContainer')

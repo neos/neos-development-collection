@@ -1,0 +1,42 @@
+#                                                                        #
+# Settings                                                               #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Just add your own modifications as necessary.                          #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+TYPO3:
+  TYPO3CR:
+    contentTypes:
+      'TYPO3.TYPO3:ThreeColumn':
+        superTypes: ['TYPO3.TYPO3:ContentObject']
+        label: 'Three column content'
+        group: 'Structure'
+        icon: 'Images/Icons/White/columns_icon-16.png'
+
+        # TODO: think about name; as the structure is ONLY created on the beginning...
+        structure:
+          left:
+            type: 'TYPO3.TYPO3:Section'
+          center:
+            type: 'TYPO3.TYPO3:Section'
+          right:
+            type: 'TYPO3.TYPO3:Section'
+      'TYPO3.TYPO3:TextWithHeadline':
+        superTypes: ['TYPO3.TYPO3:ContentObject']
+        group: 'General'
+        icon: 'Images/Icons/White/doc_lines_stright_icon-16.png'
+        label: 'Text'
+
+        properties:
+          headline:
+            label: string
+            default: 'Enter headline here'
+          text:
+            label: string
+            default: '<p>Enter text here</p>'
+
+        inlineEditableProperties: ['headline', 'text']

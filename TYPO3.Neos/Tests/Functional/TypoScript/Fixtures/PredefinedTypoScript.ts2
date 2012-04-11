@@ -32,7 +32,8 @@ prototype(TYPO3.TypoScript:Page) {
 	body = TYPO3.TypoScript:FluidRenderer
 	body.title = ${context.property('title')}
 	body.nodePath = ${context.property('_path')}
-	head = TYPO3.TypoScript:TypoScriptArrayRenderer
+	headerData = TYPO3.TypoScript:TypoScriptArrayRenderer
+	backendHeader = TYPO3.TypoScript:TypoScriptArrayRenderer
 }
 
 # TextWithHeadline TS Object

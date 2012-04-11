@@ -16,6 +16,7 @@ use \TYPO3\TYPO3\Domain\Model\User;
 /**
  * Testcase for method security of the backend controller
  *
+ * @group large
  */
 class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
@@ -35,6 +36,8 @@ class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCas
 	 */
 	protected $testableSecurityEnabled = TRUE;
 
+	protected $testableHttpEnabled = TRUE;
+
 	/**
 	 * @test
 	 */
@@ -44,15 +47,15 @@ class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCas
 
 		$account = $this->authenticateRoles(array('Administrator'));
 		$account->setParty($user);
-		$this->sendWebRequest('Backend\Backend', 'TYPO3.TYPO3', 'index');
+		$this->browser->request('http://localhost/typo3/login');
 	}
 
 	/**
 	 * @test
-	 * @expectedException \TYPO3\FLOW3\Security\Exception\AccessDeniedException
 	 */
 	public function indexActionIsDeniedForEverybody() {
-		$this->sendWebRequest('Backend\Backend', 'TYPO3.TYPO3', 'index');
+		$this->browser->request('http://localhost/typo3/');
+		$this->assertSame('Access denied!', $this->browser->getLastResponse()->getContent());
 	}
 }
 
