@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\TYPO3\Controller\Module\System;
+namespace TYPO3\TYPO3\Controller\Module\Administration;
 
 /*                                                                        *
  * This script belongs to the FLOW3 package "TYPO3.TYPO3".                *
