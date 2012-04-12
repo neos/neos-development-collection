@@ -864,8 +864,8 @@
       border-radius: 3px 0 0 3px; }
     .t3-ui .input-prepend .active,
     .t3-ui .input-append .active {
-      background-color: #bfdab4;
-      border-color: #69a550; }
+      background-color: #a9dba9;
+      border-color: #46a546; }
   .t3-ui .input-prepend .add-on,
   .t3-ui .input-prepend .btn {
     margin-right: -1px; }
@@ -1705,22 +1705,22 @@
     .t3-ui .btn-primary:active, .t3-ui .btn-primary.active {
       background-color: #004099 \9; }
   .t3-ui .btn-warning {
-    background-color: #f4a235;
-    background-image: -moz-linear-gradient(top, #f7b051, #f18f0b);
-    background-image: -ms-linear-gradient(top, #f7b051, #f18f0b);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f7b051), to(#f18f0b));
-    background-image: -webkit-linear-gradient(top, #f7b051, #f18f0b);
-    background-image: -o-linear-gradient(top, #f7b051, #f18f0b);
-    background-image: linear-gradient(top, #f7b051, #f18f0b);
+    background-color: #f9a732;
+    background-image: -moz-linear-gradient(top, #fbb450, #f89406);
+    background-image: -ms-linear-gradient(top, #fbb450, #f89406);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fbb450), to(#f89406));
+    background-image: -webkit-linear-gradient(top, #fbb450, #f89406);
+    background-image: -o-linear-gradient(top, #fbb450, #f89406);
+    background-image: linear-gradient(top, #fbb450, #f89406);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7b051', endColorstr='#f18f0b', GradientType=0);
-    border-color: #f18f0b #f18f0b #a86408;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fbb450', endColorstr='#f89406', GradientType=0);
+    border-color: #f89406 #f89406 #ad6704;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
     filter: progid:DXImageTransform.Microsoft.gradient(enabled = false); }
     .t3-ui .btn-warning:hover, .t3-ui .btn-warning:active, .t3-ui .btn-warning.active, .t3-ui .btn-warning.disabled, .t3-ui .btn-warning[disabled] {
-      background-color: #f18f0b; }
+      background-color: #f89406; }
     .t3-ui .btn-warning:active, .t3-ui .btn-warning.active {
-      background-color: #c07209 \9; }
+      background-color: #c67605 \9; }
   .t3-ui .btn-danger {
     background-color: #da4e49;
     background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
@@ -2874,9 +2874,9 @@
   .t3-ui .label-important:hover {
     background-color: #953b39; }
   .t3-ui .label-warning {
-    background-color: #f18f0b; }
+    background-color: #f89406; }
   .t3-ui .label-warning:hover {
-    background-color: #c07209; }
+    background-color: #c67605; }
   .t3-ui .label-success {
     background-color: #468847; }
   .t3-ui .label-success:hover {
@@ -2908,9 +2908,9 @@
   .t3-ui .badge-error:hover {
     background-color: #953b39; }
   .t3-ui .badge-warning {
-    background-color: #f18f0b; }
+    background-color: #f89406; }
   .t3-ui .badge-warning:hover {
-    background-color: #c07209; }
+    background-color: #c67605; }
   .t3-ui .badge-success {
     background-color: #468847; }
   .t3-ui .badge-success:hover {
@@ -3041,17 +3041,17 @@
     background-image: -o-linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent); }
   .t3-ui .progress-warning .bar {
-    background-color: #f4a235;
-    background-image: -moz-linear-gradient(top, #f7b051, #f18f0b);
-    background-image: -ms-linear-gradient(top, #f7b051, #f18f0b);
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f7b051), to(#f18f0b));
-    background-image: -webkit-linear-gradient(top, #f7b051, #f18f0b);
-    background-image: -o-linear-gradient(top, #f7b051, #f18f0b);
-    background-image: linear-gradient(top, #f7b051, #f18f0b);
+    background-color: #f9a732;
+    background-image: -moz-linear-gradient(top, #fbb450, #f89406);
+    background-image: -ms-linear-gradient(top, #fbb450, #f89406);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fbb450), to(#f89406));
+    background-image: -webkit-linear-gradient(top, #fbb450, #f89406);
+    background-image: -o-linear-gradient(top, #fbb450, #f89406);
+    background-image: linear-gradient(top, #fbb450, #f89406);
     background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f7b051', endColorstr='#f18f0b', GradientType=0); }
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fbb450', endColorstr='#f89406', GradientType=0); }
   .t3-ui .progress-warning.progress-striped .bar {
-    background-color: #f7b051;
+    background-color: #fbb450;
     background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
     background-image: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -moz-linear-gradient(-45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
@@ -3230,7 +3230,8 @@ body.t3-ui-controls-active {
     font-size: 10px;
     z-index: -9999px;
     background: url(../Images/Icons/White/on-off_icon-16.png) left 50% no-repeat;
-    opacity: 1.0;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
     -webkit-transition-property: opacity;
     -moz-transition-property: opacity;
     -ms-transition-property: opacity;
@@ -3242,6 +3243,7 @@ body.t3-ui-controls-active {
     -o-transition-duration: 0.25s;
     transition-duration: 0.25s; }
     #t3-ui-top .t3-button-logout:hover, #t3-ui-top .t3-button-logout:active, #t3-ui-top .t3-button-logout:focus {
+      filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
       opacity: 0.8; }
     #t3-ui-top .t3-button-logout span {
       float: left;
@@ -3280,7 +3282,6 @@ body.t3-ui-controls-active {
     display: block;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
-    -ms-box-sizing: border-box;
     box-sizing: border-box; }
     .t3-launcher div.t3-launcher-container input {
       border: 1px solid #888888;
@@ -3296,7 +3297,6 @@ body.t3-ui-controls-active {
       padding: 3px 6px 0 32px;
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
-      -ms-box-sizing: border-box;
       box-sizing: border-box; }
       .t3-launcher div.t3-launcher-container input:hover {
         border: 1px solid #606060;
@@ -3343,7 +3343,6 @@ ul.t3-topbar {
   border-top: 1px solid #2d2d2d;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
   box-sizing: border-box; }
   .t3-topbar li a {
     color: #999999 !important;
@@ -3370,7 +3369,6 @@ ul.t3-topbar {
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
   box-sizing: border-box;
   background: #2d2d2d;
   height: 100%;
@@ -3407,7 +3405,6 @@ ul.t3-topbar {
   width: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
   box-sizing: border-box;
   padding: 0 10px;
   height: 36px;
@@ -3528,6 +3525,8 @@ ul.t3-topbar {
   padding: 2px 5px 2px 25px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
   border-radius: 4px;
   -webkit-box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
   -moz-box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
@@ -3606,7 +3605,6 @@ ul.t3-topbar {
       text-decoration: none;
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
-      -ms-box-sizing: border-box;
       box-sizing: border-box; }
     .t3-breadcrumb li:nth-child(10) {
       z-index: 10020; }
@@ -3706,6 +3704,7 @@ button.t3-button.pressed,
       background-color: #b66c08 \9; }
 button.t3-button[disabled],
 .t3 a.t3-button[disabled] {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
   opacity: 0.6;
   cursor: auto;
   color: #cccccc; }
@@ -3741,8 +3740,8 @@ button.t3-button[disabled],
     background-repeat: no-repeat;
     background-color: white;
     overflow: hidden;
-    opacity: 0.01;
-    filter: alpha(opacity=1);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
     -webkit-transition-property: opacity;
     -moz-transition-property: opacity;
     -ms-transition-property: opacity;
@@ -3812,12 +3811,12 @@ button.t3-button[disabled],
 
 .t3-remove-from-cut-handle span,
 .t3-remove-from-copy-handle span {
-  opacity: 0.003;
-  filter: alpha(opacity=0.3); }
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
+  opacity: 0.3; }
 
 .t3-handle span:hover, .t3-handle span:focus, .t3-handle span:active {
-  opacity: 0.007;
-  filter: alpha(opacity=0.7); }
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+  opacity: 0.7; }
 
 .t3-handle-hidden {
   display: none !important; }
@@ -3832,8 +3831,8 @@ button.t3-button[disabled],
     z-index: 10000; }
 
 .t3-contentelement-hidden {
-  opacity: 0.002;
-  filter: alpha(opacity=0.2); }
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
+  opacity: 0.2; }
 
 .t3-contentelement-selected .t3-aloha-block-over > .t3-handle {
   display: none; }
@@ -3904,6 +3903,8 @@ div.aloha-block-active:hover > div.aloha-block-inner {
   background-image: linear-gradient(#cccccc, #3a3a3a);
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
   border-radius: 3px;
   display: block;
   font-size: 22px;
@@ -3985,7 +3986,6 @@ div.aloha-block-active:hover > div.aloha-block-inner {
   width: 33%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
   box-sizing: border-box; }
 
 .tc-1-1-1 .c-1 {
@@ -4330,7 +4330,6 @@ button.t3-button.t3-connection-status-down {
   text-align: left;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
   box-sizing: border-box; }
 
 .popover > .content {

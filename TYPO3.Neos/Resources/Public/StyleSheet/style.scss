@@ -1,12 +1,13 @@
 @import "t3-reset";
-@import "compass";
-@import "constants";
 
 // Bootstrap Include
 // Bootstrap files to be manually adjusted before upgrading to a newer version:
 // * bootstrap.scss - add t3-ui-class-prefix
 // * _variables.scss - adjust the sprite-image-path
 @import "../Library/twitter-bootstrap/scss/bootstrap.scss";
+
+@import "compass";
+@import "constants";
 
 // **** CSS start ****/
 // *******************/
@@ -48,13 +49,13 @@ body.t3-ui-controls-active {
 		font-size: 10px;
 		z-index: -9999px;
 		background: url(../Images/Icons/White/on-off_icon-16.png) left 50% no-repeat;
-		opacity: 1.0;
+		@include opacity(1.0);
 		@include transition-property(opacity);
 		@include transition-duration(0.25s);
 		&:hover,
 		&:active,
 		&:focus {
-			opacity: 0.8;
+			@include opacity(0.8);
 		}
 		span {
 			float: left;
@@ -485,7 +486,7 @@ button.t3-button,
 		}
 	}
 	&[disabled] {
-		opacity: 0.6;
+		@include opacity(0.6);
 		cursor: auto;
 		color: $light-grey2;
 		&:hover,
