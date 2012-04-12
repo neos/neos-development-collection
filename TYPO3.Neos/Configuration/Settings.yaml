@@ -260,16 +260,9 @@ TYPO3:
           usersettings:
             label: 'User Settings'
             controller: '\TYPO3\TYPO3\Controller\Module\Management\UserSettingsController'
-          package:
-            label: 'Package Management'
-            submodules:
-              manage:
-                label: 'Manage'
-              import:
-                label: 'Import'
       administration:
         label: 'Administration'
         submodules:
           useradmin:
             label: 'User Management'
-            controller: '\TYPO3\TYPO3\Controller\Module\System\UserAdminController'
+            controller: '\TYPO3\TYPO3\Controller\Module\Administration\UserAdminController'
