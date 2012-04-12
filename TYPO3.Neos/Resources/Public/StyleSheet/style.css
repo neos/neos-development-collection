@@ -3333,7 +3333,7 @@ ul.t3-topbar {
 .t3-topbar li {
   float: left;
   list-style-type: none;
-  height: 26px;
+  height: 25px;
   line-height: 24px;
   padding-left: 20px;
   padding-right: 20px;
@@ -3821,6 +3821,12 @@ button.t3-button[disabled],
 .t3-handle-hidden {
   display: none !important; }
 
+.aloha-block-TYPO3Block.t3-contentelement.aloha-block,
+.aloha-block-TYPO3Block.t3-contentelement.aloha-block:hover {
+  -webkit-box-shadow: 0 0 0 1px #373737;
+  -moz-box-shadow: 0 0 0 1px #373737;
+  box-shadow: 0 0 0 1px #373737; }
+
 .aloha-block-active-top > .t3-handle,
 .t3-aloha-block-over > .t3-handle {
   display: block;
@@ -3839,6 +3845,15 @@ button.t3-button[disabled],
 .t3-contentelement-selected .aloha-block-active-top > .t3-handle,
 .t3-contentelement-selected .aloha-block-active-top:hover > .t3-handle {
   display: block; }
+
+.aloha-block-TYPO3Block.aloha-block.aloha-block-active,
+.aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover {
+  -webkit-box-shadow: 0 0 0 1px rgba(55, 55, 55, 0.7);
+  -moz-box-shadow: 0 0 0 1px rgba(55, 55, 55, 0.7);
+  box-shadow: 0 0 0 1px rgba(55, 55, 55, 0.7); }
+  .aloha-block-TYPO3Block.aloha-block.aloha-block-active .t3-handle,
+  .aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover .t3-handle {
+    border-color: rgba(55, 55, 55, 0.7); }
 
 .t3-status-indicator {
   display: none; }

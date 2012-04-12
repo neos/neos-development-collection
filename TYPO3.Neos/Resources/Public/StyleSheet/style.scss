@@ -139,7 +139,7 @@ ul.t3-topbar {
 .t3-topbar li {
 	float: left;
 	list-style-type: none;
-	height: $menu-height;
+	height: $menu-height - 1px;
 	line-height: $menu-height - 2px;
 	padding-left: 20px;
 	padding-right: 20px;
@@ -600,6 +600,10 @@ button.t3-button,
 	display: none !important;
 }
 // Aloha Blocks
+.aloha-block-TYPO3Block.t3-contentelement.aloha-block,
+.aloha-block-TYPO3Block.t3-contentelement.aloha-block:hover {
+	@include box-shadow(0 0 0 1px $dark-grey3);
+}
 .aloha-block-active-top > .t3-handle,
 .t3-aloha-block-over > .t3-handle {
 	display:block;
@@ -619,6 +623,13 @@ button.t3-button,
 	.aloha-block-active-top > .t3-handle,
 	.aloha-block-active-top:hover > .t3-handle {
 		display: block;
+	}
+}
+.aloha-block-TYPO3Block.aloha-block.aloha-block-active,
+.aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover {
+	@include box-shadow(0 0 0 1px rgba($dark-grey3, 0.7));
+	.t3-handle {
+		border-color: rgba($dark-grey3, 0.7);
 	}
 }
 
