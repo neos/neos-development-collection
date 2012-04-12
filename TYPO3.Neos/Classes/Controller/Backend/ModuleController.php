@@ -38,6 +38,12 @@ class ModuleController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		$moduleRequest->setArgumentNamespace('moduleArguments');
 		$moduleRequest->setControllerObjectName($module['controller']);
 		$moduleRequest->setControllerActionName($module['action']);
+		if ($this->request->hasArgument($moduleRequest->getArgumentNamespace()) === TRUE && is_array($this->request->getArgument($moduleRequest->getArgumentNamespace()))) {
+			$moduleRequest->setArguments($this->request->getArgument($moduleRequest->getArgumentNamespace()));
+		}
+		foreach ($this->request->getPluginArguments() as $argumentNamespace => $argument) {
+			$moduleRequest->setArgument('--' . $argumentNamespace, $argument);
+		}
 
 		$moduleConfiguration = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', explode('/', $module['module'])));
 		$moduleConfiguration['path'] = $module['module'];
