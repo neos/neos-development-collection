@@ -149,7 +149,7 @@ class Runtime {
 
 		if (!isset($typoScriptConfiguration['implementationClassName']) || !isset($typoScriptConfiguration['__objectType'])) {
 			if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
-				throw new \TYPO3\TypoScript\Exception('Element at path ' . htmlspecialchars($typoScriptPath) . ' could not be rendered because ts object type or implementation class name was not found.', 1332493990);
+				throw new \TYPO3\TypoScript\Exception('Element at typoscript path "' . htmlspecialchars($typoScriptPath) . '" could not be rendered because ts object type or implementation class name was not found.', 1332493990);
 			} else {
 				return NULL;
 			}
