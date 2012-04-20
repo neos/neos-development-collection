@@ -77,6 +77,8 @@ class ImageRepositoryTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$imageRepository = new \TYPO3\Media\Domain\Repository\ImageRepository();
 		$imageRepository->add($image);
 		$this->persistenceManager->persistAll();
+
+		$this->assertTrue($imageRepository->findAll()->count() === 1);
 	}
 
 	/**
