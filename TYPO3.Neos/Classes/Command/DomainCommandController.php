@@ -37,8 +37,8 @@ class DomainCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	/**
 	 * Add a domain record
 	 *
-	 * @param string $siteNodeName The nodeName of the site rootNode
-	 * @param string $hostPattern The host pattern to match on
+	 * @param string $siteNodeName The nodeName of the site rootNode, e.g. "phoenixtypo3org"
+	 * @param string $hostPattern The host pattern to match on, e.g. "phoenix.typo3.org"
 	 * @return void
 	 */
 	public function addCommand($siteNodeName, $hostPattern) {
@@ -50,7 +50,7 @@ class DomainCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		$domains = $this->domainRepository->findByHostPattern($hostPattern);
 		if ($domains->count() > 0) {
-			$this->outputLine('The host pattern \'' . $hostPattern . '\' is not unique');
+			$this->outputLine('The host pattern "%s" is not unique', array($hostPattern));
 			$this->quit(1);
 		}
 
@@ -77,7 +77,7 @@ class DomainCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		if (count($domains) === 0) {
 			$this->outputLine('No domains available');
-			$this->quit(1);
+			$this->quit(0);
 		}
 
 		$longestNodeName = 9;

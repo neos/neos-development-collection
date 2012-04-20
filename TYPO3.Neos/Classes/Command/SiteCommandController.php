@@ -139,7 +139,7 @@ class SiteCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 
 		if ($sites->count() === 0) {
 			$this->outputLine('No sites available');
-			$this->quit(1);
+			$this->quit(0);
 		}
 
 		$longestSiteName = 4;
