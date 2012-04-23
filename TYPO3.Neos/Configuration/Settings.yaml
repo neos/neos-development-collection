@@ -25,6 +25,14 @@ TYPO3:
     mvc:
       notFoundController: TYPO3\TYPO3\Controller\ErrorController
 
+  DocTools:
+    bundles:
+      Phoenix:
+        documentationRootPath: %FLOW3_PATH_PACKAGES%Application/TYPO3.TYPO3/Documentation/
+        configurationRootPath: %FLOW3_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/
+        renderedDocumentationRootPath: %FLOW3_PATH_DATA%Temporary/Documentation/TYPO3.TYPO3/
+        renderingOutputFormat: 'html'
+        renderByDefault: false
 
   TYPO3CR:
     contentTypes:
