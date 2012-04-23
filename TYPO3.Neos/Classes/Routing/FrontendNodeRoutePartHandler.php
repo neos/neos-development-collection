@@ -144,7 +144,7 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 				return FALSE;
 			}
 
-			$node = $contentContext->getCurrentSiteNode()->getNode($value);
+			$node = $contentContext->getCurrentSiteNode()->getNode($matches['NodePath']);
 		} else {
 			$node = $value;
 			$contentContext = $node->getContext();
