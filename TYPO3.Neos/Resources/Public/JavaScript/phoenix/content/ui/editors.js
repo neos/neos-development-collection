@@ -7,7 +7,8 @@
 define(
 [
 	'text!phoenix/templates/content/ui/fileUpload.html',
-	'text!phoenix/templates/content/ui/imageUpload.html'
+	'text!phoenix/templates/content/ui/imageUpload.html',
+	'phoenix/content/ui/elements'
 ],
 function(fileUploadTemplate, imageUploadTemplate) {
 	var T3 = window.T3 || {};

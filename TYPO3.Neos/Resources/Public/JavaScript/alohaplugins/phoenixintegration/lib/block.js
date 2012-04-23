@@ -134,9 +134,8 @@ function(block) {
 				var handle = $('<span class="t3-handle ' + cssClass + '"><span>' + innerHtml + '</span></span>');
 				this.$element.prepend(handle);
 
-				var nodePath = handle.parent('.aloha-block').attr('data-__nodepath');
-
 				handle.click(function(event) {
+					var nodePath = $(this).closest('.t3-contentelement').attr('data-__nodepath');
 					clickHandler.call(scope, nodePath, handle);
 				});
 			}

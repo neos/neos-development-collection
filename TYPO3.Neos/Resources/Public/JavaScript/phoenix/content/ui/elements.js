@@ -6,7 +6,8 @@
 
 define(
 [
-	'text!phoenix/templates/content/ui/toolbar.html'
+	'text!phoenix/templates/content/ui/toolbar.html',
+	'Library/jquery-popover/jquery.popover'
 ],
 function(toolbarTemplate) {
 	var T3 = window.T3 || {};
@@ -122,11 +123,11 @@ function(toolbarTemplate) {
 			var that = this;
 			this.$().popover({
 				header: $('<div>' + that.get('popoverTitle') + '</div>'),
-				content: that.$popoverContent,
-				preventLeft: (that.get('popoverPosition')==='left' ? false : true),
-				preventRight: (that.get('popoverPosition')==='right' ? false : true),
-				preventTop: (that.get('popoverPosition')==='top' ? false : true),
-				preventBottom: (that.get('popoverPosition')==='bottom' ? false : true),
+				content: this.$popoverContent,
+				preventLeft: (this.get('popoverPosition')==='left' ? false : true),
+				preventRight: (this.get('popoverPosition')==='right' ? false : true),
+				preventTop: (this.get('popoverPosition')==='top' ? false : true),
+				preventBottom: (this.get('popoverPosition')==='bottom' ? false : true),
 				zindex: 10090,
 				closeEvent: function() {
 					that.set('pressed', false);

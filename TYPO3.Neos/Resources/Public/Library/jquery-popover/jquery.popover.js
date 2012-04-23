@@ -324,4 +324,4 @@
 			});
 		});
 	};
-})(jQuery);
+})(Aloha.jQuery);
