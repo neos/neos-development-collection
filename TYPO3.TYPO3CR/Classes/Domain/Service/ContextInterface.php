@@ -91,5 +91,16 @@ interface ContextInterface {
 	 */
 	public function isRemovedContentShown();
 
+	/**
+	 * @param boolean $inaccessibleContentShown
+	 * @return void
+	 */
+	public function setInaccessibleContentShown($inaccessibleContentShown);
+
+	/**
+	 * @return boolean
+	 */
+	public function isInaccessibleContentShown();
+
 }
 ?>
