@@ -21,13 +21,15 @@ class ContentContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getCurrentDateTimeReturnsACurrentDateAndTime() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getHTTPHost')->will($this->returnValue('myhost'));
+		$mockHttpRequestHandler = $this->getMock('TYPO3\FLOW3\Http\HttpRequestHandlerInterface');
+		$mockHttpRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://myhost/'))));
+		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
+		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockHttpRequestHandler));
 		$mockDomainRepository = $this->getMock('TYPO3\TYPO3\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
 		$mockSiteRepository = $this->getMock('TYPO3\TYPO3\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
 		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('environment', $mockEnvironment);
+		$contentContext->_set('bootstrap', $mockBootstrap);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
 		$contentContext->initializeObject();
@@ -55,8 +57,10 @@ class ContentContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function getLocaleReturnsByDefaultAnInternationalMultilingualLocale() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getHTTPHost')->will($this->returnValue('myhost'));
+		$mockHttpRequestHandler = $this->getMock('TYPO3\FLOW3\Http\HttpRequestHandlerInterface');
+		$mockHttpRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://myhost/'))));
+		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
+		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockHttpRequestHandler));
 
 		$mockDomainRepository = $this->getMock('TYPO3\TYPO3\Domain\Repository\DomainRepository', array(), array(), '', FALSE);
 		$mockDomainRepository->expects($this->once())->method('findByHost')->with('myhost')->will($this->returnValue(array()));
@@ -64,7 +68,7 @@ class ContentContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockSiteRepository = $this->getMock('TYPO3\TYPO3\Domain\Repository\SiteRepository', array('findFirst'), array(), '', FALSE);
 
 		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
-		$contentContext->_set('environment', $mockEnvironment);
+		$contentContext->_set('bootstrap', $mockBootstrap);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
 		$contentContext->initializeObject();
@@ -76,8 +80,10 @@ class ContentContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function initializeObjectResolvesTheBestMatchingDomainAndSetsTheCurrentSiteAndDomain() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getHTTPHost')->will($this->returnValue('myhost'));
+		$mockHttpRequestHandler = $this->getMock('TYPO3\FLOW3\Http\HttpRequestHandlerInterface');
+		$mockHttpRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://myhost/'))));
+		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
+		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockHttpRequestHandler));
 
 		$mockSite = $this->getMock('TYPO3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE);
 
@@ -96,7 +102,7 @@ class ContentContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$contentContext = $this->getMock($this->buildAccessibleProxy('TYPO3\TYPO3\Domain\Service\ContentContext'), array('dummy'), array('live'));
 		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
-		$contentContext->_set('environment', $mockEnvironment);
+		$contentContext->_set('bootstrap', $mockBootstrap);
 
 		$contentContext->initializeObject();
 
@@ -108,8 +114,10 @@ class ContentContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function initializeObjectSetsTheCurrentSiteToTheFirstSiteFoundIfNoDomainsMatchedTheCurrentRequest() {
-		$mockEnvironment = $this->getMock('TYPO3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getHTTPHost')->will($this->returnValue('myhost'));
+		$mockHttpRequestHandler = $this->getMock('TYPO3\FLOW3\Http\HttpRequestHandlerInterface');
+		$mockHttpRequestHandler->expects($this->any())->method('getHttpRequest')->will($this->returnValue(\TYPO3\FLOW3\Http\Request::create(new \TYPO3\FLOW3\Http\Uri('http://myhost/'))));
+		$mockBootstrap = $this->getMock('TYPO3\FLOW3\Core\Bootstrap', array('getActiveRequestHandler'), array(), '', FALSE);
+		$mockBootstrap->expects($this->any())->method('getActiveRequestHandler')->will($this->returnValue($mockHttpRequestHandler));
 
 		$mockSites = array(
 			$this->getMock('TYPO3\TYPO3\Domain\Model\Site', array(), array(), '', FALSE),
@@ -128,7 +136,7 @@ class ContentContextTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$contentContext->_set('objectManager', $mockObjectManager);
 		$contentContext->_set('domainRepository', $mockDomainRepository);
 		$contentContext->_set('siteRepository', $mockSiteRepository);
-		$contentContext->_set('environment', $mockEnvironment);
+		$contentContext->_set('bootstrap', $mockBootstrap);
 
 		$contentContext->initializeObject();
 
