@@ -73,6 +73,9 @@ class SiteCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @return void
 	 */
 	public function importCommand($packageKey = NULL, $filename = NULL) {
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		$this->nodeRepository->setContext($contentContext);
+
 		if ($filename !== NULL) {
 			try {
 				$this->siteImportService->importSitesFromFile($filename);

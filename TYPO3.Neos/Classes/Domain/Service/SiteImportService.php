@@ -85,38 +85,13 @@ class SiteImportService {
 	}
 
 	/**
-	 * Checks for the presence of Sites.xml in the given package and re-imports
-	 * the nodes of the live workspace.
-	 *
-	 * @param string $packageKey
-	 * @return void
-	 */
-	public function updateFromPackage($packageKey) {
-		if (!$this->packageManager->isPackageActive($packageKey)) {
-			throw new \TYPO3\TYPO3\Exception('Error: Package "' . $packageKey . '" is not active.');
-		} elseif (!file_exists('resource://' . $packageKey . '/Private/Content/Sites.xml')) {
-			throw new \TYPO3\TYPO3\Exception('Error: No content found in package "' . $packageKey . '".');
-		}
-
-		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
-		$siteNode = $contentContext->getCurrentSiteNode();
-
-		try {
-			$this->importSitesFromFile('resource://' . $packageKey . '/Private/Content/Sites.xml');
-		} catch (\Exception $exception) {
-			throw new \TYPO3\TYPO3\Exception('Error: During import an exception occured. ' . $exception->getMessage(), 1300360479, $exception);
-		}
-	}
-
-	/**
 	 * @param string $pathAndFilename
 	 * @return void
 	 */
 	public function importSitesFromFile($pathAndFilename) {
-		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		$contentContext = $this->nodeRepository->getContext();
 		$contentContext->setInvisibleContentShown(TRUE);
 		$contentContext->setInaccessibleContentShown(TRUE);
-		$this->nodeRepository->setContext($contentContext);
 
 			// no file_get_contents here because it does not work on php://stdin
 		$fp = fopen($pathAndFilename, 'rb');
