@@ -29,6 +29,12 @@ class TypoScriptService {
 	protected $typoScriptParser;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Returns a merged TypoScript object tree in the context of the given nodes
 	 *
 	 * The start node and end node mark the starting point and end point of the
@@ -40,7 +46,7 @@ class TypoScriptService {
 	 * @return array The merged object tree as of the given node
 	 */
 	public function getMergedTypoScriptObjectTree(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $startNode, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $endNode) {
-		$contentContext = $startNode->getContext();
+		$contentContext = $this->nodeRepository->getContext();
 		$parentNodes = $contentContext->getNodesOnPath($startNode->getPath(), $endNode->getPath());
 		if (!is_array($parentNodes)) {
 			return NULL;

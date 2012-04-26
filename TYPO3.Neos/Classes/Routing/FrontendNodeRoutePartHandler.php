@@ -32,6 +32,19 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 	const MATCHRESULT_INVALIDPATH = -6;
 
 	/**
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository
+	 * @return void
+	 */
+	public function injectNodeRepository(\TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository) {
+		$this->nodeRepository = $nodeRepository;
+	}
+
+	/**
 	 * Matches a frontend URI pointing to a node (for example a page).
 	 *
 	 * This function tries to find a matching node by the given relative context node path. If one was found, its
@@ -56,9 +69,14 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 			$relativeNodePath = '';
 		}
 
-		$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
-		$contentContext = new ContentContext($workspaceName);
-		$contentContext->setInvisibleContentShown(TRUE);
+		if ($this->nodeRepository->getContext() === NULL) {
+			$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
+			$contentContext = new ContentContext($workspaceName);
+			$contentContext->setInvisibleContentShown(TRUE);
+			$this->nodeRepository->setContext($contentContext);
+		} else {
+			$contentContext = $this->nodeRepository->getContext();
+		}
 
 		$workspace = $contentContext->getWorkspace(FALSE);
 		if (!$workspace) {
@@ -74,12 +92,10 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 		if (!$siteNode) {
 			return self::MATCHRESULT_NOSITENODE;
 		}
-
 		$node = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
 		if (!$node) {
 			return self::MATCHRESULT_NOSUCHNODE;
 		}
-
 		$this->value = $node->getContextPath();
 		return self::MATCHRESULT_FOUND;
 	}
@@ -139,7 +155,7 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 			}
 
 			$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
-			$contentContext = new ContentContext($workspaceName);
+			$contentContext = $this->nodeRepository->getContext();
 			if ($contentContext->getWorkspace(FALSE) === NULL) {
 				return FALSE;
 			}
@@ -147,7 +163,7 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 			$node = $contentContext->getCurrentSiteNode()->getNode($matches['NodePath']);
 		} else {
 			$node = $value;
-			$contentContext = $node->getContext();
+			$contentContext = $this->nodeRepository->getContext();
 		}
 
 		if ($node instanceof NodeInterface) {

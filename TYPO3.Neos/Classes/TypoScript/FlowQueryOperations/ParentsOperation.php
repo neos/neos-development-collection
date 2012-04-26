@@ -33,6 +33,12 @@ class ParentsOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
 	static protected $priority = 100;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @param array (or array-like object) $context onto which this operation should be applied
@@ -53,7 +59,7 @@ class ParentsOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperation
 		$output = array();
 		$outputNodePaths = array();
 		foreach ($flowQuery->getContext() as $contextNode) {
-			$siteNode = $contextNode->getContext()->getCurrentSiteNode();
+			$siteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
 			while ($contextNode->getParent() !== $siteNode) {
 				$contextNode = $contextNode->getParent();
 				if (!isset($outputNodePaths[$contextNode->getPath()])) {

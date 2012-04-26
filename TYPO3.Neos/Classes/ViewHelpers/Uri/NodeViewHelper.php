@@ -31,6 +31,12 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Render the Uri.
 	 *
 	 * @param mixed $node A node object or a node path
@@ -43,8 +49,7 @@ class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
 		$request = $this->controllerContext->getRequest();
 
 		if ($node === NULL) {
-			$currentlyRenderedNode = $this->templateVariableContainer->get('context');
-			$node = $currentlyRenderedNode->getContext()->getCurrentNode();
+			$node = $this->nodeRepository->getContext()->getCurrentNode();
 		}
 
 		if ($format === NULL) {

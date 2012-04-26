@@ -31,6 +31,12 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * @var string
 	 */
 	protected $tagName = 'a';
@@ -61,8 +67,7 @@ class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHe
 		$request = $this->controllerContext->getRequest();
 
 		if ($node === NULL) {
-			$currentlyRenderedNode = $this->templateVariableContainer->get('context');
-			$node = $currentlyRenderedNode->getContext()->getCurrentNode();
+			$node = $this->nodeRepository->getContext()->getCurrentNode();
 		}
 
 		if ($format === NULL) {

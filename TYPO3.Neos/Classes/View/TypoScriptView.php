@@ -26,6 +26,12 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	protected $typoScriptService;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view
@@ -37,7 +43,7 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 			throw new TYPO3\TYPO3\Exception('TypoScriptView needs a node as argument.', 1329736456);
 		}
 
-		$currentSiteNode = $currentNode->getContext()->getCurrentSiteNode();
+		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
 
 			// TODO: find closest folder node from this node...
 		$closestFolderNode = $currentNode;
