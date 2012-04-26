@@ -25,9 +25,9 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\FLOW3\Utility\Environment
+	 * @var \TYPO3\FLOW3\Core\Bootstrap
 	 */
-	protected $environment;
+	protected $bootstrap;
 
 	/**
 	 * @FLOW3\Inject
@@ -69,7 +69,7 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	public function initializeObject() {
 		$this->locale = new Locale('mul_ZZ');
 
-		$matchingDomains = $this->domainRepository->findByHost($this->environment->getHTTPHost());
+		$matchingDomains = $this->domainRepository->findByHost($this->bootstrap->getActiveRequestHandler()->getHttpRequest()->getUri()->getHost());
 		if (count ($matchingDomains) > 0) {
 			$this->currentDomain = $matchingDomains[0];
 			$this->currentSite = $matchingDomains[0]->getSite();
