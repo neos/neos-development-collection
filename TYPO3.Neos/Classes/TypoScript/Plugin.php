@@ -216,7 +216,7 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 		} catch (\Exception $exception) {
 			$this->systemLogger->logException($exception);
 			$message = 'Exception #' . $exception->getCode() . ' thrown while rendering ' . get_class($this) . '. See log for more details.';
-			return ($this->objectManager->getContext() === 'Development') ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
+			return ($this->objectManager->getContext()->isDevelopment()) ? ('<strong>' . $message . '</strong>') : ('<!--' . $message . '-->');
 		}
 	}
 
