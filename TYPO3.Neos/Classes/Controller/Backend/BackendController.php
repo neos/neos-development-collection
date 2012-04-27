@@ -36,7 +36,6 @@ class BackendController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * Default action of the backend controller.
 	 *
 	 * @return string
-	 * @FLOW3\SkipCsrfProtection
 	 */
 	public function indexAction() {
 		$workspaceName = $this->securityContext->getParty()->getPreferences()->get('context.workspace');
