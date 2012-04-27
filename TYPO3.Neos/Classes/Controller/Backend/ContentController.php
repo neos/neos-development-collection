@@ -55,6 +55,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @param array $settings
+	 * @return void
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -72,6 +73,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @param \TYPO3\Media\Domain\Model\Image $image
+	 * @return string
 	 */
 	public function imageWithMetadataAction(\TYPO3\Media\Domain\Model\Image $image) {
 		$thumbnail = $image->getThumbnail(500, 500);
@@ -127,6 +129,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * This action currently returns the JS configuration we need for the backend.
 	 * That's still quite unclean, but it works for now.
 	 *
+	 * @return string
 	 * @FLOW3\SkipCsrfProtection
 	 */
 	public function javascriptConfigurationAction() {
@@ -139,6 +142,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $position either "above", "below" or "inside"
 	 * @param string $type
+	 * @throws \TYPO3\TYPO3\Controller\Exception\NodeCreationException
 	 * @return string
 	 */
 	public function createAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $position, $type) {
@@ -176,10 +180,10 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 *
 	 * Inserts the defined structure for a content type.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Node $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
 	 */
-	protected function populateNode(\TYPO3\TYPO3CR\Domain\Model\Node $node) {
+	protected function populateNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
 
 			// Set default values
