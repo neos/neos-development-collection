@@ -25,7 +25,7 @@ function(launcherTemplate) {
 		__modified: false,
 		__publishable: false,
 		__status: '',
-		__titleAndModifcationState: '',
+		__titleAndModificationState: '',
 		__nodePath: null,
 		__workspacename: null,
 			// If false we don't fire any change notifications
@@ -44,7 +44,7 @@ function(launcherTemplate) {
 		 * A concatenation of title and status for the breadcrumb menu.
 		 * Triggered each time "__status" and "__title" properties change.
 		 */
-		__titleAndModifcationState: function() {
+		__titleAndModificationState: function() {
 			return this.get('__status') === '' ? this.get('__title') : this.get('__title') + ' (' + this.get('__status') + ')';
 		}.property('__status', '__title').cacheable(),
 

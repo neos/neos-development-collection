@@ -64,7 +64,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
-		template: Ember.Handlebars.compile('{{item.__titleAndModifcationState}}'),
+		template: Ember.Handlebars.compile('{{item.__titleAndModificationState}}'),
 		click: function(event) {
 			var item = this.get('item');
 			T3.Content.Model.BlockSelection.selectItem(item);
@@ -72,8 +72,6 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 			return false;
 		}
 	});
-
-
 
 	/**
 	 * T3.Content.UI.Inspector
