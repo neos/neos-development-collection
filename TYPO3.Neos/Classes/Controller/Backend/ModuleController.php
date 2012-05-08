@@ -31,7 +31,6 @@ class ModuleController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	/**
 	 * @param array $module
 	 * @return void
-	 * @todo Security
 	 */
 	public function indexAction(array $module) {
 		$moduleRequest = new ActionRequest($this->request);
