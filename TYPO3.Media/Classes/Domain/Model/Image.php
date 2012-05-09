@@ -34,7 +34,7 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 	 * @var string
 	 * @FLOW3\Validate(type="StringLength", options={ "maximum"=255 })
 	 */
-	protected $title;
+	protected $title = '';
 
 	/**
 	 * @var \TYPO3\FLOW3\Resource\Resource
