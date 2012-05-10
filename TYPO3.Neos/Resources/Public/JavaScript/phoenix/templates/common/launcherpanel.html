@@ -1,4 +1,5 @@
 <div class="three-columns tc-1-1-1">
+	{{#boundIf T3.ContentModule.showDevelopmentFeatures}}
 	<div class="c-1">
 		<div class="scroll-content">
 			<div class="t3-launcher-alternating-row t3-odd">
@@ -130,6 +131,7 @@
 		</ul>
 		<div class="t3-clear"></div>
 	</div>
+	{{/boundIf}}
 	<div class="c-3">
 		<h2>Search</h2>
 		{{#collection contentBinding="searchItems" tagName="ul" classNames="t3-launcher-panel-search"}}
