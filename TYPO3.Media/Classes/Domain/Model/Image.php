@@ -79,14 +79,28 @@ class Image implements \TYPO3\Media\Domain\Model\ImageInterface {
 
 	/**
 	 * Calculates image width, height and type from the image resource
+	 * The getimagesize() method may either return FALSE; or throw a Warning
+	 * which is translated to a \TYPO3\FLOW3\Error\Exception by FLOW3. In both
+	 * cases \TYPO3\Media\Exception\ImageFileException should be thrown.
 	 *
+	 * @throws \TYPO3\Media\Exception\ImageFileException
 	 * @return void
 	 */
 	protected function initialize() {
-		$imageSize = getimagesize('resource://' . $this->resource->getResourcePointer()->getHash());
-		$this->width = (integer)$imageSize[0];
-		$this->height = (integer)$imageSize[1];
-		$this->type = (integer)$imageSize[2];
+		try {
+			$imageSize = getimagesize('resource://' . $this->resource->getResourcePointer()->getHash());
+			if ($imageSize === FALSE) {
+				throw new \TYPO3\Media\Exception\ImageFileException('The given resource was not a valid image file', 1336662898);
+			}
+			$this->width = (integer)$imageSize[0];
+			$this->height = (integer)$imageSize[1];
+			$this->type = (integer)$imageSize[2];
+		} catch(\TYPO3\Media\Exception\ImageFileException $exception) {
+			throw $exception;
+		} catch(\TYPO3\FLOW3\Error\Exception $exception) {
+			$exceptionMessage = 'An error with code "' . $exception->getCode() . '" occured when trying to read the image: "' . $exception->getMessage() . '"';
+			throw new \TYPO3\Media\Exception\ImageFileException($exceptionMessage, 1336663970);
+		}
 	}
 
 	/**

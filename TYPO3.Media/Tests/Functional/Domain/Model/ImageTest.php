@@ -106,6 +106,18 @@ class ImageTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertEquals(50, $imageVariant->getHeight());
 	}
 
+	/**
+	 * @test
+	 * @expectedException \TYPO3\Media\Exception\ImageFileException
+	 */
+	public function constructingImageFromANonImageResourceThrowsException() {
+		$dummyImageContent = 'not an actual image';
+		$hash = sha1($dummyImageContent);
+		file_put_contents('resource://' . $hash, $dummyImageContent);
+		$mockResource = $this->createMockResourceAndPointerFromHash($hash);
+		new \TYPO3\Media\Domain\Model\Image($mockResource);
+	}
+
 
 	/**
 	 * Creates an Image object from a file using a mock resource (in order to avoid a database resource pointer entry)
@@ -116,14 +128,27 @@ class ImageTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$imagePathAndFilename = \TYPO3\FLOW3\Utility\Files::getUnixStylePath($imagePathAndFilename);
 		$hash = sha1_file($imagePathAndFilename);
 		copy($imagePathAndFilename, 'resource://' . $hash);
+		$mockResource = $this->createMockResourceAndPointerFromHash($hash);
+
+		return new \TYPO3\Media\Domain\Model\Image($mockResource);
+	}
+
+	/**
+	 * Creates a mock ResourcePointer and Resource from a given hash.
+	 * Make sure that a file representation already exists, e.g. with
+	 * file_put_content('resource://' . $hash) before
+	 *
+	 * @param string $hash
+	 * @return \TYPO3\FLOW3\Resource\Resource
+	 */
+	protected function createMockResourceAndPointerFromHash($hash) {
 		$resourcePointer = new \TYPO3\FLOW3\Resource\ResourcePointer($hash);
 
 		$mockResource = $this->getMock('TYPO3\FLOW3\Resource\Resource', array('getResourcePointer'));
 		$mockResource->expects($this->any())
-			->method('getResourcePointer')
-			->will($this->returnValue($resourcePointer));
-
-		return new \TYPO3\Media\Domain\Model\Image($mockResource);
+				->method('getResourcePointer')
+				->will($this->returnValue($resourcePointer));
+		return $mockResource;
 	}
 
 	/**

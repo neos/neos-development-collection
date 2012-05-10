@@ -67,13 +67,17 @@ class ImageConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeCon
 	 * @param string $targetType must be 'TYPO3\Media\Domain\Model\Image'
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
-	 * @return \TYPO3\Media\Domain\Model\Image the converted image or NULL if type conversion failed
+	 * @return \TYPO3\Media\Domain\Model\Image|\TYPO3\FLOW3\Validation\Error The converted Image, a Validation Error or NULL
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (!isset($convertedChildProperties['resource']) || !$convertedChildProperties['resource'] instanceof \TYPO3\FLOW3\Resource\Resource) {
 			return NULL;
 		}
-		return new \TYPO3\Media\Domain\Model\Image($convertedChildProperties['resource']);
+		try {
+			return new \TYPO3\Media\Domain\Model\Image($convertedChildProperties['resource']);
+		} catch(\TYPO3\Media\Exception\ImageFileException $exception) {
+			return new \TYPO3\FLOW3\Validation\Error($exception->getMessage(), $exception->getCode());
+		}
 	}
 
 }
