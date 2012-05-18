@@ -12,7 +12,7 @@ Aloha.ready(function() {
 		[
 		'order!Library/jquery-ui/js/jquery-ui-1.8.16.custom.min',
 		'css!Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css',
-		'order!Library/emberjs/ember',
+		'order!Library/emberjs/ember-0.9.7' + (window.localStorage.showDevelopmentFeatures === 'true' ? '' : '.min'),
 		'order!Library/jquery-lionbars/jQuery.lionbars.0.2.1',
 		'order!phoenix/contentmodule'],
 		function() {
