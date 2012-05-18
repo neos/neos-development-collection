@@ -59,6 +59,13 @@ function() {
 			window.PhoenixAlohaPlugin.start();
 			this._initializeAlohaBlocksAndUpdateUi();
 
+			$('.t3-contentelement').live('dblclick', function(event) {
+				if ($('.t3-primary-editor-action').length > 0) {
+					$('.t3-primary-editor-action').click();
+				}
+				event.preventDefault();
+			});
+
 			$('body').addClass('t3-ui-controls-active');
 			$('body').addClass('t3-backend');
 

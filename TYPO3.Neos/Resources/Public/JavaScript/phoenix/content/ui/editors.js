@@ -118,6 +118,8 @@ function(fileUploadTemplate, imageUploadTemplate) {
 
 		popoverPosition: 'left',
 
+		classNames: ['t3-primary-editor-action'],
+
 		onPopoverOpen: function() {
 			var that = this,
 				id = this.get(Ember.GUID_KEY);
