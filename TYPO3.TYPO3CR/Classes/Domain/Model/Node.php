@@ -972,7 +972,7 @@ class Node implements NodeInterface {
 			return NULL;
 		}
 
-		if (!$this->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
+		if (!$node->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
 			return NULL;
 		}
 		return $node;
