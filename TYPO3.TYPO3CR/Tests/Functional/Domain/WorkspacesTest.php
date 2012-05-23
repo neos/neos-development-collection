@@ -24,11 +24,6 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 * @var \TYPO3\TYPO3\Domain\Service\ContentContext
-	 */
-	protected $personalContext;
-
-	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
@@ -43,11 +38,11 @@ class WorkspacesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		$this->personalContext = new \TYPO3\TYPO3CR\Domain\Service\Context('user-robert');
-		$this->objectManager->forgetInstance('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
+		$personalContext = new \TYPO3\TYPO3CR\Domain\Service\Context('user-robert');
 		$this->nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
-		$this->nodeRepository->setContext($this->personalContext);
-		$this->rootNode = $this->personalContext->getWorkspace()->getRootNode();
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this->nodeRepository, 'context', $personalContext, TRUE);
+		$this->rootNode = $personalContext->getWorkspace()->getRootNode();
+		$this->persistenceManager->persistAll();
 	}
 
 	/**
