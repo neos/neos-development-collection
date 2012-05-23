@@ -25,12 +25,15 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
-	 *
 	 * @var boolean
 	 */
 	protected $testableHttpEnabled = TRUE;
 
+	/**
+	 * @var boolean
+	 */
 	protected $testableSecurityEnabled = TRUE;
+
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
@@ -38,7 +41,8 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 	public function setUp() {
 		parent::setUp();
-
+		$nodeRepository = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Repository\NodeRepository');
+		\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($nodeRepository, 'context', new \TYPO3\TYPO3\Domain\Service\ContentContext('live'), TRUE);
 		$siteImportService = $this->objectManager->get('TYPO3\TYPO3\Domain\Service\SiteImportService');
 		$siteImportService->importSitesFromFile(__DIR__ . '/Fixtures/NodeStructure.xml');
 		$this->persistenceManager->persistAll();
