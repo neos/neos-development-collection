@@ -26,6 +26,11 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	static protected $testablePersistenceEnabled = TRUE;
 
 	/**
+	 * @var boolean
+	 */
+	protected $testableHttpEnabled = TRUE;
+
+	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
