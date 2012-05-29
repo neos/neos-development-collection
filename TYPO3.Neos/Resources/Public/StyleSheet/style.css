@@ -3776,7 +3776,6 @@ button.t3-button[disabled],
 .t3-handle-hidden {
   display: none !important; }
 
-.aloha-block-TYPO3Block.t3-contentelement.aloha-block,
 .aloha-block-TYPO3Block.t3-contentelement.aloha-block:hover {
   -webkit-box-shadow: 0 0 0 1px #373737;
   -moz-box-shadow: 0 0 0 1px #373737;
