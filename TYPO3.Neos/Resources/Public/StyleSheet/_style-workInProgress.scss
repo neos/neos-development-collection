@@ -184,3 +184,37 @@ button.t3-button.t3-connection-status-up {
 button.t3-button.t3-connection-status-down {
 	border: 1px solid #c02f00;
 }
+
+// Content element overlay
+.t3-contentelement-overlay {
+	position: absolute;
+	display: none;
+	@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
+
+	.t3-contentelement-overlay-icon {
+		display: none;
+		width: 32px;
+		height: 32px;
+
+		margin: auto;
+		position: relative;
+		top: 35%;
+		background-repeat: no-repeat;
+		background-position: center;
+		cursor: pointer;
+		@include user-select(none);
+	}
+}
+
+.t3-aloha-block-over {
+	.t3-contentelement-overlay {
+		display: inline-block;
+	}
+	.t3-contentelement-overlay-icon {
+		display: block;
+	}
+}
+
+.typo3-typo3-html .t3-contentelement-overlay-icon {
+	background-image: url('../Images/Icons/White/brackets_icon-16.png');
+}

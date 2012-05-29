@@ -27,6 +27,22 @@ function(block) {
 		_caseSensitivePropertyNameCache: null,
 
 		/**
+		 * Activate the block
+		 *
+		 * This method is a wrapper of the Aloha block activate method, we use
+		 * this to prevent reactivating the currently selected block.
+		 */
+		activate: function(eventTarget, event) {
+			if ($(eventTarget).parents('.aloha-block').length
+				&& $(eventTarget).parents('.aloha-block').attr('data-__nodePath') == T3.Content.Model.BlockSelection.get('selectedBlock').__nodePath) {
+					// Don't reactivate the current selected block
+				return;
+			}
+
+			this._super(eventTarget, event);
+		},
+
+		/**
 		 * Receive the content type schema; and also build up the _caseSensitivePropertyNameCache
 		 */
 		_getContentTypeSchema: function() {
@@ -92,6 +108,26 @@ function(block) {
 			});
 
 			this.renderHandles();
+			this.renderOverlay();
+		},
+
+		/**
+		 * Renders the block overlay for elements which
+		 * have no inline editable properties
+		 *
+		 * @return {void}
+		 */
+		renderOverlay: function() {
+			if (typeof this._getContentTypeSchema().inlineEditableProperties === 'undefined') {
+				var overlay = $('<div />', {
+					'class': 't3-contentelement-overlay',
+					'css': {
+						'width': this.$element.width(),
+						'height': this.$element.height()
+					}
+				}).prependTo(this.$element);
+				$('<span />', {'class': 't3-contentelement-overlay-icon'}).appendTo(overlay);
+			}
 		},
 
 		/**
