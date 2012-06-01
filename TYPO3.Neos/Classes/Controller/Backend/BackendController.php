@@ -46,8 +46,10 @@ class BackendController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 		if (isset($_COOKIE['TYPO3_lastVisitedUri'])) {
 			$redirectUri = $_COOKIE['TYPO3_lastVisitedUri'];
-			if (!strpos($redirectUri, '@')) {
+			if (!strpos($redirectUri, '@') && strpos($redirectUri, '.html') !== FALSE) {
 				$redirectUri = str_replace('.html', '@' . $workspaceName . '.html', $redirectUri);
+			} elseif (!strpos($redirectUri, '@')) {
+				$redirectUri .= '@' . $workspaceName;
 			}
 			$this->redirectToUri($redirectUri);
 		} else {
