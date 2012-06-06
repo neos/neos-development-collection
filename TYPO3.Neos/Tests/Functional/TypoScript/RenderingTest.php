@@ -158,7 +158,7 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 
 	protected function assertTeaserConformsToBasicRendering($output) {
-		$this->assertContains('TYPO3 is based on FLOW3, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
+		$this->assertContains('TYPO3 Phoenix is based on FLOW3, a powerful PHP application framework licensed under the GNU/LGPL.', $output);
 		$this->assertSelectEquals('h1', 'Home', TRUE, $output);
 		$this->assertSelectEquals('.teaser > .typo3-typo3-textwithheadline > h1', 'Welcome to this example', TRUE, $output);
 		$this->assertSelectEquals('.teaser > .typo3-typo3-textwithheadline > div', 'This is our exemplary rendering test.', TRUE, $output);
