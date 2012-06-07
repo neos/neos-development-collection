@@ -14,13 +14,25 @@ namespace TYPO3\Media\Validator;
 use TYPO3\Flow\Annotations as Flow;
 
 /**
- * Validator that checks the orientation (square, portrait, landscape) of a given image
+ * Validator that checks the orientation (square, portrait, landscape) of a given image.
+ *
  * Supported validator options are (array)allowedOrientations with one or two out of 'square', 'landcape' or 'portrait'.
- * Example:
- * [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageOrientationValidator", options={ "allowedOrientations"={"square", "landscape"} })
+ *
+ * *Example*::
+ *
+ *   [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageOrientationValidator",
+ *         options={ "allowedOrientations"={"square", "landscape"} })
+ *
  * this would refuse an image that is in portrait orientation, but allow landscape and square ones.
  */
 class ImageOrientationValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
+
+	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'allowedOrientations' => array(array(), 'Array of image orientations, one or two out of \'square\', \'landcape\' or \'portrait\'', 'array', TRUE)
+	);
 
 	/**
 	 * The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the

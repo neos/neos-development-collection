@@ -15,11 +15,18 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Validator that checks the type of a given image
- * Supported validator options are (array)allowedTypes with one or more of PHP's IMAGETYPE_* constants.
+ *
  * Example:
  * [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageTypeValidator", options={ "allowedTypes"={"jpeg", "png"} })
  */
 class ImageTypeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
+
+	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'allowedTypes' => array(NULL, 'Allowed image types (using the IMAGETYPE_* constants)', 'array', TRUE)
+	);
 
 	/**
 	 * The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the

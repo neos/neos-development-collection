@@ -15,17 +15,23 @@ use TYPO3\Flow\Annotations as Flow;
 
 /**
  * Validator that checks size (resolution) of a given image
- * Supported validator options are
- *   - (integer)minimumWidth
- *   - (integer)minimumHeight
- *   - (integer)maximumWidth
- *   - (integer)maximumHeight
- *   - (integer)minimumResolution
- *   - (integer)maximumResolution
+ *
  * Example:
  * [at]Flow\Validate("$image", type="\TYPO3\Media\Validator\ImageSizeValidator", options={ "minimumWidth"=150, "maximumResolution"=60000 })
  */
 class ImageSizeValidator extends \TYPO3\Flow\Validation\Validator\AbstractValidator {
+
+	/**
+	 * @var array
+	 */
+	protected $supportedOptions = array(
+		'minimumWidth' => array(NULL, 'The minimum width of the image', 'integer'),
+		'minimumHeight' => array(NULL, 'The minimum height of the image', 'integer'),
+		'maximumWidth' => array(NULL, 'The maximum width of the image', 'integer'),
+		'maximumHeight' => array(NULL, 'The maximum height of the image', 'integer'),
+		'minimumResolution' => array(NULL, 'The minimum resolution of the image', 'integer'),
+		'maximumResolution' => array(NULL, 'The maximum resolution of the image', 'integer')
+	);
 
 	/**
 	 * The given $value is valid if it is an \TYPO3\Media\Domain\Model\ImageInterface of the configured resolution
