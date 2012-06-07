@@ -16,7 +16,7 @@ and they are probably not what you expected. They are sprint releases, following
 iteration in our Scrum-based project management. As such they are complete releases,
 doing everything they are supposed to do, *according to the goals of their sprint*.
 
-They are not, releases of TYPO3 Phoenix, though - as you would probably laugh about the feaure
+They are not, releases of TYPO3 Phoenix, though - as you would probably laugh about the feature
 set, then...
 
 System Overview
@@ -26,10 +26,10 @@ TYPO3 Phoenix is made up of packages and based on the FLOW3 framework. Most of t
 are part of the FLOW3 base system, TYPO3 Phoenix consists of a few additional packages, like
 TYPO3 and TypoScript, in which the actual CMS functionality is contained. The templates,
 graphics and content of the demo site are in another package. Generally, all static website
-resouces (including templates, TypoScript and Images) can be found in separate packages for
+resources (including templates, TypoScript and Images) can be found in separate packages for
 each website.
 
-.. figure:: /Images/Quickstart/SystemStructure.png
+.. figure:: /Images/GettingStarted/SystemStructure.png
 	:align: right
 	:width: 200pt
 	:alt: The TYPO3 Phoenix system structure
