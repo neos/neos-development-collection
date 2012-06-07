@@ -83,7 +83,7 @@ class SiteCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 				$this->outputLine('Error: During the import of the file "%s" an exception occurred: %s', array($filename, $exception->getMessage()));
 				$this->quit(1);
 			}
-		} else if ($packageKey !== NULL) {
+		} elseif ($packageKey !== NULL) {
 			try {
 				$this->siteImportService->importFromPackage($packageKey);
 			} catch (\Exception $exception) {
@@ -105,6 +105,9 @@ class SiteCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	 * @return void
 	 */
 	public function exportCommand() {
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		$this->nodeRepository->setContext($contentContext);
+
 		$sites = $this->siteRepository->findAll();
 		$this->response->setContent($this->siteExportService->export($sites->toArray()));
 	}
