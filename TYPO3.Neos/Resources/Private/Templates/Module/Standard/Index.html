@@ -3,12 +3,25 @@
 
 <f:section name="content">
 	<f:if condition="{moduleConfiguration.submodules}">
-		<ul>
-			<f:for each="{moduleConfiguration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
-				<li>
-					<t:link.module path="{moduleConfiguration.path}/{submoduleIdentifier}">{submoduleConfiguration.label}</t:link.module>
-				</li>
-			</f:for>
-		</ul>
+		<f:for each="{moduleConfiguration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
+			<f:cycle values="{0: 1, 1: 2, 2: 3}" as="cycle">
+				<f:if condition="{cycle} == 1">
+					<div class="row">
+				</f:if>
+				<div class="span4">
+					<t:standaloneView templatePathAndFilename="{f:if(condition: submoduleConfiguration.widgetTemplatePathAndFileName, then: submoduleConfiguration.widgetTemplatePathAndFileName, else: settings.moduleConfiguration.widgetTemplatePathAndFileName)}" arguments="{moduleConfiguration: moduleConfiguration, submoduleIdentifier: submoduleIdentifier, submoduleConfiguration: submoduleConfiguration}" />
+				</div>
+				<f:if condition="{iterator.isLast}">
+					<f:then>
+						</div>
+					</f:then>
+					<f:else>
+						<f:if condition="{cycle} == 3">
+							</div>
+						</f:if>
+					</f:else>
+				</f:if>
+			</f:cycle>
+		</f:for>
 	</f:if>
 </f:section>

@@ -4325,6 +4325,53 @@ button.t3-button.t3-connection-status-down {
 .typo3-typo3-html .t3-contentelement-overlay-icon {
   background-image: url("../Images/Icons/White/brackets_icon-16.png"); }
 
+.t3-ui .widget {
+  overflow: auto;
+  margin-bottom: 20px;
+  background-color: #ffffff;
+  border: 1px solid #999;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  *border: 1px solid #999;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding-box;
+  background-clip: padding-box; }
+  .t3-ui .widget .widget-header {
+    padding: 9px 15px;
+    border-bottom: 1px solid #eee; }
+    .t3-ui .widget .widget-header h3 {
+      margin: 0; }
+  .t3-ui .widget .widget-body {
+    max-height: 400px;
+    padding: 15px;
+    overflow-y: auto; }
+  .t3-ui .widget .widget-footer {
+    padding: 14px 15px 15px;
+    margin-bottom: 0;
+    text-align: right;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+    *zoom: 1;
+    -webkit-box-shadow: inset 0 1px 0 #ffffff;
+    -moz-box-shadow: inset 0 1px 0 #ffffff;
+    box-shadow: inset 0 1px 0 #ffffff; }
+  .t3-ui .widget .widget-footer:before,
+  .t3-ui .widget .widget-footer:after {
+    display: table;
+    content: ""; }
+  .t3-ui .widget .widget-footer:after {
+    clear: both; }
+  .t3-ui .widget .widget-footer .btn + .btn {
+    margin-bottom: 0;
+    margin-left: 5px; }
+  .t3-ui .widget .widget-footer .btn-group .btn + .btn {
+    margin-left: -1px; }
+
 .popover {
   position: absolute;
   display: none;

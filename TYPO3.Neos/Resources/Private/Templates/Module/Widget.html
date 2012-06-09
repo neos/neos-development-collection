@@ -1,0 +1,25 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<div class="widget">
+	<div class="widget-header">
+		<f:if condition="{submoduleConfiguration.icon}">
+			<img src="{f:uri.resource(uri: submoduleConfiguration.icon)}" class="pull-right" />
+		</f:if>
+		<h3>
+			<t:link.module path="{moduleConfiguration.path}/{submoduleIdentifier}">
+				{submoduleConfiguration.label}
+			</t:link.module>
+		</h3>
+	</div>
+	<f:if condition="{submoduleConfiguration.description}">
+		<div class="widget-body">
+			<p>{submoduleConfiguration.description}</p>
+		</div>
+	</f:if>
+	<f:if condition="{submoduleConfiguration.actions}">
+		<div class="widget-footer">
+			<f:for each="{submoduleConfiguration.actions}" as="actionConfiguration" key="submoduleAction">
+				<t:link.module title="{actionConfiguration.title}" class="btn btn-primary" path="{f:if(condition: actionConfiguration.path, then: actionConfiguration.path, else: '{moduleConfiguration.path}/{submoduleIdentifier}/{submoduleAction}')}">{actionConfiguration.label}</t:link.module>
+			</f:for>
+		</div>
+	</f:if>
+</div>
