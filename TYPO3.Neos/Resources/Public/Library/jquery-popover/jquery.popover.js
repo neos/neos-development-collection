@@ -253,6 +253,8 @@
 			}
 
 			settings.popover$.addClass('t3-popover-' + settings.positioning);
+
+			settings.popover$.addClass('t3-ui');
 			// TYPO3 SPECIFIC FIX STOP
 
 			// set popover css and show it

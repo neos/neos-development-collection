@@ -126,6 +126,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 
 					this.$().dialog({
 						modal: true,
+						dialogClass: 't3-ui',
 						zIndex: 11001,
 						title: title,
 						close: function() {
