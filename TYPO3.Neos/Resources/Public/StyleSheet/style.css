@@ -4389,6 +4389,8 @@ button.t3-button.t3-connection-status-down {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
+  .popover > .header h1, .popover > .header h2, .popover > .header h3 {
+    color: #fff; }
 
 .popover > .content {
   min-width: 15em;

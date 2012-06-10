@@ -51,6 +51,9 @@
 	background-color: #373737;
 	text-align: left;
 	@include box-sizing(border-box);
+	h1, h2, h3 {
+		color: #fff;
+	}
 }
 .popover > .content {
   min-width: 15em;

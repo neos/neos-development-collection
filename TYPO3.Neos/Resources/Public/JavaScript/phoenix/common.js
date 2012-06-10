@@ -298,7 +298,7 @@ function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTem
 			var handlerEvents = $handle.data('events');
 			if (!handlerEvents['showPopover']) {
 					// Set popover content
-				that._options.header = (options.title) ? '<h1>' + options.title + '</h1>': null;
+				that._options.header = (options.title) ? '<h4>' + options.title + '</h4>': null;
 				that._options.content = $(options.content === undefined ? '<div />' : '<div>' + options.content + '</div>');
 
 				var view = Ember.View.create({
