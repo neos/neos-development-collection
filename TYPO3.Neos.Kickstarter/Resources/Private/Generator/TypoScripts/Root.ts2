@@ -1,0 +1,28 @@
+include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/All.ts2
+
+/**
+ * Root TypoScript template for the {siteName} Site
+ */
+page = TYPO3.TYPO3:Page
+
+page.headerData {
+	stylesheets = TYPO3.TypoScript:FluidRenderer
+	stylesheets {
+		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+		sectionName = 'stylesheets'
+	}
+}
+
+page.body {
+	templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
+	sectionName = 'body'
+	parts {
+		menu = TYPO3.TYPO3:MenuRenderer
+		breadcrumb = TYPO3.TYPO3:Breadcrumb
+	}
+		// This are your content areas, you can define as many as you want, just name them and the nodePath.
+	sections {
+		main = TYPO3.TYPO3:Section
+		main.nodePath = 'main'
+	}
+}
