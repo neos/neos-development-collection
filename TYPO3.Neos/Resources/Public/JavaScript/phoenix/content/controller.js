@@ -490,10 +490,9 @@ function() {
 			block.hideHandle('remove-from-cut');
 			block.hideHandle('remove-from-copy');
 			$('.t3-paste-before-handle, .t3-paste-after-handle').addClass('t3-handle-hidden');
+			$('.t3-add-above-handle, .t3-add-below-handle').removeClass('t3-handle-hidden');
 			block.showHandle('cut');
 			block.showHandle('copy');
-			block.showHandle('add-above');
-			block.showHandle('add-below');
 		},
 
 		/**
@@ -523,8 +522,7 @@ function() {
 					block.showHandle('remove-from-copy');
 				}
 				$('.t3-paste-before-handle, .t3-paste-after-handle').removeClass('t3-handle-hidden');
-				block.hideHandle('add-above');
-				block.hideHandle('add-below');
+				$('.t3-add-above-handle, .t3-add-below-handle').addClass('t3-handle-hidden');
 			} catch (error) {
 				// TODO: HACK! Somehow this is a DOMWindow on first load of the page
 				setTimeout(this.onClipboardChange, 500);
