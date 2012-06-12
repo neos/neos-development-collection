@@ -290,11 +290,23 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 					$foundNodes[$addedNode->getIdentifier()] = $addedNode;
 				}
 			}
+			foreach ($this->removedNodes as $removedNode) {
+				if (isset($foundNodes[$removedNode->getIdentifier()])) {
+					unset($foundNodes[$removedNode->getIdentifier()]);
+				}
+			}
 		} else {
 			$childNodeDepth = substr_count($parentPath, '/') + 1;
 			foreach ($this->addedNodes as $addedNode) {
 				if ($addedNode->getDepth() === $childNodeDepth && substr($addedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
 					$foundNodes[$addedNode->getIdentifier()] = $addedNode;
+				}
+			}
+			foreach ($this->removedNodes as $removedNode) {
+				if ($removedNode->getDepth() === $childNodeDepth && substr($removedNode->getPath(), 0, strlen($parentPath) + 1) === ($parentPath . '/')) {
+					if (isset($foundNodes[$removedNode->getIdentifier()])) {
+						unset($foundNodes[$removedNode->getIdentifier()]);
+					};
 				}
 			}
 		}
