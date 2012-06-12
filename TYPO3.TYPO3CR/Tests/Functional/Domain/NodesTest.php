@@ -482,12 +482,12 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$nodes[4] = $liveParentNode->createNode('node004');
 		$nodes[4]->setIndex(5);
 
-		$this->persistenceManager->persistAll();
+		$this->nodeRepository->persistEntities();
 
 		$nodes[1]->moveAfter($nodes[2]);
 		$nodes[3]->moveAfter($nodes[2]);
 
-		$this->persistenceManager->persistAll();
+		$this->nodeRepository->persistEntities();
 
 		$actualChildNodes = $liveParentNode->getChildNodes();
 
@@ -522,6 +522,7 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		}
 		$this->persistenceManager->persistAll();
 
+		ksort($nodes);
 		$actualChildNodes = $liveParentNode->getChildNodes();
 		$this->assertSameOrder($nodes, $actualChildNodes);
 	}
@@ -545,11 +546,7 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		foreach ($actualNodes as $actualNode) {
 			$expectedNode = current($expectedNodes);
 			if ($expectedNode->getPath() !== $actualNode->getPath()) {
-				echo "\nActual node indexes:\n";
-				foreach ($actualNodes as $actualNode) {
-					printf("Node %s has index %s\n", $actualNode->getPath(), $actualNode->getIndex());
-				}
-				$this->fail(sprintf('Expected node %s (index %s), actual node %s (index %s)', $expectedNode->getName(), $expectedNode->getIndex(), $actualNode->getName(), $actualNode->getIndex()));
+				$this->fail(sprintf('Expected node %s (index %s), actual node %s (index %s)', $expectedNode->getPath(), $expectedNode->getIndex(), $actualNode->getPath(), $actualNode->getIndex()));
 			}
 			next($expectedNodes);
 		}

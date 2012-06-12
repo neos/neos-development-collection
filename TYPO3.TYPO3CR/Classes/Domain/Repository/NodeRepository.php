@@ -369,16 +369,10 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @return integer The currently highest index
 	 */
 	protected function findHighestIndexInLevel($parentPath) {
+		$this->persistEntities();
 		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath');
 		$query->setParameter('parentPath', $parentPath);
-		$highestIndex = $query->getSingleScalarResult() ?: 0;
-
-		foreach ($this->addedNodes as $node) {
-			if ($node->getParentPath() === $parentPath && $node->getIndex() > $highestIndex) {
-				$highestIndex = $node->getIndex();
-			}
-		}
-		return $highestIndex;
+		return $query->getSingleScalarResult() ?: 0;
 	}
 
 	/**
@@ -393,19 +387,11 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @return integer The currently next lower index
 	 */
 	protected function findNextLowerIndex($parentPath, $referenceIndex) {
+		$this->persistEntities();
 		$query = $this->entityManager->createQuery('SELECT MAX(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath AND n.index < :referenceIndex');
 		$query->setParameter('parentPath', $parentPath);
 		$query->setParameter('referenceIndex', $referenceIndex);
-		$nextLowerIndex = $query->getSingleScalarResult() ?: 0;
-
-		foreach ($this->addedNodes as $node) {
-			$otherIndex = $node->getIndex();
-			if ($node->getParentPath() === $parentPath && $otherIndex > $nextLowerIndex && $otherIndex < $referenceIndex) {
-				$nextLowerIndex = $otherIndex;
-			}
-		}
-
-		return $nextLowerIndex;
+		return $query->getSingleScalarResult() ?: 0;
 	}
 
 	/**
@@ -420,20 +406,11 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @return integer The currently next higher index
 	 */
 	protected function findNextHigherIndex($parentPath, $referenceIndex) {
+		$this->persistEntities();
 		$query = $this->entityManager->createQuery('SELECT MIN(n.index) FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.parentPath = :parentPath AND n.index > :referenceIndex');
-		$query->setMaxResults(1);
 		$query->setParameter('parentPath', $parentPath);
 		$query->setParameter('referenceIndex', $referenceIndex);
-		$nextHigherIndex = $query->getSingleScalarResult() ?: NULL;
-
-		foreach ($this->addedNodes as $node) {
-			$otherIndex = $node->getIndex();
-			if ($node->getParentPath() === $parentPath && ($nextHigherIndex === NULL || $otherIndex < $nextHigherIndex) && $otherIndex > $referenceIndex) {
-				$nextHigherIndex = $otherIndex;
-			}
-		}
-
-		return $nextHigherIndex;
+		return $query->getSingleScalarResult() ?: NULL;
 	}
 
 	/**
@@ -681,6 +658,32 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 */
 	public function getContext() {
 		return $this->context;
+	}
+
+	/**
+	 * Persists all entities managed by the repository and all cascading dependencies
+	 *
+	 * @return void
+	 */
+	public function persistEntities() {
+		foreach ($this->entityManager->getUnitOfWork()->getIdentityMap() as $className => $entities) {
+			if ($className === $this->entityClassName) {
+				foreach ($entities as $entityToPersist) {
+					$this->entityManager->flush($entityToPersist);
+				}
+				$this->emitRepositoryObjectsPersisted();
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Signals that persistEntities() in this repository finished correctly.
+	 *
+	 * @FLOW3\Signal
+	 * @return void
+	 */
+	protected function emitRepositoryObjectsPersisted() {
 	}
 }
 ?>
