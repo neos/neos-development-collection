@@ -7,7 +7,6 @@ prototype(TYPO3.TypoScript:CollectionRenderer) {
 prototype(TYPO3.TYPO3:Section) < prototype(TYPO3.TypoScript:CollectionRenderer)
 prototype(TYPO3.TYPO3:Section) {
 	implementationClassName = 'TYPO3\\TYPO3\\TypoScript\\Section'
-
 	collection = ${context.children(this.getNodePath()).children()}
 }
 
@@ -17,14 +16,12 @@ prototype(TYPO3.TypoScript:Case).matchers.999999999999 {
 	type = ${context.property('_contentType')}
 }
 
-
 # HTML TS Object
 prototype(TYPO3.TYPO3:Html) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TYPO3:Html) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/HtmlTemplate.html'
 	source = ${context.property('source')}
 }
-
 
 # Page TS Object
 prototype(TYPO3.TYPO3:Page) < prototype(TYPO3.TypoScript:FluidRenderer)
@@ -59,6 +56,6 @@ prototype(TYPO3.TYPO3:TextWithImage) {
 # Breadcrumb TS Object
 prototype(TYPO3.TYPO3:Breadcrumb) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TYPO3:Breadcrumb) {
-		templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
-		items = ${context.parents().add(context)}
-	}
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
+	items = ${context.add(context.parents())}
+}

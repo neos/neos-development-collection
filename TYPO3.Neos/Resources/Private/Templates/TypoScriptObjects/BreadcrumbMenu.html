@@ -1,6 +1,6 @@
 {namespace t=TYPO3\TYPO3\ViewHelpers}
 <f:if condition="{items}">
-	<f:for each="{items}" as="item">
+	<f:for each="{items}" as="item" reverse="1">
 		&gt; <t:link.node node="{item}">{item.label}</t:link.node>
 	</f:for>
 </f:if>
