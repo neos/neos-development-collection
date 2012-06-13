@@ -91,8 +91,10 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @api
 	 */
 	public function add($object) {
+		if ($this->removedNodes->contains($object)) {
+			$this->removedNodes->detach($object);
+		}
 		$this->addedNodes->attach($object);
-		$this->removedNodes->detach($object);
 		parent::add($object);
 	}
 
@@ -130,6 +132,8 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $path Absolute path of the node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The matching node if found, otherwise NULL
+	 * @throws \InvalidArgumentException
+	 * @throws \TYPO3\TYPO3CR\Exception
 	 */
 	public function findOneByPath($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($path) === 0 || ($path !== '/' && ($path[0] !== '/' || substr($path, -1, 1) === '/'))) {
@@ -140,7 +144,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			return $workspace->getRootNode();
 		}
 
-		while($workspace !== NULL) {
+		while ($workspace !== NULL) {
 
 			foreach ($this->addedNodes as $node) {
 				if ($node->getPath() === $path && $node->getWorkspace() === $workspace) {
@@ -186,6 +190,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param integer $position The position the new index should reflect, must be one of the POSITION_* constants
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode The reference node. Mandatory for POSITION_BEFORE and POSITION_AFTER
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 */
 	public function setNewIndex(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $position, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode = NULL) {
 		$parentPath = $node->getParentPath();
@@ -307,6 +312,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 *
 	 * @param string $parentPath Path to the parent node
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 */
 	protected function renumberIndexesInLevel($parentPath) {
 		$this->systemLogger->log(sprintf('Renumbering nodes in level below %s.', $parentPath), LOG_INFO);
@@ -492,6 +498,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $pathEndPoint Absolute path specifying the end point
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return array<\TYPO3\TYPO3\Domain\Model\Node> The nodes found on the given path
+	 * @throws \InvalidArgumentException
 	 */
 	public function findOnPath($pathStartingPoint, $pathEndPoint, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if ($pathStartingPoint !== substr($pathEndPoint, 0, strlen($pathStartingPoint))) {
@@ -501,7 +508,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 		$foundNodes = array();
 		$pathSegments = explode('/', substr($pathEndPoint, strlen($pathStartingPoint)));
 
-		while($workspace !== NULL && count($foundNodes) < count($pathSegments)) {
+		while ($workspace !== NULL && count($foundNodes) < count($pathSegments)) {
 			$query = $this->createQuery();
 			$pathConstraints = array();
 			$constraintPath = $pathStartingPoint;
@@ -585,6 +592,7 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	 * @param string $contentTypeFilter Filter the content type of the nodes, allows complex expressions (e.g. "TYPO3.TYPO3:Page", "!TYPO3.TYPO3:Page,TYPO3.TYPO3:Text" or NULL)
 	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
 	 * @return \TYPO3\FLOW3\Persistence\QueryInterface The query
+	 * @throws \InvalidArgumentException
 	 */
 	protected function createQueryForFindByParentAndContentType($parentPath, $contentTypeFilter, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
 		if (strlen($parentPath) === 0 || ($parentPath !== '/' && ($parentPath[0] !== '/' || substr($parentPath, -1, 1) === '/'))) {
