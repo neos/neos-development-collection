@@ -46,6 +46,7 @@
 			if ($.fn.popover.openedPopup != null
 				&& ($(event.target).parents('.popover').length == 0)
 				&& (!$(event.target).hasClass('popover-button'))
+				&& (!$(event.target).parents('.popover-button'))
 				&& (!$(event.target).hasClass('dynatree-expander'))) {
 				$.fn.popover.openedPopup.trigger('hidePopover');
 			}
