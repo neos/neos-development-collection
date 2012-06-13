@@ -298,7 +298,7 @@ function() {
 	 */
 	var BlockActions = Ember.Object.create({
 
-		// TODO: Move this to a separete controller
+		// TODO: Move this to a separate controller
 		_clipboard: null,
 
 		/**
@@ -312,8 +312,6 @@ function() {
 		},
 		deleteBlock: function(nodePath, $handle) {
 			var that = this;
-			$handle.addClass('t3-handle-loading');
-
 			T3.Common.Dialog.openConfirmPopover({
 				title: 'Are you sure you want to remove this content element?',
 				content: 'If you remove this element you can restore it using undo',
@@ -328,13 +326,8 @@ function() {
 							}
 						}
 					);
-				},
-				onDialogOpen: function() {
-					$handle.removeClass('t3-handle-loading');
 				}
 			}, $handle);
-
-
 		},
 
 		addAbove: function(nodePath, $handle) {
