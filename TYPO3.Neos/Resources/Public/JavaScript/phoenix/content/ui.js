@@ -155,9 +155,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 
 		render: function() {
 			var typeDefinition = T3.Configuration.UserInterface[this.propertyDefinition.type];
-			if (!typeDefinition) {
-				throw {message: 'Type defaults for "' + this.propertyDefinition.type + '" not found', code: 1316346119};
-			}
+			ember_assert('Type defaults for "' + this.propertyDefinition.type + '" not found1', !!typeDefinition);
 
 			var editorConfigurationDefinition = typeDefinition;
 			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface) {
@@ -165,9 +163,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 			}
 
 			var editorClass = Ember.getPath(editorConfigurationDefinition['class']);
-			if (!editorClass) {
-				throw 'Editor class "' + typeDefinition['class'] + '" not found';
-			}
+			ember_assert('Editor class "' + typeDefinition['class'] + '" not found', !!editorClass);
 
 			var classOptions = $.extend({
 				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
