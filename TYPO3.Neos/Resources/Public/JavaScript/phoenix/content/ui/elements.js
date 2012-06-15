@@ -6,17 +6,18 @@
 
 define(
 [
+	'jquery',
 	'text!phoenix/templates/content/ui/toolbar.html',
-	'Library/jquery-popover/jquery.popover'
+	'jquery.popover'
 ],
-function(toolbarTemplate) {
+function(jQuery, toolbarTemplate) {
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
 		T3.Content = {};
 	}
 
 	T3.Content.UI = T3.Content.UI || {};
-	var $ = window.Aloha.jQuery || window.jQuery;
+	var $ = jQuery;
 
 	/**
 	 * T3.Content.UI.Toolbar

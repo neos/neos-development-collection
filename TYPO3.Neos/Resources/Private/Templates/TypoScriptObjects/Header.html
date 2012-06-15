@@ -12,39 +12,26 @@
 	<script src="{f:uri.action(controller: 'Backend\Content', action: 'javascriptConfiguration')}"></script>
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 		<script language="javascript">
-		<![CDATA[
-				Aloha = window.Aloha || {};
-
-				Aloha.settings = {
-					logLevels: {'error': true, 'warn': true, 'info': false, 'debug': false},
-					errorhandling : false,
-
-					plugins: {
-						block: {
-							sidebarAttributeEditor: false
-						}
-					},
-						// Fine-tune some Aloha-SmartContentChange settings, making the whole system feel more responsive.
-					smartContentChange: {
-						idle: 500,
-						delay: 150
-					},
-					bundles: {
-						// Path for custom bundle relative from require.js path
-						phoenixAloha: '../../../../TYPO3.TYPO3/JavaScript/alohaplugins',
-					},]]>
-					basePath: '{aloha:baseUri()}/src/lib/'
-				};
 				var phoenixJavascriptBasePath = '{f:uri.resource(path:"JavaScript/")}';
-
 				var ExtDirectInitialization = function() {
 					<ext:extDirect.provider />;
 				};
+				var Aloha, alohaBaseUrl = '{aloha:baseUri()}/src/lib/';
 		</script>
-		<script src="{aloha:baseUri()}/src/lib/aloha.js" data-aloha-plugins="common/format,common/paste,common/block,common/table,common/link,extra/browser,phoenixAloha/phoenixintegration,phoenixAloha/phoenix-links"></script>
-		<script src="{f:uri.resource(path:'JavaScript/contentmodule-main.js')}"></script>
 
-		<link rel="stylesheet" href="{aloha:baseUri()}/src/css/aloha.css" type="text/css" />
+		<ext:include includeStylesheets="false" />
+
+		<script data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js')}" src="{f:uri.resource(path:'JavaScript/require.js')}"></script>
+
+		<!-- TODO Combine all CSS files with @import in one CSS file for requirejs optimizer -->
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/style.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jquery-notice/jquery.notice.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jcrop/css/jquery.Jcrop.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jquery-dynatree/css/ui.dynatree.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/chosen/chosen/chosen.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/codemirror2/lib/codemirror.css')}" />
+		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/codemirror2/theme/default.css')}" />
+		<link rel="stylesheet" href="{aloha:baseUri()}/src/css/aloha.css" type="text/css" />
 	</f:if>
 </f:security.ifAccess>

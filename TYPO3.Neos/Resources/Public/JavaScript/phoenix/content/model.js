@@ -7,13 +7,13 @@
  */
 
 define(
-['text!phoenix/templates/common/launcher.html'],
-function(launcherTemplate) {
+['jquery', 'text!phoenix/templates/common/launcher.html'],
+function(jQuery, launcherTemplate) {
 
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
 	T3.Content.Model = {};
-	var $ = window.Aloha.jQuery || window.jQuery;
+	var $ = jQuery;
 
 	/**
 	 * T3.Content.Model.AbstractBlock

@@ -3,12 +3,12 @@
  */
 
 define(
-['phoenix/common'],
-function() {
+['jquery', 'phoenix/common'],
+function(jQuery) {
 
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
-	var $ = window.Aloha.jQuery || window.jQuery;
+	var $ = jQuery;
 
 	/**
 	 * This controller toggles the preview mode on and off.
@@ -59,9 +59,9 @@ function() {
 		onInspectModeChange: function() {
 			var isInspectEnabled = this.get('inspectMode');
 			if (isInspectEnabled) {
-				$('body').addClass('t3-inspect-active');
+				jQuery('body').addClass('t3-inspect-active');
 			} else {
-				$('body').removeClass('t3-inspect-active');
+				jQuery('body').removeClass('t3-inspect-active');
 			}
 		}.observes('inspectMode')
 	});
@@ -102,11 +102,11 @@ function() {
 			if (!selectedBlockSchema || !selectedBlockSchema.groups || !selectedBlockSchema.properties) return [];
 
 			var sectionsAndViews = [];
-			$.each(selectedBlockSchema.groups, function(groupIdentifier, propertyGroupConfiguration) {
+			jQuery.each(selectedBlockSchema.groups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
-				$.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
+				jQuery.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
 					if (propertyConfiguration.group === groupIdentifier) {
-						properties.push($.extend({key: propertyName}, propertyConfiguration));
+						properties.push(jQuery.extend({key: propertyName}, propertyConfiguration));
 					}
 				});
 
@@ -114,13 +114,13 @@ function() {
 					return (b.priority || 0) - (a.priority || 0);
 				});
 
-				sectionsAndViews.push($.extend({}, propertyGroupConfiguration, {
+				sectionsAndViews.push(jQuery.extend({}, propertyGroupConfiguration, {
 					properties: properties
 				}));
 			});
 			sectionsAndViews.sort(function(a, b) {
 				return (b.priority || 0) - (a.priority || 0);
-			})
+			});
 
 			return sectionsAndViews;
 		}.property('T3.Content.Model.BlockSelection.selectedBlockSchema').cacheable(),
@@ -148,9 +148,9 @@ function() {
 					editableProperties = [],
 					blockProperties = this.get('blockProperties');
 				if (selectedBlockSchema.properties) {
-					$.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
+					jQuery.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
 						if (selectedBlockSchema.inlineEditableProperties) {
-							if ($.inArray(propertyName, selectedBlockSchema.inlineEditableProperties) === -1) {
+							if (jQuery.inArray(propertyName, selectedBlockSchema.inlineEditableProperties) === -1) {
 								editableProperties.push(propertyName);
 							}
 						} else {
@@ -159,7 +159,7 @@ function() {
 					});
 				}
 				if (editableProperties.length > 0) {
-					$.each(editableProperties, function(key, propertyName) {
+					jQuery.each(editableProperties, function(key, propertyName) {
 						blockProperties.addObserver(propertyName, null, function(property, propertyName, value) {
 							that._somePropertyChanged();
 						});
@@ -172,7 +172,7 @@ function() {
 		_somePropertyChanged: function() {
 			var that = this,
 				hasChanges = false;
-			$.each(this.selectedBlock.getCleanedUpAttributes(), function(key, value) {
+			jQuery.each(this.selectedBlock.getCleanedUpAttributes(), function(key, value) {
 				if (that.get('blockProperties').get(key) !== value) {
 					hasChanges = true;
 				}
@@ -270,22 +270,22 @@ function() {
 				$handle.addClass('t3-handle-loading');
 
 				$handle.bind('showPopover', function() {
-					$('.contentTypeSelectorTabs.notInitialized').each(function(index) {
+					jQuery('.contentTypeSelectorTabs.notInitialized').each(function(index) {
 						var newDate = new Date();
 						var uniqueId = 't3-content-tabs-' + Math.random() * Math.pow(10, 17) + '-' + newDate.getTime();
-						$(this).attr('id', uniqueId);
+						jQuery(this).attr('id', uniqueId);
 
-						$(this).children('ul').find('li a').each(function (index) {
-							$(this).attr('href', '#' + uniqueId + '-' + index.toString());
+						jQuery(this).children('ul').find('li a').each(function (index) {
+							jQuery(this).attr('href', '#' + uniqueId + '-' + index.toString());
 						});
 
-						$(this).children('div').each(function (index) {
-							$(this).attr('id', uniqueId + '-' + index.toString());
+						jQuery(this).children('div').each(function (index) {
+							jQuery(this).attr('id', uniqueId + '-' + index.toString());
 						})
-						$(this).tabs();
-						$(this).removeClass('notInitialized');
+						jQuery(this).tabs();
+						jQuery(this).removeClass('notInitialized');
 					});
-					$('.t3-handle-loading').removeClass('t3-handle-loading');
+					jQuery('.t3-handle-loading').removeClass('t3-handle-loading');
 				});
 			}
 
@@ -407,8 +407,8 @@ function() {
 
 			block.hideHandle('remove-from-cut');
 			block.hideHandle('remove-from-copy');
-			$('.t3-paste-before-handle, .t3-paste-after-handle').addClass('t3-handle-hidden');
-			$('.t3-add-above-handle, .t3-add-below-handle').removeClass('t3-handle-hidden');
+			jQuery('.t3-paste-before-handle, .t3-paste-after-handle').addClass('t3-handle-hidden');
+			jQuery('.t3-add-above-handle, .t3-add-below-handle').removeClass('t3-handle-hidden');
 			block.showHandle('cut');
 			block.showHandle('copy');
 		},
@@ -425,9 +425,9 @@ function() {
 
 				if (clipboard.type === 'cut') {
 					// TODO: Make a sproutcore binding to andle this
-					$('.t3-contentelement-cut').each(function() {
-						$(this).removeClass('t3-contentelement-cut');
-						$(this).parent().find('.t3-cut-handle').removeClass('t3-handle-hidden');
+					jQuery('.t3-contentelement-cut').each(function() {
+						jQuery(this).removeClass('t3-contentelement-cut');
+						jQuery(this).parent().find('.t3-cut-handle').removeClass('t3-handle-hidden');
 					});
 
 					// Handle cut
@@ -439,8 +439,8 @@ function() {
 					block.hideHandle('copy');
 					block.showHandle('remove-from-copy');
 				}
-				$('.t3-paste-before-handle, .t3-paste-after-handle').removeClass('t3-handle-hidden');
-				$('.t3-add-above-handle, .t3-add-below-handle').addClass('t3-handle-hidden');
+				jQuery('.t3-paste-before-handle, .t3-paste-after-handle').removeClass('t3-handle-hidden');
+				jQuery('.t3-add-above-handle, .t3-add-below-handle').addClass('t3-handle-hidden');
 			} catch (error) {
 				// TODO: HACK! Somehow this is a DOMWindow on first load of the page
 				setTimeout(this.onClipboardChange, 500);

@@ -1,7 +1,7 @@
 define(
 ['block/block'],
 function(block) {
-    "use strict";
+	'use strict';
 	var exports = {};
 	var $ = window.Aloha.jQuery || window.jQuery;
 

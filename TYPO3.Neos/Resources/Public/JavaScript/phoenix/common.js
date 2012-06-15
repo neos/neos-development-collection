@@ -6,16 +6,16 @@
 
 define(
 [
-	'phoenix/fixture',
+	'jquery',
 	'text!phoenix/templates/common/launcher.html',
 	'text!phoenix/templates/common/launcherpanel.html',
 	'text!phoenix/templates/common/confirmationDialog.html'
 ],
-function(fixture, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
+function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
 
 	var T3 = window.T3 || {};
 	T3.Common = {};
-	var $ = window.Aloha.jQuery || window.jQuery;
+	var $ = jQuery;
 
 	/**
 	 * T3.Common.Launcher

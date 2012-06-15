@@ -6,18 +6,19 @@
 
 define(
 [
+	'jquery',
 	'text!phoenix/templates/content/ui/fileUpload.html',
 	'text!phoenix/templates/content/ui/imageUpload.html',
 	'phoenix/content/ui/elements'
 ],
-function(fileUploadTemplate, imageUploadTemplate) {
+function(jQuery, fileUploadTemplate, imageUploadTemplate) {
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
 		T3.Content = {};
 	}
 	T3.Content.UI = T3.Content.UI || {};
 	T3.Content.UI.Editor = T3.Content.UI.Editor || {};
-	var $ = window.Aloha.jQuery || window.jQuery;
+	var $ = jQuery;
 
 	T3.Content.UI.Editor.TextField = Ember.TextField.extend({
 		classNames: ['input-small']
@@ -103,8 +104,7 @@ function(fileUploadTemplate, imageUploadTemplate) {
 			}
 
 			require([
-					'Library/chosen/chosen/chosen.jquery.min',
-					'css!Library/chosen/chosen/chosen.css'
+					'chosen'
 				], function() {
 					// TODO Check value binding
 					that.$().addClass('chzn-select').chosen().change(function() {
@@ -146,14 +146,11 @@ function(fileUploadTemplate, imageUploadTemplate) {
 				this.$popoverContent.append($editorContent);
 
 				require([
-					'order!Library/codemirror2/lib/codemirror',
-					'order!Library/codemirror2/mode/xml/xml',
-					'order!Library/codemirror2/mode/css/css',
-					'order!Library/codemirror2/mode/javascript/javascript',
-					'order!Library/codemirror2/mode/htmlmixed/htmlmixed',
-
-					'css!Library/codemirror2/lib/codemirror.css',
-					'css!Library/codemirror2/theme/default.css'
+					'codemirror',
+					'codemirror.xml',
+					'codemirror.css',
+					'codemirror.javascript',
+					'codemirror.htmlmixed'
 				], function() {
 					var editorFullyPopulated = false;
 

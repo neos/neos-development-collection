@@ -6,15 +6,16 @@
 
 define(
 [
+	'jquery',
 	'phoenix/common',
 	'phoenix/content/model',
 	'phoenix/content/ui',
 	'phoenix/content/controller',
-	'Library/jquery-hotkeys/jquery.hotkeys'
+	'jquery.hotkeys'
 ],
-function() {
+function(jQuery) {
 	var T3 = window.T3 || {},
-		$ = window.Aloha.jQuery || window.jQuery;
+		$ = jQuery;
 	var ContentModule = Ember.Application.create({
 
 		/**
@@ -57,32 +58,32 @@ function() {
 			}, false);
 			this._enableDevelopmentFeaturesIfNeeded();
 
-			// Aloha is already loaded, so we can directly blockify our content
+				// Aloha is already loaded, so we can directly blockify our content
 			window.PhoenixAlohaPlugin.start();
 			this._initializeAlohaBlocksAndUpdateUi();
 
-			$('.t3-contentelement').live('dblclick', function(event) {
-				if ($('.t3-primary-editor-action').length > 0) {
-					$('.t3-primary-editor-action').click();
+			jQuery('.t3-contentelement').live('dblclick', function(event) {
+				if (jQuery('.t3-primary-editor-action').length > 0) {
+					jQuery('.t3-primary-editor-action').click();
 				}
 				event.preventDefault();
 			});
 
-			$('body').addClass('t3-ui-controls t3-backend');
+			jQuery('body').addClass('t3-ui-controls t3-backend');
 
 			this._setPagePosition();
 
 			this._initializeShortcuts();
 			this._initializeHistoryManagement();
 
-			// Remove the Aloha sidebar completely from DOM, as there is
-			// currently no other way to deactivate it.
-			$('.aloha-sidebar-bar').remove();
+				// Remove the Aloha sidebar completely from DOM, as there is
+				// currently no other way to deactivate it.
+			jQuery('.aloha-sidebar-bar').remove();
 		},
 
 		_initializeShortcuts: function() {
 			var that = this;
-			$(document).bind('keydown', 'alt+p', function() {
+			jQuery(document).bind('keydown', 'alt+p', function() {
 				T3.Content.Controller.Preview.togglePreview();
 				return false;
 			}).bind('keydown', 'alt+l', function() {
@@ -104,7 +105,7 @@ function() {
 		},
 
 		_initializeAlohaBlocksAndUpdateUi: function() {
-			$('.t3-contentelement').alohaBlock({
+			Aloha.jQuery('.t3-contentelement').alohaBlock({
 				'aloha-block-type': 'TYPO3Block'
 			});
 
@@ -119,14 +120,14 @@ function() {
 
 			// Initialize "Add Block" buttons
 			// TODO: find a clean place where to put this...
-			$('button.t3-create-new-content').click(function() {
-				T3.Content.Controller.BlockActions.addInside($(this).attr('data-node'), $(this));
+			jQuery('button.t3-create-new-content').click(function() {
+				T3.Content.Controller.BlockActions.addInside(jQuery(this).attr('data-node'), jQuery(this));
 			});
 
 			if (T3.Content.Controller.Preview.get('previewMode')) {
 
 				// HACK around an aloha bug:
-				// somehow, enabling aloha and then *directly* diactivating
+				// somehow, enabling aloha and then *directly* deactivating
 				// editables breaks does not work. That's why we need a timeout.
 				window.setTimeout(function() {
 					Aloha.editables.forEach(function(editable) {
@@ -154,7 +155,7 @@ function() {
 				classNames: ['t3-ui', 't3-inspector', 'aloha-block-do-not-deactivate']
 			});
 
-			inspector.appendTo($('body'));
+			inspector.appendTo(jQuery('body'));
 		},
 
 		_initializeToolbar: function() {
@@ -193,14 +194,14 @@ function() {
 					})
 				]
 			});
-			toolbar.appendTo($('body'));
+			toolbar.appendTo(jQuery('body'));
 		},
 
 		_initializeLauncher: function() {
 			this._launcher = T3.Common.Launcher.create({
 				searchItemsBinding: 'T3.Common.Launcher.SearchController.searchItems'
 			});
-			this._launcher.appendTo($('#t3-launcher'));
+			this._launcher.appendTo(jQuery('#t3-launcher'));
 		},
 
 		_initializeFooter: function() {
@@ -214,14 +215,14 @@ function() {
 					breadcrumb
 				]
 			});
-			footer.appendTo($('body'));
+			footer.appendTo(jQuery('body'));
 		},
 
 		/**
 		 * Intercept all links, and instead use AJAX for reloading the page.
 		 */
 		_initializeAjaxPageReload: function() {
-			this._linkInterceptionHandler($('a:not(.t3-ui a, .aloha-floatingmenu a)'));
+			this._linkInterceptionHandler(jQuery('a:not(.t3-ui a, .aloha-floatingmenu a)'));
 			this._linkInterceptionHandler('a.t3-link-ajax', true);
 		},
 
@@ -231,7 +232,7 @@ function() {
 		},
 
 		_markTopmostSelectedBlock: function(blocks) {
-			$('.aloha-block-active-top').removeClass('aloha-block-active-top');
+			jQuery('.aloha-block-active-top').removeClass('aloha-block-active-top');
 			if (blocks.length > 0) {
 				blocks[0].$element.addClass('aloha-block-active-top');
 			}
@@ -240,9 +241,9 @@ function() {
 		_setPagePosition: function() {
 			var hash = location.hash;
 			if (hash.length > 0) {
-				var contentElement = $('#' + hash.substring(1));
+				var contentElement = jQuery('#' + hash.substring(1));
 				if (contentElement.length > 0) {
-					window.scroll(0, contentElement.position().top - $('body').offset().top);
+					window.scroll(0, contentElement.position().top - jQuery('body').offset().top);
 				}
 			}
 		},
@@ -254,18 +255,18 @@ function() {
 			var that = this;
 			function clickHandler(e, link) {
 				e.preventDefault();
-				var $this = $(link);
+				var $this = jQuery(link);
 				if (!$this.attr('href').match(/[a-z]*:\/\//)) {
 						// We only load the page if the link is a non-external link.
 					that.loadPage($this.attr('href'));
 				}
 			}
 			if (constant === true) {
-				$(document).delegate(selector, 'click', function(e) {
+				jQuery(document).delegate(selector, 'click', function(e) {
 					clickHandler(e, this);
 				});
 			} else {
-				$(selector).click(function(e) {
+				jQuery(selector).click(function(e) {
 					clickHandler(e, this);
 				});
 			}
@@ -275,8 +276,8 @@ function() {
 
 			var selectorsToReplace = [];
 
-			$('.t3-reloadable-content').each(function() {
-				var id = $(this).attr('id');
+			jQuery('.t3-reloadable-content').each(function() {
+				var id = jQuery(this).attr('id');
 				if (!id) {
 					// TODO: we need cleaner developer error handling
 					throw 'You have marked a DOM element with the CSS class t3-reloadable-content; but this element has no ID.';
@@ -300,21 +301,21 @@ function() {
 
 			$.get(uri, function(htmlString, status) {
 				if (status === 'success') {
-					var $htmlDom = $(htmlString);
+					var $htmlDom = jQuery(htmlString);
 
 					$.each(selectorsToReplace, function(index, selector) {
 						if ($htmlDom.find(selector).length > 0) {
-							$(selector).replaceWith($htmlDom.find(selector));
+							jQuery(selector).replaceWith($htmlDom.find(selector));
 						} else if ($htmlDom.filter(selector).length > 0) {
 							// find only looks inside the *descendants* of the result
 							// set; that's why we might need to use "filter" if a top-
 							// level element has the t3-reloadable-content CSS class applied
-							$(selector).replaceWith($htmlDom.filter(selector));
+							jQuery(selector).replaceWith($htmlDom.filter(selector));
 						} else {
 							throw 'Target HTML selector not found. Something has gone really wrong';
 						}
 
-						that._linkInterceptionHandler($(selector).find('a'));
+						that._linkInterceptionHandler(jQuery(selector).find('a'));
 					});
 
 					var $newMetaInformation = $htmlDom.filter('#t3-page-metainformation');
@@ -325,8 +326,8 @@ function() {
 					} else {
 						T3.ContentModule.currentUri = uri;
 					}
-					$('#t3-page-metainformation').replaceWith($newMetaInformation);
-					$('title').html($htmlDom.filter('title').html());
+					jQuery('#t3-page-metainformation').replaceWith($newMetaInformation);
+					jQuery('title').html($htmlDom.filter('title').html());
 
 					that._setPagePosition();
 					that._initializeAlohaBlocksAndUpdateUi();
@@ -336,7 +337,7 @@ function() {
 					window.location.href = uri;
 				}
 				that.set('_isLoadingPage', false);
-				$('.t3-pageloader-wrapper').fadeOut('fast', function() {
+				jQuery('.t3-pageloader-wrapper').fadeOut('fast', function() {
 					$(this).remove();
 				});
 			});
@@ -344,12 +345,12 @@ function() {
 
 		_showPageLoader: function() {
 			require([
-				'Library/canvas-indicator/canvas.indicator'
+				'canvas.indicator'
 			], function() {
-				var body = $('body'),
-					loader = $('<canvas class="t3-pageloader" />'),
+				var body = jQuery('body'),
+					loader = jQuery('<canvas class="t3-pageloader" />'),
 					indicator;
-				body.append($('<div />').addClass('t3-pageloader-wrapper').append(loader).fadeTo('fast', .8));
+				body.append(jQuery('<div />').addClass('t3-pageloader-wrapper').append(loader).fadeTo('fast', .8));
 
 				indicator = new CanvasIndicator(loader.get(0), {
 					bars: 12,

@@ -11,10 +11,9 @@
 */
 
 define(
-[],
-function() {
+['jquery'],
+function(jQuery) {
 	var T3 = window.T3 || {},
-		jQuery = window.Aloha.jQuery || window.jQuery,
 		$ = jQuery;
 
 	jQuery.hotkeys = {

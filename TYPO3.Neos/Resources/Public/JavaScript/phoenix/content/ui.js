@@ -6,31 +6,27 @@
 
 define(
 [
-	'phoenix/fixture',
+	'jquery',
 	'text!phoenix/templates/content/ui/breadcrumb.html',
 	'text!phoenix/templates/content/ui/inspector.html',
 	'text!phoenix/templates/content/ui/inspectorDialog.html',
 	'phoenix/content/ui/elements',
 	'phoenix/content/ui/editors',
-	'Library/jquery-popover/jquery.popover',
-	'Library/jquery-notice/jquery.notice',
-	'css!Library/jquery-notice/jquery.notice.css',
-	'Library/jcrop/js/jquery.Jcrop.min',
-	'css!Library/jcrop/css/jquery.Jcrop.css',
-	'order!Library/plupload/js/plupload',
-	'order!Library/plupload/js/plupload.html5',
-	//dynatree
-	'Library/jquery-cookie/jquery.cookie',
-	'Library/jquery-dynatree/js/jquery.dynatree',
-	'css!Library/jquery-dynatree/css/ui.dynatree.css'
+	'jquery.popover',
+	'jquery.notice',
+	'jquery.jcrop',
+	'jquery.plupload',
+	'jquery.plupload.html5',
+	'jquery.cookie',
+	'jquery.dynatree'
 ],
-function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate) {
+function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate) {
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
 		T3.Content = {};
 	}
 	T3.Content.UI = T3.Content.UI || {};
-	var $ = window.Aloha.jQuery || window.jQuery;
+	var $ = jQuery;
 
 	/**
 	 * =====================

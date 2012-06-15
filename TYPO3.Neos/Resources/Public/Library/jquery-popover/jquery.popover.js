@@ -327,4 +327,4 @@
 			});
 		});
 	};
-})(Aloha.jQuery);
+})(jQuery);
