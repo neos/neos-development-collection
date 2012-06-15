@@ -123,11 +123,17 @@ class Runtime {
 	 */
 	public function render($typoScriptPath) {
 		try {
-			$output = '';
-			$output = sprintf(chr(10) . '<!-- Beginning to render TS path "%s" (Context: %s) -->', $typoScriptPath, $this->getCurrentContext());
-			$output .= $this->evaluateInternal($typoScriptPath, self::BEHAVIOR_EXCEPTION);
-			$output .= sprintf(chr(10) . '<!-- End to render TS path "%s" (Context: %s) -->', $typoScriptPath, $this->getCurrentContext());
-			return $output;
+			$output = $this->evaluateInternal($typoScriptPath, self::BEHAVIOR_EXCEPTION);
+
+			if (isset($this->settings['debugMode']) && $this->settings['debugMode'] === TRUE) {
+				$output = sprintf('%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
+					chr(10),
+					$typoScriptPath,
+					$this->getCurrentContext(),
+					$output
+				);
+			}
+			return trim($output);
 		} catch (\Exception $e) {
 			if ($this->settings['catchRuntimeExceptions'] === TRUE) {
 				return '<!-- Exception while rendering ' . htmlspecialchars($typoScriptPath) . ' : ' . $e->getMessage() . ' -->';
@@ -223,7 +229,7 @@ class Runtime {
 				}
 
 			} else {
-				throw new TYPO3\TypoScript\Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
+				throw new \TYPO3\TypoScript\Exception('Path Part ' . $pathPart . ' not well-formed', 1332494645);
 			}
 		}
 
