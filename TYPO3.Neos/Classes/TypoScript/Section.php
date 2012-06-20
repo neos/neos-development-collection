@@ -33,6 +33,12 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 	protected $nodeRepository;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 */
+	protected $accessDecisionManager;
+
+	/**
 	 * @return string the identifier of the section node which shall be rendered
 	 */
 	public function getNodePath() {
@@ -56,14 +62,20 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 	public function evaluate($node) {
 		$output = parent::evaluate($node);
 
+		try {
+			$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
+		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
+			return $output;
+		}
+
 		if ($this->numberOfRenderedNodes === 0 && $this->nodeRepository->getContext()->getWorkspaceName() !== 'live') {
 			$sectionNode = $node->getNode($this->nodePath);
 			if ($sectionNode === NULL) {
 				$sectionNode = $node->createNode($this->getNodePath(), 'TYPO3.TYPO3:Section');
 			}
-
 			$output = '<button class="t3-create-new-content t3-button" data-node="' . $sectionNode->getContextPath() . '"><span>Create new content</span></button>';
 		}
+
 		return $output;
 	}
 }
