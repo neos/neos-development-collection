@@ -73,7 +73,7 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 			if ($sectionNode === NULL) {
 				$sectionNode = $node->createNode($this->getNodePath(), 'TYPO3.TYPO3:Section');
 			}
-			$output = '<button class="t3-create-new-content t3-button" data-node="' . $sectionNode->getContextPath() . '"><span>Create new content</span></button>';
+			$output = '<div class="t3-ui"><button class="t3-create-new-content t3-button btn" data-node="' . $sectionNode->getContextPath() . '">Create new content</button></div>';
 		}
 
 		return $output;
