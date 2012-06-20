@@ -77,3 +77,16 @@
 	}
 }
 // Our own styles for the jQuery UI stuff - end
+
+.t3-backend {
+	.notice-wrap {
+		top: 0;
+		right: 0;
+		margin-top: 26px;
+		margin-right: 10px;
+		.notice-item {
+			min-height: 60px;
+			height: auto;
+		}
+	}
+}

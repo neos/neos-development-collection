@@ -4408,6 +4408,15 @@ button.t3-button.t3-connection-status-down {
 .ui-tabs .ui-tabs-nav li.ui-state-active {
   border-top: 1px solid #ff8700; }
 
+.t3-backend .notice-wrap {
+  top: 0;
+  right: 0;
+  margin-top: 26px;
+  margin-right: 10px; }
+  .t3-backend .notice-wrap .notice-item {
+    min-height: 60px;
+    height: auto; }
+
 .t3-module {
   margin: 104px 8px 8px 8px;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; }
