@@ -12,7 +12,6 @@ namespace TYPO3\TypoScript\Core;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
-
 use TYPO3\FLOW3\Utility\Arrays;
 use TYPO3\FLOW3\Reflection\ObjectAccess;
 
@@ -40,7 +39,10 @@ class Runtime {
 	 */
 	protected $processorEvaluator;
 
-	// Contains list of contexts
+	/**
+	 * Contains list of contexts
+	 * @var array
+	 */
 	protected $renderingStack = array();
 
 	/**
