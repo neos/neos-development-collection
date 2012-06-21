@@ -22,6 +22,12 @@ use TYPO3\ExtJS\Annotations\ExtDirect;
 class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController {
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 */
+	protected $accessDecisionManager;
+
+	/**
 	 * Select special views according to format
 	 *
 	 * @return void
@@ -45,6 +51,13 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 	 * @return void
 	 */
 	public function indexAction($username = NULL) {
+		if ($this->authenticationManager->isAuthenticated() === TRUE) {
+			try {
+				$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
+				$this->redirect('index', 'Backend\Backend');
+			} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
+			}
+		}
 		$this->view->assign('username', $username);
 
 		$version = $this->objectManager->get('TYPO3\FLOW3\Package\PackageManagerInterface')->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
