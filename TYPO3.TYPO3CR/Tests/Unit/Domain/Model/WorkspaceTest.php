@@ -166,6 +166,47 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$currentWorkspace->_call('getPublishingTargetWorkspace', 'group-bar');
 	}
+
+	/**
+	 * @return array
+	 */
+	public function validContextNodePaths() {
+		return array(
+			array('foo@user-bar'),
+			array('foo/bar/baz@user-bar'),
+			array('foo@user-UpperCamelCasedUser'),
+			array('foo/bar/baz@user-UpperCamelCasedUser')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider validContextNodePaths
+	 */
+	public function contextNodePathMatchPatternMatchesNodeContextPaths($contextNodePath) {
+		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
+		$this->assertArrayHasKey('WorkspaceName', $matches);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function invalidContextNodePaths() {
+		return array(
+			array('foo@user-bar.html'),
+			array('foo/bar/baz')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider invalidContextNodePaths
+	 */
+	public function contextNodePathMatchPatternDoesNotMatchInvalidNodeContextPaths($contextNodePath) {
+		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $contextNodePath, $matches);
+		$this->assertArrayNotHasKey('WorkspaceName', $matches);
+	}
+
 }
 
 ?>
