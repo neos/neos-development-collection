@@ -80,7 +80,7 @@ class FluidRenderer extends AbstractTsObject implements \ArrayAccess {
 	 * @return string
 	 */
 	public function evaluate($context) {
-		$fluidTemplate = new \TYPO3\Fluid\View\StandaloneView();
+		$fluidTemplate = new \TYPO3\Fluid\View\StandaloneView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\FLOW3\Mvc\ActionRequest) ? $this->tsRuntime->getControllerContext()->getRequest() : NULL);
 
 		$templatePath = $this->tsValue('templatePath');
 		if ($templatePath === NULL) {
