@@ -114,7 +114,6 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 			$contentContext = $this->nodeRepository->getContext();
 			$workspaceName = $contentContext->getWorkspace()->getName();
 		}
-
 		if ($workspaceName !== 'live') {
 			$contentContext->setInvisibleContentShown(TRUE);
 		}
@@ -124,7 +123,10 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 			return new Error(sprintf('Could not convert %s to Node object because the workspace "%s" as specified in the context node path does not exist.', $source['__contextNodePath'], $workspaceName), 1285162905);
 		}
 
+		$currentAccessModeFromContext = $contentContext->isInaccessibleContentShown();
+		$contentContext->setInaccessibleContentShown(TRUE);
 		$node = $contentContext->getNode($nodePath);
+		$contentContext->setInaccessibleContentShown($currentAccessModeFromContext);
 
 		if (!$node) {
 			return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1285162908);
@@ -156,7 +158,7 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 				if (isset($contentTypeProperties[$nodePropertyKey]['type'])) {
 					$targetType = $contentTypeProperties[$nodePropertyKey]['type'];
 					if ($this->objectManager->isRegistered($targetType)) {
-						$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, true), $targetType);
+						$nodePropertyValue = $this->propertyMapper->convert(json_decode($nodePropertyValue, TRUE), $targetType);
 					}
 				}
 

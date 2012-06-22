@@ -92,7 +92,12 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 		if (!$siteNode) {
 			return self::MATCHRESULT_NOSITENODE;
 		}
+
+		$currentAccessModeFromContext = $contentContext->isInaccessibleContentShown();
+		$contentContext->setInaccessibleContentShown(TRUE);
 		$node = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
+		$contentContext->setInaccessibleContentShown($currentAccessModeFromContext);
+
 		if (!$node) {
 			return self::MATCHRESULT_NOSUCHNODE;
 		}

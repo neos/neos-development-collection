@@ -51,7 +51,9 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		if (!$node->isAccessible()) {
-			$this->authenticationManager->authenticate();
+			try {
+				$this->authenticationManager->authenticate();
+			} catch (\Exception $exception) {}
 		}
 		if (!$node->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
 			$this->throwStatus(403);
