@@ -33,9 +33,8 @@ class SiteExportService {
 	 * @return void
 	 */
 	public function export(array $sites) {
-		$contentContext = new \TYPO3\TYPO3CR\Domain\Service\Context('live');
-		$contentContext->setInvisibleContentShown(TRUE);
-		$contentContext->setInaccessibleContentShown(TRUE);
+		$this->nodeRepository->getContext()->setInvisibleContentShown(TRUE);
+		$this->nodeRepository->getContext()->setInaccessibleContentShown(TRUE);
 
 		$xmlWriter = new \XMLWriter();
 		$xmlWriter->openUri('php://output');
@@ -57,7 +56,7 @@ class SiteExportService {
 			$xmlWriter->endElement();
 
 				// on to the nodes...
-			$node = $contentContext->getNode('/Sites/' . $site->getNodeName());
+			$node = $this->nodeRepository->getContext()->getNode('/Sites/' . $site->getNodeName());
 			foreach ($node->getChildNodes() as $childNode) {
 				$this->exportNode($childNode, $xmlWriter);
 			}
