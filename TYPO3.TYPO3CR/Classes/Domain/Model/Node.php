@@ -964,15 +964,15 @@ class Node implements NodeInterface {
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
 	protected function filterNodeByContext(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		if ($node->isRemoved() && !$this->nodeRepository->getContext()->isRemovedContentShown()) {
+		if (!$this->nodeRepository->getContext()->isRemovedContentShown() && $node->isRemoved()) {
 			return NULL;
 		}
 
-		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
+		if (!$this->nodeRepository->getContext()->isInvisibleContentShown() && !$node->isVisible()) {
 			return NULL;
 		}
 
-		if (!$node->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
+		if (!$this->nodeRepository->getContext()->isInaccessibleContentShown() && !$node->isAccessible()) {
 			return NULL;
 		}
 		return $node;
