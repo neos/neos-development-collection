@@ -285,3 +285,5 @@ TYPO3:
         className: 'TYPO3\TYPO3\Setup\Step\SiteImportStep'
         requiredConditions:
           - className: 'TYPO3\Setup\Condition\DatabaseConnectionCondition'
+      final:
+        className: 'TYPO3\TYPO3\Setup\Step\FinalStep'
