@@ -7,6 +7,12 @@ Installation
 	TYPO3 Phoenix is built on top of the FLOW3 framework. If you run into technical problems,
 	feel free to check the `FLOW3 documentation`_ for possible hints as well.
 
+.. note::
+
+	The setup script is still being worked on, and can throw an error during the installation steps.
+	If this happens, please be patient and use the back button to return to the last step or
+	reload the page. Polishing the setup procedure is planned for the current sprint.
+
 Requirements
 ------------
 
