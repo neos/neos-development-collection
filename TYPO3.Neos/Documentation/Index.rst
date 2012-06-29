@@ -22,4 +22,5 @@ Index
 	GettingStarted/Contributing
 
 	Development/UserInterface/Index
+	ReleaseNotes
 	_DocumentationInProgress

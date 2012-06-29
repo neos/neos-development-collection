@@ -11,4 +11,3 @@ Index
 	Introduction
 	Installation
 	YourFirstSite
-	Contributing

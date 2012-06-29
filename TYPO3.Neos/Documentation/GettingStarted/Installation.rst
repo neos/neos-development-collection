@@ -13,8 +13,6 @@ Requirements
 Of course TYPO3 Phoenix has at least the same system requirements as FLOW3. You can find them
 on the `FLOW3 Requirements Documentation`_.
 
-TODO: Add possible additions to those requirements.
-
 Installation of TYPO3 Phoenix
 -----------------------------
 
@@ -50,9 +48,7 @@ If all went well you'll get a confirmation the setup is completed. Click on `Go 
 
 	The TYPO3 Phoenix start page
 
-TODO: Add correct URL to sprint release download page
-
-.. _TYPO3 Phoenix Download: http://phoenix.typo3.org/download
+.. _TYPO3 Phoenix Download: http://phoenix.typo3.org/download.html
 .. _FLOW3 Documentation: http://flow3.typo3.org/documentation/GettingStarted.html
 .. _FLOW3 Requirements Documentation: http://flow3.typo3.org/documentation/guide/partii/requirements.html
 .. _FLOW3 GettingStarted: http://flow3.typo3.org/documentation/GettingStarted.html
