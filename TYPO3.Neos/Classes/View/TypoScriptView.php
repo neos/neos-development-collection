@@ -38,9 +38,9 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	 * @api
 	 */
 	public function render() {
-		$currentNode = $this->variables['value'];
-		if (!isset($currentNode) || !$currentNode instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
-			throw new TYPO3\TYPO3\Exception('TypoScriptView needs a node as argument.', 1329736456);
+		$currentNode = isset($this->variables['value']) ? $this->variables['value'] : NULL;
+		if (!$currentNode instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
+			throw new \TYPO3\TYPO3\Exception('TypoScriptView needs a node as argument.', 1329736456);
 		}
 
 		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
