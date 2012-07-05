@@ -1,4 +1,4 @@
 TYPO3:
   TypoScript:
-    catchRuntimeExceptions: true
-    debugMode: false
+    catchRuntimeExceptions: TRUE
+    debugMode: FALSE
