@@ -1,0 +1,3 @@
+prototype(TYPO3.TypoScript:TestRenderer).implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+Foo.Bar.TestController.index = TYPO3.TypoScript:TestRenderer
