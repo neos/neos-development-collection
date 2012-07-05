@@ -12,17 +12,36 @@ namespace TYPO3\TypoScript\ViewHelpers;
  *                                                                        */
 
 /**
- * Render a TypoScript object with a relative TypoScript path
- *
- * @author sebastian
+ * Render a TypoScript object with a relative TypoScript path, optionally pushing
+ * new variables onto the TypoScript context
  */
 class RenderTypoScriptViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelper {
-	public function render($path) {
-		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject'); // TODO: should be retrieved differently
+
+	/**
+	 * Evaluate the TypoScript object at $path and return the rendered result.
+	 *
+	 * @param string $path the relative TypoScript path to be rendered
+	 * @param array $context the context variables to be set
+	 * @return string
+	 */
+	public function render($path, array $context = NULL) {
+		$fluidTemplateTsObject = $this->templateVariableContainer->get('fluidTemplateTsObject'); // TODO: should be retrieved differently lateron
+		if ($context !== NULL) {
+			$currentContext = $fluidTemplateTsObject->getTsRuntime()->getCurrentContext();
+			foreach ($context as $k => $v) {
+				$currentContext[$k] = $v;
+			}
+			$fluidTemplateTsObject->getTsRuntime()->pushContextArray($currentContext);
+		}
 
 		$absolutePath = $fluidTemplateTsObject->getPath() . '/' . $path;
-		return $fluidTemplateTsObject->getTsRuntime()->render($absolutePath);
+		$output = $fluidTemplateTsObject->getTsRuntime()->render($absolutePath);
+
+		if ($context !== NULL) {
+			$fluidTemplateTsObject->getTsRuntime()->popContext();
+		}
+
+		return $output;
 	}
 }
-
 ?>

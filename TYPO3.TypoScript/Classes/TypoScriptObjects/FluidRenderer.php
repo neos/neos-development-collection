@@ -76,10 +76,9 @@ class FluidRenderer extends AbstractTsObject implements \ArrayAccess {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @param mixed $context
 	 * @return string
 	 */
-	public function evaluate($context) {
+	public function evaluate() {
 		$fluidTemplate = new \TYPO3\Fluid\View\StandaloneView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\FLOW3\Mvc\ActionRequest) ? $this->tsRuntime->getControllerContext()->getRequest() : NULL);
 
 		$templatePath = $this->tsValue('templatePath');
@@ -103,7 +102,6 @@ class FluidRenderer extends AbstractTsObject implements \ArrayAccess {
 
 			// TODO this should be done differently lateron
 		$fluidTemplate->assign('fluidTemplateTsObject', $this);
-		$fluidTemplate->assign('context', $context);
 
 		$sectionName = $this->tsValue('sectionName');
 

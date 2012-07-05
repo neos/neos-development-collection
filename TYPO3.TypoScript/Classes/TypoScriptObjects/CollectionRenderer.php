@@ -36,6 +36,11 @@ class CollectionRenderer extends AbstractTsObject {
 	protected $numberOfRenderedNodes;
 
 	/**
+	 * @var string
+	 */
+	protected $itemName;
+
+	/**
 	 * @param array $collection
 	 */
 	public function setCollection($collection) {
@@ -43,18 +48,28 @@ class CollectionRenderer extends AbstractTsObject {
 	}
 
 	/**
+	 * @param string $itemName
+	 */
+	public function setItemName($itemName) {
+		$this->itemName = $itemName;
+	}
+
+	/**
 	 * Evaluate the collection nodes
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string
 	 */
-	public function evaluate($node) {
+	public function evaluate() {
 		$collection = $this->tsValue('collection');
 
 		$output = '';
 		$this->numberOfRenderedNodes = 0;
-		foreach ($collection as $node) {
-			$this->tsRuntime->pushContext($node);
+		$itemName = $this->tsValue('itemName');
+		if ($itemName === NULL) {
+			throw new \TYPO3\TypoScript\Exception('The CollectionRenderer needs an itemName to be set.', 1344325771);
+		}
+		foreach ($collection as $collectionElement) {
+			$this->tsRuntime->pushContext($itemName, $collectionElement);
 			$output .= $this->tsRuntime->render($this->path . '/itemRenderer');
 			$this->tsRuntime->popContext();
 			$this->numberOfRenderedNodes++;

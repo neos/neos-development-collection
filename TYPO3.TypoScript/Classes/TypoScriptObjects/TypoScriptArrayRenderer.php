@@ -31,10 +31,9 @@ class TypoScriptArrayRenderer extends AbstractTsObject implements \ArrayAccess {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @param mixed $currentContext
 	 * @return string
 	 */
-	public function evaluate($currentContext) {
+	public function evaluate() {
 		sort($this->subKeys, SORT_NUMERIC);
 
 		$output = '';
