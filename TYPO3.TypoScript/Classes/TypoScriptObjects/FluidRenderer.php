@@ -29,6 +29,21 @@ class FluidRenderer extends AbstractTsObject implements \ArrayAccess {
 	protected $templatePath = NULL;
 
 	/**
+	 * Path to the partial root
+	 *
+	 * @var string
+	 */
+	protected $partialRootPath = NULL;
+
+	/**
+	 * Path to the layout root
+	 *
+	 * @var string
+	 */
+	protected $layoutRootPath = NULL;
+
+
+	/**
 	 * Name of a specific section, if only this section should be rendered.
 	 *
 	 * @var string
@@ -44,14 +59,39 @@ class FluidRenderer extends AbstractTsObject implements \ArrayAccess {
 	protected $variables = array();
 
 	/**
+	 * Allows to set the template path.
+	 *
 	 * @param string $templatePath
+	 * @return void
 	 */
 	public function setTemplatePath($templatePath) {
 		$this->templatePath = $templatePath;
 	}
 
 	/**
+	 * Allows to set the partial root path.
+	 *
+	 * @param string $partialRootPath
+	 * @return void
+	 */
+	public function setPartialRootPath($partialRootPath) {
+		$this->partialRootPath = $partialRootPath;
+	}
+
+	/**
+	 * Allows to set the layout root path.
+	 *
+	 * @param string $layoutRootPath
+	 * @return void
+	 */
+	public function setLayoutRootPath($layoutRootPath) {
+		$this->layoutRootPath = $layoutRootPath;
+	}
+
+
+	/**
 	 * @param string $sectionName
+	 * @return void
 	 */
 	public function setSectionName($sectionName) {
 		$this->sectionName = $sectionName;
@@ -87,7 +127,17 @@ class FluidRenderer extends AbstractTsObject implements \ArrayAccess {
 		}
 		$fluidTemplate->setTemplatePathAndFilename($templatePath);
 
-		// Set controller package key from template path
+		$partialRootPath = $this->tsValue('partialRootPath');
+		if ($partialRootPath !== NULL) {
+			$fluidTemplate->setPartialRootPath($partialRootPath);
+		}
+
+		$layoutRootPath = $this->tsValue('layoutRootPath');
+		if ($layoutRootPath !== NULL) {
+			$fluidTemplate->setLayoutRootPath($layoutRootPath);
+		}
+
+			// Set controller package key from template path
 		if (strpos($templatePath, 'resource://') === 0) {
 			$tmp = substr($templatePath, 11);
 			$tmp2 = explode('/', $tmp);
