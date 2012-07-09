@@ -579,6 +579,10 @@ button.t3-button,
 		border-color: rgba($dark-grey3, 0.7);
 	}
 }
+button.t3-create-new-content {
+	position: relative;
+	z-index: 100;
+}
 
 // Hide content element status indicators by default
 .t3-status-indicator {

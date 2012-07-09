@@ -39,7 +39,7 @@ prototype(TYPO3.TypoScript:Page) {
 # TextWithHeadline TS Object
 prototype(TYPO3.TypoScript:TextWithHeadline) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TypoScript:TextWithHeadline) {
-	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithHeadlineTemplate.html'
+	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithHeadline.html'
 	headline = ${context.property('headline')}
 	text = ${context.property('text')}
 }

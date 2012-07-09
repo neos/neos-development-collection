@@ -61,7 +61,6 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 	 */
 	public function evaluate($node) {
 		$output = parent::evaluate($node);
-
 		try {
 			$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
 		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
@@ -69,7 +68,7 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 		}
 
 		if ($this->numberOfRenderedNodes === 0 && $this->nodeRepository->getContext()->getWorkspaceName() !== 'live') {
-			$sectionNode = $node->getNode($this->nodePath);
+			$sectionNode = $node->getNode($this->getNodePath());
 			if ($sectionNode === NULL) {
 				$sectionNode = $node->createNode($this->getNodePath(), 'TYPO3.TYPO3:Section');
 			}

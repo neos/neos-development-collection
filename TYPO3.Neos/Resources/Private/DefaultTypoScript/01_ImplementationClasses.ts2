@@ -1,3 +1,6 @@
+# namespace declarations
+namespace:cms=TYPO3\TYPO3\TypoScript
+
 # setting up implementation class names
 
 prototype(TYPO3.TypoScript:TypoScriptArrayRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'

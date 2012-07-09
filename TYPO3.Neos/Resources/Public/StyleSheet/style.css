@@ -3809,6 +3809,10 @@ button.t3-button[disabled],
   .aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover .t3-handle {
     border-color: rgba(55, 55, 55, 0.7); }
 
+button.t3-create-new-content {
+  position: relative;
+  z-index: 100; }
+
 .t3-status-indicator {
   display: none; }
 

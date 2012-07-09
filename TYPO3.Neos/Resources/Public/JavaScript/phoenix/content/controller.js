@@ -173,13 +173,13 @@ function() {
 		 */
 		sectionsAndViews: function() {
 			var selectedBlockSchema = T3.Content.Model.BlockSelection.get('selectedBlockSchema');
-			if (!selectedBlockSchema || !selectedBlockSchema.propertyGroups || !selectedBlockSchema.properties) return [];
+			if (!selectedBlockSchema || !selectedBlockSchema.groups || !selectedBlockSchema.properties) return [];
 
 			var sectionsAndViews = [];
-			$.each(selectedBlockSchema.propertyGroups, function(propertyGroupIdentifier, propertyGroupConfiguration) {
+			$.each(selectedBlockSchema.groups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
 				$.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
-					if (propertyConfiguration.category === propertyGroupIdentifier) {
+					if (propertyConfiguration.group === groupIdentifier) {
 						properties.push($.extend({key: propertyName}, propertyConfiguration));
 					}
 				});

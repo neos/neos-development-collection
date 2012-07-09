@@ -93,24 +93,51 @@ class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 	}
 
 	/**
+	 * Return evaluated entryLevel value.
+	 *
+	 * @return integer
+	 */
+	public function getEntryLevel() {
+		return $this->tsValue('entryLevel');
+	}
+
+	/**
 	 * @param integer $maximumLevels
 	 * @return void
 	 */
 	public function setMaximumLevels($maximumLevels) {
-		if ($maximumLevels > self::MAXIMUM_LEVELS_LIMIT) {
-			$maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
-		}
 		$this->maximumLevels = $maximumLevels;
 	}
 
 	/**
+	 * @return integer
+	 */
+	public function getMaximumLevels() {
+		$maximumLevels = $this->tsValue('maximumLevels');
+		if ($maximumLevels > self::MAXIMUM_LEVELS_LIMIT) {
+			$maximumLevels = self::MAXIMUM_LEVELS_LIMIT;
+		}
+		return $maximumLevels;
+	}
+
+	/**
 	 * @param integer $lastLevel
+	 * @return void
 	 */
 	public function setLastLevel($lastLevel) {
 		if ($lastLevel > self::MAXIMUM_LEVELS_LIMIT) {
 			$lastLevel = self::MAXIMUM_LEVELS_LIMIT;
 		}
 		$this->lastLevel = $lastLevel;
+	}
+
+	/**
+	 * Return evaluated lastLevel value.
+	 *
+	 * @return integer
+	 */
+	public function getLastLevel() {
+		return $this->tsValue('lastLevel');
 	}
 
 	/**
@@ -145,11 +172,11 @@ class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 	 * @return array An array of menu items and further information
 	 */
 	protected function buildItems(\TYPO3\TYPO3\Domain\Service\ContentContext $contentContext) {
-		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->entryLevel, $contentContext);
+		$entryParentNode = $this->findParentNodeInBreadcrumbPathByLevel($this->getEntryLevel(), $contentContext);
 		if ($entryParentNode === NULL) {
 			return array();
 		}
-		$lastParentNode = ($this->lastLevel !== NULL) ? $this->findParentNodeInBreadcrumbPathByLevel($this->lastLevel, $contentContext) : NULL;
+		$lastParentNode = ($this->getLastLevel() !== NULL) ? $this->findParentNodeInBreadcrumbPathByLevel($this->getLastLevel(), $contentContext) : NULL;
 
 		return $this->buildRecursiveItemsArray($entryParentNode, $lastParentNode, $contentContext);
 	}
@@ -180,7 +207,7 @@ class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 				$item['state'] = self::STATE_CURRENT;
 			}
 
-			if ($currentLevel < $this->maximumLevels && $entryParentNode !== $lastParentNode) {
+			if ($currentLevel < $this->getMaximumLevels() && $entryParentNode !== $lastParentNode) {
 				$subItems = $this->buildRecursiveItemsArray($currentNode, $lastParentNode, $contentContext, $currentLevel + 1);
 				if ($subItems !== array()) {
 					$item['subItems'] = $subItems;
