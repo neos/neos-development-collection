@@ -11,3 +11,4 @@ Index
 	Introduction
 	Installation
 	YourFirstSite
+	YourFirstPlugin

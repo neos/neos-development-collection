@@ -18,6 +18,7 @@ Index
 	GettingStarted/Introduction
 	GettingStarted/Installation
 	GettingStarted/YourFirstSite
+	GettingStarted/YourFirstPlugin
 	Features/Index
 	GettingStarted/Contributing
 
