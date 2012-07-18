@@ -221,7 +221,8 @@ function() {
 		 * Intercept all links, and instead use AJAX for reloading the page.
 		 */
 		_initializeAjaxPageReload: function() {
-			this._linkInterceptionHandler($('a').not('.t3-ui a, .aloha-floatingmenu a'));
+			this._linkInterceptionHandler($('a:not(.t3-ui a, .aloha-floatingmenu a)'));
+			this._linkInterceptionHandler('a.t3-link-ajax', true);
 		},
 
 		_onBlockSelectionChange: function(blocks) {
@@ -249,17 +250,25 @@ function() {
 		reloadPage: function() {
 			this.loadPage(T3.ContentModule.currentUri);
 		},
-		_linkInterceptionHandler: function($selector) {
+		_linkInterceptionHandler: function(selector, constant) {
 			var that = this;
-			$selector.click(function(e) {
+			function clickHandler(e, link) {
 				e.preventDefault();
-				var $this = $(this);
-
+				var $this = $(link);
 				if (!$this.attr('href').match(/[a-z]*:\/\//)) {
 						// We only load the page if the link is a non-external link.
 					that.loadPage($this.attr('href'));
 				}
-			})
+			}
+			if (constant === true) {
+				$(document).delegate(selector, 'click', function(e) {
+					clickHandler(e, this);
+				});
+			} else {
+				$(selector).click(function(e) {
+					clickHandler(e, this);
+				});
+			}
 		},
 		loadPage: function(uri, ignorePushToHistory) {
 			var that = this;

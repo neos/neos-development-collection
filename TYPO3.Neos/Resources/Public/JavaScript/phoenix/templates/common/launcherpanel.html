@@ -137,9 +137,9 @@
 		{{#collection contentBinding="searchItems" tagName="ul" classNames="t3-launcher-panel-search"}}
 			<div class="t3-launcher-search-group-label"><span>{{content.label}}</span></div>
 			{{#collection contentBinding="content.items" tagName="ul" classNames="t3-launcher-search-group-results"}}
-				<a {{bindAttr href="content.action"}} {{bindAttr title="content.action"}}>
-					<span class="t3-launcher-search-group-results-image"><img {{bindAttr src="content.icon"}} alt="" /></span>
-					<span class="t3-launcher-search-group-results-text">{{content.label}}</span>
+				<a {{bindAttr href="content.action"}} {{bindAttr title="content.path"}} class="t3-link-ajax">
+					<img {{bindAttr src="content.icon"}} alt="" />
+					{{content.label}}
 				</a>
 			{{/collection}}
 			<div class="t3-clear"></div>

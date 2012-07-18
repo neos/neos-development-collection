@@ -45,6 +45,18 @@ class LauncherController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected $resourcePublisher;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 */
+	protected $nodeRepository;
+
+	/**
 	 * Select special error action
 	 *
 	 * @return void
@@ -63,6 +75,9 @@ class LauncherController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @todo Improve this WIP search implementation
 	 */
 	public function searchAction($term, $requestIndex) {
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext($this->securityContext->getParty()->getPreferences()->get('context.workspace'));
+		$this->nodeRepository->setContext($contentContext);
+
 		$searchContentGroups = array();
 		$searchContentTypes = array();
 		$contentTypes = $this->contentTypeManager->getFullConfiguration();
@@ -108,10 +123,18 @@ class LauncherController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 					break;
 				}
 			}
+			$this->uriBuilder->reset();
+			if ($result->getContentType() === 'TYPO3.TYPO3:Page') {
+				$pageNode = $result;
+			} else {
+				$pageNode = $this->findNextParentFolderNode($result);
+				$this->uriBuilder->setSection('c' . $result->getIdentifier());
+			}
 			$searchResult = array(
 				'type' => $result->getContentType(),
 				'label' => substr(trim(strip_tags($result->getProperty($labelProperty))), 0, 50),
-				'action' => $result->getPath()
+				'action' => $this->uriBuilder->uriFor('show', array('node' => $pageNode), 'Frontend\Node', 'TYPO3.TYPO3'),
+				'path' => $result->getPath()
 			);
 			if (isset($contentTypeConfiguration['icon'])) {
 				$searchResult['icon'] = $staticWebBaseUri . str_replace('/White/', '/Black/', $contentTypeConfiguration['icon']);
@@ -144,6 +167,20 @@ class LauncherController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	public function extErrorAction() {
 		$this->view->assignErrors($this->arguments->getValidationResults());
+	}
+
+	/**
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 */
+	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		while ($node = $node->getParent()) {
+			if ($node->getContentType() === 'TYPO3.TYPO3:Page') {
+				// TODO: Support for other "Folder" types, which are not of type "Page"
+				return $node;
+			}
+		}
+		return NULL;
 	}
 
 }

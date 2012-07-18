@@ -4039,18 +4039,19 @@ ul.t3-launcher-horizontal {
     .t3-launcher-panel-search li .t3-launcher-search-group-label span {
       padding-right: 5px; }
   .t3-launcher-panel-search li .t3-launcher-search-group-results {
-    float: left; }
+    margin-left: 105px; }
     .t3-launcher-panel-search li .t3-launcher-search-group-results li {
       height: 20px; }
       .t3-launcher-panel-search li .t3-launcher-search-group-results li a {
+        display: block;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
         color: #000;
-        text-decoration: none; }
-      .t3-launcher-panel-search li .t3-launcher-search-group-results li .t3-launcher-search-group-results-image {
-        width: 26px;
-        float: left; }
-      .t3-launcher-panel-search li .t3-launcher-search-group-results li .t3-launcher-search-group-results-text {
-        float: left;
+        text-decoration: none;
         line-height: 16px; }
+        .t3-launcher-panel-search li .t3-launcher-search-group-results li a img {
+          padding-right: 10px; }
 
 .t3-inspector-form .typo3-imagethumbnailcontainer {
   position: relative;
