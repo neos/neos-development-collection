@@ -76,6 +76,7 @@ class ContentElementWrappingService {
 			}
 
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
+			$tagBuilder->addAttribute('id', 'c' . $node->getIdentifier());
 		}
 
 		try {
