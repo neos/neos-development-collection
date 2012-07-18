@@ -7,12 +7,6 @@ Installation
 	TYPO3 Phoenix is built on top of the FLOW3 framework. If you run into technical problems,
 	feel free to check the `FLOW3 documentation`_ for possible hints as well.
 
-.. note::
-
-	The setup script is still being worked on, and can throw an error during the installation steps.
-	If this happens, please be patient and use the back button to return to the last step or
-	reload the page. Polishing the setup procedure is planned for the current sprint.
-
 Requirements
 ------------
 
@@ -27,25 +21,18 @@ Installation of TYPO3 Phoenix
 	If you want to use the current master branch of TYPO3 Phoenix we suggest to use the
 	TYPO3 Phoenix Base Distribution: `git://git.typo3.org/TYPO3v5/Distributions/Base.git`
 
-* Follow the `Downloading FLOW3`, `Database Setup` and `Setting File Permissions` steps of the
-	`FLOW3 GettingStarted`_, but use the `TYPO3 Phoenix Download`_ distribution package instead of
-	the FLOW3 Base Distribution.
+* Fetch the `TYPO3 Phoenix Download`_ packages, or check it out from git using
+  `git clone --recursive git://git.typo3.org/TYPO3v5/Distributions/Base.git`
 
-* Now go to `http://your.phoenix.uri/setup` and wait (this may take some time). You are now asked
-	for a password, which you find in the blue box in the form. Copy paste this password into
-	the field and press `Login`. You do not have to remember this password unless you would want to reinstall
-	at a later point.
+* Set up your virtual host to point to the Web/ directory of your Phoenix installation.
 
-* Next step will ask you about the database credentials to use for your TYPO3 Phoenix installation.
-	Set those credentials, select a database and click `Next`.
+* Go to `http://your.phoenix.uri/setup`. This page checks the basic requirements. If they
+  are met, you will be redirected to the setup tool.
 
-* Next step is setting your personal information and creating an administrator account. Set all values
-	and click `Next`.
+* Then, follow the on-screen instructions of the setup tool.
 
-* On the `Import a site` page you select the `phoenix.demo.typo3.org` site and click `Next`.
-
-If all went well you'll get a confirmation the setup is completed. Click on `Go to homepage` to see
-	your TYPO3 Phoenix Demo Site:
+* If all went well you'll get a confirmation the setup is completed, and you can enter the
+  frontend or backend of your Phoenix website.
 
 .. figure:: /Images/GettingStarted/StartPage.png
 	:align: right
