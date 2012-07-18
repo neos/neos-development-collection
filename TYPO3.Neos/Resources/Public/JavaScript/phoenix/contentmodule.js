@@ -68,15 +68,16 @@ function() {
 				event.preventDefault();
 			});
 
-			$('body').addClass('t3-ui-controls-active');
-			$('body').addClass('t3-backend');
+			$('body').addClass('t3-ui-controls-active t3-backend');
+
+			this._setPagePosition();
 
 			this._initializeShortcuts();
 			this._initializeHistoryManagement();
 
 			// Remove the Aloha sidebar completely from DOM, as there is
 			// currently no other way to deactivate it.
-			Aloha.jQuery('.aloha-sidebar-bar').remove();
+			$('.aloha-sidebar-bar').remove();
 		},
 
 		_initializeShortcuts: function() {
@@ -235,6 +236,16 @@ function() {
 			}
 		},
 
+		_setPagePosition: function() {
+			var hash = location.hash;
+			if (hash.length > 0) {
+				var contentElement = $('#' + hash.substring(1));
+				if (contentElement.length > 0) {
+					window.scroll(0, contentElement.position().top - $('body').offset().top);
+				}
+			}
+		},
+
 		reloadPage: function() {
 			this.loadPage(T3.ContentModule.currentUri);
 		},
@@ -308,6 +319,7 @@ function() {
 					$('#t3-page-metainformation').replaceWith($newMetaInformation);
 					$('title').html($htmlDom.filter('title').html());
 
+					that._setPagePosition();
 					that._initializeAlohaBlocksAndUpdateUi();
 				} else {
 					// FALLBACK: AJAX error occured,
