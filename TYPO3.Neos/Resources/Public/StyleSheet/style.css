@@ -4182,7 +4182,10 @@ div.dynatree-container {
   background-position: 3px 5px !important;
   background-repeat: no-repeat !important; }
   .notice-item p {
-    padding-left: 17px; }
+    padding-left: 17px;
+    padding-right: 10px;
+    word-break: break-all;
+    overflow: hidden; }
   .notice-item.typo3-notification-ok {
     background-image: url("../Images/Icons/White/checkmark_icon-16.png"); }
   .notice-item.typo3-notification-info {
