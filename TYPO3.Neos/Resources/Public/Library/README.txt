@@ -13,7 +13,8 @@ Version 0.2.2
 
 jquery.dynatree.js
 jquery.dynatree.min.js
-https://review.typo3.org/#/c/11452/3/Resources/Public/Library/jquery-dynatree/js/jquery.dynatree.js
+jQuery Dynatree Version 1.2.1
+/Resources/Public/Library/jquery-dynatree/js/jquery.dynatree.js
 _setDndStatus: function(){
 	--- var pos = $target.offset();
 	+++ var pos = $target.position();

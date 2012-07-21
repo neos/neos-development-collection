@@ -2,15 +2,15 @@
 	jquery.dynatree.js
 	Dynamic tree view control, with support for lazy loading of branches.
 
-	Copyright (c) 2008-2011, Martin Wendt (http://wwWendt.de)
+	Copyright (c) 2006-2012, Martin Wendt (http://wwWendt.de)
 	Dual licensed under the MIT or GPL Version 2 licenses.
 	http://code.google.com/p/dynatree/wiki/LicenseInfo
 
 	A current version and some documentation is available at
 		http://dynatree.googlecode.com/
 
-	$Version: 1.2.1_rc3$
-	$Revision: 585, 2012-01-10 00:07:39$
+	$Version: 1.2.1$
+	$Revision: 606, 2012-06-12 08:10:04$
 
 	@depends: jquery.js
 	@depends: jquery.ui.core.js
@@ -18,7 +18,16 @@
 *************************************************************************/
 
 // Note: We currently allow eval() to parse the 'data' attribtes, when initializing from HTML.
-/*jslint laxbreak: true, browser: true, evil: true, indent: 0, white: false, onevar: false */
+
+/* jsLint options*/
+// TODO: does not pass jsLint
+/*NOT_YET_jslint browser: true, evil: true, indent: 4, sloppy: true, nomen: true, vars: true, white: true, plusplus: true*/
+/*global alert */
+
+/* jsHint options*/
+// TODO: pass jsHint with the options given in grunt.js only.
+//       The following should not be required:
+/*jshint nomen:false, smarttabs:true, eqeqeq:false, evil:true, regexp:false */
 
 /*************************************************************************
  *	Debug functions
@@ -898,6 +907,8 @@ DynaTreeNode.prototype = {
 				for(i=0, l=p.childList.length; i<l;  i++) {
 					var n = p.childList[i];
 					if( !n.bSelected && !n.data.isStatusNode && !n.data.unselectable) {
+					// issue 305 proposes this:
+//					if( !n.bSelected && !n.data.isStatusNode ) {
 						allChildsSelected = false;
 						break;
 					}
@@ -1155,12 +1166,8 @@ DynaTreeNode.prototype = {
 			this._userActivate();
 			var aTag = this.span.getElementsByTagName("a");
 			if(aTag[0]){
-				// issue 154
-				// TODO: check if still required on IE 9:
-				// Chrome and Safari don't focus the a-tag on click,
-				// but calling focus() seem to have problems on IE:
-				// http://code.google.com/p/dynatree/issues/detail?id=154
-				if(!$.browser.msie){
+				// issue 154, 313
+				if(!($.browser.msie && parseInt($.browser.version, 10) < 9)){
 					aTag[0].focus();
 				}
 			}else{
@@ -1272,7 +1279,7 @@ DynaTreeNode.prototype = {
 
 	_onFocus: function(event) {
 		// Handles blur and focus events.
-//		this.tree.logDebug("dtnode.onFocus(%o): %o", event, this);
+//		this.tree.logDebug("dtnode._onFocus(%o): %o", event, this);
 		var opts = this.tree.options;
 		if ( event.type == "blur" || event.type == "focusout" ) {
 			if ( opts.onBlur ){
@@ -1478,39 +1485,44 @@ DynaTreeNode.prototype = {
 			throw "Key path must be relative (don't start with '/')";
 		}
 		var seg = segList.shift();
+		if(this.childList){
+			for(var i=0, l=this.childList.length; i < l; i++){
+				var child = this.childList[i];
+				if( child.data.key === seg ){
+					if(segList.length === 0) {
+						// Found the end node
+						callback.call(tree, child, "ok");
 
-		for(var i=0, l=this.childList.length; i < l; i++){
-			var child = this.childList[i];
-			if( child.data.key === seg ){
-				if(segList.length === 0) {
-					// Found the end node
-					callback.call(tree, child, "ok");
-
-				}else if(child.data.isLazy && (child.childList === null || child.childList === undefined)){
-					tree.logDebug("%s._loadKeyPath(%s) -> reloading %s...", this, keyPath, child);
-					var self = this;
-					child.reloadChildren(function(node, isOk){
-						// After loading, look for direct child with that key
-						if(isOk){
-							tree.logDebug("%s._loadKeyPath(%s) -> reloaded %s.", node, keyPath, node);
-							callback.call(tree, child, "loaded");
-							node._loadKeyPath(segList.join(tree.options.keyPathSeparator), callback);
-						}else{
-							tree.logWarning("%s._loadKeyPath(%s) -> reloadChildren() failed.", self, keyPath);
-							callback.call(tree, child, "error");
-						}
-					}); // Note: this line gives a JSLint warning (Don't make functions within a loop)
-					// we can ignore it, since it will only be exectuted once, the the loop is ended
-					// See also http://stackoverflow.com/questions/3037598/how-to-get-around-the-jslint-error-dont-make-functions-within-a-loop
-				} else {
-					callback.call(tree, child, "loaded");
-					// Look for direct child with that key
-					child._loadKeyPath(segList.join(tree.options.keyPathSeparator), callback);
+					}else if(child.data.isLazy && (child.childList === null || child.childList === undefined)){
+						tree.logDebug("%s._loadKeyPath(%s) -> reloading %s...", this, keyPath, child);
+						var self = this;
+						// Note: this line gives a JSLint warning (Don't make functions within a loop)
+						/*jshint loopfunc:true */
+						child.reloadChildren(function(node, isOk){
+							// After loading, look for direct child with that key
+							if(isOk){
+								tree.logDebug("%s._loadKeyPath(%s) -> reloaded %s.", node, keyPath, node);
+								callback.call(tree, child, "loaded");
+								node._loadKeyPath(segList.join(tree.options.keyPathSeparator), callback);
+							}else{
+								tree.logWarning("%s._loadKeyPath(%s) -> reloadChildren() failed.", self, keyPath);
+								callback.call(tree, child, "error");
+							}
+						});
+						// we can ignore it, since it will only be exectuted once, the the loop is ended
+						// See also http://stackoverflow.com/questions/3037598/how-to-get-around-the-jslint-error-dont-make-functions-within-a-loop
+					} else {
+						callback.call(tree, child, "loaded");
+						// Look for direct child with that key
+						child._loadKeyPath(segList.join(tree.options.keyPathSeparator), callback);
+					}
+					return;
 				}
-				return;
 			}
 		}
 		// Could not find key
+		// Callback params: child: undefined, the segment, isEndNode (segList.length === 0)
+		callback.call(tree, undefined, "notfound", seg, segList.length === 0);
 		tree.logWarning("Node not found: " + seg);
 		return;
 	},
@@ -1729,7 +1741,7 @@ DynaTreeNode.prototype = {
 				// Process ASPX WebMethod JSON object inside "d" property
 				// http://code.google.com/p/dynatree/issues/detail?id=202
 				else if (data && data.hasOwnProperty("d")) {
-				   data = (typeof data.d) == "string" ? $.parseJSON(data.d) : response.d;
+				   data = (typeof data.d) == "string" ? $.parseJSON(data.d) : data.d;
 				}
 				if(!$.isArray(data) || data.length !== 0){
 					self.addChild(data, null);
@@ -1789,7 +1801,7 @@ DynaTreeNode.prototype = {
 		}
 		// Unlink this node from current parent
 		if( this.parent.childList.length == 1 ) {
-			this.parent.childList = null;
+			this.parent.childList = this.parent.data.isLazy ? [] : null;
 			this.parent.bExpanded = false;
 		} else {
 			pos = $.inArray(this, this.parent.childList);
@@ -1799,7 +1811,9 @@ DynaTreeNode.prototype = {
 			this.parent.childList.splice(pos, 1);
 		}
 		// Remove from source DOM parent
-		this.parent.ul.removeChild(this.li);
+		if(this.parent.ul){
+			this.parent.ul.removeChild(this.li);
+		}
 
 		// Insert this node to target parent's child list
 		this.parent = targetParent;
@@ -1839,8 +1853,10 @@ DynaTreeNode.prototype = {
 			targetParent.ul.style.display = "none";
 			targetParent.li.appendChild(targetParent.ul);
 		}
-		// Add to target DOM parent
-		targetParent.ul.appendChild(this.li);
+		// Issue 319: Add to target DOM parent (only if node was already rendered(expanded))
+		if(this.li){
+			targetParent.ul.appendChild(this.li);
+		}
 
 		if( this.tree !== targetNode.tree ) {
 			// Fix node.tree for all source nodes
@@ -2026,7 +2042,7 @@ var DynaTree = Class.create();
 
 // --- Static members ----------------------------------------------------------
 
-DynaTree.version = "$Version: 1.2.1_rc3$";
+DynaTree.version = "$Version: 1.2.1$";
 
 /*
 DynaTree._initTree = function() {
@@ -2139,10 +2155,10 @@ DynaTree.prototype = {
 		this.tnRoot.render();
 		this.divTree.appendChild(this.tnRoot.ul);
 
-		var root = this.tnRoot;
-		var isReloading = ( opts.persist && this.persistence.isReloading() );
-		var isLazy = false;
-		var prevFlag = this.enableUpdate(false);
+		var root = this.tnRoot,
+			isReloading = ( opts.persist && this.persistence.isReloading() ),
+			isLazy = false,
+			prevFlag = this.enableUpdate(false);
 
 		this.logDebug("Dynatree._load(): read tree structure...");
 
@@ -2549,7 +2565,8 @@ TODO: better?
 //		this.$dndMarker.attr("class", hitMode);
 		if(hitMode === "after" || hitMode === "before" || hitMode === "over"){
 //			$source && $source.addClass("dynatree-drag-source");
-
+			//var pos = $target.offset();
+			//was edited to adjust the marker to the absolute position of the pagetree container mgoldbeck
 			var pos = $target.position();
 
 //			$target.addClass("dynatree-drop-target");
@@ -2585,8 +2602,7 @@ TODO: better?
 			this.$dndMarker //.offset({left: pos.left, top: pos.top})
 				.css({
 					"left": pos.left,
-					//was edited to adjust the marker to the fixed position of the pagetree container
-					top: pos.top,
+					"top": pos.top,
 					"z-index": 1000
 				})
 				.show();
@@ -2661,7 +2677,8 @@ TODO: better?
 			dnd = this.options.dnd,
 			res = null,
 			nodeTag = $(node.span),
-			hitMode;
+			hitMode,
+			enterResponse;
 
 		switch (eventName) {
 		case "helper":
@@ -2704,7 +2721,7 @@ TODO: better?
 //			this.logDebug("helper.enterResponse: %o", res);
 			break;
 		case "over":
-			var enterResponse = ui.helper.data("enterResponse");
+			enterResponse = ui.helper.data("enterResponse");
 			hitMode = null;
 			if(enterResponse === false){
 				// Don't call onDragOver if onEnter returned false.
@@ -2772,8 +2789,10 @@ TODO: better?
 			this._setDndStatus(otherNode, node, ui.helper, hitMode, res!==false);
 			break;
 		case "drop":
+			// issue 286: don't trigger onDrop, if DnD status is 'reject'
+			var isForbidden = ui.helper.hasClass("dynatree-drop-reject");
 			hitMode = ui.helper.data("hitMode");
-			if(hitMode && dnd.onDrop){
+			if(hitMode && dnd.onDrop && !isForbidden){
 				dnd.onDrop(node, otherNode, hitMode, ui, draggable);
 			}
 			break;
@@ -2910,6 +2929,7 @@ $.widget("ui.dynatree", {
 			return dtnode ? dtnode._onFocus(event) : false;
 		}
 		var div = this.tree.divTree;
+
 		if( div.addEventListener ) {
 			div.addEventListener("focus", __focusHandler, true);
 			div.addEventListener("blur", __focusHandler, true);
@@ -2974,7 +2994,7 @@ if( parseFloat($.ui.version) < 1.8 ) {
 /*******************************************************************************
  * Tools in ui.dynatree namespace
  */
-$.ui.dynatree.version = "$Version: 1.2.1_rc3$";
+$.ui.dynatree.version = "$Version: 1.2.1$";
 
 /**
  * Return a DynaTreeNode object for a given DOM element
@@ -3009,7 +3029,7 @@ $.ui.dynatree.getNode = function(el) {
 	});
 	return node;
 */
-}
+};
 
 /**Return persistence information from cookies.*/
 $.ui.dynatree.getPersistData = DynaTreeStatus._getTreePersistData;
@@ -3057,6 +3077,9 @@ $.ui.dynatree.prototype.options = {
 	onCustomRender: null, // Callback(dtnode) before a node is rendered. Return a HTML string to override.
 	onCreate: null, // Callback(dtnode, nodeSpan) after a node was rendered for the first time.
 	onRender: null, // Callback(dtnode, nodeSpan) after a node was rendered.
+				// postProcess is similar to the standard dataFilter hook,
+				// but it is also called for JSONP
+	postProcess: null, // Callback(data, dataType) before an Ajax result is passed to dynatree
 
 	// Drag'n'drop support
 	dnd: {
@@ -3196,8 +3219,10 @@ function _initDragAndDrop(tree) {
 				return sourceNode.tree._onDragEvent("helper", sourceNode, null, event, null, null);
 			},
 			start: function(event, ui) {
+				// See issues 211, 268, 278
 //				var sourceNode = $.ui.dynatree.getNode(event.target);
-				// don't return false if sourceNode == null (see issue 268)
+				var sourceNode = ui.helper.data("dtSourceNode");
+				return !!sourceNode; // Abort dragging if no Node could be found
 			},
 			_last: null
 		});
@@ -3311,4 +3336,4 @@ var _registerDnd = function() {
 };
 
 // ---------------------------------------------------------------------------
-})(jQuery);
+}(jQuery));
