@@ -127,6 +127,7 @@ class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 	/**
 	 * Returns the menu items according to the defined settings.
 	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return array
 	 */
 	public function getItems(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
@@ -134,7 +135,7 @@ class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 			$this->items = $this->buildItems($this->nodeRepository->getContext());
 		}
 		return $this->items;
-   }
+	}
 
 	/**
 	 * Builds the array of menu items containing those items which match the

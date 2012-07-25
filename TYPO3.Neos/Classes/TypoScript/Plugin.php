@@ -175,9 +175,9 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 				$pluginRequest->setControllerActionName($this->node->getProperty('action') ?: $this->action);
 			}
 
-			// TODO Check if we want to use all properties as arguments
-			//      This enables us to configure plugin controller arguments via
-			//      content type definitions for now.
+				// TODO: Check if we want to use all properties as arguments
+				//     This enables us to configure plugin controller arguments via
+				//     content type definitions for now.
 			foreach ($this->node->getProperties() as $propertyName => $propertyValue) {
 				$propertyName = '--' . $propertyName;
 				if (!in_array($propertyName, array('--package', '--subpackage', '--controller', '--action', '--format')) && !$pluginRequest->hasArgument($propertyName)) {
@@ -196,7 +196,9 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 	/**
 	 * Returns the rendered content of this plugin
 	 *
+	 * @param mixed $currentContext
 	 * @return string The rendered content as a string
+	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
 	 */
 	public function evaluate($currentContext) {
 		$this->node = $currentContext;

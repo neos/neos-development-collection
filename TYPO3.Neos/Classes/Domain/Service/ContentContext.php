@@ -69,9 +69,9 @@ class ContentContext extends \TYPO3\TYPO3CR\Domain\Service\Context {
 	public function initializeObject() {
 		$this->locale = new Locale('mul_ZZ');
 
-		$activeRequesthandler = $this->bootstrap->getActiveRequestHandler();
-		if ($activeRequesthandler instanceof \TYPO3\FLOW3\Http\HttpRequestHandlerInterface) {
-			$matchingDomains = $this->domainRepository->findByHost($activeRequesthandler->getHttpRequest()->getUri()->getHost());
+		$activeRequestHandler = $this->bootstrap->getActiveRequestHandler();
+		if ($activeRequestHandler instanceof \TYPO3\FLOW3\Http\HttpRequestHandlerInterface) {
+			$matchingDomains = $this->domainRepository->findByHost($activeRequestHandler->getHttpRequest()->getUri()->getHost());
 			if (count ($matchingDomains) > 0) {
 				$this->currentDomain = $matchingDomains[0];
 				$this->currentSite = $matchingDomains[0]->getSite();

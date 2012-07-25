@@ -39,6 +39,7 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 	/**
 	 * @param string $property the property to render
 	 * @param string $tag
+	 * @return string
 	 */
 	public function render($property, $tag = 'div') {
 		$this->tag->setTagName($tag);

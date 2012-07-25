@@ -101,13 +101,20 @@ class IfProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject Not used in this processor
 	 * @return string The calculated return value. Either $this->trueValue or $this->falseValue
+	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	public function process($subject) {
 		$condition = $this->condition;
 		if (!is_bool($condition)) {
-			if (is_object($condition)) $condition = (string)$condition;
-			if ((is_numeric($condition) && $condition <= 0) || $condition === '') $condition = FALSE;
-			if ($condition === 1 || (is_string($condition) && \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($condition) > 0)) $condition = TRUE;
+			if (is_object($condition)) {
+				$condition = (string)$condition;
+			}
+			if ((is_numeric($condition) && $condition <= 0) || $condition === '') {
+				$condition = FALSE;
+			}
+			if ($condition === 1 || (is_string($condition) && \TYPO3\FLOW3\Utility\Unicode\Functions::strlen($condition) > 0)) {
+				$condition = TRUE;
+			}
 		}
 		if (!is_bool($condition)) {
 			throw new \TYPO3\TypoScript\Exception('The condition in the if processor could not be converted to boolean. Got: (' . gettype($condition) . ')' . (string)$condition, 1185355020);

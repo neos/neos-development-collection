@@ -37,7 +37,7 @@ class DomainMatchingStrategy {
 		$matchQualities = array();
 		$hostPartsReverse = array_reverse(explode('.', $host));
 
-		foreach($domains as $domain) {
+		foreach ($domains as $domain) {
 			$hostPattern = $domain->getHostPattern();
 
 			if ($host === $hostPattern) {

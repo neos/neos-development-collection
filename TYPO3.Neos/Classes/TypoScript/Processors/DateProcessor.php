@@ -45,6 +45,7 @@ class DateProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param string $subject The UNIX timestamp to transform
 	 * @return string The processed string
+	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	public function process($subject) {
 		if ($subject === '') {

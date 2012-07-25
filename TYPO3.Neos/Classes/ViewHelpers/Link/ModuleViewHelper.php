@@ -59,8 +59,8 @@ class ModuleViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedView
 	 * @param array $additionalParams additional query parameters that won't be prefixed like $arguments (overrule $arguments)
 	 * @param boolean $addQueryString If set, the current query parameters will be kept in the URI
 	 * @param array $argumentsToBeExcludedFromQueryString arguments to be removed from the URI. Only active if $addQueryString = TRUE
-	 *
 	 * @return string The rendered link
+	 * @throws \TYPO3\Fluid\Core\ViewHelper\Exception
 	 */
 	public function render($path, $action = NULL, $arguments = array(), $section = '', $format = '', array $additionalParams = array(), $addQueryString = FALSE, array $argumentsToBeExcludedFromQueryString = array()) {
 		$mainRequest = $this->controllerContext->getRequest()->getMainRequest();

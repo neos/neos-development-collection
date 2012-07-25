@@ -156,8 +156,8 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 			$parentNode = $referenceNode->getParent();
 		}
 
-		// TODO: Write policy which only allows createAction for logged in users!
-		// TODO: make it possible for the user to specify the node identifier
+			// TODO: Write policy which only allows createAction for logged in users!
+			// TODO: make it possible for the user to specify the node identifier
 		$newNode = $parentNode->createNode(uniqid(), $type);
 		if ($position === 'above') {
 			$newNode->moveBefore($referenceNode);
@@ -182,6 +182,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return void
+	 * @throws \TYPO3\TYPO3\Exception
 	 */
 	protected function populateNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
@@ -216,7 +217,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		while ($node = $node->getParent()) {
 			if ($node->getContentType() === 'TYPO3.TYPO3:Page') {
-				// TODO: Support for other "Folder" types, which are not of type "Page"
+					// TODO: Support for other "Folder" types, which are not of type "Page"
 				return $node;
 			}
 		}

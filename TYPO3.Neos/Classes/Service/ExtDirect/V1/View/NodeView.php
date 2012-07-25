@@ -96,7 +96,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 
 					$data[] = array(
 						'key' => $childNode->getContextPath(),
-						// TODO Move to JS
+							// TODO Move to JS
 						'title' => $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title'): $childNode->getLabel(),
 						'href' => $uriForNode,
 						'isFolder' => $hasChildNodes,
@@ -140,7 +140,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
 			$this->collectNodeData($data, $propertyNames, $childNode);
 			if ($depth === 0 || ($recursionPointer < $depth)) {
-				$this->collectChildNodeData($data, $propertyNames, $childNode, $contentTypeFilter, $depth, ($recursionPointer+1));
+				$this->collectChildNodeData($data, $propertyNames, $childNode, $contentTypeFilter, $depth, ($recursionPointer + 1));
 			}
 		}
 	}

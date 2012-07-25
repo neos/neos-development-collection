@@ -26,6 +26,7 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 
 	/**
 	 * @param array $settings
+	 * @return void
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -33,6 +34,7 @@ class ContainerViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractViewHelpe
 
 	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return string
 	 */
 	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		$view = new \TYPO3\Fluid\View\StandaloneView($this->controllerContext->getRequest());

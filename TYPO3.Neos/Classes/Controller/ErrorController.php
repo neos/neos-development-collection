@@ -52,7 +52,7 @@ class ErrorController extends \TYPO3\FLOW3\Mvc\Controller\ActionController imple
 		}
 		$httpRequest = $this->request->getHttpRequest();
 		$uriPath = $httpRequest->getUri()->getPath();
-		$uriPathWithoutFormat = substr($uriPath, 0 , strrpos($uriPath, '.'));
+		$uriPathWithoutFormat = substr($uriPath, 0, strrpos($uriPath, '.'));
 
 		preg_match(\TYPO3\TYPO3CR\Domain\Model\NodeInterface::MATCH_PATTERN_CONTEXTPATH, $uriPathWithoutFormat, $matches);
 		if (isset($matches['WorkspaceName'])) {

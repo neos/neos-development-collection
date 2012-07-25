@@ -45,4 +45,6 @@ class FinalStep extends \TYPO3\Setup\Step\AbstractStep {
 		$backendLink->setProperty('href', '/typo3');
 		$backendLink->setProperty('class', 'btn btn-large');
 	}
+
 }
+?>

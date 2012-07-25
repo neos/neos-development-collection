@@ -37,8 +37,7 @@ class NotEditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBase
 	}
 
 	/**
-	 * @param string $property the property to render
-	 * @param string $context either "inline" or "block"
+	 * @return string
 	 */
 	public function render() {
 		if ($this->hasAccessToResource('TYPO3_TYPO3_Backend_BackendController')) {

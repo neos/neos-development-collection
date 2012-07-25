@@ -69,6 +69,7 @@ class SiteImportService {
 	 *
 	 * @param string $packageKey
 	 * @return void
+	 * @throws \TYPO3\TYPO3\Exception
 	 */
 	public function importFromPackage($packageKey) {
 		if (!$this->packageManager->isPackageActive($packageKey)) {
@@ -87,6 +88,8 @@ class SiteImportService {
 	/**
 	 * @param string $pathAndFilename
 	 * @return void
+	 * @throws \TYPO3\FLOW3\Package\Exception\UnknownPackageException
+	 * @throws \TYPO3\FLOW3\Package\Exception\InvalidPackageStateException
 	 */
 	public function importSitesFromFile($pathAndFilename) {
 		$contentContext = $this->nodeRepository->getContext();
@@ -124,7 +127,7 @@ class SiteImportService {
 
 			$rootNode = $contentContext->getWorkspace()->getRootNode();
 
-			if($rootNode->getNode('/sites') === NULL) {
+			if ($rootNode->getNode('/sites') === NULL) {
 				$rootNode->createNode('sites');
 			}
 

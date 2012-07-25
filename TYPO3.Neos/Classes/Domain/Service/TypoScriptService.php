@@ -21,7 +21,6 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  */
 class TypoScriptService {
 
-
 	/**
 	 * @FLOW3\Inject
 	 * @var \TYPO3\TypoScript\Core\Parser

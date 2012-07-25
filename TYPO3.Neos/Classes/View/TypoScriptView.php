@@ -35,6 +35,7 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	 * Renders the view
 	 *
 	 * @return string The rendered view
+	 * @throws \TYPO3\TYPO3\Exception
 	 * @api
 	 */
 	public function render() {

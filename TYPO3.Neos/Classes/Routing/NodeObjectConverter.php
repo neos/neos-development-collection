@@ -90,6 +90,7 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 	 * @param array $subProperties not used
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration not used
 	 * @return mixed An object or \TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
+	 * @throws \Exception
 	 */
 	public function convertFrom($source, $targetType, array $subProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		if (is_string($source)) {

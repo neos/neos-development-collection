@@ -40,5 +40,4 @@ class ErrorView extends \TYPO3\FLOW3\Mvc\View\NotFoundView {
 		return 'resource://TYPO3.TYPO3/Private/Templates/Frontend/Error/NotFound.html';
 	}
 }
-
 ?>

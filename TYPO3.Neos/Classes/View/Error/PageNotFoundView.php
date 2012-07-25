@@ -29,5 +29,4 @@ class PageNotFoundView extends \TYPO3\TYPO3\View\Error\ErrorView {
 	);
 
 }
-
 ?>

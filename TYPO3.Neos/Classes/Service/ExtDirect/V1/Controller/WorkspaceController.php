@@ -49,6 +49,7 @@ class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 *
 	 * @param string $workspaceName Name of the workspace
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @ExtDirect
 	 */
 	public function getStatusAction($workspaceName) {
@@ -70,6 +71,7 @@ class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 *
 	 * @param string $workspaceName Name of the workspace containing the nodes
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @ExtDirect
 	 */
 	public function getUnpublishedNodesAction($workspaceName) {
@@ -97,6 +99,7 @@ class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @param string $sourceWorkspaceName
 	 * @param string $targetWorkspaceName
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @ExtDirect
 	 */
 	public function publishWorkspaceAction($sourceWorkspaceName, $targetWorkspaceName) {

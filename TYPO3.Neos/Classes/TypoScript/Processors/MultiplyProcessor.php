@@ -43,6 +43,7 @@ class MultiplyProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 	 *
 	 * @param float/string $subject The subject to multiply.
 	 * @return float The multiplied value ($subject*$this->factor)
+	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	public function process($subject) {
 		if (!is_numeric($subject)) throw new \TYPO3\TypoScript\Exception('Expected a numeric string as first parameter.', 1224146988);

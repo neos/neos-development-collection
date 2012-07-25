@@ -116,6 +116,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @param array $nodeData
 	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
+	 * @throws \InvalidArgumentException
 	 * @todo maybe the actual creation should be put in a helper / service class
 	 * @ExtDirect
 	 */
@@ -148,7 +149,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		}
 
 		if ($nodeData['contentType'] === 'TYPO3.TYPO3:Page') {
-			// TODO: Remove that and fix it!
+				// TODO: Remove that and fix it!
 			$this->createEmptySectionNode($newNode);
 		}
 
@@ -163,6 +164,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
 	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
 	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 * @ExtDirect
 	 * @fixme Find a better solution that passing -1, 0 and 1
 	 */
@@ -174,14 +176,14 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		switch ($position) {
 			case -1:
 				$node->moveBefore($targetNode);
-				break;
+			break;
 			case 0:
-				//@TODO: Create a moveInto action on the node domain
-				//$node->moveInto($targetNode);
-				break;
+				// TODO: Create a moveInto action on the node domain
+				// $node->moveInto($targetNode);
+			break;
 			case 1:
 				$node->moveAfter($targetNode);
-				break;
+			break;
 		}
 
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', '');

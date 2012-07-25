@@ -100,24 +100,24 @@ class CropProcessor implements \TYPO3\TypoScript\ProcessorInterface {
 		$processedSubject = $subject;
 		if (\TYPO3\FLOW3\Utility\Unicode\Functions::strlen($subject) > $this->maximumCharacters) {
 			if ($this->options & self::CROP_FROM_BEGINNING) {
-				 if ($this->options & self::CROP_AT_WORD) {
-				 	$iterator = new \TYPO3\FLOW3\Utility\Unicode\TextIterator($subject, \TYPO3\FLOW3\Utility\Unicode\TextIterator::WORD);
-				 	$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, $iterator->following($this->maximumCharacters));
-				 } else {
-				 	$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, $this->maximumCharacters);
-				 }
-				 $processedSubject = $this->preOrSuffixString . $processedSubject;
+				if ($this->options & self::CROP_AT_WORD) {
+					$iterator = new \TYPO3\FLOW3\Utility\Unicode\TextIterator($subject, \TYPO3\FLOW3\Utility\Unicode\TextIterator::WORD);
+					$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, $iterator->following($this->maximumCharacters));
+				} else {
+					$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, $this->maximumCharacters);
+				}
+				$processedSubject = $this->preOrSuffixString . $processedSubject;
 			} else {
-				 if ($this->options & self::CROP_AT_WORD) {
-				 	$iterator = new \TYPO3\FLOW3\Utility\Unicode\TextIterator($subject, \TYPO3\FLOW3\Utility\Unicode\TextIterator::WORD);
-				 	$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, 0, $iterator->preceding($this->maximumCharacters));
-				 } elseif ($this->options & self::CROP_AT_SENTENCE) {
-				 	$iterator = new \TYPO3\FLOW3\Utility\Unicode\TextIterator($subject, \TYPO3\FLOW3\Utility\Unicode\TextIterator::SENTENCE);
-				 	$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, 0, $iterator->preceding($this->maximumCharacters));
-				 } else {
-				 	$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, 0, $this->maximumCharacters);
-				 }
-				 $processedSubject .= $this->preOrSuffixString;
+				if ($this->options & self::CROP_AT_WORD) {
+					$iterator = new \TYPO3\FLOW3\Utility\Unicode\TextIterator($subject, \TYPO3\FLOW3\Utility\Unicode\TextIterator::WORD);
+					$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, 0, $iterator->preceding($this->maximumCharacters));
+				} elseif ($this->options & self::CROP_AT_SENTENCE) {
+					$iterator = new \TYPO3\FLOW3\Utility\Unicode\TextIterator($subject, \TYPO3\FLOW3\Utility\Unicode\TextIterator::SENTENCE);
+					$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, 0, $iterator->preceding($this->maximumCharacters));
+				} else {
+					$processedSubject = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($subject, 0, $this->maximumCharacters);
+				}
+				$processedSubject .= $this->preOrSuffixString;
 			}
 		}
 		return $processedSubject;

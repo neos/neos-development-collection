@@ -31,6 +31,7 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param boolean $page
+	 * @return string
 	 */
 	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE) {
 		return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $page);

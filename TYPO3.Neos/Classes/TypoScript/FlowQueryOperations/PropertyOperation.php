@@ -66,7 +66,9 @@ class PropertyOperation extends \TYPO3\Eel\FlowQuery\Operations\AbstractOperatio
 			$context = $flowQuery->getContext();
 			$propertyPath = $arguments[0];
 
-			if (!isset($context[0])) return NULL;
+			if (!isset($context[0])) {
+				return NULL;
+			}
 
 			$element = $context[0];
 			if ($propertyPath[0] === '_') {

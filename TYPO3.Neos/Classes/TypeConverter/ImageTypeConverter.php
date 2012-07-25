@@ -65,6 +65,7 @@ class ImageTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTyp
 	 * @param array $convertedChildProperties
 	 * @param \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration
 	 * @return \TYPO3\Media\Domain\Model\Image An object or an instance of TYPO3\FLOW3\Error\Error if the input format is not supported or could not be converted for other reasons
+	 * @throws \TYPO3\FLOW3\Property\Exception\TypeConverterException
 	 */
 	public function convertFrom($source, $targetType, array $convertedChildProperties = array(), \TYPO3\FLOW3\Property\PropertyMappingConfigurationInterface $configuration = NULL) {
 		$resource = $this->resourceManager->importUploadedResource($_FILES['file']);
@@ -72,9 +73,9 @@ class ImageTypeConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTyp
 			throw new \TYPO3\FLOW3\Property\Exception\TypeConverterException('Resource could not be converted.', 1316428994);
 		}
 		$image = new \TYPO3\Media\Domain\Model\Image($resource);
-		$image->setTitle(''); // TODO: this should maybe be settable
+			// TODO: this should maybe be settable
+		$image->setTitle('');
 		return $image;
 	}
 }
-
 ?>

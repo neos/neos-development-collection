@@ -99,4 +99,6 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 		$account->setParty($user);
 		$this->accountRepository->add($account);
 	}
+
 }
+?>

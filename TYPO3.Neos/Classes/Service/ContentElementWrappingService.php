@@ -60,6 +60,7 @@ class ContentElementWrappingService {
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $content
 	 * @param boolean $isPage
+	 * @return string
 	 */
 	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $isPage = FALSE) {
 		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
@@ -136,7 +137,6 @@ class ContentElementWrappingService {
 				$this->nodeRepository->getContext()->getWorkspace()->getName()
 			));
 		}
-
 
 		return $tagBuilder->render();
 	}

@@ -30,7 +30,7 @@ class NodeSearchService {
 	 * Search all properties for given $term
 	 * @param string $term
 	 * @param array $searchContentTypes
-	 * @return type
+	 * @return \TYPO3\FLOW3\Persistence\QueryResultInterface
 	 */
 	public function findByProperties($term, array $searchContentTypes) {
 			// TODO: Implement a better search when FLOW3 offer the possibility
@@ -39,9 +39,7 @@ class NodeSearchService {
 			$query->like('properties', '%' . $term . '%'),
 			$query->in('contentType', $searchContentTypes)
 		);
-		$results = $query->matching($query->logicalAnd($constraints))->execute();
-
-		return $results;
+		return $query->matching($query->logicalAnd($constraints))->execute();
 	}
 }
 ?>
