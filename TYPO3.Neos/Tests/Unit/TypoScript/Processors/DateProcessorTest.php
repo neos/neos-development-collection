@@ -35,12 +35,26 @@ class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 *
 	 * @test
 	 */
-	public function dateBasicallyWorks() {
+	public function dateBasicallyWorksImplyingUtcTimezone() {
 		$subject = 1185279917;
-		$this->dateProcessor->setFormat('F j, Y, g:i a');
+		$this->dateProcessor->setFormat('F j, Y, g:i a e');
 		$result = $this->dateProcessor->process($subject);
-		$expectedResult = 'July 24, 2007, 2:25 pm';
+		$expectedResult = 'July 24, 2007, 12:25 pm +00:00';
 		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return the expected result while converting a UNIX timestamp. Expected "' . $expectedResult . '" but got "' . $result . '"');
+	}
+
+	/**
+	 * Checks if the date() processor works when setting the timezone to "Japan"
+	 *
+	 * @test
+	 */
+	public function dateWorksAdjustingTimezoneToJapan() {
+		$subject = 1185279917;
+		$this->dateProcessor->setFormat('F j, Y, g:i a e');
+		$this->dateProcessor->setTimezone('Japan');
+		$result = $this->dateProcessor->process($subject);
+		$expectedResult = 'July 24, 2007, 9:25 pm Japan';
+		$this->assertEquals($expectedResult, $result, 'The TypoScript processor "date" did not return the expected result while converting a UNIX timestamp to Japanese timezone. Expected "' . $expectedResult . '" but got "' . $result . '"');
 	}
 
 	/**
@@ -64,6 +78,19 @@ class DateProcessorTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function dateThrowsExceptionOnNegativeTimestamp() {
 		$subject = -1254324643;
 		$this->dateProcessor->setFormat('F j, Y, g:i a');
+		$this->dateProcessor->process($subject);
+	}
+
+	/**
+	 * Checks if the date() processor throws an exception on an invalid timezone setting
+	 *
+	 * @test
+	 * @expectedException \TYPO3\TypoScript\Exception
+	 */
+	public function dateThrowsExceptionOnGivingInvalidTimezone() {
+		$subject = 1185279917;
+		$this->dateProcessor->setFormat('F j, Y, g:i a e');
+		$this->dateProcessor->setTimezone('Galactic Sector QQ7 Active J Gamma');
 		$this->dateProcessor->process($subject);
 	}
 
