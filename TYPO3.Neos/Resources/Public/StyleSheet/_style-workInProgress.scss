@@ -110,6 +110,9 @@ button.t3-create-new-content {
 
 	p {
 		padding-left: 17px;
+		padding-right: 10px;
+		word-break: break-all;
+		overflow: hidden;
 	}
 
 	&.typo3-notification-ok {
