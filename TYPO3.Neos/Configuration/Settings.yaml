@@ -283,10 +283,11 @@ TYPO3:
               new:
                 label: 'Create user'
                 title: 'Create a new user'
-
           package:
             label: 'Package Management'
             controller: '\TYPO3\TYPO3\Controller\Module\Administration\PackageController'
+            description: "The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context."
+            icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Black/box_icon-24.png'
 
   Setup:
     stepOrder: ['database', 'administrator', 'siteimport', 'final']
