@@ -43,6 +43,12 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected $nodeRepository;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
+	 */
+	protected $accessDecisionManager;
+
+	/**
 	 * Shows the specified node and takes visibility and access restrictions into
 	 * account.
 	 *
@@ -50,6 +56,14 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @return string View output for the specified node
 	 */
 	public function showAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		if ($node->getContext()->getWorkspace()->getName() !== 'live') {
+				// TODO: Introduce check if workspace is visible or accessible to the user
+			try {
+				$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
+			} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
+				$this->throwStatus(403);
+			}
+		}
 		if (!$node->isAccessible()) {
 			try {
 				$this->authenticationManager->authenticate();
