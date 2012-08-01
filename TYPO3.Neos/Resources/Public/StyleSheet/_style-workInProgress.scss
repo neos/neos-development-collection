@@ -218,17 +218,9 @@ button.t3-create-new-content {
 
 // Block
 
-// Add margins when not in preview mode to fit handles
 .aloha-block-TYPO3Block {
 	margin-top: 20px;
 	margin-bottom: 20px;
-	@include transition-property(margin-top margin-bottom);
-	@include transition-duration(0.3s);
-}
-.t3-ui-previewmode-activating {
-	.aloha-block-TYPO3Block {
-		margin: 0;
-	}
 }
 
 // Load indicator

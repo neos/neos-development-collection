@@ -11,13 +11,13 @@
 
 // **** CSS start ****/
 // *******************/
-body.t3-ui-controls-active {
+body.t3-ui-controls {
 	margin-right: $property-panel-width;
 	margin-bottom: $footer-height;
-	margin-top: $menu-height + $launcher-height + $toolbar-height;
+	margin-top: $launcher-height + $menu-height + $topbar-offset;
 	margin-left: 0;
 	@include transition-property(margin);
-	@include transition-duration(0.3s);
+	@include transition-duration(0.2s);
 }
 #t3-page-metainformation {
 	display: none;
@@ -37,7 +37,9 @@ body.t3-ui-controls-active {
 	top: 0;
 	position: fixed;
 	width: 100%;
+	overflow: hidden;
 	z-index: 10015;
+	height: $launcher-height + $menu-height + $topbar-offset;
 	.t3-button-logout {
 		float: right;
 		margin-right: 10px;
@@ -67,14 +69,14 @@ body.t3-ui-controls-active {
 	height: $launcher-height;
 	overflow: hidden;
 	@include transition-property(height);
-	@include transition-duration(0.3s);
+	@include transition-duration(0.2s);
 }
 .t3-launcher {
 	position: relative;
 	width: 100%;
 	background-color: $light-grey;
 	@include transition-property(height);
-	@include transition-duration(0.3s);
+	@include transition-duration(0.2s);
 	div.t3-launcher-container {
 		height: $launcher-height;
 		display: block;
@@ -181,7 +183,7 @@ ul.t3-topbar {
 }
 
 /*** Inspector Panel ***/
-.t3-inspector {
+#t3-inspector {
 	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	@include box-sizing(border-box);
 	background: $dark-grey;
@@ -195,8 +197,8 @@ ul.t3-topbar {
 	overflow: auto;
 	padding-bottom: 20px;
 	border-top: 1px solid $green;
-	@include transition-property(margin);
-	@include transition-duration(0.3s);
+	@include transition-property('width, margin-top');
+	@include transition-duration(0.2s);
 }
 .t3-inspector-form {
 	fieldset {
@@ -250,13 +252,13 @@ ul.t3-topbar {
 #t3-toolbar {
 	background: $dark-grey2;
 	height: $toolbar-height;
-	left: 0;
 	position: fixed;
-	right: $property-panel-width;
-	top: $menu-height + $launcher-height + $topbar-offset;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin-top: $menu-height + $launcher-height + $topbar-offset;
+	padding-right: $property-panel-width;
 	z-index: 10012;
-	@include transition-property(top);
-	@include transition-duration(0.3s);
 	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	ul {
 		margin: 0px;
@@ -318,7 +320,7 @@ ul.t3-topbar {
 	position: fixed;
 	height: $footer-height;
 	line-height: $footer-height;
-	right: $property-panel-width;
+	right: 0;
 	z-index: 10012;
 	@include single-box-shadow(rgba($darkest, 0.5), 0px, 0px, 5px);
 	.t3-toolbar-left {
@@ -630,7 +632,7 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	background: lighten($light-grey, 10%);
 }
 
-.t3-ui-controls-active #t3-ui-top {
+.t3-ui-controls #t3-ui-top {
 	@include single-box-shadow(transparent, 0, 0, 0);
 }
 
@@ -665,51 +667,70 @@ div.aloha-block-active:hover > div.aloha-block-inner {
 	}
 }
 
-// Revert modifications to the content area where it is possible
-.t3-ui-controls-inactive {
-	// Aloha Block highlighting
-	div.aloha-block:hover > .aloha-block-inner {
-		cursor: default;
-	}
-	div.aloha-block-inner {
-		outline:none !important;
-		background:none !important;
-	}
-	// Handles around Aloha Blocks
-	.t3-handle,
-	.t3-status-indicator {
-		display: none !important;
-	}
-	// Aloha Floating Menu
-	#aloha-floatingmenu-shadow,
-	.aloha-floatingmenu,
-	.x-shadow {
-		display:none !important;
-	}
-	button.t3-create-new-content {
-		display:none;
-	}
-}
-
-// Re-enable previewmode on reload
-.typo3-previewmode-enabled {
-	margin: $toolbar-height 0 0 0;
-	#t3-footer {
-		display: none;
+// Preview mode
+body {
+	#t3-footer,
+	#t3-ui-top {
+		@include transition-property(height);
+		@include transition-duration(0.2s);
 	}
 	#t3-toolbar {
-		top: 0px;
-		right: 0px;
+		@include transition-property(margin-top);
+		@include transition-duration(0.2s);
 	}
-	#t3-ui-top {
-		display: none;
+	&.t3-backend,
+	.aloha-block-TYPO3Block {
+		@include transition-property(margin);
+		@include transition-duration(0.2s);
 	}
-	#t3-inspector {
-		display: none;
+	&.t3-ui-previewmode {
+		margin-top: 30px;
+		margin-right: 0;
+		#t3-footer,
+		#t3-ui-top {
+			height: 0;
+		}
+		#t3-toolbar {
+			margin-top: 0;
+		}
+		#t3-inspector {
+			width: 0;
+		}
+		.aloha-block-TYPO3Block {
+			margin: 0;
+		}
+		// Aloha Block highlighting
+		div.aloha-block:hover > .aloha-block-inner {
+			cursor: default;
+		}
+		div.aloha-block-inner {
+			outline: none !important;
+			background: none !important;
+		}
+		.aloha-block-TYPO3Block.aloha-block:hover,
+		.aloha-block-TYPO3Block.aloha-block.aloha-block-active,
+		.aloha-block-TYPO3Block.aloha-block.aloha-block-active:hover {
+			@include box-shadow(none);
+		}
+		// Handles around Aloha Blocks
+		.t3-handle,
+		.t3-status-indicator {
+			display: none !important;
+		}
+		// Aloha Floating Menu
+		#aloha-floatingmenu-shadow,
+		.aloha-floatingmenu,
+		.x-shadow,
+		.t3-contentelement-overlay,
+		button.t3-create-new-content,
+		.t3-contentelement-hidden {
+			display: none !important;
+		}
+		.aloha-block:hover,
+		.aloha-block.aloha-block-highlighted {
+			cursor: auto;
+		}
 	}
-}
-.typo3-previewmode-enabled.t3-ui-controls-active {
-	margin: $toolbar-height 0px 0px 0px;
 }
 
 // New Content Flyout - start

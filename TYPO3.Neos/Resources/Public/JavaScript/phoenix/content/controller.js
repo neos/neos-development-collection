@@ -18,10 +18,7 @@ function() {
 
 		init: function() {
 			if (T3.Common.LocalStorage.getItem('previewMode') === true) {
-				$('body').removeClass('t3-ui-controls-active');
-				$('body').addClass('t3-ui-controls-inactive');
-				$('body').addClass('typo3-previewmode-enabled');
-				this.set('previewMode', true);
+				this.togglePreview();
 			}
 		},
 
@@ -31,88 +28,17 @@ function() {
 
 		onTogglePreviewMode: function() {
 			var isPreviewEnabled = this.get('previewMode');
-			var i = 0, count = 5, allDone = function() {
-				i++;
-				if (i >= count) {
-					if (isPreviewEnabled) {
-						$('body').removeClass('t3-ui-controls-active');
-						$('body').addClass('t3-ui-controls-inactive');
-						Aloha.editables.forEach(function(editable) {
-							editable.disable();
-						});
-					} else {
-						$('body').addClass('t3-ui-controls-active');
-						$('body').removeClass('t3-ui-controls-inactive');
 
-						Aloha.editables.forEach(function(editable) {
-							editable.enable();
-						});
-					}
-				}
-			};
+			$('body').toggleClass('t3-ui-previewmode t3-ui-controls');
+
 			if (isPreviewEnabled) {
-				$('body').addClass('t3-ui-previewmode-activating');
-				if(!T3.Common.LocalStorage.getItem('previewModeStore')) {
-					var stylesToSave = {
-						'body': {
-							'margin-top': $('body').css('margin-top'),
-							'margin-right': $('body').css('margin-right')
-						},
-						't3-footer': {
-							'height': $('#t3-footer').css('height')
-						},
-						't3-toolbar': {
-							'top': $('#t3-toolbar').css('top'),
-							'right': $('#t3-toolbar').css('right')
-						},
-						't3-inspector': {
-							'width': $('#t3-inspector').css('width')
-						}
-					};
-					T3.Common.LocalStorage.setItem('previewModeStore', stylesToSave);
-				}
-
-				$('.t3-contentelement-hidden').hide('fast');
-				$('body').animate({
-					'margin-top': 30,
-					'margin-right': 0
-				}, 'fast', allDone);
-				$('#t3-footer').animate({
-					height: 0
-				}, 'fast', allDone);
-				$('#t3-toolbar').animate({
-					top: 0,
-					right: 0
-				}, 'fast', allDone);
-				$('#t3-ui-top').slideUp('fast', allDone);
-				$('#t3-inspector').animate({
-					width: 0
-				}, 'fast', allDone);
+				Aloha.editables.forEach(function(editable) {
+					editable.disable();
+				});
 			} else {
-
-				var stylesToUse = T3.Common.LocalStorage.getItem('previewModeStore');
-
-				$('body').removeClass('t3-ui-previewmode-activating');
-				// TODO Cleanup the 'hidden' workaround for previewMode with a CSS transition
-				$('#t3-footer, #t3-ui-top, #t3-inspector').css('display', 'block');
-
-				$('.t3-contentelement-hidden').show('fast');
-
-				$('body').animate({
-					'margin-top': stylesToUse['body']['margin-top'],
-					'margin-right': stylesToUse['body']['margin-right']
-				}, 'fast', allDone);
-				$('#t3-footer').animate({
-					height: stylesToUse['t3-footer']['height']
-				}, 'fast', allDone);
-				$('#t3-toolbar').animate({
-					top: stylesToUse['t3-toolbar']['top'],
-					right: stylesToUse['t3-toolbar']['right']
-				}, 'fast', allDone);
-				$('#t3-ui-top').slideDown('fast', allDone);
-				$('#t3-inspector').animate({
-					width: stylesToUse['t3-inspector']['width']
-				}, 'fast', allDone);
+				Aloha.editables.forEach(function(editable) {
+					editable.enable();
+				});
 			}
 		}.observes('previewMode'),
 

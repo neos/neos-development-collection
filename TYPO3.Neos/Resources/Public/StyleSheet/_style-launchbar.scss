@@ -1,14 +1,14 @@
 .t3-launcher-open {
-	&.t3-ui-controls-active {
-		margin-top: $menu-height + $launcher-height-open + $toolbar-height;
+	#t3-ui-top {
+		height: $launcher-height-open + $menu-height + $topbar-offset;
 	}
 	#t3-toolbar {
-		top: $menu-height + $launcher-height-open;
+		margin-top: $launcher-height-open + $menu-height + $topbar-offset;
 	}
-	.t3-inspector {
-		margin-top: $menu-height + $launcher-height-open;
+	#t3-inspector {
+		margin-top: $launcher-height-open + $menu-height + $topbar-offset;
 	}
-	#t3-launcher, .t3-launcher {
+	#t3-launcher {
 		height: $launcher-height-open;
 	}
 }

@@ -68,7 +68,7 @@ function() {
 				event.preventDefault();
 			});
 
-			$('body').addClass('t3-ui-controls-active t3-backend');
+			$('body').addClass('t3-ui-controls t3-backend');
 
 			this._setPagePosition();
 
