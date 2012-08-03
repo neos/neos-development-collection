@@ -11,6 +11,12 @@ object1 = Text
 object1.value = "Hello world!"
 object1.value << 1.wrap(prefix: '<strong>', suffix: '</strong>')
 
+# TypoScript processors can also be applied to full objects
+object1 << 1.wrap(prefix: '<div>', suffix: '</div>')
+
+# ... and also on full prototype objects
+prototype(Foo) << 1.wrap(prefix: '<div>', suffix: '</div>')
+
 object2 = Text
 object2.value = "Bumerang"
 object2.value << 1.wrap(prefix: 'ein ', suffix: ';')

@@ -440,6 +440,26 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 							'suffix' => '</strong>',
 							'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
 						)
+					),
+					'__all' => array(
+						1 => array(
+							'prefix' => '<div>',
+							'suffix' => '</div>',
+							'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
+						)
+					)
+				)
+			),
+			'__prototypes' => array(
+				'Foo' => array(
+					'__processors' => array(
+						'__all' => array(
+							1 => array(
+								'prefix' => '<div>',
+								'suffix' => '</div>',
+								'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
+							)
+						)
 					)
 				)
 			),

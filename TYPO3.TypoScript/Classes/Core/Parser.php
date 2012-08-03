@@ -461,6 +461,10 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 
 			$typoScriptObject = &$this->getValueFromObjectTree($objectPropertyPathArray);
 			if (is_array($typoScriptObject) && isset($typoScriptObject['__objectType'])) {
+					// The processor is put onto a complete object instance
+				$propertyName = '__all';
+			} elseif ($objectPropertyPathArray[count($objectPropertyPathArray) - 2] === '__prototypes') {
+					// The processor is put onto a prototype object
 				$propertyName = '__all';
 			} else {
 				$objectPathArray = array_slice($objectPropertyPathArray, 0, -1);
