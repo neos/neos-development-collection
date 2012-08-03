@@ -121,8 +121,13 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 		)
 		\s*
 		(?P<Value>                        # the remaining line inside the value
-			.*
-		)$
+			.*?
+		)
+		\s*
+		(?P<OpeningConfinement>
+			\{                    # optionally followed by an opening confinement
+		)?
+		\s*$
 	/x';
 	const SPLIT_PATTERN_VALUENUMBER = '/^\s*-?\d+\s*$/';
 	const SPLIT_PATTERN_VALUEFLOATNUMBER = '/^\s*-?\d+(\.\d+)?\s*$/';
@@ -375,6 +380,10 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 				$this->parseValueProcessing($matches['Value'], $objectPath);
 				break;
 		}
+
+		if (isset($matches['OpeningConfinement'])) {
+			$this->parseConfinementBlock($matches['ObjectPath'], TRUE);
+		}
 	}
 
 	/**
@@ -578,7 +587,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * @param string $unparsedValue The unparsed value
 	 * @return mixed The processed value
 	 */
-	protected function getProcessedValue(array $objectPathArray, $unparsedValue) {
+	protected function getProcessedValue($objectPathArray, $unparsedValue) {
 		if (preg_match(self::SPLIT_PATTERN_VALUENUMBER, $unparsedValue, $matches) === 1) {
 			$processedValue = intval($unparsedValue);
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUEFLOATNUMBER, $unparsedValue, $matches) === 1) {

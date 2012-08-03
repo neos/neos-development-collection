@@ -265,6 +265,14 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				'__objectType' => 'TYPO3.TypoScript:Text',
 				'value' => 'Go outside. The graphics are AMAZING!'
 			),
+			'firstObject2' => array(
+				'__objectType' => 'TYPO3.TypoScript:Text',
+				'value' => 'Go outside. The graphics are AMAZING!'
+			),
+			'firstObject3' => array(
+				'__objectType' => 'TYPO3.TypoScript:Text',
+				'value' => 'Overridden value'
+			),
 			'secondObject' => array(
 				'subObject' => array(
 					'__objectType' => 'TYPO3.TypoScript:Text',
@@ -278,6 +286,12 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 							'__objectType' => 'TYPO3.TypoScript:Text',
 							'value' => 'Fully or hard tail?',
 							'value2' => 'I don\'t know.'
+						)
+					),
+					'anotherSubSubObject' => array(
+						'someMessage' => array(
+							'__objectType' => 'TYPO3.TypoScript:Text',
+							'value' => 'Hard',
 						)
 					)
 				)

@@ -10,6 +10,14 @@ firstObject {
 	value = "Go outside. The graphics are AMAZING!"
 }
 
+# The "condensed confinement" syntax is also supported:
+firstObject2 = Text {
+	value = "Go outside. The graphics are AMAZING!"
+}
+firstObject3 < firstObject2 {
+	value = "Overridden value"
+}
+
 secondObject {
 	subObject = Text
 	subObject.value = "27°C and a blue sky."
@@ -20,6 +28,9 @@ thirdObject {
 		subSubObject {
 			someMessage = Text
 			someMessage.value = "Fully or hard tail?"
+		}
+		anotherSubSubObject < .subSubObject {
+			someMessage.value = "Hard"
 		}
 	}
 }
