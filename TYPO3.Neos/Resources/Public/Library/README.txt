@@ -59,7 +59,7 @@ Commit: d7b29372f128b22d8a962dfa48c96499154e2160
 CodeMirror 2.13 from http://codemirror.net/
 
 
-Chosen 0.9.3 from http://harvesthq.github.com/chosen/
+Chosen 0.9.8 from http://harvesthq.github.com/chosen/
 Only the jquery files / needed files are added (skipped coffeescript / prototype / examples)
 
 
