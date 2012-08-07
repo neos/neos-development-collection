@@ -20,9 +20,10 @@
 	<body {bodyAttributes -> f:format.raw()}>
 
 		<!-- TODO: add the page properties in a more clever way, and only when being in backend... -->
-		<t:contentElement node="{context}" page="1" />
+
+		<t:contentElement node="{node}" page="1" />
 
 		<ts:renderTypoScript path="body" />
-		<t:backend.container node="{context}"/>
+		<t:backend.container node="{node}"/>
 	</body>
 </html>

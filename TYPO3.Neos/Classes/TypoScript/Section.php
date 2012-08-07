@@ -56,11 +56,12 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 	 * Render the list of nodes, and if there are none and we are not inside the live
 	 * workspace, render a button to create new content.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return string
 	 */
-	public function evaluate($node) {
-		$output = parent::evaluate($node);
+	public function evaluate() {
+		$currentContext = $this->tsRuntime->getCurrentContext();
+		$node = $currentContext['node'];
+		$output = parent::evaluate();
 		try {
 			$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
 		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {

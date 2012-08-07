@@ -5,12 +5,12 @@
 	document.cookie = "TYPO3_lastVisitedUri=" +
 		window.location.protocol + "//" +
 		window.location.host +
-		(window.location.pathname.charAt(window.location.pathname.length - 1) === "/" ? window.location.pathname + "{context.name}.html" : window.location.pathname) +
+		(window.location.pathname.charAt(window.location.pathname.length - 1) === "/" ? window.location.pathname + "{node.name}.html" : window.location.pathname) +
 		";path=/";
 </script>
 <f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
 	<script src="{f:uri.action(controller: 'Backend\Content', action: 'javascriptConfiguration')}"></script>
-	<f:if condition="{0: 'live'} != {0: context.context.workspace.name}">
+	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
 		<script language="javascript">
 		<![CDATA[
 				Aloha = window.Aloha || {};

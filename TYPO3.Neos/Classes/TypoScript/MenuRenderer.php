@@ -143,21 +143,19 @@ class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @param mixed $context
 	 * @return string
 	 */
-	public function evaluate($context) {
-		$this['items'] = $this->getItems($context);
-		return parent::evaluate($context);
+	public function evaluate() {
+		$this['items'] = $this->getItems();
+		return parent::evaluate();
 	}
 
 	/**
 	 * Returns the menu items according to the defined settings.
 	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return array
 	 */
-	public function getItems(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	public function getItems() {
 		if ($this->items === NULL) {
 			$this->items = $this->buildItems($this->nodeRepository->getContext());
 		}

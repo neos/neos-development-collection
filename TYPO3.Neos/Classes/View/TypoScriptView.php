@@ -54,7 +54,7 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 		$typoScriptPath = 'page';
 
 		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $this->controllerContext);
-		$typoScriptRuntime->pushContext($currentNode);
+		$typoScriptRuntime->pushContextArray(array('node' => $currentNode));
 		$output = $typoScriptRuntime->render($typoScriptPath);
 		$typoScriptRuntime->popContext();
 		return $output;

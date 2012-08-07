@@ -196,12 +196,12 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 	/**
 	 * Returns the rendered content of this plugin
 	 *
-	 * @param mixed $currentContext
 	 * @return string The rendered content as a string
 	 * @throws \TYPO3\FLOW3\Mvc\Exception\StopActionException
 	 */
-	public function evaluate($currentContext) {
-		$this->node = $currentContext;
+	public function evaluate() {
+		$currentContext = $this->tsRuntime->getCurrentContext();
+		$this->node = $currentContext['node'];
 		$parentResponse = $this->tsRuntime->getControllerContext()->getResponse();
 		$pluginResponse = new Response($parentResponse);
 

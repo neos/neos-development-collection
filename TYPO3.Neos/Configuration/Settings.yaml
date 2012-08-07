@@ -60,6 +60,7 @@ TYPO3:
             priority: 1
 
       'TYPO3.TYPO3:Section':
+        superTypes: ['TYPO3.TYPO3:AbstractNode']
         label: 'Section'
 
       'TYPO3.TYPO3:Shortcut':

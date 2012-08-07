@@ -1,28 +1,37 @@
 namespace:cms=TYPO3\TYPO3\TypoScript
 
+prototype(TYPO3.TypoScript:FluidRenderer) {
+	node = ${node}
+	# DEPRECATED since Sprint 10; should be removed lateron. Is just added for
+	# backwards compatibility.
+	context = ${node}
+}
+
+
 # setting up additional Prototype configuration
 prototype(TYPO3.TypoScript:CollectionRenderer) {
-	collection = ${context.children()}
+	collection = ${q(node).children()}
+	itemName = 'node'
 	itemRenderer = TYPO3.TypoScript:Case
 }
 
 prototype(TYPO3.TYPO3:Section) < prototype(TYPO3.TypoScript:CollectionRenderer)
 prototype(TYPO3.TYPO3:Section) {
 	implementationClassName = 'TYPO3\\TYPO3\\TypoScript\\Section'
-	collection = ${context.children(this.getNodePath()).children()}
+	collection = ${q(node).children(this.getNodePath()).children()}
 }
 
 # Catch-all condition for the default case
 prototype(TYPO3.TypoScript:Case).matchers.999999999999 {
 	condition = ${true}
-	type = ${context.property('_contentType')}
+	type = ${q(node).property('_contentType')}
 }
 
 # HTML TS Object
 prototype(TYPO3.TYPO3:Html) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TYPO3:Html) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/HtmlTemplate.html'
-	source = ${context.property('source')}
+	source = ${q(node).property('source')}
 }
 
 # Page TS Object
@@ -30,8 +39,8 @@ prototype(TYPO3.TYPO3:Page) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TYPO3:Page) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/PageTemplate.html'
 	body = TYPO3.TypoScript:FluidRenderer
-	body.title = ${context.property('title')}
-	body.nodePath = ${context.property('_path')}
+	body.title = ${q(node).property('title')}
+	body.nodePath = ${q(node).property('_path')}
 	headerData = TYPO3.TypoScript:TypoScriptArrayRenderer
 
 	backendHeader = TYPO3.TypoScript:FluidRenderer
@@ -43,45 +52,45 @@ prototype(TYPO3.TYPO3:Page) {
 prototype(TYPO3.TYPO3:Headline) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TYPO3:Headline) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Headline.html'
-	title = ${context.property('title')}
+	title = ${q(node).property('title')}
 }
 
 # TextWithHeadline TS Object
 prototype(TYPO3.TYPO3:Text) < prototype(TYPO3.TYPO3:Headline)
 prototype(TYPO3.TYPO3:Text) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithHeadline.html'
-	text = ${context.property('text')}
+	text = ${q(node).property('text')}
 }
 
 # TextWithImage TS Object
 prototype(TYPO3.TYPO3:TextWithImage) < prototype(TYPO3.TYPO3:Text)
 prototype(TYPO3.TYPO3:TextWithImage) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithImage.html'
-	image = ${context.property('image')}
-	position = ${context.property('position')}
+	image = ${q(node).property('image')}
+	position = ${q(node).property('position')}
 }
 
 # Image TS Object
 prototype(TYPO3.TYPO3:Image) < prototype(TYPO3.TYPO3:Headline)
 prototype(TYPO3.TYPO3:Image) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Image.html'
-	image = ${context.property('image')}
+	image = ${q(node).property('image')}
 }
 
 # Breadcrumb TS Object
 prototype(TYPO3.TYPO3:Breadcrumb) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TYPO3:Breadcrumb) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
-	items = ${context.add(context.parents())}
+	items = ${q(node).add(q(node).parents())}
 }
 
 # Content Menu TS Object
 prototype(TYPO3.TYPO3:Menu) < prototype(TYPO3.TYPO3:MenuRenderer)
 prototype(TYPO3.TYPO3:Menu) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/ContentMenu.html'
-	entryLevel = ${context.property('startLevel')}
+	entryLevel = ${q(node).property('startLevel')}
 	entryLevel << 1.cms:toInteger()
-	maximumLevels = ${context.property('maximumLevels')}
+	maximumLevels = ${q(node).property('maximumLevels')}
 	maximumLevels << 1.cms:toInteger()
 }
 
@@ -89,10 +98,10 @@ prototype(TYPO3.TYPO3:Menu) {
 prototype(TYPO3.TYPO3:MultiColumn) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TYPO3:MultiColumn) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/MultiColumn.html'
-	layout = ${context.property('layout')}
+	layout = ${q(node).property('layout')}
 	columns = TYPO3.TypoScript:CollectionRenderer
 	columns {
-		collection = ${context.children('[instanceof TYPO3.TYPO3:Section]')}
+		collection = ${q(node).children('[instanceof TYPO3.TYPO3:Section]')}
 		itemRenderer = TYPO3.TYPO3:MultiColumnItem
 	}
 }
@@ -104,7 +113,7 @@ prototype(TYPO3.TYPO3:MultiColumnItem) {
 	columnContent = TYPO3.TYPO3:Section
 	columnContent {
 		nodePath = '.'
-		collection = ${context.children()}
+		collection = ${q(node).children()}
 	}
 }
 
