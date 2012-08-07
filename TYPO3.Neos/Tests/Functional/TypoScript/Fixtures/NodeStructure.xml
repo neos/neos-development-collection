@@ -13,7 +13,7 @@
 			<node nodeName="teaser" type="TYPO3.TYPO3:Section">
 				<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
 					<properties>
-						<headline>Welcome to this example</headline>
+						<title>Welcome to this example</title>
 						<text>This is our exemplary rendering test. Check it out and play around!</text>
 					</properties>
 				</node>
@@ -21,7 +21,7 @@
 			<node nodeName="main" type="TYPO3.TYPO3:Section">
 				<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
 					<properties>
-						<headline>Do you love FLOW3?</headline>
+						<title>Do you love FLOW3?</title>
 						<text>If you do, make sure to post your opinion about it on Twitter!</text>
 					</properties>
 				</node>
@@ -34,7 +34,7 @@
 					<node nodeName="left" type="TYPO3.TYPO3:Section">
 						<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
 							<properties>
-								<headline>Documentation</headline>
+								<title>Documentation</title>
 								<text>We're still improving our docs, but check them out nevertheless! Our presentations are also worth a visit</text>
 							</properties>
 						</node>
@@ -47,7 +47,7 @@
 					<node nodeName="center" type="TYPO3.TYPO3:Section">
 						<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
 							<properties>
-								<headline>Development Process</headline>
+								<title>Development Process</title>
 								<text>We're spending lots of thought into our infrastructure, you can profit from that, too!</text>
 							</properties>
 						</node>
@@ -59,7 +59,7 @@
 			<node nodeName="sidebar" type="TYPO3.TYPO3:Section">
 				<node nodeName="dummy42" type="TYPO3.TYPO3:TextWithHeadline">
 					<properties>
-						<headline>Last Commits</headline>
+						<title>Last Commits</title>
 						<text>Below, you'll see the most recent activity</text>
 					</properties>
 				</node>

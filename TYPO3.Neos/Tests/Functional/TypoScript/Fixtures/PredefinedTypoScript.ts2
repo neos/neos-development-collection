@@ -40,7 +40,7 @@ prototype(TYPO3.TypoScript:Page) {
 prototype(TYPO3.TypoScript:TextWithHeadline) < prototype(TYPO3.TypoScript:FluidRenderer)
 prototype(TYPO3.TypoScript:TextWithHeadline) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithHeadline.html'
-	headline = ${context.property('headline')}
+	title = ${context.property('title')}
 	text = ${context.property('text')}
 }
 prototype(TYPO3.TypoScript:Case).matchers.100200 {

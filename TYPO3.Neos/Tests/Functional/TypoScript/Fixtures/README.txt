@@ -9,29 +9,29 @@ Node Structure:
 - home (page) (title: Home)
   - teaser (section)
     - ___ (TextWithHeadline)
-      - headline: 'Welcome to this example'
+      - title: 'Welcome to this example'
       - text: 'This is our exemplary rendering test. Check it out and play around!'
   - main (section)
     - ___ (TextWithHeadline)
-      - headline: 'Do you love FLOW3?'
+      - title: 'Do you love FLOW3?'
       - text: 'If you do, make sure to post your opinion about it on Twitter!'
     - ___ (HTML)
       - source: '[TWITTER WIDGET]'
     - ___ (ThreeColumn)
       - left (section)
         - ___ (TextWithHeadline)
-          - headline: 'Documentation'
+          - title: 'Documentation'
           - text: 'We're still improving our docs, but check them out nevertheless! Our presentations are also worth a visit'
         - ___ (HTML)
           - source: '[SLIDESHARE]'
       - center (section)
         - ___ (TextWithHeadline)
-          - headline: 'Development Process'
+          - title: 'Development Process'
           - text: 'We're spending lots of thought into our infrastructure, you can profit from that, too!'
       - right (section)
   - sidebar (section)
     - ___ (TextWithHeadline)
-      - headline: 'Last Commits'
+      - title: 'Last Commits'
       - text: 'Below, you'll see the most recent activity'
     - ___ (HTML)
       - source: '[COMMIT WIDGET]'

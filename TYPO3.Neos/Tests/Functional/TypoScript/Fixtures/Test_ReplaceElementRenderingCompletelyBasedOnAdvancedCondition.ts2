@@ -1,12 +1,12 @@
 #
-# If the headline starts with "Docume", prefix it with "DOCS" (globally)
+# If the title starts with "Docume", prefix it with "DOCS" (globally)
 #
 
 namespace: default = TYPO3\TYPO3\TypoScript
 
 prototype(TYPO3.TypoScript:Case).matchers.20 {
-	condition = ${context.is('[headline ^= Docume]')}
+	condition = ${context.is('[title ^= Docume]')}
 	type = 'TYPO3.TypoScript:DocumentationText'
 }
 prototype(TYPO3.TypoScript:DocumentationText) < prototype(TYPO3.TypoScript:TextWithHeadline)
-prototype(TYPO3.TypoScript:DocumentationText).headline << 1.wrap(prefix: 'DOCS: ')
+prototype(TYPO3.TypoScript:DocumentationText).title << 1.wrap(prefix: 'DOCS: ')

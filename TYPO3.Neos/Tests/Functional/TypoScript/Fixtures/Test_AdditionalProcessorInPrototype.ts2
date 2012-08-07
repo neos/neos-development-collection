@@ -4,4 +4,4 @@
 
 namespace: default = TYPO3\TYPO3\TypoScript
 
-page1.body.sections.sidebar.prototype(TYPO3.TypoScript:TextWithHeadline).headline << 1.wrap(prefix: 'BEFORE', suffix: 'AFTER')
+page1.body.sections.sidebar.prototype(TYPO3.TypoScript:TextWithHeadline).title << 1.wrap(prefix: 'BEFORE', suffix: 'AFTER')
