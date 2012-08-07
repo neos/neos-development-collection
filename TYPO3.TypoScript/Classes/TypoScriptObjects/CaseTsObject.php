@@ -45,9 +45,14 @@ class CaseTsObject extends AbstractTsObject {
 	 * @return mixed
 	 */
 	public function evaluate() {
-		$matchers = array_keys($this->tsValue('matchers'));
-		asort($matchers);
-		foreach ($matchers as $matcherName) {
+		$matchers = $this->tsValue('matchers');
+		if ($matchers === NULL) {
+			return '';
+		}
+
+		$matcherKeys = array_keys($matchers);
+		asort($matcherKeys);
+		foreach ($matcherKeys as $matcherName) {
 			$evaluatedCondition = $this->tsValue('matchers.' . $matcherName . '.condition');
 			if ($evaluatedCondition) {
 				return $this->tsRuntime->render(

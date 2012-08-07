@@ -162,7 +162,10 @@ class Runtime {
 					$output
 				);
 			}
-			return trim($output);
+			if (is_string($output)) {
+				$output = trim($output);
+			}
+			return $output;
 		} catch (\Exception $e) {
 			if ($this->settings['catchRuntimeExceptions'] === TRUE) {
 				return '<!-- Exception while rendering ' . htmlspecialchars($typoScriptPath) . ' : ' . $e->getMessage() . ' -->';
@@ -184,7 +187,11 @@ class Runtime {
 
 		if (!isset($typoScriptConfiguration['implementationClassName']) || !isset($typoScriptConfiguration['__objectType'])) {
 			if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
-				throw new \TYPO3\TypoScript\Exception('Element at typoscript path "' . htmlspecialchars($typoScriptPath) . '" could not be rendered because ts object type or implementation class name was not found.', 1332493990);
+				if (!isset($typoScriptConfiguration['__objectType'])) {
+					throw new \TYPO3\TypoScript\Exception('Element at typoscript path "' . $typoScriptPath . '" could not be rendered because ts object type was not found.', 1332493990);
+				} else {
+					throw new \TYPO3\TypoScript\Exception('Element at typoscript path "' . $typoScriptPath . '" could not be rendered because implementation class name for "' . $typoScriptConfiguration['__objectType'] . '" was not found.', 1332493995);
+				}
 			} else {
 				return NULL;
 			}

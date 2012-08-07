@@ -63,6 +63,9 @@ class CollectionRenderer extends AbstractTsObject {
 		$collection = $this->tsValue('collection');
 
 		$output = '';
+		if ($collection === NULL) {
+			return '';
+		}
 		$this->numberOfRenderedNodes = 0;
 		$itemName = $this->tsValue('itemName');
 		if ($itemName === NULL) {
