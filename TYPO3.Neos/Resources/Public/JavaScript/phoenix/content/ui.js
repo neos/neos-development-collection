@@ -403,8 +403,8 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 						position,
 						function(result) {
 							if (result.success == true) {
-								//reload the parent node with its childrens
-								//if the parentnode has no children left the fathernode of the parenNode should be reloaded
+								//reload the parent node with its children
+								//if the parentNode has no children left the fatherNode of the parentNode should be reloaded
 								//editNode(node);
 								var parentNode = activeNode.getParent();
 								parentNode.reloadChildren();
@@ -434,8 +434,8 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 							node.data.key,
 							function(result) {
 								if (result.success == true) {
-									//reload the parent node with its childrens
-									//if the parentnode has no children left the fathernode of the parenNode should be reloaded
+									//reload the parent node with its children
+									//if the parentNode has no children left the fatherNode of the parentNode should be reloaded
 									reloadNodeAfterRemove(node);
 								}
 							}
@@ -530,9 +530,8 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 		}.observes('T3.ContentModule._isLoadingPage'),
 
 		onPopoverOpen: function() {
-			var attr = $('#t3-page-metainformation').attr('data-__nodepath');
-			var dataNodeTitle = $('#t3-page-metainformation').data('title');
-			var dataNodePath = $('#t3-page-metainformation').attr('data-__nodepath');
+			var dataNodeTitle = $('#t3-page-metainformation').data('title'),
+				dataNodePath = $('#t3-page-metainformation').attr('data-__nodepath');
 
 				// if there is a tree and the rootnode key of the tree is different from the actual page, the tree should be reinitialised
 			if (this.inspectTree) {
@@ -626,13 +625,11 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 					 * hitmode over, after and before
 					 */
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-						var position;
-
 						// it is an existing node which was moved on the tree
-						var sourceNodeLevel = sourceNode.getLevel();
-						var nodeLevel = node.getLevel();
-						var nodeLevelDiff = nodeLevel - sourceNodeLevel;
-						var targetNodeContentType = node.data.contentType;
+						var position,
+							sourceNodeLevel = sourceNode.getLevel(),
+							nodeLevel = node.getLevel(),
+							nodeLevelDiff = nodeLevel - sourceNodeLevel;
 
 						if (hitMode === 'before') {
 							position = -1;
@@ -662,7 +659,7 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 					}
 				},
 				onClick: function(node, event) {
-					if (node.getEventTargetType === 'title') {
+					if (node.getEventTargetType() === 'title') {
 						var nodePath = node.data.key, offsetFromTop = 150;
 						var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
 						if (!block) return;
