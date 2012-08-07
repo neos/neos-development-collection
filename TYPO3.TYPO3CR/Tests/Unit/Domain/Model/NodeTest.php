@@ -44,19 +44,6 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function getLabelCropsTheLabelIfNecessary() {
-		$this->assertEquals('(unstructured) bar', $this->node->getLabel());
-
-		$this->node->setProperty('title', 'The point of this title is, that it`s a bit long and needs to be cropped.');
-		$this->assertEquals('The point of this title is, th …', $this->node->getLabel());
-
-		$this->node->setProperty('title', 'A better title');
-		$this->assertEquals('A better title', $this->node->getLabel());
-	}
-
-	/**
-	 * @test
-	 */
 	public function getAbstractReturnsAnAbstract() {
 		$this->node->setProperty('title', 'The title of this node');
 		$this->node->setProperty('text', 'Shall I or <em>shall</em> I not, leak or not leak?');

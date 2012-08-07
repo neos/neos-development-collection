@@ -553,4 +553,20 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertTrue(TRUE);
 	}
 
+	/**
+	 * @test
+	 */
+	public function getLabelCropsTheLabelIfNecessary() {
+		$workspace = new \TYPO3\TYPO3CR\Domain\Model\Workspace('live');
+		$node = new \TYPO3\TYPO3CR\Domain\Model\Node('/bar', $workspace);
+		$this->inject($node, 'nodeRepository', $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository'));
+		$this->assertEquals('(unstructured) bar', $node->getLabel());
+
+		$node->setProperty('title', 'The point of this title is, that it`s a bit long and needs to be cropped.');
+		$this->assertEquals('The point of this title is, th …', $node->getLabel());
+
+		$node->setProperty('title', 'A better title');
+		$this->assertEquals('A better title', $node->getLabel());
+	}
 }
+?>

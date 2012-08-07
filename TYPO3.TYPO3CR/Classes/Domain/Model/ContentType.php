@@ -42,6 +42,12 @@ class ContentType {
 	protected $declaredSuperTypes;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
 	 * Constructs this content type
 	 *
 	 * @param string $name Name of the content type
@@ -117,6 +123,20 @@ class ContentType {
 	 */
 	public function getLabel() {
 		return (isset($this->configuration['label']) ? $this->configuration['label'] : '');
+	}
+
+	/**
+	 * Return the node label generator class for the given node
+	 *
+	 * @return NodeLabelGeneratorInterface
+	 */
+	public function getNodeLabelGenerator() {
+		if (isset($this->configuration['nodeLabelGenerator'])) {
+			$nodeLabelGeneratorClassName = $this->configuration['nodeLabelGenerator'];
+		} else {
+			$nodeLabelGeneratorClassName = 'TYPO3\TYPO3CR\Domain\Model\DefaultNodeLabelGenerator';
+		}
+		return $this->objectManager->get($nodeLabelGeneratorClassName);
 	}
 
 	/**

@@ -258,12 +258,10 @@ class Node implements NodeInterface {
 	 * of this node.
 	 *
 	 * @return string
-	 * @todo Use a property specified by the content type once it supports it.
 	 */
 	public function getLabel() {
-		$label = $this->hasProperty('title') ? strip_tags($this->getProperty('title')) : '(' . $this->getContentType() . ') '. $this->getName();
-		$croppedLabel = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($label, 0, self::LABEL_MAXIMUM_CHARACTERS);
-		return $croppedLabel . (strlen($croppedLabel) < strlen($label) ? ' …' : '');
+		$contentType = $this->contentTypeManager->getContentType($this->contentType);
+		return $contentType->getNodeLabelGenerator()->getLabel($this);
 	}
 
 	/**
