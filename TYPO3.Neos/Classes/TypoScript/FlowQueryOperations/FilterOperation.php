@@ -77,7 +77,13 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 	 */
 	protected function evaluateOperator($value, $operator, $operand) {
 		if ($operator === 'instanceof') {
-			return $this->contentTypeManager->getContentType($value->getContentType())->isOfType($operand);
+			if ($this->operandIsSimpleType($operand)) {
+				return $this->handleSimpleTypeOperand($operand, $value);
+			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface') {
+				return TRUE;
+			} else {
+				return $this->contentTypeManager->getContentType($value->getContentType())->isOfType($operand);
+			}
 		} else {
 			return parent::evaluateOperator($value, $operator, $operand);
 		}
