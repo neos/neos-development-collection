@@ -176,6 +176,32 @@ class Runtime {
 	}
 
 	/**
+	 * Determine if the given TypoScriptPath is renderable, which means it exists and has an implementation.
+	 *
+	 * @param string $typoScriptPath
+	 * @return boolean
+	 */
+	public function canRender($typoScriptPath) {
+		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
+
+		return $this->canRenderWithConfiguration($typoScriptConfiguration);
+	}
+
+	/**
+	 * Internal evaluation if given configuration is renderable.
+	 *
+	 * @param array $typoScriptConfiguration
+	 * @return boolean
+	 */
+	protected function canRenderWithConfiguration(array $typoScriptConfiguration) {
+		if (!isset($typoScriptConfiguration['implementationClassName']) || !isset($typoScriptConfiguration['__objectType'])) {
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
+	/**
 	 * Internal evaluation method of absolute $typoScriptpath
 	 *
 	 * @param string $typoScriptPath
@@ -185,7 +211,7 @@ class Runtime {
 	protected function evaluateInternal($typoScriptPath, $behaviorIfPathNotFound) {
 		$typoScriptConfiguration = $this->getConfigurationForPath($typoScriptPath);
 
-		if (!isset($typoScriptConfiguration['implementationClassName']) || !isset($typoScriptConfiguration['__objectType'])) {
+		if (!$this->canRenderWithConfiguration($typoScriptConfiguration)) {
 			if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
 				if (!isset($typoScriptConfiguration['__objectType'])) {
 					throw new \TYPO3\TypoScript\Exception('Element at typoscript path "' . $typoScriptPath . '" could not be rendered because ts object type was not found.', 1332493990);
