@@ -77,5 +77,8 @@ https://github.com/jeresig/jquery.hotkeys - version 0.8
 - Modularized by Christopher
 
 
-Bootstrap CSS - from twitter
-http://markdotto.com/bs2/docs/index.html (https://github.com/twitter/bootstrap/) - Version 2.0 (WIP)
+Twitter Bootstrap
+SASS version - https://github.com/jlong/sass-twitter-bootstrap/tree/master/lib (https://github.com/twitter/bootstrap/) - version 2.0.4
+
+* Wrapped in .t3-ui class (bootstrap.scss)
+* Changed icon images paths variables $iconSpritePath + $iconWhiteSpritePath (_variables.scss)
