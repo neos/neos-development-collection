@@ -32,10 +32,17 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	protected $nodeRepository;
 
 	/**
+	 * The TypoScript path to use for rendering the node given in "value", defaults to "page".
+	 *
+	 * @var string
+	 */
+	protected $typoScriptPath = 'page';
+
+	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view
-	 * @throws \TYPO3\TYPO3\Exception
+	 * @throws \TYPO3\TYPO3\Exception if no node is given
 	 * @api
 	 */
 	public function render() {
@@ -50,14 +57,30 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 		$closestFolderNode = $currentNode;
 		$typoScriptConfiguration = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
 
-			// TODO: make TypoScriptPath overridable
-		$typoScriptPath = 'page';
-
 		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $this->controllerContext);
+
 		$typoScriptRuntime->pushContextArray(array('node' => $currentNode));
-		$output = $typoScriptRuntime->render($typoScriptPath);
+		$output = $typoScriptRuntime->render($this->typoScriptPath);
 		$typoScriptRuntime->popContext();
+
 		return $output;
+	}
+
+	/**
+	 * Set the TypoScript path to use for rendering the node given in "value"
+	 *
+	 * @param string $typoScriptPath
+	 * @return void
+	 */
+	public function setTypoScriptPath($typoScriptPath) {
+		$this->typoScriptPath = $typoScriptPath;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTypoScriptPath() {
+		return $this->typoScriptPath;
 	}
 }
 ?>
