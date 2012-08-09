@@ -67,6 +67,23 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	}
 
 	/**
+	 * Is it possile to render $node with $typoScriptPath?
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param string $typoScriptPath
+	 * @return boolean TRUE if $node can be rendered at $typoScriptPath
+	 */
+	public function canRenderWithNodeAndPath(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoScriptPath) {
+		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
+
+		// TODO: find closest folder node from this node...
+		$closestFolderNode = $node;
+		$typoScriptConfiguration = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
+		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $this->controllerContext);
+		return $typoScriptRuntime->canRender($typoScriptPath);
+	}
+
+	/**
 	 * Set the TypoScript path to use for rendering the node given in "value"
 	 *
 	 * @param string $typoScriptPath
