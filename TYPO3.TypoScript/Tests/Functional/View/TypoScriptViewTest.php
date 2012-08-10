@@ -45,6 +45,15 @@ class TypoScriptViewTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function typoScriptViewUsesGivenPathIfSet() {
+		$view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
+		$view->setTypoScriptPath('foo/bar');
+		$this->assertEquals('TestRenderer calledfoobar', $view->render());
+	}
+
+	/**
+	 * @test
+	 */
 	public function ifNoTypoScriptViewIsFoundThenFallbackViewIsExecuted() {
 		$view = $this->buildView('Foo\Bar\Controller\TestController', 'nonExisting');
 		$this->mockFallbackView->expects($this->once())->method('render')->will($this->returnValue('FallbackView called'));

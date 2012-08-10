@@ -1,3 +1,9 @@
-prototype(TYPO3.TypoScript:TestRenderer).implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(TYPO3.TypoScript:TestRenderer) {
+	implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+	test = ${test}
+}
 
 Foo.Bar.TestController.index = TYPO3.TypoScript:TestRenderer
+
+foo.bar = TYPO3.TypoScript:TestRenderer
+foo.bar.test = 'foobar'

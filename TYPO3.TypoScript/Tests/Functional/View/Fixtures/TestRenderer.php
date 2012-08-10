@@ -18,14 +18,19 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  */
 class TestRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 
+	protected $test;
+
+	public function setTest($test) {
+		$this->test = $test;
+	}
+
 	/**
 	 * {@inheritdoc}
 	 *
 	 * @return string
 	 */
 	public function evaluate() {
-		$context = $this->tsRuntime->getCurrentContext();
-		return 'TestRenderer called' . (isset($context['test']) ? $context['test'] : '');
+		return 'TestRenderer called' . $this->tsValue('test');
 	}
 }
 ?>
