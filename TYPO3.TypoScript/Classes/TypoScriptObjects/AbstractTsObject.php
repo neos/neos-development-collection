@@ -63,10 +63,9 @@ abstract class AbstractTsObject {
 	/**
 	 * Evaluate this TypoScript object and return the result
 	 *
-	 * @param mixed $currentContext
 	 * @return mixed
 	 */
-	abstract public function evaluate($currentContext);
+	abstract public function evaluate();
 
 	/**
 	 * @param array $internalProcessors

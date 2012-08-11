@@ -42,10 +42,9 @@ class CaseTsObject extends AbstractTsObject {
 	/**
 	 * Execute each matcher condition, and if the condition matches, render the matcher type.
 	 *
-	 * @param mixed $node
 	 * @return mixed
 	 */
-	public function evaluate($node) {
+	public function evaluate() {
 		$matchers = array_keys($this->tsValue('matchers'));
 		asort($matchers);
 		foreach ($matchers as $matcherName) {
@@ -56,7 +55,7 @@ class CaseTsObject extends AbstractTsObject {
 				);
 			}
 		}
-		return 'No matcher found for ' . $node;
+		return '';
 	}
 }
 ?>

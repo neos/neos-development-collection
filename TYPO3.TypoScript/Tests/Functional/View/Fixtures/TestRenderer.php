@@ -21,10 +21,10 @@ class TestRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject 
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @param mixed $context
 	 * @return string
 	 */
-	public function evaluate($context) {
+	public function evaluate() {
+		$context = $this->tsRuntime->getCurrentContext();
 		return 'TestRenderer called' . (isset($context['test']) ? $context['test'] : '');
 	}
 }

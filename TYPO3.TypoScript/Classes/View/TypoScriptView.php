@@ -126,7 +126,7 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	 */
 	protected function renderTypoScript() {
 		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($this->parsedTypoScript, $this->controllerContext);
-		$typoScriptRuntime->pushContext($this->variables);
+		$typoScriptRuntime->pushContextArray($this->variables);
 		$output = $typoScriptRuntime->render(str_replace('.', '/', $this->typoScriptPath));
 		$typoScriptRuntime->popContext();
 		return $output;

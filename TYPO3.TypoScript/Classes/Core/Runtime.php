@@ -18,6 +18,17 @@ use TYPO3\FLOW3\Reflection\ObjectAccess;
 /**
  * TypoScript Runtime
  *
+ * TypoScript Rendering Process
+ * ============================
+ *
+ * During rendering, all TypoScript objects form a tree.
+ *
+ * When a TypoScript object at a certain $typoScriptPath is invoked, it has
+ * access to all variables stored in the $context (which is an array).
+ *
+ * The TypoScript object can then add or replace variables to this context using pushContext()
+ * or pushContextArray(), before rendering sub-TypoScript objects. After rendering
+ * these, it must call popContext() to reset the context to the last state.
  */
 class Runtime {
 
@@ -79,18 +90,34 @@ class Runtime {
 	}
 
 	/**
-	 * Push a new context object to the rendering stack
+	 * Completely replace the context array with the new $contextArray.
 	 *
-	 * @param mixed $context
+	 * Purely internal method, should not be called outside of TYPO3.TypoScript.
+	 *
+	 * @param array $contextArray
+	 * @return void
 	 */
-	public function pushContext($context) {
-		$this->renderingStack[] = $context;
+	public function pushContextArray(array $contextArray) {
+		$this->renderingStack[] = $contextArray;
 	}
 
 	/**
-	 * Remove the topmost context object and return it
+	 * Push a new context object to the rendering stack
 	 *
-	 * @return mixed the topmost context object
+	 * @param string $key the key inside the context
+	 * @param mixed $context
+	 * @return void
+	 */
+	public function pushContext($key, $context) {
+		$newContext = $this->getCurrentContext();
+		$newContext[$key] = $context;
+		$this->renderingStack[] = $newContext;
+	}
+
+	/**
+	 * Remove the topmost context objects and return them
+	 *
+	 * @return array the topmost context objects as associative array
 	 */
 	public function popContext() {
 		return array_pop($this->renderingStack);
@@ -99,7 +126,7 @@ class Runtime {
 	/**
 	 * Get the current context object
 	 *
-	 * @return mixed the current context object
+	 * @return array the array of current context objects
 	 */
 	public function getCurrentContext() {
 		return $this->renderingStack[count($this->renderingStack) - 1];
@@ -173,7 +200,7 @@ class Runtime {
 		$tsObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
 		$this->setOptionsOnTsObject($tsObject, $typoScriptConfiguration);
 
-		$output = $tsObject->evaluate($this->getCurrentContext());
+		$output = $tsObject->evaluate();
 		return $this->evaluateProcessor('__all', $tsObject, $output);
 	}
 
@@ -245,9 +272,15 @@ class Runtime {
 	 */
 	protected function setOptionsOnTsObject(\TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $tsObject, array $typoScriptConfiguration) {
 		foreach ($typoScriptConfiguration as $key => $value) {
-			if ($key === 'implementationClassName') continue;
-			if ($key === '__processors') $tsObject->setInternalProcessors($value);
-			# TODO THAT'S VERY UGLY!!
+			if ($key === 'implementationClassName') {
+					// The implementationClassName is already handled by the TypoScript runtime
+				continue;
+			}
+			if ($key === '__processors') {
+				$tsObject->setInternalProcessors($value);
+			}
+
+				// skip keys which start with __, as they are purely internal.
 			if ($key[0] === '_' && $key[1] === '_') continue;
 			ObjectAccess::setProperty($tsObject, $key, $value);
 		}
@@ -263,10 +296,24 @@ class Runtime {
 	 */
 	public function evaluateProcessor($variableName, \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $tsObject, $value) {
 		if (is_array($value) && isset($value['__eelExpression'])) {
-			$context = new \TYPO3\Eel\Context(array(
-				'context' => new \TYPO3\Eel\FlowQuery\FlowQuery(array($this->getCurrentContext())),
-				'this' => $tsObject
-			));
+
+			$contextVariables = $this->getCurrentContext();
+			if (!isset($contextVariables['context']) && isset($contextVariables['node'])) {
+					// DEPRECATED since sprint release 10; should be removed lateron.
+				$contextVariables['context'] = new \TYPO3\Eel\FlowQuery\FlowQuery(array($contextVariables['node']));
+			}
+			if (isset($contextVariables['q'])) {
+				throw new \TYPO3\TypoScript\Exception('Context variable "q" not allowed, as it is already reserved for FlowQuery use.', 1344325040);
+			}
+			$contextVariables['q'] = function($element) {
+				return new \TYPO3\Eel\FlowQuery\FlowQuery(array($element));
+			};
+			if (isset($contextVariables['this'])) {
+				throw new \TYPO3\TypoScript\Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current TypoScript object.', 1344325044);
+			}
+			$contextVariables['this'] = $tsObject;
+
+			$context = new \TYPO3\Eel\Context($contextVariables);
 			$value = $this->eelEvaluator->evaluate($value['__eelExpression'], $context);
 		}
 		return $this->processorEvaluator->evaluateProcessor($tsObject->getInternalProcessors(), $variableName, $value);
