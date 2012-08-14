@@ -85,6 +85,7 @@ class UserSettingsController extends \TYPO3\TYPO3\Controller\Module\StandardCont
 		$this->accountRepository->update($account);
 		$this->partyRepository->update($account->getParty());
 
+		$this->addFlashMessage('The user profile has been updated.');
 		$this->redirect('index');
 	}
 

@@ -134,7 +134,8 @@ class UserAdminController extends \TYPO3\TYPO3\Controller\Module\StandardControl
 		$this->accountRepository->update($account);
 		$this->partyRepository->update($account->getParty());
 
-		$this->redirect('edit', NULL, NULL, array('account' => $account));
+		$this->addFlashMessage('The user profile has been updated.');
+		$this->redirect('index');
 	}
 
 	/**
@@ -144,6 +145,7 @@ class UserAdminController extends \TYPO3\TYPO3\Controller\Module\StandardControl
 	 */
 	public function deleteAction(\TYPO3\FLOW3\Security\Account $account) {
 		$this->accountRepository->remove($account);
+		$this->addFlashMessage('The user has been deleted.');
 		$this->redirect('index');
 	}
 
