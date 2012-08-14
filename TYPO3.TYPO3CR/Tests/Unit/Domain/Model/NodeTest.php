@@ -213,6 +213,45 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
+	public function propertiesCanBeRemoved() {
+		$this->node->setProperty('title', 'My Title');
+		$this->assertTrue($this->node->hasProperty('title'));
+
+		$this->node->removeProperty('title');
+
+		$this->assertFalse($this->node->hasProperty('title'));
+	}
+
+	/**
+	 * @test
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
+	 */
+	public function removePropertyThrowsExceptionIfPropertyDoesNotExist() {
+		$this->node->removeProperty('nada');
+	}
+
+	/**
+	 * @test
+	 */
+	public function removePropertyDoesNotTouchAContentObject() {
+		$this->node->_set('persistenceManager', $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'));
+
+		$className = uniqid('Test');
+		eval('class ' .$className . ' {
+				public $title = "My Title";
+			}');
+		$contentObject = new $className();
+		$this->node->setContentObject($contentObject);
+
+		$this->node->removeProperty('title');
+
+		$this->assertTrue($this->node->hasProperty('title'));
+		$this->assertEquals('My Title', $this->node->getProperty('title'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function propertyFunctionsUseAContentObjectIfOneHasBeenDefined() {
 		$this->node->_set('persistenceManager', $this->getMock('TYPO3\FLOW3\Persistence\PersistenceManagerInterface'));
 
@@ -248,7 +287,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\TYPO3CR\Exception\NodeException
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
 	 */
 	public function getPropertyThrowsAnExceptionIfTheSpecifiedPropertyDoesNotExistInTheContentObject() {
 		$className = uniqid('Test');
@@ -280,7 +319,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException TYPO3\TYPO3CR\Exception\NodeException
+	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
 	 */
 	public function setContentTypeThrowsAnExceptionIfTheSpecifiedContentTypeDoesNotExist() {
 		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);

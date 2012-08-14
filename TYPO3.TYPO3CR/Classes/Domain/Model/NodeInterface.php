@@ -189,9 +189,21 @@ interface NodeInterface {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return mixed value of the property
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the a content object exists but does not contain the specified property
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
 	 */
 	public function getProperty($propertyName);
+
+	/**
+	 * Removes the specified property.
+	 *
+	 * If the node has a content object attached, the property will not be removed on
+	 * that object if it exists.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+	 */
+	public function removeProperty($propertyName);
 
 	/**
 	 * Returns all properties of this node.

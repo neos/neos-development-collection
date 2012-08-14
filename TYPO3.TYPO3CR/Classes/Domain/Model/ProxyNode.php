@@ -282,6 +282,24 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Removes the specified property.
+	 *
+	 * If the node has a content object attached, the property will not be removed on
+	 * that object if it exists.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if the node does not contain the specified property
+	 */
+	public function removeProperty($propertyName) {
+		if (isset($this->newNode)) {
+			$this->newNode->removeProperty($propertyName);
+		} else {
+			$this->originalNode->removeProperty($propertyName);
+		}
+	}
+
+	/**
 	 * Returns all properties of this node.
 	 *
 	 * If the node has a content object attached, the properties will be fetched
