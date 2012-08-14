@@ -39,9 +39,18 @@ class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	protected $accountFactory;
 
 	/**
-	 * Create a new Typo3BackendProvider user
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Cryptography\HashService
+	 */
+	protected $hashService;
+
+	/**
+	 * Create a new user
 	 *
-	 * @param string $username Email address of the user to be created
+	 * This command creates a new user which has access to the backend user interface.
+	 * It is recommended to user the email address as a username.
+	 *
+	 * @param string $username The username of the user to be created.
 	 * @param string $password Password of the user to be created
 	 * @param string $firstName First name of the user to be created
 	 * @param string $lastName Last name of the user to be created
@@ -73,9 +82,33 @@ class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 	}
 
 	/**
+	 * Set a new password for the given user
+	 *
+	 * This allows for setting a new password for an existing user account.
+	 *
+	 * @param string $username Username of the account to modify
+	 * @param string $password The new password
+	 * @return void
+	 */
+	public function setPasswordCommand($username, $password) {
+		$account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($username, 'Typo3BackendProvider');
+		if (!$account instanceof \TYPO3\FLOW3\Security\Account) {
+			$this->outputLine('User "%s" does not exists.', array($username));
+			$this->quit(1);
+		}
+		$account->setCredentialsSource($this->hashService->hashPassword($password, 'default'));
+		$this->accountRepository->update($account);
+
+		$this->outputLine('The new password for user "%s" was set.', array($username));
+	}
+
+	/**
 	 * Add a role to a user
 	 *
-	 * @param string $username Email address of the user
+	 * This command allows for adding a specific role to an existing user.
+	 * Currently supported roles: "Editor", "Administrator"
+	 *
+	 * @param string $username The username
 	 * @param string $role Role ot be added to the user
 	 * @return void
 	 */
