@@ -387,6 +387,11 @@ TYPO3:
             controller: '\TYPO3\TYPO3\Controller\Module\Management\UserSettingsController'
             description: "This module allows you to customize your backend user profile. Here you can change your active system language, name and email address. You may also configure other general features in the system."
             icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Black/user_icon-24.png'
+          workspaces:
+            label: 'Workspaces'
+            controller: '\TYPO3\TYPO3\Controller\Module\Management\WorkspacesController'
+            description: "This module contains the overview of all elements within the current workspace and it enables to continue the review and publishing workflow for them."
+            icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Black/layers_1_icon-24.png'
       administration:
         label: 'Administration'
         submodules:

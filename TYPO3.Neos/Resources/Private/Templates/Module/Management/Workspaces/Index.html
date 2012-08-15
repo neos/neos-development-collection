@@ -1,0 +1,188 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
+<f:layout name="BackendModule" />
+
+<f:section name="content">
+	<ul class="nav nav-pills">
+		<f:for each="{workspaces}" as="workspace">
+			<f:if condition="{0: workspace.workspaceNode.name} != {0: 'live'}">
+				<li{f:if(condition: '{workspace.workspaceNode.name} == {workspaceName}', then: ' class="active"')}>
+					<f:link.action arguments="{workspaceName: workspace.workspaceNode.name}">{workspace.workspaceNode.name} ({workspace.unpublishedNodesCount})</f:link.action>
+				</li>
+			</f:if>
+		</f:for>
+	</ul>
+
+	<f:if condition="{sites}">
+		<f:then>
+			<f:form action="publishOrDiscardNodes">
+				<f:render section="actions" arguments="{workspaceName: workspaceName}" />
+
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th class="check"><input type="checkbox" id="check-all" /></th>
+							<th class="legend"></th>
+							<th>Label</th>
+							<th>Content type</th>
+							<th>Relative path</th>
+							<th class="actions"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<f:for each="{sites}" as="site">
+							<f:for each="{site.folders}" key="folderPath" as="folder">
+								<tr>
+									<td colspan="6" class="folder">
+										<div class="pull-left">
+											<i class="fold-toggle icon-chevron-down" data-toggle="fold-{folder.folderNode.identifier}"></i>
+											<strong>Path: <t:link.node node="{folder.folderNode}" absolute="1">/{folderPath}</t:link.node></strong>
+										</div>
+										<f:if condition="{sites -> f:count()} > 1">
+											<div class="pull-right">
+												<strong>Site: {f:if(condition: site.siteNode.name, then: site.siteNode.name, else: site.siteNode.nodeName)}</strong>
+											</div>
+										</f:if>
+									</td>
+								</tr>
+								<f:for each="{folder.changes}" key="relativePath" as="change">
+									<tr class="fold-{folder.folderNode.identifier}">
+										<td class="check">
+											<f:form.checkbox name="nodes[]" value="{change.node.contextPath}" id="{change.node.identifier}" />
+										</td>
+										<td class="legend">
+											<label for="{change.node.identifier}">
+												<f:if condition="{change.node.removed}">
+													<f:then><i class="legend icon-trash" title="deleted"></i></f:then>
+													<f:else>
+														<f:if condition="{change.isNew}">
+															<f:then><i class="legend icon-star" title="created"></i></f:then>
+															<f:else>
+																<f:if condition="{change.isMoved}">
+																	<f:then><i class="legend icon-move" title="moved"></i></f:then>
+																	<f:else>
+																		<f:if condition="{change.node.hidden}">
+																			<f:then>
+																				<i class="legend icon-eye-close" title="hidden"></i>
+																			</f:then>
+																			<f:else>
+																				<i class="legend icon-pencil" title="edited"></i>
+																			</f:else>
+																		</f:if>
+																	</f:else>
+																</f:if>
+															</f:else>
+														</f:if>
+													</f:else>
+												</f:if>
+											</label>
+										</td>
+										<td><label for="{change.node.identifier}" title="{change.node.abstract}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>[No title]</em>')}</label></td>
+										<td class="content-type" title="{change.node.contentType}">
+											<label for="{change.node.identifier}">
+												<f:if condition="{change.configuration.darkIcon}">
+													<img src="{f:uri.resource(path: change.configuration.darkIcon)}" alt="{change.node.contentType}" />
+												</f:if>
+												{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.contentType)}
+											</label>
+										</td>
+										<td><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
+										<td class="actions">
+											<f:link.action action="publishNode" arguments="{node: change.node.contextPath}" class="btn btn-success" title="Publish">
+												<i class="icon-check icon-white"></i>
+											</f:link.action>
+											<f:link.action action="discardNode" arguments="{node: change.node.contextPath}" class="btn btn-danger" title="Discard">
+												<i class="icon-trash icon-white"></i>
+											</f:link.action>
+										</td>
+									</tr>
+								</f:for>
+							</f:for>
+						</f:for>
+					</tbody>
+					<tfoot>
+						<td colspan="6">
+							Legend:
+							<i class="legend icon-pencil"></i> edited
+							<i class="legend icon-move"></i> moved
+							<i class="legend icon-star"></i> created
+							<i class="legend icon-eye-close"></i> hidden
+							<i class="legend icon-trash"></i> deleted
+						</td>
+					</tfoot>
+				</table>
+
+				<f:render section="actions" arguments="{workspaceName: workspaceName}" />
+			</f:form>
+		</f:then>
+		<f:else>
+			<p>No unpublished changes in this workspace</p>
+		</f:else>
+	</f:if>
+
+	<div class="modal hide" id="discard">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3>Are you sure you want to discard all changes in the "{workspaceName}" workspace?</h3>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+			<f:link.action action="discardWorkspace" arguments="{workspaceName: workspaceName}" class="btn btn-danger">
+				<i class="icon-trash icon-white"></i>
+				Discard
+			</f:link.action>
+		</div>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
+	<script>
+		(function($) {
+			$('#check-all').change(function() {
+				var value = false;
+				if ($(this).is(':checked')) {
+					value = true;
+					$('.nodes-action').removeClass('disabled');
+				} else {
+					$('.nodes-action').addClass('disabled');
+				}
+				$('tbody input[type="checkbox"]').attr('checked', value);
+			});
+			$('tbody input[type="checkbox"]').change(function() {
+				if ($('tbody input[type="checkbox"]:checked').length > 0) {
+					$('.nodes-action').removeClass('disabled');
+				} else {
+					$('.nodes-action').addClass('disabled');
+				}
+			});
+			$('.fold-toggle').click(function() {
+				$(this).toggleClass('icon-chevron-down icon-chevron-right');
+				$('tr.' + $(this).data('toggle')).toggle();
+			});
+		})(jQuery);
+	</script>
+</f:section>
+
+<f:section name="actions">
+	<div class="form-actions">
+		<div class="pull-left">
+			<button type="submit" name="moduleArguments[action]" value="publish" class="btn btn-success disabled nodes-action">
+				<i class="icon-ok-circle icon-white"></i>
+				Publish <strong>selected</strong> changes
+			</button>
+			<button type="submit" name="moduleArguments[action]" value="discard" class="btn btn-warning disabled nodes-action">
+				<i class="icon-remove-circle icon-white"></i>
+				Discard <strong>selected</strong> changes
+			</button>
+		</div>
+		<div class="pull-right">
+			<f:link.action action="publishWorkspace" arguments="{workspaceName: workspaceName}" class="btn btn-primary">
+				<i class="icon-refresh icon-white"></i>
+				Publish <strong>all</strong> changes
+			</f:link.action>
+			<button class="btn btn-danger" data-toggle="modal" href="#discard">
+				<i class="icon-trash icon-white"></i>
+				Discard <strong>all</strong> changes
+			</button>
+		</div>
+	</div>
+</f:section>

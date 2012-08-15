@@ -5793,3 +5793,52 @@ a.btn:hover {
   color: #141414;
   text-decoration: none;
 }
+
+.t3-module .alert {
+  font-size: 13px;
+  line-height: 18px;
+}
+.t3-module.t3-module-management-workspaces td.folder {
+  background-color: #F9F9F9;
+}
+.t3-module.t3-module-management-workspaces td {
+  line-height: 28px;
+}
+.t3-module.t3-module-management-workspaces td.content-type {
+  white-space: nowrap;
+}
+.t3-module.t3-module-management-workspaces td.content-type img {
+  vertical-align: middle;
+}
+.t3-module.t3-module-management-workspaces td label {
+  padding: 5px 0;
+  margin-bottom: 0;
+  font-size: inherit;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.t3-module.t3-module-management-workspaces th,
+.t3-module.t3-module-management-workspaces td.actions {
+  white-space: nowrap;
+}
+.t3-module.t3-module-management-workspaces i.legend {
+  vertical-align: middle;
+}
+.t3-module.t3-module-management-workspaces .fold-toggle {
+  cursor: pointer;
+}
+.t3-module.t3-module-management-workspaces td.check,
+.t3-module.t3-module-management-workspaces th.check {
+  width: 12px;
+}
+.t3-module.t3-module-management-workspaces td.legend,
+.t3-module.t3-module-management-workspaces th.legend {
+  width: 14px;
+}
+.t3-module.t3-module-management-workspaces td.actions {
+  width: 76px;
+}

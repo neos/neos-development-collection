@@ -1,0 +1,52 @@
+.t3-module {
+	.alert {
+		font-size: 13px;
+		line-height: 18px;
+	}
+	&.t3-module-management-workspaces {
+		td.folder {
+			background-color: #F9F9F9;
+		}
+		td {
+			line-height: 28px;
+			&.content-type {
+				white-space: nowrap;
+				img {
+					vertical-align: middle;
+				}
+			}
+			label {
+				padding: 5px 0;
+				margin-bottom: 0;
+				font-size: inherit;
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+		}
+		th,
+		td.actions {
+			white-space: nowrap;
+		}
+		i.legend {
+			vertical-align: middle;
+		}
+		.fold-toggle {
+			cursor: pointer;
+		}
+		td.check,
+		th.check {
+			width: 12px;
+		}
+		td.legend,
+		th.legend {
+			width: 14px;
+		}
+		td.actions {
+			width: 76px;
+		}
+	}
+}
