@@ -25,8 +25,24 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  */
 class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTypeConverter {
 
+	/**
+	 * @var boolean
+	 */
+	const REMOVED_CONTENT_SHOWN = 1;
+
+	/**
+	 * @var array
+	 */
 	protected $sourceTypes = array('string', 'array');
+
+	/**
+	 * @var string
+	 */
 	protected $targetType = 'TYPO3\TYPO3CR\Domain\Model\NodeInterface';
+
+	/**
+	 * @var integer
+	 */
 	protected $priority = 1;
 
 	/**
@@ -117,6 +133,9 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 		}
 		if ($workspaceName !== 'live') {
 			$contentContext->setInvisibleContentShown(TRUE);
+			if ($configuration->getConfigurationValue('TYPO3\TYPO3\Routing\NodeObjectConverter', self::REMOVED_CONTENT_SHOWN) === TRUE) {
+				$contentContext->setRemovedContentShown(TRUE);
+			}
 		}
 
 		$workspace = $contentContext->getWorkspace(FALSE);
