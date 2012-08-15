@@ -570,7 +570,7 @@ class ProxyNode implements NodeInterface {
 	 *
 	 * @return \TYPO3\TYPO3CR\Domain\Service\Context
 	 */
-	protected function getContext() {
+	public function getContext() {
 		return $this->nodeRepository->getContext();
 	}
 
