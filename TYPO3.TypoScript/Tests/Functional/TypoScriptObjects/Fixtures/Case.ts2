@@ -1,0 +1,38 @@
+prototype(TYPO3.TypoScript:Case).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
+prototype(TYPO3.TypoScript:Matcher).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\Matcher'
+prototype(TYPO3.TypoScript:TestRenderer).implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+case.classicMatching = TYPO3.TypoScript:Case {
+	matchers.100.condition = ${true}
+	matchers.100.type = 'TYPO3.TypoScript:Case.Test1'
+
+	matchers.20.condition = ${cond}
+	matchers.20.type = 'TYPO3.TypoScript:Case.Test2'
+}
+
+case.numericMatching = TYPO3.TypoScript:Case {
+	100.condition = ${true}
+	100.type = 'TYPO3.TypoScript:Case.Test1'
+
+	20.condition = ${cond}
+	20.type = 'TYPO3.TypoScript:Case.Test2'
+}
+
+case.positionalMatching = TYPO3.TypoScript:Case {
+	foo.condition = ${true}
+	foo.type = 'TYPO3.TypoScript:Case.Test1'
+	foo.@position = 'end'
+
+	z.condition = ${cond}
+	z.type = 'TYPO3.TypoScript:Case.Test2'
+}
+
+
+
+prototype(TYPO3.TypoScript:Case.Test1) < prototype(TYPO3.TypoScript:TestRenderer) {
+	test = 'testconditionfalse'
+}
+
+prototype(TYPO3.TypoScript:Case.Test2) < prototype(TYPO3.TypoScript:TestRenderer) {
+	test = 'testconditiontrue'
+}

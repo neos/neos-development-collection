@@ -16,51 +16,77 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * Case TypoScript Object
  *
- * We suggest the following matcher groups:
+ * The "case" TypoScript object renders its children in order. The first
+ * result which is not MATCH_NORESULT is returned.
  *
- * Index 0-1000 -- RESERVED for special cases / override use
- * Index 1001 - 99 999 -- default TypoScript object definitions of extensions
- * Index > 100 000 -- default TypoScript object definitions of Phoenix
- *
+ * Often, this TypoScript object is used together with the "Matcher" TypoScript
+ * object; and all its children are by-default interpreted as "Matcher" TypoScript
+ * objects if no others are specified.
  */
-class CaseTsObject extends AbstractTsObject {
+class CaseTsObject extends TypoScriptArrayRenderer {
+
+	/**
+	 * This constant should be returned by individual matchers if the matcher
+	 * did not match.
+	 *
+	 * You should not rely on the contents or type of this constant.
+	 */
+	const MATCH_NORESULT = '_____________NO_MATCH_RESULT_____________';
 
 	/**
 	 * A list of matchers
 	 *
 	 * @var array
+	 * @deprecated since Sprint 9
 	 */
 	protected $matchers;
 
 	/**
 	 * @param array $matchers
+	 * @deprecated since Sprint 9
 	 */
 	public function setMatchers($matchers) {
 		$this->matchers = $matchers;
 	}
 
 	/**
-	 * Execute each matcher condition, and if the condition matches, render the matcher type.
+	 * Execute each matcher until the first one matches
 	 *
 	 * @return mixed
 	 */
 	public function evaluate() {
-		$matchers = $this->tsValue('matchers');
-		if ($matchers === NULL) {
-			return '';
+		if ($this->matchers !== NULL) {
+				// DEPRECATED since Sprint 9
+			$this->subElements = \TYPO3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->subElements, $this->matchers);
 		}
 
-		$matcherKeys = array_keys($matchers);
-		asort($matcherKeys);
+		$matcherKeys = $this->sortNestedTypoScriptKeys();
+
 		foreach ($matcherKeys as $matcherName) {
-			$evaluatedCondition = $this->tsValue('matchers.' . $matcherName . '.condition');
-			if ($evaluatedCondition) {
-				return $this->tsRuntime->render(
-					sprintf('%s/element<%s>', $this->path, $this->tsValue('matchers.' . $matcherName . '.type'))
+			$renderedMatcher = NULL;
+			if (isset($this->matchers[$matcherName])) {
+					// DEPRECATED since Sprint 9
+				$matcherName = 'matchers/' . $matcherName;
+			}
+
+			if (isset($this->subElements[$matcherName]['__objectType'])) {
+					// object type already set, so no need to set it
+				$renderedMatcher = $this->tsRuntime->render(
+					sprintf('%s/%s', $this->path, $matcherName)
+				);
+			} else {
+					// No object type has been set, so we're using TYPO3.TypoScript:Matcher as fallback
+				$renderedMatcher = $this->tsRuntime->render(
+					sprintf('%s/%s<TYPO3.TypoScript:Matcher>', $this->path, $matcherName)
 				);
 			}
+
+			if ($renderedMatcher !== self::MATCH_NORESULT) {
+				return $renderedMatcher;
+			}
 		}
-		return '';
+
+		return NULL;
 	}
 }
 ?>
