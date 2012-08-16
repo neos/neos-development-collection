@@ -68,7 +68,8 @@ class BackendModuleRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRout
 					$moduleController = isset($moduleConfiguration['controller']) ? $moduleConfiguration['controller'] : '\TYPO3\TYPO3\Controller\Module\StandardController';
 				} else {
 					if ($level === count($segments)) {
-						if ($this->reflectionService->hasMethod($moduleController, $segment . 'Action') === TRUE) {
+						$moduleMethods = array_change_key_case(array_flip(get_class_methods($moduleController)), CASE_LOWER);
+						if (array_key_exists($segment . 'action', $moduleMethods) === TRUE) {
 							$moduleAction = $segment;
 							break;
 						}
