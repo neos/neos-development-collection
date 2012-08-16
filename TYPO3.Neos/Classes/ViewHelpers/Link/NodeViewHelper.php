@@ -63,8 +63,10 @@ class NodeViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHe
 	 * @return string The rendered link
 	 */
 	public function render($node = NULL, $format = NULL, $absolute = FALSE) {
-		$uriBuilder = $this->controllerContext->getUriBuilder();
-		$request = $this->controllerContext->getRequest();
+		$request = $this->controllerContext->getRequest()->getMainRequest();
+
+		$uriBuilder = new \TYPO3\FLOW3\Mvc\Routing\UriBuilder();
+		$uriBuilder->setRequest($request);
 
 		if ($node === NULL) {
 			$node = $this->nodeRepository->getContext()->getCurrentNode();
