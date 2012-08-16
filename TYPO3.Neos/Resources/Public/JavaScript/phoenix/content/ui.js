@@ -517,8 +517,8 @@ function(fixture, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate
 		inspectTree: null,
 		isLoadingLayerActive: function() {
 			if (T3.ContentModule.get('_isLoadingPage')) {
-				if (that.get('_ignoreCloseOnPageLoad')) {
-					that.set('_ignoreCloseOnPageLoad', false);
+				if (this.get('_ignoreCloseOnPageLoad')) {
+					this.set('_ignoreCloseOnPageLoad', false);
 					return;
 				}
 				$('.t3-inspect > button.pressed').click();
