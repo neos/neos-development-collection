@@ -12,10 +12,10 @@
 @import "variables"; // Modify this for custom colors, font-sizes, etc
 @import "mixins";
 
-// CSS Reset
-@import "reset";
-
 .t3-ui {
+	// CSS Reset
+	@import "reset";
+
 	// Grid system and page structure
 	@import "scaffolding";
 	@import "grid";
