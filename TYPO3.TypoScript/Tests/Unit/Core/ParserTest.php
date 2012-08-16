@@ -215,7 +215,10 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 				'__objectType' => 'TYPO3.TypoScript:ContentArray',
 				10 => array(
 					'__objectType' => 'TYPO3.TypoScript:Text',
-					'value' => 'Hello '
+					'value' => 'Hello ',
+					'__meta' => array(
+						'position' => 'after 10'
+					)
 				),
 				20 => array(
 					'__objectType' => 'TYPO3.TypoScript:Text',

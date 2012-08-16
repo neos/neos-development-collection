@@ -30,7 +30,7 @@ class TestRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject 
 	 * @return string
 	 */
 	public function evaluate() {
-		return 'TestRenderer called' . $this->tsValue('test');
+		return 'X' . $this->tsValue('test');
 	}
 }
 ?>

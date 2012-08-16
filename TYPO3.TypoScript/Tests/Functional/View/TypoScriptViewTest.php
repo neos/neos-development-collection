@@ -39,7 +39,7 @@ class TypoScriptViewTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	 */
 	public function typoScriptViewIsUsedForRendering() {
 		$view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
-		$this->assertEquals('TestRenderer called', $view->render());
+		$this->assertEquals('X', $view->render());
 	}
 
 	/**
@@ -48,7 +48,7 @@ class TypoScriptViewTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function typoScriptViewUsesGivenPathIfSet() {
 		$view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
 		$view->setTypoScriptPath('foo/bar');
-		$this->assertEquals('TestRenderer calledfoobar', $view->render());
+		$this->assertEquals('Xfoobar', $view->render());
 	}
 
 	/**
@@ -68,7 +68,7 @@ class TypoScriptViewTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	public function typoScriptViewOutputsVariable() {
 		$view = $this->buildView('Foo\Bar\Controller\TestController', 'index');
 		$view->assign('test', 'Hallo Welt');
-		$this->assertEquals('TestRenderer calledHallo Welt', $view->render());
+		$this->assertEquals('XHallo Welt', $view->render());
 	}
 
 	protected function buildView($controllerObjectName, $controllerActionName) {

@@ -12,40 +12,49 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  *                                                                        */
 
 /**
- * Testcase for the TypoScript Fluid Renderer
+ * Testcase for the TypoScript Array
  *
  */
-class FluidRendererTest extends AbstractTypoScriptObjectTest {
+class TypoScriptArrayTest extends AbstractTypoScriptObjectTest {
 
 	/**
 	 * @test
 	 */
-	public function basicFluidTemplateCanBeUsedForRendering() {
+	public function basicOrderingWorks() {
 		$view = $this->buildView();
 
-		$view->setTypoScriptPath('fluidRenderer/basicTemplate');
-		$this->assertEquals('Test Templatefoo', $view->render());
+		$view->setTypoScriptPath('array/basicOrdering');
+		$this->assertEquals('Xtest10Xtest100', $view->render());
 	}
 
 	/**
 	 * @test
 	 */
-	public function customPartialPathCanBeSetOnRendering() {
+	public function positionalOrderingWorks() {
 		$view = $this->buildView();
 
-		$view->setTypoScriptPath('fluidRenderer/partial');
-		$this->assertEquals('Test Template--partial contents', $view->render());
+		$view->setTypoScriptPath('array/positionalOrdering');
+		$this->assertEquals('XbeforeXmiddleXafter', $view->render());
 	}
 
 	/**
 	 * @test
 	 */
-	public function customLayoutPathCanBeSetOnRendering() {
+	public function startEndOrderingWorks() {
 		$view = $this->buildView();
 
-		$view->setTypoScriptPath('fluidRenderer/layout');
-		$this->assertEquals('layout start -- Test Template -- layout end', $view->render());
+		$view->setTypoScriptPath('array/startEndOrdering');
+		$this->assertEquals('XbeforeXmiddleXafter', $view->render());
 	}
 
+	/**
+	 * @test
+	 */
+	public function advancedStartEndOrderingWorks() {
+		$view = $this->buildView();
+
+		$view->setTypoScriptPath('array/advancedStartEndOrdering');
+		$this->assertEquals('XeXdXfoobarXfXgX100XbXaXc', $view->render());
+	}
 }
 ?>
