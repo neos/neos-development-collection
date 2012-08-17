@@ -233,7 +233,20 @@ class Runtime {
 		$tsObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
 		$this->setOptionsOnTsObject($tsObject, $typoScriptConfiguration);
 
+			// modify context if @override is specified
+		if (isset($typoScriptConfiguration['__meta']['override'])) {
+			$contextArray = $this->getCurrentContext();
+			foreach ($typoScriptConfiguration['__meta']['override'] as $overrideKey => $overrideValue) {
+				$contextArray[$overrideKey] = $this->evaluateProcessor('@override.' . $overrideKey, $tsObject, $overrideValue);
+			}
+			$this->pushContextArray($contextArray);
+		}
+
 		$output = $tsObject->evaluate();
+
+		if (isset($typoScriptConfiguration['__meta']['override'])) {
+			$this->popContext();
+		}
 		return $this->evaluateProcessor('__all', $tsObject, $output);
 	}
 

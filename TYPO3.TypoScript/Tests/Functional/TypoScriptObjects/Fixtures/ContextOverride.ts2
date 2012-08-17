@@ -1,0 +1,21 @@
+prototype(TYPO3.TypoScript:Array).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
+prototype(TYPO3.TypoScript:TestRenderer).implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+contextOverride.test = TYPO3.TypoScript:Array {
+
+	100 = TYPO3.TypoScript:TestRenderer
+	100.@override.var1alias = ${var1}
+	100.test = ${var1alias}
+
+	200 = TYPO3.TypoScript:TestRenderer {
+		@override.var1alias = ${var1}
+	}
+	200.test = ${var1alias}
+
+	300 = TYPO3.TypoScript:TestRenderer {
+		@override {
+			var1alias = ${var1}
+		}
+	}
+	300.test = ${var1alias}
+}
