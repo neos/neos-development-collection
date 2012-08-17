@@ -99,16 +99,18 @@ function(block) {
 		 * want to touch them).
 		 */
 		renderBlockHandlesIfNeeded: function() {
-			this.$element.mouseenter(function(event) {
-				$(this).parents('.t3-aloha-block-over').removeClass('t3-aloha-block-over');
-				$(this).addClass('t3-aloha-block-over');
-				event.stopPropagation();
-			}).mouseleave(function() {
-				$(this).removeClass('t3-aloha-block-over');
-			});
+			if (this.$element.data('_removed') === false) {
+				this.$element.mouseenter(function(event) {
+					$(this).parents('.t3-aloha-block-over').removeClass('t3-aloha-block-over');
+					$(this).addClass('t3-aloha-block-over');
+					event.stopPropagation();
+				}).mouseleave(function() {
+					$(this).removeClass('t3-aloha-block-over');
+				});
 
-			this.renderHandles();
-			this.renderOverlay();
+				this.renderHandles();
+				this.renderOverlay();
+			}
 		},
 
 		/**
@@ -136,9 +138,7 @@ function(block) {
 		 * with the situation that the handles are already created.
 		 */
 		renderHandles: function() {
-			if (this.$element.find('.t3-contentelement.t3-contentelement-removed').length === 0) {
-				this._renderHandle('t3-delete-handle', 'Delete element', T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
-			}
+			this._renderHandle('t3-delete-handle', 'Delete element', T3.Content.Controller.BlockActions.deleteBlock, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-cut-handle', 'Cut', T3.Content.Controller.BlockActions.cut, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-paste-before-handle t3-handle-hidden', 'Paste before', T3.Content.Controller.BlockActions.pasteBefore, T3.Content.Controller.BlockActions);
 			this._renderHandle('t3-paste-after-handle t3-handle-hidden', 'Paste after', T3.Content.Controller.BlockActions.pasteAfter, T3.Content.Controller.BlockActions);

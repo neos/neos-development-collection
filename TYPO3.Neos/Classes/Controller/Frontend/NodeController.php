@@ -60,6 +60,8 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 				// TODO: Introduce check if workspace is visible or accessible to the user
 			try {
 				$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
+				$this->nodeRepository->getContext()->setInvisibleContentShown(TRUE);
+				$this->nodeRepository->getContext()->setRemovedContentShown(TRUE);
 			} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
 				$this->throwStatus(403);
 			}

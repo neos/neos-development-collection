@@ -565,6 +565,9 @@ button.t3-button,
 .t3-contentelement-hidden {
 	@include opacity(0.2);
 }
+.t3-contentelement-removed {
+	display: none;
+}
 .t3-contentelement-selected {
 	.t3-aloha-block-over > .t3-handle {
 		display: none;

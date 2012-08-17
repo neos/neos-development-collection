@@ -67,13 +67,18 @@ class ContentElementWrappingService {
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
 		$tagBuilder->forceClosingTag(TRUE);
-		$tagBuilder->setContent($content);
+		if (!$node->isRemoved()) {
+			$tagBuilder->setContent($content);
+		}
 
 		if (!$isPage) {
 			$cssClasses = array('t3-contentelement');
 			$cssClasses[] = str_replace(array(':', '.'), '-', strtolower($contentType->getName()));
 			if ($node->isHidden()) {
 				$cssClasses[] = 't3-contentelement-hidden';
+			}
+			if ($node->isRemoved()) {
+				$cssClasses[] = 't3-contentelement-removed';
 			}
 
 			$tagBuilder->addAttribute('class', implode(' ', $cssClasses));
@@ -88,6 +93,7 @@ class ContentElementWrappingService {
 
 		$tagBuilder->addAttribute('data-__nodepath', $node->getContextPath());
 		$tagBuilder->addAttribute('data-__workspacename', $node->getWorkspace()->getName());
+		$tagBuilder->addAttribute('data-_removed', ($node->isRemoved() ? 'true' : 'false'));
 
 		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
 			if ($propertyName[0] === '_') {

@@ -42,6 +42,13 @@ class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	protected function initializeAction() {
 		$this->errorMethodName = 'extErrorAction';
+		if ($this->arguments->hasArgument('node')) {
+			$this
+				->arguments
+				->getArgument('node')
+				->getPropertyMappingConfiguration()
+				->setTypeConverterOption('TYPO3\TYPO3\Routing\NodeObjectConverter', \TYPO3\TYPO3\Routing\NodeObjectConverter::REMOVED_CONTENT_SHOWN, TRUE);
+		}
 	}
 
 	/**

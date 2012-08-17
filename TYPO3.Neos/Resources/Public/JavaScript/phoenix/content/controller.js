@@ -269,7 +269,6 @@ function() {
 			if ($handle !== undefined) {
 				$handle.addClass('t3-handle-loading');
 
-
 				$handle.bind('showPopover', function() {
 					$('.contentTypeSelectorTabs.notInitialized').each(function(index) {
 						var newDate = new Date();
