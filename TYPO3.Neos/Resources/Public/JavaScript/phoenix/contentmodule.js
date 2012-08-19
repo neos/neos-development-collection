@@ -69,7 +69,7 @@ function(jQuery) {
 				event.preventDefault();
 			});
 
-			jQuery('body').addClass('t3-ui-controls t3-backend');
+			jQuery('body').toggleClass('t3-ui-controls t3-backend');
 
 			this._setPagePosition();
 
