@@ -14,7 +14,7 @@
 body.t3-ui-controls {
 	margin-right: $property-panel-width;
 	margin-bottom: $footer-height;
-	margin-top: $launcher-height + $menu-height + $topbar-offset;
+	margin-top: $launcher-height + $menu-height + $topbar-offset + $toolbar-height;
 	margin-left: 0;
 	@include transition-property(margin);
 	@include transition-duration(0.2s);
@@ -684,7 +684,7 @@ body {
 		@include transition-duration(0.2s);
 	}
 	&.t3-ui-previewmode {
-		margin-top: 30px;
+		margin-top: $toolbar-height;
 		margin-right: 0;
 		#t3-footer,
 		#t3-ui-top {
