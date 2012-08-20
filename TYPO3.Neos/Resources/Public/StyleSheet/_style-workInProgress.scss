@@ -17,14 +17,6 @@ div.dynatree-container {
 /*Inspect Button end*/
 
 /* Pagetree start */
-.dynatree-container .t3-dd-newpage {
-	padding: 2px 2px 2px 25px;
-	margin: 5px;
-	background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
-	border: 1px dotted #000000;
-	cursor: move;
-}
-
 .dynatree-container #t3-dd-pagetree {
 	height: 270px;
 	padding-bottom: 7px;
@@ -51,7 +43,7 @@ div.dynatree-container {
 	margin: 5px;
 	background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
 	border: 1px dotted #000000;
-	cursor: move;
+	cursor: pointer;
 }
 
 .dynatree-container .t3-dd-deletionzone {
