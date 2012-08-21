@@ -7,6 +7,7 @@ prototype(TYPO3.TypoScript:TypoScriptArrayRenderer).implementationClassName = 'T
 prototype(TYPO3.TypoScript:FluidRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
 prototype(TYPO3.TypoScript:CollectionRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionRenderer'
 prototype(TYPO3.TypoScript:Case).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
+prototype(TYPO3.TypoScript:Matcher).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\Matcher'
 
 prototype(TYPO3.TypoScript:FluidRenderer) {
 	node = ${node}
