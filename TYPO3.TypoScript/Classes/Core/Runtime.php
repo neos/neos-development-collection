@@ -194,7 +194,8 @@ class Runtime {
 	 * @return boolean
 	 */
 	protected function canRenderWithConfiguration(array $typoScriptConfiguration) {
-		if (!isset($typoScriptConfiguration['implementationClassName']) || !isset($typoScriptConfiguration['__objectType'])) {
+			// DEPRECATED implementationClassName is deprecated since Sprint 10, use @class instead
+		if (!(isset($typoScriptConfiguration['__meta']['class']) || isset($typoScriptConfiguration['implementationClassName'])) || !isset($typoScriptConfiguration['__objectType'])) {
 			return FALSE;
 		}
 
@@ -224,7 +225,8 @@ class Runtime {
 		}
 		$typoScriptObjectType = $typoScriptConfiguration['__objectType'];
 
-		$tsObjectClassName = $typoScriptConfiguration['implementationClassName'];
+			// DEPRECATED implementationClassName is deprecated since Sprint 10, use @class instead
+		$tsObjectClassName = isset($typoScriptConfiguration['__meta']['class']) ? $typoScriptConfiguration['__meta']['class'] : $typoScriptConfiguration['implementationClassName'];
 
 		if (!preg_match('#<[^>]*>$#', $typoScriptPath)) {
 				// Only add typoscript object type to last path part if not already set
@@ -318,8 +320,9 @@ class Runtime {
 	 */
 	protected function setOptionsOnTsObject(\TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $tsObject, array $typoScriptConfiguration) {
 		foreach ($typoScriptConfiguration as $key => $value) {
-			if ($key === 'implementationClassName') {
-					// The implementationClassName is already handled by the TypoScript runtime
+				// DEPRECATED implementationClassName is deprecated since Sprint 10, use @class instead
+			if ($key === '@class' || $key === 'implementationClassName') {
+					// The @class property is already handled by the TypoScript runtime
 				continue;
 			}
 			if ($key === '__processors') {

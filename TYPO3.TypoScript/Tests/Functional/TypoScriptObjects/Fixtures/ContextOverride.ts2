@@ -1,5 +1,5 @@
-prototype(TYPO3.TypoScript:Array).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
-prototype(TYPO3.TypoScript:TestRenderer).implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
+prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 contextOverride.test = TYPO3.TypoScript:Array {
 

@@ -1,5 +1,5 @@
 prototype(TYPO3.TypoScript:TestRenderer) {
-	implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+	@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 	test = ${test}
 }
 

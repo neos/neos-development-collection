@@ -1,6 +1,6 @@
-prototype(TYPO3.TypoScript:Case).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
-prototype(TYPO3.TypoScript:Matcher).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\Matcher'
-prototype(TYPO3.TypoScript:TestRenderer).implementationClassName = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+prototype(TYPO3.TypoScript:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
+prototype(TYPO3.TypoScript:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\Matcher'
+prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 case.classicMatching = TYPO3.TypoScript:Case {
 	matchers.100.condition = ${true}

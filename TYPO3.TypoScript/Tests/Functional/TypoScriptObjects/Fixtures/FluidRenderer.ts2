@@ -1,4 +1,4 @@
-prototype(TYPO3.TypoScript:FluidRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
+prototype(TYPO3.TypoScript:FluidRenderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
 
 fluidRenderer.basicTemplate = TYPO3.TypoScript:FluidRenderer {
 	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
