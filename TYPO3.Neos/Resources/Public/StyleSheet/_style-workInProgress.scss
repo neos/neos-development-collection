@@ -225,21 +225,6 @@ button.t3-create-new-content {
 
 // Load indicator
 
-.t3-pageloader-wrapper {
-	position: fixed;
-	background-color: #fff;
-	opacity: 0.8;
-	z-index: 11000;
-	.t3-pageloader {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		margin: -60px 0 0 -60px;
-	}
-}
-
-// Load indicator
-
 // Image size //
 .t3-inspector {
 	.typo3-fileupload-image-size {

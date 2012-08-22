@@ -336,7 +336,9 @@ function() {
 					window.location.href = uri;
 				}
 				that.set('_isLoadingPage', false);
-				$('.t3-pageloader-wrapper').remove();
+				$('.t3-pageloader-wrapper').fadeOut('fast', function() {
+					$(this).remove();
+				});
 			});
 		},
 
@@ -346,14 +348,8 @@ function() {
 			], function() {
 				var body = $('body'),
 					loader = $('<canvas class="t3-pageloader" />'),
-					offset = $('#t3-toolbar').height(),
-					width = body.outerWidth(),
-					height = $(document).height() - offset,
 					indicator;
-				if (T3.Content.Controller.Preview.previewMode) {
-					height = height - $('#t3-footer').height();
-				}
-				body.append($('<div />').css({width: width, height: height, top: offset}).attr('class', 't3-pageloader-wrapper').append(loader));
+				body.append($('<div />').addClass('t3-pageloader-wrapper').append(loader).fadeTo('fast', .8));
 
 				indicator = new CanvasIndicator(loader.get(0), {
 					bars: 12,
