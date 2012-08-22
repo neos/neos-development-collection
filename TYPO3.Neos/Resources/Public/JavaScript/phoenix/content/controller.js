@@ -237,21 +237,20 @@ function(jQuery) {
 			}
 		},
 		deleteBlock: function(nodePath, $handle) {
-			var that = this;
 			T3.Common.Dialog.openConfirmPopover({
 				title: 'Are you sure you want to remove this content element?',
 				content: 'If you remove this element you can restore it using undo',
 				positioning: 'absolute',
 				onOk: function() {
-					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'].call(
-						that,
-						nodePath,
-						function (result) {
-							if (result.success) {
-								T3.ContentModule.reloadPage();
-							}
-						}
-					);
+					var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
+					block.set('_removed', true);
+					$handle.addClass('t3-handle-loading');
+					T3.Content.Model.Changes.save(function() {
+						var contentElement = block.getContentElement();
+						contentElement.fadeOut(function() {
+							contentElement.html('').addClass('t3-contentelement-removed');
+						});
+					});
 				}
 			}, $handle);
 		},

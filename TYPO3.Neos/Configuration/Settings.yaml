@@ -37,6 +37,8 @@ TYPO3:
     contentTypes:
       'TYPO3.TYPO3:AbstractNode':
         properties:
+          _removed:
+            type: boolean
           _hidden:
             type: boolean
             label: 'Hide'
