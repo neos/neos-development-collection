@@ -680,6 +680,18 @@ class Node implements NodeInterface {
 	}
 
 	/**
+	 * Enables using the remove method when only setters are available
+	 *
+	 * @param boolean $removed If TRUE, this node and it's child nodes will be removed
+	 * @return void
+	 */
+	public function setRemoved($removed) {
+		if ((boolean)$removed === TRUE) {
+			$this->remove();
+		}
+	}
+
+	/**
 	 * If this node is a removed node.
 	 *
 	 * @return boolean
