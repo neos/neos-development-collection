@@ -148,11 +148,6 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 			}
 		}
 
-		if ($nodeData['contentType'] === 'TYPO3.TYPO3:Page') {
-				// TODO: Remove that and fix it!
-			$this->createEmptySectionNode($newNode);
-		}
-
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
 	}
@@ -214,21 +209,6 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	public function moveAfterAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
 		$node->moveAfter($targetNode);
 		$this->view->assign('value', array('success' => TRUE));
-	}
-
-	/**
-	 * Create a section node for the page, so that the user can then create
-	 * content elements inside there.
-	 *
-	 * The section name is currently hardcoded, but should be determined by the currently selected Fluid template
-	 * in the future.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode The page node
-	 * @return void
-	 * @todo Move section + text node creation to better place (content type triggered)
-	 */
-	protected function createEmptySectionNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $pageNode) {
-		$pageNode->createNode('main', 'TYPO3.TYPO3:Section');
 	}
 
 	/**
