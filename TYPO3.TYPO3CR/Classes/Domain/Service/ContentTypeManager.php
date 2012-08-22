@@ -61,10 +61,11 @@ class ContentTypeManager {
 	}
 
 	/**
-	 * Returns the speciifed content type
+	 * Returns the specified content type
 	 *
 	 * @param string $contentTypeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType or NULL
+	 * @throws \TYPO3\TYPO3CR\Exception\ContentTypeNotFoundException
 	 */
 	public function getContentType($contentTypeName) {
 		if ($this->cachedContentTypes === array()) {
@@ -93,6 +94,8 @@ class ContentTypeManager {
 	 * Creates a new content type
 	 *
 	 * @param string $contentTypeName Unique name of the new content type. Example: "TYPO3.TYPO3:Page"
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception
 	 */
 	public function createContentType($contentTypeName) {
 		throw new \TYPO3\TYPO3CR\Exception('Creation of content types not supported so far; tried to create "' . $contentTypeName . '".', 1316449432);
@@ -131,6 +134,7 @@ class ContentTypeManager {
 	 *
 	 * @param string $contentTypeName
 	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType
+	 * @throws \TYPO3\TYPO3CR\Exception
 	 */
 	protected function loadContentType($contentTypeName) {
 		if (isset($this->cachedContentTypes[$contentTypeName])) {
