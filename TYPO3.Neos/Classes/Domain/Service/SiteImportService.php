@@ -29,6 +29,12 @@ class SiteImportService {
 
 	/**
 	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Resource\ResourceManager
+	 */
+	protected $resourceManager;
+
+	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Repository\SiteRepository
 	 */
 	protected $siteRepository;
@@ -175,7 +181,11 @@ class SiteImportService {
 
 			if ($childNodeXml->properties) {
 				foreach ($childNodeXml->properties->children() as $childXml) {
-					$childNode->setProperty($childXml->getName(), (string)$childXml);
+					if (isset($childXml['__type']) && (string)$childXml['__type'] == 'object') {
+						$childNode->setProperty($childXml->getName(), $this->xmlToObject($childXml));
+					} else {
+						$childNode->setProperty($childXml->getName(), (string)$childXml);
+					}
 				}
 			}
 
@@ -191,6 +201,36 @@ class SiteImportService {
 				$this->parseNodes($childNodeXml, $childNode);
 			}
 		}
+	}
+
+	/**
+	 * Handles conversion of our XML format into objects.
+	 *
+	 * Note: currently only ImageVariant instances are supported.
+	 *
+	 * @param \SimpleXMLElement $xml
+	 * @return object
+	 */
+	protected function xmlToObject(\SimpleXMLElement $xml) {
+		$object = NULL;
+		$className = (string)$xml['__classname'];
+		switch ($className) {
+			case 'TYPO3\Media\Domain\Model\ImageVariant':
+				$processingInstructions = unserialize(trim((string)$xml->processingInstructions));
+				$originalResource = $this->resourceManager->createResourceFromContent(
+					base64_decode(trim((string)$xml->originalImage->resource->content)),
+					(string)$xml->originalImage->resource->filename
+				);
+				$object = new \TYPO3\Media\Domain\Model\ImageVariant(
+					new \TYPO3\Media\Domain\Model\Image($originalResource),
+					$processingInstructions
+				);
+			break;
+			default:
+				throw new \TYPO3\TYPO3\Domain\Exception('Unsupported object of type "' . get_class($className) . '" hit during XML import.', 1347144938);
+		}
+
+		return $object;
 	}
 }
 ?>
