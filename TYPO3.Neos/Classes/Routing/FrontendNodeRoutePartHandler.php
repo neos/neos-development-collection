@@ -159,7 +159,6 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 				return FALSE;
 			}
 
-			$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
 			$contentContext = $this->nodeRepository->getContext();
 			if ($contentContext->getWorkspace(FALSE) === NULL) {
 				return FALSE;
@@ -172,7 +171,7 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 		}
 
 		if ($node instanceof NodeInterface) {
-			while ($node->getContentType() === 'TYPO3.TYPO3:Shortcut') {
+			while ($node->getContentType()->isOfType('TYPO3.TYPO3:Shortcut')) {
 				$childNodes = $node->getChildNodes('TYPO3.TYPO3:Page,TYPO3.TYPO3:Shortcut');
 				$node = current($childNodes);
 			}

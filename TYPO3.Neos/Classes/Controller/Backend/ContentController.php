@@ -185,7 +185,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @throws \TYPO3\TYPO3\Exception
 	 */
 	protected function populateNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
+		$contentType = $node->getContentType();
 
 			// Set default values
 		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
@@ -216,8 +216,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		while ($node = $node->getParent()) {
-			if ($node->getContentType() === 'TYPO3.TYPO3:Page') {
-					// TODO: Support for other "Folder" types, which are not of type "Page"
+			if ($node->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
 				return $node;
 			}
 		}

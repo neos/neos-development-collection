@@ -40,12 +40,6 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
-	 */
-	protected $contentTypeManager;
-
-	/**
-	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Property\PropertyMapper
 	 */
 	protected $propertyMapper;
@@ -89,8 +83,6 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 		$contentContext->setInaccessibleContentShown(TRUE);
 		$this->nodeRepository->setContext($contentContext);
 
-		$contentTypes = $this->contentTypeManager->getSubContentTypes('TYPO3.TYPO3:AbstractNode');
-
 		$sites = array();
 		foreach ($this->workspacesService->getUnpublishedNodes($workspaceName) as $node) {
 			if (!$node->getContentType()->isOfType('TYPO3.TYPO3:Section')) {
@@ -105,8 +97,8 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 					}
 					$sites[$siteNodeName]['folders'][$folderPath]['folderNode'] = $folder;
 					$change = array('node' => $node);
-					if (isset($contentTypes[$node->getContentType()])) {
-						$change['configuration'] = $contentTypes[$node->getContentType()]->getConfiguration();
+					if ($node->getContentType()->isOfType('TYPO3.TYPO3:AbstractNode')) {
+						$change['configuration'] = $node->getContentType()->getConfiguration();
 					}
 					$sites[$siteNodeName]['folders'][$folderPath]['changes'][$relativePath] = $change;
 				}
@@ -226,9 +218,8 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface|NULL
 	 */
 	protected function findFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$folderTypes = $this->contentTypeManager->getSubContentTypes('TYPO3.TYPO3CR:Folder');
 		while ($node) {
-			if (array_key_exists($node->getContentType(), $folderTypes)) {
+			if ($node->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
 				return $node;
 			}
 			$node = $node->getParent();

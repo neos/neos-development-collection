@@ -24,7 +24,7 @@ prototype(TYPO3.TYPO3:Section) {
 # Catch-all condition for the default case
 prototype(TYPO3.TypoScript:Case).matchers.999999999999 {
 	condition = ${true}
-	type = ${q(node).property('_contentType')}
+	type = ${q(node).property('_contentType.name')}
 }
 
 # HTML TS Object

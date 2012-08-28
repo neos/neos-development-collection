@@ -59,12 +59,6 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
-	 */
-	protected $contentTypeManager;
-
-	/**
-	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -152,8 +146,7 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 			return new Error(sprintf('Could not convert array to Node object because the node "%s" does not exist.', $nodePath), 1285162908);
 		}
 
-		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
-		$contentTypeProperties = $contentType->getProperties();
+		$contentTypeProperties = $node->getContentType()->getProperties();
 
 		foreach ($source as $nodePropertyKey => $nodePropertyValue) {
 			if (substr($nodePropertyKey, 0, 2) === '__') {

@@ -82,7 +82,7 @@ class FilterOperation extends \TYPO3\Eel\FlowQuery\Operations\Object\FilterOpera
 			} elseif ($operand === 'TYPO3\TYPO3CR\Domain\Model\NodeInterface') {
 				return TRUE;
 			} else {
-				return $this->contentTypeManager->getContentType($value->getContentType())->isOfType($operand);
+				return $value->getContentType()->isOfType($operand);
 			}
 		} else {
 			return parent::evaluateOperator($value, $operator, $operand);

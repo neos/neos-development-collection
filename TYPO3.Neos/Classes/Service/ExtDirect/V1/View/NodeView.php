@@ -97,11 +97,11 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 					$data[] = array(
 						'key' => $childNode->getContextPath(),
 							// TODO Move to JS
-						'title' => $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title'): $childNode->getLabel(),
+						'title' => $childNode->getContentType()->isOfType('TYPO3.TYPO3:Page') ? $childNode->getProperty('title'): $childNode->getLabel(),
 						'href' => $uriForNode,
 						'isFolder' => $hasChildNodes,
 						'isLazy' => $hasChildNodes,
-						'contentType' => $childNode->getContentType()
+						'contentType' => $childNode->getContentType()->getName()
 					);
 				}
 			break;
@@ -158,7 +158,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		$properties['__contextNodePath'] = $node->getContextPath();
 		$properties['__workspaceName'] = $node->getWorkspace()->getName();
 		$properties['__nodeName'] = $node->getName();
-		$properties['__contentType'] = $node->getContentType();
+		$properties['__contentType'] = $node->getContentType()->getName();
 		$properties['__label'] = $node->getLabel();
 		$properties['__abstract'] = $node->getAbstract();
 		$data[] = $properties;

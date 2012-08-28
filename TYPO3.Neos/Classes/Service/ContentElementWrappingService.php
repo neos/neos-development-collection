@@ -24,12 +24,6 @@ class ContentElementWrappingService {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
-	 */
-	protected $contentTypeManager;
-
-	/**
-	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Object\ObjectManagerInterface
 	 */
 	protected $objectManager;
@@ -63,7 +57,7 @@ class ContentElementWrappingService {
 	 * @return string
 	 */
 	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $isPage = FALSE) {
-		$contentType = $this->contentTypeManager->getContentType($node->getContentType());
+		$contentType = $node->getContentType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
 		$tagBuilder->forceClosingTag(TRUE);

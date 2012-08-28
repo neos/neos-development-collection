@@ -81,7 +81,7 @@ class SiteExportService {
 
 			// node attributes
 		$xmlWriter->writeAttribute('identifier', $node->getIdentifier());
-		$xmlWriter->writeAttribute('type', $node->getContentType());
+		$xmlWriter->writeAttribute('type', $node->getContentType()->getName());
 		$xmlWriter->writeAttribute('nodeName', $node->getName());
 		$xmlWriter->writeAttribute('locale', '');
 		if ($node->isHidden() === TRUE) {

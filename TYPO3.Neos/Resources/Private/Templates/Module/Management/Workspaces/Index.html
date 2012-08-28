@@ -77,12 +77,12 @@
 											</label>
 										</td>
 										<td><label for="{change.node.identifier}" title="{change.node.abstract}">{f:if(condition: change.node.label, then: change.node.label, else: '<em>[No title]</em>')}</label></td>
-										<td class="content-type" title="{change.node.contentType}">
+										<td class="content-type" title="{change.node.contentType.name}">
 											<label for="{change.node.identifier}">
 												<f:if condition="{change.configuration.darkIcon}">
-													<img src="{f:uri.resource(path: change.configuration.darkIcon)}" alt="{change.node.contentType}" />
+													<img src="{f:uri.resource(path: change.configuration.darkIcon)}" alt="{change.node.contentType.name}" />
 												</f:if>
-												{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.contentType)}
+												{f:if(condition: change.configuration.label, then: change.configuration.label, else: change.node.contentType.name)}
 											</label>
 										</td>
 										<td><label for="{change.node.identifier}">{f:if(condition: relativePath, then: relativePath, else: '&nbsp;')}</label></td>
