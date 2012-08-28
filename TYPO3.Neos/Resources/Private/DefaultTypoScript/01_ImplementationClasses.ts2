@@ -3,13 +3,13 @@ namespace:cms=TYPO3\TYPO3\TypoScript
 
 # setting up implementation class names
 
-prototype(TYPO3.TypoScript:TypoScriptArrayRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
-prototype(TYPO3.TypoScript:FluidRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
-prototype(TYPO3.TypoScript:CollectionRenderer).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionRenderer'
-prototype(TYPO3.TypoScript:Case).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
-prototype(TYPO3.TypoScript:Matcher).implementationClassName = 'TYPO3\\TypoScript\\TypoScriptObjects\\Matcher'
+prototype(TYPO3.TypoScript:TypoScriptArrayRenderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
+prototype(TYPO3.TypoScript:FluidRenderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
+prototype(TYPO3.TypoScript:CollectionRenderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionRenderer'
+prototype(TYPO3.TypoScript:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
+prototype(TYPO3.TypoScript:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\Matcher'
 
 
 # TODO: rename the implementation class following to "PluginRenderer"
-prototype(TYPO3.TYPO3:PluginRenderer).implementationClassName = 'TYPO3\\TYPO3\\TypoScript\\Plugin'
-prototype(TYPO3.TYPO3:MenuRenderer).implementationClassName = 'TYPO3\\TYPO3\\TypoScript\\MenuRenderer'
+prototype(TYPO3.TYPO3:PluginRenderer).@class = 'TYPO3\\TYPO3\\TypoScript\\Plugin'
+prototype(TYPO3.TYPO3:MenuRenderer).@class = 'TYPO3\\TYPO3\\TypoScript\\MenuRenderer'

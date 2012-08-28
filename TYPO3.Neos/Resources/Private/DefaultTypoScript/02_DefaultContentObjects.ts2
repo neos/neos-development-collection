@@ -17,7 +17,7 @@ prototype(TYPO3.TypoScript:CollectionRenderer) {
 
 prototype(TYPO3.TYPO3:Section) < prototype(TYPO3.TypoScript:CollectionRenderer)
 prototype(TYPO3.TYPO3:Section) {
-	implementationClassName = 'TYPO3\\TYPO3\\TypoScript\\Section'
+	@class = 'TYPO3\\TYPO3\\TypoScript\\Section'
 	collection = ${q(node).children(this.getNodePath()).children()}
 }
 
