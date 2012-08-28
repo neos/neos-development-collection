@@ -370,7 +370,7 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Returns the content type of this node.
 	 *
-	 * @return string $contentType
+	 * @return ContentType
 	 */
 	public function getContentType() {
 		return (isset($this->newNode) ? $this->newNode->getContentType() : $this->originalNode->getContentType());
@@ -621,7 +621,7 @@ class ProxyNode implements NodeInterface {
 	 * @return string
 	 */
 	public function __toString() {
-		return 'ProxyNode ' . $this->getContextPath() . '[' . $this->getContentType() . ']';
+		return 'ProxyNode ' . $this->getContextPath() . '[' . $this->getContentType()->getName() . ']';
 	}
 }
 ?>

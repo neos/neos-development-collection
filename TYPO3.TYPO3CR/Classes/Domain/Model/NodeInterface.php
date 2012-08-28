@@ -255,7 +255,7 @@ interface NodeInterface {
 	/**
 	 * Returns the content type of this node.
 	 *
-	 * @return string $contentType
+	 * @return ContentType
 	 */
 	public function getContentType();
 

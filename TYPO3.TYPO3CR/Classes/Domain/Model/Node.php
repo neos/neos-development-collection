@@ -260,8 +260,7 @@ class Node implements NodeInterface {
 	 * @return string
 	 */
 	public function getLabel() {
-		$contentType = $this->contentTypeManager->getContentType($this->contentType);
-		return $contentType->getNodeLabelGenerator()->getLabel($this);
+		return $this->getContentType()->getNodeLabelGenerator()->getLabel($this);
 	}
 
 	/**
@@ -572,10 +571,10 @@ class Node implements NodeInterface {
 	/**
 	 * Returns the content type of this node.
 	 *
-	 * @return string $contentType
+	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType
 	 */
 	public function getContentType() {
-		return $this->contentType;
+		return $this->contentTypeManager->getContentType($this->contentType);
 	}
 
 	/**
@@ -894,7 +893,7 @@ class Node implements NodeInterface {
 			$this->setProperty($propertyName, $propertyValue);
 		}
 		$this->setIndex($sourceNode->getIndex());
-		$this->setContentType($sourceNode->getContentType());
+		$this->setContentType($sourceNode->getContentType()->getName());
 		$contentObject = $sourceNode->getContentObject();
 		if ($contentObject !== NULL) {
 			$this->setContentObject($contentObject);
@@ -1002,7 +1001,7 @@ class Node implements NodeInterface {
 	 * @return string
 	 */
 	public function __toString() {
-		return 'Node ' . $this->getContextPath() . '[' . $this->contentType . ']';
+		return 'Node ' . $this->getContextPath() . '[' . $this->getContentType()->getName() . ']';
 	}
 }
 ?>

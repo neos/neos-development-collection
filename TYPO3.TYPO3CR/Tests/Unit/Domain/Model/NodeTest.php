@@ -53,7 +53,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 * @dataProvider invalidPaths()
 	 */
 	public function setPathThrowsAnExceptionIfAnInvalidPathIsPassed($path) {
@@ -80,6 +80,8 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function setPathAcceptsAValidPath($path) {
 		$this->node->setPath($path);
+			// dummy assertion to avoid PHPUnit warning in strict mode
+		$this->assertTrue(TRUE);
 	}
 
 	/**
@@ -306,15 +308,16 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function theContentTypeCanBeSetAndRetrieved() {
-		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
+		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
 		$contentTypeManager->expects($this->once())->method('hasContentType')->with('typo3:mycontent')->will($this->returnValue(TRUE));
+		$contentTypeManager->expects($this->any())->method('getContentType')->will($this->returnCallback(function ($name) { return new \TYPO3\TYPO3CR\Domain\Model\ContentType($name, array(), array()) ;}));
 
 		$this->node->_set('contentTypeManager', $contentTypeManager);
 
-		$this->assertEquals('unstructured', $this->node->getContentType());
+		$this->assertEquals('unstructured', $this->node->getContentType()->getName());
 
 		$this->node->setContentType('typo3:mycontent');
-		$this->assertEquals('typo3:mycontent', $this->node->getContentType());
+		$this->assertEquals('typo3:mycontent', $this->node->getContentType()->getName());
 	}
 
 	/**
@@ -353,7 +356,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$newNode = $currentNode->createNode('foo', 'mycontenttype');
 		$this->assertSame($currentNode, $newNode->getParent());
 		$this->assertEquals(1, $newNode->getIndex());
-		$this->assertEquals('mycontenttype', $newNode->getContentType());
+		$this->assertEquals('mycontenttype', $newNode->getContentType()->getName());
 	}
 
 	/**
