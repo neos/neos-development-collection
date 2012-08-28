@@ -88,8 +88,8 @@ Now create the file `Resources/Private/TypoScripts/Root.ts2`, and add the follow
 	page.body.templatePath = 'resource://My.Site/Private/Templates/Page/Default.html'
 	page.body.sectionName = 'body'
 
-	page.body.sections.main = TYPO3.TypoScript:CollectionRenderer
-	page.body.sections.main.collection = ${context.children('main').children()}
+	page.body.sections.main = TYPO3.TYPO3:Section
+	page.body.sections.main.nodePath = 'main'
 
 This includes all default TypoScript from TYPO3 Phoenix and creates a `TYPO3.TYPO3:Page`
 object. Besides that we set the template, and configure we will use the 'body' section
