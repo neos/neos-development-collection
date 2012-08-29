@@ -186,18 +186,17 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 	T3.Content.UI.PageTreeButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Page Tree',
 		$popoverContent: pageTreeTemplate,
-
 		tree: null,
 		onPopoverOpen: function() {
-			if (this.tree) return;
+			if (this.tree) {
+				return;
+			}
 
-			var siteRootNodePath = $('#t3-page-metainformation').attr('data-__siteroot');
+			var that = this,
+				pageMetaInformation = $('#t3-page-metainformation'),
+				siteRootNodePath = pageMetaInformation.data('__siteroot');
 
-			this.tree = $('#t3-dd-pagetree').dynatree({
-				initialize: function(parent, tree, data) {
-					this.parent = parent;
-					this.tree = tree;
-				},
+			that.tree = $('#t3-dd-pagetree').dynatree({
 				keyboard: true,
 				minExpandLevel: 1,
 				classNames: {
@@ -211,8 +210,8 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 				},
 				children: [
 					{
-						title: $('#t3-page-metainformation').attr('data-__sitename'),
-						key: $('#t3-page-metainformation').attr('data-__siteroot'),
+						title: pageMetaInformation.data('__sitename'),
+						key: pageMetaInformation.data('__siteroot'),
 						isFolder: true,
 						expand: false,
 						isLazy: true,
@@ -235,14 +234,21 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 						return;
 					}
 					node._currentlySendingExtDirectAjaxRequest = true;
-					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(node.data.key, 'TYPO3.TYPO3:Page', function(result) {
-						node._currentlySendingExtDirectAjaxRequest = false;
-						if (result.success == true) {
-							node.setLazyNodeStatus(DTNodeStatus_Ok);
-						} else {
-							T3.Common.Notification.error('Page Tree loading error.');
-						}
-						node.addChild(result.data);
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
+						node.data.key,
+						'TYPO3.TYPO3:Page',
+						0,
+						function(result) {
+							node._currentlySendingExtDirectAjaxRequest = false;
+							if (result.success === true) {
+								node.setLazyNodeStatus(DTNodeStatus_Ok);
+							} else {
+								T3.Common.Notification.error('Page Tree loading error.');
+							}
+							node.addChild(result.data);
+							if (node.getLevel() === 1) {
+								that.tree.dynatree('getTree').activateKey(pageMetaInformation.data('__nodepath'));
+							}
 					});
 				},
 				dnd: {
@@ -251,7 +257,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					 * Returns false to cancel dragging of node.
 					 */
 					onDragStart: function(node) {
-						if (node.data.key != siteRootNodePath) {
+						if (node.data.key !== siteRootNodePath) {
 							$('#t3-drop-deletionzone').show();
 							return true;
 						} else {
@@ -303,7 +309,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 								},
 								position,
 								function(result) {
-									if (result.success == true) {
+									if (result.success === true) {
 										var parentNode = node.getParent();
 										parentNode.reloadChildren();
 										T3.ContentModule.loadPage(node.data.href);
@@ -332,7 +338,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 									node.data.key,
 									position,
 									function(result) {
-										if (result.success == true) {
+										if (result.success === true) {
 											//var parentNode = sourceNode.getParent();
 											//parentNode.reloadChildren();
 											T3.ContentModule.loadPage(node.data.href);
@@ -343,7 +349,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 						}
 					},
 					onDragStop: function() {
-						if ($deletePage.data('currently-deleting') == 'true') {
+						if ($deletePage.data('currently-deleting') === true) {
 							$deletePage.data('currently-deleting', '');
 							window.setTimeout(function() {
 								$deletePage.hide();
@@ -357,12 +363,12 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					// only if the node title was clicked
 					// and it was not active at this time
 					// it should be navigated to the target node
-					if (node.isActive() === false && node.data.key != siteRootNodePath && (node.getEventTargetType(event) == 'title' || node.getEventTargetType(event) == 'icon')) {
+					if (node.isActive() === false && node.data.key !== siteRootNodePath && (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === 'icon')) {
 						T3.ContentModule.loadPage(node.data.href);
 					}
 				},
 				onDblClick: function(node, event) {
-					if (node.getEventTargetType(event) == 'title' && node.getLevel() !== 1) {
+					if (node.getEventTargetType(event) === 'title' && node.getLevel() !== 1) {
 						editNode(node);
 						return false;
 					}
@@ -379,7 +385,10 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 				}
 			});
 
-			$newPage = $('#t3-drag-newpage').draggable({
+				// Automatically expand the first node when opened
+			that.tree.dynatree('getRoot').getChildren()[0].expand(true);
+
+			var $newPage = $('#t3-drag-newpage').draggable({
 				revert: true,
 				connectToDynatree: true,
 				helper: 'clone',
@@ -400,7 +409,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 						},
 						position,
 						function(result) {
-							if (result.success == true) {
+							if (result.success === true) {
 								//reload the parent node with its children
 								//if the parentNode has no children left the fatherNode of the parentNode should be reloaded
 								//editNode(node);
@@ -409,29 +418,29 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 							}
 						}
 					);
-				}else{
+				} else {
 					T3.Common.Notification.notice('You have to select a page');
 				}
 			});
-			$deletePage = $('#t3-drop-deletionzone').droppable({
+			var $deletePage = $('#t3-drop-deletionzone').droppable({
 				over: function(event, ui) {
 					$(this).addClass('ui-state-highlight');
 				},
 				out: function() {
-					$(this).removeClass('ui-state-highlight')
+					$(this).removeClass('ui-state-highlight');
 				},
 				drop: function(event, ui) {
-					$deletePage.data('currently-deleting', 'true');
+					$deletePage.data('currently-deleting', true);
 					var node = ui.helper.data('dtSourceNode') || ui.draggable;
 					$(this).addClass('ui-state-highlight').find('p').html('Dropped ' + node);
 
 					//nodes could only be deleted if they have no children
 					//and they are not root
-					if (node.data.key != siteRootNodePath || node.hasChildren == false) {
+					if (node.data.key !== siteRootNodePath || node.hasChildren === false) {
 						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'](
 							node.data.key,
 							function(result) {
-								if (result.success == true) {
+								if (result.success === true) {
 									//reload the parent node with its children
 									//if the parentNode has no children left the fatherNode of the parentNode should be reloaded
 									reloadNodeAfterRemove(node);
@@ -459,7 +468,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 				var prevTitle = node.data.title,
 				tree = node.tree;
 				tree.$widget.unbind();
-				$('.dynatree-title', node.span).html('<input id="editNode" value="' + prevTitle + '">');
+				$('.dynatree-title', node.span).html($('<input />').attr({id: 'editNode', value: prevTitle}));
 				// Focus <input> and bind keyboard handler
 				$('input#editNode').focus().keydown(function(event) {
 					switch (event.which) {
@@ -483,7 +492,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 							title: title
 						},
 						function(result) {
-							if (result.success == true) {
+							if (result.success === true) {
 								var parentNode = node.getParent();
 								parentNode.reloadChildren();
 								T3.ContentModule.loadPage(node.data.href);
@@ -520,7 +529,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					return;
 				}
 				$('.t3-inspect > button.pressed').click();
-				if(this.inspectTree != null) {
+				if (this.inspectTree !== null) {
 					$('#t3-dd-inspecttree').dynatree('destroy');
 					this.inspectTree = null;
 				}
@@ -528,14 +537,13 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 		}.observes('T3.ContentModule.currentUri'),
 
 		onPopoverOpen: function() {
-			var dataNodeTitle = $('#t3-page-metainformation').data('title'),
-				dataNodePath = $('#t3-page-metainformation').attr('data-__nodepath');
+			var pageMetaInformation = $('#t3-page-metainformation'),
+				pageTitle = pageMetaInformation.data('title'),
+				pageNodePath = pageMetaInformation.data('__nodepath');
 
 				// if there is a tree and the rootnode key of the tree is different from the actual page, the tree should be reinitialised
 			if (this.inspectTree) {
-				var tree = $("#t3-dd-inspecttree").dynatree('getTree');
-				var rootNode = tree.getRoot();
-				if (dataNodePath != rootNode.childList[0].data.key) {
+				if (pageNodePath !== $('#t3-dd-inspecttree').dynatree('getTree').getRoot().getChildren()[0].data.key) {
 					$('#t3-dd-inspecttree').dynatree('destroy');
 				}
 			}
@@ -544,14 +552,10 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 				debugLevel: 0, // 0:quiet, 1:normal, 2:debug,
 				cookieId: null,
 				persist: false,
-				onPostInit: function (isReloading, isError, tree, node) {
-					dataNodeTitle = $('#t3-page-metainformation').data('title');
-					dataNodePath = $('#t3-page-metainformation').attr('data-__nodepath');
-				},
 				children: [
 					{
-						title: dataNodeTitle ,
-						key: dataNodePath,
+						title: pageTitle ,
+						key: pageNodePath,
 						isFolder: true,
 						expand: false,
 						isLazy: true,
@@ -575,9 +579,13 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 						return;
 					}
 					node._currentlySendingExtDirectAjaxRequest = true;
-					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(node.data.key, '!TYPO3.TYPO3:Page', function(result) {
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
+						node.data.key,
+						'!TYPO3.TYPO3:Page',
+						0,
+						function(result) {
 						node._currentlySendingExtDirectAjaxRequest = false;
-						if (result.success == true) {
+						if (result.success === true) {
 							node.setLazyNodeStatus(DTNodeStatus_Ok);
 						} else {
 							T3.Common.Notification.error('Page Tree loading error.');
@@ -604,7 +612,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					 */
 					onDragEnter: function(node, sourceNode) {
 						//it is only posssible to move nodes into nodes of the contentType:Section
-						if(node.data.contentType === 'TYPO3.TYPO3:Section') {
+						if (node.data.contentType === 'TYPO3.TYPO3:Section') {
 							T3.Common.Notification.error('moving nodes inside other nodes is not possible right now');
 							return ['before', 'after','over'];
 						}
@@ -645,7 +653,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 								node.data.key,
 								position,
 								function(result) {
-									if(result.success == true) {
+									if (result.success === true) {
 										T3.ContentModule.reloadPage();
 									}
 								}
@@ -659,7 +667,9 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					if (node.getEventTargetType() === 'title') {
 						var nodePath = node.data.key, offsetFromTop = 150;
 						var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
-						if (!block) return;
+						if (!block) {
+							return;
+						}
 
 						T3.Content.Model.BlockSelection.selectItem(block);
 						var $blockDomElement = block.getContentElement();
@@ -670,6 +680,9 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					}
 				}
 			});
+
+				// Automatically expand the first node when opened
+			this.inspectTree.dynatree('getRoot').getChildren()[0].expand(true);
 		}
 	});
 });

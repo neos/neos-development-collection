@@ -24,6 +24,11 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	const TREESTYLE = 2;
 
 	/**
+	 * @var integer
+	 */
+	protected $outputStyle;
+
+	/**
 	 * Assigns a node to the NodeView.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to render
@@ -45,128 +50,83 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 	}
 
 	/**
-	 * Prepares this view to render the specified list of nodes
-	 *
-	 * @param array<\TYPO3\TYPO3CR\Domain\Model\NodeInterface> $nodes The nodes to render
-	 * @return void
-	 */
-	public function assignNodes(array $nodes) {
-		$data = array();
-		$propertyNames = array();
-
-		foreach ($nodes as $node) {
-			$this->collectNodeData($data, $propertyNames, $node);
-		}
-
-		$this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
-		$this->assign('value',
-			array(
-				'data' => $data,
-				'metaData' => array(
-					'idProperty' => '__nodePath',
-					'root' => 'data',
-					'fields' => array_keys($propertyNames)
-				),
-				'success' => TRUE
-			)
-		);
-	}
-
-
-	/**
 	 * Prepares this view to render a list or tree of child nodes of the given node.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to fetch child nodes of
 	 * @param string $contentTypeFilter Criteria for filtering the child nodes
 	 * @param integer $outputStyle Either TREESTYLE or LISTSTYLE
-	 * @param integer $depth how many levels of childNodes (0 = unlimited)
+	 * @param integer $depth How many levels of childNodes (0 = unlimited)
 	 * @return void
 	 */
 	public function assignChildNodes(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $outputStyle = self::LISTSTYLE, $depth = 0) {
-		$contentTypeFilter = ($contentTypeFilter === '' ? NULL : $contentTypeFilter);
-		$metaData = array();
-		$data = array();
-
-		$uriBuilder = $this->controllerContext->getUriBuilder();
-		switch ($outputStyle) {
-			case self::TREESTYLE :
-				foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
-					$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $childNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
-					$hasChildNodes = $childNode->hasChildNodes($contentTypeFilter);
-
-					$data[] = array(
-						'key' => $childNode->getContextPath(),
-							// TODO Move to JS
-						'title' => $childNode->getContentType()->isOfType('TYPO3.TYPO3:Page') ? $childNode->getProperty('title'): $childNode->getLabel(),
-						'href' => $uriForNode,
-						'isFolder' => $hasChildNodes,
-						'isLazy' => $hasChildNodes,
-						'contentType' => $childNode->getContentType()->getName()
-					);
-				}
-			break;
-
-			case self::LISTSTYLE :
-				$propertyNames = array();
-				$this->collectChildNodeData($data, $propertyNames, $node, $contentTypeFilter, $depth);
-				$metaData = array(
-					'idProperty' => '__nodePath',
-					'root' => 'data',
-					'fields' => array_keys($propertyNames)
-				);
-		}
+		$this->outputStyle = $outputStyle;
+		$nodes = array();
+		$this->collectChildNodeData($nodes, $node, ($contentTypeFilter === '' ? NULL : $contentTypeFilter), $depth);
 
 		$this->setConfiguration(array('value' => array('data' => array('_descendAll' => array()))));
-		$value = array('data' => $data, 'success' => TRUE);
-		if ($metaData !== array()) {
-			$value['metaData'] = $metaData;
-		}
 
-		$this->assign('value', $value);
+		$this->assign('value', array('data' => $nodes, 'success' => TRUE));
 	}
 
 	/**
 	 * Collect node data and recurse into child nodes
 	 *
-	 * @param array &$data
-	 * @param array &$propertyNames
+	 * @param array &$nodes
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param string $contentTypeFilter
 	 * @param integer $depth levels of child nodes to fetch. 0 = unlimited
 	 * @param integer $recursionPointer current recursion level
 	 * @return void
 	 */
-	protected function collectChildNodeData(array &$data, array &$propertyNames, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth = 0, $recursionPointer = 1) {
+	protected function collectChildNodeData(array &$nodes, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth = 0, $recursionPointer = 1) {
+		$uriBuilder = $this->controllerContext->getUriBuilder();
 		foreach ($node->getChildNodes($contentTypeFilter) as $childNode) {
-			$this->collectNodeData($data, $propertyNames, $childNode);
-			if ($depth === 0 || ($recursionPointer < $depth)) {
-				$this->collectChildNodeData($data, $propertyNames, $childNode, $contentTypeFilter, $depth, ($recursionPointer + 1));
+			$contextNodePath = $childNode->getContextPath();
+			$workspaceName = $childNode->getWorkspace()->getName();
+			$nodeName = $childNode->getName();
+			$contentType = $childNode->getContentType()->getName();
+			$title = $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title'): $childNode->getLabel();
+			$abstract = $childNode->getAbstract();
+			$expand = ($depth === 0 || $recursionPointer < $depth);
+			switch ($this->outputStyle) {
+				case self::LISTSTYLE:
+					$properties = $childNode->getProperties();
+					$properties['__contextNodePath'] = $contextNodePath;
+					$properties['__workspaceName'] = $workspaceName;
+					$properties['__nodeName'] = $nodeName;
+					$properties['__contentType'] = $contentType;
+					$properties['__title'] = $title;
+					$properties['__abstract'] = $abstract;
+					array_push($nodes, $properties);
+					if ($expand) {
+						$this->collectChildNodeData($nodes, $childNode, $contentTypeFilter, $depth, ($recursionPointer + 1));
+					}
+				case self::TREESTYLE:
+					$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $childNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
+					$hasChildNodes = $childNode->hasChildNodes($contentTypeFilter);
+
+					$treeNode = array(
+						'key' => $contextNodePath,
+						'title' => $title,
+						'href' => $uriForNode,
+						'isFolder' => $hasChildNodes,
+						'isLazy' => ($hasChildNodes && !$expand),
+						'contentType' => $contentType,
+						'expand' => $expand
+					);
+
+					if ($expand && $hasChildNodes === TRUE) {
+						$children = array();
+						$this->collectChildNodeData($children, $childNode, $contentTypeFilter, $depth, ($recursionPointer + 1));
+						if ($children !== array()) {
+							$treeNode['children'] = $children;
+						}
+					}
+
+					array_push($nodes, $treeNode);
 			}
 		}
 	}
 
-	/**
-	 * Collects node data of the given node
-	 *
-	 * @param array &$data
-	 * @param array &$propertyNames
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return void
-	 */
-	protected function collectNodeData(array &$data, array &$propertyNames, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$properties = $node->getProperties();
-		$properties['__contextNodePath'] = $node->getContextPath();
-		$properties['__workspaceName'] = $node->getWorkspace()->getName();
-		$properties['__nodeName'] = $node->getName();
-		$properties['__contentType'] = $node->getContentType()->getName();
-		$properties['__label'] = $node->getLabel();
-		$properties['__abstract'] = $node->getAbstract();
-		$data[] = $properties;
-
-		foreach ($properties as $propertyName => $propertyValue) {
-			$propertyNames[$propertyName] = TRUE;
-		}
-
-	}
 }
 ?>
