@@ -395,18 +395,18 @@ TYPO3:
       administration:
         label: 'Administration'
         submodules:
-          useradmin:
+          users:
             label: 'User Management'
-            controller: '\TYPO3\TYPO3\Controller\Module\Administration\UserAdminController'
+            controller: '\TYPO3\TYPO3\Controller\Module\Administration\UsersController'
             description: "The User Management module provides you with an overview of all backend users. You can group them by their properties so you're able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured."
             icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Black/users_icon-24.png'
             actions:
               new:
                 label: 'Create user'
                 title: 'Create a new user'
-          package:
+          packages:
             label: 'Package Management'
-            controller: '\TYPO3\TYPO3\Controller\Module\Administration\PackageController'
+            controller: '\TYPO3\TYPO3\Controller\Module\Administration\PackagesController'
             description: "The Package Management module provides you with an overview of all packages. You can activate and deactivate individual packages, import new packages and delete existing packages. It also provides you with the ability to freeze and unfreeze packages in development context."
             icon: 'resource://TYPO3.TYPO3/Public/Images/Icons/Black/box_icon-24.png'
 

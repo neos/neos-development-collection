@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("singleton")
  */
-class PackageController extends \TYPO3\TYPO3\Controller\Module\StandardController {
+class PackagesController extends \TYPO3\TYPO3\Controller\Module\StandardController {
 
 	/**
 	 * @FLOW3\Inject
