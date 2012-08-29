@@ -40,7 +40,7 @@ class ProxyNode implements NodeInterface {
 	 * to write on the proxy. The $newNode is always in the same workspace
 	 * as the this ProxyNode.
 	 *
-	 * @var \TYPO3\TYPO3CR\Domain\Model\NodeInterface
+	 * @var \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @ORM\ManyToOne
 	 */
 	protected $newNode;
@@ -357,10 +357,10 @@ class ProxyNode implements NodeInterface {
 	/**
 	 * Sets the content type of this node.
 	 *
-	 * @param string $contentType
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType
 	 * @return void
 	 */
-	public function setContentType($contentType) {
+	public function setContentType(\TYPO3\TYPO3CR\Domain\Model\ContentType $contentType) {
 		if (!isset($this->newNode)) {
 			$this->materializeOriginalNode();
 		}
@@ -380,11 +380,11 @@ class ProxyNode implements NodeInterface {
 	 * Creates, adds and returns a child node of this node.
 	 *
 	 * @param string $name Name of the new node
-	 * @param string $contentType Content type of the new node (optional)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	public function createNode($name, $contentType = NULL, $identifier = NULL) {
+	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
 		return (isset($this->newNode) ? $this->newNode->createNode($name, $contentType, $identifier) : $this->originalNode->createNode($name, $contentType, $identifier));
 	}
 

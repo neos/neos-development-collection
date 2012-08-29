@@ -245,7 +245,8 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function setContentTypeSetsTheContentTypeOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
-		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setContentType');
+		$contentType = $this->getMock('TYPO3\TYPO3CR\Domain\Model\ContentType', array(), array(), '', FALSE);
+		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setContentType', $contentType);
 	}
 
 	/**
@@ -259,7 +260,7 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function createNodeCallsCreateNodeOnTheNewNodeOrTheOriginalNode() {
-		$this->assertThatOriginalOrNewNodeIsCalled('createNode', 'nodename', 'MyContentType');
+		$this->assertThatOriginalOrNewNodeIsCalled('createNode', 'nodename');
 	}
 
 	/**

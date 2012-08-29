@@ -554,16 +554,12 @@ class Node implements NodeInterface {
 	/**
 	 * Sets the content type of this node.
 	 *
-	 * @param string $contentType
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you give an unknown content type.
 	 */
-	public function setContentType($contentType) {
-		if (!$this->contentTypeManager->hasContentType($contentType)) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('Unknown content type "' . $contentType . '".', 1285519999);
-		}
-		if ($this->contentType !== $contentType) {
-			$this->contentType = $contentType;
+	public function setContentType(\TYPO3\TYPO3CR\Domain\Model\ContentType $contentType) {
+		if ($this->contentType !== $contentType->getName()) {
+			$this->contentType = $contentType->getName();
 			$this->nodeRepository->update($this);
 		}
 	}
@@ -581,13 +577,13 @@ class Node implements NodeInterface {
 	 * Creates, adds and returns a child node of this node.
 	 *
 	 * @param string $name Name of the new node
-	 * @param string $contentType Content type of the new node (optional)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\Node
 	 * @throws \InvalidArgumentException if the node name is not accepted.
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if a node with this path already exists.
 	 */
-	public function createNode($name, $contentType = NULL, $identifier = NULL) {
+	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
 		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
 			throw new \InvalidArgumentException('Invalid node name: A node name must only contain characters, numbers and the "-" sign.', 1292428697);
 		}
@@ -893,7 +889,7 @@ class Node implements NodeInterface {
 			$this->setProperty($propertyName, $propertyValue);
 		}
 		$this->setIndex($sourceNode->getIndex());
-		$this->setContentType($sourceNode->getContentType()->getName());
+		$this->setContentType($sourceNode->getContentType());
 		$contentObject = $sourceNode->getContentObject();
 		if ($contentObject !== NULL) {
 			$this->setContentObject($contentObject);

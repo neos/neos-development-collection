@@ -309,28 +309,15 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 */
 	public function theContentTypeCanBeSetAndRetrieved() {
 		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
-		$contentTypeManager->expects($this->once())->method('hasContentType')->with('typo3:mycontent')->will($this->returnValue(TRUE));
 		$contentTypeManager->expects($this->any())->method('getContentType')->will($this->returnCallback(function ($name) { return new \TYPO3\TYPO3CR\Domain\Model\ContentType($name, array(), array()) ;}));
 
 		$this->node->_set('contentTypeManager', $contentTypeManager);
 
 		$this->assertEquals('unstructured', $this->node->getContentType()->getName());
 
-		$this->node->setContentType('typo3:mycontent');
-		$this->assertEquals('typo3:mycontent', $this->node->getContentType()->getName());
-	}
-
-	/**
-	 * @test
-	 * @expectedException \TYPO3\TYPO3CR\Exception\NodeException
-	 */
-	public function setContentTypeThrowsAnExceptionIfTheSpecifiedContentTypeDoesNotExist() {
-		$contentTypeManager = $this->getMock('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager', array(), array(), '', FALSE);
-		$contentTypeManager->expects($this->once())->method('hasContentType')->with('somecontenttype')->will($this->returnValue(FALSE));
-
-		$this->node->_set('contentTypeManager', $contentTypeManager);
-
-		$this->node->setContentType('somecontenttype');
+		$myContentType = $contentTypeManager->getContentType('typo3:mycontent');
+		$this->node->setContentType($myContentType);
+		$this->assertEquals($myContentType, $this->node->getContentType());
 	}
 
 	/**

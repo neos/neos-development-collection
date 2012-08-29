@@ -247,15 +247,15 @@ interface NodeInterface {
 	/**
 	 * Sets the content type of this node.
 	 *
-	 * @param string $contentType
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType
 	 * @return void
 	 */
-	public function setContentType($contentType);
+	public function setContentType(\TYPO3\TYPO3CR\Domain\Model\ContentType $contentType);
 
 	/**
 	 * Returns the content type of this node.
 	 *
-	 * @return ContentType
+	 * @return \TYPO3\TYPO3CR\Domain\Model\ContentType
 	 */
 	public function getContentType();
 
@@ -263,11 +263,11 @@ interface NodeInterface {
 	 * Creates, adds and returns a child node of this node.
 	 *
 	 * @param string $name Name of the new node
-	 * @param string $contentType Content type of the new node (optional)
+	 * @param \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType Content type of the new node (optional)
 	 * @param string $identifier The identifier of the node, unique within the workspace, optional(!)
 	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
 	 */
-	public function createNode($name, $contentType = NULL, $identifier = NULL);
+	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL);
 
 	/**
 	 * Returns a node specified by the given relative path.
