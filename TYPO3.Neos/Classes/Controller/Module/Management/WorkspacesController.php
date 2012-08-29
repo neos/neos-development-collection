@@ -171,17 +171,23 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 		foreach ($nodes as $key => $node) {
 			$nodes[$key] = $this->propertyMapper->convert($node, 'TYPO3\TYPO3CR\Domain\Model\NodeInterface', $propertyMappingConfiguration);
 		}
-		if ($action === 'publish') {
-			foreach ($nodes as $node) {
-				$this->workspacesService->publishNode($node);
-			}
-			$message = 'Selected changes have been published';
-		} elseif ($action === 'discard') {
-			foreach ($nodes as $node) {
-				$this->nodeRepository->remove($node);
-			}
-			$message = 'Selected changes have been discarded';
+		switch ($action) {
+			case 'publish':
+				foreach ($nodes as $node) {
+					$this->workspacesService->publishNode($node);
+				}
+				$message = 'Selected changes have been published';
+			break;
+			case 'discard':
+				foreach ($nodes as $node) {
+					$this->nodeRepository->remove($node);
+				}
+				$message = 'Selected changes have been discarded';
+			break;
+			default:
+				throw new \RuntimeException('Invalid action "' . $action . '" given.', 1346167441);
 		}
+
 		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Message($message));
 		$this->redirect('index');
 	}
