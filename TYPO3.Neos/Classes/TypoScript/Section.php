@@ -34,6 +34,12 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 
 	/**
 	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
@@ -71,7 +77,7 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 		if ($this->numberOfRenderedNodes === 0 && $this->nodeRepository->getContext()->getWorkspaceName() !== 'live') {
 			$sectionNode = $node->getNode($this->getNodePath());
 			if ($sectionNode === NULL) {
-				$sectionNode = $node->createNode($this->getNodePath(), 'TYPO3.TYPO3:Section');
+				$sectionNode = $node->createNode($this->getNodePath(), $this->contentTypeManager->getContentType('TYPO3.TYPO3:Section'));
 			}
 			$output = '<div class="t3-ui"><button class="t3-create-new-content t3-button btn" data-node="' . $sectionNode->getContextPath() . '">Create new content</button></div>';
 		}

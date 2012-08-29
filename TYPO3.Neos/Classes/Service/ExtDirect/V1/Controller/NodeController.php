@@ -34,6 +34,12 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\TYPO3\Domain\Service\NodeSearchService
 	 */
 	protected $nodeSearchService;
@@ -128,12 +134,13 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		if (empty($nodeData['nodeName'])) {
 			$nodeData['nodeName'] = uniqid('node');
 		}
+		$contentType = $this->contentTypeManager->getContentType($nodeData['contentType']);
 
 		if ($position === 0) {
-			$newNode = $referenceNode->createNode($nodeData['nodeName'], $nodeData['contentType']);
+			$newNode = $referenceNode->createNode($nodeData['nodeName'], $contentType);
 		} else {
 			$parentNode = $referenceNode->getParent();
-			$newNode = $parentNode->createNode($nodeData['nodeName'], $nodeData['contentType']);
+			$newNode = $parentNode->createNode($nodeData['nodeName'], $contentType);
 
 			if ($position === -1) {
 				$newNode->moveBefore($referenceNode);

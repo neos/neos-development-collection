@@ -158,7 +158,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 			// TODO: Write policy which only allows createAction for logged in users!
 			// TODO: make it possible for the user to specify the node identifier
-		$newNode = $parentNode->createNode(uniqid(), $type);
+		$newNode = $parentNode->createNode(uniqid(), $this->contentTypeManager->getContentType($type));
 		if ($position === 'above') {
 			$newNode->moveBefore($referenceNode);
 		} elseif ($position === 'below') {
@@ -201,7 +201,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 					throw new \TYPO3\TYPO3\Exception('Type for node in structure has to be configured', 1316881909);
 				}
 
-				$node->createNode($nodeName, $nodeConfiguration['type']);
+				$node->createNode($nodeName, $this->contentTypeManager->getContentType($nodeConfiguration['type']));
 
 				// TODO: recurse into nested structure definition
 			}

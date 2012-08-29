@@ -151,16 +151,18 @@ class SiteImportService {
 	protected function parseNodes(\SimpleXMLElement $parentXml, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $parentNode) {
 		foreach ($parentXml->node as $childNodeXml) {
 			$childNode = $parentNode->getNode((string)$childNodeXml['nodeName']);
-			if ($childNode === NULL) {
-				$identifier = (string)$childNodeXml['identifier'] === '' ? NULL : (string)$childNodeXml['identifier'];
-				$childNode = $parentNode->createNode((string)$childNodeXml['nodeName'], NULL, $identifier);
-			}
-
 			$contentTypeName = (string)$childNodeXml['type'];
 			if (!$this->contentTypeManager->hasContentType($contentTypeName)) {
-				$this->contentTypeManager->createContentType($contentTypeName);
+				$contentType = $this->contentTypeManager->createContentType($contentTypeName);
+			} else {
+				$contentType = $this->contentTypeManager->getContentType($contentTypeName);
 			}
-			$childNode->setContentType($contentTypeName);
+			if ($childNode === NULL) {
+				$identifier = (string)$childNodeXml['identifier'] === '' ? NULL : (string)$childNodeXml['identifier'];
+				$childNode = $parentNode->createNode((string)$childNodeXml['nodeName'], $contentType, $identifier);
+			} else {
+				$childNode->setContentType($contentType);
+			}
 
 			$childNode->setHidden((boolean)$childNodeXml['hidden']);
 			$childNode->setHiddenInIndex((boolean)$childNodeXml['hiddenInIndex']);
