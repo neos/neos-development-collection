@@ -249,10 +249,12 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$typoScript = file_get_contents(__DIR__ . '/Fixtures/PredefinedTypoScript.ts2');
 		$typoScript .= chr(10) . chr(10) . file_get_contents(__DIR__ . '/Fixtures/BaseTypoScript.ts2');
 
-		if ($additionalTypoScriptFile != NULL) {
-			$typoScript .= chr(10) . chr(10) . file_get_contents(__DIR__ . '/Fixtures/' . $additionalTypoScriptFile);
+		$fixtureDirectory = \TYPO3\FLOW3\Utility\Files::concatenatePaths(array(__DIR__, 'Fixtures'));
+
+		if ($additionalTypoScriptFile !== NULL) {
+			$typoScript .= chr(10) . chr(10) . file_get_contents(\TYPO3\FLOW3\Utility\Files::concatenatePaths(array($fixtureDirectory, $additionalTypoScriptFile)));
 		}
-		$typoScript = str_replace('FIXTURE_DIRECTORY', __DIR__ . '/Fixtures/', $typoScript);
+		$typoScript = str_replace('FIXTURE_DIRECTORY', $fixtureDirectory, $typoScript);
 
 		$parser = new \TYPO3\TypoScript\Core\Parser();
 		$typoScriptConfiguration = $parser->parse($typoScript);
