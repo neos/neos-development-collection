@@ -25,15 +25,14 @@ class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @FLOW3\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @var \TYPO3\TYPO3\Service\WorkspacesService
 	 */
-	protected $nodeRepository;
+	protected $workspacesService;
 
 	/**
 	 * @var string
 	 */
 	protected $viewObjectNamePattern = 'TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView';
-
 
 	/**
 	 * Select special error action
@@ -71,8 +70,7 @@ class WorkspaceController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 			return;
 		}
 
-		$sourceWorkspace = $node->getWorkspace();
-		$sourceWorkspace->publishNodes(array($node), $targetWorkspaceName);
+		$this->workspacesService->publishNode($node, $targetWorkspaceName);
 
 		$this->view->assign('value', array('success' => TRUE));
 	}

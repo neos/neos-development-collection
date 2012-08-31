@@ -93,21 +93,23 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 
 		$sites = array();
 		foreach ($this->workspacesService->getUnpublishedNodes($workspaceName) as $node) {
-			$pathParts = explode('/', $node->getPath());
-			if (count($pathParts) > 2) {
-				$siteNodeName = $pathParts[2];
-				$folder = $this->findFolderNode($node);
-				$folderPath = implode('/', array_slice(explode('/', $folder->getPath()), 3));
-				$relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $folderPath), '', $node->getPath());
-				if (!isset($sites[$siteNodeName]['siteNode'])) {
-					$sites[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
+			if (!$node->getContentType()->isOfType('TYPO3.TYPO3:Section')) {
+				$pathParts = explode('/', $node->getPath());
+				if (count($pathParts) > 2) {
+					$siteNodeName = $pathParts[2];
+					$folder = $this->findFolderNode($node);
+					$folderPath = implode('/', array_slice(explode('/', $folder->getPath()), 3));
+					$relativePath = str_replace(sprintf('/sites/%s/%s', $siteNodeName, $folderPath), '', $node->getPath());
+					if (!isset($sites[$siteNodeName]['siteNode'])) {
+						$sites[$siteNodeName]['siteNode'] = $this->siteRepository->findOneByNodeName($siteNodeName);
+					}
+					$sites[$siteNodeName]['folders'][$folderPath]['folderNode'] = $folder;
+					$change = array('node' => $node);
+					if (isset($contentTypes[$node->getContentType()])) {
+						$change['configuration'] = $contentTypes[$node->getContentType()]->getConfiguration();
+					}
+					$sites[$siteNodeName]['folders'][$folderPath]['changes'][$relativePath] = $change;
 				}
-				$sites[$siteNodeName]['folders'][$folderPath]['folderNode'] = $folder;
-				$change = array('node' => $node);
-				if (isset($contentTypes[$node->getContentType()])) {
-					$change['configuration'] = $contentTypes[$node->getContentType()]->getConfiguration();
-				}
-				$sites[$siteNodeName]['folders'][$folderPath]['changes'][$relativePath] = $change;
 			}
 		}
 
