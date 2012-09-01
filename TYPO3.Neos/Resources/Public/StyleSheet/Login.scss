@@ -8,224 +8,224 @@ $font-family: Arial,sans-serif;
 $font-share: Share-Regular, Arial,sans-serif;
 
 @mixin label-font {
-  font-size: 93%;
-  font-weight: normal;
-  font-family: $font-family;
+	font-size: 93%;
+	font-weight: normal;
+	font-family: $font-family;
 }
 
 @mixin input-txt-font {
-  font-size: 93%;
-  font-weight: bold;
-  font-family: $font-family;
+	font-size: 93%;
+	font-weight: bold;
+	font-family: $font-family;
 }
 
 @mixin input-txt-default {
-  @include box-shadow(0 0 0 1px #9e9e9e, 0 0 0 2px #131313, 0 1px 0 2px rgba(88,88,88,0.6));
-  border: 1px solid #b6b6b6;
-  background: #c5c5c5;
+	@include box-shadow(0 0 0 1px #9e9e9e, 0 0 0 2px #131313, 0 1px 0 2px rgba(88,88,88,0.6));
+	border: 1px solid #b6b6b6;
+	background: #c5c5c5;
 }
 
 @mixin txt-shadow-black {
-  text-shadow: #000000 0 -1px 0;
+	text-shadow: #000000 0 -1px 0;
 }
 
 @mixin txt-shadow-grey {
-  text-shadow: $grey 0 -1px 0;
+	text-shadow: $grey 0 -1px 0;
 }
 
 @mixin rounded-corners-middle {
-  @include border-radius(5px);
+	@include border-radius(5px);
 }
 
 @mixin rounded-corners-small {
-  @include border-radius(3px);
+	@include border-radius(3px);
 }
 
 html {
-  height: 100%;
-  overflow: auto;
-  background: none;
-  font-size: 13px;
+	height: 100%;
+	overflow: auto;
+	background: none;
+	font-size: 13px;
 }
 body, table, form {
-  font-family: $font-family;
-  font-size: 13px;
-  color: #ffffff;
-  margin: 0;
-  padding: 0;
-  line-height: 1.5em;
+	font-family: $font-family;
+	font-size: 13px;
+	color: #ffffff;
+	margin: 0;
+	padding: 0;
+	line-height: 1.5em;
 }
 body {
-  background: #000000 url(../Images/Login/WallpaperRepeater.jpg) 25% top repeat-x;
-  height: 100%;
+	background: #000000 url(../Images/Login/WallpaperRepeater.jpg) 25% top repeat-x;
+	height: 100%;
 }
 #typo3-typo3-login-site {
-  width: 100%;
-  height: 100%;
-  display: block;
-  background: url(../Images/Login/FooterBg.png) 50% bottom repeat-x;
-  position: relative;
+	width: 100%;
+	height: 100%;
+	display: block;
+	background: url(../Images/Login/FooterBg.png) 50% bottom repeat-x;
+	position: relative;
 }
 #typo3-typo3-login-wallpaper {
-  width: 100%;
-  height: 100%;
-  background: url(../Images/Login/Wallpaper.png) 50% bottom no-repeat;
-  position: absolute;
-  bottom: 256px;
+	width: 100%;
+	height: 100%;
+	background: url(../Images/Login/Wallpaper.png) 50% bottom no-repeat;
+	position: absolute;
+	bottom: 256px;
 }
 .typo3-typo3-version-information {
-  font-size: 77%;
-  color: #535353;
-  background: url(../Images/TYPO3ApplicationLogo-50px.png) left top no-repeat;
-  padding: 44px 0 0 10px;
-  font-weight: normal;
-  min-width: 125px;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  margin: 0;
+	font-size: 77%;
+	color: #535353;
+	background: url(../Images/TYPO3ApplicationLogo-50px.png) left top no-repeat;
+	padding: 44px 0 0 10px;
+	font-weight: normal;
+	min-width: 125px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	margin: 0;
 }
 #typo3-typo3-login-box {
-  width: 391px;
-  max-width: 428px;
-  height: 320px;
-  position: absolute;
-  bottom: -125px;
-  left: 50%;
-  margin-left: -214px;
-  padding: 20px 0 0 37px;
-  background: url(../Images/Login/LoginBoxBg.png) left top no-repeat;
-  form {
-    margin: 1px;
-    padding: 17px 55px 17px 17px;
-    float: left;
-    .errorMessages {
-        background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconError.png) 9px 50% no-repeat #5D0F0E;
-        position: absolute;
-        right: 55px;
-        top: 43px;
-        padding: 5px 5px 5px 37px;
-        @include rounded-corners-middle;
-        border: 1px solid #000000;
-    }
-    a.typo3-typo3-link-help {
-      color: $light-grey;
-      @include txt-shadow-black;
-      font-size: 88%;
-      float: right;
-      margin: -7px 0 10px 0;
-    }
-    .typo3-typo3-login-fields {
-      clear: both;
-      margin: 0 0 10px 0;
-      position: relative;
-      label {
-        width: 75px;
-        display: block;
-        float: left;
-        @include label-font;
-        @include txt-shadow-black;
-      }
-      input {
-        width: 235px;
-        height: 20px;
-        padding: 0 2px 0 2px;
-        color: #000000;
-        position: relative;
-        @include rounded-corners-small;
-        @include input-txt-default;
-        @include input-txt-font;
-        &:active,
-        &:focus {
-          @include box-shadow(0 0 1px 1px #c7885b, 0 0 0 2px #131313, 0px 1px 0 2px rgba(88,88,88,0.6));
-          outline: none 0px;
-          border: 1px solid #ffd4b6;
-          background: #ffffff;
-        }
-      }
-    }
-    .typo3-typo3-login-actions {
-      clear: both;
-      padding: 45px 0 0 0;
-      .typo3-typo3-login-button {
-        background:
-          url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat,
-          url(../Images/Login/IconShutdown.png) left 50% no-repeat $orange;
-        @include rounded-corners-middle;
-        height: 32px;
-        display: block;
-        padding: 0 0 0 48px;
-        border: 1px solid #000000;
-        display: block;
-        @include box-shadow(0 1px 0 0 rgba(88, 88, 88, 0.6));
-        float: right;
-        color: #ffffff;
-        text-decoration: none;
-        @include input-txt-font;
-        @include txt-shadow-grey;
-        outline: 0;
-        cursor: pointer;
-        margin: 0;
-        &:hover {
-          background:
-            url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat,
-            url(../Images/Login/IconShutdown.png) left 50% no-repeat $light-orange;
-          div {
-            background-color: $light-orange;
-          }
-        }
-        &:focus {
-          background:
-            url(../Images/Login/ButtonBgLeftFocus.png) -1px 50% no-repeat,
-            url(../Images/Login/IconShutdown.png) left top no-repeat $orange;
-          div {
-            background: url(../Images/Login/ButtonBgRightFocus.png) right 50% no-repeat $orange;
-            line-height: 32px;
-          }
-        }
-        div {
-          background: url(../Images/Login/ButtonBgRight.png) right 50% no-repeat $orange;
-          line-height: 30px;
-          padding-right: 17px;
-          height: 30px;
-        }
-      }
-    }
-  }
-  h2.typo3-typo3-login-domain {
-    @include txt-shadow-black;
-    margin: 12px 0 12px 15px;
-    font-family: $font-share;
-    font-size: 153.9%;
-    font-weight: normal;
-    strong {
-      font-weight: bold;
-    }
-  }
+	width: 391px;
+	max-width: 428px;
+	height: 320px;
+	position: absolute;
+	bottom: -125px;
+	left: 50%;
+	margin-left: -214px;
+	padding: 20px 0 0 37px;
+	background: url(../Images/Login/LoginBoxBg.png) left top no-repeat;
+	form {
+		margin: 1px;
+		padding: 17px 55px 17px 17px;
+		float: left;
+		.errorMessages {
+			background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconError.png) 9px 50% no-repeat #5D0F0E;
+			position: absolute;
+			right: 55px;
+			top: 43px;
+			padding: 5px 5px 5px 37px;
+			@include rounded-corners-middle;
+			border: 1px solid #000000;
+		}
+		a.typo3-typo3-link-help {
+			color: $light-grey;
+			@include txt-shadow-black;
+			font-size: 88%;
+			float: right;
+			margin: -7px 0 10px 0;
+		}
+		.typo3-typo3-login-fields {
+			clear: both;
+			margin: 0 0 10px 0;
+			position: relative;
+			label {
+				width: 75px;
+				display: block;
+				float: left;
+				@include label-font;
+				@include txt-shadow-black;
+			}
+			input {
+				width: 235px;
+				height: 20px;
+				padding: 0 2px 0 2px;
+				color: #000000;
+				position: relative;
+				@include rounded-corners-small;
+				@include input-txt-default;
+				@include input-txt-font;
+				&:active,
+				&:focus {
+					@include box-shadow(0 0 1px 1px #c7885b, 0 0 0 2px #131313, 0px 1px 0 2px rgba(88,88,88,0.6));
+					outline: none 0px;
+					border: 1px solid #ffd4b6;
+					background: #ffffff;
+				}
+			}
+		}
+		.typo3-typo3-login-actions {
+			clear: both;
+			padding: 45px 0 0 0;
+			.typo3-typo3-login-button {
+				background:
+					url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat,
+					url(../Images/Login/IconShutdown.png) left 50% no-repeat $orange;
+				@include rounded-corners-middle;
+				height: 32px;
+				display: block;
+				padding: 0 0 0 48px;
+				border: 1px solid #000000;
+				display: block;
+				@include box-shadow(0 1px 0 0 rgba(88, 88, 88, 0.6));
+				float: right;
+				color: #ffffff;
+				text-decoration: none;
+				@include input-txt-font;
+				@include txt-shadow-grey;
+				outline: 0;
+				cursor: pointer;
+				margin: 0;
+				&:hover {
+					background:
+						url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat,
+						url(../Images/Login/IconShutdown.png) left 50% no-repeat $light-orange;
+					div {
+						background-color: $light-orange;
+					}
+				}
+				&:focus {
+					background:
+						url(../Images/Login/ButtonBgLeftFocus.png) -1px 50% no-repeat,
+						url(../Images/Login/IconShutdown.png) left top no-repeat $orange;
+					div {
+						background: url(../Images/Login/ButtonBgRightFocus.png) right 50% no-repeat $orange;
+						line-height: 32px;
+					}
+				}
+				div {
+					background: url(../Images/Login/ButtonBgRight.png) right 50% no-repeat $orange;
+					line-height: 30px;
+					padding-right: 17px;
+					height: 30px;
+				}
+			}
+		}
+	}
+	h2.typo3-typo3-login-domain {
+		@include txt-shadow-black;
+		margin: 12px 0 12px 15px;
+		font-family: $font-share;
+		font-size: 153.9%;
+		font-weight: normal;
+		strong {
+			font-weight: bold;
+		}
+	}
 }
 .typo3-typo3-login-lock {
-  position: absolute;
-  left: 38px;
-  bottom: 59px;
-  width: 76px;
-  height: 108px;
-  display: block;
-  background: url(../Images/Login/Lock.png) 50% 50% no-repeat;
+	position: absolute;
+	left: 38px;
+	bottom: 59px;
+	width: 76px;
+	height: 108px;
+	display: block;
+	background: url(../Images/Login/Lock.png) 50% 50% no-repeat;
 }
 #typo3-typo3-login-footer {
-  width: 70%;
-  position: absolute;
-  bottom: 15px;
-  left: 50%;
-  margin-left: -35%;
-  text-align: center;
-  p {
-    font-size: 77%;
-    color: #535353;
-    line-height: 1.3em;
-    margin: 0;
-  }
-  a {
-    color: #535353;
-  }
+	width: 70%;
+	position: absolute;
+	bottom: 15px;
+	left: 50%;
+	margin-left: -35%;
+	text-align: center;
+	p {
+		font-size: 77%;
+		color: #535353;
+		line-height: 1.3em;
+		margin: 0;
+	}
+	a {
+		color: #535353;
+	}
 }
