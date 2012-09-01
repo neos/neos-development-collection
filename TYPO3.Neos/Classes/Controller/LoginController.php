@@ -58,6 +58,9 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 			} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
 			}
 		}
+		if ($authenticationArguments = $this->request->getInternalArgument('__authentication')) {
+			$username = $authenticationArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'];
+		}
 		$this->view->assign('username', $username);
 
 		$version = $this->objectManager->get('TYPO3\FLOW3\Package\PackageManagerInterface')->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
