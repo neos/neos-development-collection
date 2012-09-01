@@ -100,13 +100,22 @@ body {
 		padding: 17px 55px 17px 17px;
 		float: left;
 		.errorMessages {
-			background: url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat, url(../Images/Login/IconError.png) 9px 50% no-repeat #5D0F0E;
+			background:
+				url(../Images/Login/ButtonBgLeft.png) left 50% no-repeat,
+				url(../Images/Login/IconError.png) 9px 50% no-repeat #5D0F0E;
 			position: absolute;
 			right: 55px;
 			top: 43px;
 			padding: 5px 5px 5px 37px;
 			@include rounded-corners-middle;
 			border: 1px solid #000000;
+			z-index: 10;
+			li {
+				list-style: none;
+			}
+			h3 {
+				display: none;
+			}
 		}
 		a.typo3-typo3-link-help {
 			color: $light-grey;
