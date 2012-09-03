@@ -1759,7 +1759,7 @@
   *margin-right: .3em;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("../img/glyphicons-halflings.png");
+  background-image: url("../Library/twitter-bootstrap/img/glyphicons-halflings.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
   margin-top: 1px;
@@ -1771,7 +1771,7 @@
 .t3-ui .dropdown-menu > li > a:hover > [class*=" icon-"],
 .t3-ui .dropdown-menu > .active > a > [class^="icon-"],
 .t3-ui .dropdown-menu > .active > a > [class*=" icon-"] {
-  background-image: url("../img/glyphicons-halflings-white.png");
+  background-image: url("../Library/twitter-bootstrap/img/glyphicons-halflings-white.png");
 }
 .t3-ui .icon-glass {
   background-position: 0      0;
