@@ -2,7 +2,6 @@
 <!DOCTYPE
 	html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-{namespace ext=TYPO3\ExtJS\ViewHelpers}
 {namespace typo3=TYPO3\TYPO3\ViewHelpers}
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -11,33 +10,27 @@
 		<title>TYPO3 Login</title>
 		<f:base />
 
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'CSS/reset-min.css', package: 'TYPO3.ExtJS')}" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'StyleSheet/Login.css')}" />
 	</head>
 	<body>
 		<div id="typo3-typo3-login-site">
-		<h2 class="typo3-typo3-version-information">Version {version}</h2>
+			<h2 class="typo3-typo3-version-information">Version {version}</h2>
 			<div id="typo3-typo3-login-wallpaper">
 				<div id="typo3-typo3-login-box">
-				<!-- for grid-debugging <div class="grid"></div>-->
 					<h2 class="typo3-typo3-login-domain">TYPO3 Login</h2>
-					<f:form id="typo3-typo3-login-form" action="authenticate" >
+					<f:form id="typo3-typo3-login-form" action="authenticate">
 						<div class="typo3-typo3-login-container">
 							<f:flashMessages class="errorMessages" />
 							<div class="typo3-typo3-login-fields">
 								<label class="username">User</label>
-								<input type="text" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" {f:if(condition:'{username}', then: 'tabindex="2"', else:'autofocus="autofocus"')} value="{username}" />
+								<input type="text" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" {f:if(condition: username, else: 'autofocus="autofocus"')} value="{username}" />
 							</div>
 							<div class="typo3-typo3-login-fields">
 								<label class="password">Password</label>
-								<input class="active" type="password" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" {f:if(condition:'{username}', then:'autofocus="autofocus"', else: 'tabindex="2"')} />
+								<input type="password" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" tabindex="2" {f:if(condition: username, then: 'autofocus="autofocus"')} />
 							</div>
 							<div class="typo3-typo3-login-actions">
-								<a href="#" id="typo3-typo3-login-button" class="typo3-typo3-login-button"><span>Login</span></a>
-								<!--
-									Commented because of issue http://forge.typo3.org/issues/11177
-									<a class="typo3-typo3-openid-button"><span>OpenID Login</span></a>
-								-->
+								<button type="submit" class="typo3-typo3-login-button" tabindex="3"><div>Login</div></button>
 							</div>
 						</div>
 						<span class="typo3-typo3-login-lock"></span>
@@ -45,33 +38,13 @@
 				</div>
 			</div>
 			<div id="typo3-typo3-login-footer">
-				<p>TYPO3 (Phoenix) – © 2006-2010 by Robert Lemke, Karsten Dambekalns, Sebastian Kurf&uuml;rst, Andreas F&ouml;rthner, Bastian Waidelich, Christopher Hlubek, Jens Hoffmann,
-					Nils Dehl, Berit Jensen, Christian M&uuml;ller, Rens Admiraal and more great guys from the TYPO3 community.
-					This is free software, licensed under GPL3 or higher. TYPO3 comes with MANY GREAT FEATURES but WITHOUT ANY WARRANTY.	See <a href="http://www.typo3.org">www.typo3.org</a> for more details.
+				<p>TYPO3 (Phoenix) – © 2006-2012 by Robert Lemke, Karsten Dambekalns, Sebastian Kurfürst, Andreas Förthner, Bastian Waidelich, Christopher Hlubek, Jens Hoffmann,
+					Nils Dehl, Berit Jensen, Christian Müller, Rens Admiraal and more great guys from the TYPO3 community.
+					This is free software, licensed under GPL3 or higher. TYPO3 comes with MANY GREAT FEATURES but WITHOUT ANY WARRANTY.
+					See <a href="http://www.typo3.org">www.typo3.org</a> for more details.
 					Removing or obstructing the appearance of this notice is not nice and for the rest prohibited by law. Reading fineprint can damage your eyes.
 				</p>
 			</div>
 		</div>
-		<ext:include theme="xtheme-gray" includeStylesheets="false" />
-		<script type="text/javascript">
-			Ext.onReady(function() {
-				if (Ext.select("input:focus").elements.length === 0) {
-					Ext.DomQuery.selectNode("input[autofocus]").focus();
-				}
-				Ext.get('typo3-typo3-login-button').on('click', function(event) {
-					event.preventDefault();
-					Ext.get('typo3-typo3-login-form').dom.submit();
-				});
-				Ext.get('typo3-typo3-login-form').on('keypress', function(event) {
-					if (event.keyCode == 13) {
-						event.preventDefault();
-						Ext.get('typo3-typo3-login-form').dom.submit();
-					}
-
-				});
-			});
-
-		</script>
-
 	</body>
 </html>
