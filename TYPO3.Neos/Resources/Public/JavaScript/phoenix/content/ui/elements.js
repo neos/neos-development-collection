@@ -72,7 +72,8 @@ function(jQuery, toolbarTemplate) {
 			this.set('pressed', !this.get('pressed'));
 		},
 		mouseUp: function(event) {
-			if (this.get('isActive')) {
+			// Only trigger if left mouse is clicked
+			if (event.button === 0 && this.get('isActive')) {
 				var action = this.get('action'),
 				target = this.get('targetObject');
 
