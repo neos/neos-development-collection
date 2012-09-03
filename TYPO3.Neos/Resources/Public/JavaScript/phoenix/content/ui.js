@@ -10,6 +10,8 @@ define(
 	'text!phoenix/templates/content/ui/breadcrumb.html',
 	'text!phoenix/templates/content/ui/inspector.html',
 	'text!phoenix/templates/content/ui/inspectorDialog.html',
+	'text!phoenix/templates/content/ui/pageTree.html',
+	'text!phoenix/templates/content/ui/inspectTree.html',
 	'phoenix/content/ui/elements',
 	'phoenix/content/ui/editors',
 	'jquery.popover',
@@ -20,7 +22,7 @@ define(
 	'jquery.cookie',
 	'jquery.dynatree'
 ],
-function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate) {
+function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, inspectTreeTemplate) {
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
 		T3.Content = {};
@@ -183,7 +185,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate)
 
 	T3.Content.UI.PageTreeButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Page Tree',
-		$popoverContent: $('<div class="dynatree-container" id="t3-pagetree-container"><div id="t3-drag-newpage" class="t3-dd-newpage">New page</div><div id="t3-dd-pagetree"></div><div class="t3-dd-deletionzone" id="t3-drop-deletionzone">Drop here to delete</div></div>'),
+		$popoverContent: pageTreeTemplate,
 
 		tree: null,
 		onPopoverOpen: function() {
@@ -506,7 +508,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate)
 
 	T3.Content.UI.InspectButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Content Structure',
-		$popoverContent: $('<div class="dynatree-container" id="t3-inspecttree-container"><div id="t3-dd-inspecttree"></div></div>'),
+		$popoverContent: inspectTreeTemplate,
 		popoverPosition: 'top',
 		_ignoreCloseOnPageLoad: false,
 
