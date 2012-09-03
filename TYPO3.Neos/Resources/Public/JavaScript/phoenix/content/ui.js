@@ -523,7 +523,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate)
 					this.inspectTree = null;
 				}
 			}
-		}.observes('T3.ContentModule._isLoadingPage'),
+		}.observes('T3.ContentModule.currentUri'),
 
 		onPopoverOpen: function() {
 			var dataNodeTitle = $('#t3-page-metainformation').data('title'),
@@ -644,7 +644,6 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate)
 								position,
 								function(result) {
 									if(result.success == true) {
-										that.set('_ignoreCloseOnPageLoad', true);
 										T3.ContentModule.reloadPage();
 									}
 								}

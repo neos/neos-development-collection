@@ -326,7 +326,7 @@ function(jQuery) {
 						// so we reload the whole backend.
 						window.location.href = uri;
 					} else {
-						T3.ContentModule.currentUri = uri;
+						T3.ContentModule.set('currentUri', uri)
 					}
 					jQuery('#t3-page-metainformation').replaceWith($newMetaInformation);
 					jQuery('title').html($htmlDom.filter('title').html());
