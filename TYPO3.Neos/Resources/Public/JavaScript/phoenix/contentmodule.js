@@ -186,6 +186,7 @@ function(jQuery) {
 						_saveRunningBinding: 'T3.Content.Controller.ServerConnection._saveRunning',
 						_noChangesBinding: 'T3.Content.Model.PublishableBlocks.noChanges',
 						classNameBindings: ['connectionStatusClass'],
+						classNames: ['btn-publish'],
 
 						connectionStatusClass: function() {
 							var className = 't3-connection-status-';

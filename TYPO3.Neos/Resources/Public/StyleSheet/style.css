@@ -5566,6 +5566,9 @@ body.t3-ui-previewmode #t3-toolbar {
 body.t3-ui-previewmode #t3-inspector {
   width: 0;
 }
+body.t3-ui-previewmode .btn-publish {
+  display: none;
+}
 body.t3-ui-previewmode .aloha-block-TYPO3Block {
   margin: 0;
 }
