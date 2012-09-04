@@ -1,0 +1,17 @@
+prototype(TYPO3.TypoScript:TestRenderer).@class = 'TYPO3\\TypoScript\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
+
+namespace:test=TYPO3\TypoScript\Tests\Functional\TypoScriptObjects\Fixtures
+
+processors.runtimeAware = TYPO3.TypoScript:TestRenderer {
+	test = ${var1alias}
+}
+
+processors.runtimeAware << 1.test:alias()
+
+
+prototype(TYPO3.TypoScript:TestRenderer2) < prototype(TYPO3.TypoScript:TestRenderer)
+prototype(TYPO3.TypoScript:TestRenderer2) << 1.test:alias()
+
+processors.runtimeAwarePrototype = TYPO3.TypoScript:TestRenderer2 {
+	test = ${var1alias}
+}

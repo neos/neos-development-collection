@@ -45,12 +45,6 @@ class Runtime {
 	protected $eelEvaluator;
 
 	/**
-	 * @var \TYPO3\TypoScript\Core\ProcessorEvaluator
-	 * @FLOW3\Inject
-	 */
-	protected $processorEvaluator;
-
-	/**
 	 * Contains list of contexts
 	 * @var array
 	 */
@@ -124,7 +118,7 @@ class Runtime {
 	}
 
 	/**
-	 * Get the current context object
+	 * Get the current context array
 	 *
 	 * @return array the array of current context objects
 	 */
@@ -244,12 +238,31 @@ class Runtime {
 			$this->pushContextArray($contextArray);
 		}
 
+		$processorsForTypoScriptObject = $this->getProcessors($tsObject->getInternalProcessors(), '__all');
+
+		foreach ($processorsForTypoScriptObject as $processor) {
+			if ($processor instanceof \TYPO3\TypoScript\RuntimeAwareProcessorInterface) {
+				$processor->beforeInvocation($this, $tsObject, $typoScriptPath);
+			}
+		}
+
 		$output = $tsObject->evaluate();
+
+		foreach ($processorsForTypoScriptObject as $processor) {
+			$output = $processor->process($output);
+		}
+
+		foreach ($processorsForTypoScriptObject as $processor) {
+			if ($processor instanceof \TYPO3\TypoScript\RuntimeAwareProcessorInterface) {
+				$processor->afterInvocation($this, $tsObject, $typoScriptPath);
+			}
+		}
 
 		if (isset($typoScriptConfiguration['__meta']['override'])) {
 			$this->popContext();
 		}
-		return $this->evaluateProcessor('__all', $tsObject, $output);
+
+		return $output;
 	}
 
 	/**
@@ -365,7 +378,43 @@ class Runtime {
 			$context = new \TYPO3\Eel\Context($contextVariables);
 			$value = $this->eelEvaluator->evaluate($value['__eelExpression'], $context);
 		}
-		return $this->processorEvaluator->evaluateProcessor($tsObject->getInternalProcessors(), $variableName, $value);
+
+		$processors = $this->getProcessors($tsObject->getInternalProcessors(), $variableName);
+		foreach ($processors as $processor) {
+			$value = $processor->process($value);
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Instantiate and return all processors for a given $processorConfiguration and $propertyName,
+	 * in the right ordering.
+	 *
+	 * @param array $processorConfiguration
+	 * @param string $propertyName
+	 * @return array<\TYPO3\TypoScript\ProcessorInterface> the fully initialized processors, ready for further use.
+	 */
+	protected function getProcessors(array $processorConfiguration, $propertyName) {
+		$processors = array();
+		if (!isset($processorConfiguration[$propertyName])) {
+			return array();
+		}
+		ksort($processorConfiguration[$propertyName]);
+		foreach ($processorConfiguration[$propertyName] as $singleProcessorConfiguration) {
+			$processorClassName = $singleProcessorConfiguration['__processorClassName'];
+			$processor = new $processorClassName();
+			unset($singleProcessorConfiguration['__processorClassName']);
+
+			foreach ($singleProcessorConfiguration as $propertyName => $propertyValue) {
+				if (!ObjectAccess::setProperty($processor, $propertyName, $propertyValue)) {
+					throw new \TYPO3\TypoScript\Exception(sprintf('Property "%s" could not be set on processor "%s".', $propertyName, $processorClassName), 1332493740);
+				}
+			}
+
+			$processors[] = $processor;
+		}
+		return $processors;
 	}
 
 	/**
