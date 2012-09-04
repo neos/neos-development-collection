@@ -35,6 +35,9 @@ function(jQuery) {
 				Aloha.editables.forEach(function(editable) {
 					editable.disable();
 				});
+					// Hide all popover windows on preview mode active,
+					// same applies for buttons
+				$(document).trigger('hidePopover');
 			} else {
 				Aloha.editables.forEach(function(editable) {
 					editable.enable();
