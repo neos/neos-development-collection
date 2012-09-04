@@ -74,22 +74,6 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
-	 * Sets the absolute path of this node.
-	 *
-	 * This method is only for internal use by the content repository. Changing
-	 * the path of a node manually may lead to unexpected behavior.
-	 *
-	 * @param string $path
-	 * @return void
-	 */
-	public function setPath($path) {
-		if (!isset($this->newNode)) {
-			$this->materializeOriginalNode();
-		}
-		$this->newNode->setPath($path);
-	}
-
-	/**
 	 * Returns the path of this node
 	 *
 	 * @return string

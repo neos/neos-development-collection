@@ -180,7 +180,7 @@ class Node implements NodeInterface {
 	 * @param string $identifier Uuid of this node. Specifying this only makes sense while creating corresponding nodes
 	 */
 	public function  __construct($path, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace, $identifier = NULL) {
-		$this->setPath($path);
+		$this->setPath($path, FALSE);
 		$this->workspace = $workspace;
 		$this->identifier = ($identifier === NULL) ? \TYPO3\FLOW3\Utility\Algorithms::generateUUID() : $identifier;
 	}
@@ -192,13 +192,25 @@ class Node implements NodeInterface {
 	 * the path of a node manually may lead to unexpected behavior and bad breath.
 	 *
 	 * @param string $path
+	 * @param boolean $recurse
 	 * @return void
 	 * @throws \InvalidArgumentException if the given node path is invalid.
 	 */
-	public function setPath($path) {
+	protected function setPath($path, $recurse = TRUE) {
 		if (!is_string($path) || preg_match(self::MATCH_PATTERN_PATH, $path) !== 1) {
 			throw new \InvalidArgumentException('Invalid path: A path must be a valid string, be absolute (starting with a slash) and contain only the allowed characters.', 1284369857);
 		}
+
+		if ($path === $this->path) {
+			return;
+		}
+
+		if ($recurse === TRUE) {
+			foreach ($this->getChildNodes() as $childNode) {
+				$childNode->setPath($path . ($path === '/' ? '' : '/') . $childNode->getName());
+			}
+		}
+
 		$this->path = $path;
 		if ($path === '/') {
 			$this->parentPath = '';

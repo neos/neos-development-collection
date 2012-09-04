@@ -57,7 +57,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider invalidPaths()
 	 */
 	public function setPathThrowsAnExceptionIfAnInvalidPathIsPassed($path) {
-		$this->node->setPath($path);
+		$this->node->_call('setPath', $path, FALSE);
 	}
 
 	/**
@@ -79,7 +79,7 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @dataProvider validPaths()
 	 */
 	public function setPathAcceptsAValidPath($path) {
-		$this->node->setPath($path);
+		$this->node->_call('setPath', $path, FALSE);
 			// dummy assertion to avoid PHPUnit warning in strict mode
 		$this->assertTrue(TRUE);
 	}

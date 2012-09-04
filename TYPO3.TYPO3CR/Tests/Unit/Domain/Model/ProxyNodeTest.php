@@ -102,13 +102,6 @@ class ProxyNodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	/**
 	 * @test
 	 */
-	public function setPathSetsThePathOnTheNewNodeAndClonesTheOriginalNodeIfNoNewNodeExistedYet() {
-		$this->assertThatOriginalNodeIsClonedAndMethodIsCalledOnNewNode('setPath', '/foo/bar');
-	}
-
-	/**
-	 * @test
-	 */
 	public function getPathRetrievesThePathFromTheOriginalOrNewNode() {
 		$this->assertThatOriginalOrNewNodeIsCalled('getPath');
 	}

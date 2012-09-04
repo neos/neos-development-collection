@@ -46,6 +46,25 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function setPathWorksRecursively() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$fooNode = $rootNode->createNode('foo');
+		$bazNode = $fooNode->createNode('bar')->createNode('baz');
+
+		$methodReflection = new \ReflectionMethod($fooNode, 'setPath');
+		$methodReflection->setAccessible(TRUE);
+		$methodReflection->invoke($fooNode, '/quux');
+
+		$this->assertEquals('/quux/bar/baz', $bazNode->getPath());
+	}
+
+	/**
+	 * @test
+	 */
 	public function nodesCreatedInTheLiveWorkspacesCanBeRetrievedAgainInTheLiveContext() {
 		$context = new ContentContext('live');
 		$this->nodeRepository->setContext($context);
