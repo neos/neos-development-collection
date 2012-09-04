@@ -374,7 +374,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node or move to different level.
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
 	 */
 	public function moveBefore(NodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
@@ -385,11 +385,8 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
 		}
 
-		$referenceNodePath = $referenceNode->getPath();
-		if (substr($this->path, 0, strrpos($this->path, '/')) !== substr($referenceNodePath, 0, strrpos($referenceNodePath, '/'))) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1285005926);
-		}
-
+		$parentPath = $referenceNode->getParentPath();
+		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_BEFORE, $referenceNode);
 	}
 
@@ -398,7 +395,7 @@ class Node implements NodeInterface {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @return void
-	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node or move to different level.
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
 	 */
 	public function moveAfter(NodeInterface $referenceNode) {
 		if ($referenceNode === $this) {
@@ -409,11 +406,8 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1316361483);
 		}
 
-		$referenceNodePath = $referenceNode->getPath();
-		if (substr($this->path, 0, strrpos($this->path, '/')) !== substr($referenceNodePath, 0, strrpos($referenceNodePath, '/'))) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('Moving to other levels is currently not supported.', 1316361485);
-		}
-
+		$parentPath = $referenceNode->getParentPath();
+		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_AFTER, $referenceNode);
 	}
 

@@ -253,6 +253,60 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function moveBeforeMovesNodesBeforeOthersOnDifferentLevelWithoutPersistAll() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$parentNode = $rootNode->createNode('parentNode');
+		$parentNode->createNode('childNodeA');
+		$childNodeB = $parentNode->createNode('childNodeB');
+		$childNodeB1 = $childNodeB->createNode('childNodeB1');
+		$childNodeC = $parentNode->createNode('childNodeC');
+		$childNodeC1 = $childNodeC->createNode('childNodeC1');
+
+		$childNodeB->moveBefore($childNodeC1);
+
+		$this->assertNull($parentNode->getNode('childNodeB'));
+		$this->assertSame($childNodeB, $childNodeC->getNode('childNodeB'));
+		$this->assertSame($childNodeB1, $childNodeC->getNode('childNodeB')->getNode('childNodeB1'));
+
+		$expectedChildNodes = array($childNodeB, $childNodeC1);
+		$actualChildNodes = $childNodeC->getChildNodes();
+		$this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
+	}
+
+	/**
+	 * @test
+	 */
+	public function moveAfterMovesNodesAfterOthersOnDifferentLevelWithoutPersistAll() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$parentNode = $rootNode->createNode('parentNode');
+		$parentNode->createNode('childNodeA');
+		$childNodeB = $parentNode->createNode('childNodeB');
+		$childNodeB1 = $childNodeB->createNode('childNodeB1');
+		$childNodeC = $parentNode->createNode('childNodeC');
+		$childNodeC1 = $childNodeC->createNode('childNodeC1');
+
+		$childNodeB->moveAfter($childNodeC1);
+
+		$this->assertNull($parentNode->getNode('childNodeB'));
+		$this->assertSame($childNodeB, $childNodeC->getNode('childNodeB'));
+		$this->assertSame($childNodeB1, $childNodeC->getNode('childNodeB')->getNode('childNodeB1'));
+
+		$expectedChildNodes = array($childNodeC1, $childNodeB);
+		$actualChildNodes = $childNodeC->getChildNodes();
+		$this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
+	}
+
+	/**
+	 * @test
+	 */
 	public function moveBeforeNodesWithLowerIndexMovesNodesBeforeOthersWithPersistAll() {
 		$context = new ContentContext('live');
 		$this->nodeRepository->setContext($context);
@@ -389,6 +443,68 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$this->assertNull($parentNode->getNode('childNodeB'));
 		$this->assertSame($childNodeB, $childNodeA->getNode('childNodeB'));
 		$this->assertSame($childNodeB1, $childNodeA->getNode('childNodeB')->getNode('childNodeB1'));
+	}
+
+	/**
+	 * @test
+	 */
+	public function moveBeforeMovesNodesBeforeOthersOnDifferentLevelWithPersistAll() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$parentNode = $rootNode->createNode('parentNode');
+		$parentNode->createNode('childNodeA');
+		$childNodeB = $parentNode->createNode('childNodeB');
+		$childNodeB1 = $childNodeB->createNode('childNodeB1');
+		$childNodeC = $parentNode->createNode('childNodeC');
+		$childNodeC1 = $childNodeC->createNode('childNodeC1');
+
+		$this->persistenceManager->persistAll();
+
+		$childNodeB->moveBefore($childNodeC1);
+
+		$this->persistenceManager->persistAll();
+
+		$this->assertNull($parentNode->getNode('childNodeB'));
+		$this->assertSame($childNodeB, $childNodeC->getNode('childNodeB'));
+		$this->assertSame($childNodeB1, $childNodeC->getNode('childNodeB')->getNode('childNodeB1'));
+
+		$expectedChildNodes = array($childNodeB, $childNodeC1);
+		$actualChildNodes = $childNodeC->getChildNodes();
+		$this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
+	}
+
+	/**
+	 * @test
+	 */
+	public function moveAfterMovesNodesAfterOthersOnDifferentLevelWithPersistAll() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$parentNode = $rootNode->createNode('parentNode');
+		$parentNode->createNode('childNodeA');
+		$childNodeB = $parentNode->createNode('childNodeB');
+		$childNodeB1 = $childNodeB->createNode('childNodeB1');
+		$childNodeC = $parentNode->createNode('childNodeC');
+		$childNodeC1 = $childNodeC->createNode('childNodeC1');
+
+		$this->persistenceManager->persistAll();
+
+		$childNodeB->moveAfter($childNodeC1);
+
+		$this->persistenceManager->persistAll();
+
+		$this->assertNull($parentNode->getNode('childNodeB'));
+		$this->assertSame($childNodeB, $childNodeC->getNode('childNodeB'));
+		$this->assertSame($childNodeB1, $childNodeC->getNode('childNodeB')->getNode('childNodeB1'));
+
+		$expectedChildNodes = array($childNodeC1, $childNodeB);
+		$actualChildNodes = $childNodeC->getChildNodes();
+		$this->assertSameOrder($expectedChildNodes, array_values($actualChildNodes));
 	}
 
 	/**
