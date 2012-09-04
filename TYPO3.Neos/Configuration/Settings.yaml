@@ -64,6 +64,8 @@ TYPO3:
       'TYPO3.TYPO3:Section':
         superTypes: ['TYPO3.TYPO3:AbstractNode']
         label: 'Section'
+        icon: 'Images/Icons/White/page_layout_icon-16.png'
+        darkIcon: 'Images/Icons/Black/page_layout_icon-16.png'
 
       'TYPO3.TYPO3:Shortcut':
         superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.TYPO3:AbstractNode']
