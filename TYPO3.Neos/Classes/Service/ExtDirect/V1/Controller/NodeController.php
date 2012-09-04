@@ -80,11 +80,12 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node The node to find child nodes for
 	 * @param string $contentTypeFilter A content type filter
+	 * @param integer $depth levels of childNodes (0 = unlimited)
 	 * @return void
 	 * @ExtDirect
 	 */
-	public function getChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter) {
-		$this->view->assignChildNodes($node, $contentTypeFilter, \TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView::TREESTYLE, 0);
+	public function getChildNodesForTreeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $contentTypeFilter, $depth) {
+		$this->view->assignChildNodes($node, $contentTypeFilter, \TYPO3\TYPO3\Service\ExtDirect\V1\View\NodeView::TREESTYLE, $depth);
 	}
 
 	/**
