@@ -112,7 +112,8 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 						'isFolder' => $hasChildNodes,
 						'isLazy' => ($hasChildNodes && !$expand),
 						'contentType' => $contentType,
-						'expand' => $expand
+						'expand' => $expand,
+						'addClass' => strtolower(str_replace(array('.', ':'), array('_', '-'), $contentType))
 					);
 
 					if ($expand && $hasChildNodes === TRUE) {

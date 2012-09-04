@@ -5928,11 +5928,38 @@ ul.t3-launcher-horizontal li .text {
   background-position: 0 0;
   background-image: url("../Images/Icons/Black/doc_empty_icon-16.png");
 }
-.dynatree-container #t3-dd-pagetree ul.dynatree-container .dynatree-icon {
+.dynatree-container ul.dynatree-container .typo3_typo3-root .dynatree-icon {
   background-image: url("../Images/Icons/Black/globe_2_icon-16.png");
 }
-.dynatree-container #t3-dd-pagetree ul.dynatree-container ul .dynatree-icon {
-  background-image: url("../Images/Icons/Black/doc_empty_icon-16.png");
+.dynatree-container ul.dynatree-container .typo3_typo3-headline .dynatree-icon {
+  background-image: url("../Images/Icons/Black/text_letter_t_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-text .dynatree-icon {
+  background-image: url("../Images/Icons/Black/doc_lines_stright_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-image .dynatree-icon {
+  background-image: url("../Images/Icons/Black/picture_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-textwithimage .dynatree-icon {
+  background-image: url("../Images/Icons/Black/image_text_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-html .dynatree-icon {
+  background-image: url("../Images/Icons/Black/brackets_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-menu .dynatree-icon {
+  background-image: url("../Images/Icons/Black/list_bullets_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-twocolumn .dynatree-icon {
+  background-image: url("../Images/Icons/Black/columns_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-threecolumn .dynatree-icon {
+  background-image: url("../Images/Icons/Black/columns_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-fourcolumn .dynatree-icon {
+  background-image: url("../Images/Icons/Black/columns_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-plugin .dynatree-icon {
+  background-image: url("../Images/Icons/Black/page_layout_icon-16.png");
 }
 .dynatree-container #dynatree-drop-marker {
   background-image: url("../Library/twitter-bootstrap/img/glyphicons-halflings.png");

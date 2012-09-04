@@ -217,7 +217,8 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 						isLazy: true,
 						select: false,
 						active: false,
-						unselectable: true
+						unselectable: true,
+						addClass: 'typo3_typo3-root'
 					}
 				],
 				/**
