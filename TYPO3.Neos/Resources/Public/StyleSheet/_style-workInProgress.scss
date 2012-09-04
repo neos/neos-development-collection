@@ -3,63 +3,150 @@
 
 
 /*Dynatree start*/
-div.dynatree-container {
+.dynatree-container {
 	position: relative;
-}
+	font-size: 12px;
 
-/*Inspect Button start*/
-.dynatree-container #t3-dd-inspecttree {
-	height: 270px;
-	padding-bottom: 7px;
-	width: 250px;
-}
-
-/*Inspect Button end*/
-
-/* Pagetree start */
-.dynatree-container #t3-dd-pagetree {
-	height: 270px;
-	padding-bottom: 7px;
-	width: 250px;
-}
-
-.dynatree-container #t3-dd-pagetree span.dynatree-drop-target {
-	margin: 3px 0;
-	display: block;
-}
-
-.dynatree-container ul.dynatree-container {
-	background-color: white;
-	border:none;
-	height: 100%;
-	margin: 0;
-	padding: 3px;
-	overflow: auto;
-	white-space: nowrap;
-}
-
-.dynatree-container .t3-dd-newpage {
-	padding: 6px 5px 5px 25px;;
-	margin: 10px 10px 5px;
-	background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
-	border: 1px dotted #444444;
-	cursor: pointer;
-}
-
-.dynatree-container .t3-dd-deletionzone {
-	background: #eee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
-	cursor: default;
-	display: none;
-	border: 1px dotted #444444;
-	margin: 10px 10px 5px;
-	padding: 6px 5px 5px 25px;
-	&.t3-dd-deletionzone-over {
-		background: #ddd url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+	/*Inspect Button start*/
+	#t3-dd-inspecttree {
+		height: 270px;
+		padding-bottom: 7px;
+		width: 250px;
 	}
-	&.t3-dd-deletionzone-active {
-		background: #eee url(../Images/ajax-preloader-dddddd.gif) 5px 50% no-repeat;
+	/*Inspect Button end*/
+
+	/* Pagetree start */
+	#t3-dd-pagetree {
+		height: 270px;
+		padding-bottom: 7px;
+		width: 250px;
+		span.dynatree-drop-target {
+			margin: 3px 0;
+			display: block;
+			&.dynatree-drop-accept a {
+				background-color: #F8F8F8 !important;
+				border: 1px solid #D7D7D7;
+				color: #333333 !important;
+				text-decoration: none;
+				outline: none;
+			}
+		}
+	}
+	ul.dynatree-container {
+		background-color: white;
+		border:none;
+		height: 100%;
+		margin: 0;
+		padding: 3px;
+		overflow: auto;
+		white-space: nowrap;
+		font-family: inherit;
+		font-size: inherit;
+		a:hover {
+			background-color: #F8F8F8;
+			border: 1px solid #D7D7D7;
+			color: #333333;
+			text-decoration: none;
+			outline: none;
+		}
+		a:active, a:focus {
+			outline: inherit;
+			border-color: transparent;
+			background-color: inherit;
+		}
+		.dynatree-active {
+			a {
+				background-color: #F8F8F8;
+				border-color: #D7D7D7;
+				color: #333333;
+				text-decoration: none;
+			}
+		}
+		.dynatree-loading span.dynatree-expander {
+			vertical-align: middle;
+			margin-top: 0;
+			background-image: url('../Images/ajax-preloader.gif');
+			background-position: 0 0;
+			&:hover {
+				background-position: 0 0;
+			}
+		}
+		.dynatree-expander {
+			margin-top: 1px;
+			background-image: url('../Images/dynatree-icons.png');
+			background-position: 0 0;
+			&:hover {
+				background-position: -16px 0;
+			}
+		}
+		.dynatree-exp-e,
+		.dynatree-exp-ed,
+		.dynatree-exp-el,
+		.dynatree-exp-edl {
+			.dynatree-expander {
+				background-position: -32px 0;
+				&:hover {
+					background-position: -48px 0;
+				}
+			}
+		}
+		.dynatree-icon {
+			vertical-align: middle;
+			background-position: 0 0;
+			background-image: url('../Images/Icons/Black/doc_empty_icon-16.png');
+		}
+	}
+	#t3-dd-pagetree ul.dynatree-container {
+		.dynatree-icon {
+			background-image: url('../Images/Icons/Black/globe_2_icon-16.png');
+		}
+		ul {
+			.dynatree-icon {
+				background-image: url('../Images/Icons/Black/doc_empty_icon-16.png');
+			}
+		}
+	}
+	#dynatree-drop-marker {
+		background-image: url('../Library/twitter-bootstrap/img/glyphicons-halflings.png');
+		background-position: -264px -96px;
+		width: 14px;
+		height: 14px;
+		&.dynatree-drop-after,
+		&.dynatree-drop-before {
+			width: 64px;
+			background-position: 0 -16px;
+			background-image: url('../Images/dynatree-icons.png');
+		}
+		&.dynatree-drop-copy {
+			background-position: -408px -96px;
+		}
+		&.dynatree-drop-move {
+			background-position: -433px -96px;
+		}
+	}
+	.t3-dd-newpage {
+		padding: 6px 5px 5px 25px;;
+		margin: 10px 10px 5px;
+		background: #eee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
+		border: 1px dotted #444444;
+		cursor: pointer;
+	}
+	.t3-dd-deletionzone {
+		background: #eee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+		cursor: default;
+		display: none;
+		border: 1px dotted #444444;
+		margin: 10px 10px 5px;
+		padding: 6px 5px 5px 25px;
+		&.t3-dd-deletionzone-over {
+			background: #ddd url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
+		}
+		&.t3-dd-deletionzone-active {
+			background: #eee url(../Images/ajax-preloader-dddddd.gif) 5px 50% no-repeat;
+		}
 	}
 }
+
 /*Pagetree end*/
 
 

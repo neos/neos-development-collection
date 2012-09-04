@@ -5837,30 +5837,34 @@ ul.t3-launcher-horizontal li .text {
 }
 
 /*Dynatree start*/
-div.dynatree-container {
+.dynatree-container {
   position: relative;
+  font-size: 12px;
+  /*Inspect Button start*/
+  /*Inspect Button end*/
+  /* Pagetree start */
 }
-
-/*Inspect Button start*/
 .dynatree-container #t3-dd-inspecttree {
   height: 270px;
   padding-bottom: 7px;
   width: 250px;
 }
-
-/*Inspect Button end*/
-/* Pagetree start */
 .dynatree-container #t3-dd-pagetree {
   height: 270px;
   padding-bottom: 7px;
   width: 250px;
 }
-
 .dynatree-container #t3-dd-pagetree span.dynatree-drop-target {
   margin: 3px 0;
   display: block;
 }
-
+.dynatree-container #t3-dd-pagetree span.dynatree-drop-target.dynatree-drop-accept a {
+  background-color: #F8F8F8 !important;
+  border: 1px solid #D7D7D7;
+  color: #333333 !important;
+  text-decoration: none;
+  outline: none;
+}
 .dynatree-container ul.dynatree-container {
   background-color: white;
   border: none;
@@ -5869,8 +5873,84 @@ div.dynatree-container {
   padding: 3px;
   overflow: auto;
   white-space: nowrap;
+  font-family: inherit;
+  font-size: inherit;
 }
-
+.dynatree-container ul.dynatree-container a:hover {
+  background-color: #F8F8F8;
+  border: 1px solid #D7D7D7;
+  color: #333333;
+  text-decoration: none;
+  outline: none;
+}
+.dynatree-container ul.dynatree-container a:active, .dynatree-container ul.dynatree-container a:focus {
+  outline: inherit;
+  border-color: transparent;
+  background-color: inherit;
+}
+.dynatree-container ul.dynatree-container .dynatree-active a {
+  background-color: #F8F8F8;
+  border-color: #D7D7D7;
+  color: #333333;
+  text-decoration: none;
+}
+.dynatree-container ul.dynatree-container .dynatree-loading span.dynatree-expander {
+  vertical-align: middle;
+  margin-top: 0;
+  background-image: url("../Images/ajax-preloader.gif");
+  background-position: 0 0;
+}
+.dynatree-container ul.dynatree-container .dynatree-loading span.dynatree-expander:hover {
+  background-position: 0 0;
+}
+.dynatree-container ul.dynatree-container .dynatree-expander {
+  margin-top: 1px;
+  background-image: url("../Images/dynatree-icons.png");
+  background-position: 0 0;
+}
+.dynatree-container ul.dynatree-container .dynatree-expander:hover {
+  background-position: -16px 0;
+}
+.dynatree-container ul.dynatree-container .dynatree-exp-e .dynatree-expander,
+.dynatree-container ul.dynatree-container .dynatree-exp-ed .dynatree-expander,
+.dynatree-container ul.dynatree-container .dynatree-exp-el .dynatree-expander,
+.dynatree-container ul.dynatree-container .dynatree-exp-edl .dynatree-expander {
+  background-position: -32px 0;
+}
+.dynatree-container ul.dynatree-container .dynatree-exp-e .dynatree-expander:hover,
+.dynatree-container ul.dynatree-container .dynatree-exp-ed .dynatree-expander:hover,
+.dynatree-container ul.dynatree-container .dynatree-exp-el .dynatree-expander:hover,
+.dynatree-container ul.dynatree-container .dynatree-exp-edl .dynatree-expander:hover {
+  background-position: -48px 0;
+}
+.dynatree-container ul.dynatree-container .dynatree-icon {
+  vertical-align: middle;
+  background-position: 0 0;
+  background-image: url("../Images/Icons/Black/doc_empty_icon-16.png");
+}
+.dynatree-container #t3-dd-pagetree ul.dynatree-container .dynatree-icon {
+  background-image: url("../Images/Icons/Black/globe_2_icon-16.png");
+}
+.dynatree-container #t3-dd-pagetree ul.dynatree-container ul .dynatree-icon {
+  background-image: url("../Images/Icons/Black/doc_empty_icon-16.png");
+}
+.dynatree-container #dynatree-drop-marker {
+  background-image: url("../Library/twitter-bootstrap/img/glyphicons-halflings.png");
+  background-position: -264px -96px;
+  width: 14px;
+  height: 14px;
+}
+.dynatree-container #dynatree-drop-marker.dynatree-drop-after, .dynatree-container #dynatree-drop-marker.dynatree-drop-before {
+  width: 64px;
+  background-position: 0 -16px;
+  background-image: url("../Images/dynatree-icons.png");
+}
+.dynatree-container #dynatree-drop-marker.dynatree-drop-copy {
+  background-position: -408px -96px;
+}
+.dynatree-container #dynatree-drop-marker.dynatree-drop-move {
+  background-position: -433px -96px;
+}
 .dynatree-container .t3-dd-newpage {
   padding: 6px 5px 5px 25px;
   margin: 10px 10px 5px;
@@ -5878,7 +5958,6 @@ div.dynatree-container {
   border: 1px dotted #444444;
   cursor: pointer;
 }
-
 .dynatree-container .t3-dd-deletionzone {
   background: #eeeeee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
   cursor: default;
