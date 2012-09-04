@@ -418,6 +418,27 @@ class Node implements NodeInterface {
 	}
 
 	/**
+	 * Moves this node into the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
+	 */
+	public function moveInto(NodeInterface $referenceNode) {
+		if ($referenceNode === $this) {
+			return;
+		}
+
+		if ($this->path === '/') {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1346769001);
+		}
+
+		$parentPath = $referenceNode->getPath();
+		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_LAST);
+	}
+
+	/**
 	 * Copies this node after the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode

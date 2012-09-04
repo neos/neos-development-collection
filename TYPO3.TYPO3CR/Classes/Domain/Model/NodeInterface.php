@@ -155,6 +155,14 @@ interface NodeInterface {
 	public function moveAfter(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
 
 	/**
+	 * Moves this node into the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @return void
+	 */
+	public function moveInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode);
+
+	/**
 	 * Copies this node before the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode

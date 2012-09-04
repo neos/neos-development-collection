@@ -232,6 +232,27 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function moveIntoMovesNodesIntoOthersOnDifferentLevelWithoutPersistAll() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$parentNode = $rootNode->createNode('parentNode');
+		$childNodeA = $parentNode->createNode('childNodeA');
+		$childNodeB = $parentNode->createNode('childNodeB');
+		$childNodeB1 = $childNodeB->createNode('childNodeB1');
+
+		$childNodeB->moveInto($childNodeA);
+
+		$this->assertNull($parentNode->getNode('childNodeB'));
+		$this->assertSame($childNodeB, $childNodeA->getNode('childNodeB'));
+		$this->assertSame($childNodeB1, $childNodeA->getNode('childNodeB')->getNode('childNodeB1'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function moveBeforeNodesWithLowerIndexMovesNodesBeforeOthersWithPersistAll() {
 		$context = new ContentContext('live');
 		$this->nodeRepository->setContext($context);
@@ -343,6 +364,31 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$actualChildNodes = $parentNode->getChildNodes();
 
 		$this->assertSameOrder($expectedChildNodes, $actualChildNodes);
+	}
+
+	/**
+	 * @test
+	 */
+	public function moveIntoMovesNodesIntoOthersOnDifferentLevelWithPersistAll() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$parentNode = $rootNode->createNode('parentNode');
+		$childNodeA = $parentNode->createNode('childNodeA');
+		$childNodeB = $parentNode->createNode('childNodeB');
+		$childNodeB1 = $childNodeB->createNode('childNodeB1');
+
+		$this->persistenceManager->persistAll();
+
+		$childNodeB->moveInto($childNodeA);
+
+		$this->persistenceManager->persistAll();
+
+		$this->assertNull($parentNode->getNode('childNodeB'));
+		$this->assertSame($childNodeB, $childNodeA->getNode('childNodeB'));
+		$this->assertSame($childNodeB1, $childNodeA->getNode('childNodeB')->getNode('childNodeB1'));
 	}
 
 	/**

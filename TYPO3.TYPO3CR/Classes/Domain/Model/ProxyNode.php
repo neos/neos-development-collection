@@ -232,6 +232,19 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Moves this node into the given node
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @return void
+	 */
+	public function moveInto(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode) {
+		if (!isset($this->newNode)) {
+			$this->materializeOriginalNode();
+		}
+		$this->newNode->moveInto($referenceNode);
+	}
+
+	/**
 	 * Copies this node before the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
