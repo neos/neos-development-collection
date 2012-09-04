@@ -35,7 +35,7 @@ class BackendModuleArgumentsRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\Dy
 	 */
 	protected function resolveValue($value) {
 		if (is_array($value)) {
-			$this->value = isset($value['@action']) ? $value['@action'] : '';
+			$this->value = isset($value['@action']) && $value['@action'] !== 'index' ? $value['@action'] : '';
 			$exceedingArguments = array();
 			foreach ($value as $argumentKey => $argumentValue) {
 				if (substr($argumentKey, 0, 1) !== '@' && substr($argumentKey, 0, 2) !== '__') {
