@@ -116,7 +116,11 @@ class SiteExportService {
 			foreach ($properties as $propertyName => $propertyValue) {
 				if (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
 					$xmlWriter->startElement($propertyName);
-					$xmlWriter->writeCdata($propertyValue);
+					if (strpos($propertyValue, '<![CDATA[') !== FALSE) {
+						$xmlWriter->writeCdata(str_replace(']]>', ']]]]><![CDATA[>', $propertyValue));
+					} else {
+						$xmlWriter->writeCdata($propertyValue);
+					}
 					$xmlWriter->endElement();
 				} else {
 					$xmlWriter->writeElement($propertyName, $propertyValue);
