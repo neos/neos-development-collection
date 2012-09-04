@@ -173,6 +173,11 @@ function(jQuery) {
 					}),
 					T3.Content.UI.PageTreeButton.extend({
 						label: 'Pages'
+					}),
+					T3.Content.UI.ToggleButton.extend({
+						pressedBinding: 'T3.Content.Controller.Wireframe.wireframeMode',
+						label: 'Wireframe',
+						icon: 'wireframe'
 					})
 				],
 				right: [

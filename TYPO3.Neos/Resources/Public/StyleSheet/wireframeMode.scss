@@ -1,0 +1,196 @@
+@import "compass";
+
+$darkGray: #444;
+$orange: #FF8700;
+
+.t3-wireframeMode {
+	background: url('../Images/WireframeMode/GraphGrid.png');
+	padding: 15px;
+	.breadcrumb {
+		background: $darkGray;
+		color: #fff;
+		a {
+			color: #fff;
+		}
+	}
+	#t3-ui-wireframe-menu {
+		padding: 10px 5px;
+	}
+	.well {
+		.nav-list a {
+			text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+			&:hover {
+				color: $orange;
+				text-decoration: none;
+			}
+		}
+		.nav-list > .active > a, .nav-list > .active > a:hover {
+			background: transparent;
+			color: #fff;
+		}
+		.nav-list .current > a, .nav-list .current > a:hover {
+			background: transparent;
+			color: $orange;
+		}
+		background: $darkGray;
+		ul {
+			list-style: none;
+			margin: 0 0 0 10px;
+			a {
+				color: #fff;
+				font-size: 12px;
+			}
+		}
+	}
+	.t3-create-new-content {
+		margin-top: 15px;
+	}
+	.container {
+		&:before, &:after {
+			display: table;
+			content: "";
+			clear: both;
+		}
+		.column {
+			float: left;
+		}
+	}
+	.typo3-typo3-twocolumn {
+		.columns-50-50 {
+			.column {
+				width: 48%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				margin-right: 0;
+			}
+		}
+		.columns-75-25 {
+			.column:first-child {
+				width: 73%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				width: 23%;
+				margin-right: 0;
+			}
+		}
+		.columns-25-75 {
+			.column:first-child {
+				width: 23%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				width: 73%;
+				margin-right: 0%;
+			}
+		}
+		.columns-66-33 {
+			.column:first-child {
+				width: 64.5%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				width: 31.5%;
+				margin-right: 0;
+			}
+		}
+		.columns-33-66 {
+			.column:first-child {
+				width: 31.5%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				width: 64.5%;
+				margin-right: 0%;
+			}
+		}
+	}
+	.typo3-typo3-threecolumn {
+		.columns-33-33-33 {
+			.column {
+				width: 30.66666666666%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				margin-right: 0;
+			}
+		}
+		.columns-50-25-25 {
+			.column {
+				width: 22%;
+				margin-right: 4%;
+			}
+			.column:first-child {
+				width: 48%;
+			}
+			.column:last-child {
+				margin-right: 0;
+			}
+		}
+		.columns-25-50-25 {
+			.column {
+				width: 22%;
+				margin-right: 4%;
+			}
+			.column:nth-child(2) {
+				width: 48%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				margin-right: 0%;
+			}
+		}
+		.columns-25-25-50 {
+			.column {
+				width: 22%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				width: 48%;
+				margin-right: 0;
+			}
+		}
+	}
+	.typo3-typo3-fourcolumn {
+		.columns-25-25-25-25 {
+			.column {
+				width: 22%;
+				margin-right: 4%;
+			}
+			.column:last-child {
+				margin-right: 0;
+			}
+		}
+	}
+	.typo3-typo3-twocolumn,
+	.typo3-typo3-threecolumn,
+	.typo3-typo3-fourcolumn {
+		.container {
+			width: auto;
+		}
+	}
+}
+
+.t3-ui {
+	.t3-ui-wireframe-section-container {
+		margin: 10px 0;
+		padding: 10px 15px 15px 15px;
+		background: rgba(240, 240, 240, 0.7);
+		font-family: "Courier New", serif;
+	}
+	.t3-ui-wireframe-section-container:last-child {
+		margin-bottom: 0;
+	}
+	header.t3-ui-wireframe-section {
+		margin: -10px -15px 5px;
+		font-family: "Courier New", serif;
+		font-size: 16px;
+		font-weight: bold;
+		background: rgba(232, 232, 232, 1);
+		padding: 10px 15px 5px 15px;
+		text-align: center;
+		@include box-shadow(0px 2px 2px rgba(0, 0, 0, 0.5));
+		border-radius: 0;
+	}
+}

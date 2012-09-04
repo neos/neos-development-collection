@@ -1,0 +1,3 @@
+include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/01_ImplementationClasses.ts2
+include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/02_DefaultContentObjects.ts2
+include: resource://TYPO3.TYPO3/Private/WireframeMode/TypoScript/Page/root.ts2
