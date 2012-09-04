@@ -206,6 +206,19 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Rename the node to $newName, keeping it's position as it is.
+	 *
+	 * @param string $newName
+	 * @return void
+	 */
+	public function rename($newName) {
+		if (!isset($this->newNode)) {
+			$this->materializeOriginalNode();
+		}
+		$this->newNode->rename($newName);
+	}
+
+	/**
 	 * Moves this node before the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode

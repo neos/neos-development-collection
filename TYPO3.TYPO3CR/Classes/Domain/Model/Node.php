@@ -370,6 +370,27 @@ class Node implements NodeInterface {
 	}
 
 	/**
+	 * Rename the node to $newName, keeping it's position as it is.
+	 *
+	 * @param string $newName
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to rename the root node.
+	 */
+	public function rename($newName) {
+		if ($this->path === '/') {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be renamed.', 1346778388);
+		}
+
+		if ($this->getName() === $newName) {
+			return;
+		}
+
+		$this->setPath($this->parentPath . ($this->parentPath === '/' ? '' : '/') . $newName);
+		$this->nodeRepository->update($this);
+		$this->nodeRepository->persistEntities();
+	}
+
+	/**
 	 * Moves this node before the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode

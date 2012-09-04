@@ -65,6 +65,26 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function nodesCanBeRenamed() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$fooNode = $rootNode->createNode('foo');
+		$barNode = $fooNode->createNode('bar');
+		$bazNode = $barNode->createNode('baz');
+
+		$fooNode->rename('quux');
+		$barNode->rename('lax');
+
+		$this->assertNull($rootNode->getNode('foo'));
+		$this->assertEquals('/quux/lax/baz', $bazNode->getPath());
+	}
+
+	/**
+	 * @test
+	 */
 	public function nodesCreatedInTheLiveWorkspacesCanBeRetrievedAgainInTheLiveContext() {
 		$context = new ContentContext('live');
 		$this->nodeRepository->setContext($context);
