@@ -200,6 +200,7 @@ function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemp
 				var open = that.get('open');
 				// TODO: Move position calculations to css transitions (sass)
 				if (open) {
+					$(document).trigger('hidePopover');
 					$('body').addClass('t3-launcher-open');
 					if (!that.scrollingInitialized) {
 						$('.c-1 .scroll-content').lionbars('dark', false, true, false);
