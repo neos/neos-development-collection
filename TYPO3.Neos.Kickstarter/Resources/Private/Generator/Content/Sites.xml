@@ -10,8 +10,6 @@
 			<properties>
 				<title>Home</title>
 			</properties>
-			<node identifier="" type="TYPO3.TYPO3:Section" nodeName="main" locale="en_EN">
-			</node>
 		</node>
 	</site>
 </root>
