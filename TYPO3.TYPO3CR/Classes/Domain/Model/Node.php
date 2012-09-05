@@ -75,6 +75,18 @@ class Node implements NodeInterface {
 	protected $index;
 
 	/**
+	 * @var integer
+	 * @FLOW3\Transient
+	 */
+	protected $depth;
+
+	/**
+	 * @var string
+	 * @FLOW3\Transient
+	 */
+	protected $name;
+
+	/**
 	 * Properties of this Node
 	 *
 	 * @var array<mixed>
@@ -192,32 +204,39 @@ class Node implements NodeInterface {
 	 * the path of a node manually may lead to unexpected behavior and bad breath.
 	 *
 	 * @param string $path
-	 * @param boolean $recurse
+	 * @param boolean $recursive
 	 * @return void
 	 * @throws \InvalidArgumentException if the given node path is invalid.
 	 */
-	protected function setPath($path, $recurse = TRUE) {
+	protected function setPath($path, $recursive = TRUE) {
 		if (!is_string($path) || preg_match(self::MATCH_PATTERN_PATH, $path) !== 1) {
-			throw new \InvalidArgumentException('Invalid path: A path must be a valid string, be absolute (starting with a slash) and contain only the allowed characters.', 1284369857);
+			throw new \InvalidArgumentException('Invalid path "' . $path . '" (a path must be a valid string, be absolute (starting with a slash) and contain only the allowed characters).', 1284369857);
 		}
 
 		if ($path === $this->path) {
 			return;
 		}
 
-		if ($recurse === TRUE) {
+		if ($recursive === TRUE) {
 			foreach ($this->getChildNodes() as $childNode) {
-				$childNode->setPath($path . ($path === '/' ? '' : '/') . $childNode->getName());
+				$childNode->setPath($path . '/' . $childNode->getName());
 			}
 		}
 
 		$this->path = $path;
 		if ($path === '/') {
 			$this->parentPath = '';
-		} elseif (substr_count($path, '/') === 1) {
-			$this->parentPath = '/';
+			$this->depth = 0;
+			$this->name = '';
 		} else {
-			$this->parentPath = substr($path, 0, strrpos($path, '/'));
+			if (substr_count($path, '/') === 1) {
+				$this->parentPath = '/';
+				$this->depth = 1;
+			} else {
+				$this->parentPath = substr($path, 0, strrpos($path, '/'));
+				$this->depth = substr_count($this->path, '/');
+			}
+			$this->name = substr($path, strrpos($path, '/') + 1);
 		}
 	}
 
@@ -253,7 +272,7 @@ class Node implements NodeInterface {
 	 * @return integer
 	 */
 	public function getDepth() {
-		return ($this->path === '/') ? 0 : substr_count($this->path, '/');
+		return $this->depth;
 	}
 
 	/**
@@ -262,7 +281,7 @@ class Node implements NodeInterface {
 	 * @return string
 	 */
 	public function getName() {
-		return ($this->path === '/') ? '' : substr($this->path, strrpos($this->path, '/') + 1);
+		return $this->name;
 	}
 
 	/**
@@ -687,7 +706,7 @@ class Node implements NodeInterface {
 	 */
 	public function createNode($name, \TYPO3\TYPO3CR\Domain\Model\ContentType $contentType = NULL, $identifier = NULL) {
 		if (!is_string($name) || preg_match(self::MATCH_PATTERN_NAME, $name) !== 1) {
-			throw new \InvalidArgumentException('Invalid node name: A node name must only contain characters, numbers and the "-" sign.', 1292428697);
+			throw new \InvalidArgumentException('Invalid node name "' . $name . '" (a node name must only contain characters, numbers and the "-" sign).', 1292428697);
 		}
 
 		$newPath = $this->path . ($this->path === '/' ? '' : '/') . $name;
