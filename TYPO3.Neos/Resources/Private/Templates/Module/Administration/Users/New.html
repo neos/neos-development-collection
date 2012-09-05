@@ -1,53 +1,61 @@
-<f:layout name="BackendModule" />
+<f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<h2>New account</h2>
+	<div class="row t3-module-container indented">
+		<h2>New account</h2>
+	</div>
 </f:section>
 
 <f:section name="content">
-	<f:form action="create" name="account" class="form-horizontal">
-		<fieldset>
-			<legend>Account</legend>
+	<f:form action="create" name="account">
 
-			<div class="control-group">
-				<label class="control-label">Username</label>
-				<div class="controls">
-					<f:form.textfield name="identifier" />
-				</div>
-			</div>
+		<div class="row t3-module-container">
+			<fieldset class="span5">
+				<legend>Account</legend>
 
-			<div class="control-group">
-				<label class="control-label">Password</label>
-				<div class="controls">
-					<f:form.password name="password[0]" />
-				</div>
-			</div>
-
-			<div class="control-group">
-				<label class="control-label">Repeat password</label>
-				<div class="controls">
-					<f:form.password name="password[1]" />
-				</div>
-			</div>
-		</fieldset>
-
-		<fieldset>
-			<legend>Personal Data</legend>
-
-			<div class="control-group">
-				<label class="control-label">Name</label>
-				<div class="controls">
-					<div class="inline-inputs">
-						<f:form.textfield name="firstName" placeholder="First Name" />
-						<f:form.textfield name="lastName" placeholder="Last Name"/>
+				<div class="control-group">
+					<label class="control-label">Username</label>
+					<div class="controls">
+						<f:form.textfield name="identifier" />
 					</div>
 				</div>
-			</div>
-		</fieldset>
 
-		<div class="form-actions">
-			<f:form.submit value="Save" class="btn btn-primary" />
-			<f:link.action class="btn">Back</f:link.action>
+				<div class="control-group">
+					<label class="control-label">Password</label>
+					<div class="controls">
+						<f:form.password name="password[0]" />
+					</div>
+				</div>
+
+				<div class="control-group">
+					<label class="control-label">Repeat password</label>
+					<div class="controls">
+						<f:form.password name="password[1]" />
+					</div>
+				</div>
+			</fieldset>
+
+			<fieldset class="span5">
+				<legend>Personal Data</legend>
+
+				<div class="control-group">
+					<label class="control-label">First Name</label>
+					<div class="controls">
+							<f:form.textfield name="firstName" />
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Last Name</label>
+					<div class="controls">
+							<f:form.textfield name="lastName"/>
+					</div>
+				</div>
+			</fieldset>
+		</div>
+
+		<div class="form-actions form-footer">
+			<f:link.action class="btn t3-button">Back</f:link.action>
+			<f:form.submit value="Save" class="btn btn-primary t3-button" />
 		</div>
 	</f:form>
 </f:section>

@@ -1,38 +1,40 @@
-<h1>{moduleConfiguration.label}</h1>
+<div class="t3-content fluid-container">
 
-<f:render section="subtitle" optional="1" />
+	<f:render section="subtitle" optional="1" />
 
-<f:flashMessages as="flashMessages">
-	<f:for each="{flashMessages}" as="flashMessage">
-		<f:if condition="{0: flashMessage.severity} == {0: 'OK'}">
-			<div class="alert alert-success">
-		</f:if>
-		<f:if condition="{0: flashMessage.severity} == {0: 'Error'}">
-			<div class="alert alert-error">
-		</f:if>
-		<f:if condition="{0: flashMessage.severity} == {0: 'Warning'}">
-			<div class="alert alert-warning">
-		</f:if>
-		<f:if condition="{0: flashMessage.severity} == {0: 'Notice'}">
-			<div class="alert alert-notice">
-		</f:if>
-			<a class="close" data-dismiss="alert" href="#">×</a>
-			<f:if condition="{flashMessage.title}">
-				<h4 class="alert-heading">{flashMessage.title}</h4>
+	<f:flashMessages as="flashMessages">
+		<f:for each="{flashMessages}" as="flashMessage">
+			<f:if condition="{0: flashMessage.severity} == {0: 'OK'}">
+				<div class="alert alert-success">
 			</f:if>
-			{flashMessage}
-		</div>
-	</f:for>
-</f:flashMessages>
+			<f:if condition="{0: flashMessage.severity} == {0: 'Error'}">
+				<div class="alert alert-error">
+			</f:if>
+			<f:if condition="{0: flashMessage.severity} == {0: 'Warning'}">
+				<div class="alert alert-warning">
+			</f:if>
+			<f:if condition="{0: flashMessage.severity} == {0: 'Notice'}">
+				<div class="alert alert-notice">
+			</f:if>
+				<a class="close" data-dismiss="alert" href="#">×</a>
+				<f:if condition="{flashMessage.title}">
+					<h4 class="alert-heading">{flashMessage.title}</h4>
+				</f:if>
+				{flashMessage}
+			</div>
+		</f:for>
+	</f:flashMessages>
 
-<f:form.validationResults>
-	<f:if condition="{validationResults.flattenedErrors}">
-		<ul class="error">
-			<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
-				<li>{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></li>
-			</f:for>
-		</ul>
-	</f:if>
-</f:form.validationResults>
+	<f:form.validationResults>
+		<f:if condition="{validationResults.flattenedErrors}">
+			<ul class="error">
+				<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
+					<li>{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></li>
+				</f:for>
+			</ul>
+		</f:if>
+	</f:form.validationResults>
 
-<f:render section="content" />
+	<f:render section="content" />
+
+</div>

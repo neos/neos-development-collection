@@ -1,92 +1,94 @@
 {namespace t=TYPO3\TYPO3\ViewHelpers}
-<f:layout name="BackendModule" />
+<f:layout name="BackendSubModule" />
 
 <f:section name="content">
 	<f:form action="import" class="form-horizontal">
-		<fieldset>
-			<legend>Import package</legend>
-			<div class="alert alert-info">
-				Currently only packages located at <a href="http://git.typo3.org" target="blank">git.typo3.org</a> are supported.
-				<br /><br />
-				<strong>Hint:</strong> To import the git repository <strong>FLOW3/Packages/TYPO3.Comments.git</strong> you only need to enter <strong>TYPO3.Comments</strong>
-			</div>
-			<div class="control-group">
-				<f:form.textfield name="packageKey" placeholder="Package name from git.typo3.org"/>
-				<button class="btn primary" type="submit"><i class="icon-download"></i> Import package</button>
-			</div>
-		</fieldset>
+		<div class="row t3-module-container indented">
+			<fieldset>
+				<legend>Import package</legend>
+				<div class="alert alert-info">
+					<p>Currently only packages located at <a href="http://git.typo3.org" target="blank">git.typo3.org</a> are supported.</p>
+					<p><strong>Hint:</strong> To import the git repository <strong>FLOW3/Packages/TYPO3.Comments.git</strong> you only need to enter <strong>TYPO3.Comments</strong></p>
+				</div>
+				<div class="input-append">
+					<f:form.textfield name="packageKey" placeholder="Package name from git.typo3.org" /><button class="btn btn-primary t3-button" type="submit"><i class="icon-download icon-white"></i> Import package</button>
+				</div>
+			</fieldset>
+		</div>
 	</f:form>
 
-	<h2>Available packages</h2>
-	<table class="table table-striped">
-		<thead>
-			<th>Package name</th>
-			<th>Version</th>
-			<th>Package key</th>
-			<th>&nbsp;</th>
-		</thead>
-		<tbody>
-			<f:for each="{packages}" key="packageKey" as="package">
-				<tr{f:if(condition: '{package.isActive}', then: '', else: ' class="muted"')}{f:if(condition: package.description, then: ' title="{package.description}"')}>
-					<td>
-						<f:if condition="{package.title}">
-							<f:then>
-								{package.title}
-							</f:then>
-							<f:else>
-								<em>[No title]</em>
-							</f:else>
-						</f:if>
-					</td>
-					<td>{package.version}</td>
-					<td>{packageKey}</td>
-					<td>
-						<div class="pull-right">
-							<f:if condition="{package.isActive}">
+	<div class="row t3-module-container indented">
+		<h2>Available packages</h2>
+		<table class="table">
+			<thead>
+				<th>Package name</th>
+				<th>Version</th>
+				<th>Package key</th>
+				<th>&nbsp;</th>
+			</thead>
+			<tbody>
+				<f:for each="{packages}" key="packageKey" as="package">
+					<tr{f:if(condition: '{package.isActive}', then: '', else: ' class="muted"')}{f:if(condition: package.description, then: ' title="{package.description}"')}>
+						<td>
+							<f:if condition="{package.title}">
 								<f:then>
-									<f:if condition="{isDevelopmentContext}">
-										<f:if condition="{package.isFrozen}">
-											<f:then>
-												<f:link.action action="unfreeze" class="btn btn-info active" arguments="{packageKey: packageKey}" title="This package is frozen. Click to unfreeze"><i class="icon-asterisk icon-white"></i></f:link.action>
-											</f:then>
-											<f:else>
-												<f:link.action action="freeze" class="btn btn-info" arguments="{packageKey: packageKey}" title="This package is not frozen. Click to freeze"><i class="icon-asterisk icon-white"></i></f:link.action>
-											</f:else>
+									{package.title}
+								</f:then>
+								<f:else>
+									<em>[No title]</em>
+								</f:else>
+							</f:if>
+						</td>
+						<td>{package.version}</td>
+						<td>{packageKey}</td>
+						<td>
+							<div class="pull-right">
+								<f:if condition="{package.isActive}">
+									<f:then>
+										<f:if condition="{isDevelopmentContext}">
+											<f:if condition="{package.isFrozen}">
+												<f:then>
+													<f:link.action action="unfreeze" class="btn btn-info active t3-button" arguments="{packageKey: packageKey}" title="This package is frozen. Click to unfreeze"><i class="icon-asterisk icon-white"></i></f:link.action>
+												</f:then>
+												<f:else>
+													<f:link.action action="freeze" class="btn btn-info t3-button" arguments="{packageKey: packageKey}" title="This package is not frozen. Click to freeze"><i class="icon-asterisk icon-white"></i></f:link.action>
+												</f:else>
+											</f:if>
 										</f:if>
-									</f:if>
-									<f:link.action action="deactivate" class="btn btn-warning" arguments="{packageKey: packageKey}" title="Click to deactivate">Deactivate</f:link.action>
-								</f:then>
-								<f:else>
-									<f:link.action action="activate" class="btn btn-success" arguments="{packageKey: packageKey}" title="Click to activate">Activate</f:link.action>
-								</f:else>
-							</f:if>
-							<f:if condition="{package.isProtected}">
-								<f:then>
-									<button class="btn btn-danger disabled" title="This package is protected so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
-								</f:then>
-								<f:else>
-									<button class="btn btn-danger" title="Click to delete" data-toggle="modal" href="#{package.sanitizedPackageKey}">
-										<i class="icon-trash icon-white"></i>
-									</button>
-									<div class="modal hide" id="{package.sanitizedPackageKey}">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal">×</button>
-											<h3>Are you sure you want to delete "{packageKey}"?</h3>
+										<f:link.action action="deactivate" class="btn btn-warning t3-button" arguments="{packageKey: packageKey}" title="Click to deactivate"><i class="icon-minus-sign icon-white"></i></f:link.action>
+									</f:then>
+									<f:else>
+										<f:link.action action="activate" class="btn btn-success t3-button" arguments="{packageKey: packageKey}" title="Click to activate"><i class="icon-plus-sign icon-white"></i></f:link.action>
+									</f:else>
+								</f:if>
+								<f:if condition="{package.isProtected}">
+									<f:then>
+										<button class="btn btn-danger disabled t3-button" title="This package is protected so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
+									</f:then>
+									<f:else>
+										<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{package.sanitizedPackageKey}">
+											<i class="icon-trash icon-white"></i>
+										</button>
+										<div class="modal hide" id="{package.sanitizedPackageKey}">
+											<div class="modal-header">
+												<button type="button" class="close t3-button" data-dismiss="modal">×</button>
+												<h3>Are you sure you want to delete "{packageKey}"?</h3>
+											</div>
+											<div class="modal-footer">
+												<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
+												<f:link.action action="delete" class="btn btn-danger t3-button" arguments="{packageKey: packageKey}" title="Delete">
+													<i class="icon-trash icon-white"></i>
+													Delete
+												</f:link.action>
+											</div>
 										</div>
-										<div class="modal-footer">
-											<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-											<f:link.action action="delete" class="btn btn-danger" arguments="{packageKey: packageKey}" title="Delete">
-												<i class="icon-trash icon-white"></i>
-												Delete
-											</f:link.action>
-										</div>
-									</div>
-								</f:else>
-							</f:if>
-						</div>
-					</td>
-				</tr>
-			</f:for>
-		</tbody>
-	</table>
+									</f:else>
+								</f:if>
+							</div>
+						</td>
+					</tr>
+				</f:for>
+			</tbody>
+		</table>
+	</div>
 </f:section>

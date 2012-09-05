@@ -63,6 +63,7 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 		if ($this->arguments->hasArgument('node')) {
 			$this->arguments->getArgument('node')->getPropertyMappingConfiguration()->setTypeConverterOption('TYPO3\TYPO3\Routing\NodeObjectConverter', \TYPO3\TYPO3\Routing\NodeObjectConverter::REMOVED_CONTENT_SHOWN, TRUE);
 		}
+		parent::initializeAction();
 	}
 
 	/**

@@ -12,33 +12,37 @@
 	</head>
 	<body class="t3 t3-ui t3-module t3-module-{moduleClass}">
 
-		<div class="t3-content container">
-			<f:if condition="{moduleContents}">
-				{moduleContents -> f:format.raw()}
-			</f:if>
-		</div>
+		<f:if condition="{moduleContents}">
+			{moduleContents -> f:format.raw()}
+		</f:if>
+
 		<div id="t3-ui-top" class="aloha-block-do-not-deactivate">
 			<div id="t3-launcher"></div>
 			<ul class="t3-topbar">
 				<li>
 					<f:link.action controller="Backend\Backend" action="index">Content</f:link.action>
 				</li>
-				<f:for each="{settings.modules}" key="module" as="moduleConfiguration">
+				<f:for each="{settings.modules}" key="module" as="configuration">
 					<li{f:if(condition: '{rootModule} == {module}', then: ' class="t3-active"')}>
-						<t:link.module path="{module}">{moduleConfiguration.label}</t:link.module>
+						<t:link.module path="{module}">{configuration.label}</t:link.module>
 					</li>
 				</f:for>
 			</ul>
 			<a class="t3-button t3-button-logout t3-icon-logout" href="/typo3/logout"><span>Logout</span></a>
 			<div class="t3-clear"></div>
 		</div>
-		<div id="t3-toolbar" class="t3-toolbar t3-breadcrumb">
-			<ul>
-				<f:for each="{breadcrumb}" key="path" as="name">
-					<li>
-						<t:link.module path="{path}">{name}</t:link.module>
-					</li>
+		<div id="t3-toolbar" class="t3-toolbar">
+			<ul class="nav nav-pills">
+				<f:for each="{settings.modules}" key="module" as="configuration">
+					<f:if condition="{rootModule} == {module}">
+						<f:for each="{configuration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
+							<li{f:if(condition: '{submoduleIdentifier} == {submodule}', then: ' class="active"')}>
+								<t:link.module path="{rootModule}/{submoduleIdentifier}">{submoduleConfiguration.label}</t:link.module>
+							</li>
+						</f:for>
+					</f:if>
 				</f:for>
+
 			</ul>
 		</div>
 	</body>

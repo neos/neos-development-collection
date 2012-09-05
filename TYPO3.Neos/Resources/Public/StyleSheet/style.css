@@ -4699,6 +4699,2248 @@
   box-sizing: border-box;
 }
 
+/*
+ * Bootstrap Responsive v2.0.4
+ *
+ * Copyright 2012 Twitter, Inc
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Designed and built with all the love in the world @twitter by @mdo and @fat.
+ */
+.clearfix {
+  *zoom: 1;
+}
+.clearfix:before, .clearfix:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.clearfix:after {
+  clear: both;
+}
+
+.hide-text {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.input-block-level {
+  display: block;
+  width: 100%;
+  min-height: 30px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.hidden {
+  display: none;
+  visibility: hidden;
+}
+
+.visible-phone {
+  display: none !important;
+}
+
+.visible-tablet {
+  display: none !important;
+}
+
+.hidden-desktop {
+  display: none !important;
+}
+
+.visible-desktop {
+  display: inherit !important;
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .hidden-desktop {
+    display: inherit !important;
+  }
+
+  .visible-desktop {
+    display: none !important;
+  }
+
+  .visible-tablet {
+    display: inherit !important;
+  }
+
+  .hidden-tablet {
+    display: none !important;
+  }
+}
+@media (max-width: 767px) {
+  .hidden-desktop {
+    display: inherit !important;
+  }
+
+  .visible-desktop {
+    display: none !important;
+  }
+
+  .visible-phone {
+    display: inherit !important;
+  }
+
+  .hidden-phone {
+    display: none !important;
+  }
+}
+@media (min-width: 1200px) {
+  .t3-ui .row {
+    margin-left: -30px;
+    *zoom: 1;
+  }
+  .t3-ui .row:before, .t3-ui .row:after {
+    display: table;
+    content: "";
+    line-height: 0;
+  }
+  .t3-ui .row:after {
+    clear: both;
+  }
+  .t3-ui [class*="span"] {
+    float: left;
+    margin-left: 30px;
+  }
+  .t3-ui .container,
+  .t3-ui .navbar-static-top .container,
+  .t3-ui .navbar-fixed-top .container,
+  .t3-ui .navbar-fixed-bottom .container {
+    width: 1170px;
+  }
+  .t3-ui .span12 {
+    width: 1170px;
+  }
+  .t3-ui .span11 {
+    width: 1070px;
+  }
+  .t3-ui .span10 {
+    width: 970px;
+  }
+  .t3-ui .span9 {
+    width: 870px;
+  }
+  .t3-ui .span8 {
+    width: 770px;
+  }
+  .t3-ui .span7 {
+    width: 670px;
+  }
+  .t3-ui .span6 {
+    width: 570px;
+  }
+  .t3-ui .span5 {
+    width: 470px;
+  }
+  .t3-ui .span4 {
+    width: 370px;
+  }
+  .t3-ui .span3 {
+    width: 270px;
+  }
+  .t3-ui .span2 {
+    width: 170px;
+  }
+  .t3-ui .span1 {
+    width: 70px;
+  }
+  .t3-ui .offset12 {
+    margin-left: 1230px;
+  }
+  .t3-ui .offset11 {
+    margin-left: 1130px;
+  }
+  .t3-ui .offset10 {
+    margin-left: 1030px;
+  }
+  .t3-ui .offset9 {
+    margin-left: 930px;
+  }
+  .t3-ui .offset8 {
+    margin-left: 830px;
+  }
+  .t3-ui .offset7 {
+    margin-left: 730px;
+  }
+  .t3-ui .offset6 {
+    margin-left: 630px;
+  }
+  .t3-ui .offset5 {
+    margin-left: 530px;
+  }
+  .t3-ui .offset4 {
+    margin-left: 430px;
+  }
+  .t3-ui .offset3 {
+    margin-left: 330px;
+  }
+  .t3-ui .offset2 {
+    margin-left: 230px;
+  }
+  .t3-ui .offset1 {
+    margin-left: 130px;
+  }
+  .t3-ui .row-fluid {
+    width: 100%;
+    *zoom: 1;
+  }
+  .t3-ui .row-fluid:before, .t3-ui .row-fluid:after {
+    display: table;
+    content: "";
+    line-height: 0;
+  }
+  .t3-ui .row-fluid:after {
+    clear: both;
+  }
+  .t3-ui .row-fluid [class*="span"] {
+    display: block;
+    width: 100%;
+    min-height: 30px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    margin-left: 2.5641%;
+    *margin-left: 2.51091%;
+  }
+  .t3-ui .row-fluid [class*="span"]:first-child {
+    margin-left: 0;
+  }
+  .t3-ui .row-fluid .span12 {
+    width: 100%;
+    *width: 99.94681%;
+  }
+  .t3-ui .row-fluid .span11 {
+    width: 91.45299%;
+    *width: 91.3998%;
+  }
+  .t3-ui .row-fluid .span10 {
+    width: 82.90598%;
+    *width: 82.85279%;
+  }
+  .t3-ui .row-fluid .span9 {
+    width: 74.35897%;
+    *width: 74.30578%;
+  }
+  .t3-ui .row-fluid .span8 {
+    width: 65.81197%;
+    *width: 65.75877%;
+  }
+  .t3-ui .row-fluid .span7 {
+    width: 57.26496%;
+    *width: 57.21177%;
+  }
+  .t3-ui .row-fluid .span6 {
+    width: 48.71795%;
+    *width: 48.66476%;
+  }
+  .t3-ui .row-fluid .span5 {
+    width: 40.17094%;
+    *width: 40.11775%;
+  }
+  .t3-ui .row-fluid .span4 {
+    width: 31.62393%;
+    *width: 31.57074%;
+  }
+  .t3-ui .row-fluid .span3 {
+    width: 23.07692%;
+    *width: 23.02373%;
+  }
+  .t3-ui .row-fluid .span2 {
+    width: 14.52991%;
+    *width: 14.47672%;
+  }
+  .t3-ui .row-fluid .span1 {
+    width: 5.98291%;
+    *width: 5.92971%;
+  }
+  .t3-ui .row-fluid .offset12 {
+    margin-left: 105.12821%;
+    *margin-left: 105.02182%;
+  }
+  .t3-ui .row-fluid .offset12:first-child {
+    margin-left: 102.5641%;
+    *margin-left: 102.45772%;
+  }
+  .t3-ui .row-fluid .offset11 {
+    margin-left: 96.5812%;
+    *margin-left: 96.47481%;
+  }
+  .t3-ui .row-fluid .offset11:first-child {
+    margin-left: 94.01709%;
+    *margin-left: 93.91071%;
+  }
+  .t3-ui .row-fluid .offset10 {
+    margin-left: 88.03419%;
+    *margin-left: 87.92781%;
+  }
+  .t3-ui .row-fluid .offset10:first-child {
+    margin-left: 85.47009%;
+    *margin-left: 85.3637%;
+  }
+  .t3-ui .row-fluid .offset9 {
+    margin-left: 79.48718%;
+    *margin-left: 79.3808%;
+  }
+  .t3-ui .row-fluid .offset9:first-child {
+    margin-left: 76.92308%;
+    *margin-left: 76.81669%;
+  }
+  .t3-ui .row-fluid .offset8 {
+    margin-left: 70.94017%;
+    *margin-left: 70.83379%;
+  }
+  .t3-ui .row-fluid .offset8:first-child {
+    margin-left: 68.37607%;
+    *margin-left: 68.26969%;
+  }
+  .t3-ui .row-fluid .offset7 {
+    margin-left: 62.39316%;
+    *margin-left: 62.28678%;
+  }
+  .t3-ui .row-fluid .offset7:first-child {
+    margin-left: 59.82906%;
+    *margin-left: 59.72268%;
+  }
+  .t3-ui .row-fluid .offset6 {
+    margin-left: 53.84615%;
+    *margin-left: 53.73977%;
+  }
+  .t3-ui .row-fluid .offset6:first-child {
+    margin-left: 51.28205%;
+    *margin-left: 51.17567%;
+  }
+  .t3-ui .row-fluid .offset5 {
+    margin-left: 45.29915%;
+    *margin-left: 45.19276%;
+  }
+  .t3-ui .row-fluid .offset5:first-child {
+    margin-left: 42.73504%;
+    *margin-left: 42.62866%;
+  }
+  .t3-ui .row-fluid .offset4 {
+    margin-left: 36.75214%;
+    *margin-left: 36.64575%;
+  }
+  .t3-ui .row-fluid .offset4:first-child {
+    margin-left: 34.18803%;
+    *margin-left: 34.08165%;
+  }
+  .t3-ui .row-fluid .offset3 {
+    margin-left: 28.20513%;
+    *margin-left: 28.09875%;
+  }
+  .t3-ui .row-fluid .offset3:first-child {
+    margin-left: 25.64103%;
+    *margin-left: 25.53464%;
+  }
+  .t3-ui .row-fluid .offset2 {
+    margin-left: 19.65812%;
+    *margin-left: 19.55174%;
+  }
+  .t3-ui .row-fluid .offset2:first-child {
+    margin-left: 17.09402%;
+    *margin-left: 16.98763%;
+  }
+  .t3-ui .row-fluid .offset1 {
+    margin-left: 11.11111%;
+    *margin-left: 11.00473%;
+  }
+  .t3-ui .row-fluid .offset1:first-child {
+    margin-left: 8.54701%;
+    *margin-left: 8.44063%;
+  }
+  .t3-ui input,
+  .t3-ui textarea,
+  .t3-ui .uneditable-input {
+    margin-left: 0;
+  }
+  .t3-ui .controls-row [class*="span"] + [class*="span"] {
+    margin-left: 30px;
+  }
+  .t3-ui input.span12,
+  .t3-ui textarea.span12,
+  .t3-ui .uneditable-input.span12 {
+    width: 1156px;
+  }
+  .t3-ui input.span11,
+  .t3-ui textarea.span11,
+  .t3-ui .uneditable-input.span11 {
+    width: 1056px;
+  }
+  .t3-ui input.span10,
+  .t3-ui textarea.span10,
+  .t3-ui .uneditable-input.span10 {
+    width: 956px;
+  }
+  .t3-ui input.span9,
+  .t3-ui textarea.span9,
+  .t3-ui .uneditable-input.span9 {
+    width: 856px;
+  }
+  .t3-ui input.span8,
+  .t3-ui textarea.span8,
+  .t3-ui .uneditable-input.span8 {
+    width: 756px;
+  }
+  .t3-ui input.span7,
+  .t3-ui textarea.span7,
+  .t3-ui .uneditable-input.span7 {
+    width: 656px;
+  }
+  .t3-ui input.span6,
+  .t3-ui textarea.span6,
+  .t3-ui .uneditable-input.span6 {
+    width: 556px;
+  }
+  .t3-ui input.span5,
+  .t3-ui textarea.span5,
+  .t3-ui .uneditable-input.span5 {
+    width: 456px;
+  }
+  .t3-ui input.span4,
+  .t3-ui textarea.span4,
+  .t3-ui .uneditable-input.span4 {
+    width: 356px;
+  }
+  .t3-ui input.span3,
+  .t3-ui textarea.span3,
+  .t3-ui .uneditable-input.span3 {
+    width: 256px;
+  }
+  .t3-ui input.span2,
+  .t3-ui textarea.span2,
+  .t3-ui .uneditable-input.span2 {
+    width: 156px;
+  }
+  .t3-ui input.span1,
+  .t3-ui textarea.span1,
+  .t3-ui .uneditable-input.span1 {
+    width: 56px;
+  }
+  .t3-ui .thumbnails {
+    margin-left: -30px;
+  }
+  .t3-ui .thumbnails > li {
+    margin-left: 30px;
+  }
+  .t3-ui .row-fluid .thumbnails {
+    margin-left: 0;
+  }
+}
+@media (min-width: 768px) and (max-width: 979px) {
+  .t3-ui .row {
+    margin-left: -20px;
+    *zoom: 1;
+  }
+  .t3-ui .row:before, .t3-ui .row:after {
+    display: table;
+    content: "";
+    line-height: 0;
+  }
+  .t3-ui .row:after {
+    clear: both;
+  }
+  .t3-ui [class*="span"] {
+    float: left;
+    margin-left: 20px;
+  }
+  .t3-ui .container,
+  .t3-ui .navbar-static-top .container,
+  .t3-ui .navbar-fixed-top .container,
+  .t3-ui .navbar-fixed-bottom .container {
+    width: 724px;
+  }
+  .t3-ui .span12 {
+    width: 724px;
+  }
+  .t3-ui .span11 {
+    width: 662px;
+  }
+  .t3-ui .span10 {
+    width: 600px;
+  }
+  .t3-ui .span9 {
+    width: 538px;
+  }
+  .t3-ui .span8 {
+    width: 476px;
+  }
+  .t3-ui .span7 {
+    width: 414px;
+  }
+  .t3-ui .span6 {
+    width: 352px;
+  }
+  .t3-ui .span5 {
+    width: 290px;
+  }
+  .t3-ui .span4 {
+    width: 228px;
+  }
+  .t3-ui .span3 {
+    width: 166px;
+  }
+  .t3-ui .span2 {
+    width: 104px;
+  }
+  .t3-ui .span1 {
+    width: 42px;
+  }
+  .t3-ui .offset12 {
+    margin-left: 764px;
+  }
+  .t3-ui .offset11 {
+    margin-left: 702px;
+  }
+  .t3-ui .offset10 {
+    margin-left: 640px;
+  }
+  .t3-ui .offset9 {
+    margin-left: 578px;
+  }
+  .t3-ui .offset8 {
+    margin-left: 516px;
+  }
+  .t3-ui .offset7 {
+    margin-left: 454px;
+  }
+  .t3-ui .offset6 {
+    margin-left: 392px;
+  }
+  .t3-ui .offset5 {
+    margin-left: 330px;
+  }
+  .t3-ui .offset4 {
+    margin-left: 268px;
+  }
+  .t3-ui .offset3 {
+    margin-left: 206px;
+  }
+  .t3-ui .offset2 {
+    margin-left: 144px;
+  }
+  .t3-ui .offset1 {
+    margin-left: 82px;
+  }
+  .t3-ui .row-fluid {
+    width: 100%;
+    *zoom: 1;
+  }
+  .t3-ui .row-fluid:before, .t3-ui .row-fluid:after {
+    display: table;
+    content: "";
+    line-height: 0;
+  }
+  .t3-ui .row-fluid:after {
+    clear: both;
+  }
+  .t3-ui .row-fluid [class*="span"] {
+    display: block;
+    width: 100%;
+    min-height: 30px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    float: left;
+    margin-left: 2.76243%;
+    *margin-left: 2.70924%;
+  }
+  .t3-ui .row-fluid [class*="span"]:first-child {
+    margin-left: 0;
+  }
+  .t3-ui .row-fluid .span12 {
+    width: 100%;
+    *width: 99.94681%;
+  }
+  .t3-ui .row-fluid .span11 {
+    width: 91.43646%;
+    *width: 91.38327%;
+  }
+  .t3-ui .row-fluid .span10 {
+    width: 82.87293%;
+    *width: 82.81974%;
+  }
+  .t3-ui .row-fluid .span9 {
+    width: 74.30939%;
+    *width: 74.2562%;
+  }
+  .t3-ui .row-fluid .span8 {
+    width: 65.74586%;
+    *width: 65.69266%;
+  }
+  .t3-ui .row-fluid .span7 {
+    width: 57.18232%;
+    *width: 57.12913%;
+  }
+  .t3-ui .row-fluid .span6 {
+    width: 48.61878%;
+    *width: 48.56559%;
+  }
+  .t3-ui .row-fluid .span5 {
+    width: 40.05525%;
+    *width: 40.00206%;
+  }
+  .t3-ui .row-fluid .span4 {
+    width: 31.49171%;
+    *width: 31.43852%;
+  }
+  .t3-ui .row-fluid .span3 {
+    width: 22.92818%;
+    *width: 22.87499%;
+  }
+  .t3-ui .row-fluid .span2 {
+    width: 14.36464%;
+    *width: 14.31145%;
+  }
+  .t3-ui .row-fluid .span1 {
+    width: 5.8011%;
+    *width: 5.74791%;
+  }
+  .t3-ui .row-fluid .offset12 {
+    margin-left: 105.52486%;
+    *margin-left: 105.41848%;
+  }
+  .t3-ui .row-fluid .offset12:first-child {
+    margin-left: 102.76243%;
+    *margin-left: 102.65605%;
+  }
+  .t3-ui .row-fluid .offset11 {
+    margin-left: 96.96133%;
+    *margin-left: 96.85494%;
+  }
+  .t3-ui .row-fluid .offset11:first-child {
+    margin-left: 94.1989%;
+    *margin-left: 94.09251%;
+  }
+  .t3-ui .row-fluid .offset10 {
+    margin-left: 88.39779%;
+    *margin-left: 88.29141%;
+  }
+  .t3-ui .row-fluid .offset10:first-child {
+    margin-left: 85.63536%;
+    *margin-left: 85.52898%;
+  }
+  .t3-ui .row-fluid .offset9 {
+    margin-left: 79.83425%;
+    *margin-left: 79.72787%;
+  }
+  .t3-ui .row-fluid .offset9:first-child {
+    margin-left: 77.07182%;
+    *margin-left: 76.96544%;
+  }
+  .t3-ui .row-fluid .offset8 {
+    margin-left: 71.27072%;
+    *margin-left: 71.16434%;
+  }
+  .t3-ui .row-fluid .offset8:first-child {
+    margin-left: 68.50829%;
+    *margin-left: 68.4019%;
+  }
+  .t3-ui .row-fluid .offset7 {
+    margin-left: 62.70718%;
+    *margin-left: 62.6008%;
+  }
+  .t3-ui .row-fluid .offset7:first-child {
+    margin-left: 59.94475%;
+    *margin-left: 59.83837%;
+  }
+  .t3-ui .row-fluid .offset6 {
+    margin-left: 54.14365%;
+    *margin-left: 54.03726%;
+  }
+  .t3-ui .row-fluid .offset6:first-child {
+    margin-left: 51.38122%;
+    *margin-left: 51.27483%;
+  }
+  .t3-ui .row-fluid .offset5 {
+    margin-left: 45.58011%;
+    *margin-left: 45.47373%;
+  }
+  .t3-ui .row-fluid .offset5:first-child {
+    margin-left: 42.81768%;
+    *margin-left: 42.7113%;
+  }
+  .t3-ui .row-fluid .offset4 {
+    margin-left: 37.01657%;
+    *margin-left: 36.91019%;
+  }
+  .t3-ui .row-fluid .offset4:first-child {
+    margin-left: 34.25414%;
+    *margin-left: 34.14776%;
+  }
+  .t3-ui .row-fluid .offset3 {
+    margin-left: 28.45304%;
+    *margin-left: 28.34666%;
+  }
+  .t3-ui .row-fluid .offset3:first-child {
+    margin-left: 25.69061%;
+    *margin-left: 25.58422%;
+  }
+  .t3-ui .row-fluid .offset2 {
+    margin-left: 19.8895%;
+    *margin-left: 19.78312%;
+  }
+  .t3-ui .row-fluid .offset2:first-child {
+    margin-left: 17.12707%;
+    *margin-left: 17.02069%;
+  }
+  .t3-ui .row-fluid .offset1 {
+    margin-left: 11.32597%;
+    *margin-left: 11.21958%;
+  }
+  .t3-ui .row-fluid .offset1:first-child {
+    margin-left: 8.56354%;
+    *margin-left: 8.45715%;
+  }
+  .t3-ui input,
+  .t3-ui textarea,
+  .t3-ui .uneditable-input {
+    margin-left: 0;
+  }
+  .t3-ui .controls-row [class*="span"] + [class*="span"] {
+    margin-left: 20px;
+  }
+  .t3-ui input.span12,
+  .t3-ui textarea.span12,
+  .t3-ui .uneditable-input.span12 {
+    width: 710px;
+  }
+  .t3-ui input.span11,
+  .t3-ui textarea.span11,
+  .t3-ui .uneditable-input.span11 {
+    width: 648px;
+  }
+  .t3-ui input.span10,
+  .t3-ui textarea.span10,
+  .t3-ui .uneditable-input.span10 {
+    width: 586px;
+  }
+  .t3-ui input.span9,
+  .t3-ui textarea.span9,
+  .t3-ui .uneditable-input.span9 {
+    width: 524px;
+  }
+  .t3-ui input.span8,
+  .t3-ui textarea.span8,
+  .t3-ui .uneditable-input.span8 {
+    width: 462px;
+  }
+  .t3-ui input.span7,
+  .t3-ui textarea.span7,
+  .t3-ui .uneditable-input.span7 {
+    width: 400px;
+  }
+  .t3-ui input.span6,
+  .t3-ui textarea.span6,
+  .t3-ui .uneditable-input.span6 {
+    width: 338px;
+  }
+  .t3-ui input.span5,
+  .t3-ui textarea.span5,
+  .t3-ui .uneditable-input.span5 {
+    width: 276px;
+  }
+  .t3-ui input.span4,
+  .t3-ui textarea.span4,
+  .t3-ui .uneditable-input.span4 {
+    width: 214px;
+  }
+  .t3-ui input.span3,
+  .t3-ui textarea.span3,
+  .t3-ui .uneditable-input.span3 {
+    width: 152px;
+  }
+  .t3-ui input.span2,
+  .t3-ui textarea.span2,
+  .t3-ui .uneditable-input.span2 {
+    width: 90px;
+  }
+  .t3-ui input.span1,
+  .t3-ui textarea.span1,
+  .t3-ui .uneditable-input.span1 {
+    width: 28px;
+  }
+}
+@media (max-width: 767px) {
+  .t3-ui body {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .t3-ui .navbar-fixed-top,
+  .t3-ui .navbar-fixed-bottom {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+  .t3-ui .container-fluid {
+    padding: 0;
+  }
+  .t3-ui .dl-horizontal dt {
+    float: none;
+    clear: none;
+    width: auto;
+    text-align: left;
+  }
+  .t3-ui .dl-horizontal dd {
+    margin-left: 0;
+  }
+  .t3-ui .container {
+    width: auto;
+  }
+  .t3-ui .row-fluid {
+    width: 100%;
+  }
+  .t3-ui .row,
+  .t3-ui .thumbnails {
+    margin-left: 0;
+  }
+  .t3-ui .thumbnails > li {
+    float: none;
+    margin-left: 0;
+  }
+  .t3-ui [class*="span"],
+  .t3-ui .row-fluid [class*="span"] {
+    float: none;
+    display: block;
+    width: auto;
+    margin-left: 0;
+  }
+  .t3-ui .span12,
+  .t3-ui .row-fluid .span12 {
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .t3-ui .input-large,
+  .t3-ui .input-xlarge,
+  .t3-ui .input-xxlarge,
+  .t3-ui input[class*="span"],
+  .t3-ui select[class*="span"],
+  .t3-ui textarea[class*="span"],
+  .t3-ui .uneditable-input {
+    display: block;
+    width: 100%;
+    min-height: 30px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .t3-ui .input-prepend input,
+  .t3-ui .input-append input,
+  .t3-ui .input-prepend input[class*="span"],
+  .t3-ui .input-append input[class*="span"] {
+    display: inline-block;
+    width: auto;
+  }
+  .t3-ui .modal {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    width: auto;
+    margin: 0;
+  }
+  .t3-ui .modal.fade.in {
+    top: auto;
+  }
+}
+@media (max-width: 767px) and (max-width: 480px) {
+  .nav-collapse {
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+
+  .page-header h1 small {
+    display: block;
+    line-height: 20px;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    border: 1px solid #ccc;
+  }
+
+  .form-horizontal .control-group > label {
+    float: none;
+    width: auto;
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .form-horizontal .controls {
+    margin-left: 0;
+  }
+
+  .form-horizontal .control-list {
+    padding-top: 0;
+  }
+
+  .form-horizontal .form-actions {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .modal {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+  }
+
+  .modal-header .close {
+    padding: 10px;
+    margin: -10px;
+  }
+
+  .carousel-caption {
+    position: static;
+  }
+}
+@media (max-width: 979px) {
+  body {
+    padding-top: 0;
+  }
+
+  .navbar-fixed-top,
+  .navbar-fixed-bottom {
+    position: static;
+  }
+
+  .navbar-fixed-top {
+    margin-bottom: 20px;
+  }
+
+  .navbar-fixed-bottom {
+    margin-top: 20px;
+  }
+
+  .navbar-fixed-top .navbar-inner,
+  .navbar-fixed-bottom .navbar-inner {
+    padding: 5px;
+  }
+
+  .navbar .container {
+    width: auto;
+    padding: 0;
+  }
+
+  .navbar .brand {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 0 0 0 -5px;
+  }
+
+  .nav-collapse {
+    clear: both;
+  }
+
+  .nav-collapse .nav {
+    float: none;
+    margin: 0 0 10px;
+  }
+
+  .nav-collapse .nav > li {
+    float: none;
+  }
+
+  .nav-collapse .nav > li > a {
+    margin-bottom: 2px;
+  }
+
+  .nav-collapse .nav > .divider-vertical {
+    display: none;
+  }
+
+  .nav-collapse .nav .nav-header {
+    color: #555555;
+    text-shadow: none;
+  }
+
+  .nav-collapse .nav > li > a,
+  .nav-collapse .dropdown-menu a {
+    padding: 9px 15px;
+    font-weight: bold;
+    color: #555555;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+  }
+
+  .nav-collapse .btn {
+    padding: 4px 10px 4px;
+    font-weight: normal;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+  }
+
+  .nav-collapse .dropdown-menu li + li a {
+    margin-bottom: 2px;
+  }
+
+  .nav-collapse .nav > li > a:hover,
+  .nav-collapse .dropdown-menu a:hover {
+    background-color: #f2f2f2;
+  }
+
+  .navbar-inverse .nav-collapse .nav > li > a:hover,
+  .navbar-inverse .nav-collapse .dropdown-menu a:hover {
+    background-color: #111111;
+  }
+
+  .nav-collapse.in .btn-group {
+    margin-top: 5px;
+    padding: 0;
+  }
+
+  .nav-collapse .dropdown-menu {
+    position: static;
+    top: auto;
+    left: auto;
+    float: none;
+    display: block;
+    max-width: none;
+    margin: 0 15px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .nav-collapse .dropdown-menu:before,
+  .nav-collapse .dropdown-menu:after {
+    display: none;
+  }
+
+  .nav-collapse .dropdown-menu .divider {
+    display: none;
+  }
+
+  .nav-collapse .navbar-form,
+  .nav-collapse .navbar-search {
+    float: none;
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-top: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f2f2;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar .nav-collapse .nav.pull-right {
+    float: none;
+    margin-left: 0;
+  }
+
+  .nav-collapse,
+  .nav-collapse.collapse {
+    overflow: hidden;
+    height: 0;
+  }
+
+  .navbar .btn-navbar {
+    display: block;
+  }
+
+  .navbar-static .navbar-inner {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+@media (min-width: 980px) {
+  .nav-collapse.collapse {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+.t3-ui h1 {
+  font-size: 213%;
+  font-weight: normal;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+}
+.t3-ui h2 {
+  font-weight: normal;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  margin-bottom: 0px;
+  font-size: 174%;
+}
+.t3-ui p {
+  line-height: 1.6em;
+}
+
+.t3-ui form {
+  margin: 0px;
+}
+.t3-ui input[type="text"],
+.t3-ui input[type="password"],
+.t3-ui input[type="datetime"],
+.t3-ui input[type="datetime-local"],
+.t3-ui input[type="date"],
+.t3-ui input[type="month"],
+.t3-ui input[type="time"],
+.t3-ui input[type="week"],
+.t3-ui input[type="number"],
+.t3-ui input[type="email"],
+.t3-ui input[type="url"],
+.t3-ui input[type="search"],
+.t3-ui input[type="tel"],
+.t3-ui input[type="color"],
+.t3-ui .uneditable-input {
+  padding: 2px 4px 2px 4px;
+  font-size: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+.t3-ui .btn.t3-button {
+  font-size: 100%;
+}
+.t3-ui .btn.t3-button i {
+  margin-top: 0;
+}
+.t3-ui .input-append,
+.t3-ui .input-prepend {
+  font-size: inherit;
+}
+.t3-ui legend {
+  border-color: #999;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  margin-bottom: 0px;
+  font-size: 174%;
+}
+.t3-ui legend + .alert {
+  margin-top: 20px;
+  float: left;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.t3-ui label {
+  font-size: 100%;
+  color: white;
+}
+
+.t3-ui .form-horizontal .control-label {
+  padding-top: 2px;
+}
+.t3-ui .row-fluid [class*="span"] {
+  min-height: inherit;
+}
+.t3-ui .row-fluid [class*="span"] input {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+.t3-ui .form-footer,
+.t3-ui .modal-footer {
+  background: #666;
+  border-color: #888888;
+  -moz-border-radius-bottomleft: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  -moz-border-radius-bottomright: 4px;
+  -webkit-border-bottom-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  -webkit-box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.2), 0px -1px 0px #666666;
+  -moz-box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.2), 0px -1px 0px #666666;
+  box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.2), 0px -1px 0px #666666;
+  margin-bottom: 0px;
+}
+
+.t3-ui button.t3-button,
+.t3-ui input.t3-button,
+.t3-ui a.t3-button {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+.t3-ui button.t3-button.btn,
+.t3-ui input.t3-button.btn,
+.t3-ui a.t3-button.btn {
+  outline: none;
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #909090;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #888888;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #7b7b7b;
+  border-bottom-color: #6f6f6f;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui button.t3-button.btn:hover, .t3-ui button.t3-button.btn:active, .t3-ui button.t3-button.btn.active, .t3-ui button.t3-button.btn.disabled, .t3-ui button.t3-button.btn[disabled],
+.t3-ui input.t3-button.btn:hover,
+.t3-ui input.t3-button.btn:active,
+.t3-ui input.t3-button.btn.active,
+.t3-ui input.t3-button.btn.disabled,
+.t3-ui input.t3-button.btn[disabled],
+.t3-ui a.t3-button.btn:hover,
+.t3-ui a.t3-button.btn:active,
+.t3-ui a.t3-button.btn.active,
+.t3-ui a.t3-button.btn.disabled,
+.t3-ui a.t3-button.btn[disabled] {
+  color: white;
+  background-color: #888888;
+  *background-color: #7b7b7b;
+}
+.t3-ui button.t3-button.btn:active, .t3-ui button.t3-button.btn.active,
+.t3-ui input.t3-button.btn:active,
+.t3-ui input.t3-button.btn.active,
+.t3-ui a.t3-button.btn:active,
+.t3-ui a.t3-button.btn.active {
+  background-color: #6f6f6f \9;
+}
+.t3-ui button.t3-button.btn:hover, .t3-ui button.t3-button.btn:focus, .t3-ui button.t3-button.btn:active,
+.t3-ui input.t3-button.btn:hover,
+.t3-ui input.t3-button.btn:focus,
+.t3-ui input.t3-button.btn:active,
+.t3-ui a.t3-button.btn:hover,
+.t3-ui a.t3-button.btn:focus,
+.t3-ui a.t3-button.btn:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #868686;
+  background-image: -moz-linear-gradient(top, #888888, #838383);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#888888), to(#838383));
+  background-image: -webkit-linear-gradient(top, #888888, #838383);
+  background-image: -o-linear-gradient(top, #888888, #838383);
+  background-image: linear-gradient(to bottom, #888888, #838383);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF888888', endColorstr='#FF838383', GradientType=0);
+  border-color: #838383 #838383 #5d5d5d;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #838383;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #6f6f6f;
+  border-bottom-color: #555555;
+}
+.t3-ui button.t3-button.btn:hover:hover, .t3-ui button.t3-button.btn:hover:active, .t3-ui button.t3-button.btn:hover.active, .t3-ui button.t3-button.btn:hover.disabled, .t3-ui button.t3-button.btn:hover[disabled], .t3-ui button.t3-button.btn:focus:hover, .t3-ui button.t3-button.btn:focus:active, .t3-ui button.t3-button.btn:focus.active, .t3-ui button.t3-button.btn:focus.disabled, .t3-ui button.t3-button.btn:focus[disabled], .t3-ui button.t3-button.btn:active:hover, .t3-ui button.t3-button.btn:active:active, .t3-ui button.t3-button.btn:active.active, .t3-ui button.t3-button.btn:active.disabled, .t3-ui button.t3-button.btn:active[disabled],
+.t3-ui input.t3-button.btn:hover:hover,
+.t3-ui input.t3-button.btn:hover:active,
+.t3-ui input.t3-button.btn:hover.active,
+.t3-ui input.t3-button.btn:hover.disabled,
+.t3-ui input.t3-button.btn:hover[disabled],
+.t3-ui input.t3-button.btn:focus:hover,
+.t3-ui input.t3-button.btn:focus:active,
+.t3-ui input.t3-button.btn:focus.active,
+.t3-ui input.t3-button.btn:focus.disabled,
+.t3-ui input.t3-button.btn:focus[disabled],
+.t3-ui input.t3-button.btn:active:hover,
+.t3-ui input.t3-button.btn:active:active,
+.t3-ui input.t3-button.btn:active.active,
+.t3-ui input.t3-button.btn:active.disabled,
+.t3-ui input.t3-button.btn:active[disabled],
+.t3-ui a.t3-button.btn:hover:hover,
+.t3-ui a.t3-button.btn:hover:active,
+.t3-ui a.t3-button.btn:hover.active,
+.t3-ui a.t3-button.btn:hover.disabled,
+.t3-ui a.t3-button.btn:hover[disabled],
+.t3-ui a.t3-button.btn:focus:hover,
+.t3-ui a.t3-button.btn:focus:active,
+.t3-ui a.t3-button.btn:focus.active,
+.t3-ui a.t3-button.btn:focus.disabled,
+.t3-ui a.t3-button.btn:focus[disabled],
+.t3-ui a.t3-button.btn:active:hover,
+.t3-ui a.t3-button.btn:active:active,
+.t3-ui a.t3-button.btn:active.active,
+.t3-ui a.t3-button.btn:active.disabled,
+.t3-ui a.t3-button.btn:active[disabled] {
+  color: white;
+  background-color: #838383;
+  *background-color: #767676;
+}
+.t3-ui button.t3-button.btn:hover:active, .t3-ui button.t3-button.btn:hover.active, .t3-ui button.t3-button.btn:focus:active, .t3-ui button.t3-button.btn:focus.active, .t3-ui button.t3-button.btn:active:active, .t3-ui button.t3-button.btn:active.active,
+.t3-ui input.t3-button.btn:hover:active,
+.t3-ui input.t3-button.btn:hover.active,
+.t3-ui input.t3-button.btn:focus:active,
+.t3-ui input.t3-button.btn:focus.active,
+.t3-ui input.t3-button.btn:active:active,
+.t3-ui input.t3-button.btn:active.active,
+.t3-ui a.t3-button.btn:hover:active,
+.t3-ui a.t3-button.btn:hover.active,
+.t3-ui a.t3-button.btn:focus:active,
+.t3-ui a.t3-button.btn:focus.active,
+.t3-ui a.t3-button.btn:active:active,
+.t3-ui a.t3-button.btn:active.active {
+  background-color: dimgrey \9;
+}
+.t3-ui button.t3-button.pressed, .t3-ui button.t3-button.btn-warning,
+.t3-ui input.t3-button.pressed,
+.t3-ui input.t3-button.btn-warning,
+.t3-ui a.t3-button.pressed,
+.t3-ui a.t3-button.btn-warning {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #f39518;
+  background-image: -moz-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f59a21), to(#f18f0b));
+  background-image: -webkit-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: -o-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: linear-gradient(to bottom, #f59a21, #f18f0b);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF59A21', endColorstr='#FFF18F0B', GradientType=0);
+  border-color: #f18f0b #f18f0b #a86408;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #f18f0b;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #d9810a;
+  border-bottom-color: #c07209;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui button.t3-button.pressed:hover, .t3-ui button.t3-button.pressed:active, .t3-ui button.t3-button.pressed.active, .t3-ui button.t3-button.pressed.disabled, .t3-ui button.t3-button.pressed[disabled], .t3-ui button.t3-button.btn-warning:hover, .t3-ui button.t3-button.btn-warning:active, .t3-ui button.t3-button.btn-warning.active, .t3-ui button.t3-button.btn-warning.disabled, .t3-ui button.t3-button.btn-warning[disabled],
+.t3-ui input.t3-button.pressed:hover,
+.t3-ui input.t3-button.pressed:active,
+.t3-ui input.t3-button.pressed.active,
+.t3-ui input.t3-button.pressed.disabled,
+.t3-ui input.t3-button.pressed[disabled],
+.t3-ui input.t3-button.btn-warning:hover,
+.t3-ui input.t3-button.btn-warning:active,
+.t3-ui input.t3-button.btn-warning.active,
+.t3-ui input.t3-button.btn-warning.disabled,
+.t3-ui input.t3-button.btn-warning[disabled],
+.t3-ui a.t3-button.pressed:hover,
+.t3-ui a.t3-button.pressed:active,
+.t3-ui a.t3-button.pressed.active,
+.t3-ui a.t3-button.pressed.disabled,
+.t3-ui a.t3-button.pressed[disabled],
+.t3-ui a.t3-button.btn-warning:hover,
+.t3-ui a.t3-button.btn-warning:active,
+.t3-ui a.t3-button.btn-warning.active,
+.t3-ui a.t3-button.btn-warning.disabled,
+.t3-ui a.t3-button.btn-warning[disabled] {
+  color: white;
+  background-color: #f18f0b;
+  *background-color: #d9810a;
+}
+.t3-ui button.t3-button.pressed:active, .t3-ui button.t3-button.pressed.active, .t3-ui button.t3-button.btn-warning:active, .t3-ui button.t3-button.btn-warning.active,
+.t3-ui input.t3-button.pressed:active,
+.t3-ui input.t3-button.pressed.active,
+.t3-ui input.t3-button.btn-warning:active,
+.t3-ui input.t3-button.btn-warning.active,
+.t3-ui a.t3-button.pressed:active,
+.t3-ui a.t3-button.pressed.active,
+.t3-ui a.t3-button.btn-warning:active,
+.t3-ui a.t3-button.btn-warning.active {
+  background-color: #c07209 \9;
+}
+.t3-ui button.t3-button.pressed:hover, .t3-ui button.t3-button.pressed:focus, .t3-ui button.t3-button.pressed:active, .t3-ui button.t3-button.btn-warning:hover, .t3-ui button.t3-button.btn-warning:focus, .t3-ui button.t3-button.btn-warning:active,
+.t3-ui input.t3-button.pressed:hover,
+.t3-ui input.t3-button.pressed:focus,
+.t3-ui input.t3-button.pressed:active,
+.t3-ui input.t3-button.btn-warning:hover,
+.t3-ui input.t3-button.btn-warning:focus,
+.t3-ui input.t3-button.btn-warning:active,
+.t3-ui a.t3-button.pressed:hover,
+.t3-ui a.t3-button.pressed:focus,
+.t3-ui a.t3-button.pressed:active,
+.t3-ui a.t3-button.btn-warning:hover,
+.t3-ui a.t3-button.btn-warning:focus,
+.t3-ui a.t3-button.btn-warning:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #ed8c0b;
+  background-image: -moz-linear-gradient(top, #f18f0b, #e7890b);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f18f0b), to(#e7890b));
+  background-image: -webkit-linear-gradient(top, #f18f0b, #e7890b);
+  background-image: -o-linear-gradient(top, #f18f0b, #e7890b);
+  background-image: linear-gradient(to bottom, #f18f0b, #e7890b);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF18F0B', endColorstr='#FFE7890B', GradientType=0);
+  border-color: #e7890b #e7890b #9e5e07;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #e7890b;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #c07209;
+  border-bottom-color: #8f5507;
+}
+.t3-ui button.t3-button.pressed:hover:hover, .t3-ui button.t3-button.pressed:hover:active, .t3-ui button.t3-button.pressed:hover.active, .t3-ui button.t3-button.pressed:hover.disabled, .t3-ui button.t3-button.pressed:hover[disabled], .t3-ui button.t3-button.pressed:focus:hover, .t3-ui button.t3-button.pressed:focus:active, .t3-ui button.t3-button.pressed:focus.active, .t3-ui button.t3-button.pressed:focus.disabled, .t3-ui button.t3-button.pressed:focus[disabled], .t3-ui button.t3-button.pressed:active:hover, .t3-ui button.t3-button.pressed:active:active, .t3-ui button.t3-button.pressed:active.active, .t3-ui button.t3-button.pressed:active.disabled, .t3-ui button.t3-button.pressed:active[disabled], .t3-ui button.t3-button.btn-warning:hover:hover, .t3-ui button.t3-button.btn-warning:hover:active, .t3-ui button.t3-button.btn-warning:hover.active, .t3-ui button.t3-button.btn-warning:hover.disabled, .t3-ui button.t3-button.btn-warning:hover[disabled], .t3-ui button.t3-button.btn-warning:focus:hover, .t3-ui button.t3-button.btn-warning:focus:active, .t3-ui button.t3-button.btn-warning:focus.active, .t3-ui button.t3-button.btn-warning:focus.disabled, .t3-ui button.t3-button.btn-warning:focus[disabled], .t3-ui button.t3-button.btn-warning:active:hover, .t3-ui button.t3-button.btn-warning:active:active, .t3-ui button.t3-button.btn-warning:active.active, .t3-ui button.t3-button.btn-warning:active.disabled, .t3-ui button.t3-button.btn-warning:active[disabled],
+.t3-ui input.t3-button.pressed:hover:hover,
+.t3-ui input.t3-button.pressed:hover:active,
+.t3-ui input.t3-button.pressed:hover.active,
+.t3-ui input.t3-button.pressed:hover.disabled,
+.t3-ui input.t3-button.pressed:hover[disabled],
+.t3-ui input.t3-button.pressed:focus:hover,
+.t3-ui input.t3-button.pressed:focus:active,
+.t3-ui input.t3-button.pressed:focus.active,
+.t3-ui input.t3-button.pressed:focus.disabled,
+.t3-ui input.t3-button.pressed:focus[disabled],
+.t3-ui input.t3-button.pressed:active:hover,
+.t3-ui input.t3-button.pressed:active:active,
+.t3-ui input.t3-button.pressed:active.active,
+.t3-ui input.t3-button.pressed:active.disabled,
+.t3-ui input.t3-button.pressed:active[disabled],
+.t3-ui input.t3-button.btn-warning:hover:hover,
+.t3-ui input.t3-button.btn-warning:hover:active,
+.t3-ui input.t3-button.btn-warning:hover.active,
+.t3-ui input.t3-button.btn-warning:hover.disabled,
+.t3-ui input.t3-button.btn-warning:hover[disabled],
+.t3-ui input.t3-button.btn-warning:focus:hover,
+.t3-ui input.t3-button.btn-warning:focus:active,
+.t3-ui input.t3-button.btn-warning:focus.active,
+.t3-ui input.t3-button.btn-warning:focus.disabled,
+.t3-ui input.t3-button.btn-warning:focus[disabled],
+.t3-ui input.t3-button.btn-warning:active:hover,
+.t3-ui input.t3-button.btn-warning:active:active,
+.t3-ui input.t3-button.btn-warning:active.active,
+.t3-ui input.t3-button.btn-warning:active.disabled,
+.t3-ui input.t3-button.btn-warning:active[disabled],
+.t3-ui a.t3-button.pressed:hover:hover,
+.t3-ui a.t3-button.pressed:hover:active,
+.t3-ui a.t3-button.pressed:hover.active,
+.t3-ui a.t3-button.pressed:hover.disabled,
+.t3-ui a.t3-button.pressed:hover[disabled],
+.t3-ui a.t3-button.pressed:focus:hover,
+.t3-ui a.t3-button.pressed:focus:active,
+.t3-ui a.t3-button.pressed:focus.active,
+.t3-ui a.t3-button.pressed:focus.disabled,
+.t3-ui a.t3-button.pressed:focus[disabled],
+.t3-ui a.t3-button.pressed:active:hover,
+.t3-ui a.t3-button.pressed:active:active,
+.t3-ui a.t3-button.pressed:active.active,
+.t3-ui a.t3-button.pressed:active.disabled,
+.t3-ui a.t3-button.pressed:active[disabled],
+.t3-ui a.t3-button.btn-warning:hover:hover,
+.t3-ui a.t3-button.btn-warning:hover:active,
+.t3-ui a.t3-button.btn-warning:hover.active,
+.t3-ui a.t3-button.btn-warning:hover.disabled,
+.t3-ui a.t3-button.btn-warning:hover[disabled],
+.t3-ui a.t3-button.btn-warning:focus:hover,
+.t3-ui a.t3-button.btn-warning:focus:active,
+.t3-ui a.t3-button.btn-warning:focus.active,
+.t3-ui a.t3-button.btn-warning:focus.disabled,
+.t3-ui a.t3-button.btn-warning:focus[disabled],
+.t3-ui a.t3-button.btn-warning:active:hover,
+.t3-ui a.t3-button.btn-warning:active:active,
+.t3-ui a.t3-button.btn-warning:active.active,
+.t3-ui a.t3-button.btn-warning:active.disabled,
+.t3-ui a.t3-button.btn-warning:active[disabled] {
+  color: white;
+  background-color: #e7890b;
+  *background-color: #cf7b09;
+}
+.t3-ui button.t3-button.pressed:hover:active, .t3-ui button.t3-button.pressed:hover.active, .t3-ui button.t3-button.pressed:focus:active, .t3-ui button.t3-button.pressed:focus.active, .t3-ui button.t3-button.pressed:active:active, .t3-ui button.t3-button.pressed:active.active, .t3-ui button.t3-button.btn-warning:hover:active, .t3-ui button.t3-button.btn-warning:hover.active, .t3-ui button.t3-button.btn-warning:focus:active, .t3-ui button.t3-button.btn-warning:focus.active, .t3-ui button.t3-button.btn-warning:active:active, .t3-ui button.t3-button.btn-warning:active.active,
+.t3-ui input.t3-button.pressed:hover:active,
+.t3-ui input.t3-button.pressed:hover.active,
+.t3-ui input.t3-button.pressed:focus:active,
+.t3-ui input.t3-button.pressed:focus.active,
+.t3-ui input.t3-button.pressed:active:active,
+.t3-ui input.t3-button.pressed:active.active,
+.t3-ui input.t3-button.btn-warning:hover:active,
+.t3-ui input.t3-button.btn-warning:hover.active,
+.t3-ui input.t3-button.btn-warning:focus:active,
+.t3-ui input.t3-button.btn-warning:focus.active,
+.t3-ui input.t3-button.btn-warning:active:active,
+.t3-ui input.t3-button.btn-warning:active.active,
+.t3-ui a.t3-button.pressed:hover:active,
+.t3-ui a.t3-button.pressed:hover.active,
+.t3-ui a.t3-button.pressed:focus:active,
+.t3-ui a.t3-button.pressed:focus.active,
+.t3-ui a.t3-button.pressed:active:active,
+.t3-ui a.t3-button.pressed:active.active,
+.t3-ui a.t3-button.btn-warning:hover:active,
+.t3-ui a.t3-button.btn-warning:hover.active,
+.t3-ui a.t3-button.btn-warning:focus:active,
+.t3-ui a.t3-button.btn-warning:focus.active,
+.t3-ui a.t3-button.btn-warning:active:active,
+.t3-ui a.t3-button.btn-warning:active.active {
+  background-color: #b66c08 \9;
+}
+.t3-ui button.t3-button.pressed.disabled, .t3-ui button.t3-button.pressed.disabled:hover, .t3-ui button.t3-button.pressed.disabled:active, .t3-ui button.t3-button.pressed.disabled:focus, .t3-ui button.t3-button.btn-warning.disabled, .t3-ui button.t3-button.btn-warning.disabled:hover, .t3-ui button.t3-button.btn-warning.disabled:active, .t3-ui button.t3-button.btn-warning.disabled:focus,
+.t3-ui input.t3-button.pressed.disabled,
+.t3-ui input.t3-button.pressed.disabled:hover,
+.t3-ui input.t3-button.pressed.disabled:active,
+.t3-ui input.t3-button.pressed.disabled:focus,
+.t3-ui input.t3-button.btn-warning.disabled,
+.t3-ui input.t3-button.btn-warning.disabled:hover,
+.t3-ui input.t3-button.btn-warning.disabled:active,
+.t3-ui input.t3-button.btn-warning.disabled:focus,
+.t3-ui a.t3-button.pressed.disabled,
+.t3-ui a.t3-button.pressed.disabled:hover,
+.t3-ui a.t3-button.pressed.disabled:active,
+.t3-ui a.t3-button.pressed.disabled:focus,
+.t3-ui a.t3-button.btn-warning.disabled,
+.t3-ui a.t3-button.btn-warning.disabled:hover,
+.t3-ui a.t3-button.btn-warning.disabled:active,
+.t3-ui a.t3-button.btn-warning.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #f39518;
+  background-image: -moz-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f59a21), to(#f18f0b));
+  background-image: -webkit-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: -o-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: linear-gradient(to bottom, #f59a21, #f18f0b);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF59A21', endColorstr='#FFF18F0B', GradientType=0);
+  border-color: #f18f0b #f18f0b #a86408;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #f18f0b;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.t3-ui button.t3-button.pressed.disabled:hover, .t3-ui button.t3-button.pressed.disabled:active, .t3-ui button.t3-button.pressed.disabled.active, .t3-ui button.t3-button.pressed.disabled.disabled, .t3-ui button.t3-button.pressed.disabled[disabled], .t3-ui button.t3-button.pressed.disabled:hover:hover, .t3-ui button.t3-button.pressed.disabled:hover:active, .t3-ui button.t3-button.pressed.disabled:hover.active, .t3-ui button.t3-button.pressed.disabled:hover.disabled, .t3-ui button.t3-button.pressed.disabled:hover[disabled], .t3-ui button.t3-button.pressed.disabled:active:hover, .t3-ui button.t3-button.pressed.disabled:active:active, .t3-ui button.t3-button.pressed.disabled:active.active, .t3-ui button.t3-button.pressed.disabled:active.disabled, .t3-ui button.t3-button.pressed.disabled:active[disabled], .t3-ui button.t3-button.pressed.disabled:focus:hover, .t3-ui button.t3-button.pressed.disabled:focus:active, .t3-ui button.t3-button.pressed.disabled:focus.active, .t3-ui button.t3-button.pressed.disabled:focus.disabled, .t3-ui button.t3-button.pressed.disabled:focus[disabled], .t3-ui button.t3-button.btn-warning.disabled:hover, .t3-ui button.t3-button.btn-warning.disabled:active, .t3-ui button.t3-button.btn-warning.disabled.active, .t3-ui button.t3-button.btn-warning.disabled.disabled, .t3-ui button.t3-button.btn-warning.disabled[disabled], .t3-ui button.t3-button.btn-warning.disabled:hover:hover, .t3-ui button.t3-button.btn-warning.disabled:hover:active, .t3-ui button.t3-button.btn-warning.disabled:hover.active, .t3-ui button.t3-button.btn-warning.disabled:hover.disabled, .t3-ui button.t3-button.btn-warning.disabled:hover[disabled], .t3-ui button.t3-button.btn-warning.disabled:active:hover, .t3-ui button.t3-button.btn-warning.disabled:active:active, .t3-ui button.t3-button.btn-warning.disabled:active.active, .t3-ui button.t3-button.btn-warning.disabled:active.disabled, .t3-ui button.t3-button.btn-warning.disabled:active[disabled], .t3-ui button.t3-button.btn-warning.disabled:focus:hover, .t3-ui button.t3-button.btn-warning.disabled:focus:active, .t3-ui button.t3-button.btn-warning.disabled:focus.active, .t3-ui button.t3-button.btn-warning.disabled:focus.disabled, .t3-ui button.t3-button.btn-warning.disabled:focus[disabled],
+.t3-ui input.t3-button.pressed.disabled:hover,
+.t3-ui input.t3-button.pressed.disabled:active,
+.t3-ui input.t3-button.pressed.disabled.active,
+.t3-ui input.t3-button.pressed.disabled.disabled,
+.t3-ui input.t3-button.pressed.disabled[disabled],
+.t3-ui input.t3-button.pressed.disabled:hover:hover,
+.t3-ui input.t3-button.pressed.disabled:hover:active,
+.t3-ui input.t3-button.pressed.disabled:hover.active,
+.t3-ui input.t3-button.pressed.disabled:hover.disabled,
+.t3-ui input.t3-button.pressed.disabled:hover[disabled],
+.t3-ui input.t3-button.pressed.disabled:active:hover,
+.t3-ui input.t3-button.pressed.disabled:active:active,
+.t3-ui input.t3-button.pressed.disabled:active.active,
+.t3-ui input.t3-button.pressed.disabled:active.disabled,
+.t3-ui input.t3-button.pressed.disabled:active[disabled],
+.t3-ui input.t3-button.pressed.disabled:focus:hover,
+.t3-ui input.t3-button.pressed.disabled:focus:active,
+.t3-ui input.t3-button.pressed.disabled:focus.active,
+.t3-ui input.t3-button.pressed.disabled:focus.disabled,
+.t3-ui input.t3-button.pressed.disabled:focus[disabled],
+.t3-ui input.t3-button.btn-warning.disabled:hover,
+.t3-ui input.t3-button.btn-warning.disabled:active,
+.t3-ui input.t3-button.btn-warning.disabled.active,
+.t3-ui input.t3-button.btn-warning.disabled.disabled,
+.t3-ui input.t3-button.btn-warning.disabled[disabled],
+.t3-ui input.t3-button.btn-warning.disabled:hover:hover,
+.t3-ui input.t3-button.btn-warning.disabled:hover:active,
+.t3-ui input.t3-button.btn-warning.disabled:hover.active,
+.t3-ui input.t3-button.btn-warning.disabled:hover.disabled,
+.t3-ui input.t3-button.btn-warning.disabled:hover[disabled],
+.t3-ui input.t3-button.btn-warning.disabled:active:hover,
+.t3-ui input.t3-button.btn-warning.disabled:active:active,
+.t3-ui input.t3-button.btn-warning.disabled:active.active,
+.t3-ui input.t3-button.btn-warning.disabled:active.disabled,
+.t3-ui input.t3-button.btn-warning.disabled:active[disabled],
+.t3-ui input.t3-button.btn-warning.disabled:focus:hover,
+.t3-ui input.t3-button.btn-warning.disabled:focus:active,
+.t3-ui input.t3-button.btn-warning.disabled:focus.active,
+.t3-ui input.t3-button.btn-warning.disabled:focus.disabled,
+.t3-ui input.t3-button.btn-warning.disabled:focus[disabled],
+.t3-ui a.t3-button.pressed.disabled:hover,
+.t3-ui a.t3-button.pressed.disabled:active,
+.t3-ui a.t3-button.pressed.disabled.active,
+.t3-ui a.t3-button.pressed.disabled.disabled,
+.t3-ui a.t3-button.pressed.disabled[disabled],
+.t3-ui a.t3-button.pressed.disabled:hover:hover,
+.t3-ui a.t3-button.pressed.disabled:hover:active,
+.t3-ui a.t3-button.pressed.disabled:hover.active,
+.t3-ui a.t3-button.pressed.disabled:hover.disabled,
+.t3-ui a.t3-button.pressed.disabled:hover[disabled],
+.t3-ui a.t3-button.pressed.disabled:active:hover,
+.t3-ui a.t3-button.pressed.disabled:active:active,
+.t3-ui a.t3-button.pressed.disabled:active.active,
+.t3-ui a.t3-button.pressed.disabled:active.disabled,
+.t3-ui a.t3-button.pressed.disabled:active[disabled],
+.t3-ui a.t3-button.pressed.disabled:focus:hover,
+.t3-ui a.t3-button.pressed.disabled:focus:active,
+.t3-ui a.t3-button.pressed.disabled:focus.active,
+.t3-ui a.t3-button.pressed.disabled:focus.disabled,
+.t3-ui a.t3-button.pressed.disabled:focus[disabled],
+.t3-ui a.t3-button.btn-warning.disabled:hover,
+.t3-ui a.t3-button.btn-warning.disabled:active,
+.t3-ui a.t3-button.btn-warning.disabled.active,
+.t3-ui a.t3-button.btn-warning.disabled.disabled,
+.t3-ui a.t3-button.btn-warning.disabled[disabled],
+.t3-ui a.t3-button.btn-warning.disabled:hover:hover,
+.t3-ui a.t3-button.btn-warning.disabled:hover:active,
+.t3-ui a.t3-button.btn-warning.disabled:hover.active,
+.t3-ui a.t3-button.btn-warning.disabled:hover.disabled,
+.t3-ui a.t3-button.btn-warning.disabled:hover[disabled],
+.t3-ui a.t3-button.btn-warning.disabled:active:hover,
+.t3-ui a.t3-button.btn-warning.disabled:active:active,
+.t3-ui a.t3-button.btn-warning.disabled:active.active,
+.t3-ui a.t3-button.btn-warning.disabled:active.disabled,
+.t3-ui a.t3-button.btn-warning.disabled:active[disabled],
+.t3-ui a.t3-button.btn-warning.disabled:focus:hover,
+.t3-ui a.t3-button.btn-warning.disabled:focus:active,
+.t3-ui a.t3-button.btn-warning.disabled:focus.active,
+.t3-ui a.t3-button.btn-warning.disabled:focus.disabled,
+.t3-ui a.t3-button.btn-warning.disabled:focus[disabled] {
+  color: white;
+  background-color: #f18f0b;
+  *background-color: #d9810a;
+}
+.t3-ui button.t3-button.pressed.disabled:active, .t3-ui button.t3-button.pressed.disabled.active, .t3-ui button.t3-button.pressed.disabled:hover:active, .t3-ui button.t3-button.pressed.disabled:hover.active, .t3-ui button.t3-button.pressed.disabled:active:active, .t3-ui button.t3-button.pressed.disabled:active.active, .t3-ui button.t3-button.pressed.disabled:focus:active, .t3-ui button.t3-button.pressed.disabled:focus.active, .t3-ui button.t3-button.btn-warning.disabled:active, .t3-ui button.t3-button.btn-warning.disabled.active, .t3-ui button.t3-button.btn-warning.disabled:hover:active, .t3-ui button.t3-button.btn-warning.disabled:hover.active, .t3-ui button.t3-button.btn-warning.disabled:active:active, .t3-ui button.t3-button.btn-warning.disabled:active.active, .t3-ui button.t3-button.btn-warning.disabled:focus:active, .t3-ui button.t3-button.btn-warning.disabled:focus.active,
+.t3-ui input.t3-button.pressed.disabled:active,
+.t3-ui input.t3-button.pressed.disabled.active,
+.t3-ui input.t3-button.pressed.disabled:hover:active,
+.t3-ui input.t3-button.pressed.disabled:hover.active,
+.t3-ui input.t3-button.pressed.disabled:active:active,
+.t3-ui input.t3-button.pressed.disabled:active.active,
+.t3-ui input.t3-button.pressed.disabled:focus:active,
+.t3-ui input.t3-button.pressed.disabled:focus.active,
+.t3-ui input.t3-button.btn-warning.disabled:active,
+.t3-ui input.t3-button.btn-warning.disabled.active,
+.t3-ui input.t3-button.btn-warning.disabled:hover:active,
+.t3-ui input.t3-button.btn-warning.disabled:hover.active,
+.t3-ui input.t3-button.btn-warning.disabled:active:active,
+.t3-ui input.t3-button.btn-warning.disabled:active.active,
+.t3-ui input.t3-button.btn-warning.disabled:focus:active,
+.t3-ui input.t3-button.btn-warning.disabled:focus.active,
+.t3-ui a.t3-button.pressed.disabled:active,
+.t3-ui a.t3-button.pressed.disabled.active,
+.t3-ui a.t3-button.pressed.disabled:hover:active,
+.t3-ui a.t3-button.pressed.disabled:hover.active,
+.t3-ui a.t3-button.pressed.disabled:active:active,
+.t3-ui a.t3-button.pressed.disabled:active.active,
+.t3-ui a.t3-button.pressed.disabled:focus:active,
+.t3-ui a.t3-button.pressed.disabled:focus.active,
+.t3-ui a.t3-button.btn-warning.disabled:active,
+.t3-ui a.t3-button.btn-warning.disabled.active,
+.t3-ui a.t3-button.btn-warning.disabled:hover:active,
+.t3-ui a.t3-button.btn-warning.disabled:hover.active,
+.t3-ui a.t3-button.btn-warning.disabled:active:active,
+.t3-ui a.t3-button.btn-warning.disabled:active.active,
+.t3-ui a.t3-button.btn-warning.disabled:focus:active,
+.t3-ui a.t3-button.btn-warning.disabled:focus.active {
+  background-color: #c07209 \9;
+}
+.t3-ui button.t3-button.btn-primary, .t3-ui button.t3-button.btn-success,
+.t3-ui input.t3-button.btn-primary,
+.t3-ui input.t3-button.btn-success,
+.t3-ui a.t3-button.btn-primary,
+.t3-ui a.t3-button.btn-success {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #71ac58;
+  background-image: -moz-linear-gradient(top, #76b15e, #69a550);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#76b15e), to(#69a550));
+  background-image: -webkit-linear-gradient(top, #76b15e, #69a550);
+  background-image: -o-linear-gradient(top, #76b15e, #69a550);
+  background-image: linear-gradient(to bottom, #76b15e, #69a550);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF76B15E', endColorstr='#FF69A550', GradientType=0);
+  border-color: #69a550 #69a550 #487137;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #69a550;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #5e9448;
+  border-bottom-color: #53833f;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui button.t3-button.btn-primary:hover, .t3-ui button.t3-button.btn-primary:active, .t3-ui button.t3-button.btn-primary.active, .t3-ui button.t3-button.btn-primary.disabled, .t3-ui button.t3-button.btn-primary[disabled], .t3-ui button.t3-button.btn-success:hover, .t3-ui button.t3-button.btn-success:active, .t3-ui button.t3-button.btn-success.active, .t3-ui button.t3-button.btn-success.disabled, .t3-ui button.t3-button.btn-success[disabled],
+.t3-ui input.t3-button.btn-primary:hover,
+.t3-ui input.t3-button.btn-primary:active,
+.t3-ui input.t3-button.btn-primary.active,
+.t3-ui input.t3-button.btn-primary.disabled,
+.t3-ui input.t3-button.btn-primary[disabled],
+.t3-ui input.t3-button.btn-success:hover,
+.t3-ui input.t3-button.btn-success:active,
+.t3-ui input.t3-button.btn-success.active,
+.t3-ui input.t3-button.btn-success.disabled,
+.t3-ui input.t3-button.btn-success[disabled],
+.t3-ui a.t3-button.btn-primary:hover,
+.t3-ui a.t3-button.btn-primary:active,
+.t3-ui a.t3-button.btn-primary.active,
+.t3-ui a.t3-button.btn-primary.disabled,
+.t3-ui a.t3-button.btn-primary[disabled],
+.t3-ui a.t3-button.btn-success:hover,
+.t3-ui a.t3-button.btn-success:active,
+.t3-ui a.t3-button.btn-success.active,
+.t3-ui a.t3-button.btn-success.disabled,
+.t3-ui a.t3-button.btn-success[disabled] {
+  color: white;
+  background-color: #69a550;
+  *background-color: #5e9448;
+}
+.t3-ui button.t3-button.btn-primary:active, .t3-ui button.t3-button.btn-primary.active, .t3-ui button.t3-button.btn-success:active, .t3-ui button.t3-button.btn-success.active,
+.t3-ui input.t3-button.btn-primary:active,
+.t3-ui input.t3-button.btn-primary.active,
+.t3-ui input.t3-button.btn-success:active,
+.t3-ui input.t3-button.btn-success.active,
+.t3-ui a.t3-button.btn-primary:active,
+.t3-ui a.t3-button.btn-primary.active,
+.t3-ui a.t3-button.btn-success:active,
+.t3-ui a.t3-button.btn-success.active {
+  background-color: #53833f \9;
+}
+.t3-ui button.t3-button.btn-primary:hover, .t3-ui button.t3-button.btn-primary:focus, .t3-ui button.t3-button.btn-primary:active, .t3-ui button.t3-button.btn-success:hover, .t3-ui button.t3-button.btn-success:focus, .t3-ui button.t3-button.btn-success:active,
+.t3-ui input.t3-button.btn-primary:hover,
+.t3-ui input.t3-button.btn-primary:focus,
+.t3-ui input.t3-button.btn-primary:active,
+.t3-ui input.t3-button.btn-success:hover,
+.t3-ui input.t3-button.btn-success:focus,
+.t3-ui input.t3-button.btn-success:active,
+.t3-ui a.t3-button.btn-primary:hover,
+.t3-ui a.t3-button.btn-primary:focus,
+.t3-ui a.t3-button.btn-primary:active,
+.t3-ui a.t3-button.btn-success:hover,
+.t3-ui a.t3-button.btn-success:focus,
+.t3-ui a.t3-button.btn-success:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #67a24e;
+  background-image: -moz-linear-gradient(top, #69a550, #659e4d);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#69a550), to(#659e4d));
+  background-image: -webkit-linear-gradient(top, #69a550, #659e4d);
+  background-image: -o-linear-gradient(top, #69a550, #659e4d);
+  background-image: linear-gradient(to bottom, #69a550, #659e4d);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF69A550', endColorstr='#FF659E4D', GradientType=0);
+  border-color: #659e4d #659e4d #446b34;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #659e4d;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #53833f;
+  border-bottom-color: #3d602f;
+}
+.t3-ui button.t3-button.btn-primary:hover:hover, .t3-ui button.t3-button.btn-primary:hover:active, .t3-ui button.t3-button.btn-primary:hover.active, .t3-ui button.t3-button.btn-primary:hover.disabled, .t3-ui button.t3-button.btn-primary:hover[disabled], .t3-ui button.t3-button.btn-primary:focus:hover, .t3-ui button.t3-button.btn-primary:focus:active, .t3-ui button.t3-button.btn-primary:focus.active, .t3-ui button.t3-button.btn-primary:focus.disabled, .t3-ui button.t3-button.btn-primary:focus[disabled], .t3-ui button.t3-button.btn-primary:active:hover, .t3-ui button.t3-button.btn-primary:active:active, .t3-ui button.t3-button.btn-primary:active.active, .t3-ui button.t3-button.btn-primary:active.disabled, .t3-ui button.t3-button.btn-primary:active[disabled], .t3-ui button.t3-button.btn-success:hover:hover, .t3-ui button.t3-button.btn-success:hover:active, .t3-ui button.t3-button.btn-success:hover.active, .t3-ui button.t3-button.btn-success:hover.disabled, .t3-ui button.t3-button.btn-success:hover[disabled], .t3-ui button.t3-button.btn-success:focus:hover, .t3-ui button.t3-button.btn-success:focus:active, .t3-ui button.t3-button.btn-success:focus.active, .t3-ui button.t3-button.btn-success:focus.disabled, .t3-ui button.t3-button.btn-success:focus[disabled], .t3-ui button.t3-button.btn-success:active:hover, .t3-ui button.t3-button.btn-success:active:active, .t3-ui button.t3-button.btn-success:active.active, .t3-ui button.t3-button.btn-success:active.disabled, .t3-ui button.t3-button.btn-success:active[disabled],
+.t3-ui input.t3-button.btn-primary:hover:hover,
+.t3-ui input.t3-button.btn-primary:hover:active,
+.t3-ui input.t3-button.btn-primary:hover.active,
+.t3-ui input.t3-button.btn-primary:hover.disabled,
+.t3-ui input.t3-button.btn-primary:hover[disabled],
+.t3-ui input.t3-button.btn-primary:focus:hover,
+.t3-ui input.t3-button.btn-primary:focus:active,
+.t3-ui input.t3-button.btn-primary:focus.active,
+.t3-ui input.t3-button.btn-primary:focus.disabled,
+.t3-ui input.t3-button.btn-primary:focus[disabled],
+.t3-ui input.t3-button.btn-primary:active:hover,
+.t3-ui input.t3-button.btn-primary:active:active,
+.t3-ui input.t3-button.btn-primary:active.active,
+.t3-ui input.t3-button.btn-primary:active.disabled,
+.t3-ui input.t3-button.btn-primary:active[disabled],
+.t3-ui input.t3-button.btn-success:hover:hover,
+.t3-ui input.t3-button.btn-success:hover:active,
+.t3-ui input.t3-button.btn-success:hover.active,
+.t3-ui input.t3-button.btn-success:hover.disabled,
+.t3-ui input.t3-button.btn-success:hover[disabled],
+.t3-ui input.t3-button.btn-success:focus:hover,
+.t3-ui input.t3-button.btn-success:focus:active,
+.t3-ui input.t3-button.btn-success:focus.active,
+.t3-ui input.t3-button.btn-success:focus.disabled,
+.t3-ui input.t3-button.btn-success:focus[disabled],
+.t3-ui input.t3-button.btn-success:active:hover,
+.t3-ui input.t3-button.btn-success:active:active,
+.t3-ui input.t3-button.btn-success:active.active,
+.t3-ui input.t3-button.btn-success:active.disabled,
+.t3-ui input.t3-button.btn-success:active[disabled],
+.t3-ui a.t3-button.btn-primary:hover:hover,
+.t3-ui a.t3-button.btn-primary:hover:active,
+.t3-ui a.t3-button.btn-primary:hover.active,
+.t3-ui a.t3-button.btn-primary:hover.disabled,
+.t3-ui a.t3-button.btn-primary:hover[disabled],
+.t3-ui a.t3-button.btn-primary:focus:hover,
+.t3-ui a.t3-button.btn-primary:focus:active,
+.t3-ui a.t3-button.btn-primary:focus.active,
+.t3-ui a.t3-button.btn-primary:focus.disabled,
+.t3-ui a.t3-button.btn-primary:focus[disabled],
+.t3-ui a.t3-button.btn-primary:active:hover,
+.t3-ui a.t3-button.btn-primary:active:active,
+.t3-ui a.t3-button.btn-primary:active.active,
+.t3-ui a.t3-button.btn-primary:active.disabled,
+.t3-ui a.t3-button.btn-primary:active[disabled],
+.t3-ui a.t3-button.btn-success:hover:hover,
+.t3-ui a.t3-button.btn-success:hover:active,
+.t3-ui a.t3-button.btn-success:hover.active,
+.t3-ui a.t3-button.btn-success:hover.disabled,
+.t3-ui a.t3-button.btn-success:hover[disabled],
+.t3-ui a.t3-button.btn-success:focus:hover,
+.t3-ui a.t3-button.btn-success:focus:active,
+.t3-ui a.t3-button.btn-success:focus.active,
+.t3-ui a.t3-button.btn-success:focus.disabled,
+.t3-ui a.t3-button.btn-success:focus[disabled],
+.t3-ui a.t3-button.btn-success:active:hover,
+.t3-ui a.t3-button.btn-success:active:active,
+.t3-ui a.t3-button.btn-success:active.active,
+.t3-ui a.t3-button.btn-success:active.disabled,
+.t3-ui a.t3-button.btn-success:active[disabled] {
+  color: white;
+  background-color: #659e4d;
+  *background-color: #5a8d44;
+}
+.t3-ui button.t3-button.btn-primary:hover:active, .t3-ui button.t3-button.btn-primary:hover.active, .t3-ui button.t3-button.btn-primary:focus:active, .t3-ui button.t3-button.btn-primary:focus.active, .t3-ui button.t3-button.btn-primary:active:active, .t3-ui button.t3-button.btn-primary:active.active, .t3-ui button.t3-button.btn-success:hover:active, .t3-ui button.t3-button.btn-success:hover.active, .t3-ui button.t3-button.btn-success:focus:active, .t3-ui button.t3-button.btn-success:focus.active, .t3-ui button.t3-button.btn-success:active:active, .t3-ui button.t3-button.btn-success:active.active,
+.t3-ui input.t3-button.btn-primary:hover:active,
+.t3-ui input.t3-button.btn-primary:hover.active,
+.t3-ui input.t3-button.btn-primary:focus:active,
+.t3-ui input.t3-button.btn-primary:focus.active,
+.t3-ui input.t3-button.btn-primary:active:active,
+.t3-ui input.t3-button.btn-primary:active.active,
+.t3-ui input.t3-button.btn-success:hover:active,
+.t3-ui input.t3-button.btn-success:hover.active,
+.t3-ui input.t3-button.btn-success:focus:active,
+.t3-ui input.t3-button.btn-success:focus.active,
+.t3-ui input.t3-button.btn-success:active:active,
+.t3-ui input.t3-button.btn-success:active.active,
+.t3-ui a.t3-button.btn-primary:hover:active,
+.t3-ui a.t3-button.btn-primary:hover.active,
+.t3-ui a.t3-button.btn-primary:focus:active,
+.t3-ui a.t3-button.btn-primary:focus.active,
+.t3-ui a.t3-button.btn-primary:active:active,
+.t3-ui a.t3-button.btn-primary:active.active,
+.t3-ui a.t3-button.btn-success:hover:active,
+.t3-ui a.t3-button.btn-success:hover.active,
+.t3-ui a.t3-button.btn-success:focus:active,
+.t3-ui a.t3-button.btn-success:focus.active,
+.t3-ui a.t3-button.btn-success:active:active,
+.t3-ui a.t3-button.btn-success:active.active {
+  background-color: #4f7c3c \9;
+}
+.t3-ui button.t3-button.btn-primary.disabled, .t3-ui button.t3-button.btn-primary.disabled:hover, .t3-ui button.t3-button.btn-primary.disabled:active, .t3-ui button.t3-button.btn-primary.disabled:focus, .t3-ui button.t3-button.btn-success.disabled, .t3-ui button.t3-button.btn-success.disabled:hover, .t3-ui button.t3-button.btn-success.disabled:active, .t3-ui button.t3-button.btn-success.disabled:focus,
+.t3-ui input.t3-button.btn-primary.disabled,
+.t3-ui input.t3-button.btn-primary.disabled:hover,
+.t3-ui input.t3-button.btn-primary.disabled:active,
+.t3-ui input.t3-button.btn-primary.disabled:focus,
+.t3-ui input.t3-button.btn-success.disabled,
+.t3-ui input.t3-button.btn-success.disabled:hover,
+.t3-ui input.t3-button.btn-success.disabled:active,
+.t3-ui input.t3-button.btn-success.disabled:focus,
+.t3-ui a.t3-button.btn-primary.disabled,
+.t3-ui a.t3-button.btn-primary.disabled:hover,
+.t3-ui a.t3-button.btn-primary.disabled:active,
+.t3-ui a.t3-button.btn-primary.disabled:focus,
+.t3-ui a.t3-button.btn-success.disabled,
+.t3-ui a.t3-button.btn-success.disabled:hover,
+.t3-ui a.t3-button.btn-success.disabled:active,
+.t3-ui a.t3-button.btn-success.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #71ac58;
+  background-image: -moz-linear-gradient(top, #76b15e, #69a550);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#76b15e), to(#69a550));
+  background-image: -webkit-linear-gradient(top, #76b15e, #69a550);
+  background-image: -o-linear-gradient(top, #76b15e, #69a550);
+  background-image: linear-gradient(to bottom, #76b15e, #69a550);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF76B15E', endColorstr='#FF69A550', GradientType=0);
+  border-color: #69a550 #69a550 #487137;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #69a550;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.t3-ui button.t3-button.btn-primary.disabled:hover, .t3-ui button.t3-button.btn-primary.disabled:active, .t3-ui button.t3-button.btn-primary.disabled.active, .t3-ui button.t3-button.btn-primary.disabled.disabled, .t3-ui button.t3-button.btn-primary.disabled[disabled], .t3-ui button.t3-button.btn-primary.disabled:hover:hover, .t3-ui button.t3-button.btn-primary.disabled:hover:active, .t3-ui button.t3-button.btn-primary.disabled:hover.active, .t3-ui button.t3-button.btn-primary.disabled:hover.disabled, .t3-ui button.t3-button.btn-primary.disabled:hover[disabled], .t3-ui button.t3-button.btn-primary.disabled:active:hover, .t3-ui button.t3-button.btn-primary.disabled:active:active, .t3-ui button.t3-button.btn-primary.disabled:active.active, .t3-ui button.t3-button.btn-primary.disabled:active.disabled, .t3-ui button.t3-button.btn-primary.disabled:active[disabled], .t3-ui button.t3-button.btn-primary.disabled:focus:hover, .t3-ui button.t3-button.btn-primary.disabled:focus:active, .t3-ui button.t3-button.btn-primary.disabled:focus.active, .t3-ui button.t3-button.btn-primary.disabled:focus.disabled, .t3-ui button.t3-button.btn-primary.disabled:focus[disabled], .t3-ui button.t3-button.btn-success.disabled:hover, .t3-ui button.t3-button.btn-success.disabled:active, .t3-ui button.t3-button.btn-success.disabled.active, .t3-ui button.t3-button.btn-success.disabled.disabled, .t3-ui button.t3-button.btn-success.disabled[disabled], .t3-ui button.t3-button.btn-success.disabled:hover:hover, .t3-ui button.t3-button.btn-success.disabled:hover:active, .t3-ui button.t3-button.btn-success.disabled:hover.active, .t3-ui button.t3-button.btn-success.disabled:hover.disabled, .t3-ui button.t3-button.btn-success.disabled:hover[disabled], .t3-ui button.t3-button.btn-success.disabled:active:hover, .t3-ui button.t3-button.btn-success.disabled:active:active, .t3-ui button.t3-button.btn-success.disabled:active.active, .t3-ui button.t3-button.btn-success.disabled:active.disabled, .t3-ui button.t3-button.btn-success.disabled:active[disabled], .t3-ui button.t3-button.btn-success.disabled:focus:hover, .t3-ui button.t3-button.btn-success.disabled:focus:active, .t3-ui button.t3-button.btn-success.disabled:focus.active, .t3-ui button.t3-button.btn-success.disabled:focus.disabled, .t3-ui button.t3-button.btn-success.disabled:focus[disabled],
+.t3-ui input.t3-button.btn-primary.disabled:hover,
+.t3-ui input.t3-button.btn-primary.disabled:active,
+.t3-ui input.t3-button.btn-primary.disabled.active,
+.t3-ui input.t3-button.btn-primary.disabled.disabled,
+.t3-ui input.t3-button.btn-primary.disabled[disabled],
+.t3-ui input.t3-button.btn-primary.disabled:hover:hover,
+.t3-ui input.t3-button.btn-primary.disabled:hover:active,
+.t3-ui input.t3-button.btn-primary.disabled:hover.active,
+.t3-ui input.t3-button.btn-primary.disabled:hover.disabled,
+.t3-ui input.t3-button.btn-primary.disabled:hover[disabled],
+.t3-ui input.t3-button.btn-primary.disabled:active:hover,
+.t3-ui input.t3-button.btn-primary.disabled:active:active,
+.t3-ui input.t3-button.btn-primary.disabled:active.active,
+.t3-ui input.t3-button.btn-primary.disabled:active.disabled,
+.t3-ui input.t3-button.btn-primary.disabled:active[disabled],
+.t3-ui input.t3-button.btn-primary.disabled:focus:hover,
+.t3-ui input.t3-button.btn-primary.disabled:focus:active,
+.t3-ui input.t3-button.btn-primary.disabled:focus.active,
+.t3-ui input.t3-button.btn-primary.disabled:focus.disabled,
+.t3-ui input.t3-button.btn-primary.disabled:focus[disabled],
+.t3-ui input.t3-button.btn-success.disabled:hover,
+.t3-ui input.t3-button.btn-success.disabled:active,
+.t3-ui input.t3-button.btn-success.disabled.active,
+.t3-ui input.t3-button.btn-success.disabled.disabled,
+.t3-ui input.t3-button.btn-success.disabled[disabled],
+.t3-ui input.t3-button.btn-success.disabled:hover:hover,
+.t3-ui input.t3-button.btn-success.disabled:hover:active,
+.t3-ui input.t3-button.btn-success.disabled:hover.active,
+.t3-ui input.t3-button.btn-success.disabled:hover.disabled,
+.t3-ui input.t3-button.btn-success.disabled:hover[disabled],
+.t3-ui input.t3-button.btn-success.disabled:active:hover,
+.t3-ui input.t3-button.btn-success.disabled:active:active,
+.t3-ui input.t3-button.btn-success.disabled:active.active,
+.t3-ui input.t3-button.btn-success.disabled:active.disabled,
+.t3-ui input.t3-button.btn-success.disabled:active[disabled],
+.t3-ui input.t3-button.btn-success.disabled:focus:hover,
+.t3-ui input.t3-button.btn-success.disabled:focus:active,
+.t3-ui input.t3-button.btn-success.disabled:focus.active,
+.t3-ui input.t3-button.btn-success.disabled:focus.disabled,
+.t3-ui input.t3-button.btn-success.disabled:focus[disabled],
+.t3-ui a.t3-button.btn-primary.disabled:hover,
+.t3-ui a.t3-button.btn-primary.disabled:active,
+.t3-ui a.t3-button.btn-primary.disabled.active,
+.t3-ui a.t3-button.btn-primary.disabled.disabled,
+.t3-ui a.t3-button.btn-primary.disabled[disabled],
+.t3-ui a.t3-button.btn-primary.disabled:hover:hover,
+.t3-ui a.t3-button.btn-primary.disabled:hover:active,
+.t3-ui a.t3-button.btn-primary.disabled:hover.active,
+.t3-ui a.t3-button.btn-primary.disabled:hover.disabled,
+.t3-ui a.t3-button.btn-primary.disabled:hover[disabled],
+.t3-ui a.t3-button.btn-primary.disabled:active:hover,
+.t3-ui a.t3-button.btn-primary.disabled:active:active,
+.t3-ui a.t3-button.btn-primary.disabled:active.active,
+.t3-ui a.t3-button.btn-primary.disabled:active.disabled,
+.t3-ui a.t3-button.btn-primary.disabled:active[disabled],
+.t3-ui a.t3-button.btn-primary.disabled:focus:hover,
+.t3-ui a.t3-button.btn-primary.disabled:focus:active,
+.t3-ui a.t3-button.btn-primary.disabled:focus.active,
+.t3-ui a.t3-button.btn-primary.disabled:focus.disabled,
+.t3-ui a.t3-button.btn-primary.disabled:focus[disabled],
+.t3-ui a.t3-button.btn-success.disabled:hover,
+.t3-ui a.t3-button.btn-success.disabled:active,
+.t3-ui a.t3-button.btn-success.disabled.active,
+.t3-ui a.t3-button.btn-success.disabled.disabled,
+.t3-ui a.t3-button.btn-success.disabled[disabled],
+.t3-ui a.t3-button.btn-success.disabled:hover:hover,
+.t3-ui a.t3-button.btn-success.disabled:hover:active,
+.t3-ui a.t3-button.btn-success.disabled:hover.active,
+.t3-ui a.t3-button.btn-success.disabled:hover.disabled,
+.t3-ui a.t3-button.btn-success.disabled:hover[disabled],
+.t3-ui a.t3-button.btn-success.disabled:active:hover,
+.t3-ui a.t3-button.btn-success.disabled:active:active,
+.t3-ui a.t3-button.btn-success.disabled:active.active,
+.t3-ui a.t3-button.btn-success.disabled:active.disabled,
+.t3-ui a.t3-button.btn-success.disabled:active[disabled],
+.t3-ui a.t3-button.btn-success.disabled:focus:hover,
+.t3-ui a.t3-button.btn-success.disabled:focus:active,
+.t3-ui a.t3-button.btn-success.disabled:focus.active,
+.t3-ui a.t3-button.btn-success.disabled:focus.disabled,
+.t3-ui a.t3-button.btn-success.disabled:focus[disabled] {
+  color: white;
+  background-color: #69a550;
+  *background-color: #5e9448;
+}
+.t3-ui button.t3-button.btn-primary.disabled:active, .t3-ui button.t3-button.btn-primary.disabled.active, .t3-ui button.t3-button.btn-primary.disabled:hover:active, .t3-ui button.t3-button.btn-primary.disabled:hover.active, .t3-ui button.t3-button.btn-primary.disabled:active:active, .t3-ui button.t3-button.btn-primary.disabled:active.active, .t3-ui button.t3-button.btn-primary.disabled:focus:active, .t3-ui button.t3-button.btn-primary.disabled:focus.active, .t3-ui button.t3-button.btn-success.disabled:active, .t3-ui button.t3-button.btn-success.disabled.active, .t3-ui button.t3-button.btn-success.disabled:hover:active, .t3-ui button.t3-button.btn-success.disabled:hover.active, .t3-ui button.t3-button.btn-success.disabled:active:active, .t3-ui button.t3-button.btn-success.disabled:active.active, .t3-ui button.t3-button.btn-success.disabled:focus:active, .t3-ui button.t3-button.btn-success.disabled:focus.active,
+.t3-ui input.t3-button.btn-primary.disabled:active,
+.t3-ui input.t3-button.btn-primary.disabled.active,
+.t3-ui input.t3-button.btn-primary.disabled:hover:active,
+.t3-ui input.t3-button.btn-primary.disabled:hover.active,
+.t3-ui input.t3-button.btn-primary.disabled:active:active,
+.t3-ui input.t3-button.btn-primary.disabled:active.active,
+.t3-ui input.t3-button.btn-primary.disabled:focus:active,
+.t3-ui input.t3-button.btn-primary.disabled:focus.active,
+.t3-ui input.t3-button.btn-success.disabled:active,
+.t3-ui input.t3-button.btn-success.disabled.active,
+.t3-ui input.t3-button.btn-success.disabled:hover:active,
+.t3-ui input.t3-button.btn-success.disabled:hover.active,
+.t3-ui input.t3-button.btn-success.disabled:active:active,
+.t3-ui input.t3-button.btn-success.disabled:active.active,
+.t3-ui input.t3-button.btn-success.disabled:focus:active,
+.t3-ui input.t3-button.btn-success.disabled:focus.active,
+.t3-ui a.t3-button.btn-primary.disabled:active,
+.t3-ui a.t3-button.btn-primary.disabled.active,
+.t3-ui a.t3-button.btn-primary.disabled:hover:active,
+.t3-ui a.t3-button.btn-primary.disabled:hover.active,
+.t3-ui a.t3-button.btn-primary.disabled:active:active,
+.t3-ui a.t3-button.btn-primary.disabled:active.active,
+.t3-ui a.t3-button.btn-primary.disabled:focus:active,
+.t3-ui a.t3-button.btn-primary.disabled:focus.active,
+.t3-ui a.t3-button.btn-success.disabled:active,
+.t3-ui a.t3-button.btn-success.disabled.active,
+.t3-ui a.t3-button.btn-success.disabled:hover:active,
+.t3-ui a.t3-button.btn-success.disabled:hover.active,
+.t3-ui a.t3-button.btn-success.disabled:active:active,
+.t3-ui a.t3-button.btn-success.disabled:active.active,
+.t3-ui a.t3-button.btn-success.disabled:focus:active,
+.t3-ui a.t3-button.btn-success.disabled:focus.active {
+  background-color: #53833f \9;
+}
+.t3-ui button.t3-button.btn-danger,
+.t3-ui input.t3-button.btn-danger,
+.t3-ui a.t3-button.btn-danger {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #dc544f;
+  background-image: -moz-linear-gradient(top, #dd5753, #db4f4a);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#dd5753), to(#db4f4a));
+  background-image: -webkit-linear-gradient(top, #dd5753, #db4f4a);
+  background-image: -o-linear-gradient(top, #dd5753, #db4f4a);
+  background-image: linear-gradient(to bottom, #dd5753, #db4f4a);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFDD5753', endColorstr='#FFDB4F4A', GradientType=0);
+  border-color: #db4f4a #db4f4a #b52924;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #db4f4a;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #d94741;
+  border-bottom-color: #ca2e28;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui button.t3-button.btn-danger:hover, .t3-ui button.t3-button.btn-danger:active, .t3-ui button.t3-button.btn-danger.active, .t3-ui button.t3-button.btn-danger.disabled, .t3-ui button.t3-button.btn-danger[disabled],
+.t3-ui input.t3-button.btn-danger:hover,
+.t3-ui input.t3-button.btn-danger:active,
+.t3-ui input.t3-button.btn-danger.active,
+.t3-ui input.t3-button.btn-danger.disabled,
+.t3-ui input.t3-button.btn-danger[disabled],
+.t3-ui a.t3-button.btn-danger:hover,
+.t3-ui a.t3-button.btn-danger:active,
+.t3-ui a.t3-button.btn-danger.active,
+.t3-ui a.t3-button.btn-danger.disabled,
+.t3-ui a.t3-button.btn-danger[disabled] {
+  color: white;
+  background-color: #db4f4a;
+  *background-color: #d73a35;
+}
+.t3-ui button.t3-button.btn-danger:active, .t3-ui button.t3-button.btn-danger.active,
+.t3-ui input.t3-button.btn-danger:active,
+.t3-ui input.t3-button.btn-danger.active,
+.t3-ui a.t3-button.btn-danger:active,
+.t3-ui a.t3-button.btn-danger.active {
+  background-color: #ca2e28 \9;
+}
+.t3-ui button.t3-button.btn-danger:hover, .t3-ui button.t3-button.btn-danger:focus, .t3-ui button.t3-button.btn-danger:active,
+.t3-ui input.t3-button.btn-danger:hover,
+.t3-ui input.t3-button.btn-danger:focus,
+.t3-ui input.t3-button.btn-danger:active,
+.t3-ui a.t3-button.btn-danger:hover,
+.t3-ui a.t3-button.btn-danger:focus,
+.t3-ui a.t3-button.btn-danger:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #da4c46;
+  background-image: -moz-linear-gradient(top, #db4f4a, #d94741);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#db4f4a), to(#d94741));
+  background-image: -webkit-linear-gradient(top, #db4f4a, #d94741);
+  background-image: -o-linear-gradient(top, #db4f4a, #d94741);
+  background-image: linear-gradient(to bottom, #db4f4a, #d94741);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFDB4F4A', endColorstr='#FFD94741', GradientType=0);
+  border-color: #d94741 #d94741 #ac2722;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #d94741;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #d73a35;
+  border-bottom-color: #9f2420;
+}
+.t3-ui button.t3-button.btn-danger:hover:hover, .t3-ui button.t3-button.btn-danger:hover:active, .t3-ui button.t3-button.btn-danger:hover.active, .t3-ui button.t3-button.btn-danger:hover.disabled, .t3-ui button.t3-button.btn-danger:hover[disabled], .t3-ui button.t3-button.btn-danger:focus:hover, .t3-ui button.t3-button.btn-danger:focus:active, .t3-ui button.t3-button.btn-danger:focus.active, .t3-ui button.t3-button.btn-danger:focus.disabled, .t3-ui button.t3-button.btn-danger:focus[disabled], .t3-ui button.t3-button.btn-danger:active:hover, .t3-ui button.t3-button.btn-danger:active:active, .t3-ui button.t3-button.btn-danger:active.active, .t3-ui button.t3-button.btn-danger:active.disabled, .t3-ui button.t3-button.btn-danger:active[disabled],
+.t3-ui input.t3-button.btn-danger:hover:hover,
+.t3-ui input.t3-button.btn-danger:hover:active,
+.t3-ui input.t3-button.btn-danger:hover.active,
+.t3-ui input.t3-button.btn-danger:hover.disabled,
+.t3-ui input.t3-button.btn-danger:hover[disabled],
+.t3-ui input.t3-button.btn-danger:focus:hover,
+.t3-ui input.t3-button.btn-danger:focus:active,
+.t3-ui input.t3-button.btn-danger:focus.active,
+.t3-ui input.t3-button.btn-danger:focus.disabled,
+.t3-ui input.t3-button.btn-danger:focus[disabled],
+.t3-ui input.t3-button.btn-danger:active:hover,
+.t3-ui input.t3-button.btn-danger:active:active,
+.t3-ui input.t3-button.btn-danger:active.active,
+.t3-ui input.t3-button.btn-danger:active.disabled,
+.t3-ui input.t3-button.btn-danger:active[disabled],
+.t3-ui a.t3-button.btn-danger:hover:hover,
+.t3-ui a.t3-button.btn-danger:hover:active,
+.t3-ui a.t3-button.btn-danger:hover.active,
+.t3-ui a.t3-button.btn-danger:hover.disabled,
+.t3-ui a.t3-button.btn-danger:hover[disabled],
+.t3-ui a.t3-button.btn-danger:focus:hover,
+.t3-ui a.t3-button.btn-danger:focus:active,
+.t3-ui a.t3-button.btn-danger:focus.active,
+.t3-ui a.t3-button.btn-danger:focus.disabled,
+.t3-ui a.t3-button.btn-danger:focus[disabled],
+.t3-ui a.t3-button.btn-danger:active:hover,
+.t3-ui a.t3-button.btn-danger:active:active,
+.t3-ui a.t3-button.btn-danger:active.active,
+.t3-ui a.t3-button.btn-danger:active.disabled,
+.t3-ui a.t3-button.btn-danger:active[disabled] {
+  color: white;
+  background-color: #d94741;
+  *background-color: #d5322c;
+}
+.t3-ui button.t3-button.btn-danger:hover:active, .t3-ui button.t3-button.btn-danger:hover.active, .t3-ui button.t3-button.btn-danger:focus:active, .t3-ui button.t3-button.btn-danger:focus.active, .t3-ui button.t3-button.btn-danger:active:active, .t3-ui button.t3-button.btn-danger:active.active,
+.t3-ui input.t3-button.btn-danger:hover:active,
+.t3-ui input.t3-button.btn-danger:hover.active,
+.t3-ui input.t3-button.btn-danger:focus:active,
+.t3-ui input.t3-button.btn-danger:focus.active,
+.t3-ui input.t3-button.btn-danger:active:active,
+.t3-ui input.t3-button.btn-danger:active.active,
+.t3-ui a.t3-button.btn-danger:hover:active,
+.t3-ui a.t3-button.btn-danger:hover.active,
+.t3-ui a.t3-button.btn-danger:focus:active,
+.t3-ui a.t3-button.btn-danger:focus.active,
+.t3-ui a.t3-button.btn-danger:active:active,
+.t3-ui a.t3-button.btn-danger:active.active {
+  background-color: #c12c26 \9;
+}
+.t3-ui button.t3-button.btn-danger.disabled, .t3-ui button.t3-button.btn-danger.disabled:hover, .t3-ui button.t3-button.btn-danger.disabled:active, .t3-ui button.t3-button.btn-danger.disabled:focus,
+.t3-ui input.t3-button.btn-danger.disabled,
+.t3-ui input.t3-button.btn-danger.disabled:hover,
+.t3-ui input.t3-button.btn-danger.disabled:active,
+.t3-ui input.t3-button.btn-danger.disabled:focus,
+.t3-ui a.t3-button.btn-danger.disabled,
+.t3-ui a.t3-button.btn-danger.disabled:hover,
+.t3-ui a.t3-button.btn-danger.disabled:active,
+.t3-ui a.t3-button.btn-danger.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #dd5c57;
+  background-image: -moz-linear-gradient(top, #df645f, #db4f4a);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#df645f), to(#db4f4a));
+  background-image: -webkit-linear-gradient(top, #df645f, #db4f4a);
+  background-image: -o-linear-gradient(top, #df645f, #db4f4a);
+  background-image: linear-gradient(to bottom, #df645f, #db4f4a);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFDF645F', endColorstr='#FFDB4F4A', GradientType=0);
+  border-color: #db4f4a #db4f4a #b52924;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #db4f4a;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.t3-ui button.t3-button.btn-danger.disabled:hover, .t3-ui button.t3-button.btn-danger.disabled:active, .t3-ui button.t3-button.btn-danger.disabled.active, .t3-ui button.t3-button.btn-danger.disabled.disabled, .t3-ui button.t3-button.btn-danger.disabled[disabled], .t3-ui button.t3-button.btn-danger.disabled:hover:hover, .t3-ui button.t3-button.btn-danger.disabled:hover:active, .t3-ui button.t3-button.btn-danger.disabled:hover.active, .t3-ui button.t3-button.btn-danger.disabled:hover.disabled, .t3-ui button.t3-button.btn-danger.disabled:hover[disabled], .t3-ui button.t3-button.btn-danger.disabled:active:hover, .t3-ui button.t3-button.btn-danger.disabled:active:active, .t3-ui button.t3-button.btn-danger.disabled:active.active, .t3-ui button.t3-button.btn-danger.disabled:active.disabled, .t3-ui button.t3-button.btn-danger.disabled:active[disabled], .t3-ui button.t3-button.btn-danger.disabled:focus:hover, .t3-ui button.t3-button.btn-danger.disabled:focus:active, .t3-ui button.t3-button.btn-danger.disabled:focus.active, .t3-ui button.t3-button.btn-danger.disabled:focus.disabled, .t3-ui button.t3-button.btn-danger.disabled:focus[disabled],
+.t3-ui input.t3-button.btn-danger.disabled:hover,
+.t3-ui input.t3-button.btn-danger.disabled:active,
+.t3-ui input.t3-button.btn-danger.disabled.active,
+.t3-ui input.t3-button.btn-danger.disabled.disabled,
+.t3-ui input.t3-button.btn-danger.disabled[disabled],
+.t3-ui input.t3-button.btn-danger.disabled:hover:hover,
+.t3-ui input.t3-button.btn-danger.disabled:hover:active,
+.t3-ui input.t3-button.btn-danger.disabled:hover.active,
+.t3-ui input.t3-button.btn-danger.disabled:hover.disabled,
+.t3-ui input.t3-button.btn-danger.disabled:hover[disabled],
+.t3-ui input.t3-button.btn-danger.disabled:active:hover,
+.t3-ui input.t3-button.btn-danger.disabled:active:active,
+.t3-ui input.t3-button.btn-danger.disabled:active.active,
+.t3-ui input.t3-button.btn-danger.disabled:active.disabled,
+.t3-ui input.t3-button.btn-danger.disabled:active[disabled],
+.t3-ui input.t3-button.btn-danger.disabled:focus:hover,
+.t3-ui input.t3-button.btn-danger.disabled:focus:active,
+.t3-ui input.t3-button.btn-danger.disabled:focus.active,
+.t3-ui input.t3-button.btn-danger.disabled:focus.disabled,
+.t3-ui input.t3-button.btn-danger.disabled:focus[disabled],
+.t3-ui a.t3-button.btn-danger.disabled:hover,
+.t3-ui a.t3-button.btn-danger.disabled:active,
+.t3-ui a.t3-button.btn-danger.disabled.active,
+.t3-ui a.t3-button.btn-danger.disabled.disabled,
+.t3-ui a.t3-button.btn-danger.disabled[disabled],
+.t3-ui a.t3-button.btn-danger.disabled:hover:hover,
+.t3-ui a.t3-button.btn-danger.disabled:hover:active,
+.t3-ui a.t3-button.btn-danger.disabled:hover.active,
+.t3-ui a.t3-button.btn-danger.disabled:hover.disabled,
+.t3-ui a.t3-button.btn-danger.disabled:hover[disabled],
+.t3-ui a.t3-button.btn-danger.disabled:active:hover,
+.t3-ui a.t3-button.btn-danger.disabled:active:active,
+.t3-ui a.t3-button.btn-danger.disabled:active.active,
+.t3-ui a.t3-button.btn-danger.disabled:active.disabled,
+.t3-ui a.t3-button.btn-danger.disabled:active[disabled],
+.t3-ui a.t3-button.btn-danger.disabled:focus:hover,
+.t3-ui a.t3-button.btn-danger.disabled:focus:active,
+.t3-ui a.t3-button.btn-danger.disabled:focus.active,
+.t3-ui a.t3-button.btn-danger.disabled:focus.disabled,
+.t3-ui a.t3-button.btn-danger.disabled:focus[disabled] {
+  color: white;
+  background-color: #db4f4a;
+  *background-color: #d73a35;
+}
+.t3-ui button.t3-button.btn-danger.disabled:active, .t3-ui button.t3-button.btn-danger.disabled.active, .t3-ui button.t3-button.btn-danger.disabled:hover:active, .t3-ui button.t3-button.btn-danger.disabled:hover.active, .t3-ui button.t3-button.btn-danger.disabled:active:active, .t3-ui button.t3-button.btn-danger.disabled:active.active, .t3-ui button.t3-button.btn-danger.disabled:focus:active, .t3-ui button.t3-button.btn-danger.disabled:focus.active,
+.t3-ui input.t3-button.btn-danger.disabled:active,
+.t3-ui input.t3-button.btn-danger.disabled.active,
+.t3-ui input.t3-button.btn-danger.disabled:hover:active,
+.t3-ui input.t3-button.btn-danger.disabled:hover.active,
+.t3-ui input.t3-button.btn-danger.disabled:active:active,
+.t3-ui input.t3-button.btn-danger.disabled:active.active,
+.t3-ui input.t3-button.btn-danger.disabled:focus:active,
+.t3-ui input.t3-button.btn-danger.disabled:focus.active,
+.t3-ui a.t3-button.btn-danger.disabled:active,
+.t3-ui a.t3-button.btn-danger.disabled.active,
+.t3-ui a.t3-button.btn-danger.disabled:hover:active,
+.t3-ui a.t3-button.btn-danger.disabled:hover.active,
+.t3-ui a.t3-button.btn-danger.disabled:active:active,
+.t3-ui a.t3-button.btn-danger.disabled:active.active,
+.t3-ui a.t3-button.btn-danger.disabled:focus:active,
+.t3-ui a.t3-button.btn-danger.disabled:focus.active {
+  background-color: #ca2e28 \9;
+}
+.t3-ui button.t3-button[disabled],
+.t3-ui input.t3-button[disabled],
+.t3-ui a.t3-button[disabled] {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
+  opacity: 0.6;
+  cursor: auto;
+  color: #cccccc;
+}
+.t3-ui button.t3-button[disabled]:hover, .t3-ui button.t3-button[disabled]:focus, .t3-ui button.t3-button[disabled]:active,
+.t3-ui input.t3-button[disabled]:hover,
+.t3-ui input.t3-button[disabled]:focus,
+.t3-ui input.t3-button[disabled]:active,
+.t3-ui a.t3-button[disabled]:hover,
+.t3-ui a.t3-button[disabled]:focus,
+.t3-ui a.t3-button[disabled]:active {
+  background: white;
+  color: #cccccc;
+}
+.t3-ui a.t3-button {
+  display: inline-block;
+}
+
+.t3-ui table.table {
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  border-radius: 6px;
+}
+.t3-ui table.table tbody tr:hover, .t3-ui table.table tbody tr:focus, .t3-ui table.table tbody tr:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+.t3-ui table.table th {
+  font-weight: normal;
+  font-size: 116%;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+.t3-ui table.table.table-striped {
+  background: #aaa;
+}
+.t3-ui table.table tr {
+  color: #e8e8e8;
+}
+.t3-ui table.table tr.muted {
+  color: rgba(0, 0, 0, 0.5);
+}
+.t3-ui table.table tr:last-child {
+  -moz-border-radius-bottomleft: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  -moz-border-radius-bottomright: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+.t3-ui table.table td {
+  line-height: 28px;
+}
+.t3-ui table.table td.folder {
+  background: rgba(0, 0, 0, 0.1);
+}
+.t3-ui table.table td.folder:hover, .t3-ui table.table td.folder:active, .t3-ui table.table td.folder:focus {
+  background: rgba(0, 0, 0, 0.2);
+}
+
 body.t3-ui-controls {
   margin-right: 200px;
   margin-bottom: 26px;
@@ -5155,114 +7397,6 @@ ul.t3-topbar {
 }
 .t3-breadcrumb li:last-child {
   background: url(../Images/ContentModule/breadcrumb-arrow-orange.png) right 50% no-repeat;
-}
-
-button.t3-button.pressed,
-.t3 a.t3-button.pressed {
-  color: white;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #f39518;
-  background-image: -moz-linear-gradient(top, #f59a21, #f18f0b);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f59a21), to(#f18f0b));
-  background-image: -webkit-linear-gradient(top, #f59a21, #f18f0b);
-  background-image: -o-linear-gradient(top, #f59a21, #f18f0b);
-  background-image: linear-gradient(to bottom, #f59a21, #f18f0b);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF59A21', endColorstr='#FFF18F0B', GradientType=0);
-  border-color: #f18f0b #f18f0b #a86408;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #f18f0b;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  border: 1px solid #d9810a;
-  border-bottom-color: #c07209;
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
-  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-button.t3-button.pressed:hover, button.t3-button.pressed:active, button.t3-button.pressed.active, button.t3-button.pressed.disabled, button.t3-button.pressed[disabled],
-.t3 a.t3-button.pressed:hover,
-.t3 a.t3-button.pressed:active,
-.t3 a.t3-button.pressed.active,
-.t3 a.t3-button.pressed.disabled,
-.t3 a.t3-button.pressed[disabled] {
-  color: white;
-  background-color: #f18f0b;
-  *background-color: #d9810a;
-}
-button.t3-button.pressed:active, button.t3-button.pressed.active,
-.t3 a.t3-button.pressed:active,
-.t3 a.t3-button.pressed.active {
-  background-color: #c07209 \9;
-}
-button.t3-button.pressed:hover, button.t3-button.pressed:focus, button.t3-button.pressed:active,
-.t3 a.t3-button.pressed:hover,
-.t3 a.t3-button.pressed:focus,
-.t3 a.t3-button.pressed:active {
-  color: white;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #ed8c0b;
-  background-image: -moz-linear-gradient(top, #f18f0b, #e7890b);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f18f0b), to(#e7890b));
-  background-image: -webkit-linear-gradient(top, #f18f0b, #e7890b);
-  background-image: -o-linear-gradient(top, #f18f0b, #e7890b);
-  background-image: linear-gradient(to bottom, #f18f0b, #e7890b);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF18F0B', endColorstr='#FFE7890B', GradientType=0);
-  border-color: #e7890b #e7890b #9e5e07;
-  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #e7890b;
-  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  border: 1px solid #c07209;
-  border-bottom-color: #8f5507;
-}
-button.t3-button.pressed:hover:hover, button.t3-button.pressed:hover:active, button.t3-button.pressed:hover.active, button.t3-button.pressed:hover.disabled, button.t3-button.pressed:hover[disabled], button.t3-button.pressed:focus:hover, button.t3-button.pressed:focus:active, button.t3-button.pressed:focus.active, button.t3-button.pressed:focus.disabled, button.t3-button.pressed:focus[disabled], button.t3-button.pressed:active:hover, button.t3-button.pressed:active:active, button.t3-button.pressed:active.active, button.t3-button.pressed:active.disabled, button.t3-button.pressed:active[disabled],
-.t3 a.t3-button.pressed:hover:hover,
-.t3 a.t3-button.pressed:hover:active,
-.t3 a.t3-button.pressed:hover.active,
-.t3 a.t3-button.pressed:hover.disabled,
-.t3 a.t3-button.pressed:hover[disabled],
-.t3 a.t3-button.pressed:focus:hover,
-.t3 a.t3-button.pressed:focus:active,
-.t3 a.t3-button.pressed:focus.active,
-.t3 a.t3-button.pressed:focus.disabled,
-.t3 a.t3-button.pressed:focus[disabled],
-.t3 a.t3-button.pressed:active:hover,
-.t3 a.t3-button.pressed:active:active,
-.t3 a.t3-button.pressed:active.active,
-.t3 a.t3-button.pressed:active.disabled,
-.t3 a.t3-button.pressed:active[disabled] {
-  color: white;
-  background-color: #e7890b;
-  *background-color: #cf7b09;
-}
-button.t3-button.pressed:hover:active, button.t3-button.pressed:hover.active, button.t3-button.pressed:focus:active, button.t3-button.pressed:focus.active, button.t3-button.pressed:active:active, button.t3-button.pressed:active.active,
-.t3 a.t3-button.pressed:hover:active,
-.t3 a.t3-button.pressed:hover.active,
-.t3 a.t3-button.pressed:focus:active,
-.t3 a.t3-button.pressed:focus.active,
-.t3 a.t3-button.pressed:active:active,
-.t3 a.t3-button.pressed:active.active {
-  background-color: #b66c08 \9;
-}
-button.t3-button[disabled],
-.t3 a.t3-button[disabled] {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
-  opacity: 0.6;
-  cursor: auto;
-  color: #cccccc;
-}
-button.t3-button[disabled]:hover, button.t3-button[disabled]:focus, button.t3-button[disabled]:active,
-.t3 a.t3-button[disabled]:hover,
-.t3 a.t3-button[disabled]:focus,
-.t3 a.t3-button[disabled]:active {
-  background: white;
-  color: #cccccc;
-}
-
-.t3 a.t3-button {
-  display: inline-block;
 }
 
 .t3-handle {
@@ -6205,42 +8339,68 @@ button.t3-button.t3-connection-status-down {
 .t3-ui .widget {
   overflow: auto;
   margin-bottom: 20px;
-  background-color: #ffffff;
-  border: 1px solid #999;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  *border: 1px solid #999;
+  background-color: #e8e8e8;
+  border: 1px solid #777;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
   border-radius: 6px;
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding-box;
-  background-clip: padding-box;
+  -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  height: 300px;
+  position: relative;
+}
+.t3-ui .widget.has-footer .widget-body {
+  padding-bottom: 60px;
 }
 .t3-ui .widget .widget-header {
   padding: 9px 15px;
-  border-bottom: 1px solid #eee;
 }
 .t3-ui .widget .widget-header h3 {
   margin: 0;
+  font-size: 167%;
+  font-weight: normal;
+  color: #444444;
+  border-bottom: 1px solid #444444;
+}
+.t3-ui .widget .widget-header h3 a {
+  color: #2d2d2d;
+}
+.t3-ui .widget .widget-header img.pull-right {
+  margin-top: 5px;
 }
 .t3-ui .widget .widget-body {
-  max-height: 400px;
   padding: 15px;
   overflow-y: auto;
+}
+.t3-ui .widget .widget-body p {
+  color: #5e5e5e;
 }
 .t3-ui .widget .widget-footer {
   padding: 14px 15px 15px;
   margin-bottom: 0;
   text-align: right;
-  background-color: #f5f5f5;
+  background-color: transparent;
   border-top: 1px solid #ddd;
-  -webkit-border-radius: 0 0 6px 6px;
-  -moz-border-radius: 0 0 6px 6px;
-  border-radius: 0 0 6px 6px;
+  -moz-border-radius-bottomleft: 6px;
+  -webkit-border-bottom-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  -moz-border-radius-bottomright: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  border-bottom-right-radius: 6px;
   *zoom: 1;
-  -webkit-box-shadow: inset 0 1px 0 #ffffff;
-  -moz-box-shadow: inset 0 1px 0 #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff;
+  -webkit-box-shadow: 0 1px 0 white inset;
+  -moz-box-shadow: 0 1px 0 white inset;
+  box-shadow: 0 1px 0 white inset;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .t3-ui .widget .widget-footer:before,
 .t3-ui .widget .widget-footer:after {
@@ -6256,6 +8416,55 @@ button.t3-button.t3-connection-status-down {
 }
 .t3-ui .widget .widget-footer .btn-group .btn + .btn {
   margin-left: -1px;
+}
+
+.t3-ui .alert p {
+  margin: 0px;
+}
+.t3-ui .alert p + p, .t3-ui .alert p + ul {
+  margin-top: 10px;
+}
+.t3-ui .alert ul li {
+  list-style-type: disc;
+}
+.t3-ui .alert a {
+  color: #666666;
+}
+.t3-ui .alert a:hover, .t3-ui .alert a:focus, .t3-ui .alert a:active {
+  color: #888888;
+}
+.t3-ui .alert .close {
+  top: -4px;
+  color: #666666;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1;
+  -webkit-transition-property: color;
+  -moz-transition-property: color;
+  -o-transition-property: color;
+  transition-property: color;
+  -webkit-transition-duration: 0.1s;
+  -moz-transition-duration: 0.1s;
+  -o-transition-duration: 0.1s;
+  transition-duration: 0.1s;
+}
+.t3-ui .alert .close:hover, .t3-ui .alert .close:active, .t3-ui .alert .close:focus {
+  color: #888888;
+}
+
+.t3-ui .modal {
+  top: 120px;
+  margin: 0px 0px 0px -250px;
+  color: #e8e8e8;
+  background: #555;
+  color: #E8E8E8;
+  -webkit-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5) inset;
+  -moz-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5) inset;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5) inset;
+  border: 1px solid #373737;
+}
+.t3-ui .modal h3 {
+  font-size: 146.5%;
+  font-weight: normal;
 }
 
 .popover {
@@ -6399,22 +8608,22 @@ body.t3-ui-previewmode .t3-pageloader-wrapper .t3-pageloader {
 }
 
 .t3-module {
-  margin: 104px 8px 8px 8px;
+  margin: 120px 0px 0px 0px;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 .t3-module h1, .t3-module h2, .t3-module h3, .t3-module h4, .t3-module h5, .t3-module h6 {
   margin-bottom: 0.5em;
 }
 .t3-module a {
-  color: #0088cc;
+  color: white;
   text-decoration: none;
 }
 .t3-module a:hover, .t3-module a:focus, .t3-module a:active {
-  color: #005580;
+  color: #e8e8e8;
   text-decoration: underline;
 }
 .t3-module .t3-content {
-  font-size: 14px;
+  font-size: 100%;
 }
 .t3-module #t3-ui-top {
   -webkit-box-shadow: 0 0 0 transparent;
@@ -6444,23 +8653,21 @@ a.btn:hover {
   text-decoration: none;
 }
 
-.t3-module .alert {
+.t3-ui.t3-module {
+  background: #888888;
+  background: url(../Images/module-bg.jpg) left top repeat;
+}
+.t3-ui.t3-module .alert {
   font-size: 13px;
   line-height: 18px;
 }
-.t3-module.t3-module-management-workspaces td.folder {
-  background-color: #F9F9F9;
-}
-.t3-module.t3-module-management-workspaces td {
-  line-height: 28px;
-}
-.t3-module.t3-module-management-workspaces td.content-type {
+.t3-ui.t3-module.t3-module-management-workspaces td.content-type {
   white-space: nowrap;
 }
-.t3-module.t3-module-management-workspaces td.content-type img {
+.t3-ui.t3-module.t3-module-management-workspaces td.content-type img {
   vertical-align: middle;
 }
-.t3-module.t3-module-management-workspaces td label {
+.t3-ui.t3-module.t3-module-management-workspaces td label {
   padding: 5px 0;
   margin-bottom: 0;
   font-size: inherit;
@@ -6471,24 +8678,667 @@ a.btn:hover {
   -ms-user-select: none;
   user-select: none;
 }
-.t3-module.t3-module-management-workspaces th,
-.t3-module.t3-module-management-workspaces td.actions {
+.t3-ui.t3-module.t3-module-management-workspaces th,
+.t3-ui.t3-module.t3-module-management-workspaces td.actions {
   white-space: nowrap;
 }
-.t3-module.t3-module-management-workspaces i.legend {
+.t3-ui.t3-module.t3-module-management-workspaces i.legend {
   vertical-align: middle;
 }
-.t3-module.t3-module-management-workspaces .fold-toggle {
+.t3-ui.t3-module.t3-module-management-workspaces .fold-toggle {
   cursor: pointer;
 }
-.t3-module.t3-module-management-workspaces td.check,
-.t3-module.t3-module-management-workspaces th.check {
+.t3-ui.t3-module.t3-module-management-workspaces td.check,
+.t3-ui.t3-module.t3-module-management-workspaces th.check {
   width: 12px;
 }
-.t3-module.t3-module-management-workspaces td.legend,
-.t3-module.t3-module-management-workspaces th.legend {
+.t3-ui.t3-module.t3-module-management-workspaces td.legend,
+.t3-ui.t3-module.t3-module-management-workspaces th.legend {
   width: 14px;
+  padding: 8px 10px;
 }
-.t3-module.t3-module-management-workspaces td.actions {
+.t3-ui.t3-module.t3-module-management-workspaces td.actions {
   width: 76px;
+}
+.t3-ui.t3-module.t3-module-management-workspaces tfoot .legend {
+  margin-left: 15px;
+}
+.t3-ui.t3-module .nav-pills > li > a {
+  padding: 0 20px 0 20px;
+  margin: 0px;
+  color: #999999;
+  background: transparent;
+}
+.t3-ui.t3-module .nav-pills > li > a:hover, .t3-ui.t3-module .nav-pills > li > a:active, .t3-ui.t3-module .nav-pills > li > a:focus {
+  color: white;
+  background: transparent;
+}
+.t3-ui.t3-module .nav-pills > li:first-child a {
+  padding-left: 15px;
+}
+.t3-ui.t3-module .nav-pills li.active a,
+.t3-ui.t3-module .nav-pills li.active a:hover,
+.t3-ui.t3-module .nav-pills li.active a:focus,
+.t3-ui.t3-module .nav-pills li.active a:active {
+  background: transparent;
+  color: white;
+  cursor: default;
+}
+.t3-ui.t3-module .t3-content.well {
+  background-color: #777;
+  border-color: #666;
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
+  padding: 0px;
+}
+.t3-ui.t3-module .t3-content.well h1 {
+  padding: 10px 50px 0px 50px;
+}
+.t3-ui.t3-module .t3-content.well p {
+  color: #e8e8e8;
+}
+.t3-ui.t3-module .t3-content.well .alert p {
+  color: inherit;
+}
+.t3-ui.t3-module .t3-content.well .breadcrumb {
+  -moz-border-radius-topleft: 4px;
+  -webkit-border-top-left-radius: 4px;
+  border-top-left-radius: 4px;
+  -moz-border-radius-topright: 4px;
+  -webkit-border-top-right-radius: 4px;
+  border-top-right-radius: 4px;
+  -moz-border-radius-bottomleft: 0px;
+  -webkit-border-bottom-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  -moz-border-radius-bottomright: 0px;
+  -webkit-border-bottom-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  background-color: #666;
+  border-bottom: 1px solid #888888;
+  -webkit-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
+  -moz-box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 1px 0px #666666;
+}
+.t3-ui.t3-module .t3-content.well .breadcrumb li {
+  text-shadow: 0 0 0 transparent;
+  color: #e6e6e6;
+}
+.t3-ui.t3-module .t3-content.well .breadcrumb a {
+  color: #b3b3b3;
+}
+.t3-ui.t3-module .t3-content.well .breadcrumb a:hover, .t3-ui.t3-module .t3-content.well .breadcrumb a:active, .t3-ui.t3-module .t3-content.well .breadcrumb a:focus {
+  color: #e6e6e6;
+  text-decoration: none;
+}
+.t3-ui.t3-module .t3-content.well .t3-module-container {
+  padding: 0px 50px 0px 50px;
+}
+.t3-ui.t3-module .t3-content.well .t3-module-container.indented {
+  margin-left: 0px;
+}
+.t3-ui.t3-module .t3-content.fluid-container h1 {
+  margin-left: 20px;
+}
+.t3-ui.t3-module table td > .t3-button.btn-info,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6e6e6e;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui.t3-module table td > .t3-button.btn-info:hover, .t3-ui.t3-module table td > .t3-button.btn-info:active, .t3-ui.t3-module table td > .t3-button.btn-info.active, .t3-ui.t3-module table td > .t3-button.btn-info.disabled, .t3-ui.t3-module table td > .t3-button.btn-info[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.t3-ui.t3-module table td > .t3-button.btn-info:active, .t3-ui.t3-module table td > .t3-button.btn-info.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active {
+  background-color: #4d4d4d \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-info:hover, .t3-ui.t3-module table td > .t3-button.btn-info:focus, .t3-ui.t3-module table td > .t3-button.btn-info:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #0499d7;
+  background-image: -moz-linear-gradient(top, #049cdb, #0495d1);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#049cdb), to(#0495d1));
+  background-image: -webkit-linear-gradient(top, #049cdb, #0495d1);
+  background-image: -o-linear-gradient(top, #049cdb, #0495d1);
+  background-image: linear-gradient(to bottom, #049cdb, #0495d1);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF049CDB', endColorstr='#FF0495D1', GradientType=0);
+  border-color: #0495d1 #0495d1 #025f86;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #0495d1;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #0378a9;
+  border-bottom-color: #025577;
+}
+.t3-ui.t3-module table td > .t3-button.btn-info:hover:hover, .t3-ui.t3-module table td > .t3-button.btn-info:hover:active, .t3-ui.t3-module table td > .t3-button.btn-info:hover.active, .t3-ui.t3-module table td > .t3-button.btn-info:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn-info:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn-info:focus:hover, .t3-ui.t3-module table td > .t3-button.btn-info:focus:active, .t3-ui.t3-module table td > .t3-button.btn-info:focus.active, .t3-ui.t3-module table td > .t3-button.btn-info:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn-info:focus[disabled], .t3-ui.t3-module table td > .t3-button.btn-info:active:hover, .t3-ui.t3-module table td > .t3-button.btn-info:active:active, .t3-ui.t3-module table td > .t3-button.btn-info:active.active, .t3-ui.t3-module table td > .t3-button.btn-info:active.disabled, .t3-ui.t3-module table td > .t3-button.btn-info:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active[disabled] {
+  color: white;
+  background-color: #0495d1;
+  *background-color: #0383b8;
+}
+.t3-ui.t3-module table td > .t3-button.btn-info:hover:active, .t3-ui.t3-module table td > .t3-button.btn-info:hover.active, .t3-ui.t3-module table td > .t3-button.btn-info:focus:active, .t3-ui.t3-module table td > .t3-button.btn-info:focus.active, .t3-ui.t3-module table td > .t3-button.btn-info:active:active, .t3-ui.t3-module table td > .t3-button.btn-info:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info:active.active {
+  background-color: #03719f \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-info.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #04a7ea;
+  background-image: -moz-linear-gradient(top, #04aef4, #049cdb);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#04aef4), to(#049cdb));
+  background-image: -webkit-linear-gradient(top, #04aef4, #049cdb);
+  background-image: -o-linear-gradient(top, #04aef4, #049cdb);
+  background-image: linear-gradient(to bottom, #04aef4, #049cdb);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF04AEF4', endColorstr='#FF049CDB', GradientType=0);
+  border-color: #049cdb #049cdb #036690;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #049cdb;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #048ac2;
+  border-bottom-color: #0378a9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-info.active:hover, .t3-ui.t3-module table td > .t3-button.btn-info.active:active, .t3-ui.t3-module table td > .t3-button.btn-info.active.active, .t3-ui.t3-module table td > .t3-button.btn-info.active.disabled, .t3-ui.t3-module table td > .t3-button.btn-info.active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active[disabled] {
+  color: white;
+  background-color: #049cdb;
+  *background-color: #048ac2;
+}
+.t3-ui.t3-module table td > .t3-button.btn-info.active:active, .t3-ui.t3-module table td > .t3-button.btn-info.active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info.active.active {
+  background-color: #0378a9 \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6e6e6e;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning:hover, .t3-ui.t3-module table td > .t3-button.btn-warning:active, .t3-ui.t3-module table td > .t3-button.btn-warning.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning:active, .t3-ui.t3-module table td > .t3-button.btn-warning.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.active {
+  background-color: #4d4d4d \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning:hover, .t3-ui.t3-module table td > .t3-button.btn-warning:focus, .t3-ui.t3-module table td > .t3-button.btn-warning:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #ed8c0b;
+  background-image: -moz-linear-gradient(top, #f18f0b, #e7890b);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f18f0b), to(#e7890b));
+  background-image: -webkit-linear-gradient(top, #f18f0b, #e7890b);
+  background-image: -o-linear-gradient(top, #f18f0b, #e7890b);
+  background-image: linear-gradient(to bottom, #f18f0b, #e7890b);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF18F0B', endColorstr='#FFE7890B', GradientType=0);
+  border-color: #e7890b #e7890b #9e5e07;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #e7890b;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #c07209;
+  border-bottom-color: #8f5507;
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning:hover:hover, .t3-ui.t3-module table td > .t3-button.btn-warning:hover:active, .t3-ui.t3-module table td > .t3-button.btn-warning:hover.active, .t3-ui.t3-module table td > .t3-button.btn-warning:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn-warning:focus:hover, .t3-ui.t3-module table td > .t3-button.btn-warning:focus:active, .t3-ui.t3-module table td > .t3-button.btn-warning:focus.active, .t3-ui.t3-module table td > .t3-button.btn-warning:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning:focus[disabled], .t3-ui.t3-module table td > .t3-button.btn-warning:active:hover, .t3-ui.t3-module table td > .t3-button.btn-warning:active:active, .t3-ui.t3-module table td > .t3-button.btn-warning:active.active, .t3-ui.t3-module table td > .t3-button.btn-warning:active.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active[disabled] {
+  color: white;
+  background-color: #e7890b;
+  *background-color: #cf7b09;
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning:hover:active, .t3-ui.t3-module table td > .t3-button.btn-warning:hover.active, .t3-ui.t3-module table td > .t3-button.btn-warning:focus:active, .t3-ui.t3-module table td > .t3-button.btn-warning:focus.active, .t3-ui.t3-module table td > .t3-button.btn-warning:active:active, .t3-ui.t3-module table td > .t3-button.btn-warning:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning:active.active {
+  background-color: #b66c08 \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #f39518;
+  background-image: -moz-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f59a21), to(#f18f0b));
+  background-image: -webkit-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: -o-linear-gradient(top, #f59a21, #f18f0b);
+  background-image: linear-gradient(to bottom, #f59a21, #f18f0b);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF59A21', endColorstr='#FFF18F0B', GradientType=0);
+  border-color: #f18f0b #f18f0b #a86408;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #f18f0b;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled[disabled], .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover:hover, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active:hover, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active[disabled], .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus:hover, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus[disabled] {
+  color: white;
+  background-color: #f18f0b;
+  *background-color: #d9810a;
+}
+.t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus.active {
+  background-color: #c07209 \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-success,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6e6e6e;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui.t3-module table td > .t3-button.btn-success:hover, .t3-ui.t3-module table td > .t3-button.btn-success:active, .t3-ui.t3-module table td > .t3-button.btn-success.active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled, .t3-ui.t3-module table td > .t3-button.btn-success[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.t3-ui.t3-module table td > .t3-button.btn-success:active, .t3-ui.t3-module table td > .t3-button.btn-success.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.active {
+  background-color: #4d4d4d \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-success:hover, .t3-ui.t3-module table td > .t3-button.btn-success:focus, .t3-ui.t3-module table td > .t3-button.btn-success:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #67a24e;
+  background-image: -moz-linear-gradient(top, #69a550, #659e4d);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#69a550), to(#659e4d));
+  background-image: -webkit-linear-gradient(top, #69a550, #659e4d);
+  background-image: -o-linear-gradient(top, #69a550, #659e4d);
+  background-image: linear-gradient(to bottom, #69a550, #659e4d);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF69A550', endColorstr='#FF659E4D', GradientType=0);
+  border-color: #659e4d #659e4d #446b34;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #659e4d;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #53833f;
+  border-bottom-color: #3d602f;
+}
+.t3-ui.t3-module table td > .t3-button.btn-success:hover:hover, .t3-ui.t3-module table td > .t3-button.btn-success:hover:active, .t3-ui.t3-module table td > .t3-button.btn-success:hover.active, .t3-ui.t3-module table td > .t3-button.btn-success:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn-success:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn-success:focus:hover, .t3-ui.t3-module table td > .t3-button.btn-success:focus:active, .t3-ui.t3-module table td > .t3-button.btn-success:focus.active, .t3-ui.t3-module table td > .t3-button.btn-success:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn-success:focus[disabled], .t3-ui.t3-module table td > .t3-button.btn-success:active:hover, .t3-ui.t3-module table td > .t3-button.btn-success:active:active, .t3-ui.t3-module table td > .t3-button.btn-success:active.active, .t3-ui.t3-module table td > .t3-button.btn-success:active.disabled, .t3-ui.t3-module table td > .t3-button.btn-success:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active[disabled] {
+  color: white;
+  background-color: #659e4d;
+  *background-color: #5a8d44;
+}
+.t3-ui.t3-module table td > .t3-button.btn-success:hover:active, .t3-ui.t3-module table td > .t3-button.btn-success:hover.active, .t3-ui.t3-module table td > .t3-button.btn-success:focus:active, .t3-ui.t3-module table td > .t3-button.btn-success:focus.active, .t3-ui.t3-module table td > .t3-button.btn-success:active:active, .t3-ui.t3-module table td > .t3-button.btn-success:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success:active.active {
+  background-color: #4f7c3c \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-success.disabled, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #909090;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #888888;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled.active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled.disabled, .t3-ui.t3-module table td > .t3-button.btn-success.disabled[disabled], .t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover:hover, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active:hover, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active.disabled, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active[disabled], .t3-ui.t3-module table td > .t3-button.btn-success.disabled:focus:hover, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:focus.active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:focus[disabled] {
+  color: white;
+  background-color: #888888;
+  *background-color: #7b7b7b;
+}
+.t3-ui.t3-module table td > .t3-button.btn-success.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled.active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn-success.disabled:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success.disabled:focus.active {
+  background-color: #6f6f6f \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6e6e6e;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger:hover, .t3-ui.t3-module table td > .t3-button.btn-danger:active, .t3-ui.t3-module table td > .t3-button.btn-danger.active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger:active, .t3-ui.t3-module table td > .t3-button.btn-danger.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.active {
+  background-color: #4d4d4d \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger:hover, .t3-ui.t3-module table td > .t3-button.btn-danger:focus, .t3-ui.t3-module table td > .t3-button.btn-danger:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #da4c46;
+  background-image: -moz-linear-gradient(top, #db4f4a, #d94741);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#db4f4a), to(#d94741));
+  background-image: -webkit-linear-gradient(top, #db4f4a, #d94741);
+  background-image: -o-linear-gradient(top, #db4f4a, #d94741);
+  background-image: linear-gradient(to bottom, #db4f4a, #d94741);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFDB4F4A', endColorstr='#FFD94741', GradientType=0);
+  border-color: #d94741 #d94741 #ac2722;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #d94741;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #ca2e28;
+  border-bottom-color: #9f2420;
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger:hover:hover, .t3-ui.t3-module table td > .t3-button.btn-danger:hover:active, .t3-ui.t3-module table td > .t3-button.btn-danger:hover.active, .t3-ui.t3-module table td > .t3-button.btn-danger:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn-danger:focus:hover, .t3-ui.t3-module table td > .t3-button.btn-danger:focus:active, .t3-ui.t3-module table td > .t3-button.btn-danger:focus.active, .t3-ui.t3-module table td > .t3-button.btn-danger:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger:focus[disabled], .t3-ui.t3-module table td > .t3-button.btn-danger:active:hover, .t3-ui.t3-module table td > .t3-button.btn-danger:active:active, .t3-ui.t3-module table td > .t3-button.btn-danger:active.active, .t3-ui.t3-module table td > .t3-button.btn-danger:active.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active[disabled] {
+  color: white;
+  background-color: #d94741;
+  *background-color: #d5322c;
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger:hover:active, .t3-ui.t3-module table td > .t3-button.btn-danger:hover.active, .t3-ui.t3-module table td > .t3-button.btn-danger:focus:active, .t3-ui.t3-module table td > .t3-button.btn-danger:focus.active, .t3-ui.t3-module table td > .t3-button.btn-danger:active:active, .t3-ui.t3-module table td > .t3-button.btn-danger:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger:active.active {
+  background-color: #c12c26 \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #909090;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #888888;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled.active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled[disabled], .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover:hover, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active:hover, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active[disabled], .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:focus:hover, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:focus.active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:focus[disabled] {
+  color: white;
+  background-color: #888888;
+  *background-color: #7b7b7b;
+}
+.t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled.active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn-danger.disabled:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn-danger.disabled:focus.active {
+  background-color: #6f6f6f \9;
 }

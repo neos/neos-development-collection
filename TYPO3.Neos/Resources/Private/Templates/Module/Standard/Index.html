@@ -6,7 +6,7 @@
 		<f:for each="{moduleConfiguration.submodules}" key="submoduleIdentifier" as="submoduleConfiguration">
 			<f:cycle values="{0: 1, 1: 2, 2: 3}" as="cycle">
 				<f:if condition="{cycle} == 1">
-					<div class="row">
+					<div class="fluid-row">
 				</f:if>
 				<div class="span4">
 					<t:standaloneView templatePathAndFilename="{f:if(condition: submoduleConfiguration.widgetTemplatePathAndFileName, then: submoduleConfiguration.widgetTemplatePathAndFileName, else: settings.moduleConfiguration.widgetTemplatePathAndFileName)}" arguments="{moduleConfiguration: moduleConfiguration, submoduleIdentifier: submoduleIdentifier, submoduleConfiguration: submoduleConfiguration}" />

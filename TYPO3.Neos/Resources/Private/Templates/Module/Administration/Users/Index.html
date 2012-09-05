@@ -1,21 +1,34 @@
-<f:layout name="BackendModule" />
+<f:layout name="BackendSubModule" />
 
 <f:section name="content">
-	<f:link.action action="new" class="btn">
-		<i class="icon-user"></i>
-		New account
-	</f:link.action><br /><br />
 
-	<table class="table">
-		<f:for each="{accounts}" as="account">
-			<tr>
-				<td><f:link.action action="edit" arguments="{account: account}">{account.accountIdentifier}</f:link.action></td>
-				<td>{account.party.name}</td>
-				<td><f:link.action action="delete" arguments="{account: account}" class="btn btn-danger">
-					<i class="icon-white icon-trash"></i>
-					Delete
-				</f:link.action></td>
-			</tr>
-		</f:for>
-	</table>
+	<div class="row t3-module-container indented">
+		<f:link.action action="new" class="btn t3-button btn-primary">
+			<i class="icon-user icon-white"></i>
+			New account
+		</f:link.action>
+
+		<br /><br />
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Alias</th>
+					<th>Name</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<f:for each="{accounts}" as="account">
+				<tr>
+					<td><f:link.action action="edit" arguments="{account: account}">{account.accountIdentifier}</f:link.action></td>
+					<td>{account.party.name}</td>
+					<td><f:link.action action="delete" arguments="{account: account}" class="btn btn-danger t3-button">
+						<i class="icon-white icon-trash"></i>
+						Delete
+					</f:link.action></td>
+				</tr>
+			</f:for>
+		</table>
+	</div>
+
 </f:section>

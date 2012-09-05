@@ -1,23 +1,24 @@
 // Management View
 
 .t3-module {
-	margin: 104px 8px 8px 8px;
+	margin: 120px 0px 0px 0px;
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+
 	h1, h2, h3, h4, h5, h6 {
 		margin-bottom: 0.5em;
 	}
 	a {
-		color: #0088cc;
+		color: $lightest;
 		text-decoration: none;
 		&:hover,
 		&:focus,
 		&:active {
-			color: #005580;
+			color: $light-grey;
 			text-decoration: underline;
 		}
 	}
 	.t3-content {
-		font-size: 14px;
+		font-size: 100%;
 	}
 	#t3-ui-top {
 		@include single-box-shadow(transparent, 0, 0, 0);

@@ -1,52 +1,57 @@
-<fieldset>
+<fieldset class="span5">
 	<legend>Account</legend>
 
 	<div class="control-group">
 		<label class="control-label">Username</label>
 		<div class="controls">
-			<f:form.textfield property="accountIdentifier" />
+			<f:form.textfield property="accountIdentifier" class="span3" />
 		</div>
 	</div>
 
 	<div class="control-group">
 		<label class="control-label">Password</label>
 		<div class="controls">
-			<f:form.password name="password[0]" />
+			<f:form.password name="password[0]" class="span3" />
 		</div>
 	</div>
 
 	<div class="control-group">
 		<label class="control-label">Repeat password</label>
 		<div class="controls">
-			<f:form.password name="password[1]" />
+			<f:form.password name="password[1]" class="span3" />
 		</div>
 	</div>
 </fieldset>
 
-<fieldset>
+<fieldset class="span5">
 	<legend>Personal Data</legend>
 
 	<div class="control-group">
 		<label class="control-label">Title</label>
-		<div class="controls">
-			<f:form.textfield property="party.name.title" />
+		<div class="controls controls-row">
+			<f:form.textfield property="party.name.title" class="span3" />
 		</div>
 	</div>
 
 	<div class="control-group">
-		<label class="control-label">Name</label>
-		<div class="controls">
-			<f:form.textfield class="span2" property="party.name.firstName" placeholder="First Name" />
-			<f:form.textfield class="span1" property="party.name.middleName" placeholder="Middle Name" />
-			<f:form.textfield class="span2" property="party.name.lastName" placeholder="Last Name"/>
-			<f:form.textfield class="span1" property="party.name.otherName" placeholder="Other Name" />
+		<label class="control-label">First Name</label>
+		<div class="controls controls-row">
+			<f:form.textfield property="party.name.firstName" placeholder="First Name" class="span3" />
+			<f:form.textfield property="party.name.middleName" placeholder="Middle Name" class="span2" />
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Last Name</label>
+		<div class="controls controls-row">
+			<f:form.textfield property="party.name.lastName" placeholder="Last Name" class="span3" />
+			<f:form.textfield property="party.name.otherName" placeholder="Other Name" class="span2" />
 		</div>
 	</div>
 
 	<div class="control-group">
 		<label class="control-label">Alias</label>
 		<div class="controls">
-			<f:form.textfield property="party.name.alias" />
+			<f:form.textfield property="party.name.alias" class="span3" />
 		</div>
 	</div>
 

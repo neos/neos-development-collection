@@ -1,15 +1,19 @@
-<f:layout name="BackendModule" />
+<f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<h2>Edit account "{account.accountIdentifier}"</h2>
+	<div class="row t3-module-container indented">
+		<h2>Edit account "{account.accountIdentifier}"</h2>
+	</div>
 </f:section>
 <f:section name="content">
-	<f:form action="update" name="account" object="{account}" class="form-horizontal">
-		<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
+	<f:form action="update" name="account" object="{account}">
+		<div class="row t3-module-container">
+			<f:render partial="Module/Shared/EditUserSettingsForm" arguments="{_all}" />
+		</div>
 
-		<div class="form-actions">
-			<f:form.submit value="Save" class="btn btn-primary" />
-			<f:link.action class="btn">Back</f:link.action>
+		<div class="form-actions form-footer">
+			<f:link.action class="btn t3-button">Back</f:link.action>
+			<f:form.submit value="Save" class="btn btn-primary t3-button" />
 		</div>
 	</f:form>
 </f:section>

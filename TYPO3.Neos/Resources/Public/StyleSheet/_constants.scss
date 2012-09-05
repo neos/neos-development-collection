@@ -11,21 +11,26 @@ $max-image-width: 160px;
 $max-image-height: 160px;
 
 $green: #69A550;
-$light-green: #54974a;
+$light-green: #54974A;
 $orange: #F18F0B;
-$light-orange: #ff8700;
+$light-orange: #FF8700;
+$red: #DB4F4A;
+$blue: #049cdb;
 
 $lightest: #FFFFFF;
 
-$light-grey: #e8e8e8;
-$light-grey2: #cccccc;
+$light-grey: #E8E8E8;
+$light-grey2: #CCCCCC;
 $light-grey3: #888888;
 $light-grey4: #666666;
 $dark-grey2: #444444;
 $dark-grey3: #373737;
-$dark-grey: #2d2d2d;
+$dark-grey: #2D2D2D;
 
 $darkest: #000000;
+
+$baseFontSize: 100%;
+$grayDark: $dark-grey2;
 
 // Mixins //
 // Use Compass for CSS3 Mixins!

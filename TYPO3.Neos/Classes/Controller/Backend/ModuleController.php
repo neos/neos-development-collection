@@ -68,7 +68,9 @@ class ModuleController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 			'moduleContents' => $moduleResponse->getContent(),
 			'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
 			'rootModule' => array_shift($modules),
-			'breadcrumb' => $breadcrumb
+			'submodule' => array_shift($modules),
+			'breadcrumb' => $breadcrumb,
+			'moduleConfiguration' => $moduleConfiguration
 		));
 	}
 

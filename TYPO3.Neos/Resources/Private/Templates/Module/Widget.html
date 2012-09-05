@@ -1,5 +1,5 @@
 {namespace t=TYPO3\TYPO3\ViewHelpers}
-<div class="widget">
+<div class="widget {f:if(condition: '{submoduleConfiguration.actions}', then: 'has-footer')}">
 	<div class="widget-header">
 		<f:if condition="{submoduleConfiguration.icon}">
 			<img src="{f:uri.resource(uri: submoduleConfiguration.icon)}" class="pull-right" />
@@ -18,7 +18,7 @@
 	<f:if condition="{submoduleConfiguration.actions}">
 		<div class="widget-footer">
 			<f:for each="{submoduleConfiguration.actions}" as="actionConfiguration" key="submoduleAction">
-				<t:link.module title="{actionConfiguration.title}" class="btn btn-primary" path="{f:if(condition: actionConfiguration.path, then: actionConfiguration.path, else: '{moduleConfiguration.path}/{submoduleIdentifier}/{submoduleAction}')}">{actionConfiguration.label}</t:link.module>
+				<t:link.module title="{actionConfiguration.title}" class="btn btn-primary t3-button" path="{f:if(condition: actionConfiguration.path, then: actionConfiguration.path, else: '{moduleConfiguration.path}/{submoduleIdentifier}/{submoduleAction}')}">{actionConfiguration.label}</t:link.module>
 			</f:for>
 		</div>
 	</f:if>
