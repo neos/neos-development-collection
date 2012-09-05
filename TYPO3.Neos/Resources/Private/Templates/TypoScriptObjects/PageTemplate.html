@@ -17,7 +17,8 @@
 
 		<ts:renderTypoScript path="backendHeader" />
 	</head>
-	<body {bodyAttributes -> f:format.raw()}>
+
+	<body<f:if condition="{bodyAttributes}"><f:for each="{bodyAttributes}" key="attribute" as="value"> {attribute}="{value -> f:format.raw()}"</f:for></f:if>>
 
 		<!-- TODO: add the page properties in a more clever way, and only when being in backend... -->
 
