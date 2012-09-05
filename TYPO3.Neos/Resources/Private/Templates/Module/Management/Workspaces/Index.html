@@ -131,16 +131,20 @@
 				if ($(this).is(':checked')) {
 					value = true;
 					$('.nodes-action').removeClass('disabled');
+					$('.nodes-action').removeAttr('disabled')
 				} else {
 					$('.nodes-action').addClass('disabled');
+					$('.nodes-action').attr('disabled', 'disabled');
 				}
 				$('tbody input[type="checkbox"]').attr('checked', value);
 			});
 			$('tbody input[type="checkbox"]').change(function() {
 				if ($('tbody input[type="checkbox"]:checked').length > 0) {
 					$('.nodes-action').removeClass('disabled');
+					$('.nodes-action').removeAttr('disabled')
 				} else {
 					$('.nodes-action').addClass('disabled');
+					$('.nodes-action').attr('disabled', 'disabled');
 				}
 			});
 			$('.fold-toggle').click(function() {
@@ -154,11 +158,11 @@
 <f:section name="actions">
 	<div class="form-actions form-footer">
 		<div class="pull-left">
-			<button type="submit" name="moduleArguments[action]" value="publish" class="btn btn-success disabled nodes-action t3-button">
+			<button type="submit" name="moduleArguments[action]" value="publish" class="btn btn-success disabled nodes-action t3-button" disabled="disabled">
 				<i class="icon-ok-circle icon-white"></i>
 				Publish <strong>selected</strong> changes
 			</button>
-			<button type="submit" name="moduleArguments[action]" value="discard" class="btn btn-warning disabled nodes-action t3-button">
+			<button type="submit" name="moduleArguments[action]" value="discard" class="btn btn-warning disabled nodes-action t3-button" disabled="disabled">
 				<i class="icon-remove-circle icon-white"></i>
 				Discard <strong>selected</strong> changes
 			</button>
