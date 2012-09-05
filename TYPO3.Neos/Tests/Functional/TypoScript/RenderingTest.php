@@ -231,7 +231,7 @@ class RenderingTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	protected function simulateRendering($additionalTypoScriptFile = NULL, $debugMode = FALSE) {
 		$typoScriptRuntime = $this->parseTypoScript($additionalTypoScriptFile);
 		if ($debugMode) {
-			$typoScriptRuntime->injectSettings(array('debugMode' => TRUE));
+			$typoScriptRuntime->injectSettings(array('debugMode' => TRUE, 'catchRuntimeExceptions' => FALSE));
 		}
 		$typoScriptRuntime->pushContextArray(array('node' => $this->node));
 		$output = $typoScriptRuntime->render('page1');
