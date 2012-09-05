@@ -197,6 +197,15 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Returns the parent node path
+	 *
+	 * @return string Absolute node path of the parent node
+	 */
+	public function getParentPath() {
+		return (isset($this->newNode) ? $this->newNode->getParentPath() : $this->originalNode->getParentPath());
+	}
+
+	/**
 	 * Moves this node before the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode

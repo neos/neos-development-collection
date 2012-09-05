@@ -132,6 +132,13 @@ interface NodeInterface {
 	public function getParent();
 
 	/**
+	 * Returns the parent node path
+	 *
+	 * @return string Absolute node path of the parent node
+	 */
+	public function getParentPath();
+
+	/**
 	 * Moves this node before the given node
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
