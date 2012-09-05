@@ -26,10 +26,16 @@ class StandardController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected $moduleConfiguration;
 
 	/**
+	 * @var array
+	 */
+	protected $moduleBreadcrumb;
+
+	/**
 	 * @return void
 	 */
 	protected function initializeAction() {
 		$this->moduleConfiguration = $this->request->getInternalArgument('__moduleConfiguration');
+		$this->moduleBreadcrumb = $this->request->getInternalArgument('__moduleBreadcrumb');
 	}
 
 	/**
@@ -37,7 +43,10 @@ class StandardController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @return void
 	 */
 	protected function initializeView(\TYPO3\FLOW3\Mvc\View\ViewInterface $view) {
-		$view->assign('moduleConfiguration', $this->moduleConfiguration);
+		$view->assignMultiple(array(
+			'moduleConfiguration', $this->moduleConfiguration,
+			'moduleBreadcrumb' => $this->moduleBreadcrumb
+		));
 	}
 
 	/**

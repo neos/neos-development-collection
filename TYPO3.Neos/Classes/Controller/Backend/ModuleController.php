@@ -48,28 +48,28 @@ class ModuleController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		$moduleConfiguration = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', explode('/', $module['module'])));
 		$moduleConfiguration['path'] = $module['module'];
 
-		$moduleRequest->setArgument('__moduleConfiguration', $moduleConfiguration);
-
-		$moduleResponse = new Response($this->response);
-
-		$this->dispatcher->dispatch($moduleRequest, $moduleResponse);
-
-		$breadcrumb = array();
+		$moduleBreadcrumb = array();
 		$path = array();
 		$modules = explode('/', $module['module']);
 		foreach ($modules as $moduleIdentifier) {
 			array_push($path, $moduleIdentifier);
 			$config = \TYPO3\FLOW3\Utility\Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $path));
-			$breadcrumb[implode('/', $path)] = $config['label'];
+			$moduleBreadcrumb[implode('/', $path)] = $config['label'];
 		}
 
+		$moduleRequest->setArgument('__moduleConfiguration', $moduleConfiguration);
+		$moduleRequest->setArgument('__moduleBreadcrumb', $moduleBreadcrumb);
+
+		$moduleResponse = new Response($this->response);
+
+		$this->dispatcher->dispatch($moduleRequest, $moduleResponse);
+
 		$this->view->assignMultiple(array(
-			'moduleClass' => strtolower(implode('-', $breadcrumb)),
+			'moduleClass' => strtolower(implode('-', $moduleBreadcrumb)),
 			'moduleContents' => $moduleResponse->getContent(),
 			'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
 			'rootModule' => array_shift($modules),
 			'submodule' => array_shift($modules),
-			'breadcrumb' => $breadcrumb,
 			'moduleConfiguration' => $moduleConfiguration
 		));
 	}

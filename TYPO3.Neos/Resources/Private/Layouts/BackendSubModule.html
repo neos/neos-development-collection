@@ -1,39 +1,28 @@
+{namespace t=TYPO3\TYPO3\ViewHelpers}
 <div class="t3-content container well">
+
+	<ul class="breadcrumb">
+		<f:for each="{moduleBreadcrumb}" key="path" as="name" iteration="iterator">
+			<li>
+				<t:link.module path="{path}">{name}</t:link.module>
+				<f:if condition="{iterator.isLast}"><f:else><span class="divider">&gt;</span></f:else></f:if>
+			</li>
+		</f:for>
+	</ul>
 
 	<h1>{moduleConfiguration.label}</h1>
 
 	<f:render section="subtitle" optional="1" />
 
 	<div class="row t3-module-container indented">
-		<f:flashMessages as="flashMessages">
-			<f:for each="{flashMessages}" as="flashMessage">
-				<f:if condition="{0: flashMessage.severity} == {0: 'OK'}">
-					<div class="alert alert-success">
-				</f:if>
-				<f:if condition="{0: flashMessage.severity} == {0: 'Notice'}">
-					<div class="alert alert-notice">
-				</f:if>
-				<f:if condition="{0: flashMessage.severity} == {0: 'Warning'}">
-					<div class="alert alert-warning">
-				</f:if>
-				<f:if condition="{0: flashMessage.severity} == {0: 'Error'}">
-					<div class="alert alert-error">
-				</f:if>
-					<a class="close" data-dismiss="alert" href="#">×</a>
-					<f:if condition="{flashMessage.title}">
-						<h4 class="alert-heading">{flashMessage.title}</h4>
-					</f:if>
-					{flashMessage}
-				</div>
-			</f:for>
-		</f:flashMessages>
+		<f:render partial="Module/FlashMessages" />
 	</div>
 
 	<f:form.validationResults>
 		<f:if condition="{validationResults.flattenedErrors}">
 			<div class="row t3-module-container indented">
 				<div class="alert alert-error">
-					<p><strong>The following errors occured</strong></p>
+					<p><strong>The following errors occurred</strong></p>
 					<ul class="error">
 						<f:for each="{validationResults.flattenedErrors}" key="propertyPath" as="errors">
 							<li>{propertyPath}: <f:for each="{errors}" as="error">{error}</f:for></li>
