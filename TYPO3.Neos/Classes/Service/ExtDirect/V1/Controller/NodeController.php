@@ -180,8 +180,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 				$node->moveBefore($targetNode);
 			break;
 			case 'into':
-				// TODO: Create a moveInto action on the node domain
-				// $node->moveInto($targetNode);
+				$node->moveInto($targetNode);
 			break;
 			case 'after':
 				$node->moveAfter($targetNode);
@@ -214,6 +213,19 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	public function moveAfterAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
 		$node->moveAfter($targetNode);
+		$this->view->assign('value', array('success' => TRUE));
+	}
+
+	/**
+	 * Move $node into $targetNode
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function moveIntoAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode) {
+		$node->moveInto($targetNode);
 		$this->view->assign('value', array('success' => TRUE));
 	}
 
