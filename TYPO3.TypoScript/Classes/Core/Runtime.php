@@ -158,7 +158,7 @@ class Runtime {
 				$output = sprintf('%1$s<!-- Beginning to render TS path "%2$s" (Context: %3$s) -->%4$s%1$s<!-- End to render TS path "%2$s" (Context: %3$s) -->',
 					chr(10),
 					$typoScriptPath,
-					$this->getCurrentContext(),
+					implode(', ', array_keys($this->getCurrentContext())),
 					$output
 				);
 			}
