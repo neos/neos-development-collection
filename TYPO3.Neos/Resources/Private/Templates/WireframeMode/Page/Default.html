@@ -1,0 +1,47 @@
+{namespace ts=TYPO3\TypoScript\ViewHelpers}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" xmlns:bootstrap="http://typo3.org/ns/Twitter/Bootstrap/ViewHelpers">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<meta name="DC.title" content="" />
+		<meta name="DC.creator" content="" />
+		<title>Wireframe Mode</title>
+		<f:base/>
+		<f:section name="headerIncludes">
+			<bootstrap:include />
+			<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'StyleSheet/wireframeMode.css', package: 'TYPO3.TYPO3')}" />
+		</f:section>
+	</head>
+	<body>
+		<f:section name="body">
+			<div class="container-fluid">
+				<div class="row-fluid">
+					<div class="span2">
+						<div class="well t3-reloadable-content" id="t3-ui-wireframe-menu">
+							<ts:renderTypoScript path="parts/menu" />
+						</div>
+					</div>
+					<div class="span10">
+						<nav class="breadcrumb t3-reloadable-content" id="t3-ui-wireframe-breadcrumb">
+							<ts:renderTypoScript path="parts/breadcrumb" />
+						</nav>
+						<section class="row-fluid">
+							<div class="span4">
+								<div class="input-append">
+									<input type="text" class="span8" id="t3-ui-createsection-input" placeholder="Name for a new content section">
+									<button class="btn btn-warning" id="t3-ui-createsection-button" type="button">Create section</button>
+								</div>
+							</div>
+						</section>
+						<div class="t3-reloadable-content" id="t3-ui-wireframe-sections-container">
+							<ts:renderTypoScript path="sections/all" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</f:section>
+	</body>
+</html>

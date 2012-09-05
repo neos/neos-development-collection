@@ -51,6 +51,62 @@ function(jQuery) {
 	});
 
 	/**
+	 * This controller toggles the wireframe mode on and off.
+	 */
+	var Wireframe = Ember.Object.create({
+		wireframeMode: false,
+
+		init: function() {
+			if (T3.Common.LocalStorage.getItem('wireframeMode') === true) {
+				this.toggleWireframeMode();
+				$('#t3-ui-createsection-input').keypress(function(e) {
+					if ((e.keyCode || e.which) === 13) {
+						$('#t3-ui-createsection-button').click();
+					}
+				});
+				$('#t3-ui-createsection-button').click(function() {
+					var newSectionName = $('#t3-ui-createsection-input').val();
+					if (newSectionName === '') {
+						T3.Common.Notification.error('You need to give a name for the new content section.');
+					} else {
+						T3.Content.Controller.Wireframe.createSection(newSectionName);
+					}
+				});
+			}
+		},
+
+		toggleWireframeMode: function() {
+			this.set('wireframeMode', !this.get('wireframeMode'));
+		},
+
+		onWireframeModeChange: function () {
+			var wireframeMode;
+			wireframeMode = this.get('wireframeMode');
+			if (typeof TYPO3_TYPO3_Service_ExtDirect_V1_Controller_UserController === 'object') {
+				T3.ContentModule._showPageLoader();
+				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.wireframeMode': wireframeMode}, function() {
+					T3.Common.LocalStorage.setItem('wireframeMode', wireframeMode);
+					window.location.reload(false);
+				});
+			}
+		}.observes('wireframeMode'),
+
+		createSection: function(sectionName) {
+			var pageBlock = T3.Content.Model.BlockManager.get('_pageBlock');
+			T3.ContentModule._showPageLoader();
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(pageBlock.get('__nodePath'), {
+				contentType: 'TYPO3.TYPO3:Section',
+				nodeName: sectionName
+			}, 0,
+			function (result) {
+				if (result.success == true) {
+					T3.ContentModule.reloadPage();
+				}
+			});
+		}
+	});
+
+	/**
 	 * This controller toggles the inspection mode on and off.
 	 *
 	 * @TODO: rename differently, because it is too similar with "Inspector"
@@ -503,6 +559,7 @@ function(jQuery) {
 
 	T3.Content.Controller = {
 		Preview: Preview,
+		Wireframe: Wireframe,
 		Inspect: Inspect,
 		BlockActions: BlockActions,
 		Inspector: Inspector,

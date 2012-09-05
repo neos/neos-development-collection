@@ -1,0 +1,161 @@
+.t3-wireframeMode {
+  background: url("../Images/WireframeMode/GraphGrid.png");
+  padding: 15px;
+}
+.t3-wireframeMode .breadcrumb {
+  background: #444444;
+  color: #fff;
+}
+.t3-wireframeMode .breadcrumb a {
+  color: #fff;
+}
+.t3-wireframeMode #t3-ui-wireframe-menu {
+  padding: 10px 5px;
+}
+.t3-wireframeMode .well {
+  background: #444444;
+}
+.t3-wireframeMode .well .nav-list a {
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+.t3-wireframeMode .well .nav-list a:hover {
+  color: #ff8700;
+  text-decoration: none;
+}
+.t3-wireframeMode .well .nav-list > .active > a, .t3-wireframeMode .well .nav-list > .active > a:hover {
+  background: transparent;
+  color: #fff;
+}
+.t3-wireframeMode .well .nav-list .current > a, .t3-wireframeMode .well .nav-list .current > a:hover {
+  background: transparent;
+  color: #ff8700;
+}
+.t3-wireframeMode .well ul {
+  list-style: none;
+  margin: 0 0 0 10px;
+}
+.t3-wireframeMode .well ul a {
+  color: #fff;
+  font-size: 12px;
+}
+.t3-wireframeMode .t3-create-new-content {
+  margin-top: 15px;
+}
+.t3-wireframeMode .container:before, .t3-wireframeMode .container:after {
+  display: table;
+  content: "";
+  clear: both;
+}
+.t3-wireframeMode .container .column {
+  float: left;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-50-50 .column {
+  width: 48%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-50-50 .column:last-child {
+  margin-right: 0;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-75-25 .column:first-child {
+  width: 73%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-75-25 .column:last-child {
+  width: 23%;
+  margin-right: 0;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-25-75 .column:first-child {
+  width: 23%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-25-75 .column:last-child {
+  width: 73%;
+  margin-right: 0%;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-66-33 .column:first-child {
+  width: 64.5%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-66-33 .column:last-child {
+  width: 31.5%;
+  margin-right: 0;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-33-66 .column:first-child {
+  width: 31.5%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .columns-33-66 .column:last-child {
+  width: 64.5%;
+  margin-right: 0%;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-33-33-33 .column {
+  width: 30.66666666666%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-33-33-33 .column:last-child {
+  margin-right: 0;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-50-25-25 .column {
+  width: 22%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-50-25-25 .column:first-child {
+  width: 48%;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-50-25-25 .column:last-child {
+  margin-right: 0;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-50-25 .column {
+  width: 22%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-50-25 .column:nth-child(2) {
+  width: 48%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-50-25 .column:last-child {
+  margin-right: 0%;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-25-50 .column {
+  width: 22%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-threecolumn .columns-25-25-50 .column:last-child {
+  width: 48%;
+  margin-right: 0;
+}
+.t3-wireframeMode .typo3-typo3-fourcolumn .columns-25-25-25-25 .column {
+  width: 22%;
+  margin-right: 4%;
+}
+.t3-wireframeMode .typo3-typo3-fourcolumn .columns-25-25-25-25 .column:last-child {
+  margin-right: 0;
+}
+.t3-wireframeMode .typo3-typo3-twocolumn .container,
+.t3-wireframeMode .typo3-typo3-threecolumn .container,
+.t3-wireframeMode .typo3-typo3-fourcolumn .container {
+  width: auto;
+}
+
+.t3-ui .t3-ui-wireframe-section-container {
+  margin: 10px 0;
+  padding: 10px 15px 15px 15px;
+  background: rgba(240, 240, 240, 0.7);
+  font-family: "Courier New", serif;
+}
+.t3-ui .t3-ui-wireframe-section-container:last-child {
+  margin-bottom: 0;
+}
+.t3-ui header.t3-ui-wireframe-section {
+  margin: -10px -15px 5px;
+  font-family: "Courier New", serif;
+  font-size: 16px;
+  font-weight: bold;
+  background: #e8e8e8;
+  padding: 10px 15px 5px 15px;
+  text-align: center;
+  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 0;
+}

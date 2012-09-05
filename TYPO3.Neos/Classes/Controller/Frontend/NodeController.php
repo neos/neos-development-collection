@@ -44,6 +44,12 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 	/**
 	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
 	 */
 	protected $accessDecisionManager;
@@ -65,6 +71,9 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 			} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $exception) {
 				$this->throwStatus(403);
 			}
+		}
+		if ($this->isWireframeModeEnabled($node)) {
+			$this->forward('showWireframe', NULL, NULL, array('node' => $node->getPath()));
 		}
 		if (!$node->isAccessible()) {
 			try {
@@ -91,5 +100,55 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		$this->response->setHeader('Cache-Control', 'public, s-maxage=600', FALSE);
 	}
 
+	/**
+	 * Shows the specified node and takes visibility and access restrictions into
+	 * account.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return string View output for the specified node
+	 */
+	public function showWireframeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		if (!$node->isAccessible()) {
+			try {
+				$this->authenticationManager->authenticate();
+			} catch (\Exception $exception) {
+			}
+		}
+		if (!$node->isAccessible() && !$this->nodeRepository->getContext()->isInaccessibleContentShown()) {
+			$this->throwStatus(403);
+		}
+		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
+			$this->throwStatus(404);
+		}
+		if ($node->getContentType() === 'TYPO3.TYPO3:Shortcut') {
+			$this->view->assign('wireframeMode', $node);
+		}
+
+		$this->nodeRepository->getContext()->setCurrentNode($node);
+		$this->view->assign('value', $node);
+
+		$this->view->setTypoScriptPath('wireframeMode');
+
+		$this->response->setHeader('Cache-Control', 'public, s-maxage=600', FALSE);
+	}
+
+	/**
+	 * Decide if wireframe mode should be enabled.
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @return boolean
+	 */
+	protected function isWireframeModeEnabled(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+		if ($this->securityContext->getParty() !== NULL) {
+			try {
+				$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
+				if (!$this->view->canRenderWithNodeAndPath($node, $this->view->getTypoScriptPath())) {
+					return TRUE;
+				}
+				return $this->securityContext->getParty()->getPreferences()->get('contentEditing.wireframeMode') ? TRUE : FALSE;
+			} catch (\Exception $e) {}
+		}
+		return FALSE;
+	}
 }
 ?>
