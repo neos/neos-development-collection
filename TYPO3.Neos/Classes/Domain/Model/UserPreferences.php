@@ -34,6 +34,15 @@ class UserPreferences {
 	protected $preferences = array();
 
 	/**
+	 * Get preferences
+	 *
+	 * @return array UserPreferences
+	 */
+	public function getPreferences() {
+		return $this->preferences;
+	}
+
+	/**
 	 * @param mixed $key
 	 * @param mixed $value
 	 * @return void
