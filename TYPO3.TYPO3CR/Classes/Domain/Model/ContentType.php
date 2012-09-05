@@ -152,6 +152,15 @@ class ContentType {
 	}
 
 	/**
+	 * Alias for getName().
+	 *
+	 * @return string
+	 */
+	public function __toString() {
+		return $this->getName();
+	}
+
+	/**
 	 * Magic get* and has* method for all properties inside $configuration.
 	 *
 	 * @param string $methodName
