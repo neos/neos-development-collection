@@ -222,6 +222,7 @@ ul.t3-topbar {
 			}
 		}
 	}
+	.header,
 	h2 {
 		width: 100%;
 		@include box-sizing(border-box);
@@ -232,6 +233,9 @@ ul.t3-topbar {
 		color: $lightest;
 		font-weight: normal;
 		font-size: 100%;
+	}
+	.header {
+		text-align: right;
 	}
 	label {
 		color: $lightest;

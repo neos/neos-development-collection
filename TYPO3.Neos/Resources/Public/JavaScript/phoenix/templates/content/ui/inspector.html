@@ -1,5 +1,5 @@
 <form class="t3-inspector-form" action="#">
-	<h2><span style="float:right">{{view T3.Content.UI.Button label="Apply" disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle"}}</span></h2>
+	<div class="header">{{view T3.Content.UI.Button label="Apply" disabledBinding="T3.Content.Controller.Inspector._unmodified" target="T3.Content.Controller.Inspector" action="onApplyButtonToggle"}}</div>
 
 	{{#collection tagName="fieldset" classNames="t3-inspector-section" contentBinding="T3.Content.Controller.Inspector.sectionsAndViews"}}
 		<h2>{{content.label}}</h2>

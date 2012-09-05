@@ -7184,6 +7184,7 @@ ul.t3-topbar {
 .t3-inspector-form fieldset .t3-inspector-field input {
   padding: 1px 4px 1px 4px;
 }
+.t3-inspector-form .header,
 .t3-inspector-form h2 {
   width: 100%;
   -webkit-box-sizing: border-box;
@@ -7196,6 +7197,9 @@ ul.t3-topbar {
   color: white;
   font-weight: normal;
   font-size: 100%;
+}
+.t3-inspector-form .header {
+  text-align: right;
 }
 .t3-inspector-form label {
   color: white;
