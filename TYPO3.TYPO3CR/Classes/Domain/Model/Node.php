@@ -227,16 +227,10 @@ class Node implements NodeInterface {
 		if ($path === '/') {
 			$this->parentPath = '';
 			$this->depth = 0;
-			$this->name = '';
-		} else {
-			if (substr_count($path, '/') === 1) {
+		} elseif (substr_count($path, '/') === 1) {
 				$this->parentPath = '/';
-				$this->depth = 1;
-			} else {
-				$this->parentPath = substr($path, 0, strrpos($path, '/'));
-				$this->depth = substr_count($this->path, '/');
-			}
-			$this->name = substr($path, strrpos($path, '/') + 1);
+		} else {
+			$this->parentPath = substr($path, 0, strrpos($path, '/'));
 		}
 	}
 
@@ -272,6 +266,9 @@ class Node implements NodeInterface {
 	 * @return integer
 	 */
 	public function getDepth() {
+		if ($this->depth === NULL) {
+			$this->depth = $this->path === '/' ? 0 : substr_count($this->path, '/');
+		}
 		return $this->depth;
 	}
 
@@ -281,6 +278,9 @@ class Node implements NodeInterface {
 	 * @return string
 	 */
 	public function getName() {
+		if ($this->name === NULL) {
+			$this->name = $this->path === '/' ? '' : substr($this->path, strrpos($this->path, '/') + 1);
+		}
 		return $this->name;
 	}
 

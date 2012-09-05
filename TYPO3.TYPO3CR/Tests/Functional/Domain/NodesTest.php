@@ -166,12 +166,15 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
 		$firstLevelNode = $rootNode->createNode('firstlevel');
 		$secondLevelNode = $firstLevelNode->createNode('secondlevel');
-		$thirdLevelNode = $secondLevelNode->createNode('thirdlevel');
+		$secondLevelNode->createNode('thirdlevel');
 
 		$this->persistenceManager->persistAll();
-
+		$this->persistenceManager->clearState();
 		$retrievedNode = $rootNode->getNode('/firstlevel/secondlevel/thirdlevel');
-		$this->assertSame($thirdLevelNode, $retrievedNode);
+
+		$this->assertEquals('/firstlevel/secondlevel/thirdlevel', $retrievedNode->getPath());
+		$this->assertEquals('thirdlevel', $retrievedNode->getName());
+		$this->assertEquals(3, $retrievedNode->getDepth());
 	}
 
 	/**
