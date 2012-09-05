@@ -1032,7 +1032,7 @@ class Node implements NodeInterface {
 	/**
 	 * Normalizes the given path and returns an absolute path
 	 *
-	 * @param string $path The unnormalized path
+	 * @param string $path The non-normalized path
 	 * @return string The normalized absolute path
 	 * @throws \InvalidArgumentException if your node path contains two consecutive slashes.
 	 */

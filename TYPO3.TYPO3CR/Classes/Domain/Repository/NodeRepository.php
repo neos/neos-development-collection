@@ -55,6 +55,12 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 
 	/**
 	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
+	 */
+	protected $contentTypeManager;
+
+	/**
+	 * @FLOW3\Inject
 	 * @var \TYPO3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
@@ -542,39 +548,14 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	}
 
 	/**
-	 * @param string $contentTypeFilter
-	 * @return string
-	 * @fixme implement
-	 */
-	protected function getDqlContentTypeFilterConstraints($contentTypeFilter) {
-		if ($contentTypeFilter === NULL) {
-			return '';
-		}
-
-		return '';
-
-		$constraints = '';
-		$includeContentTypeConstraints = array();
-		$excludeContentTypeConstraints = array();
-
-		$contentTypeFilterParts = explode(',', $contentTypeFilter);
-		foreach ($contentTypeFilterParts as $contentTypeFilterPart) {
-			if (strpos($contentTypeFilterPart, '!') === 0) {
-				$excludeContentTypeConstraints[] = "NOT n.contentType = '" . substr($contentTypeFilterPart, 1) . "'";
-			} else {
-				$includeContentTypeConstraints[] = "n.contentType = '" . substr($contentTypeFilterPart, 1) . "'";
-			}
-		}
-		if (count($excludeContentTypeConstraints) > 0) {
-		}
-		if (count($includeContentTypeConstraints) > 0) {
-		}
-	}
-
-	/**
-	 * Creates a query for findinnodes by its parent and (optionally) by its content type.
+	 * Creates a query for finding nodes by their parent and (optionally) content type.
 	 *
-	 * Does not traverse base workspaces, returns ary query only matching nodes of
+	 * The content type filter syntax is simple: allowed content type names are listed,
+	 * separated by comma. An exclamation mark as first character of a content type name
+	 * excludes it. Inheritance is taken into account, all sub-types of a given type are
+	 * allowed as well.
+	 *
+	 * Does not traverse base workspaces, returns a query only matching nodes of
 	 * the given workspace.
 	 *
 	 * @param string $parentPath Absolute path of the parent node
@@ -603,10 +584,21 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			$excludeContentTypeConstraints = array();
 			$contentTypeFilterParts = explode(',', $contentTypeFilter);
 			foreach ($contentTypeFilterParts as $contentTypeFilterPart) {
+				$contentTypeFilterPart = trim($contentTypeFilterPart);
 				if (strpos($contentTypeFilterPart, '!') === 0) {
-					$excludeContentTypeConstraints[] = $query->logicalNot($query->equals('contentType', substr($contentTypeFilterPart, 1)));
+					$negate = TRUE;
+					$contentTypeFilterPart = substr($contentTypeFilterPart, 1);
 				} else {
-					$includeContentTypeConstraints[] = $query->equals('contentType', $contentTypeFilterPart);
+					$negate = FALSE;
+				}
+				$contentTypeFilterPartSubTypes = array_merge(array($contentTypeFilterPart), $this->contentTypeManager->getSubContentTypes($contentTypeFilterPart));
+
+				foreach ($contentTypeFilterPartSubTypes as $contentTypeFilterPartSubType) {
+					if ($negate === TRUE) {
+						$excludeContentTypeConstraints[] = $query->logicalNot($query->equals('contentType', $contentTypeFilterPartSubType));
+					} else {
+						$includeContentTypeConstraints[] = $query->equals('contentType', $contentTypeFilterPartSubType);
+					}
 				}
 			}
 			if (count($excludeContentTypeConstraints) > 0) {
