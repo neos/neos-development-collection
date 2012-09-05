@@ -275,6 +275,12 @@ ul.t3-topbar {
 	ul {
 		margin: 0px;
 	}
+	.t3-icon-preview {
+		i {
+			padding-top: 1px;
+			margin-top: -1px;
+		}
+	}
 }
 .t3-toolbar-left {
 	float: left;
@@ -655,6 +661,10 @@ body {
 	#t3-toolbar {
 		@include transition-property(margin-top);
 		@include transition-duration(0.2s);
+		.t3-icon-preview {
+			@include transition-property(margin-top);
+			@include transition-duration(0.125s);
+		}
 	}
 	&.t3-backend,
 	.aloha-block-TYPO3Block {
@@ -669,7 +679,12 @@ body {
 			height: 0;
 		}
 		#t3-toolbar {
-			margin-top: 0;
+			margin-top: -$toolbar-height;
+			box-shadow: none;
+			.t3-icon-preview {
+				margin-top: $toolbar-height + 10px;
+				box-shadow: 0 0 15px rgba(0, 0, 0, .15);
+			}
 		}
 		#t3-inspector {
 			width: 0;

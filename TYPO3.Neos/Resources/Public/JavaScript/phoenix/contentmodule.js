@@ -163,13 +163,16 @@ function(jQuery) {
 				elementId: 't3-toolbar',
 				classNames: ['t3-ui'],
 				left: [
-					T3.Content.UI.PageTreeButton.extend({
-						label: 'Pages'
-					}),
 					T3.Content.UI.ToggleButton.extend({
 						pressedBinding: 'T3.Content.Controller.Preview.previewMode',
-						label: 'Preview',
-						icon: 'preview'
+						template: Ember.Handlebars.compile('<i class="icon-fullscreen"></i>'),
+						attributeBindings: ['disabled', 'title'],
+						icon: 'preview',
+						title: 'Preview',
+						elementAttributes: ['title']
+					}),
+					T3.Content.UI.PageTreeButton.extend({
+						label: 'Pages'
 					})
 				],
 				right: [
