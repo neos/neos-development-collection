@@ -291,15 +291,9 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					 * !sourcenode = new Node
 					 */
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-						var position;
+						var position = hitMode === 'over' ? 'into' : hitMode;
 						if (!sourceNode) {
-							// a new Node was created
-							position = 0;
-							if (hitMode === 'before') {
-								position = -1;
-							} else if (hitMode === 'after') {
-								position = 1;
-							}
+								// a new Node was created
 							TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(
 								node.data.key,
 								{
@@ -318,19 +312,11 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 								}
 							);
 						} else {
-							// it is an existing node which was moved on the tree
-							var sourceNodeLevel = sourceNode.getLevel();
-							var nodeLevel = node.getLevel();
-							var nodeLevelDiff = nodeLevel - sourceNodeLevel;
-
-							if (hitMode === 'before') {
-								position = -1;
-							} else if (hitMode === 'after') {
-								position = 1;
-							} else {
-								position = 0;
-							}
-							if (position === 0 || nodeLevelDiff !== 0) {
+								// it is an existing node which was moved on the tree
+							var sourceNodeLevel = sourceNode.getLevel(),
+								nodeLevel = node.getLevel(),
+								nodeLevelDiff = nodeLevel - sourceNodeLevel;
+							if (position === 'into' || nodeLevelDiff !== 0) {
 								T3.Common.Notification.error('moving nodes inside other nodes is not possible right now');
 							} else {
 								sourceNode.move(node, hitMode);
@@ -399,7 +385,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 			$newPage.click(function() {
 				var activeNode = $('#t3-dd-pagetree').dynatree('getActiveNode');
 				if (activeNode !== null) {
-					var position = 0;
+					var position = 'into';
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(
 						activeNode.data.key,
 						{
@@ -633,19 +619,12 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					 */
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
 						// it is an existing node which was moved on the tree
-						var position,
+						var position = hitMode === 'over' ? 'into' : hitMode,
 							sourceNodeLevel = sourceNode.getLevel(),
 							nodeLevel = node.getLevel(),
 							nodeLevelDiff = nodeLevel - sourceNodeLevel;
 
-						if (hitMode === 'before') {
-							position = -1;
-						} else if (hitMode === 'after') {
-							position = 1;
-						} else {
-							position = 0;
-						}
-						if (position === 0 && nodeLevelDiff !== 0) {
+						if (position === 'into' && nodeLevelDiff !== 0) {
 							T3.Common.Notification.error('moving nodes inside other nodes is not possible right now');
 						} else {
 							sourceNode.move(node, hitMode);

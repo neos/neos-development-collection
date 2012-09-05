@@ -121,15 +121,15 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param array $nodeData
-	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
+	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
 	 * @throws \InvalidArgumentException
 	 * @todo maybe the actual creation should be put in a helper / service class
 	 * @ExtDirect
 	 */
 	public function createAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, array $nodeData, $position) {
-		if (!in_array($position, array(-1, 0, 1), TRUE)) {
-			throw new \InvalidArgumentException('The position should be one of the following: -1, 0, 1.', 1296132542);
+		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
 		}
 
 		if (empty($nodeData['nodeName'])) {
@@ -137,15 +137,15 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		}
 		$contentType = $this->contentTypeManager->getContentType($nodeData['contentType']);
 
-		if ($position === 0) {
+		if ($position === 'into') {
 			$newNode = $referenceNode->createNode($nodeData['nodeName'], $contentType);
 		} else {
 			$parentNode = $referenceNode->getParent();
 			$newNode = $parentNode->createNode($nodeData['nodeName'], $contentType);
 
-			if ($position === -1) {
+			if ($position === 'before') {
 				$newNode->moveBefore($referenceNode);
-			} elseif ($position === 1) {
+			} else {
 				$newNode->moveAfter($referenceNode);
 			}
 		}
@@ -165,28 +165,26 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
-	 * @param integer $position where the node should be added, -1 is before, 0 is in, 1 is after
+	 * @param string $position where the node should be added (allowed: before, into, after)
 	 * @return void
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
 	 * @ExtDirect
-	 * @fixme Find a better solution that passing -1, 0 and 1
 	 */
 	public function moveAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $position) {
-		if (!in_array($position, array(-1, 0, 1), TRUE)) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: -1, 0, 1.', 1296132542);
+		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
 		}
 
 		switch ($position) {
-			case -1:
+			case 'before':
 				$node->moveBefore($targetNode);
 			break;
-			case 0:
+			case 'into':
 				// TODO: Create a moveInto action on the node domain
 				// $node->moveInto($targetNode);
 			break;
-			case 1:
+			case 'after':
 				$node->moveAfter($targetNode);
-			break;
 		}
 
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', '');
