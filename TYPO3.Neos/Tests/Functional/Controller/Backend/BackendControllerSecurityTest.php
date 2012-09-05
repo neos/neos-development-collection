@@ -20,8 +20,6 @@ use \TYPO3\TYPO3\Domain\Model\User;
  */
 class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 
-
-
 	/**
 	 * We need to enable this, so that the database is set up. Otherwise
 	 * there will be an error along the lines of:
@@ -36,6 +34,9 @@ class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCas
 	 */
 	protected $testableSecurityEnabled = TRUE;
 
+	/**
+	 * @var boolean
+	 */
 	protected $testableHttpEnabled = TRUE;
 
 	/**
@@ -55,7 +56,7 @@ class BackendControllerSecurityTest extends \TYPO3\FLOW3\Tests\FunctionalTestCas
 	 */
 	public function indexActionIsDeniedForEverybody() {
 		$this->browser->request('http://localhost/typo3/');
-		$this->assertSame('Access denied!', $this->browser->getLastResponse()->getContent());
+		$this->assertSame(403, $this->browser->getLastResponse()->getStatusCode());
 	}
 }
 
