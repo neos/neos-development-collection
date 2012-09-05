@@ -380,6 +380,7 @@ function(jQuery) {
 			}
 
 			var action = (position == 'before') ? 'moveBefore' : 'moveAfter';
+			$handle.addClass('t3-handle-loading');
 			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController[action].call(
 				that,
 				clipboard.nodePath,
@@ -389,6 +390,7 @@ function(jQuery) {
 						T3.Common.LocalStorage.removeItem('clipboard');
 						T3.ContentModule.reloadPage();
 					}
+					$handle.removeClass('t3-handle-loading');
 				}
 			);
 		},
