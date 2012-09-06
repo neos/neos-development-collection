@@ -39,6 +39,18 @@ interface NodeInterface {
 	const LABEL_MAXIMUM_CHARACTERS = 30;
 
 	/**
+	 * Sets the absolute path of this node.
+	 *
+	 * This method is only for internal use by the content repository. Changing
+	 * the path of a node manually may lead to unexpected behavior.
+	 *
+	 * @param string $path
+	 * @param boolean $recursive
+	 * @return void
+	 */
+	public function setPath($path, $recursive = TRUE);
+
+	/**
 	 * Returns the path of this node
 	 *
 	 * @return string

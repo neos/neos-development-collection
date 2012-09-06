@@ -208,7 +208,7 @@ class Node implements NodeInterface {
 	 * @return void
 	 * @throws \InvalidArgumentException if the given node path is invalid.
 	 */
-	protected function setPath($path, $recursive = TRUE) {
+	public function setPath($path, $recursive = TRUE) {
 		if (!is_string($path) || preg_match(self::MATCH_PATTERN_PATH, $path) !== 1) {
 			throw new \InvalidArgumentException('Invalid path "' . $path . '" (a path must be a valid string, be absolute (starting with a slash) and contain only the allowed characters).', 1284369857);
 		}
