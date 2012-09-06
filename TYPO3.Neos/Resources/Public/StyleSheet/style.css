@@ -7447,10 +7447,15 @@ ul.t3-launcher-horizontal li .text {
 .dynatree-container ul.dynatree-container .dynatree-icon {
   vertical-align: middle;
   background-position: 0 0;
-  background-image: url("../Images/Icons/Black/doc_empty_icon-16.png");
 }
 .dynatree-container ul.dynatree-container .typo3_typo3-root .dynatree-icon {
   background-image: url("../Images/Icons/Black/globe_2_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-page .dynatree-icon {
+  background-image: url("../Images/Icons/Black/doc_empty_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .typo3_typo3-shortcut .dynatree-icon {
+  background-image: url("../Images/Icons/Black/shortcut_icon-16.png");
 }
 .dynatree-container ul.dynatree-container .typo3_typo3-section .dynatree-icon {
   background-image: url("../Images/Icons/Black/page_layout_icon-16.png");

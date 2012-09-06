@@ -71,6 +71,7 @@ TYPO3:
       'TYPO3.TYPO3:Folder':
         superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.TYPO3:AbstractNode']
         label: 'Folder'
+        search: 'Pages'
         properties:
           title:
             type: string
@@ -90,6 +91,8 @@ TYPO3:
       'TYPO3.TYPO3:Shortcut':
         superTypes: ['TYPO3.TYPO3:Folder']
         label: 'Shortcut'
+        icon: 'Images/Icons/White/shortcut_icon-16.png'
+        darkIcon: 'Images/Icons/Black/shortcut_icon-16.png'
         groups:
           page:
             label: 'Shortcut options'
@@ -97,7 +100,6 @@ TYPO3:
       'TYPO3.TYPO3:Page':
         superTypes: ['TYPO3.TYPO3:Folder']
         label: 'Page'
-        search: 'Pages'
         icon: 'Images/Icons/White/doc_empty_icon-16.png'
         darkIcon: 'Images/Icons/Black/doc_empty_icon-16.png'
         groups:
