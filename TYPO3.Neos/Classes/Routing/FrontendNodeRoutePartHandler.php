@@ -33,16 +33,9 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 
 	/**
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
+	 * @FLOW3\Inject
 	 */
 	protected $nodeRepository;
-
-	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository
-	 * @return void
-	 */
-	public function injectNodeRepository(\TYPO3\TYPO3CR\Domain\Repository\NodeRepository $nodeRepository) {
-		$this->nodeRepository = $nodeRepository;
-	}
 
 	/**
 	 * Matches a frontend URI pointing to a node (for example a page).
