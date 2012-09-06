@@ -28,6 +28,7 @@ class Package extends BasePackage {
 		$dispatcher = $bootstrap->getSignalSlotDispatcher();
 		$dispatcher->connect('TYPO3\FLOW3\Persistence\Doctrine\PersistenceManager', 'allObjectsPersisted', 'TYPO3\TYPO3CR\Domain\Repository\NodeRepository', 'flushNodeRegistry');
 		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', 'repositoryObjectsPersisted', 'TYPO3\TYPO3CR\Domain\Repository\NodeRepository', 'flushNodeRegistry');
+		$dispatcher->connect('TYPO3\TYPO3CR\Domain\Model\Node', 'nodePathChanged', 'TYPO3\FLOW3\Mvc\Routing\Aspect\RouterCachingAspect', 'flushCaches');
 	}
 
 }
