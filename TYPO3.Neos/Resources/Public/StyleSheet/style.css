@@ -8078,6 +8078,7 @@ a.btn:hover {
 }
 .t3-ui.t3-module.t3-module-management-workspaces .fold-toggle {
   cursor: pointer;
+  margin-top: -1px;
 }
 .t3-ui.t3-module.t3-module-management-workspaces td.check,
 .t3-ui.t3-module.t3-module-management-workspaces th.check {
