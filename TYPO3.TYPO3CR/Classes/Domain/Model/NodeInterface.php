@@ -61,6 +61,14 @@ interface NodeInterface {
 	public function getDepth();
 
 	/**
+	 * Set the name of the node to $newName, keeping it's position as it is.
+	 *
+	 * @param string $newName
+	 * @return void
+	 */
+	public function setName($newName);
+
+	/**
 	 * Returns the name of this node
 	 *
 	 * @return string
@@ -137,14 +145,6 @@ interface NodeInterface {
 	 * @return string Absolute node path of the parent node
 	 */
 	public function getParentPath();
-
-	/**
-	 * Rename the node to $newName, keeping it's position as it is.
-	 *
-	 * @param string $newName
-	 * @return void
-	 */
-	public function rename($newName);
 
 	/**
 	 * Moves this node before the given node

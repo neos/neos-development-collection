@@ -75,8 +75,8 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 		$barNode = $fooNode->createNode('bar');
 		$bazNode = $barNode->createNode('baz');
 
-		$fooNode->rename('quux');
-		$barNode->rename('lax');
+		$fooNode->setName('quux');
+		$barNode->setName('lax');
 
 		$this->assertNull($rootNode->getNode('foo'));
 		$this->assertEquals('/quux/lax/baz', $bazNode->getPath());

@@ -102,6 +102,19 @@ class ProxyNode implements NodeInterface {
 	}
 
 	/**
+	 * Set the name of the node to $newName, keeping it's position as it is.
+	 *
+	 * @param string $newName
+	 * @return void
+	 */
+	public function setName($newName) {
+		if (!isset($this->newNode)) {
+			$this->materializeOriginalNode();
+		}
+		$this->newNode->setName($newName);
+	}
+
+	/**
 	 * Returns the name of this node
 	 *
 	 * @return string
@@ -203,19 +216,6 @@ class ProxyNode implements NodeInterface {
 	 */
 	public function getParentPath() {
 		return (isset($this->newNode) ? $this->newNode->getParentPath() : $this->originalNode->getParentPath());
-	}
-
-	/**
-	 * Rename the node to $newName, keeping it's position as it is.
-	 *
-	 * @param string $newName
-	 * @return void
-	 */
-	public function rename($newName) {
-		if (!isset($this->newNode)) {
-			$this->materializeOriginalNode();
-		}
-		$this->newNode->rename($newName);
 	}
 
 	/**
