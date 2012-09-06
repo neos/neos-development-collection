@@ -150,8 +150,8 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			return $workspace->getRootNode();
 		}
 
+		$originalWorkspace = $workspace;
 		while ($workspace !== NULL) {
-
 			foreach ($this->addedNodes as $node) {
 				if ($node->getPath() === $path && $node->getWorkspace() === $workspace) {
 					return $node;
@@ -171,6 +171,18 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 			try {
 				$node = $query->getOneOrNullResult();
 				if ($node !== NULL) {
+					if ($workspace !== $originalWorkspace) {
+						$query = $this->createQuery();
+						$query->matching(
+							$query->logicalAnd(
+								$query->equals('identifier', $node->getIdentifier()),
+								$query->equals('workspace', $originalWorkspace)
+							)
+						);
+						if ($query->count() > 0) {
+							return NULL;
+						}
+					}
 					return $node;
 				}
 			} catch (\Doctrine\ORM\NonUniqueResultException $exception) {
