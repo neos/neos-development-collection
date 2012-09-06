@@ -544,7 +544,8 @@ function(jQuery, launcherTemplate) {
 			}
 			reloadPage = reloadPage || this.checkIfReloadNeededAfterSave();
 
-			var savedAttributes = {};
+			var savedAttributes = {},
+				nextUri;
 			T3.Content.Controller.ServerConnection.sendAllToServer(
 				this,
 					// Get attributes to be updated from block
@@ -577,11 +578,18 @@ function(jQuery, launcherTemplate) {
 						// Check if a changed property in the schema needs
 						// a server-side reload
 					if (reloadPage) {
-						T3.ContentModule.reloadPage();
+						if (nextUri) {
+							T3.ContentModule.loadPage(nextUri);
+						} else {
+							T3.ContentModule.reloadPage();
+						}
 					}
 				},
 					// Callback on success per block
 				function(block, response) {
+					if (typeof response.result.data.nextUri !== 'undefined') {
+						nextUri = response.result.data.nextUri;
+					}
 						// when we save a node, it could be the case that it was in
 						// live workspace beforehand, but because of some modifications,
 						// is now copied into the user's workspace.
