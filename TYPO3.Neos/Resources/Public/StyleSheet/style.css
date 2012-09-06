@@ -8184,6 +8184,152 @@ a.btn:hover {
 .t3-ui.t3-module .t3-content.fluid-container h1 {
   margin-left: 20px;
 }
+.t3-ui.t3-module table td > .t3-button.btn,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #6e6e6e;
+  background-image: -moz-linear-gradient(top, #737373, #666666);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#737373), to(#666666));
+  background-image: -webkit-linear-gradient(top, #737373, #666666);
+  background-image: -o-linear-gradient(top, #737373, #666666);
+  background-image: linear-gradient(to bottom, #737373, #666666);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF737373', endColorstr='#FF666666', GradientType=0);
+  border-color: #666666 #666666 #404040;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #666666;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #595959;
+  border-bottom-color: #4d4d4d;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.t3-ui.t3-module table td > .t3-button.btn:hover, .t3-ui.t3-module table td > .t3-button.btn:active, .t3-ui.t3-module table td > .t3-button.btn.active, .t3-ui.t3-module table td > .t3-button.btn.disabled, .t3-ui.t3-module table td > .t3-button.btn[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn[disabled] {
+  color: white;
+  background-color: #666666;
+  *background-color: #595959;
+}
+.t3-ui.t3-module table td > .t3-button.btn:active, .t3-ui.t3-module table td > .t3-button.btn.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.active {
+  background-color: #4d4d4d \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn:hover, .t3-ui.t3-module table td > .t3-button.btn:focus, .t3-ui.t3-module table td > .t3-button.btn:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #868686;
+  background-image: -moz-linear-gradient(top, #888888, #838383);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#888888), to(#838383));
+  background-image: -webkit-linear-gradient(top, #888888, #838383);
+  background-image: -o-linear-gradient(top, #888888, #838383);
+  background-image: linear-gradient(to bottom, #888888, #838383);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF888888', endColorstr='#FF838383', GradientType=0);
+  border-color: #838383 #838383 #5d5d5d;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #838383;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+  border: 1px solid #6f6f6f;
+  border-bottom-color: #555555;
+}
+.t3-ui.t3-module table td > .t3-button.btn:hover:hover, .t3-ui.t3-module table td > .t3-button.btn:hover:active, .t3-ui.t3-module table td > .t3-button.btn:hover.active, .t3-ui.t3-module table td > .t3-button.btn:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn:focus:hover, .t3-ui.t3-module table td > .t3-button.btn:focus:active, .t3-ui.t3-module table td > .t3-button.btn:focus.active, .t3-ui.t3-module table td > .t3-button.btn:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn:focus[disabled], .t3-ui.t3-module table td > .t3-button.btn:active:hover, .t3-ui.t3-module table td > .t3-button.btn:active:active, .t3-ui.t3-module table td > .t3-button.btn:active.active, .t3-ui.t3-module table td > .t3-button.btn:active.disabled, .t3-ui.t3-module table td > .t3-button.btn:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active[disabled] {
+  color: white;
+  background-color: #838383;
+  *background-color: #767676;
+}
+.t3-ui.t3-module table td > .t3-button.btn:hover:active, .t3-ui.t3-module table td > .t3-button.btn:hover.active, .t3-ui.t3-module table td > .t3-button.btn:focus:active, .t3-ui.t3-module table td > .t3-button.btn:focus.active, .t3-ui.t3-module table td > .t3-button.btn:active:active, .t3-ui.t3-module table td > .t3-button.btn:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn:active.active {
+  background-color: dimgrey \9;
+}
+.t3-ui.t3-module table td > .t3-button.btn.disabled, .t3-ui.t3-module table td > .t3-button.btn.disabled:hover, .t3-ui.t3-module table td > .t3-button.btn.disabled:active, .t3-ui.t3-module table td > .t3-button.btn.disabled:focus,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:focus {
+  color: white;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #909090;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+  *background-color: #888888;
+  /* Darken IE7 buttons by default so they stand out more given they won't have borders */
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+.t3-ui.t3-module table td > .t3-button.btn.disabled:hover, .t3-ui.t3-module table td > .t3-button.btn.disabled:active, .t3-ui.t3-module table td > .t3-button.btn.disabled.active, .t3-ui.t3-module table td > .t3-button.btn.disabled.disabled, .t3-ui.t3-module table td > .t3-button.btn.disabled[disabled], .t3-ui.t3-module table td > .t3-button.btn.disabled:hover:hover, .t3-ui.t3-module table td > .t3-button.btn.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn.disabled:hover.disabled, .t3-ui.t3-module table td > .t3-button.btn.disabled:hover[disabled], .t3-ui.t3-module table td > .t3-button.btn.disabled:active:hover, .t3-ui.t3-module table td > .t3-button.btn.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn.disabled:active.disabled, .t3-ui.t3-module table td > .t3-button.btn.disabled:active[disabled], .t3-ui.t3-module table td > .t3-button.btn.disabled:focus:hover, .t3-ui.t3-module table td > .t3-button.btn.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn.disabled:focus.active, .t3-ui.t3-module table td > .t3-button.btn.disabled:focus.disabled, .t3-ui.t3-module table td > .t3-button.btn.disabled:focus[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active[disabled],
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:focus:hover,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:focus.disabled,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:focus[disabled] {
+  color: white;
+  background-color: #888888;
+  *background-color: #7b7b7b;
+}
+.t3-ui.t3-module table td > .t3-button.btn.disabled:active, .t3-ui.t3-module table td > .t3-button.btn.disabled.active, .t3-ui.t3-module table td > .t3-button.btn.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn.disabled:focus.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:hover.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:active.active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:focus:active,
+.t3-ui.t3-module table td > div.pull-right > .t3-button.btn.disabled:focus.active {
+  background-color: #6f6f6f \9;
+}
 .t3-ui.t3-module table td > .t3-button.btn-info,
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-info {
   color: white;
@@ -8404,17 +8550,17 @@ a.btn:hover {
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #f39518;
-  background-image: -moz-linear-gradient(top, #f59a21, #f18f0b);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f59a21), to(#f18f0b));
-  background-image: -webkit-linear-gradient(top, #f59a21, #f18f0b);
-  background-image: -o-linear-gradient(top, #f59a21, #f18f0b);
-  background-image: linear-gradient(to bottom, #f59a21, #f18f0b);
+  background-color: #909090;
+  background-image: -moz-linear-gradient(top, #959595, #888888);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#959595), to(#888888));
+  background-image: -webkit-linear-gradient(top, #959595, #888888);
+  background-image: -o-linear-gradient(top, #959595, #888888);
+  background-image: linear-gradient(to bottom, #959595, #888888);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFF59A21', endColorstr='#FFF18F0B', GradientType=0);
-  border-color: #f18f0b #f18f0b #a86408;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF959595', endColorstr='#FF888888', GradientType=0);
+  border-color: #888888 #888888 #626262;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #f18f0b;
+  *background-color: #888888;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
@@ -8440,8 +8586,8 @@ a.btn:hover {
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus.disabled,
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus[disabled] {
   color: white;
-  background-color: #f18f0b;
-  *background-color: #d9810a;
+  background-color: #888888;
+  *background-color: #7b7b7b;
 }
 .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:hover.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:active.active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus:active, .t3-ui.t3-module table td > .t3-button.btn-warning.disabled:focus.active,
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active,
@@ -8452,7 +8598,7 @@ a.btn:hover {
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:active.active,
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus:active,
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-warning.disabled:focus.active {
-  background-color: #c07209 \9;
+  background-color: #6f6f6f \9;
 }
 .t3-ui.t3-module table td > .t3-button.btn-success,
 .t3-ui.t3-module table td > div.pull-right > .t3-button.btn-success {
