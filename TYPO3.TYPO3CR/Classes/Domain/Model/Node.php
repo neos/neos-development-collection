@@ -291,6 +291,7 @@ class Node implements NodeInterface {
 		$this->setPath($this->parentPath . ($this->parentPath === '/' ? '' : '/') . $newName);
 		$this->nodeRepository->update($this);
 		$this->nodeRepository->persistEntities();
+		$this->emitNodePathChanged();
 	}
 
 	/**
@@ -425,8 +426,11 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1285005924);
 		}
 
-		$parentPath = $referenceNode->getParentPath();
-		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+		if ($referenceNode->getParentPath() !== $this->parentPath) {
+			$parentPath = $referenceNode->getParentPath();
+			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+			$this->emitNodePathChanged();
+		}
 		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_BEFORE, $referenceNode);
 	}
 
@@ -446,8 +450,11 @@ class Node implements NodeInterface {
 			throw new \TYPO3\TYPO3CR\Exception\NodeException('The root node cannot be moved.', 1316361483);
 		}
 
-		$parentPath = $referenceNode->getParentPath();
-		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+		if ($referenceNode->getParentPath() !== $this->parentPath) {
+			$parentPath = $referenceNode->getParentPath();
+			$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
+			$this->emitNodePathChanged();
+		}
 		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_AFTER, $referenceNode);
 	}
 
@@ -459,7 +466,7 @@ class Node implements NodeInterface {
 	 * @throws \TYPO3\TYPO3CR\Exception\NodeException if you try to move the root node.
 	 */
 	public function moveInto(NodeInterface $referenceNode) {
-		if ($referenceNode === $this) {
+		if ($referenceNode === $this || $referenceNode === $this->getParent()) {
 			return;
 		}
 
@@ -470,6 +477,7 @@ class Node implements NodeInterface {
 		$parentPath = $referenceNode->getPath();
 		$this->setPath($parentPath . ($parentPath === '/' ? '' : '/') . $this->getName());
 		$this->nodeRepository->setNewIndex($this, NodeRepository::POSITION_LAST);
+		$this->emitNodePathChanged();
 	}
 
 	/**
@@ -1132,5 +1140,15 @@ class Node implements NodeInterface {
 	public function __toString() {
 		return 'Node ' . $this->getContextPath() . '[' . $this->getContentType()->getName() . ']';
 	}
+
+	/**
+	 * Signals that a node has changed it's path.
+	 *
+	 * @FLOW3\Signal
+	 * @return void
+	 */
+	protected function emitNodePathChanged() {
+	}
+
 }
 ?>
