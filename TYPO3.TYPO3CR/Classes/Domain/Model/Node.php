@@ -1029,8 +1029,15 @@ class Node implements NodeInterface {
 		foreach ($sourceNode->getProperties() as $propertyName => $propertyValue) {
 			$this->setProperty($propertyName, $propertyValue);
 		}
-		$this->setIndex($sourceNode->getIndex());
-		$this->setContentType($sourceNode->getContentType());
+
+		$propertyNames = array(
+			'contentType', 'index', 'hidden', 'hiddenAfterDateTime',
+			'hiddenBeforeDateTime', 'hiddenInIndex', 'accessRoles'
+		);
+		foreach ($propertyNames as $propertyName) {
+			\TYPO3\FLOW3\Reflection\ObjectAccess::setProperty($this, $propertyName, \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($sourceNode, $propertyName));
+		}
+
 		$contentObject = $sourceNode->getContentObject();
 		if ($contentObject !== NULL) {
 			$this->setContentObject($contentObject);
