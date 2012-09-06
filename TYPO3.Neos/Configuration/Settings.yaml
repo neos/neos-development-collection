@@ -56,6 +56,7 @@ TYPO3:
             label: 'Hide after date'
             group: 'visibility'
             priority: 10
+
         groups:
           visibility:
             label: 'Visibility'
@@ -67,26 +68,41 @@ TYPO3:
         icon: 'Images/Icons/White/page_layout_icon-16.png'
         darkIcon: 'Images/Icons/Black/page_layout_icon-16.png'
 
-      'TYPO3.TYPO3:Shortcut':
+      'TYPO3.TYPO3:Folder':
         superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.TYPO3:AbstractNode']
-        label: 'Shortcut'
-
-      'TYPO3.TYPO3:Page':
-        superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.TYPO3:AbstractNode']
-        label: 'Page'
-        search: 'Pages'
-        icon: 'Images/Icons/White/doc_empty_icon-16.png'
-        darkIcon: 'Images/Icons/Black/doc_empty_icon-16.png'
+        label: 'Folder'
         properties:
           title:
             type: string
-            label: 'Page title'
+            label: 'Title'
+            group: 'page'
+            reloadOnChange: true
+          _name:
+            type: string
+            label: 'Name (URL)'
             group: 'page'
             reloadOnChange: true
         groups:
           page:
-            label: 'Page options'
+            label: 'Folder options'
             priority: 10
+
+      'TYPO3.TYPO3:Shortcut':
+        superTypes: ['TYPO3.TYPO3:Folder']
+        label: 'Shortcut'
+        groups:
+          page:
+            label: 'Shortcut options'
+
+      'TYPO3.TYPO3:Page':
+        superTypes: ['TYPO3.TYPO3:Folder']
+        label: 'Page'
+        search: 'Pages'
+        icon: 'Images/Icons/White/doc_empty_icon-16.png'
+        darkIcon: 'Images/Icons/Black/doc_empty_icon-16.png'
+        groups:
+          page:
+            label: 'Page options'
 
       'TYPO3.TYPO3:ContentObject':
         superTypes: ['TYPO3.TYPO3:AbstractNode']
