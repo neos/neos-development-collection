@@ -7485,6 +7485,17 @@ ul.t3-launcher-horizontal li .text {
 .dynatree-container ul.dynatree-container .typo3_typo3-plugin .dynatree-icon {
   background-image: url("../Images/Icons/Black/page_layout_icon-16.png");
 }
+.dynatree-container ul.dynatree-container .hidden {
+  display: inherit;
+  visibility: visible;
+}
+.dynatree-container ul.dynatree-container .hidden .dynatree-icon {
+  background-image: url("../Images/Icons/Black/doc_delete_icon-16.png");
+}
+.dynatree-container ul.dynatree-container .hiddenInIndex .dynatree-icon {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  opacity: 0.5;
+}
 .dynatree-container #dynatree-drop-marker {
   background-image: url("../Library/twitter-bootstrap/img/glyphicons-halflings.png");
   background-position: -264px -96px;

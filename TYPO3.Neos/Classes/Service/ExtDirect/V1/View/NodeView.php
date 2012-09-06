@@ -105,6 +105,14 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 					$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $childNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
 					$hasChildNodes = $childNode->hasChildNodes($contentTypeFilter);
 
+					$classes = array(strtolower(str_replace(array('.', ':'), array('_', '-'), $contentType)));
+					if ($childNode->isHidden() === TRUE) {
+						array_push($classes, 'hidden');
+					}
+					if ($childNode->isHiddenInIndex() === TRUE) {
+						array_push($classes, 'hiddenInIndex');
+					}
+
 					$treeNode = array(
 						'key' => $contextNodePath,
 						'title' => $title,
@@ -113,7 +121,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 						'isLazy' => ($hasChildNodes && !$expand),
 						'contentType' => $contentType,
 						'expand' => $expand,
-						'addClass' => strtolower(str_replace(array('.', ':'), array('_', '-'), $contentType))
+						'addClass' => implode(' ', $classes)
 					);
 
 					if ($expand && $hasChildNodes === TRUE) {

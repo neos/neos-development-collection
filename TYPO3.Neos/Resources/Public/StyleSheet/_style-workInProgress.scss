@@ -131,6 +131,16 @@
 		.typo3_typo3-plugin .dynatree-icon {
 			background-image: url('../Images/Icons/Black/page_layout_icon-16.png');
 		}
+		.hidden {
+			display: inherit;
+			visibility: visible;
+			.dynatree-icon {
+				background-image: url('../Images/Icons/Black/doc_delete_icon-16.png');
+			}
+		}
+		.hiddenInIndex .dynatree-icon {
+			@include opacity(.5);
+		}
 	}
 	#dynatree-drop-marker {
 		background-image: url('../Library/twitter-bootstrap/img/glyphicons-halflings.png');
