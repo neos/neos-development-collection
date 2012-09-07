@@ -155,7 +155,7 @@ class Workspace {
 		$targetWorkspace = $this->getPublishingTargetWorkspace($targetWorkspaceName);
 		foreach ($nodes as $node) {
 			if ($node->getPath() !== '/') {
-				$targetNode = $this->nodeRepository->findOneByPath($node->getPath(), $targetWorkspace);
+				$targetNode = $this->nodeRepository->findOneByIdentifier($node->getIdentifier(), $targetWorkspace);
 				if ($targetNode !== NULL) {
 					$this->nodeRepository->remove($targetNode);
 				}

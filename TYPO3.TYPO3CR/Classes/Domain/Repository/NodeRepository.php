@@ -195,6 +195,62 @@ class NodeRepository extends \TYPO3\FLOW3\Persistence\Repository {
 	}
 
 	/**
+	 * Finds a node by its identifier and workspace.
+	 *
+	 * If the node does not exist in the specified workspace, this function will
+	 * try to find one with the given identifier in one of the base workspaces (if any).
+	 *
+	 * @param string $identifier Identifier of the node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace The containing workspace
+	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface The matching node if found, otherwise NULL
+	 * @throws \TYPO3\TYPO3CR\Exception
+	 */
+	public function findOneByIdentifier($identifier, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
+		$originalWorkspace = $workspace;
+		while ($workspace !== NULL) {
+			foreach ($this->addedNodes as $node) {
+				if ($node->getIdentifier() === $identifier && $node->getWorkspace() === $workspace) {
+					return $node;
+				}
+			}
+
+			foreach ($this->removedNodes as $node) {
+				if ($node->getIdentifier() === $identifier && $node->getWorkspace() === $workspace) {
+					return NULL;
+				}
+			}
+
+			$query = $this->entityManager->createQuery('SELECT n FROM TYPO3\TYPO3CR\Domain\Model\Node n WHERE n.identifier = :identifier AND n.workspace = :workspace');
+			$query->setParameter('identifier', $identifier);
+			$query->setParameter('workspace', $workspace);
+
+			try {
+				$node = $query->getOneOrNullResult();
+				if ($node !== NULL) {
+					if ($workspace !== $originalWorkspace) {
+						$query = $this->createQuery();
+						$query->matching(
+							$query->logicalAnd(
+								$query->equals('identifier', $node->getIdentifier()),
+								$query->equals('workspace', $originalWorkspace)
+							)
+						);
+						if ($query->count() > 0) {
+							return NULL;
+						}
+					}
+					return $node;
+				}
+			} catch (\Doctrine\ORM\NonUniqueResultException $exception) {
+				throw new \TYPO3\TYPO3CR\Exception(sprintf('Non-unique result found for identifier "%s"', $identifier), 1346947613, $exception);
+			}
+			$workspace = $workspace->getBaseWorkspace();
+		}
+
+		return NULL;
+	}
+
+	/**
 	 * Assigns an index to the given node which reflects the specified position.
 	 * If the position is "before" or "after", an index will be chosen which makes
 	 * the given node the previous or next node of the given reference node.
