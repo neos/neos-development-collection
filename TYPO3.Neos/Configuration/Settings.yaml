@@ -21,8 +21,31 @@ TYPO3:
             entryPointOptions:
               uri: typo3/login
         authenticationStrategy: oneToken
-    mvc:
-      notFoundController: TYPO3\TYPO3\Controller\ErrorController
+
+    error:
+      exceptionHandler:
+        renderingGroups:
+          notFoundExceptions:
+            matchingStatusCodes: [ 404 ]
+            options:
+              fluidTemplate: 'resource://TYPO3.TYPO3/Private/Templates/Error/Index.html'
+              variables:
+                errorTitle: 'Page Not Found'
+                errorDescription: 'Sorry, the page you requested was not found.'
+          databaseConnectionExceptions:
+            matchingExceptionClassNames: ['TYPO3\FLOW3\Persistence\Doctrine\DatabaseConnectionException']
+            options:
+              fluidTemplate: 'resource://TYPO3.TYPO3/Private/Templates/Error/Index.html'
+              variables:
+                errorTitle: 'No Database Connection'
+                errorDescription: 'Sorry, the database connection couldn''t be established.'
+          noHomepageException:
+            matchingExceptionClassNames: ['TYPO3\TYPO3\Routing\Exception\NoHomepageException']
+            options:
+              fluidTemplate: 'resource://TYPO3.TYPO3/Private/Templates/Error/Index.html'
+              variables:
+                errorTitle: 'Missing Homepage'
+                errorDescription: 'Either no site has been defined yet or the site does not contain a homepage.'
 
   DocTools:
     bundles:

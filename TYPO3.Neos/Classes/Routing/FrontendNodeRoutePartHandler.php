@@ -23,19 +23,17 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  */
 class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoutePart {
 
-	const MATCHRESULT_FOUND = TRUE;
-	const MATCHRESULT_NOWORKSPACE = -1;
-	const MATCHRESULT_NOSITE = -2;
-	const MATCHRESULT_NOSITENODE = -3;
-	const MATCHRESULT_NOSUCHNODE = -4;
-	const MATCHRESULT_NOSUCHCONTENT = -5;
-	const MATCHRESULT_INVALIDPATH = -6;
-
 	/**
-	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
+
+	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\TYPO3\Service\NodeService
+	 */
+	protected $nodeService;
 
 	/**
 	 * Matches a frontend URI pointing to a node (for example a page).
@@ -46,56 +44,22 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 	 * Note that this matcher does not check if access to the resolved workspace or node is allowed because at the point
 	 * in time the route part handler is invoked, the security framework is not yet fully initialized.
 	 *
-	 * @param string $value The relative context node path (without leading "/", relative to the current Site Node)
-	 * @return mixed One of the MATCHRESULT_* constants
+	 * @param string $requestPath The relative context node path (without leading "/", relative to the current Site Node)
+	 * @return boolean TRUE if the $requestPath could be matched, otherwise FALSE
+	 * @throws \TYPO3\TYPO3\Routing\Exception\NoHomepageException if no node could be found on the homepage (empty $requestPath)
 	 */
-	protected function matchValue($value) {
-		$relativeContextNodePath = $value;
-
-		if ($relativeContextNodePath !== '') {
-			preg_match(NodeInterface::MATCH_PATTERN_CONTEXTPATH, $relativeContextNodePath, $matches);
-			if (!isset($matches['NodePath'])) {
-				return self::MATCHRESULT_INVALIDPATH;
+	protected function matchValue($requestPath) {
+		try {
+			$node = $this->nodeService->getNodeByContextNodePath($requestPath);
+		} catch (\TYPO3\TYPO3\Routing\Exception $exception) {
+			if ($requestPath === '') {
+				throw new \TYPO3\TYPO3\Routing\Exception\NoHomepageException('Homepage could not be loaded. Probably you haven\'t imported a site yet', 1346950755, $exception);
 			}
-			$relativeNodePath = $matches['NodePath'];
-		} else {
-			$relativeNodePath = '';
+			return FALSE;
 		}
 
-		if ($this->nodeRepository->getContext() === NULL) {
-			$workspaceName = (isset($matches['WorkspaceName']) ? $matches['WorkspaceName'] : 'live');
-			$contentContext = new ContentContext($workspaceName);
-			$contentContext->setInvisibleContentShown(TRUE);
-			$this->nodeRepository->setContext($contentContext);
-		} else {
-			$contentContext = $this->nodeRepository->getContext();
-		}
-
-		$workspace = $contentContext->getWorkspace(FALSE);
-		if (!$workspace) {
-			return self::MATCHRESULT_NOWORKSPACE;
-		}
-
-		$site = $contentContext->getCurrentSite();
-		if (!$site) {
-			return self::MATCHRESULT_NOSITE;
-		}
-
-		$siteNode = $contentContext->getCurrentSiteNode();
-		if (!$siteNode) {
-			return self::MATCHRESULT_NOSITENODE;
-		}
-
-		$currentAccessModeFromContext = $contentContext->isInaccessibleContentShown();
-		$contentContext->setInaccessibleContentShown(TRUE);
-		$node = ($relativeNodePath === '') ? $siteNode->getPrimaryChildNode() : $siteNode->getNode($relativeNodePath);
-		$contentContext->setInaccessibleContentShown($currentAccessModeFromContext);
-
-		if (!$node) {
-			return self::MATCHRESULT_NOSUCHNODE;
-		}
 		$this->value = $node->getContextPath();
-		return self::MATCHRESULT_FOUND;
+		return TRUE;
 	}
 
 	/**

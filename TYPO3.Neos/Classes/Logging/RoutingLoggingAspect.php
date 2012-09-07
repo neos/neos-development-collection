@@ -36,36 +36,30 @@ class RoutingLoggingAspect {
 	protected $securityContext;
 
 	/**
-	 * Logs results of the FrontendNodeRoutePartHandler's matchValue() methods
+	 * Logs successful results of the NodeService's getNodeByContextNodePath() method which is called by FrontendNodeRoutePartHandler::matchValue()
 	 *
-	 * @FLOW3\AfterReturning("method(TYPO3\TYPO3\Routing\FrontendNodeRoutePartHandler->matchValue()) || method(TYPO3\TYPO3\Routing\RestRestServiceNodeRoutePartHandler->matchValue())")
-	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current joinpoint
+	 * @FLOW3\AfterReturning("method(TYPO3\TYPO3\Service\NodeService->getNodeByContextNodePath())")
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 */
-	public function logMatchValue(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
-		$path = $joinPoint->getMethodArgument('value');
-		$resultCode = $joinPoint->getResult();
+	public function logSuccessfulMatch(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+		$relativeContextNodePath = $joinPoint->getMethodArgument('relativeContextNodePath');
+		$returnedNode = $joinPoint->getResult();
+		$this->systemLogger->log(sprintf('%s matched node "%s" for path "%s"', $joinPoint->getClassName(), $returnedNode->getContextPath(), $relativeContextNodePath), LOG_INFO);
+	}
 
-		switch (TRUE) {
-			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_INVALIDPATH :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because the path was not valid.', LOG_INFO);
-				break;
-			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_NOWORKSPACE :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no workspace was found.', LOG_INFO);
-				break;
-			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_NOSITE :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no site was found.', LOG_INFO);
-				break;
-			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_NOSITENODE :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match because no site node was found.', LOG_INFO);
-				break;
-			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_NOSUCHNODE :
-				$this->systemLogger->log($joinPoint->getClassName() . ' did not match path "' . $path . '" because no such node was found.', LOG_INFO);
-				break;
-			case $resultCode === FrontendNodeRoutePartHandler::MATCHRESULT_FOUND :
-				$contextNodePath = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($joinPoint->getProxy(), 'value', TRUE);
-				$this->systemLogger->log($joinPoint->getClassName() . ' matched node "' . $contextNodePath . '".', LOG_INFO);
-				break;
+	/**
+	 * Logs exceptional results of the NodeService's getNodeByContextNodePath() method which is called by FrontendNodeRoutePartHandler::matchValue()
+	 *
+	 * @FLOW3\AfterThrowing("method(TYPO3\TYPO3\Service\NodeService->getNodeByContextNodePath())")
+	 * @param \TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint The current join point
+	 * @return void
+	 */
+	public function logFailedMatch(\TYPO3\FLOW3\Aop\JoinPointInterface $joinPoint) {
+		$relativeContextNodePath = $joinPoint->getMethodArgument('relativeContextNodePath');
+		$exception = $joinPoint->getException();
+		if ($exception !== NULL) {
+			$this->systemLogger->log(sprintf('%s failed to retrieve a node for path "%s" with message: %s', $joinPoint->getClassName(), $relativeContextNodePath, $exception->getMessage()), LOG_INFO);
 		}
 	}
 }

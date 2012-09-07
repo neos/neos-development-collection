@@ -118,7 +118,7 @@
 
 -
   name:          'Frontend content without a specified format'
-  uriPattern:    '({node})'
+  uriPattern:    '{node}'
   defaults:
     '@package':    'TYPO3.TYPO3'
     '@controller': 'Frontend\Node'
