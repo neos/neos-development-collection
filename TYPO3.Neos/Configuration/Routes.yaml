@@ -79,6 +79,16 @@
   toLowerCase: 0
   appendExceedingArguments: true
 
+-
+  name:          'Backend - Schema'
+  uriPattern:    'typo3/schema/{@action}'
+  defaults:
+    '@package':    'TYPO3.TYPO3'
+    '@controller': 'Backend\Schema'
+    '@action':     'index'
+    '@format':     'html'
+  appendExceedingArguments: true
+
 ##
 # Frontend
 

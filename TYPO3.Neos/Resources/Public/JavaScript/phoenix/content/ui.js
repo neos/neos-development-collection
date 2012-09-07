@@ -15,20 +15,20 @@ define(
 	'phoenix/content/ui/elements',
 	'phoenix/content/ui/editors',
 	'jquery.popover',
-	'jquery.notice',
 	'jquery.jcrop',
 	'jquery.plupload',
 	'jquery.plupload.html5',
 	'jquery.cookie',
 	'jquery.dynatree'
 ],
-function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, inspectTreeTemplate) {
+function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, inspectTreeTemplate) {
+	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui');
+
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
 		T3.Content = {};
 	}
 	T3.Content.UI = T3.Content.UI || {};
-	var $ = jQuery;
 
 	/**
 	 * =====================
@@ -62,11 +62,13 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
-		template: Ember.Handlebars.compile('{{item.__titleAndModificationState}}'),
+		template: Ember.Handlebars.compile('{{item.contentTypeSchema.label}} {{#if item.status}}<span class="t3-breadcrumbitem-status">({{item.status}})</span>{{/if}}'),
+
 		click: function(event) {
+			event.preventDefault();
+
 			var item = this.get('item');
-			T3.Content.Model.BlockSelection.selectItem(item);
-			event.stopPropagation();
+			T3.Content.Model.NodeSelection.selectNode(item);
 			return false;
 		}
 	});
@@ -105,7 +107,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 			var zIndex;
 			if (T3.Content.Controller.Inspector.get('_modified')) {
 				zIndex = this.$().css('z-index') - 1;
-				this.$clickProtectionLayer = $('<div />').addClass('t3-inspector-clickprotection').addClass('aloha-block-do-not-deactivate').css({'z-index': zIndex});
+				this.$clickProtectionLayer = $('<div />').addClass('t3-inspector-clickprotection').addClass('t3-ui').css({'z-index': zIndex});
 				this.$clickProtectionLayer.click(this._showUnappliedDialog);
 				$('body').append(this.$clickProtectionLayer);
 			} else {
@@ -153,7 +155,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 
 		render: function() {
 			var typeDefinition = T3.Configuration.UserInterface[this.propertyDefinition.type];
-			ember_assert('Type defaults for "' + this.propertyDefinition.type + '" not found1', !!typeDefinition);
+			ember_assert('Type defaults for "' + this.propertyDefinition.type + '" not found!', !!typeDefinition);
 
 			var editorConfigurationDefinition = typeDefinition;
 			if (this.propertyDefinition.userInterface && this.propertyDefinition.userInterface) {
@@ -164,7 +166,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 			ember_assert('Editor class "' + typeDefinition['class'] + '" not found', !!editorClass);
 
 			var classOptions = $.extend({
-				valueBinding: 'T3.Content.Controller.Inspector.blockProperties.' + this.propertyDefinition.key
+				valueBinding: 'T3.Content.Controller.Inspector.nodeProperties.' + this.propertyDefinition.key
 
 			}, this.propertyDefinition.options || {});
 			classOptions = $.extend(classOptions, typeDefinition.options || {});
@@ -237,7 +239,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					node._currentlySendingExtDirectAjaxRequest = true;
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
 						node.data.key,
-						'TYPO3.TYPO3:Folder',
+						'TYPO3.TYPO3CR:Folder',
 						0,
 						function(result) {
 							node._currentlySendingExtDirectAjaxRequest = false;
@@ -440,7 +442,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 				}
 			});
 			function reloadNodeAfterRemove(node) {
-				// @Todo fix when the last page of a folder was deleted
+				// TODO fix when the last page of a folder was deleted
 				var parentNode = node.getParent();
 				if (node.hasChildren() || node.isLazy()) {
 					var grandFatherNode = parentNode.getParent();
@@ -486,7 +488,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 							}
 						}
 					);
-					// Re-enable mouse and keyboard handlling
+					// Re-enable mouse and keyboard handling
 					tree.$widget.bind();
 					node.focus();
 				});
@@ -665,4 +667,42 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 			this.inspectTree.dynatree('getRoot').getChildren()[0].expand(true);
 		}
 	});
+
+	/**
+	 * ================
+	 * SECTION: UTILITY
+	 * ================
+	 * - Content Element Handle Utilities
+	 */
+
+	T3.Content.UI.Util = T3.Content.UI.Util || {};
+
+	T3.Content.UI.Util.AddContentElementHandleBars = function($contentElement, contentElementIndex, collection) {
+			// If this method is called from a jQuery UI widget we can't use our own $ instance
+		if (!$ && jQuery) {
+			$ = jQuery;
+		}
+
+		if (!$contentElement || $contentElement.find('> .t3-contentelement-handle-container').length > 0) {
+			return;
+		}
+
+		var topButtonContainer = $('<div />', {'class': 't3-contentelement-handle-container t3-contentelement-handle-container-top'}).prependTo($contentElement);
+		T3.Content.UI.NewContentelementButton.create({
+			_index: contentElementIndex,
+			_collection: collection
+		}).appendTo(topButtonContainer);
+
+		var bottomButtonContainer = $('<div />', {'class': 't3-contentelement-handle-container t3-contentelement-handle-container-bottom'}).appendTo($contentElement);
+		T3.Content.UI.NewContentelementButton.create({
+			_index: contentElementIndex + 1,
+			_collection: collection
+		}).appendTo(bottomButtonContainer);
+
+		T3.Content.UI.ContentElementHandle.create({
+			_element: $contentElement,
+			_collection: collection
+		}).appendTo(topButtonContainer);
+	}
+
 });

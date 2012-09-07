@@ -11,11 +11,11 @@ define(
 	'text!phoenix/templates/common/launcherpanel.html',
 	'text!phoenix/templates/common/confirmationDialog.html'
 ],
-function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
+function($, launcherTemplate, launcherPanelTemplate, confirmationdialogTemplate) {
+	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/common');
 
 	var T3 = window.T3 || {};
 	T3.Common = {};
-	var $ = jQuery;
 
 	/**
 	 * T3.Common.Launcher
@@ -275,7 +275,7 @@ function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemp
 		 * @param {Object} data the GET data to append
 		 * @param {Object} commands Command-Name --> Callback function list
 		 * @param {jQuery} the handle to which the dialog is appended to
-		 * @param {Object} options to be overriden for the popover
+		 * @param {Object} options to be overridden for the popover
 		 */
 		openFromUrl: function(url, data, commands, $handle, overrideOptions) {
 			var that = this;
@@ -346,7 +346,7 @@ function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemp
 		 * @return {void}
 		 */
 		_showDialog: function() {
-			this._handle.popover(this._options).trigger('showPopover').removeClass('t3-handle-loading');
+			this._handle.popover(this._options).trigger('showPopover').addClass('t3-ui').removeClass('t3-handle-loading');
 		},
 
 		/**
@@ -417,44 +417,79 @@ function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemp
 	 */
 	T3.Common.Notification = Ember.Object.create({
 
+		_timeout: 5000,
+
+		/**
+		 * Shows a new notification
+		 *
+		 * @param {String} msg
+		 * @param {Boolean} stay
+		 * @param {String} className
+		 * @private
+		 * @return {Void}
+		 */
+		_show: function(msg, stay, className) {
+			$('body').midgardNotifications('create', {
+				body: $('<p />', {'class': className, text: msg}),
+				class_prefix: 'typo3-notification',
+				timeout: stay ? 0 : this.get('_timeout'),
+				gravity: 'RT'
+			});
+		},
+
+		/**
+		 * Show ok message
+		 *
+		 * @param {String} msg
+		 * @param {Boolean} stay
+		 * @return {Void}
+		 */
 		ok: function(msg, stay) {
-			$.noticeAdd({
-				text: msg,
-				stay: stay !== undefined ? stay : false,
-				type: 'typo3-notification-ok'
-			});
+			this._show(msg, stay, 'typo3-notification-ok');
 		},
 
+		/**
+		 * Show info message
+		 *
+		 * @param {String} msg
+		 * @param {Boolean} stay
+		 * @return {Void}
+		 */
 		info: function(msg, stay) {
-			$.noticeAdd({
-				text: msg,
-				stay: stay !== undefined ? stay : false,
-				type: 'typo3-notification-info'
-			});
+			this._show(msg, stay, 'typo3-notification-info');
 		},
 
+		/**
+		 * Show notice message
+		 *
+		 * @param {String} msg
+		 * @param {Boolean} stay
+		 * @return {Void}
+		 */
 		notice: function(msg, stay) {
-			$.noticeAdd({
-				text: msg,
-				stay: stay !== undefined ? stay : false,
-				type: 'typo3-notification-notice'
-			});
+			this._show(msg, stay, 'typo3-notification-notice');
 		},
 
+		/**
+		 * Show warning message
+		 *
+		 * @param {String} msg
+		 * @param {Boolean} stay
+		 * @return {Void}
+		 */
 		warning: function(msg, stay) {
-			$.noticeAdd({
-				text: msg,
-				stay: stay !== undefined ? stay : true,
-				type: 'typo3-notification-warning'
-			});
+			this._show(msg, stay, 'typo3-notification-warning');
 		},
 
+		/**
+		 * Show error message
+		 *
+		 * @param {String} msg
+		 * @param {Boolean} stay
+		 * @return {Void}
+		 */
 		error: function(msg, stay) {
-			$.noticeAdd({
-				text: msg,
-				stay: stay !== undefined ? stay : true,
-				type: 'typo3-notification-error'
-			});
+			this._show(msg, stay, 'typo3-notification-error');
 		}
 	});
 

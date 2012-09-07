@@ -1,9 +1,33 @@
-jQuery UI: version 1.8.14
-- UI Core: all
-- Interactions: all
-- Widgets: all
-- Effects: core, fade, highlight
-Theme: UI Darkness
+jQuery UI: version 1.9 beta 1
+Theme: UI Darkness (from 1.8)
+
+The isLocal() function is patched because otherwise Aloha is broken.
+
+Original isLocal() function:
+
+	function isLocal( anchor ) {
+		// clone the node to work around IE 6 not normalizing the href property
+		// if it's manually set, i.e., a.href = "#foo" kills the normalization
+		anchor = anchor.cloneNode( false );
+		return anchor.hash.length > 1 &&
+			anchor.href.replace( rhash, "" ) === location.href.replace( rhash, "" );
+	}
+
+Patched isLocal() function:
+	function isLocal( anchor ) {
+		var rhash = /#.*$/,
+			currentPage = location.href.replace( rhash, "" );
+
+		return function( anchor ) {
+			var href = anchor.href.replace(location.origin + '/', location.href);
+
+			// clone the node to work around IE 6 not normalizing the href property
+			// if it's manually set, i.e., a.href = "#foo" kills the normalization
+			anchor = anchor.cloneNode( false );
+			return anchor.hash.length > 1 &&
+				href.replace( rhash, "" ) === currentPage;
+		};
+	}
 
 
 jquery popover from https://github.com/harryhorn/jquery-popover
@@ -19,9 +43,6 @@ _setDndStatus: function(){
 	--- var pos = $target.offset();
 	+++ var pos = $target.position();
 }
-
-jQuery Notice from http://code.google.com/p/jquery-notice/
-Version 1.0
 
 plupload from http://plupload.com
 Version 1.5b (2011-09-11)
@@ -52,9 +73,6 @@ Version 0.9.9 from 6/7/11
 - deleted index.html
 - deleted js/jquery.min.js
 
-Sproutcore 2.0 from Github repository https://github.com/sproutcore/sproutcore20
-Commit: d7b29372f128b22d8a962dfa48c96499154e2160
-
 
 CodeMirror 2.13 from http://codemirror.net/
 
@@ -83,8 +101,10 @@ SASS version - https://github.com/jlong/sass-twitter-bootstrap/tree/master/lib (
 * Wrapped in .t3-ui class (bootstrap.scss)
 * Changed icon images paths variables $iconSpritePath + $iconWhiteSpritePath (_variables.scss)
 
+
 Createjs
 Update using Scripts/update-createjs-to-master.sh
+
 
 Hallo editor
 Update using Scripts/update-hallo-to-master.sh

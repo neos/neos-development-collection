@@ -8,25 +8,30 @@
 		(window.location.pathname.charAt(window.location.pathname.length - 1) === "/" ? window.location.pathname + "{node.name}.html" : window.location.pathname) +
 		";path=/";
 </script>
+
 <f:security.ifAccess resource="TYPO3_TYPO3_Backend_BackendController">
-	<script src="{f:uri.action(controller: 'Backend\Content', action: 'javascriptConfiguration')}"></script>
 	<f:if condition="{0: 'live'} != {0: node.context.workspace.name}">
-		<script language="javascript">
-				var phoenixJavascriptBasePath = '{f:uri.resource(path:"JavaScript/")}';
+		<script type="text/javascript">
+					// TODO Get rid of those global variables
+				var phoenixJavascriptBasePath = '{f:uri.resource(path:"JavaScript/")}',
+					phoenixContentTypeSchema = '{f:uri.action(action:"index", controller: "Backend\Schema", absolute: TRUE)}';
+
 				var ExtDirectInitialization = function() {
 					<ext:extDirect.provider />;
 				};
+				<typo3:backend.javascriptConfiguration />
 				var Aloha, alohaBaseUrl = '{aloha:baseUri()}/src/lib/';
 		</script>
 
 		<script src="{f:uri.resource(path: 'JavaScript/ext-direct.js', package: 'TYPO3.ExtJS')}"></script>
 
 		<script data-main="{f:uri.resource(path:'JavaScript/contentmodule-main.js')}" src="{f:uri.resource(path:'JavaScript/require.js')}"></script>
+		<!-- Below is the built file -->
+		<!--<script src="{f:uri.resource(path:'JavaScript/contentmodule-main-built.js')}"></script>-->
 
 		<!-- TODO Combine all CSS files with @import in one CSS file for requirejs optimizer -->
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'StyleSheet/style.css')}" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jquery-ui/css/custom-theme/jquery-ui-1.8.16.custom.css')}" />
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jquery-notice/jquery.notice.css')}" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jcrop/css/jquery.Jcrop.css')}" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/jquery-dynatree/css/ui.dynatree.css')}" />
 		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path:'Library/chosen/chosen/chosen.css')}" />

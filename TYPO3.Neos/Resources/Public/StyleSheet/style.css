@@ -7563,31 +7563,58 @@ ul.t3-launcher-horizontal li .text {
   left: 0px;
 }
 
-.notice-wrap {
-  top: 90px !important;
-  right: 210px !important;
+.midgardNotifications-container {
+  width: 280px;
+  z-index: 99999999;
+  color: white;
 }
-
-.notice-item {
-  background-position: 3px 5px !important;
-  background-repeat: no-repeat !important;
+.midgardNotifications-container .typo3-notification-item-normal .typo3-notification-item-inner,
+.midgardNotifications-container .typo3-notification-item-binded .typo3-notification-item-inner {
+  height: auto;
+  background: rgba(51, 51, 51, 0.9);
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  color: #eee;
+  padding: 6px 6px 0px 6px;
+  border: 2px solid #999999;
+  display: block;
+  position: relative;
+  margin: 0 0 12px 0;
+  z-index: 99999998;
 }
-.notice-item p {
+.midgardNotifications-container .typo3-notification-item-binded .typo3-notification-item-inner {
+  left: 0;
+  top: 0;
+}
+.midgardNotifications-container .typo3-notification-title {
+  position: relative;
+  top: -3px;
+  text-align: left;
+}
+.midgardNotifications-container .typo3-notification-item-outer {
+  margin-right: 200px;
+  margin-top: 116px;
+  width: 250px;
+}
+.midgardNotifications-container .typo3-notification-item-outer p {
   padding-left: 17px;
   padding-right: 10px;
   word-break: break-all;
   overflow: hidden;
+  background-position: 0px 0px !important;
+  background-repeat: no-repeat !important;
+  min-height: 50px;
 }
-.notice-item.typo3-notification-ok {
+.midgardNotifications-container .typo3-notification-item-outer .typo3-notification-ok {
   background-image: url("../Images/Icons/White/checkmark_icon-16.png");
 }
-.notice-item.typo3-notification-info {
+.midgardNotifications-container .typo3-notification-item-outer .typo3-notification-info {
   background-image: url("../Images/Icons/White/info_icon-16.png");
 }
-.notice-item.typo3-notification-warning {
+.midgardNotifications-container .typo3-notification-item-outer .typo3-notification-warning {
   background-image: url("../Images/Icons/White/message_attention_icon-16.png");
 }
-.notice-item.typo3-notification-error {
+.midgardNotifications-container .typo3-notification-item-outer .typo3-notification-error {
   background-image: url("../Images/Icons/White/attention_icon-16.png");
 }
 
@@ -7702,6 +7729,16 @@ button.t3-button.t3-connection-status-down {
   border: 1px solid #c02f00;
 }
 
+.t3-contentelement-hover {
+  outline: 3px solid rgba(0, 0, 0, 0.2);
+  outline-offset: 4px;
+}
+
+.t3-contentelement-active {
+  outline: 3px solid rgba(247, 144, 37, 0.8);
+  outline-offset: 4px;
+}
+
 .t3-contentelement-overlay {
   position: absolute;
   display: none;
@@ -7737,6 +7774,31 @@ button.t3-button.t3-connection-status-down {
 
 .typo3-typo3-html .t3-contentelement-overlay-icon {
   background-image: url("../Images/Icons/White/brackets_icon-16.png");
+}
+
+.t3-contentelement > .t3-contentelement-handle-container {
+  overflow: hidden;
+  display: none;
+  font-size: 16px;
+}
+
+.t3-contentelement:hover > .t3-contentelement-handle-container {
+  display: inline;
+}
+
+.t3-contentelement-handle-container > div {
+  position: relative;
+  float: right;
+  left: 7px;
+}
+
+.t3-contentelement-handle-container > button {
+  position: relative;
+  float: left;
+}
+
+.t3-contentelement-handle-container-bottom > button {
+  top: 0px;
 }
 
 .t3-ui .widget {

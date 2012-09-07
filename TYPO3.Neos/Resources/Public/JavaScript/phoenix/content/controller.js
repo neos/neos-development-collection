@@ -3,12 +3,12 @@
  */
 
 define(
-['jquery', 'phoenix/common'],
-function(jQuery) {
+['jquery', 'create', 'phoenix/common'],
+function($, CreateJS) {
+	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/controller');
 
 	var T3 = window.T3 || {};
 	T3.Content = T3.Content || {};
-	var $ = jQuery;
 
 	/**
 	 * This controller toggles the preview mode on and off.
@@ -28,21 +28,12 @@ function(jQuery) {
 
 		onTogglePreviewMode: function() {
 			var isPreviewEnabled = this.get('previewMode');
-
-			$('body').toggleClass('t3-ui-previewmode t3-ui-controls');
-
 			if (isPreviewEnabled) {
-				Aloha.editables.forEach(function(editable) {
-					editable.disable();
-				});
-					// Hide all popover windows on preview mode active,
-					// same applies for buttons
-				$(document).trigger('hidePopover');
+				CreateJS.disableEdit();
 			} else {
-				Aloha.editables.forEach(function(editable) {
-					editable.enable();
-				});
+				CreateJS.enableEdit();
 			}
+			$('body').toggleClass('t3-ui-previewmode t3-ui-controls');
 		}.observes('previewMode'),
 
 		onPreviewModeChange: function() {
@@ -134,13 +125,13 @@ function(jQuery) {
 			return !this.get('_modified');
 		}.property('_modified').cacheable(),
 
-		blockProperties: null,
+		nodeProperties: null,
 
-		selectedBlock: null,
+		selectedNode: null,
 		cleanProperties: null,
 
 		init: function() {
-			this.set('blockProperties', Ember.Object.create());
+			this.set('nodeProperties', Ember.Object.create());
 		},
 
 		/**
@@ -157,13 +148,13 @@ function(jQuery) {
 		 *   - image (file upload)
 		 */
 		sectionsAndViews: function() {
-			var selectedBlockSchema = T3.Content.Model.BlockSelection.get('selectedBlockSchema');
-			if (!selectedBlockSchema || !selectedBlockSchema.groups || !selectedBlockSchema.properties) return [];
+			var selectedNodeSchema = T3.Content.Model.NodeSelection.get('selectedNodeSchema');
+			if (!selectedNodeSchema || !selectedNodeSchema.groups || !selectedNodeSchema.properties) return [];
 
 			var sectionsAndViews = [];
-			jQuery.each(selectedBlockSchema.groups, function(groupIdentifier, propertyGroupConfiguration) {
+			jQuery.each(selectedNodeSchema.groups, function(groupIdentifier, propertyGroupConfiguration) {
 				var properties = [];
-				jQuery.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
+				jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
 					if (propertyConfiguration.group === groupIdentifier) {
 						properties.push(jQuery.extend({key: propertyName}, propertyConfiguration));
 					}
@@ -182,34 +173,40 @@ function(jQuery) {
 			});
 
 			return sectionsAndViews;
-		}.property('T3.Content.Model.BlockSelection.selectedBlockSchema').cacheable(),
+		}.property('T3.Content.Model.NodeSelection.selectedNodeSchema').cacheable(),
 
 		/**
 		 * When the selected block changes in the content model,
-		 * we update this.blockProperties
+		 * we update this.nodeProperties
 		 */
-		onSelectedBlockChange: function() {
-			this.selectedBlock = T3.Content.Model.BlockSelection.get('selectedBlock');
-			this.cleanProperties = this.selectedBlock.getCleanedUpAttributes();
-			this.set('blockProperties', Ember.Object.create(this.cleanProperties));
-		}.observes('T3.Content.Model.BlockSelection.selectedBlock'),
-
+		onSelectedNodeChange: function() {
+			var selectedNode = T3.Content.Model.NodeSelection.get('selectedNode'),
+				cleanProperties = {};
+			this.set('selectedNode', selectedNode);
+			if (selectedNode) {
+				cleanProperties = selectedNode.get('attributes');
+			}
+			this.set('cleanProperties', cleanProperties);
+			this.set('nodeProperties', Ember.Object.create(cleanProperties));
+		}.observes('T3.Content.Model.NodeSelection.selectedNode'),
 
 		/**
 		 * We'd like to monitor *every* property change, that's why we have
 		 * to look through the list of properties...
 		 */
-		onBlockPropertiesChange: function() {
+		onNodePropertiesChange: function() {
 			var that = this,
-				selectedBlock = this.get('selectedBlock');
-			if (selectedBlock) {
-				var selectedBlockSchema = T3.Content.Model.BlockSelection.get('selectedBlockSchema'),
-					editableProperties = [],
-					blockProperties = this.get('blockProperties');
-				if (selectedBlockSchema.properties) {
-					jQuery.each(selectedBlockSchema.properties, function(propertyName, propertyConfiguration) {
-						if (selectedBlockSchema.inlineEditableProperties) {
-							if (jQuery.inArray(propertyName, selectedBlockSchema.inlineEditableProperties) === -1) {
+				selectedNode = this.get('selectedNode'),
+				selectedNodeSchema,
+				editableProperties = [],
+				nodeProperties;
+			if (selectedNode) {
+				selectedNodeSchema = selectedNode.get('contentTypeSchema');
+				nodeProperties = this.get('nodeProperties');
+				if (selectedNodeSchema.properties) {
+					jQuery.each(selectedNodeSchema.properties, function(propertyName, propertyConfiguration) {
+						if (selectedNodeSchema.inlineEditableProperties) {
+							if (jQuery.inArray(propertyName, selectedNodeSchema.inlineEditableProperties) === -1) {
 								editableProperties.push(propertyName);
 							}
 						} else {
@@ -219,20 +216,22 @@ function(jQuery) {
 				}
 				if (editableProperties.length > 0) {
 					jQuery.each(editableProperties, function(key, propertyName) {
-						blockProperties.addObserver(propertyName, null, function(property, propertyName, value) {
+						nodeProperties.addObserver(propertyName, null, function() {
 							that._somePropertyChanged();
 						});
 					});
 				}
 			}
-		}.observes('blockProperties'),
+		}.observes('nodeProperties'),
 
 			// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
 		_somePropertyChanged: function() {
 			var that = this,
 				hasChanges = false;
-			jQuery.each(this.selectedBlock.getCleanedUpAttributes(), function(key, value) {
-				if (that.get('blockProperties').get(key) !== value) {
+
+			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
+
+				if (that.get('nodeProperties').get(key) !== cleanPropertyValue) {
 					hasChanges = true;
 				}
 			});
@@ -249,25 +248,23 @@ function(jQuery) {
 		},
 
 		/**
-		 * Apply the edited properties back to the block
+		 * Apply the edited properties back to the node proxy
 		 */
 		apply: function() {
-			var that = this;
-			Ember.beginPropertyChanges();
-			Ember.keys(this.cleanProperties).forEach(function(key) {
-				that.selectedBlock.set(key, that.blockProperties.get(key));
-			});
+			_.each(Ember.keys(this.cleanProperties), function(key) {
+				this.get('selectedNode').setAttribute(key, this.get('nodeProperties').get(key));
+			}, this);
+
+			Backbone.sync('update', this.get('selectedNode').get('_vieEntity'));
 
 			this.set('_modified', false);
-			Ember.endPropertyChanges();
 		},
 
 		/**
 		 * Revert all changed properties
 		 */
 		revert: function() {
-			this.cleanProperties = this.selectedBlock.getCleanedUpAttributes();
-			this.set('blockProperties', Ember.Object.create(this.cleanProperties));
+			this.set('nodeProperties', Ember.Object.create(this.get('cleanProperties')));
 			this.set('_modified', false);
 		}
 	});
@@ -283,7 +280,7 @@ function(jQuery) {
 	 */
 	var BlockActions = Ember.Object.create({
 
-		// TODO: Move this to a separate controller
+			// TODO: Move this to a separate controller
 		_clipboard: null,
 
 		/**

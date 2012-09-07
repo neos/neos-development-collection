@@ -62,6 +62,7 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 	 * Render the list of nodes, and if there are none and we are not inside the live
 	 * workspace, render a button to create new content.
 	 *
+	 * @throws \TYPO3\TYPO3\Exception
 	 * @return string
 	 */
 	public function evaluate() {
@@ -74,15 +75,17 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 			return $output;
 		}
 
-		if ($this->numberOfRenderedNodes === 0 && $this->nodeRepository->getContext()->getWorkspaceName() !== 'live') {
+		if ($node->getContentType()->isOfType('TYPO3.TYPO3:Section')) {
+			$sectionNode = $node;
+		} else {
 			$sectionNode = $node->getNode($this->getNodePath());
-			if ($sectionNode === NULL) {
-				$sectionNode = $node->createNode($this->getNodePath(), $this->contentTypeManager->getContentType('TYPO3.TYPO3:Section'));
-			}
-			$output = '<div class="t3-ui"><button class="t3-create-new-content t3-button btn" data-node="' . $sectionNode->getContextPath() . '">Create new content</button></div>';
 		}
 
-		return $output;
+		if ($sectionNode === NULL) {
+			throw new \TYPO3\TYPO3\Exception('Empty TYPO3.TYPO3:Section node with path "' . $this->getNodePath() . '" for ' . $node->getContextPath() . ' can not be rendered');
+		}
+
+		return sprintf('<div about="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), 'TYPO3.TYPO3:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
 	}
 }
 ?>

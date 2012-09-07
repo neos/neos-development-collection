@@ -18,7 +18,8 @@ prototype(TYPO3.TypoScript:CollectionRenderer) {
 prototype(TYPO3.TYPO3:Section) < prototype(TYPO3.TypoScript:CollectionRenderer)
 prototype(TYPO3.TYPO3:Section) {
 	@class = 'TYPO3\\TYPO3\\TypoScript\\Section'
-	collection = ${q(node).children(this.getNodePath()).children()}
+		# To enable direct rendering of a Section we check if we have
+	collection = ${q(node).is('[instanceof TYPO3.TYPO3:Section]') ? q(node).children() : q(node).children(this.getNodePath()).children()}
 }
 
 # Catch-all condition for the default case

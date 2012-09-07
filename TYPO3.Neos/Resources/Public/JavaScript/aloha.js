@@ -1,12 +1,24 @@
-define(['jquery', 'jquery.ui'], function(jQuery, jQueryUi) {
+define(['jquery', 'jquery-ui'], function(jQuery, jQueryUi) {
+	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha');
 	var Aloha = window.Aloha = window.Aloha || {};
 
 	Aloha.settings = {
 		logLevels: {'error': true, 'warn': true, 'info': false, 'debug': false},
 		errorhandling : false,
-
+		sidebar: {
+			disabled: true
+		},
 		plugins: {
-			load: 'common/ui,common/format,common/paste,common/block,common/table,common/link,phoenixAloha/phoenixintegration,phoenixAloha/phoenix-links',
+			load: [
+				'common/ui',
+				'common/format',
+				'common/paste',
+				'common/block',
+				'common/table',
+				'common/link'//,
+//				'phoenixAloha/phoenixintegration',
+//				'phoenixAloha/phoenix-links'
+			].join(','),
 			block: {
 				sidebarAttributeEditor: false
 			},
@@ -35,15 +47,17 @@ define(['jquery', 'jquery.ui'], function(jQuery, jQueryUi) {
 		}
 	};
 
-	require(
+	// TODO: Aloha is currently removed because we want to reduce page loading times
+	/*require(
 		{
 			context: 'aloha',
 			baseUrl: alohaBaseUrl
 		},
 		['aloha'],
 		function(Aloha) {
+			if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha (inner require)');
 		}
-	);
+	);*/
 });
 
 

@@ -18,51 +18,9 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * The wrapper contains the property name which should be made editable, and is either a "span" or a "div" tag (depending on the context)
  *
  * @FLOW3\Scope("prototype")
+ * @deprecated since sprint 10, use ContentElement/NotEditableViewHelper instead
  */
-class NotEditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper {
+class NotEditableViewHelper extends \TYPO3\TYPO3\ViewHelpers\ContentElement\NotEditableViewHelper {
 
-	/**
-	 * @var \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface
-	 */
-	protected $accessDecisionManager;
-
-	/**
-	 * Injects the access decision manager
-	 *
-	 * @param \TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
-	 * @return void
-	 */
-	public function injectAccessDecisionManager(\TYPO3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
-		$this->accessDecisionManager = $accessDecisionManager;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function render() {
-		if ($this->hasAccessToResource('TYPO3_TYPO3_Backend_BackendController')) {
-			$this->tag->setContent($this->renderChildren());
-			$this->tag->addAttribute('class', 'typo3-typo3-notEditable');
-			return $this->tag->render();
-		} else {
-			return $this->renderChildren();
-		}
-	}
-
-	/**
-	 * Check if we currently have access to the given resource
-	 *
-	 * @param string $resource The resource to check
-	 * @return boolean TRUE if we currently have access to the given resource
-	 */
-	protected function hasAccessToResource($resource) {
-		try {
-			$this->accessDecisionManager->decideOnResource($resource);
-		} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
-			return FALSE;
-		}
-
-		return TRUE;
-	}
 }
 ?>

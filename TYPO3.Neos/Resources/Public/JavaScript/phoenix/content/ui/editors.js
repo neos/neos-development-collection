@@ -11,14 +11,15 @@ define(
 	'text!phoenix/templates/content/ui/imageUpload.html',
 	'phoenix/content/ui/elements'
 ],
-function(jQuery, fileUploadTemplate, imageUploadTemplate) {
+function($, fileUploadTemplate, imageUploadTemplate) {
+	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui/editors');
+
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
 		T3.Content = {};
 	}
 	T3.Content.UI = T3.Content.UI || {};
 	T3.Content.UI.Editor = T3.Content.UI.Editor || {};
-	var $ = jQuery;
 
 	T3.Content.UI.Editor.TextField = Ember.TextField.extend({
 		classNames: ['input-small']
@@ -46,7 +47,7 @@ function(jQuery, fileUploadTemplate, imageUploadTemplate) {
 			this.$().datepicker({
 				dateFormat: $.datepicker.W3C,
 				beforeShow: function(field, datePicker) {
-					$(datePicker.dpDiv).addClass('aloha-block-do-not-deactivate');
+					$(datePicker.dpDiv).addClass('t3-ui');
 				}
 			});
 		}
@@ -122,7 +123,7 @@ function(jQuery, fileUploadTemplate, imageUploadTemplate) {
 		_editor: null,
 
 		// TODO: fix the width / height so it relates to the rest of the UI
-		$popoverContent: $('<div />').attr('class', 'aloha-block-do-not-deactivate t3-htmleditor-window'),
+		$popoverContent: $('<div />').attr('class', 't3-ui t3-htmleditor-window'),
 
 		label: 'HTML Editor',
 
@@ -562,7 +563,7 @@ function(jQuery, fileUploadTemplate, imageUploadTemplate) {
 				preventRight: true,
 				openEvent: function() {
 					$imageInThumbnail.attr('src', that.get('_previewImageUri'));
-					this.popover$.addClass('aloha-block-do-not-deactivate');
+					this.popover$.addClass('t3-ui');
 					var cropOptions = that.get('_cropOptions');
 
 					var settings = {

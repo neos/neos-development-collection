@@ -7,28 +7,30 @@
 define(
 [
 	'jquery',
-	'text!phoenix/templates/content/ui/toolbar.html',
+	'phoenix/content/ui/elements/toolbar',
+	'phoenix/content/ui/elements/button',
+	'phoenix/content/ui/elements/toggle-button',
+	'phoenix/content/ui/elements/popover-button',
+	'phoenix/content/ui/elements/new-contentelement-button',
+	'phoenix/content/ui/elements/contentelement-handles',
 	'jquery.popover'
 ],
-function(jQuery, toolbarTemplate) {
+function($, Toolbar, Button, ToggleButton, PopoverButton, NewContentelementButton, ContentElementHandle) {
+	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui/elements');
+
 	var T3 = window.T3 || {};
 	if (typeof T3.Content === 'undefined') {
 		T3.Content = {};
 	}
 
 	T3.Content.UI = T3.Content.UI || {};
-	var $ = jQuery;
 
 	/**
 	 * T3.Content.UI.Toolbar
 	 *
 	 * Toolbar which can contain other views. Has two areas, left and right.
 	 */
-	T3.Content.UI.Toolbar = Ember.View.extend({
-		tagName: 'div',
-		classNames: ['t3-toolbar', 'aloha-block-do-not-deactivate'],
-		template: Ember.Handlebars.compile(toolbarTemplate)
-	});
+	T3.Content.UI.Toolbar = Toolbar;
 
 	/**
 	 * T3.Content.UI.Button
@@ -37,21 +39,13 @@ function(jQuery, toolbarTemplate) {
 	 *
 	 * TODO: should be moved to T3.Common.UI.Button?
 	 */
-	T3.Content.UI.Button = Ember.Button.extend({
-		classNames: ['t3-button','btn','btn-mini'],
-		attributeBindings: ['disabled'],
-		classNameBindings: ['iconClass'],
-		label: '',
-		disabled: false,
-		visible: true,
-		icon: '',
-		template: Ember.Handlebars.compile('{{label}}'),
-		iconClass: function() {
-			var icon = this.get('icon');
-			return icon !== '' ? 't3-icon-' + icon : '';
-		}.property('icon').cacheable()
-	});
+	T3.Content.UI.Button = Button;
 
+	/**
+	 * T3.Content.UI.Image
+	 *
+	 * TODO: should be moved to T3.Common.UI.Button?
+	 */
 	T3.Content.UI.Image = Ember.View.extend({
 		tagName: 'img',
 		attributeBindings: ['src']
@@ -64,87 +58,14 @@ function(jQuery, toolbarTemplate) {
 	 *
 	 * TODO: should be moved to T3.Common.UI.Button?
 	 */
-	T3.Content.UI.ToggleButton = T3.Content.UI.Button.extend({
-		classNames: ['t3-button'],
-		classNameBindings: ['pressed'],
-		pressed: false,
-		toggle: function() {
-			this.set('pressed', !this.get('pressed'));
-		},
-		mouseUp: function(event) {
-			// Only trigger if left mouse is clicked
-			if (event.button === 0 && this.get('isActive')) {
-				var action = this.get('action'),
-				target = this.get('targetObject');
-
-				this.toggle();
-				if (target && action) {
-					if (typeof action === 'string') {
-						action = target[action];
-					}
-					action.call(target, this.get('pressed'), this);
-				}
-
-				this.set('isActive', false);
-			}
-
-			this._mouseDown = false;
-			this._mouseEntered = false;
-		}
-	});
+	T3.Content.UI.ToggleButton = ToggleButton;
 
 	/**
 	 * T3.Content.UI.PopoverButton
-	 *
-	 * A button which, when pressed, shows a "popover". You will subclass
-	 * this class and implement onPopoverOpen / popoverTitle / $popoverContent
 	 */
-	T3.Content.UI.PopoverButton = T3.Content.UI.ToggleButton.extend({
+	T3.Content.UI.PopoverButton = PopoverButton;
 
-		/**
-		 * @var {String} title of the popover
-		 */
-		popoverTitle: '',
+	T3.Content.UI.NewContentelementButton = NewContentelementButton;
 
-		/**
-		 * @var {jQuery} content of the popover. to be manipulated in the onPopoverOpen function
-		 */
-		$popoverContent: $('<div></div>'),
-
-		/**
-		 * @var {String} one of "top, bottom, left, right". Specifies the popover position.
-		 */
-		popoverPosition: 'bottom',
-
-		/**
-		 * Lifecycle method by SproutCore, executed as soon as the element has been
-		 * inserted in the DOM and the $() method is executable. We initialize the
-		 * popover at this point.
-		 */
-		didInsertElement: function() {
-			var that = this;
-			this.$().popover({
-				header: $('<div>' + that.get('popoverTitle') + '</div>'),
-				content: this.$popoverContent,
-				preventLeft: (this.get('popoverPosition')==='left' ? false : true),
-				preventRight: (this.get('popoverPosition')==='right' ? false : true),
-				preventTop: (this.get('popoverPosition')==='top' ? false : true),
-				preventBottom: (this.get('popoverPosition')==='bottom' ? false : true),
-				zindex: 10090,
-				closeEvent: function() {
-					that.set('pressed', false);
-				},
-				openEvent: function() {
-					that.onPopoverOpen.call(that);
-				}
-			});
-		},
-
-		/**
-		 * Template method, to be implemented in subclasses. Usually,
-		 * you want to manipulate this.$popoverContent in this method.
-		 */
-		onPopoverOpen: function() {
-		}
-	});
+	T3.Content.UI.ContentElementHandle = ContentElementHandle;
 });

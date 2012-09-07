@@ -7,626 +7,210 @@
  */
 
 define(
-['jquery', 'text!phoenix/templates/common/launcher.html'],
-function(jQuery, launcherTemplate) {
+	['jquery', 'vie/instance', 'vie/entity'],
+	function($, vie, EntityWrapper) {
+		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/model');
 
-	var T3 = window.T3 || {};
-	T3.Content = T3.Content || {};
-	T3.Content.Model = {};
-	var $ = jQuery;
-
-	/**
-	 * T3.Content.Model.AbstractBlock
-	 */
-	var AbstractBlock = Ember.Object.extend({
-		_hidden: false,
-		__title: null,
-		__originalValues: null,
-		__modified: false,
-		__publishable: false,
-		__status: '',
-		__titleAndModificationState: '',
-		__nodePath: null,
-		__workspacename: null,
-			// If false we don't fire any change notifications
-		__valuesInitialized: false,
+		var T3 = window.T3 || {};
+		if (typeof T3.Content === 'undefined') {
+			T3.Content = {};
+		}
+		T3.Content.Model = {};
 
 		/**
-		 * @var {boolean}
-		 * A node is publishable if it is not in the live workspace.
-		 */
-		__publishable: function() {
-			return (this.get('__workspacename') !== 'live');
-		}.property('__workspacename').cacheable(),
-
-		/**
-		 * @var {String}
-		 * A concatenation of title and status for the breadcrumb menu.
-		 * Triggered each time "__status" and "__title" properties change.
-		 */
-		__titleAndModificationState: function() {
-			return this.get('__status') === '' ? this.get('__title') : this.get('__title') + ' (' + this.get('__status') + ')';
-		}.property('__status', '__title').cacheable(),
-
-		_initializePropertiesFromSchema: function(schema) {
-			var that = this;
-			this.__originalValues = {};
-				// HACK: Add observer for each element, as we do not know how to add one observer for *all* elements.
-			$.each(schema.properties, function(key) {
-				that.__originalValues[key] = null;
-				that.addObserver(key, that, that._somePropertyChanged);
-			});
-		},
-
-		/**
-		 * Triggered each time "publishable" and "modified" properties change.
+		 * T3.Content.Model.NodeSelection
 		 *
-		 * If something is *publishable* and *modified*, i.e. is already saved
-		 * in the current workspace AND has more local changes, the system
-		 * will NOT publish the not-visible changes.
+		 * Contains the currently selected node proxy with parents.
+		 *
+		 * This model is the one most listened to, as when the node selection changes, the UI
+		 * is responding to that.
 		 */
-		_onStateChange: function() {
-			if (this.get('__modified')) {
-				this.set('__status', 'modified');
-				Changes.addChange(this);
-				PublishableBlocks.remove(this);
-			} else if (this.get('__publishable')) {
-				this.set('__status', 'publishable');
-				Changes.removeChange(this);
-				PublishableBlocks.add(this);
-			} else {
-				this.set('__status', '');
-				Changes.removeChange(this);
-				PublishableBlocks.remove(this);
-			}
-		}.observes('__publishable', '__modified'),
+		var NodeSelection = Ember.Object.create({
+			nodes: [],
 
-			// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
-		_somePropertyChanged: function(that, propertyName) {
-			if (!this.__valuesInitialized) {
-				return;
-			}
-			var hasChanges = false;
+			/**
+			 *
+			 */
+			initialize: function() {
+				vie.entities.reset();
+				vie.load({element: $('body')}).from('rdfa').execute();
 
-				// We need to register this block as changed even if it is
-				// already inside, so that the local store can be updated
-				// with the new content.
-			Changes.addChange(this);
+					// Update the selection on initialize, such that the current Page is added to the breadcrumb
+				this.updateSelection();
+			},
 
-			$.each(this.__originalValues, function(key, value) {
-				if (that.get(key) !== value) {
-					hasChanges = true;
+			/**
+			 * Update the selection from a selected content element.
+			 * If we have a node activated, we add the CSS class "t3-contentelement-selected"
+			 * to the body so that we can modify the appearance of the content element editing handles.
+			 */
+			updateSelection: function($element) {
+				var nodes = [],
+					that = this;
+
+					// Remove active class from all previously active nodes (content elements and sections)
+				$('.t3-contentelement[about], .t3-contentsection[about]').removeClass('t3-contentelement-active');
+
+					// TODO Check if we need that
+				if (this._updating) {
+					return;
 				}
-			});
-			this.set('__modified', hasChanges);
-		},
+				this._updating = true;
 
-		/**
-		 * Returns a simple JSON object containing the simple and cleaned
-		 * attributes for the block
-		 */
-		getCleanedUpAttributes: function() {
-			var that = this, cleanedAttributes = {};
-			$.each(this.__originalValues, function(key) {
-				cleanedAttributes[key] = that.get(key);
-			});
-			return cleanedAttributes;
-		},
+				if ($element !== undefined) {
+						// Add active class to selected content element
+					$element.addClass('t3-contentelement-active');
 
-		recordCurrentStateAsOriginal: function() {
-			var that = this;
-			$.each(this.__originalValues, function(key) {
-				that.__originalValues[key] = that.get(key);
-			});
-			this.__valuesInitialized = true;
-		},
+					this.addNodeByElement(nodes, $element);
+					$element.parents('.t3-contentelement[about], .t3-contentsection[about]').each(function() {
+						that.addNodeByElement(nodes, this);
+					});
 
-		setOriginalValues: function(properties) {
-			var that = this;
-			$.each(properties, function(key, value) {
-				that.__originalValues[key] = value;
-			});
-			this._checkForDirtyProperties();
-		},
-
-		_checkForDirtyProperties: function() {
-			var that = this, modified = false;
-			$.each(this.__originalValues, function(key, value) {
-				if (value !== that.get(key)) {
-					modified = true;
-				}
-			});
-			this.set('__modified', modified);
-		}
-	});
-
-	/**
-	 * T3.Content.Model.Block
-	 *
-	 * The most central model class, which represents a single content element, and wraps and
-	 * extends an Aloha Block for use in SproutCore, so we can use data binding on it.
-	 *
-	 * We use the following conventions:
-	 *
-	 * (variable without prefix): TYPO3CR Node::setProperty(...)
-	 * _[varname]: TYPO3CR Node::set[Varname](...)
-	 * __[varname]: Purely internal stuff, like the context node path
-	 */
-	var Block = AbstractBlock.extend({
-		__alohaBlockId: null,
-
-			// As the DOM is all lowercase the data attribute is all lowercase and we need it in camel case,
-			// that's why we use the below hack
-		__nodepath: null,
-		_setProperCamelCaseNodePath: function() {
-			this.set('__nodePath', this.get('__nodepath'));
-		}.observes('__nodepath'),
-
-		schema: function() {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('__alohaBlockId'));
-			return alohaBlock.getSchema();
-		}.property().cacheable(),
-
-		/**
-		 * Get the actual content element wrapper as jQuery object
-		 * Note that handles are pretended to the block, and the element itself should
-		 * be wrapped with a div
-		 * @return {jQuery}
-		 */
-		getContentElement: function() {
-			if (this.__alohaBlockId) {
-				return $('#' + this.__alohaBlockId);
-			}
-		},
-
-		_onStatusChange: function() {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('__alohaBlockId'));
-			alohaBlock.attr('__status', this.get('__status'));
-		}.observes('__status'),
-
-		_onHiddenChange: function(that, propertyName) {
-			var contentElementContainer = $('#' + that.__alohaBlockId).first();
-			if (this.get('_hidden')) {
-				contentElementContainer.addClass('t3-contentelement-hidden');
-			} else {
-				contentElementContainer.removeClass('t3-contentelement-hidden');
-			}
-		}.observes('_hidden'),
-
-		_updateChangedPropertyInAlohaBlock: function(propertyName) {
-			var alohaBlock = Aloha.Block.BlockManager.getBlock(this.get('__alohaBlockId'));
-				// Save original property back to Aloha Block
-				if (!this._disableAlohaBlockUpdate) {
-					alohaBlock.attr(propertyName, this.get(propertyName));
-				}
-		},
-
-			// Some hack which is fired when we change a property. Should be replaced with a proper API method which should be fired *every time* a property is changed.
-		_somePropertyChanged: function(that, propertyName) {
-			this._updateChangedPropertyInAlohaBlock(propertyName);
-			this._super(that, propertyName);
-		},
-
-		/**
-		 * Hides a handle of the block if available
-		 * @return {void}
-		 */
-		hideHandle: function(handleIdentifier) {
-			if (this.__alohaBlockId) {
-				$('#' + this.__alohaBlockId + ' > .t3-' + handleIdentifier + '-handle').addClass('t3-handle-hidden');
-			}
-		},
-
-		/**
-		 * Shows a handle of the block if available
-		 * @return {void}
-		 */
-		showHandle: function(handleIdentifier) {
-			if (this.__alohaBlockId) {
-				$('#' + this.__alohaBlockId + ' > .t3-' + handleIdentifier + '-handle').removeClass('t3-handle-hidden');
-			}
-		},
-
-			// HACK for making updates of editables work...
-		_doNotUpdateAlohaBlock: function() {
-			this._disableAlohaBlockUpdate = true;
-		},
-
-		_enableAlohaBlockUpdateAgain: function() {
-			this._disableAlohaBlockUpdate = false;
-		}
-	});
-
-	var PageBlock = AbstractBlock.extend({
-		__title: 'Page',
-
-		schema: function() {
-			return T3.Configuration.Schema['TYPO3.TYPO3:Page'];
-		}.property().cacheable(),
-
-		init: function() {
-			var that = this,
-				$pageMetainformation = $('#t3-page-metainformation');
-
-			this._initializePropertiesFromSchema(this.get('schema'));
-			$.each(this.get('schema').properties, function(key) {
-				that.set(key, $pageMetainformation.data(key.toLowerCase()));
-			});
-			this.set('__nodePath', $pageMetainformation.attr('data-__nodepath'));
-			this.set('__workspacename', $pageMetainformation.attr('data-__workspacename'));
-			this.recordCurrentStateAsOriginal();
-		}
-	});
-
-	/**
-	 * T3.Content.Model.BlockManager
-	 *
-	 * Should be used to get an instance of a T3.Content.Model.Block, when
-	 * an Aloha Block is given. Is only used internally.
-	 *
-	 * @internal
-	 */
-	var BlockManager = Ember.Object.create({
-		_blocks: {},
-		_blocksByNodePath: {},
-		_pageBlock: null,
-
-		initialize: function() {
-			this._blocks = {};
-			this._blocksByNodePath = {};
-			this._pageBlock = PageBlock.create();
-
-			var scope = this;
-			$('*[data-__nodepath]').each(function() {
-					// Just fetch the block a single time so that it is initialized.
-				scope.getBlockByNodePath($(this).attr('data-__nodepath'));
-			});
-		},
-
-		/**
-		 * @param block/block Aloha Block instance
-		 * @return {T3.Content.Model.Block}
-		 */
-		getBlockProxy: function(alohaBlock) {
-			var blockId = alohaBlock.getId();
-			if (this._blocks[blockId]) {
-				return this._blocks[blockId];
-			}
-
-
-			var attributes = {};
-			var internalAttributes = {};
-			$.each(alohaBlock.attr(), function(key, value) {
-					// TODO: This simply converts all strings 'false' and 'true' into boolean, see if type checking has to be added
-				if (value === 'false') {
-					value = false;
-				} else if (value === 'true') {
-					value = true;
-				}
-
-				if (key[0] === '_' && key[1] === '_') {
-					internalAttributes[key] = value;
+						// Add class to body that we have a content element selected
+					$('body').addClass('t3-contentelement-selected');
 				} else {
-					attributes[key] = value;
+					$('body').removeClass('t3-contentelement-selected');
 				}
-			});
 
-			var blockProxy = Block.create($.extend({}, attributes, {
-				__alohaBlockId: blockId,
-				__title: alohaBlock.getTitle(),
-				init: function() {
-					this._initializePropertiesFromSchema(alohaBlock.getSchema());
-					this.recordCurrentStateAsOriginal();
+					// add page node
+				if (!$element || !$element.is('#t3-page-metainformation')) {
+					this.addNodeByElement(nodes, $('#t3-page-metainformation'));
 				}
-			}));
-			$.each(internalAttributes, function(key, value) {
-				blockProxy.set(key, value);
-			})
 
-			this._blocks[blockId] = blockProxy;
+				nodes = nodes.reverse();
+				this.set('nodes', nodes);
 
-			this._blocksByNodePath[blockProxy.get('__nodePath')] = blockProxy;
-			return this._blocks[blockId];
-		},
+				this._updating = false;
+			},
+
+			/**
+			 *
+			 * @param nodes
+			 * @param $element
+			 */
+			addNodeByElement: function(nodes, $element) {
+				if ($element !== undefined) {
+					var nodeProxy = this._createEntityWrapper($element);
+					if (nodeProxy) {
+						nodes.push(nodeProxy);
+					}
+				}
+			},
+
+			_entitiesBySubject: {},
+
+			_createEntityWrapper: function($element) {
+				var subject = vie.service("rdfa").getElementSubject($element);
+
+				if (!this._entitiesBySubject[subject]) {
+					var entity = vie.entities.get(subject);
+					if (entity === undefined) {
+						return;
+					}
+
+					this._entitiesBySubject[subject] = EntityWrapper.create({
+						_vieEntity: entity
+					});
+				}
+
+				return this._entitiesBySubject[subject];
+			},
+
+			selectedNode: function() {
+				var nodes = this.get('nodes');
+				return nodes.length > 0 ? _.last(nodes) : null;
+			}.property('nodes').cacheable(),
+
+
+			selectedNodeSchema: function() {
+				var selectedNode = this.get('selectedNode');
+				if (!selectedNode) return;
+				return selectedNode.get('contentTypeSchema');
+			}.property('selectedNode').cacheable(),
+
+			selectNode: function(node) {
+				this.updateSelection(node.get('$element'));
+			}
+		});
+
+		var PublishableNodes = Ember.Object.create({
+
+			publishableEntitySubjects: [],
+
+			noChanges: function() {
+				return this.getPath('publishableEntitySubjects.length') == 0;
+			}.property('publishableEntitySubjects').cacheable(),
+
+			initialize: function() {
+				vie.entities.on('change', this._updatePublishableEntities, this);
+				this._updatePublishableEntities();
+			},
+
+			_updatePublishableEntities: function() {
+				var publishableEntitySubjects = [];
+				vie.entities.forEach(function(entity) {
+					if (this._isEntityPublishable(entity)) {
+						publishableEntitySubjects.push(entity.id);
+					}
+				}, this);
+
+				this.set('publishableEntitySubjects', publishableEntitySubjects);
+			},
+
+			/**
+			 * Check whether the entity is publishable or not. Currently, everything
+			 * which is not in the live workspace is publishable.
+			 */
+			_isEntityPublishable: function(entity) {
+				var attributes = EntityWrapper.extractAttributesFromVieEntity(entity);
+				return attributes['__workspacename'] !== 'live';
+			},
+
+			/**
+			 * Publish all blocks which are unsaved *and* on current page.
+			 */
+			publishAll: function() {
+				this.get('publishableEntitySubjects').forEach(function(subject) {
+					var entity = vie.entities.get(subject);
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode(entity.fromReference(subject), 'live', function() {
+						entity.set('typo3:__workspacename', 'live');
+					});
+				});
+			}
+		});
 
 		/**
-		 * Retrieve block instance for a certain TYPO3CR Node Path
+		 * T3.Content.Model.Changes
 		 *
-		 * @param {String} nodePath
-		 * @return {T3.Content.Model.Block}
+		 * Contains a list of Blocks which contain changes.
+		 *
+		 * TODO: On saving, should empty local storage!
 		 */
-		getBlockByNodePath: function(nodePath) {
-			if(this._blocksByNodePath[nodePath]) {
-				return this._blocksByNodePath[nodePath];
-			}
-			var alohaBlock = Aloha.Block.BlockManager.getBlock($('[data-__nodepath="' + nodePath + '"]'));
-
-			if (alohaBlock) {
-				return this.getBlockProxy(alohaBlock);
-			}
-			return undefined;
-		}
-	});
-
-	/**
-	 * T3.Content.Model.BlockSelection
-	 *
-	 * Contains the currently selected blocks.
-	 *
-	 * This model is the one most listened to, as when the block selection changes, the UI
-	 * is responding to that.
-	 */
-	var BlockSelection = Ember.Object.create({
-		blocks: [],
-
-		initialize: function() {
-			this.updateSelection();
-		},
-
-		/**
-		 * Update the selection. If we have a block activated, we add the CSS class "t3-contentelement-selected" to the body
-		 * so that we can modify the appearance of the block handles.
-		 */
-		updateSelection: function(alohaBlocks) {
-			var blocks = [];
-			if (this._updating) {
-				return;
-			}
-			this._updating = true;
-
-			if (alohaBlocks === undefined || alohaBlocks === null || alohaBlocks === [] || alohaBlocks.length == 0) {
-				alohaBlocks = [];
-				$('body').removeClass('t3-contentelement-selected');
-			} else {
-				$('body').addClass('t3-contentelement-selected');
-			}
-			if (alohaBlocks.length > 0) {
-				$.each(alohaBlocks, function() {
-					blocks.unshift(T3.Content.Model.BlockManager.getBlockProxy(this));
-				});
-			}
-			blocks.unshift(BlockManager.get('_pageBlock'));
-			this.set('blocks', blocks);
-			this._updating = false;
-		},
-
-		selectedBlock: function() {
-			var blocks = this.get('blocks');
-			return blocks.length > 0 ? blocks[blocks.length - 1]: null;
-		}.property('blocks').cacheable(),
-
-		selectedBlockSchema: function() {
-			var selectedBlock = this.get('selectedBlock');
-			if (!selectedBlock) return;
-			return selectedBlock.get('schema');
-		}.property('selectedBlock').cacheable(),
-
-		selectItem: function(item) {
-			if (item === BlockManager.get('_pageBlock')) {
-				this.updateSelection([]);
-			} else {
-				var block = Aloha.Block.BlockManager.getBlock(item.get('__alohaBlockId'));
-				if (block) {
-					window.setTimeout(function() {
-						block.activate();
-					}, 10);
-				}
-			}
-		}
-	});
-
-	var PublishableBlocks = Ember.ArrayProxy.create({
-		content: [],
-
-		noChanges: function() {
-			return this.get('length') === 0;
-		}.property('length'),
-
-		add: function(block) {
-			if (!this.contains(block)) {
-				this.pushObject(block);
-			}
-		},
-
-		remove: function(block) {
-			this.removeObject(block);
-		},
-
-		/**
-		 * Publish all blocks which are unsaved *and* on current page.
-		 */
-		publishAll: function() {
-			var that = this;
-			T3.Content.Controller.ServerConnection.sendAllToServer(
-				this,
-				function(block) {
-					return [block.get('__nodePath'), 'live'];
-				},
-				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_WorkspaceController.publishNode,
-				function() {
-						// Flush local changes so the UI updates
-					that.set('[]', []);
-					T3.ContentModule.reloadPage();
-				}
-			);
-		}
-	});
-
-	/**
-	 * T3.Content.Model.Changes
-	 *
-	 * Contains a list of Blocks which contain changes.
-	 *
-	 * TODO: On saving, should empty local storage!
-	 */
-	var Changes = Ember.ArrayProxy.create({
-		content: [],
-
-		_loadedFromLocalStore: false,
-
-		initialize: function() {
-				// We first set this._loadedFromLocalStore to FALSE; such that the removal
-				// of all changes does NOT trigger a _saveToLocalStore.
-			this._loadedFromLocalStore = false;
-			this.set('[]', []);
-			this._readFromLocalStore();
-		},
-
-		addChange: function(block) {
-			if (!this.contains(block)) {
-				this.pushObject(block);
-			} else {
-					// We still need to update the local store, if the block is already recorded as "changed"
-				this._saveToLocalStore();
-			}
-		},
-		removeChange: function(block) {
-			this.removeObject(block);
-		},
-
-		noChanges: function() {
-			return this.get('length') == 0;
-		}.property('length').cacheable(),
-
-		_readFromLocalStore: function() {
-			var blocks = T3.Common.LocalStorage.getItem('page_' + $('#t3-page-metainformation').attr('data-__nodepath'));
-
-			if (blocks instanceof Array && blocks.length > 0) {
-				blocks.forEach(function(serializedBlock) {
-					if (serializedBlock.__nodePath === $('#t3-page-metainformation').attr('data-__nodepath')) {
-							// Serialized block is the page block
-						var pageBlock = BlockManager.get('_pageBlock');
-						$.each(serializedBlock, function(k, v) {
-							pageBlock.set(k, v);
-						});
-					} else {
-						var blockProxy = T3.Content.Model.BlockManager.getBlockByNodePath(serializedBlock.__nodePath);
-						if (blockProxy) {
-							$.each(serializedBlock, function(k, v) {
-								blockProxy.set(k, v);
-							});
-						} else {
-							// TODO: warning: Somehow the block was not found on the page anymore
+		var Changes = Ember.ArrayProxy.create({
+				// TODO: still migrate this!
+			checkIfReloadNeededAfterSave: function() {
+				var reloadPage = false;
+				this.get('[]').forEach(function(change) {
+					$.each(change.__originalValues, function(key, value) {
+						if (change.get(key) !== value) {
+							var schema = change.get('schema'),
+								changedPropertyDefinition = schema.properties[key];
+							if (changedPropertyDefinition && changedPropertyDefinition.reloadOnChange) {
+								reloadPage = true;
+							}
 						}
-					}
+					});
 				});
+				return reloadPage;
 			}
-			this._loadedFromLocalStore = true;
-		},
+		});
 
-			// TODO This doesn't work as a second observer on [] somehow
-		_saveContentOnChange: function() {
-			if (window.TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController) {
-				this.save();
-			}
-		},
+		T3.Content.Model = {
+			Changes: Changes,
+			PublishableNodes: PublishableNodes,
 
-		_saveToLocalStore: function() {
-			if (!this._loadedFromLocalStore) return true;
-
-			var cleanedUpBlocks = this.get('[]').map(function(block) {
-				return $.extend(
-					block.getCleanedUpAttributes(),
-					{__nodePath: block.get('__nodePath')}
-				);
-			});
-
-			T3.Common.LocalStorage.setItem('page_' + $('#t3-page-metainformation').attr('data-__nodepath'), cleanedUpBlocks);
-
-			this._saveContentOnChange();
-		}.observes('[]'),
-
-
-		save: function(callback, reloadPage) {
-			if (T3.Content.Controller.ServerConnection.get('_saveRunning')) {
-				T3.Content.Controller.ServerConnection.set('_pendingSave', true);
-				return;
-			}
-			reloadPage = reloadPage || this.checkIfReloadNeededAfterSave();
-
-			var savedAttributes = {},
-				nextUri;
-			T3.Content.Controller.ServerConnection.sendAllToServer(
-				this,
-					// Get attributes to be updated from block
-				function(block) {
-					var nodePath = block.get('__nodePath');
-					// block.recordCurrentStateAsOriginal();
-
-					var attributes = block.getCleanedUpAttributes();
-					delete attributes['block-type'];
-
-					savedAttributes[nodePath] = $.extend({}, attributes);
-
-					attributes['__contextNodePath'] = nodePath;
-
-					return [attributes];
-				},
-				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update,
-					// Callback on success after all changes were saved
-				function() {
-						// Remove changesToBeRemoved
-					if (callback) {
-						callback();
-					}
-
-					if (T3.Content.Controller.ServerConnection.get('_pendingSave')) {
-						T3.Content.Controller.ServerConnection.set('_pendingSave', false);
-						T3.Content.Model.Changes.save();
-					}
-
-						// Check if a changed property in the schema needs
-						// a server-side reload
-					if (reloadPage) {
-						if (nextUri) {
-							T3.ContentModule.loadPage(nextUri);
-						} else {
-							T3.ContentModule.reloadPage();
-						}
-					}
-				},
-					// Callback on success per block
-				function(block, response) {
-					if (typeof response.result.data.nextUri !== 'undefined') {
-						nextUri = response.result.data.nextUri;
-					}
-						// when we save a node, it could be the case that it was in
-						// live workspace beforehand, but because of some modifications,
-						// is now copied into the user's workspace.
-						// That's why we need to update the (possibly changed) workspace
-						// name in the block.
-					block.set('__workspacename', response.result.data.workspaceNameOfNode);
-					var nodePath = block.get('__nodePath');
-					if (savedAttributes[nodePath]) {
-						block.setOriginalValues(savedAttributes[nodePath]);
-					}
-				}
-			);
-		},
-
-		checkIfReloadNeededAfterSave: function() {
-			var reloadPage = false;
-			this.get('[]').forEach(function(change) {
-				$.each(change.__originalValues, function(key, value) {
-					if (change.get(key) !== value) {
-						var schema = change.get('schema'),
-							changedPropertyDefinition = schema.properties[key];
-						if (changedPropertyDefinition && changedPropertyDefinition.reloadOnChange) {
-							reloadPage = true;
-						}
-					}
-				});
-			});
-			return reloadPage;
+			NodeSelection: NodeSelection
 		}
-	});
-
-	T3.Content.Model = {
-		Block: Block,
-		BlockManager: BlockManager,
-		BlockSelection: BlockSelection,
-		Changes: Changes,
-		PublishableBlocks: PublishableBlocks
+		window.T3 = T3;
 	}
-	window.T3 = T3;
-});
+);

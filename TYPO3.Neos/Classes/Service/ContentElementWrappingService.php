@@ -52,11 +52,12 @@ class ContentElementWrappingService {
 	 * $parameters can be used to further pass parameters to the content element.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param string $typoscriptPath
 	 * @param string $content
 	 * @param boolean $isPage
 	 * @return string
 	 */
-	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $content, $isPage = FALSE) {
+	public function wrapContentObject(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $typoscriptPath, $content, $isPage = FALSE) {
 		$contentType = $node->getContentType();
 
 		$tagBuilder = new \TYPO3\Fluid\Core\ViewHelper\TagBuilder('div');
@@ -85,11 +86,15 @@ class ContentElementWrappingService {
 			return $tagBuilder->render();
 		}
 
-		$tagBuilder->addAttribute('data-__nodepath', $node->getContextPath());
-		$tagBuilder->addAttribute('data-__workspacename', $node->getWorkspace()->getName());
-		$tagBuilder->addAttribute('data-_removed', ($node->isRemoved() ? 'true' : 'false'));
+		$tagBuilder->addAttribute('typeof', 'typo3:' . $contentType->getName());
+		$tagBuilder->addAttribute('about', $node->getContextPath());
+
+		$this->addScriptTag($tagBuilder, '__workspacename', $node->getWorkspace()->getName());
+		$this->addScriptTag($tagBuilder, '_removed', ($node->isRemoved() ? 'true' : 'false'), 'boolean');
+		$this->addScriptTag($tagBuilder, '_typoscriptPath', $typoscriptPath);
 
 		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
+			$dataType = isset($propertyConfiguration['type']) ? $propertyConfiguration['type'] : 'string';
 			if ($propertyName[0] === '_') {
 				$propertyValue = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($node, substr($propertyName, 1));
 			} else {
@@ -119,15 +124,15 @@ class ContentElementWrappingService {
 					$convertedProperties[$key] = $value;
 				}
 				$propertyValue = json_encode($convertedProperties);
+				$dataType = 'jsonEncoded';
 			}
 
-			$tagBuilder->addAttribute('data-' . $propertyName, $propertyValue);
+			$this->addScriptTag($tagBuilder, $propertyName, $propertyValue, $dataType);
 		}
 
 		if (!$isPage) {
 				// add CSS classes
-
-			$tagBuilder->addAttribute('data-__contenttype', $contentType->getName());
+			$this->addScriptTag($tagBuilder, '__contenttype', $contentType->getName());
 		} else {
 			$tagBuilder->addAttribute('id', 't3-page-metainformation');
 			$tagBuilder->addAttribute('data-__sitename', $this->nodeRepository->getContext()->getCurrentSite()->getName());
@@ -140,5 +145,42 @@ class ContentElementWrappingService {
 
 		return $tagBuilder->render();
 	}
+
+	/**
+	 * Prepend a script tag with property metadata to the content
+	 *
+	 * @param \TYPO3\Fluid\Core\ViewHelper\TagBuilder $tagBuilder
+	 * @param string $propertyName
+	 * @param string $propertyValue
+	 * @param string $dataType
+	 * @return void
+	 */
+	protected function addScriptTag(\TYPO3\Fluid\Core\ViewHelper\TagBuilder $tagBuilder, $propertyName, $propertyValue, $dataType = 'string') {
+		$dataType = $this->getDataTypeCurie($dataType);
+		if ($dataType === 'xsd:string') {
+			$dataTypeAttribute = '';
+		} else {
+			$dataTypeAttribute = sprintf(' datatype="%s"', $dataType);
+		}
+		$tag = sprintf('<script type="text/x-typo3" property="typo3:%s"%s>%s</script>', $propertyName, $dataTypeAttribute, $propertyValue);
+		$tagBuilder->setContent($tag . $tagBuilder->getContent());
+	}
+
+	/**
+	 * Map a data type from the content type definition to a correct
+	 * CURIE.
+	 *
+	 * @param string $dataType
+	 * @return string
+	 */
+	protected function getDataTypeCurie($dataType) {
+		switch ($dataType) {
+			case 'jsonEncoded':
+				return 'typo3:jsonEncoded';
+			default:
+				return 'xsd:' . $dataType;
+		}
+	}
+
 }
 ?>

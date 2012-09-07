@@ -34,7 +34,7 @@ class ContentElementViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractView
 	 * @return string
 	 */
 	public function render(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $page = FALSE) {
-		return $this->contentElementWrappingService->wrapContentObject($node, $this->renderChildren(), $page);
+		return $this->contentElementWrappingService->wrapContentObject($node, $this->templateVariableContainer->get('fluidTemplateTsObject')->getPath(), $this->renderChildren(), $page);
 	}
 }
 ?>

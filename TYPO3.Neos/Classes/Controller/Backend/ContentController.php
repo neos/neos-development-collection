@@ -126,19 +126,6 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	}
 
 	/**
-	 * This action currently returns the JS configuration we need for the backend.
-	 * That's still quite unclean, but it works for now.
-	 *
-	 * @return string
-	 * @FLOW3\SkipCsrfProtection
-	 */
-	public function javascriptConfigurationAction() {
-		$this->response->setHeader('Content-Type', 'text/javascript');
-		$this->response->setContent('window.T3Configuration = {}; window.T3Configuration.Schema = ' . json_encode($this->contentTypeManager->getFullConfiguration()) . '; window.T3Configuration.UserInterface = ' . json_encode($this->settings['userInterface']));
-		return '';
-	}
-
-	/**
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
 	 * @param string $position either "above", "below" or "inside"
 	 * @param string $type

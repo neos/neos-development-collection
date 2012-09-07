@@ -129,7 +129,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	public function createAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, array $nodeData, $position) {
 		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
-			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1296132542);
+			throw new \InvalidArgumentException('The position should be one of the following: "before", "into", "after".', 1347133640);
 		}
 
 		if (empty($nodeData['nodeName'])) {
@@ -158,6 +158,59 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $newNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
 		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
+	}
+
+	/**
+	 * Creates a new node and renders the node inside the containing section
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
+	 * @param string $typoScriptPath The TypoScript path of the collection
+	 * @param array $nodeData
+	 * @param string $position where the node should be added (allowed: before, into, after)
+	 * @return void
+	 * @throws \InvalidArgumentException
+	 * @ExtDirect
+	 */
+	public function createAndRenderAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $typoScriptPath, array $nodeData, $position) {
+		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
+			throw new \InvalidArgumentException('The position should be one of the following: "before", "into", "after".', 1296132542);
+		}
+
+		if (empty($nodeData['nodeName'])) {
+			$nodeData['nodeName'] = uniqid('node');
+		}
+		$contentType = $this->contentTypeManager->getContentType($nodeData['contentType']);
+
+		if ($position === 'into') {
+			$newNode = $referenceNode->createNode($nodeData['nodeName'], $contentType);
+		} else {
+			$parentNode = $referenceNode->getParent();
+			$newNode = $parentNode->createNode($nodeData['nodeName'], $contentType);
+
+			if ($position === 'before') {
+				$newNode->moveBefore($referenceNode);
+			} elseif ($position === 'after') {
+				$newNode->moveAfter($referenceNode);
+			}
+		}
+
+		if (isset($nodeData['properties']) && is_array($nodeData['properties'])) {
+			foreach ($nodeData['properties'] as $propertyName => $propertyValue) {
+				$newNode->setProperty($propertyName, $propertyValue);
+			}
+		}
+
+		$this->view = new \TYPO3\TYPO3\View\TypoScriptView();
+		$this->view->setControllerContext($this->controllerContext);
+
+		$this->view->setTypoScriptPath($typoScriptPath);
+		$this->view->assign('value', $newNode->getParent());
+
+		$result = $this->view->render();
+		$this->response->setResult(array('collectionContent' => $result, 'nodePath' => $newNode->getContextPath()));
+		$this->response->setSuccess(TRUE);
+
+		return '';
 	}
 
 	/**

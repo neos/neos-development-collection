@@ -1,6 +1,6 @@
 {namespace t=TYPO3\TYPO3\ViewHelpers}
 <t:contentElement node="{node}">
-	<t:aloha.editable property="title" tag="header">{title -> f:format.raw()}</t:aloha.editable>
+	<t:contentElement.editable property="title" tag="header">{title -> f:format.raw()}</t:contentElement.editable>
 	<div class="typo3-image{f:if(condition:position, then: ' typo3-image-position-{position}')}">
 		<f:if condition="{image.resource}">
 			<f:then>
@@ -11,5 +11,5 @@
 			</f:else>
 		</f:if>
 	</div>
-	<t:aloha.editable property="text">{text -> f:format.raw()}</t:aloha.editable>
+	<t:contentElement.editable property="text">{text -> f:format.raw()}</t:contentElement.editable>
 </t:contentElement>
