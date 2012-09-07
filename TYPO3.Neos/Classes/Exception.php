@@ -13,9 +13,8 @@ namespace TYPO3\TYPO3;
 
 /**
  * A generic TYPO3 exception
- *
  */
-class Exception extends \Exception {
+class Exception extends \TYPO3\FLOW3\Exception {
 
 }
 
