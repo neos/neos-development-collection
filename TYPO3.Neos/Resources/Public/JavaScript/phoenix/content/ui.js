@@ -12,6 +12,7 @@ define(
 	'text!phoenix/templates/content/ui/inspector.html',
 	'text!phoenix/templates/content/ui/inspectorDialog.html',
 	'text!phoenix/templates/content/ui/pageTree.html',
+	'text!phoenix/templates/content/ui/deletePageDialog.html',
 	'text!phoenix/templates/content/ui/inspectTree.html',
 	'phoenix/content/ui/elements',
 	'phoenix/content/ui/editors',
@@ -22,7 +23,8 @@ define(
 	'jquery.cookie',
 	'jquery.dynatree'
 ],
-function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, inspectTreeTemplate) {
+
+function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui');
 
 	var T3 = window.T3 || {};
@@ -64,7 +66,6 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 		// TODO Don't need to bind here actually
 		attributeBindings: ['href'],
 		template: Ember.Handlebars.compile('{{item.contentTypeSchema.label}} {{#if item.status}}<span class="t3-breadcrumbitem-status">({{item.status}})</span>{{/if}}'),
-
 		click: function(event) {
 			event.preventDefault();
 
@@ -186,10 +187,192 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 	 * - PageTreeButton
 	 */
 
+	var editNodeTitleMode = false;
 	T3.Content.UI.PageTreeButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Page Tree',
 		$popoverContent: pageTreeTemplate,
 		tree: null,
+
+		/**
+		 * When clicking the delete Page, we show a dialog
+		 */
+		showDeletePageDialog: function(activeNode) {
+			var content = 'Are you sure the page "'+activeNode.data.title + '" should be deleted?';
+			if(activeNode.hasChildren() === true){
+				content = 'Are you sure the page "'+activeNode.data.title + '" and all its children should be deleted?';
+			}
+			var that = this;
+			var view = Ember.View.create({
+				template: Ember.Handlebars.compile(deletePageDialogTemplate),
+				content: content,
+				didInsertElement: function() {
+					var title = this.$().find('h1').remove().html();
+
+					this.$().dialog({
+						modal: true,
+						dialogClass: 't3-ui',
+						zIndex: 11001,
+						title: title,
+						close: function() {
+							view.destroy();
+						}
+					});
+				},
+				cancel: function() {
+					this.$().dialog('close');
+				},
+				apply: function() {
+					that.deleteNode(activeNode);
+					this.$().dialog('close');
+				}
+			});
+			view.append();
+		},
+		editNode: function(node){
+
+			var prevTitle = node.data.title,
+			tree = node.tree;
+			tree.$widget.unbind();
+			$('.dynatree-title', node.span).html($('<input />').attr({id: 'editNode', value: prevTitle}));
+				// Focus <input> and bind keyboard handler
+			$('input#editNode').focus().keydown(function(event) {
+				switch (event.which) {
+					case 27: // [esc]
+							// discard changes on [esc]
+						$('input#editNode').val(prevTitle);
+						$(this).blur();
+						break;
+					case 13: // [enter]
+							// simulate blur to accept new value
+						$(this).blur();
+						break;
+				}
+			}).blur(function(event) {
+					// Accept new value, when user leaves <input>
+				var newTitle = $('input#editNode').val();
+				if (prevTitle == newTitle) {
+					title = prevTitle;
+					//node.setTitle(title);
+				} else {
+					title = newTitle;
+					node.setTitle(title);
+
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(
+						{
+							__contextNodePath: node.data.key,
+							title: title
+						},
+						function(result) {
+							if (result.success === true) {
+								var parentNode = node.getParent();
+								parentNode.activate()
+								parentNode.focus();
+								T3.ContentModule.loadPage(parentNode.data.href);
+							}
+						}
+					);
+				}
+				node.setTitle(title);
+					// Re-enable mouse and keyboard handling
+				tree.$widget.bind();
+			});
+		},
+	createAndEditNode: function(activeNode){
+			var position = 'into';
+			var node = activeNode.addChild({
+				title: '[New Page]',
+				contentType: 'TYPO3.TYPO3:Page',
+				addClass: 'typo3_typo3-page'
+			});
+			editNodeTitleMode = true;
+			var prevTitle = node.data.title,
+			tree = node.tree;
+			tree.$widget.unbind();
+
+			$('.dynatree-title', node.span).html($('<input />').attr({id: 'editcreatedNode', value: prevTitle}));
+				// Focus <input> and bind keyboard handler
+			$('input#editcreatedNode').focus().keydown(function(event) {
+				switch (event.which) {
+					case 27: // [esc]
+							// discard changes on [esc]
+						$('input#editNode').val(prevTitle);
+						$(this).blur();
+						break;
+					case 13: // [enter]
+							// simulate blur to accept new value
+						$(this).blur();
+						break;
+				}
+			}).blur(function(event) {
+				var newTitle = $('input#editcreatedNode').val();
+					// Re-enable mouse and keyboard handling
+				tree.$widget.bind();
+				activeNode.focus();
+
+					// Accept new value, when user leaves <input>
+				if (prevTitle == newTitle) {
+					title = prevTitle;
+				} else if(newTitle == '') {
+					title = prevTitle;
+				} else {
+					title = newTitle;
+				}
+					//hack for chrome and safari, otherwise two pages will be created, because .blur fires one request with two datasets
+				if(editNodeTitleMode) {
+					editNodeTitleMode = false;
+					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
+						activeNode.data.key,
+						{
+							contentType: 'TYPO3.TYPO3:Page',
+							//@todo give a unique nodename from the title
+							properties: {
+								title: title
+							}
+						},
+						position,
+						function(result) {
+							if (result.success === true) {
+									//actualizing the created js dynatree node
+								node.data.key = result.data.key;
+								node.data.title = result.data.title;
+								node.data.href = result.data.href;
+								node.data.isFolder = result.data.isFolder;
+								node.data.isLazy = result.data.isLazy;
+								node.data.contentType = result.data.contenType;
+								node.data.expand = result.data.expand;
+								node.data.addClass = result.data.addClass;
+
+								editNodeTitleMode = false;
+								activeNode.focus();
+									// Re-enable mouse and keyboard handling
+								tree.$widget.bind();
+								T3.ContentModule.loadPage(activeNode.data.href);
+							}
+						}
+					);
+				}
+
+				node.setTitle(title);
+				editNodeTitleMode = false;
+				activeNode.focus();
+			});
+		},
+
+		deleteNode: function(node) {
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'](
+				node.data.key,
+				function(result) {
+					if (result.success === true) {
+						var parentNode = node.getParent();
+						parentNode.focus();
+						parentNode.activate();
+						node.remove();
+						T3.ContentModule.loadPage(parentNode.data.href);
+					}
+				}
+			);
+		},
+
 		onPopoverOpen: function() {
 			if (this.tree) {
 				return;
@@ -197,7 +380,8 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 
 			var that = this,
 				pageMetaInformation = $('#t3-page-metainformation'),
-				siteRootNodePath = pageMetaInformation.data('__siteroot');
+				siteRootNodePath = pageMetaInformation.data('__siteroot'),
+				pageNodePath = $('#t3-page-metainformation').attr('about');
 
 			that.tree = $('#t3-dd-pagetree').dynatree({
 				keyboard: true,
@@ -251,7 +435,7 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 							}
 							node.addChild(result.data);
 							if (node.getLevel() === 1) {
-								that.tree.dynatree('getTree').activateKey(pageMetaInformation.data('__nodepath'));
+								that.tree.dynatree('getTree').activateKey(pageNodePath);
 							}
 					});
 				},
@@ -265,7 +449,7 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 							$('#t3-drop-deletionzone').show();
 							return true;
 						} else {
-							// the root node should not be draggable
+								// the root node should not be draggable
 							return false;
 						}
 					},
@@ -337,39 +521,34 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 								);
 							}
 						}
-					},
-					onDragStop: function() {
-						if ($deletePage.data('currently-deleting') === true) {
-							$deletePage.data('currently-deleting', '');
-							window.setTimeout(function() {
-								$deletePage.hide();
-							}, 1500);
-						} else {
-							$deletePage.hide();
-						}
 					}
 				},
 				onClick: function(node, event) {
-					// only if the node title was clicked
-					// and it was not active at this time
-					// it should be navigated to the target node
+					if (editNodeTitleMode == true){
+						return false;
+						alert('editMode');
+					}
+						// only if the node title was clicked
+						// and it was not active at this time
+						// it should be navigated to the target node
 					if (node.isActive() === false && node.data.key !== siteRootNodePath && (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === 'icon')) {
 						T3.ContentModule.loadPage(node.data.href);
 					}
 				},
 				onDblClick: function(node, event) {
 					if (node.getEventTargetType(event) === 'title' && node.getLevel() !== 1) {
-						editNode(node);
+						var position = 0;
+						that.editNewNode(node);
 						return false;
 					}
 				},
 				onKeydown: function(node, event) {
 					switch( event.which ) {
 						case 113: // [F2]
-							editNode(node);
+							that.editNode(node);
 							return false;
 						case 13: // [enter]
-							editNode(node);
+							that.editNode(node);
 							return false;
 					}
 				}
@@ -378,72 +557,40 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 				// Automatically expand the first node when opened
 			that.tree.dynatree('getRoot').getChildren()[0].expand(true);
 
-			var $newPage = $('#t3-drag-newpage').draggable({
-				revert: true,
-				connectToDynatree: true,
-				helper: 'clone',
-				containment: '#t3-newpage-container'
+
+				//handles click events when a pagetitle is in editmode so clicks on other pages leads not to reloads
+			$('#t3-dd-pagetree').click(function() {
+				if (editNodeTitleMode == true) {
+					return false;
+				}
 			});
-			//adding a new page by clicking on the newPage container, if a page is active
-			$newPage.click(function() {
+
+				//adding a new page by clicking on the newPage container, if a page is active
+			$('#t3-action-newpage').click(function() {
 				var activeNode = $('#t3-dd-pagetree').dynatree('getActiveNode');
 				if (activeNode !== null) {
-					var position = 'into';
-					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(
-						activeNode.data.key,
-						{
-							contentType: 'TYPO3.TYPO3:Page',
-								properties: {
-								title: '[New Page]'
-							}
-						},
-						position,
-						function(result) {
-							if (result.success === true) {
-								//reload the parent node with its children
-								//if the parentNode has no children left the fatherNode of the parentNode should be reloaded
-								//editNode(node);
-								var parentNode = activeNode.getParent();
-								parentNode.reloadChildren();
-							}
-						}
-					);
+					that.createAndEditNode(activeNode);
+				} else {
+					T3.Common.Notification.notice('You have to select a page');
+				}
+				return false;
+			});
+				//deleting a page by clicking on the deletePage container, if a page is active
+			$('#t3-action-deletepage').click(function() {
+				var activeNode = $('#t3-dd-pagetree').dynatree('getActiveNode'),
+					$handle = $(this);
+				if (activeNode !== null) {
+					if (activeNode.data.key !== siteRootNodePath) {
+						that.showDeletePageDialog(activeNode);
+					}else {
+						T3.Common.Notification.notice('The Root page cannot be deleted.');
+					}
 				} else {
 					T3.Common.Notification.notice('You have to select a page');
 				}
 			});
-			var $deletePage = $('#t3-drop-deletionzone').droppable({
-				over: function(event, ui) {
-					$(this).addClass('ui-state-highlight');
-				},
-				out: function() {
-					$(this).removeClass('ui-state-highlight');
-				},
-				drop: function(event, ui) {
-					$deletePage.data('currently-deleting', true);
-					var node = ui.helper.data('dtSourceNode') || ui.draggable;
-					$(this).addClass('ui-state-highlight').find('p').html('Dropped ' + node);
-
-					//nodes could only be deleted if they have no children
-					//and they are not root
-					if (node.data.key !== siteRootNodePath || node.hasChildren === false) {
-						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'](
-							node.data.key,
-							function(result) {
-								if (result.success === true) {
-									//reload the parent node with its children
-									//if the parentNode has no children left the fatherNode of the parentNode should be reloaded
-									reloadNodeAfterRemove(node);
-								}
-							}
-						);
-					} else {
-						T3.Common.Notification.notice('This node has got children and could not be deleted.');
-					}
-				}
-			});
 			function reloadNodeAfterRemove(node) {
-				// TODO fix when the last page of a folder was deleted
+					// @Todo fix when the last page of a folder was deleted
 				var parentNode = node.getParent();
 				if (node.hasChildren() || node.isLazy()) {
 					var grandFatherNode = parentNode.getParent();
@@ -453,46 +600,6 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					parentNode.reloadChildren();
 					T3.ContentModule.loadPage(parentNode.data.href);
 				}
-			}
-			function editNode(node) {
-				var prevTitle = node.data.title,
-				tree = node.tree;
-				tree.$widget.unbind();
-				$('.dynatree-title', node.span).html($('<input />').attr({id: 'editNode', value: prevTitle}));
-				// Focus <input> and bind keyboard handler
-				$('input#editNode').focus().keydown(function(event) {
-					switch (event.which) {
-						case 27: // [esc]
-						// discard changes on [esc]
-						$('input#editNode').val(prevTitle);
-						$(this).blur();
-						break;
-					case 13: // [enter]
-						// simulate blur to accept new value
-						$(this).blur();
-						break;
-					}
-				}).blur(function(event) {
-					// Accept new value, when user leaves <input>
-					var title = $('input#editNode').val();
-					node.setTitle(title);
-					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(
-						{
-							__contextNodePath: node.data.key,
-							title: title
-						},
-						function(result) {
-							if (result.success === true) {
-								var parentNode = node.getParent();
-								parentNode.reloadChildren();
-								T3.ContentModule.loadPage(node.data.href);
-							}
-						}
-					);
-					// Re-enable mouse and keyboard handling
-					tree.$widget.bind();
-					node.focus();
-				});
 			}
 		}
 	});
@@ -572,7 +679,7 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					node._currentlySendingExtDirectAjaxRequest = true;
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
 						node.data.key,
-						'!TYPO3.TYPO3:Folder',
+						'!TYPO3.TYPO3CR:Folder',
 						0,
 						function(result) {
 						node._currentlySendingExtDirectAjaxRequest = false;

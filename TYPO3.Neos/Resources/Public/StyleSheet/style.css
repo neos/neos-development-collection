@@ -7528,12 +7528,25 @@ ul.t3-launcher-horizontal li .text {
 .dynatree-container #dynatree-drop-marker.dynatree-drop-move {
   background-position: -433px -96px;
 }
-.dynatree-container .t3-dd-newpage {
-  padding: 6px 5px 5px 25px;
-  margin: 10px 10px 5px;
-  background: #eeeeee url(../Images/Icons/Black/round_plus_icon-16.png) 5px 50% no-repeat;
+.dynatree-container .t3-pagetree-action-toolbar-con {
+  background-color: #EEEEEE;
   border: 1px dotted #444444;
+  height: 25px;
+  margin: 10px 10px 5px;
+  width: 240px;
+}
+.dynatree-container .page-action-toolbar {
   cursor: pointer;
+  float: right;
+  height: 15px;
+  margin: 0 5px;
+  padding: 6px 0 5px 25px;
+}
+.dynatree-container .t3-action-newpage {
+  background: url(../Images/Icons/Black/round_plus_icon-16.png) 3px 50% no-repeat;
+}
+.dynatree-container .t3-action-deletepage {
+  background: url(../Images/Icons/Black/trash_icon-16.png) 3px 50% no-repeat;
 }
 .dynatree-container .t3-dd-deletionzone {
   background: #eeeeee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
