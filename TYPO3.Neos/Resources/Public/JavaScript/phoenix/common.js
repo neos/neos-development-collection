@@ -453,7 +453,7 @@ function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemp
 
 	T3.Common.Util = Ember.Object.create({
 		isValidJsonString: function(jsonString) {
-			// The following regular expression comes from http://tools.ietf.org/html/rfc4627 and checks if the JSON is valid
+				// The following regular expression comes from http://tools.ietf.org/html/rfc4627 and checks if the JSON is valid
 			return !/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(jsonString.replace(/"(\\.|[^"\\])*"/g, ''));
 		}
 	});

@@ -55,3 +55,19 @@ To sum it up, we have three types of methods/properties:
 
 	It is allowed to observe or bind to private properties within the TYPO3 Phoenix javascript code. This is because the property
 	is not just meant as private object property, but as a non-api property.
+
+When to use a new file
+----------------------
+
+JavaScript files can become pretty large, so there should be a point to create a new file. Having just one class per file
+would be too much though, as this would end up in possibly hundreds of files, from which a lot will just have 20 lines
+of code.
+
+As we use requirejs for loading dependencies we came up with the following guidelines for creating a new file:
+
+* Classes using a template include using the ``!text`` plugin should be in a separate file
+* If a class is extended by another class, then it should be in a separate file so it can be easily loaded as dependency
+* If a class is huge, and affecting readability of the definition file, then it should be moved to a single file
+* It has preference to keep classes grouped together, so classes with just a few lines stay grouped together, so if none
+  of the above is true the classes stays in the main file.
+
