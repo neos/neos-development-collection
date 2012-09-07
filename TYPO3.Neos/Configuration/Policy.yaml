@@ -9,8 +9,8 @@ resources:
     TYPO3_TYPO3_Service: 'method(TYPO3\TYPO3\Service\.*Controller->.*Action())'
 
 roles:
-  Administrator: [ TYPO3CR_Administrator, Editor ]
-  Editor: []
+  Administrator: [ Editor ]
+  Editor: [ TYPO3CR_Administrator ]
 
 acls:
   Administrator:
