@@ -82,3 +82,12 @@ SASS version - https://github.com/jlong/sass-twitter-bootstrap/tree/master/lib (
 
 * Wrapped in .t3-ui class (bootstrap.scss)
 * Changed icon images paths variables $iconSpritePath + $iconWhiteSpritePath (_variables.scss)
+
+Createjs
+Update using Scripts/update-createjs-to-master.sh
+
+Hallo editor
+Update using Scripts/update-hallo-to-master.sh
+
+* Hallo depends on fontawesome which we don't include because of clashes with twitter bootstrap
+  icons so we have to include some icon-classes ourselves
