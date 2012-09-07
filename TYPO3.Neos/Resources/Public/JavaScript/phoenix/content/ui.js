@@ -237,7 +237,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					node._currentlySendingExtDirectAjaxRequest = true;
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
 						node.data.key,
-						'TYPO3.TYPO3CR:Folder',
+						'TYPO3.TYPO3:Folder',
 						0,
 						function(result) {
 							node._currentlySendingExtDirectAjaxRequest = false;
@@ -582,7 +582,7 @@ function(jQuery, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					node._currentlySendingExtDirectAjaxRequest = true;
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.getChildNodesForTree(
 						node.data.key,
-						'!TYPO3.TYPO3:Page',
+						'!TYPO3.TYPO3:Folder',
 						0,
 						function(result) {
 						node._currentlySendingExtDirectAjaxRequest = false;
