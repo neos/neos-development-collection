@@ -299,12 +299,18 @@ function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemp
 			var handlerEvents = $handle.data('events');
 			if (!handlerEvents['showPopover']) {
 					// Set popover content
-				that._options.header = (options.title) ? '<h4>' + options.title + '</h4>': null;
-				that._options.content = $(options.content === undefined ? '<div />' : '<div>' + options.content + '</div>');
+				that._options.header = (options.title) ? '<div>' + options.title + '</div>' : null;
+				that._options.content = $('<div />');
 
 				var view = Ember.View.create({
+					classNames: ['typo3-confirmationdialog', 'aloha-block-do-not-deactivate'],
 					template: Ember.Handlebars.compile(confirmationdialogTemplate),
-					save: function() {
+					content: options.content,
+					confirmLabel: options.confirmLabel ? options.confirmLabel : 'Confirm',
+					confirmClass: options.confirmClass ? options.confirmClass : '',
+					cancelLabel: options.cancelLabel ? options.cancelLabel : 'Cancel',
+					cancelClass: options.cancelClass ? options.cancelClass : '',
+					confirm: function() {
 						if (options.onOk) {
 							options.onOk.call(that);
 						}
@@ -315,18 +321,19 @@ function(jQuery, launcherTemplate, launcherPanelTemplate, confirmationdialogTemp
 							options.onCancel.call(that);
 						}
 						$handle.trigger('hidePopover');
+					},
+					didInsertElement: function() {
+						that._showDialog();
+						if (options.onDialogOpen) {
+							options.onDialogOpen.call(that);
+						}
 					}
 				});
 				if (options.positioning) {
 					that._options.positioning = options.positioning;
 				}
 
-				that._showDialog();
-
 				view.appendTo(that._options.content);
-				if (options.onDialogOpen) {
-					options.onDialogOpen.call(that);
-				}
 			}
 
 			if (options.onDialogOpen) {
