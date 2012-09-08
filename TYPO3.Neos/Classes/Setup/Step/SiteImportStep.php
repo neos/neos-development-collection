@@ -12,7 +12,8 @@ namespace TYPO3\TYPO3\Setup\Step;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3,
-	TYPO3\Form\Core\Model\FormDefinition;
+	TYPO3\Form\Core\Model\FormDefinition,
+	\TYPO3\FLOW3\Utility\Files as Files;
 
 /**
  * @FLOW3\Scope("singleton")
@@ -78,6 +79,12 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	protected $closureFinisher;
 
 	/**
+	 * @var \TYPO3\SiteKickstarter\Service\GeneratorService
+	 * @FLOW3\Inject
+	 */
+	protected $generatorService;
+
+	/**
 	 * Returns the form definitions for the step
 	 *
 	 * @param \TYPO3\Form\Core\Model\FormDefinition $formDefinition
@@ -112,7 +119,19 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$error = $title->createElement('error', 'TYPO3.Form:StaticText');
 			$error->setProperty('text', 'No site packages were available, make sure you have an active site package');
 			$error->setProperty('class', 'alert alert-warning');
+
 		}
+
+		$newPackageSection = $page1->createElement('newPackageSection', 'TYPO3.Form:Section');
+		$newPackageSection->setLabel('Create a new site');
+		$packageName = $newPackageSection->createElement('packageKey', 'TYPO3.Form:SingleLineText');
+		$packageName->setLabel('Package Name (in form "Vendor.MyPackageName")');
+		$packageName->addValidator(new \TYPO3\FLOW3\Validation\Validator\RegularExpressionValidator(array(
+			'regularExpression' =>  \TYPO3\FLOW3\Package\PackageInterface::PATTERN_MATCH_PACKAGEKEY
+		)));
+
+		$siteName = $newPackageSection->createElement('siteName', 'TYPO3.Form:SingleLineText');
+		$siteName->setLabel('Site Name');
 
 		$step = $this;
 		$callback = function(\TYPO3\Form\Core\Model\FinisherContext $finisherContext) use ($step) {
@@ -126,6 +145,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 	/**
 	 * @param \TYPO3\Form\Core\Model\FinisherContext $finisherContext
 	 * @return void
+	 * @throws \TYPO3\Setup\Exception
 	 */
 	public function importSite(\TYPO3\Form\Core\Model\FinisherContext $finisherContext) {
 		$formValues = $finisherContext->getFormRuntime()->getFormState()->getFormValues();
@@ -138,7 +158,22 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$this->persistenceManager->persistAll();
 		}
 
-		$packageKey = $formValues['site'];
+		if (isset($formValues['packageKey'])) {
+			if ($this->packageManager->isPackageAvailable($formValues['packageKey'])) {
+				throw new \TYPO3\Setup\Exception(sprintf('The package key "%s" already exists.', $formValues['packageKey']), 1346759486);
+			}
+			$packageKey = $formValues['packageKey'];
+			$siteName = $formValues['packageKey'];
+
+			$this->packageManager->createPackage($packageKey, NULL, Files::getUnixStylePath(Files::concatenatePaths(array(FLOW3_PATH_PACKAGES, 'Sites'))));
+			$this->generatorService->generateSitesXml($packageKey, $siteName);
+			$this->generatorService->generateSitesTypoScript($packageKey, $siteName);
+			$this->generatorService->generateSitesTemplate($packageKey, $siteName);
+			$this->packageManager->activatePackage($packageKey);
+		} else {
+			$packageKey = $formValues['site'];
+		}
+
 
 		if ($packageKey !== '') {
 			try {
