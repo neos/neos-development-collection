@@ -32,6 +32,8 @@
 		$('.header', settings.popover$).append($(settings.header).detach());
 
 		// TYPO3 SPECIFIC FIX START
+		settings.popover$.addClass('t3-ui');
+
 		if ($('.header', settings.popover$).html() === '') {
 			$('.header', settings.popover$).detach();
 		}
@@ -42,18 +44,23 @@
 		settings.triangle$ = $('.triangle', settings.popover$);
 
 		$.fn.popover.openedPopup = null;
-		$(document).bind('click', function(event) {
+
+		// TYPO3 SPECIFIC FIX START
+		$(document).unbind('click.popover').bind('click.popover', function(event) {
+			var $target = $(event.target);
 			if ($.fn.popover.openedPopup != null
-				&& ($(event.target).parents('.popover').length == 0)
-				&& (!$(event.target).hasClass('popover-button'))
-				&& (!$(event.target).parents('.popover-button'))
-				&& (!$(event.target).hasClass('dynatree-expander'))) {
+				&& ($target.parents('.popover').length === 0)
+				&& (!$target.hasClass('popover'))
+				&& (!$target.hasClass('popover-button'))
+				&& ($target.parents('.popover-button').length === 0)
+				&& (!$target.hasClass('dynatree-expander'))) {
 				$.fn.popover.openedPopup.trigger('hidePopover');
 			}
 		});
+		// TYPO3 SPECIFIC FIX STOP
 
 		// document hidePopover causes active popover to close
-		$(document).bind('hidePopover', function(event) {
+		$(document).unbind('hidePopover').bind('hidePopover', function(event) {
 			if ($.fn.popover.openedPopup != null) {
 				$.fn.popover.openedPopup.trigger('hidePopover');
 			}
@@ -154,8 +161,10 @@
 				triangleX: 0,
 				triangleY: 0,
 				triangleSize: 20, // needs to be updated if triangle changed in css
-				docWidth: $(document).width(),
-				docHeight: $(document).height(),
+				// TYPO3 SPECIFIC FIX START
+				docWidth: $('body').width(),
+				docHeight: $('body').height(),
+				// TYPO3 SPECIFIC FIX STOP
 				popoverWidth: settings.popover$.outerWidth(),
 				popoverHeight: settings.popover$.outerHeight(),
 				buttonWidth: button.outerWidth(),
@@ -216,7 +225,9 @@
 					coord.deltaY = coord.popoverY - settings.padding;
 				} else if (coord.popoverY + coord.popoverHeight > coord.docHeight - settings.padding) {
 					// out of the document bottom
-					coord.deltaY = coord.popoverY + coord.popoverHeight - coord.docHeight + settings.padding;
+					// TYPO3 SPECIFIC FIX START
+					coord.deltaY = coord.popoverY + coord.popoverHeight - coord.docHeight + settings.padding - 36;
+					// TYPO3 SPECIFIC FIX STOP
 				}
 
 				// calc triangle pos
@@ -233,16 +244,26 @@
 			settings.triangle$.removeClass('left top right bottom');
 			settings.triangle$.addClass(coord.popoverDir);
 
-			if (coord.triangleX > 0) {
-				settings.triangle$.css('left', coord.triangleX);
+			// TYPO3 SPECIFIC FIX START
+			if ((coord.popoverDir === 'top' || coord.popoverDir === 'bottom')) {
+				if (coord.triangleX > 0) {
+					settings.triangle$.css('left', coord.triangleX > (coord.popoverWidth - 34) ? coord.popoverWidth - 34 : coord.triangleX);
+				} else {
+					settings.triangle$.css('left', -8);
+				}
 			}
 
-			if (coord.triangleY > 0) {
-				settings.triangle$.css('top', coord.triangleY);
+			if ((coord.popoverDir === 'left' || coord.popoverDir === 'right')) {
+				if (coord.triangleY > 2) {
+					settings.triangle$.css('top', coord.triangleY > (coord.popoverHeight - 34) ? coord.popoverHeight - 34 : coord.triangleY);
+				} else {
+					settings.triangle$.css('top', 2);
+				}
 			}
+			// TYPO3 SPECIFIC FIX STOP
 
 			// position popover
-			settings.popover$.offset({
+			settings.popover$.css({
 				top: coord.popoverY - coord.deltaY + settings.offsetY,
 				left: coord.popoverX - coord.deltaX + settings.offsetX
 			});
@@ -254,8 +275,6 @@
 			}
 
 			settings.popover$.addClass('t3-popover-' + settings.positioning);
-
-			settings.popover$.addClass('t3-ui');
 			// TYPO3 SPECIFIC FIX STOP
 
 			// set popover css and show it

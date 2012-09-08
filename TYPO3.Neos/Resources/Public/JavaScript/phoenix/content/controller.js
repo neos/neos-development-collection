@@ -299,6 +299,8 @@ function(jQuery) {
 			T3.Common.Dialog.openConfirmPopover({
 				title: 'Are you sure you want to remove this content element?',
 				content: 'If you remove this element you can restore it using undo',
+				confirmLabel: 'Delete',
+				confirmClass: 'btn-danger',
 				positioning: 'absolute',
 				onOk: function() {
 					var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
