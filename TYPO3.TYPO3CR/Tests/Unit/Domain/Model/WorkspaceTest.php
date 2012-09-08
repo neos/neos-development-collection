@@ -67,7 +67,7 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishWillReplaceExistingNodesInBaseWorkspaceByNodeInWorkspaceToBePubslished() {
-		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByPath', 'remove', 'add'), array(), '', FALSE);
+		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
 
 		$targetWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
 		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
@@ -78,7 +78,7 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$nodesInCurrentWorkspace = array(
 			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $currentWorkspace)),
-			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('isRemoved', 'setWorkspace'), array('/sites/foo/homepage', $currentWorkspace)),
+			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('isRemoved', 'setWorkspace'), array('/sites/foo/homepage', $currentWorkspace, 'fakeUuid')),
 		);
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(FALSE));
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('setWorkspace')->with($targetWorkspace);
@@ -86,7 +86,7 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockQueryResult = $this->getMock('TYPO3\FLOW3\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('toArray')->will($this->returnValue($nodesInCurrentWorkspace));
 		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
-		$mockNodeRepository->expects($this->once())->method('findOneByPath')->with('/sites/foo/homepage')->will($this->returnValue($existingNode));
+		$mockNodeRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));
 		$mockNodeRepository->expects($this->once())->method('remove')->with($existingNode);
 
 		$currentWorkspace->publish('live');
@@ -96,7 +96,7 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	 * @test
 	 */
 	public function publishWillRemoveNodesInTargetWorkspaceIfTheyHaveBeenMarkedAsRemovedInSourceWorkspace() {
-		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByPath', 'remove', 'add'), array(), '', FALSE);
+		$mockNodeRepository = $this->getMock('TYPO3\TYPO3CR\Domain\Repository\NodeRepository', array('findByWorkspace', 'findOneByIdentifier', 'remove', 'add'), array(), '', FALSE);
 
 		$targetWorkspace = $this->getAccessibleMock('TYPO3\TYPO3CR\Domain\Model\Workspace', array('dummy'), array(), '', FALSE);
 		$existingNode = $this->getMock('TYPO3\TYPO3CR\Domain\Model\NodeInterface', array(), array(), '', FALSE);
@@ -107,14 +107,14 @@ class WorkspaceTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$nodesInCurrentWorkspace = array(
 			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('dummy'), array('/', $currentWorkspace)),
-			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('isRemoved'), array('/sites/foo/homepage', $currentWorkspace)),
+			$this->getMock('TYPO3\TYPO3CR\Domain\Model\Node', array('isRemoved'), array('/sites/foo/homepage', $currentWorkspace, 'fakeUuid')),
 		);
 		$nodesInCurrentWorkspace[1]->expects($this->once())->method('isRemoved')->will($this->returnValue(TRUE));
 
 		$mockQueryResult = $this->getMock('TYPO3\FLOW3\Persistence\QueryResultInterface');
 		$mockQueryResult->expects($this->once())->method('toArray')->will($this->returnValue($nodesInCurrentWorkspace));
 		$mockNodeRepository->expects($this->once())->method('findByWorkspace')->will($this->returnValue($mockQueryResult));
-		$mockNodeRepository->expects($this->once())->method('findOneByPath')->with('/sites/foo/homepage')->will($this->returnValue($existingNode));
+		$mockNodeRepository->expects($this->once())->method('findOneByIdentifier')->with('fakeUuid')->will($this->returnValue($existingNode));
 		$mockNodeRepository->expects($this->at(2))->method('remove')->with($existingNode);
 		$mockNodeRepository->expects($this->at(3))->method('remove')->with($nodesInCurrentWorkspace[1]);
 
