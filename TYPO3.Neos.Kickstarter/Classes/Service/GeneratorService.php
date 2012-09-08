@@ -19,8 +19,14 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  */
 class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
+	/**
+	 * Generate a Sites.xml for the given package and name.
+	 *
+	 * @param string $packageKey
+	 * @param string $siteName
+	 * @return array
+	 */
 	public function generateSitesXml($packageKey, $siteName) {
-
 		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/Content/Sites.xml';
 
 		$contextVariables = array();
@@ -37,8 +43,14 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		return $this->generatedFiles;
 	}
 
+	/**
+	 * Generate basic TypoScript files.
+	 *
+	 * @param string $packageKey
+	 * @param string $siteName
+	 * @return array
+	 */
 	public function generateSitesTypoScript($packageKey, $siteName) {
-
 		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/TypoScripts/Root.ts2';
 
 		$contextVariables = array();
@@ -55,8 +67,14 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 		return $this->generatedFiles;
 	}
 
+	/**
+	 * Generate basic template file.
+	 *
+	 * @param string $packageKey
+	 * @param string $siteName
+	 * @return array
+	 */
 	public function generateSitesTemplate($packageKey, $siteName) {
-
 		$templatePathAndFilename = 'resource://TYPO3.SiteKickstarter/Private/Generator/Template/SiteTemplate.html';
 
 		$contextVariables = array();

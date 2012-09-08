@@ -20,7 +20,7 @@ page.body {
 		menu = TYPO3.TYPO3:MenuRenderer
 		breadcrumb = TYPO3.TYPO3:Breadcrumb
 	}
-		// This are your content areas, you can define as many as you want, just name them and the nodePath.
+		// These are your content areas, you can define as many as you want, just name them and the nodePath.
 	sections {
 		main = TYPO3.TYPO3:Section
 		main.nodePath = 'main'
