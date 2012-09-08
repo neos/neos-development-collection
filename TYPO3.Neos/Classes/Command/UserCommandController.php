@@ -122,7 +122,7 @@ class UserCommandController extends \TYPO3\FLOW3\Cli\CommandController {
 		$role = new \TYPO3\FLOW3\Security\Policy\Role($role);
 
 		if ($account->hasRole($role)) {
-			$this->outputLine('User "%s" allready has the role "%s" assigned.', array($username, $role));
+			$this->outputLine('User "%s" already has the role "%s" assigned.', array($username, $role));
 			$this->quit(1);
 		}
 
