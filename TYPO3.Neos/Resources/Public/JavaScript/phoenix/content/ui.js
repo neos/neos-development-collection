@@ -692,19 +692,7 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 			$contentElement.height(25);
 		}
 
-		var topButtonContainer = $('<div />', {'class': 't3ui t3-contentelement-handle-container t3-contentelement-handle-container-top'}).prependTo($contentElement);
-
-		T3.Content.UI.NewContentelementButton.create({
-			_index: contentElementIndex,
-			_collection: collection
-		}).appendTo(topButtonContainer);
-
-		var bottomButtonContainer = $('<div />', {'class': 't3-contentelement-handle-container t3-contentelement-handle-container-bottom'}).appendTo($contentElement);
-		T3.Content.UI.NewContentelementButton.create({
-			_index: contentElementIndex + 1,
-			_collection: collection
-		}).appendTo(bottomButtonContainer);
-
+		var topButtonContainer = $('<div />', {'class': 't3-ui t3-contentelement-handle-container t3-contentelement-handle-container-top'}).prependTo($contentElement);
 		T3.Content.UI.ContentElementHandle.create({
 			_element: $contentElement,
 			_collection: collection

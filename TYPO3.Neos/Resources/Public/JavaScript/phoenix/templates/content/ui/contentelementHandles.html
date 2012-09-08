@@ -1,8 +1,9 @@
 <div class="btn-toolbar">
 	<div class="btn-group">
-		<button class="btn btn-mini"><span class="icon-cut"></span></button>
-		<button class="btn btn-mini"><span class="icon-copy"></span></button>
-		<button class="btn btn-mini"><span class="icon-paste"></span></button>
-		<button class="btn btn-mini"><span class="icon-remove"></span></button>
+		<button class="btn btn-mini action-remove"><i class="icon-trash" {{action "remove" }}></i></button>
+		<button class="btn btn-mini action-cut"><i class="icon-share" {{action "cut" }}></i></button>
+		<button class="btn btn-mini action-copy"><i class="icon-tags" {{action "copy" }}></i></button>
+		<button class="btn btn-mini action-paster-after"><i class="icon-circle-arrow-down" {{action "pasteAfter" }}></i></button>
+		<button class="btn btn-mini action-new-after"><i class="icon-plus" {{action "newAfter" }}></i></button>
 	</div>
 </div>

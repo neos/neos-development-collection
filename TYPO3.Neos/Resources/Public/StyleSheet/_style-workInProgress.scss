@@ -455,28 +455,16 @@ button.t3-button.t3-connection-status-down {
 }
 
 .t3-contentelement > .t3-contentelement-handle-container {
-	overflow: hidden;
 	display: none;
-	font-size: 16px;
+
+	div {
+		margin: 0px;
+		position: absolute;
+	}
 }
 
 .t3-contentelement:hover > .t3-contentelement-handle-container {
 	display: inline;
-}
-
-.t3-contentelement-handle-container > div {
-	position: relative;
-	float: right;
-	left: 7px;
-}
-
-.t3-contentelement-handle-container > button {
-	position: relative;
-	float: left;
-}
-
-.t3-contentelement-handle-container-bottom > button {
-	top: 0px;
 }
 
 .t3-ui .widget {
