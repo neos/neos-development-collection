@@ -41,7 +41,6 @@ class SiteExportService {
 		$xmlWriter->startDocument('1.0', 'UTF-8');
 		$xmlWriter->startElement('root');
 
-		/** @var $site \TYPO3\TYPO3\Domain\Model\Site */
 		foreach ($sites as $site) {
 			$xmlWriter->startElement('site');
 
@@ -114,7 +113,13 @@ class SiteExportService {
 		if (count($properties) > 0) {
 			$xmlWriter->startElement('properties');
 			foreach ($properties as $propertyName => $propertyValue) {
-				if (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
+				if (is_object($propertyValue)) {
+					$xmlWriter->startElement($propertyName);
+					$xmlWriter->writeAttribute('__type', 'object');
+					$xmlWriter->writeAttribute('__classname', get_class($propertyValue));
+					$this->objectToXml($propertyValue, $xmlWriter);
+					$xmlWriter->endElement();
+				} elseif (strpos($propertyValue, '<') !== FALSE || strpos($propertyValue, '>') !== FALSE || strpos($propertyValue, '&') !== FALSE) {
 					$xmlWriter->startElement($propertyName);
 					if (strpos($propertyValue, '<![CDATA[') !== FALSE) {
 						$xmlWriter->writeCdata(str_replace(']]>', ']]]]><![CDATA[>', $propertyValue));
@@ -135,6 +140,43 @@ class SiteExportService {
 		}
 
 		$xmlWriter->endElement();
+	}
+
+	/**
+	 * Handles conversion of objects into a string format that can be exported in our
+	 * XML format.
+	 *
+	 * Note: currently only ImageVariant instances are supported.
+	 *
+	 * @param $object
+	 * @param \XMLWriter $xmlWriter
+	 * @return void
+	 */
+	protected function objectToXml($object, \XMLWriter $xmlWriter) {
+		$className = get_class($object);
+		switch ($className) {
+			case 'TYPO3\Media\Domain\Model\ImageVariant':
+				$xmlWriter->startElement('processingInstructions');
+				$xmlWriter->writeCdata(serialize($object->getProcessingInstructions()));
+				$xmlWriter->endElement();
+
+				$xmlWriter->startElement('originalImage');
+				$xmlWriter->writeAttribute('__type', 'object');
+				$xmlWriter->writeAttribute('__classname', '\TYPO3\Media\Domain\Model\Image');
+
+				$xmlWriter->startElement('resource');
+				$xmlWriter->writeAttribute('__type', 'object');
+				$xmlWriter->writeAttribute('__classname', '\TYPO3\FLOW3\Resource\Resource');
+				$resource = $object->getOriginalImage()->getResource();
+				$xmlWriter->writeElement('filename', $resource->getFilename());
+				$xmlWriter->writeElement('content', base64_encode(file_get_contents($resource->getUri())));
+				$xmlWriter->endElement();
+
+				$xmlWriter->endElement();
+			break;
+			default:
+				throw new \TYPO3\TYPO3\Domain\Exception('Unsupported object of type "' . get_class($className) . '" hit during XML export.', 1347144928);
+		}
 	}
 }
 ?>
