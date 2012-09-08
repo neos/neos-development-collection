@@ -3,15 +3,14 @@
 define(
 	[
 		'jquery',
-		'text!phoenix/templates/content/ui/newContentelementButton.html',
 		'phoenix/content/ui/elements/popover-button',
 		'phoenix/content/ui/elements/new-contentelement-popover-content'
 	],
-	function ($, template, PopoverButton, ContentElementPopoverContent) {
+	function ($, PopoverButton, ContentElementPopoverContent) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui/elements/new-contentelement-button');
 
 		return PopoverButton.extend({
-			template: Ember.Handlebars.compile(template),
+			template: Ember.Handlebars.compile('<span class="icon-plus-sign" clickBinding="click"></span>'),
 
 			$popoverContent: null,
 
