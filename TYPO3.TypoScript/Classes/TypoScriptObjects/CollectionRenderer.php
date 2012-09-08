@@ -41,7 +41,15 @@ class CollectionRenderer extends AbstractTsObject {
 	protected $itemName;
 
 	/**
+	 * If set iteration data (index, cycle, isFirst, isLast) is available in context with the name given.
+	 *
+	 * @var string
+	 */
+	protected $iterationName;
+
+	/**
 	 * @param array $collection
+	 * @return void
 	 */
 	public function setCollection($collection) {
 		$this->collection = $collection;
@@ -49,15 +57,25 @@ class CollectionRenderer extends AbstractTsObject {
 
 	/**
 	 * @param string $itemName
+	 * @return void
 	 */
 	public function setItemName($itemName) {
 		$this->itemName = $itemName;
 	}
 
 	/**
+	 * @param string $iterationName
+	 * @return void
+	 */
+	public function setIterationName($iterationName) {
+		$this->iterationName = $iterationName;
+	}
+
+	/**
 	 * Evaluate the collection nodes
 	 *
 	 * @return string
+	 * @throws \TYPO3\TypoScript\Exception
 	 */
 	public function evaluate() {
 		$collection = $this->tsValue('collection');
@@ -71,14 +89,42 @@ class CollectionRenderer extends AbstractTsObject {
 		if ($itemName === NULL) {
 			throw new \TYPO3\TypoScript\Exception('The CollectionRenderer needs an itemName to be set.', 1344325771);
 		}
+		$iterationName = $this->tsValue('iterationName');
+		$collectionTotalCount = $collection->count();
 		foreach ($collection as $collectionElement) {
-			$this->tsRuntime->pushContext($itemName, $collectionElement);
+			$context = array($itemName => $collectionElement);
+			if ($iterationName !== NULL) {
+				$context[$iterationName] = $this->prepareIterationInformation($collectionTotalCount);
+			}
+
+			$this->tsRuntime->pushContextArray($context);
 			$output .= $this->tsRuntime->render($this->path . '/itemRenderer');
 			$this->tsRuntime->popContext();
 			$this->numberOfRenderedNodes++;
 		}
 
 		return $output;
+	}
+
+	/**
+	 * @param integer $collectionCount
+	 * @return array
+	 */
+	protected function prepareIterationInformation($collectionCount) {
+		$iteration = array (
+			'index' => $this->numberOfRenderedNodes,
+			'cycle' => ($this->numberOfRenderedNodes + 1),
+			'isFirst' => FALSE,
+			'isLast' => FALSE
+		);
+		if ($this->numberOfRenderedNodes === 0) {
+			$iteration['isFirst'] = TRUE;
+		}
+		if (($this->numberOfRenderedNodes + 1) === $collectionCount) {
+			$iteration['isLast'] = TRUE;
+		}
+
+		return $iteration;
 	}
 }
 ?>
