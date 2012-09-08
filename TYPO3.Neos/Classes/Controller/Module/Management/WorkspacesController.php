@@ -112,9 +112,9 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 		foreach ($sites as $siteKey => $site) {
 			foreach ($site['folders'] as $folderKey => $folder) {
 				foreach ($folder['changes'] as $changeKey => $change) {
-					$liveNode = $this->getSiblingNodeInWorkspace($change['node'], $liveWorkspace);
+					$liveNode = $this->nodeRepository->findOneByIdentifier($change['node']->getIdentifier(), $liveWorkspace);
 					$sites[$siteKey]['folders'][$folderKey]['changes'][$changeKey]['isNew'] = is_null($liveNode);
-					$sites[$siteKey]['folders'][$folderKey]['changes'][$changeKey]['isMoved'] = $liveNode && $change['node']->getParentPath() !== $liveNode->getParentPath();
+					$sites[$siteKey]['folders'][$folderKey]['changes'][$changeKey]['isMoved'] = $liveNode && $change['node']->getPath() !== $liveNode->getPath();
 				}
 			}
 			ksort($sites[$siteKey]['folders']);
@@ -226,23 +226,6 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 			$node = $node->getParent();
 		}
 		return NULL;
-	}
-
-	/**
-	 * Gets the sibling node in a different workspace connected via the identifier'
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @param \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface|NULL
-	 */
-	protected function getSiblingNodeInWorkspace(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\Workspace $workspace) {
-		$query = $this->nodeRepository->createQuery();
-		return $query->matching(
-			$query->logicalAnd(
-				$query->equals('workspace', $workspace),
-				$query->equals('identifier', $node->getIdentifier()
-			)
-		))->execute()->getFirst();
 	}
 
 }
