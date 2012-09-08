@@ -687,7 +687,13 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 			return;
 		}
 
-		var topButtonContainer = $('<div />', {'class': 't3-contentelement-handle-container t3-contentelement-handle-container-top'}).prependTo($contentElement);
+			// Make sure we have a minimum height to be able to hover
+		if ($contentElement.height() < 25) {
+			$contentElement.height(25);
+		}
+
+		var topButtonContainer = $('<div />', {'class': 't3ui t3-contentelement-handle-container t3-contentelement-handle-container-top'}).prependTo($contentElement);
+
 		T3.Content.UI.NewContentelementButton.create({
 			_index: contentElementIndex,
 			_collection: collection

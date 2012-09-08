@@ -162,6 +162,7 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 						onChange: function() {
 							if (that._editor && editorFullyPopulated) {
 								that.set('value', that._editor.getValue());
+								T3.Content.Model.NodeSelection.get('selectedNode').get('$element').html(that.get('value'));
 							}
 						}
 					});
