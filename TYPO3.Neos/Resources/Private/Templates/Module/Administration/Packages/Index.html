@@ -55,7 +55,14 @@
 												</f:else>
 											</f:if>
 										</f:if>
-										<f:link.action action="deactivate" class="btn btn-warning t3-button" arguments="{packageKey: packageKey}" title="Click to deactivate"><i class="icon-minus-sign icon-white"></i></f:link.action>
+										<f:if condition="{package.isProtected}">
+											<f:then>
+												<button class="btn btn-warning disabled t3-button" title="This package is protected so it cannot be deactivated"><i class="icon-minus-sign icon-white"></i></button>
+											</f:then>
+											<f:else>
+												<f:link.action action="deactivate" class="btn btn-warning t3-button" arguments="{packageKey: packageKey}" title="Click to deactivate"><i class="icon-minus-sign icon-white"></i></f:link.action>
+											</f:else>
+										</f:if>
 									</f:then>
 									<f:else>
 										<f:link.action action="activate" class="btn btn-success t3-button" arguments="{packageKey: packageKey}" title="Click to activate"><i class="icon-plus-sign icon-white"></i></f:link.action>
