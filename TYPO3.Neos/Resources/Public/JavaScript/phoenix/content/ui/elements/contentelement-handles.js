@@ -29,7 +29,6 @@ define(
 				});
 
 				this.$newAfterPopoverContent = $('<div />', {id: this.get(Ember.GUID_KEY)});
-				console.log(this.$().find('.action-new-after'));
 
 				this.$().find('.action-new-after').popover({
 					content: this.$newAfterPopoverContent,
