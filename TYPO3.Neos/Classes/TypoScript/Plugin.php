@@ -209,7 +209,7 @@ class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
 			$this->dispatcher->dispatch($this->buildPluginRequest(), $pluginResponse);
 
 			if ($this->node instanceof \TYPO3\TYPO3CR\Domain\Model\NodeInterface) {
-				return $this->contentElementWrappingService->wrapContentObject($this->node, $pluginResponse->getContent());
+				return $this->contentElementWrappingService->wrapContentObject($this->node, $this->path, $pluginResponse->getContent());
 			} else {
 				return $pluginResponse->getContent();
 			}
