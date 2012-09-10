@@ -52,9 +52,10 @@ class Matcher extends AbstractTsObject {
 	public function evaluate() {
 		if ($this->tsValue('condition')) {
 			$type = $this->tsValue('type');
-			return $this->tsRuntime->render(
+			$renderedElement = $this->tsRuntime->render(
 				sprintf('%s/element<%s>', $this->path, $type)
 			);
+			return $this->tsRuntime->evaluateProcessor('element', $this, $renderedElement);
 		} else {
 			return CaseTsObject::MATCH_NORESULT;
 		}
