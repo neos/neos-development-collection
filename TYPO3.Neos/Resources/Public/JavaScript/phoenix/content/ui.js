@@ -678,11 +678,6 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 	T3.Content.UI.Util = T3.Content.UI.Util || {};
 
 	T3.Content.UI.Util.AddContentElementHandleBars = function($contentElement, contentElementIndex, collection) {
-			// If this method is called from a jQuery UI widget we can't use our own $ instance
-		if (!$ && jQuery) {
-			$ = jQuery;
-		}
-
 		if (!$contentElement || $contentElement.find('> .t3-contentelement-handle-container').length > 0) {
 			return;
 		}
