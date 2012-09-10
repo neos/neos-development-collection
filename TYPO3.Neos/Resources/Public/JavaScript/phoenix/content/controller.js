@@ -292,6 +292,7 @@ function($, CreateJS) {
 				this.set('_clipboard', T3.Common.LocalStorage.getItem('clipboard'));
 			}
 		},
+
 		deleteBlock: function(nodePath, $handle) {
 			T3.Common.Dialog.openConfirmPopover({
 				title: 'Are you sure you want to remove this content element?',
@@ -316,12 +317,15 @@ function($, CreateJS) {
 		addAbove: function(nodePath, $handle) {
 			this._add(nodePath, 'above', $handle);
 		},
+
 		addBelow: function(nodePath, $handle) {
 			this._add(nodePath, 'below', $handle);
 		},
+
 		addInside: function(nodePath, $handle) {
 			this._add(nodePath, 'inside', $handle);
 		},
+
 		_add: function(nodePath, position, $handle) {
 			if ($handle !== undefined) {
 				$handle.addClass('t3-handle-loading');
@@ -429,17 +433,18 @@ function($, CreateJS) {
 				T3.Common.Notification.notice('No node found on the clipboard');
 				return;
 			}
-			if (clipboard.nodePath === nodePath) {
+			if (clipboard.nodePath === nodePath && clipboard.type === 'cut') {
 				T3.Common.Notification.notice('It is not possible to paste a node "' + position + '" at itself');
 				return;
 			}
 
-			var action = (position == 'before') ? 'moveBefore' : 'moveAfter';
+			var action = clipboard.type === 'cut' ? 'move' : 'copy';
 			$handle.addClass('t3-handle-loading');
 			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController[action].call(
 				that,
 				clipboard.nodePath,
 				nodePath,
+				position,
 				function (result) {
 					if (result.success) {
 						T3.Common.LocalStorage.removeItem('clipboard');
@@ -507,9 +512,7 @@ function($, CreateJS) {
 		}.observes('_clipboard')
 	});
 
-
 	var ServerConnection = Ember.Object.create({
-
 		_lastSuccessfulTransfer: null,
 		_failedRequest: false,
 		_pendingSave: false,

@@ -283,6 +283,84 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	}
 
 	/**
+	 * Copy $node before, into or after $targetNode
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
+	 * @param string $position where the node should be added (allowed: before, into, after)
+	 * @param string $nodeName optional node name (if empty random node name will be generated)
+	 * @return void
+	 * @throws \TYPO3\TYPO3CR\Exception\NodeException
+	 * @ExtDirect
+	 */
+	public function copyAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $position, $nodeName = '') {
+		if (!in_array($position, array('before', 'into', 'after'), TRUE)) {
+			throw new \TYPO3\TYPO3CR\Exception\NodeException('The position should be one of the following: "before", "into", "after".', 1346832303);
+		}
+
+		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
+
+		switch ($position) {
+			case 'before':
+				$node->copyBefore($targetNode, $nodeName);
+			break;
+			case 'into':
+				$node->copyInto($targetNode, $nodeName);
+			break;
+			case 'after':
+				$node->copyAfter($targetNode, $nodeName);
+		}
+
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', '');
+		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
+	}
+
+	/**
+	 * Copy $node before $targetNode
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
+	 * @param string $nodeName optional node name (if empty random node name will be generated)
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function copyBeforeAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $nodeName = '') {
+		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
+		$node->copyBefore($targetNode, $nodeName);
+		$this->view->assign('value', array('success' => TRUE));
+	}
+
+	/**
+	 * Copy $node after $targetNode
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
+	 * @param string $nodeName optional node name (if empty random node name will be generated)
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function copyAfterAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $nodeName = '') {
+		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
+		$node->copyAfter($targetNode, $nodeName);
+		$this->view->assign('value', array('success' => TRUE));
+	}
+
+	/**
+	 * Copy $node into $targetNode
+	 *
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
+	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode
+	 * @param string $nodeName optional node name (if empty random node name will be generated)
+	 * @return void
+	 * @ExtDirect
+	 */
+	public function copyIntoAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, \TYPO3\TYPO3CR\Domain\Model\NodeInterface $targetNode, $nodeName = '') {
+		$nodeName = $nodeName === '' ? uniqid('node') : $nodeName;
+		$node->copyInto($targetNode, $nodeName);
+		$this->view->assign('value', array('success' => TRUE));
+	}
+
+	/**
 	 * Updates the specified node
 	 *
 	 * Note: We do not call $nodeRepository->update() here, as TYPO3CR has a stateful API for now.
