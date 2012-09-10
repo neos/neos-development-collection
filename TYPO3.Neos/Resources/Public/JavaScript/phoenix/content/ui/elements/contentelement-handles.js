@@ -16,6 +16,8 @@ define(
 
 			$newAfterPopoverContent: null,
 
+			_entityCollectionIndex: null,
+
 			_collection: null,
 
 			popoverPosition: 'right',
@@ -93,7 +95,7 @@ define(
 
 				ContentElementPopoverContent.create({
 					_options: this.get('_collection').options,
-					_index: this.get('_index'),
+					_index: this.get('_entityCollectionIndex'),
 					data: data
 				}).replaceIn(this.$newAfterPopoverContent);
 			},

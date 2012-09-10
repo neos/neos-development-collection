@@ -314,59 +314,43 @@ function($, CreateJS) {
 			}, $handle);
 		},
 
-		addAbove: function(nodePath, $handle) {
-			this._add(nodePath, 'above', $handle);
+		addAbove: function(contentType, referenceEntity, callBack) {
+			this._add(contentType, referenceEntity, 'before', callBack);
 		},
 
-		addBelow: function(nodePath, $handle) {
-			this._add(nodePath, 'below', $handle);
+		addBelow: function(contentType, referenceEntity, callBack) {
+			this._add(contentType, referenceEntity, 'after', callBack);
 		},
 
-		addInside: function(nodePath, $handle) {
-			this._add(nodePath, 'inside', $handle);
+		addInside: function(contentType, referenceEntity, callBack) {
+			this._add(contentType, referenceEntity, 'into', callBack);
 		},
 
-		_add: function(nodePath, position, $handle) {
-			if ($handle !== undefined) {
-				$handle.addClass('t3-handle-loading');
-
-				$handle.bind('showPopover', function() {
-					jQuery('.contentTypeSelectorTabs.notInitialized').each(function(index) {
-						var newDate = new Date();
-						var uniqueId = 't3-content-tabs-' + Math.random() * Math.pow(10, 17) + '-' + newDate.getTime();
-						jQuery(this).attr('id', uniqueId);
-
-						jQuery(this).children('ul').find('li a').each(function (index) {
-							jQuery(this).attr('href', '#' + uniqueId + '-' + index.toString());
-						});
-
-						jQuery(this).children('div').each(function (index) {
-							jQuery(this).attr('id', uniqueId + '-' + index.toString());
-						})
-						jQuery(this).tabs();
-						jQuery(this).removeClass('notInitialized');
-					});
-					jQuery('.t3-handle-loading').removeClass('t3-handle-loading');
-				});
-			}
-
-			T3.Common.Dialog.openFromUrl(
-				'/typo3/content/new',
+		/**
+		 * Creates a node on the server. When the result is received the callback function is called.
+		 * The first argument passed to the callback is the nodepath of the new node, second argument
+		 * is the jQuery object containing the rendered HTML of the new node.
+		 *
+		 * @param {String} contentType
+		 * @param {Object} referenceEntity
+		 * @param {String} position
+		 * @param {Function} callBack This function is called after element creation and receives the jQuery DOM element as arguments
+		 * @private
+		 */
+		_add: function(contentType, referenceEntity, position, callBack) {
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.createAndRender(
+				referenceEntity.getSubject().substring(1, referenceEntity.getSubject().length - 1),
+				referenceEntity.get('typo3:_typoscriptPath'),
 				{
-					position: position,
-					referenceNode: nodePath
+					contentType: contentType,
+					properties: {}
 				},
-				{
-					'created-new-content': function($callbackDomElement) {
-						T3.ContentModule.reloadPage();
-					}
-				},
-				$handle,
-				{
-					positioning: 'absolute'
+				position,
+				function(result) {
+					var template = $(result.collectionContent).find('[about="' + result.nodePath + '"]').first();
+					callBack(result.nodePath, template);
 				}
 			);
-
 		},
 
 		/**

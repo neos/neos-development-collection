@@ -16,7 +16,7 @@ define(
 	'phoenix/content/controller',
 	'jquery.hotkeys'
 ],
-function($, vieInstance, Ember, CreateJS) {
+function($, vie, Ember, CreateJS) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/contentmodule');
 
 	return Ember.Application.create({
@@ -60,7 +60,7 @@ function($, vieInstance, Ember, CreateJS) {
 		},
 
 		bootstrap: function() {
-			this.set('vie', vieInstance);
+			this.set('vie', vie);
 			this._initializeInspector();
 			this._initializeToolbar();
 			this._initializeFooter();
@@ -109,8 +109,7 @@ function($, vieInstance, Ember, CreateJS) {
 		},
 
 		_initializeVie: function() {
-			var vie = vieInstance,
-				that = this;
+			var that = this;
 
 			if (this.get('_vieOptions').stanbolUrl) {
 				vie.use(new vie.StanbolService({
@@ -142,47 +141,69 @@ function($, vieInstance, Ember, CreateJS) {
 			}
 		},
 
-		_initializeVieAfterSchemaIsLoaded: function(vie) {
+		_initializeVieAfterSchemaIsLoaded: function() {
 			T3.Content.Model.NodeSelection.initialize();
 			T3.Content.Model.PublishableNodes.initialize();
+			this._registerVieContentTypeTemplateCallbacks();
+			this._initializeCreateJs();
+		},
 
+		/**
+		 * Register template generation callbacks.
+		 *
+		 * For adding new content elements VIE needs an HTML template. This method registers callback methods
+		 * for generating those templates. The template itself is rendered on the server, and contains the
+		 * rendered output of the requested content type, rendered within the current typoscript path.
+		 *
+		 * @return {Void}
+		 */
+		_registerVieContentTypeTemplateCallbacks: function() {
 			_.each(vie.types.toArray(), function(type) {
-				var contentType = type.id.substring(1, type.id.length - 1).replace('http://www.typo3.org/ns/2011/FLOW3/Packages/TYPO3/Content/', '');
+				var contentType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, '');
 				var prefix = vie.namespaces.getPrefix(type.id);
 
 				if (prefix === 'typo3') {
 					vie.service('rdfa').setTemplate('typo3:' + contentType, 'typo3:content-collection', function(entity, callBack, collectionView) {
 						var type = entity.get('@type'),
 							contentType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, ''),
-							collectionSubject = $(collectionView.el).attr('about'),
-							collectionEntity = vie.entities.get(collectionSubject),
-							typoScriptPath = collectionEntity.get('typo3:_typoscriptPath');
+							referenceEntity = null,
+							lastMatchedEntity = null;
 
-						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.createAndRender(
-							collectionSubject,
-							typoScriptPath,
-							{
-								contentType: contentType,
-								properties: {}
-							},
-							'into',
-							function(result) {
-								entity.set('@subject', result.nodePath);
-								var template = $(result.collectionContent).find('[about="' + result.nodePath + '"]').first();
-								callBack(template);
+						var afterCreationCallback = function(nodePath, template) {
+							entity.set('@subject', nodePath);
+							callBack(template);
+						}
+
+						_.each(collectionView.collection.models, function(matchEntity) {
+							if (entity === matchEntity && lastMatchedEntity) {
+								referenceEntity = lastMatchedEntity;
+								T3.Content.Controller.BlockActions.addBelow(
+									contentType,
+									referenceEntity,
+									afterCreationCallback
+								);
+							} else {
+								lastMatchedEntity = matchEntity;
 							}
-						);
+						});
+
+						if (referenceEntity === null) {
+							// No reference node found, use the section
+							T3.Content.Controller.BlockActions.addInside(
+								contentType,
+								vie.entities.get($(collectionView.el).attr('about')),
+								afterCreationCallback
+							);
+						}
 					});
 				}
 			});
-
-			this._initializeCreateJs();
 		},
 
 		_initializeCreateJs: function() {
 				// Midgard Storage
 			$('body').midgardStorage({
-				vie: vieInstance,
+				vie: vie,
 				url: function () { /* empty function to prevent Midgard error */ },
 				localStorage: true,
 				autoSave: true

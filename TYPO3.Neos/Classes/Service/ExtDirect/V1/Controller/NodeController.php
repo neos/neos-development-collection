@@ -192,6 +192,11 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 			} elseif ($position === 'after') {
 				$newNode->moveAfter($referenceNode);
 			}
+
+				// We are creating a node *inside* another node; so the client side
+				// currently expects the whole parent TypoScript path to be rendered.
+				// Thus, we split off the last segment of the TypoScript path.
+			$typoScriptPath = substr($typoScriptPath, 0, strrpos($typoScriptPath, '/'));
 		}
 
 		if (isset($nodeData['properties']) && is_array($nodeData['properties'])) {

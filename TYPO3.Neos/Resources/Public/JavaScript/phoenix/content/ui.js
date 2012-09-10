@@ -690,7 +690,8 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 		var topButtonContainer = $('<div />', {'class': 't3-ui t3-contentelement-handle-container t3-contentelement-handle-container-top'}).prependTo($contentElement);
 		T3.Content.UI.ContentElementHandle.create({
 			_element: $contentElement,
-			_collection: collection
+			_collection: collection,
+			_entityCollectionIndex: contentElementIndex
 		}).appendTo(topButtonContainer);
 	}
 

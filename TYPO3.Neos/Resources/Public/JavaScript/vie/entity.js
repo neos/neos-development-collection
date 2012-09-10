@@ -72,7 +72,7 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 			$entityElement.bind("midgardeditablechanged", function(event, data) {
 					// this event fires if inline content changes
 				that.set('modified', !$.isEmptyObject(that.get('_vieEntity').changed));
-			})
+			});
 			this.get('_vieEntity').on('change', function() {
 					// this event fires if content changes through the property inspector
 				that.set('modified', !$.isEmptyObject(that.get('_vieEntity').changed));
