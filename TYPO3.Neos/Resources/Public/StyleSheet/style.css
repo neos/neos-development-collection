@@ -7618,10 +7618,10 @@ ul.t3-launcher-horizontal li .text {
   background-image: url("../Images/Icons/White/attention_icon-16.png");
 }
 
-.t3-handle-loading span {
-  background-image: url("../Images/ajax-preloader.gif");
-  background-repeat: no-repeat;
-  background-position: 50% 50%;
+.t3-handle-loading i, .t3-handle-loading span {
+  background-image: url("../Images/ajax-preloader.gif") !important;
+  background-repeat: no-repeat !important;
+  background-position: 50% 50% !important;
 }
 
 .popover {

@@ -281,10 +281,10 @@ button.t3-create-new-content {
 	}
 }
 
-.t3-handle-loading span {
-	background-image: url('../Images/ajax-preloader.gif');
-	background-repeat: no-repeat;
-	background-position: 50% 50%;
+.t3-handle-loading i, .t3-handle-loading span {
+	background-image: url('../Images/ajax-preloader.gif') !important;
+	background-repeat: no-repeat !important;
+	background-position: 50% 50% !important;
 }
 
 .popover {

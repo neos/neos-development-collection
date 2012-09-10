@@ -278,20 +278,100 @@ function($, CreateJS) {
 	 *
 	 * @singleton
 	 */
-	var BlockActions = Ember.Object.create({
+	var NodeActions = Ember.Object.create({
 
 			// TODO: Move this to a separate controller
 		_clipboard: null,
 
+		clipboardContainsContent: function() {
+			return this.get('_clipboard') !== null;
+		}.property('_clipboard').cacheable(),
+
 		/**
-		 * Initialization lifecycle method. Here, we connect the create-new-content button
-		 * which is displayed when a ContentArray is empty.
+		 * Initialization lifecycle method. Here, we re-fill the clipboard as needed
 		 */
 		init: function() {
 			if (T3.Common.LocalStorage.getItem('clipboard')) {
 				this.set('_clipboard', T3.Common.LocalStorage.getItem('clipboard'));
 			}
 		},
+
+		/**
+		 * Cut a node and put it on the clipboard
+		 * TODO: Decide if we move cut copy paste to another controller
+		 * @return {void}
+		 */
+		cut: function(nodePath) {
+			if (this.getPath('_clipboard.type') === 'cut' && this.getPath('_clipboard.nodePath') === nodePath) {
+				this.set('_clipboard', null);
+			} else {
+				this.set('_clipboard', {
+					type: 'cut',
+					nodePath: nodePath
+				});
+			}
+		},
+
+		/**
+		 * Copy a node and put it on the clipboard
+		 * @return {void}
+		 */
+		copy: function(nodePath) {
+			if (this.getPath('_clipboard.type') === 'copy' && this.getPath('_clipboard.nodePath') === nodePath) {
+				this.set('_clipboard', null);
+			} else {
+				this.set('_clipboard', {
+					type: 'copy',
+					nodePath: nodePath
+				});
+			}
+		},
+
+		/**
+		 * Paste the current node on the clipboard after another node
+		 * @param {String} nodePath the nodePath of the target node
+		 * @return {void}
+		 */
+		pasteAfter: function(nodePath) {
+			this._paste(nodePath, 'after');
+		},
+
+		/**
+		 * Paste a node on a certain location, relative to another node
+		 * @param {String} nodePath the nodePath of the target node
+		 * @param {jQuery} handle the clicked handle
+		 * @param {String} position
+		 * @return {void}
+		 */
+		_paste: function(nodePath, position) {
+			var that = this,
+				clipboard = this.get('_clipboard');
+
+			if (!clipboard.nodePath) {
+				T3.Common.Notification.notice('No node found on the clipboard');
+				return;
+			}
+			if (clipboard.nodePath === nodePath && clipboard.type === 'cut') {
+				T3.Common.Notification.notice('It is not possible to paste a node ' + position + ' itself.');
+				return;
+			}
+
+			var action = clipboard.type === 'cut' ? 'move' : 'copy';
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController[action].call(
+				that,
+				clipboard.nodePath,
+				nodePath,
+				position,
+				function (result) {
+					if (result.success) {
+						T3.Common.LocalStorage.removeItem('clipboard');
+						that.set('_clipboard', null);
+						T3.ContentModule.reloadPage();
+					}
+				}
+			);
+		},
+
 
 		deleteBlock: function(nodePath, $handle) {
 			T3.Common.Dialog.openConfirmPopover({
@@ -354,35 +434,6 @@ function($, CreateJS) {
 		},
 
 		/**
-		 * Cut a node and put it on the clipboard
-		 * TODO: Decide if we move cut copy paste to another controller
-		 * @return {void}
-		 */
-		cut: function(nodePath, $handle) {
-			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
-			block.hideHandle('remove-from-copy');
-			block.showHandle('copy');
-			this.set('_clipboard', {
-				type: 'cut',
-				nodePath: nodePath
-			});
-		},
-
-		/**
-		 * Copy a node and put it on the clipboard
-		 * @return {void}
-		 */
-		copy: function(nodePath, $handle) {
-			var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
-			block.hideHandle('remove-from-cut');
-			block.showHandle('cut');
-			this.set('_clipboard', {
-				type: 'copy',
-				nodePath: nodePath
-			});
-		},
-
-		/**
 		 * Paste the current node on the clipboard before another node
 		 * @param {String} nodePath the nodePath of the target node
 		 * @param {jQuery} handle the clicked handle
@@ -390,53 +441,6 @@ function($, CreateJS) {
 		 */
 		pasteBefore: function(nodePath, $handle) {
 			this._paste(nodePath, $handle, 'before');
-		},
-
-		/**
-		 * Paste the current node on the clipboard after another node
-		 * @param {String} nodePath the nodePath of the target node
-		 * @param {jQuery} handle the clicked handle
-		 * @return {void}
-		 */
-		pasteAfter: function(nodePath, $handle) {
-			this._paste(nodePath, $handle, 'after');
-		},
-
-		/**
-		 * Paste a node on a certain location, relative to another node
-		 * @param {String} nodePath the nodePath of the target node
-		 * @param {jQuery} handle the clicked handle
-		 * @param {String} position
-		 * @return {void}
-		 */
-		_paste: function(nodePath, $handle, position) {
-			var that = this,
-				clipboard = this.get('_clipboard');
-
-			if (!clipboard.nodePath) {
-				T3.Common.Notification.notice('No node found on the clipboard');
-				return;
-			}
-			if (clipboard.nodePath === nodePath && clipboard.type === 'cut') {
-				T3.Common.Notification.notice('It is not possible to paste a node "' + position + '" at itself');
-				return;
-			}
-
-			var action = clipboard.type === 'cut' ? 'move' : 'copy';
-			$handle.addClass('t3-handle-loading');
-			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController[action].call(
-				that,
-				clipboard.nodePath,
-				nodePath,
-				position,
-				function (result) {
-					if (result.success) {
-						T3.Common.LocalStorage.removeItem('clipboard');
-						T3.ContentModule.reloadPage();
-					}
-					$handle.removeClass('t3-handle-loading');
-				}
-			);
 		},
 
 		/**
@@ -466,33 +470,8 @@ function($, CreateJS) {
 		 * @return {void}
 		 */
 		onClipboardChange: function() {
-			try {
-				var clipboard = this.get('_clipboard');
-				T3.Common.LocalStorage.setItem('_clipboard', clipboard);
-				var block = T3.Content.Model.BlockManager.getBlockByNodePath(clipboard.nodePath);
-
-				if (clipboard.type === 'cut') {
-						// TODO: Make a sproutcore binding to andle this
-					jQuery('.t3-contentelement-cut').each(function() {
-						jQuery(this).removeClass('t3-contentelement-cut');
-						jQuery(this).parent().find('.t3-cut-handle').removeClass('t3-handle-hidden');
-					});
-
-						// Handle cut
-					block.getContentElement().addClass('t3-contentelement-cut');
-					block.hideHandle('cut');
-					block.showHandle('remove-from-cut');
-				} else if (clipboard.type === 'copy') {
-						// Handle copy
-					block.hideHandle('copy');
-					block.showHandle('remove-from-copy');
-				}
-				jQuery('.t3-paste-before-handle, .t3-paste-after-handle').removeClass('t3-handle-hidden');
-				jQuery('.t3-add-above-handle, .t3-add-below-handle').addClass('t3-handle-hidden');
-			} catch (error) {
-					// TODO: HACK! Somehow this is a DOMWindow on first load of the page
-				setTimeout(this.onClipboardChange, 500);
-			}
+			var clipboard = this.get('_clipboard');
+			T3.Common.LocalStorage.setItem('clipboard', clipboard);
 		}.observes('_clipboard')
 	});
 
@@ -547,7 +526,7 @@ function($, CreateJS) {
 		Preview: Preview,
 		Wireframe: Wireframe,
 		Inspect: Inspect,
-		BlockActions: BlockActions,
+		NodeActions: NodeActions,
 		Inspector: Inspector,
 		ServerConnection: ServerConnection
 	}

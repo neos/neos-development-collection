@@ -164,6 +164,7 @@ function($, vie, Ember, CreateJS) {
 
 				if (prefix === 'typo3') {
 					vie.service('rdfa').setTemplate('typo3:' + contentType, 'typo3:content-collection', function(entity, callBack, collectionView) {
+							// This callback function is called whenever we create a content element
 						var type = entity.get('@type'),
 							contentType = type.id.substring(1, type.id.length - 1).replace(T3.ContentModule.TYPO3_NAMESPACE, ''),
 							referenceEntity = null,

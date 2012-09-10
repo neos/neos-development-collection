@@ -3,10 +3,11 @@
 define(
 	[
 		'jquery',
+		'vie/instance',
 		'text!phoenix/templates/content/ui/contentelementHandles.html',
 		'phoenix/content/ui/elements/new-contentelement-popover-content'
 	],
-	function ($, template, ContentElementPopoverContent) {
+	function ($, vieInstance, template, ContentElementPopoverContent) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui/contentelement-handles');
 
 		return Ember.View.extend({
@@ -22,8 +23,28 @@ define(
 
 			popoverPosition: 'right',
 
+			_nodePath: null,
+
+			_pasteInProgress: false,
+
+			_thisElementStartedCut: function() {
+				var clipboard = T3.Content.Controller.NodeActions.get('_clipboard');
+				if (!clipboard) return false;
+
+				return (clipboard.type === 'cut' && clipboard.nodePath === this.get('_nodePath'));
+			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath').cacheable(),
+
+			_thisElementStartedCopy: function() {
+				var clipboard = T3.Content.Controller.NodeActions.get('_clipboard');
+				if (!clipboard) return false;
+
+				return (clipboard.type === 'copy' && clipboard.nodePath === this.get('_nodePath'));
+			}.property('T3.Content.Controller.NodeActions._clipboard', '_nodePath').cacheable(),
+
 			didInsertElement: function() {
 				var that = this;
+				var subject = vieInstance.service('rdfa').getElementSubject(this.get('_element'));
+				this.set('_nodePath', vieInstance.entities.get(subject).getSubjectUri());
 
 					// TODO find a way to calculate the width of the button toolbar
 				this.$().css({
@@ -53,15 +74,16 @@ define(
 			},
 
 			cut: function() {
-
+				T3.Content.Controller.NodeActions.cut(this.get('_nodePath'));
 			},
 
 			copy: function() {
-
+				T3.Content.Controller.NodeActions.copy(this.get('_nodePath'));
 			},
 
 			pasteAfter: function() {
-
+				T3.Content.Controller.NodeActions.pasteAfter(this.get('_nodePath'));
+				this.set('_pasteInProgress', true);
 			},
 
 			newAfter: function() {
