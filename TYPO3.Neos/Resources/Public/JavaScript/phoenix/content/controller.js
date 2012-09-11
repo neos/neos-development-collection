@@ -258,6 +258,10 @@ function($, CreateJS) {
 			Backbone.sync('update', this.get('selectedNode').get('_vieEntity'));
 
 			this.set('_modified', false);
+
+			var cleanProperties = this.getPath('selectedNode.attributes');
+			this.set('cleanProperties', cleanProperties);
+			this.set('nodeProperties', Ember.Object.create(cleanProperties));
 		},
 
 		/**
