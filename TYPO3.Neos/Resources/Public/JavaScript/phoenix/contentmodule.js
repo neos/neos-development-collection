@@ -178,7 +178,7 @@ function($, vie, Ember, CreateJS) {
 						_.each(collectionView.collection.models, function(matchEntity) {
 							if (entity === matchEntity && lastMatchedEntity) {
 								referenceEntity = lastMatchedEntity;
-								T3.Content.Controller.BlockActions.addBelow(
+								T3.Content.Controller.NodeActions.addBelow(
 									contentType,
 									referenceEntity,
 									afterCreationCallback
@@ -189,12 +189,22 @@ function($, vie, Ember, CreateJS) {
 						});
 
 						if (referenceEntity === null) {
-							// No reference node found, use the section
-							T3.Content.Controller.BlockActions.addInside(
-								contentType,
-								vie.entities.get($(collectionView.el).attr('about')),
-								afterCreationCallback
-							);
+								// No reference entity found. This only happens when an element is created into a section
+							if (collectionView.collection.models.length === 1) {
+									// The section only contains the new entity and was empty before, so we create the node into the section
+								T3.Content.Controller.NodeActions.addInside(
+									contentType,
+									vie.entities.get($(collectionView.el).attr('about')),
+									afterCreationCallback
+								);
+							} else {
+									// The section contains other entities, so we create the node before the first entity (index 1 as index 0 is the newly created entity)
+								T3.Content.Controller.NodeActions.addAbove(
+									contentType,
+									collectionView.collection.models[1],
+									afterCreationCallback
+								);
+							}
 						}
 					});
 				}

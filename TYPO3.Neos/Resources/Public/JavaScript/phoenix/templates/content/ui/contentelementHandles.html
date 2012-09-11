@@ -1,9 +1,9 @@
 <div class="btn-toolbar">
 	<div class="btn-group">
-		<button class="btn btn-mini action-remove" title="Remove"><i class="icon-trash" {{action "remove" }}></i></button>
-		<button class="btn btn-mini action-cut" {{bindAttr class="_thisElementStartedCut:active"}} title="Cut"><i class="icon-share" {{action "cut" }}></i></button>
-		<button class="btn btn-mini action-copy" {{bindAttr class="_thisElementStartedCopy:active"}} title="Copy"><i class="icon-tags" {{action "copy" }}></i></button>
-		{{#if T3.Content.Controller.NodeActions.clipboardContainsContent}}<button class="btn btn-mini action-paster-after" {{bindAttr class="_pasteInProgress:t3-handle-loading"}} title="Paste after" {{action "pasteAfter"}}><i class="icon-circle-arrow-down" {{action "pasteAfter" }}></i></button>{{/if}}
-		<button class="btn btn-mini action-new-after" title="Create after"><i class="icon-plus" {{action "newAfter" }}></i></button>
+		{{#if _showRemove}}<button class="btn btn-mini action-remove" title="Remove"><i class="icon-trash" {{action "remove" }}></i></button>{{/if}}
+		{{#if _showCut}}<button class="btn btn-mini action-cut" {{bindAttr class="_thisElementStartedCut:active"}} title="Cut"><i class="icon-share" {{action "cut" }}></i></button>{{/if}}
+		{{#if _showCopy}}<button class="btn btn-mini action-copy" {{bindAttr class="_thisElementStartedCopy:active"}} title="Copy"><i class="icon-tags" {{action "copy" }}></i></button>{{/if}}
+		{{#if T3.Content.Controller.NodeActions.clipboardContainsContent}}<button class="btn btn-mini action-paste" {{bindAttr class="_pasteInProgress:t3-handle-loading"}} title="Paste after" {{action "pasteAfter"}}><i class="icon-circle-arrow-down" {{action "pasteAfter" }}></i></button>{{/if}}
+		<button class="btn btn-mini action-new" title="Create after"><i class="icon-plus" {{action "newAfter" }}></i></button>
 	</div>
 </div>

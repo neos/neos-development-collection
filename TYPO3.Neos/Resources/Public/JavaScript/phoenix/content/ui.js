@@ -677,9 +677,30 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 
 	T3.Content.UI.Util = T3.Content.UI.Util || {};
 
-	T3.Content.UI.Util.AddContentElementHandleBars = function($contentElement, contentElementIndex, collection) {
-		if (!$contentElement || $contentElement.find('> .t3-contentelement-handle-container').length > 0) {
-			return;
+	/**
+	 * @param {Object} $contentElement jQuery object for the element to which the handles should be added
+	 * @param {Integer} contentElementIndex The position in the collection on which paste / new actions should place the new entity
+	 * @param {Object} collection The VIE entity collection to which the element belongs
+	 * @param {Object} options A set of options passed to the actual Ember View (will be overridden with the required properties _element, _collection and _entityCollectionIndex)
+	 * @return void
+	 */
+	T3.Content.UI.Util.AddContentElementHandleBars = function($contentElement, contentElementIndex, collection, options) {
+		var handleContainerClassName, handleContainer;
+
+		if (options && options._type && options._type === 'section') {
+				// Add container BEFORE the section DOM element
+			handleContainerClassName = 't3-section-handle-container';
+			if ($contentElement.prev() && $contentElement.prev().hasClass(handleContainerClassName)) {
+				return;
+			}
+			handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).insertBefore($contentElement);
+		} else {
+				// Add container INTO the content elements DOM element
+			handleContainerClassName = 't3-contentelement-handle-container';
+			if (!$contentElement || $contentElement.find('> .' + handleContainerClassName).length > 0) {
+				return;
+			}
+			handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).prependTo($contentElement);
 		}
 
 			// Make sure we have a minimum height to be able to hover
@@ -687,12 +708,13 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 			$contentElement.height(25);
 		}
 
-		var topButtonContainer = $('<div />', {'class': 't3-ui t3-contentelement-handle-container t3-contentelement-handle-container-top'}).prependTo($contentElement);
-		T3.Content.UI.ContentElementHandle.create({
-			_element: $contentElement,
-			_collection: collection,
-			_entityCollectionIndex: contentElementIndex
-		}).appendTo(topButtonContainer);
+		T3.Content.UI.ContentElementHandle.create(
+			jQuery.extend(options || {}, {
+				_element: $contentElement,
+				_collection: collection,
+				_entityCollectionIndex: contentElementIndex
+			}
+		)).appendTo(handleContainer);
 	}
 
 });
