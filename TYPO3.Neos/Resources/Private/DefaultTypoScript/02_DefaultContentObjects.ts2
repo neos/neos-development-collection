@@ -23,7 +23,8 @@ prototype(TYPO3.TYPO3:Section) {
 }
 
 # Catch-all condition for the default case
-prototype(TYPO3.TypoScript:Case).matchers.999999999999 {
+prototype(TYPO3.TypoScript:Case).default {
+	@position = 'end'
 	condition = ${true}
 	type = ${q(node).property('_contentType.name')}
 }
