@@ -46,24 +46,7 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 		}.observes('typo3:_hidden'),
 
 		contentType: function() {
-			var types = this.get('_vieEntity').get('@type'),
-				type;
-			if (!_.isArray(types)) {
-				types = [types];
-			}
-
-			type = _.find(
-				_.map(types, function(type) {
-					return type.toString();
-				}), function(type) {
-					return type.indexOf('<' + T3.ContentModule.TYPO3_NAMESPACE) === 0;
-				});
-
-			if (type) {
-				type = type.substr(T3.ContentModule.TYPO3_NAMESPACE.length + 1);
-				type = type.substr(0, type.length - 1);
-			}
-			return type;
+			return Entity.extractContentTypeFromVieEntity(this.get('_vieEntity'));
 		}.property('_vieEntity'),
 
 		init: function() {
@@ -128,6 +111,26 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 				}
 			});
 			return cleanAttributes;
+		},
+		extractContentTypeFromVieEntity: function(vieEntity) {
+			var types = vieEntity.get('@type'),
+				type;
+			if (!_.isArray(types)) {
+				types = [types];
+			}
+
+			type = _.find(
+				_.map(types, function(type) {
+					return type.toString();
+				}), function(type) {
+					return type.indexOf('<' + T3.ContentModule.TYPO3_NAMESPACE) === 0;
+				});
+
+			if (type) {
+				type = type.substr(T3.ContentModule.TYPO3_NAMESPACE.length + 1);
+				type = type.substr(0, type.length - 1);
+			}
+			return type;
 		}
 	});
 	return Entity;

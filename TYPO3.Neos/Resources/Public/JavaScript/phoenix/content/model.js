@@ -179,36 +179,8 @@ define(
 			}
 		});
 
-		/**
-		 * T3.Content.Model.Changes
-		 *
-		 * Contains a list of Blocks which contain changes.
-		 *
-		 * TODO: On saving, should empty local storage!
-		 */
-		var Changes = Ember.ArrayProxy.create({
-				// TODO: still migrate this!
-			checkIfReloadNeededAfterSave: function() {
-				var reloadPage = false;
-				this.get('[]').forEach(function(change) {
-					$.each(change.__originalValues, function(key, value) {
-						if (change.get(key) !== value) {
-							var schema = change.get('schema'),
-								changedPropertyDefinition = schema.properties[key];
-							if (changedPropertyDefinition && changedPropertyDefinition.reloadOnChange) {
-								reloadPage = true;
-							}
-						}
-					});
-				});
-				return reloadPage;
-			}
-		});
-
 		T3.Content.Model = {
-			Changes: Changes,
 			PublishableNodes: PublishableNodes,
-
 			NodeSelection: NodeSelection
 		}
 		window.T3 = T3;

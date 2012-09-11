@@ -22,7 +22,7 @@ define(['vie/entity', 'backbone'], function(Entity) {
 					if (options && options.success) {
 						options.success(model);
 					}
-				})
+				});
 			},
 			'delete': function(model, options) {
 				console.log("DELETE", arguments);

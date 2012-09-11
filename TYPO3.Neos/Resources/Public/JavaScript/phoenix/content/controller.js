@@ -3,8 +3,8 @@
  */
 
 define(
-['jquery', 'create', 'phoenix/common'],
-function($, CreateJS) {
+['jquery', 'create', 'vie/entity', 'phoenix/common'],
+function($, CreateJS, Entity) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/controller');
 
 	var T3 = window.T3 || {};
@@ -230,7 +230,6 @@ function($, CreateJS) {
 				hasChanges = false;
 
 			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
-
 				if (that.get('nodeProperties').get(key) !== cleanPropertyValue) {
 					hasChanges = true;
 				}
@@ -251,15 +250,29 @@ function($, CreateJS) {
 		 * Apply the edited properties back to the node proxy
 		 */
 		apply: function() {
-			_.each(Ember.keys(this.cleanProperties), function(key) {
-				this.get('selectedNode').setAttribute(key, this.get('nodeProperties').get(key));
-			}, this);
+			var that = this,
+				cleanProperties,
+				contentTypeSchema = T3.Configuration.Schema[Entity.extractContentTypeFromVieEntity(this.getPath('selectedNode._vieEntity'))],
+				reloadPage = false;
 
-			Backbone.sync('update', this.get('selectedNode').get('_vieEntity'));
+			_.each(this.get('cleanProperties'), function(cleanPropertyValue, key) {
+				if (that.get('nodeProperties').get(key) !== cleanPropertyValue) {
+					that.get('selectedNode').setAttribute(key, that.get('nodeProperties').get(key));
+					if (contentTypeSchema && contentTypeSchema.properties && contentTypeSchema.properties[key] && contentTypeSchema.properties[key]['reloadOnChange']) {
+						reloadPage = true;
+					}
+				}
+			});
+
+			Backbone.sync('update', this.getPath('selectedNode._vieEntity'), {success: function() {
+				if (reloadPage) {
+					T3.ContentModule.reloadPage();
+				}
+			}});
 
 			this.set('_modified', false);
 
-			var cleanProperties = this.getPath('selectedNode.attributes');
+			cleanProperties = this.getPath('selectedNode.attributes');
 			this.set('cleanProperties', cleanProperties);
 			this.set('nodeProperties', Ember.Object.create(cleanProperties));
 		},
