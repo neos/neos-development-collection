@@ -11,7 +11,8 @@ define(
 		'Library/createjs/deps/jquery.tagsinput.min',
 		'Library/createjs/deps/rangy-core-1.2.3',
 		'createjs',
-		'create/collectionWidgets/jquery.typo3.collectionWidget'
+		'create/collectionWidgets/jquery.typo3.collectionWidget',
+		'create/typo3MidgardEditable',
 	],
 	function($, vieInstance, Ember) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('create');
@@ -64,7 +65,7 @@ define(
 				};
 
 				$('[about]').each(function() {
-					$(this).midgardEditable(editableOptions);
+					$(this).typo3MidgardEditable(editableOptions);
 				});
 				this.set('_state', 'edit');
 			},
@@ -75,7 +76,7 @@ define(
 					vie: vieInstance
 				};
 				$('.t3-contentelement[about]').each(function() {
-					$(this).midgardEditable(editableOptions);
+					$(this).typo3MidgardEditable(editableOptions);
 					$(this).removeClass('ui-state-disabled');
 				});
 				this.set('_state', 'browse');

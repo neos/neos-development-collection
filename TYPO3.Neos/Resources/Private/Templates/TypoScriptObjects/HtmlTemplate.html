@@ -1,4 +1,4 @@
 {namespace t=TYPO3\TYPO3\ViewHelpers}
 <t:contentElement node="{node}">
-	{source -> f:format.raw()}
+	<div property="typo3:source">{source -> f:format.raw()}</div>
 </t:contentElement>
