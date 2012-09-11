@@ -50,6 +50,7 @@ class EditableViewHelper extends \TYPO3\Fluid\Core\ViewHelper\AbstractTagBasedVi
 
 		if ($this->hasAccessToResource('TYPO3_TYPO3_Backend_BackendController')) {
 			$this->tag->addAttribute('property', 'typo3:' . $property);
+			$this->tag->addAttribute('class', 't3-inline-editable');
 		} elseif (empty($content)) {
 			return '';
 		}
