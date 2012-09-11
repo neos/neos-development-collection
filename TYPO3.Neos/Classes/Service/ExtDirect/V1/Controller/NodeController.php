@@ -245,7 +245,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		}
 
 		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', '');
-		$this->view->assign('value', array('data' => array('nextUri' => $nextUri), 'success' => TRUE));
+		$this->view->assign('value', array('data' => array('nextUri' => $nextUri, 'newNodePath' => $node->getContextPath()), 'success' => TRUE));
 	}
 
 	/**

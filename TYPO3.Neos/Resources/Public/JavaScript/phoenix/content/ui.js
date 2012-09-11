@@ -7,6 +7,7 @@
 define(
 [
 	'jquery',
+	'vie/instance',
 	'text!phoenix/templates/content/ui/breadcrumb.html',
 	'text!phoenix/templates/content/ui/inspector.html',
 	'text!phoenix/templates/content/ui/inspectorDialog.html',
@@ -21,7 +22,7 @@ define(
 	'jquery.cookie',
 	'jquery.dynatree'
 ],
-function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, inspectTreeTemplate) {
+function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, inspectTreeTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui');
 
 	var T3 = window.T3 || {};
@@ -526,9 +527,10 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 		}.observes('T3.ContentModule.currentUri'),
 
 		onPopoverOpen: function() {
-			var pageMetaInformation = $('#t3-page-metainformation'),
-				pageTitle = pageMetaInformation.data('title'),
-				pageNodePath = pageMetaInformation.data('__nodepath');
+			var page = vie.entities.get(vie.service('rdfa').getElementSubject($('#t3-page-metainformation')));
+
+			var pageTitle = page.get(T3.ContentModule.TYPO3_NAMESPACE + 'title'),
+				pageNodePath = $('#t3-page-metainformation').attr('about');
 
 				// if there is a tree and the rootnode key of the tree is different from the actual page, the tree should be reinitialised
 			if (this.inspectTree) {
@@ -600,10 +602,9 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 					 *  Any other return value will calc the hitMode from the cursor position.
 					 */
 					onDragEnter: function(node, sourceNode) {
-						//it is only posssible to move nodes into nodes of the contentType:Section
+							//it is only posssible to move nodes into nodes of the contentType:Section
 						if (node.data.contentType === 'TYPO3.TYPO3:Section') {
-							T3.Common.Notification.error('moving nodes inside other nodes is not possible right now');
-							return ['before', 'after','over'];
+							return ['before', 'after', 'over'];
 						}
 						else{
 							return ['before', 'after'];
@@ -620,46 +621,41 @@ function($, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, page
 					 * hitmode over, after and before
 					 */
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
-						// it is an existing node which was moved on the tree
-						var position = hitMode === 'over' ? 'into' : hitMode,
-							sourceNodeLevel = sourceNode.getLevel(),
-							nodeLevel = node.getLevel(),
-							nodeLevelDiff = nodeLevel - sourceNodeLevel;
+							// it is an existing node which was moved on the tree
+						var position = hitMode === 'over' ? 'into' : hitMode;
 
-						if (position === 'into' && nodeLevelDiff !== 0) {
-							T3.Common.Notification.error('moving nodes inside other nodes is not possible right now');
-						} else {
-							sourceNode.move(node, hitMode);
-							TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
-								sourceNode.data.key,
-								node.data.key,
-								position,
-								function(result) {
-									if (result.success === true) {
-										T3.ContentModule.reloadPage();
-									}
+						sourceNode.move(node, hitMode);
+						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
+							sourceNode.data.key,
+							node.data.key,
+							position,
+							function(result) {
+								if (result.success === true) {
+										// We need to update the node path of the moved node,
+										// else we cannot move it forth and back across levels.
+									sourceNode.data.key = result.data.newNodePath;
+									T3.ContentModule.reloadPage();
+								} else {
+									T3.Common.notification.error('Unexpected error while moving node: ' + JSON.stringify(result));
 								}
-							);
-						}
+							}
+						);
+
 					},
 					onDragStop: function() {
 					}
 				},
 				onClick: function(node, event) {
-					if (node.getEventTargetType() === 'title') {
-						var nodePath = node.data.key, offsetFromTop = 150;
-						var block = T3.Content.Model.BlockManager.getBlockByNodePath(nodePath);
-						if (!block) {
-							return;
-						}
+					var nodePath = node.data.key,
+						offsetFromTop = 150,
+						$element = $('[about="' + nodePath + '"]');
 
-						T3.Content.Model.BlockSelection.selectItem(block);
-						var $blockDomElement = block.getContentElement();
+					T3.Content.Model.NodeSelection.updateSelection($element);
 
-						$('html,body').animate({
-							scrollTop: $blockDomElement.offset().top - offsetFromTop
-						}, 500);
-					}
+					$('html,body').animate({
+						scrollTop: $element.offset().top - offsetFromTop
+					}, 500);
+
 				}
 			});
 

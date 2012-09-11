@@ -116,6 +116,15 @@ define(
 						if (e.result === 'activated') {
 							return;
 						}
+						if ($(e.target).parents().length === 0) {
+								// BUGFIX for working together with DynaTree:
+								// Somehow, when clicking on a non-leaf node in the tree,
+								// DynaTree replaces the clicked element with a new DOM element.
+								// Thus, the event target is not connected to the page anymore.
+								// Thus, the stopPropagation() of t3-ui is never called; effectively
+								// unselecting the current node.
+							return;
+						}
 
 							// Unselect any other active element
 						if (T3.Content.Model.NodeSelection.get('selectedNode') !== null) {
