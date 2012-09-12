@@ -67,9 +67,9 @@ Version 1.5b (2011-09-11)
 
 
 jCrop from http://deepliquid.com/content/Jcrop.html
-Version 0.9.9 from 6/7/11
+Version 0.9.10 from 28/4/12
 - deleted build/
-- deleted demo/
+- deleted demos/
 - deleted index.html
 - deleted js/jquery.min.js
 

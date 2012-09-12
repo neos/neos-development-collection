@@ -9,7 +9,8 @@ define(
 	'jquery',
 	'text!phoenix/templates/content/ui/fileUpload.html',
 	'text!phoenix/templates/content/ui/imageUpload.html',
-	'phoenix/content/ui/elements'
+	'phoenix/content/ui/elements',
+	'canvas.indicator',
 ],
 function($, fileUploadTemplate, imageUploadTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui/editors');
@@ -286,14 +287,21 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 	 */
 	T3.Content.UI.Editor.Image = T3.Content.UI.Editor.FileUpload.extend({
 
+		/****************************************
+		 * GENERAL SETUP
+		 ***************************************/
 		fileChooserLabel: 'Choose Image',
 
 		uploaderLabel: 'Upload!',
 
 		/**
 		 * Size of the image preview. Public configuration.
+		 *
+		 * If this setting is changed, also the CSS properties
+		 * .typo3-fileupload-thumbnail-portrait and .typo3-fileupload-thumbnail-landscape
+		 * need to be adjusted.
 		 */
-		imagePreviewMaximumDimensions: {width: 160, height: 160},
+		imagePreviewMaximumDimensions: {w: 160, h: 160},
 
 		/**
 		 * Comma-separated list of allowed file types.
@@ -303,121 +311,18 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 		template: Ember.Handlebars.compile(imageUploadTemplate),
 
-		// Upload Preview
+		/**
+		 * The Upload Preview is the image being shown *before* the user presses
+		 * "upload".
+		 */
 		_uploadPreviewShown: true,
 		_uploadPreviewNotShown: function() {
 			return !this.get('_uploadPreviewShown');
-		}.property('_uploadPreviewShown'),
-
+		}.property('_uploadPreviewShown').cacheable(),
 		_uploadPreviewImageSource: '/_Resources/Static/Packages/TYPO3.TYPO3/Images/dummy-image.jpg', // TODO: we need a way to fetch the static resources base URI
-		_previewImageSize:null,
-		_previewImageUri:null,
-		_imageUuid:null,
-
-		// Transformation options
-
-		/**
-		 * Sizing
-		 *
-		 * For the image sizing we use a computed property for the _aspectRatio, this _aspectRatio is based on the
-		 * width and height set in the _cropOptions (managed by the jCrop editor).
-		 * The _imageWidth is just a property, and is watched by the _imageHeight computed property.
-		 * We base only the _imageHeight on _imageWidth and not the other way around because we
-		 * would end up in recursion if we let those properties watch each other.
-		 *
-		 * _imageWidth and _imageWidthHeight are placeholders to prevent recursion in databinding.
-		 */
-		_cropProperties: Ember.Object.create({
-			width: null,
-			height: null,
-			x: null,
-			y: null,
-			full: function() {
-				return {
-					width: this.get('width'),
-					height: this.get('height'),
-					x: this.get('x'),
-					y: this.get('y')
-				}
-			}.property('width', 'height', 'x', 'y').cacheable(),
-			initialized: function() {
-				return this.get('width') !== null && this.get('height') !== null && this.get('x') !== null && this.get('y') !== null;
-			}.property('width', 'height', 'x', 'y').cacheable()
-		}),
-
-		_imageProperties: Ember.Object.create({
-			width: null,
-			height: null
-		}),
-
-		/**
-		 * Calculate the aspect ratio of the crop proportions, uses ratio 1 if it's not possible
-		 * to calculate a ratio based on the _cropProperties object
-		 */
-		_aspectRatio: function() {
-			if (isNaN(this._cropProperties.get('width'))
-					|| isNaN(this._cropProperties.get('height'))
-					|| this._cropProperties.get('width') === 0
-					|| this._cropProperties.get('height') === 0) {
-				return 1;
-			}
-			return parseFloat(this._cropProperties.get('width') / this._cropProperties.get('height'));
-		}.property('_cropProperties.width', '_cropProperties.height').cacheable(),
-
-		_aspectRatioChanged: function() {
-			this._imageProperties.set('height', parseInt(this._imageProperties.get('width') / this.get('_aspectRatio')));
-		}.observes('_aspectRatio'),
-
-		_imageWidth: function(key, value) {
-			if (arguments.length === 1) {
-				return parseInt(this._imageProperties.get('width'));
-			} else {
-				value = parseInt(value);
-
-				if (value > this._imageProperties.get('width') + 1 || value < this._imageProperties.get('height') - 1) {
-					this._imageProperties.set('width', value);
-					this._imageProperties.set('height', parseInt(this._imageProperties.get('width') / this.get('_aspectRatio')));
-					this._updateValue();
-				}
-
-				return value;
-			}
-		}.property('_cropProperties.width'), // This property is NOT cacheable!!!
-
-		_imageHeight: function(key, value) {
-			if (arguments.length === 1) {
-				return this._imageProperties.get('height');
-			} else {
-				value = parseInt(value);
-
-				if (value > this._imageProperties.get('height') + 1 || value < this._imageProperties.get('height') - 1) {
-					this._imageProperties.set('height', parseInt(value));
-					this._imageProperties.set('width', parseInt(this._imageProperties.get('height') * this.get('_aspectRatio')));
-					this._updateValue();
-				}
-
-				return value;
-			}
-		}.property('_cropProperties.height'), // This property is NOT cacheable!!!
-
-		// Cropping
-		_originalImageSize:null,
-
-		_cropOptions: function(key, value) {
-			if (arguments.length === 1) {
-				return this._cropProperties.get('full');
-			} else {
-				this._cropProperties.set('width', parseInt(value.w) || null);
-				this._cropProperties.set('height', parseInt(value.h) || null);
-				this._cropProperties.set('x', parseInt(value.x) || null);
-				this._cropProperties.set('y', parseInt(value.y) || null);
-				return value;
-			}
-		}.property('_cropProperties.width', '_cropProperties.height', '_cropProperties.x', '_cropProperties.y').cacheable(),
 
 		// Image Badge
 		_imageBadgeVisible: false,
-
 		_imageBadgeClass: function() {
 			if (this.get('_imageBadgeVisible')) {
 				return 'typo3-imagebadge typo3-imagebadge-visible';
@@ -426,53 +331,139 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		}.property('_imageBadgeVisible').cacheable(),
 
 		/**
-		 * Lifecycle callback; sets some CSS for the image preview area to sensible defaults.
+		 * @var boolean
+		 * set to true as soon as the image is fully loaded and all image properties
+		 * are initialized. Is set when selecting an image or uploading a new one.
 		 */
-		didInsertElement: function() {
+		_imageFullyLoaded: false,
+
+		/****************************************
+		 * IMAGE SIZING
+		 ***************************************/
+		/**
+		 * This is the UUID of the full-size image; which is being stored.
+		 */
+		_originalImageUuid:null,
+		// size of the original (base) image ("w" + "h")
+		_originalImageSize:null,
+
+		/**
+		 * The "preview" image is shown in the sidebar, and is also used
+		 * for cropping.
+		 */
+		_previewImageUri:null,
+
+		// This is the size of the image being used for cropping
+		// Object "w" + "h"
+		_previewImageSize:null,
+
+		/**
+		 * Crop properties, as being used by jCrop editor.
+		 * ALL COORDINATES are relative to _previewImageSize.
+		 */
+		_cropProperties: null,
+
+		// After cropping, we still scale the cropped image
+		_finalImageScale: null,
+
+		init: function() {
 			var that = this;
 			this._super();
 
-			if (!this._cropProperties.get('initialized')) {
-				this.set('_imageWidth', this.imagePreviewMaximumDimensions.width);
-				this.set('_imageHeight', this.imagePreviewMaximumDimensions.height);
+			this.set('_finalImageScale', Ember.Object.create({
+				w: null,
+				h: null,
 
-				this._resetCropPropertiesToCurrentImageSize();
-			}
+				_updateValueIfWidthAndHeightChange: function() {
+					that._updateValue();
+				}.observes('w', 'h'),
+
+				/**
+				 * As width and height are always connected through the aspect ratio,
+				 * we cannot directly change the height. Instead, we need to adjust the
+				 * width as needed and let the bindings update the height property instead.
+				 *
+				 * As a result, the input field for the image height is bound to
+				 * "computedHeight", and not just to "h".
+				 */
+				computedHeight: function(key, value) {
+					if (arguments.length === 1) {
+						return this.get('h');
+					} else {
+						this.set('w', Math.ceil(that.getPath('_cropProperties.aspectRatio') * value));
+						return value;
+					}
+				}.property('h').cacheable()
+			}));
+
+			this.set('_cropProperties',  Ember.Object.create({
+				x: null,
+				y: null,
+				w: null,
+				h: null,
+
+				full: function() {
+					return {
+						x: this.get('x'),
+						y: this.get('y'),
+						w: this.get('w'),
+						h: this.get('h')
+					}
+				}.property('w', 'h', 'x', 'y').cacheable(),
+
+				initialized: function() {
+					return this.get('w') !== null && this.get('h') !== null && this.get('x') !== null && this.get('y') !== null;
+				}.property('w', 'h', 'x', 'y').cacheable(),
+
+				aspectRatio: function() {
+					if (isNaN(this.get('w'))
+						|| isNaN(this.get('h'))
+						|| this.get('w') === 0
+						|| this.get('h') === 0) {
+						return 1;
+					}
+
+					return parseFloat(this.get('w')) / parseFloat(this.get('h'));
+				}.property('w', 'h').cacheable()
+			}));
+		},
+
+		_aspectRatioChanged: function() {
+			this.setPath('_finalImageScale.h', parseInt(this.getPath('_finalImageScale.w') / this.getPath('_cropProperties.aspectRatio')));
+		}.observes('_finalImageScale.w', '_cropProperties.aspectRatio'),
+
+		/****************************************
+		 * INITIALIZATION
+		 ***************************************/
+		/**
+		 * Lifecycle callback; sets some CSS for the image preview area to sensible defaults,
+		 * and reads the image if possible
+		 */
+		didInsertElement: function() {
+			this._super();
 
 			this.$().find('.typo3-imagethumbnail-inner').css({
-				width: this.imagePreviewMaximumDimensions.width + 'px',
-				height: this.imagePreviewMaximumDimensions.height + 'px'
+				width: this.imagePreviewMaximumDimensions.w + 'px',
+				height: this.imagePreviewMaximumDimensions.h + 'px'
 			});
 			this.$().find('.typo3-imagethumbnailcontainer').css({
-				width: this.imagePreviewMaximumDimensions.width + 'px',
-				height: this.imagePreviewMaximumDimensions.height + 'px'
+				width: this.imagePreviewMaximumDimensions.w + 'px',
+				height: this.imagePreviewMaximumDimensions.h + 'px'
 			});
 
 			this._readAndDeserializeValue();
-			if (this.get('_imageUuid')) {
-
-				// Image already preselected
-				this.set('_uploadPreviewImageSource', ' ');
-				$.get('/typo3/content/imageWithMetadata/' + this.get('_imageUuid'), function(result) {
-
-					if (T3.Common.Util.isValidJsonString(result)) {
-						var metadata = JSON.parse(result);
-					}
-					that._setPreviewImage(metadata);
-					that._updateCropPreviewImage();
-				});
-			}
 		},
 
-		_resetCropPropertiesToCurrentImageSize: function() {
-			this._cropProperties.set('x', 0);
-			this._cropProperties.set('y', 0);
-			this._cropProperties.set('width', this.get('_imageWidth'));
-			this._cropProperties.set('height', this.get('_imageHeight'));
+		willDestroyElement: function() {
+				// Hide popover when the focus changes
+			this.$().find('.typo3-imagethumbnail').trigger('hidePopover');
 		},
 
+		/****************************************
+		 * IMAGE UPLOAD
+		 ***************************************/
 		/**
-		 * Display Image preview
+		 * Display before-upload Image preview
 		 */
 		filesScheduledForUpload: function(files) {
 			var that = this;
@@ -488,12 +479,25 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 
 						var imageObjForFindingSize = new window.Image();
 						imageObjForFindingSize.onload = function() {
+							var scaleFactor, offset;
 							if (imageObjForFindingSize.width > imageObjForFindingSize.height) {
 								that.$().find('.typo3-uploadthumbnail img').addClass('typo3-fileupload-thumbnail-landscape');
 								that.$().find('.typo3-uploadthumbnail img').removeClass('typo3-fileupload-thumbnail-portrait');
+
+									// For landscape images, we set the margin-top correctly to align the image in the center
+								scaleFactor = that.getPath('imagePreviewMaximumDimensions.w') / imageObjForFindingSize.width;
+								offset = ((that.getPath('imagePreviewMaximumDimensions.h') - imageObjForFindingSize.height * scaleFactor) / 2);
+								that.$().find('.typo3-uploadthumbnail img').css('margin-top', parseInt(offset) + 'px');
+								that.$().find('.typo3-uploadthumbnail img').css('margin-left', '0px');
 							} else {
 								that.$().find('.typo3-uploadthumbnail img').removeClass('typo3-fileupload-thumbnail-landscape');
 								that.$().find('.typo3-uploadthumbnail img').addClass('typo3-fileupload-thumbnail-portrait');
+
+									// For portrait images, we set the margin-left correctly to align the image in the center
+								scaleFactor = that.getPath('imagePreviewMaximumDimensions.h') / imageObjForFindingSize.height;
+								offset = ((that.getPath('imagePreviewMaximumDimensions.w') - imageObjForFindingSize.width * scaleFactor) / 2);
+								that.$().find('.typo3-uploadthumbnail img').css('margin-left', parseInt(offset) + 'px');
+								that.$().find('.typo3-uploadthumbnail img').css('margin-top', '0px');
 							}
 							that.set('_uploadPreviewShown', true);
 							that.set('_imageBadgeVisible', false);
@@ -506,6 +510,9 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			}
 		},
 
+		/**
+		 * Callback after file upload is complete
+		 */
 		fileUploaded: function(response) {
 			if (!T3.Common.Util.isValidJsonString(response)) {
 				T3.Common.Notification.error('Tried to fetch image metadata: Unexpected result format.');
@@ -514,13 +521,15 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			this._super();
 			var responseJson = JSON.parse(response);
 
-			this.set('_imageUuid', responseJson.imageUuid);
-			this.set('_imageWidth', responseJson.originalSize.width);
-			this.set('_imageHeight', responseJson.originalSize.height);
-
-			this._resetCropPropertiesToCurrentImageSize();
-
+			this.set('_originalImageUuid', responseJson.imageUuid);
 			this._setPreviewImage(responseJson);
+
+				// We only need to set the width here; as the height is automatically
+				// calculated from the aspect ratio in the cropper
+			this.setPath('_finalImageScale.w', responseJson.originalSize.w);
+
+			this._resetCropPropertiesToCurrentPreviewImageSize();
+			this.set('_imageFullyLoaded', true);
 			this._updateValue();
 		},
 
@@ -536,20 +545,29 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			Ember.endPropertyChanges();
 		},
 
+		_resetCropPropertiesToCurrentPreviewImageSize: function() {
+			this.setPath('_cropProperties.x', 0);
+			this.setPath('_cropProperties.y', 0);
+			this.setPath('_cropProperties.w', this.getPath('_previewImageSize.w'));
+			this.setPath('_cropProperties.h', this.getPath('_previewImageSize.h'));
+		},
+
+		/****************************************
+		 * CROPPING
+		 ***************************************/
 		/**
 		 * When the preview image is loaded, we initialize the popover.
 		 */
 		_initializePopover: function() {
-			var that = this;
-			var $popoverContent = $('<div />');
-			var $imageInThumbnail = $('<img />');
+			var that = this,
+				$popoverContent = $('<div />'),
+				$imageInThumbnail = $('<img />'),
+				previewImageSize = that.get('_previewImageSize');
+
 			$popoverContent.append($imageInThumbnail);
-
-			var previewImageSize = that.get('_previewImageSize');
-
 			$popoverContent.css({
-				width: previewImageSize.width + 10 + 'px',
-				height: previewImageSize.height + 10 + 'px',
+				width: previewImageSize.w + 10 + 'px',
+				height: previewImageSize.h + 10 + 'px',
 				'padding-left': '5px',
 				'padding-top': '5px',
 				'background': 'black'
@@ -564,29 +582,29 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 				openEvent: function() {
 					$imageInThumbnail.attr('src', that.get('_previewImageUri'));
 					this.popover$.addClass('t3-ui');
-					var cropOptions = that.get('_cropOptions');
 
 					var settings = {
 							// Triggered when the selection is finished
 						onSelect: function(previewImageCoordinates) {
-							var newCropProperties = that._convertCropOptionsFromPreviewImageCoordinates(previewImageCoordinates);
-							that._cropProperties.set('x', newCropProperties.x);
-							that._cropProperties.set('y', newCropProperties.y);
-							that._cropProperties.set('width', newCropProperties.width);
-							that._cropProperties.set('height', newCropProperties.height);
+							Ember.beginPropertyChanges();
+							that.setPath('_cropProperties.x', previewImageCoordinates.x);
+							that.setPath('_cropProperties.y', previewImageCoordinates.y);
+							that.setPath('_cropProperties.w', previewImageCoordinates.w);
+							that.setPath('_cropProperties.h', previewImageCoordinates.h);
+							Ember.endPropertyChanges();
 							that._updateValue();
 						}
 					};
 
 						// If we have all crop options set, we preselect this in the cropping tool.
-					if (that._cropProperties.get('initialized')) {
-						var previewImageCoordinates = that._convertCropOptionsToPreviewImageCoordinates(cropOptions);
+					if (that.getPath('_cropProperties.initialized')) {
+						var cropOptions = that.getPath('_cropProperties.full');
 
 						settings.setSelect = [
-							previewImageCoordinates.x,
-							previewImageCoordinates.y,
-							previewImageCoordinates.x + previewImageCoordinates.w,
-							previewImageCoordinates.y + previewImageCoordinates.h
+							cropOptions.x,
+							cropOptions.y,
+							cropOptions.x + cropOptions.w,
+							cropOptions.y + cropOptions.h
 						];
 					}
 					$imageInThumbnail.Jcrop(settings);
@@ -603,37 +621,153 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 		 * - scale the preview image and sete the offsets correctly.
 		 */
 		_updateCropPreviewImage: function() {
-			if (!this._previewImageUri) return;
+			if (!this.get('_previewImageUri')) return;
 
-			var previewCropOptions = this._convertCropOptionsToPreviewImageCoordinates(this.get('_cropOptions'));
+			var cropProperties = this.getPath('_cropProperties.full');
 
-			var scalingFactorX = this.imagePreviewMaximumDimensions.width / previewCropOptions.w;
-			var scalingFactorY = this.imagePreviewMaximumDimensions.height / previewCropOptions.h;
+			var scalingFactorX = this.imagePreviewMaximumDimensions.w / cropProperties.w;
+			var scalingFactorY = this.imagePreviewMaximumDimensions.h / cropProperties.h;
 			var overallScalingFactor = Math.min(scalingFactorX, scalingFactorY);
 
 			var previewBoundingBoxSize = {
-				width: Math.floor(previewCropOptions.w * overallScalingFactor),
-				height: Math.floor(previewCropOptions.h * overallScalingFactor)
+				w: Math.floor(cropProperties.w * overallScalingFactor),
+				h: Math.floor(cropProperties.h * overallScalingFactor)
 			};
 
 				// Update size of preview bounding box
 				// and Center preview image thumbnail
 			this.$().find('.typo3-imagethumbnail-inner').css({
-				width: previewBoundingBoxSize.width + 'px',
-				height: previewBoundingBoxSize.height + 'px',
+				width: previewBoundingBoxSize.w + 'px',
+				height: previewBoundingBoxSize.h + 'px',
 				position: 'absolute',
-				left: ((this.imagePreviewMaximumDimensions.width - previewBoundingBoxSize.width) / 2 ) + 'px',
-				top: ((this.imagePreviewMaximumDimensions.height - previewBoundingBoxSize.height) / 2) + 'px'
+				left: ((this.imagePreviewMaximumDimensions.w - previewBoundingBoxSize.w) / 2 ) + 'px',
+				top: ((this.imagePreviewMaximumDimensions.h - previewBoundingBoxSize.h) / 2) + 'px'
 			});
 
 				// Scale Preview image and update relative image position
 			this.$().find('.typo3-imagethumbnail-inner img').css({
-				width: Math.floor(this.get('_previewImageSize').width * overallScalingFactor) + 'px',
-				height: 'auto',
-				marginLeft: '-' + (previewCropOptions.x * overallScalingFactor) + 'px',
-				marginTop: '-' + (previewCropOptions.y * overallScalingFactor) + 'px'
+				width: Math.floor(this.get('_previewImageSize').w * overallScalingFactor) + 'px',
+				height:  Math.floor(this.get('_previewImageSize').h * overallScalingFactor) + 'px',
+				marginLeft: '-' + (cropProperties.x * overallScalingFactor) + 'px',
+				marginTop: '-' + (cropProperties.y * overallScalingFactor) + 'px'
 			});
-		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.width', '_cropProperties.height', '_previewImageUri'),
+		}.observes('_cropProperties.x', '_cropProperties.y', '_cropProperties.w', '_cropProperties.h', '_previewImageUri'),
+
+
+		/****************************************
+		 * Saving / Loading
+		 ***************************************/
+		/**
+		 * This function must be triggered *explicitely* when either:
+		 * _originalImageUuid, _cropProperties or _finalImageScale are modified, as it
+		 * writes these changes back into a JSON object.
+		 *
+		 * We don't use value observing here, as this might end up with a circular
+		 * dependency.
+		 */
+		_updateValue: function() {
+			if (!this.getPath('_cropProperties.initialized')) return;
+			if (!this.get('_imageFullyLoaded')) return;
+
+			var originalImageCropDimensions = this._convertCropOptionsFromPreviewImageCoordinates(this.getPath('_cropProperties.full'));
+
+			this.set('value', JSON.stringify({
+				originalImage: this.get('_originalImageUuid'),
+
+				processingInstructions: [{
+					command: 'crop',
+					options: {
+						start: {
+							x: originalImageCropDimensions.x,
+							y: originalImageCropDimensions.y
+						},
+						size: {
+							width: originalImageCropDimensions.w,
+							height: originalImageCropDimensions.h
+						}
+					}
+				},{
+					command: 'resize',
+					options: {
+						size: {
+							width: this.getPath('_finalImageScale.w'),
+							height: this.getPath('_finalImageScale.h')
+						}
+					}
+				}]
+			}));
+		},
+
+		/**
+		 * On startup, we deserialize the JSON string and fill _originalImageUuid, _scaleOptions and _cropOptions
+		 */
+		_readAndDeserializeValue: function() {
+			var that = this,
+				imageVariant = this.get('value');
+
+			if (!imageVariant || !T3.Common.Util.isValidJsonString(imageVariant)) {
+				return;
+			}
+			try {
+				imageVariant = JSON.parse(imageVariant);
+			} catch(e) {
+					// In case we do not have valid JSON here, let's silently return
+				return;
+			}
+			if (imageVariant) {
+					// We now load the metadata for the image variant, and as soon as we have it fully initialize the
+					// widget.
+				this._displayImageLoader();
+
+					// we hide the default upload preview image; as we only want the loading indicator to be visible
+				this.set('_uploadPreviewShown', false);
+				$.get('/typo3/content/imageWithMetadata/' + imageVariant.originalImage, function(result) {
+					that._hideImageLoader();
+					var metadata = JSON.parse(result);
+					that.beginPropertyChanges();
+					that._setPreviewImage(metadata);
+					that.set('_originalImageUuid', imageVariant.originalImage);
+
+					$.each(imageVariant.processingInstructions, function(index, instruction) {
+						if (instruction.command === 'crop') {
+							var finalSizeCropProperties = {
+								x: Ember.getPath(instruction, 'options.start.x'),
+								y: Ember.getPath(instruction, 'options.start.y'),
+								w: Ember.getPath(instruction, 'options.size.width'),
+								h: Ember.getPath(instruction, 'options.size.height')
+							};
+
+							var previewImageCropProperties = that._convertCropOptionsToPreviewImageCoordinates(finalSizeCropProperties);
+
+							that.setPath('_cropProperties.x', previewImageCropProperties.x);
+							that.setPath('_cropProperties.y', previewImageCropProperties.y);
+							that.setPath('_cropProperties.w', previewImageCropProperties.w);
+							that.setPath('_cropProperties.h', previewImageCropProperties.h);
+						} else if (instruction.command === 'resize') {
+							that.setPath('_finalImageScale.w', Ember.getPath(instruction, 'options.size.width'));
+								// Height does not need to be set, as it is automatically calculated from crop properties + width
+						}
+					});
+
+					that.endPropertyChanges();
+					that.set('_imageFullyLoaded', true);
+				});
+			}
+		},
+		_displayImageLoader: function() {
+			var $canvas = $('<canvas class="t3-image-loadingindicator" />');
+			this.$().find('.typo3-imagethumbnailcontainer').append($canvas);
+			new CanvasIndicator($canvas.get(0), {
+				bars: 12,
+				innerRadius: 8,
+				size: [3, 15],
+				rgb: [255, 255, 255],
+				fps: 15
+			});
+		},
+		_hideImageLoader: function() {
+			this.$().find('.t3-image-loadingindicator').remove();
+		},
 
 		/**
 		 * Helper.
@@ -648,10 +782,10 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			var originalImageSize = this.get('_originalImageSize');
 
 			return {
-				x: previewImageCoordinates.x * (originalImageSize.width / previewImageSize.width),
-				y: previewImageCoordinates.y * (originalImageSize.height / previewImageSize.height),
-				width: previewImageCoordinates.w * (originalImageSize.width / previewImageSize.width),
-				height: previewImageCoordinates.h * (originalImageSize.height / previewImageSize.height)
+				x: previewImageCoordinates.x * (originalImageSize.w / previewImageSize.w),
+				y: previewImageCoordinates.y * (originalImageSize.h / previewImageSize.h),
+				w: previewImageCoordinates.w * (originalImageSize.w / previewImageSize.w),
+				h: previewImageCoordinates.h * (originalImageSize.h / previewImageSize.h)
 			};
 		},
 
@@ -668,94 +802,12 @@ function($, fileUploadTemplate, imageUploadTemplate) {
 			var previewImageSize = this.get('_previewImageSize');
 			var originalImageSize = this.get('_originalImageSize');
 
-			if (!previewImageSize || !originalImageSize) {
-				return {x: 0, y: 0, w: 1, h: 1};
-			}
-
-			if (coordinates) {
-				return {
-					x: parseInt(coordinates.x / (originalImageSize.width / previewImageSize.width)),
-					y: parseInt(coordinates.y / (originalImageSize.height / previewImageSize.height)),
-					w: parseInt(coordinates.w / (originalImageSize.width / previewImageSize.width)),
-					h: parseInt(coordinates.h / (originalImageSize.height / previewImageSize.height))
-				}
-			} else {
-				return {x: 0, y: 0, w: 0, h: 0};
-			}
-		},
-
-		/**
-		 * This function must be triggered *explicitely* when either:
-		 * _imageUuid, _cropOptions or _scaleOptions are modified, as it
-		 * writes these changes back into a JSON string.
-		 *
-		 * We don't use value observing here, as this might end up with a circular
-		 * dependency.
-		 */
-		_updateValue: function() {
-			this.set('value', JSON.stringify({
-				originalImage: this.get('_imageUuid'),
-
-				processingInstructions: [{
-					command: 'crop',
-					options: {
-						start: {
-							x: this._cropProperties.get('x'),
-							y: this._cropProperties.get('y')
-						},
-						size: {
-							width: this._cropProperties.get('width'),
-							height: this._cropProperties.get('height')
-						}
-					}
-				},{
-					command: 'resize',
-					options: {
-						size: {
-							width: this.get('_imageWidth'),
-							height: this.get('_imageHeight')
-						}
-					}
-				}]
-			}));
-		},
-
-		/**
-		 * On startup, we deserialize the JSON string and fill _imageUuid, _scaleOptions and _cropOptions
-		 */
-		_readAndDeserializeValue: function() {
-			var imageVariant, that = this,
-				value = this.get('value');
-
-			if (value && value !== '') {
-				if (T3.Common.Util.isValidJsonString(value)) {
-					imageVariant = JSON.parse(value);
-				}
-
-				if (!imageVariant) return;
-
-					// The following changes should be applied atomically
-				this.beginPropertyChanges();
-
-				this.set('_imageUuid', imageVariant.originalImage);
-				$.each(imageVariant.processingInstructions, function(index, instruction) {
-					if (instruction.command === 'crop') {
-						var cropOptions = {
-							x: Ember.getPath(instruction, 'options.start.x'),
-							y: Ember.getPath(instruction, 'options.start.y'),
-							w: Ember.getPath(instruction, 'options.size.width'),
-							h: Ember.getPath(instruction, 'options.size.height')
-						};
-						that.set('_cropOptions', cropOptions);
-					} else if (instruction.command === 'resize') {
-						that.set('_imageWidth', Ember.getPath(instruction, 'options.size.width'));
-						that.set('_imageHeight', Ember.getPath(instruction, 'options.size.height'));
-					}
-				});
-
-				this.endPropertyChanges();
-			}
-		}.observes('value')
-
+			return {
+				x: parseInt(coordinates.x / (originalImageSize.w / previewImageSize.w)),
+				y: parseInt(coordinates.y / (originalImageSize.h / previewImageSize.h)),
+				w: parseInt(coordinates.w / (originalImageSize.w / previewImageSize.w)),
+				h: parseInt(coordinates.h / (originalImageSize.h / previewImageSize.h))
+			};
+		}
 	});
 });

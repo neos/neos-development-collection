@@ -16,7 +16,7 @@ use \TYPO3\TYPO3\Controller\Exception\NodeCreationException;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * The TYPO3 ContentModule controller
+ * The TYPO3 ContentModule controller; providing backend functionality for the Content Module.
  *
  * @FLOW3\Scope("singleton")
  */
@@ -27,12 +27,6 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @var \TYPO3\Media\Domain\Repository\ImageRepository
 	 */
 	protected $imageRepository;
-
-	/**
-	 * @FLOW3\Inject
-	 * @var \TYPO3\TYPO3CR\Domain\Service\ContentTypeManager
-	 */
-	protected $contentTypeManager;
 
 	/**
 	 * @FLOW3\Inject
@@ -47,21 +41,7 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	protected $resourcePublisher;
 
 	/**
-	 * Adds the uploaded image to the image repository and returns the
-	 * identifier of the image object.
-	 * @var array
-	 */
-	protected $settings;
-
-	/**
-	 * @param array $settings
-	 * @return void
-	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
-	}
-
-	/**
+	 * Upload a new image, and return its metadata.
 	 *
 	 * @param \TYPO3\Media\Domain\Model\Image $image
 	 * @return string
@@ -72,6 +52,8 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	}
 
 	/**
+	 * Fetch the metadata for a given image
+	 *
 	 * @param \TYPO3\Media\Domain\Model\Image $image
 	 * @return string
 	 */
@@ -81,133 +63,9 @@ class ContentController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		return json_encode(array(
 			'imageUuid' => $this->persistenceManager->getIdentifierByObject($image),
 			'previewImageResourceUri' => $this->resourcePublisher->getPersistentResourceWebUri($thumbnail->getResource()),
-			'originalSize' => array('width' => $image->getWidth(), 'height' => $image->getHeight()),
-			'previewSize' => array('width' => $thumbnail->getWidth(), 'height' => $thumbnail->getHeight())
+			'originalSize' => array('w' => $image->getWidth(), 'h' => $image->getHeight()),
+			'previewSize' => array('w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight())
 		));
-	}
-
-	/**
-	 * Output a grouped list of possible (new) content elements to select from
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
-	 * @param string $position either "above", "below" or "inside"
-	 * @return string
-	 * @FLOW3\SkipCsrfProtection
-	 */
-	public function newAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $position) {
-		$allContentTypes = $this->contentTypeManager->getSubContentTypes('TYPO3.TYPO3:ContentObject');
-		$contentTypeGroups = $this->settings['contentTypeGroups'];
-		$groupedContentTypes = array();
-		foreach ($contentTypeGroups as $contentTypeGroup) {
-			$groupedContentTypes[] = array(
-				'label' => $contentTypeGroup,
-				'contentTypes' => array()
-			);
-		}
-		foreach ($allContentTypes as $groupKey => $contentType) {
-			if (!$contentType->hasGroup()) {
-				continue;
-			}
-			if (!in_array($contentType->getGroup(), $contentTypeGroups)) {
-				$contentTypeGroups[] = $contentType->getGroup();
-				$groupKey = array_search($contentType->getGroup(), $contentTypeGroups);
-				$groupedContentTypes[$groupKey] = array (
-					'label' => $contentType->getGroup(),
-					'contentTypes' => array()
-				);
-			} else {
-				$groupKey = array_search($contentType->getGroup(), $contentTypeGroups);
-			}
-			$groupedContentTypes[$groupKey]['contentTypes'][] = $contentType;
-		}
-		$this->view->assign('groupedContentTypes', $groupedContentTypes);
-		$this->view->assign('contentTypes', $this->contentTypeManager->getSubContentTypes('TYPO3.TYPO3:ContentObject'));
-		$this->view->assign('referenceNode', $referenceNode);
-		$this->view->assign('position', $position);
-	}
-
-	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode
-	 * @param string $position either "above", "below" or "inside"
-	 * @param string $type
-	 * @throws \TYPO3\TYPO3\Controller\Exception\NodeCreationException
-	 * @return string
-	 */
-	public function createAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $referenceNode, $position, $type) {
-		if (!in_array($position, array('above', 'below', 'inside'))) {
-			throw new NodeCreationException(sprintf('Position "%s" given, but only "above, below, inside" supported', $position), 1313754773);
-		}
-
-		if ($position === 'inside') {
-			$parentNode = $referenceNode;
-		} else {
-			$parentNode = $referenceNode->getParent();
-		}
-
-			// TODO: Write policy which only allows createAction for logged in users!
-			// TODO: make it possible for the user to specify the node identifier
-		$newNode = $parentNode->createNode(uniqid(), $this->contentTypeManager->getContentType($type));
-		if ($position === 'above') {
-			$newNode->moveBefore($referenceNode);
-		} elseif ($position === 'below') {
-			$newNode->moveAfter($referenceNode);
-		}
-
-		$this->populateNode($newNode);
-
-		$parentFolderNode = $this->findNextParentFolderNode($newNode);
-			// TODO: write Page URI service; it must be easier to retrieve the URI for a node...
-		$pageUri = $this->uriBuilder
-				->reset()
-				->uriFor('show', array('node' => $parentFolderNode), 'Frontend\Node', 'TYPO3.TYPO3');
-		return '<a rel="typo3-created-new-content" href="' . $newNode->getContextPath() . '" data-page="' . $pageUri . '">Go to new content element</a>';
-	}
-
-	/**
-	 * Populate a given node
-	 *
-	 * Inserts the defined structure for a content type.
-	 *
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return void
-	 * @throws \TYPO3\TYPO3\Exception
-	 */
-	protected function populateNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$contentType = $node->getContentType();
-
-			// Set default values
-		foreach ($contentType->getProperties() as $propertyName => $propertyConfiguration) {
-			if (isset($propertyConfiguration['default'])) {
-				$node->setProperty($propertyName, $propertyConfiguration['default']);
-			}
-		}
-
-			// Populate structure
-		if ($contentType->hasStructure()) {
-			foreach ($contentType->getStructure() as $nodeName => $nodeConfiguration) {
-				if (!isset($nodeConfiguration['type'])) {
-					throw new \TYPO3\TYPO3\Exception('Type for node in structure has to be configured', 1316881909);
-				}
-
-				$node->createNode($nodeName, $this->contentTypeManager->getContentType($nodeConfiguration['type']));
-
-				// TODO: recurse into nested structure definition
-			}
-		}
-	}
-
-	// TODO: TEAR APART THE CONTENT CONTROLLER!!!
-
-	/**
-	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
-	 * @return \TYPO3\TYPO3CR\Domain\Model\NodeInterface
-	 */
-	protected function findNextParentFolderNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		while ($node = $node->getParent()) {
-			if ($node->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
-				return $node;
-			}
-		}
-		return NULL;
 	}
 }
 ?>

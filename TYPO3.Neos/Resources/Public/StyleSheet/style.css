@@ -7302,10 +7302,20 @@ ul.t3-launcher-horizontal li .text {
   position: relative;
   overflow: hidden;
 }
+.t3-inspector-form .typo3-imagethumbnailcontainer .t3-image-loadingindicator {
+  z-index: 1;
+  position: absolute;
+  left: 57px;
+  top: 64px;
+}
 .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagethumbnail-inner {
   overflow: hidden;
   padding: 0;
   margin: auto;
+}
+.t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagethumbnail-inner img {
+  max-width: none;
+  max-height: none;
 }
 .t3-inspector-form .typo3-imagethumbnailcontainer .typo3-imagebadge {
   position: absolute;

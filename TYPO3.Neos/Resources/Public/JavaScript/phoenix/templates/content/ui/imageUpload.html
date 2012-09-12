@@ -16,7 +16,7 @@
 </div>
 
 <div class="typo3-fileupload" id="{{unbound _containerId}}">
-	<button id="{{unbound _browseButtonId}}" class="t3-button typo3-fileupload-pickfiles" type="button">
+	<button id="{{unbound _browseButtonId}}" class="t3-button btn btn-mini typo3-fileupload-pickfiles" type="button">
 		{{fileChooserLabel}}
 	</button>
 
@@ -26,12 +26,12 @@
 <div class="typo3-fileupload-image-size">
 	<div>
 		<label>Width:</label>
-		{{view Ember.TextField class="typo3-fileupload-image-size-width" valueBinding="_imageWidth" }}
+		{{view Ember.TextField class="typo3-fileupload-image-size-width" valueBinding="_finalImageScale.w" }}
 		<span>px</span>
 	</div>
 	<div>
 		<label>Height:</label>
-		{{view Ember.TextField class="typo3-fileupload-image-size-height" valueBinding="_imageHeight" }}
+		{{view Ember.TextField class="typo3-fileupload-image-size-height" valueBinding="_finalImageScale.computedHeight" }}
 		<span>px</span>
 	</div>
 </div>

@@ -65,7 +65,7 @@ define(
 				};
 
 				$('[about]').each(function() {
-					$(this).typo3MidgardEditable(editableOptions);
+					$(this).midgardEditable(editableOptions);
 				});
 				this.set('_state', 'edit');
 			},
@@ -76,7 +76,7 @@ define(
 					vie: vieInstance
 				};
 				$('.t3-contentelement[about]').each(function() {
-					$(this).typo3MidgardEditable(editableOptions);
+					$(this).midgardEditable(editableOptions);
 					$(this).removeClass('ui-state-disabled');
 				});
 				this.set('_state', 'browse');

@@ -3,10 +3,22 @@
 	position: relative;
 	overflow:hidden;
 
+	.t3-image-loadingindicator {
+		z-index: 1;
+		position: absolute;
+		left: 57px;
+		top: 64px;
+	}
+
 	.typo3-imagethumbnail-inner {
 		overflow: hidden;
 		padding: 0;
 		margin: auto;
+		img {
+				// We need to reset max-width and height, as this is set in t3-ui globally.
+			max-width: none;
+			max-height: none;
+		}
 	}
 	.typo3-imagebadge {
 		position: absolute;
