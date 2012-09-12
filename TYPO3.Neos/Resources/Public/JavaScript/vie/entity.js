@@ -38,7 +38,11 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 		}.observes('publishable', 'modified'),
 
 		_applyHiddenClass: function() {
-			this.get('$element')
+			if (this.getPath('attributes._hidden')) {
+				this.get('$element').addClass('t3-contentelement-hidden');
+			} else {
+				this.get('$element').removeClass('t3-contentelement-hidden');
+			}
 		}.observes('typo3:_hidden'),
 
 		contentType: function() {
