@@ -158,7 +158,7 @@ class SiteImportStep extends \TYPO3\Setup\Step\AbstractStep {
 			$this->persistenceManager->persistAll();
 		}
 
-		if (isset($formValues['packageKey'])) {
+		if (!empty($formValues['packageKey'])) {
 			if ($this->packageManager->isPackageAvailable($formValues['packageKey'])) {
 				throw new \TYPO3\Setup\Exception(sprintf('The package key "%s" already exists.', $formValues['packageKey']), 1346759486);
 			}
