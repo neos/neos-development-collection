@@ -1,6 +1,12 @@
 .t3-ui.t3-module {
 	background: $light-grey3;
 	background: url(../Images/module-bg.jpg) left top repeat;
+	color: #fff;
+
+	label {
+		font-size: 116%;
+		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+	}
 
 	.alert {
 		font-size: 13px;

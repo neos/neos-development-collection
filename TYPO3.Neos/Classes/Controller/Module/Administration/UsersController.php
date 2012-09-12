@@ -65,7 +65,11 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	 * @return void
 	 */
 	public function indexAction() {
-		$this->view->assign('accounts', $this->accountRepository->findAll());
+		$accounts = array();
+		foreach ($this->accountRepository->findAll() as $account) {
+			$accounts[$this->persistenceManager->getIdentifierByObject($account)] = $account;
+		}
+		$this->view->assign('accounts', $accounts);
 	}
 
 	/**
@@ -113,6 +117,15 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	 * @todo Creation/editing of electronic addresses on party property
 	 */
 	public function editAction(\TYPO3\FLOW3\Security\Account $account) {
+		$this->view->assign('account', $account);
+		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
+	}
+
+	/**
+	 * @param \TYPO3\FLOW3\Security\Account $account
+	 * @return void
+	 */
+	public function showAction(\TYPO3\FLOW3\Security\Account $account) {
 		$this->view->assign('account', $account);
 		$this->setTitle($this->moduleConfiguration['label'] . ' :: ' . ucfirst($this->request->getControllerActionName()));
 	}

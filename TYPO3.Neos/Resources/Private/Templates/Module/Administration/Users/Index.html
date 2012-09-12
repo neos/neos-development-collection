@@ -1,34 +1,75 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="content">
-
 	<div class="row t3-module-container indented">
-		<f:link.action action="new" class="btn t3-button btn-primary">
-			<i class="icon-user icon-white"></i>
-			New account
-		</f:link.action>
-
-		<br /><br />
-
 		<table class="table">
 			<thead>
 				<tr>
-					<th>Alias</th>
+					<th>Username</th>
 					<th>Name</th>
-					<th>Action</th>
+					<th>Creation date</th>
+					<th>Roles</th>
+					<th>&nbsp;</th>
 				</tr>
 			</thead>
-			<f:for each="{accounts}" as="account">
+			<f:for each="{accounts}" key="flow3identifier" as="account">
 				<tr>
-					<td><f:link.action action="edit" arguments="{account: account}">{account.accountIdentifier}</f:link.action></td>
-					<td>{account.party.name}</td>
-					<td><f:link.action action="delete" arguments="{account: account}" class="btn btn-danger t3-button">
-						<i class="icon-white icon-trash"></i>
-						Delete
-					</f:link.action></td>
+					<td>
+						<i class="icon-user icon-white"></i>
+						{account.accountIdentifier}
+					</td>
+					<td title="{account.party.alias}">{account.party.name}</td>
+					<td>
+						<f:format.date format="d.m.Y - H:i:s">{account.creationDate}</f:format.date>
+					</td>
+					<td>
+						<f:for each="{account.roles}" as="role" iteration="iterator">
+							<f:if condition="{iterator.isLast}">
+								<f:then>
+									{role}
+								</f:then>
+								<f:else>
+									{role},&nbsp;
+								</f:else>
+							</f:if>
+						</f:for>
+					</td>
+					<td>
+						<div class="pull-right">
+							<f:link.action action="show" arguments="{account: account}" class="btn t3-button" title="Click to view">
+								<i class="icon-info-sign icon-white"></i>
+							</f:link.action>
+							<f:link.action action="edit" arguments="{account: account}" class="btn t3-button" title="Click to edit">
+								<i class="icon-pencil icon-white"></i>
+							</f:link.action>
+							<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{flow3identifier}">
+								<i class="icon-trash icon-white"></i>
+							</button>
+							<div class="modal hide" id="{flow3identifier}">
+								<div class="modal-header">
+									<button type="button" class="close t3-button" data-dismiss="modal">×</button>
+									<h3>Are you sure you want to delete the account "{account.accountIdentifier}"?</h3>
+								</div>
+								<div class="modal-footer">
+									<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
+									<f:link.action action="delete" arguments="{account: account}" class="btn btn-danger t3-button" title="Delete">
+										<i class="icon-trash icon-white"></i>
+										Delete
+									</f:link.action>
+								</div>
+							</div>
+						</div>
+					</td>
 				</tr>
 			</f:for>
 		</table>
 	</div>
-
+	<div class="form-actions form-footer">
+		<div class="pull-right">
+			<f:link.action action="new" class="btn t3-button btn-primary" title="Create new user">
+				<i class="icon-user icon-white"></i>
+				New user
+			</f:link.action>
+		</div>
+	</div>
 </f:section>

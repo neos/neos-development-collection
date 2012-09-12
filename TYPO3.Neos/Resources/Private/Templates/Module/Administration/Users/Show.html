@@ -1,0 +1,135 @@
+<f:layout name="BackendSubModule" />
+
+<f:section name="subtitle">
+	<div class="row t3-module-container indented">
+		<h2>View user "{account.accountIdentifier}"</h2>
+	</div>
+</f:section>
+<f:section name="content">
+	<div class="row t3-module-container">
+		<div class="span5">
+			<legend>User</legend>
+			<br />
+			<p>
+				<label>Username</label>
+				{account.accountIdentifier}
+			</p>
+			<f:if condition="{account.party.name.alias}">
+				<p>
+					<label>Alias</label>
+					{account.party.name.alias}
+				</p>
+			</f:if>
+			<p>
+				<label>Creation date</label>
+				<f:format.date format="d.m.Y - H:i:s">{account.creationDate}</f:format.date>
+			</p>
+			<f:if condition="{account.roles}">
+				<p>
+					<label>Roles</label>
+					<f:for each="{account.roles}" as="role" iteration="iterator">
+						<f:if condition="{iterator.isLast}">
+							<f:then>
+								{role}
+							</f:then>
+							<f:else>
+								{role},&nbsp;
+							</f:else>
+						</f:if>
+					</f:for>
+				</p>
+			</f:if>
+		</div>
+		<div class="span5">
+			<legend>Personal Data</legend>
+			<br />
+			<f:if condition="{account.party.name.title}">
+				<p>
+					<label>Title</label>
+					{account.party.name.title}
+				</p>
+			</f:if>
+			<f:if condition="{account.party.name.firstName}">
+				<p>
+					<label>First Name</label>
+					{account.party.name.firstName}
+				</p>
+			</f:if>
+			<f:if condition="{account.party.name.middleName}">
+				<p>
+					<label>Middle Name</label>
+					{account.party.name.middleName}
+				</p>
+			</f:if>
+			<f:if condition="{account.party.name.lastName}">
+				<p>
+					<label>Last Name</label>
+					{account.party.name.lastName}
+				</p>
+			</f:if>
+			<f:if condition="{account.party.name.otherName}">
+				<p>
+					<label>Other name</label>
+					{account.party.name.otherName}
+				</p>
+			</f:if>
+		</div>
+	</div>
+	<div class="row t3-module-container">
+		<div class="span5">
+			<legend>Electronic Addresses</legend>
+			<br />
+			<f:if condition="{account.party.electronicAddresses}">
+				<f:then>
+					<ul class="inputs-list">
+						<f:for each="{account.party.electronicAddresses}" as="electronicAddress">
+							<li>{electronicAddress.identifier} ({electronicAddress.type})</li>
+						</f:for>
+					</ul>
+				</f:then>
+				<f:else>
+					<em>N/A</em>
+				</f:else>
+			</f:if>
+		</div>
+		<div class="span5">
+			<legend>User Preferences</legend>
+			<br />
+			<f:if condition="{account.party.preferences.preferences}">
+				<f:for each="{account.party.preferences.preferences}" as="value" key="preference">
+					<p>
+						<label>{preference}</label>
+						{value}
+					</p>
+				</f:for>
+			</f:if>
+		</div>
+	</div>
+
+	<div class="form-actions form-footer">
+		<div class="pull-left">
+			<f:link.action action="index" class="btn t3-button">Back</f:link.action>
+		</div>
+		<div class="pull-right">
+			<f:link.action action="edit" arguments="{account: account}" class="btn btn-info t3-button">
+				<i class="icon-pencil icon-white"></i> Edit user
+			</f:link.action>
+			<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#delete">
+				<i class="icon-trash icon-white"></i> Delete user
+			</button>
+			<div class="modal hide" id="delete">
+				<div class="modal-header">
+					<button type="button" class="close t3-button" data-dismiss="modal">×</button>
+					<h3>Are you sure you want to delete the accounet "{account.accountIdentifier}"?</h3>
+				</div>
+				<div class="modal-footer">
+					<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
+					<f:link.action action="delete" arguments="{account: account}" class="btn btn-danger t3-button" title="Delete">
+						<i class="icon-trash icon-white"></i>
+						Delete
+					</f:link.action>
+				</div>
+			</div>
+		</div>
+	</div>
+</f:section>
