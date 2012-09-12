@@ -172,6 +172,11 @@ function($, vie, Ember, CreateJS) {
 
 						var afterCreationCallback = function(nodePath, template) {
 							entity.set('@subject', nodePath);
+
+								// We also want to load all the other RDFa properties on the entity.
+								// Else, editing newly created content elements in the Property Inspector
+								// does not work.
+							vie.load({element: template}).from('rdfa').execute();
 							callBack(template);
 						}
 
