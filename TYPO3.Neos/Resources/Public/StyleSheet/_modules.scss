@@ -40,11 +40,13 @@
 		.fold-toggle {
 			cursor: pointer;
 			margin-top: -1px;
+			margin-right: 11px;
 		}
 
 		td.check,
 		th.check {
 			width: 12px;
+			line-height: 26px;
 		}
 
 		td.legend,
@@ -59,6 +61,82 @@
 
 		tfoot .legend {
 			margin-left: 15px;
+		}
+	}
+
+	&.t3-module-administration-package {
+		.t3-button.btn-freeze {
+			@include buttonBackground(lighten($blue, 5%), $blue);
+			border: 1px solid darken($blue, 5%);
+			border-bottom-color: darken($blue, 10%);
+			$shadow: inset 0 1px 0 rgba($lightest, 0.1), 0 1px 2px rgba($darkest, 0.05);
+			@include box-shadow($shadow);
+
+			&:hover,
+			&:focus,
+			&:active {
+				@include buttonBackground($blue, darken($blue, 2%));
+				border: 1px solid darken($blue, 10%);
+				border-bottom-color: darken($blue, 20%);
+			}
+
+			&.disabled,
+			&.disabled:hover,
+			&.disabled:active,
+			&.disabled:focus {
+				@include buttonBackground(lighten($blue, 5%), $blue);
+			}
+		}
+		table {
+			td.check,
+			th.check {
+				width: 12px;
+				line-height: 26px;
+			}
+
+			label {
+				padding: 5px 0;
+				margin-bottom: 0;
+				font-size: inherit;
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+
+			.fold-toggle {
+				cursor: pointer;
+				margin-top: -1px;
+				margin-right: 11px;
+			}
+
+			td > .t3-button,
+			td > div.pull-right > .t3-button {
+				// Freeze Button
+				&.btn-freeze {
+					@include buttonBackground(lighten($light-grey4, 5%), $light-grey4);
+					border: 1px solid darken($light-grey4, 5%);
+					border-bottom-color: darken($light-grey4, 10%);
+					$shadow: inset 0 1px 0 rgba($lightest, 0.1), 0 1px 2px rgba($darkest, 0.05);
+					@include box-shadow($shadow);
+
+					&:hover,
+					&:focus,
+					&:active {
+						@include buttonBackground($blue, darken($blue,2%));
+						border: 1px solid darken($blue, 10%);
+						border-bottom-color: darken($blue, 20%);
+					}
+
+					&.active {
+						@include buttonBackground($blue, darken($blue, 2%));
+						border: 1px solid darken($blue, 10%);
+						border-bottom-color: darken($blue, 20%);
+					}
+				}
+			}
 		}
 	}
 
@@ -179,29 +257,6 @@
 				&.disabled:active,
 				&.disabled:focus {
 					@include buttonBackground(lighten($light-grey3, 5%), $light-grey3);
-				}
-			}
-
-			// Freeze Button
-			&.btn-info {
-				@include buttonBackground(lighten($light-grey4, 5%), $light-grey4);
-				border: 1px solid darken($light-grey4, 5%);
-				border-bottom-color: darken($light-grey4, 10%);
-				$shadow: inset 0 1px 0 rgba($lightest, 0.1), 0 1px 2px rgba($darkest, 0.05);
-				@include box-shadow($shadow);
-
-				&:hover,
-				&:focus,
-				&:active {
-					@include buttonBackground($blue, darken($blue,2%));
-					border: 1px solid darken($blue, 10%);
-					border-bottom-color: darken($blue, 20%);
-				}
-
-				&.active {
-					@include buttonBackground(lighten($blue, 5%), $blue);
-					border: 1px solid darken($blue, 5%);
-					border-bottom-color: darken($blue, 10%);
 				}
 			}
 
