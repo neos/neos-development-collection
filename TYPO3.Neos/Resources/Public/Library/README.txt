@@ -102,12 +102,23 @@ SASS version - https://github.com/jlong/sass-twitter-bootstrap/tree/master/lib (
 * Changed icon images paths variables $iconSpritePath + $iconWhiteSpritePath (_variables.scss)
 
 
-Createjs
-Update using Scripts/update-createjs-to-master.sh
+Create.js - https://github.com/bergie/create
+* Update using Scripts/update-createjs-to-master.sh
 
+VIE - https://github.com/bergie/VIE
+* Update using Scripts/update-vie-to-master.sh
 
-Hallo editor
-Update using Scripts/update-hallo-to-master.sh
-
+Hallo editor - https://github.com/bergie/hallo
+* Update using Scripts/update-hallo-to-master.sh
 * Hallo depends on fontawesome which we don't include because of clashes with twitter bootstrap
   icons so we have to include some icon-classes ourselves
+
+To execute the update scripts method you'll need:
+* NodeJS v0.6.9 or lower
+* CoffeeScript (http://jashkenas.github.com/coffee-script/)
+* uglify-js (https://npmjs.org/package/uglify-js) - install globally with -g flag for npm
+* async (https://npmjs.org/package/async)
+* vie (https://npmjs.org:10020/package/vie)
+
+** If you're using OS X you'll need to either ignore or add backup file extension for "sed" commands (http://stackoverflow.com/questions/4247068/sed-command-failing-on-mac-but-works-on-linux),
+   which are used in the Cakefile in hallo root dir. Replace "sed -i ..." with "sed -i '' ..." or "sed -ibak ..." to ignore backup files.
