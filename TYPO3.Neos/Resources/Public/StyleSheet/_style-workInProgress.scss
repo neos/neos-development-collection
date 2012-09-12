@@ -409,62 +409,54 @@ button.t3-button.t3-connection-status-down {
 }
 
 // Content editable highlight
-
-.t3-contentelement-hover {
-	outline: 3px solid rgba(0,0,0,0.2);
-	outline-offset: 4px;
-}
-
-.t3-contentelement-active {
-	outline: 3px solid rgba(247,144,37,0.8);
-	outline-offset: 4px;
-}
-
-// Content element overlay
-.t3-contentelement-overlay {
-	position: absolute;
-	display: none;
-	@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
-
-	.t3-contentelement-overlay-icon {
-		display: none;
-		width: 32px;
-		height: 32px;
-
-		margin: auto;
-		position: relative;
-		top: 35%;
-		background-repeat: no-repeat;
-		background-position: center;
-		cursor: pointer;
-		@include user-select(none);
+.t3-contentelement {
+	&.t3-contentelement-hover {
+		outline: 3px solid rgba(0,0,0,0.2);
+		outline-offset: 4px;
 	}
-}
 
-.t3-aloha-block-over {
-	.t3-contentelement-overlay {
-		display: inline-block;
+	&.t3-contentelement-active {
+		outline: 3px solid rgba(247,144,37,0.8);
+		outline-offset: 4px;
+
+		.t3-contentelement-handle-container {
+			display: block;
+		}
 	}
-	.t3-contentelement-overlay-icon {
-		display: block;
-	}
-}
 
-.typo3-typo3-html .t3-contentelement-overlay-icon {
-	background-image: url('../Images/Icons/White/brackets_icon-16.png');
-}
-
-.t3-contentelement > .t3-contentelement-handle-container {
-	display: none;
-
-	div {
-		margin: 0px;
+	// Content element overlay
+	&.t3-contentelement-overlay {
 		position: absolute;
-	}
-}
+		display: none;
+		@include background-image(linear-gradient(top, rgba(50,50,50,0.1), rgba(50,50,50,0.2), rgba(50,50,50,0.1)));
 
-.t3-contentelement:hover > .t3-contentelement-handle-container {
-	display: inline;
+		.t3-contentelement-overlay-icon {
+			display: none;
+			width: 32px;
+			height: 32px;
+
+			margin: auto;
+			position: relative;
+			top: 35%;
+			background-repeat: no-repeat;
+			background-position: center;
+			cursor: pointer;
+			@include user-select(none);
+		}
+	}
+
+	&.typo3-typo3-html .t3-contentelement-overlay-icon {
+		background-image: url('../Images/Icons/White/brackets_icon-16.png');
+	}
+
+	.t3-contentelement-handle-container {
+		display: none;
+
+		div {
+			margin: 0px;
+			position: absolute;
+		}
+	}
 }
 
 .t3-section-handle-container {
