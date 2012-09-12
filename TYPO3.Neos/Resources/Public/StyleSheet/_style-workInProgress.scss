@@ -626,3 +626,74 @@ button.t3-button.t3-connection-status-down {
 		}
 	}
 }
+
+// Hallo toolbar
+.t3-ui.hallotoolbar {
+	.t3-button {
+		width: 28px;
+		height: 23px;
+		margin-right: 0;
+
+		span {
+			margin-left: -1px;
+			padding: 0;
+			width: 16px;
+			height: 16px;
+			background-repeat: no-repeat;
+			background-position: center center;
+		}
+	}
+
+	.ui-buttonset + .ui-buttonset {
+		margin-left: 5px;
+	}
+
+	.ui-buttonset {
+		margin-right: 0;
+
+		.t3-button {
+			position: relative;
+			@include border-radius(0);
+		}
+
+		span + span {
+			.t3-button {
+				margin-left: -1px;
+			}
+		}
+
+		span:first-child .t3-button {
+			@include border-top-left-radius(4px);
+			@include border-bottom-left-radius(4px);
+		}
+
+		span:last-child .t3-button {
+			@include border-top-right-radius(4px);
+			@include border-bottom-right-radius(4px);
+		}
+	}
+
+	.dropdown-menu {
+		@include border-bottom-left-radius(6px);
+		@include border-bottom-right-radius(6px);
+		background-color: #EEEEEC;
+		border-bottom: 1px solid #BABDB6;
+		border-left: 1px solid #BABDB6;
+		border-right: 1px solid #BABDB6;
+		margin-top: -1px;
+		float: left;
+		.blockselector {
+			float: left;
+			width: 100%;
+			.menu-item {
+				@include border-radius(0px);
+				font-size: 12px;
+				line-height: 12px;
+				border: 0px;
+				color: #000000;
+				margin: 0;
+				padding: 0;
+			}
+		}
+	}
+}
