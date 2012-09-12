@@ -83,12 +83,12 @@ function($, CreateJS, Entity) {
 		}.observes('wireframeMode'),
 
 		createSection: function(sectionName) {
-			var pageBlock = T3.Content.Model.BlockManager.get('_pageBlock');
+			var pageNodePath = $('#t3-page-metainformation').attr('about');
 			T3.ContentModule._showPageLoader();
-			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(pageBlock.get('__nodePath'), {
+			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(pageNodePath, {
 				contentType: 'TYPO3.TYPO3:Section',
 				nodeName: sectionName
-			}, 0,
+			}, 'into',
 			function (result) {
 				if (result.success == true) {
 					T3.ContentModule.reloadPage();

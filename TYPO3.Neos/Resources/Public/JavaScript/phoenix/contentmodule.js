@@ -471,6 +471,10 @@ function($, vie, Ember, CreateJS) {
 		},
 
 		_showPageLoader: function() {
+			if ($('.t3-pageloader-wrapper').length > 0) {
+					// page loader already shown, so we do not show it again
+				return;
+			}
 			require([
 				'canvas.indicator'
 			], function() {
