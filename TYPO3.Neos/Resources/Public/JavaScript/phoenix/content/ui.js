@@ -7,6 +7,7 @@
 define(
 [
 	'jquery',
+	'emberjs',
 	'vie/instance',
 	'text!phoenix/templates/content/ui/breadcrumb.html',
 	'text!phoenix/templates/content/ui/inspector.html',
@@ -23,8 +24,7 @@ define(
 	'jquery.cookie',
 	'jquery.dynatree'
 ],
-
-function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate) {
+function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate, pageTreeTemplate, deletePageDialogTemplate, inspectTreeTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui');
 
 	var T3 = window.T3 || {};
@@ -781,12 +781,39 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 		}
 
 		T3.Content.UI.ContentElementHandle.create(
-			jQuery.extend(options || {}, {
+			$.extend(options || {}, {
 				_element: $contentElement,
 				_collection: collection,
 				_entityCollectionIndex: contentElementIndex
 			}
 		)).appendTo(handleContainer);
+	};
+
+	T3.Content.UI.Util.AddNotInlineEditableOverlay = function($element) {
+			// Add overlay to content elements without inline editable properties
+		if ($element.find('> .t3-inline-editable').length === 0) {
+			var overlay = $('<div />', {
+				'class': 't3-contentelement-overlay',
+				'css': {
+					'width': $element.width(),
+					'height': $element.height()
+				},
+				'click': function(event) {
+					if ($('.t3-primary-editor-action').length > 0) {
+							// We need to use setTimeout here because otherwise the popover is aligned to the bottom of the body
+						setTimeout(function() {
+							$('.t3-primary-editor-action').click();
+							if (Ember.View.views[jQuery('.t3-primary-editor-action').attr('id')] && Ember.View.views[jQuery('.t3-primary-editor-action').attr('id')].toggle) {
+								Ember.View.views[jQuery('.t3-primary-editor-action').attr('id')].toggle();
+							}
+						}, 1);
+					}
+					event.preventDefault();
+				}
+			}).insertBefore($element.find('> .t3-contentelement-handle-container'));
+
+			$('<span />', {'class': 't3-contentelement-overlay-icon'}).appendTo(overlay);
+		};
 	}
 
 });

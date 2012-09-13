@@ -45,6 +45,11 @@ define(
 			 * to the body so that we can modify the appearance of the content element editing handles.
 			 */
 			updateSelection: function($element) {
+					// Do not update the selection if the element is already selected
+				if ($element && $element.hasClass('t3-contentelement-active')) {
+					return;
+				}
+
 				var nodes = [],
 					that = this;
 

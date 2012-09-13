@@ -76,6 +76,7 @@ define(
 				$('[about]').each(function() {
 					$(this).midgardEditable(editableOptions);
 				});
+
 				this.set('_state', 'edit');
 			},
 
@@ -145,7 +146,8 @@ define(
 
 			selectContentElement: function(element) {
 				var selectedNode = T3.Content.Model.NodeSelection.get('selectedNode');
-				if (selectedNode !== null && selectedNode.get('$element') !== element) {
+
+				if (selectedNode !== null && selectedNode.get('$element').attr('about') !== element.attr('about')) {
 					this.unselectContentElement(selectedNode.get('$element'));
 				}
 

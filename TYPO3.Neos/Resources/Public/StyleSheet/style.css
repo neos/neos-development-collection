@@ -8029,7 +8029,7 @@ button.t3-button.t3-connection-status-down {
 .t3-contentelement.t3-contentelement-active .t3-contentelement-handle-container {
   display: block;
 }
-.t3-contentelement.t3-contentelement-overlay {
+.t3-contentelement .t3-contentelement-overlay {
   position: absolute;
   display: none;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, rgba(50, 50, 50, 0.1)), color-stop(50%, rgba(50, 50, 50, 0.2)), color-stop(100%, rgba(50, 50, 50, 0.1)));
@@ -8038,7 +8038,7 @@ button.t3-button.t3-connection-status-down {
   background-image: -o-linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
   background-image: linear-gradient(top, rgba(50, 50, 50, 0.1), rgba(50, 50, 50, 0.2), rgba(50, 50, 50, 0.1));
 }
-.t3-contentelement.t3-contentelement-overlay .t3-contentelement-overlay-icon {
+.t3-contentelement .t3-contentelement-overlay .t3-contentelement-overlay-icon {
   display: none;
   width: 32px;
   height: 32px;
@@ -8053,6 +8053,9 @@ button.t3-button.t3-connection-status-down {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+.t3-contentelement:hover .t3-contentelement-overlay {
+  display: block;
 }
 .t3-contentelement.typo3-typo3-html .t3-contentelement-overlay-icon {
   background-image: url("../Images/Icons/White/brackets_icon-16.png");
