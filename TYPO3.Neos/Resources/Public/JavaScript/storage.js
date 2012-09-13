@@ -20,7 +20,7 @@ define(['vie/entity', 'backbone'], function(Entity) {
 						// name in the block.
 					model.set('typo3:__workspacename', result.data.workspaceNameOfNode);
 					if (options && options.success) {
-						options.success(model);
+						options.success(model, result);
 					}
 				});
 			},

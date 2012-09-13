@@ -267,9 +267,14 @@ function($, CreateJS, Entity) {
 			if (reloadPage) {
 				T3.ContentModule.showPageLoader();
 			}
-			Backbone.sync('update', this.getPath('selectedNode._vieEntity'), {success: function() {
+			Backbone.sync('update', this.getPath('selectedNode._vieEntity'), {success: function(model, result) {
 				if (reloadPage) {
-					T3.ContentModule.reloadPage();
+					if (result && result.data && result.data.nextUri) {
+							// It might happen that the page has been renamed, so we need to take the server-side URI
+						T3.ContentModule.loadPage(result.data.nextUri);
+					} else {
+						T3.ContentModule.reloadPage();
+					}
 				}
 			}});
 
