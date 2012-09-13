@@ -12,9 +12,10 @@ define(
 	'phoenix/content/ui/elements/toggle-button',
 	'phoenix/content/ui/elements/popover-button',
 	'phoenix/content/ui/elements/contentelement-handles',
+	'phoenix/content/ui/elements/section-handles',
 	'jquery.popover'
 ],
-function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle) {
+function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle, SectionHandle) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui/elements');
 
 	var T3 = window.T3 || {};
@@ -65,4 +66,6 @@ function($, Toolbar, Button, ToggleButton, PopoverButton, ContentElementHandle) 
 	T3.Content.UI.PopoverButton = PopoverButton;
 
 	T3.Content.UI.ContentElementHandle = ContentElementHandle;
+
+	T3.Content.UI.SectionHandle = SectionHandle;
 });

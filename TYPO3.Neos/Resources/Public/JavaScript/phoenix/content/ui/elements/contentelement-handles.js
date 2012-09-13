@@ -15,18 +15,10 @@ define(
 
 			_element: null,
 
-			_type: 'entity',
 
 			$newAfterPopoverContent: null,
 
 			_entityCollectionIndex: null,
-
-			_width: function() {
-				if (this.get('_type') === 'section') {
-					return 57;
-				}
-				return 140;
-			}.property(),
 
 			_collection: null,
 
@@ -54,17 +46,6 @@ define(
 				var that = this;
 				var subject = vieInstance.service('rdfa').getElementSubject(this.get('_element'));
 				this.set('_nodePath', vieInstance.entities.get(subject).getSubjectUri());
-
-					// TODO find a way to calculate the width of the button toolbar
-				if (this.get('_type') === 'section') {
-					this.get('_element').prev().css({
-						left: this.get('_element').width() - this.get('_width')
-					});
-				} else {
-					this.$().css({
-						left: this.get('_element').offset().left + this.get('_element').width() - this.get('_width')
-					});
-				}
 
 				this.$newAfterPopoverContent = $('<div />', {id: this.get(Ember.GUID_KEY)});
 
@@ -141,20 +122,9 @@ define(
 				this.$().find('.action-new').trigger('hidePopover');
 			},
 
-			_showRemove: function() {
-				// TODO add check if remove action should be shown, now we only show it for entity
-				return this.get('_type') === 'entity';
-			}.property(),
-
-			_showCut: function() {
-				// TODO add check if cut action should be shown, now we only show it for entity
-				return this.get('_type') === 'entity';
-			}.property(),
-
-			_showCopy: function() {
-					// TODO add check if copy action should be shown, now we only show it for entity
-				return this.get('_type') === 'entity';
-			}.property()
+			_showRemove: true,
+			_showCut: true,
+			_showCopy: true
 
 		});
 	}

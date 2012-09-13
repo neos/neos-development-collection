@@ -8022,13 +8022,6 @@ button.t3-button.t3-connection-status-down {
   outline: 3px solid rgba(0, 0, 0, 0.2);
   outline-offset: 4px;
 }
-.t3-contentelement.t3-contentelement-active {
-  outline: 3px solid rgba(247, 144, 37, 0.8);
-  outline-offset: 4px;
-}
-.t3-contentelement.t3-contentelement-active .t3-contentelement-handle-container {
-  display: block;
-}
 .t3-contentelement .t3-contentelement-overlay {
   position: absolute;
   display: none;
@@ -8061,15 +8054,27 @@ button.t3-button.t3-connection-status-down {
   background-image: url("../Images/Icons/White/brackets_icon-16.png");
 }
 .t3-contentelement .t3-contentelement-handle-container {
-  display: none;
+  visibility: hidden;
+  height: 0;
 }
-.t3-contentelement .t3-contentelement-handle-container div {
-  margin: 0px;
-  position: absolute;
+.t3-contentelement .t3-contentelement-handle-container .btn-toolbar {
+  text-align: right !important;
+  margin-top: 0;
+}
+.t3-contentelement .t3-contentelement-handle-container .btn-toolbar .btn {
+  z-index: 10000;
 }
 
-.t3-section-handle-container {
-  position: relative;
+.t3-contentelement-active {
+  outline: 3px solid rgba(247, 144, 37, 0.8) !important;
+  outline-offset: 4px;
+}
+.t3-contentelement-active > .t3-contentelement-handle-container {
+  visibility: visible;
+}
+
+.t3-section-handle-container .btn-toolbar {
+  text-align: right !important;
 }
 
 .t3-ui .widget {

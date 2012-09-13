@@ -756,16 +756,23 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 	 * @param {Object} options A set of options passed to the actual Ember View (will be overridden with the required properties _element, _collection and _entityCollectionIndex)
 	 * @return void
 	 */
-	T3.Content.UI.Util.AddContentElementHandleBars = function($contentElement, contentElementIndex, collection, options) {
+	T3.Content.UI.Util.AddContentElementHandleBars = function($contentElement, contentElementIndex, collection, isSection) {
 		var handleContainerClassName, handleContainer;
 
-		if (options && options._type && options._type === 'section') {
+		if (isSection) {
 				// Add container BEFORE the section DOM element
 			handleContainerClassName = 't3-section-handle-container';
 			if ($contentElement.prev() && $contentElement.prev().hasClass(handleContainerClassName)) {
 				return;
 			}
 			handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).insertBefore($contentElement);
+
+			T3.Content.UI.SectionHandle.create({
+				_element: $contentElement,
+				_collection: collection,
+				_entityCollectionIndex: contentElementIndex
+			}).appendTo(handleContainer);
+
 		} else {
 				// Add container INTO the content elements DOM element
 			handleContainerClassName = 't3-contentelement-handle-container';
@@ -773,20 +780,18 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				return;
 			}
 			handleContainer = $('<div />', {'class': 't3-ui ' + handleContainerClassName}).prependTo($contentElement);
-		}
 
-			// Make sure we have a minimum height to be able to hover
-		if ($contentElement.height() < 25) {
-			$contentElement.height(25);
-		}
+				// Make sure we have a minimum height to be able to hover
+			if ($contentElement.height() < 25) {
+				$contentElement.height(25);
+			}
 
-		T3.Content.UI.ContentElementHandle.create(
-			$.extend(options || {}, {
+			T3.Content.UI.ContentElementHandle.create({
 				_element: $contentElement,
 				_collection: collection,
 				_entityCollectionIndex: contentElementIndex
-			}
-		)).appendTo(handleContainer);
+			}).appendTo(handleContainer);
+		}
 	};
 
 	T3.Content.UI.Util.AddNotInlineEditableOverlay = function($element) {

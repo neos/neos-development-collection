@@ -89,6 +89,11 @@ define(['jquery', 'vie/instance', 'emberjs', 'emberjs/dictionary-object'], funct
 			this.propertyDidChange(attributeName);
 		},
 
+		nodePath: function() {
+			var subject = this.get('_vieEntity').getSubject();
+			return subject.substring(1, subject.length - 1);
+		}.property('_vieEntity').cacheable(),
+
 		/**
 		 * Receive the content type schema; and also build up the _caseSensitivePropertyNameCache
 		 */

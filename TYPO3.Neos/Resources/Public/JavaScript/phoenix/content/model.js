@@ -54,7 +54,7 @@ define(
 					that = this;
 
 					// Remove active class from all previously active nodes (content elements and sections)
-				$('.t3-contentelement[about], .t3-contentsection[about]').removeClass('t3-contentelement-active');
+				$('.t3-contentelement-active').removeClass('t3-contentelement-active');
 
 					// TODO Check if we need that
 				if (this._updating) {
@@ -64,7 +64,13 @@ define(
 
 				if ($element !== undefined) {
 						// Add active class to selected content element
-					$element.addClass('t3-contentelement-active');
+					if ($element.is('.t3-contentsection')) {
+							// If we are inside a section, we want to mark the outer element as active; as this also
+							// contains the section handles.
+						$element.parent().addClass('t3-contentelement-active');
+					} else {
+						$element.addClass('t3-contentelement-active');
+					}
 
 					this.addNodeByElement(nodes, $element);
 					$element.parents('.t3-contentelement[about], .t3-contentsection[about]').each(function() {
