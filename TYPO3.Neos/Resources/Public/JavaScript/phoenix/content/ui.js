@@ -625,6 +625,7 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 						var position = hitMode === 'over' ? 'into' : hitMode;
 
 						sourceNode.move(node, hitMode);
+						T3.ContentModule.showPageLoader();
 						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
 							sourceNode.data.key,
 							node.data.key,

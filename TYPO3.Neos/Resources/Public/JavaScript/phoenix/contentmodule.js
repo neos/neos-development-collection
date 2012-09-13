@@ -406,7 +406,7 @@ function($, vie, Ember, CreateJS) {
 				return;
 			}
 
-			this._showPageLoader();
+			this.showPageLoader();
 			this.set('_isLoadingPage', true);
 
 			if (window.history && !ignorePushToHistory) {
@@ -470,7 +470,15 @@ function($, vie, Ember, CreateJS) {
 			});
 		},
 
-		_showPageLoader: function() {
+		/**
+		 * Display an overlay over the full frontend page with a loading indicator.
+		 *
+		 * This method is automatically called during an in-page reload. Furthermore,
+		 * this method should be called by other part of the content module if
+		 * they need to do some work (like saving changes to the server), but
+		 * already know that this will be followed by a reload of the current page.
+		 */
+		showPageLoader: function() {
 			if ($('.t3-pageloader-wrapper').length > 0) {
 					// page loader already shown, so we do not show it again
 				return;

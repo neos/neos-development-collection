@@ -74,7 +74,7 @@ function($, CreateJS, Entity) {
 			var wireframeMode;
 			wireframeMode = this.get('wireframeMode');
 			if (typeof TYPO3_TYPO3_Service_ExtDirect_V1_Controller_UserController === 'object') {
-				T3.ContentModule._showPageLoader();
+				T3.ContentModule.showPageLoader();
 				TYPO3_TYPO3_Service_ExtDirect_V1_Controller_UserController.updatePreferences({'contentEditing.wireframeMode': wireframeMode}, function() {
 					T3.Common.LocalStorage.setItem('wireframeMode', wireframeMode);
 					window.location.reload(false);
@@ -84,7 +84,7 @@ function($, CreateJS, Entity) {
 
 		createSection: function(sectionName) {
 			var pageNodePath = $('#t3-page-metainformation').attr('about');
-			T3.ContentModule._showPageLoader();
+			T3.ContentModule.showPageLoader();
 			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(pageNodePath, {
 				contentType: 'TYPO3.TYPO3:Section',
 				nodeName: sectionName
@@ -264,6 +264,9 @@ function($, CreateJS, Entity) {
 				}
 			});
 
+			if (reloadPage) {
+				T3.ContentModule.showPageLoader();
+			}
 			Backbone.sync('update', this.getPath('selectedNode._vieEntity'), {success: function() {
 				if (reloadPage) {
 					T3.ContentModule.reloadPage();
