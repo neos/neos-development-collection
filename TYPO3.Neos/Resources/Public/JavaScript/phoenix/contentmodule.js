@@ -413,6 +413,7 @@ function($, vie, Ember, CreateJS) {
 				window.history.pushState({uri: uri}, document.title, uri);
 			}
 
+			var currentlyActiveContentElementNodePath = $('.t3-contentelement-active').attr('about');
 			$.get(uri, function(htmlString, status) {
 				if (status === 'success') {
 					var $htmlDom = $(htmlString);
@@ -445,9 +446,18 @@ function($, vie, Ember, CreateJS) {
 
 					that._setPagePosition();
 
-						// TODO Update VIE and create here
+						// Update node selection (will update VIE)
 					T3.Content.Model.NodeSelection.initialize();
 					T3.Content.Model.PublishableNodes.initialize();
+
+						// Refresh CreateJS, renders the button bars f.e.
+					CreateJS.enableEdit();
+
+						// If doing a reload, we highlight the currently active content element again
+					var $currentlyActiveContentElement = $('[about="' + currentlyActiveContentElementNodePath + '"]');
+					if ($currentlyActiveContentElement.length === 1) {
+						T3.Content.Model.NodeSelection.updateSelection($currentlyActiveContentElement);
+					}
 				} else {
 						// FALLBACK: AJAX error occured,
 						// so we reload the whole backend.
