@@ -21,7 +21,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * retrieving content in the system.
  *
  * Note: If this API is extended, make sure to also implement the additional
- * methods inside ProxyNode!
+ * methods inside ProxyNode and keep NodeInterface in sync!
  *
  * @FLOW3\Entity
  * @FLOW3\Scope("prototype")
