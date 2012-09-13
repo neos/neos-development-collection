@@ -79,10 +79,25 @@ class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
 			$sectionNode = $node;
 		} else {
 			$sectionNode = $node->getNode($this->getNodePath());
+
+			if ($sectionNode === NULL && $this->nodeRepository->getContext()->getWorkspaceName() !== 'live') {
+					/**
+					 * In case the user created a new page, this page does not have the necessary sections created yet.
+					 * The problem is that we only know during TypoScript rendering which sections we expect to have
+					 * on a certain page; as it is only stored in the "nodePath" property of this Section TypoScript object.
+					 *
+					 * Thus, as a workaround, we create new section nodes as we need them during rendering, although we
+					 * know it is ugly.
+					 */
+				$sectionNode = $node->createNode($this->getNodePath(), $this->contentTypeManager->getContentType('TYPO3.TYPO3:Section'));
+			}
 		}
 
 		if ($sectionNode === NULL) {
-			throw new \TYPO3\TYPO3\Exception('Empty TYPO3.TYPO3:Section node with path "' . $this->getNodePath() . '" for ' . $node->getContextPath() . ' can not be rendered');
+				// It might still happen that there is no section node on the page,
+				// f.e. when we are in live workspace. In this case, we just silently
+				// return what we have so far.
+			return $output;
 		}
 
 		return sprintf('<div about="%s" typeof="typo3:%s" rel="typo3:content-collection" class="t3-contentsection"><script type="text/x-typo3" property="typo3:_typoscriptPath">%s</script><script type="text/x-typo3" property="typo3:__workspacename">%s</script>%s</div>', $sectionNode->getContextPath(), 'TYPO3.TYPO3:Section', $this->path, $sectionNode->getWorkspace()->getName(), $output);
