@@ -57,9 +57,8 @@ class TypoScriptService {
 		$mergedTypoScriptCode = 'include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/All.ts2' . chr(10);
 		$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($typoScriptsPath) . chr(10);
 		foreach ($parentNodes as $node) {
-			$currentTypoScriptPath = $typoScriptsPath . substr($node->getPath(), strlen($startNode->getPath()));
+			$currentTypoScriptPath = $typoScriptsPath . ucfirst(substr($node->getPath(), strlen($startNode->getPath()) + 1));
 			$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($currentTypoScriptPath) . chr(10);
-
 			$typoScriptNodes = $node->getChildNodes('TYPO3.TYPO3:TypoScript');
 			foreach ($typoScriptNodes as $typoScriptNode) {
 				$mergedTypoScriptCode .= $typoScriptNode->getProperty('sourceCode') . chr(10);
