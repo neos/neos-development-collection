@@ -56,6 +56,7 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 			// TODO: find closest folder node from this node...
 		$closestFolderNode = $currentNode;
 		$typoScriptConfiguration = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
+
 			// Prevent Exception in case no TypoScript is available for the given nodes by loading the Wireframe TypoScript as default.
 		if ($typoScriptConfiguration === array()) {
 			$typoScriptConfiguration = $this->typoScriptService->readTypoScriptFromSpecificPath('resource://TYPO3.TYPO3/Private/WireframeMode/TypoScript/');

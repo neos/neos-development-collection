@@ -82,8 +82,6 @@ Now create the file `Resources/Private/TypoScripts/Root.ts2`, and add the follow
 
 ::
 
-	include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/All.ts2
-
 	page = TYPO3.TYPO3:Page
 	page.body.templatePath = 'resource://My.Site/Private/Templates/Page/Default.html'
 	page.body.sectionName = 'body'
