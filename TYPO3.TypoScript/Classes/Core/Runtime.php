@@ -76,7 +76,9 @@ class Runtime {
 	}
 
 	/**
-	 * @param array
+	 * Inject settings of this package
+	 *
+	 * @param array $settings The settings
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
@@ -170,7 +172,8 @@ class Runtime {
 	}
 
 	/**
-	 * Determine if the given TypoScriptPath is renderable, which means it exists and has an implementation.
+	 * Determine if the given TypoScript path is renderable, which means it exists
+	 * and has an implementation.
 	 *
 	 * @param string $typoScriptPath
 	 * @return boolean
@@ -328,6 +331,7 @@ class Runtime {
 
 	/**
 	 * Set options on the given TypoScript obect
+	 *
 	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $tsObject
 	 * @param string $typoScriptConfiguration
 	 */

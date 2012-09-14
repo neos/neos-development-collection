@@ -16,12 +16,13 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * The TypoScript Parser
  *
+ * @FLOW3\Scope("singleton")
  * @api
  */
 class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 
 	const SCAN_PATTERN_COMMENT = '/
-		^\s*                       # beginning of line; with numerous whitespace
+		^\s*                      # beginning of line; with numerous whitespace
 		(
 			\#                     # this can be a comment char
 			|\/\/                  # or two slashes
@@ -74,19 +75,19 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	/x';
 
 	/**
-	 * Split an object path like "foo.bar.baz.asdf" or "foo.prototype(TYPO3.TypoScript:Blah).bar.baz"
+	 * Split an object path like "foo.bar.baz.quux" or "foo.prototype(TYPO3.TypoScript:Something).bar.baz"
 	 * at the dots (but not the dots inside the prototype definition prototype(...))
 	 */
 	const SPLIT_PATTERN_OBJECTPATH = '/
-		\.                       # we split at dot characters...
-		(?!                      # which are not inside prototype(...). Thus, the dot does NOT match IF it is followed by:
-			[^(]*                # - any character except (
-			\)                    # - the character )
+		\.                        # we split at dot characters...
+		(?!                       # which are not inside prototype(...). Thus, the dot does NOT match IF it is followed by:
+			[^(]*                  # - any character except (
+			\)                     # - the character )
 		)
 	/x';
 
 	/**
-	 * Analyze an object path segment like foo" or "prototype(TYPO3.TypoScript:Blah)"
+	 * Analyze an object path segment like "foo" or "prototype(TYPO3.TypoScript:Something)"
 	 * and detect the latter
 	 */
 	const SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE = '/
@@ -99,8 +100,8 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	const SPLIT_PATTERN_DECLARATION = '/([a-zA-Z]+[a-zA-Z0-9]*)\s*:(.*)/';
 	const SPLIT_PATTERN_NAMESPACEDECLARATION = '/\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(\w(?:\w+|\\\\)+)/';
 	const SPLIT_PATTERN_OBJECTDEFINITION = '/
-		^\s*                              # beginning of line; with numerous whitespace
-		(?P<ObjectPath>                   # begin ObjectPath
+		^\s*                      # beginning of line; with numerous whitespace
+		(?P<ObjectPath>           # begin ObjectPath
 
 			\.?
 			(?:
@@ -116,16 +117,16 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 			)*
 		)
 		\s*
-		(?P<Operator>                     # the operators which are supported
+		(?P<Operator>             # the operators which are supported
 			=<|=|<<|<|>
 		)
 		\s*
-		(?P<Value>                        # the remaining line inside the value
+		(?P<Value>                # the remaining line inside the value
 			.*?
 		)
 		\s*
 		(?P<OpeningConfinement>
-			\{                    # optionally followed by an opening confinement
+			\{                     # optionally followed by an opening confinement
 		)?
 		\s*$
 	/x';
@@ -134,26 +135,25 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	const SPLIT_PATTERN_VALUELITERAL = '/^"((?:\\\\.|[^\\\\"])*)"|\'((?:\\\\.|[^\\\\\'])*)\'$/';
 	const SPLIT_PATTERN_VALUEMULTILINELITERAL = '/^(?P<DoubleQuoteChar>")(?P<DoubleQuoteValue>(?:\\\\.|[^\\\\"])*)$|(?P<SingleQuoteChar>\')(?P<SingleQuoteValue>(?:\\\\.|[^\\\\\'])*)$/';
 
-
 	const SCAN_PATTERN_VALUEOBJECTTYPE = '/
 		^\s*                      # beginning of line; with numerous whitespace
 		(?:                       # non-capturing submatch containing the namespace followed by ":" (optional)
 			(?P<namespace>
-				[a-zA-Z0-9.]+     # Namespace
+				[a-zA-Z0-9.]+       # namespace
 			)
-			:                     # : as delimiter
+			:                      # : as delimiter
 		)?
 		(?P<unqualifiedType>
-			[a-zA-Z0-9.]+         # the unqualified type
+			[a-zA-Z0-9.]+          # the unqualified type
 		)
 		\s*$
 	/x';
-
 
 	const SPLIT_PATTERN_INDEXANDPROCESSORCALL = '/(?P<Index>\d+)\.(?P<ProcessorSignature>[^(]+)\s*\((?P<Arguments>.*?)\)\s*$/';
 	const SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME = '/(?:(?P<NamespaceReference>[a-zA-Z]+[a-zA-Z0-9]*+)\s*:\s*)?(?P<ProcessorName>\w+)/';
 	const SPLIT_PATTERN_PROCESSORARGUMENTS = '/(?P<ArgumentName>[a-zA-Z0-9]+):\s*(?P<ArgumentValue>"(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|-?[0-9]+(\.\d+)?)/';
 
+	const DEFAULT_PROCESSOR_NAMESPACE = 'TYPO3.TypoScript';
 
 	/**
 	 * @FLOW3\Inject
@@ -199,6 +199,10 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 		'default' => ''
 	);
 
+	/**
+	 * An optional context path which is used as a prefix for inclusion of further typoscript files
+	 * @var string
+	 */
 	protected $contextPathAndFilename = NULL;
 
 	/**
@@ -206,11 +210,16 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * as the result.
 	 *
 	 * @param string $sourceCode The TypoScript source code to parse
-	 * @return \TYPO3\TypoScript\ObjectTree A TypoScript object tree, generated from the source code
+	 * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further TypoScript files
+	 * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
+	 * @return array A TypoScript object tree, generated from the source code
+	 * @throws \TYPO3\TypoScript\Exception
 	 * @api
 	 */
-	public function parse($sourceCode, $contextPathAndFilename = NULL, $objectTreeUntilNow = array()) {
-		if (!is_string($sourceCode)) throw new \TYPO3\TypoScript\Exception('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
+	public function parse($sourceCode, $contextPathAndFilename = NULL, array $objectTreeUntilNow = array()) {
+		if (!is_string($sourceCode)) {
+			throw new \TYPO3\TypoScript\Exception('Cannot parse TypoScript - $sourceCode must be of type string!', 1180203775);
+		}
 		$this->initialize();
 		$this->objectTree = $objectTreeUntilNow;
 		$this->contextPathAndFilename = $contextPathAndFilename;
@@ -229,7 +238,9 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * @api
 	 */
 	public function setDefaultNamespace($objectNamePrefix) {
-		if (!is_string($objectNamePrefix)) throw new \TYPO3\TypoScript\Exception('The object name prefix for the default namespace must be of type string!', 1180600696);
+		if (!is_string($objectNamePrefix)) {
+			throw new \TYPO3\TypoScript\Exception('The object name prefix for the default namespace must be of type string!', 1180600696);
+		}
 		$this->namespaces['default'] = $objectNamePrefix;
 	}
 
@@ -301,7 +312,9 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 					$this->currentBlockCommentState = TRUE;
 					break;
 				case '*/' :
-					if ($this->currentBlockCommentState !== TRUE) throw new \TYPO3\TypoScript\Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
+					if ($this->currentBlockCommentState !== TRUE) {
+						throw new \TYPO3\TypoScript\Exception('Unexpected closing block comment without matching opening block comment.', 1180615119);
+					}
 					$this->currentBlockCommentState = FALSE;
 					$this->parseTypoScriptLine(substr($typoScriptLine, ($matches[1][1] + 2)));
 					break;
@@ -327,7 +340,9 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 			$result = trim(trim(trim($typoScriptLine), '{'));
 			array_push($this->currentObjectPathStack, $this->getCurrentObjectPathPrefix() . $result);
 		} else {
-			if (count($this->currentObjectPathStack) < 1) throw new \TYPO3\TypoScript\Exception('Unexpected closing confinement without matching opening confinement. Check the number of your curly braces.', 1181575973);
+			if (count($this->currentObjectPathStack) < 1) {
+				throw new \TYPO3\TypoScript\Exception('Unexpected closing confinement without matching opening confinement. Check the number of your curly braces.', 1181575973);
+			}
 			array_pop($this->currentObjectPathStack);
 		}
 	}
@@ -340,7 +355,9 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 */
 	protected function parseDeclaration($typoScriptLine) {
 		$result = preg_match(self::SPLIT_PATTERN_DECLARATION, $typoScriptLine, $matches);
-		if ($result !== 1 || count($matches) != 3) throw new \TYPO3\TypoScript\Exception('Invalid declaration "' . $typoScriptLine . '"', 1180544656);
+		if ($result !== 1 || count($matches) != 3) {
+			throw new \TYPO3\TypoScript\Exception('Invalid declaration "' . $typoScriptLine . '"', 1180544656);
+		}
 
 		switch ($matches[1]) {
 			case 'namespace' :
@@ -360,7 +377,9 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 */
 	protected function parseObjectDefinition($typoScriptLine) {
 		$result = preg_match(self::SPLIT_PATTERN_OBJECTDEFINITION, $typoScriptLine, $matches);
-		if ($result !== 1) throw new \TYPO3\TypoScript\Exception('Invalid object definition "' . $typoScriptLine . '"', 1180548488);
+		if ($result !== 1) {
+			throw new \TYPO3\TypoScript\Exception('Invalid object definition "' . $typoScriptLine . '"', 1180548488);
+		}
 
 		$objectPath = $this->getCurrentObjectPathPrefix() . $matches['ObjectPath'];
 		switch ($matches['Operator']) {
@@ -394,10 +413,8 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * @return void
 	 */
 	protected function parseValueAssignment($objectPath, $value) {
-		$objectPathArray = $this->getParsedObjectPath($objectPath);
-		$processedValue = $this->getProcessedValue($objectPathArray, $value);
-
-		$this->setValueInObjectTree($objectPathArray, $processedValue);
+		$processedValue = $this->getProcessedValue($value);
+		$this->setValueInObjectTree($this->getParsedObjectPath($objectPath), $processedValue);
 	}
 
 	/**
@@ -472,14 +489,13 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 				$typoScriptObject = &$this->getValueFromObjectTree($objectPathArray);
 			}
 
-
 			// TODO: re-implement some checking logic
 
 			$processorArguments = array();
 			if (preg_match_all(self::SPLIT_PATTERN_PROCESSORARGUMENTS, $matches['Arguments'], $matchedArguments) > 0) {
 				foreach ($matchedArguments['ArgumentValue'] as $argumentIndex => $matchedArgumentValue) {
 					$matchedArgumentName = $matchedArguments['ArgumentName'][$argumentIndex];
-					$processorArguments[$matchedArgumentName] = $this->getProcessedValue($objectPropertyPathArray, $matchedArgumentValue);
+					$processorArguments[$matchedArgumentName] = $this->getProcessedValue($matchedArgumentValue);
 				}
 			}
 
@@ -495,12 +511,14 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	/**
 	 * Parses a namespace declaration and stores the result in the namespace registry.
 	 *
-	 * @param string $namespaceDeclaration The namespace declaration, for example "cms = TYPO3\TYPO3\TypoScript"
+	 * @param string $namespaceDeclaration The namespace declaration, for example "phoenix = TYPO3\Phoenix\TypoScript"
 	 * @return void
 	 */
 	protected function parseNamespaceDeclaration($namespaceDeclaration) {
 		$result = preg_match(self::SPLIT_PATTERN_NAMESPACEDECLARATION, $namespaceDeclaration, $matches);
-		if ($result !== 1 || count($matches) !== 3) throw new \TYPO3\TypoScript\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
+		if ($result !== 1 || count($matches) !== 3) {
+			throw new \TYPO3\TypoScript\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
+		}
 
 		$namespaceIdentifier = $matches[1];
 		$objectNamePrefix = $matches[2];
@@ -511,13 +529,13 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * Parse an include file. Currently, we start a new parser object; but we could as well re-use
 	 * the given one.
 	 *
-	 * @param string $include The include, for example " FooBar" or " resource://...."
+	 * @param string $include The include value, for example " FooBar" or " resource://...."
+	 * @return void
 	 */
 	protected function parseInclude($include) {
 		$include = trim($include);
 		$parser = new Parser();
 		if (strpos($include, 'resource://') === 0) {
-			// String starts with resource path, so we load the file directly
 			$this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree);
 		} elseif ($this->contextPathAndFilename !== NULL) {
 			$include = dirname($this->contextPathAndFilename) . '/' . $include;
@@ -531,8 +549,9 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * Parses the given object-and-method-name string and then returns a new processor invocation
 	 * object calling the specified processor with the given arguments.
 	 *
-	 * @param string $processorSignature Either just a method name (then the default namespace is used) or a full object/method name as in "TYPO3\Package\Object->methodName"
-	 * @param array $processorArguments An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
+	 * @param string $processorSignature Either just a method name (then the default namespace is used) or a full object/method name as in "Acme\Foo\Object->methodName"
+	 * @throws \TYPO3\TypoScript\Exception
+	 * @internal param array $processorArguments An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
 	 * @return string the processor object name
 	 */
 	protected function getProcessorObjectName($processorSignature) {
@@ -590,11 +609,10 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * Parses the given value (which may be a literal, variable or object type) and returns
 	 * the evaluated result, including variables replaced by their actual value.
 	 *
-	 * @param array $objectPathArray The object path specifying the location of the value in the object tree
 	 * @param string $unparsedValue The unparsed value
 	 * @return mixed The processed value
 	 */
-	protected function getProcessedValue($objectPathArray, $unparsedValue) {
+	protected function getProcessedValue($unparsedValue) {
 		if (preg_match(self::SPLIT_PATTERN_VALUENUMBER, $unparsedValue, $matches) === 1) {
 			$processedValue = intval($unparsedValue);
 		} elseif (preg_match(self::SPLIT_PATTERN_VALUEFLOATNUMBER, $unparsedValue, $matches) === 1) {
@@ -617,11 +635,10 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 				}
 			}
 		} elseif (preg_match(self::SCAN_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
-			$typoScriptObjectType = $matches[0];
 			if (!empty($matches['namespace'])) {
 				$namespace = $matches['namespace'];
 			} else {
-				$namespace = 'TYPO3.TypoScript'; // Default Namespace
+				$namespace = self::DEFAULT_PROCESSOR_NAMESPACE;
 			}
 			$unqualifiedType = $matches['unqualifiedType'];
 			$processedValue = array(
@@ -639,7 +656,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * @param array $objectPathArray The object path, specifying the node / property to set
 	 * @param mixed $value The value to assign
 	 * @param array $objectTree The current (sub-) tree, used internally - don't specify!
-	 * @return void
+	 * @return array The modified object tree
 	 */
 	protected function setValueInObjectTree(array $objectPathArray, $value, $objectTree = NULL) {
 		if ($objectTree === NULL) {

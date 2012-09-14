@@ -48,7 +48,7 @@ abstract class AbstractTsObject {
 	protected $internalProcessors = array();
 
 	/**
-	 * Constructor.
+	 * Constructor
 	 *
 	 * @param \TYPO3\TypoScript\Core\Runtime $tsRuntime
 	 * @param string $path

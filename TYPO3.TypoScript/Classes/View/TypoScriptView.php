@@ -44,7 +44,7 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 	 *
 	 * @var string
 	 */
-	protected $typoScriptPathPattern = 'resource://@package/Private/TypoScript/';
+	protected $typoScriptPathPattern = 'resource://@package/Private/TypoScripts/';
 
 	/**
 	 * The parsed TypoScript array in its internal representation
@@ -147,7 +147,6 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 		foreach (\TYPO3\FLOW3\Utility\Files::readDirectoryRecursively($typoScriptPathPattern, '.ts2') as $filePath) {
 			$mergedTypoScriptCode .= PHP_EOL . file_get_contents($filePath) . PHP_EOL;
 		}
-		$this->typoScriptParser->setDefaultNamespace('TYPO3\TYPO3\TypoScript');
 		$this->parsedTypoScript = $this->typoScriptParser->parse($mergedTypoScriptCode);
 	}
 

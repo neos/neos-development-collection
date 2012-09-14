@@ -23,10 +23,13 @@ interface ParserInterface {
 	 * as the result.
 	 *
 	 * @param string $sourceCode The TypoScript source code to parse
-	 * @return \TYPO3\TypoScript\ObjectTree A TypoScript object tree, generated from the source code
+	 * @param string $contextPathAndFilename An optional path and filename to use as a prefix for inclusion of further TypoScript files
+	 * @param array $objectTreeUntilNow Used internally for keeping track of the built object tree
+	 * @return array A TypoScript object tree, generated from the source code
+	 * @throws \TYPO3\TypoScript\Exception
 	 * @api
 	 */
-	public function parse($sourceCode, $contextPathAndFilename = NULL);
+	public function parse($sourceCode, $contextPathAndFilename = NULL, array $objectTreeUntilNow = array());
 
 	/**
 	 * Sets the default namespace to the given object name prefix
