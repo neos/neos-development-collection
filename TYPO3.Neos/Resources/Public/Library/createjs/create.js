@@ -1,4 +1,4 @@
-//     Create.js {{ VERSION }} - On-site web editing interface
+//     Create.js 1.0.0alpha3 - On-site web editing interface
 //     (c) 2011-2012 Henri Bergius, IKS Consortium
 //     Create may be freely distributed under the MIT license.
 //     For all details and documentation:
@@ -41,43 +41,45 @@
           widget: 'halloWidget'
         }
       },
+      // Widgets to use for managing collections.
       collectionWidgets: {
         default: 'midgardCollectionAdd'
       },
+      // URL callback used with Backbone.sync. Will be passed to the
+      // Storage widget.
       url: function () {},
+      // Prefix used for localStorage.
       storagePrefix: 'node',
+      // Workflow configuration. URL callback is used for retrieving
+      // list of workflow actions that can be initiated for an item.
       workflows: {
         url: null
       },
+      // Notifications configuration.
       notifications: {},
+      // VIE instance used with Create.js. If no VIE instance is passed,
+      // Create.js will create its own instance.
       vie: null,
+      // URL for the Apache Stanbol service used for annotations, and tag
+      // and image suggestions.
       stanbolUrl: null,
+      // URL for the DBpedia instance used for finding more information
+      // about annotations and tags.
       dbPediaUrl: null,
-      tags: false
+      // Whether to enable the Tags widget.
+      tags: false,
+      // Selector for element where Create.js will place its buttons, like
+      // Save and Edit/Cancel.
+      buttonContainer: '.create-ui-toolbar-statustoolarea .create-ui-statustools',
+      // Templates used for UI elements of the Create widget
+      templates: {
+        buttonContent: '<%= label %> <i class="icon-<%= icon %>"></i>',
+        button: '<li id="<%= id %>"><a class="create-ui-btn"><%= buttonContent %></a></li>'
+      }
     },
 
     _create: function () {
-      if (this.options.vie) {
-        this.vie = this.options.vie;
-      } else {
-        this.vie = new VIE();
-
-        this.vie.use(new this.vie.RdfaService());
-
-        if (this.options.stanbolUrl) {
-          this.vie.use(new this.vie.StanbolService({
-            proxyDisabled: true,
-            url: this.options.stanbolUrl
-          }));
-        }
-
-        if (this.options.dbPediaUrl) {
-          this.vie.use(new this.vie.DBPediaService({
-            proxyDisabled: true,
-            url: this.options.dbPediaUrl
-          }));
-        }
-      }
+      this.vie = this._setupVIE(this.options);
 
       var widget = this;
       window.setTimeout(function () {
@@ -98,18 +100,78 @@
       }
     },
 
+    destroy: function () {
+      // Clean up on widget destruction
+      this.element.midgardStorage('destroy');
+      this.element.midgardToolbar('destroy');
+
+      jQuery('[about]', this.element).each(function () {
+        jQuery(this).midgardEditable('destroy');
+      });
+
+      // Conditional widgets
+      if (this.element.midgardWorkflows) {
+        this.element.midgardWorkflows('destroy');
+      }
+      if (this.element.midgardNotifications) {
+        this.element.midgardNotifications('destroy');
+      }
+      if (this.options.tags) {
+        this.element.midgardTags('destroy');
+      }
+      // TODO: use _destroy in jQuery UI 1.9 and above
+      jQuery.Widget.prototype.destroy.call(this);
+    },
+
+    _setupVIE: function (options) {
+      var vie;
+      if (options.vie) {
+        vie = options.vie;
+      } else {
+        // Set up our own VIE instance
+        var vie = new VIE();
+      }
+
+      if (!vie.hasService('rdfa')) {
+        vie.use(new vie.RdfaService());
+      }
+
+      if (!vie.hasService('stanbol') && options.stanbolUrl) {
+        vie.use(new vie.StanbolService({
+          proxyDisabled: true,
+          url: options.stanbolUrl
+        }));
+      }
+
+      if (!vie.hasService('dbpedia') && options.dbPediaUrl) {
+        vie.use(new vie.DBPediaService({
+          proxyDisabled: true,
+          url: options.dbPediaUrl
+        }));
+      }
+
+      return vie;
+    },
+
     _prepareStorage: function () {
       this.element.midgardStorage({
         vie: this.vie,
         url: this.options.url
       });
 
+      var widget = this;
       this.element.bind('midgardstoragesave', function () {
-        jQuery('#midgardcreate-save a').html('Saving <i class="icon-upload"></i>');
+        jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
+          label: 'Saving',
+          icon: 'upload'
+        }));
       });
 
       this.element.bind('midgardstoragesaved midgardstorageerror', function () {
-        jQuery('#midgardcreate-save a').html('Save <i class="icon-ok"></i>');
+        jQuery('#midgardcreate-save a').html(_.template(widget.options.templates.buttonContent, {
+          label: 'Save',
+          icon: 'ok'
+        }));
       });
     },
 
@@ -157,7 +219,7 @@
     },
 
     _checkSession: function () {
-      if (!Modernizr.sessionstorage) {
+      if (!window.sessionStorage) {
         return;
       }
 
@@ -180,8 +242,13 @@
       if (this.options.saveButton) {
         return this.options.saveButton;
       }
-
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-save"><a class="create-ui-btn">Save <i class="icon-ok"></i></a></li>'));
+      jQuery(this.options.buttonContainer, this.element).append(jQuery(_.template(this.options.templates.button, {
+        id: 'midgardcreate-save',
+        buttonContent: _.template(this.options.templates.buttonContent, {
+          label: 'Save',
+          icon: 'ok'
+        })
+      })));
       this.options.saveButton = jQuery('#midgardcreate-save', this.element);
       this.options.saveButton.hide();
       return this.options.saveButton;
@@ -189,7 +256,10 @@
 
     _editButton: function () {
       var widget = this;
-      jQuery('.create-ui-toolbar-statustoolarea .create-ui-statustools', this.element).append(jQuery('<li id="midgardcreate-edit"></li>'));
+      jQuery(this.options.buttonContainer, this.element).append(jQuery(_.template(this.options.templates.button, {
+        id: 'midgardcreate-edit',
+        buttonContent: ''
+      })));
       jQuery('#midgardcreate-edit', this.element).bind('click', function () {
         if (widget.options.state === 'edit') {
           widget.setState('browse');
@@ -201,10 +271,16 @@
 
     _setEditButtonState: function (state) {
       var buttonContents = {
-        edit: '<a class="create-ui-btn">Cancel <i class="icon-remove"></i></a>',
-        browse: '<a class="create-ui-btn">Edit <i class="icon-edit"></i></a>'
+        edit: _.template(this.options.templates.buttonContent, {
+          label: 'Cancel',
+          icon: 'remove'
+        }),
+        browse: _.template(this.options.templates.buttonContent, {
+          label: 'Edit',
+          icon: 'edit'
+        })
       };
-      var editButton = jQuery('#midgardcreate-edit', this.element);
+      var editButton = jQuery('#midgardcreate-edit a', this.element);
       if (!editButton) {
         return;
       }
@@ -217,7 +293,7 @@
     _enableToolbar: function () {
       var widget = this;
       this.element.bind('midgardtoolbarstatechange', function (event, options) {
-        if (Modernizr.sessionstorage) {
+        if (window.sessionStorage) {
           sessionStorage.setItem(widget.options.storagePrefix + 'Midgard.create.toolbar', options.display);
         }
         widget._setOption('toolbar', options.display);
@@ -326,7 +402,10 @@
       view: null,
       disabled: false,
       vie: null,
-      editableOptions: null
+      editableOptions: null,
+      templates: {
+        button: '<button class="btn"><i class="icon-<%= icon %>"></i> <%= label %></button>'
+      }
     },
 
     _create: function () {
@@ -422,7 +501,10 @@
     enable: function () {
       var widget = this;
 
-      var addButton = jQuery('<button class="btn"><i class="icon-plus"></i> Add</button>').button();
+      var addButton = jQuery(_.template(this.options.templates.button, {
+        icon: 'plus',
+        label: 'Add'
+      })).button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
         widget.addItem(addButton);
@@ -514,7 +596,10 @@
 
     prepareButton: function (index) {
       var widget = this;
-      var addButton = jQuery('<button class="btn"><i class="icon-plus"></i></button>').button();
+      var addButton = jQuery(_.template(this.options.templates.button, {
+        icon: 'plus',
+        label: ''
+      })).button();
       addButton.addClass('midgard-create-add');
       addButton.click(function () {
         widget.addItem(addButton, {
@@ -1756,7 +1841,19 @@
       saveReferencedNew: false,
       saveReferencedChanged: false,
       // Namespace used for events from midgardEditable-derived widget
-      editableNs: 'midgardeditable'
+      editableNs: 'midgardeditable',
+      // CSS selector for the Edit button, leave to null to not bind
+      // notifications to any element
+      editSelector: '#midgardcreate-edit a',
+      // CSS selector for the Save button
+      saveSelector: '#midgardcreate-save',
+      // Templates used for dialog output
+      templates: {
+        localModifications: '<%= number %> items on this page have local modifications',
+        saveSuccess: 'Item "<%= label %>" saved successfully',
+        saveSuccessMultiple: '<%= number %> items saved successfully',
+        saveError: 'Error occurred while saving<br /><%= error %>'
+      }
     },
 
     _create: function () {
@@ -1775,10 +1872,10 @@
         model.toJSON = model.toJSONLD;
       });
 
-      jQuery('#midgardcreate-save').click(function () {
-        widget._saveRemote({
+      jQuery(widget.options.saveSelector).click(function () {
+        widget.saveRemote({
           success: function () {
-            jQuery('#midgardcreate-save').button({
+            jQuery(widget.options.saveSelector).button({
               disabled: true
             });
           },
@@ -1805,9 +1902,9 @@
           return;
         }
 
-        widget._saveRemote({
+        widget.saveRemote({
           success: function () {
-            jQuery('#midgardcreate-save').button({
+            jQuery(widget.options.saveSelector).button({
               disabled: true
             });
           },
@@ -1843,7 +1940,7 @@
 
     _bindEditables: function () {
       var widget = this;
-      var restorables = [];
+      this.restorables = [];
       var restorer;
 
       widget.element.bind(widget.options.editableNs + 'changed', function (event, options) {
@@ -1851,17 +1948,17 @@
           widget.changedModels.push(options.instance);
         }
         widget._saveLocal(options.instance);
-        jQuery('#midgardcreate-save').button({disabled: false});
+        jQuery(widget.options.saveSelector).button({disabled: false});
       });
 
       widget.element.bind(widget.options.editableNs + 'disable', function (event, options) {
         widget._restoreLocal(options.instance);
-        jQuery('#midgardcreate-save').hide();
+        jQuery(widget.options.saveSelector).hide();
       });
 
       widget.element.bind(widget.options.editableNs + 'enable', function (event, options) {
-        jQuery('#midgardcreate-save').button({disabled: true});
-        jQuery('#midgardcreate-save').show();
+        jQuery(widget.options.saveSelector).button({disabled: true});
+        jQuery(widget.options.saveSelector).show();
 
         if (!options.instance._originalAttributes) {
           options.instance._originalAttributes = _.clone(options.instance.attributes);
@@ -1869,7 +1966,7 @@
 
         if (!options.instance.isNew() && widget._checkLocal(options.instance)) {
           // We have locally-stored modifications, user needs to be asked
-          restorables.push(options.instance);
+          widget.restorables.push(options.instance);
         }
 
         /*_.each(options.instance.attributes, function (attributeValue, property) {
@@ -1880,62 +1977,71 @@
       });
 
       widget.element.bind('midgardcreatestatechange', function (event, options) {
-        if (options.state === 'browse' || restorables.length === 0) {
-          restorables = [];
+        if (options.state === 'browse' || widget.restorables.length === 0) {
+          widget.restorables = [];
           if (restorer) {
             restorer.close();
           }
           return;
         }
-        
-        restorer = jQuery('body').midgardNotifications('create', {
-          bindTo: '#midgardcreate-edit a',
-          gravity: 'TR',
-          body: restorables.length + " items on this page have local modifications",
-          timeout: 0,
-          actions: [
-            {
-              name: 'restore',
-              label: 'Restore',
-              cb: function() {
-                _.each(restorables, function (instance) {
-                  widget._readLocal(instance);
-                });
-                restorables = [];
-                restorer = null;
-              },
-              className: 'create-ui-btn'
-            },
-            {
-              name: 'ignore',
-              label: 'Ignore',
-              cb: function(event, notification) {
-                if (widget.options.removeLocalstorageOnIgnore) {
-                  _.each(restorables, function (instance) {
-                    widget._removeLocal(instance);
-                  });
-                }
-                notification.close();
-                restorables = [];
-                restorer = null;
-              },
-              className: 'create-ui-btn'
-            }
-          ]
-        });
+        restorer = widget.checkRestore();
       });
 
       widget.element.bind('midgardstorageloaded', function (event, options) {
         if (_.indexOf(widget.changedModels, options.instance) === -1) {
           widget.changedModels.push(options.instance);
         }
-        jQuery('#midgardcreate-save').button({
+        jQuery(widget.options.saveSelector).button({
           disabled: false
         });
       });
     },
 
-    _saveRemote: function (options) {
+    checkRestore: function () {
+      var widget = this;
+      if (widget.restorables.length === 0) {
+        return;
+      }
+
+      var restorer = jQuery('body').midgardNotifications('create', {
+        bindTo: widget.options.editSelector,
+        gravity: 'TR',
+        body: _.template(widget.options.templates.localModifications, {
+          number: widget.restorables.length
+        }),
+        timeout: 0,
+        actions: [
+          {
+            name: 'restore',
+            label: 'Restore',
+            cb: function() {
+              _.each(widget.restorables, function (instance) {
+                widget._readLocal(instance);
+              });
+              widget.restorables = [];
+            },
+            className: 'create-ui-btn'
+          },
+          {
+            name: 'ignore',
+            label: 'Ignore',
+            cb: function(event, notification) {
+              if (widget.options.removeLocalstorageOnIgnore) {
+                _.each(widget.restorables, function (instance) {
+                  widget._removeLocal(instance);
+                });
+              }
+              notification.close();
+              widget.restorables = [];
+            },
+            className: 'create-ui-btn'
+          }
+        ]
+      });
+      return restorer;
+    },
+
+    saveRemote: function (options) {
       var widget = this;
       if (widget.changedModels.length === 0) {
         return;
@@ -1947,10 +2053,13 @@
 
       var needed = widget.changedModels.length;
       if (needed > 1) {
-        notification_msg = needed + ' objects saved successfully';
+        notification_msg = _.template(widget.options.templates.saveSuccessMultiple, {
+          number: needed
+        });
       } else {
-        subject = widget.changedModels[0].getSubjectUri();
-        notification_msg = 'Object with subject ' + subject + ' saved successfully';
+        notification_msg = _.template(widget.options.templates.saveSuccess, {
+          label: widget.changedModels[0].getSubjectUri()
+        });
       }
 
       widget.disableSave();
@@ -1999,14 +2108,11 @@
             }
           },
           error: function (m, err) {
-            notification_msg = 'Error occurred while saving';
-            if (err.responseText) {
-              notification_msg = notification_msg + ':<br />' + err.responseText;
-            }
-
             options.error();
             jQuery('body').midgardNotifications('create', {
-              body: notification_msg,
+              body: _.template(widget.options.templates.saveError, {
+                error: err.responseText || ''
+              }),
               timeout: 0
             });
 
@@ -2157,10 +2263,16 @@
   jQuery.widget('Midgard.midgardWorkflows', {
     options: {
       url: function (model) {},
+      templates: {
+        button: '<button class="create-ui-btn" id="<%= id %>"><%= label %></button>'
+      },
       renderers: {
         button: function (model, workflow, action_cb, final_cb) {
           button_id = 'midgardcreate-workflow_' + workflow.get('name');
-          html = jQuery('<button class="create-ui-btn" id="' + button_id + '">' + workflow.get('label') + '</button>').button();
+          html = jQuery(_.template(this.options.templates.button, {
+            id: button_id,
+            label: workflow.get('label')
+          })).button();
 
           html.bind('click', function (evt) {
             action_cb(model, workflow, final_cb);
@@ -2346,7 +2458,7 @@
       renderer = this.getRenderer(workflow.get("type"));
       action_type_cb = this.getActionType(workflow.get("action").type);
 
-      return renderer(model, workflow, action_type_cb, function (err, m) {
+      return renderer.call(this, model, workflow, action_type_cb, function (err, m) {
         delete widget.workflows[model.cid];
         widget._last_instance = null;
         if (workflow.get('action').type !== 'backbone_destroy') {
