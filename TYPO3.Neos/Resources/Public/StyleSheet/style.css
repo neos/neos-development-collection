@@ -7380,6 +7380,9 @@ ul.t3-launcher-horizontal li .text {
   padding-bottom: 7px;
   width: 250px;
 }
+.dynatree-container #t3-dd-pagetree-con {
+  position: relative;
+}
 .dynatree-container #t3-dd-pagetree {
   height: 270px;
   padding-bottom: 7px;
