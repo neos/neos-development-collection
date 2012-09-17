@@ -7662,8 +7662,8 @@ ul.t3-launcher-horizontal li .text {
 }
 .dynatree-container #t3-dd-pagetree {
   height: 270px;
-  padding-bottom: 7px;
-  width: 250px;
+  padding-bottom: 8px;
+  width: 260px;
 }
 .dynatree-container #t3-dd-pagetree span.dynatree-drop-target {
   margin: 3px 0;
@@ -7681,7 +7681,7 @@ ul.t3-launcher-horizontal li .text {
   border: none;
   height: 100%;
   margin: 0;
-  padding: 3px;
+  padding: 3px 3px 3px 10px;
   overflow: auto;
   white-space: nowrap;
   font-family: inherit;
@@ -7812,8 +7812,8 @@ ul.t3-launcher-horizontal li .text {
   background-color: #EEEEEE;
   border: 1px dotted #444444;
   height: 25px;
-  margin: 10px 10px 5px;
-  width: 240px;
+  padding-right: 10px;
+  width: 248px;
 }
 .dynatree-container .page-action-toolbar {
   cursor: pointer;
@@ -7827,20 +7827,6 @@ ul.t3-launcher-horizontal li .text {
 }
 .dynatree-container .t3-action-deletepage {
   background: url(../Images/Icons/Black/trash_icon-16.png) 3px 50% no-repeat;
-}
-.dynatree-container .t3-dd-deletionzone {
-  background: #eeeeee url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
-  cursor: default;
-  display: none;
-  border: 1px dotted #444444;
-  margin: 10px 10px 5px;
-  padding: 6px 5px 5px 25px;
-}
-.dynatree-container .t3-dd-deletionzone.t3-dd-deletionzone-over {
-  background: #dddddd url(../Images/Icons/Black/trash_icon-16.png) 5px 50% no-repeat;
-}
-.dynatree-container .t3-dd-deletionzone.t3-dd-deletionzone-active {
-  background: #eeeeee url(../Images/ajax-preloader-dddddd.gif) 5px 50% no-repeat;
 }
 
 /*Pagetree end*/
