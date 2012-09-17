@@ -6,7 +6,7 @@ namespace TYPO3\TYPO3CR\Domain\Model;
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License, either version 3   *
- *  of the License, or (at your option) any later version.                *
+ * of the License, or (at your option) any later version.                 *
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
@@ -28,7 +28,7 @@ class ContentType {
 	protected $name;
 
 	/**
-	 * Configuration for this content type, can be an arbitarily nested array.
+	 * Configuration for this content type, can be an arbitrarily nested array.
 	 *
 	 * @var array
 	 */
