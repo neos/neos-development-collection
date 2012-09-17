@@ -98,7 +98,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 
 	const SPLIT_PATTERN_COMMENTTYPE = '/.*(#|\/\/|\/\*|\*\/).*/';
 	const SPLIT_PATTERN_DECLARATION = '/([a-zA-Z]+[a-zA-Z0-9]*)\s*:(.*)/';
-	const SPLIT_PATTERN_NAMESPACEDECLARATION = '/\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(\w(?:\w+|\\\\)+)/';
+	const SPLIT_PATTERN_NAMESPACEDECLARATION = '/\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*([a-zA-Z0-9\.]+)\s*$/';
 	const SPLIT_PATTERN_OBJECTDEFINITION = '/
 		^\s*                      # beginning of line; with numerous whitespace
 		(?P<ObjectPath>           # begin ObjectPath
@@ -139,7 +139,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 		^\s*                      # beginning of line; with numerous whitespace
 		(?:                       # non-capturing submatch containing the namespace followed by ":" (optional)
 			(?P<namespace>
-				[a-zA-Z0-9.]+       # namespace
+				[a-zA-Z0-9.]+       # namespace alias (cms, …) or fully qualified namespace (TYPO3.Phoenix, …)
 			)
 			:                      # : as delimiter
 		)?
@@ -150,10 +150,8 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	/x';
 
 	const SPLIT_PATTERN_INDEXANDPROCESSORCALL = '/(?P<Index>\d+)\.(?P<ProcessorSignature>[^(]+)\s*\((?P<Arguments>.*?)\)\s*$/';
-	const SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME = '/(?:(?P<NamespaceReference>[a-zA-Z]+[a-zA-Z0-9]*+)\s*:\s*)?(?P<ProcessorName>\w+)/';
+	const SPLIT_PATTERN_PHPNAMESPACEANDPROCESSORNAME = '/(?:(?P<PhpNamespace>[a-zA-Z]+[a-zA-Z0-9\\\\]*+)\s*:\s*)?(?P<ProcessorName>\w+)/';
 	const SPLIT_PATTERN_PROCESSORARGUMENTS = '/(?P<ArgumentName>[a-zA-Z0-9]+):\s*(?P<ArgumentValue>"(?:\\\\.|[^\\\\"])*"|\'(?:\\\\.|[^\\\\\'])*\'|-?[0-9]+(\.\d+)?)/';
-
-	const DEFAULT_PROCESSOR_NAMESPACE = 'TYPO3.TypoScript';
 
 	/**
 	 * @FLOW3\Inject
@@ -192,18 +190,31 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	protected $currentBlockCommentState = FALSE;
 
 	/**
-	 * Namespace identifiers and their object name prefix
-	 * @var array
-	 */
-	protected $namespaces = array(
-		'default' => ''
-	);
-
-	/**
-	 * An optional context path which is used as a prefix for inclusion of further typoscript files
+	 * An optional context path which is used as a prefix for inclusion of further
+	 * TypoScript files
 	 * @var string
 	 */
 	protected $contextPathAndFilename = NULL;
+
+	/**
+	 * Namespaces used for resolution of TypoScript object names. These namespaces
+	 * are a mapping from a user defined key (alias) to a package key (the namespace).
+	 * By convention, the namespace should be a package key, but other strings would
+	 * be possible, too. Note that, in order to resolve an object type, a prototype
+	 * with that namespace and name must be defined elsewhere.
+	 *
+	 * These namespaces are _not_ used for resolution of processor class names.
+	 * @var array
+	 */
+	protected $objectTypeNamespaces = array(
+		'default' => 'TYPO3.TypoScript'
+	);
+
+	/**
+	 * Default class namespace used for processors. This fallback is currently not
+	 * configurable.
+	 */
+	const DEFAULT_PROCESSOR_NAMESPACE = 'TYPO3\TypoScript\Processors';
 
 	/**
 	 * Parses the given TypoScript source code and returns an object tree
@@ -231,17 +242,32 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	}
 
 	/**
-	 * Sets the default namespace to the given object name prefix
+	 * Sets the given alias to the specified namespace.
 	 *
-	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing \
+	 * The namespaces defined through this setter or through a "namespace" declaration
+	 * in one of the TypoScripts are used to resolve a fully qualified TypoScript
+	 * object name while parsing TypoScript code.
+	 *
+	 * The alias is the handle by wich the namespace can be referred to.
+	 * The namespace is, by convention, a package key which must correspond to a
+	 * namespace used in the prototype definitions for TypoScript object types.
+	 *
+	 * The special alias "default" is used as a fallback for resolution of unqualified
+	 * TypoScript object types.
+	 *
+	 * @param string $alias An alias for the given namespace, for example "phoenix"
+	 * @param string $namespace The namespace, for example "TYPO3.Phoenix"
 	 * @return void
 	 * @api
 	 */
-	public function setDefaultNamespace($objectNamePrefix) {
-		if (!is_string($objectNamePrefix)) {
-			throw new \TYPO3\TypoScript\Exception('The object name prefix for the default namespace must be of type string!', 1180600696);
+	public function setObjectTypeNamespace($alias, $namespace) {
+		if (!is_string($alias)) {
+			throw new \TYPO3\TypoScript\Exception('The alias of a namespace must be valid string!', 1180600696);
 		}
-		$this->namespaces['default'] = $objectNamePrefix;
+		if (!is_string($namespace)) {
+			throw new \TYPO3\TypoScript\Exception('The namespace must be of type string!', 1180600697);
+		}
+		$this->objectTypeNamespaces[$alias] = $namespace;
 	}
 
 	/**
@@ -511,7 +537,7 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	/**
 	 * Parses a namespace declaration and stores the result in the namespace registry.
 	 *
-	 * @param string $namespaceDeclaration The namespace declaration, for example "phoenix = TYPO3\Phoenix\TypoScript"
+	 * @param string $namespaceDeclaration The namespace declaration, for example "phoenix = TYPO3.Phoenix"
 	 * @return void
 	 */
 	protected function parseNamespaceDeclaration($namespaceDeclaration) {
@@ -520,9 +546,9 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 			throw new \TYPO3\TypoScript\Exception('Invalid namespace declaration "' . $namespaceDeclaration . '"', 1180547190);
 		}
 
-		$namespaceIdentifier = $matches[1];
-		$objectNamePrefix = $matches[2];
-		$this->namespaces[$namespaceIdentifier] = $objectNamePrefix;
+		$namespaceAlias = $matches[1];
+		$namespacePackageKey = $matches[2];
+		$this->objectTypeNamespaces[$namespaceAlias] = $namespacePackageKey;
 	}
 
 	/**
@@ -549,22 +575,19 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 * Parses the given object-and-method-name string and then returns a new processor invocation
 	 * object calling the specified processor with the given arguments.
 	 *
-	 * @param string $processorSignature Either just a method name (then the default namespace is used) or a full object/method name as in "Acme\Foo\Object->methodName"
-	 * @throws \TYPO3\TypoScript\Exception
+	 * @param string $processorSignature Either just a method name (then DEFAULT_PROCESSOR_NAMESPACE will be used) or a full object/method name as in "Acme\Foo\Object->methodName"
+	 * @param array $processorArguments An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
 	 * @return string the processor object name
 	 */
 	protected function getProcessorObjectName($processorSignature) {
 		$matchedObjectAndMethodName = array();
-		preg_match(self::SPLIT_PATTERN_NAMESPACEANDPROCESSORNAME, $processorSignature, $matchedObjectAndMethodName);
+		preg_match(self::SPLIT_PATTERN_PHPNAMESPACEANDPROCESSORNAME, $processorSignature, $matchedObjectAndMethodName);
 
-		if (isset($matchedObjectAndMethodName['NamespaceReference']) && strlen($matchedObjectAndMethodName['NamespaceReference']) > 0) {
-			$namespaceReference = $matchedObjectAndMethodName['NamespaceReference'];
-			if (!isset($this->namespaces[$namespaceReference]) || strlen($this->namespaces[$namespaceReference]) === 0) throw new \TYPO3\TypoScript\Exception('Referring to undefined namespace "' . $namespaceReference . '" in processor invocation.', 1278451837);
-			$processorNamespace = $this->namespaces[$namespaceReference];
+		if (isset($matchedObjectAndMethodName['PhpNamespace']) && strlen($matchedObjectAndMethodName['PhpNamespace']) > 0) {
+			$processorNamespace = $matchedObjectAndMethodName['PhpNamespace'];
 		} else {
-			$processorNamespace = $this->namespaces['default'];
+			$processorNamespace = self::DEFAULT_PROCESSOR_NAMESPACE;
 		}
-		$processorNamespace .= '\Processors';
 		$processorObjectName = $processorNamespace . '\\' . ucfirst($matchedObjectAndMethodName['ProcessorName']) . 'Processor';
 
 		if (!$this->objectManager->isRegistered($processorObjectName)) {
@@ -593,7 +616,17 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 					$objectPathArray[] = substr($objectPathSegment, 1);
 				} elseif (preg_match(self::SCAN_PATTERN_OBJECTPATHSEGMENT_IS_PROTOTYPE, $objectPathSegment)) {
 					$objectPathArray[] = '__prototypes';
-					$objectPathArray[] = substr($objectPathSegment, 10, -1);
+
+					$unexpandedObjectType = substr($objectPathSegment, 10, -1);
+					$objectTypeParts = explode(':', $unexpandedObjectType);
+					if (!isset($objectTypeParts[1])) {
+						$fullyQualifiedObjectType = $this->objectTypeNamespaces['default'] . ':' . $objectTypeParts[0];
+					} elseif (isset($this->objectTypeNamespaces[$objectTypeParts[0]])) {
+						$fullyQualifiedObjectType = $this->objectTypeNamespaces[$objectTypeParts[0]] . ':' . $objectTypeParts[1];
+					} else {
+						$fullyQualifiedObjectType = $unexpandedObjectType;
+					}
+					$objectPathArray[] = $fullyQualifiedObjectType;
 				} else {
 					$objectPathArray[] = $objectPathSegment;
 				}
@@ -605,8 +638,8 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	}
 
 	/**
-	 * Parses the given value (which may be a literal, variable or object type) and returns
-	 * the evaluated result, including variables replaced by their actual value.
+	 * Parses the given value (which may be a literal, variable or object type) and
+	 * returns the evaluated result, including variables replaced by their actual value.
 	 *
 	 * @param string $unparsedValue The unparsed value
 	 * @return mixed The processed value
@@ -634,14 +667,13 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 				}
 			}
 		} elseif (preg_match(self::SCAN_PATTERN_VALUEOBJECTTYPE, $unparsedValue, $matches) === 1) {
-			if (!empty($matches['namespace'])) {
-				$namespace = $matches['namespace'];
+			if (empty($matches['namespace'])) {
+				$objectTypeNamespace = $this->objectTypeNamespaces['default'];
 			} else {
-				$namespace = self::DEFAULT_PROCESSOR_NAMESPACE;
+				$objectTypeNamespace = (isset($this->objectTypeNamespaces[$matches['namespace']])) ? $this->objectTypeNamespaces[$matches['namespace']] : $matches['namespace'];
 			}
-			$unqualifiedType = $matches['unqualifiedType'];
 			$processedValue = array(
-				'__objectType' => $namespace . ':' . $unqualifiedType
+				'__objectType' => $objectTypeNamespace . ':' . $matches['unqualifiedType']
 			);
 		} else {
 			throw new \TYPO3\TypoScript\Exception('Syntax error: Invalid value "' . $unparsedValue . '" in value assignment.', 1180604192);

@@ -32,13 +32,25 @@ interface ParserInterface {
 	public function parse($sourceCode, $contextPathAndFilename = NULL, array $objectTreeUntilNow = array());
 
 	/**
-	 * Sets the default namespace to the given object name prefix
+	 * Sets the given alias to the specified namespace.
 	 *
-	 * @param string $objectNamePrefix The object name to prepend as the default namespace, without trailing "
+	 * The namespaces defined through this setter or through a "namespace" declaration
+	 * in one of the TypoScripts are used to resolve a fully qualified TypoScript
+	 * object name while parsing TypoScript code.
+	 *
+	 * The alias is the handle by wich the namespace can be referred to.
+	 * The namespace is, by convention, a package key which must correspond to a
+	 * namespace used in the prototype definitions for TypoScript object types.
+	 *
+	 * The special alias "default" is used as a fallback for resolution of unqualified
+	 * TypoScript object types.
+	 *
+	 * @param string $alias An alias for the given namespace, for example "phoenix"
+	 * @param string $namespace The namespace, for example "TYPO3.Phoenix"
 	 * @return void
 	 * @api
 	 */
-	public function setDefaultNamespace($objectNamePrefix);
+	public function setObjectTypeNamespace($alias, $namespace);
 
 }
 ?>

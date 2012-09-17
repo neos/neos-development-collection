@@ -5,7 +5,7 @@
  *  Do processors really get integer values?
  *
  */
-namespace: default = TYPO3\TypoScript\Fixtures
+namespace: default = TYPO3.TypoScript
 
 page = Page
 page.10 = Text

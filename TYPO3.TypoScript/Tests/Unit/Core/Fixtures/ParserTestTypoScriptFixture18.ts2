@@ -1,0 +1,17 @@
+//
+// TypoScript Fixture 18
+//
+// This fixture is used to check that namespace declarations are expanded correctly
+
+namespace: default = TYPO3.Phoenix
+namespace: alternative = TYPO3.Schirmchen
+
+object1 = Text
+object2 = default:Text
+object3 = alternative:Text
+object4 = TYPO3.Future:Text
+
+prototype(Foo).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
+prototype(default:Bar).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
+prototype(alternative:Baz).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
+prototype(TYPO3.Future:Quux).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'

@@ -13,7 +13,6 @@ namespace TYPO3\TypoScript\Tests\Unit\Core;
 
 /**
  * Testcase for the TypoScript Parser
- *
  */
 class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -67,9 +66,9 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			case 'TYPO3\TypoScript\Fixtures\Page' :
 			case 'TYPO3\TypoScript\Fixtures\ContentArray' :
 			case 'TYPO3\TypoScript\Fixtures\ObjectWithArrayProperty' :
-			case 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor' :
-			case 'TYPO3\TypoScript\Fixtures\Processors\SubstringProcessor' :
-			case 'TYPO3\TypoScript\Fixtures\Processors\MultiplyProcessor' :
+			case 'TYPO3\TypoScript\Processors\WrapProcessor' :
+			case 'TYPO3\TypoScript\Processors\SubstringProcessor' :
+			case 'TYPO3\TypoScript\Processors\MultiplyProcessor' :
 			case 'TYPO3\SomeOther\Namespace\MyWrapProcessor' :
 				return TRUE;
 			default :
@@ -441,26 +440,26 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 						1 => array(
 							'prefix' => '<strong>',
 							'suffix' => '</strong>',
-							'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
+							'__processorClassName' => 'TYPO3\TypoScript\Processors\WrapProcessor'
 						)
 					),
 					'__all' => array(
 						1 => array(
 							'prefix' => '<div>',
 							'suffix' => '</div>',
-							'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
+							'__processorClassName' => 'TYPO3\TypoScript\Processors\WrapProcessor'
 						)
 					)
 				)
 			),
 			'__prototypes' => array(
-				'Foo' => array(
+				'TYPO3.TypoScript:Foo' => array(
 					'__processors' => array(
 						'__all' => array(
 							1 => array(
 								'prefix' => '<div>',
 								'suffix' => '</div>',
-								'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
+								'__processorClassName' => 'TYPO3\TypoScript\Processors\WrapProcessor'
 							)
 						)
 					)
@@ -474,15 +473,15 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 						1 => array(
 							'prefix' => 'ein ',
 							'suffix' => ';',
-							'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor',
+							'__processorClassName' => 'TYPO3\TypoScript\Processors\WrapProcessor',
 						),
 						2 => array(
 							'prefix' => 'einmal (vielleicht auch zweimal) ',
-							'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor',
+							'__processorClassName' => 'TYPO3\TypoScript\Processors\WrapProcessor',
 						),
 						3 => array(
 							'prefix' => 'War ',
-							'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
+							'__processorClassName' => 'TYPO3\TypoScript\Processors\WrapProcessor'
 						),
 					)
 				)
@@ -495,7 +494,7 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 						1 => array(
 							'prefix' => 2,
 							'suffix' => '6',
-							'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
+							'__processorClassName' => 'TYPO3\TypoScript\Processors\WrapProcessor'
 						)
 					)
 				)
@@ -510,7 +509,7 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 							1 => array(
 								'prefix' => 'su',
 								'suffix' => 'ess',
-								'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\WrapProcessor'
+								'__processorClassName' => 'TYPO3\TypoScript\Processors\WrapProcessor'
 							)
 						)
 					)
@@ -519,7 +518,7 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$actualParseTree = $this->parser->parse($sourceCode);
-		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 10.');
+		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 10.');
 	}
 
 	/**
@@ -542,11 +541,11 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 							1 => array(
 								'start' => 6,
 								'length' => 5,
-								'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\SubstringProcessor'
+								'__processorClassName' => 'TYPO3\TypoScript\Processors\SubstringProcessor'
 							),
 							2 => array(
 								'start' => -6,
-								'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\SubstringProcessor'
+								'__processorClassName' => 'TYPO3\TypoScript\Processors\SubstringProcessor'
 							)
 						)
 					)
@@ -555,7 +554,7 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$actualParseTree = $this->parser->parse($sourceCode);
-		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 11.');
+		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 11.');
 	}
 
 	/**
@@ -577,7 +576,7 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 						'value' => array(
 							1 => array(
 								'factor' => 1.5,
-								'__processorClassName' => 'TYPO3\TypoScript\Fixtures\Processors\MultiplyProcessor'
+								'__processorClassName' => 'TYPO3\TypoScript\Processors\MultiplyProcessor'
 							)
 						)
 					)
@@ -586,7 +585,7 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		);
 
 		$actualParseTree = $this->parser->parse($sourceCode);
-		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 12.');
+		$this->assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 12.');
 	}
 
 	/**
@@ -741,5 +740,55 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 	public function parserCorrectlyParsesFixture17() {
 		$this->parserCorrectlyParsesFixture16(17);
 	}
+
+	/**
+	 * Checks if namespace declarations are expanded correctly
+	 *
+	 * @test
+	 */
+	public function parserCorrectlyParsesFixture18() {
+		$sourceCode = file_get_contents(__DIR__ . '/Fixtures/ParserTestTypoScriptFixture18.ts2', FILE_TEXT);
+
+		$expectedParseTree = array(
+			'object1' => array(
+				'__objectType' => 'TYPO3.Phoenix:Text'
+			),
+			'object2' => array(
+				'__objectType' => 'TYPO3.Phoenix:Text'
+			),
+			'object3' => array(
+				'__objectType' => 'TYPO3.Schirmchen:Text'
+			),
+			'object4' => array(
+				'__objectType' => 'TYPO3.Future:Text'
+			),
+			'__prototypes' => array (
+				'TYPO3.Phoenix:Foo' => array(
+					'__meta' => array(
+						'class' => 'TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer'
+					)
+				),
+				'TYPO3.Phoenix:Bar' => array(
+					'__meta' => array(
+						'class' => 'TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer'
+					)
+				),
+				'TYPO3.Schirmchen:Baz' => array(
+					'__meta' => array(
+						'class' => 'TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer'
+					)
+				),
+				'TYPO3.Future:Quux' => array(
+					'__meta' => array(
+						'class' => 'TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer'
+					)
+				)
+			)
+		);
+
+		$actualParseTree = $this->parser->parse($sourceCode);
+		$this->assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 18.');
+	}
+
 }
 ?>

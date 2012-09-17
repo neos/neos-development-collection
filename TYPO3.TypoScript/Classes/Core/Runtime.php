@@ -229,6 +229,9 @@ class Runtime {
 				// Only add typoscript object type to last path part if not already set
 			$typoScriptPath .= '<' . $typoScriptObjectType . '>';
 		}
+		if (!class_exists($tsObjectClassName)) {
+			throw new \TYPO3\TypoScript\Exception(sprintf('The implementation class "%s" defined for TypoScript object of type "%s" does not exist (defined at %s).', $tsObjectClassName, $typoScriptObjectType, $typoScriptPath), 1347952109);
+		}
 		$tsObject = new $tsObjectClassName($this, $typoScriptPath, $typoScriptObjectType);
 		$this->setOptionsOnTsObject($tsObject, $typoScriptConfiguration);
 

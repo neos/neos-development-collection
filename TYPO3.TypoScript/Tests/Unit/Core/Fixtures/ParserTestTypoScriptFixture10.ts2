@@ -4,8 +4,6 @@
  *  This fixture serves for testing the processors syntax
  *
  */
-namespace: default = TYPO3\TypoScript\Fixtures
-namespace: custom = TYPO3\TypoScript\Fixtures
 
 object1 = Text
 object1.value = "Hello world!"
@@ -20,8 +18,8 @@ prototype(Foo) << 1.wrap(prefix: '<div>', suffix: '</div>')
 object2 = Text
 object2.value = "Bumerang"
 object2.value << 1.wrap(prefix: 'ein ', suffix: ';')
-object2.value << 3.custom:wrap(prefix:'War ')
-object2.value << 2.custom : wrap(prefix:  'einmal (vielleicht auch zweimal) ')
+object2.value << 3.wrap(prefix:'War ')
+object2.value << 2. wrap(prefix:  'einmal (vielleicht auch zweimal) ')
 
 object3 = Text
 #object3.$one = "1"

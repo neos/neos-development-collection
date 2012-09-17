@@ -70,6 +70,7 @@ class PatternTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertEquals(preg_match($pattern, 'namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration.');
 		$this->assertEquals(preg_match($pattern, '  namespace: cms = Test'), 1, 'The SCAN_PATTERN_DECLARATION pattern did not match an namespace declaration whith leading whitespace.');
 		$this->assertEquals(preg_match($pattern, 'ASDF  namespace: cms = Test'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
+		$this->assertEquals(preg_match($pattern, 'ASDF  namespace: TYPO3.Phoenix = Foo'), 0, 'The SCAN_PATTERN_DECLARATION pattern did match an namespace declaration whith leading text.');
 		$this->assertEquals(preg_match($pattern, '// This is a comment ...'), 0, 'The SCAN_PATTERN_DECLARATION pattern matched a comment.');
 	}
 
@@ -255,6 +256,14 @@ class PatternTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->assertRegexMatches('TYPO3.TypoScript:Foo', $pattern, $expected, 'Detailed result');
 	}
 
+	/**
+	 * Custom assertion for matching regexes
+	 *
+	 * @param $testString
+	 * @param $pattern
+	 * @param $expectedMatches
+	 * @param $explanation
+	 */
 	protected function assertRegexMatches($testString, $pattern, $expectedMatches, $explanation) {
 		$matches = array();
 		preg_match($pattern, $testString, $matches);
