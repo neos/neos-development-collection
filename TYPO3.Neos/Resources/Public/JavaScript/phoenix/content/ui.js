@@ -187,18 +187,19 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 	 * - PageTreeButton
 	 */
 
-	var editNodeTitleMode = false;
 	T3.Content.UI.PageTreeButton = T3.Content.UI.PopoverButton.extend({
 		popoverTitle: 'Page Tree',
 		$popoverContent: pageTreeTemplate,
 		tree: null,
+		editNodeTitleMode: false,
+		isDblClick: false,
 
 		/**
 		 * When clicking the delete Page, we show a dialog
 		 */
 		showDeletePageDialog: function(activeNode) {
 			var content = 'Are you sure the page "'+activeNode.data.title + '" should be deleted?';
-			if(activeNode.hasChildren() === true){
+			if(activeNode.hasChildren() === true) {
 				content = 'Are you sure the page "'+activeNode.data.title + '" and all its children should be deleted?';
 			}
 			var that = this;
@@ -228,11 +229,13 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			});
 			view.append();
 		},
-		editNode: function(node){
-
+		editNode: function(node) {
 			var prevTitle = node.data.title,
-			tree = node.tree;
+				tree = node.tree
+				that = this;
+			that.editNodeTitleMode = true
 			tree.$widget.unbind();
+
 			$('.dynatree-title', node.span).html($('<input />').attr({id: 'editNode', value: prevTitle}));
 				// Focus <input> and bind keyboard handler
 			$('input#editNode').focus().keydown(function(event) {
@@ -250,12 +253,22 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			}).blur(function(event) {
 					// Accept new value, when user leaves <input>
 				var newTitle = $('input#editNode').val();
-				if (prevTitle == newTitle) {
+					// Re-enable mouse and keyboard handling
+				tree.$widget.bind();
+				node.focus();
+
+				if (prevTitle === newTitle) {
 					title = prevTitle;
-					//node.setTitle(title);
+					that.editNodeTitleMode = false;
+				} else if(newTitle === '') {
+					title = prevTitle;
+					that.editNodeTitleMode = false;
 				} else {
 					title = newTitle;
-					node.setTitle(title);
+				}
+
+				if (that.editNodeTitleMode === true) {
+					that.editNodeTitleMode = false;
 
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.update(
 						{
@@ -264,27 +277,28 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						},
 						function(result) {
 							if (result.success === true) {
-								var parentNode = node.getParent();
-								parentNode.activate()
-								parentNode.focus();
-								T3.ContentModule.loadPage(parentNode.data.href);
+								that.editNodeTitleMode = false;
+								node.focus();
+								tree.$widget.bind();
+								T3.ContentModule.loadPage(node.data.href);
 							}
 						}
 					);
 				}
 				node.setTitle(title);
-					// Re-enable mouse and keyboard handling
-				tree.$widget.bind();
+				that.editNodeTitleMode = false;
+				node.focus();
 			});
 		},
-	createAndEditNode: function(activeNode){
-			var position = 'into';
+		createAndEditNode: function(activeNode) {
+			var position = 'into',
+				that = this;
 			var node = activeNode.addChild({
 				title: '[New Page]',
 				contentType: 'TYPO3.Phoenix.ContentTypes:Page',
 				addClass: 'typo3_phoenix_contenttypes-page'
 			});
-			editNodeTitleMode = true;
+			that.editNodeTitleMode = true;
 			var prevTitle = node.data.title,
 			tree = node.tree;
 			tree.$widget.unbind();
@@ -310,16 +324,17 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 				activeNode.focus();
 
 					// Accept new value, when user leaves <input>
-				if (prevTitle == newTitle) {
+				if (prevTitle === newTitle) {
 					title = prevTitle;
-				} else if(newTitle == '') {
+				} else if(newTitle === '') {
 					title = prevTitle;
 				} else {
 					title = newTitle;
 				}
 					//hack for chrome and safari, otherwise two pages will be created, because .blur fires one request with two datasets
-				if(editNodeTitleMode) {
-					editNodeTitleMode = false;
+				if (that.editNodeTitleMode) {
+
+					that.editNodeTitleMode = false;
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
 						activeNode.data.key,
 						{
@@ -342,22 +357,20 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 								node.data.expand = result.data.expand;
 								node.data.addClass = result.data.addClass;
 
-								editNodeTitleMode = false;
+								that.editNodeTitleMode = false;
 								activeNode.focus();
+								T3.ContentModule.loadPage(activeNode.data.href);
 									// Re-enable mouse and keyboard handling
 								tree.$widget.bind();
-								T3.ContentModule.loadPage(activeNode.data.href);
 							}
 						}
 					);
 				}
-
 				node.setTitle(title);
-				editNodeTitleMode = false;
+				that.editNodeTitleMode = false;
 				activeNode.focus();
 			});
 		},
-
 		deleteNode: function(node) {
 			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController['delete'](
 				node.data.key,
@@ -377,7 +390,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			if (this.tree) {
 				return;
 			}
-
 			var that = this,
 				pageMetaInformation = $('#t3-page-metainformation'),
 				siteRootNodePath = pageMetaInformation.data('__siteroot'),
@@ -494,21 +506,28 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					}
 				},
 				onClick: function(node, event) {
-					if (editNodeTitleMode == true){
+
+					if (that.editNodeTitleMode === true) {
 						return false;
 					}
 						// only if the node title was clicked
 						// and it was not active at this time
 						// it should be navigated to the target node
-					if (node.isActive() === false && node.data.key !== siteRootNodePath && (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === 'icon')) {
-						T3.ContentModule.loadPage(node.data.href);
+					if (node.data.key !== siteRootNodePath && (node.getEventTargetType(event) === 'title' || node.getEventTargetType(event) === 'icon')) {
+						setTimeout(function() {
+							if (!that.isDblClick) {
+								T3.ContentModule.loadPage(node.data.href);
+							}
+						}, 300);
 					}
 				},
 				onDblClick: function(node, event) {
 					if (node.getEventTargetType(event) === 'title' && node.getLevel() !== 1) {
-						var position = 0;
-						that.editNewNode(node);
-						return false;
+						that.isDblClick = true;
+						setTimeout(function() {
+							that.isDblClick = false;
+							that.editNode(node);
+						}, 300);
 					}
 				},
 				onKeydown: function(node, event) {
@@ -528,7 +547,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 
 				//handles click events when a pagetitle is in editmode so clicks on other pages leads not to reloads
 			$('#t3-dd-pagetree').click(function() {
-				if (editNodeTitleMode == true) {
+				if (that.editNodeTitleMode === true) {
 					return false;
 				}
 			});
@@ -557,21 +576,8 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					T3.Common.Notification.notice('You have to select a page');
 				}
 			});
-			function reloadNodeAfterRemove(node) {
-					// @Todo fix when the last page of a folder was deleted
-				var parentNode = node.getParent();
-				if (node.hasChildren() || node.isLazy()) {
-					var grandFatherNode = parentNode.getParent();
-					grandFatherNode.reloadChildren();
-					T3.ContentModule.loadPage(grandFatherNode.data.href);
-				} else {
-					parentNode.reloadChildren();
-					T3.ContentModule.loadPage(parentNode.data.href);
-				}
-			}
 		}
 	});
-
 
 	/**
 	 * =====================
@@ -716,7 +722,6 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 								}
 							}
 						);
-
 					},
 					onDragStop: function() {
 					}
@@ -727,11 +732,9 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 						$element = $('[about="' + nodePath + '"]');
 
 					T3.Content.Model.NodeSelection.updateSelection($element);
-
 					$('html,body').animate({
 						scrollTop: $element.offset().top - offsetFromTop
 					}, 500);
-
 				}
 			});
 
