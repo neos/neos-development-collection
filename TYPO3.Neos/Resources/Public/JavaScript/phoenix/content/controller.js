@@ -91,6 +91,7 @@ function($, CreateJS, Entity) {
 			}, 'into',
 			function (result) {
 				if (result.success == true) {
+					$('#t3-ui-createsection-input').val('');
 					T3.ContentModule.reloadPage();
 				}
 			});
