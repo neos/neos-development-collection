@@ -100,6 +100,7 @@ SASS version - https://github.com/jlong/sass-twitter-bootstrap/tree/master/lib (
 
 * Wrapped in .t3-ui class (bootstrap.scss)
 * Changed icon images paths variables $iconSpritePath + $iconWhiteSpritePath (_variables.scss)
+* Removed sprites.scss import (bootstrap.scss)
 
 
 Create.js - https://github.com/bergie/create
@@ -122,3 +123,11 @@ To execute the update scripts method you'll need:
 
 ** If you're using OS X you'll need to either ignore or add backup file extension for "sed" commands (http://stackoverflow.com/questions/4247068/sed-command-failing-on-mac-but-works-on-linux),
    which are used in the Cakefile in hallo root dir. Replace "sed -i ..." with "sed -i '' ..." or "sed -ibak ..." to ignore backup files.
+
+
+Font Awesome v2.0
+http://fortawesome.github.com/Font-Awesome/
+
+* Changed $fontAwesomePath in sass/font-awesome.scss
+* Wrapped everything in t3-ui sass/font-awesome.scss
+* Removed the background of twitter-bootstrap icons before include (style.scss)

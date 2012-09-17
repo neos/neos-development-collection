@@ -8,6 +8,12 @@
 @import "../Library/twitter-bootstrap/scss/bootstrap.scss";
 @import "../Library/twitter-bootstrap/scss/responsive.scss";
 
+// Fontawesome include
+[class^="icon-"], [class*=" icon-"] {
+	background: none;
+}
+@import "../Library/fontawesome/sass/font-awesome.scss";
+
 @import "compass";
 
 // Phoenix variable Include
