@@ -551,7 +551,6 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 	 *
 	 * @param string $processorSignature Either just a method name (then the default namespace is used) or a full object/method name as in "Acme\Foo\Object->methodName"
 	 * @throws \TYPO3\TypoScript\Exception
-	 * @internal param array $processorArguments An array of arguments which are passed to the processor method, in the same order as expected by the processor method.
 	 * @return string the processor object name
 	 */
 	protected function getProcessorObjectName($processorSignature) {
