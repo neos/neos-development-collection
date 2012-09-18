@@ -58,7 +58,8 @@ define(
 						hallo: {
 							widget: 'halloWidget',
 							options: {
-								toolbar: 'halloToolbarContextual',
+								toolbar: 'halloToolbarFixed',
+								parentElement: 'body',
 								toolbarCssClass: 't3-ui',
 								buttonCssClass: 'btn btn-mini t3-button',
 								plugins: {
