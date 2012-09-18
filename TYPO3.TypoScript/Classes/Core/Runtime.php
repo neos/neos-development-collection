@@ -335,10 +335,10 @@ class Runtime {
 	/**
 	 * Set options on the given TypoScript obect
 	 *
-	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $tsObject
+	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject
 	 * @param string $typoScriptConfiguration
 	 */
-	protected function setOptionsOnTsObject(\TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $tsObject, array $typoScriptConfiguration) {
+	protected function setOptionsOnTsObject(\TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject, array $typoScriptConfiguration) {
 		foreach ($typoScriptConfiguration as $key => $value) {
 				// DEPRECATED implementationClassName is deprecated since Sprint 10, use @class instead
 			if ($key === '@class' || $key === 'implementationClassName') {
@@ -359,11 +359,11 @@ class Runtime {
 	 * Evaluate the processors for $variableName
 	 *
 	 * @param string $variableName
-	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $tsObject
+	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject
 	 * @param mixed $value
 	 * @return mixed
 	 */
-	public function evaluateProcessor($variableName, \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $tsObject, $value) {
+	public function evaluateProcessor($variableName, \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $tsObject, $value) {
 		if (is_array($value) && isset($value['__eelExpression'])) {
 
 			$contextVariables = $this->getCurrentContext();

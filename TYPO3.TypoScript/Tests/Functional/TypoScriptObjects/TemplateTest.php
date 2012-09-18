@@ -12,10 +12,10 @@ namespace TYPO3\TypoScript\Tests\Functional\TypoScriptObjects;
  *                                                                        */
 
 /**
- * Testcase for the TypoScript Fluid Renderer
+ * Testcase for the TypoScript Template Object
  *
  */
-class FluidRendererTest extends AbstractTypoScriptObjectTest {
+class TemplateTest extends AbstractTypoScriptObjectTest {
 
 	/**
 	 * @test
@@ -23,7 +23,7 @@ class FluidRendererTest extends AbstractTypoScriptObjectTest {
 	public function basicFluidTemplateCanBeUsedForRendering() {
 		$view = $this->buildView();
 
-		$view->setTypoScriptPath('fluidRenderer/basicTemplate');
+		$view->setTypoScriptPath('template/basicTemplate');
 		$this->assertEquals('Test Templatefoo', $view->render());
 	}
 
@@ -33,7 +33,7 @@ class FluidRendererTest extends AbstractTypoScriptObjectTest {
 	public function customPartialPathCanBeSetOnRendering() {
 		$view = $this->buildView();
 
-		$view->setTypoScriptPath('fluidRenderer/partial');
+		$view->setTypoScriptPath('template/partial');
 		$this->assertEquals('Test Template--partial contents', $view->render());
 	}
 
@@ -43,7 +43,7 @@ class FluidRendererTest extends AbstractTypoScriptObjectTest {
 	public function customLayoutPathCanBeSetOnRendering() {
 		$view = $this->buildView();
 
-		$view->setTypoScriptPath('fluidRenderer/layout');
+		$view->setTypoScriptPath('template/layout');
 		$this->assertEquals('layout start -- Test Template -- layout end', $view->render());
 	}
 

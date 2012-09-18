@@ -16,7 +16,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * Matcher object for use inside a "Case" statement
  */
-class Matcher extends AbstractTsObject {
+class MatcherImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * @var boolean
@@ -57,7 +57,7 @@ class Matcher extends AbstractTsObject {
 			);
 			return $this->tsRuntime->evaluateProcessor('element', $this, $renderedElement);
 		} else {
-			return CaseTsObject::MATCH_NORESULT;
+			return CaseImplementation::MATCH_NORESULT;
 		}
 	}
 }

@@ -16,7 +16,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * The old "COA" object
  */
-class TypoScriptArrayRenderer extends AbstractTsObject implements \ArrayAccess {
+class ArrayImplementation extends AbstractTypoScriptObject implements \ArrayAccess {
 
 	/**
 	 * Sub-typoscript elements of this object

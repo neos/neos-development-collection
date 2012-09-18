@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Reflection\ObjectAccess;
 /**
  * Base class for all TypoScript objects
  */
-abstract class AbstractTsObject {
+abstract class AbstractTypoScriptObject {
 
 	/**
 	 * @var \TYPO3\TypoScript\Core\Runtime

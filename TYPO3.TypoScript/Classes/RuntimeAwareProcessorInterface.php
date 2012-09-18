@@ -32,19 +32,19 @@ interface RuntimeAwareProcessorInterface extends ProcessorInterface {
 	 * Called before the $typoScriptObject is evaluated.
 	 *
 	 * @param \TYPO3\TypoScript\Core\Runtime $runtime
-	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $typoScriptObject
+	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $typoScriptObject
 	 * @param string $typoScriptPath
 	 */
-	public function beforeInvocation(Core\Runtime $runtime, TypoScriptObjects\AbstractTsObject $typoScriptObject, $typoScriptPath);
+	public function beforeInvocation(Core\Runtime $runtime, TypoScriptObjects\AbstractTypoScriptObject $typoScriptObject, $typoScriptPath);
 
 	/**
 	 * Called after the $typoScriptObject is evaluated and process has been called.
 	 *
 	 * @param \TYPO3\TypoScript\Core\Runtime $runtime
-	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject $typoScriptObject
+	 * @param \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject $typoScriptObject
 	 * @param string $typoScriptPath
 	 */
-	public function afterInvocation(Core\Runtime $runtime, TypoScriptObjects\AbstractTsObject $typoScriptObject, $typoScriptPath);
+	public function afterInvocation(Core\Runtime $runtime, TypoScriptObjects\AbstractTypoScriptObject $typoScriptObject, $typoScriptPath);
 
 }
 ?>

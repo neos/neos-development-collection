@@ -1,16 +1,16 @@
-prototype(TYPO3.TypoScript:FluidRenderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
+prototype(TYPO3.TypoScript:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
 
-fluidRenderer.basicTemplate = TYPO3.TypoScript:FluidRenderer {
+template.basicTemplate = TYPO3.TypoScript:Template {
 	templatePath = ${fixtureDirectory + 'BasicTemplate.html'}
 	myVariable = 'foo'
 }
 
-fluidRenderer.partial = TYPO3.TypoScript:FluidRenderer {
+template.partial = TYPO3.TypoScript:Template {
 	templatePath = ${fixtureDirectory + 'PartialTemplate.html'}
 	partialPath = ${fixtureDirectory + 'Partials/'}
 }
 
-fluidRenderer.layout = TYPO3.TypoScript:FluidRenderer {
+template.layout = TYPO3.TypoScript:Template {
 	templatePath = ${fixtureDirectory + 'LayoutTemplate.html'}
 	layoutPath = ${fixtureDirectory + 'Layouts'}
 }

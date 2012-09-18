@@ -14,12 +14,12 @@ namespace TYPO3\TypoScript\TypoScriptObjects;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * Fluid Renderer, rendering a fluid template
+ * TypoScript object rendering a fluid template
  *
  * //tsPath variables TODO The result of this TS object is made available inside the template as "variables"
  * @api
  */
-class FluidRenderer extends AbstractTsObject implements \ArrayAccess {
+class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayAccess {
 
 	/**
 	 * Path to the template which should be rendered

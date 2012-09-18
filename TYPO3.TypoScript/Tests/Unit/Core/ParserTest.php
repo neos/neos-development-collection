@@ -765,22 +765,22 @@ class ParserTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 			'__prototypes' => array (
 				'TYPO3.Phoenix:Foo' => array(
 					'__meta' => array(
-						'class' => 'TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer'
+						'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
 					)
 				),
 				'TYPO3.Phoenix:Bar' => array(
 					'__meta' => array(
-						'class' => 'TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer'
+						'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
 					)
 				),
 				'TYPO3.Schirmchen:Baz' => array(
 					'__meta' => array(
-						'class' => 'TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer'
+						'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
 					)
 				),
 				'TYPO3.Future:Quux' => array(
 					'__meta' => array(
-						'class' => 'TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer'
+						'class' => 'TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation'
 					)
 				)
 			)

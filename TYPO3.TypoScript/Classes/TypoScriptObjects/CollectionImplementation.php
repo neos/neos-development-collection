@@ -19,7 +19,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * //tsPath collection *Collection
  * //tsPath itemRenderer the TS object which is triggered for each element in the node collection
  */
-class CollectionRenderer extends AbstractTsObject {
+class CollectionImplementation extends AbstractTypoScriptObject {
 
 	/**
 	 * Render the array collection by triggering the itemRenderer for every element
@@ -87,7 +87,7 @@ class CollectionRenderer extends AbstractTsObject {
 		$this->numberOfRenderedNodes = 0;
 		$itemName = $this->tsValue('itemName');
 		if ($itemName === NULL) {
-			throw new \TYPO3\TypoScript\Exception('The CollectionRenderer needs an itemName to be set.', 1344325771);
+			throw new \TYPO3\TypoScript\Exception('The Collection needs an itemName to be set.', 1344325771);
 		}
 		$iterationName = $this->tsValue('iterationName');
 		$collectionTotalCount = $collection->count();

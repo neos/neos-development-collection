@@ -23,7 +23,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  * object; and all its children are by-default interpreted as "Matcher" TypoScript
  * objects if no others are specified.
  */
-class CaseTsObject extends TypoScriptArrayRenderer {
+class CaseImplementation extends ArrayImplementation {
 
 	/**
 	 * This constant should be returned by individual matchers if the matcher

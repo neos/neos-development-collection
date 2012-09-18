@@ -15,7 +15,7 @@ namespace TYPO3\TypoScript\Tests\Unit\TypoScriptObjects;
  * Testcase for the TypoScript Array Rrenderer
  *
  */
-class TypoScriptArrayRendererTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
+class ArrayImplementationTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 	/**
 	 * @test
@@ -24,7 +24,7 @@ class TypoScriptArrayRendererTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$mockTsRuntime = $this->getMock('TYPO3\TypoScript\Core\Runtime', array(), array(), '', FALSE);
 		$path = 'array/test';
 		$typoScriptObjectName = 'TYPO3.TypoScript:Array';
-		$renderer = new \TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer($mockTsRuntime, $path, $typoScriptObjectName);
+		$renderer = new \TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
 		$result = $renderer->evaluate();
 		$this->assertNull($result);
 	}
@@ -119,7 +119,7 @@ class TypoScriptArrayRendererTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
 		$path = '';
 		$typoScriptObjectName = 'TYPO3.TypoScript:Array';
-		$renderer = new \TYPO3\TypoScript\TypoScriptObjects\TypoScriptArrayRenderer($mockTsRuntime, $path, $typoScriptObjectName);
+		$renderer = new \TYPO3\TypoScript\TypoScriptObjects\ArrayImplementation($mockTsRuntime, $path, $typoScriptObjectName);
 		foreach ($subElements as $key => $value) {
 			$renderer[$key] = $value;
 		}

@@ -16,7 +16,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
 /**
  * Test renderer
  */
-class TestRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
+class TestRenderer extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject {
 
 	protected $test;
 
