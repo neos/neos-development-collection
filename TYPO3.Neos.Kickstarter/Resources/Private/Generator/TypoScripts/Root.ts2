@@ -6,7 +6,7 @@ include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/All.ts2
 page = TYPO3.TYPO3:Page
 
 page.headerData {
-	stylesheets = TYPO3.TypoScript:FluidRenderer
+	stylesheets = TYPO3.TypoScript:Template
 	stylesheets {
 		templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 		sectionName = 'stylesheets'
@@ -17,7 +17,7 @@ page.body {
 	templatePath = 'resource://{packageKey}/Private/Templates/Page/Default.html'
 	sectionName = 'body'
 	parts {
-		menu = TYPO3.TYPO3:MenuRenderer
+		menu = TYPO3.TYPO3:Menu
 		breadcrumb = TYPO3.TYPO3:Breadcrumb
 	}
 		// These are your content areas, you can define as many as you want, just name them and the nodePath.
