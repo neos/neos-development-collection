@@ -20,7 +20,7 @@ use TYPO3\FLOW3\Http\Response;
  *
  * @FLOW3\Scope("prototype")
  */
-class Plugin extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTsObject {
+class PluginImplementation extends \TYPO3\TypoScript\TypoScriptObjects\AbstractTypoScriptObject {
 
 	/**
 	 * @FLOW3\Inject

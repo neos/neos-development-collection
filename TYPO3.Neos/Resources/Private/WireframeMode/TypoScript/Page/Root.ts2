@@ -1,7 +1,7 @@
 wireframeMode = TYPO3.TYPO3:Page
 wireframeMode {
 	headerData {
-		stylesheets = TYPO3.TypoScript:FluidRenderer
+		stylesheets = TYPO3.TypoScript:Template
 		stylesheets {
 			templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/Page/Default.html'
 			sectionName = 'headerIncludes'
@@ -15,7 +15,7 @@ wireframeMode {
 		sectionName = 'body'
 
 		parts {
-			menu = TYPO3.TYPO3:MenuRenderer
+			menu = TYPO3.TYPO3:Menu
 			menu {
 				templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/TypoScriptObjects/Menu.html'
 				entryLevel = 1

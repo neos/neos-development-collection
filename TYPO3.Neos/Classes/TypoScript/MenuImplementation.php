@@ -18,7 +18,7 @@ use TYPO3\FLOW3\Annotations as FLOW3;
  *
  * @FLOW3\Scope("prototype")
  */
-class MenuRenderer extends \TYPO3\TypoScript\TypoScriptObjects\FluidRenderer {
+class MenuImplementation extends \TYPO3\TypoScript\TypoScriptObjects\TemplateImplementation {
 
 	/**
 	 * Hard limit for the maximum number of levels supported by this menu

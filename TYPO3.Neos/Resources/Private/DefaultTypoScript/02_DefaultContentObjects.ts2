@@ -1,21 +1,22 @@
-prototype(TYPO3.TypoScript:FluidRenderer) {
+prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 	# DEPRECATED since Sprint 10; should be removed lateron. Is just added for
 	# backwards compatibility.
 	context = ${node}
 }
 
+prototype(TYPO3.TYPO3:Template) < prototype(TYPO3.TypoScript:Template)
 
 # setting up additional Prototype configuration
-prototype(TYPO3.TypoScript:CollectionRenderer) {
+prototype(TYPO3.TypoScript:Collection) {
 	collection = ${q(node).children()}
 	itemName = 'node'
 	itemRenderer = TYPO3.TypoScript:Case
 }
 
-prototype(TYPO3.TYPO3:Section) < prototype(TYPO3.TypoScript:CollectionRenderer)
+prototype(TYPO3.TYPO3:Section) < prototype(TYPO3.TypoScript:Collection)
 prototype(TYPO3.TYPO3:Section) {
-	@class = 'TYPO3\\TYPO3\\TypoScript\\Section'
+	@class = 'TYPO3\\TYPO3\\TypoScript\\SectionImplementation'
 		# To enable direct rendering of a Section we check if we have
 	collection = ${q(node).is('[instanceof TYPO3.TYPO3:Section]') ? q(node).children() : q(node).children(this.getNodePath()).children()}
 }
@@ -28,28 +29,28 @@ prototype(TYPO3.TypoScript:Case).default {
 }
 
 # HTML TS Object
-prototype(TYPO3.TYPO3:Html) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:Html) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TYPO3:Html) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/HtmlTemplate.html'
 	source = ${q(node).property('source')}
 }
 
 # Page TS Object
-prototype(TYPO3.TYPO3:Page) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:Page) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TYPO3:Page) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/PageTemplate.html'
-	body = TYPO3.TypoScript:FluidRenderer
+	body = TYPO3.TypoScript:Template
 	body.title = ${q(node).property('title')}
 	body.nodePath = ${q(node).property('_path')}
-	headerData = TYPO3.TypoScript:TypoScriptArrayRenderer
+	headerData = TYPO3.TypoScript:Array
 
-	backendHeader = TYPO3.TypoScript:FluidRenderer
+	backendHeader = TYPO3.TypoScript:Template
 	backendHeader.templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Header.html'
 	htmlAttributes = ''
 }
 
 # Headline TS Object
-prototype(TYPO3.TYPO3:Headline) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:Headline) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TYPO3:Headline) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/Headline.html'
 	title = ${q(node).property('title')}
@@ -78,14 +79,14 @@ prototype(TYPO3.TYPO3:Image) {
 }
 
 # Breadcrumb TS Object
-prototype(TYPO3.TYPO3:Breadcrumb) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:Breadcrumb) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TYPO3:Breadcrumb) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/BreadcrumbMenu.html'
 	items = ${q(node).add(q(node).parents())}
 }
 
 # Content Menu TS Object
-prototype(TYPO3.TYPO3:Menu) < prototype(TYPO3.TYPO3:MenuRenderer)
+prototype(TYPO3.TYPO3:Menu) < prototype(TYPO3.TYPO3:Menu)
 prototype(TYPO3.TYPO3:Menu) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/ContentMenu.html'
 	entryLevel = ${q(node).property('startLevel')}
@@ -95,11 +96,11 @@ prototype(TYPO3.TYPO3:Menu) {
 }
 
 # Basic implementation of a flexible MultiColumn element, not exposed directly but inherited by all specific MultiColumn content elements
-prototype(TYPO3.TYPO3:MultiColumn) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:MultiColumn) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TYPO3:MultiColumn) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/MultiColumn.html'
 	layout = ${q(node).property('layout')}
-	columns = TYPO3.TypoScript:CollectionRenderer
+	columns = TYPO3.TypoScript:Collection
 	columns {
 		collection = ${q(node).children('[instanceof TYPO3.TYPO3:Section]')}
 		itemRenderer = TYPO3.TYPO3:MultiColumnItem
@@ -107,7 +108,7 @@ prototype(TYPO3.TYPO3:MultiColumn) {
 }
 
 # Abstract render definition for a single content column in a multi column element
-prototype(TYPO3.TYPO3:MultiColumnItem) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TYPO3:MultiColumnItem) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TYPO3:MultiColumnItem) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/MultiColumnItem.html'
 	columnContent = TYPO3.TYPO3:Section

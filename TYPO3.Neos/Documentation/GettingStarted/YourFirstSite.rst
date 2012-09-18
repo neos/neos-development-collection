@@ -82,12 +82,14 @@ Now create the file `Resources/Private/TypoScripts/Root.ts2`, and add the follow
 
 ::
 
-	page = TYPO3.TYPO3:Page
-	page.body.templatePath = 'resource://My.Site/Private/Templates/Page/Default.html'
-	page.body.sectionName = 'body'
+	page = Page
+	page.body {
+		templatePath = 'resource://My.Site/Private/Templates/Page/Default.html'
+		sectionName = 'body'
 
-	page.body.sections.main = TYPO3.TYPO3:Section
-	page.body.sections.main.nodePath = 'main'
+		sections.main = TYPO3.TYPO3:Section
+		sections.main.nodePath = 'main'
+	}
 
 This includes all default TypoScript from TYPO3 Phoenix and creates a `TYPO3.TYPO3:Page`
 object. Besides that we set the template, and configure we will use the 'body' section
@@ -99,14 +101,12 @@ something like this:
 
 .. code-block:: html
 
-	<!DOCTYPE html
-			PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-			"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<!DOCTYPE html>
 	{namespace typo3=TYPO3\TYPO3\ViewHelpers}
 	{namespace ts=TYPO3\TypoScript\ViewHelpers}
-	<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<html>
 		<head>
-			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<meta charset="UTF-8" />
 			<f:base />
 			<title>My Site Template</title>
 		</head>
