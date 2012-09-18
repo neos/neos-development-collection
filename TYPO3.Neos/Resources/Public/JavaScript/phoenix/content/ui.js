@@ -479,54 +479,23 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 					 */
 					onDrop: function(node, sourceNode, hitMode, ui, draggable) {
 						var position = hitMode === 'over' ? 'into' : hitMode;
-						if (!sourceNode) {
-								// a new Node was created
-							TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(
-								node.data.key,
-								{
-									contentType: 'TYPO3.TYPO3:Page',
-									properties: {
-										title: '[New Page]'
-									}
-								},
-								position,
-								function(result) {
-									if (result.success === true) {
-										var parentNode = node.getParent();
-										parentNode.reloadChildren();
-										T3.ContentModule.loadPage(node.data.href);
-									}
+						sourceNode.move(node, hitMode);
+
+						TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
+							sourceNode.data.key,
+							node.data.key,
+							position,
+							function(result) {
+								if (result.success === true) {
+									T3.ContentModule.loadPage(node.data.href);
 								}
-							);
-						} else {
-								// it is an existing node which was moved on the tree
-							var sourceNodeLevel = sourceNode.getLevel(),
-								nodeLevel = node.getLevel(),
-								nodeLevelDiff = nodeLevel - sourceNodeLevel;
-							if (position === 'into' || nodeLevelDiff !== 0) {
-								T3.Common.Notification.error('moving nodes inside other nodes is not possible right now');
-							} else {
-								sourceNode.move(node, hitMode);
-								TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.move(
-									sourceNode.data.key,
-									node.data.key,
-									position,
-									function(result) {
-										if (result.success === true) {
-											//var parentNode = sourceNode.getParent();
-											//parentNode.reloadChildren();
-											T3.ContentModule.loadPage(node.data.href);
-										}
-									}
-								);
 							}
-						}
+						);
 					}
 				},
 				onClick: function(node, event) {
 					if (editNodeTitleMode == true){
 						return false;
-						alert('editMode');
 					}
 						// only if the node title was clicked
 						// and it was not active at this time
@@ -556,7 +525,6 @@ function($, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTemplate,
 
 				// Automatically expand the first node when opened
 			that.tree.dynatree('getRoot').getChildren()[0].expand(true);
-
 
 				//handles click events when a pagetitle is in editmode so clicks on other pages leads not to reloads
 			$('#t3-dd-pagetree').click(function() {
