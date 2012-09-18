@@ -1,7 +1,8 @@
-#####################
+####################################
 # BASIC TYPOSCRIPT FOR THE TEST CASE
-#####################
+####################################
 
+namespace: default = TYPO3.TypoScript
 
 # Definition of custom TypoScript types
 prototype(TYPO3.TypoScript:ThreeColumn) < prototype(TYPO3.TypoScript:FluidRenderer)
@@ -23,7 +24,7 @@ prototype(TYPO3.TypoScript:Case).matchers.4242 {
 
 # MAIN PAGE TEMPLATE
 
-page1 = TYPO3.TypoScript:Page
+page1 = Page
 page1.body.templatePath = 'FIXTURE_DIRECTORY/WebsiteTemplate.html'
 page1.body.sections {
 	teaser = TYPO3.TypoScript:CollectionRenderer

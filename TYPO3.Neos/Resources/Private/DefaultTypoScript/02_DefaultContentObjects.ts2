@@ -1,5 +1,3 @@
-namespace:cms=TYPO3\TYPO3\TypoScript
-
 prototype(TYPO3.TypoScript:FluidRenderer) {
 	node = ${node}
 	# DEPRECATED since Sprint 10; should be removed lateron. Is just added for
@@ -91,9 +89,9 @@ prototype(TYPO3.TYPO3:Menu) < prototype(TYPO3.TYPO3:MenuRenderer)
 prototype(TYPO3.TYPO3:Menu) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/ContentMenu.html'
 	entryLevel = ${q(node).property('startLevel')}
-	entryLevel << 1.cms:toInteger()
+	entryLevel << 1.toInteger()
 	maximumLevels = ${q(node).property('maximumLevels')}
-	maximumLevels << 1.cms:toInteger()
+	maximumLevels << 1.toInteger()
 }
 
 # Basic implementation of a flexible MultiColumn element, not exposed directly but inherited by all specific MultiColumn content elements

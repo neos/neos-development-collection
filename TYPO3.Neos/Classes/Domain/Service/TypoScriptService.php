@@ -34,6 +34,15 @@ class TypoScriptService {
 	protected $nodeRepository;
 
 	/**
+	 * Initializes the parser
+	 *
+	 * @return void
+	 */
+	public function initializeObject() {
+		$this->typoScriptParser->setObjectTypeNamespace('default', 'TYPO3.TYPO3');
+	}
+
+	/**
 	 * Returns a merged TypoScript object tree in the context of the given nodes
 	 *
 	 * The start node and end node mark the starting point and end point of the
@@ -64,7 +73,6 @@ class TypoScriptService {
 				$mergedTypoScriptCode .= $typoScriptNode->getProperty('sourceCode') . chr(10);
 			}
 		}
-		$this->typoScriptParser->setDefaultNamespace('TYPO3\TYPO3\TypoScript');
 		return $this->typoScriptParser->parse($mergedTypoScriptCode);
 	}
 
@@ -76,7 +84,6 @@ class TypoScriptService {
 	 */
 	public function readTypoScriptFromSpecificPath($typoScriptResourcePath) {
 		$mergedTypoScriptCode = $this->readExternalTypoScriptFiles($typoScriptResourcePath) . chr(10);
-		$this->typoScriptParser->setDefaultNamespace('TYPO3\TYPO3\TypoScript');
 		return $this->typoScriptParser->parse($mergedTypoScriptCode);
 	}
 
