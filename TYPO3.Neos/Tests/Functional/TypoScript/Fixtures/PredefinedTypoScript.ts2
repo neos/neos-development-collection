@@ -3,25 +3,25 @@
 #######################
 
 # setting up implementation class names
-prototype(TYPO3.TypoScript:TypoScriptArrayRenderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TypoScriptArrayRenderer'
-prototype(TYPO3.TypoScript:FluidRenderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\FluidRenderer'
-prototype(TYPO3.TypoScript:CollectionRenderer).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionRenderer'
-prototype(TYPO3.TypoScript:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseTsObject'
-prototype(TYPO3.TypoScript:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\Matcher'
+prototype(TYPO3.TypoScript:Array).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\ArrayImplementation'
+prototype(TYPO3.TypoScript:Template).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\TemplateImplementation'
+prototype(TYPO3.TypoScript:Collection).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CollectionImplementation'
+prototype(TYPO3.TypoScript:Case).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\CaseImplementation'
+prototype(TYPO3.TypoScript:Matcher).@class = 'TYPO3\\TypoScript\\TypoScriptObjects\\MatcherImplementation'
 
-prototype(TYPO3.TypoScript:FluidRenderer) {
+prototype(TYPO3.TypoScript:Template) {
 	node = ${node}
 }
 
 # setting up additional Prototype configuration
-prototype(TYPO3.TypoScript:CollectionRenderer) {
+prototype(TYPO3.TypoScript:Collection) {
 	collection = ${context.children()}
 	itemRenderer = TYPO3.TypoScript:Case
 	itemName = 'node'
 }
 
 # HTML TS Object
-prototype(TYPO3.TypoScript:Html) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TypoScript:Html) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TypoScript:Html) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/HtmlTemplate.html'
 	source = ${context.property('source')}
@@ -32,18 +32,18 @@ prototype(TYPO3.TypoScript:Case).matchers.100100 {
 }
 
 # Page TS Object
-prototype(TYPO3.TypoScript:Page) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TypoScript:Page) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TypoScript:Page) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/PageTemplate.html'
-	body = TYPO3.TypoScript:FluidRenderer
+	body = TYPO3.TypoScript:Template
 	body.title = ${context.property('title')}
 	body.nodePath = ${context.property('_path')}
-	headerData = TYPO3.TypoScript:TypoScriptArrayRenderer
-	backendHeader = TYPO3.TypoScript:TypoScriptArrayRenderer
+	headerData = TYPO3.TypoScript:Array
+	backendHeader = TYPO3.TypoScript:Array
 }
 
 # TextWithHeadline TS Object
-prototype(TYPO3.TypoScript:TextWithHeadline) < prototype(TYPO3.TypoScript:FluidRenderer)
+prototype(TYPO3.TypoScript:TextWithHeadline) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TypoScript:TextWithHeadline) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithHeadline.html'
 	title = ${context.property('title')}

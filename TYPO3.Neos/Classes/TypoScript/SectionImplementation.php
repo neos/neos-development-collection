@@ -14,10 +14,10 @@ namespace TYPO3\TYPO3\TypoScript;
 use TYPO3\FLOW3\Annotations as FLOW3;
 
 /**
- * Renderer for specific sections, which also renders a "create-new-content" button
+ * TypoScript object for specific sections, which also renders a "create-new-content" button
  * when not being in live workspace.
  */
-class Section extends \TYPO3\TypoScript\TypoScriptObjects\CollectionRenderer {
+class SectionImplementation extends \TYPO3\TypoScript\TypoScriptObjects\CollectionImplementation {
 
 	/**
 	 * The identifier of the section Node which shall be rendered.

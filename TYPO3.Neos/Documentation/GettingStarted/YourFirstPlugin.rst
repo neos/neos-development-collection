@@ -82,7 +82,7 @@ Add the following to *Configuration/Settings.yaml* of your package:
 Second, the rendering of the plugin needs to be specified using TypoScript,
 so the following TypoScript needs to be inserted into your package's *Resources/Private/TypoScript/Plugin.ts2*::
 
-  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.TYPO3:PluginRenderer)
+  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.TYPO3:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
        package = 'Sarkosh.CdCollection'
        controller = 'Standard'
