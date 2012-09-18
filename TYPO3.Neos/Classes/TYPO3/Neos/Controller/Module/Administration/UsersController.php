@@ -106,7 +106,7 @@ class UsersController extends \TYPO3\Neos\Controller\Module\StandardController {
 	 */
 	public function createAction($identifier, array $password, $firstName, $lastName) {
 		$password = array_shift($password);
-		$user = $this->userFactory->create($identifier, $password, $firstName, $lastName, array('Administrator'));
+		$user = $this->userFactory->create($identifier, $password, $firstName, $lastName, array('TYPO3.Neos:Administrator'));
 
 		$this->partyRepository->add($user);
 		$accounts = $user->getAccounts();

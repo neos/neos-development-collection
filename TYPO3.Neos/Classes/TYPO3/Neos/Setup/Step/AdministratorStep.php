@@ -91,7 +91,7 @@ class AdministratorStep extends \TYPO3\Setup\Step\AbstractStep {
 	 * @return void
 	 */
 	public function postProcessFormValues(array $formValues) {
-		$user = $this->userFactory->create($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], array('Administrator'));
+		$user = $this->userFactory->create($formValues['username'], $formValues['password'], $formValues['firstName'], $formValues['lastName'], array('TYPO3.Neos:Administrator'));
 		$this->partyRepository->add($user);
 		$accounts = $user->getAccounts();
 		foreach ($accounts as $account) {

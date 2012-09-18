@@ -21,15 +21,6 @@ use TYPO3\Neos\Domain\Model\User;
 class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase {
 
 	/**
-	 * We need to enable this, so that the database is set up. Otherwise
-	 * there will be an error along the lines of:
-	 *  "Table 'functional_tests.domain' doesn't exist"
-	 *
-	 * @var boolean
-	 */
-	static protected $testablePersistenceEnabled = TRUE;
-
-	/**
 	 * @var boolean
 	 */
 	protected $testableSecurityEnabled = TRUE;
@@ -41,9 +32,12 @@ class BackendControllerSecurityTest extends \TYPO3\Flow\Tests\FunctionalTestCase
 		$user = new User();
 		$user->getPreferences()->set('context.workspace', 'user-admin');
 
-		$account = $this->authenticateRoles(array('Administrator'));
+		$account = $this->authenticateRoles(array('TYPO3.Neos:Administrator'));
 		$account->setParty($user);
 		$this->browser->request('http://localhost/neos/login');
+
+			// dummy assertion to avoid PHPUnit warning
+		$this->assertTrue(TRUE);
 	}
 
 	/**

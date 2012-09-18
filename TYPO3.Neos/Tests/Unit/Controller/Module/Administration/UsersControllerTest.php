@@ -35,7 +35,7 @@ class UsersControllerTest extends \TYPO3\Flow\Tests\UnitTestCase {
 		$this->inject($controller, 'partyRepository', $mockPartyRepository);
 		$this->inject($controller, 'accountRepository', $mockAccountRepository);
 
-		$mockUserFactory->expects($this->once())->method('create')->with('username', 'password', 'John', 'Doe', array('Administrator'))->will($this->returnValue($mockUser));
+		$mockUserFactory->expects($this->once())->method('create')->with('username', 'password', 'John', 'Doe', array('TYPO3.Neos:Administrator'))->will($this->returnValue($mockUser));
 		$mockPartyRepository->expects($this->once())->method('add')->with($mockUser);
 		$mockAccountRepository->expects($this->once())->method('add')->with($mockAccount);
 
