@@ -86,8 +86,8 @@ prototype(TYPO3.TYPO3:Breadcrumb) {
 }
 
 # Content Menu TS Object
-prototype(TYPO3.TYPO3:Menu) < prototype(TYPO3.TYPO3:Menu)
-prototype(TYPO3.TYPO3:Menu) {
+prototype(TYPO3.TYPO3:ContentMenu) < prototype(TYPO3.TYPO3:Menu)
+prototype(TYPO3.TYPO3:ContentMenu) {
 	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/ContentMenu.html'
 	entryLevel = ${q(node).property('startLevel')}
 	entryLevel << 1.toInteger()
