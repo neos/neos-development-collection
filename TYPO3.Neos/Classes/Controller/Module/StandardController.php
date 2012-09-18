@@ -44,7 +44,7 @@ class StandardController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 */
 	protected function initializeView(\TYPO3\FLOW3\Mvc\View\ViewInterface $view) {
 		$view->assignMultiple(array(
-			'moduleConfiguration', $this->moduleConfiguration,
+			'moduleConfiguration' => $this->moduleConfiguration,
 			'moduleBreadcrumb' => $this->moduleBreadcrumb
 		));
 	}
