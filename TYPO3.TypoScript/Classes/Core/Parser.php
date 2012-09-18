@@ -562,9 +562,15 @@ class Parser implements \TYPO3\TypoScript\Core\ParserInterface {
 		$include = trim($include);
 		$parser = new Parser();
 		if (strpos($include, 'resource://') === 0) {
+			if (!file_exists($include)) {
+				throw new \TYPO3\TypoScript\Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977017);
+			}
 			$this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree);
 		} elseif ($this->contextPathAndFilename !== NULL) {
 			$include = dirname($this->contextPathAndFilename) . '/' . $include;
+			if (!file_exists($include)) {
+				throw new \TYPO3\TypoScript\Exception(sprintf('Could not include TypoScript file "%s"', $include), 1347977016);
+			}
 			$this->objectTree = $parser->parse(file_get_contents($include), $include, $this->objectTree);
 		} else {
 			throw new \TYPO3\TypoScript\Exception('Relative file inclusions are only possible if a context path and filename has been passed as second argument to parse()', 1329806940);
