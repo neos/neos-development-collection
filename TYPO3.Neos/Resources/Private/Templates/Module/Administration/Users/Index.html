@@ -42,22 +42,30 @@
 							<f:link.action action="edit" arguments="{account: account}" class="btn t3-button" title="Click to edit">
 								<i class="icon-pencil icon-white"></i>
 							</f:link.action>
-							<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{flow3identifier}">
-								<i class="icon-trash icon-white"></i>
-							</button>
-							<div class="modal hide" id="{flow3identifier}">
-								<div class="modal-header">
-									<button type="button" class="close t3-button" data-dismiss="modal">×</button>
-									<h3>Are you sure you want to delete the account "{account.accountIdentifier}"?</h3>
-								</div>
-								<div class="modal-footer">
-									<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
-									<f:link.action action="delete" arguments="{account: account}" class="btn btn-danger t3-button" title="Delete">
+
+							<f:if condition="{currentAccount} == {account}">
+								<f:then>
+									<button class="btn btn-danger disabled t3-button" title="This user is logged in in current session so it cannot be deleted"><i class="icon-trash icon-white"></i></button>
+								</f:then>
+								<f:else>
+									<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#{flow3identifier}">
 										<i class="icon-trash icon-white"></i>
-										Delete
-									</f:link.action>
-								</div>
-							</div>
+									</button>
+									<div class="modal hide" id="{flow3identifier}">
+										<div class="modal-header">
+											<button type="button" class="close t3-button" data-dismiss="modal">×</button>
+											<h3>Are you sure you want to delete the account "{account.accountIdentifier}"?</h3>
+										</div>
+										<div class="modal-footer">
+											<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
+											<f:link.action action="delete" arguments="{account: account}" class="btn btn-danger t3-button" title="Delete">
+												<i class="icon-trash icon-white"></i>
+												Delete
+											</f:link.action>
+										</div>
+									</div>
+								</f:else>
+							</f:if>
 						</div>
 					</td>
 				</tr>

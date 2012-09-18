@@ -45,6 +45,12 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	protected $hashService;
 
 	/**
+	 * @FLOW3\Inject
+	 * @var \TYPO3\FLOW3\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * @return void
 	 */
 	protected function initializeAction() {
@@ -69,6 +75,7 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 		foreach ($this->accountRepository->findAll() as $account) {
 			$accounts[$this->persistenceManager->getIdentifierByObject($account)] = $account;
 		}
+		$this->view->assign('currentAccount', $this->securityContext->getAccount());
 		$this->view->assign('accounts', $accounts);
 	}
 
@@ -157,6 +164,10 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 	 * @todo Security
 	 */
 	public function deleteAction(\TYPO3\FLOW3\Security\Account $account) {
+		if ($this->securityContext->getAccount() === $account) {
+			$this->addFlashMessage('You can not remove current logged in user');
+			$this->redirect('index');
+		}
 		$this->accountRepository->remove($account);
 		$this->addFlashMessage('The user has been deleted.');
 		$this->redirect('index');
