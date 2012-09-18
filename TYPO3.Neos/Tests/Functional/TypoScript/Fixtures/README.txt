@@ -36,6 +36,9 @@ Node Structure:
     - ___ (HTML)
       - source: '[COMMIT WIDGET]'
 
+  - about-us (page) (title: About Us)
+    - history (page) (title: History)
+
 
 That is, we want to simulate the following layout with it:
 

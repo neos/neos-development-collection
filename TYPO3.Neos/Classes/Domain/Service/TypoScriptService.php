@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3\Domain\Service;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\FLOW3\Utility\Files;
 
 /**
  * The TypoScript Service
@@ -32,6 +33,13 @@ class TypoScriptService {
 	 * @var \TYPO3\TYPO3CR\Domain\Repository\NodeRepository
 	 */
 	protected $nodeRepository;
+
+	/**
+	 * Pattern used for determining the TypoScripts root path for a site.
+	 *
+	 * @var string
+	 */
+	protected $typoScriptsPathPattern = 'resource://%s/Private/TypoScripts';
 
 	/**
 	 * Initializes the parser
@@ -61,19 +69,23 @@ class TypoScriptService {
 		}
 
 		$siteResourcesPackageKey = $contentContext->getCurrentSite()->getSiteResourcesPackageKey();
-		$typoScriptsPath = 'resource://' . $siteResourcesPackageKey . '/Private/TypoScripts/';
+		$typoScriptsPath = sprintf($this->typoScriptsPathPattern, $siteResourcesPackageKey);
 
-		$mergedTypoScriptCode = 'include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/All.ts2' . chr(10);
-		$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($typoScriptsPath) . chr(10);
+		$mergedTypoScriptCode = $this->readExternalTypoScriptFile('resource://TYPO3.TYPO3/Private/DefaultTypoScript/All.ts2');
+		$mergedTypoScriptCode .= $this->readExternalTypoScriptFile($typoScriptsPath . '/Library/Root.ts2');
+
+		$currentTypoScriptPath = $typoScriptsPath . '/Nodes';
 		foreach ($parentNodes as $node) {
-			$currentTypoScriptPath = $typoScriptsPath . ucfirst(substr($node->getPath(), strlen($startNode->getPath()) + 1));
-			$mergedTypoScriptCode .= $this->readExternalTypoScriptFiles($currentTypoScriptPath) . chr(10);
+			$nodeName = $node->getName();
+			$mergedTypoScriptCode .= Files::getFileContents($this->getMixedCasedPathAndFilename($currentTypoScriptPath . '/' . $nodeName . '.ts2')) . chr(10);
+			$currentTypoScriptPath .= '/' . basename($this->getMixedCasedPathAndFilename($currentTypoScriptPath . '/' . $nodeName));
+
 			$typoScriptNodes = $node->getChildNodes('TYPO3.TYPO3:TypoScript');
 			foreach ($typoScriptNodes as $typoScriptNode) {
 				$mergedTypoScriptCode .= $typoScriptNode->getProperty('sourceCode') . chr(10);
 			}
 		}
-		return $this->typoScriptParser->parse($mergedTypoScriptCode);
+		return $this->typoScriptParser->parse($mergedTypoScriptCode, $typoScriptsPath);
 	}
 
 	/**
@@ -88,29 +100,40 @@ class TypoScriptService {
 	}
 
 	/**
-	 * Scans the directory of the given path for .ts2 files, reads them and returns their
-	 * content merged as a string.
+	 * Reads the TypoScript file from the given path and filename.
+	 * If it doesn't exist, this function will just return an empty string.
 	 *
-	 * @param string $path Path to the directory to read the files from
-	 * @return string The merged content of the .ts2 files found
+	 * @param string $pathAndFilename Path and filename of the TypoScript file
+	 * @return string The content of the .ts2 file, plus one chr(10) at the end
 	 */
-	protected function readExternalTypoScriptFiles($path) {
-		$mergedTypoScriptCode = '';
-		if (is_dir($path)) {
-			$directoryIterator = new \DirectoryIterator($path);
-			$filePathsAndNames = array();
-			foreach ($directoryIterator as $file) {
-				$filename = $file->getFilename();
-				if ($file->isFile() && substr($filename, -4) === '.ts2') {
-					$filePathsAndNames[] = $file->getPathname();
-				}
-			}
-			natsort($filePathsAndNames);
-			foreach ($filePathsAndNames as $filePathAndName) {
-				$mergedTypoScriptCode .= \TYPO3\FLOW3\Utility\Files::getFileContents($filePathAndName) . chr(10);
+	protected function readExternalTypoScriptFile($pathAndFilename) {
+		return (file_exists($pathAndFilename)) ? Files::getFileContents($pathAndFilename) . chr(10) : '';
+	}
+
+	/**
+	 * Checks if the directory specified in $pathAndFilename exists and if so,
+	 * tries to find a file matching the name in $pathAndFilename through case
+	 * insensitive comparison of the file name.
+	 *
+	 * You must specify a valid case sensitive path – only the filename maybe
+	 * case insensitive.
+	 *
+	 * @param string $pathAndFilename Path and filename
+	 * @return mixed Either the resolved case sensitive path and filename or FALSE
+	 */
+	protected function getMixedCasedPathAndFilename($pathAndFilename) {
+		$path = dirname($pathAndFilename);
+		if (!is_dir($path)) {
+			return FALSE;
+		}
+		$needleFilename = strtolower(basename($pathAndFilename));
+		foreach (new \DirectoryIterator($path) as $fileInfo) {
+			$haystackFilename = $fileInfo->getBasename();
+			if (strtolower($haystackFilename) === $needleFilename) {
+				return $fileInfo->getPathname();
 			}
 		}
-		return $mergedTypoScriptCode;
+		return FALSE;
 	}
 }
 

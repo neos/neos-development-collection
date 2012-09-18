@@ -12,6 +12,7 @@ namespace TYPO3\TYPO3\View;
  *                                                                        */
 
 use TYPO3\FLOW3\Annotations as FLOW3;
+use TYPO3\TypoScript\Core\Runtime;
 
 /**
  * Controller for displaying nodes in the frontend
@@ -51,19 +52,18 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 			throw new \TYPO3\TYPO3\Exception('TypoScriptView needs a node as argument.', 1329736456);
 		}
 
-		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
-
 			// TODO: find closest folder node from this node...
 		$closestFolderNode = $currentNode;
-		$typoScriptConfiguration = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
+		$currentSiteNode = $this->nodeRepository->getContext()->getCurrentSiteNode();
+		$typoScriptObjectTree = $this->typoScriptService->getMergedTypoScriptObjectTree($currentSiteNode, $closestFolderNode);
 
-			// Prevent Exception in case no TypoScript is available for the given nodes by loading the Wireframe TypoScript as default.
-		if ($typoScriptConfiguration === array()) {
-			$typoScriptConfiguration = $this->typoScriptService->readTypoScriptFromSpecificPath('resource://TYPO3.TYPO3/Private/WireframeMode/TypoScript/');
-		}
-		$typoScriptRuntime = new \TYPO3\TypoScript\Core\Runtime($typoScriptConfiguration, $this->controllerContext);
-
+		$typoScriptRuntime = new Runtime($typoScriptObjectTree, $this->controllerContext);
 		$typoScriptRuntime->pushContextArray(array('node' => $currentNode));
+
+		if (!isset($typoScriptObjectTree[$this->typoScriptPath])) {
+			throw new \TYPO3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No "page" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1347981306);
+		}
+
 		$output = $typoScriptRuntime->render($this->typoScriptPath);
 		$typoScriptRuntime->popContext();
 

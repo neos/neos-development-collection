@@ -1,0 +1,4 @@
+include: resource://TYPO3.TYPO3/../Tests/Functional/TypoScript/Fixtures/ResourcesFixture/TypoScripts/Library/Additional.ts2
+
+text2.value = 'AboutUs'
+text3.value = 'AboutUs'

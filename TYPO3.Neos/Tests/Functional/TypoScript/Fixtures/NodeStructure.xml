@@ -69,6 +69,16 @@
 					</properties>
 				</node>
 			</node>
+			<node type="TYPO3.TYPO3:Page" nodeName="about-us" locale="">
+				<properties>
+					<title>About Us</title>
+				</properties>
+				<node type="TYPO3.TYPO3:Page" nodeName="history" locale="">
+					<properties>
+						<title>History</title>
+					</properties>
+				</node>
+			</node>
 		</node>
 	</site>
 </root>
