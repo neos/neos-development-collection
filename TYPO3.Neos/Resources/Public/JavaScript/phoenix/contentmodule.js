@@ -387,6 +387,13 @@ function($, vie, Ember, CreateJS) {
 
 		loadPage: function(uri, ignorePushToHistory) {
 			var that = this;
+			if (uri === '#') {
+					// Often, pages use an URI of "#" to go to the homepage. In this case,
+					// we extract the current workspace name and redirect to this workspace instead.
+				var siteRoot = $('#t3-page-metainformation').attr('data-__siteroot');
+				var workspaceName = siteRoot.substr(siteRoot.lastIndexOf('@') + 1);
+				uri = '@' + workspaceName;
+			}
 
 			var selectorsToReplace = [];
 
