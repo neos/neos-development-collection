@@ -115,7 +115,7 @@ class UsersController extends \TYPO3\TYPO3\Controller\Module\StandardController 
 		$account->setParty($user);
 		$this->accountRepository->add($account);
 
-		$this->redirect('edit', NULL, NULL, array('account' => $account));
+		$this->redirect('index');
 	}
 
 	/**

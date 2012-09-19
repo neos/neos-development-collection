@@ -7,7 +7,6 @@
 				<tr>
 					<th>Username</th>
 					<th>Name</th>
-					<th>Creation date</th>
 					<th>Roles</th>
 					<th>&nbsp;</th>
 				</tr>
@@ -19,9 +18,6 @@
 						{account.accountIdentifier}
 					</td>
 					<td title="{account.party.alias}">{account.party.name}</td>
-					<td>
-						<f:format.date format="d.m.Y - H:i:s">{account.creationDate}</f:format.date>
-					</td>
 					<td>
 						<f:for each="{account.roles}" as="role" iteration="iterator">
 							<f:if condition="{iterator.isLast}">
@@ -54,7 +50,9 @@
 									<div class="modal hide" id="{flow3identifier}">
 										<div class="modal-header">
 											<button type="button" class="close t3-button" data-dismiss="modal">×</button>
-											<h3>Are you sure you want to delete the account "{account.accountIdentifier}"?</h3>
+											<h3>Are you sure you want to delete user "{account.accountIdentifier}"?</h3>
+											<p>This will delete the user and his personal workspace, including all unpublished content.
+											This operation cannot be undone.</p>
 										</div>
 										<div class="modal-footer">
 											<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>

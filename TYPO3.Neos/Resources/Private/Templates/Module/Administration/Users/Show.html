@@ -1,9 +1,6 @@
 <f:layout name="BackendSubModule" />
 
 <f:section name="subtitle">
-	<div class="row t3-module-container indented">
-		<h2>View user "{account.accountIdentifier}"</h2>
-	</div>
 </f:section>
 <f:section name="content">
 	<div class="row t3-module-container">
@@ -92,18 +89,6 @@
 				</f:else>
 			</f:if>
 		</div>
-		<div class="span5">
-			<legend>User Preferences</legend>
-			<br />
-			<f:if condition="{account.party.preferences.preferences}">
-				<f:for each="{account.party.preferences.preferences}" as="value" key="preference">
-					<p>
-						<label>{preference}</label>
-						{value}
-					</p>
-				</f:for>
-			</f:if>
-		</div>
 	</div>
 
 	<div class="form-actions form-footer">
@@ -111,16 +96,18 @@
 			<f:link.action action="index" class="btn t3-button">Back</f:link.action>
 		</div>
 		<div class="pull-right">
-			<f:link.action action="edit" arguments="{account: account}" class="btn btn-info t3-button">
-				<i class="icon-pencil icon-white"></i> Edit user
-			</f:link.action>
 			<button class="btn btn-danger t3-button" title="Click to delete" data-toggle="modal" href="#delete">
-				<i class="icon-trash icon-white"></i> Delete user
+				<i class="icon-trash icon-white"></i> Delete
 			</button>
+			<f:link.action action="edit" arguments="{account: account}" class="btn btn-info t3-button">
+				<i class="icon-pencil icon-white"></i> Edit
+			</f:link.action>
 			<div class="modal hide" id="delete">
 				<div class="modal-header">
 					<button type="button" class="close t3-button" data-dismiss="modal">×</button>
-					<h3>Are you sure you want to delete the accounet "{account.accountIdentifier}"?</h3>
+					<h3>Are you sure you want to delete user "{account.accountIdentifier}"?</h3>
+					<p>This will delete the user and his personal workspace, including all unpublished content.
+					This operation cannot be undone.</p>
 				</div>
 				<div class="modal-footer">
 					<a href="#" class="btn t3-button" data-dismiss="modal">Cancel</a>
