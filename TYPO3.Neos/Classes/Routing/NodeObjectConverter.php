@@ -156,7 +156,7 @@ class NodeObjectConverter extends \TYPO3\FLOW3\Property\TypeConverter\AbstractTy
 				$propertyName = substr($nodePropertyKey, 1);
 
 					// TODO: Hack: we need to create DateTime objects for some properties of Node
-				if ($propertyName === 'hiddenBeforeDateTime' || $propertyName === 'hiddenAfterDateTime') {
+				if (($propertyName === 'hiddenBeforeDateTime' || $propertyName === 'hiddenAfterDateTime') && is_string($nodePropertyValue)) {
 					if ($nodePropertyValue !== '') {
 						$nodePropertyValue = \DateTime::createFromFormat('!Y-m-d', $nodePropertyValue);
 					} else {
