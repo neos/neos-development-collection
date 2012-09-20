@@ -19,7 +19,7 @@ use TYPO3\ExtJS\Annotations\ExtDirect;
  *
  * @FLOW3\Scope("singleton")
  */
-class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\AuthenticationController {
+class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\AbstractAuthenticationController {
 
 	/**
 	 * @FLOW3\Inject
@@ -51,32 +51,39 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Au
 	 * @return void
 	 */
 	public function indexAction($username = NULL) {
-		if ($this->authenticationManager->isAuthenticated() === TRUE) {
-			try {
-				$this->accessDecisionManager->decideOnResource('TYPO3_TYPO3_Backend_BackendController');
-				$this->redirect('index', 'Backend\Backend');
-			} catch (\TYPO3\FLOW3\Security\Exception\AccessDeniedException $e) {
-			}
-		}
-		if ($authenticationArguments = $this->request->getInternalArgument('__authentication')) {
-			$username = $authenticationArguments['TYPO3']['FLOW3']['Security']['Authentication']['Token']['UsernamePassword']['username'];
-		}
 		$this->view->assign('username', $username);
+		$this->view->assign('hostname', $this->request->getHttpRequest()->getBaseUri()->getHost());
+		$this->view->assign('date', new \DateTime());
+		$this->view->assign('welcomeMessage', 'Please enter your username and password in order to proceed.');
 
 		$version = $this->objectManager->get('TYPO3\FLOW3\Package\PackageManagerInterface')->getPackage('TYPO3.TYPO3')->getPackageMetaData()->getVersion();
 		$this->view->assign('version', $version);
 	}
 
 	/**
-	 * If the call to parent authenticates and an intercepted request exists,
-	 * a redirect will happen in the parent.
+	 * Is called if authentication failed.
 	 *
+	 * @param \TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException $exception The exception thrown while the authentication process
 	 * @return void
 	 */
-	public function authenticateAction() {
-		parent::authenticateAction();
-		$this->redirect('index', 'Backend\Backend');
+	protected function onAuthenticationFailure(\TYPO3\FLOW3\Security\Exception\AuthenticationRequiredException $exception = NULL) {
+		$this->flashMessageContainer->addMessage(new \TYPO3\FLOW3\Error\Error('The entered username or password was wrong.', ($exception === NULL ? 1347016771 : $exception->getCode())));
+		$this->redirect('index');
 	}
+
+	/**
+	 * Is called if authentication was successful.
+	 *
+	 * @param \TYPO3\FLOW3\Mvc\ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
+	 * @return string
+	 */
+	public function onAuthenticationSuccess(\TYPO3\FLOW3\Mvc\ActionRequest $originalRequest = NULL) {
+		if ($originalRequest !== NULL) {
+			$this->redirectToRequest($originalRequest);
+		 }
+		 $this->redirect('Backend\Backend');
+	}
+
 
 	/**
 	 * Shows some information about the currently logged in account

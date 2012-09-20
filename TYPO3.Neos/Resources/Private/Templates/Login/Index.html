@@ -1,50 +1,75 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE
 	html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-{namespace typo3=TYPO3\TYPO3\ViewHelpers}
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="generator" content="TYPO3, http://typo3.org, &#169; The TYPO3 Development Team" />
-		<title>TYPO3 Login</title>
-		<f:base />
-
-		<link rel="stylesheet" type="text/css" href="{f:uri.resource(path: 'StyleSheet/Login.css')}" />
-	</head>
-	<body>
-		<div id="typo3-typo3-login-site">
-			<h2 class="typo3-typo3-version-information">Version {version}</h2>
-			<div id="typo3-typo3-login-wallpaper">
-				<div id="typo3-typo3-login-box">
-					<h2 class="typo3-typo3-login-domain">TYPO3 Login</h2>
-					<f:form id="typo3-typo3-login-form" action="authenticate">
-						<div class="typo3-typo3-login-container">
-							<f:flashMessages class="errorMessages" />
-							<div class="typo3-typo3-login-fields">
-								<label class="username">User</label>
-								<input type="text" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]" id="username" tabindex="1" {f:if(condition: username, else: 'autofocus="autofocus"')} value="{username}" />
-							</div>
-							<div class="typo3-typo3-login-fields">
-								<label class="password">Password</label>
-								<input type="password" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]" id="password" tabindex="2" {f:if(condition: username, then: 'autofocus="autofocus"')} />
-							</div>
-							<div class="typo3-typo3-login-actions">
-								<button type="submit" class="typo3-typo3-login-button" tabindex="3"><div>Login</div></button>
-							</div>
-						</div>
-						<span class="typo3-typo3-login-lock"></span>
-					</f:form>
-				</div>
-			</div>
-			<div id="typo3-typo3-login-footer">
-				<p>TYPO3 (Phoenix) – © 2006-2012 by Robert Lemke, Karsten Dambekalns, Sebastian Kurfürst, Andreas Förthner, Bastian Waidelich, Christopher Hlubek, Jens Hoffmann,
-					Nils Dehl, Berit Jensen, Christian Müller, Rens Admiraal and more great guys from the TYPO3 community.
-					This is free software, licensed under GPL3 or higher. TYPO3 comes with MANY GREAT FEATURES but WITHOUT ANY WARRANTY.
-					See <a href="http://www.typo3.org">www.typo3.org</a> for more details.
-					Removing or obstructing the appearance of this notice is not nice and for the rest prohibited by law. Reading fineprint can damage your eyes.
-				</p>
-			</div>
+{namespace typo3=TYPO3\TYPO3\ViewHelpers}<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<f:base/>
+	<title>TYPO3 Phoenix Login</title>
+	<link rel="stylesheet" href="{f:uri.resource(path: '2/css/bootstrap.min.css', package: 'Twitter.Bootstrap')}"/>
+	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Setup.css', package: 'TYPO3.Setup')}"/>
+	<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Login.css')}"/>
+	<script src="{f:uri.resource(path: 'JavaScript/jquery-1.7.1.min.js', package: 'TYPO3.Setup')}"></script>
+</head>
+<body>
+<div class="container">
+	<div class="modal typo3-phoenix-login-box ">
+		<div class="modal-header">
+			<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png')}" width="115" height="50" alt="TYPO3 Phoenix"/>
 		</div>
-	</body>
+		<div class="modal-body">
+			<f:form action="authenticate">
+				<div class="row-fluid">
+					<div class="span5">
+						<f:alias map="{flashMessages: '{f:render(partial: \'Login\\FlashMessages\')}'}">
+							<f:if condition="{flashMessages}">
+								<f:then>
+									<f:format.raw>{flashMessages}</f:format.raw>
+								</f:then>
+								<f:else>
+									<p>{welcomeMessage}</p>
+								</f:else>
+							</f:if>
+						</f:alias>
+					</div>
+					<div class="span6 pull-right row-fluid">
+						<fieldset>
+							<div class="controls">
+								<f:form.textfield id="username" type="text" placeholder="Username" class="span12" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}"/>
+							</div>
+							<div class="controls">
+								<f:form.textfield id="password" type="password" placeholder="Password" class="span12" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]"/>
+							</div>
+							<div class="controls">
+								<f:form.button type="button" class="span7 btn btn-link">
+									<!-- Forgot password? --></f:form.button>
+								<f:form.button type="submit" class="span5 btn btn-primary btn-warning">
+									Login
+								</f:form.button>
+							</div>
+						</fieldset>
+					</div>
+				</div>
+			</f:form>
+		</div>
+	</div>
+
+</div>
+<div id="typo3-phoenix-login-footer">
+	<p>TYPO3 Phoenix – © 2006-
+		<f:format.date format="Y">{date}</f:format.date>
+		by Robert Lemke, Karsten Dambekalns, Sebastian Kurfürst, Rens Admiraal, Aske
+		Ertmann, Andreas Förthner, Markus Goldbeck, Berit Hlubek, Christopher Hlubek,
+		Jens Hoffmann, Christian Müller, Marc Neuhaus, Mattias Nilsson, Bastian
+		Waidelich and more great guys from the TYPO3 community. This is free software,
+		licensed under GPL3 or higher. TYPO3 Phoenix comes with MANY GREAT FEATURES
+		but WITHOUT ANY WARRANTY. See <a href="http://phoenix.typo3.org">phoenix.typo3.org</a>
+		for more details. Removing or obstructing the appearance of this notice is not
+		nice and for the rest prohibited by law. Reading fineprint can damage your
+		eyes.
+	</p>
+</div>
+<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
+</body>
 </html>
