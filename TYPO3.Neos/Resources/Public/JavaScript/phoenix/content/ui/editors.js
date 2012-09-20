@@ -10,7 +10,7 @@ define(
 	'text!phoenix/templates/content/ui/fileUpload.html',
 	'text!phoenix/templates/content/ui/imageUpload.html',
 	'phoenix/content/ui/elements',
-	'canvas.indicator',
+	'canvas.indicator'
 ],
 function($, fileUploadTemplate, imageUploadTemplate) {
 	if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('phoenix/content/ui/editors');

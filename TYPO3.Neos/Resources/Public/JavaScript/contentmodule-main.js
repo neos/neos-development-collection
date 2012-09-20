@@ -43,10 +43,10 @@ require(
 			'underscorejs': {
 				'exports': '_'
 			},
-			'createjs': [''],
 			'hallo': ['jquery-ui'],
 			'backbone': ['underscorejs'],
-			'Library/vie/lib/rdfquery/latest/jquery.rdfquery.min': ['jquery']
+			'Library/vie/lib/rdfquery/latest/jquery.rdfquery.min': ['jquery'],
+			'halloplugins/linkplugin': ['hallo']
 		},
 		locale: 'en'
 	},

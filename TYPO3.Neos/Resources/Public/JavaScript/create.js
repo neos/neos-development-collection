@@ -8,11 +8,12 @@ define(
 		'backbone',
 		'underscorejs',
 		'hallo',
+		'halloplugins/linkplugin',
 		'Library/createjs/deps/jquery.tagsinput.min',
 		'Library/createjs/deps/rangy-core-1.2.3',
 		'createjs',
 		'create/collectionWidgets/jquery.typo3.collectionWidget',
-		'create/typo3MidgardEditable',
+		'create/typo3MidgardEditable'
 	],
 	function($, vieInstance, Ember) {
 		if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('create');
@@ -65,7 +66,7 @@ define(
 									halloformat: {},
 									halloblock: {},
 									hallolists: {},
-									hallolink: {}
+									'hallo-linkplugin': {}
 								}
 							}
 						},

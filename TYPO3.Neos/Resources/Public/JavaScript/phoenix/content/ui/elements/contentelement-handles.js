@@ -15,7 +15,6 @@ define(
 
 			_element: null,
 
-
 			$newAfterPopoverContent: null,
 
 			_entityCollectionIndex: null,
