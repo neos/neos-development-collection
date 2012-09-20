@@ -59,11 +59,6 @@ class TypoScriptView extends \TYPO3\FLOW3\Mvc\View\AbstractView {
 
 		$typoScriptRuntime = new Runtime($typoScriptObjectTree, $this->controllerContext);
 		$typoScriptRuntime->pushContextArray(array('node' => $currentNode));
-
-		if (!isset($typoScriptObjectTree[$this->typoScriptPath])) {
-			throw new \TYPO3\TYPO3\Controller\Exception\NoTypoScriptPageObjectException('No "page" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1347981306);
-		}
-
 		$output = $typoScriptRuntime->render($this->typoScriptPath);
 		$typoScriptRuntime->popContext();
 
