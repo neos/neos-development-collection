@@ -672,8 +672,10 @@ body {
 		@include transition-duration(0.2s);
 	}
 	&.t3-ui-previewmode {
-		margin-top: $toolbar-height;
 		margin-right: 0;
+		.t3-ui {
+			display: none;
+		}
 		#t3-footer,
 		#t3-ui-top {
 			height: 0;
@@ -681,6 +683,7 @@ body {
 		#t3-toolbar {
 			margin-top: -$toolbar-height;
 			box-shadow: none;
+			display: block;
 			.t3-icon-preview {
 				margin-top: $toolbar-height + 10px;
 				box-shadow: 0 0 15px rgba(0, 0, 0, .15);
