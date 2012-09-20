@@ -7346,8 +7346,10 @@ body .aloha-block-TYPO3Block {
   transition-duration: 0.2s;
 }
 body.t3-ui-previewmode {
-  margin-top: 36px;
   margin-right: 0;
+}
+body.t3-ui-previewmode .t3-ui {
+  display: none;
 }
 body.t3-ui-previewmode #t3-footer,
 body.t3-ui-previewmode #t3-ui-top {
@@ -7356,6 +7358,7 @@ body.t3-ui-previewmode #t3-ui-top {
 body.t3-ui-previewmode #t3-toolbar {
   margin-top: -36px;
   box-shadow: none;
+  display: block;
 }
 body.t3-ui-previewmode #t3-toolbar .t3-icon-preview {
   margin-top: 46px;
