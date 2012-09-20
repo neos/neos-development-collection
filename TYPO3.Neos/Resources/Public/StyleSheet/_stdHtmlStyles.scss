@@ -116,6 +116,9 @@
 		@include border-bottom-radius(4px);
 		@include box-shadow(0px -1px 5px rgba($darkest, 0.2), 0px -1px 0px #666);
 		margin-bottom: 0px;
+		li {
+			text-align:left;
+		}
 	}
 }
 

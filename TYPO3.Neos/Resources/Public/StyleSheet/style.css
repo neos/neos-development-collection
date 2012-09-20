@@ -6138,6 +6138,10 @@
   box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.2), 0px -1px 0px #666666;
   margin-bottom: 0px;
 }
+.t3-ui .form-footer li,
+.t3-ui .modal-footer li {
+  text-align: left;
+}
 
 .t3-ui .t3-button.pressed {
   color: white;
