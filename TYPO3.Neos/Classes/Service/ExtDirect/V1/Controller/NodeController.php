@@ -403,11 +403,13 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function searchPageAction($query) {
+		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
+		$this->nodeRepository->setContext($contentContext);
+
 		$nodes = $this->nodeSearchService->findByProperties($query, array('TYPO3.TYPO3:Page'));
 
 		$searchResult = array();
 
-		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
 		foreach ($nodes as $uninitializedNode) {
 			$node = $contentContext->getNode($uninitializedNode->getPath());
 			$searchResult[] = $this->processNodeForAlohaRepository($node);
