@@ -369,7 +369,10 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	}
 
 	/**
-	 * Updates the specified node
+	 * Updates the specified node. Returns the following data:
+	 * - the (possibly changed) workspace name of the node
+	 * - the URI of the closest folder node. If $node is a folder node (f.e. a Page), the own URI is returned.
+	 *   This is important to handle renamings of nodes correctly.
 	 *
 	 * Note: We do not call $nodeRepository->update() here, as TYPO3CR has a stateful API for now.
 	 *
@@ -378,7 +381,11 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	 * @ExtDirect
 	 */
 	public function updateAction(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
-		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', '');
+		$closestFolderNode = $node;
+		while (!$closestFolderNode->getContentType()->isOfType('TYPO3.TYPO3CR:Folder')) {
+			$closestFolderNode = $closestFolderNode->getParent();
+		}
+		$nextUri = $this->uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $closestFolderNode), 'Frontend\Node', 'TYPO3.TYPO3', '');
 		$this->view->assign('value', array('data' => array('workspaceNameOfNode' => $node->getWorkspace()->getName(), 'nextUri' => $nextUri), 'success' => TRUE));
 	}
 
