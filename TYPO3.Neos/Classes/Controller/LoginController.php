@@ -80,15 +80,14 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Ab
 	public function onAuthenticationSuccess(\TYPO3\FLOW3\Mvc\ActionRequest $originalRequest = NULL) {
 		if ($originalRequest !== NULL) {
 			$this->redirectToRequest($originalRequest);
-		 }
-		 $this->redirect('Backend\Backend');
+		}
+		$this->redirect('index', 'Backend\Backend');
 	}
-
 
 	/**
 	 * Shows some information about the currently logged in account
 	 *
-	 * @return void
+	 * @return string
 	 * @ExtDirect
 	 */
 	public function showAction() {
@@ -112,9 +111,9 @@ class LoginController extends \TYPO3\FLOW3\Security\Authentication\Controller\Ab
 						'success' => TRUE
 					)
 				);
-				break;
+				return $this->view->render();
 			default :
-				return 'Hello ' . $person->getName()->getFirstName() . '. You are currently logged in with the account '. $this->securityContext->getAccount()->getAccountIdentifier() . '.';
+				return 'Hello ' . $person->getName()->getFirstName() . '. You are currently logged in with the account ' . $this->securityContext->getAccount()->getAccountIdentifier() . '.';
 		}
 	}
 
