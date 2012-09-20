@@ -212,9 +212,9 @@ class Runtime {
 		if (!$this->canRenderWithConfiguration($typoScriptConfiguration)) {
 			if ($behaviorIfPathNotFound === self::BEHAVIOR_EXCEPTION) {
 				if (!isset($typoScriptConfiguration['__objectType'])) {
-					throw new \TYPO3\TypoScript\Exception('Element at typoscript path "' . $typoScriptPath . '" could not be rendered because the object type of that TypoScript object was not defined.', 1332493990);
+					throw new \TYPO3\TypoScript\Exception\MissingTypoScriptObjectException('No "' . $typoScriptPath . '" TypoScript object found. Please make sure to define one in your TypoScript configuration.', 1332493990);
 				} else {
-					throw new \TYPO3\TypoScript\Exception('Element at typoscript path "' . $typoScriptPath . '" could not be rendered because implementation class name for "' . $typoScriptConfiguration['__objectType'] . '" was not found.', 1332493995);
+					throw new \TYPO3\TypoScript\Exception\MissingTypoScriptImplementationException('The TypoScript object at path "' . $typoScriptPath . '" could not be rendered: Missing implementation class name for "' . $typoScriptConfiguration['__objectType'] . '". Add @class in your TypoScript configuration.', 1332493995);
 				}
 			} else {
 				return NULL;
