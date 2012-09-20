@@ -8612,7 +8612,7 @@ a.btn:hover {
 .t3-ui.t3-module.t3-module-management-workspaces tfoot .legend {
   margin-left: 15px;
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #04a7ea;
@@ -8634,15 +8634,15 @@ a.btn:hover {
   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze[disabled] {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze[disabled] {
   color: white;
   background-color: #049cdb;
   *background-color: #048ac2;
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.active {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.active {
   background-color: #0378a9 \9;
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:focus, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:focus, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #0499d7;
@@ -8661,15 +8661,15 @@ a.btn:hover {
   border: 1px solid #0378a9;
   border-bottom-color: #025577;
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover[disabled], .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:focus:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:focus:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:focus.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:focus.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:focus[disabled], .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active[disabled] {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover[disabled], .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:focus:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:focus:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:focus.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:focus.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:focus[disabled], .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active[disabled] {
   color: white;
   background-color: #0495d1;
   *background-color: #0383b8;
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:hover.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:focus:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:focus.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze:active.active {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:hover.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:focus:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:focus.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze:active.active {
   background-color: #03719f \9;
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:focus {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:focus {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #04a7ea;
@@ -8686,20 +8686,20 @@ a.btn:hover {
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled[disabled], .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover[disabled], .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active[disabled], .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:focus:hover, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:focus:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:focus.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:focus.disabled, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:focus[disabled] {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled[disabled], .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover[disabled], .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active[disabled], .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:focus:hover, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:focus:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:focus.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:focus.disabled, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:focus[disabled] {
   color: white;
   background-color: #049cdb;
   *background-color: #048ac2;
 }
-.t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:hover.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:active.active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:focus:active, .t3-ui.t3-module.t3-module-administration-package .t3-button.btn-freeze.disabled:focus.active {
+.t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:hover.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:active.active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:focus:active, .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze.disabled:focus.active {
   background-color: #0378a9 \9;
 }
-.t3-ui.t3-module.t3-module-administration-package table td.check,
-.t3-ui.t3-module.t3-module-administration-package table th.check {
+.t3-ui.t3-module.t3-module-administration-packages table td.check,
+.t3-ui.t3-module.t3-module-administration-packages table th.check {
   width: 12px;
   line-height: 26px;
 }
-.t3-ui.t3-module.t3-module-administration-package table label {
+.t3-ui.t3-module.t3-module-administration-packages table label {
   padding: 5px 0;
   margin-bottom: 0;
   font-size: inherit;
@@ -8710,13 +8710,13 @@ a.btn:hover {
   -ms-user-select: none;
   user-select: none;
 }
-.t3-ui.t3-module.t3-module-administration-package table .fold-toggle {
+.t3-ui.t3-module.t3-module-administration-packages table .fold-toggle {
   cursor: pointer;
   margin-top: -1px;
   margin-right: 11px;
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #6e6e6e;
@@ -8738,25 +8738,25 @@ a.btn:hover {
   -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.disabled, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze[disabled],
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.disabled,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze[disabled] {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.disabled, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze[disabled],
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.disabled,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze[disabled] {
   color: white;
   background-color: #666666;
   *background-color: #595959;
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active {
   background-color: #4d4d4d \9;
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:focus, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:focus,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:focus, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:focus,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #0499d7;
@@ -8775,37 +8775,37 @@ a.btn:hover {
   border: 1px solid #0378a9;
   border-bottom-color: #025577;
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover:hover, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover.active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover.disabled, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover[disabled], .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:focus:hover, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:focus:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:focus.active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:focus.disabled, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:focus[disabled], .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active:hover, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active.active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active.disabled, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active[disabled],
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover:hover,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover.disabled,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover[disabled],
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:focus:hover,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:focus:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:focus.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:focus.disabled,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:focus[disabled],
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active:hover,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active.disabled,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active[disabled] {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover:hover, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover.active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover.disabled, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover[disabled], .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:focus:hover, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:focus:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:focus.active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:focus.disabled, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:focus[disabled], .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active:hover, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active.active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active.disabled, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active[disabled],
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover:hover,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover.disabled,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover[disabled],
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:focus:hover,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:focus:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:focus.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:focus.disabled,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:focus[disabled],
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active:hover,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active.disabled,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active[disabled] {
   color: white;
   background-color: #0495d1;
   *background-color: #0383b8;
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:hover.active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:focus:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:focus.active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze:active.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:hover.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:focus:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:focus.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze:active.active {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:hover.active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:focus:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:focus.active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze:active.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:hover.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:focus:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:focus.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze:active.active {
   background-color: #03719f \9;
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #0499d7;
@@ -8824,19 +8824,19 @@ a.btn:hover {
   border: 1px solid #0378a9;
   border-bottom-color: #025577;
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active:hover, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active.active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active.disabled, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active[disabled],
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active:hover,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active.disabled,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active[disabled] {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active:hover, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active.active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active.disabled, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active[disabled],
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active:hover,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active.disabled,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active[disabled] {
   color: white;
   background-color: #0495d1;
   *background-color: #0383b8;
 }
-.t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active:active, .t3-ui.t3-module.t3-module-administration-package table td > .t3-button.btn-freeze.active.active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active:active,
-.t3-ui.t3-module.t3-module-administration-package table td > div.pull-right > .t3-button.btn-freeze.active.active {
+.t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active:active, .t3-ui.t3-module.t3-module-administration-packages table td > .t3-button.btn-freeze.active.active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active:active,
+.t3-ui.t3-module.t3-module-administration-packages table td > div.pull-right > .t3-button.btn-freeze.active.active {
   background-color: #03719f \9;
 }
 .t3-ui.t3-module .nav-pills > li > a {

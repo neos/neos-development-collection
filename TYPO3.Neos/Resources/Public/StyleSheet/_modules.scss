@@ -70,7 +70,7 @@
 		}
 	}
 
-	&.t3-module-administration-package {
+	&.t3-module-administration-packages {
 		.t3-button.btn-freeze {
 			@include buttonBackground(lighten($blue, 5%), $blue);
 			border: 1px solid darken($blue, 5%);

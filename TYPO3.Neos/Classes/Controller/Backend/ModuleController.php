@@ -65,7 +65,7 @@ class ModuleController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		$this->dispatcher->dispatch($moduleRequest, $moduleResponse);
 
 		$this->view->assignMultiple(array(
-			'moduleClass' => strtolower(implode('-', $moduleBreadcrumb)),
+			'moduleClass' => implode('-', $modules),
 			'moduleContents' => $moduleResponse->getContent(),
 			'title' => $moduleRequest->hasArgument('title') ? $moduleRequest->getArgument('title') : $moduleConfiguration['label'],
 			'rootModule' => array_shift($modules),
