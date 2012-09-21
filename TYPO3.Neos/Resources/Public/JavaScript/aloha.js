@@ -47,16 +47,20 @@ define(['jquery', 'jquery-ui'], function(jQuery, jQueryUi) {
 		}
 	};
 
-	require(
-		{
-			context: 'aloha',
-			baseUrl: alohaBaseUrl
-		},
-		['aloha'],
-		function(Aloha) {
-			if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha (inner require)');
-		}
-	);
+		// because this method is called during bootstrap, it might happen that T3.Configuration is not yet available.
+		// Thus, we need to check the configuration in window.T3Configuration as well.
+	if ((window.T3Configuration && window.T3Configuration.enableAloha) || (T3.Configuration && T3.Configuration.enableAloha)) {
+		require(
+			{
+				context: 'aloha',
+				baseUrl: alohaBaseUrl
+			},
+			['aloha'],
+			function(Aloha) {
+				if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha (inner require)');
+			}
+		);
+	}
 });
 
 

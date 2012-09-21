@@ -54,7 +54,7 @@ TYPO3:
         configurationRootPath: %FLOW3_PATH_PACKAGES%Application/TYPO3.DocTools/Resources/Private/Themes/TYPO3/
         renderedDocumentationRootPath: %FLOW3_PATH_DATA%Temporary/Documentation/TYPO3.TYPO3/
         renderingOutputFormat: 'html'
-        renderByDefault: false
+        renderByDefault: FALSE
 
   TYPO3CR:
     contentTypes:
@@ -100,12 +100,12 @@ TYPO3:
             type: string
             label: 'Title'
             group: 'page'
-            reloadOnChange: true
+            reloadOnChange: TRUE
           _name:
             type: string
             label: 'Name (URL)'
             group: 'page'
-            reloadOnChange: true
+            reloadOnChange: TRUE
         groups:
           page:
             label: 'Folder options'
@@ -172,7 +172,7 @@ TYPO3:
             type: TYPO3\Media\Domain\Model\ImageVariant
             label: 'Image'
             group: 'image'
-            reloadOnChange: true
+            reloadOnChange: TRUE
         groups:
           image:
             label: 'Image'
@@ -195,7 +195,7 @@ TYPO3:
                   label: 'Left'
                 right:
                   label: 'Right'
-            reloadOnChange: true
+            reloadOnChange: TRUE
 
       'TYPO3.TYPO3:Html':
         superTypes: ['TYPO3.TYPO3:ContentObject']
@@ -227,7 +227,7 @@ TYPO3:
             type: enum
             label: 'Starting Level'
             group: 'options'
-            reloadOnChange: true
+            reloadOnChange: TRUE
             default: '0'
             options:
               values:
@@ -257,7 +257,7 @@ TYPO3:
             type: enum
             label: 'Maximum Levels'
             group: 'options'
-            reloadOnChange: true
+            reloadOnChange: TRUE
             default: '1'
             options:
               values:
@@ -324,7 +324,7 @@ TYPO3:
                   label: '66% / 33%'
                 '33-66':
                   label: '33% / 66%'
-            reloadOnChange: true
+            reloadOnChange: TRUE
 
       'TYPO3.TYPO3:ThreeColumn':
         superTypes: ['TYPO3.TYPO3:Column']
@@ -350,7 +350,7 @@ TYPO3:
                   label: '25% / 50% / 25%'
                 '25-25-50':
                   label: '25% / 25% / 50%'
-            reloadOnChange: true
+            reloadOnChange: TRUE
 
       'TYPO3.TYPO3:FourColumn':
         superTypes: ['TYPO3.TYPO3:Column']
@@ -372,7 +372,7 @@ TYPO3:
               values:
                 '25-25-25-25':
                   label: '25% / 25% / 25% / 25%'
-            reloadOnChange: true
+            reloadOnChange: TRUE
 
       'TYPO3.TYPO3:Plugin':
         superTypes: ['TYPO3.TYPO3:ContentObject']
@@ -384,28 +384,32 @@ TYPO3:
             type: string
             label: 'Package'
             group: 'pluginSettings'
-            reloadOnChange: true
+            reloadOnChange: TRUE
           subpackage:
             type: string
             label: 'Subpackage'
             group: 'pluginSettings'
-            reloadOnChange: true
+            reloadOnChange: TRUE
           controller:
             type: string
             label: 'Controller Name'
             group: 'pluginSettings'
-            reloadOnChange: true
+            reloadOnChange: TRUE
           action:
             type: string
             label: 'Action'
             group: 'pluginSettings'
-            reloadOnChange: true
+            reloadOnChange: TRUE
         groups:
           pluginSettings:
             label: 'Plugin Settings'
 
   TYPO3:
     contentTypeGroups: ['General', 'Structure', 'Plugins']
+
+    # as Aloha is quite big to load, we do not include it by default. Lateron,
+    # this setting will be replaced by a better API.
+    enableAloha: FALSE
 
     userInterface:
       string:
