@@ -119,18 +119,18 @@ class ContentTypeSchemaBuilder {
 		foreach ($this->properties as $property => $propertyConfiguration) {
 			if (isset($propertyConfiguration->domains) && is_array($propertyConfiguration->domains)) {
 				foreach ($propertyConfiguration->domains as $domain) {
-					if (preg_match('/TYPO3\.TYPO3:.*Column/', $domain)) {
+					if (preg_match('/TYPO3\.Phoenix\.ContentTypes:.*Column/', $domain)) {
 						$this->properties[$property]->ranges = array_keys($this->types);
 					}
 				}
 			}
 		}
 
-			// Convert the TYPO3.TYPO3:Section element to support content-collection
+			// Convert the TYPO3.Phoenix.ContentTypes:Section element to support content-collection
 			// TODO Move to content type definition
-		if (isset($this->types['typo3:TYPO3.TYPO3:Section'])) {
-			$this->addProperty('typo3:TYPO3.TYPO3:Section', 'typo3:content-collection', array());
-			$this->types['typo3:TYPO3.TYPO3:Section']->specific_properties[] = 'typo3:content-collection';
+		if (isset($this->types['typo3:TYPO3.Phoenix.ContentTypes:Section'])) {
+			$this->addProperty('typo3:TYPO3.Phoenix.ContentTypes:Section', 'typo3:content-collection', array());
+			$this->types['typo3:TYPO3.Phoenix.ContentTypes:Section']->specific_properties[] = 'typo3:content-collection';
 			$this->properties['typo3:content-collection']->ranges = array_keys($this->types);
 		}
 

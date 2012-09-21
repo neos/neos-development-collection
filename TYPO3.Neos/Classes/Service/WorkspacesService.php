@@ -88,8 +88,8 @@ class WorkspacesService {
 	public function publishNode(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node, $targetWorkspaceName = 'live') {
 		$nodes = array($node);
 		$contentType = $node->getContentType();
-		if ($contentType->isOfType('TYPO3.TYPO3:Page') || $contentType->hasStructure()) {
-			foreach ($node->getChildNodes('TYPO3.TYPO3:Section') as $sectionNode) {
+		if ($contentType->isOfType('TYPO3.Phoenix.ContentTypes:Page') || $contentType->hasStructure()) {
+			foreach ($node->getChildNodes('TYPO3.Phoenix.ContentTypes:Section') as $sectionNode) {
 				array_push($nodes, $sectionNode);
 			}
 		}

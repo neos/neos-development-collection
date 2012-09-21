@@ -27,14 +27,14 @@ prototype(TYPO3.TypoScript:Html) {
 	source = ${context.property('source')}
 }
 prototype(TYPO3.TypoScript:Case).matchers.100100 {
-	condition = ${context.is('[instanceof TYPO3.TYPO3:Html]')}
+	condition = ${context.is('[instanceof TYPO3.Phoenix.ContentTypes:Html]')}
 	type = 'TYPO3.TypoScript:Html'
 }
 
 # Page TS Object
 prototype(TYPO3.TypoScript:Page) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TypoScript:Page) {
-	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/PageTemplate.html'
+	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/PageTemplate.html'
 	body = TYPO3.TypoScript:Template
 	body.title = ${context.property('title')}
 	body.nodePath = ${context.property('_path')}
@@ -45,11 +45,11 @@ prototype(TYPO3.TypoScript:Page) {
 # TextWithHeadline TS Object
 prototype(TYPO3.TypoScript:TextWithHeadline) < prototype(TYPO3.TypoScript:Template)
 prototype(TYPO3.TypoScript:TextWithHeadline) {
-	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/TextWithHeadline.html'
+	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/TextWithHeadline.html'
 	title = ${context.property('title')}
 	text = ${context.property('text')}
 }
 prototype(TYPO3.TypoScript:Case).matchers.100200 {
-	condition = ${context.is('[instanceof TYPO3.TYPO3:TextWithHeadline]')}
+	condition = ${context.is('[instanceof TYPO3.Phoenix.ContentTypes:TextWithHeadline]')}
 	type = 'TYPO3.TypoScript:TextWithHeadline'
 }

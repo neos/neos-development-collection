@@ -81,7 +81,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 
 		$contextNodePath = $node->getContextPath();
 		$contentType = $node->getContentType()->getName();
-		$title = $node->getContentType() === 'TYPO3.TYPO3:Page' ? $node->getProperty('title'): $node->getLabel();
+		$title = $node->getContentType() === 'TYPO3.Phoenix.ContentTypes:Page' ? $node->getProperty('title'): $node->getLabel();
 		$expand = 0;
 		$uriForNode = $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', '');
 
@@ -115,7 +115,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 			$workspaceName = $childNode->getWorkspace()->getName();
 			$nodeName = $childNode->getName();
 			$contentType = $childNode->getContentType()->getName();
-			$title = $childNode->getContentType() === 'TYPO3.TYPO3:Page' ? $childNode->getProperty('title'): $childNode->getLabel();
+			$title = $childNode->getContentType() === 'TYPO3.Phoenix.ContentTypes:Page' ? $childNode->getProperty('title'): $childNode->getLabel();
 			$abstract = $childNode->getAbstract();
 			$expand = ($depth === 0 || $recursionPointer < $depth);
 			switch ($this->outputStyle) {
@@ -164,7 +164,7 @@ class NodeView extends \TYPO3\ExtJS\ExtDirect\View {
 		$contentType = $node->getContentType()->getName();
 		$treeNode = array(
 			'key' => $node->getContextPath(),
-			'title' => $node->getContentType() === 'TYPO3.TYPO3:Page' ? $node->getProperty('title'): $node->getLabel(),
+			'title' => $node->getContentType() === 'TYPO3.Phoenix.ContentTypes:Page' ? $node->getProperty('title'): $node->getLabel(),
 			'href' => $uriBuilder->reset()->setFormat('html')->setCreateAbsoluteUri(TRUE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', ''),
 			'isFolder' => $hasChildNodes,
 			'isLazy' => ($hasChildNodes && !$expand),

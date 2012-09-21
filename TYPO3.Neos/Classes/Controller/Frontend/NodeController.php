@@ -86,9 +86,9 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
-		if ($node->getContentType()->isOfType('TYPO3.TYPO3:Shortcut')) {
-			while ($node->getContentType()->isOfType('TYPO3.TYPO3:Shortcut')) {
-				$childNodes = $node->getChildNodes('TYPO3.TYPO3:Page,TYPO3.TYPO3:Shortcut');
+		if ($node->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:Shortcut')) {
+			while ($node->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:Shortcut')) {
+				$childNodes = $node->getChildNodes('TYPO3.Phoenix.ContentTypes:Page,TYPO3.Phoenix.ContentTypes:Shortcut');
 				$node = current($childNodes);
 			}
 			$this->redirect('show', NULL, NULL, array('node' => $node));
@@ -120,7 +120,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		if (!$node->isVisible() && !$this->nodeRepository->getContext()->isInvisibleContentShown()) {
 			$this->throwStatus(404);
 		}
-		if ($node->getContentType() === 'TYPO3.TYPO3:Shortcut') {
+		if ($node->getContentType() === 'TYPO3.Phoenix.ContentTypes:Shortcut') {
 			$this->view->assign('wireframeMode', $node);
 		}
 

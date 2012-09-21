@@ -86,7 +86,7 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 
 		$sites = array();
 		foreach ($this->workspacesService->getUnpublishedNodes($workspaceName) as $node) {
-			if (!$node->getContentType()->isOfType('TYPO3.TYPO3:Section')) {
+			if (!$node->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:Section')) {
 				$pathParts = explode('/', $node->getPath());
 				if (count($pathParts) > 2) {
 					$siteNodeName = $pathParts[2];
@@ -98,7 +98,7 @@ class WorkspacesController extends \TYPO3\TYPO3\Controller\Module\StandardContro
 					}
 					$sites[$siteNodeName]['folders'][$folderPath]['folderNode'] = $folder;
 					$change = array('node' => $node);
-					if ($node->getContentType()->isOfType('TYPO3.TYPO3:AbstractNode')) {
+					if ($node->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:AbstractNode')) {
 						$change['configuration'] = $node->getContentType()->getConfiguration();
 					}
 					$sites[$siteNodeName]['folders'][$folderPath]['changes'][$relativePath] = $change;
