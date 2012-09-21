@@ -119,7 +119,8 @@ class TemplateImplementation extends AbstractTypoScriptObject implements \ArrayA
 	 * @return string
 	 */
 	public function evaluate() {
-		$fluidTemplate = new \TYPO3\Fluid\View\StandaloneView(($this->tsRuntime->getControllerContext()->getRequest() instanceof \TYPO3\FLOW3\Mvc\ActionRequest) ? $this->tsRuntime->getControllerContext()->getRequest() : NULL);
+			// standalone view will generate a "standalone" ActionRequest, needed so that the package key in the "real" ActionRequest is not overwritten.
+		$fluidTemplate = new \TYPO3\Fluid\View\StandaloneView();
 
 		$templatePath = $this->tsValue('templatePath');
 		if ($templatePath === NULL) {
