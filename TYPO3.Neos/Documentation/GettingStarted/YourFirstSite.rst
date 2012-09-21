@@ -53,12 +53,12 @@ with the following content:
 				<state>1</state>
 				<siteResourcesPackageKey>My.Site</siteResourcesPackageKey>
 			</properties>
-			<node identifier="" type="TYPO3.TYPO3:Page" nodeName="homepage" locale="en_EN">
+			<node identifier="" type="TYPO3.Phoenix.ContentTypes:Page" nodeName="homepage" locale="en_EN">
 				<properties>
 					<title>Home</title>
 				</properties>
-				<node identifier="" type="TYPO3.TYPO3:Section" nodeName="main" locale="en_EN">
-					<node identifier="" type="TYPO3.TYPO3:Text" nodeName="text1" locale="en_EN">
+				<node identifier="" type="TYPO3.Phoenix.ContentTypes:Section" nodeName="main" locale="en_EN">
+					<node identifier="" type="TYPO3.Phoenix.ContentTypes:Text" nodeName="text1" locale="en_EN">
 						<properties>
 							<headline>Welcome</headline>
 							<text><![CDATA[This is your first TYPO3 Phoenix website.]]>	</text>
@@ -78,7 +78,7 @@ Now import this basic structure using the following command:
 Adding a template
 =================
 
-Now create the file `Resources/Private/TypoScripts/Root.ts2`, and add the following content:
+Now create the file `Resources/Private/TypoScripts/Library/Root.ts2`, and add the following content:
 
 ::
 
@@ -91,7 +91,7 @@ Now create the file `Resources/Private/TypoScripts/Root.ts2`, and add the follow
 		sections.main.nodePath = 'main'
 	}
 
-This includes all default TypoScript from TYPO3 Phoenix and creates a `TYPO3.TYPO3:Page`
+This includes all default TypoScript from TYPO3 Phoenix and creates a `TYPO3.Phoenix.ContentTypes:Page`
 object. Besides that we set the template, and configure we will use the 'body' section
 from this template. The last two lines add actual content rendering to the page for all
 content in the 'main' section node (see Sites.xml file).

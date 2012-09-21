@@ -1,3 +1,4 @@
 include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/ImplementationClasses.ts2
 include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/DefaultContentObjects.ts2
+include: resource://TYPO3.Phoenix.ContentTypes/Private/TypoScript/Root.ts2
 include: resource://TYPO3.TYPO3/Private/DefaultTypoScript/WireframeMode.ts2

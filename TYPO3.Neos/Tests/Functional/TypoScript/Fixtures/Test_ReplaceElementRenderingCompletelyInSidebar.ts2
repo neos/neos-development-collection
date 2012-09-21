@@ -3,7 +3,7 @@
 #
 
 page1.body.sections.sidebar.prototype(TYPO3.TypoScript:Case).matchers.20 {
-	condition = ${context.is('[instanceof TYPO3.TYPO3:TextWithHeadline]')}
+	condition = ${context.is('[instanceof TYPO3.Phoenix.ContentTypes:TextWithHeadline]')}
 	type = 'TYPO3.TypoScript:TextWithSmallHeadline'
 }
 prototype(TYPO3.TypoScript:TextWithSmallHeadline) < prototype(TYPO3.TypoScript:TextWithHeadline)

@@ -1,4 +1,4 @@
-wireframeMode = TYPO3.TYPO3:Page
+wireframeMode = TYPO3.Phoenix.ContentTypes:Page
 wireframeMode {
 	headerData {
 		stylesheets = TYPO3.TypoScript:Template
@@ -25,12 +25,12 @@ wireframeMode {
 			breadcrumb.templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/TypoScriptObjects/BreadcrumbMenu.html'
 		}
 
-		sections.all = TYPO3.TYPO3:MultiColumn
+		sections.all = TYPO3.Phoenix.ContentTypes:MultiColumn
 		sections.all {
 			templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/TypoScriptObjects/GeneralSectionRendering.html'
 			layout = ''
 			columns {
-				collection = ${context.children('[instanceof TYPO3.TYPO3:Section]')}
+				collection = ${context.children('[instanceof TYPO3.Phoenix.ContentTypes:Section]')}
 				itemRenderer {
 					templatePath = 'resource://TYPO3.TYPO3/Private/Templates/WireframeMode/TypoScriptObjects/SectionTemplate.html'
 				}

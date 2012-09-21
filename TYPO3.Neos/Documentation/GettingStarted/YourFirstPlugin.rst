@@ -75,14 +75,14 @@ Add the following to *Configuration/Settings.yaml* of your package:
     TYPO3CR:
       contentTypes:
         'Sarkosh.CdCollection:Plugin':
-          superTypes: ['TYPO3.TYPO3:Plugin']
+          superTypes: ['TYPO3.Phoenix.ContentTypes:Plugin']
           label: 'CD Collection'
           group: 'Plugins'
 
 Second, the rendering of the plugin needs to be specified using TypoScript,
-so the following TypoScript needs to be inserted into your package's *Resources/Private/TypoScript/Plugin.ts2*::
+so the following TypoScript needs to be inserted into your package's *Resources/Private/TypoScripts/Library/Plugin.ts2*::
 
-  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.TYPO3:Plugin)
+  prototype(Sarkosh.CdCollection:Plugin) < prototype(TYPO3.Phoenix.ContentTypes:Plugin)
   prototype(Sarkosh.CdCollection:Plugin) {
        package = 'Sarkosh.CdCollection'
        controller = 'Standard'
@@ -91,7 +91,7 @@ so the following TypoScript needs to be inserted into your package's *Resources/
 
 Finally tweak your site package's *Root.ts2* and include the newly created TypoScript file::
 
-  include: resource://Sarkosh.CdCollection/Private/TypoScript/Plugin.ts2
+  include: resource://Sarkosh.CdCollection/Private/TypoScripts/Library/Plugin.ts2
 
 Now log in to your Phoenix backend (remove the FLOW3 routes again now), and you
 should be able to add your plugin just like any other content element.

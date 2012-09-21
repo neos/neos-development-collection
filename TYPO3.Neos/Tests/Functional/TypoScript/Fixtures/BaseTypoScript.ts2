@@ -17,7 +17,7 @@ prototype(TYPO3.TypoScript:ThreeColumn) {
 }
 
 prototype(TYPO3.TypoScript:Case).matchers.4242 {
-	condition = ${context.is('[instanceof TYPO3.TYPO3:ThreeColumn]')}
+	condition = ${context.is('[instanceof TYPO3.Phoenix.ContentTypes:ThreeColumn]')}
 	type = 'TYPO3.TypoScript:ThreeColumn'
 }
 

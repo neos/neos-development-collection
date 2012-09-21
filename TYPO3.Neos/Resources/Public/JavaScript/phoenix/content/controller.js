@@ -86,7 +86,7 @@ function($, CreateJS, Entity) {
 			var pageNodePath = $('#t3-page-metainformation').attr('about');
 			T3.ContentModule.showPageLoader();
 			TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.create(pageNodePath, {
-				contentType: 'TYPO3.TYPO3:Section',
+				contentType: 'TYPO3.Phoenix.ContentTypes:Section',
 				nodeName: sectionName
 			}, 'into',
 			function (result) {

@@ -281,7 +281,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			var position = 'into';
 			var node = activeNode.addChild({
 				title: '[New Page]',
-				contentType: 'TYPO3.TYPO3:Page',
+				contentType: 'TYPO3.Phoenix.ContentTypes:Page',
 				addClass: 'typo3_typo3-page'
 			});
 			editNodeTitleMode = true;
@@ -323,7 +323,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					TYPO3_TYPO3_Service_ExtDirect_V1_Controller_NodeController.createNodeForTheTree(
 						activeNode.data.key,
 						{
-							contentType: 'TYPO3.TYPO3:Page',
+							contentType: 'TYPO3.Phoenix.ContentTypes:Page',
 							//@todo give a unique nodename from the title
 							properties: {
 								title: title
@@ -678,7 +678,7 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 					 */
 					onDragEnter: function(node, sourceNode) {
 							//it is only posssible to move nodes into nodes of the contentType:Section
-						if (node.data.contentType === 'TYPO3.TYPO3:Section') {
+						if (node.data.contentType === 'TYPO3.Phoenix.ContentTypes:Section') {
 							return ['before', 'after', 'over'];
 						}
 						else{

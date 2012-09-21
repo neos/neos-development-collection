@@ -80,7 +80,7 @@ class LauncherController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 		$searchContentGroups = array();
 		$searchContentTypes = array();
-		foreach (array('TYPO3.TYPO3:Page', 'TYPO3.TYPO3:ContentObject') as $contentType) {
+		foreach (array('TYPO3.Phoenix.ContentTypes:Page', 'TYPO3.Phoenix.ContentTypes:ContentObject') as $contentType) {
 			$searchContentGroups[$contentType] = $this->contentTypeManager->getContentType($contentType)->getConfiguration();
 			array_push($searchContentTypes, $contentType);
 			$subContentTypes = $this->contentTypeManager->getSubContentTypes($contentType);
@@ -119,7 +119,7 @@ class LauncherController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 				}
 			}
 			$this->uriBuilder->reset();
-			if ($result->getContentType()->isOfType('TYPO3.TYPO3:Page')) {
+			if ($result->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:Page')) {
 				$pageNode = $result;
 			} else {
 				$pageNode = $this->findNextParentFolderNode($result);

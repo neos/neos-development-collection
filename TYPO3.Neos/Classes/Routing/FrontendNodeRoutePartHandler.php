@@ -128,8 +128,8 @@ class FrontendNodeRoutePartHandler extends \TYPO3\FLOW3\Mvc\Routing\DynamicRoute
 		}
 
 		if ($node instanceof NodeInterface) {
-			while ($node->getContentType()->isOfType('TYPO3.TYPO3:Shortcut')) {
-				$childNodes = $node->getChildNodes('TYPO3.TYPO3:Page,TYPO3.TYPO3:Shortcut');
+			while ($node->getContentType()->isOfType('TYPO3.Phoenix.ContentTypes:Shortcut')) {
+				$childNodes = $node->getChildNodes('TYPO3.Phoenix.ContentTypes:Page,TYPO3.Phoenix.ContentTypes:Shortcut');
 				$node = current($childNodes);
 			}
 
