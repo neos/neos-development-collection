@@ -103,6 +103,22 @@ class NodesTest extends \TYPO3\FLOW3\Tests\FunctionalTestCase {
 	/**
 	 * @test
 	 */
+	public function createdNodesHaveDefaultValuesSet() {
+		$context = new ContentContext('live');
+		$this->nodeRepository->setContext($context);
+		$context->injectNodeRepository($this->nodeRepository);
+		$rootNode = $context->getWorkspace()->getRootNode();
+
+		$contentTypeManager = $this->objectManager->get('TYPO3\TYPO3CR\Domain\Service\ContentTypeManager');
+		$testContentType = $contentTypeManager->getContentType('TYPO3.TYPO3CR:TestingContentType');
+		$fooNode = $rootNode->createNode('foo', $testContentType);
+
+		$this->assertSame('default value 1', $fooNode->getProperty('test1'));
+	}
+
+	/**
+	 * @test
+	 */
 	public function removedNodesCannotBeRetrievedAnymore() {
 		$context = new ContentContext('live');
 		$this->nodeRepository->setContext($context);

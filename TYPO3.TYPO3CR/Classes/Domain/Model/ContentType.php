@@ -152,6 +152,28 @@ class ContentType {
 	}
 
 	/**
+	 * Return an array with the defined default values for each property, if any.
+	 *
+	 * The default value is configured for each property under the "default" key.
+	 *
+	 * @return array
+	 */
+	public function getDefaultValuesForProperties() {
+		if (!isset($this->configuration['properties'])) {
+			return array();
+		}
+
+		$defaultValues = array();
+		foreach ($this->configuration['properties'] as $propertyName => $propertyConfiguration) {
+			if (isset($propertyConfiguration['default'])) {
+				$defaultValues[$propertyName] = $propertyConfiguration['default'];
+			}
+		}
+
+		return $defaultValues;
+	}
+
+	/**
 	 * Alias for getName().
 	 *
 	 * @return string

@@ -728,6 +728,9 @@ class Node implements NodeInterface {
 
 		if ($contentType !== NULL) {
 			$newNode->setContentType($contentType);
+			foreach ($contentType->getDefaultValuesForProperties() as $propertyName => $propertyValue) {
+				$newNode->setProperty($propertyName, $propertyValue);
+			}
 		}
 
 		return $this->createProxyForContextIfNeeded($newNode, TRUE);

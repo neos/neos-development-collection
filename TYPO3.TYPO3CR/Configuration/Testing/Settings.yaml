@@ -1,0 +1,11 @@
+# Settings for Functional Tests
+
+TYPO3:
+  TYPO3CR:
+    contentTypes:
+      'TYPO3.TYPO3CR:TestingContentType':
+        label: 'Testing Content Type'
+        properties:
+          test1:
+            default: 'default value 1'
+
