@@ -47,8 +47,7 @@ define(['jquery', 'jquery-ui'], function(jQuery, jQueryUi) {
 		}
 	};
 
-	// TODO: Aloha is currently removed because we want to reduce page loading times
-	/*require(
+	require(
 		{
 			context: 'aloha',
 			baseUrl: alohaBaseUrl
@@ -57,7 +56,7 @@ define(['jquery', 'jquery-ui'], function(jQuery, jQueryUi) {
 		function(Aloha) {
 			if (window._requirejsLoadingTrace) window._requirejsLoadingTrace.push('aloha (inner require)');
 		}
-	);*/
+	);
 });
 
 

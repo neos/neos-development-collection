@@ -43,10 +43,9 @@ define(
 					disabled: false,
 					vie: vieInstance,
 					widgets: {
-						'default': 'hallo',
+						'default': 'aloha',
 							// TODO Pull this from the content type definition
-						headline: 'hallo',
-						text: 'aloha'
+						'typo3:title': 'hallo-blockonly'
 					},
 					collectionWidgets: {
 						'default': 'typo3CollectionWidget'
@@ -69,6 +68,21 @@ define(
 									hallolink: {}
 								}
 							}
+						},
+						'hallo-blockonly': {
+							widget: 'halloWidget',
+							options: {
+								toolbar: 'halloToolbarFixed',
+								parentElement: 'body',
+								toolbarCssClass: 't3-ui',
+								buttonCssClass: 'btn btn-mini t3-button',
+								plugins: {
+									halloblock: {}
+								}
+							}
+						},
+						'inline-only': {
+							widget: 'editWidget'
 						}
 					}
 				};
