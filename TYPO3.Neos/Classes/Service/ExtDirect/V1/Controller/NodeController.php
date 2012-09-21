@@ -449,7 +449,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 		return array(
 			'id' => $node->getPath(),
 			'name' => $node->getLabel(),
-			'url' => $this->uriBuilder->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', ''),
+			'url' => $this->uriBuilder->setLinkProtectionEnabled(FALSE)->uriFor('show', array('node' => $node), 'Frontend\Node', 'TYPO3.TYPO3', ''),
 			'type' => 'phoenix/internal-link'
 		);
 	}
