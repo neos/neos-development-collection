@@ -11,15 +11,18 @@ else
 	rm -rf vie
 	git clone --recursive git://github.com/bergie/VIE.git vie
 fi
-
-echo "Remove files we don't use"
-rm -rf vie/lib/jquery
-rm -rf vie/lib/json
+cd vie
+npm install
+cd ../
 
 echo "Build vie"
 cd vie
 ant
 cd ../
+
+echo "Remove files we don't use"
+rm -rf vie/lib/jquery
+rm -rf vie/lib/json
 
 echo "Move built files to Library folder"
 rm -rf ../Resources/Public/Library/vie/

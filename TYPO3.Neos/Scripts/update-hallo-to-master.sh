@@ -14,6 +14,7 @@ fi
 
 echo "Build hallo"
 cd hallo
+npm install
 cake build
 cake min
 cd ../

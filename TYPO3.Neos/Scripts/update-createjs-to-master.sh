@@ -24,6 +24,7 @@ rm -rf create/deps/vie-min.js
 
 echo "Build create"
 cd create
+npm install
 cake build
 cake min
 cd ../
