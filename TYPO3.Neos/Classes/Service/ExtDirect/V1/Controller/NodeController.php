@@ -419,7 +419,7 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 
 		foreach ($nodes as $uninitializedNode) {
 			$node = $contentContext->getNode($uninitializedNode->getPath());
-			$searchResult[] = $this->processNodeForAlohaRepository($node);
+			$searchResult[] = $this->processNodeForEditorPlugins($node);
 		}
 
 		$this->view->assign('value', array('searchResult' => $searchResult, 'success' => TRUE));
@@ -435,17 +435,17 @@ class NodeController extends \TYPO3\FLOW3\Mvc\Controller\ActionController {
 	public function getPageByNodePathAction($nodePath) {
 		$contentContext = new \TYPO3\TYPO3\Domain\Service\ContentContext('live');
 		$node = $contentContext->getNode($nodePath);
-		$this->view->assign('value', array('node' => $this->processNodeForAlohaRepository($node), 'success' => TRUE));
+		$this->view->assign('value', array('node' => $this->processNodeForEditorPlugins($node), 'success' => TRUE));
 	}
 
 	/**
-	 * Returns an array with the data needed by the Aloha link browser to represent the passed
-	 * NodeInterface instance.
+	 * Returns an array with the data needed by for example the Hallo and Aloha
+	 * link plugins to represent the passed NodeInterface instance.
 	 *
 	 * @param \TYPO3\TYPO3CR\Domain\Model\NodeInterface $node
 	 * @return array
 	 */
-	protected function processNodeForAlohaRepository(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
+	protected function processNodeForEditorPlugins(\TYPO3\TYPO3CR\Domain\Model\NodeInterface $node) {
 		return array(
 			'id' => $node->getPath(),
 			'name' => $node->getLabel(),
