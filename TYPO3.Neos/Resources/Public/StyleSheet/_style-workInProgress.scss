@@ -462,6 +462,11 @@ button.t3-button.t3-connection-status-down {
 					// We use a high z-index for the buttons to make them always visible
 				z-index: 10000;
 			}
+
+			.btn-group button:nth-child(2) {
+				@include border-top-left-radius(4px);
+				@include border-bottom-left-radius(4px);
+			}
 		}
 	}
 }
@@ -667,6 +672,11 @@ button.t3-button.t3-connection-status-down {
 		span:last-child .t3-button {
 			@include border-top-right-radius(4px);
 			@include border-bottom-right-radius(4px);
+		}
+
+		div.dropdown-menu + span .t3-button {
+			@include border-top-left-radius(4px);
+			@include border-bottom-left-radius(4px);
 		}
 	}
 
