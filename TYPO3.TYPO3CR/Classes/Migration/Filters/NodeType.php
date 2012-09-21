@@ -52,6 +52,9 @@ class NodeType implements FilterInterface {
 	 * Whether the filter should match also on all subtypes of the configured
 	 * node type.
 	 *
+	 * Note: This can only be used with node types still available in the
+	 * system!
+	 *
 	 * @param boolean $withSubTypes
 	 * @return void
 	 */
