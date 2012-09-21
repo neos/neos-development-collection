@@ -19,7 +19,7 @@
 			<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png')}" width="115" height="50" alt="TYPO3 Phoenix"/>
 		</div>
 		<div class="modal-body">
-			<f:form action="authenticate">
+			<f:form name="login" action="authenticate">
 				<div class="row-fluid">
 					<div class="span5">
 						<f:alias map="{flashMessages: '{f:render(partial: \'Login\\FlashMessages\')}'}">
@@ -36,15 +36,14 @@
 					<div class="span6 pull-right row-fluid">
 						<fieldset>
 							<div class="controls">
-								<f:form.textfield id="username" type="text" placeholder="Username" class="span12" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}"/>
+								<f:form.textfield id="username" type="text" placeholder="Username" class="span12" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][username]" additionalAttributes="{autofocus: 'autofocus'}" value="{username}" />
 							</div>
 							<div class="controls">
 								<f:form.textfield id="password" type="password" placeholder="Password" class="span12" name="__authentication[TYPO3][FLOW3][Security][Authentication][Token][UsernamePassword][password]"/>
 							</div>
 							<div class="controls">
-								<f:form.button type="button" class="span7 btn btn-link">
-									<!-- Forgot password? --></f:form.button>
-								<f:form.button type="submit" class="span5 btn btn-primary btn-warning">
+								<!-- Forgot password link will be here -->
+								<f:form.button type="submit" class="span5 pull-right btn btn-primary btn-warning">
 									Login
 								</f:form.button>
 							</div>
@@ -71,5 +70,8 @@
 	</p>
 </div>
 <script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
+<script>
+	$('#{f:if(condition: username, then: 'password', else: 'username')}').focus();
+</script>
 </body>
 </html>
