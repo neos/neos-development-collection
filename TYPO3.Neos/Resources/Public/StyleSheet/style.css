@@ -7876,6 +7876,11 @@ ul.t3-launcher-horizontal li .text {
 }
 
 /*Pagetree end*/
+/* Modal Dialog Content area*/
+.t3-ui button.icon-trash:before {
+  padding-right: 3px;
+}
+
 .popover .x-tree .t3-gotoPage {
   display: none;
   position: absolute;

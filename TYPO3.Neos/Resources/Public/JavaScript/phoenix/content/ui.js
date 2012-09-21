@@ -124,31 +124,20 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 			var view = Ember.View.create({
 				template: Ember.Handlebars.compile(inspectorDialogTemplate),
 				didInsertElement: function() {
-					var title = this.$().find('h1').remove().html();
-
-					this.$().dialog({
-						modal: true,
-						dialogClass: 't3-ui',
-						zIndex: 11001,
-						title: title,
-						close: function() {
-							view.destroy();
-						}
-					});
 				},
 				cancel: function() {
-					this.$().dialog('close');
+					view.destroy();
 				},
 				apply: function() {
 					T3.Content.Controller.Inspector.apply();
-					this.$().dialog('close');
+					view.destroy();
 				},
 				dontApply: function() {
 					T3.Content.Controller.Inspector.revert();
-					this.$().dialog('close');
+					view.destroy();
 				}
 			});
-			view.append();
+			view.appendTo('#t3-inspector');
 		}
 	});
 
@@ -179,6 +168,23 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		}
 	});
 
+
+		//Is necessary otherwise a Button has always the class 'btn-mini'
+	T3.Content.UI.ButtonDialog = Ember.Button.extend({
+		classNames: ['btn, btn-danger, t3-button'],
+		attributeBindings: ['disabled'],
+		classNameBindings: ['iconClass'],
+		label: '',
+		disabled: false,
+		visible: true,
+		icon: '',
+		template: Ember.Handlebars.compile('{{label}}'),
+		iconClass: function() {
+			var icon = this.get('icon');
+			return icon !== '' ? 't3-icon-' + icon : '';
+		}.property('icon').cacheable()
+	});
+
 	/**
 	 * ==================
 	 * SECTION: PAGE TREE
@@ -198,36 +204,28 @@ function($, Ember, vie, breadcrumbTemplate, inspectorTemplate, inspectorDialogTe
 		 * When clicking the delete Page, we show a dialog
 		 */
 		showDeletePageDialog: function(activeNode) {
-			var content = 'Are you sure the page "'+activeNode.data.title + '" should be deleted?';
+			var pagetitle = activeNode.data.title;
 			if(activeNode.hasChildren() === true) {
-				content = 'Are you sure the page "'+activeNode.data.title + '" and all its children should be deleted?';
+				var children = 'and all its children';
 			}
 			var that = this;
 			var view = Ember.View.create({
 				template: Ember.Handlebars.compile(deletePageDialogTemplate),
-				content: content,
-				didInsertElement: function() {
-					var title = this.$().find('h1').remove().html();
+				pagetitle: pagetitle,
+				children: children,
 
-					this.$().dialog({
-						modal: true,
-						dialogClass: 't3-ui',
-						zIndex: 11001,
-						title: title,
-						close: function() {
-							view.destroy();
-						}
-					});
+				didInsertElement: function() {
 				},
 				cancel: function() {
-					this.$().dialog('close');
+					view.destroy();
 				},
-				apply: function() {
+				delete: function() {
 					that.deleteNode(activeNode);
-					this.$().dialog('close');
+					view.destroy();
 				}
+
 			});
-			view.append();
+			view.appendTo('#t3-pagetree-container');
 		},
 		editNode: function(node) {
 			var prevTitle = node.data.title,

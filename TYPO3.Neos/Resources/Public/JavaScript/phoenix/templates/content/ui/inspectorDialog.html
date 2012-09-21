@@ -1,15 +1,13 @@
-<h1>Apply your changes</h1>
-
-<div class="t3-dialog-notice">
-	You are currently changing properties. Do you want to apply your changes?
-</div>
-
-<div class="t3-toolbar">
-	<div class="t3-toolbar-left">
-		{{view T3.Content.UI.Button label="Don't apply" target="parentView" action="dontApply"}}
+<div class="modal" id="inspectorDialog">
+	<div class="modal-header">
+		{{view T3.Content.UI.ButtonDialog label="x" target="parentView" data-dismiss="modal" action="cancel" class="close t3-button" title="x"}}
+		<h3>You are currently changing properties. Do you want to apply your changes?</h3>
+		<p></p>
 	</div>
-	<div class="t3-toolbar-right">
-		{{view T3.Content.UI.Button label="Cancel" target="parentView" action="cancel"}}
-		{{view T3.Content.UI.Button label="Apply" target="parentView" action="apply"}}
-	</div>
+		<div class="modal-footer">
+			{{view T3.Content.UI.ButtonDialog label="Don't apply" class="btn t3-button" target="parentView" action="dontApply"}}
+			{{view T3.Content.UI.ButtonDialog label="Cancel" class="btn t3-button" target="parentView" action="cancel"}}
+			{{view T3.Content.UI.ButtonDialog label="Apply" class="btn t3-button" target="parentView" action="apply"}}
+		</div>
 </div>
+<div class="modal-backdrop in"></div>

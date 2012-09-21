@@ -34,6 +34,11 @@ jquery popover from https://github.com/harryhorn/jquery-popover
 Version 0.2.2
 - MODIFIED: see "// TYPO3 SPECIFIC FIX" in jquery.popover.js
 
+line 75
+-- $.fn.popover.openedPopup.trigger('hidePopover');
+++ //$.fn.popover.openedPopup.trigger('hidePopover');
+
+
 
 jquery.dynatree.js
 jquery.dynatree.min.js

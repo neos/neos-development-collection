@@ -1,14 +1,13 @@
-<h1>Delete this page</h1>
-
-<div class="t3-dialog-notice">
-	{{content}}
-</div>
-
-<div class="t3-toolbar">
-	<div class="t3-toolbar-left">
+<div class="modal" id="pagetreeDeleteDialog">
+	<div class="modal-header">
+		{{view T3.Content.UI.ButtonDialog label="x" target="parentView" data-dismiss="modal" action="cancel" class="close t3-button" title="x"}}
+		<h3>Are you sure you want to delete the page "{{pagetitle}}"?</h3>
+		<p>This will delete the page {{page}} {{children}}.
+			This operation can be undone in the workspace management.</p>
 	</div>
-	<div class="t3-toolbar-right">
-		{{view T3.Content.UI.Button label="Cancel" target="parentView" action="cancel"}}
-		{{view T3.Content.UI.Button label="Apply" target="parentView" action="apply"}}
-	</div>
+	<div class="modal-footer">
+			{{view T3.Content.UI.ButtonDialog label="Cancel" target="parentView" action="cancel"   class="btn t3-button" title="Cancel"}}
+			{{view T3.Content.UI.ButtonDialog label="Delete" target="parentView" action="delete"   class="btn btn-danger t3-button icon-trash icon-white" title="Delete"}}
+		</div>
 </div>
+<div class="modal-backdrop in"></div>

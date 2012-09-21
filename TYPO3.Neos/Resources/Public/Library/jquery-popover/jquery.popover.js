@@ -74,12 +74,13 @@
 				switch(event.keyCode) {
 					case KEY_ESC:
 						if ($.fn.popover.openedPopup != null) {
-							$.fn.popover.openedPopup.trigger('hidePopover');
+							//$.fn.popover.openedPopup.trigger('hidePopover');
 						}
 						break;
 				}
 			}
 		}
+
 
 		function calcPopoverDirPossible(button, coord) {
 			var possibleDir = {
