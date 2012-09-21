@@ -43,7 +43,7 @@ define(
 					disabled: false,
 					vie: vieInstance,
 					widgets: {
-						'default': 'aloha',
+						'default': 'hallo',
 							// TODO Pull this from the content type definition
 						'typo3:title': 'hallo-blockonly'
 					},
