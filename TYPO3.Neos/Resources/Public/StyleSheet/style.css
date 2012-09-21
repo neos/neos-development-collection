@@ -7187,9 +7187,13 @@ ul.t3-topbar {
   z-index: 10000;
 }
 
-.t3-contentelement-hidden {
+.t3-contentelement-hidden > * {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=20);
   opacity: 0.2;
+}
+.t3-contentelement-hidden > *.t3-contentelement-handle-container {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+  opacity: 1;
 }
 
 .t3-contentelement-removed {

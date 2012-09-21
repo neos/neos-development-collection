@@ -543,8 +543,11 @@ ul.t3-topbar {
 		z-index: 10000;
 	}
 }
-.t3-contentelement-hidden {
+.t3-contentelement-hidden > * {
 	@include opacity(0.2);
+	&.t3-contentelement-handle-container {
+		@include opacity(1);
+	}
 }
 .t3-contentelement-removed {
 	display: none;
