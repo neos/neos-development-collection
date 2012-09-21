@@ -7710,6 +7710,10 @@ ul.t3-launcher-horizontal li .text {
   border-color: transparent;
   background-color: inherit;
 }
+.dynatree-container ul.dynatree-container a input {
+  font-family: inherit;
+  font-size: inherit;
+}
 .dynatree-container ul.dynatree-container .dynatree-active a {
   background-color: #F8F8F8;
   border-color: #D7D7D7;
