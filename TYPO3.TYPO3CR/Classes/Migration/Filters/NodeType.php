@@ -69,7 +69,8 @@ class NodeType implements FilterInterface {
 		if ($this->withSubTypes === TRUE) {
 			return $this->contentTypeManager->getContentType($node->getContentType())->isOfType($this->nodeTypeName);
 		} else {
-			return $node->getContentType() === $this->nodeTypeName;
+			$nodeContentType = \TYPO3\FLOW3\Reflection\ObjectAccess::getProperty($node, 'contentType', TRUE);
+			return $nodeContentType === $this->nodeTypeName;
 		}
 	}
 
