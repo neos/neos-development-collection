@@ -70,6 +70,12 @@
 		}
 	}
 
+        &.t3-module-administration-users {
+                i.icon-user {
+                        margin-right: 11px;
+                }
+        }
+
 	&.t3-module-administration-packages {
 		.t3-button.btn-freeze {
 			@include buttonBackground(lighten($blue, 5%), $blue);

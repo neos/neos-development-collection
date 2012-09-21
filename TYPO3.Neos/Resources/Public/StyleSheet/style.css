@@ -8632,6 +8632,9 @@ a.btn:hover {
 .t3-ui.t3-module.t3-module-management-workspaces tfoot .legend {
   margin-left: 15px;
 }
+.t3-ui.t3-module.t3-module-administration-users i.icon-user {
+  margin-right: 11px;
+}
 .t3-ui.t3-module.t3-module-administration-packages .t3-button.btn-freeze {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
