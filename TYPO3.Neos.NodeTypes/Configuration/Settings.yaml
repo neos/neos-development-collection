@@ -1,0 +1,348 @@
+TYPO3:
+  TYPO3CR:
+    contentTypes:
+      'TYPO3.Phoenix.ContentTypes:AbstractNode':
+        properties:
+          _removed:
+            type: boolean
+          _hidden:
+            type: boolean
+            label: 'Hide'
+            # The "group" groups the properties together in "(property)groups"
+            group: 'visibility'
+            # The higher the priority, the more important the property is.
+            priority: 1
+          _hiddenBeforeDateTime:
+            type: date
+            label: 'Hide before date'
+            group: 'visibility'
+            priority: 11
+          _hiddenAfterDateTime:
+            type: date
+            label: 'Hide after date'
+            group: 'visibility'
+            priority: 10
+
+        groups:
+          visibility:
+            label: 'Visibility'
+            priority: 1
+
+      'TYPO3.Phoenix.ContentTypes:Section':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:AbstractNode']
+        label: 'Section'
+        icon: 'Images/Icons/White/page_layout_icon-16.png'
+        darkIcon: 'Images/Icons/Black/page_layout_icon-16.png'
+
+      'TYPO3.Phoenix.ContentTypes:Folder':
+        superTypes: ['TYPO3.TYPO3CR:Folder', 'TYPO3.Phoenix.ContentTypes:AbstractNode']
+        label: 'Folder'
+        search: 'Pages'
+        properties:
+          title:
+            type: string
+            label: 'Title'
+            group: 'page'
+            reloadOnChange: true
+          _name:
+            type: string
+            label: 'Name (URL)'
+            group: 'page'
+            reloadOnChange: true
+        groups:
+          page:
+            label: 'Folder options'
+            priority: 10
+
+      'TYPO3.Phoenix.ContentTypes:Shortcut':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:Folder']
+        label: 'Shortcut'
+        icon: 'Images/Icons/White/shortcut_icon-16.png'
+        darkIcon: 'Images/Icons/Black/shortcut_icon-16.png'
+        groups:
+          page:
+            label: 'Shortcut options'
+
+      'TYPO3.Phoenix.ContentTypes:Page':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:Folder']
+        label: 'Page'
+        icon: 'Images/Icons/White/doc_empty_icon-16.png'
+        darkIcon: 'Images/Icons/Black/doc_empty_icon-16.png'
+        groups:
+          page:
+            label: 'Page options'
+
+      'TYPO3.Phoenix.ContentTypes:ContentObject':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:AbstractNode']
+        label: 'Abstract content object'
+        search: 'Content'
+        properties:
+          title:
+            type: 'string'
+            label: 'Content Title'
+
+      'TYPO3.Phoenix.ContentTypes:Headline':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+        group: 'General'
+        icon: 'Images/Icons/White/text_letter_t_icon-16.png'
+        darkIcon: 'Images/Icons/Black/text_letter_t_icon-16.png'
+        label: 'Headline'
+        properties:
+          title:
+            default: '<h1>Enter headline here</h1>'
+        inlineEditableProperties: ['title']
+
+      'TYPO3.Phoenix.ContentTypes:Text':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:Headline']
+        group: 'General'
+        icon: 'Images/Icons/White/doc_lines_stright_icon-16.png'
+        darkIcon: 'Images/Icons/Black/doc_lines_stright_icon-16.png'
+        label: 'Text'
+        properties:
+          text:
+            label: string
+            default: '<p>Enter text here</p>'
+        inlineEditableProperties: ['title', 'text']
+
+      'TYPO3.Phoenix.ContentTypes:Image':
+        label: 'Image'
+        superTypes: ['TYPO3.Phoenix.ContentTypes:Headline']
+        group: 'General'
+        icon: 'Images/Icons/White/picture_icon-16.png'
+        darkIcon: 'Images/Icons/Black/picture_icon-16.png'
+        properties:
+          image:
+            type: TYPO3\Media\Domain\Model\ImageVariant
+            label: 'Image'
+            group: 'image'
+            reloadOnChange: true
+        groups:
+          image:
+            label: 'Image'
+            priority: 5
+
+      'TYPO3.Phoenix.ContentTypes:TextWithImage':
+        label: 'Text with Image'
+        superTypes: ['TYPO3.Phoenix.ContentTypes:Image', 'TYPO3.Phoenix.ContentTypes:Text']
+        group: 'General'
+        icon: 'Images/Icons/White/image_text_icon-16.png'
+        darkIcon: 'Images/Icons/Black/image_text_icon-16.png'
+        properties:
+          position:
+            type: enum
+            label: 'Image position'
+            group: 'image'
+            options:
+              values:
+                left:
+                  label: 'Left'
+                right:
+                  label: 'Right'
+            reloadOnChange: true
+
+      'TYPO3.Phoenix.ContentTypes:Html':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+        group: 'General'
+        icon: 'Images/Icons/White/brackets_icon-16.png'
+        darkIcon: 'Images/Icons/Black/brackets_icon-16.png'
+        label: 'HTML'
+        properties:
+          source:
+            type: string
+            label: 'HTML Content'
+            default: '<p>Enter HTML here</p>'
+            group: 'html'
+            userInterface:
+              class: T3.Content.UI.Editor.HtmlEditor
+        groups:
+          html:
+            label: 'HTML'
+            priority: 10
+
+      'TYPO3.Phoenix.ContentTypes:Menu':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+        group: 'Structure'
+        icon: 'Images/Icons/White/list_bullets_icon-16.png'
+        darkIcon: 'Images/Icons/Black/list_bullets_icon-16.png'
+        label: 'Menu'
+        properties:
+          startLevel:
+            type: enum
+            label: 'Starting Level'
+            group: 'options'
+            reloadOnChange: true
+            default: '0'
+            options:
+              values:
+                '-4':
+                  label: 'Four Levels Above Current Page'
+                '-3':
+                  label: 'Three Levels Above Current Page'
+                '-2':
+                  label: 'Two Levels Above Current Page'
+                '-1':
+                  label: 'One Level Above Current Page'
+                '0':
+                  label: 'Same Level As Current Page'
+                '1':
+                  label: 'First Level Of Website'
+                '2':
+                  label: 'Second Level Of Website'
+                '3':
+                  label: 'Third Level Of Website'
+                '4':
+                  label: 'Forth Level Of Website'
+                '5':
+                  label: 'Fifth Level Of Website'
+                '6':
+                  label: 'Sixth Level Of Website'
+          maximumLevels:
+            type: enum
+            label: 'Maximum Levels'
+            group: 'options'
+            reloadOnChange: true
+            default: '1'
+            options:
+              values:
+                '1':
+                  label: '1'
+                '2':
+                  label: '2'
+                '3':
+                  label: '3'
+                '4':
+                  label: '4'
+                '5':
+                  label: '5'
+                '6':
+                  label: '6'
+                '7':
+                  label: '7'
+                '8':
+                  label: '8'
+                '9':
+                  label: '9'
+                '10':
+                  label: '10'
+        groups:
+         options:
+           label: 'Options'
+           priority: 30
+
+      'TYPO3.Phoenix.ContentTypes:Column':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+        icon: 'Images/Icons/White/columns_icon-16.png'
+        darkIcon: 'Images/Icons/Black/columns_icon-16.png'
+        properties:
+          layout:
+            type: enum
+            label: 'Layout'
+            group: 'column'
+        groups:
+          column:
+            label: 'Columns'
+            priority: 10
+
+      'TYPO3.Phoenix.ContentTypes:TwoColumn':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:Column']
+        group: 'Structure'
+        label: 'Two column content'
+        structure:
+          column0:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+          column1:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+        properties:
+          layout:
+            default: '50-50'
+            options:
+              values:
+                '50-50':
+                  label: '50% / 50%'
+                '75-25':
+                  label: '75% / 25%'
+                '25-75':
+                  label: '25% / 75%'
+                '66-33':
+                  label: '66% / 33%'
+                '33-66':
+                  label: '33% / 66%'
+            reloadOnChange: true
+
+      'TYPO3.Phoenix.ContentTypes:ThreeColumn':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:Column']
+        group: 'Structure'
+        label: 'Three column content'
+        structure:
+          column0:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+          column1:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+          column2:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+        properties:
+          layout:
+            default: '33-33-33'
+            options:
+              values:
+                '33-33-33':
+                  label: '33% / 33% / 33%'
+                '50-25-25':
+                  label: '50% / 25% / 25%'
+                '25-50-25':
+                  label: '25% / 50% / 25%'
+                '25-25-50':
+                  label: '25% / 25% / 50%'
+            reloadOnChange: true
+
+      'TYPO3.Phoenix.ContentTypes:FourColumn':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:Column']
+        group: 'Structure'
+        label: 'Four column content'
+        structure:
+          column0:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+          column1:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+          column2:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+          column3:
+            type: 'TYPO3.Phoenix.ContentTypes:Section'
+        properties:
+          layout:
+            default: '25-25-25-25'
+            options:
+              values:
+                '25-25-25-25':
+                  label: '25% / 25% / 25% / 25%'
+            reloadOnChange: true
+
+      'TYPO3.Phoenix.ContentTypes:Plugin':
+        superTypes: ['TYPO3.Phoenix.ContentTypes:ContentObject']
+        icon: 'Images/Icons/White/app_window_shell_icon-16.png'
+        darkIcon: 'Images/Icons/Black/app_window_shell_icon-16.png'
+        label: 'Abstract plugin'
+        properties:
+          package:
+            type: string
+            label: 'Package'
+            group: 'pluginSettings'
+            reloadOnChange: true
+          subpackage:
+            type: string
+            label: 'Subpackage'
+            group: 'pluginSettings'
+            reloadOnChange: true
+          controller:
+            type: string
+            label: 'Controller Name'
+            group: 'pluginSettings'
+            reloadOnChange: true
+          action:
+            type: string
+            label: 'Action'
+            group: 'pluginSettings'
+            reloadOnChange: true
+        groups:
+          pluginSettings:
+            label: 'Plugin Settings'
