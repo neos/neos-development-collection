@@ -323,7 +323,13 @@ class Node implements NodeInterface {
 	 * @todo Implement real abstract rendering and use a property specified in the content type
 	 */
 	public function getAbstract() {
-		$abstract = strip_tags(implode(' – ', $this->getProperties()));
+		$abstractParts = array();
+		foreach ($this->getProperties() as $propertyValue) {
+			if (!is_object($propertyValue) || method_exists($propertyValue, '__toString')) {
+				$abstractParts[] = $propertyValue;
+			}
+		}
+		$abstract = strip_tags(implode(' – ', $abstractParts));
 		$croppedAbstract = \TYPO3\FLOW3\Utility\Unicode\Functions::substr($abstract, 0, 253);
 		return $croppedAbstract . (strlen($croppedAbstract) < strlen($abstract) ? ' …' : '');
 	}

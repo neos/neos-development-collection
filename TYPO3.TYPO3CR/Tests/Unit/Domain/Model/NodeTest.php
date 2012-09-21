@@ -13,7 +13,6 @@ namespace TYPO3\TYPO3CR\Tests\Unit\Domain\Model;
 
 /**
  * Testcase for the "Node" domain model
- *
  */
 class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 
@@ -49,6 +48,18 @@ class NodeTest extends \TYPO3\FLOW3\Tests\UnitTestCase {
 		$this->node->setProperty('text', 'Shall I or <em>shall</em> I not, leak or not leak?');
 
 		$this->assertEquals('The title of this node – Shall I or shall I not, leak or not leak?', $this->node->getAbstract());
+	}
+
+	/**
+	 * @test
+	 */
+	public function getAbstractIgnoresPropertiesWhichAreObjects() {
+		$this->node->setProperty('title', 'The title of this node');
+		$this->node->setProperty('subtitle', 'The sub title');
+		$this->node->setProperty('uri', new \TYPO3\FLOW3\Http\Uri('http://localhost'));
+		$this->node->setProperty('myObject', new \stdClass());
+
+		$this->assertEquals('The title of this node – The sub title – http://localhost', $this->node->getAbstract());
 	}
 
 	/**
