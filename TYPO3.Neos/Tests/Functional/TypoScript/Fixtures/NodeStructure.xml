@@ -8,12 +8,12 @@
 		</properties>
 		<node type="TYPO3.Phoenix.ContentTypes:Page" nodeName="home" locale="">
 			<properties>
-				<title>Home</title>
+				<title><![CDATA[<h1>Home</h1>]]></title>
 			</properties>
 			<node nodeName="teaser" type="TYPO3.Phoenix.ContentTypes:Section">
 				<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:TextWithHeadline">
 					<properties>
-						<title>Welcome to this example</title>
+						<title><![CDATA[<h1>Welcome to this example</h1>]]></title>
 						<text>This is our exemplary rendering test. Check it out and play around!</text>
 					</properties>
 				</node>
@@ -21,7 +21,7 @@
 			<node nodeName="main" type="TYPO3.Phoenix.ContentTypes:Section">
 				<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:TextWithHeadline">
 					<properties>
-						<title>Do you love FLOW3?</title>
+						<title><![CDATA[<h1>Do you love FLOW3?</h1>]]></title>
 						<text>If you do, make sure to post your opinion about it on Twitter!</text>
 					</properties>
 				</node>
@@ -34,7 +34,7 @@
 					<node nodeName="left" type="TYPO3.Phoenix.ContentTypes:Section">
 						<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:TextWithHeadline">
 							<properties>
-								<title>Documentation</title>
+								<title><![CDATA[<h1>Documentation</h1>]]></title>
 								<text>We're still improving our docs, but check them out nevertheless! Our presentations are also worth a visit</text>
 							</properties>
 						</node>
@@ -47,7 +47,7 @@
 					<node nodeName="center" type="TYPO3.Phoenix.ContentTypes:Section">
 						<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:TextWithHeadline">
 							<properties>
-								<title>Development Process</title>
+								<title><![CDATA[<h1>Development Process</h1>]]></title>
 								<text>We're spending lots of thought into our infrastructure, you can profit from that, too!</text>
 							</properties>
 						</node>
@@ -59,7 +59,7 @@
 			<node nodeName="sidebar" type="TYPO3.Phoenix.ContentTypes:Section">
 				<node nodeName="dummy42" type="TYPO3.Phoenix.ContentTypes:TextWithHeadline">
 					<properties>
-						<title>Last Commits</title>
+						<title><![CDATA[<h1>Last Commits</h1>]]></title>
 						<text>Below, you'll see the most recent activity</text>
 					</properties>
 				</node>
@@ -71,11 +71,11 @@
 			</node>
 			<node type="TYPO3.Phoenix.ContentTypes:Page" nodeName="about-us" locale="">
 				<properties>
-					<title>About Us</title>
+					<title><![CDATA[<h1>About Us</h1>]]></title>
 				</properties>
 				<node type="TYPO3.Phoenix.ContentTypes:Page" nodeName="history" locale="">
 					<properties>
-						<title>History</title>
+						<title><![CDATA[<h1>History</h1>]]></title>
 					</properties>
 				</node>
 			</node>

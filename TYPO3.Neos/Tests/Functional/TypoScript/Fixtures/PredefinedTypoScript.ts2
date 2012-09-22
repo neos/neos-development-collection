@@ -15,41 +15,41 @@ prototype(TYPO3.TypoScript:Template) {
 
 # setting up additional Prototype configuration
 prototype(TYPO3.TypoScript:Collection) {
-	collection = ${context.children()}
+	collection = ${q(node).children()}
 	itemRenderer = TYPO3.TypoScript:Case
 	itemName = 'node'
 }
 
 # HTML TS Object
-prototype(TYPO3.TypoScript:Html) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.TypoScript:Html) {
-	templatePath = 'resource://TYPO3.TYPO3/Private/Templates/TypoScriptObjects/HtmlTemplate.html'
-	source = ${context.property('source')}
+prototype(TYPO3.Phoenix.ContentTypes:Html) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Phoenix.ContentTypes:Html) {
+	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/Html.html'
+	source = ${q(node).property('source')}
 }
 prototype(TYPO3.TypoScript:Case).matchers.100100 {
-	condition = ${context.is('[instanceof TYPO3.Phoenix.ContentTypes:Html]')}
-	type = 'TYPO3.TypoScript:Html'
+	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:Html]')}
+	type = 'TYPO3.Phoenix.ContentTypes:Html'
 }
 
 # Page TS Object
-prototype(TYPO3.TypoScript:Page) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.TypoScript:Page) {
+prototype(TYPO3.Phoenix.ContentTypes:Page) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Phoenix.ContentTypes:Page) {
 	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/PageTemplate.html'
 	body = TYPO3.TypoScript:Template
-	body.title = ${context.property('title')}
-	body.nodePath = ${context.property('_path')}
+	body.title = ${q(node).property('title')}
+	body.nodePath = ${q(node).property('_path')}
 	headerData = TYPO3.TypoScript:Array
 	backendHeader = TYPO3.TypoScript:Array
 }
 
 # TextWithHeadline TS Object
-prototype(TYPO3.TypoScript:TextWithHeadline) < prototype(TYPO3.TypoScript:Template)
-prototype(TYPO3.TypoScript:TextWithHeadline) {
+prototype(TYPO3.Phoenix.ContentTypes:TextWithHeadline) < prototype(TYPO3.TypoScript:Template)
+prototype(TYPO3.Phoenix.ContentTypes:TextWithHeadline) {
 	templatePath = 'resource://TYPO3.Phoenix.ContentTypes/Private/Templates/TypoScriptObjects/TextWithHeadline.html'
-	title = ${context.property('title')}
-	text = ${context.property('text')}
+	title = ${q(node).property('title')}
+	text = ${q(node).property('text')}
 }
 prototype(TYPO3.TypoScript:Case).matchers.100200 {
-	condition = ${context.is('[instanceof TYPO3.Phoenix.ContentTypes:TextWithHeadline]')}
-	type = 'TYPO3.TypoScript:TextWithHeadline'
+	condition = ${q(node).is('[instanceof TYPO3.Phoenix.ContentTypes:TextWithHeadline]')}
+	type = 'TYPO3.Phoenix.ContentTypes:TextWithHeadline'
 }
