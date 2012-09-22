@@ -61,7 +61,7 @@ class GeneratorService extends \TYPO3\Kickstart\Service\GeneratorService {
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScripts/Root.ts2';
+		$sitesTypoScriptPathAndFilename = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/TypoScripts/Library/Root.ts2';
 		$this->generateFile($sitesTypoScriptPathAndFilename, $fileContent);
 
 		return $this->generatedFiles;
