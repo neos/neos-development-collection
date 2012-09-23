@@ -1,119 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE
-	html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+{namespace typo3=TYPO3\TYPO3\ViewHelpers}
+<html lang="en">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>{statusCode} - {statusMessage}</title>
+		<meta charset="utf-8">
 		<f:base />
-		<link rel="stylesheet" href="{f:uri.resource(path:'CSS/reset-min.css', package:'TYPO3.ExtJS')}" />
-		<style type="text/css">
-		html {
-			height: 100%;
-			overflow: auto;
-			background: none;
-			font-size: 13px;
-		}
-		body, table, form {
-			font-family: Verdana,Helvetica,Arial,sans-serif;
-			font-size: 13px;
-			color: #ffffff;
-			margin: 0px 0px 0px 0px;
-			padding: 0px 0px 0px 0px;
-			text-align: center;
-			line-height: 1.5em;
-		}
-		body {
-			background: #636363;
-			background: #636363 -webkit-gradient(linear, left bottom, left top, color-stop(0.23, rgb(118,118,118)), color-stop(0.83, rgb(81,81,81)));
-			background: #636363 -moz-linear-gradient(center bottom, rgb(118,118,118) 23%, rgb(81,81,81) 83%);
-			min-height: 100%;
-			position: relative;
-		}
-		a,
-		a:visited,
-		a:link {
-			text-decoration: underline;
-			color: #ffffff;
-		}
-		a:hover,
-		a:focus,
-		a:active {
-			text-decoration: none;
-		}
-		/*** ERROR SCREEN ***/
-		#errorBox {
-			margin: 0 auto 0;
-			width: 600px;
-			padding-top: 5%;
-		}
-		#errorBox h3 {
-			font-size: 174%;
-			line-height: 1.2em;
-			background: url({f:uri.resource(path: 'Images/Error/WarningSign.png', package: 'TYPO3.TYPO3')}) left 50% no-repeat;
-			padding: 0 0 0 60px;
-			margin: 0 0 20px 0;
-			min-height: 50px;
-		}
-		#errorBox h4 {
-			font-size: 153.9%;
-			color: #aca8a6;
-			line-height: 1.2em;
-			padding: 0 0 50px 60px;
-		}
-		#errorBox h2 {
-			text-indent: -9999px;
-			background: url({f:uri.resource(path: 'Images/Error/Typo3LogoUpsideDown.png', package: 'TYPO3.TYPO3')}) left top no-repeat;
-			width: 183px;
-			height: 55px;
-			margin: 0 0 20px 0;
-		}
-		#errorBox .errorContainer {
-			margin: 0px auto 0;
-			border: 0px;
-			border-top: 2px solid #7a210c;
-			border-bottom: 3px solid #7a210c;
-			background: url({f:uri.resource(path: 'Images/Error/TransparentBackgroundWithRed.png', package: 'TYPO3.TYPO3')}) left top repeat;
-			padding: 20px;
-			text-align: left;
-			-webkit-box-shadow: #4d4d4d 1px 1px 10px;
-			-moz-box-shadow: #4d4d4d 1px 1px 10px;
-			filter:DropShadow(color=#4d4d4d, offx=1, offy=1);
-		}
-		#errorBox p {
-			padding: 0 0 16px 60px;
-			font-size: 108%;
-		}
-
-		/*** FOOTER ***/
-		#footer {
-			position: absolute;
-			width: 100%;
-			left: 0px;
-			bottom: 0px;
-			background: #636363 -webkit-gradient(linear, left bottom, left top, color-stop(0.23, #2d2d2d), color-stop(0.83, #5d5d5d));
-			background: #636363 -moz-linear-gradient(center bottom, #2d2d2d 23%, #5d5d5d 83%);
-			border: 0;
-			border-top: 1px solid #4a4a4a;
-		}
-		#footer p {
-			text-align: left;
-			font-size: 85%;
-			line-height: 1.2em;
-			padding: 10px 20px 10px 20px;
-		}
-		</style>
+		<title>TYPO3 Phoenix Error</title>
+		<link rel="stylesheet" href="{f:uri.resource(path: '2/css/bootstrap.min.css', package: 'Twitter.Bootstrap')}" />
+		<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Setup.css', package: 'TYPO3.Setup')}" />
+		<link rel="stylesheet" href="{f:uri.resource(path: 'StyleSheet/Login.css', package: 'TYPO3.TYPO3')}" />
+		<script src="{f:uri.resource(path: 'JavaScript/jquery-1.7.1.min.js', package: 'TYPO3.Setup')}"></script>
 	</head>
 	<body>
-		<div id="site">
-			<div id="errorBox">
-				<h2>TYPO3</h2>
-				<div class="errorContainer">
-					<h3>{errorTitle}</h3>
-					<p>{errorDescription -> f:format.raw()}</p>
+		<div class="container">
+			<div class="modal typo3-phoenix-login-box">
+				<div class="modal-header">
+					<div class="row-fluid">
+						<div class="span4">
+							<img src="{f:uri.resource(path: 'Images/Login/ApplicationLogo.png', package: 'TYPO3.TYPO3')}" width="115" height="50" alt="TYPO3 Phoenix" />
+						</div>
+						<div class="span7 pull-right">
+							<h3>{errorTitle}</h3>
+						</div>
+					</div>
+				</div>
+				<div class="modal-body">
+					<div class="alert alert-error">
+						{errorDescription -> f:format.raw()}
+					</div>
 				</div>
 			</div>
+
 		</div>
+		<script src="{f:uri.resource(path: '2/js/bootstrap.min.js', package: 'Twitter.Bootstrap')}"></script>
 	</body>
 </html>

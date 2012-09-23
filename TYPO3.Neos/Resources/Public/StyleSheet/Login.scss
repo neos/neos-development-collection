@@ -70,10 +70,6 @@ body {
 	background-color: #2B2B2B;
 }
 
-.modal-header {
-  border-bottom: 1px solid #444444;
-}
-
 .btn-link {
 	text-shadow: none;
 	font-size: 11px;
@@ -97,6 +93,12 @@ body {
 	.modal-header {
 		padding-left: 30px;
 		background-color: #252525;
+		border-bottom: 1px solid #444444;
+
+		h3 {
+			margin: 16px 0 0 0;
+			font-weight: normal;
+		}
 	}
 
 	.modal-body {

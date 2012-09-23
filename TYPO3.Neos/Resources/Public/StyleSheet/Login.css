@@ -33,10 +33,6 @@ body {
   background-color: #2B2B2B;
 }
 
-.modal-header {
-  border-bottom: 1px solid #444444;
-}
-
 .btn-link {
   text-shadow: none;
   font-size: 11px;
@@ -59,6 +55,11 @@ body {
 .typo3-phoenix-login-box .modal-header {
   padding-left: 30px;
   background-color: #252525;
+  border-bottom: 1px solid #444444;
+}
+.typo3-phoenix-login-box .modal-header h3 {
+  margin: 16px 0 0 0;
+  font-weight: normal;
 }
 .typo3-phoenix-login-box .modal-body {
   padding: 30px;
