@@ -11,12 +11,12 @@ http://hallojs.org
 (function() {
 
   (function(jQuery) {
-    return jQuery.widget("IKS.hallo", {
+    return jQuery.widget('IKS.hallo', {
       toolbar: null,
       bound: false,
-      originalContent: "",
-      previousContent: "",
-      uuid: "",
+      originalContent: '',
+      previousContent: '',
+      uuid: '',
       selection: null,
       _keepActivated: false,
       originalHref: null,
@@ -88,8 +88,7 @@ http://hallojs.org
         return this._trigger("disabled", null);
       },
       enable: function() {
-        var widget,
-          _this = this;
+        var _this = this;
         this.element.parents('a[href]').andSelf().each(function(idx, elem) {
           var element;
           element = jQuery(elem);
@@ -113,7 +112,6 @@ http://hallojs.org
           this.element.bind("keyup paste change", this, this._checkModified);
           this.element.bind("keyup", this, this._keys);
           this.element.bind("keyup mouseup", this, this._checkSelection);
-          widget = this;
           this.bound = true;
         }
         if (this.options.forceStructured) {
@@ -169,10 +167,11 @@ http://hallojs.org
         }
       },
       getContents: function() {
-        var contentClone, plugin;
+        var cleanup, contentClone, plugin;
         contentClone = this.element.clone();
         for (plugin in this.options.plugins) {
-          if (!jQuery.isFunction(jQuery(this.element).data(plugin)['cleanupContentClone'])) {
+          cleanup = jQuery(this.element).data(plugin).cleanupContentClone;
+          if (!jQuery.isFunction(cleanup)) {
             continue;
           }
           jQuery(this.element)[plugin]('cleanupContentClone', contentClone);
@@ -207,13 +206,12 @@ http://hallojs.org
         }
       },
       protectFocusFrom: function(el) {
-        var widget;
-        widget = this;
+        var _this = this;
         return el.bind("mousedown", function(event) {
           event.preventDefault();
-          widget._protectToolbarFocus = true;
+          _this._protectToolbarFocus = true;
           return setTimeout(function() {
-            return widget._protectToolbarFocus = false;
+            return _this._protectToolbarFocus = false;
           }, 300);
         });
       },
@@ -228,7 +226,7 @@ http://hallojs.org
         return "" + (S4()) + (S4()) + "-" + (S4()) + "-" + (S4()) + "-" + (S4()) + "-" + (S4()) + (S4()) + (S4());
       },
       _prepareToolbar: function() {
-        var plugin;
+        var plugin, populate;
         this.toolbar = jQuery('<div class="hallotoolbar"></div>').hide();
         if (this.options.toolbarCssClass) {
           this.toolbar.addClass(this.options.toolbarCssClass);
@@ -239,6 +237,10 @@ http://hallojs.org
           toolbar: this.toolbar
         });
         for (plugin in this.options.plugins) {
+          populate = jQuery(this.element).data(plugin).populateToolbar;
+          if (!jQuery.isFunction(populate)) {
+            continue;
+          }
           this.element[plugin]('populateToolbar', this.toolbar);
         }
         this.element[this.options.toolbar]('setPosition');
@@ -286,7 +288,19 @@ http://hallojs.org
         }
       },
       _rangesEqual: function(r1, r2) {
-        return r1.startContainer === r2.startContainer && r1.startOffset === r2.startOffset && r1.endContainer === r2.endContainer && r1.endOffset === r2.endOffset;
+        if (r1.startContainer !== r2.startContainer) {
+          return false;
+        }
+        if (r1.startOffset !== r2.startOffset) {
+          return false;
+        }
+        if (r1.endContainer !== r2.endContainer) {
+          return false;
+        }
+        if (r1.endOffset !== r2.endOffset) {
+          return false;
+        }
+        return true;
       },
       _checkSelection: function(event) {
         var widget;
@@ -304,8 +318,8 @@ http://hallojs.org
                 editable: widget,
                 originalEvent: event
               });
+              return;
             }
-            return;
           }
           if (!widget.selection || !widget._rangesEqual(sel, widget.selection)) {
             widget.selection = sel.cloneRange();
@@ -411,11 +425,11 @@ http://hallojs.org
         var editableElement, turnOffAnnotate, widget;
         widget = this;
         if (this.options.vie === void 0) {
-          throw 'The halloannotate plugin requires VIE to be loaded';
+          throw new Error('The halloannotate plugin requires VIE');
           return;
         }
         if (typeof this.element.annotate !== 'function') {
-          throw 'The halloannotate plugin requires annotate.js to be loaded';
+          throw new Error('The halloannotate plugin requires annotate.js');
           return;
         }
         this.state = 'off';
@@ -489,11 +503,12 @@ http://hallojs.org
         widget = this;
         try {
           return this.options.editable.element.annotate('enable', function(success) {
-            if (success) {
-              _this.state = 'on';
-              _this.button.hallobutton('checked', true);
-              return _this.button.hallobutton('enable');
+            if (!success) {
+              return;
             }
+            _this.state = 'on';
+            _this.button.hallobutton('checked', true);
+            return _this.button.hallobutton('enable');
           });
         } catch (e) {
           return alert(e);
@@ -564,8 +579,8 @@ http://hallojs.org
         contentArea = jQuery("<div id=\"" + contentId + "\"></div>");
         containingElement = this.options.editable.element.get(0).tagName.toLowerCase();
         addElement = function(element) {
-          var el, queryState;
-          el = jQuery("<button class='blockselector'><" + element + " class=\"menu-item\">" + element + "</" + element + "></button>");
+          var el, events, queryState;
+          el = jQuery("<button class='blockselector'>          <" + element + " class=\"menu-item\">" + element + "</" + element + ">        </button>");
           if (containingElement === element) {
             el.addClass('selected');
           }
@@ -573,14 +588,16 @@ http://hallojs.org
             el.addClass('disabled');
           }
           el.bind('click', function() {
+            var tagName;
+            tagName = element.toUpperCase();
             if (el.hasClass('disabled')) {
               return;
             }
             if (jQuery.browser.msie) {
-              return _this.options.editable.execute('FormatBlock', '<' + element.toUpperCase() + '>');
-            } else {
-              return _this.options.editable.execute('formatBlock', element.toUpperCase());
+              _this.options.editable.execute('FormatBlock', "<" + tagName + ">");
+              return;
             }
+            return _this.options.editable.execute('formatBlock', tagName);
           });
           queryState = function(event) {
             var block;
@@ -591,12 +608,13 @@ http://hallojs.org
             }
             return el.removeClass('selected');
           };
-          _this.options.editable.element.bind('keyup paste change mouseup', queryState);
+          events = 'keyup paste change mouseup';
+          _this.options.editable.element.bind(events, queryState);
           _this.options.editable.element.bind('halloenabled', function() {
-            return _this.options.editable.element.bind('keyup paste change mouseup', queryState);
+            return _this.options.editable.element.bind(events, queryState);
           });
           _this.options.editable.element.bind('hallodisabled', function() {
-            return _this.options.editable.element.unbind('keyup paste change mouseup', queryState);
+            return _this.options.editable.element.unbind(events, queryState);
           });
           return el;
         };
@@ -656,9 +674,10 @@ http://hallojs.org
         _ref = this.options.formattings;
         for (format in _ref) {
           enabled = _ref[format];
-          if (enabled) {
-            buttonize(format);
+          if (!enabled) {
+            continue;
           }
+          buttonize(format);
         }
         buttonset.hallobuttonset();
         return toolbar.append(buttonset);
@@ -675,13 +694,14 @@ http://hallojs.org
         headers: [1, 2, 3]
       },
       populateToolbar: function(toolbar) {
-        var button, buttonize, buttonset, header, id, label, widget, _i, _len, _ref,
+        var button, buttonize, buttonset, header, id, label, markup, widget, _i, _len, _ref,
           _this = this;
         widget = this;
         buttonset = jQuery("<span class=\"" + widget.widgetName + "\"></span>");
         id = "" + this.options.uuid + "-paragraph";
         label = "P";
-        buttonset.append(jQuery("<input id=\"" + id + "\" type=\"radio\" name=\"" + widget.options.uuid + "-headings\"/><label for=\"" + id + "\" class=\"p_button\">" + label + "</label>").button());
+        markup = "<input id=\"" + id + "\" type=\"radio\"        name=\"" + widget.options.uuid + "-headings\"/>        <label for=\"" + id + "\" class=\"p_button\">" + label + "</label>";
+        buttonset.append(jQuery(markup).button());
         button = jQuery("#" + id, buttonset);
         button.attr("hallo-command", "formatBlock");
         button.bind("change", function(event) {
@@ -690,9 +710,11 @@ http://hallojs.org
           return widget.options.editable.execute(cmd, "P");
         });
         buttonize = function(headerSize) {
+          var buttonMarkup;
           label = "H" + headerSize;
           id = "" + _this.options.uuid + "-" + headerSize;
-          buttonset.append(jQuery("<input id=\"" + id + "\" type=\"radio\" name=\"" + widget.options.uuid + "-headings\"/><label for=\"" + id + "\" class=\"h" + headerSize + "_button\">" + label + "</label>").button());
+          buttonMarkup = "<input id=\"" + id + "\" type=\"radio\"          name=\"" + widget.options.uuid + "-headings\"/>          <label for=\"" + id + "\" class=\"h" + headerSize + "_button\">" + label + "</label>";
+          buttonset.append(jQuery(buttonMarkup).button());
           button = jQuery("#" + id, buttonset);
           button.attr("hallo-size", "H" + headerSize);
           return button.bind("change", function(event) {
@@ -731,8 +753,7 @@ http://hallojs.org
           }
         });
         return toolbar.append(buttonset);
-      },
-      _init: function() {}
+      }
     });
   })(jQuery);
 
@@ -803,9 +824,11 @@ http://hallojs.org
             width: this.options.third * 2,
             height: editable.height()
           }),
-          left: jQuery("<div/>").addClass("smallOverlay smallOverlayLeft").css(overlayMiddleConfig),
-          right: jQuery("<div/>").addClass("smallOverlay smallOverlayRight").css(overlayMiddleConfig).css("left", this.options.third * 2)
+          left: jQuery("<div/>").addClass("smallOverlay smallOverlayLeft"),
+          right: jQuery("<div/>").addClass("smallOverlay smallOverlayRight")
         };
+        this.overlay.left.css(overlayMiddleConfig);
+        this.overlay.right.css(overlayMiddleConfig).css("left", this.options.third * 2);
         editable.bind('halloactivated', function() {
           return widget._enableDragging();
         });
@@ -833,13 +856,14 @@ http://hallojs.org
         }
       },
       _calcDropPosition: function(offset, event) {
-        var position;
+        var position, rightTreshold;
         position = offset.left + this.options.third;
-        if (event.pageX >= position && event.pageX <= (offset.left + this.options.third * 2)) {
+        rightTreshold = offset.left + this.options.third * 2;
+        if (event.pageX >= position && event.pageX <= rightTreshold) {
           return 'middle';
         } else if (event.pageX < position) {
           return 'left';
-        } else if (event.pageX > (offset.left + this.options.third * 2)) {
+        } else if (event.pageX > rightTreshold) {
           return 'right';
         }
       },
@@ -888,7 +912,9 @@ http://hallojs.org
       _showOverlay: function(position) {
         var eHeight, editable;
         editable = jQuery(this.options.editable.element);
-        eHeight = editable.height() + parseFloat(editable.css('paddingTop')) + parseFloat(editable.css('paddingBottom'));
+        eHeight = editable.height();
+        eHeight += parseFloat(editable.css('paddingTop'));
+        eHeight += parseFloat(editable.css('paddingBottom'));
         this.overlay.big.css({
           height: eHeight
         });
@@ -900,9 +926,12 @@ http://hallojs.org
         });
         switch (position) {
           case 'left':
-            this.overlay.big.addClass("bigOverlayLeft").removeClass("bigOverlayRight").css({
+            this.overlay.big.addClass("bigOverlayLeft");
+            this.overlay.big.removeClass("bigOverlayRight");
+            this.overlay.big.css({
               left: this.options.third
-            }).show();
+            });
+            this.overlay.big.show();
             this.overlay.left.hide();
             return this.overlay.right.hide();
           case 'middle':
@@ -911,9 +940,12 @@ http://hallojs.org
             this.overlay.left.show();
             return this.overlay.right.show();
           case 'right':
-            this.overlay.big.addClass("bigOverlayRight").removeClass("bigOverlayLeft").css({
+            this.overlay.big.addClass("bigOverlayRight");
+            this.overlay.big.removeClass("bigOverlayLeft");
+            this.overlay.big.css({
               left: 0
-            }).show();
+            });
+            this.overlay.big.show();
             this.overlay.left.hide();
             return this.overlay.right.hide();
         }
@@ -924,7 +956,7 @@ http://hallojs.org
         }
         return false;
       },
-      _createTmpFeedback: function(image, position) {
+      _createFeedback: function(image, position) {
         var el;
         if (position === 'middle') {
           return this._createLineFeedbackElement();
@@ -937,7 +969,7 @@ http://hallojs.org
         widget = this;
         editable = jQuery(this.options.editable);
         postPone = function() {
-          var position;
+          var position, target;
           window.waitWithTrash = clearTimeout(window.waitWithTrash);
           position = widget._calcDropPosition(widget.options.offset, event);
           jQuery('.trashcan', ui.helper).remove();
@@ -945,12 +977,13 @@ http://hallojs.org
           editable.append(widget.overlay.left);
           editable.append(widget.overlay.right);
           widget._removeFeedbackElements();
-          jQuery(event.target).prepend(widget._createTmpFeedback(ui.draggable[0], position));
+          target = jQuery(event.target);
+          target.prepend(widget._createFeedback(ui.draggable[0], position));
           if (position === 'middle') {
-            jQuery(event.target).prepend(widget._createTmpFeedback(ui.draggable[0], 'right'));
+            target.prepend(widget._createFeedback(ui.draggable[0], 'right'));
             jQuery('.halloTmp', event.target).hide();
           } else {
-            jQuery(event.target).prepend(widget._createTmpFeedback(ui.draggable[0], 'middle'));
+            target.prepend(widget._createFeedback(ui.draggable[0], 'middle'));
             jQuery('.halloTmpLine', event.target).hide();
           }
           return widget._showOverlay(position);
@@ -971,7 +1004,9 @@ http://hallojs.org
           tmpFeedbackLR.hide();
         } else {
           tmpFeedbackMiddle.hide();
-          tmpFeedbackLR.removeClass('inlineImage-left inlineImage-right').addClass("inlineImage-" + position).show();
+          tmpFeedbackLR.removeClass('inlineImage-left inlineImage-right');
+          tmpFeedbackLR.addClass("inlineImage-" + position);
+          tmpFeedbackLR.show();
         }
         return this._showOverlay(position);
       },
@@ -1009,23 +1044,28 @@ http://hallojs.org
         return jQuery(document).trigger('stopPreventSave');
       },
       _handleDropEvent: function(event, ui) {
-        var editable, imageInsert, internalDrop, position;
+        var classes, editable, imageInsert, internalDrop, left, position;
         editable = jQuery(this.options.editable.element);
         internalDrop = this._checkOrigin(event);
         position = this._calcDropPosition(this.options.offset, event);
         this._removeFeedbackElements();
         this._removeCustomHelper();
         imageInsert = this._createInsertElement(ui.draggable[0], false);
+        classes = 'inlineImage-middle inlineImage-left inlineImage-right';
         if (position === 'middle') {
           imageInsert.show();
-          imageInsert.removeClass('inlineImage-middle inlineImage-left inlineImage-right');
+          imageInsert.removeClass(classes);
+          left = editable.width();
+          left += parseFloat(editable.css('paddingLeft'));
+          left += parseFloat(editable.css('paddingRight'));
+          left -= imageInsert.attr('width');
           imageInsert.addClass("inlineImage-" + position).css({
             position: 'relative',
-            left: ((editable.width() + parseFloat(editable.css('paddingLeft')) + parseFloat(editable.css('paddingRight'))) - imageInsert.attr('width')) / 2
+            left: left / 2
           });
           imageInsert.insertBefore(jQuery(event.target));
         } else {
-          imageInsert.removeClass('inlineImage-middle inlineImage-left inlineImage-right');
+          imageInsert.removeClass(classes);
           imageInsert.addClass("inlineImage-" + position);
           imageInsert.css('display', 'block');
           jQuery(event.target).prepend(imageInsert);
@@ -1110,19 +1150,18 @@ http://hallojs.org
       </div>');
       },
       _init: function() {
-        var widget;
-        widget = this;
-        if (widget.options.searchUrl && !widget.options.searchCallback) {
-          widget.options.searchCallback = widget._ajaxSearch;
+        var _this = this;
+        if (this.options.searchUrl && !this.options.searchCallback) {
+          this.options.searchCallback = this._ajaxSearch;
         }
         jQuery('.activitySpinner', this.element).hide();
         return jQuery('form', this.element).submit(function(event) {
           var query;
           event.preventDefault();
-          jQuery('.activitySpinner', this.element).show();
-          query = jQuery('.searchInput', widget.element).val();
-          return widget.options.searchCallback(query, widget.options.limit, 0, function(results) {
-            return widget._showResults(results);
+          jQuery('.activitySpinner', _this.element).show();
+          query = jQuery('.searchInput', _this.element.element).val();
+          return _this.options.searchCallback(query, _this.options.limit, 0, function(results) {
+            return _this._showResults(results);
           });
         });
       },
@@ -1132,7 +1171,7 @@ http://hallojs.org
         if (!image.label) {
           image.label = image.alt;
         }
-        html = jQuery("<li><img src=\"" + image.url + "\" class=\"imageThumbnail\" title=\"" + image.label + "\"></li>");
+        html = jQuery("<li>        <img src=\"" + image.url + "\" class=\"imageThumbnail\"          title=\"" + image.label + "\"></li>");
         html.bind('click', function() {
           return _this.options.imageWidget.setCurrent(image);
         });
@@ -1143,11 +1182,11 @@ http://hallojs.org
         return jQuery('.imageThumbnailContainer ul', this.element).append(html);
       },
       _showNextPrev: function(results) {
-        var container, widget;
-        widget = this;
+        var container,
+          _this = this;
         container = jQuery('imageThumbnailContainer ul', this.element);
-        container.prepend(jQuery('<div class="pager-prev" style="display:none"></div>'));
-        container.append(jQuery('<div class="pager-next" style="display:none"></div>'));
+        container.prepend(jQuery('<div class="pager-prev" style="display:none" />'));
+        container.append(jQuery('<div class="pager-next" style="display:none" />'));
         if (results.offset > 0) {
           jQuery('.pager-prev', container).show();
         }
@@ -1155,13 +1194,17 @@ http://hallojs.org
           jQuery('.pager-next', container).show();
         }
         jQuery('.pager-prev', container).click(function(event) {
-          return widget.options.searchCallback(query, widget.options.limit, response.offset - widget.options.limit, function(results) {
-            return widget._showResults(results);
+          var offset;
+          offset = results.offset - _this.options.limit;
+          return _this.options.searchCallback(query, _this.options.limit, offset, function(results) {
+            return _this._showResults(results);
           });
         });
         return jQuery('.pager-next', container).click(function(event) {
-          return widget.options.searchCallback(query, widget.options.limit, response.offset + widget.options.limit, function(results) {
-            return widget._showResults(results);
+          var offset;
+          offset = results.offset + _this.options.limit;
+          return _this.options.searchCallback(query, _this.options.limit, offset, function(results) {
+            return _this._showResults(results);
           });
         });
       },
@@ -1197,7 +1240,8 @@ http://hallojs.org
         entity: null,
         vie: null,
         dbPediaUrl: null,
-        getSuggestions: null
+        getSuggestions: null,
+        thumbnailUri: '<http://dbpedia.org/ontology/thumbnail>'
       },
       _create: function() {
         return this.element.html('\
@@ -1236,7 +1280,7 @@ http://hallojs.org
         }));
       },
       _getSuggestions: function() {
-        var normalizedTags, tags;
+        var limit, normalizedTags, tags;
         if (this.loaded) {
           return;
         }
@@ -1251,8 +1295,9 @@ http://hallojs.org
         }
         jQuery('.imageThumbnailContainer ul', this.element).empty();
         normalizedTags = this._normalizeRelated(tags);
+        limit = this.options.limit;
         if (this.options.getSuggestions) {
-          this.options.getSuggestions(normalizedTags, widget.options.limit, 0, this._showSuggestions);
+          this.options.getSuggestions(normalizedTags, limit, 0, this._showSuggestions);
         }
         this._prepareVIE();
         if (this.options.vie.services.dbpedia) {
@@ -1271,7 +1316,7 @@ http://hallojs.org
             jQuery('.activitySpinner', this.element).hide();
             return _.each(entities, function(entity) {
               var img, thumbnail;
-              thumbnail = entity.attributes['<http://dbpedia.org/ontology/thumbnail>'];
+              thumbnail = entity.attributes[widget.options.thumbnailUri];
               if (!thumbnail) {
                 return;
               }
@@ -1292,7 +1337,7 @@ http://hallojs.org
       _showSuggestion: function(image) {
         var html,
           _this = this;
-        html = jQuery("<li><img src=\"" + image.url + "\" class=\"imageThumbnail\" title=\"" + image.label + "\"></li>");
+        html = jQuery("<li>        <img src=\"" + image.url + "\" class=\"imageThumbnail\"          title=\"" + image.label + "\">        </li>");
         html.bind('click', function() {
           return _this.options.imageWidget.setCurrent(image);
         });
@@ -1347,12 +1392,13 @@ http://hallojs.org
       },
       _prepareIframe: function(widget) {
         var iframe, iframeName;
-        iframeName = ("" + widget.widgetName + "_postframe_" + widget.options.uuid).replace(/-/g, '_');
+        iframeName = "" + widget.widgetName + "_postframe_" + widget.options.uuid;
+        iframeName = iframeName.replace(/-/g, '_');
         iframe = jQuery("#" + iframeName);
         if (iframe.length) {
           return iframe;
         }
-        iframe = jQuery("<iframe name=\"" + iframeName + "\" id=\"" + iframeName + "\" class=\"hidden\" style=\"display:none\" />");
+        iframe = jQuery("<iframe name=\"" + iframeName + "\" id=\"" + iframeName + "\"        class=\"hidden\" style=\"display:none\" />");
         this.element.append(iframe);
         iframe.get(0).name = iframeName;
         return iframe;
@@ -1415,19 +1461,21 @@ http://hallojs.org
         maxHeight: 250
       },
       populateToolbar: function(toolbar) {
-        var buttonHolder, buttonset, dialogId, id, widget;
+        var buttonHolder, buttonset, dialogId, id, tabContent, tabs, widget;
         this.options.toolbar = toolbar;
         widget = this;
         dialogId = "" + this.options.uuid + "-image-dialog";
-        this.options.dialog = jQuery("<div id=\"" + dialogId + "\">                <div class=\"nav\">                    <ul class=\"tabs\">                    </ul>                    <div id=\"" + this.options.uuid + "-tab-activeIndicator\" class=\"tab-activeIndicator\" />                </div>                <div class=\"dialogcontent\">            </div>");
+        this.options.dialog = jQuery("<div id=\"" + dialogId + "\">        <div class=\"nav\">          <ul class=\"tabs\">          </ul>          <div id=\"" + this.options.uuid + "-tab-activeIndicator\"            class=\"tab-activeIndicator\" />        </div>        <div class=\"dialogcontent\">        </div>");
+        tabs = jQuery('.tabs', this.options.dialog);
+        tabContent = jQuery('.dialogcontent', this.options.dialog);
         if (widget.options.suggestions) {
-          this._addGuiTabSuggestions(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
+          this._addGuiTabSuggestions(tabs, tabContent);
         }
         if (widget.options.search || widget.options.searchUrl) {
-          this._addGuiTabSearch(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
+          this._addGuiTabSearch(tabs, tabContent);
         }
         if (widget.options.upload || widget.options.uploadUrl) {
-          this._addGuiTabUpload(jQuery(".tabs", this.options.dialog), jQuery(".dialogcontent", this.options.dialog));
+          this._addGuiTabUpload(tabs, tabContent);
         }
         this.current = jQuery('<div class="currentImage"></div>').halloimagecurrent({
           uuid: this.options.uuid,
@@ -1478,16 +1526,19 @@ http://hallojs.org
         var widget;
         widget = this;
         jQuery('.nav li', this.options.dialog).bind('click', function() {
-          var id;
+          var id, left;
           jQuery("." + widget.widgetName + "-tab").hide();
           id = jQuery(this).attr('id');
           jQuery("#" + id + "-content").show();
-          return jQuery("#" + widget.options.uuid + "-tab-activeIndicator").css("margin-left", jQuery(this).position().left + (jQuery(this).width() / 2));
+          left = jQuery(this).position().left + (jQuery(this).width() / 2);
+          return jQuery("#" + widget.options.uuid + "-tab-activeIndicator").css({
+            "margin-left": left
+          });
         });
         return jQuery('.nav li', this.options.dialog).first().click();
       },
       _openDialog: function() {
-        var cleanUp, widget, xposition, yposition,
+        var cleanUp, editableEl, getActive, suggestionSelector, toolbarEl, widget, xposition, yposition,
           _this = this;
         widget = this;
         cleanUp = function() {
@@ -1503,11 +1554,17 @@ http://hallojs.org
             });
           }, 15000);
         };
-        jQuery("#" + this.options.uuid + "-sugg-activeImage").attr("src", jQuery("#" + this.options.uuid + "-tab-suggestions-content .imageThumbnailActive").first().attr("src"));
-        jQuery("#" + this.options.uuid + "-sugg-activeImageBg").attr("src", jQuery("#" + this.options.uuid + "-tab-suggestions-content .imageThumbnailActive").first().attr("src"));
+        suggestionSelector = "#" + this.options.uuid + "-tab-suggestions-content";
+        getActive = function() {
+          return jQuery('.imageThumbnailActive', suggestionSelector).first().attr("src");
+        };
+        jQuery("#" + this.options.uuid + "-sugg-activeImage").attr("src", getActive());
+        jQuery("#" + this.options.uuid + "-sugg-activeImageBg").attr("src", getActive());
         this.lastSelection = this.options.editable.getSelection();
-        xposition = jQuery(this.options.editable.element).offset().left + jQuery(this.options.editable.element).outerWidth() - 3;
-        yposition = jQuery(this.options.toolbar).offset().top - jQuery(document).scrollTop() - 29;
+        editableEl = jQuery(this.options.editable.element);
+        toolbarEl = jQuery(this.options.toolbar);
+        xposition = editableEl.offset().left + editableEl.outerWidth() - 3;
+        yposition = toolbarEl.offset().top - jQuery(document).scrollTop() - 29;
         this.options.dialog.dialog("option", "position", [xposition, yposition]);
         cleanUp();
         widget.options.loaded = 1;
@@ -1524,8 +1581,8 @@ http://hallojs.org
       },
       _addGuiTabSuggestions: function(tabs, element) {
         var tab;
-        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-suggestions\" class=\"" + this.widgetName + "-tabselector " + this.widgetName + "-tab-suggestions\"><span>Suggestions</span></li>"));
-        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-suggestions-content\" class=\"" + this.widgetName + "-tab tab-suggestions\"></div>");
+        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-suggestions\"        class=\"" + this.widgetName + "-tabselector " + this.widgetName + "-tab-suggestions\">          <span>Suggestions</span>        </li>"));
+        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-suggestions-content\"        class=\"" + this.widgetName + "-tab tab-suggestions\"></div>");
         element.append(tab);
         return tab.halloimagesuggestions({
           uuid: this.options.uuid,
@@ -1537,8 +1594,8 @@ http://hallojs.org
         var dialogId, tab, widget;
         widget = this;
         dialogId = "" + this.options.uuid + "-image-dialog";
-        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-search\" class=\"" + widget.widgetName + "-tabselector " + widget.widgetName + "-tab-search\"><span>Search</span></li>"));
-        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-search-content\" class=\"" + widget.widgetName + "-tab tab-search\"></div>");
+        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-search\"        class=\"" + this.widgetName + "-tabselector " + this.widgetName + "-tab-search\">          <span>Search</span>        </li>"));
+        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-search-content\"        class=\"" + widget.widgetName + "-tab tab-search\"></div>");
         element.append(tab);
         return tab.halloimagesearch({
           uuid: this.options.uuid,
@@ -1551,8 +1608,8 @@ http://hallojs.org
       },
       _addGuiTabUpload: function(tabs, element) {
         var tab;
-        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-upload\" class=\"" + this.widgetName + "-tabselector " + this.widgetName + "-tab-upload\"><span>Upload</span></li>"));
-        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\" class=\"" + this.widgetName + "-tab tab-upload\"></div>");
+        tabs.append(jQuery("<li id=\"" + this.options.uuid + "-tab-upload\"        class=\"" + this.widgetName + "-tabselector " + this.widgetName + "-tab-upload\">          <span>Upload</span>        </li>"));
+        tab = jQuery("<div id=\"" + this.options.uuid + "-tab-upload-content\"        class=\"" + this.widgetName + "-tab tab-upload\"></div>");
         element.append(tab);
         return tab.halloimageupload({
           uuid: this.options.uuid,
@@ -1561,30 +1618,31 @@ http://hallojs.org
           imageWidget: this,
           entity: this.options.entity
         });
-        /*
-                    insertImage = () ->
-                        #This may need to insert an image that does not have the same URL as the preview image, since it may be a different size
-        
-                        # Check if we have a selection and fall back to @lastSelection otherwise
-                        try
-                            if not widget.options.editable.getSelection()
-                                throw new Error "SelectionNotSet"
-                        catch error
-                            widget.options.editable.restoreSelection(widget.lastSelection)
-        
-                        document.execCommand "insertImage", null, jQuery(this).attr('src')
-                        img = document.getSelection().anchorNode.firstChild
-                        jQuery(img).attr "alt", jQuery(".caption").value
-        
-                        triggerModified = () ->
-                            widget.element.trigger "hallomodified"
-                        window.setTimeout triggerModified, 100
-                        widget._closeDialog()
-        
-                    @options.dialog.find(".halloimage-activeImage, ##{widget.options.uuid}-#{widget.widgetName}-addimage").click insertImage
-        */
-
       }
+      /*
+          insertImage = () ->
+          # This may need to insert an image that does not have the same URL as
+          # the preview image, since it may be a different size
+            # Check if we have a selection and fall back to @lastSelection otherwise
+            try
+              if not widget.options.editable.getSelection()
+              throw new Error "SelectionNotSet"
+            catch error
+              widget.options.editable.restoreSelection(widget.lastSelection)
+      
+            document.execCommand "insertImage", null, jQuery(this).attr('src')
+            img = document.getSelection().anchorNode.firstChild
+            jQuery(img).attr "alt", jQuery(".caption").value
+      
+            triggerModified = () ->
+              widget.element.trigger "hallomodified"
+            window.setTimeout triggerModified, 100
+            widget._closeDialog()
+      
+            addImage = "##{widget.options.uuid}-#{widget.widgetName-addimage"
+            @options.dialog.find(".halloimage-activeImage, addImage).click insertImage
+      */
+
     });
   })(jQuery);
 
@@ -1676,8 +1734,7 @@ http://hallojs.org
         buttonize("Right");
         buttonset.hallobuttonset();
         return toolbar.append(buttonset);
-      },
-      _init: function() {}
+      }
     });
   })(jQuery);
 
@@ -1699,26 +1756,36 @@ http://hallojs.org
           draggable: false,
           dialogClass: 'hallolink-dialog'
         },
-        butonCssClass: null
+        buttonCssClass: null
       },
       populateToolbar: function(toolbar) {
-        var buttonize, buttonset, dialog, dialogId, dialogSubmitCb, urlInput, widget,
+        var buttonize, buttonset, dialog, dialogId, dialogSubmitCb, isEmptyLink, urlInput, widget,
           _this = this;
         widget = this;
         dialogId = "" + this.options.uuid + "-dialog";
-        dialog = jQuery("<div id=\"" + dialogId + "\"><form action=\"#\" method=\"post\" class=\"linkForm\"><input class=\"url\" type=\"text\" name=\"url\" value=\"" + this.options.defaultUrl + "\" /><input type=\"submit\" id=\"addlinkButton\" value=\"Insert\" /></form></div>");
+        dialog = jQuery("<div id=\"" + dialogId + "\">        <form action=\"#\" method=\"post\" class=\"linkForm\">          <input class=\"url\" type=\"text\" name=\"url\"            value=\"" + this.options.defaultUrl + "\" />          <input type=\"submit\" id=\"addlinkButton\" value=\"Insert\" />        </form></div>");
         urlInput = jQuery('input[name=url]', dialog).focus(function(e) {
           return this.select();
         });
+        isEmptyLink = function(link) {
+          if ((new RegExp(/^\s*$/)).test(link)) {
+            return true;
+          }
+          if (link === widget.options.defaultUrl) {
+            return true;
+          }
+          return false;
+        };
         dialogSubmitCb = function(event) {
-          var link;
+          var link, selectionStart;
           event.preventDefault();
           link = urlInput.val();
           widget.options.editable.restoreSelection(widget.lastSelection);
-          if (((new RegExp(/^\s*$/)).test(link)) || link === widget.options.defaultUrl) {
+          if (isEmptyLink(link)) {
+            selectionStart = widget.lastSelection.startContainer;
             if (widget.lastSelection.collapsed) {
-              widget.lastSelection.setStartBefore(widget.lastSelection.startContainer);
-              widget.lastSelection.setEndAfter(widget.lastSelection.startContainer);
+              widget.lastSelection.setStartBefore(selectionStart);
+              widget.lastSelection.setEndAfter(selectionStart);
               window.getSelection().addRange(widget.lastSelection);
             }
             document.execCommand("unlink", null, "");
@@ -1755,12 +1822,14 @@ http://hallojs.org
           buttonset.append(buttonHolder);
           button = buttonHolder;
           button.bind("click", function(event) {
+            var selectionParent;
             widget.lastSelection = widget.options.editable.getSelection();
             urlInput = jQuery('input[name=url]', dialog);
-            if (widget.lastSelection.startContainer.parentNode.href === void 0) {
+            selectionParent = widget.lastSelection.startContainer.parentNode;
+            if (!selectionParent.href) {
               urlInput.val(widget.options.defaultUrl);
             } else {
-              urlInput.val(jQuery(widget.lastSelection.startContainer.parentNode).attr('href'));
+              urlInput.val(jQuery(selectionParent).attr('href'));
               jQuery(urlInput[0].form).find('input[type=submit]').val('update');
             }
             widget.options.editable.keepActivated(true);
@@ -1775,7 +1844,11 @@ http://hallojs.org
           return _this.element.bind("keyup paste change mouseup", function(event) {
             var nodeName, start;
             start = jQuery(widget.options.editable.getSelection().startContainer);
-            nodeName = start.prop('nodeName') ? start.prop('nodeName') : start.parent().prop('nodeName');
+            if (start.prop('nodeName')) {
+              nodeName = start.prop('nodeName');
+            } else {
+              nodeName = start.parent().prop('nodeName');
+            }
             if (nodeName && nodeName.toUpperCase() === "A") {
               jQuery('label', button).addClass('ui-state-active');
               return;
@@ -1791,8 +1864,7 @@ http://hallojs.org
           buttonset.hallobuttonset();
           return dialog.dialog(this.options.dialogOpts);
         }
-      },
-      _init: function() {}
+      }
     });
   })(jQuery);
 
@@ -1852,19 +1924,19 @@ http://hallojs.org
         widget = this;
         if (!this.options.bound) {
           this.options.bound = true;
-          widget.options.editable.element.bind("halloactivated", function(event, data) {
+          this.options.editable.element.bind("halloactivated", function(event, data) {
             widget.options.currentEditable = jQuery(event.target);
             if (!widget.options.visible) {
               return widget.showOverlay();
             }
           });
-          widget.options.editable.element.bind("hallomodified", function(event, data) {
+          this.options.editable.element.bind("hallomodified", function(event, data) {
             widget.options.currentEditable = jQuery(event.target);
             if (widget.options.visible) {
               return widget.resizeOverlay();
             }
           });
-          return widget.options.editable.element.bind("hallodeactivated", function(event, data) {
+          return this.options.editable.element.bind("hallodeactivated", function(event, data) {
             widget.options.currentEditable = jQuery(event.target);
             if (widget.options.visible) {
               return widget.hideOverlay();
@@ -1872,14 +1944,13 @@ http://hallojs.org
           });
         }
       },
-      _init: function() {},
       showOverlay: function() {
         this.options.visible = true;
         if (this.options.overlay === null) {
           if (jQuery("#halloOverlay").length > 0) {
             this.options.overlay = jQuery("#halloOverlay");
           } else {
-            this.options.overlay = jQuery('<div id="halloOverlay" class="halloOverlay">');
+            this.options.overlay = jQuery("<div id=\"halloOverlay\"            class=\"halloOverlay\">");
             jQuery(document.body).append(this.options.overlay);
           }
           this.options.overlay.bind('click', jQuery.proxy(this.options.editable.turnOff, this.options.editable));
@@ -1889,7 +1960,7 @@ http://hallojs.org
           if (jQuery("#halloBackground").length > 0) {
             this.options.background = jQuery("#halloBackground");
           } else {
-            this.options.background = jQuery('<div id="halloBackground" class="halloBackground">');
+            this.options.background = jQuery("<div id=\"halloBackground\"            class=\"halloBackground\">");
             jQuery(document.body).append(this.options.background);
           }
         }
@@ -1903,12 +1974,12 @@ http://hallojs.org
       resizeOverlay: function() {
         var offset;
         offset = this.options.currentEditable.offset();
-        this.options.background.css({
+        return this.options.background.css({
           top: offset.top - this.options.padding,
-          left: offset.left - this.options.padding
+          left: offset.left - this.options.padding,
+          width: this.options.currentEditable.width() + 2 * this.options.padding,
+          height: this.options.currentEditable.height() + 2 * this.options.padding
         });
-        this.options.background.width(this.options.currentEditable.width() + 2 * this.options.padding);
-        return this.options.background.height(this.options.currentEditable.height() + 2 * this.options.padding);
       },
       hideOverlay: function() {
         this.options.visible = false;
@@ -1961,8 +2032,7 @@ http://hallojs.org
         buttonize("redo", "Redo");
         buttonset.hallobuttonset();
         return toolbar.append(buttonset);
-      },
-      _init: function() {}
+      }
     });
   })(jQuery);
 
@@ -1974,7 +2044,7 @@ http://hallojs.org
         breakAfter: []
       },
       populateToolbar: function(toolbar) {
-        var buttonset, buttonsets, queuedButtonsets, row, rowcounter, _i, _j, _len, _len1, _ref;
+        var buttonRow, buttonset, buttonsets, queuedButtonsets, row, rowcounter, _i, _j, _len, _len1, _ref;
         buttonsets = jQuery('.ui-buttonset', toolbar);
         queuedButtonsets = jQuery();
         rowcounter = 0;
@@ -1982,11 +2052,12 @@ http://hallojs.org
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           row = _ref[_i];
           rowcounter++;
+          buttonRow = "<div          class=\"halloButtonrow halloButtonrow-" + rowcounter + "\" />";
           for (_j = 0, _len1 = buttonsets.length; _j < _len1; _j++) {
             buttonset = buttonsets[_j];
             queuedButtonsets = jQuery(queuedButtonsets).add(jQuery(buttonset));
             if (jQuery(buttonset).hasClass(row)) {
-              queuedButtonsets.wrapAll('<div class="halloButtonrow halloButtonrow-' + rowcounter + '" />');
+              queuedButtonsets.wrapAll(buttonRow);
               buttonsets = buttonsets.not(queuedButtonsets);
               queuedButtonsets = jQuery();
               break;
@@ -1995,10 +2066,10 @@ http://hallojs.org
         }
         if (buttonsets.length > 0) {
           rowcounter++;
-          return buttonsets.wrapAll('<div class="halloButtonrow halloButtonrow-' + rowcounter + '" />');
+          buttonRow = "<div          class=\"halloButtonrow halloButtonrow-" + rowcounter + "\" />";
+          return buttonsets.wrapAll(buttonRow);
         }
-      },
-      _init: function() {}
+      }
     });
   })(jQuery);
 
@@ -2025,14 +2096,18 @@ http://hallojs.org
           return;
         }
         eventType = event.type;
-        if (eventType === "keydown" || eventType === "keyup" || eventType === "keypress") {
-          return this._getCaretPosition(selection);
-        }
-        if (eventType === "click" || eventType === "mousedown" || eventType === "mouseup") {
-          return position = {
-            top: event.pageY,
-            left: event.pageX
-          };
+        switch (eventType) {
+          case 'keydown':
+          case 'keyup':
+          case 'keypress':
+            return this._getCaretPosition(selection);
+          case 'click':
+          case 'mousedown':
+          case 'mouseup':
+            return position = {
+              top: event.pageY,
+              left: event.pageX
+            };
         }
       },
       _getCaretPosition: function(range) {
@@ -2118,11 +2193,12 @@ http://hallojs.org
         }
       },
       _getPosition: function(event, selection) {
-        var offset, position;
+        var offset, position, width;
         if (!event) {
           return;
         }
-        offset = parseFloat(this.element.css('outline-width')) + parseFloat(this.element.css('outline-offset'));
+        width = parseFloat(this.element.css('outline-width'));
+        offset = width + parseFloat(this.element.css('outline-offset'));
         return position = {
           top: this.element.offset().top - this.toolbar.outerHeight() - offset,
           left: this.element.offset().left - offset
@@ -2177,13 +2253,14 @@ http://hallojs.org
         cssClass: null
       },
       _create: function() {
-        var hoverclass, id, _base, _ref,
+        var hoverclass, id, opts, _base, _ref,
           _this = this;
         if ((_ref = (_base = this.options).icon) == null) {
           _base.icon = "icon-" + (this.options.label.toLowerCase());
         }
         id = "" + this.options.uuid + "-" + this.options.label;
-        this.button = this._createButton(id, this.options.command, this.options.label, this.options.icon);
+        opts = this.options;
+        this.button = this._createButton(id, opts.command, opts.label, opts.icon);
         this.element.append(this.button);
         if (this.options.cssClass) {
           this.button.addClass(this.options.cssClass);
@@ -2203,7 +2280,7 @@ http://hallojs.org
         });
       },
       _init: function() {
-        var editableElement, queryState,
+        var editableElement, events, queryState,
           _this = this;
         if (!this.button) {
           this.button = this._prepareButton();
@@ -2231,12 +2308,13 @@ http://hallojs.org
           return;
         }
         editableElement = this.options.editable.element;
-        editableElement.bind('keyup paste change mouseup hallomodified', queryState);
+        events = 'keyup paste change mouseup hallomodified';
+        editableElement.bind(events, queryState);
         editableElement.bind('halloenabled', function() {
-          return editableElement.bind('keyup paste change mouseup hallomodified', queryState);
+          return editableElement.bind(events, queryState);
         });
         return editableElement.bind('hallodisabled', function() {
-          return editableElement.unbind('keyup paste change mouseup hallomodified', queryState);
+          return editableElement.unbind(events, queryState);
         });
       },
       enable: function() {
@@ -2260,7 +2338,9 @@ http://hallojs.org
         return this.refresh();
       },
       _createButton: function(id, command, label, icon) {
-        return jQuery("<button id=\"" + id + "\" class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only " + command + "_button\" title=\"" + label + "\"><span class=\"ui-button-text\"><i class=\"" + icon + "\"></i></span></button>");
+        var classes;
+        classes = ['ui-button', 'ui-widget', 'ui-state-default', 'ui-corner-all', 'ui-button-text-only', "" + command + "_button"];
+        return jQuery("<button id=\"" + id + "\"        class=\"" + (classes.join(' ')) + "\" title=\"" + label + "\">          <span class=\"ui-button-text\">            <i class=\"" + icon + "\"></i>          </span>        </button>");
       }
     });
     return jQuery.widget('IKS.hallobuttonset', {
@@ -2276,8 +2356,13 @@ http://hallojs.org
         rtl = this.element.css('direction') === 'rtl';
         this.buttons = this.element.find('.ui-button');
         this.buttons.removeClass('ui-corner-all ui-corner-left ui-corner-right');
-        this.buttons.filter(':first').addClass(rtl ? 'ui-corner-right' : 'ui-corner-left');
-        return this.buttons.filter(':last').addClass(rtl ? 'ui-corner-left' : 'ui-corner-right');
+        if (rtl) {
+          this.buttons.filter(':first').addClass('ui-corner-right');
+          return this.buttons.filter(':last').addClass('ui-corner-left');
+        } else {
+          this.buttons.filter(':first').addClass('ui-corner-left');
+          return this.buttons.filter(':last').addClass('ui-corner-right');
+        }
       }
     });
   })(jQuery);
@@ -2344,9 +2429,10 @@ http://hallojs.org
         return target.css('left', left - 20);
       },
       _prepareButton: function() {
-        var buttonEl, id;
+        var buttonEl, classes, id;
         id = "" + this.options.uuid + "-" + this.options.label;
-        buttonEl = jQuery("<button id=\"" + id + "\" class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" title=\"" + this.options.label + "\"><i class=\"" + this.options.icon + "\"></i></button>");
+        classes = ['ui-button', 'ui-widget', 'ui-state-default', 'ui-corner-all', 'ui-button-text-only'];
+        buttonEl = jQuery("<button id=\"" + id + "\"        class=\"" + (classes.join(' ')) + "\" title=\"" + this.options.label + "\">         <i class=\"" + this.options.icon + "\"></i>       </button>");
         if (this.options.cssClass) {
           buttonEl.addClass(this.options.cssClass);
         }
